@@ -209,6 +209,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         buttons.addSubview(more)
         self.contentView.addSubview(info)
         self.contentView.addSubview(box)
+        self.contentView.addSubview(buttons)
         
         self.contentView.backgroundColor = ColorUtil.foregroundColor
         
