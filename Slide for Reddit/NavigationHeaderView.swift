@@ -66,6 +66,10 @@ class NavigationHeaderView: UIView {
         accounts.addGestureRecognizer(aTap)
         accounts.isUserInteractionEnabled = true
         
+        let pTap = UITapGestureRecognizer(target: self, action: #selector(self.showProfileDialog(_:)))
+        profile.addGestureRecognizer(pTap)
+        profile.isUserInteractionEnabled = true
+        
         addSubview(logo)
         addSubview(accounts)
         addSubview(multis)
@@ -76,6 +80,24 @@ class NavigationHeaderView: UIView {
         self.clipsToBounds = true
         updateConstraints()
         
+    }
+    
+    func showProfileDialog(_ sender: AnyObject){
+        let alert = UIAlertController(title: "Enter a username", message: "", preferredStyle: .alert)
+        
+        alert.addTextField { (textField) in
+            textField.text = ""
+        }
+        
+        alert.addAction(UIAlertAction(title: "Go to user", style: .default, handler: { [weak alert] (_) in
+            let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
+            let profile = ProfileViewController.init(name: (textField?.text!)!)
+            self.parentController?.show(profile, sender: self.parentController)
+        }))
+        
+        alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
+        
+        parentController?.present(alert, animated: true, completion: nil)
     }
     
     func switchAccounts(_ sender: AnyObject){

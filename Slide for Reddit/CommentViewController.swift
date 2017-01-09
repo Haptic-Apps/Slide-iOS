@@ -12,11 +12,55 @@ import AudioToolbox.AudioServices
 import BGTableViewRowActionWithImage
 import AMScrollingNavbar
 
-class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, UZTextViewCellDelegate {
+class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, UZTextViewCellDelegate, LinkCellViewDelegate {
     
     internal func pushedMoreButton(_ cell: CommentDepthCell) {
         
     }
+    func save(_ cell: LinkCellView) {
+        do {
+            try session?.setSave(!ActionStates.isSaved(s: cell.link!), name: (cell.link?.name)!, completion: { (result) in
+                
+            })
+            ActionStates.setSaved(s: cell.link!, saved: !ActionStates.isSaved(s: cell.link!))
+            History.addSeen(s: cell.link!)
+            cell.refresh()
+        } catch {
+            
+        }
+    }
+    
+    func upvote(_ cell: LinkCellView) {
+        do{
+            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up, name: (cell.link?.name)!, completion: { (result) in
+                
+            })
+            ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up)
+            History.addSeen(s: cell.link!)
+            cell.refresh()
+        } catch {
+            
+        }
+    }
+    
+    func downvote(_ cell: LinkCellView) {
+        do {
+            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down, name: (cell.link?.name)!, completion: { (result) in
+                
+            })
+            ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down)
+            History.addSeen(s: cell.link!)
+            cell.refresh()
+        } catch {
+            
+        }
+    }
+    
+    func more(_ cell: LinkCellView){
+        
+    }
+    
+    
 
     
     var submission: Link? = nil
@@ -98,6 +142,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                         DispatchQueue.main.async(execute: { () -> Void in
                             if(!self.hasSubmission){
                                 self.headerCell = LinkCellView()
+                                self.headerCell?.delegate = self
                                 self.headerCell?.setLink(submission: self.submission!, parent: self, nav: self.navigationController)
                                 self.headerCell?.showBody(width: self.tableView.frame.size.width)
                                 self.tableView.tableHeaderView = UIView(frame: CGRect.init(x:0, y:0, width:self.tableView.frame.width, height:0.01))
@@ -141,6 +186,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         super.viewDidLayoutSubviews()
         if(hasSubmission && self.view.frame.size.width != 0 && !hasDone){
             headerCell = LinkCellView()
+            headerCell?.delegate = self
             hasDone = true
             headerCell?.setLink(submission: submission!, parent: self, nav: self.navigationController)
             headerCell?.showBody(width: self.view.frame.size.width)
@@ -279,20 +325,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
     }
     
-    func save(_ save: Bool) {
-        if let link = self.submission {
-            do {
-                try session?.setSave(save, name: link.name, completion: { (result) -> Void in
-                    switch result {
-                    case .failure(let error):
-                        print(error)
-                    case .success(let check):
-                        print(check)
-                    }
-                })
-            } catch { print(error) }
-        }
-    }
     
     func hide(_ hide: Bool) {
         if let link = self.submission {
@@ -319,14 +351,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     func cancelVote(_ sender: AnyObject?) {
         vote(.none)
-    }
-    
-    func doSave(_ sender: AnyObject?) {
-        save(true)
-    }
-    
-    func doUnsave(_ sender: AnyObject?) {
-        save(false)
     }
     
     func doHide(_ sender: AnyObject?) {
@@ -359,12 +383,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             }
             items.append(space)
             
-            // save
-            if link.saved {
-                items.append(UIBarButtonItem(image: UIImage(named: "favoriteFill"), style:.plain, target: self, action:#selector(CommentViewController.doUnsave(_:))))
-            } else {
-                items.append(UIBarButtonItem(image: UIImage(named: "favorite"), style:.plain, target: self, action:#selector(CommentViewController.doSave(_:))))
-            }
             items.append(space)
             
             // hide
@@ -580,7 +598,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     if(hiddenPersons.contains(thing.getId())){
                         count = getChildNumber(n: thing as! Comment)
                     }
-                    cell.setComment(comment: thing as! Comment, depth: cDepth[thing.getId()] as! Int, parent: self, hiddenCount: count, date: lastSeen, author: link.author)
+                    cell.setComment(comment: thing as! Comment, depth: cDepth[thing.getId()] as! Int, parent: self, hiddenCount: count, date: lastSeen, author: submission?.author)
                 } else {
                     cell.setMore(more: (thing as! More), depth: cDepth[thing.getId()] as! Int)
                 }

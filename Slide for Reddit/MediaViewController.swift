@@ -15,6 +15,7 @@ import AMScrollingNavbar
 class MediaViewController: UIViewController, MHGalleryDataSource {
     
     var link:Link!
+    var paging: Bool = false
     weak var blockGal: MHGalleryController?
     
     var images:[URL] = []
@@ -244,8 +245,10 @@ class MediaViewController: UIViewController, MHGalleryDataSource {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        if(!paging){
         navigationController?.navigationBar.shadowImage = UIImage()
         setNavColors()
+        }
     }
     func getHash(sS:String) -> String {
         var s = sS

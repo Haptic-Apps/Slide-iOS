@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  SubredditLinkViewController.swift
 //  Slide for Reddit
 //
 //  Created by Carlos Crane on 12/22/16.
@@ -14,7 +14,60 @@ import XLPagerTabStrip
 import AMScrollingNavbar
 
 
-class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, IndicatorInfoProvider, ScrollingNavigationControllerDelegate {
+class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, IndicatorInfoProvider, ScrollingNavigationControllerDelegate, LinkCellViewDelegate, ColorPickerDelegate {
+    
+    var parentController: SubredditsViewController?
+    func valueChanged(_ value: CGFloat) {
+        self.navigationController?.navigationBar.barTintColor = UIColor.init(cgColor: ColorPicker.allColors[Int(value * CGFloat(ColorPicker.allColors.count))])
+        if(parentController != nil){
+            parentController?.colorChanged()
+        }
+    }
+    
+    func save(_ cell: LinkCellView) {
+        do {
+            try session?.setSave(!ActionStates.isSaved(s: cell.link!), name: (cell.link?.name)!, completion: { (result) in
+                
+            })
+            ActionStates.setSaved(s: cell.link!, saved: !ActionStates.isSaved(s: cell.link!))
+            History.addSeen(s: cell.link!)
+            cell.refresh()
+        } catch {
+            
+        }
+    }
+    
+    func upvote(_ cell: LinkCellView) {
+        do{
+            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up, name: (cell.link?.name)!, completion: { (result) in
+                
+            })
+            ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up)
+            History.addSeen(s: cell.link!)
+            cell.refresh()
+        } catch {
+            
+        }
+    }
+    
+    func downvote(_ cell: LinkCellView) {
+        do {
+            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down, name: (cell.link?.name)!, completion: { (result) in
+                
+            })
+            ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down)
+            History.addSeen(s: cell.link!)
+            cell.refresh()
+        } catch {
+            
+        }
+    }
+    
+    func more(_ cell: LinkCellView){
+        
+    }
+    
+    
     var links: [Link] = []
     var paginator = Paginator()
     var sub : String
@@ -66,7 +119,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             print("navbar is moving")
         }
     }
-
+    
     
     
     override func loadView(){
@@ -109,29 +162,57 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         if self.links.count == 0 {
             load(reset: true)
         }
-
+        
         tableView.estimatedRowHeight = 400.0
         tableView.rowHeight = UITableViewAutomaticDimension
-
+        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
     }
     
+    func pickTheme(parent: SubredditsViewController){
+        parentController = parent
+        let alertController = UIAlertController(title: "\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
+        
+        let margin:CGFloat = 10.0
+        let rect = CGRect(x: margin, y: margin, width: alertController.view.bounds.size.width - margin * 4.0, height: 120)
+        let customView = ColorPicker(frame: rect)
+        customView.delegate = self
+        
+        customView.backgroundColor = ColorUtil.backgroundColor
+        alertController.view.addSubview(customView)
+        
+        let somethingAction = UIAlertAction(title: "Save", style: .default, handler: {(alert: UIAlertAction!) in
+            ColorUtil.setColorForSub(sub: self.sub, color: (self.navigationController?.navigationBar.barTintColor)!)
+        })
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: {(alert: UIAlertAction!) in
+            parent.resetColors()
+        })
+        
+        alertController.addAction(somethingAction)
+        alertController.addAction(cancelAction)
+        
+        present(alertController, animated: true, completion: nil)
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
         navigationController?.navigationBar.isTranslucent = false
         if let navigationController = self.navigationController as? ScrollingNavigationController {
-            print("Following scroll")
             navigationController.followScrollView(self.tableView, delay: 50.0)
             navigationController.scrollingNavbarDelegate = self
         }
         if(single){
             self.title = sub
+        } else {
+            paging = true
         }
+        super.viewWillAppear(animated)
+        tableView.reloadData()
     }
-        
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -146,7 +227,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         
         let link = self.links[(indexPath as NSIndexPath).row]
         cell.setLink(submission: link, parent: self, nav: self.navigationController)
-        
+        cell.delegate = self
         if indexPath.row == self.links.count - 1 && !loading {
             self.loadMore()
         }

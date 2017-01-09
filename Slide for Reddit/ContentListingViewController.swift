@@ -99,6 +99,7 @@ class ContentListingViewController: MediaViewController, UITableViewDelegate, UI
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        paging = baseData.paging
         super.viewWillAppear(animated)
         if let navigationController = self.navigationController as? ScrollingNavigationController {
             print("Following scroll")

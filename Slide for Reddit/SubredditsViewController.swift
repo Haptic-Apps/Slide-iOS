@@ -25,6 +25,7 @@ class SubredditsViewController:  ButtonBarPagerTabStripViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.navigationBar.shadowImage = UIImage()
+        self.navigationController?.navigationBar.barTintColor = self.tintColor
     }
     
     func addAccount(){
@@ -96,7 +97,7 @@ class SubredditsViewController:  ButtonBarPagerTabStripViewController {
             setToken(token: token!)
         }
     }
-    
+    var tintColor: UIColor = UIColor.white
     var menuLeftNavigationController: UISideMenuNavigationController?
     var menuNav: NavigationSidebarViewController?
     override func viewDidLoad() {
@@ -133,10 +134,11 @@ class SubredditsViewController:  ButtonBarPagerTabStripViewController {
             oldCell?.label.textColor = .white
             self.navigationController?.navigationBar.barStyle = .black;
             if((newCell?.label.text) != nil){
-                self.navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: (newCell?.label.text)!)
-                self.buttonBarView.backgroundColor = self.navigationController?.navigationBar.barTintColor
-                self.buttonBarView.selectedBar.backgroundColor = ColorUtil.accentColorForSub(sub: (newCell?.label.text)!)
+                self.tintColor = ColorUtil.getColorForSub(sub: (newCell?.label.text)!)
+                self.navigationController?.navigationBar.barTintColor = self.tintColor
+                self.colorChanged()
                 self.menuNav?.setSubreddit(subreddit: (newCell?.label.text)!)
+                self.buttonBarView.selectedBar.backgroundColor = ColorUtil.accentColorForSub(sub: (newCell?.label.text)!)
             }
         }
         view.backgroundColor = ColorUtil.backgroundColor
@@ -175,6 +177,14 @@ class SubredditsViewController:  ButtonBarPagerTabStripViewController {
         navigationItem.leftBarButtonItem = menuB
         
     }
+    func resetColors(){
+        self.navigationController?.navigationBar.barTintColor = self.tintColor
+        self.buttonBarView.backgroundColor = self.tintColor
+    }
+    
+    func colorChanged(){
+        self.buttonBarView.backgroundColor = self.navigationController?.navigationBar.barTintColor
+    }
     
     func showSortMenu(_ sender: AnyObject){
         (viewControllers[currentIndex] as? SubredditLinkViewController)?.showMenu()
@@ -203,7 +213,7 @@ class SubredditsViewController:  ButtonBarPagerTabStripViewController {
         actionSheetController.addAction(cancelActionButton)
         
         cancelActionButton = UIAlertAction(title: "Subreddit Theme", style: .default) { action -> Void in
-            print("Subreddit Theme")
+            (self.viewControllers[self.currentIndex] as? SubredditLinkViewController)?.pickTheme(parent: self)
         }
         actionSheetController.addAction(cancelActionButton)
         

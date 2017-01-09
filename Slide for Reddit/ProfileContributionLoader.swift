@@ -28,6 +28,7 @@ class ProfileContributionLoader: ContributionLoader {
     var content: [Thing]
     var delegate: ContentListingViewController?
     var indicatorInfo: IndicatorInfo
+    var paging = true
     
     func getData(reload: Bool) {
         if(delegate != nil){

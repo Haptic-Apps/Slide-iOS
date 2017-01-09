@@ -47,10 +47,15 @@ class ColorUtil{
         }
     }
     
+    public static func setColorForSub(sub: String, color: UIColor){
+        UserDefaults.standard.setColor(color: color , forKey: "color+" + sub)
+        UserDefaults.standard.synchronize()
+    }
+    
     public static func accentColorForSub(sub: String) -> UIColor {
         let color = UserDefaults.standard.colorForKey(key: "accent+" + sub)
         if(color == nil){
-            return UIColor(rgba: MaterialColors.Cyan.A200.HUE)
+            return GMColor.cyanA200Color()
         } else {
             return color!
         }
