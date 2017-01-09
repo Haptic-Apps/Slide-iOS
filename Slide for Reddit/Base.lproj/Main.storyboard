@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16C67" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="C9p-7X-Uvk">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Scrolling Navigation Controller-->
+        <scene sceneID="4GI-Uj-nW2">
+            <objects>
+                <navigationController id="C9p-7X-Uvk" customClass="ScrollingNavigationController" customModule="AMScrollingNavbar" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="WlN-bS-fIE">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="zBQ-tl-wHr">
+                        <rect key="frame" x="0.0" y="623" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </toolbar>
+                    <connections>
+                        <segue destination="Rj6-oy-24s" kind="relationship" relationship="rootViewController" id="InL-3Z-LYr"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="bzJ-dD-M52" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1361" y="111"/>
+        </scene>
+        <!--Subreddits View Controller-->
+        <scene sceneID="Dug-Bu-cBA">
+            <objects>
+                <viewController id="Rj6-oy-24s" customClass="SubredditsViewController" customModule="Slide_for_Reddit" customModuleProvider="target" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" id="35h-Gc-8e5"/>
+                    <connections>
+                        <segue destination="vf7-Tc-iyW" kind="show" identifier="mediaSegue" id="qvG-yn-c8P"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="mfV-ht-0y2" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-606" y="103"/>
+        </scene>
+        <!--Media View Controller-->
+        <scene sceneID="OTg-eD-Fm9">
+            <objects>
+                <viewController id="vf7-Tc-iyW" customClass="MediaViewController" customModule="Slide_for_Reddit" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="4Ml-CK-ogq"/>
+                        <viewControllerLayoutGuide type="bottom" id="TxL-y3-GpP"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="OdB-7H-YE9">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="0f1-x2-pzg" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="286" y="89"/>
+        </scene>
+    </scenes>
+</document>

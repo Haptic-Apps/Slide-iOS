@@ -1,0 +1,257 @@
+//
+//  AppDelegate.swift
+//  Slide for Reddit
+//
+//  Created by Carlos Crane on 12/22/16.
+//  Copyright © 2016 Haptic Apps. All rights reserved.
+//
+
+import UIKit
+import reddift
+import ChameleonFramework
+
+/// Posted when the OAuth2TokenRepository object succeed in saving a token successfully into Keychain.
+public let OAuth2TokenRepositoryDidSaveTokenName = Notification.Name(rawValue: "OAuth2TokenRepositoryDidSaveToken")
+
+/// Posted when the OAuth2TokenRepository object failed to save a token successfully into Keychain.
+public let OAuth2TokenRepositoryDidFailToSaveTokenName = Notification.Name(rawValue: "OAuth2TokenRepositoryDidFailToSaveToken")
+
+@UIApplicationMain
+class AppDelegate: UIResponder, UIApplicationDelegate {
+    
+    var window: UIWindow?
+    let name = "reddittoken"
+    var session: Session? = nil
+    var subreddits: [Subreddit] = []
+    var paginator = Paginator()
+    var login: SubredditsViewController?
+    var seenFile: String?
+    var commentsFile: String?
+
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        // Override point for customization after application launch.
+        
+        let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true) as NSArray
+        let documentDirectory = paths[0] as! String
+        seenFile = documentDirectory.appending("/seen.plist")
+        commentsFile = documentDirectory.appending("/comments.plist")
+
+        let fileManager = FileManager.default
+        if(!fileManager.fileExists(atPath: seenFile!)){
+            if let bundlePath = Bundle.main.path(forResource: "seen", ofType: "plist"){
+                let result = NSMutableDictionary(contentsOfFile: bundlePath)
+                print("Bundle file seen.plist is -> \(result?.description)")
+                do{
+                    try fileManager.copyItem(atPath: bundlePath, toPath: seenFile!)
+                }catch{
+                    print("copy failure.")
+                }
+            }else{
+                print("file myData.plist not found.")
+            }
+        }else{
+            print("file myData.plist already exits at path.")
+        }
+
+        if(!fileManager.fileExists(atPath: commentsFile!)){
+            if let bundlePath = Bundle.main.path(forResource: "comments", ofType: "plist"){
+                let result = NSMutableDictionary(contentsOfFile: bundlePath)
+                print("Bundle file comments.plist is -> \(result?.description)")
+                do{
+                    try fileManager.copyItem(atPath: bundlePath, toPath: commentsFile!)
+                }catch{
+                    print("copy failure.")
+                }
+            }else{
+                print("file myData.plist not found.")
+            }
+        }else{
+            print("file myData.plist already exits at path.")
+        }
+
+        session = Session()
+        History.seenTimes = NSMutableDictionary.init(contentsOfFile: seenFile!)!
+        History.commentCounts = NSMutableDictionary.init(contentsOfFile: commentsFile!)!
+
+        UIApplication.shared.statusBarStyle = .lightContent
+        
+        AccountController.initialize()
+        Subscriptions.sync(name: AccountController.currentName)
+        let settings = UIUserNotificationSettings(
+            types: [.badge, .sound, .alert],
+            categories: nil)
+        application.registerUserNotificationSettings(settings);
+
+        if !UserDefaults.standard.bool(forKey: "sc" + name){
+            syncColors(subredditController: nil)
+        }
+
+        ColorUtil.doInit()
+        return true
+    }
+    
+    func syncColors(subredditController: SubredditsViewController?) {
+        let defaults = UserDefaults.standard
+        var toReturn: [String] = []
+        defaults.set(true, forKey: "sc" + name)
+        defaults.synchronize()
+        do {
+            if(!AccountController.isLoggedIn){
+                try session?.getSubreddit(.default, paginator:paginator, completion: { (result) -> Void in
+                switch result {
+                case .failure:
+                    print(result.error!)
+                case .success(let listing):
+                    self.subreddits += listing.children.flatMap({$0 as? Subreddit})
+                    self.paginator = listing.paginator
+                    for sub in self.subreddits{
+                        toReturn.append(sub.displayName)
+                            let color = (UIColor.init(hexString: sub.keyColor))
+                            if(color != nil && defaults.object(forKey: "color" + sub.displayName) == nil){
+                                defaults.setColor(color: color , forKey: "color+" + sub.displayName)
+                            }
+                        }
+                    
+                }
+                    if(subredditController != nil){
+                        DispatchQueue.main.async (execute: { () -> Void in
+                        subredditController?.complete(subs: toReturn)
+                        })
+                    }
+            })
+
+            } else {
+                Subscriptions.getSubscriptionsFully(session: session!, completion: { (subs) in
+                    for sub in subs {
+                        toReturn.append(sub.displayName)
+                        print(sub.displayName)
+                        let color = (UIColor.init(hexString: sub.keyColor))
+                        if(color != nil && defaults.object(forKey: "color" + sub.displayName) == nil){
+                            defaults.setColor(color: color , forKey: "color+" + sub.displayName)
+                        }
+                    }
+                    
+                    toReturn = toReturn.sorted{ $0.localizedCaseInsensitiveCompare($1) == ComparisonResult.orderedAscending }
+                    toReturn.insert("all", at: 0)
+                    toReturn.insert("frontpage", at: 0)
+                    if(subredditController != nil){
+                        DispatchQueue.main.async (execute: { () -> Void in
+                            subredditController?.complete(subs: toReturn)
+                        })
+                    }
+
+                })
+            }
+        } catch {
+            print(error)
+            if(subredditController != nil){
+                DispatchQueue.main.async (execute: { () -> Void in
+                    subredditController?.complete(subs: toReturn)
+                })
+            }
+        }
+        
+    }
+    
+    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+        print("Returning \(url.absoluteString)")
+        var parameters: [String:String] = url.getKeyVals()!
+        
+        if let code = parameters["code"], let state = parameters["state"] {
+            print(state)
+            if code.characters.count > 0 {
+                do {
+                    print(code)
+                } catch {
+                    print(error)
+                }
+            }
+        }
+
+        return OAuth2Authorizer.sharedInstance.receiveRedirect(url, completion: {(result) -> Void in
+            print(result)
+            switch result {
+        
+            case .failure(let error):
+                print(error)
+            case .success(let token):
+                DispatchQueue.main.async(execute: { () -> Void in
+                    do {
+                        try OAuth2TokenRepository.save(token: token, of: token.name)
+                        self.login?.setToken(token: token)
+                        NotificationCenter.default.post(name: OAuth2TokenRepositoryDidSaveTokenName, object: nil, userInfo: nil)
+                    } catch {
+                        NotificationCenter.default.post(name: OAuth2TokenRepositoryDidFailToSaveTokenName, object: nil, userInfo: nil)
+                        print(error)
+                    }
+                })
+            }
+        })
+    }
+    
+    func killAndReturn(){
+        if let rootViewController = UIApplication.topViewController() {
+            var navigationArray = rootViewController.viewControllers
+            navigationArray.removeAll()
+            rootViewController.viewControllers = navigationArray
+            rootViewController.pushViewController(SubredditsViewController(coder: NSCoder.init())!, animated: false)
+        }
+    }
+    
+    func applicationWillResignActive(_ application: UIApplication) {
+        // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
+        // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
+    }
+    
+    func applicationDidEnterBackground(_ application: UIApplication) {
+        History.seenTimes.write(toFile: seenFile!, atomically: true)
+        History.commentCounts.write(toFile: commentsFile!, atomically: true)
+        // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
+        // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+    }
+    
+    func applicationWillEnterForeground(_ application: UIApplication) {
+        // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
+    }
+    
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+    }
+    
+    func applicationWillTerminate(_ application: UIApplication) {
+        // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    }
+    
+    
+}
+extension UIApplication {
+    class func topViewController(base: UIViewController? = UIApplication.shared.keyWindow?.rootViewController) -> UINavigationController? {
+        if let nav = base as? UINavigationController {
+            return nav
+        }
+        if let tab = base as? UITabBarController {
+            let moreNavigationController = tab.moreNavigationController
+            return moreNavigationController
+        }
+        if let presented = base?.presentedViewController {
+            return topViewController(base: presented)
+        }
+        return base?.navigationController
+    }
+}
+extension URL {
+    func getKeyVals() -> Dictionary<String, String>? {
+        var results = [String:String]()
+        var keyValues = self.query?.components(separatedBy: "&")
+        if (keyValues?.count)! > 0 {
+            for pair in keyValues! {
+                let kv = pair.components(separatedBy: "=")
+                if kv.count > 1 {
+                    results.updateValue(kv[1], forKey: kv[0])
+                }
+            }
+            
+        }
+        return results
+    }
+}

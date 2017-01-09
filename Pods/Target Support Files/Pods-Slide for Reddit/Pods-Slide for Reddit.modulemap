@@ -1,0 +1,6 @@
+framework module Pods_Slide_for_Reddit {
+  umbrella header "Pods-Slide for Reddit-umbrella.h"
+
+  export *
+  module * { export * }
+}

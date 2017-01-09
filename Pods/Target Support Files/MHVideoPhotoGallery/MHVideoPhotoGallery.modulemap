@@ -1,0 +1,6 @@
+framework module MHVideoPhotoGallery {
+  umbrella header "MHVideoPhotoGallery-umbrella.h"
+
+  export *
+  module * { export * }
+}

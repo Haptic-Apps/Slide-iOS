@@ -1,0 +1,44 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "43A19E24FFD15E64908E79CDB0389981192E6F20",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "7CCF51B0B1B6E03251B16586BC6B02E27AFAB431" : 9223372036854775807,
+    "ED5062A4D95B5BAEF0FBD8B001A28B27231B0D1C" : 9223372036854775807,
+    "FAF81802DDAEA2BD0452EB7D5EB8D1CC44DDF059" : 9223372036854775807,
+    "43A19E24FFD15E64908E79CDB0389981192E6F20" : 9223372036854775807
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "B85C0881-42F4-44FF-B7EF-EC868E4DD5B8",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "7CCF51B0B1B6E03251B16586BC6B02E27AFAB431" : "Slide%20for%20Reddit\/reddift\/",
+    "ED5062A4D95B5BAEF0FBD8B001A28B27231B0D1C" : "Slide%20for%20Reddit\/reddift\/reddiftSample\/vendor\/UZTextView\/",
+    "FAF81802DDAEA2BD0452EB7D5EB8D1CC44DDF059" : "Slide%20for%20Reddit\/reddift\/reddift\/vendor\/MiniKeychain\/",
+    "43A19E24FFD15E64908E79CDB0389981192E6F20" : "Slide%20for%20Reddit\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "Slide for Reddit",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "Slide for Reddit.xcworkspace",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:ccrama\/SlideiOS.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "43A19E24FFD15E64908E79CDB0389981192E6F20"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/sonsongithub\/reddift.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "7CCF51B0B1B6E03251B16586BC6B02E27AFAB431"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/sonsongithub\/UZTextView.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "ED5062A4D95B5BAEF0FBD8B001A28B27231B0D1C"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/sonsongithub\/MiniKeychain.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "FAF81802DDAEA2BD0452EB7D5EB8D1CC44DDF059"
+    }
+  ]
+}
