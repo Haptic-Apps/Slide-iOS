@@ -354,7 +354,7 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         
         parent?.present(alertController, animated: true, completion: nil)
     }
-    func setComment(comment: Comment, depth: Int, parent: MediaViewController, hiddenCount: Int, date: Double, author: String){
+    func setComment(comment: Comment, depth: Int, parent: MediaViewController, hiddenCount: Int, date: Double, author: String?){
         self.comment = comment
         if(self.parent == nil){
             self.parent = parent
@@ -404,7 +404,7 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         
     }
     
-    func refresh(comment: Comment, submissionAuthor: String){
+    func refresh(comment: Comment, submissionAuthor: String?){
         var color: UIColor
         
         switch(ActionStates.getVoteDirection(s: comment)){
@@ -425,6 +425,7 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         let endString = NSMutableAttributedString(string:"  •  \(DateFormatter().timeSince(from: NSDate.init(timeIntervalSince1970: TimeInterval.init(comment.createdUtc)), numericDates: true))")
         
         author.text = " \(comment.author) "
+        var userColor = ColorUtil.getColorForUser(name: comment.author)
         if (comment.distinguished == "admin") {
             author.textColor = UIColor.white
             a.backgroundColor = UIColor.init(hexString: "#E57373")
@@ -437,7 +438,7 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         } else if (AccountController.currentName == comment.author) {
             author.textColor = UIColor.white
             a.backgroundColor = UIColor.init(hexString: "#FFB74D")
-        } else if(comment.author == submissionAuthor) {
+        } else if(submissionAuthor != nil && comment.author == submissionAuthor) {
             author.textColor = UIColor.white
             a.backgroundColor = UIColor.init(hexString: "#64B5F6")
         } else if (false ) { //user colors

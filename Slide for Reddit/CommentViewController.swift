@@ -580,7 +580,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     if(hiddenPersons.contains(thing.getId())){
                         count = getChildNumber(n: thing as! Comment)
                     }
-                    cell.setComment(comment: thing as! Comment, depth: cDepth[thing.getId()] as! Int, parent: self, hiddenCount: count, date: lastSeen, author: link.author)
+                    cell.setComment(comment: thing as! Comment, depth: cDepth[thing.getId()] as! Int, parent: self, hiddenCount: count, date: lastSeen, author: submission?.author)
                 } else {
                     cell.setMore(more: (thing as! More), depth: cDepth[thing.getId()] as! Int)
                 }

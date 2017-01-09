@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  SubredditLinkViewController.swift
 //  Slide for Reddit
 //
 //  Created by Carlos Crane on 12/22/16.
@@ -14,7 +14,51 @@ import XLPagerTabStrip
 import AMScrollingNavbar
 
 
-class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, IndicatorInfoProvider, ScrollingNavigationControllerDelegate {
+class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, IndicatorInfoProvider, ScrollingNavigationControllerDelegate, LinkCellViewDelegate {
+    
+    func save(_ cell: LinkCellView) {
+        do {
+            try session?.setSave(!ActionStates.isSaved(s: cell.link!), name: (cell.link?.name)!, completion: { (result) in
+                
+            })
+            History.addSeen(s: cell.link!)
+            cell.refresh(submission:cell.link!)
+        } catch {
+            
+        }
+    }
+    
+    func upvote(_ cell: LinkCellView) {
+        do{
+            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up, name: (cell.link?.name)!, completion: { (result) in
+                
+            })
+            ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up)
+            History.addSeen(s: cell.link!)
+            cell.refresh(submission:cell.link!)
+        } catch {
+            
+        }
+    }
+    
+    func downvote(_ cell: LinkCellView) {
+        do {
+            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down, name: (cell.link?.name)!, completion: { (result) in
+                
+            })
+            ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down)
+            History.addSeen(s: cell.link!)
+            cell.refresh(submission:cell.link!)
+        } catch {
+            
+        }
+    }
+    
+    func more(_ cell: LinkCellView){
+        
+    }
+    
+    
     var links: [Link] = []
     var paginator = Paginator()
     var sub : String
@@ -66,7 +110,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             print("navbar is moving")
         }
     }
-
+    
     
     
     override func loadView(){
@@ -109,10 +153,10 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         if self.links.count == 0 {
             load(reset: true)
         }
-
+        
         tableView.estimatedRowHeight = 400.0
         tableView.rowHeight = UITableViewAutomaticDimension
-
+        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -131,7 +175,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             self.title = sub
         }
     }
-        
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -146,7 +190,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         
         let link = self.links[(indexPath as NSIndexPath).row]
         cell.setLink(submission: link, parent: self, nav: self.navigationController)
-        
+        cell.delegate = self
         if indexPath.row == self.links.count - 1 && !loading {
             self.loadMore()
         }

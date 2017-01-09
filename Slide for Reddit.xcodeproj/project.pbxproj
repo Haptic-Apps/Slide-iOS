@@ -869,6 +869,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "ccrama.me.Slide-for-Reddit";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				"SWIFT_OPTIMIZATION_LEVEL[arch=*]" = "-Onone";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
