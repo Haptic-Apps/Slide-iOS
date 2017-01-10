@@ -34,6 +34,20 @@ class ColorPicker: UIView {
     }()
     
     var top = CGFloat(ColorPicker.allColors.count)
+    
+    func set(value: CGColor){
+        var i = 0
+        for color in ColorPicker.allColors{
+            if(color == value){
+                setValue(i: i)
+            } else {
+                i = i + 1
+            }
+        }
+    }
+    func setValue(i: Int){
+        value = CGFloat(ColorPicker.allColors.count) / CGFloat(i)
+    }
 
     private(set) var value: CGFloat = 0.5 {
         didSet {

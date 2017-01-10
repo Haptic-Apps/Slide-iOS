@@ -171,8 +171,10 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     
     func estimateHeight() ->CGFloat {
         if(estimatedHeight == 0){
+            title.sizeToFit()
         let he = title.frame.size.height
-            estimatedHeight = CGFloat((he < 75 && thumb) ? 75 : he) + CGFloat(66) + CGFloat(thumb ? 20 : 0) + CGFloat(!hasText ? 0 : (content?.textHeight)!) +  CGFloat(big ? height + 40 : 0)
+            print("Height is \(he)")
+            estimatedHeight = CGFloat((he < 75 && thumb || he < 75 && !big) ? 75 : he) + CGFloat(66) + CGFloat(!hasText ? 0 : (content?.textHeight)!) +  CGFloat(big ? height + 40 : 0)
         }
         return estimatedHeight
     }
@@ -300,7 +302,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                           metrics: metrics,
                                                           views: views))
         
-        box.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[score]-|",
+        box.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[score(20)]-|",
                                                           options: NSLayoutFormatOptions(rawValue: 0),
                                                           metrics: metrics,
                                                           views: views))
@@ -310,7 +312,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                           metrics: metrics,
                                                           views: views2))
         
-        box.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[comments]-|",
+        box.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[comments(20)]-|",
                                                           options: NSLayoutFormatOptions(rawValue: 0),
                                                           metrics: metrics,
                                                           views: views))
@@ -384,7 +386,10 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         var loadLq = false //check internet vs settings
         
         var preview  = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["url"] as? String)
-        
+        if(bigConstraint != nil){
+            self.contentView.removeConstraint(bigConstraint!)
+        }
+
         if (type == ContentType.CType.SELF && hideSelftextLeadImage
             || noImages && submission.isSelf) {
             big = false
@@ -491,7 +496,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                             thumb = true
                         }
                         if (!full) {
-                            thumbImage.sd_setImage(with: URL.init(string: submission.thumbnail))
+                            thumbImage.sd_setImage(with: URL.init(string: submission.thumbnail), placeholderImage: UIImage.init(named: "web"))
                         }
                     } else {
                         thumb = false
@@ -531,7 +536,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                     if (!full) {
                         thumb = true
                     }
-                    thumbImage.sd_setImage(with: URL.init(string: submission.thumbnail))
+                    thumbImage.sd_setImage(with: URL.init(string: submission.thumbnail), placeholderImage: UIImage.init(named: "web"))
                     big = false
                     
                 } else {
@@ -548,7 +553,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                 if (!full) {
                     thumb  = true
                 } 
-                thumbImage.sd_setImage(with: URL.init(string: submission.thumbnail))
+                thumbImage.sd_setImage(with: URL.init(string: submission.thumbnail), placeholderImage: UIImage.init(named: "web"))
                 big = false
             } else {
                 thumb = false
@@ -558,7 +563,6 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         if(thumb && type == .SELF){
             thumb = false
         }
-        print(url)
         addTouch(view: save, action: #selector(LinkCellView.save(sender:)))
         addTouch(view: upvote, action: #selector(LinkCellView.upvote(sender:)))
         addTouch(view: downvote, action: #selector(LinkCellView.downvote(sender:)))
@@ -574,22 +578,14 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         if(big){
             let imageSize = CGSize.init(width:w, height:h);
             let aspect = imageSize.width / imageSize.height
-            
-            
-            if(bigConstraint != nil){
-                bannerImage.removeConstraint(bigConstraint!)
-            }
+
             bigConstraint = NSLayoutConstraint(item: bannerImage, attribute:  NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: bannerImage, attribute: NSLayoutAttribute.height, multiplier: aspect, constant: 0.0)
-            bannerImage.addConstraint(bigConstraint!)
             
             bannerImage.isUserInteractionEnabled = true
             let tap = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openLink(sender:)))
             tap.delegate = self
             bannerImage.addGestureRecognizer(tap)
         } else {
-            if(bigConstraint != nil){
-                bannerImage.removeConstraint(bigConstraint!)
-            }
             bannerImage.sd_setImage(with: URL.init(string: ""))
         }
         
@@ -644,7 +640,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                                               metrics: metrics,
                                                                               views: views))
             
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[label]-8-[image]-12-|",
+            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[label]-8-[image(75)]-12-|",
                                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                                               metrics: metrics,
                                                                               views: views))
@@ -658,18 +654,19 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                                               metrics: metrics,
                                                                               views: views))
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[label]-4-[info]-4-[body]-10-[box]-8-|",
+            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[label(>=60)]-4@1000-[info]-10@1000-[box]-8-|",
                                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                                               metrics: metrics,
                                                                               views: views))
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[label]-4-[info]-4-[body]-10-[buttons]-8-|",
+            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[info]-10@250-[buttons]-8-|",
                                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                                               metrics: metrics,
                                                                               views: views))
             
+
             self.contentView.addConstraints(thumbConstraint)
         } else if(big) {
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[image(0)]",
+            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[image(0)]",
                                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                                               metrics: metrics,
                                                                               views: views))
@@ -679,22 +676,25 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                                               metrics: metrics,
                                                                               views: views))
             
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[body]-4-[image(0)]-12-|",
+            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[body]-12-|",
                                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                                               metrics: metrics,
                                                                               views: views))
             
             
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[info]-[image(0)]-12-|",
+            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[info]-12-|",
+                                                                              options: NSLayoutFormatOptions(rawValue: 0),
+                                                                              metrics: metrics,
+                                                                              views: views))
+            if(bigConstraint != nil){
+            thumbConstraint.append(bigConstraint!)
+            }
+            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-4-[banner]-8-[label]-4@1000-[info]-10@1000-[box]-8-|",
                                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                                               metrics: metrics,
                                                                               views: views))
             
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-4-[banner]-8-[label]-4-[info]-4-[body]-10-[box]-8-|",
-                                                                              options: NSLayoutFormatOptions(rawValue: 0),
-                                                                              metrics: metrics,
-                                                                              views: views))
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-4-[banner]-8-[label]-4-[info]-4-[body]-10-[buttons]-8-|",
+            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[info]-10@250-[buttons]-8-|",
                                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                                               metrics: metrics,
                                                                               views: views))
@@ -712,27 +712,27 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                                               views: views))
             
             
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[label]-8-[image]-12-|",
+            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[label]-12-|",
                                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                                               metrics: metrics,
                                                                               views: views))
             
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[body]-0-[image(0)]-12-|",
+            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[body]-12-|",
                                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                                               metrics: metrics,
                                                                               views: views))
             
             
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[info]-[image(0)]-12-|",
+            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[info]-12-|",
                                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                                               metrics: metrics,
                                                                               views: views))
             
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[label]-4-[info]-4-[body]-10-[box]-8-|",
+            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[label]-4-[info]-4@1000-[body]-10@1000-[box]-8-|",
                                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                                               metrics: metrics,
                                                                               views: views))
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[label]-4-[info]-4-[body]-10-[buttons]-8-|",
+            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[body]-10@250-[buttons]-8-|",
                                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                                               metrics: metrics,
                                                                               views: views))
@@ -866,7 +866,7 @@ extension UILabel
     func textAttachment(fontSize: CGFloat, imageName: String) -> NSTextAttachment {
         let font = UIFont.systemFont(ofSize: fontSize) //set accordingly to your font, you might pass it in the function
         let textAttachment = NSTextAttachment()
-        textAttachment.image = UIImage(named: imageName)?.withRenderingMode(.alwaysTemplate).imageResize(sizeChange: CGSize.init(width: self.font.pointSize, height: self.font.pointSize))
+        textAttachment.image = UIImage(named: imageName)?.imageResize(sizeChange: CGSize.init(width: self.font.pointSize, height: self.font.pointSize))
         let mid = font.descender + font.capHeight
         textAttachment.bounds = CGRect(x: 0, y: font.descender - fontSize / 2 + mid + 2, width: fontSize, height: fontSize).integral
         return textAttachment

@@ -238,6 +238,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         let margin:CGFloat = 10.0
         let rect = CGRect(x: margin, y: margin, width: alertController.view.bounds.size.width - margin * 4.0, height: 120)
         let customView = ColorPicker(frame: rect)
+        customView.set(value: (self.navigationController?.navigationBar.barTintColor?.cgColor)!)
         customView.delegate = self
         
         customView.backgroundColor = ColorUtil.backgroundColor
