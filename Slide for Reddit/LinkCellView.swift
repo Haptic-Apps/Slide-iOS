@@ -27,7 +27,7 @@ protocol LinkCellViewDelegate: class {
 }
 
 class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextViewDelegate {
-    
+
     func upvote(sender: UITapGestureRecognizer? = nil) {
         if let delegate = self.delegate {
             delegate.upvote(self)
@@ -257,7 +257,6 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         addTouch(view: downvote, action: #selector(LinkCellView.downvote(sender:)))
         addTouch(view: more, action: #selector(LinkCellView.more(sender:)))
         
-
         self.contentView.addSubview(bannerImage)
         self.contentView.addSubview(thumbImage)
         self.contentView.addSubview(title)
@@ -273,7 +272,6 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         self.contentView.addSubview(buttons)
         
         self.contentView.backgroundColor = ColorUtil.foregroundColor
-    
         self.updateConstraints()
         
         buttons.isUserInteractionEnabled = true
