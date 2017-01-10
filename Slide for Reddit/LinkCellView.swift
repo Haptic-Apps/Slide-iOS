@@ -769,7 +769,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             save.tintColor = UIColor.flatYellow()
         }
         if(History.getSeen(s: link!)){
-            self.contentView.alpha = 0.8
+            self.contentView.alpha = 0.9
         } else {
             self.contentView.alpha = 1
         }

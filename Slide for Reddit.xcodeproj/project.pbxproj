@@ -13,6 +13,8 @@
 		BE2B89F31E2450D70053D493 /* ColorPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2B89F21E2450D70053D493 /* ColorPicker.swift */; };
 		BE2B89F61E246CA60053D493 /* GMColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2B89F41E246CA60053D493 /* GMColor.swift */; };
 		BE2B89F71E246CA60053D493 /* GMPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2B89F51E246CA60053D493 /* GMPalette.swift */; };
+		BE2B89F91E2533990053D493 /* EditorToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2B89F81E2533990053D493 /* EditorToolbar.swift */; };
+		BE2B89FB1E253D610053D493 /* ReplyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2B89FA1E253D610053D493 /* ReplyViewController.swift */; };
 		BE3E5C0C1E160D7000749C0C /* ColorUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3E5C0B1E160D7000749C0C /* ColorUtil.swift */; };
 		BE3E5C131E16BA2200749C0C /* Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3E5C101E16BA2200749C0C /* Data.swift */; };
 		BE3E5C141E16BA2200749C0C /* Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3E5C111E16BA2200749C0C /* Images.swift */; };
@@ -101,6 +103,8 @@
 		BE2B89F21E2450D70053D493 /* ColorPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorPicker.swift; sourceTree = "<group>"; };
 		BE2B89F41E246CA60053D493 /* GMColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GMColor.swift; sourceTree = "<group>"; };
 		BE2B89F51E246CA60053D493 /* GMPalette.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GMPalette.swift; sourceTree = "<group>"; };
+		BE2B89F81E2533990053D493 /* EditorToolbar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditorToolbar.swift; sourceTree = "<group>"; };
+		BE2B89FA1E253D610053D493 /* ReplyViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReplyViewController.swift; sourceTree = "<group>"; };
 		BE3E5C0B1E160D7000749C0C /* ColorUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorUtil.swift; sourceTree = "<group>"; };
 		BE3E5C101E16BA2200749C0C /* Data.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
 		BE3E5C111E16BA2200749C0C /* Images.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Images.swift; sourceTree = "<group>"; };
@@ -345,6 +349,8 @@
 				BEBF45E01E23EED800764BB8 /* SettingValues.swift */,
 				BE2B89EE1E2444D20053D493 /* Settings.bundle */,
 				BE2B89F21E2450D70053D493 /* ColorPicker.swift */,
+				BE2B89F81E2533990053D493 /* EditorToolbar.swift */,
+				BE2B89FA1E253D610053D493 /* ReplyViewController.swift */,
 			);
 			path = "Slide for Reddit";
 			sourceTree = "<group>";
@@ -670,6 +676,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE2B89F91E2533990053D493 /* EditorToolbar.swift in Sources */,
 				BE6EA6BF1E1C1A3400E9E709 /* GifMWPhotoBrowser.swift in Sources */,
 				BE6EA6E41E1DA24700E9E709 /* ContentListingViewController.swift in Sources */,
 				BE3E5C0C1E160D7000749C0C /* ColorUtil.swift in Sources */,
@@ -706,6 +713,7 @@
 				BE3E5C1F1E18223600749C0C /* CellContent.swift in Sources */,
 				BE3E5C151E16BA2200749C0C /* AlbumJSONBase.swift in Sources */,
 				BEE5BF841E14836E00E3C9AE /* MediaViewController.swift in Sources */,
+				BE2B89FB1E253D610053D493 /* ReplyViewController.swift in Sources */,
 				BE6EA6D71E1C1FC700E9E709 /* VidMeJSONBase.swift in Sources */,
 				BE3E5C171E16BC1A00749C0C /* String+util.swift in Sources */,
 				BE8FCA0A1E0C46090063B8EF /* SubredditLinkViewController.swift in Sources */,

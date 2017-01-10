@@ -75,6 +75,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     var hasSubmission = true
     var paginator: Paginator? = Paginator()
     var refreshControl: UIRefreshControl!
+    var context: String = ""
+    var contextNumber: Int = 0
     
     var dataArray : [Thing] = []
     
@@ -106,7 +108,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         session = (UIApplication.shared.delegate as! AppDelegate).session
         if let link = self.submission {
             do {
-                try session?.getArticles(link, sort:.top, comments:nil, completion: { (result) -> Void in
+                try session?.getArticles(link, sort:.top, comments:(context.isEmpty ? nil : [context]), context: contextNumber, completion: { (result) -> Void in
                     switch result {
                     case .failure(let error):
                         print(error)
@@ -143,15 +145,44 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                             if(!self.hasSubmission){
                                 self.headerCell = LinkCellView()
                                 self.headerCell?.delegate = self
+                                self.hasDone = true
                                 self.headerCell?.setLink(submission: self.submission!, parent: self, nav: self.navigationController)
-                                self.headerCell?.showBody(width: self.tableView.frame.size.width)
+                                self.headerCell?.showBody(width: self.view.frame.size.width)
                                 self.tableView.tableHeaderView = UIView(frame: CGRect.init(x:0, y:0, width:self.tableView.frame.width, height:0.01))
+                                if let tableHeaderView = self.headerCell {
+                                    var frame = CGRect.zero
+                                    frame.size.width = self.tableView.bounds.size.width
+                                    frame.size.height = tableHeaderView.estimateHeight()
+                                    if self.tableView.tableHeaderView == nil || !frame.equalTo(tableHeaderView.frame) {
+                                        tableHeaderView.frame = frame
+                                        tableHeaderView.layoutIfNeeded()
+                                        let view = UIView(frame: tableHeaderView.frame)
+                                        view.addSubview(tableHeaderView)
+                                        self.tableView.tableHeaderView = view
+                                    }
+                                }
+                                self.title = self.submission!.subreddit
+                                self.setBarColors(color: ColorUtil.getColorForSub(sub: self.title))
+                                self.setNavColors()
                             }
                             self.doArrays()
                             self.lastSeen = History.getSeenTime(s: link)
                             self.tableView.reloadData()
                             History.setComments(s: link)
                             History.addSeen(s: link)
+                            
+                            var index = 0
+                            if(!self.context.isEmpty()){
+                                for comment in self.comments {
+                                    if(comment.getId().contains(self.context)){
+                                        let indexPath = IndexPath.init(row: index, section: 0)
+                                        self.tableView.scrollToRow(at: indexPath,
+                                                                   at: UITableViewScrollPosition.top, animated: true)
+                                        } else {
+                                        index += 1
+                                    }
+                                }
+                            }
                         })
                     }
                 })
@@ -208,21 +239,33 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     }
     
-    
-    
     init(submission: Link){
         self.submission = submission
         super.init(nibName: nil, bundle: nil)
         setBarColors(color: ColorUtil.getColorForSub(sub: submission.subreddit))
     }
     
+    init(submission: String, subreddit: String){
+        self.submission = Link(id: submission)
+        hasSubmission = false
+        super.init(nibName: nil, bundle: nil)
+        setBarColors(color: ColorUtil.getColorForSub(sub: subreddit))
+    }
+    
     init(submission: String){
         self.submission = Link(id: submission)
         hasSubmission = false
         super.init(nibName: nil, bundle: nil)
-        setBarColors(color: ColorUtil.getColorForSub(sub: submission))
     }
     
+    init(submission: String, comment: String, context: Int, subreddit: String){
+        self.submission = Link(id: submission)
+        hasSubmission = false
+        self.context = context
+        self.contextNumber = comment
+        super.init(nibName: nil, bundle: nil)
+        setBarColors(color: ColorUtil.getColorForSub(sub: subreddit))
+    }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -603,6 +646,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     cell.setMore(more: (thing as! More), depth: cDepth[thing.getId()] as! Int)
                 }
                 cell.content = thing
+                if(thing.getId().contains(context) && !context.isEmpty()){
+                    cell.setIsContext()
+                }
             }
             return cell
         } else {

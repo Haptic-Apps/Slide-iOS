@@ -16,7 +16,7 @@ PODS:
   - SDWebImage (3.8.2):
     - SDWebImage/Core (= 3.8.2)
   - SDWebImage/Core (3.8.2)
-  - SideMenu (2.1.3)
+  - SideMenu (2.1.4)
   - TTTAttributedLabel (1.13.3)
   - UZTextView (1.0.6)
   - XLActionController (3.0.1):
@@ -50,7 +50,7 @@ CHECKOUT OPTIONS:
     :commit: caab179b68bf02ee0b0f703489d2653037d4e454
     :git: https://github.com/ccrama/MHVideoPhotoGallery
   reddift:
-    :commit: 6cea30ab120ce20b87a1e0c5a43f9e89d8d8dabd
+    :commit: 9b5ac029b934a1fea9b438fc5f948b9241cd22ef
     :git: https://github.com/ccrama/reddift
   UZTextView:
     :commit: 94021870e65000cf332cb1f2ec70525b05c6ab16
@@ -65,7 +65,7 @@ SPEC CHECKSUMS:
   MHVideoPhotoGallery: aa36cdd9b75c6d5a19b48005cddb9b730c2e27e8
   reddift: 3066e687c2a934b0f9aca6ee6e2161abc4c93a56
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
-  SideMenu: a3215a359447a37476be665288ee374f917896fb
+  SideMenu: 74b93b251064668fc7523aae897157b767733f04
   TTTAttributedLabel: 6f3174aef8e738f44dff97c2eb7d8184f6ab6277
   UZTextView: 96bd60ad22f7f5ea882c56a9f90621f86b443192
   XLActionController: 57fe0ce1642e2eed971b188b490762345fdbf963

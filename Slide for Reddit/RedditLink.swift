@@ -48,10 +48,29 @@ class RedditLink{
             break
             
         case .COMMENT_PERMALINK:
+            var comment = ""
+            var contextNumber = 3
+            if (parts.count >= 7) {
+                var end = parts[6]
+                var endCopy = end
+                if (end.contains("?")){ end = end.substring(0, length: end.indexOf("?")!) }
+                
+                if (end.length >= 3) {
+                    comment = end
+                }
+                if (endCopy.contains("?context=") || !endParameters.isEmpty()) {
+                    if (!endParameters.isEmpty()) {
+                        endCopy = endParameters;
+                    }
+                    var index = endCopy.indexOf("?context=")! + 9
+                    contextNumber = Int(endCopy.substring(index, endCopy.length - index))
+                }
+                }
+            return CommentViewController.init(submission: parts[4], comment: comment, subreddit: parts[2], context: contextNumber)
             break
             
         case .SUBMISSION:
-            return CommentViewController.init(submission: parts[4])
+            return CommentViewController.init(submission: parts[4], subreddit: parts[2])
             
         case .SUBMISSION_WITHOUT_SUB:
             return CommentViewController.init(submission: parts[2])
