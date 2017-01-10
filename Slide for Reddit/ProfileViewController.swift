@@ -101,7 +101,7 @@ class ProfileViewController:  ButtonBarPagerTabStripViewController {
     }
     
     func showSortMenu(_ sender: AnyObject){
-        (viewControllers[currentIndex] as? SubredditLinkViewController)?.showMenu()
+        (viewControllers[currentIndex] as? SubredditLinkViewController)?.showMenu(sender)
     }
     
     func showMenu(_ sender: AnyObject){

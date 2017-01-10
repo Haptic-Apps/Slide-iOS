@@ -164,7 +164,7 @@ class SubredditsViewController:  ButtonBarPagerTabStripViewController {
         let more = UIButton.init(type: .custom)
         more.setImage(UIImage.init(named: "ic_more_vert_white"), for: UIControlState.normal)
         more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
-        more.frame = CGRect.init(x: 0, y: -15, width: 30, height: 30)
+        more.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let moreB = UIBarButtonItem.init(customView: more)
         
         navigationItem.rightBarButtonItems = [ moreB, sortB]
@@ -187,7 +187,7 @@ class SubredditsViewController:  ButtonBarPagerTabStripViewController {
     }
     
     func showSortMenu(_ sender: AnyObject){
-        (viewControllers[currentIndex] as? SubredditLinkViewController)?.showMenu()
+        (viewControllers[currentIndex] as? SubredditLinkViewController)?.showMenu(sender)
     }
     
     func showDrawer(_ sender: AnyObject){

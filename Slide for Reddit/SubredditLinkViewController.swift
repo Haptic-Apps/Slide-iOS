@@ -172,7 +172,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         super.viewWillDisappear(animated)
     }
     
-    func pickTheme(parent: SubredditsViewController){
+    func pickTheme(parent: SubredditsViewController?){
         parentController = parent
         let alertController = UIAlertController(title: "\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
         
@@ -186,10 +186,13 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         
         let somethingAction = UIAlertAction(title: "Save", style: .default, handler: {(alert: UIAlertAction!) in
             ColorUtil.setColorForSub(sub: self.sub, color: (self.navigationController?.navigationBar.barTintColor)!)
+            self.tableView.reloadData()
         })
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: {(alert: UIAlertAction!) in
-            parent.resetColors()
+            if(parent != nil){
+            parent?.resetColors()
+            }
         })
         
         alertController.addAction(somethingAction)
@@ -206,12 +209,61 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         }
         if(single){
             self.title = sub
+            if(navigationController != nil){
+                let sort = UIButton.init(type: .custom)
+                sort.setImage(UIImage.init(named: "ic_sort_white"), for: UIControlState.normal)
+                sort.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
+                sort.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+                let sortB = UIBarButtonItem.init(customView: sort)
+                
+                let more = UIButton.init(type: .custom)
+                more.setImage(UIImage.init(named: "ic_more_vert_white"), for: UIControlState.normal)
+                more.addTarget(self, action: #selector(self.showMore(_:)), for: UIControlEvents.touchUpInside)
+                more.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
+                let moreB = UIBarButtonItem.init(customView: more)
+                
+                navigationItem.rightBarButtonItems = [ moreB, sortB]
+            }
         } else {
             paging = true
         }
         super.viewWillAppear(animated)
         tableView.reloadData()
     }
+    
+    func showMore(_ sender: AnyObject){
+        let actionSheetController: UIAlertController = UIAlertController(title: "", message: "", preferredStyle: .actionSheet)
+        
+        var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
+            print("Cancel")
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        cancelActionButton = UIAlertAction(title: "Search", style: .default) { action -> Void in
+            print("Search")
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        cancelActionButton = UIAlertAction(title: "Refresh", style: .default) { action -> Void in
+            self.refresh()
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        cancelActionButton = UIAlertAction(title: "Subreddit Theme", style: .default) { action -> Void in
+            self.pickTheme(parent: nil)
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        cancelActionButton = UIAlertAction(title: "Filter", style: .default) { action -> Void in
+            print("Filter")
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        
+        self.present(actionSheetController, animated: true, completion: nil)
+        
+    }
+
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -264,7 +316,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         return itemInfo
     }
     
-    func showMenu(){
+    func showMenu(_ selector: AnyObject){
         let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
         
         let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
