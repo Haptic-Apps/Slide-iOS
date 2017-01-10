@@ -108,6 +108,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         session = (UIApplication.shared.delegate as! AppDelegate).session
         if let link = self.submission {
             do {
+                print("Context number is \(contextNumber)")
                 try session?.getArticles(link, sort:.top, comments:(context.isEmpty ? nil : [context]), context: contextNumber, completion: { (result) -> Void in
                     switch result {
                     case .failure(let error):
@@ -162,7 +163,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                     }
                                 }
                                 self.title = self.submission!.subreddit
-                                self.setBarColors(color: ColorUtil.getColorForSub(sub: self.title))
+                                self.setBarColors(color: ColorUtil.getColorForSub(sub: self.title!))
                                 self.setNavColors()
                             }
                             self.doArrays()
@@ -175,9 +176,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                             if(!self.context.isEmpty()){
                                 for comment in self.comments {
                                     if(comment.getId().contains(self.context)){
-                                        let indexPath = IndexPath.init(row: index, section: 0)
-                                        self.tableView.scrollToRow(at: indexPath,
-                                                                   at: UITableViewScrollPosition.top, animated: true)
+                                        self.goToCell(i: index)
+                                        break
                                         } else {
                                         index += 1
                                     }
@@ -203,9 +203,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         tableView.separatorStyle = .none
         refreshControl.beginRefreshing()
         refresh(self)
-        
-        updateToolbar()
-        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -261,8 +258,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     init(submission: String, comment: String, context: Int, subreddit: String){
         self.submission = Link(id: submission)
         hasSubmission = false
-        self.context = context
-        self.contextNumber = comment
+        self.context = comment
+        self.contextNumber = context
         super.init(nibName: nil, bundle: nil)
         setBarColors(color: ColorUtil.getColorForSub(sub: subreddit))
     }
@@ -288,7 +285,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             print("Following scroll")
             navigationController.followScrollView(self.tableView, delay: 50.0)
         }
-        
+        updateToolbar()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -404,43 +401,161 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         hide(false)
     }
     
-    func updateToolbar() {
-        var items: [UIBarButtonItem] = []
-        let space = UIBarButtonItem(barButtonSystemItem:.flexibleSpace, target: nil, action: nil)
-        if let link = self.submission {
-            items.append(space)
-            // voting status
-            switch(link.likes) {
-            case .up:
-                items.append(UIBarButtonItem(image: UIImage(named: "thumbDown"), style:.plain, target: self, action: #selector(CommentViewController.downVote(_:))))
-                items.append(space)
-                items.append(UIBarButtonItem(image: UIImage(named: "thumbUpFill"), style:.plain, target: self, action: #selector(CommentViewController.cancelVote(_:))))
-            case .down:
-                items.append(UIBarButtonItem(image: UIImage(named: "thumbDownFill"), style:.plain, target: self, action: #selector(CommentViewController.cancelVote(_:))))
-                items.append(space)
-                items.append(UIBarButtonItem(image: UIImage(named: "thumbUp"), style:.plain, target: self, action: #selector(CommentViewController.upVote(_:))))
-            case .none:
-                items.append(UIBarButtonItem(image: UIImage(named: "thumbDown"), style:.plain, target: self, action: #selector(CommentViewController.downVote(_:))))
-                items.append(space)
-                items.append(UIBarButtonItem(image: UIImage(named: "thumbUp"), style:.plain, target: self, action: #selector(CommentViewController.upVote(_:))))
+    func loadAll(_ sender: AnyObject){
+        context = ""
+        refresh(sender)
+        updateToolbar()
+    }
+    
+    var currentSort: CommentNavType = .PARENTS
+    
+    enum CommentNavType {
+        case PARENTS
+        case GILDED
+        case OP
+        case LINK
+        case YOU
+    }
+    
+
+    
+    func goDown(_ sender: AnyObject){
+        let topCell = (tableView.indexPathsForVisibleRows?[0].row)!
+        for i in (topCell + 1)...comments.count - 1 {
+            if(comments[i]  is Comment && matches(comment: comments[i] as! Comment, sort: currentSort)) {
+                goToCell(i: i)
+                break
             }
-            items.append(space)
-            
-            items.append(space)
-            
-            // hide
-            if link.hidden {
-                items.append(UIBarButtonItem(image: UIImage(named: "eyeFill"), style:.plain, target: self, action: #selector(CommentViewController.doUnhide(_:))))
+        }
+    }
+    
+    func getCount(sort: CommentNavType) -> Int {
+        var count = 0
+        for comment in comments {
+            if(comment is Comment && matches(comment: comment as! Comment, sort: sort)){
+                count += 1
+            }
+        }
+        return count
+    }
+    
+    func showNavTypes(_ sender: AnyObject){
+        let actionSheetController: UIAlertController = UIAlertController(title: "Navigation type", message: "", preferredStyle: .actionSheet)
+        
+        let link = getCount(sort: .LINK)
+        let parents = getCount(sort: .PARENTS)
+        let op = getCount(sort: .OP)
+        let gilded = getCount(sort: .GILDED)
+        let you = getCount(sort: .YOU)
+        
+        var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
+            print("Cancel")
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        cancelActionButton = UIAlertAction(title: "Parent comment (\(parents))", style: .default) { action -> Void in
+            self.currentSort = .PARENTS
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        cancelActionButton = UIAlertAction(title: "OP (\(op))", style: .default) { action -> Void in
+            self.currentSort = .OP
+        }
+        actionSheetController.addAction(cancelActionButton)
+
+        cancelActionButton = UIAlertAction(title: "Link (\(link))", style: .default) { action -> Void in
+            self.currentSort = .LINK
+        }
+        actionSheetController.addAction(cancelActionButton)
+
+        cancelActionButton = UIAlertAction(title: "You (\(you))", style: .default) { action -> Void in
+            self.currentSort = .YOU
+        }
+        actionSheetController.addAction(cancelActionButton)
+
+        cancelActionButton = UIAlertAction(title: "Gilded (\(gilded))", style: .default) { action -> Void in
+            self.currentSort = .GILDED
+        }
+        actionSheetController.addAction(cancelActionButton)
+
+
+        
+        self.present(actionSheetController, animated: true, completion: nil)
+    }
+    
+    func goToCell(i: Int){
+        let indexPath = IndexPath.init(row: i, section: 0)
+        self.tableView.scrollToRow(at: indexPath,
+                                   at: UITableViewScrollPosition.top, animated: true)
+        
+    }
+    
+    func goUp(_ sender: AnyObject){
+        let topCell = (tableView.indexPathsForVisibleRows?[0].row)!
+        for i in stride(from: (topCell - 1) , to: -1, by: -1) {
+            if(comments[i]  is Comment && matches(comment: comments[i] as! Comment, sort: currentSort)) {
+                goToCell(i: i)
+                break
+            }
+        }
+    }
+
+    func matches(comment: Comment, sort: CommentNavType) ->Bool{
+        switch sort {
+        case .PARENTS:
+            if( cDepth[comment.getId()] as! Int == 1) {
+                return true
             } else {
-                items.append(UIBarButtonItem(image: UIImage(named: "eye"), style:.plain, target: self, action: #selector(CommentViewController.doHide(_:))))
+                return false
             }
+        case .GILDED:
+            if(comment.gilded > 0){
+                return true
+            } else {
+                return false
+            }
+        case .OP:
+            if(comment.author == submission?.author){
+                return true
+            } else {
+                return false
+            }
+        case .LINK:
+            if(comment.bodyHtml.contains("<a")){
+                return true
+            } else {
+                return false
+            }
+        case .YOU:
+            if(AccountController.isLoggedIn && comment.author == AccountController.currentName){
+                return true
+            } else {
+                return false
+            }
+        }
+    
+    }
+    
+    func updateToolbar() {
+        navigationController?.isToolbarHidden = false
+        let space = UIBarButtonItem(barButtonSystemItem:.flexibleSpace, target: nil, action: nil)
+        var items: [UIBarButtonItem] = []
+        if(!context.isEmpty()){
             items.append(space)
-            
-            // comment button
-            items.append(UIBarButtonItem(image: UIImage(named: "comment"), style:.plain, target: nil, action: nil))
+            items.append(UIBarButtonItem.init(title: "Load full thread", style: .plain, target: self, action: #selector(CommentViewController.loadAll(_:))))
+            items.append(space)
+        } else {
+            items.append(space)
+            items.append(UIBarButtonItem(image: UIImage(named: "up")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(CommentViewController.goUp(_:))))
+            items.append(space)
+            items.append(UIBarButtonItem(image: UIImage(named: "nav")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(CommentViewController.showNavTypes(_:))))
+            items.append(space)
+            items.append(UIBarButtonItem(image: UIImage(named: "down")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(CommentViewController.goDown(_:))))
             items.append(space)
         }
         self.toolbarItems = items
+        navigationController?.toolbar.barTintColor = UIColor.black.withAlphaComponent(0.4)
+        navigationController?.toolbar.tintColor = UIColor.white
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -729,8 +844,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         
         
     }
-    
-    
 }
 
 extension Thing {

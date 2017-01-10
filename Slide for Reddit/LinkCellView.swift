@@ -454,7 +454,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                 }
             } else if (type != .IMAGE
                 && type != .SELF
-                && (!submission.thumbnail.isEmpty() && (thumbnailType != .URL))) {
+                && (!submission.thumbnail.isEmpty() && (thumbnailType != .URL)) || submission.thumbnail.isEmpty() && !submission.isSelf) {
                 
                 big = false
                 if (!full) {

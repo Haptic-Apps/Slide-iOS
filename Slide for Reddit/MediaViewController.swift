@@ -249,7 +249,9 @@ class MediaViewController: UIViewController, MHGalleryDataSource {
         navigationController?.navigationBar.shadowImage = UIImage()
         setNavColors()
         }
+        navigationController?.isToolbarHidden = true
     }
+    
     func getHash(sS:String) -> String {
         var s = sS
         if(s.contains("/comment/")){

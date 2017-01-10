@@ -62,12 +62,14 @@ class RedditLink{
                     if (!endParameters.isEmpty()) {
                         endCopy = endParameters;
                     }
-                    var index = endCopy.indexOf("?context=")! + 9
-                    contextNumber = Int(endCopy.substring(index, endCopy.length - index))
+                    let index = endCopy.indexOf("?context=")! + 9
+                    contextNumber = Int(endCopy.substring(index, length: endCopy.length - index))!
                 }
-                }
-            return CommentViewController.init(submission: parts[4], comment: comment, subreddit: parts[2], context: contextNumber)
-            break
+            }
+            if(contextNumber == 0){
+                contextNumber = 3
+            }
+            return CommentViewController.init(submission: parts[4], comment: comment, context: contextNumber, subreddit: parts[2])
             
         case .SUBMISSION:
             return CommentViewController.init(submission: parts[4], subreddit: parts[2])
@@ -102,7 +104,7 @@ class RedditLink{
         if(url.hasPrefix("applewebdata:")){
             url = urlS.path
         }
-
+        
         // Strip unused prefixes that don't require special handling
         url.stringByRemovingRegexMatches(pattern: "(?i)^(https?://)?(www\\.)?((ssl|pay|amp)\\.)?");
         
@@ -134,7 +136,7 @@ class RedditLink{
         if (url.matches(regex: "(?i)[^/]++/(?>wiki|help)(?>$|/.*)")) {
             url.stringByRemovingRegexMatches(pattern: "(?i)/(?>wiki|help)", replaceWith: "/r/reddit.com/wiki")
         }
-
+        
         return url;
     }
     
