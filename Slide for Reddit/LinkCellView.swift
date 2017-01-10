@@ -295,28 +295,6 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         let views=["label":title, "body": textView, "image": thumbImage, "score": score, "comments": comments, "info": info,"banner": bannerImage, "box": box] as [String : Any]
         let views2=["buttons":buttons, "upvote": upvote, "downvote": downvote, "more": more, "save": save] as [String : Any]
         
-        
-        self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[image]",
-                                                                       options: NSLayoutFormatOptions(rawValue: 0),
-                                                                       metrics: metrics,
-                                                                       views: views))
-        
-        self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[label]-4-[image]-12-|",
-                                                                       options: NSLayoutFormatOptions(rawValue: 0),
-                                                                       metrics: metrics,
-                                                                       views: views))
-        
-        self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[banner]-12-|",
-                                                                       options: NSLayoutFormatOptions(rawValue: 0),
-                                                                       metrics: metrics,
-                                                                       views: views))
-
-        self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[body]-4-[image]-12-|",
-                                                                       options: NSLayoutFormatOptions(rawValue: 0),
-                                                                       metrics: metrics,
-                                                                       views: views))
-        
-        
         box.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[score(>=20)]-8-[comments(>=20)]",
                                                           options: NSLayoutFormatOptions(rawValue: 0),
                                                           metrics: metrics,
@@ -360,11 +338,6 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                               metrics: metrics,
                                                               views: views2))
 
-        self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[info]-[image]-12-|",
-                                                                       options: NSLayoutFormatOptions(rawValue: 0),
-                                                                       metrics: metrics,
-                                                                       views: views))
-        
     }
     
     func getHeightFromAspectRatio(imageHeight:Int, imageWidth: Int) -> Int {
@@ -676,11 +649,10 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                                               metrics: metrics,
                                                                               views: views))
             
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[body]-4-[image(75)]-12-|",
+            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[body]-8-[image(75)]-12-|",
                                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                                               metrics: metrics,
                                                                               views: views))
-            
             
             thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[info]-[image(75)]-12-|",
                                                                               options: NSLayoutFormatOptions(rawValue: 0),
@@ -694,8 +666,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                                               metrics: metrics,
                                                                               views: views))
-
-
+            
             self.contentView.addConstraints(thumbConstraint)
         } else if(big) {
             thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[image(0)]",
@@ -727,7 +698,12 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                                               metrics: metrics,
                                                                               views: views))
-
+            
+            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[banner]-12-|",
+                                                                           options: NSLayoutFormatOptions(rawValue: 0),
+                                                                           metrics: metrics,
+                                                                           views: views))
+            
             self.contentView.addConstraints(thumbConstraint)
         } else {
             thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[image(0)]",
@@ -760,7 +736,6 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                                               metrics: metrics,
                                                                               views: views))
-
             self.contentView.addConstraints(thumbConstraint)
             
         }

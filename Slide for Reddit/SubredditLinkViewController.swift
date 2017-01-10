@@ -64,7 +64,66 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     }
     
     func more(_ cell: LinkCellView){
+        let link = cell.link!
+        let actionSheetController: UIAlertController = UIAlertController(title: link.title, message: "", preferredStyle: .actionSheet)
         
+        var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
+            print("Cancel")
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        cancelActionButton = UIAlertAction(title: "/u/\(link.author)", style: .default) { action -> Void in
+            self.show(ProfileViewController.init(name: link.author), sender: self)
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        cancelActionButton = UIAlertAction(title: "/r/\(link.subreddit)", style: .default) { action -> Void in
+            self.show(SubredditLinkViewController.init(subName: link.subreddit, single: true), sender: self)
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        cancelActionButton = UIAlertAction(title: "Save", style: .default) { action -> Void in
+            self.save(cell)
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        cancelActionButton = UIAlertAction(title: "Report", style: .default) { action -> Void in
+            //todo report
+        }
+        actionSheetController.addAction(cancelActionButton)
+
+        cancelActionButton = UIAlertAction(title: "Hide", style: .default) { action -> Void in
+            //todo hide
+        }
+        actionSheetController.addAction(cancelActionButton)
+
+        cancelActionButton = UIAlertAction(title: "Open in Safari", style: .default) { action -> Void in
+            UIApplication.shared.open(link.url!, options: [:], completionHandler: nil)
+        }
+        actionSheetController.addAction(cancelActionButton)
+
+        cancelActionButton = UIAlertAction(title: "Share content", style: .default) { action -> Void in
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [link.url!], applicationActivities: nil);
+            let currentViewController:UIViewController = UIApplication.shared.keyWindow!.rootViewController!
+            currentViewController.present(activityViewController, animated: true, completion: nil);
+        }
+        actionSheetController.addAction(cancelActionButton)
+
+        cancelActionButton = UIAlertAction(title: "Share comments", style: .default) { action -> Void in
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [URL.init(string: "https://reddit.com" + link.permalink)!], applicationActivities: nil);
+            let currentViewController:UIViewController = UIApplication.shared.keyWindow!.rootViewController!
+            currentViewController.present(activityViewController, animated: true, completion: nil);
+        }
+        actionSheetController.addAction(cancelActionButton)
+
+        cancelActionButton = UIAlertAction(title: "Fiter this content", style: .default) { action -> Void in
+            //todo filter content
+        }
+        actionSheetController.addAction(cancelActionButton)
+
+        
+        self.present(actionSheetController, animated: true, completion: nil)
+
     }
     
     
