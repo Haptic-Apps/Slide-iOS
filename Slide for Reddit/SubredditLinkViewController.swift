@@ -344,6 +344,33 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         tableView.reloadData()
     }
     
+    func search(){
+        let alert = UIAlertController(title: "Search", message: "", preferredStyle: .alert)
+        
+        alert.addTextField { (textField) in
+            textField.text = ""
+        }
+        
+        alert.addAction(UIAlertAction(title: "Search All", style: .default, handler: { [weak alert] (_) in
+            let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
+            let search = SearchViewController.init(subreddit: "all", searchFor: (textField?.text!)!)
+            self.parentController?.show(search, sender: self.parentController)
+        }))
+        
+        if(sub != "all" && sub != "frontpage" && sub != "friends"){
+            alert.addAction(UIAlertAction(title: "Search \(sub)", style: .default, handler: { [weak alert] (_) in
+                let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
+                let search = SearchViewController.init(subreddit: "all", searchFor: (textField?.text!)!)
+                self.parentController?.show(search, sender: self.parentController)
+            }))
+        }
+        
+        alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
+        
+        parentController?.present(alert, animated: true, completion: nil)
+
+    }
+    
     func showMore(_ sender: AnyObject){
         let actionSheetController: UIAlertController = UIAlertController(title: "", message: "", preferredStyle: .actionSheet)
         
@@ -353,7 +380,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         actionSheetController.addAction(cancelActionButton)
         
         cancelActionButton = UIAlertAction(title: "Search", style: .default) { action -> Void in
-            print("Search")
+            self.search()
         }
         actionSheetController.addAction(cancelActionButton)
         

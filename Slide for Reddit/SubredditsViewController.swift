@@ -212,7 +212,7 @@ class SubredditsViewController:  ButtonBarPagerTabStripViewController {
         actionSheetController.addAction(cancelActionButton)
         
         cancelActionButton = UIAlertAction(title: "Search", style: .default) { action -> Void in
-            print("Search")
+            (self.viewControllers[self.currentIndex] as? SubredditLinkViewController)?.search()
         }
         actionSheetController.addAction(cancelActionButton)
         
