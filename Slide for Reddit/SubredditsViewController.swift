@@ -89,10 +89,8 @@ class SubredditsViewController:  ButtonBarPagerTabStripViewController {
     
     func restartVC(){
         menuLeftNavigationController?.dismiss(animated: true, completion: {
-            let controller = SubredditsViewController.init()
-            self.navigationController?.pushViewController(controller, animated: false)
-            self.navigationController?.viewControllers  = [controller]
-            controller.moveToViewController(at: 0)
+            self.reloadPagerTabStripView()
+            self.menuNav?.tableView.reloadData()
         })
     }
     
