@@ -172,7 +172,10 @@ class SettingsViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if(indexPath.section == 0 && indexPath.row == 1){
             show(SubredditReorderViewController(), sender: self)
+        } else  if(indexPath.section == 0 && indexPath.row == 0){
+            show(SettingsGeneral(), sender: self)
         }
+
     }
     /* maybe future
  override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {

@@ -41,7 +41,7 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
         filteredContent = []
         isSearching = false
         tableView.reloadData()
-
+        
     }
     
     var searchBar:UISearchBar?
@@ -67,12 +67,19 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
                 filteredContent.append(s)
             }
         }
+        
+        if(searchString != nil && !(searchString?.isEmpty())!){
+            for s in Subscriptions.historySubs {
+                if (s.localizedCaseInsensitiveContains(searchString!)) {
+                    filteredContent.append(s)
+                }
+            }
+        }
         if(!filteredContent.contains(searchString!)){
             filteredContent.append(searchString!)
         }
-
     }
-
+    
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableViewAutomaticDimension
@@ -91,7 +98,7 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
         header.frame.size.height = header.getEstHeight()
         tableView.tableHeaderView = header
         tableView.contentInset = UIEdgeInsetsMake(0, 0, header.getEstHeight(), 0)
-
+        
         searchBar = header.search
         searchBar?.searchBarStyle = UISearchBarStyle.minimal
         searchBar?.placeholder = " Go to subreddit"
@@ -105,7 +112,7 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
         header.setSubreddit(subreddit: subreddit, parent: self)
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForUser(name: subreddit)
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         self.tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "sub")
         super.viewWillAppear(animated)
@@ -124,7 +131,7 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
         if(isSearching){
             return filteredContent.count
         } else {
-        return Subscriptions.subreddits.count
+            return Subscriptions.subreddits.count
         }
     }
     
@@ -136,9 +143,9 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
             thing = Subscriptions.subreddits[indexPath.row]
         }
         var cell: SubredditCellView?
-            let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
-            c.setSubreddit(subreddit: thing)
-            cell = c
+        let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
+        c.setSubreddit(subreddit: thing)
+        cell = c
         return cell!
     }
     

@@ -28,6 +28,7 @@ class Subscriptions{
         return accountSubs
     }
     
+    public static var historySubs: [String] = []
     private static var accountSubs: [String] = []
     
     public static func sync(name: String, completion: (() -> Void)?){
@@ -38,11 +39,25 @@ class Subscriptions{
         } else {
             accountSubs = defaultSubs
         }
+        
+        if let accounts = UserDefaults.standard.array(forKey: "historysubs" + name){
+            print("Count is \(accounts.count)")
+            historySubs = accounts as! [String]
+        } else {
+            historySubs = []
+        }
+
         if((completion) != nil){
             completion!()
         }
     }
     
+    public static func addHistorySub(name: String, sub: String){
+        historySubs.append(sub)
+        UserDefaults.standard.set(historySubs, forKey: "historysubs" + name)
+        UserDefaults.standard.synchronize()
+    }
+
     public static func set(name: String, subs: [String], completion: @escaping () -> Void){
         print("Setting subs")
         UserDefaults.standard.set(subs, forKey: "subs" + name)

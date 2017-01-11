@@ -121,7 +121,7 @@ class SubredditsViewController:  ButtonBarPagerTabStripViewController {
         
         // Enable gestures. The left and/or right menus must be set up above for these to work.
         // Note that these continue to work on the Navigation Controller independent of the View Controller it displays!
-        SideMenuManager.menuAddPanGestureToPresent(toView: self.navigationController!.navigationBar)
+        SideMenuManager.menuAddPanGestureToPresent(toView: self.view)
         SideMenuManager.menuAddScreenEdgePanGesturesToPresent(toView: self.navigationController!.view)
         
         settings.style.buttonBarItemFont = UIFont.systemFont(ofSize: 14)
@@ -266,7 +266,7 @@ class SubredditsViewController:  ButtonBarPagerTabStripViewController {
     override func viewControllers(for pagerTabStripController: PagerTabStripViewController) -> [UIViewController] {
         var controllers : [UIViewController] = []
         for subname in Subscriptions.subreddits {
-            controllers.append(SubredditLinkViewController(subName: subname))
+            controllers.append(SubredditLinkViewController(subName: subname, parent: self))
         }
         return Array(controllers)
     }

@@ -12,7 +12,7 @@ import Foundation
  
 /* For support, please feel free to contact me at https://www.linkedin.com/in/syedabsar */
 
-public class Data {
+public class AlbumData {
 	public var count : Int?
 	public var images : Array<Images>?
 
@@ -26,12 +26,12 @@ public class Data {
 
     - returns: Array of Data Instances.
 */
-    public class func modelsFromDictionaryArray(array:NSArray) -> [Data]
+    public class func modelsFromDictionaryArray(array:NSArray) -> [AlbumData]
     {
-        var models:[Data] = []
+        var models:[AlbumData] = []
         for item in array
         {
-            models.append(Data(dictionary: item as! NSDictionary)!)
+            models.append(AlbumData(dictionary: item as! NSDictionary)!)
         }
         return models
     }

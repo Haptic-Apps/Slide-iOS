@@ -223,14 +223,12 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         score.font = UIFont.systemFont(ofSize: 12)
         score.textColor = ColorUtil.fontColor
         score.alpha = 0.87
-        score.tintColor = ColorUtil.fontColor
 
         self.comments = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
         comments.numberOfLines = 1
         comments.font = UIFont.systemFont(ofSize: 12)
         comments.textColor = ColorUtil.fontColor
         comments.alpha = 0.87
-        comments.tintColor = ColorUtil.fontColor
         
         self.info = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
         info.numberOfLines = 0
@@ -875,7 +873,7 @@ extension UILabel
     func textAttachment(fontSize: CGFloat, imageName: String) -> NSTextAttachment {
         let font = UIFont.systemFont(ofSize: fontSize) //set accordingly to your font, you might pass it in the function
         let textAttachment = NSTextAttachment()
-        textAttachment.image = UIImage(named: imageName)?.imageResize(sizeChange: CGSize.init(width: self.font.pointSize, height: self.font.pointSize))
+        textAttachment.image = UIImage(named: imageName)?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: self.font.pointSize, height: self.font.pointSize))
         let mid = font.descender + font.capHeight
         textAttachment.bounds = CGRect(x: 0, y: font.descender - fontSize / 2 + mid + 2, width: fontSize, height: fontSize).integral
         return textAttachment
@@ -887,3 +885,15 @@ extension UILabel
         self.text = text
     }
 }
+extension UIImage {
+    func withColor(tintColor: UIColor) -> UIImage {
+        var image = withRenderingMode(.alwaysTemplate)
+        UIGraphicsBeginImageContextWithOptions(size, false, scale)
+        tintColor.set()
+        image.draw(in: CGRect(x: 0, y: 0, width: size.width, height: size.height))
+        image = UIGraphicsGetImageFromCurrentImageContext()!
+        UIGraphicsEndImageContext()
+        return image
+    }
+}
+

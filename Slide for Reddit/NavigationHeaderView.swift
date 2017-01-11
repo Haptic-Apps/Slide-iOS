@@ -41,28 +41,28 @@ class NavigationHeaderView: UIView {
         
         
         accounts.setTitle("Manage accounts", for: .normal)
-        accounts.setImage(UIImage(named: "add")?.withRenderingMode(.alwaysTemplate).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
+        accounts.setImage(UIImage(named: "add")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
         accounts.contentHorizontalAlignment = .left
         accounts.titleEdgeInsets = UIEdgeInsetsMake(0, 8, 0, 0)
         accounts.tintColor = ColorUtil.fontColor
         accounts.setTitleColor(ColorUtil.fontColor, for: .normal)
         
         multis.setTitle("Multireddits", for: .normal)
-        multis.setImage(UIImage(named: "multis")?.withRenderingMode(.alwaysTemplate).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
+        multis.setImage(UIImage(named: "multis")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
         multis.contentHorizontalAlignment = .left
         multis.titleEdgeInsets = UIEdgeInsetsMake(0, 8, 0, 0)
         multis.tintColor = ColorUtil.fontColor
         multis.setTitleColor(ColorUtil.fontColor, for: .normal)
 
         profile.setTitle("Go to profile", for: .normal)
-        profile.setImage(UIImage(named: "profile")?.withRenderingMode(.alwaysTemplate).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
+        profile.setImage(UIImage(named: "profile")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
         profile.contentHorizontalAlignment = .left
         profile.titleEdgeInsets = UIEdgeInsetsMake(0, 8, 0, 0)
         profile.tintColor = ColorUtil.fontColor
         profile.setTitleColor(ColorUtil.fontColor, for: .normal)
 
         settings.setTitle("Settings", for: .normal)
-        settings.setImage(UIImage(named: "settings")?.withRenderingMode(.alwaysTemplate).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
+        settings.setImage(UIImage(named: "settings")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
         settings.contentHorizontalAlignment = .left
         settings.titleEdgeInsets = UIEdgeInsetsMake(0, 8, 0, 0)
         settings.tintColor = ColorUtil.fontColor
@@ -229,21 +229,3 @@ class NavigationHeaderView: UIView {
         return CGFloat(60*5) + 150
     }
 }
-extension UIImage {
-    
-    func addImagePadding(x: CGFloat, y: CGFloat) -> UIImage {
-        let width: CGFloat = self.size.width + x;
-        let height: CGFloat = self.size.width + y;
-        UIGraphicsBeginImageContextWithOptions(CGSize(width: width, height: height), false, 0);
-        let context: CGContext = UIGraphicsGetCurrentContext()!;
-        UIGraphicsPushContext(context);
-        let origin: CGPoint = CGPoint(x: (width - self.size.width) / 2, y: (height - self.size.height) / 2);
-        self.draw(at: origin)
-        UIGraphicsPopContext();
-        let imageWithPadding = UIGraphicsGetImageFromCurrentImageContext();
-        UIGraphicsEndImageContext();
-        
-        return imageWithPadding!
-    }
-}
-

@@ -13,7 +13,7 @@ import Foundation
 /* For support, please feel free to contact me at https://www.linkedin.com/in/syedabsar */
 
 public class AlbumJSONBase {
-	public var data : Data?
+	public var data : AlbumData?
 	public var success : String?
 	public var status : Int?
 
@@ -49,7 +49,7 @@ public class AlbumJSONBase {
 */
 	required public init?(dictionary: NSDictionary) {
 
-		if (dictionary["data"] != nil) { data = Data(dictionary: dictionary["data"] as! NSDictionary) }
+		if (dictionary["data"] != nil) { data = AlbumData(dictionary: dictionary["data"] as! NSDictionary) }
 		success = dictionary["success"] as? String
 		status = dictionary["status"] as? Int
 	}

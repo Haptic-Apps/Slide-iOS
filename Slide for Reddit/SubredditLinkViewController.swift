@@ -12,6 +12,7 @@ import SDWebImage
 import ChameleonFramework
 import XLPagerTabStrip
 import AMScrollingNavbar
+import SideMenu
 
 
 class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, IndicatorInfoProvider, ScrollingNavigationControllerDelegate, LinkCellViewDelegate, ColorPickerDelegate {
@@ -152,8 +153,9 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
      
      return [regularAction, destructiveAction, actionGroup]
      }*/
-    init(subName: String){
+    init(subName: String, parent: SubredditsViewController){
         sub = subName;
+        self.parentController = parent
         itemInfo = IndicatorInfo(title: sub)
         super.init(nibName:nil, bundle:nil)
         setBarColors(color: ColorUtil.getColorForSub(sub: subName))
@@ -216,18 +218,67 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         return UITableViewAutomaticDimension
     }
     
-    
+    var sideMenu: UISideMenuNavigationController?
+    var menuNav: SubSidebarViewController?
+
     override func viewDidLoad() {
-        super.viewDidLoad()
         self.tableView.register(LinkCellView.classForCoder(), forCellReuseIdentifier: "cell")
         session = (UIApplication.shared.delegate as! AppDelegate).session
-        if self.links.count == 0 {
+        if self.links.count == 0 && !single {
             load(reset: true)
         }
         
         tableView.estimatedRowHeight = 400.0
         tableView.rowHeight = UITableViewAutomaticDimension
         
+        if(single){
+            sideMenu = UISideMenuNavigationController()
+            print("Sub is \(sub)")
+            menuNav = SubSidebarViewController.init(parentController: self, sub: sub, completion: { (success) in
+                if(success){
+                self.load(reset: true)
+                } else {
+                    let alert = UIAlertController.init(title: "Subreddit not found", message: "/r/\(self.sub) could not be found, is it spelled correctly?", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction.init(title: "Ok", style: .default, handler: { (_) in
+                        let presentingViewController: UIViewController! = self.presentingViewController
+                        
+                        self.dismiss(animated: false) {
+                            // go back to MainMenuView as the eyes of the user
+                            presentingViewController.dismiss(animated: false, completion: nil)
+                        }
+
+                    }))
+                    self.present(alert, animated: true, completion: nil)
+                }
+            })
+            sideMenu?.addChildViewController(menuNav!)
+            // UISideMenuNavigationController is a subclass of UINavigationController, so do any additional configuration of it here like setting its viewControllers.
+            SideMenuManager.menuRightNavigationController = sideMenu
+            sideMenu?.navigationBar.isHidden = true
+            
+            // Enable gestures. The left and/or right menus must be set up above for these to work.
+            // Note that these continue to work on the Navigation Controller independent of the View Controller it displays!
+            SideMenuManager.menuAddPanGestureToPresent(toView: self.view)
+            SideMenuManager.menuAddScreenEdgePanGesturesToPresent(toView: self.navigationController!.view)
+            
+        } else {
+            sideMenu = UISideMenuNavigationController()
+            print("Sub is \(sub)")
+            menuNav = SubSidebarViewController.init(parentController: self, sub: sub, completion: { (success) in })
+            sideMenu?.addChildViewController(menuNav!)
+            // UISideMenuNavigationController is a subclass of UINavigationController, so do any additional configuration of it here like setting its viewControllers.
+            SideMenuManager.menuRightNavigationController = sideMenu
+            sideMenu?.navigationBar.isHidden = true
+            
+            // Enable gestures. The left and/or right menus must be set up above for these to work.
+            // Note that these continue to work on the Navigation Controller independent of the View Controller it displays!
+            SideMenuManager.menuAddPanGestureToPresent(toView: (self.parentController?.view)!)
+            SideMenuManager.menuAddScreenEdgePanGesturesToPresent(toView: (self.parentController?.navigationController!.view)!)
+            
+
+        }
+        super.viewDidLoad()
+
     }
     
     override func viewWillDisappear(_ animated: Bool) {

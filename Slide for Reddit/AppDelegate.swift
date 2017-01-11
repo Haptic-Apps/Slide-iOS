@@ -9,6 +9,7 @@
 import UIKit
 import reddift
 import ChameleonFramework
+import UserNotifications
 
 /// Posted when the OAuth2TokenRepository object succeed in saving a token successfully into Keychain.
 public let OAuth2TokenRepositoryDidSaveTokenName = Notification.Name(rawValue: "OAuth2TokenRepositoryDidSaveToken")
@@ -22,6 +23,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     let name = "reddittoken"
     var session: Session? = nil
+    var fetcher: BackgroundFetch? = nil
     var subreddits: [Subreddit] = []
     var paginator = Paginator()
     var login: SubredditsViewController?
@@ -29,6 +31,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var commentsFile: String?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        application.setMinimumBackgroundFetchInterval(UIApplicationBackgroundFetchIntervalMinimum)
+
         // Override point for customization after application launch.
         
         let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true) as NSArray
@@ -77,10 +81,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         AccountController.initialize()
         Subscriptions.sync(name: AccountController.currentName, completion: nil)
-        let settings = UIUserNotificationSettings(
-            types: [.badge, .sound, .alert],
-            categories: nil)
-        application.registerUserNotificationSettings(settings);
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
+            (granted, error) in
+            
+        }
+        UIApplication.shared.registerForRemoteNotifications()
 
         if !UserDefaults.standard.bool(forKey: "sc" + name){
             syncColors(subredditController: nil)
@@ -90,6 +95,78 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
     
+    func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        if let session = session {
+            do {
+                let request = try session.requestForGettingProfile()
+                let fetcher = BackgroundFetch(current: session,
+                                              request: request,
+                                              taskHandler: { (response, dataURL, error) -> Void in
+                                                if let response = response, let dataURL = dataURL {
+                                                    if response.statusCode == HttpStatus.ok.rawValue {
+                                                        
+                                                        do {
+                                                            let data = try Data(contentsOf: dataURL)
+                                                            let result = accountInResult(from: data, response: response)
+                                                            switch result {
+                                                            case .success(let account):
+                                                                print(account)
+                                                                UIApplication.shared.applicationIconBadgeNumber = account.inboxCount
+                                                                self.postLocalNotification("You have \(account.inboxCount) new messages.")
+                                                                completionHandler(.newData)
+                                                                return
+                                                            case .failure(let error):
+                                                                print(error)
+                                                                self.postLocalNotification("\(error)")
+                                                                completionHandler(.failed)
+                                                            }
+                                                        }
+                                                        catch {
+                                                            
+                                                        }
+                                                    }
+                                                    else {
+                                                        self.postLocalNotification("response code \(response.statusCode)")
+                                                        completionHandler(.failed)
+                                                    }
+                                                } else {
+                                                    self.postLocalNotification("Error can not parse response and data.")
+                                                    completionHandler(.failed)
+                                                }
+                })
+                fetcher.resume()
+                self.fetcher = fetcher
+            } catch {
+                postLocalNotification("\(error)")
+                completionHandler(.failed)
+            }
+        } else {
+            postLocalNotification("session is not available.")
+            completionHandler(.failed)
+        }
+    }
+    
+    func postLocalNotification(_ message: String) {
+        let center = UNUserNotificationCenter.current()
+        let content = UNMutableNotificationContent()
+        content.title = "New messages!"
+        content.body = message
+        content.sound = UNNotificationSound.default()
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 300,
+                                                        repeats: false)
+        let identifier = "SlideMSGNotif"
+        let request = UNNotificationRequest(identifier: identifier,
+                                            content: content, trigger: trigger)
+        center.add(request, withCompletionHandler: { (error) in
+            if let error = error {
+                // Something went wrong
+            }
+        })
+
+
+    }
+    
+
     func syncColors(subredditController: SubredditsViewController?) {
         let defaults = UserDefaults.standard
         var toReturn: [String] = []
