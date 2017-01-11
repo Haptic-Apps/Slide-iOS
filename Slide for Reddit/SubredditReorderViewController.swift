@@ -15,23 +15,31 @@ class SubredditReorderViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "sub")
+        self.tableView.isEditing = true
+        self.tableView.allowsSelectionDuringEditing = true
         subs.append(contentsOf: Subscriptions.subreddits)
         tableView.reloadData()
-        
-        let save = UIButton.init(type: .custom)
-        save.setTitle("Save", for: .normal)
-        save.addTarget(self, action: #selector(self.save(_:)), for: UIControlEvents.touchUpInside)
-        let saveB = UIBarButtonItem.init(customView: save)
         
         let sync = UIButton.init(type: .custom)
         sync.setImage(UIImage.init(named: "sync"), for: UIControlState.normal)
         sync.addTarget(self, action: #selector(self.sync(_:)), for: UIControlEvents.touchUpInside)
         sync.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let syncB = UIBarButtonItem.init(customView: sync)
+        
+        let save = UIBarButtonItem.init(title: "Save", style: .done, target: self, action: #selector(self.save(_:)))
 
-        self.navigationItem.rightBarButtonItems = [saveB, syncB]
+        self.navigationItem.rightBarButtonItems = [save, syncB]
     }
     public static var changed = false
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return UITableViewAutomaticDimension
+    }
+    
+    override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        return UITableViewAutomaticDimension
+    }
+    
 
     func save(_ selector: AnyObject){
         SubredditReorderViewController.changed = true
@@ -52,6 +60,7 @@ class SubredditReorderViewController: UITableViewController {
         self.present(alertController,animated: true, completion: nil)
         
         Subscriptions.getSubscriptionsFully(session: (UIApplication.shared.delegate as! AppDelegate).session!, completion: {(newSubs) in
+            let end = self.subs.count
             for s in newSubs {
                 if(!self.subs.contains(s.displayName)){
                     self.subs.append(s.displayName)
@@ -59,6 +68,10 @@ class SubredditReorderViewController: UITableViewController {
             }
             DispatchQueue.main.async {
                 self.tableView.reloadData()
+                let indexPath = IndexPath.init(row: end, section: 0)
+                self.tableView.scrollToRow(at: indexPath,
+                                           at: UITableViewScrollPosition.top, animated: true)
+                alertController.dismiss(animated: true, completion: nil)
             }
         })
 
@@ -93,7 +106,7 @@ class SubredditReorderViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
-        return false
+        return true
     }
     
     override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
@@ -104,7 +117,34 @@ class SubredditReorderViewController: UITableViewController {
         let itemToMove:String = subs[sourceIndexPath.row]
         subs.remove(at: sourceIndexPath.row)
         subs.insert(itemToMove, at: destinationIndexPath.row)
-        tableView.reloadData()
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let item = subs[indexPath.row]
+        let actionSheetController: UIAlertController = UIAlertController(title: item, message: "", preferredStyle: .actionSheet)
+        
+        var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
+            print("Cancel")
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        cancelActionButton = UIAlertAction(title: "Unsubscribe", style: .default) { action -> Void in
+            //todo unsub
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        cancelActionButton = UIAlertAction(title: "Move to top", style: .default) { action -> Void in
+            self.subs.remove(at: indexPath.row)
+            self.subs.insert(item, at: 0)
+            tableView.reloadData()
+            let indexPath = IndexPath.init(row: 0, section: 0)
+            self.tableView.scrollToRow(at: indexPath,
+                                       at: UITableViewScrollPosition.top, animated: true)
+
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        self.present(actionSheetController, animated: true, completion: nil)
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath)
@@ -112,7 +152,7 @@ class SubredditReorderViewController: UITableViewController {
         if editingStyle == .delete
         {
             subs.remove(at: indexPath.row)
-            tableView.reloadData()
+            tableView.deleteRows(at: [indexPath], with: .fade)
         }
     }
 
