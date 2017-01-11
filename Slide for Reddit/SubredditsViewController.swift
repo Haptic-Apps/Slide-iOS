@@ -26,10 +26,14 @@ class SubredditsViewController:  ButtonBarPagerTabStripViewController {
         super.viewWillAppear(animated)
         self.navigationController?.navigationBar.shadowImage = UIImage()
         self.navigationController?.navigationBar.barTintColor = self.tintColor
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
         if(SubredditReorderViewController.changed){
             SubredditReorderViewController.changed = false
             self.restartVC()
         }
+
     }
     
     func addAccount(){
@@ -88,9 +92,9 @@ class SubredditsViewController:  ButtonBarPagerTabStripViewController {
     }
     
     func restartVC(){
+        self.reloadPagerTabStripView()
+        self.menuNav?.tableView.reloadData()
         menuLeftNavigationController?.dismiss(animated: true, completion: {
-            self.reloadPagerTabStripView()
-            self.menuNav?.tableView.reloadData()
         })
     }
     
