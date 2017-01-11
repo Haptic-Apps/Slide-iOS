@@ -11,10 +11,14 @@ import reddift
 
 class ReplyViewController: UIViewController {
     
-    var toReplyTo: Thing
+    var toReplyTo: Thing?
+    var baseScroll: UIScrollView?
+    var text: UITextView?
+    var sub: String
     
-    init(thing: Thing){
+    init(thing: Thing?, sub: String){
         self.toReplyTo = thing
+        self.sub = sub
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -24,7 +28,7 @@ class ReplyViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(self.dismiss(_:)))
+        
         // Do any additional setup after loading the view.
     }
 
@@ -33,11 +37,46 @@ class ReplyViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+    }
+    
+    override func loadView() {
+        self.view =  UIScrollView(frame: CGRect.zero)
+        self.baseScroll = self.view as? UIScrollView
+        self.baseScroll?.backgroundColor = ColorUtil.backgroundColor
+        baseScroll?.isPagingEnabled = true
+        text = UITextView(frame: CGRect.zero)
+        text?.isEditable = true
+        text?.becomeFirstResponder()
+        EditorToolbar.init(textView:  text!).addToolbarToTextView()
+        self.baseScroll?.addSubview(text!)
+        
+
+    }
     func dismiss(_ sender: AnyObject) {
         self.dismiss(animated: true, completion: nil)
     }
     
+    func configureKeyboardNotifications() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWasShown(aNotification:)), name: NSNotification.Name.UIKeyboardDidShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeHidden(aNotification:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+    }
     
+    func keyboardWasShown(aNotification:NSNotification) {
+        let info = aNotification.userInfo
+        let infoNSValue = info![UIKeyboardFrameBeginUserInfoKey] as! NSValue
+        let kbSize = infoNSValue.cgRectValue.size
+        let contentInsets = UIEdgeInsetsMake(0.0, 0.0, kbSize.height, 0.0)
+        text?.contentInset = contentInsets
+        text?.scrollIndicatorInsets = contentInsets
+    }
+    
+    func keyboardWillBeHidden(aNotification:NSNotification) {
+        let contentInsets = UIEdgeInsets.zero
+        text?.contentInset = contentInsets
+        text?.scrollIndicatorInsets = contentInsets
+    }
 
     /*
     // MARK: - Navigation

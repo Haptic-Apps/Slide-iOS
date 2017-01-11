@@ -364,6 +364,12 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         link = submission
         title.sizeToFit()
         
+        if(submission.archived || !AccountController.isLoggedIn){
+            upvote.isHidden = true
+            downvote.isHidden = true
+            save.isHidden = true
+        }
+        
         let type = ContentType.getContentType(submission: submission)
         
         let fullImage = ContentType.fullImage(t: type)
@@ -577,7 +583,10 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         
         if(big){
             let imageSize = CGSize.init(width:w, height:h);
-            let aspect = imageSize.width / imageSize.height
+            var aspect = imageSize.width / imageSize.height
+            if(aspect == 0 || aspect > 10000){
+                aspect = 1
+            }
 
             bigConstraint = NSLayoutConstraint(item: bannerImage, attribute:  NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: bannerImage, attribute: NSLayoutAttribute.height, multiplier: aspect, constant: 0.0)
             

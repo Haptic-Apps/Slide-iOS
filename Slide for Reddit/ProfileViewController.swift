@@ -50,7 +50,9 @@ class ProfileViewController:  ButtonBarPagerTabStripViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.title = name
-        
+        if(navigationController != nil){
+            navigationController?.navigationBar.barTintColor = ColorUtil.getColorForUser(name: name)
+        }
         let sort = UIButton.init(type: .custom)
         sort.setImage(UIImage.init(named: "ic_sort_white"), for: UIControlState.normal)
         sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControlEvents.touchUpInside)

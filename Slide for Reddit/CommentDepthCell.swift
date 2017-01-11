@@ -347,12 +347,14 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         }
         
         alertController.addAction(profile)
-        
+        if(AccountController.isLoggedIn){
+
         let save: UIAlertAction = UIAlertAction(title: "Save", style: .default) { action -> Void in
             //todo save
         }
         
         alertController.addAction(save)
+        }
         
         let report: UIAlertAction = UIAlertAction(title: "Report", style: .default) { action -> Void in
             //todo report

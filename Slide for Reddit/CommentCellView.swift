@@ -17,6 +17,7 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
     var title = UILabel()
     var textView = UZTextView()
     var info = UILabel()
+    var single = false
     
     func textView(_ textView: UZTextView, didLongTapLinkAttribute value: Any?) {
         if let attr = value as? [String: Any] {
@@ -119,6 +120,41 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         
     }
     
+    init(comment: Comment, parent: MediaViewController, width: CGFloat) {
+        super.init(style: .default, reuseIdentifier: "none")
+        self.single = true
+        self.title = UILabel(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude));
+        title.numberOfLines = 0
+        title.lineBreakMode = NSLineBreakMode.byWordWrapping
+        title.font = UIFont.systemFont(ofSize: 18, weight: 1.15)
+        title.textColor = ColorUtil.fontColor
+        
+        self.textView = UZTextView(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
+        self.textView.delegate = self
+        self.textView.isUserInteractionEnabled = true
+        self.textView.backgroundColor = .clear
+        
+        self.info = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
+        info.numberOfLines = 0
+        info.font = UIFont.systemFont(ofSize: 12)
+        info.textColor = ColorUtil.fontColor
+        info.alpha = 0.87
+        
+        title.translatesAutoresizingMaskIntoConstraints = false
+        info.translatesAutoresizingMaskIntoConstraints = false
+        textView.translatesAutoresizingMaskIntoConstraints = false
+        
+        self.contentView.addSubview(title)
+        self.contentView.addSubview(textView)
+        self.contentView.addSubview(info)
+        
+        self.contentView.backgroundColor = ColorUtil.foregroundColor
+        
+        self.updateConstraints()
+        self.setComment(comment: comment, parent: parent, nav: parent.navigationController, width: width)
+    }
+
+    
     override func updateConstraints() {
         super.updateConstraints()
         
@@ -161,7 +197,7 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
             self.contentView.removeConstraints(lsC)
         }
         
-        let commentClick = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openComment(sender:)))
+        let commentClick = UITapGestureRecognizer(target: self, action: #selector(CommentCellView.openComment(sender:)))
         commentClick.delegate = self
         self.addGestureRecognizer(commentClick)
         
@@ -270,7 +306,7 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
     
     
     func openComment(sender: UITapGestureRecognizer? = nil){
-            let comment = CommentViewController(submission: Link(id: (self.comment?.parentId)!))
+        let comment = CommentViewController.init(submission: (self.comment?.linkId.substring(3, length: (self.comment?.linkId.length)! - 3))! , comment: self.comment!.id, context: 3, subreddit: (self.comment?.subreddit)!)
             (self.navViewController as? UINavigationController)?.pushViewController(comment, animated: true)
         }
     

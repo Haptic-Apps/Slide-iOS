@@ -76,7 +76,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UIApplication.shared.statusBarStyle = .lightContent
         
         AccountController.initialize()
-        Subscriptions.sync(name: AccountController.currentName)
+        Subscriptions.sync(name: AccountController.currentName, completion: nil)
         let settings = UIUserNotificationSettings(
             types: [.badge, .sound, .alert],
             categories: nil)

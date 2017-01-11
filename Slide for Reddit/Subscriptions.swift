@@ -30,18 +30,24 @@ class Subscriptions{
     
     private static var accountSubs: [String] = []
     
-    public static func sync(name: String){
+    public static func sync(name: String, completion: (() -> Void)?){
+        print("Getting \(name)'s subs")
         if let accounts = UserDefaults.standard.array(forKey: "subs" + name){
-            print("Getting \(name)'s subs count is \(accounts.count)")
+            print("Count is \(accounts.count)")
             accountSubs = accounts as! [String]
+        } else {
+            accountSubs = defaultSubs
+        }
+        if((completion) != nil){
+            completion!()
         }
     }
     
-    public static func set(name: String, subs: [String]){
+    public static func set(name: String, subs: [String], completion: @escaping () -> Void){
         print("Setting subs")
         UserDefaults.standard.set(subs, forKey: "subs" + name)
         UserDefaults.standard.synchronize()
-        Subscriptions.sync(name: name)
+        Subscriptions.sync(name: name, completion: completion)
     }
     
     public static func getSubscriptionsUntilCompletion(session: Session, p: Paginator, tR: [Subreddit], completion: @escaping (_ result: [Subreddit]) -> Void){
@@ -64,7 +70,6 @@ class Subscriptions{
                     }
                 }
             })
-            
         } catch {
             completion(toReturn)
         }

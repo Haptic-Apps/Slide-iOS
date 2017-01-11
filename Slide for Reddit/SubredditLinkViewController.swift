@@ -82,10 +82,13 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         }
         actionSheetController.addAction(cancelActionButton)
         
+        if(AccountController.isLoggedIn){
+
         cancelActionButton = UIAlertAction(title: "Save", style: .default) { action -> Void in
             self.save(cell)
         }
         actionSheetController.addAction(cancelActionButton)
+        }
         
         cancelActionButton = UIAlertAction(title: "Report", style: .default) { action -> Void in
             //todo report
@@ -238,7 +241,6 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         let margin:CGFloat = 10.0
         let rect = CGRect(x: margin, y: margin, width: alertController.view.bounds.size.width - margin * 4.0, height: 120)
         let customView = ColorPicker(frame: rect)
-        customView.set(value: (self.navigationController?.navigationBar.barTintColor?.cgColor)!)
         customView.delegate = self
         
         customView.backgroundColor = ColorUtil.backgroundColor

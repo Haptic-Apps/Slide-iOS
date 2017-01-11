@@ -11,6 +11,7 @@ import reddift
 import AudioToolbox.AudioServices
 import BGTableViewRowActionWithImage
 import AMScrollingNavbar
+import LNPopupController
 
 class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, UZTextViewCellDelegate, LinkCellViewDelegate {
     
@@ -57,11 +58,73 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
     
     func more(_ cell: LinkCellView){
+        let link = cell.link!
+        let actionSheetController: UIAlertController = UIAlertController(title: link.title, message: "", preferredStyle: .actionSheet)
+        
+        var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
+            print("Cancel")
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        cancelActionButton = UIAlertAction(title: "/u/\(link.author)", style: .default) { action -> Void in
+            self.show(ProfileViewController.init(name: link.author), sender: self)
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        cancelActionButton = UIAlertAction(title: "/r/\(link.subreddit)", style: .default) { action -> Void in
+            self.show(SubredditLinkViewController.init(subName: link.subreddit, single: true), sender: self)
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        if(AccountController.isLoggedIn){
+        cancelActionButton = UIAlertAction(title: "Save", style: .default) { action -> Void in
+            self.save(cell)
+        }
+        actionSheetController.addAction(cancelActionButton)
+        }
+        
+        cancelActionButton = UIAlertAction(title: "Report", style: .default) { action -> Void in
+            //todo report
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        cancelActionButton = UIAlertAction(title: "Hide", style: .default) { action -> Void in
+            //todo hide
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        cancelActionButton = UIAlertAction(title: "Open in Safari", style: .default) { action -> Void in
+            UIApplication.shared.open(link.url!, options: [:], completionHandler: nil)
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        cancelActionButton = UIAlertAction(title: "Share content", style: .default) { action -> Void in
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [link.url!], applicationActivities: nil);
+            let currentViewController:UIViewController = UIApplication.shared.keyWindow!.rootViewController!
+            currentViewController.present(activityViewController, animated: true, completion: nil);
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        cancelActionButton = UIAlertAction(title: "Share comments", style: .default) { action -> Void in
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [URL.init(string: "https://reddit.com" + link.permalink)!], applicationActivities: nil);
+            let currentViewController:UIViewController = UIApplication.shared.keyWindow!.rootViewController!
+            currentViewController.present(activityViewController, animated: true, completion: nil);
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        cancelActionButton = UIAlertAction(title: "Fiter this content", style: .default) { action -> Void in
+            //todo filter content
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        
+        self.present(actionSheetController, animated: true, completion: nil)
         
     }
-    
-    
 
+    
+    
+    
     
     var submission: Link? = nil
     var session: Session? = nil
@@ -138,7 +201,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                         var time = timeval(tv_sec: 0, tv_usec: 0)
                         gettimeofday(&time, nil)
                         if(!allIncoming.isEmpty){
-                        self.contents += self.updateStrings(allIncoming)
+                            self.contents += self.updateStrings(allIncoming)
                         }
                         self.paginator = listing.paginator
                         
@@ -164,7 +227,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                 }
                                 self.title = self.submission!.subreddit
                                 self.setBarColors(color: ColorUtil.getColorForSub(sub: self.title!))
-                                self.setNavColors()
                             }
                             self.doArrays()
                             self.lastSeen = History.getSeenTime(s: link)
@@ -178,7 +240,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                     if(comment.getId().contains(self.context)){
                                         self.goToCell(i: index)
                                         break
-                                        } else {
+                                    } else {
                                         index += 1
                                     }
                                 }
@@ -207,7 +269,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-            }
+    }
     
     var hasDone = false
     override func viewDidLayoutSubviews() {
@@ -233,7 +295,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             }
             
         }
-
+        
     }
     
     init(submission: Link){
@@ -284,6 +346,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         if let navigationController = self.navigationController as? ScrollingNavigationController {
             print("Following scroll")
             navigationController.followScrollView(self.tableView, delay: 50.0)
+        }
+        if(hasSubmission && !comments.isEmpty){
+            self.setBarColors(color: ColorUtil.getColorForSub(sub: self.title!))
         }
         updateToolbar()
     }
@@ -403,6 +468,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     func loadAll(_ sender: AnyObject){
         context = ""
+        refreshControl.beginRefreshing()
         refresh(sender)
         updateToolbar()
     }
@@ -417,12 +483,12 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         case YOU
     }
     
-
+    
     
     func goDown(_ sender: AnyObject){
         let topCell = (tableView.indexPathsForVisibleRows?[0].row)!
-        for i in (topCell + 1)...comments.count - 1 {
-            if(comments[i]  is Comment && matches(comment: comments[i] as! Comment, sort: currentSort)) {
+        for i in (topCell + 1)...dataArray.count - 1 {
+            if(dataArray[i]  is Comment && matches(comment: dataArray[i] as! Comment, sort: currentSort)) {
                 goToCell(i: i)
                 break
             }
@@ -431,7 +497,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     func getCount(sort: CommentNavType) -> Int {
         var count = 0
-        for comment in comments {
+        for comment in dataArray {
             if(comment is Comment && matches(comment: comment as! Comment, sort: sort)){
                 count += 1
             }
@@ -462,23 +528,23 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             self.currentSort = .OP
         }
         actionSheetController.addAction(cancelActionButton)
-
+        
         cancelActionButton = UIAlertAction(title: "Link (\(link))", style: .default) { action -> Void in
             self.currentSort = .LINK
         }
         actionSheetController.addAction(cancelActionButton)
-
+        
         cancelActionButton = UIAlertAction(title: "You (\(you))", style: .default) { action -> Void in
             self.currentSort = .YOU
         }
         actionSheetController.addAction(cancelActionButton)
-
+        
         cancelActionButton = UIAlertAction(title: "Gilded (\(gilded))", style: .default) { action -> Void in
             self.currentSort = .GILDED
         }
         actionSheetController.addAction(cancelActionButton)
-
-
+        
+        
         
         self.present(actionSheetController, animated: true, completion: nil)
     }
@@ -493,13 +559,13 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     func goUp(_ sender: AnyObject){
         let topCell = (tableView.indexPathsForVisibleRows?[0].row)!
         for i in stride(from: (topCell - 1) , to: -1, by: -1) {
-            if(comments[i]  is Comment && matches(comment: comments[i] as! Comment, sort: currentSort)) {
+            if(dataArray[i]  is Comment && matches(comment: dataArray[i] as! Comment, sort: currentSort)) {
                 goToCell(i: i)
                 break
             }
         }
     }
-
+    
     func matches(comment: Comment, sort: CommentNavType) ->Bool{
         switch sort {
         case .PARENTS:
@@ -533,7 +599,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 return false
             }
         }
-    
+        
     }
     
     func updateToolbar() {
@@ -633,7 +699,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     func vote(comment: Thing,  dir: VoteDirection) {
         
-    var direction = dir
+        var direction = dir
         switch(ActionStates.getVoteDirection(s: comment)){
         case .up:
             if(dir == .up){
@@ -648,52 +714,64 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         default:
             break
         }
-            do {
-                try session?.setVote(direction, name: comment.name, completion: { (result) -> Void in
-                    switch result {
-                    case .failure(let error):
-                        print(error)
-                    case .success(let check):
-                        print(check)
-                    }
-                })
-            } catch { print(error) }
+        do {
+            try session?.setVote(direction, name: comment.name, completion: { (result) -> Void in
+                switch result {
+                case .failure(let error):
+                    print(error)
+                case .success(let check):
+                    print(check)
+                }
+            })
+        } catch { print(error) }
         ActionStates.setVoteDirection(s: comment, direction: direction)
     }
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]?
     {
+        var toReturn: [BGTableViewRowActionWithImage] = []
         let cell = tableView.cellForRow(at: indexPath) as! CommentDepthCell
         let color = ColorUtil.getColorForSub(sub: (submission?.subreddit)!)
-        let upimg = UIImage.init(named: "upvote")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25))
-        let upvote = BGTableViewRowActionWithImage.rowAction(with: .normal, title: "    ", backgroundColor: UIColor.init(hexString: "#FF9800"), image: upimg, forCellHeight: UInt(cell.contentView.frame.size.height)) { (action, indexPath) in
-            tableView.setEditing(false, animated: true)
-            self.vote(comment: cell.content!, dir: .up)
-            cell.refresh(comment: cell.content! as! Comment, submissionAuthor: (self.submission?.author)!)
+        if(!(submission?.archived)! && AccountController.isLoggedIn){
+            let upimg = UIImage.init(named: "upvote")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25))
+            let upvote = BGTableViewRowActionWithImage.rowAction(with: .normal, title: "    ", backgroundColor: UIColor.init(hexString: "#FF9800"), image: upimg, forCellHeight: UInt(cell.contentView.frame.size.height)) { (action, indexPath) in
+                tableView.setEditing(false, animated: true)
+                self.vote(comment: cell.content!, dir: .up)
+                cell.refresh(comment: cell.content! as! Comment, submissionAuthor: (self.submission?.author)!)
+            }
+            toReturn.append(upvote!)
+            
+            let downimg = UIImage.init(named: "downvote")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25))
+            let downvote = BGTableViewRowActionWithImage.rowAction(with: .normal, title: "    ", backgroundColor: UIColor.init(hexString: "#2196F3"), image: downimg, forCellHeight: UInt(cell.contentView.frame.size.height)) { (action, indexPath) in
+                tableView.setEditing(false, animated: true)
+                self.vote(comment: cell.content!, dir: .down)
+                cell.refresh(comment: cell.content! as! Comment, submissionAuthor: self.link.author)
+            }
+            toReturn.append(downvote!)
+
+            if(!(submission?.locked)!){
+                let rep = UIImage.init(named: "reply")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25))
+                let reply = BGTableViewRowActionWithImage.rowAction(with: .normal, title: "    ", backgroundColor: color, image: rep, forCellHeight: UInt(cell.contentView.frame.size.height)) { (action, indexPath) in
+                    tableView.setEditing(false, animated: true)
+                    var reply  = ReplyViewController.init(thing: cell.content!, sub: (self.submission?.subreddit)!)
+                    reply.popupItem.title = "Reply to /u/\((cell.content as! Comment).author)"
+                    self.presentPopupBar(withContentViewController: reply, animated: true, completion: nil)
+                }
+                toReturn.append(reply!)
+            
         }
-        
-        let downimg = UIImage.init(named: "downvote")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25))
-        let downvote = BGTableViewRowActionWithImage.rowAction(with: .normal, title: "    ", backgroundColor: UIColor.init(hexString: "#2196F3"), image: downimg, forCellHeight: UInt(cell.contentView.frame.size.height)) { (action, indexPath) in
-            tableView.setEditing(false, animated: true)
-            self.vote(comment: cell.content!, dir: .down)
-            cell.refresh(comment: cell.content! as! Comment, submissionAuthor: self.link.author)
-        }
-        
-        let rep = UIImage.init(named: "reply")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25))
-        let reply = BGTableViewRowActionWithImage.rowAction(with: .normal, title: "    ", backgroundColor: color, image: rep, forCellHeight: UInt(cell.contentView.frame.size.height)) { (action, indexPath) in
-            tableView.setEditing(false, animated: true)
-        }
-        
         let mor = UIImage.init(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25))
         let more = BGTableViewRowActionWithImage.rowAction(with: .normal, title: "    ", backgroundColor: color, image: mor, forCellHeight: UInt(cell.contentView.frame.size.height)) { (action, indexPath) in
             tableView.setEditing(false, animated: true)
             cell.more()
         }
         
-        
-        return [more!, reply!, downvote!, upvote!]
+        toReturn.append(more!)
+        }
+        return toReturn
     }
     
+
     
     func unhideNumber(n: Thing, iB: Int) -> Int{
         var i = iB

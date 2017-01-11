@@ -178,6 +178,9 @@ class ContentType {
         }
         
         let url = submission?.url
+        if(url == nil){
+            return .NONE
+        }
         let basicType = getContentType(baseUrl: url!);
         
         if (submission?.isSelf)! {

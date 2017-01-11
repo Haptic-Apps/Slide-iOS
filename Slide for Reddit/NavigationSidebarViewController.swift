@@ -93,7 +93,7 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
         tableView.contentInset = UIEdgeInsetsMake(0, 0, header.getEstHeight(), 0)
 
         searchBar = header.search
-        searchBar?.searchBarStyle = UISearchBarStyle.prominent
+        searchBar?.searchBarStyle = UISearchBarStyle.minimal
         searchBar?.placeholder = " Go to subreddit"
         searchBar?.sizeToFit()
         searchBar?.isTranslucent = true

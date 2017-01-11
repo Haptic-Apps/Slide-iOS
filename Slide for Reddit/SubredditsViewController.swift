@@ -26,6 +26,10 @@ class SubredditsViewController:  ButtonBarPagerTabStripViewController {
         super.viewWillAppear(animated)
         self.navigationController?.navigationBar.shadowImage = UIImage()
         self.navigationController?.navigationBar.barTintColor = self.tintColor
+        if(SubredditReorderViewController.changed){
+            SubredditReorderViewController.changed = false
+            self.restartVC()
+        }
     }
     
     func addAccount(){
@@ -77,16 +81,19 @@ class SubredditsViewController:  ButtonBarPagerTabStripViewController {
     }
     
     func complete(subs: [String]){
-        Subscriptions.set(name: (tempToken?.name)!, subs: subs)
-        alertController?.dismiss(animated: true, completion: nil)
-        restartVC()
+        Subscriptions.set(name: (tempToken?.name)!, subs: subs, completion: {
+            self.alertController?.dismiss(animated: true, completion: nil)
+            self.restartVC()
+        })
     }
     
     func restartVC(){
-        menuLeftNavigationController?.dismiss(animated: true, completion: nil)
-        let controller = SubredditsViewController.init()
-        navigationController?.pushViewController(controller, animated: false)
-        navigationController?.viewControllers  = [controller]
+        menuLeftNavigationController?.dismiss(animated: true, completion: {
+            let controller = SubredditsViewController.init()
+            self.navigationController?.pushViewController(controller, animated: false)
+            self.navigationController?.viewControllers  = [controller]
+            controller.moveToViewController(at: 0)
+        })
     }
     
     func doLogin(token: OAuth2Token?){

@@ -41,27 +41,33 @@ class NavigationHeaderView: UIView {
         
         
         accounts.setTitle("Manage accounts", for: .normal)
-        accounts.setImage(UIImage(named: "add")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
+        accounts.setImage(UIImage(named: "add")?.withRenderingMode(.alwaysTemplate).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
         accounts.contentHorizontalAlignment = .left
         accounts.titleEdgeInsets = UIEdgeInsetsMake(0, 8, 0, 0)
-        
-        
+        accounts.tintColor = ColorUtil.fontColor
+        accounts.setTitleColor(ColorUtil.fontColor, for: .normal)
         
         multis.setTitle("Multireddits", for: .normal)
-        multis.setImage(UIImage(named: "multis")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
+        multis.setImage(UIImage(named: "multis")?.withRenderingMode(.alwaysTemplate).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
         multis.contentHorizontalAlignment = .left
         multis.titleEdgeInsets = UIEdgeInsetsMake(0, 8, 0, 0)
-        
+        multis.tintColor = ColorUtil.fontColor
+        multis.setTitleColor(ColorUtil.fontColor, for: .normal)
+
         profile.setTitle("Go to profile", for: .normal)
-        profile.setImage(UIImage(named: "profile")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
+        profile.setImage(UIImage(named: "profile")?.withRenderingMode(.alwaysTemplate).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
         profile.contentHorizontalAlignment = .left
         profile.titleEdgeInsets = UIEdgeInsetsMake(0, 8, 0, 0)
-        
+        profile.tintColor = ColorUtil.fontColor
+        profile.setTitleColor(ColorUtil.fontColor, for: .normal)
+
         settings.setTitle("Settings", for: .normal)
-        settings.setImage(UIImage(named: "settings")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
+        settings.setImage(UIImage(named: "settings")?.withRenderingMode(.alwaysTemplate).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
         settings.contentHorizontalAlignment = .left
         settings.titleEdgeInsets = UIEdgeInsetsMake(0, 8, 0, 0)
-        
+        settings.tintColor = ColorUtil.fontColor
+        settings.setTitleColor(ColorUtil.fontColor, for: .normal)
+
         let aTap = UITapGestureRecognizer(target: self, action: #selector(self.switchAccounts(_:)))
         accounts.addGestureRecognizer(aTap)
         accounts.isUserInteractionEnabled = true
@@ -70,6 +76,10 @@ class NavigationHeaderView: UIView {
         profile.addGestureRecognizer(pTap)
         profile.isUserInteractionEnabled = true
         
+        let sTap = UITapGestureRecognizer(target: self, action: #selector(self.settings(_:)))
+        settings.addGestureRecognizer(sTap)
+        settings.isUserInteractionEnabled = true
+
         addSubview(logo)
         addSubview(accounts)
         addSubview(multis)
@@ -100,6 +110,9 @@ class NavigationHeaderView: UIView {
         parentController?.present(alert, animated: true, completion: nil)
     }
     
+    func settings(_ sender: AnyObject){
+        self.parentController?.show(SettingsViewController.init(), sender: self.parentController!)
+    }
     func switchAccounts(_ sender: AnyObject){
         let optionMenu = UIAlertController(title: nil, message: "Choose Option", preferredStyle: .actionSheet)
         
@@ -114,8 +127,9 @@ class NavigationHeaderView: UIView {
                         (self.parentController as! NavigationSidebarViewController).parentController?.addAccount()
                     }
                 } else {
-                    Subscriptions.sync(name: s)
-                    (self.parentController as! NavigationSidebarViewController).parentController?.restartVC()
+                    Subscriptions.sync(name: s, completion:{
+                        (self.parentController as! NavigationSidebarViewController).parentController?.restartVC()
+                    })
                 }
             })
             optionMenu.addAction(add)
@@ -126,8 +140,9 @@ class NavigationHeaderView: UIView {
             let guest = UIAlertAction(title: "Guest", style: .default, handler: {
                 (alert: UIAlertAction!) -> Void in
                 AccountController.switchAccount(name: "GUEST")
-                Subscriptions.sync(name: "GUEST")
-                (self.parentController as! NavigationSidebarViewController).parentController?.restartVC()
+                Subscriptions.sync(name: "GUEST", completion: { 
+                    (self.parentController as! NavigationSidebarViewController).parentController?.restartVC()
+                })
             })
             optionMenu.addAction(guest)
             
