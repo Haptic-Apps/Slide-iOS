@@ -18,23 +18,23 @@ class SubSidebarViewController: UIViewController, UITableViewDelegate, UITableVi
     var filteredContent: [String] = []
     var parentController: SubredditLinkViewController?
     
-    init(parentController: SubredditLinkViewController, sub: String, completion: @escaping (Bool) -> Void){
+    init(parentController: SubredditLinkViewController, sub: String, completion: @escaping (Bool, Subreddit?) -> Void){
         self.parentController = parentController
         super.init(nibName: nil, bundle:  nil)
         do {
         try (UIApplication.shared.delegate as! AppDelegate).session?.about(sub, completion: { (result) in
             switch result {
             case .failure:
-                completion(false)
+                completion(false, nil)
             case .success(let r):
                 DispatchQueue.main.async{
                     self.doSubreddit(sub: r)
                 }
-                completion(true)
+                completion(true, r)
             }
         })
         } catch {
-            completion(false)
+            completion(false, nil)
         }
     }
     

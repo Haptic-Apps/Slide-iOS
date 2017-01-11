@@ -402,7 +402,7 @@ public struct Subreddit: SubredditURLPath, Thing {
         userIsModerator = false
         created = 0
         keyColor = ""
-        url = ""
+        url = "/r/\(subreddit)/"
         hideAds = false
         createdUtc = 0
         bannerSize = []

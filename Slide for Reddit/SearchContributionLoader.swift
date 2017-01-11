@@ -37,6 +37,7 @@ class SearchContributionLoader: ContributionLoader {
                 if(reload){
                     paginator = Paginator()
                 }
+                print("Subredd it is \(sub)")
                 try delegate?.session?.getSearch(Subreddit.init(subreddit: sub), query: query, paginator: paginator, sort: .relevance, completion: { (result) in
                     switch result {
                     case .failure:

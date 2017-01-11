@@ -233,9 +233,15 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         
         if(single){
             sideMenu = UISideMenuNavigationController()
-            print("Sub is \(sub)")
-            menuNav = SubSidebarViewController.init(parentController: self, sub: sub, completion: { (success) in
+            menuNav = SubSidebarViewController.init(parentController: self, sub: sub, completion: { (success, subreddit) in
                 if(success){
+                    if(SettingValues.saveHistory){
+                        if(SettingValues.saveNSFWHistory && subreddit!.over18){
+                            Subscriptions.addHistorySub(name: AccountController.currentName, sub: subreddit!.displayName)
+                        } else if(!subreddit!.over18){
+                            Subscriptions.addHistorySub(name: AccountController.currentName, sub: subreddit!.displayName)
+                        }
+                    }
                 self.load(reset: true)
                 } else {
                     let alert = UIAlertController.init(title: "Subreddit not found", message: "/r/\(self.sub) could not be found, is it spelled correctly?", preferredStyle: .alert)
@@ -360,7 +366,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         if(sub != "all" && sub != "frontpage" && sub != "friends"){
             alert.addAction(UIAlertAction(title: "Search \(sub)", style: .default, handler: { [weak alert] (_) in
                 let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
-                let search = SearchViewController.init(subreddit: "all", searchFor: (textField?.text!)!)
+                let search = SearchViewController.init(subreddit: self.sub, searchFor: (textField?.text!)!)
                 self.parentController?.show(search, sender: self.parentController)
             }))
         }
