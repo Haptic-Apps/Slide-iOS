@@ -19,16 +19,6 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>InAppSettingsKit-InAppSettingsKit.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>InAppSettingsKit.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
 		<key>MHVideoPhotoGallery.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -102,27 +92,27 @@
 			<key>primary</key>
 			<true/>
 		</dict>
+		<key>0EE0C3FA64855F5410B25154239C480E</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>2F379F1C8C45C3D5C9A0C24788E5C3A1</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>3844D1C397A144787F94288F732F2BB4</key>
+		<key>4C9BCAD37166E33B341A9777D69DD2F9</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>41F9F337D804EC7B351B46228A5862CE</key>
+		<key>57C44A9AF84C1E3C6A62AA70406677EF</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>48733E84E8329E196CCB52CC700A9F06</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>66B2F52F9CF225E3E39375EFEE86CE5D</key>
+		<key>5EF90DAB4A8D8B7E1A45EBBD06010DAF</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -142,17 +132,7 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>8CB67190F0A60F7A033A3E515965C86F</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
 		<key>9B7BEF22A2D2E5C2E4174836475BC47B</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>B84B69110A327687F2E351864B411FCC</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -162,12 +142,7 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>C62B464D79CF81E0AC4DC4C7B9C374F2</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>CC8848E0FAD3AD293D12B18BB315B296</key>
+		<key>BCE0ED100B2489193FEBCACB0EB3445F</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -177,12 +152,17 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>FA416ED70FC7E091F479F65D981FE8FC</key>
+		<key>D83904E17DBC65E3FFA975A057491530</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
 		<key>FAF236983AEA234037CD1077F7C4B3F7</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>FE064CF11A9CC5CC51A9607C31F6CD5E</key>
 		<dict>
 			<key>primary</key>
 			<true/>

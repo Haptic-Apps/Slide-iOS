@@ -915,7 +915,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                 }
                                 
                                 
-                                print("Queue size is \(queue.count)")
                                 self.comments.remove(at: realPosition)
                                 self.dataArray.remove(at: datasetPosition)
                                 self.contents.remove(at: realPosition)
@@ -926,9 +925,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                     if(more.parentId.hasPrefix("t1")){
                                         var b = self.comments[datasetPosition - 1]
                                         for comment in self.comments {
-                                            if(more.parentId.contains(comment.id)){
+                                            if(more.parentId.contains(comment.id) && comment is Comment){
                                                 b = comment
-                                                print("Found comment")
                                                 break
                                             }
                                         }

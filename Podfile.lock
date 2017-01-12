@@ -4,7 +4,6 @@ PODS:
   - ChameleonFramework (2.1.0):
     - ChameleonFramework/Default (= 2.1.0)
   - ChameleonFramework/Default (2.1.0)
-  - InAppSettingsKit (2.8.1)
   - Masonry (1.0.2)
   - MHVideoPhotoGallery (2.1.3):
     - Masonry
@@ -28,7 +27,6 @@ DEPENDENCIES:
   - AMScrollingNavbar
   - BGTableViewRowActionWithImage
   - ChameleonFramework
-  - InAppSettingsKit
   - MHVideoPhotoGallery (from `https://github.com/ccrama/MHVideoPhotoGallery`)
   - reddift (from `https://github.com/ccrama/reddift`)
   - SDWebImage (~> 3.8)
@@ -60,7 +58,6 @@ SPEC CHECKSUMS:
   AMScrollingNavbar: cf603d4d5f11061d466a0878b9ada136248927b2
   BGTableViewRowActionWithImage: 3517276bcee26e559465bcca13151afc33ab6d2a
   ChameleonFramework: d21a3cc247abfe5e37609a283a8238b03575cf64
-  InAppSettingsKit: 94d2fba3ccd700fc4e32c6d09fabcc0af2426744
   Masonry: 7c429b56da9d4ee0bbb3ed77a5ea710d6a5df39e
   MHVideoPhotoGallery: aa36cdd9b75c6d5a19b48005cddb9b730c2e27e8
   reddift: 3066e687c2a934b0f9aca6ee6e2161abc4c93a56
@@ -71,6 +68,6 @@ SPEC CHECKSUMS:
   XLActionController: 57fe0ce1642e2eed971b188b490762345fdbf963
   XLPagerTabStrip: c46e802a8dcac29edbcea573de8fe920e052455b
 
-PODFILE CHECKSUM: 74e8b4765ce921ec0d4a778b9b834fcf2b6b9d2f
+PODFILE CHECKSUM: 4d769d46787d2dccf595f1cb3724dc8cc5f32656
 
 COCOAPODS: 1.1.1

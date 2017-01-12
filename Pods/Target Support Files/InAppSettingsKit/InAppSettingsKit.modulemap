@@ -1,6 +1,0 @@
-framework module InAppSettingsKit {
-  umbrella header "InAppSettingsKit-umbrella.h"
-
-  export *
-  module * { export * }
-}

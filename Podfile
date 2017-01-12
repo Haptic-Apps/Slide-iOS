@@ -16,7 +16,6 @@ pod "BGTableViewRowActionWithImage"
   pod 'MHVideoPhotoGallery', :git => 'https://github.com/ccrama/MHVideoPhotoGallery’
   pod 'SideMenu'
   pod ‘UZTextView’, :git => ‘https://github.com/sonsongithub/UZTextView'
-pod 'InAppSettingsKit'
 
   target 'Slide for RedditTests' do
     inherit! :search_paths
