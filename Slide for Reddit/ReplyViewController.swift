@@ -32,7 +32,7 @@ class ReplyViewController: UIViewController, UITextViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         text?.becomeFirstResponder()
-
+        EditorToolbar.init(textView:  text!)
     }
     
     func registerKeyboardNotifications() {
@@ -111,9 +111,6 @@ class ReplyViewController: UIViewController, UITextViewDelegate {
         text?.textColor = ColorUtil.fontColor
         text?.delegate = self
         text?.font = UIFont.systemFont(ofSize: 18)
-        EditorToolbar.init(textView:  text!).addToolbarToTextView()
-        
-
     }
     
     func dismiss(_ sender: AnyObject) {

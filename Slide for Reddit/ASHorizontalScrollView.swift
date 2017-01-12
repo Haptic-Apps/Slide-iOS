@@ -1,22 +1,22 @@
 /* ---------------------------------------------------------
-* ASHorizontalScrollView.swift
-* The MIT License (MIT)
-* Copyright (C) 2014-2016 WEIWEI CHEN
-* ---------------------------------------------------------
-*  History
-*  Created by WEIWEI CHEN on 14-6-8.
-*  Edit by WEIWEI CHEN 14-9-21: fix problems to work on xcode 6.0.1
-*  Edit by WEIWEI CHEN 15-12-09: change to adapt Swift 2.1, add comments on functions, remove scale when calculating margin, it seems that the behaviour in iOS 9 change the way of align views
-*  Edit by WEIWEI CHEN 16-05-17: change C style code to swift 3 format, fix removeItemAtIndex last index crash bug
-*  Edit by WEIWEI CHEN 16-09-15: Change to adapt Swift 3 with Xcode 8, add support to nib, just change the class on nib file to ASHorizontalScrollView
-*  Edit by WEIWEI CHEN 16-12-02: When current item scroll to more than specified width, auto scroll to next item (mimic App Store behaviour which is about 1/3); add support to all apple screen sizes, now you can specified different mini margin, mini appear width and left margin for all sorts of screen sizes.
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-* -------------------------------------------------------*/
+ * ASHorizontalScrollView.swift
+ * The MIT License (MIT)
+ * Copyright (C) 2014-2016 WEIWEI CHEN
+ * ---------------------------------------------------------
+ *  History
+ *  Created by WEIWEI CHEN on 14-6-8.
+ *  Edit by WEIWEI CHEN 14-9-21: fix problems to work on xcode 6.0.1
+ *  Edit by WEIWEI CHEN 15-12-09: change to adapt Swift 2.1, add comments on functions, remove scale when calculating margin, it seems that the behaviour in iOS 9 change the way of align views
+ *  Edit by WEIWEI CHEN 16-05-17: change C style code to swift 3 format, fix removeItemAtIndex last index crash bug
+ *  Edit by WEIWEI CHEN 16-09-15: Change to adapt Swift 3 with Xcode 8, add support to nib, just change the class on nib file to ASHorizontalScrollView
+ *  Edit by WEIWEI CHEN 16-12-02: When current item scroll to more than specified width, auto scroll to next item (mimic App Store behaviour which is about 1/3); add support to all apple screen sizes, now you can specified different mini margin, mini appear width and left margin for all sorts of screen sizes.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * -------------------------------------------------------*/
 
 import UIKit
 
@@ -200,6 +200,7 @@ open class ASHorizontalScrollView: UIScrollView, UIScrollViewDelegate {
         //setup new item size and origin
         if (self.items.count>0) {
             let lastItemRect:CGRect = self.items[self.items.count-1].frame;
+            print("Width is \(self.uniformItemSize.width), x is \(lastItemRect.origin.x + self.uniformItemSize.width + self.itemsMargin)")
             item.frame = CGRect(x: lastItemRect.origin.x + self.uniformItemSize.width + self.itemsMargin, y: itemY, width: self.uniformItemSize.width, height: self.uniformItemSize.height)
         }
         else {

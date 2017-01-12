@@ -112,7 +112,7 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         author.numberOfLines = 1
         author.font = UIFont.boldSystemFont(ofSize: 12)
         author.textColor = ColorUtil.fontColor
-
+        
         self.children = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 15))
         children.numberOfLines = 1
         children.font = UIFont.boldSystemFont(ofSize: 12)
@@ -131,7 +131,7 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         self.sideViewSpace = UIView(frame: CGRect(x: 0, y: 0, width: 4, height: CGFloat.greatestFiniteMagnitude))
         self.topViewSpace = UIView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 4))
         self.rightSideViewSpace = UIView(frame: CGRect(x: 0, y: 0, width: 4, height: CGFloat.greatestFiniteMagnitude))
-
+        
         self.c = children.withPadding(padding: padding)
         c.alpha = 0
         c.backgroundColor = ColorUtil.accentColorForSub(sub: "")
@@ -141,7 +141,7 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         self.a = author.withPadding(padding: padding)
         a.layer.cornerRadius = 4
         a.clipsToBounds = true
-
+        
         
         moreButton.translatesAutoresizingMaskIntoConstraints = false
         textView.translatesAutoresizingMaskIntoConstraints = false
@@ -155,7 +155,7 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         author.translatesAutoresizingMaskIntoConstraints = false
         a.translatesAutoresizingMaskIntoConstraints = false
         rightSideViewSpace.translatesAutoresizingMaskIntoConstraints = false
-
+        
         self.contentView.addSubview(textView)
         self.contentView.addSubview(moreButton)
         self.contentView.addSubview(sideView)
@@ -166,7 +166,7 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         self.contentView.addSubview(c)
         self.contentView.addSubview(a)
         self.contentView.addSubview(rightSideViewSpace)
-
+        
         moreButton.addTarget(self, action: #selector(CommentDepthCell.pushedMoreButton(_:)), for: UIControlEvents.touchUpInside)
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(self.pushedSingleTap(_:)))
@@ -264,7 +264,7 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                                     metrics: metrics,
                                                                     views: views))
-
+        
         
         constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-2-[more]-2-|",
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
@@ -292,7 +292,7 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                                     metrics: metrics,
                                                                     views: views))
-
+        
         
         self.contentView.addConstraints(constraint)
         updateDepthConstraints()
@@ -328,7 +328,10 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         
         title.text = ""
         author.text = ""
-        textView.attributedString = NSAttributedString.init(string: "Load \(more.count) more")
+        let attr = NSMutableAttributedString(string: "Load \(more.count) more")
+        let font = UIFont(name: ".SFUIText-Light", size: 16) ?? UIFont.systemFont(ofSize: 16)
+        let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: .white)
+        textView.attributedString = attr2
         updateDepthConstraints()
     }
     
@@ -348,12 +351,12 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         
         alertController.addAction(profile)
         if(AccountController.isLoggedIn){
-
-        let save: UIAlertAction = UIAlertAction(title: "Save", style: .default) { action -> Void in
-            //todo save
-        }
-        
-        alertController.addAction(save)
+            
+            let save: UIAlertAction = UIAlertAction(title: "Save", style: .default) { action -> Void in
+                //todo save
+            }
+            
+            alertController.addAction(save)
         }
         
         let report: UIAlertAction = UIAlertAction(title: "Report", style: .default) { action -> Void in
@@ -459,7 +462,7 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
             author.textColor = ColorUtil.fontColor
             a.backgroundColor = .clear
         }
-
+        
         let infoString = NSMutableAttributedString()
         infoString.append(NSAttributedString(string:"  •  ", attributes: [:]))
         infoString.append(scoreString)

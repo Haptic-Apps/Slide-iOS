@@ -14,7 +14,7 @@ This class has children, paginator and more.
 */
 public struct Listing {
 	/// elements of the list
-	public let children: [Thing]
+	public var children: [Thing]
 	/// paginator of the list
     public let paginator: Paginator
     

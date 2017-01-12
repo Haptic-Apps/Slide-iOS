@@ -1,6 +1,0 @@
-framework module ASHorizontalScrollView {
-  umbrella header "ASHorizontalScrollView-umbrella.h"
-
-  export *
-  module * { export * }
-}

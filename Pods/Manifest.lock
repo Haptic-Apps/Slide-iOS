@@ -1,6 +1,5 @@
 PODS:
   - AMScrollingNavbar (3.2.0)
-  - ASHorizontalScrollView (1.4)
   - BGTableViewRowActionWithImage (0.3.6)
   - ChameleonFramework (2.1.0):
     - ChameleonFramework/Default (= 2.1.0)
@@ -27,7 +26,6 @@ PODS:
 
 DEPENDENCIES:
   - AMScrollingNavbar
-  - ASHorizontalScrollView (~> 1.4)
   - BGTableViewRowActionWithImage
   - ChameleonFramework
   - InAppSettingsKit
@@ -52,7 +50,7 @@ CHECKOUT OPTIONS:
     :commit: caab179b68bf02ee0b0f703489d2653037d4e454
     :git: https://github.com/ccrama/MHVideoPhotoGallery
   reddift:
-    :commit: 3f601a0165192acaabc3526277f238f09d986a49
+    :commit: 7e60d6da26fca9462996d50a6ed6b96fc0eaa5a2
     :git: https://github.com/ccrama/reddift
   UZTextView:
     :commit: 94021870e65000cf332cb1f2ec70525b05c6ab16
@@ -60,7 +58,6 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   AMScrollingNavbar: cf603d4d5f11061d466a0878b9ada136248927b2
-  ASHorizontalScrollView: de6f765f0fa5c9677af7d0211e55bcecf8df44b1
   BGTableViewRowActionWithImage: 3517276bcee26e559465bcca13151afc33ab6d2a
   ChameleonFramework: d21a3cc247abfe5e37609a283a8238b03575cf64
   InAppSettingsKit: 94d2fba3ccd700fc4e32c6d09fabcc0af2426744
@@ -74,6 +71,6 @@ SPEC CHECKSUMS:
   XLActionController: 57fe0ce1642e2eed971b188b490762345fdbf963
   XLPagerTabStrip: c46e802a8dcac29edbcea573de8fe920e052455b
 
-PODFILE CHECKSUM: 4cdb5d5d7ad8cfc9db4ec1b29b1ad91c861748ff
+PODFILE CHECKSUM: 74e8b4765ce921ec0d4a778b9b834fcf2b6b9d2f
 
 COCOAPODS: 1.1.1

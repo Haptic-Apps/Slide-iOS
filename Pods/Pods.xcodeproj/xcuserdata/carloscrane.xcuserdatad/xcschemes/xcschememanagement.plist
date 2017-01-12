@@ -9,11 +9,6 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>ASHorizontalScrollView.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
 		<key>BGTableViewRowActionWithImage.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -102,11 +97,6 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>056EDBB14C49FC6612290FB7689C6FB6</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
 		<key>09B5DAF0C3821D16B6562A7539713543</key>
 		<dict>
 			<key>primary</key>
@@ -117,22 +107,27 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>34D1004DE1C69E0324C381A2D32205C2</key>
+		<key>3844D1C397A144787F94288F732F2BB4</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>4CAD6AD84FAE24AE4744D553E25E9E93</key>
+		<key>41F9F337D804EC7B351B46228A5862CE</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>48733E84E8329E196CCB52CC700A9F06</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>66B2F52F9CF225E3E39375EFEE86CE5D</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
 		<key>6F983DF4CA4AE96FC7D664DC5BB622A8</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>707F6A65C72671E32C026CACE8B0C44A</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -152,22 +147,12 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>8EB408D2FF6B3F05DDD552FF947D8D0F</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
 		<key>9B7BEF22A2D2E5C2E4174836475BC47B</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>9DFB12D50FC80638F58549DC3D47A908</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>A93F03790D2269A26BE8CE9841D1F0B0</key>
+		<key>B84B69110A327687F2E351864B411FCC</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -177,12 +162,17 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>D52144DE9D7255DE912490FF5A806573</key>
+		<key>C62B464D79CF81E0AC4DC4C7B9C374F2</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>D557351665A3A5C648B68662DEE0469F</key>
+		<key>CC8848E0FAD3AD293D12B18BB315B296</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>D52144DE9D7255DE912490FF5A806573</key>
 		<dict>
 			<key>primary</key>
 			<true/>

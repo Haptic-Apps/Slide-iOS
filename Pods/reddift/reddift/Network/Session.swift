@@ -37,10 +37,10 @@ public class Session: NSObject, URLSessionDelegate, URLSessionDataDelegate {
     var rateLimitRemainingCount: Double = 0
     
     /// OAuth endpoint URL
-    static let OAuthEndpointURL = "https://oauth.reddit.com/"
+    static let OAuthEndpointURL = "https://oauth.reddit.com"
     
     /// Public endpoint URL
-    static let publicEndpointURL = "https://www.reddit.com/"
+    static let publicEndpointURL = "https://www.reddit.com"
     
     /**
     Initialize session object with OAuth token.

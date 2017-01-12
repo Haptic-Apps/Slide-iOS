@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import ASHorizontalScrollView
 
 class EditorToolbar {
     var textView: UITextView
@@ -19,14 +18,11 @@ class EditorToolbar {
     
     func addToolbarToTextView(){
         let horizontalScrollView = ASHorizontalScrollView(frame: CGRect.init(x: 0, y: 0, width: textView.frame.size.width, height: 50))
-        horizontalScrollView.marginSettings_320 = MarginSettings(leftMargin: 10, miniMarginBetweenItems: 5, miniAppearWidthOfLastItem: 20)
-        horizontalScrollView.marginSettings_414 = MarginSettings(leftMargin: 10, miniMarginBetweenItems: 5, miniAppearWidthOfLastItem: 20)
-        horizontalScrollView.marginSettings_736 = MarginSettings(leftMargin: 10, miniMarginBetweenItems: 10, miniAppearWidthOfLastItem: 30)
-        horizontalScrollView.defaultMarginSettings = MarginSettings(leftMargin: 10, miniMarginBetweenItems: 10, miniAppearWidthOfLastItem: 10)
-        horizontalScrollView.uniformItemSize = CGSizeMake(50, 50)
+        horizontalScrollView.uniformItemSize = CGSize(width: 50, height: 50)
         horizontalScrollView.setItemsMarginOnce()
+        horizontalScrollView.isUserInteractionEnabled = true
         horizontalScrollView.backgroundColor = ColorUtil.backgroundColor
-        for s in  [
+        horizontalScrollView.addItems([
             generateButtons(image: "save", action: #selector(self.saveDraft(_:))),
             generateButtons(image: "folder", action: #selector(self.openDrafts(_:))),
             generateButtons(image: "image", action: #selector(self.uploadImage(_:))),
@@ -37,17 +33,15 @@ class EditorToolbar {
             generateButtons(image: "list", action: #selector(self.list(_:))),
             generateButtons(image: "list_numbered", action: #selector(self.numberedList(_:))),
             generateButtons(image: "size", action: #selector(self.size(_:))),
-            generateButtons(image: "strikethrough", action: #selector(self.strike(_:)))] {
-                horizontalScrollView.addItem(s)
-        }
+            generateButtons(image: "strikethrough", action: #selector(self.strike(_:)))])
+        horizontalScrollView.contentSize = CGSize.init(width: 11 * 30, height: 50)
         textView.inputAccessoryView = horizontalScrollView
     }
     
     func generateButtons(image: String, action: Selector) -> UIButton {
-        let more = UIButton.init(type: .custom)
+        let more = UIButton.init(frame: CGRect.zero)
         more.setImage(UIImage.init(named: image)?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
         more.addTarget(self, action: action, for: UIControlEvents.touchUpInside)
-        more.frame = CGRect.init(x: 0, y: 0, width: 50, height: 50)
         return more
     }
     
