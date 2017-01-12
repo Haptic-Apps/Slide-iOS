@@ -15,9 +15,6 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     var webView: WKWebView = WKWebView()
     var myProgressView: UIProgressView = UIProgressView()
     
-    var theBool: Bool = false
-    var myTimer: Timer = Timer()
-
     init(url: URL, subreddit: String){
         self.url = url
         super.init(nibName: nil, bundle: nil)
@@ -28,6 +25,9 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        webView.removeObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress))
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,7 +41,8 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         myProgressView = UIProgressView(frame: CGRect(x:0, y:webView.frame.origin.y, width: UIScreen.main.bounds.width, height:10))
 
         self.view.addSubview(myProgressView)
-        
+        webView.addObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), options: .new, context: nil)
+
         loadUrl()
         if let navigationController = self.navigationController as? ScrollingNavigationController {
             navigationController.followScrollView(self.webView, delay: 50.0)
@@ -49,14 +50,20 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
 
     }
     
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == "estimatedProgress" {
+            myProgressView.progress = Float(webView.estimatedProgress)
+        }
+    }
+
+    
     func loadUrl(){
         let myURLRequest:URLRequest = URLRequest(url: url!)
         webView.load(myURLRequest)
     }
     
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        self.theBool = true
-        self.title = webView.stringByEvaluatingJavaScriptFromString(script: "document.title");
+        self.title = webView.stringByEvaluatingJavaScriptFromString(script: "document.title")
         UIApplication.shared.isNetworkActivityIndicatorVisible = false
 
     }
@@ -96,29 +103,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     
     func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
-        self.myProgressView.progress = 0.0
-        self.theBool = false
-        self.myTimer = Timer.scheduledTimer(timeInterval: 0.01667, target: self, selector: #selector(WebsiteViewController.timerCallback(_:)), userInfo: nil, repeats: true)
     }
-    
-
-    func timerCallback(_ sender: AnyObject) {
-        if self.theBool {
-            if self.myProgressView.progress >= 1 {
-                self.myProgressView.isHidden = true
-                self.myTimer.invalidate()
-            } else {
-                self.myProgressView.progress += 0.1
-            }
-        } else {
-            self.myProgressView.progress += 0.05
-            if self.myProgressView.progress >= 0.95 {
-                self.myProgressView.progress = 0.95
-            }
-        }
-    }
-
-
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

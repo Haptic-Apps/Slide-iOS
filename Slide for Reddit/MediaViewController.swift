@@ -211,8 +211,7 @@ class MediaViewController: UIViewController, MHGalleryDataSource {
     
     
     var contentUrl:URL?
-    
-    
+
     public func shouldTruncate(url: URL) -> Bool {
         let path = url.path
         return !ContentType.isGif(uri: url) && !ContentType.isImage(uri: url) && path.contains(".");

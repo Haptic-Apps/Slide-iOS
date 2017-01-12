@@ -212,7 +212,7 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
     }
     
     func getEstHeight()-> CGFloat{
-        return CGFloat(60) + (contentInfo!.textHeight ?? 0)  + (20*9)
+        return CGFloat(60) + ((contentInfo == nil) ? 0 : (contentInfo!.textHeight)) + (20*9)
     }
     
     func textView(_ textView: UZTextView, didLongTapLinkAttribute value: Any?) {

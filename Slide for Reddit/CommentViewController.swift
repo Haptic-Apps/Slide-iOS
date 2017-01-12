@@ -726,7 +726,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         } catch { print(error) }
         ActionStates.setVoteDirection(s: comment, direction: direction)
     }
-    
+    let overlayTransitioningDelegate = OverlayTransitioningDelegate()
+
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]?
     {
         var toReturn: [BGTableViewRowActionWithImage] = []
@@ -753,25 +754,30 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 let rep = UIImage.init(named: "reply")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25))
                 let reply = BGTableViewRowActionWithImage.rowAction(with: .normal, title: "    ", backgroundColor: color, image: rep, forCellHeight: UInt(cell.contentView.frame.size.height)) { (action, indexPath) in
                     tableView.setEditing(false, animated: true)
-                    var reply  = ReplyViewController.init(thing: cell.content!, sub: (self.submission?.subreddit)!)
-                    reply.popupItem.title = "Reply to /u/\((cell.content as! Comment).author)"
-                    self.presentPopupBar(withContentViewController: reply, animated: true, completion: nil)
+                    let reply  = ReplyViewController.init(thing: cell.content!, sub: (self.submission?.subreddit)!)
+                    let navEditorViewController: UINavigationController = UINavigationController(rootViewController: reply)
+                    self.prepareOverlayVC(overlayVC: navEditorViewController)
+                    self.present(navEditorViewController, animated: true, completion: nil)
+
                 }
                 toReturn.append(reply!)
             
+            }
         }
         let mor = UIImage.init(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25))
         let more = BGTableViewRowActionWithImage.rowAction(with: .normal, title: "    ", backgroundColor: color, image: mor, forCellHeight: UInt(cell.contentView.frame.size.height)) { (action, indexPath) in
             tableView.setEditing(false, animated: true)
             cell.more()
         }
-        
         toReturn.append(more!)
-        }
+        
         return toReturn
     }
     
-
+    private func prepareOverlayVC(overlayVC: UIViewController) {
+        overlayVC.transitioningDelegate = overlayTransitioningDelegate
+        overlayVC.modalPresentationStyle = .custom
+    }
     
     func unhideNumber(n: Thing, iB: Int) -> Int{
         var i = iB

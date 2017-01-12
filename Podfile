@@ -17,6 +17,7 @@ pod "BGTableViewRowActionWithImage"
   pod 'SideMenu'
   pod ‘UZTextView’, :git => ‘https://github.com/sonsongithub/UZTextView'
 pod 'InAppSettingsKit'
+pod 'ASHorizontalScrollView', '~> 1.4'
 
   target 'Slide for RedditTests' do
     inherit! :search_paths

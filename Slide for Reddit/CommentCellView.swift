@@ -262,12 +262,14 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
     }
     
     var registered: Bool = false
+    var currentLink: URL?
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing,
                            viewControllerForLocation location: CGPoint) -> UIViewController? {
             let locationInTextView = textView.convert(location, to: textView)
             
             if let (url, rect) = getInfo(locationInTextView: locationInTextView) {
+                currentLink = url
                 previewingContext.sourceRect = textView.convert(rect, from: textView)
                 if let controller = parentViewController?.getControllerForUrl(url: url){
                     return controller
@@ -275,6 +277,26 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
             }
         
         return nil
+    }
+    
+    var previewActionItems: [UIPreviewActionItem] {
+        
+        var toReturn: [UIPreviewAction] = []
+        
+        let likeAction = UIPreviewAction(title: "Share", style: .default) { (action, viewController) -> Void in
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [self.currentLink ?? ""], applicationActivities: nil);
+            let currentViewController:UIViewController = UIApplication.shared.keyWindow!.rootViewController!
+            currentViewController.present(activityViewController, animated: true, completion: nil);
+        }
+        toReturn.append(likeAction)
+        
+        let deleteAction = UIPreviewAction(title: "Open in Safari", style: .default) { (action, viewController) -> Void in
+            UIApplication.shared.open((self.currentLink)!, options: [:], completionHandler: nil)
+        }
+        toReturn.append(deleteAction)
+        
+        return toReturn
+        
     }
     
     func getInfo(locationInTextView: CGPoint) -> (URL, CGRect)? {

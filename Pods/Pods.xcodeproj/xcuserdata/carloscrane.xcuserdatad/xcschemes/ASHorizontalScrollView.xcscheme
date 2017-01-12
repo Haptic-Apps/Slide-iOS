@@ -14,10 +14,10 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '707F6A65C72671E32C026CACE8B0C44A'
-               BlueprintName = 'XLPagerTabStrip'
+               BlueprintIdentifier = '4CAD6AD84FAE24AE4744D553E25E9E93'
+               BlueprintName = 'ASHorizontalScrollView'
                ReferencedContainer = 'container:Pods.xcodeproj'
-               BuildableName = 'XLPagerTabStrip.framework'>
+               BuildableName = 'ASHorizontalScrollView.framework'>
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

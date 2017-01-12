@@ -9,8 +9,11 @@
 /* Begin PBXBuildFile section */
 		2097F94228BB31C58ECC96F9 /* Pods_Slide_for_RedditUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C29CF7355B69CCB84BE2FD6B /* Pods_Slide_for_RedditUITests.framework */; };
 		22FE497D2AAA9FDCC43D8B39 /* Pods_Slide_for_RedditTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE1DDF77D2F040B83CE26E0F /* Pods_Slide_for_RedditTests.framework */; };
+		BE0E8BC01E26E91E004B56B1 /* BouncyViewControllerAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0E8BBF1E26E91E004B56B1 /* BouncyViewControllerAnimator.swift */; };
 		BE1DA3961E26AD5700EC0A04 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1DA3951E26AD5700EC0A04 /* SearchViewController.swift */; };
 		BE1DA3981E26ADEA00EC0A04 /* SearchContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1DA3971E26ADEA00EC0A04 /* SearchContributionLoader.swift */; };
+		BE1DA39C1E26E86800EC0A04 /* OverlayTransitioningDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1DA39B1E26E86800EC0A04 /* OverlayTransitioningDelegate.swift */; };
+		BE1DA39E1E26E89800EC0A04 /* OverlayPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1DA39D1E26E89800EC0A04 /* OverlayPresentationController.swift */; };
 		BE2B89EF1E2444D20053D493 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = BE2B89EE1E2444D20053D493 /* Settings.bundle */; };
 		BE2B89F31E2450D70053D493 /* ColorPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2B89F21E2450D70053D493 /* ColorPicker.swift */; };
 		BE2B89F61E246CA60053D493 /* GMColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2B89F41E246CA60053D493 /* GMColor.swift */; };
@@ -119,8 +122,11 @@
 		AE788255F3A312FF233A5FEC /* Pods-Slide for RedditTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for RedditTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Slide for RedditTests/Pods-Slide for RedditTests.debug.xcconfig"; sourceTree = "<group>"; };
 		B596ABEF970425FC2114FFB2 /* Pods-Slide for RedditTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for RedditTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Slide for RedditTests/Pods-Slide for RedditTests.release.xcconfig"; sourceTree = "<group>"; };
 		BA9177B1039FF29FE7BFC503 /* Pods-Slide for RedditUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for RedditUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Slide for RedditUITests/Pods-Slide for RedditUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		BE0E8BBF1E26E91E004B56B1 /* BouncyViewControllerAnimator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BouncyViewControllerAnimator.swift; sourceTree = "<group>"; };
 		BE1DA3951E26AD5700EC0A04 /* SearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		BE1DA3971E26ADEA00EC0A04 /* SearchContributionLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchContributionLoader.swift; sourceTree = "<group>"; };
+		BE1DA39B1E26E86800EC0A04 /* OverlayTransitioningDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OverlayTransitioningDelegate.swift; sourceTree = "<group>"; };
+		BE1DA39D1E26E89800EC0A04 /* OverlayPresentationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OverlayPresentationController.swift; sourceTree = "<group>"; };
 		BE2B89EE1E2444D20053D493 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		BE2B89F21E2450D70053D493 /* ColorPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorPicker.swift; sourceTree = "<group>"; };
 		BE2B89F41E246CA60053D493 /* GMColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GMColor.swift; sourceTree = "<group>"; };
@@ -241,6 +247,29 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		BE1DA3991E26D52500EC0A04 /* ContentViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				BEDDA9901E19AB5D003CD6C3 /* WebsiteViewController.swift */,
+				BEE5BF831E14836E00E3C9AE /* MediaViewController.swift */,
+				BEF6F5391E1AF10E002B03B6 /* AlbumMWPhotoBrowser.swift */,
+				BE6EA6BE1E1C1A3400E9E709 /* GifMWPhotoBrowser.swift */,
+				BE5E53741E1DAEB7004FE226 /* RedditLink.swift */,
+				BE5E53761E1EDAE5004FE226 /* ThemedGalleryViewController.swift */,
+			);
+			name = ContentViewControllers;
+			sourceTree = "<group>";
+		};
+		BE1DA39A1E26E85500EC0A04 /* Overlay */ = {
+			isa = PBXGroup;
+			children = (
+				BE1DA39B1E26E86800EC0A04 /* OverlayTransitioningDelegate.swift */,
+				BE1DA39D1E26E89800EC0A04 /* OverlayPresentationController.swift */,
+				BE0E8BBF1E26E91E004B56B1 /* BouncyViewControllerAnimator.swift */,
+			);
+			name = Overlay;
+			sourceTree = "<group>";
+		};
 		BE2DEAAC1E26828B00FBF0B5 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
@@ -337,6 +366,8 @@
 		BE8FCA061E0C46090063B8EF /* Slide for Reddit */ = {
 			isa = PBXGroup;
 			children = (
+				BE1DA39A1E26E85500EC0A04 /* Overlay */,
+				BE1DA3991E26D52500EC0A04 /* ContentViewControllers */,
 				BE2DEAAC1E26828B00FBF0B5 /* Settings */,
 				BE6EA6DE1E1C227400E9E709 /* GfycatTranscoded */,
 				BE6EA6DB1E1C210200E9E709 /* GfycatCheck */,
@@ -365,19 +396,13 @@
 				BE3E5C201E18227500749C0C /* CommentDepthCell.swift */,
 				BE2B89F41E246CA60053D493 /* GMColor.swift */,
 				BE2B89F51E246CA60053D493 /* GMPalette.swift */,
-				BEDDA9901E19AB5D003CD6C3 /* WebsiteViewController.swift */,
 				BEDDA9921E19AEF2003CD6C3 /* AdDictionary.swift */,
 				BEF6F5351E19B4A2002B03B6 /* adsources.txt */,
 				BEF6F5381E19BE9E002B03B6 /* UZTextView.h */,
-				BEE5BF831E14836E00E3C9AE /* MediaViewController.swift */,
-				BEF6F5391E1AF10E002B03B6 /* AlbumMWPhotoBrowser.swift */,
-				BE6EA6BE1E1C1A3400E9E709 /* GifMWPhotoBrowser.swift */,
 				BE6EA6E11E1DA1A300E9E709 /* ContributionLoader.swift */,
 				BE6EA6E31E1DA24700E9E709 /* ContentListingViewController.swift */,
 				BE6EA6E51E1DA5CE00E9E709 /* ProfileContributionLoader.swift */,
 				BE6EA6E71E1DA86100E9E709 /* ProfileViewController.swift */,
-				BE5E53741E1DAEB7004FE226 /* RedditLink.swift */,
-				BE5E53761E1EDAE5004FE226 /* ThemedGalleryViewController.swift */,
 				BE7439EA1E201BB0008BB63B /* NavigationSidebarViewController.swift */,
 				BE7439EC1E201C22008BB63B /* SubredditCellView.swift */,
 				BE7439F01E203D05008BB63B /* NavigationHeaderView.swift */,
@@ -722,6 +747,7 @@
 				BE2B89F91E2533990053D493 /* EditorToolbar.swift in Sources */,
 				BE6EA6BF1E1C1A3400E9E709 /* GifMWPhotoBrowser.swift in Sources */,
 				BE6EA6E41E1DA24700E9E709 /* ContentListingViewController.swift in Sources */,
+				BE0E8BC01E26E91E004B56B1 /* BouncyViewControllerAnimator.swift in Sources */,
 				BE3E5C0C1E160D7000749C0C /* ColorUtil.swift in Sources */,
 				BE6EA6CC1E1C1E9400E9E709 /* StremableMp4Mobile.swift in Sources */,
 				BE6EA6C31E1C1DCE00E9E709 /* GfyItem.swift in Sources */,
@@ -747,6 +773,7 @@
 				BE6EA6CD1E1C1E9400E9E709 /* StremableMp4.swift in Sources */,
 				BE3E5C1D1E177B2C00749C0C /* CommentViewController.swift in Sources */,
 				BE7439EB1E201BB0008BB63B /* NavigationSidebarViewController.swift in Sources */,
+				BE1DA39E1E26E89800EC0A04 /* OverlayPresentationController.swift in Sources */,
 				BE7439ED1E201C22008BB63B /* SubredditCellView.swift in Sources */,
 				BE3E5C211E18227500749C0C /* CommentDepthCell.swift in Sources */,
 				BE1DA3961E26AD5700EC0A04 /* SearchViewController.swift in Sources */,
@@ -759,6 +786,7 @@
 				BE7439E91E201AEE008BB63B /* Subscriptions.swift in Sources */,
 				BE2B89F71E246CA60053D493 /* GMPalette.swift in Sources */,
 				BE3E5C1F1E18223600749C0C /* CellContent.swift in Sources */,
+				BE1DA39C1E26E86800EC0A04 /* OverlayTransitioningDelegate.swift in Sources */,
 				BE3E5C151E16BA2200749C0C /* AlbumJSONBase.swift in Sources */,
 				BEE5BF841E14836E00E3C9AE /* MediaViewController.swift in Sources */,
 				BE2B89FB1E253D610053D493 /* ReplyViewController.swift in Sources */,

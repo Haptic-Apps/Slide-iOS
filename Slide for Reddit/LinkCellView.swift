@@ -27,7 +27,7 @@ protocol LinkCellViewDelegate: class {
 }
 
 class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextViewDelegate {
-
+    
     func upvote(sender: UITapGestureRecognizer? = nil) {
         if let delegate = self.delegate {
             delegate.upvote(self)
@@ -48,7 +48,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             delegate.save(self)
         }
     }
-
+    
     
     var bannerImage = UIImageView()
     var thumbImage = UIImageView()
@@ -64,7 +64,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     var downvote = UIImageView()
     var more = UIImageView()
     var delegate: LinkCellViewDelegate? = nil
-
+    
     func textView(_ textView: UZTextView, didLongTapLinkAttribute value: Any?) {
         if let attr = value as? [String: Any]{
             if let url = attr[NSLinkAttributeName] as? URL {
@@ -120,7 +120,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     
     func didTapTextDoesNotIncludeLinkTextView(_ textView: UZTextView) {
     }
-
+    
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         
         let pointForTargetViewmore: CGPoint = more.convert(point, from: self)
@@ -131,7 +131,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         if downvote.bounds.contains(pointForTargetViewdownvote) {
             return downvote
         }
-
+        
         let pointForTargetViewupvote: CGPoint = upvote.convert(point, from: self)
         if upvote.bounds.contains(pointForTargetViewupvote) {
             return upvote
@@ -140,29 +140,29 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         if save.bounds.contains(pointForTargetViewsave) {
             return save
         }
-
-
+        
+        
         return super.hitTest(point, with: event)
     }
-
+    
     var content: CellContent?
     var hasText = false
     func showBody(width: CGFloat){
         full = true
         let color = ColorUtil.accentColorForSub(sub: ((link)?.subreddit)!)
         if(link?.selftextHtml != nil){
-        let html = link?.selftextHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
-        do {
-            let attr = try NSMutableAttributedString(data: (html?.data(using: .unicode)!)!, options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
-            let font = UIFont(name: ".SFUIText-Light", size: 16) ?? UIFont.systemFont(ofSize: 16)
-            let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
-            content = CellContent.init(string:attr2, width:(width - 24 - (thumb ? 75 : 0)))
-            textView.attributedString = content?.attributedString
-            textView.frame.size.height = (content?.textHeight)!
-            hasText = true
-        } catch {
-        }
-        parentViewController?.registerForPreviewing(with: self, sourceView: textView)
+            let html = link?.selftextHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
+            do {
+                let attr = try NSMutableAttributedString(data: (html?.data(using: .unicode)!)!, options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
+                let font = UIFont(name: ".SFUIText-Light", size: 16) ?? UIFont.systemFont(ofSize: 16)
+                let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
+                content = CellContent.init(string:attr2, width:(width - 24 - (thumb ? 75 : 0)))
+                textView.attributedString = content?.attributedString
+                textView.frame.size.height = (content?.textHeight)!
+                hasText = true
+            } catch {
+            }
+            parentViewController?.registerForPreviewing(with: self, sourceView: textView)
         }
     }
     
@@ -172,7 +172,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     func estimateHeight() ->CGFloat {
         if(estimatedHeight == 0){
             title.sizeToFit()
-        let he = title.frame.size.height
+            let he = title.frame.size.height
             print("Height is \(he)")
             estimatedHeight = CGFloat((he < 75 && thumb || he < 75 && !big) ? 75 : he) + CGFloat(66) + CGFloat(!hasText ? 0 : (content?.textHeight)!) +  CGFloat(big ? height + 40 : 0)
         }
@@ -203,15 +203,15 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         self.save = UIImageView(frame: CGRect(x: 0, y:0, width: 20, height: 20))
         save.image = UIImage.init(named: "save")?.withRenderingMode(.alwaysTemplate)
         save.tintColor = ColorUtil.fontColor
-
+        
         self.downvote = UIImageView(frame: CGRect(x: 0, y:0, width: 20, height: 20))
         downvote.image = UIImage.init(named: "downvote")?.withRenderingMode(.alwaysTemplate)
         downvote.tintColor = ColorUtil.fontColor
-
+        
         self.more = UIImageView(frame: CGRect(x: 0, y:0, width: 20, height: 20))
         more.image = UIImage.init(named: "ic_more_vert_white")?.withRenderingMode(.alwaysTemplate)
         more.tintColor = ColorUtil.fontColor
-
+        
         
         self.textView = UZTextView(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
         self.textView.delegate = self
@@ -223,7 +223,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         score.font = UIFont.systemFont(ofSize: 12)
         score.textColor = ColorUtil.fontColor
         score.alpha = 0.87
-
+        
         self.comments = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
         comments.numberOfLines = 1
         comments.font = UIFont.systemFont(ofSize: 12)
@@ -238,7 +238,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         
         self.box = UIStackView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
         self.buttons = UIStackView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
-
+        
         bannerImage.translatesAutoresizingMaskIntoConstraints = false
         thumbImage.translatesAutoresizingMaskIntoConstraints = false
         title.translatesAutoresizingMaskIntoConstraints = false
@@ -306,9 +306,9 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                           views: views))
         
         self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[buttons]-12-|",
-                                                          options: NSLayoutFormatOptions(rawValue: 0),
-                                                          metrics: metrics,
-                                                          views: views2))
+                                                                       options: NSLayoutFormatOptions(rawValue: 0),
+                                                                       metrics: metrics,
+                                                                       views: views2))
         
         box.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[comments(20)]-|",
                                                           options: NSLayoutFormatOptions(rawValue: 0),
@@ -316,19 +316,19 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                           views: views))
         
         buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[save(20)]-8-[upvote(20)]-8-[downvote(20)]-8-[more(20)]-0-|",
-                                                          options: NSLayoutFormatOptions(rawValue: 0),
-                                                          metrics: metrics,
-                                                          views: views2))
+                                                              options: NSLayoutFormatOptions(rawValue: 0),
+                                                              metrics: metrics,
+                                                              views: views2))
         
         buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[upvote(20)]-|",
-                                                          options: NSLayoutFormatOptions(rawValue: 0),
-                                                          metrics: metrics,
-                                                          views: views2))
+                                                              options: NSLayoutFormatOptions(rawValue: 0),
+                                                              metrics: metrics,
+                                                              views: views2))
         
         buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[downvote(20)]-|",
-                                                          options: NSLayoutFormatOptions(rawValue: 0),
-                                                          metrics: metrics,
-                                                          views: views2))
+                                                              options: NSLayoutFormatOptions(rawValue: 0),
+                                                              metrics: metrics,
+                                                              views: views2))
         buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[save(20)]-|",
                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                               metrics: metrics,
@@ -337,7 +337,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                               metrics: metrics,
                                                               views: views2))
-
+        
     }
     
     func getHeightFromAspectRatio(imageHeight:Int, imageWidth: Int) -> Int {
@@ -393,7 +393,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         if(bigConstraint != nil){
             self.contentView.removeConstraint(bigConstraint!)
         }
-
+        
         if (type == ContentType.CType.SELF && hideSelftextLeadImage
             || noImages && submission.isSelf) {
             big = false
@@ -556,7 +556,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                 
                 if (!full) {
                     thumb  = true
-                } 
+                }
                 thumbImage.sd_setImage(with: URL.init(string: submission.thumbnail), placeholderImage: UIImage.init(named: "web"))
                 big = false
             } else {
@@ -571,7 +571,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         addTouch(view: upvote, action: #selector(LinkCellView.upvote(sender:)))
         addTouch(view: downvote, action: #selector(LinkCellView.downvote(sender:)))
         addTouch(view: more, action: #selector(LinkCellView.more(sender:)))
-
+        
         if(!thumb){
             thumbImage.sd_setImage(with: URL.init(string: ""))
             self.thumbImage.frame.size.width = 0
@@ -585,7 +585,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             if(aspect == 0 || aspect > 10000){
                 aspect = 1
             }
-
+            
             bigConstraint = NSLayoutConstraint(item: bannerImage, attribute:  NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: bannerImage, attribute: NSLayoutAttribute.height, multiplier: aspect, constant: 0.0)
             
             bannerImage.isUserInteractionEnabled = true
@@ -635,7 +635,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         
         let metrics=["horizontalMargin":75,"top":0,"bottom":0,"separationBetweenLabels":0,"labelMinHeight":75,  "bannerHeight": height] as [String: Int]
         let views=["label":title, "body": textView, "image": thumbImage, "score": score, "comments": comments, "info": info,"banner": bannerImage, "buttons":buttons, "box": box] as [String : Any]
-
+        
         if(!thumbConstraint.isEmpty){
             self.contentView.removeConstraints(thumbConstraint)
             thumbConstraint = []
@@ -670,7 +670,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                                               metrics: metrics,
                                                                               views: views))
             
-
+            
             self.contentView.addConstraints(thumbConstraint)
         } else if(big) {
             thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[image(0)]",
@@ -694,7 +694,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                                               metrics: metrics,
                                                                               views: views))
             if(bigConstraint != nil){
-            thumbConstraint.append(bigConstraint!)
+                thumbConstraint.append(bigConstraint!)
             }
             thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-4-[banner]-8-[label]-4@1000-[info]-10@1000-[box]-8-|",
                                                                               options: NSLayoutFormatOptions(rawValue: 0),
@@ -707,9 +707,9 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                                               views: views))
             
             thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[banner]-12-|",
-                                                                           options: NSLayoutFormatOptions(rawValue: 0),
-                                                                           metrics: metrics,
-                                                                           views: views))
+                                                                              options: NSLayoutFormatOptions(rawValue: 0),
+                                                                              metrics: metrics,
+                                                                              views: views))
             
             self.contentView.addConstraints(thumbConstraint)
         } else {
@@ -784,6 +784,37 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     }
     
     var registered: Bool = false
+    
+    var previewActionItems: [UIPreviewActionItem] {
+
+        var toReturn: [UIPreviewAction] = []
+        
+        let likeAction = UIPreviewAction(title: "Share", style: .default) { (action, viewController) -> Void in
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [self.link?.url! ?? ""], applicationActivities: nil);
+            let currentViewController:UIViewController = UIApplication.shared.keyWindow!.rootViewController!
+            currentViewController.present(activityViewController, animated: true, completion: nil);
+        }
+        toReturn.append(likeAction)
+        
+        let deleteAction = UIPreviewAction(title: "Open in Safari", style: .default) { (action, viewController) -> Void in
+            UIApplication.shared.open((self.link?.url!)!, options: [:], completionHandler: nil)
+        }
+        toReturn.append(deleteAction)
+        
+        if(AccountController.isLoggedIn){
+            
+            let upvote = UIPreviewAction(title: "Upvote", style: .default){ (action, viewController) -> Void in
+                self.upvote()
+            }
+            toReturn.append(upvote)
+        }
+        let comments = UIPreviewAction(title: "Comments", style: .default){ (action, viewController) -> Void in
+            self.openComment()
+        }
+        toReturn.append(comments)
+        return toReturn
+        
+    }
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing,
                            viewControllerForLocation location: CGPoint) -> UIViewController? {

@@ -9,14 +9,14 @@
 import UIKit
 import reddift
 
-class ReplyViewController: UIViewController {
+class ReplyViewController: UIViewController, UITextViewDelegate {
     
-    var toReplyTo: Thing?
-    var baseScroll: UIScrollView?
+    var toReplyTo: Thing
     var text: UITextView?
     var sub: String
+    var scrollView: UIScrollView?
     
-    init(thing: Thing?, sub: String){
+    init(thing: Thing, sub: String){
         self.toReplyTo = thing
         self.sub = sub
         super.init(nibName: nil, bundle: nil)
@@ -26,10 +26,44 @@ class ReplyViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        unregisterKeyboardNotifications()
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
+        text?.becomeFirstResponder()
+
+    }
+    
+    func registerKeyboardNotifications() {
+        NotificationCenter.default.addObserver(self, selector: #selector(ReplyViewController.keyboardDidShow(notification:)), name: NSNotification.Name.UIKeyboardDidShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(ReplyViewController.keyboardWillHide(notification:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+    }
+    
+    func unregisterKeyboardNotifications() {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    
+    func keyboardDidShow(notification: NSNotification) {
+        let userInfo: NSDictionary = notification.userInfo! as NSDictionary
+        let keyboardInfo = userInfo[UIKeyboardFrameBeginUserInfoKey] as! NSValue
+        let keyboardSize = keyboardInfo.cgRectValue.size
         
-        // Do any additional setup after loading the view.
+        // Get the existing contentInset for the scrollView and set the bottom property to be the height of the keyboard
+        var contentInset = self.scrollView?.contentInset
+        contentInset?.bottom = keyboardSize.height
+        
+        self.scrollView?.contentInset = contentInset!
+        self.scrollView?.scrollIndicatorInsets = contentInset!
+    }
+    
+    func keyboardWillHide(notification: NSNotification) {
+        var contentInset = self.scrollView?.contentInset
+        contentInset?.bottom = 0
+        
+        self.scrollView?.contentInset = contentInset!
+        self.scrollView?.scrollIndicatorInsets = UIEdgeInsets.zero
     }
 
     override func didReceiveMemoryWarning() {
@@ -39,45 +73,53 @@ class ReplyViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub)
+        navigationController?.navigationBar.tintColor = UIColor.white
+        let author = (toReplyTo is Comment) ? ((toReplyTo as! Comment).author) : ((toReplyTo as! Link).author)
+        title = "Reply to /u/\(author)"
+        
+        let close = UIButton.init(type: .custom)
+        close.setImage(UIImage.init(named: "close"), for: UIControlState.normal)
+        close.addTarget(self, action: #selector(self.close(_:)), for: UIControlEvents.touchUpInside)
+        close.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
+        let closeB = UIBarButtonItem.init(customView: close)
+        
+        navigationItem.leftBarButtonItems = [closeB]
+        
+        
+        let sendB = UIBarButtonItem.init(title: "Send", style: .done, target: self, action: #selector(self.send(_:)))
+        navigationItem.rightBarButtonItems = [sendB]
+        
+        registerKeyboardNotifications()
+
+    }
+    
+    func close(_ sender: AnyObject){
+        presentingViewController?.dismiss(animated: true, completion: nil)
+    }
+    
+    func send(_ sender: AnyObject){
+        //todo this
+        self.close(sender)
     }
     
     override func loadView() {
-        self.view =  UIScrollView(frame: CGRect.zero)
-        self.baseScroll = self.view as? UIScrollView
-        self.baseScroll?.backgroundColor = ColorUtil.backgroundColor
-        baseScroll?.isPagingEnabled = true
-        text = UITextView(frame: CGRect.zero)
+         self.view = UITextView(frame: CGRect.zero)
+        text = self.view as? UITextView
         text?.isEditable = true
-        text?.becomeFirstResponder()
+        text?.backgroundColor = ColorUtil.foregroundColor
+        text?.textColor = ColorUtil.fontColor
+        text?.delegate = self
+        text?.font = UIFont.systemFont(ofSize: 18)
         EditorToolbar.init(textView:  text!).addToolbarToTextView()
-        self.baseScroll?.addSubview(text!)
         
 
     }
+    
     func dismiss(_ sender: AnyObject) {
         self.dismiss(animated: true, completion: nil)
     }
     
-    func configureKeyboardNotifications() {
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWasShown(aNotification:)), name: NSNotification.Name.UIKeyboardDidShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeHidden(aNotification:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
-    }
-    
-    func keyboardWasShown(aNotification:NSNotification) {
-        let info = aNotification.userInfo
-        let infoNSValue = info![UIKeyboardFrameBeginUserInfoKey] as! NSValue
-        let kbSize = infoNSValue.cgRectValue.size
-        let contentInsets = UIEdgeInsetsMake(0.0, 0.0, kbSize.height, 0.0)
-        text?.contentInset = contentInsets
-        text?.scrollIndicatorInsets = contentInsets
-    }
-    
-    func keyboardWillBeHidden(aNotification:NSNotification) {
-        let contentInsets = UIEdgeInsets.zero
-        text?.contentInset = contentInsets
-        text?.scrollIndicatorInsets = contentInsets
-    }
-
     /*
     // MARK: - Navigation
 
@@ -89,3 +131,18 @@ class ReplyViewController: UIViewController {
     */
 
 }
+extension UIView {
+    
+    func embedInScrollView()->UIView{
+        let cont=UIScrollView()
+        
+        self.translatesAutoresizingMaskIntoConstraints = false;
+        cont.translatesAutoresizingMaskIntoConstraints = false;
+        cont.addSubview(self)
+        cont.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[innerView]|", options: NSLayoutFormatOptions(rawValue:0),metrics: nil, views: ["innerView":self]))
+        cont.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[innerView]|", options: NSLayoutFormatOptions(rawValue:0),metrics: nil, views: ["innerView":self]))
+        cont.addConstraint(NSLayoutConstraint(item: self, attribute: .width, relatedBy: .equal, toItem: cont, attribute: .width, multiplier: 1.0, constant: 0))
+        return cont
+    }
+}
+
