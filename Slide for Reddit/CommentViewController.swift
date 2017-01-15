@@ -746,7 +746,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             let downvote = BGTableViewRowActionWithImage.rowAction(with: .normal, title: "    ", backgroundColor: UIColor.init(hexString: "#2196F3"), image: downimg, forCellHeight: UInt(cell.contentView.frame.size.height)) { (action, indexPath) in
                 tableView.setEditing(false, animated: true)
                 self.vote(comment: cell.content!, dir: .down)
-                cell.refresh(comment: cell.content! as! Comment, submissionAuthor: self.link.author)
+                cell.refresh(comment: cell.content! as! Comment, submissionAuthor: (self.submission?.author)!)
             }
             toReturn.append(downvote!)
             

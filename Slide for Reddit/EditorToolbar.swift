@@ -19,7 +19,7 @@ class EditorToolbar {
     
     func addToolbarToTextView(){
         
-        let scrollView = UIScrollView.init(frame: CGRect.init(x: 0, y: 0, width: textView.frame.size.width, height: 50))
+        let scrollView = TouchUIScrollView.init(frame: CGRect.init(x: 0, y: 0, width: textView.frame.size.width, height: 50))
         scrollView.contentSize = CGSize.init(width: 50 * 11, height: 50)
         scrollView.autoresizingMask = .flexibleWidth
         scrollView.backgroundColor = ColorUtil.backgroundColor
@@ -47,6 +47,7 @@ class EditorToolbar {
         let more = UIButton.init(frame: CGRect.zero)
         more.setImage(UIImage.init(named: image)?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
         more.addTarget(self, action: action, for: UIControlEvents.touchUpInside)
+        more.isUserInteractionEnabled = true
         return more
     }
     
@@ -80,6 +81,7 @@ class EditorToolbar {
     }
     
     @objc func bold(_ sender: AnyObject){
+        print("Bold")
         wrapIn("*")
     }
     
@@ -104,4 +106,10 @@ class EditorToolbar {
         wrapIn("~~")
     }
     
+}
+
+class TouchUIScrollView: UIScrollView {
+    override func touchesShouldCancel(in view: UIView) -> Bool {
+        return false
+    }
 }

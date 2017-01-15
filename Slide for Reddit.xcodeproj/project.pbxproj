@@ -36,7 +36,6 @@
 		BE3E5C1F1E18223600749C0C /* CellContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3E5C1E1E18223600749C0C /* CellContent.swift */; };
 		BE3E5C211E18227500749C0C /* CommentDepthCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3E5C201E18227500749C0C /* CommentDepthCell.swift */; };
 		BE5E53751E1DAEB7004FE226 /* RedditLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5E53741E1DAEB7004FE226 /* RedditLink.swift */; };
-		BE5E53771E1EDAE5004FE226 /* ThemedGalleryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5E53761E1EDAE5004FE226 /* ThemedGalleryViewController.swift */; };
 		BE6EA6BF1E1C1A3400E9E709 /* GifMWPhotoBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE6EA6BE1E1C1A3400E9E709 /* GifMWPhotoBrowser.swift */; };
 		BE6EA6C31E1C1DCE00E9E709 /* GfyItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE6EA6C11E1C1DCE00E9E709 /* GfyItem.swift */; };
 		BE6EA6C41E1C1DCE00E9E709 /* GfycatJSONBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE6EA6C21E1C1DCE00E9E709 /* GfycatJSONBase.swift */; };
@@ -148,7 +147,6 @@
 		BE3E5C1E1E18223600749C0C /* CellContent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CellContent.swift; sourceTree = "<group>"; };
 		BE3E5C201E18227500749C0C /* CommentDepthCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentDepthCell.swift; sourceTree = "<group>"; };
 		BE5E53741E1DAEB7004FE226 /* RedditLink.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RedditLink.swift; sourceTree = "<group>"; };
-		BE5E53761E1EDAE5004FE226 /* ThemedGalleryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThemedGalleryViewController.swift; sourceTree = "<group>"; };
 		BE6EA6BE1E1C1A3400E9E709 /* GifMWPhotoBrowser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GifMWPhotoBrowser.swift; sourceTree = "<group>"; };
 		BE6EA6C11E1C1DCE00E9E709 /* GfyItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GfyItem.swift; sourceTree = "<group>"; };
 		BE6EA6C21E1C1DCE00E9E709 /* GfycatJSONBase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GfycatJSONBase.swift; sourceTree = "<group>"; };
@@ -255,7 +253,6 @@
 				BEF6F5391E1AF10E002B03B6 /* AlbumMWPhotoBrowser.swift */,
 				BE6EA6BE1E1C1A3400E9E709 /* GifMWPhotoBrowser.swift */,
 				BE5E53741E1DAEB7004FE226 /* RedditLink.swift */,
-				BE5E53761E1EDAE5004FE226 /* ThemedGalleryViewController.swift */,
 			);
 			name = ContentViewControllers;
 			sourceTree = "<group>";
@@ -534,6 +531,11 @@
 						DevelopmentTeam = 68GVUVA6AU;
 						LastSwiftMigration = 0820;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
 					};
 					BE8FCA171E0C46090063B8EF = {
 						CreatedOnToolsVersion = 8.2;
@@ -806,7 +808,6 @@
 				BE2B89F31E2450D70053D493 /* ColorPicker.swift in Sources */,
 				BE2DEAB21E26916700FBF0B5 /* SubSidebarViewController.swift in Sources */,
 				BE7439F31E20C9BE008BB63B /* CommentCellView.swift in Sources */,
-				BE5E53771E1EDAE5004FE226 /* ThemedGalleryViewController.swift in Sources */,
 				BE5E53751E1DAEB7004FE226 /* RedditLink.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -964,6 +965,33 @@
 				DEVELOPMENT_TEAM = 68GVUVA6AU;
 				INFOPLIST_FILE = "Slide for Reddit/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					"\"AMScrollingNavbar\"",
+					"-framework",
+					"\"BGTableViewRowActionWithImage\"",
+					"-framework",
+					"\"ChameleonFramework\"",
+					"-framework",
+					"\"MHVideoPhotoGallery\"",
+					"-framework",
+					"\"Masonry\"",
+					"-framework",
+					"\"SDWebImage\"",
+					"-framework",
+					"\"SideMenu\"",
+					"-framework",
+					"\"TTTAttributedLabel\"",
+					"-framework",
+					"\"UZTextView\"",
+					"-framework",
+					"\"XLActionController\"",
+					"-framework",
+					"\"XLPagerTabStrip\"",
+					"-framework",
+					"\"reddift\"",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "ccrama.me.Slide-for-Reddit";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -981,6 +1009,33 @@
 				DEVELOPMENT_TEAM = 68GVUVA6AU;
 				INFOPLIST_FILE = "Slide for Reddit/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					"\"AMScrollingNavbar\"",
+					"-framework",
+					"\"BGTableViewRowActionWithImage\"",
+					"-framework",
+					"\"ChameleonFramework\"",
+					"-framework",
+					"\"MHVideoPhotoGallery\"",
+					"-framework",
+					"\"Masonry\"",
+					"-framework",
+					"\"SDWebImage\"",
+					"-framework",
+					"\"SideMenu\"",
+					"-framework",
+					"\"TTTAttributedLabel\"",
+					"-framework",
+					"\"UZTextView\"",
+					"-framework",
+					"\"XLActionController\"",
+					"-framework",
+					"\"XLPagerTabStrip\"",
+					"-framework",
+					"\"reddift\"",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "ccrama.me.Slide-for-Reddit";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;

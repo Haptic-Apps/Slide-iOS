@@ -8,27 +8,24 @@
 
 import UIKit
 import reddift
-import MHVideoPhotoGallery
 import SDWebImage
 import AMScrollingNavbar
+import ImageViewer
 
-class MediaViewController: UIViewController, MHGalleryDataSource {
+class MediaViewController: UIViewController, GalleryItemsDataSource {
     
-    var link:Link!
-    var paging: Bool = false
-    weak var blockGal: MHGalleryController?
-    
-    var images:[URL] = []
-    var photos:[MHGalleryItem] = []
-    
-    func numberOfItems(inGallery galleryController: MHGalleryController!) -> Int {
+    func itemCount() -> Int {
         return photos.count
     }
-    
-    func item(for index: Int) -> MHGalleryItem! {
+        
+    func provideGalleryItem(_ index: Int) -> GalleryItem {
         return photos[index]
     }
     
+    var link:Link!
+    var paging = false
+    var images:[URL] = []
+    var photos:[GalleryItem] = []
     
     public func setLink(lnk: Link){
         History.addSeen(s: lnk)
@@ -38,6 +35,58 @@ class MediaViewController: UIViewController, MHGalleryDataSource {
         doShow(url: link.url!);
     }
     
+    func galleryConfiguration() -> GalleryConfiguration {
+        
+        return [
+            
+            GalleryConfigurationItem.closeButtonMode(.builtIn),
+            
+            GalleryConfigurationItem.pagingMode(.standard),
+            GalleryConfigurationItem.presentationStyle(.fade),
+            GalleryConfigurationItem.hideDecorationViewsOnLaunch(true),
+            
+            GalleryConfigurationItem.swipeToDismissMode(.vertical),
+            GalleryConfigurationItem.toggleDecorationViewsBySingleTap(true),
+            
+            GalleryConfigurationItem.overlayColor(UIColor(white: 0.035, alpha: 1)),
+            GalleryConfigurationItem.overlayColorOpacity(1),
+            GalleryConfigurationItem.overlayBlurOpacity(1),
+            GalleryConfigurationItem.overlayBlurStyle(UIBlurEffectStyle.dark),
+            
+            GalleryConfigurationItem.maximumZoomScale(8),
+            GalleryConfigurationItem.swipeToDismissThresholdVelocity(500),
+            
+            GalleryConfigurationItem.doubleTapToZoomDuration(0.15),
+            
+            GalleryConfigurationItem.blurPresentDuration(0.5),
+            GalleryConfigurationItem.blurPresentDelay(0),
+            GalleryConfigurationItem.colorPresentDuration(0.25),
+            GalleryConfigurationItem.colorPresentDelay(0),
+            
+            GalleryConfigurationItem.blurDismissDuration(0.1),
+            GalleryConfigurationItem.blurDismissDelay(0.4),
+            GalleryConfigurationItem.colorDismissDuration(0.45),
+            GalleryConfigurationItem.colorDismissDelay(0),
+            
+            GalleryConfigurationItem.itemFadeDuration(0.3),
+            GalleryConfigurationItem.decorationViewsFadeDuration(0.15),
+            GalleryConfigurationItem.rotationDuration(0.15),
+            
+            GalleryConfigurationItem.displacementDuration(0.55),
+            GalleryConfigurationItem.reverseDisplacementDuration(0.25),
+            GalleryConfigurationItem.displacementTransitionStyle(.springBounce(0.7)),
+            GalleryConfigurationItem.displacementTimingCurve(.linear),
+            
+            GalleryConfigurationItem.statusBarHidden(true),
+            GalleryConfigurationItem.displacementKeepOriginalInPlace(false),
+            GalleryConfigurationItem.displacementInsetMargin(50),
+            
+            GalleryConfigurationItem.deleteButtonMode(.none),
+            GalleryConfigurationItem.thumbnailsButtonMode(.none)
+        ]
+    }
+    
+
     func getControllerForUrl(url: URL) -> UIViewController? {
         images = []
         photos = []
@@ -86,42 +135,25 @@ class MediaViewController: UIViewController, MHGalleryDataSource {
                 if(ContentType.isGif(uri: link)){
                     var link = link.absoluteString.replacingOccurrences(of: ".gifv", with: ".mp4")
                     link = link.replacingOccurrences(of: ".gif", with: ".mp4")
-                    let photo = MHGalleryItem.init(url: link, galleryType: .video)
-                    photos.append(photo!)
+                    let photo = GalleryItem.video(fetchPreviewImageBlock: { (completion) in
+                        
+                    }, videoURL: URL.init(string: link)!)
                 } else {
-                    let photo = MHGalleryItem.init(url: link.absoluteString, galleryType: .image)
-                    photos.append(photo!)
-                }
-            }
-            if let browser = MHGalleryController.init(presentationStyle: .imageViewerNavigationBarHidden) {
-                browser.dataSource = self
-                browser.autoplayVideos = true
-                let customization = MHUICustomization.init()
-                customization.barButtonsTintColor = UIColor.white
-                customization.setMHGalleryBackgroundColor(UIColor.black, for: .imageViewerNavigationBarHidden)
-                customization.setMHGalleryBackgroundColor(UIColor.black, for: .imageViewerNavigationBarShown)
-                customization.setMHGalleryBackgroundColor(UIColor.black, for: .overView)
-                customization.barStyle = .blackTranslucent
-                customization.showOverView = false
-                customization.barTintColor = .black
-                customization.barButtonsTintColor = .white
-                customization.videoProgressTintColor = ColorUtil.accentColorForSub(sub: "")
-                browser.uiCustomization = customization
-                
-                browser.navigationController?.navigationBar.barTintColor = .black
-                browser.navigationBar.barTintColor = .black
-                
-                blockGal = browser
-                browser.finishedCallback = { currentIndex, image, interactiveTransition, viewMode in
-                    //do stuff
-                    DispatchQueue.main.async(execute: { () -> Void in
-                        let imageView = UIImageView(image: nil)
-                        self.blockGal?.dismiss(animated: true, dismiss: imageView, completion: nil)
+                    let photo = GalleryItem.image(fetchImageBlock: { (completion) in
+                        SDWebImageDownloader.shared().downloadImage(with: link, options: .allowInvalidSSLCertificates, progress: { (current, total) in
+                            
+                        }, completed: { (image, _, error, _) in
+                            DispatchQueue.main.async {
+                                completion(image)
+                            }
+                        })
                     })
-                    
+                    photos.append(photo)
                 }
-                return browser
             }
+            let browser = GalleryViewController.init(startIndex: 0, itemsDataSource: self, itemsDelegate: nil, displacedViewsDataSource: nil, configuration: galleryConfiguration())
+            return browser
+            
         } else if(type == .GIF || type == .STREAMABLE || type == .VID_ME){
             print("Showing video")
             return GifMWPhotoBrowser().create(url: (contentUrl?.absoluteString)!)
@@ -134,43 +166,7 @@ class MediaViewController: UIViewController, MHGalleryDataSource {
             print("Showing youtube")
             
             let hash = getYouTubeHash(urlS: contentUrl!)
-            let photo = MHGalleryItem.init(youtubeVideoID: hash)
-            photos.append(photo!)
-            
-            print("Hash is \(hash)")
-            
-            if let browser = MHGalleryController.init(presentationStyle: .imageViewerNavigationBarHidden) {
-                browser.dataSource = self
-                browser.autoplayVideos = true
-                
-                let customization = MHUICustomization.init()
-                customization.barButtonsTintColor = UIColor.white
-                customization.setMHGalleryBackgroundColor(UIColor.black, for: .imageViewerNavigationBarHidden)
-                customization.setMHGalleryBackgroundColor(UIColor.black, for: .imageViewerNavigationBarShown)
-                customization.setMHGalleryBackgroundColor(UIColor.black, for: .overView)
-                customization.barStyle = .blackTranslucent
-                customization.showOverView = false
-                customization.hideShare = true
-                customization.barTintColor = .black
-                customization.barButtonsTintColor = .white
-                customization.videoProgressTintColor = ColorUtil.accentColorForSub(sub: "")
-                browser.uiCustomization = customization
-                
-                browser.navigationController?.navigationBar.barTintColor = .black
-                browser.navigationBar.barTintColor = .black
-                
-                blockGal = browser
-                browser.finishedCallback = { currentIndex, image, interactiveTransition, viewMode in
-                    //do stuff
-                    DispatchQueue.main.async(execute: { () -> Void in
-                        let imageView = UIImageView(image: nil)
-                        self.blockGal?.dismiss(animated: true, dismiss: imageView, completion: nil)
-                    })
-                    
-                }
-                return browser
-            }
-            
+            //todo
         }
         return WebsiteViewController(url: contentUrl!, subreddit: link == nil ? "" : link.subreddit)
     }
@@ -222,7 +218,11 @@ class MediaViewController: UIViewController, MHGalleryDataSource {
         contentUrl = url
         images = []
         let controller = getControllerForUrl(url: url)!
+        if(controller is GalleryViewController){
+            presentImageGallery(controller as! GalleryViewController)
+        } else {
         show(controller, sender: self)
+        }
         (navigationController as? ScrollingNavigationController)?.showNavbar(animated: true)
     }
     

@@ -19,6 +19,7 @@ public class GfycatTranscoded {
 	public var gifSize : Int?
 	public var gifWidth : Int?
 	public var mp4Url : String?
+    public var mobileUrl : String?
 	public var webmUrl : String?
 	public var frameRate : Int?
 	public var gifUrl : String?
@@ -61,6 +62,7 @@ public class GfycatTranscoded {
 		gifSize = dictionary["gifSize"] as? Int
 		gifWidth = dictionary["gifWidth"] as? Int
 		mp4Url = dictionary["mp4Url"] as? String
+        mobileUrl = dictionary["mobileUrl"] as? String
 		webmUrl = dictionary["webmUrl"] as? String
 		frameRate = dictionary["frameRate"] as? Int
 		gifUrl = dictionary["gifUrl"] as? String
@@ -80,6 +82,7 @@ public class GfycatTranscoded {
 		dictionary.setValue(self.gfyName, forKey: "gfyName")
 		dictionary.setValue(self.gfysize, forKey: "gfysize")
 		dictionary.setValue(self.gifSize, forKey: "gifSize")
+        dictionary.setValue(self.mobileUrl, forKey: "mobileUrl")
 		dictionary.setValue(self.gifWidth, forKey: "gifWidth")
 		dictionary.setValue(self.mp4Url, forKey: "mp4Url")
 		dictionary.setValue(self.webmUrl, forKey: "webmUrl")

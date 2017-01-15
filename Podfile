@@ -11,11 +11,11 @@ target 'Slide for Reddit' do
   pod 'ChameleonFramework'
   pod 'XLPagerTabStrip', '~> 6.0'
   pod 'AMScrollingNavbar'
-pod "BGTableViewRowActionWithImage"
+  pod 'BGTableViewRowActionWithImage'
   pod 'XLActionController'
-  pod 'MHVideoPhotoGallery', :git => 'https://github.com/ccrama/MHVideoPhotoGallery’
   pod 'SideMenu'
-  pod ‘UZTextView’, :git => ‘https://github.com/sonsongithub/UZTextView'
+  pod 'UZTextView', :git => 'https://github.com/sonsongithub/UZTextView'
+  pod 'ImageViewer', :git => 'https://github.com/ccrama/ImageViewer'
 
   target 'Slide for RedditTests' do
     inherit! :search_paths

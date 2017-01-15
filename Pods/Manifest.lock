@@ -4,19 +4,14 @@ PODS:
   - ChameleonFramework (2.1.0):
     - ChameleonFramework/Default (= 2.1.0)
   - ChameleonFramework/Default (2.1.0)
-  - Masonry (1.0.2)
-  - MHVideoPhotoGallery (2.1.3):
-    - Masonry
-    - SDWebImage
-    - TTTAttributedLabel (= 1.13.3)
+  - ImageViewer (4.0)
   - reddift (2.0.0):
     - reddift/MiniKeychain (= 2.0.0)
   - reddift/MiniKeychain (2.0.0)
   - SDWebImage (3.8.2):
     - SDWebImage/Core (= 3.8.2)
   - SDWebImage/Core (3.8.2)
-  - SideMenu (2.1.4)
-  - TTTAttributedLabel (1.13.3)
+  - SideMenu (2.1.5)
   - UZTextView (1.0.6)
   - XLActionController (3.0.1):
     - XLActionController/Core (= 3.0.1)
@@ -27,7 +22,7 @@ DEPENDENCIES:
   - AMScrollingNavbar
   - BGTableViewRowActionWithImage
   - ChameleonFramework
-  - MHVideoPhotoGallery (from `https://github.com/ccrama/MHVideoPhotoGallery`)
+  - ImageViewer (from `https://github.com/ccrama/ImageViewer`)
   - reddift (from `https://github.com/ccrama/reddift`)
   - SDWebImage (~> 3.8)
   - SideMenu
@@ -36,17 +31,17 @@ DEPENDENCIES:
   - XLPagerTabStrip (~> 6.0)
 
 EXTERNAL SOURCES:
-  MHVideoPhotoGallery:
-    :git: https://github.com/ccrama/MHVideoPhotoGallery
+  ImageViewer:
+    :git: https://github.com/ccrama/ImageViewer
   reddift:
     :git: https://github.com/ccrama/reddift
   UZTextView:
     :git: https://github.com/sonsongithub/UZTextView
 
 CHECKOUT OPTIONS:
-  MHVideoPhotoGallery:
-    :commit: caab179b68bf02ee0b0f703489d2653037d4e454
-    :git: https://github.com/ccrama/MHVideoPhotoGallery
+  ImageViewer:
+    :commit: ef5708e365dee38f7038b16730a25cb8e5259d62
+    :git: https://github.com/ccrama/ImageViewer
   reddift:
     :commit: 7e60d6da26fca9462996d50a6ed6b96fc0eaa5a2
     :git: https://github.com/ccrama/reddift
@@ -58,16 +53,14 @@ SPEC CHECKSUMS:
   AMScrollingNavbar: cf603d4d5f11061d466a0878b9ada136248927b2
   BGTableViewRowActionWithImage: 3517276bcee26e559465bcca13151afc33ab6d2a
   ChameleonFramework: d21a3cc247abfe5e37609a283a8238b03575cf64
-  Masonry: 7c429b56da9d4ee0bbb3ed77a5ea710d6a5df39e
-  MHVideoPhotoGallery: aa36cdd9b75c6d5a19b48005cddb9b730c2e27e8
+  ImageViewer: 364abc0309c33dda86d08ca25b0243e5c67d8cd3
   reddift: 3066e687c2a934b0f9aca6ee6e2161abc4c93a56
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
-  SideMenu: 74b93b251064668fc7523aae897157b767733f04
-  TTTAttributedLabel: 6f3174aef8e738f44dff97c2eb7d8184f6ab6277
+  SideMenu: bcd2d7b7d4395af088e213cebd11c3ac7d958f5a
   UZTextView: 96bd60ad22f7f5ea882c56a9f90621f86b443192
   XLActionController: 57fe0ce1642e2eed971b188b490762345fdbf963
   XLPagerTabStrip: c46e802a8dcac29edbcea573de8fe920e052455b
 
-PODFILE CHECKSUM: 4d769d46787d2dccf595f1cb3724dc8cc5f32656
+PODFILE CHECKSUM: ff6e254c41970da6b4dac29f0c8f4d9b4995b6b1
 
 COCOAPODS: 1.1.1

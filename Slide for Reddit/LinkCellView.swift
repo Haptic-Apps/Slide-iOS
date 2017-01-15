@@ -18,6 +18,7 @@ import UIKit
 import reddift
 import UZTextView
 import AMScrollingNavbar
+import ImageViewer
 
 protocol LinkCellViewDelegate: class {
     func upvote(_ cell: LinkCellView)
@@ -377,7 +378,8 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         var json: JSONDictionary? = nil
         json = submission.baseJson
         
-        let cropImage = false //setting eventually
+        let cropImage = false
+        //setting eventually
         let noImages = false //setting eventually
         var w: Int = 0
         var h: Int = 0
@@ -848,7 +850,11 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
+        if(viewControllerToCommit is GalleryViewController){
+            parentViewController?.presentImageGallery(viewControllerToCommit as! GalleryViewController)
+        } else {
         parentViewController?.show(viewControllerToCommit, sender: parentViewController )
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {

@@ -7,63 +7,86 @@
 //
 
 import UIKit
-import MHVideoPhotoGallery
+import ImageViewer
 
-class GifMWPhotoBrowser: NSObject, MHGalleryDataSource {
+class GifMWPhotoBrowser: NSObject, GalleryItemsDataSource {
     
+    func itemCount() -> Int {
+        return photos.count
+    }
     
-    var browser: MHGalleryController?
-    weak var blockGal: MHGalleryController?
-    
-    
-    func create(url: String) -> MHGalleryController {
-        photos = []
-
-        browser = ThemedGalleryViewController.gallery(withPresentationStyle: .imageViewerNavigationBarHidden)
-        browser?.dataSource = self
-        let customization = MHUICustomization.init()
-        customization.barButtonsTintColor = UIColor.white
-        customization.setMHGalleryBackgroundColor(UIColor.black, for: .imageViewerNavigationBarHidden)
-        customization.setMHGalleryBackgroundColor(UIColor.black, for: .imageViewerNavigationBarShown)
-        customization.setMHGalleryBackgroundColor(UIColor.black, for: .overView)
-        customization.barStyle = .blackTranslucent
-        customization.barTintColor = .black
-        customization.showOverView = false
-        customization.barButtonsTintColor = .white
-        customization.videoProgressTintColor = ColorUtil.accentColorForSub(sub: "")
-        browser?.uiCustomization = customization
-        
-        browser?.navigationController?.navigationBar.barTintColor = .black
-        browser?.navigationBar.barTintColor = .black
-
-        browser?.autoplayVideos = true
-        blockGal = browser
-        
-        browser?.finishedCallback = { currentIndex, image, interactiveTransition, viewMode in
-            //do stuff
-            DispatchQueue.main.async(execute: { () -> Void in
-                let imageView = UIImageView(image: nil)
-                self.blockGal?.dismiss(animated: true, dismiss: imageView, completion: nil)
+    func provideGalleryItem(_ index: Int) -> GalleryItem {
+        if(photos.isEmpty){
+            return GalleryItem.image(fetchImageBlock: { (completion) in
+                
             })
-            
+        } else {
+        return photos[index]
         }
+    }
+    func galleryConfiguration() -> GalleryConfiguration {
+        
+        return [
+            
+            GalleryConfigurationItem.closeButtonMode(.builtIn),
+            
+            GalleryConfigurationItem.pagingMode(.standard),
+            GalleryConfigurationItem.presentationStyle(.fade),
+            GalleryConfigurationItem.hideDecorationViewsOnLaunch(true),
+            
+            GalleryConfigurationItem.swipeToDismissMode(.vertical),
+            GalleryConfigurationItem.toggleDecorationViewsBySingleTap(true),
+            
+            GalleryConfigurationItem.overlayColor(UIColor(white: 0.035, alpha: 1)),
+            GalleryConfigurationItem.overlayColorOpacity(1),
+            GalleryConfigurationItem.overlayBlurOpacity(1),
+            GalleryConfigurationItem.overlayBlurStyle(UIBlurEffectStyle.dark),
+            
+            GalleryConfigurationItem.maximumZoomScale(8),
+            GalleryConfigurationItem.swipeToDismissThresholdVelocity(500),
+            
+            GalleryConfigurationItem.doubleTapToZoomDuration(0.15),
+            
+            GalleryConfigurationItem.blurPresentDuration(0.5),
+            GalleryConfigurationItem.blurPresentDelay(0),
+            GalleryConfigurationItem.colorPresentDuration(0.25),
+            GalleryConfigurationItem.colorPresentDelay(0),
+            
+            GalleryConfigurationItem.blurDismissDuration(0.1),
+            GalleryConfigurationItem.blurDismissDelay(0.4),
+            GalleryConfigurationItem.colorDismissDuration(0.45),
+            GalleryConfigurationItem.colorDismissDelay(0),
+            
+            GalleryConfigurationItem.itemFadeDuration(0.3),
+            GalleryConfigurationItem.decorationViewsFadeDuration(0.15),
+            GalleryConfigurationItem.rotationDuration(0.15),
+            
+            GalleryConfigurationItem.displacementDuration(0.55),
+            GalleryConfigurationItem.reverseDisplacementDuration(0.25),
+            GalleryConfigurationItem.displacementTransitionStyle(.springBounce(0.7)),
+            GalleryConfigurationItem.displacementTimingCurve(.linear),
+            
+            GalleryConfigurationItem.statusBarHidden(true),
+            GalleryConfigurationItem.displacementKeepOriginalInPlace(false),
+            GalleryConfigurationItem.displacementInsetMargin(50),
+            
+            GalleryConfigurationItem.deleteButtonMode(.none),
+            GalleryConfigurationItem.thumbnailsButtonMode(.none)
+        ]
+    }
 
+    var browser: GalleryViewController?
+    
+    func create(url: String) -> GalleryViewController {
+        photos = []
+        browser = GalleryViewController.init(startIndex: 0, itemsDataSource: self, itemsDelegate: nil, displacedViewsDataSource: nil, configuration: galleryConfiguration())
         print("Loading gif \(url)")
         getGif(urlS: url)
         return browser!
     }
     
-    var photos: [MHGalleryItem] = []
+    var photos: [GalleryItem] = []
     
-    func item(for index: Int) -> MHGalleryItem! {
-        return photos[index]
-    }
-    
-    func numberOfItems(inGallery galleryController: MHGalleryController!) -> Int {
-        print("Getting number \(photos.count)")
-        return photos.count
-    }
-
     
     func loadGfycat(urlString: String){
         let url = URL(string: urlString)
@@ -162,7 +185,7 @@ class GifMWPhotoBrowser: NSObject, MHGalleryDataSource {
                     
                     let gif = GfycatTranscoded.init(dictionary: json)
                     
-                    if let url = gif?.mp4Url{
+                    if let url = (gif?.mobileUrl != nil ? gif?.mobileUrl : gif?.mp4Url) {
                         DispatchQueue.main.async{
                             self.loadVideo(urlString: self.getSmallerGfy(gfy: url))
                         }
@@ -195,7 +218,7 @@ class GifMWPhotoBrowser: NSObject, MHGalleryDataSource {
                             self.loadVideo(urlString: self.getSmallerGfy(gfy: (gif?.mp4Url)!))
                         }
                     } else {
-                        self.transcodeGfycat(toTranscode: "https://upload.gfycat.com/transcode?fetchUrl=" + urlString)
+                        self.transcodeGfycat(toTranscode: urlString)
                     }
                 } catch let error as NSError {
                     print(error)
@@ -207,9 +230,10 @@ class GifMWPhotoBrowser: NSObject, MHGalleryDataSource {
     
     func loadVideo(urlString: String){
         print("Showing \(urlString)")
-        let photo = MHGalleryItem.init(url: urlString, galleryType: .video)
-        self.photos.append(photo!)
-        
+        let photo = GalleryItem.video(fetchPreviewImageBlock: { (completion) in
+            
+        }, videoURL: URL.init(string: urlString)!)
+        self.photos.append(photo)
         refresh()
     }
     func getGif(urlS: String){
@@ -245,8 +269,9 @@ class GifMWPhotoBrowser: NSObject, MHGalleryDataSource {
     }
     
     func refresh(){
-        print("reloading")
-        browser?.reloadData()
+        
+        let vc = browser!.pagingDataSource.createItemController(0)
+        browser!.setViewControllers([vc], direction: UIPageViewControllerNavigationDirection.reverse, animated: true, completion: nil)
     }
     
     

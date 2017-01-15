@@ -7,45 +7,91 @@
 //
 
 import UIKit
-import MHVideoPhotoGallery
+import ImageViewer
+import SDWebImage
 
-class AlbumMWPhotoBrowser: NSObject, MHGalleryDataSource {
+class AlbumMWPhotoBrowser: NSObject, GalleryItemsDataSource {
+    func galleryConfiguration() -> GalleryConfiguration {
+        
+        return [
+            
+            GalleryConfigurationItem.closeButtonMode(.builtIn),
+            
+            GalleryConfigurationItem.pagingMode(.carousel),
+            GalleryConfigurationItem.presentationStyle(.fade),
+            GalleryConfigurationItem.hideDecorationViewsOnLaunch(true),
+            
+            GalleryConfigurationItem.swipeToDismissMode(.vertical),
+            GalleryConfigurationItem.toggleDecorationViewsBySingleTap(true),
+            
+            GalleryConfigurationItem.overlayColor(UIColor(white: 0.035, alpha: 1)),
+            GalleryConfigurationItem.overlayColorOpacity(1),
+            GalleryConfigurationItem.overlayBlurOpacity(1),
+            GalleryConfigurationItem.overlayBlurStyle(UIBlurEffectStyle.dark),
+            
+            GalleryConfigurationItem.maximumZoomScale(8),
+            GalleryConfigurationItem.swipeToDismissThresholdVelocity(500),
+            
+            GalleryConfigurationItem.doubleTapToZoomDuration(0.15),
+            
+            GalleryConfigurationItem.blurPresentDuration(0.5),
+            GalleryConfigurationItem.blurPresentDelay(0),
+            GalleryConfigurationItem.colorPresentDuration(0.25),
+            GalleryConfigurationItem.colorPresentDelay(0),
+            
+            GalleryConfigurationItem.blurDismissDuration(0.1),
+            GalleryConfigurationItem.blurDismissDelay(0.4),
+            GalleryConfigurationItem.colorDismissDuration(0.45),
+            GalleryConfigurationItem.colorDismissDelay(0),
+            
+            GalleryConfigurationItem.itemFadeDuration(0.3),
+            GalleryConfigurationItem.decorationViewsFadeDuration(0.15),
+            GalleryConfigurationItem.rotationDuration(0.15),
+            
+            GalleryConfigurationItem.displacementDuration(0.55),
+            GalleryConfigurationItem.reverseDisplacementDuration(0.25),
+            GalleryConfigurationItem.displacementTransitionStyle(.springBounce(0.7)),
+            GalleryConfigurationItem.displacementTimingCurve(.linear),
+            
+            GalleryConfigurationItem.statusBarHidden(true),
+            GalleryConfigurationItem.displacementKeepOriginalInPlace(false),
+            GalleryConfigurationItem.displacementInsetMargin(50),
+            
+            GalleryConfigurationItem.deleteButtonMode(.none),
+            GalleryConfigurationItem.thumbnailsButtonMode(.builtIn)
+        ]
+    }
     
-    var browser: MHGalleryController?
-    weak var blockGal: MHGalleryController?
 
     func getThumbnailUrl(hash: String) -> String {
     return "https://i.imgur.com/" + hash + "s.png";
     }
 
-    func create(hash: String) -> MHGalleryController {
-    browser = ThemedGalleryViewController.gallery(withPresentationStyle: .imageViewerNavigationBarShown)
-        browser?.dataSource = self
-        browser?.autoplayVideos = true
-        blockGal = browser
-        browser?.finishedCallback = { currentIndex, image, interactiveTransition, viewMode in
-            //do stuff
-            DispatchQueue.main.async(execute: { () -> Void in
-                let imageView = UIImageView(image: nil)
-                self.blockGal?.dismiss(animated: true, dismiss: imageView, completion: nil)
-            })
-            
-        }
+    var browser: GalleryViewController?
+
+    func create(hash: String) -> GalleryViewController {
+        browser = GalleryViewController.init(startIndex: 0, itemsDataSource: self, itemsDelegate: nil, displacedViewsDataSource: nil, configuration: galleryConfiguration())
         getAlbum(hash: hash)
         return browser!
     }
     
-    func numberOfItems(inGallery galleryController: MHGalleryController!) -> Int {
+    func itemCount() -> Int {
         return photos.count
     }
     
-    func item(for index: Int) -> MHGalleryItem! {
-        return photos[index]
+    func provideGalleryItem(_ index: Int) -> GalleryItem {
+        if(photos.isEmpty){
+            return GalleryItem.image(fetchImageBlock: { (completion) in
+                
+            })
+        } else {
+            return photos[index]
+        }
     }
     
     
     var albumImages:[URL]=[]
-    var photos: [MHGalleryItem] = []
+    var photos: [GalleryItem] = []
     
     func getAlbum(hash: String){
         let urlString = "http://imgur.com/ajaxalbums/getimages/\(hash)/hit.json?all=true"
@@ -65,23 +111,33 @@ class AlbumMWPhotoBrowser: NSObject, MHGalleryDataSource {
                         let urls = "https://imgur.com/" + a.hash! + ((a.animated != nil && a.animated == "true") ? ".mp4" : ".png")
                         let url = URL.init(string: urls)
                         if(ContentType.isGif(uri: url!)){
-                            let photo = MHGalleryItem.init(url: urls, galleryType: .video)
+                            let photo = GalleryItem.video(fetchPreviewImageBlock: { (completion) in
+                                
+                            }, videoURL: url!)
                             if((a.description) != nil){
-                                photo?.descriptionString = a.description
+                                //todo desc
                             }
-                            self.photos.append(photo!)
+                            self.photos.append(photo)
                         } else {
-                            let photo = MHGalleryItem.init(url: urls, thumbnailURL: self.getThumbnailUrl(hash: a.hash!))
+                            let photo = GalleryItem.image(fetchImageBlock: { (completion) in
+                                SDWebImageDownloader.shared().downloadImage(with: url!, options: .allowInvalidSSLCertificates, progress: { (current, total) in
+                                    
+                                }, completed: { (image, _, error, _) in
+                                    DispatchQueue.main.async {
+                                        completion(image)
+                                    }
+                                })
+
+                            })
                             if((a.description) != nil){
-                                photo?.descriptionString = a.description
+                                //todo desc
                             }
-                            self.photos.append(photo!)
+                            self.photos.append(photo)
                         }
 
                     }
 
                     DispatchQueue.main.async{
-
                     self.refresh()
                     }
                 } catch let error as NSError {
@@ -93,8 +149,8 @@ class AlbumMWPhotoBrowser: NSObject, MHGalleryDataSource {
     }
     
     func refresh(){
-        print("reloading")
-        browser?.reloadData()
+        let vc = browser!.pagingDataSource.createItemController(0)
+        browser!.setViewControllers([vc], direction: UIPageViewControllerNavigationDirection.reverse, animated: true, completion: nil)
     }
 
     /*

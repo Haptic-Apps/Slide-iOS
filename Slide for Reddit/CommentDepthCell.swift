@@ -9,6 +9,7 @@
 import UIKit
 import reddift
 import UZTextView
+import ImageViewer
 
 protocol UZTextViewCellDelegate: class {
     func pushedMoreButton(_ cell: CommentDepthCell)
@@ -530,7 +531,11 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
     }
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
+        if(viewControllerToCommit is! GalleryViewController){
+            parent?.presentImageGallery(viewControllerToCommit as! GalleryViewController)
+        } else {
         parent?.show(viewControllerToCommit, sender: parent )
+        }
     }
     
     var menuShowing: Bool = false

@@ -19,12 +19,7 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>MHVideoPhotoGallery.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>Masonry.xcscheme</key>
+		<key>ImageViewer.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -50,11 +45,6 @@
 			<false/>
 		</dict>
 		<key>SideMenu.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>TTTAttributedLabel.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -87,37 +77,37 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>09B5DAF0C3821D16B6562A7539713543</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>0EE0C3FA64855F5410B25154239C480E</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
 		<key>2F379F1C8C45C3D5C9A0C24788E5C3A1</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>4C9BCAD37166E33B341A9777D69DD2F9</key>
+		<key>30FAAD706CFE61EC528BD30DA652E825</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>57C44A9AF84C1E3C6A62AA70406677EF</key>
+		<key>35D42B10B45F2C475F04DA1D6855163C</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>5EF90DAB4A8D8B7E1A45EBBD06010DAF</key>
+		<key>674172F0F63588BE985DEB1DD47C98D8</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
 		<key>6F983DF4CA4AE96FC7D664DC5BB622A8</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>6FBD4C887B0A222798B5645B7E631BF5</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>837C14DDD0F6953D69CE982C5097A418</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -137,32 +127,22 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>B967587ED7DE73A0968857EC10510B7A</key>
+		<key>A11F24DCF33815F9029BB46C299EF1A1</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>BCE0ED100B2489193FEBCACB0EB3445F</key>
+		<key>B1332F0085BCA14BA5A2949B0B399447</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>D52144DE9D7255DE912490FF5A806573</key>
+		<key>DE78F501790F5BB8D2D07FF2455E15A4</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>D83904E17DBC65E3FFA975A057491530</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>FAF236983AEA234037CD1077F7C4B3F7</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>FE064CF11A9CC5CC51A9607C31F6CD5E</key>
+		<key>E88C1627787DE9401B1981BD7AFB0B27</key>
 		<dict>
 			<key>primary</key>
 			<true/>

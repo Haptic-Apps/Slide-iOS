@@ -11,6 +11,7 @@ import UIKit
 import reddift
 import AMScrollingNavbar
 import UZTextView
+import ImageViewer
 
 class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextViewDelegate {
     
@@ -311,7 +312,11 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
     
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
+        if(viewControllerToCommit is GalleryViewController){
+            parentViewController?.presentImageGallery(viewControllerToCommit as! GalleryViewController)
+        } else {
         parentViewController?.show(viewControllerToCommit, sender: parentViewController )
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {

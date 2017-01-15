@@ -264,8 +264,6 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             
             // Enable gestures. The left and/or right menus must be set up above for these to work.
             // Note that these continue to work on the Navigation Controller independent of the View Controller it displays!
-            SideMenuManager.menuAddPanGestureToPresent(toView: self.view)
-            SideMenuManager.menuAddScreenEdgePanGesturesToPresent(toView: self.navigationController!.view)
             
         } else {
             sideMenu = UISideMenuNavigationController()
@@ -277,10 +275,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             sideMenu?.navigationBar.isHidden = true
             
             // Enable gestures. The left and/or right menus must be set up above for these to work.
-            // Note that these continue to work on the Navigation Controller independent of the View Controller it displays!
-            SideMenuManager.menuAddPanGestureToPresent(toView: (self.parentController?.view)!)
-            SideMenuManager.menuAddScreenEdgePanGesturesToPresent(toView: (self.parentController?.navigationController!.view)!)
-            
+            // Note that these continue to work on the Navigation Controller independent of the View Controller it displays!            
 
         }
         super.viewDidLoad()
@@ -322,6 +317,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.navigationBar.isTranslucent = false
+        (navigationController as? ScrollingNavigationController)?.showNavbar(animated: false)
         if let navigationController = self.navigationController as? ScrollingNavigationController {
             navigationController.followScrollView(self.tableView, delay: 50.0)
             navigationController.scrollingNavbarDelegate = self

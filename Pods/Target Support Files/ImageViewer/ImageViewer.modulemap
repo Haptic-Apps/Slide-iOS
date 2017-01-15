@@ -1,0 +1,6 @@
+framework module ImageViewer {
+  umbrella header "ImageViewer-umbrella.h"
+
+  export *
+  module * { export * }
+}

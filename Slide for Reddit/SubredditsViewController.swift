@@ -26,6 +26,7 @@ class SubredditsViewController:  ButtonBarPagerTabStripViewController {
         super.viewWillAppear(animated)
         self.navigationController?.navigationBar.shadowImage = UIImage()
         self.navigationController?.navigationBar.barTintColor = self.tintColor
+        self.title = "Slide"
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -93,7 +94,9 @@ class SubredditsViewController:  ButtonBarPagerTabStripViewController {
     
     func restartVC(){
         self.reloadPagerTabStripView()
-        self.menuNav?.tableView.reloadData()
+        if let nav = self.menuNav {
+        nav.tableView.reloadData()
+        }
         menuLeftNavigationController?.dismiss(animated: true, completion: {
         })
     }
