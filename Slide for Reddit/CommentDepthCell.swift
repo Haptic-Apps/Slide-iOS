@@ -531,7 +531,7 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
     }
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
-        if(viewControllerToCommit is! GalleryViewController){
+        if(viewControllerToCommit is GalleryViewController){
             parent?.presentImageGallery(viewControllerToCommit as! GalleryViewController)
         } else {
         parent?.show(viewControllerToCommit, sender: parent )
