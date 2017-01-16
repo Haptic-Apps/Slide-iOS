@@ -21,7 +21,15 @@ class GMPalette {
         ]
     }
     
-    
+    static func allAccent() -> [[UIColor]] {
+        return [redA(), pinkA(), purpleA(),
+                deepPurpleA(), indigoA(), blueA(),
+                lightBlueA(), cyanA(), tealA(),
+                greenA(), lightGreenA(), limeA(),
+                yellowA(), amberA(), orangeA(),
+                deepOrangeA()]
+    }
+
     static func toCGC(colors: [UIColor]) -> [CGColor] {
         var toReturn: [CGColor] = []
         var i = 0
@@ -38,6 +46,14 @@ class GMPalette {
     static func allCGColor() -> [CGColor] {
         var toReturn: [CGColor] = []
         for a in all() {
+            toReturn.append(contentsOf: toCGC(colors: a))
+        }
+        return toReturn
+    }
+
+    static func allAccentCGColor() -> [CGColor] {
+        var toReturn: [CGColor] = []
+        for a in allAccent() {
             toReturn.append(contentsOf: toCGC(colors: a))
         }
         return toReturn

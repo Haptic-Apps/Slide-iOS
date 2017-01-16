@@ -13,7 +13,7 @@ import BGTableViewRowActionWithImage
 import AMScrollingNavbar
 import LNPopupController
 
-class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, UZTextViewCellDelegate, LinkCellViewDelegate {
+class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, UZTextViewCellDelegate, LinkCellViewDelegate, UISearchBarDelegate {
     
     internal func pushedMoreButton(_ cell: CommentDepthCell) {
         
@@ -30,6 +30,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             
         }
     }
+    
+    var searchBar = UISearchBar()
     
     func upvote(_ cell: LinkCellView) {
         do{
@@ -142,9 +144,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     var contextNumber: Int = 0
     
     var dataArray : [Thing] = []
-    
     var heightArray : [CellContent] = []
-    
+    var filteredData : [Thing] = []
+    var filteredHeights : [CellContent] = []
+
     func doArrays(){
         dataArray = comments.filter{ !hidden.contains($0.getId()) }
         heightArray = contents.filter{ !hidden.contains($0.id) }
@@ -253,9 +256,60 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
     
     var lastSeen: Double = NSDate().timeIntervalSince1970
+    var savedTitleView: UIView?
+    
+    func showSearchBar() {
+        searchBar.alpha = 0
+        savedTitleView = navigationItem.titleView
+        navigationItem.titleView = searchBar
+        navigationItem.setRightBarButtonItems(nil, animated: true)
+        UIView.animate(withDuration: 0.5, animations: {
+            self.searchBar.alpha = 1
+        }, completion: { finished in
+            self.searchBar.becomeFirstResponder()
+        })
+    }
+    
+    func hideSearchBar() {
+        (navigationController as? ScrollingNavigationController)?.showNavbar(animated: true)
+        isSearching = false
+        let sort = UIButton.init(type: .custom)
+        sort.setImage(UIImage.init(named: "ic_more_vert_white"), for: UIControlState.normal)
+        sort.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
+        sort.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+        let sortB = UIBarButtonItem.init(customView: sort)
+        
+        let more = UIButton.init(type: .custom)
+        more.setImage(UIImage.init(named: "search"), for: UIControlState.normal)
+        more.addTarget(self, action: #selector(self.search(_:)), for: UIControlEvents.touchUpInside)
+        more.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
+        let moreB = UIBarButtonItem.init(customView: more)
+        
+        navigationItem.rightBarButtonItems = [ sortB, moreB]
+        
+        navigationItem.titleView = savedTitleView
+        
+        tableView.reloadData()
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        hideSearchBar()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.tableView.register(LinkCellView.classForCoder(), forCellReuseIdentifier: "cell")
+        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: UIBarButtonItemStyle.plain, target: nil, action: nil)
+        if let navigationController = self.navigationController as? ScrollingNavigationController {
+            print("Following scroll")
+            navigationController.followScrollView(self.tableView, delay: 50.0)
+        }
+        
+        searchBar.delegate = self
+        searchBar.searchBarStyle = UISearchBarStyle.minimal
+        searchBar.textColor = .white
+        searchBar.showsCancelButton = true
+        
         tableView.estimatedRowHeight = 400.0
         tableView.rowHeight = UITableViewAutomaticDimension
         
@@ -265,6 +319,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         tableView.separatorStyle = .none
         refreshControl.beginRefreshing()
         refresh(self)
+        
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -340,17 +396,36 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.tableView.register(LinkCellView.classForCoder(), forCellReuseIdentifier: "cell")
         title = submission?.subreddit
-        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: UIBarButtonItemStyle.plain, target: nil, action: nil)
-        if let navigationController = self.navigationController as? ScrollingNavigationController {
-            print("Following scroll")
-            navigationController.followScrollView(self.tableView, delay: 50.0)
-        }
         if(hasSubmission && !comments.isEmpty){
             self.setBarColors(color: ColorUtil.getColorForSub(sub: self.title!))
         }
+        
+        if(navigationController != nil){
+            let sort = UIButton.init(type: .custom)
+            sort.setImage(UIImage.init(named: "ic_more_vert_white"), for: UIControlState.normal)
+            sort.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
+            sort.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+            let sortB = UIBarButtonItem.init(customView: sort)
+            
+            let more = UIButton.init(type: .custom)
+            more.setImage(UIImage.init(named: "search"), for: UIControlState.normal)
+            more.addTarget(self, action: #selector(self.search(_:)), for: UIControlEvents.touchUpInside)
+            more.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
+            let moreB = UIBarButtonItem.init(customView: more)
+            
+            navigationItem.rightBarButtonItems = [ sortB, moreB]
+        }
+        
         updateToolbar()
+    }
+    
+    func showMenu(_ sender: AnyObject){
+        
+    }
+    
+    func search(_ sender: AnyObject){
+        showSearchBar()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -629,12 +704,12 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.comments.count - hidden.count
+        return isSearching ?  self.filteredData.count : self.dataArray.count
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let datasetPosition = (indexPath as NSIndexPath).row;
-        return heightArray[datasetPosition].textHeight
+        return isSearching ? filteredHeights[datasetPosition].textHeight : heightArray[datasetPosition].textHeight
     }
     
     func unhideAll(comment: Comment, i : Int){
@@ -831,9 +906,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as UITableViewCell
             if let cell = cell as? CommentDepthCell {
                 cell.delegate = self
-                let thing = dataArray[datasetPosition]
+                let thing = isSearching ? filteredData[datasetPosition] : dataArray[datasetPosition]
                 if(thing is Comment){
-                    let text = heightArray[datasetPosition]
+                    let text = isSearching ? filteredHeights[datasetPosition] :  heightArray[datasetPosition]
                     cell.textView.attributedString = text.attributedString
                     cell.textView.frame.size.height = text.textHeight
                     var count = 0
@@ -863,105 +938,152 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         return children.count - 1
     }
     
+    var isSearching  = false
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange textSearched: String)
+    {
+        filteredData = []
+        filteredHeights = []
+        if(textSearched.length != 0) {
+            isSearching = true
+            searchTableList()
+        }
+        else {
+            isSearching = false
+        }
+        tableView.reloadData()
+    }
+    
+    func searchTableList(){
+        let searchString = searchBar.text
+        var count = 0
+        for s in dataArray {
+            if(s is Comment){
+                if ((s as! Comment).body.localizedCaseInsensitiveContains(searchString!)) {
+                filteredData.append(s)
+                    filteredHeights.append(heightArray[count])
+            }
+            }
+            count += 1
+        }
+    }
+    
+
     func pushedSingleTap(_ cell: CommentDepthCell){
-        if let comment = cell.content as? Comment {
-            let row = tableView.indexPath(for: cell)?.row
-            
-            if(hiddenPersons.contains((comment.getId()))) {
-                hiddenPersons.remove(at: hiddenPersons.index(of: comment.getId())!)
-                unhideAll(comment: comment, i: row!)
-                cell.expand()
-                //todo hide child number
-            } else {
-                let childNumber = getChildNumber(n: comment);
-                if (childNumber > 0) {
-                    hideAll(comment: comment, i: row! + 1);
-                    if (!hiddenPersons.contains(comment.getId())) {
-                        hiddenPersons.append(comment.getId());
-                    }
-                    if (childNumber > 0) {
-                        cell.collapse(childNumber: childNumber)
+        if(isSearching){
+            hideSearchBar()
+            context = cell.content!.getId()
+            var index = 0
+            if(!self.context.isEmpty()){
+                for comment in self.dataArray {
+                    if(comment.getId().contains(self.context)){
+                        self.goToCell(i: index)
+                        break
+                    } else {
+                        index += 1
                     }
                 }
             }
+
         } else {
-            let datasetPosition = tableView.indexPath(for: cell)!.row
-            if let more = dataArray[datasetPosition] as? More, let link = self.submission {
-                do {
-                    try session?.getMoreChildren(more.children, link:link, sort:.new, id: more.id, completion: { (result) -> Void in
-                        switch result {
-                        case .failure(let error):
-                            print(error)
-                        case .success(let list):
-                            
-                            DispatchQueue.main.async(execute: { () -> Void in
-                                let startDepth = self.cDepth[more.getId()] as! Int
+            if let comment = cell.content as? Comment {
+                let row = tableView.indexPath(for: cell)?.row
+                
+                if(hiddenPersons.contains((comment.getId()))) {
+                    hiddenPersons.remove(at: hiddenPersons.index(of: comment.getId())!)
+                    unhideAll(comment: comment, i: row!)
+                    cell.expand()
+                    //todo hide child number
+                } else {
+                    let childNumber = getChildNumber(n: comment);
+                    if (childNumber > 0) {
+                        hideAll(comment: comment, i: row! + 1);
+                        if (!hiddenPersons.contains(comment.getId())) {
+                            hiddenPersons.append(comment.getId());
+                        }
+                        if (childNumber > 0) {
+                            cell.collapse(childNumber: childNumber)
+                        }
+                    }
+                }
+            } else {
+                let datasetPosition = tableView.indexPath(for: cell)!.row
+                if let more = dataArray[datasetPosition] as? More, let link = self.submission {
+                    do {
+                        try session?.getMoreChildren(more.children, link:link, sort:.new, id: more.id, completion: { (result) -> Void in
+                            switch result {
+                            case .failure(let error):
+                                print(error)
+                            case .success(let list):
                                 
-                                var queue: [Thing] = []
-                                for child in list {
-                                    let incoming = self.extendKeepMore(in: child, current: startDepth)
-                                    for i in incoming{
-                                        queue.append(i.0)
-                                        self.cDepth[i.0.getId()] = i.1
-                                    }
-                                }
-                                
-                                var realPosition = 0
-                                for comment in self.comments{
-                                    if(comment.getId() == more.getId()){
-                                        break
-                                    }
-                                    realPosition += 1
-                                }
-                                
-                                
-                                self.comments.remove(at: realPosition)
-                                self.dataArray.remove(at: datasetPosition)
-                                self.contents.remove(at: realPosition)
-                                self.heightArray.remove(at: datasetPosition)
-                                
-                                if(queue.count != 0){
+                                DispatchQueue.main.async(execute: { () -> Void in
+                                    let startDepth = self.cDepth[more.getId()] as! Int
                                     
-                                    if(more.parentId.hasPrefix("t1")){
-                                        var b = self.comments[datasetPosition - 1]
-                                        for comment in self.comments {
-                                            if(more.parentId.contains(comment.id) && comment is Comment){
-                                                b = comment
-                                                break
+                                    var queue: [Thing] = []
+                                    for child in list {
+                                        let incoming = self.extendKeepMore(in: child, current: startDepth)
+                                        for i in incoming{
+                                            queue.append(i.0)
+                                            self.cDepth[i.0.getId()] = i.1
+                                        }
+                                    }
+                                    
+                                    var realPosition = 0
+                                    for comment in self.comments{
+                                        if(comment.getId() == more.getId()){
+                                            break
+                                        }
+                                        realPosition += 1
+                                    }
+                                    
+                                    
+                                    self.comments.remove(at: realPosition)
+                                    self.dataArray.remove(at: datasetPosition)
+                                    self.contents.remove(at: realPosition)
+                                    self.heightArray.remove(at: datasetPosition)
+                                    
+                                    if(queue.count != 0){
+                                        
+                                        if(more.parentId.hasPrefix("t1")){
+                                            var b = self.comments[datasetPosition - 1]
+                                            for comment in self.comments {
+                                                if(more.parentId.contains(comment.id) && comment is Comment){
+                                                    b = comment
+                                                    break
+                                                }
                                             }
+                                            
+                                            var baseComment = b as! Comment
+                                            baseComment.replies.children.remove(at: baseComment.replies.children.count - 1)
+                                            baseComment.replies.children.append(contentsOf: queue)
+                                            
+                                            self.dataArray.remove(at: datasetPosition - 1)
+                                            self.dataArray.insert(baseComment, at: datasetPosition - 1)
+                                            self.comments.remove(at: realPosition - 1)
+                                            self.comments.insert(baseComment, at: realPosition - 1)
                                         }
                                         
-                                        var baseComment = b as! Comment
-                                        baseComment.replies.children.remove(at: baseComment.replies.children.count - 1)
-                                        baseComment.replies.children.append(contentsOf: queue)
+                                        self.dataArray.insert(contentsOf: queue, at: datasetPosition)
+                                        self.comments.insert(contentsOf: queue, at: realPosition)
+                                        self.heightArray.insert(contentsOf: self.updateStringsSingle(queue), at: datasetPosition)
+                                        self.contents.insert(contentsOf: self.updateStringsSingle(queue), at: realPosition)
+                                        self.doArrays()
+                                        self.tableView.reloadData()
                                         
-                                        self.dataArray.remove(at: datasetPosition - 1)
-                                        self.dataArray.insert(baseComment, at: datasetPosition - 1)
-                                        self.comments.remove(at: realPosition - 1)
-                                        self.comments.insert(baseComment, at: realPosition - 1)
+                                    } else {
+                                        self.doArrays()
+                                        self.tableView.reloadData()
                                     }
-                                    
-                                    self.dataArray.insert(contentsOf: queue, at: datasetPosition)
-                                    self.comments.insert(contentsOf: queue, at: realPosition)
-                                    self.heightArray.insert(contentsOf: self.updateStringsSingle(queue), at: datasetPosition)
-                                    self.contents.insert(contentsOf: self.updateStringsSingle(queue), at: realPosition)
-                                    self.doArrays()
-                                    self.tableView.reloadData()
-                                    
-                                } else {
-                                    self.doArrays()
-                                    self.tableView.reloadData()
-                                }
-                            })
-                            
-                        }
-                    })
-                } catch { print(error) }
+                                })
+                                
+                            }
+                        })
+                    } catch { print(error) }
+                }
+                
             }
             
         }
-        
-        
     }
 }
 
@@ -986,3 +1108,24 @@ extension UIImage {
     }
     
 }
+
+
+extension UISearchBar {
+    
+    var textColor:UIColor? {
+        get {
+            if let textField = self.value(forKey: "searchField") as? UITextField  {
+                return textField.textColor
+            } else {
+                return nil
+            }
+        }
+        
+        set (newValue) {
+            if let textField = self.value(forKey: "searchField") as? UITextField  {
+                textField.textColor = newValue
+            }
+        }
+    }
+} 
+

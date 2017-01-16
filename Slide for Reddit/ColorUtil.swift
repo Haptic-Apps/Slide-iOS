@@ -52,6 +52,12 @@ class ColorUtil{
         UserDefaults.standard.synchronize()
     }
     
+    public static func setAccentColorForSub(sub: String, color: UIColor){
+        UserDefaults.standard.setColor(color: color , forKey: "accent+" + sub)
+        UserDefaults.standard.synchronize()
+    }
+
+    
     public static func accentColorForSub(sub: String) -> UIColor {
         let color = UserDefaults.standard.colorForKey(key: "accent+" + sub)
         if(color == nil){

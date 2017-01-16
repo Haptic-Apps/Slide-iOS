@@ -40,7 +40,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   ImageViewer:
-    :commit: ef5708e365dee38f7038b16730a25cb8e5259d62
+    :commit: 74515e4b5b7e34b417e7e5c738a6f74c217d7ffb
     :git: https://github.com/ccrama/ImageViewer
   reddift:
     :commit: 7e60d6da26fca9462996d50a6ed6b96fc0eaa5a2

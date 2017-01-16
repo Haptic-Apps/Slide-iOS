@@ -1,7 +1,7 @@
 import UIKit
 
 protocol ColorPickerDelegate: class {
-    func valueChanged(_ value: CGFloat)
+    func valueChanged(_ value: CGFloat, accent: Bool)
 }
 
 class ColorPicker: UIView {
@@ -13,7 +13,15 @@ class ColorPicker: UIView {
         }
     }
     
-    static var allColors: [CGColor] = GMPalette.allCGColor()
+    var accent = false
+    
+    func setAccent(accent: Bool){
+        self.accent = true
+    }
+    
+    var allColors: [CGColor] {
+        return accent ? GMPalette.allAccentCGColor() : GMPalette.allCGColor()
+    }
     
     private var lastTouchLocation: CGPoint?
     private var decelerateTimer: Timer?
@@ -32,13 +40,10 @@ class ColorPicker: UIView {
     private lazy var panGesture: UIPanGestureRecognizer = {
         return UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
     }()
-    
-    var top = CGFloat(ColorPicker.allColors.count)
-    
    
     private(set) var value: CGFloat = 0.5 {
         didSet {
-                if Int(self.value * top) > ColorPicker.allColors.count - 1 {
+                if Int(self.value * CGFloat(allColors.count)) > allColors.count - 1 {
                     self.value -= 1
                 }
                 else if self.value < 0 {
@@ -47,7 +52,7 @@ class ColorPicker: UIView {
                 else {
                     setNeedsDisplay()
                 }
-            delegate?.valueChanged(self.value)
+            delegate?.valueChanged(self.value, accent: accent)
         }
     }
     
@@ -57,13 +62,13 @@ class ColorPicker: UIView {
         var index = 0
         for val in i...(i + 4){
             if(val < 0){
-                index = val + (ColorPicker.allColors.count - 1)
-            } else if(val > (ColorPicker.allColors.count - 1)){
-                index = val - (ColorPicker.allColors.count - 1)
+                index = val + (allColors.count - 1)
+            } else if(val > (allColors.count - 1)){
+                index = val - (allColors.count - 1)
             } else {
                 index = val
             }
-            result.append(ColorPicker.allColors[index])
+            result.append(allColors[index])
         }
         return result
     }
@@ -115,7 +120,7 @@ class ColorPicker: UIView {
     override func draw(_ rect: CGRect) {
         let ctx = UIGraphicsGetCurrentContext()
         
-        if let gradient = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(), colors: colors(for: Int(value * CGFloat(ColorPicker.allColors.count))) as CFArray, locations: [0, 0.25, 0.50, 0.75, 1]) {
+        if let gradient = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(), colors: colors(for: Int(value * CGFloat(allColors.count))) as CFArray, locations: [0, 0.25, 0.50, 0.75, 1]) {
             ctx?.drawLinearGradient(gradient, start: CGPoint(x: rect.size.width, y: 0), end: CGPoint.zero, options: .drawsBeforeStartLocation)
         }
         

@@ -18,10 +18,15 @@ import SideMenu
 class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, IndicatorInfoProvider, ScrollingNavigationControllerDelegate, LinkCellViewDelegate, ColorPickerDelegate {
     
     var parentController: SubredditsViewController?
-    func valueChanged(_ value: CGFloat) {
-        self.navigationController?.navigationBar.barTintColor = UIColor.init(cgColor: ColorPicker.allColors[Int(value * CGFloat(ColorPicker.allColors.count))])
-        if(parentController != nil){
-            parentController?.colorChanged()
+    var accentChosen: UIColor?
+    func valueChanged(_ value: CGFloat, accent: Bool) {
+        if(accent){
+            accentChosen = UIColor.init(cgColor: GMPalette.allAccentCGColor()[Int(value * CGFloat(GMPalette.allAccentCGColor().count))])
+        } else {
+            self.navigationController?.navigationBar.barTintColor = UIColor.init(cgColor: GMPalette.allCGColor()[Int(value * CGFloat(GMPalette.allCGColor().count))])
+            if(parentController != nil){
+                parentController?.colorChanged()
+            }
         }
     }
     
@@ -84,50 +89,50 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         actionSheetController.addAction(cancelActionButton)
         
         if(AccountController.isLoggedIn){
-
-        cancelActionButton = UIAlertAction(title: "Save", style: .default) { action -> Void in
-            self.save(cell)
-        }
-        actionSheetController.addAction(cancelActionButton)
+            
+            cancelActionButton = UIAlertAction(title: "Save", style: .default) { action -> Void in
+                self.save(cell)
+            }
+            actionSheetController.addAction(cancelActionButton)
         }
         
         cancelActionButton = UIAlertAction(title: "Report", style: .default) { action -> Void in
             //todo report
         }
         actionSheetController.addAction(cancelActionButton)
-
+        
         cancelActionButton = UIAlertAction(title: "Hide", style: .default) { action -> Void in
             //todo hide
         }
         actionSheetController.addAction(cancelActionButton)
-
+        
         cancelActionButton = UIAlertAction(title: "Open in Safari", style: .default) { action -> Void in
             UIApplication.shared.open(link.url!, options: [:], completionHandler: nil)
         }
         actionSheetController.addAction(cancelActionButton)
-
+        
         cancelActionButton = UIAlertAction(title: "Share content", style: .default) { action -> Void in
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [link.url!], applicationActivities: nil);
             let currentViewController:UIViewController = UIApplication.shared.keyWindow!.rootViewController!
             currentViewController.present(activityViewController, animated: true, completion: nil);
         }
         actionSheetController.addAction(cancelActionButton)
-
+        
         cancelActionButton = UIAlertAction(title: "Share comments", style: .default) { action -> Void in
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [URL.init(string: "https://reddit.com" + link.permalink)!], applicationActivities: nil);
             let currentViewController:UIViewController = UIApplication.shared.keyWindow!.rootViewController!
             currentViewController.present(activityViewController, animated: true, completion: nil);
         }
         actionSheetController.addAction(cancelActionButton)
-
+        
         cancelActionButton = UIAlertAction(title: "Fiter this content", style: .default) { action -> Void in
             //todo filter content
         }
         actionSheetController.addAction(cancelActionButton)
-
+        
         
         self.present(actionSheetController, animated: true, completion: nil)
-
+        
     }
     
     
@@ -220,7 +225,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     
     var sideMenu: UISideMenuNavigationController?
     var menuNav: SubSidebarViewController?
-
+    
     override func viewDidLoad() {
         self.tableView.register(LinkCellView.classForCoder(), forCellReuseIdentifier: "cell")
         session = (UIApplication.shared.delegate as! AppDelegate).session
@@ -242,7 +247,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                             Subscriptions.addHistorySub(name: AccountController.currentName, sub: subreddit!.displayName)
                         }
                     }
-                self.load(reset: true)
+                    self.load(reset: true)
                 } else {
                     let alert = UIAlertController.init(title: "Subreddit not found", message: "/r/\(self.sub) could not be found, is it spelled correctly?", preferredStyle: .alert)
                     alert.addAction(UIAlertAction.init(title: "Ok", style: .default, handler: { (_) in
@@ -252,7 +257,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                             // go back to MainMenuView as the eyes of the user
                             presentingViewController.dismiss(animated: false, completion: nil)
                         }
-
+                        
                     }))
                     self.present(alert, animated: true, completion: nil)
                 }
@@ -275,11 +280,11 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             sideMenu?.navigationBar.isHidden = true
             
             // Enable gestures. The left and/or right menus must be set up above for these to work.
-            // Note that these continue to work on the Navigation Controller independent of the View Controller it displays!            
-
+            // Note that these continue to work on the Navigation Controller independent of the View Controller it displays!
+            
         }
         super.viewDidLoad()
-
+        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -303,9 +308,48 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             self.tableView.reloadData()
         })
         
+        let accentAction = UIAlertAction(title: "Accent color", style: .default, handler: {(alert: UIAlertAction!) in
+            ColorUtil.setColorForSub(sub: self.sub, color: (self.navigationController?.navigationBar.barTintColor)!)
+            self.pickAccent(parent: parent)
+            self.tableView.reloadData()
+        })
+        
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: {(alert: UIAlertAction!) in
             if(parent != nil){
-            parent?.resetColors()
+                parent?.resetColors()
+            }
+        })
+        
+        alertController.addAction(accentAction)
+        alertController.addAction(somethingAction)
+        alertController.addAction(cancelAction)
+        
+        present(alertController, animated: true, completion: nil)
+    }
+    
+    func pickAccent(parent: SubredditsViewController?){
+        parentController = parent
+        let alertController = UIAlertController(title: "\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
+        
+        let margin:CGFloat = 10.0
+        let rect = CGRect(x: margin, y: margin, width: alertController.view.bounds.size.width - margin * 4.0, height: 120)
+        let customView = ColorPicker(frame: rect)
+        customView.setAccent(accent: true)
+        customView.delegate = self
+        
+        customView.backgroundColor = ColorUtil.backgroundColor
+        alertController.view.addSubview(customView)
+        
+        let somethingAction = UIAlertAction(title: "Save", style: .default, handler: {(alert: UIAlertAction!) in
+            if self.accentChosen != nil {
+            ColorUtil.setAccentColorForSub(sub: self.sub, color: self.accentChosen!)
+            }
+            self.tableView.reloadData()
+        })
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: {(alert: UIAlertAction!) in
+            if(parent != nil){
+                parent?.resetColors()
             }
         })
         
@@ -314,10 +358,11 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         
         present(alertController, animated: true, completion: nil)
     }
+
     
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.navigationBar.isTranslucent = false
-        (navigationController as? ScrollingNavigationController)?.showNavbar(animated: false)
+        (navigationController as? ScrollingNavigationController)?.showNavbar(animated: true)
         if let navigationController = self.navigationController as? ScrollingNavigationController {
             navigationController.followScrollView(self.tableView, delay: 50.0)
             navigationController.scrollingNavbarDelegate = self
@@ -346,6 +391,8 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         tableView.reloadData()
     }
     
+    
+    
     func search(){
         let alert = UIAlertController(title: "Search", message: "", preferredStyle: .alert)
         
@@ -370,7 +417,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
         
         parentController?.present(alert, animated: true, completion: nil)
-
+        
     }
     
     func showMore(_ sender: AnyObject){
@@ -405,7 +452,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         self.present(actionSheetController, animated: true, completion: nil)
         
     }
-
+    
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

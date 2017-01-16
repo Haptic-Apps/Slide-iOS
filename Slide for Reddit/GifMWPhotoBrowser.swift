@@ -75,11 +75,11 @@ class GifMWPhotoBrowser: NSObject, GalleryItemsDataSource {
         ]
     }
 
-    var browser: GalleryViewController?
+    var browser: ProgressGalleryViewController?
     
-    func create(url: String) -> GalleryViewController {
+    func create(url: String) -> ProgressGalleryViewController {
         photos = []
-        browser = GalleryViewController.init(startIndex: 0, itemsDataSource: self, itemsDelegate: nil, displacedViewsDataSource: nil, configuration: galleryConfiguration())
+        browser = ProgressGalleryViewController.init(startIndex: 0, itemsDataSource: self, itemsDelegate: nil, displacedViewsDataSource: nil, configuration: galleryConfiguration())
         print("Loading gif \(url)")
         getGif(urlS: url)
         return browser!

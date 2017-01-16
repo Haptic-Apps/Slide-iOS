@@ -12,9 +12,9 @@ import AVFoundation
 
 extension VideoView: ItemView {}
 
-class VideoViewController: ItemBaseController<VideoView> {
+public class VideoViewController: ItemBaseController<VideoView> {
 
-    fileprivate let swipeToDismissFadeOutAccelerationFactor: CGFloat = 6
+    let swipeToDismissFadeOutAccelerationFactor: CGFloat = 6
 
     let videoURL: URL
     let player: AVPlayer
@@ -23,7 +23,7 @@ class VideoViewController: ItemBaseController<VideoView> {
     let fullHDScreenSize = CGSize(width: 1920, height: 1080)
     let embeddedPlayButton = UIButton.circlePlayButton(70)
 
-    init(index: Int, itemCount: Int, fetchImageBlock: @escaping FetchImageBlock, videoURL: URL, scrubber: VideoScrubber, configuration: GalleryConfiguration, isInitialController: Bool = false) {
+    public init(index: Int, itemCount: Int, fetchImageBlock: @escaping FetchImageBlock, videoURL: URL, scrubber: VideoScrubber, configuration: GalleryConfiguration, isInitialController: Bool = false) {
 
         self.videoURL = videoURL
         self.scrubber = scrubber
@@ -32,7 +32,7 @@ class VideoViewController: ItemBaseController<VideoView> {
         super.init(index: index, itemCount: itemCount, fetchImageBlock: fetchImageBlock, configuration: configuration, isInitialController: isInitialController)
     }
 
-    override func viewDidLoad() {
+    override public func viewDidLoad() {
         super.viewDidLoad()
 
         if isInitialController == true { embeddedPlayButton.alpha = 0 }
@@ -56,7 +56,7 @@ class VideoViewController: ItemBaseController<VideoView> {
                     self.player.play()
     }
 
-    override func viewWillAppear(_ animated: Bool) {
+    override public func viewWillAppear(_ animated: Bool) {
 
         self.player.addObserver(self, forKeyPath: "status", options: NSKeyValueObservingOptions.new, context: nil)
         self.player.addObserver(self, forKeyPath: "rate", options: NSKeyValueObservingOptions.new, context: nil)
@@ -66,7 +66,7 @@ class VideoViewController: ItemBaseController<VideoView> {
         super.viewWillAppear(animated)
     }
 
-    override func viewWillDisappear(_ animated: Bool) {
+    override public func viewWillDisappear(_ animated: Bool) {
 
         self.player.removeObserver(self, forKeyPath: "status")
         self.player.removeObserver(self, forKeyPath: "rate")
@@ -76,18 +76,18 @@ class VideoViewController: ItemBaseController<VideoView> {
         super.viewWillDisappear(animated)
     }
 
-    override func viewDidAppear(_ animated: Bool) {
+    override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
     }
 
-    override func viewDidDisappear(_ animated: Bool) {
+    override public func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
 
         self.player.pause()
     }
 
-    override func viewDidLayoutSubviews() {
+    override public func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
         itemView.bounds.size = aspectFitSize(forContentOfSize: fullHDScreenSize, inBounds: self.scrollView.bounds.size)
@@ -110,7 +110,7 @@ class VideoViewController: ItemBaseController<VideoView> {
         })
     }
 
-    override func closeDecorationViews(_ duration: TimeInterval) {
+    override public func closeDecorationViews(_ duration: TimeInterval) {
 
         UIView.animate(withDuration: duration, animations: { [weak self] in
 
@@ -119,7 +119,7 @@ class VideoViewController: ItemBaseController<VideoView> {
         })
     }
 
-    override func presentItem(alongsideAnimation: () -> Void, completion: @escaping () -> Void) {
+    override public func presentItem(alongsideAnimation: () -> Void, completion: @escaping () -> Void) {
 
         let circleButtonAnimation = {
 
@@ -140,7 +140,7 @@ class VideoViewController: ItemBaseController<VideoView> {
         return aspectFitSize(forContentOfSize: fullHDScreenSize, inBounds: rotationAdjustedBounds().size)
     }
 
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+    override public func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
 
         if keyPath == "rate" || keyPath == "status" {
 
@@ -173,7 +173,7 @@ class VideoViewController: ItemBaseController<VideoView> {
         }
     }
 
-    override func remoteControlReceived(with event: UIEvent?) {
+    override public func remoteControlReceived(with event: UIEvent?) {
 
         if let event = event {
 

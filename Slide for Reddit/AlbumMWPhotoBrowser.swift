@@ -67,10 +67,10 @@ class AlbumMWPhotoBrowser: NSObject, GalleryItemsDataSource {
     return "https://i.imgur.com/" + hash + "s.png";
     }
 
-    var browser: GalleryViewController?
+    var browser: ProgressGalleryViewController?
 
-    func create(hash: String) -> GalleryViewController {
-        browser = GalleryViewController.init(startIndex: 0, itemsDataSource: self, itemsDelegate: nil, displacedViewsDataSource: nil, configuration: galleryConfiguration())
+    func create(hash: String) -> ProgressGalleryViewController {
+        browser = ProgressGalleryViewController.init(startIndex: 0, itemsDataSource: self, itemsDelegate: nil, displacedViewsDataSource: nil, configuration: galleryConfiguration())
         getAlbum(hash: hash)
         return browser!
     }
@@ -121,6 +121,8 @@ class AlbumMWPhotoBrowser: NSObject, GalleryItemsDataSource {
                         } else {
                             let photo = GalleryItem.image(fetchImageBlock: { (completion) in
                                 SDWebImageDownloader.shared().downloadImage(with: url!, options: .allowInvalidSSLCertificates, progress: { (current, total) in
+                                    
+                                    self.browser?.updateProgress(current: current, total: total)
                                     
                                 }, completed: { (image, _, error, _) in
                                     DispatchQueue.main.async {
