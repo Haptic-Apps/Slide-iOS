@@ -147,7 +147,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     var heightArray : [CellContent] = []
     var filteredData : [Thing] = []
     var filteredHeights : [CellContent] = []
-
+    
     func doArrays(){
         dataArray = comments.filter{ !hidden.contains($0.getId()) }
         heightArray = contents.filter{ !hidden.contains($0.id) }
@@ -257,9 +257,12 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     var lastSeen: Double = NSDate().timeIntervalSince1970
     var savedTitleView: UIView?
+    var savedHeaderView: UIView?
     
     func showSearchBar() {
         searchBar.alpha = 0
+        savedHeaderView = tableView.tableHeaderView
+        tableView.tableHeaderView = UIView()
         savedTitleView = navigationItem.titleView
         navigationItem.titleView = searchBar
         navigationItem.setRightBarButtonItems(nil, animated: true)
@@ -273,6 +276,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     func hideSearchBar() {
         (navigationController as? ScrollingNavigationController)?.showNavbar(animated: true)
         isSearching = false
+        tableView.tableHeaderView = savedHeaderView!
         let sort = UIButton.init(type: .custom)
         sort.setImage(UIImage.init(named: "ic_more_vert_white"), for: UIControlState.normal)
         sort.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
@@ -476,17 +480,49 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 do {
                     let attr = try NSMutableAttributedString(data: html.data(using: .unicode)!, options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
                     let font = UIFont(name: ".SFUIText-Light", size: 16) ?? UIFont.systemFont(ofSize: 16)
-                    let attr2 = attr.reconstruct(with: font, color: UIColor.black, linkColor: UIColor.blue)
-                    return CellContent.init(string:attr2, width:(width - 25), hasRelies:false, id: comment.getId())
+                    let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: UIColor.blue)
+                    return CellContent.init(string:attr2, width:(width - 25) - CGFloat((cDepth[thing.getId()] as! Int) * 4), hasRelies:false, id: comment.getId())
                 } catch {
                     return CellContent(string:NSAttributedString(string: ""), width:width - 25, hasRelies:false, id: thing.getId())
                 }
             } else {
                 let attr = NSMutableAttributedString(string: "more")
                 let font = UIFont(name: ".SFUIText-Light", size: 16) ?? UIFont.systemFont(ofSize: 16)
-                let attr2 = attr.reconstruct(with: font, color: UIColor.black, linkColor: UIColor.blue)
+                let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: UIColor.blue)
                 return CellContent.init(string:attr2, width:(width - 25), hasRelies:false, id: thing.getId())
             }
+        }
+    }
+    
+    func updateStringSearch(_ thing: Thing) -> CellContent {
+        let width = self.view.frame.size.width
+        if let comment = thing as? Comment {
+            let html = comment.bodyHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
+            do {
+                let attr = try NSMutableAttributedString(data: html.data(using: .unicode)!, options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
+                do {
+                let regex = try NSRegularExpression.init(pattern: ("\\b\(searchBar.text!)\\b"), options: .caseInsensitive)
+                    
+                    let substring = NSMutableAttributedString(string: searchBar.text!)
+                    substring.addAttribute(NSForegroundColorAttributeName, value: ColorUtil.getColorForSub(sub: comment.subreddit), range: NSMakeRange(0, substring.string.length))
+
+                    regex.replaceMatches(in: attr.mutableString, options: NSRegularExpression.MatchingOptions.anchored, range: NSRange.init(location: 0, length: attr.length), withTemplate: substring.string)
+                } catch {
+                    print(error)
+                }
+                
+                let font = UIFont(name: ".SFUIText-Light", size: 16) ?? UIFont.systemFont(ofSize: 16)
+                let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: UIColor.blue)
+
+                return CellContent.init(string:attr2, width:(width - 25), hasRelies:false, id: comment.getId())
+            } catch {
+                return CellContent(string:NSAttributedString(string: ""), width:width - 25, hasRelies:false, id: thing.getId())
+            }
+        } else {
+            let attr = NSMutableAttributedString(string: "more")
+            let font = UIFont(name: ".SFUIText-Light", size: 16) ?? UIFont.systemFont(ofSize: 16)
+            let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: UIColor.blue)
+            return CellContent.init(string:attr2, width:(width - 25), hasRelies:false, id: thing.getId())
         }
     }
     
@@ -938,6 +974,18 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         return children.count - 1
     }
     
+    func highlight(_ cc: CellContent) -> CellContent {
+        let base = NSMutableAttributedString.init(attributedString: cc.attributedString)
+        let r = base.mutableString.range(of: "\(searchBar.text!)", options: .caseInsensitive, range: NSMakeRange(0, base.string.length))
+        if r.length > 0 {
+            print("Range found")
+            base.addAttribute(NSForegroundColorAttributeName, value: ColorUtil.getColorForSub(sub: ""), range: r)
+        } else {
+            print("Not found")
+        }
+        return CellContent.init(string: base.attributedSubstring(from: NSRange.init(location: 0, length: base.length)), width: cc.width, hasRelies: false, id: cc.id)
+    }
+    
     var isSearching  = false
     
     func searchBar(_ searchBar: UISearchBar, textDidChange textSearched: String)
@@ -960,15 +1008,15 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         for s in dataArray {
             if(s is Comment){
                 if ((s as! Comment).body.localizedCaseInsensitiveContains(searchString!)) {
-                filteredData.append(s)
-                    filteredHeights.append(heightArray[count])
-            }
+                    filteredData.append(s)
+                    filteredHeights.append(highlight(heightArray[count]))
+                }
             }
             count += 1
         }
     }
     
-
+    
     func pushedSingleTap(_ cell: CommentDepthCell){
         if(isSearching){
             hideSearchBar()
@@ -984,7 +1032,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     }
                 }
             }
-
+            
         } else {
             if let comment = cell.content as? Comment {
                 let row = tableView.indexPath(for: cell)?.row

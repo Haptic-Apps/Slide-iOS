@@ -78,7 +78,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         History.commentCounts = NSMutableDictionary.init(contentsOfFile: commentsFile!)!
 
         UIApplication.shared.statusBarStyle = .lightContent
-        
+        SettingValues.initialize()
         AccountController.initialize()
         Subscriptions.sync(name: AccountController.currentName, completion: nil)
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {

@@ -71,7 +71,7 @@ class SettingValues{
     public static var dataSavingEnableWiFi = false
     public static var dataSavingImageQuality = "DATASAVING_IMAGE_QUALITY"
     
-    func initialize(){
+    public static func initialize(){
         let settings = UserDefaults.standard
         SettingValues.viewType = settings.bool(forKey: SettingValues.pref_viewType) ?? true
     }

@@ -368,8 +368,8 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             navigationController.scrollingNavbarDelegate = self
         }
         if(single){
-            self.title = sub
             if(navigationController != nil){
+                self.title = sub
                 let sort = UIButton.init(type: .custom)
                 sort.setImage(UIImage.init(named: "ic_sort_white"), for: UIControlState.normal)
                 sort.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
@@ -383,6 +383,21 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                 let moreB = UIBarButtonItem.init(customView: more)
                 
                 navigationItem.rightBarButtonItems = [ moreB, sortB]
+            } else if parentController != nil && parentController?.navigationController != nil{
+                 parentController?.navigationController?.title = sub
+                let sort = UIButton.init(type: .custom)
+                sort.setImage(UIImage.init(named: "ic_sort_white"), for: UIControlState.normal)
+                sort.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
+                sort.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+                let sortB = UIBarButtonItem.init(customView: sort)
+                
+                let more = UIButton.init(type: .custom)
+                more.setImage(UIImage.init(named: "ic_more_vert_white"), for: UIControlState.normal)
+                more.addTarget(self, action: #selector(self.showMore(_:)), for: UIControlEvents.touchUpInside)
+                more.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
+                let moreB = UIBarButtonItem.init(customView: more)
+                
+                 parentController?.navigationItem.rightBarButtonItems = [ moreB, sortB]
             }
         } else {
             paging = true
@@ -576,7 +591,8 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                         if(reset){
                             self.links = []
                         }
-                        self.links += listing.children.flatMap({$0 as? Link})
+                        let values = PostFilter.filter(listing.children.flatMap({$0 as? Link}), previous: self.links)
+                        self.links += values
                         self.paginator = listing.paginator
                         DispatchQueue.main.async{
                             self.tableView.reloadData()

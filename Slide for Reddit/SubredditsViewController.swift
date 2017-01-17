@@ -127,6 +127,7 @@ class SubredditsViewController:  ButtonBarPagerTabStripViewController {
         SideMenuManager.menuAddPanGestureToPresent(toView: self.view)
         SideMenuManager.menuAddScreenEdgePanGesturesToPresent(toView: self.navigationController!.view)
         
+        if(!SettingValues.viewType){
         settings.style.buttonBarItemFont = UIFont.systemFont(ofSize: 14)
         settings.style.selectedBarHeight = 3.0
         settings.style.buttonBarMinimumLineSpacing = 0
@@ -153,12 +154,7 @@ class SubredditsViewController:  ButtonBarPagerTabStripViewController {
                 self.buttonBarView.selectedBar.backgroundColor = ColorUtil.accentColorForSub(sub: (newCell?.label.text)!)
             }
         }
-        view.backgroundColor = ColorUtil.backgroundColor
-        // set up style before super view did load is executed
-        // -
         
-        super.viewDidLoad()
-        self.edgesForExtendedLayout = []
         
         
         self.title = "Slide"
@@ -187,7 +183,16 @@ class SubredditsViewController:  ButtonBarPagerTabStripViewController {
         menu.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let menuB = UIBarButtonItem.init(customView: menu)
         navigationItem.leftBarButtonItem = menuB
+        } else {
+            settings.style.buttonBarHeight = 0
+        }
+        view.backgroundColor = ColorUtil.backgroundColor
+        // set up style before super view did load is executed
+        // -
         
+        super.viewDidLoad()
+        self.edgesForExtendedLayout = []
+
     }
     func resetColors(){
         self.navigationController?.navigationBar.barTintColor = self.tintColor
@@ -269,7 +274,7 @@ class SubredditsViewController:  ButtonBarPagerTabStripViewController {
     override func viewControllers(for pagerTabStripController: PagerTabStripViewController) -> [UIViewController] {
         var controllers : [UIViewController] = []
         for subname in Subscriptions.subreddits {
-            controllers.append(SubredditLinkViewController(subName: subname, parent: self))
+            controllers.append(SettingValues.viewType ? SubredditLinkViewController(subName: subname, single: true) : SubredditLinkViewController(subName: subname, parent: self))
         }
         return Array(controllers)
     }
