@@ -740,7 +740,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return isSearching ?  self.filteredData.count : self.dataArray.count
+        return isSearching ?  self.filteredData.count : self.comments.count - self.hidden.count
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

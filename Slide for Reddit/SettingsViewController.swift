@@ -50,77 +50,77 @@ class SettingsViewController: UITableViewController {
         self.general.accessoryType = .disclosureIndicator
         self.general.backgroundColor = ColorUtil.foregroundColor
         self.general.textLabel?.textColor = ColorUtil.fontColor
-        self.general.imageView?.image = UIImage.init(named: "settings")?.withRenderingMode(.alwaysTemplate).imageResize(sizeChange: CGSize.init(width: 25, height: 25))
+        self.general.imageView?.image = UIImage.init(named: "settings")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
         self.general.imageView?.tintColor = ColorUtil.fontColor
         
         self.manageSubs.textLabel?.text = "Manage your subreddits"
         self.manageSubs.accessoryType = .disclosureIndicator
         self.manageSubs.backgroundColor = ColorUtil.foregroundColor
         self.manageSubs.textLabel?.textColor = ColorUtil.fontColor
-        self.manageSubs.imageView?.image = UIImage.init(named: "subs")?.withRenderingMode(.alwaysTemplate).imageResize(sizeChange: CGSize.init(width: 25, height: 25))
+        self.manageSubs.imageView?.image = UIImage.init(named: "subs")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
         self.manageSubs.imageView?.tintColor = ColorUtil.fontColor
 
         self.mainTheme.textLabel?.text = "Main theme"
         self.mainTheme.accessoryType = .disclosureIndicator
         self.mainTheme.backgroundColor = ColorUtil.foregroundColor
         self.mainTheme.textLabel?.textColor = ColorUtil.fontColor
-        self.mainTheme.imageView?.image = UIImage.init(named: "colors")?.withRenderingMode(.alwaysTemplate).imageResize(sizeChange: CGSize.init(width: 25, height: 25))
+        self.mainTheme.imageView?.image = UIImage.init(named: "colors")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
         self.mainTheme.imageView?.tintColor = ColorUtil.fontColor
 
         self.postLayout.textLabel?.text = "Post layout"
         self.postLayout.accessoryType = .disclosureIndicator
         self.postLayout.backgroundColor = ColorUtil.foregroundColor
         self.postLayout.textLabel?.textColor = ColorUtil.fontColor
-        self.postLayout.imageView?.image = UIImage.init(named: "layout")?.withRenderingMode(.alwaysTemplate).imageResize(sizeChange: CGSize.init(width: 25, height: 25))
+        self.postLayout.imageView?.image = UIImage.init(named: "layout")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
         self.postLayout.imageView?.tintColor = ColorUtil.fontColor
 
         self.subThemes.textLabel?.text = "Subreddit themes"
         self.subThemes.accessoryType = .disclosureIndicator
         self.subThemes.backgroundColor = ColorUtil.foregroundColor
         self.subThemes.textLabel?.textColor = ColorUtil.fontColor
-        self.subThemes.imageView?.image = UIImage.init(named: "subs")?.withRenderingMode(.alwaysTemplate).imageResize(sizeChange: CGSize.init(width: 25, height: 25))
+        self.subThemes.imageView?.image = UIImage.init(named: "subs")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
         self.subThemes.imageView?.tintColor = ColorUtil.fontColor
 
         self.font.textLabel?.text = "Font"
         self.font.accessoryType = .disclosureIndicator
         self.font.backgroundColor = ColorUtil.foregroundColor
         self.font.textLabel?.textColor = ColorUtil.fontColor
-        self.font.imageView?.image = UIImage.init(named: "size")?.withRenderingMode(.alwaysTemplate).imageResize(sizeChange: CGSize.init(width: 25, height: 25))
+        self.font.imageView?.image = UIImage.init(named: "size")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
         self.font.imageView?.tintColor = ColorUtil.fontColor
 
         self.comments.textLabel?.text = "Comments"
         self.comments.accessoryType = .disclosureIndicator
         self.comments.backgroundColor = ColorUtil.foregroundColor
         self.comments.textLabel?.textColor = ColorUtil.fontColor
-        self.comments.imageView?.image = UIImage.init(named: "comments")?.withRenderingMode(.alwaysTemplate).imageResize(sizeChange: CGSize.init(width: 25, height: 25))
+        self.comments.imageView?.image = UIImage.init(named: "comments")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
         self.comments.imageView?.tintColor = ColorUtil.fontColor
 
         self.linkHandling.textLabel?.text = "Link handling"
         self.linkHandling.accessoryType = .disclosureIndicator
         self.linkHandling.backgroundColor = ColorUtil.foregroundColor
         self.linkHandling.textLabel?.textColor = ColorUtil.fontColor
-        self.linkHandling.imageView?.image = UIImage.init(named: "link")?.withRenderingMode(.alwaysTemplate).imageResize(sizeChange: CGSize.init(width: 25, height: 25))
+        self.linkHandling.imageView?.image = UIImage.init(named: "link")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
         self.linkHandling.imageView?.tintColor = ColorUtil.fontColor
 
         self.history.textLabel?.text = "History"
         self.history.accessoryType = .disclosureIndicator
         self.history.backgroundColor = ColorUtil.foregroundColor
         self.history.textLabel?.textColor = ColorUtil.fontColor
-        self.history.imageView?.image = UIImage.init(named: "history")?.withRenderingMode(.alwaysTemplate).imageResize(sizeChange: CGSize.init(width: 25, height: 25))
+        self.history.imageView?.image = UIImage.init(named: "history")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
         self.history.imageView?.tintColor = ColorUtil.fontColor
 
         self.dataSaving.textLabel?.text = "Data saving"
         self.dataSaving.accessoryType = .disclosureIndicator
         self.dataSaving.backgroundColor = ColorUtil.foregroundColor
         self.dataSaving.textLabel?.textColor = ColorUtil.fontColor
-        self.dataSaving.imageView?.image = UIImage.init(named: "data")?.withRenderingMode(.alwaysTemplate).imageResize(sizeChange: CGSize.init(width: 25, height: 25))
+        self.dataSaving.imageView?.image = UIImage.init(named: "data")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
         self.dataSaving.imageView?.tintColor = ColorUtil.fontColor
 
         self.filters.textLabel?.text = "Filters"
         self.filters.accessoryType = .disclosureIndicator
         self.filters.backgroundColor = ColorUtil.foregroundColor
         self.filters.textLabel?.textColor = ColorUtil.fontColor
-        self.filters.imageView?.image = UIImage.init(named: "filter")?.withRenderingMode(.alwaysTemplate).imageResize(sizeChange: CGSize.init(width: 25, height: 25))
+        self.filters.imageView?.image = UIImage.init(named: "filter")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
         self.filters.imageView?.tintColor = ColorUtil.fontColor
         
 }
@@ -174,8 +174,9 @@ class SettingsViewController: UITableViewController {
             show(SubredditReorderViewController(), sender: self)
         } else  if(indexPath.section == 0 && indexPath.row == 0){
             show(SettingsGeneral(), sender: self)
+        } else if(indexPath.section == 2 && indexPath.row == 3){
+            show(FiltersViewController(), sender: self)
         }
-
     }
     /* maybe future
  override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -221,14 +222,27 @@ class SettingsViewController: UITableViewController {
 
     }*/
     
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let label : UILabel = UILabel()
+        label.textColor = ColorUtil.fontColor
+        label.font = UIFont.boldSystemFont(ofSize: 20)
+        let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
+        toReturn.backgroundColor = ColorUtil.backgroundColor
+
         switch(section) {
-        case 0: return "General"
-        case 1: return "Appearance"
-        case 2: return "Content"
-        default: fatalError("Unknown section")
+        case 0: label.text = "General"
+            break
+        case 1: label.text =  "Appearance"
+            break
+        case 2: label.text = "Content"
+            break
+        default: label.text  = ""
+            break
         }
+        return toReturn
     }
+
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch(section) {

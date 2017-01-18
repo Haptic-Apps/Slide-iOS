@@ -17,7 +17,7 @@ class PostFilter {
     static var subreddits: [String] = []
     static var flairs: [String] = []
 
-    public func initialize(){
+    public static func initialize(){
         PostFilter.domains = UserDefaults.standard.array(forKey: "domainfilters") as! [String]? ?? []
         PostFilter.selftext = UserDefaults.standard.array(forKey: "selftextfilters") as! [String]? ?? []
         PostFilter.titles = UserDefaults.standard.array(forKey: "titlefilters") as! [String]? ?? []
@@ -25,6 +25,18 @@ class PostFilter {
         PostFilter.subreddits = UserDefaults.standard.array(forKey: "subredditfilters") as! [String]? ?? []
         PostFilter.flairs = UserDefaults.standard.array(forKey: "flairfilters") as! [String]? ?? []
     }
+    
+    public static func saveAndUpdate(){
+        UserDefaults.standard.set(PostFilter.domains, forKey: "domainFilters")
+        UserDefaults.standard.set(PostFilter.selftext, forKey: "selftextfilters")
+        UserDefaults.standard.set(PostFilter.titles, forKey: "titlefilters")
+        UserDefaults.standard.set(PostFilter.profiles, forKey: "profilefilters")
+        UserDefaults.standard.set(PostFilter.subreddits, forKey: "subredditfilters")
+        UserDefaults.standard.set(PostFilter.flairs, forKey: "flairfilters")        
+        UserDefaults.standard.synchronize()
+        initialize()
+    }
+
     
     public static func contains(_ array: [String], value: String) -> Bool{
         for text in array {
@@ -36,7 +48,7 @@ class PostFilter {
     }
     
     public static func matches(_ link: Link) -> Bool {
-        return (PostFilter.domains.contains(link.domain)) || PostFilter.profiles.contains(link.author) || PostFilter.subreddits.contains(link.subreddit) || contains(PostFilter.flairs, value: link.linkFlairText) || contains(PostFilter.selftext, value: link.selftext) || contains(PostFilter.titles, value: link.title)
+        return (PostFilter.domains.contains(where: {$0.caseInsensitiveCompare(link.domain) == .orderedSame})) || PostFilter.profiles.contains(where: {$0.caseInsensitiveCompare(link.author) == .orderedSame}) || PostFilter.subreddits.contains(where: {$0.caseInsensitiveCompare(link.subreddit) == .orderedSame}) || contains(PostFilter.flairs, value: link.linkFlairText) || contains(PostFilter.selftext, value: link.selftext) || contains(PostFilter.titles, value: link.title)
     }
     
     public static func filter(_ input: [Link], previous: [Link]?) -> [Link] {

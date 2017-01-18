@@ -60,12 +60,11 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     func loadUrl(){
         let myURLRequest:URLRequest = URLRequest(url: url!)
         webView.load(myURLRequest)
+        self.title = url!.host
     }
     
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        self.title = webView.stringByEvaluatingJavaScriptFromString(script: "document.title")
         UIApplication.shared.isNetworkActivityIndicatorVisible = false
-
     }
     
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {

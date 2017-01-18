@@ -73,6 +73,6 @@ class SettingValues{
     
     public static func initialize(){
         let settings = UserDefaults.standard
-        SettingValues.viewType = settings.bool(forKey: SettingValues.pref_viewType) ?? true
+        SettingValues.viewType = !settings.bool(forKey: SettingValues.pref_viewType)
     }
 }

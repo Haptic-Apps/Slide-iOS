@@ -126,13 +126,49 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         actionSheetController.addAction(cancelActionButton)
         
         cancelActionButton = UIAlertAction(title: "Fiter this content", style: .default) { action -> Void in
-            //todo filter content
+            self.showFilterMenu(link)
         }
         actionSheetController.addAction(cancelActionButton)
         
         
         self.present(actionSheetController, animated: true, completion: nil)
         
+    }
+    
+    func showFilterMenu(_ link: Link){
+        let actionSheetController: UIAlertController = UIAlertController(title: "What would you like to filter?", message: "", preferredStyle: .actionSheet)
+        
+        var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
+            print("Cancel")
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        cancelActionButton = UIAlertAction(title: "Posts by /u/\(link.author)", style: .default) { action -> Void in
+            PostFilter.profiles.append(link.author)
+            PostFilter.saveAndUpdate()
+            self.links = PostFilter.filter(self.links, previous: nil)
+            self.tableView.reloadData()
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        cancelActionButton = UIAlertAction(title: "Posts from /r/\(link.subreddit)", style: .default) { action -> Void in
+            PostFilter.subreddits.append(link.subreddit)
+            PostFilter.saveAndUpdate()
+            self.links = PostFilter.filter(self.links, previous: nil)
+            self.tableView.reloadData()
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        cancelActionButton = UIAlertAction(title: "Posts linking to \(link.domain)", style: .default) { action -> Void in
+            PostFilter.domains.append(link.domain)
+            PostFilter.saveAndUpdate()
+            self.links = PostFilter.filter(self.links, previous: nil)
+            self.tableView.reloadData()
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        self.present(actionSheetController, animated: true, completion: nil)
+
     }
     
     
