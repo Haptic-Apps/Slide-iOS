@@ -16,6 +16,7 @@ target 'Slide for Reddit' do
   pod 'SideMenu'
   pod 'UZTextView', :git => 'https://github.com/sonsongithub/UZTextView'
   pod 'ImageViewer', :git => 'https://github.com/ccrama/ImageViewer'
+  pod 'TTTAttributedLabel'
 
   target 'Slide for RedditTests' do
     inherit! :search_paths

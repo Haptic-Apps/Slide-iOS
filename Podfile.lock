@@ -12,6 +12,7 @@ PODS:
     - SDWebImage/Core (= 3.8.2)
   - SDWebImage/Core (3.8.2)
   - SideMenu (2.1.5)
+  - TTTAttributedLabel (2.0.0)
   - UZTextView (1.0.6)
   - XLActionController (3.0.1):
     - XLActionController/Core (= 3.0.1)
@@ -26,6 +27,7 @@ DEPENDENCIES:
   - reddift (from `https://github.com/ccrama/reddift`)
   - SDWebImage (~> 3.8)
   - SideMenu
+  - TTTAttributedLabel
   - UZTextView (from `https://github.com/sonsongithub/UZTextView`)
   - XLActionController
   - XLPagerTabStrip (~> 6.0)
@@ -40,10 +42,10 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   ImageViewer:
-    :commit: 74515e4b5b7e34b417e7e5c738a6f74c217d7ffb
+    :commit: 1a6d7c365a23d86bdcdf8eb93058b75e07be1fb1
     :git: https://github.com/ccrama/ImageViewer
   reddift:
-    :commit: 7e60d6da26fca9462996d50a6ed6b96fc0eaa5a2
+    :commit: e5a1f2419be9d465de7746be935e206577c48efe
     :git: https://github.com/ccrama/reddift
   UZTextView:
     :commit: 94021870e65000cf332cb1f2ec70525b05c6ab16
@@ -57,10 +59,11 @@ SPEC CHECKSUMS:
   reddift: 3066e687c2a934b0f9aca6ee6e2161abc4c93a56
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
   SideMenu: bcd2d7b7d4395af088e213cebd11c3ac7d958f5a
+  TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   UZTextView: 96bd60ad22f7f5ea882c56a9f90621f86b443192
   XLActionController: 57fe0ce1642e2eed971b188b490762345fdbf963
   XLPagerTabStrip: c46e802a8dcac29edbcea573de8fe920e052455b
 
-PODFILE CHECKSUM: ff6e254c41970da6b4dac29f0c8f4d9b4995b6b1
+PODFILE CHECKSUM: 5cb5cf370707547881653fafc076d7f400d692dd
 
 COCOAPODS: 1.1.1

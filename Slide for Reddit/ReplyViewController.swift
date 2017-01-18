@@ -88,9 +88,12 @@ class ReplyViewController: UIViewController, UITextViewDelegate {
         navigationItem.leftBarButtonItems = [closeB]
         
         
-        let sendB = UIBarButtonItem.init(title: "Send", style: .done, target: self, action: #selector(self.send(_:)))
-        navigationItem.rightBarButtonItems = [sendB]
-        
+        let send = UIButton.init(type: .custom)
+        send.setImage(UIImage.init(named: "send"), for: UIControlState.normal)
+        send.addTarget(self, action: #selector(self.send(_:)), for: UIControlEvents.touchUpInside)
+        send.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+        let sendB = UIBarButtonItem.init(customView: send)
+        navigationItem.rightBarButtonItem = sendB
         registerKeyboardNotifications()
 
     }

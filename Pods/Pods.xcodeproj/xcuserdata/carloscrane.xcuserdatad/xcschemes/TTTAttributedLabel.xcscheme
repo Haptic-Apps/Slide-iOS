@@ -14,10 +14,10 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '44C9D3B603EF52B81A0A65D6714DAECA'
-               BlueprintName = 'UZTextView'
+               BlueprintIdentifier = '0AFFE008C8E686A6AD8E4A780FAC962A'
+               BlueprintName = 'TTTAttributedLabel'
                ReferencedContainer = 'container:Pods.xcodeproj'
-               BuildableName = 'UZTextView.framework'>
+               BuildableName = 'TTTAttributedLabel.framework'>
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

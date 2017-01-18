@@ -19,6 +19,7 @@ import reddift
 import UZTextView
 import AMScrollingNavbar
 import ImageViewer
+import TTTAttributedLabel
 
 protocol LinkCellViewDelegate: class {
     func upvote(_ cell: LinkCellView)
@@ -53,7 +54,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     
     var bannerImage = UIImageView()
     var thumbImage = UIImageView()
-    var title = UILabel()
+    var title = TTTAttributedLabel.init(frame: CGRect.zero)
     var score = UILabel()
     var box = UIStackView()
     var buttons = UIStackView()
@@ -191,7 +192,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         bannerImage.clipsToBounds = true;
         bannerImage.contentMode = UIViewContentMode.scaleAspectFit
         
-        self.title = UILabel(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude));
+        self.title = TTTAttributedLabel(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude));
         title.numberOfLines = 0
         title.lineBreakMode = NSLineBreakMode.byWordWrapping
         title.font = UIFont.systemFont(ofSize: 18, weight: 1.15)
@@ -359,7 +360,32 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         if(navViewController == nil && nav != nil){
             navViewController = nav
         }
-        title.text = submission.title
+        let attributedTitle = NSMutableAttributedString(string: submission.title, attributes: [NSFontAttributeName: title.font, NSForegroundColorAttributeName: ColorUtil.fontColor])
+        let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(submission.linkFlairText.isEmpty ? submission.linkFlairCssClass : submission.linkFlairText)\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 3, left: 3, bottom: 3, right: 3), kTTTBackgroundCornerRadiusAttributeName: 3])
+        let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 5, left: 5, bottom: 5, right: 5), kTTTBackgroundCornerRadiusAttributeName: 3])
+        let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(submission.gilded) ", attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12)])
+
+        let spacer = NSMutableAttributedString.init(string: "  ")
+        if(!(submission.linkFlairText.isEmpty ? submission.linkFlairCssClass : submission.linkFlairText).isEmpty){
+            attributedTitle.append(spacer)
+            attributedTitle.append(flairTitle)
+        }
+        if(submission.stickied){
+            attributedTitle.append(spacer)
+            attributedTitle.append(pinned)
+        }
+        if(submission.gilded > 0){
+            attributedTitle.append(spacer)
+            let attachment = NSTextAttachment()
+            attachment.image = UIImage(named: "gold")?.imageResize(sizeChange: CGSize.init(width: 15, height: 15))
+            let attachmentString = NSAttributedString(attachment: attachment)
+            attributedTitle.append(attachmentString)
+            if(submission.gilded > 1){
+                attributedTitle.append(gilded)
+            }
+        }
+
+        title.attributedText = attributedTitle
         link = submission
         title.sizeToFit()
         

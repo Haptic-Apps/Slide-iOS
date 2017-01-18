@@ -49,6 +49,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>TTTAttributedLabel.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>UZTextView.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -77,37 +82,37 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>0AFFE008C8E686A6AD8E4A780FAC962A</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>2F379F1C8C45C3D5C9A0C24788E5C3A1</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>30FAAD706CFE61EC528BD30DA652E825</key>
+		<key>44C9D3B603EF52B81A0A65D6714DAECA</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>35D42B10B45F2C475F04DA1D6855163C</key>
+		<key>5CD04638470CAE54624D43E62C5CE02C</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>674172F0F63588BE985DEB1DD47C98D8</key>
+		<key>6D2A024EAC892FD4271456F4B56E71F9</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>6F65F9E0DCDE9184FB92202FCFC14176</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
 		<key>6F983DF4CA4AE96FC7D664DC5BB622A8</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>6FBD4C887B0A222798B5645B7E631BF5</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>837C14DDD0F6953D69CE982C5097A418</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -127,7 +132,7 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>A11F24DCF33815F9029BB46C299EF1A1</key>
+		<key>9DC031B0B0495F57975CE01019E44821</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -137,12 +142,17 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>DE78F501790F5BB8D2D07FF2455E15A4</key>
+		<key>BCD81FE688D79D6021C04A6552F9FC97</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>E88C1627787DE9401B1981BD7AFB0B27</key>
+		<key>E8F98F3AEC5A85356CE7BBB4086F5CCD</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>FD09F46F8ACD414AC7D5AA7578155B39</key>
 		<dict>
 			<key>primary</key>
 			<true/>
