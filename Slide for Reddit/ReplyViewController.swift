@@ -77,7 +77,7 @@ class ReplyViewController: UIViewController, UITextViewDelegate {
         navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName : UIColor.white]
         navigationController?.navigationBar.tintColor = UIColor.white
         let author = (toReplyTo is Comment) ? ((toReplyTo as! Comment).author) : ((toReplyTo as! Link).author)
-        title = "Reply to /u/\(author)"
+        title = "Reply to \(author)"
         
         let close = UIButton.init(type: .custom)
         close.setImage(UIImage.init(named: "close"), for: UIControlState.normal)

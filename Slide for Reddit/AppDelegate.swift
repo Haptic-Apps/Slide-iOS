@@ -198,16 +198,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             })
 
             } else {
-                Subscriptions.getSubscriptionsFully(session: session!, completion: { (subs) in
+                Subscriptions.getSubscriptionsFully(session: session!, completion: { (subs, multis) in
                     for sub in subs {
                         toReturn.append(sub.displayName)
-                        print(sub.displayName)
                         let color = (UIColor.init(hexString: sub.keyColor))
                         if(color != nil && defaults.object(forKey: "color" + sub.displayName) == nil){
                             defaults.setColor(color: color , forKey: "color+" + sub.displayName)
                         }
                     }
+                    for m in multis {
+                        toReturn.append("/m/" + m.displayName)
+                        let color = (UIColor.init(hexString: m.keyColor))
+                        if(color != nil && defaults.object(forKey: "color" + m.displayName) == nil){
+                            defaults.setColor(color: color , forKey: "color+" + m.displayName)
+                        }
+                    }
                     
+
                     toReturn = toReturn.sorted{ $0.localizedCaseInsensitiveCompare($1) == ComparisonResult.orderedAscending }
                     toReturn.insert("all", at: 0)
                     toReturn.insert("frontpage", at: 0)

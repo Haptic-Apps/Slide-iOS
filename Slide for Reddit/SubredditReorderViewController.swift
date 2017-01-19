@@ -59,11 +59,16 @@ class SubredditReorderViewController: UITableViewController {
         alertController.view.addSubview(spinnerIndicator)
         self.present(alertController,animated: true, completion: nil)
         
-        Subscriptions.getSubscriptionsFully(session: (UIApplication.shared.delegate as! AppDelegate).session!, completion: {(newSubs) in
+        Subscriptions.getSubscriptionsFully(session: (UIApplication.shared.delegate as! AppDelegate).session!, completion: {(newSubs, newMultis) in
             let end = self.subs.count
             for s in newSubs {
                 if(!self.subs.contains(s.displayName)){
                     self.subs.append(s.displayName)
+                }
+            }
+            for m in newMultis {
+                if(!self.subs.contains("/m/" + m.displayName)){
+                    self.subs.append("/m/" + m.displayName)
                 }
             }
             DispatchQueue.main.async {

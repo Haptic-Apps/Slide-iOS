@@ -168,7 +168,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         actionSheetController.addAction(cancelActionButton)
         
         self.present(actionSheetController, animated: true, completion: nil)
-
+        
     }
     
     
@@ -378,7 +378,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         
         let somethingAction = UIAlertAction(title: "Save", style: .default, handler: {(alert: UIAlertAction!) in
             if self.accentChosen != nil {
-            ColorUtil.setAccentColorForSub(sub: self.sub, color: self.accentChosen!)
+                ColorUtil.setAccentColorForSub(sub: self.sub, color: self.accentChosen!)
             }
             self.tableView.reloadData()
         })
@@ -394,7 +394,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         
         present(alertController, animated: true, completion: nil)
     }
-
+    
     
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.navigationBar.isTranslucent = false
@@ -420,7 +420,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                 
                 navigationItem.rightBarButtonItems = [ moreB, sortB]
             } else if parentController != nil && parentController?.navigationController != nil{
-                 parentController?.navigationController?.title = sub
+                parentController?.navigationController?.title = sub
                 let sort = UIButton.init(type: .custom)
                 sort.setImage(UIImage.init(named: "ic_sort_white"), for: UIControlState.normal)
                 sort.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
@@ -433,7 +433,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                 more.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
                 let moreB = UIBarButtonItem.init(customView: more)
                 
-                 parentController?.navigationItem.rightBarButtonItems = [ moreB, sortB]
+                parentController?.navigationItem.rightBarButtonItems = [ moreB, sortB]
             }
         } else {
             paging = true
@@ -619,24 +619,45 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                 if(reset){
                     paginator = Paginator()
                 }
-                try session?.getList(paginator, subreddit: Subreddit.init(subreddit: sub) , sort: sort, timeFilterWithin: time, completion: { (result) in
-                    switch result {
-                    case .failure:
-                        print(result.error!)
-                    case .success(let listing):
-                        if(reset){
-                            self.links = []
+                if(sub.hasPrefix("/m/")){
+                    try session?.getList(paginator, subreddit: Multireddit.init(name: sub.substring(3, length: sub.length - 3), user: AccountController.currentName) , sort: sort, timeFilterWithin: time, completion: { (result) in
+                        switch result {
+                        case .failure:
+                            print(result.error!)
+                        case .success(let listing):
+                            if(reset){
+                                self.links = []
+                            }
+                            let values = PostFilter.filter(listing.children.flatMap({$0 as? Link}), previous: self.links)
+                            self.links += values
+                            self.paginator = listing.paginator
+                            DispatchQueue.main.async{
+                                self.tableView.reloadData()
+                                self.refreshControl.endRefreshing()
+                                self.loading = false
+                            }
                         }
-                        let values = PostFilter.filter(listing.children.flatMap({$0 as? Link}), previous: self.links)
-                        self.links += values
-                        self.paginator = listing.paginator
-                        DispatchQueue.main.async{
-                            self.tableView.reloadData()
-                            self.refreshControl.endRefreshing()
-                            self.loading = false
+                    })
+                } else {
+                    try session?.getList(paginator, subreddit: Subreddit.init(subreddit: sub) , sort: sort, timeFilterWithin: time, completion: { (result) in
+                        switch result {
+                        case .failure:
+                            print(result.error!)
+                        case .success(let listing):
+                            if(reset){
+                                self.links = []
+                            }
+                            let values = PostFilter.filter(listing.children.flatMap({$0 as? Link}), previous: self.links)
+                            self.links += values
+                            self.paginator = listing.paginator
+                            DispatchQueue.main.async{
+                                self.tableView.reloadData()
+                                self.refreshControl.endRefreshing()
+                                self.loading = false
+                            }
                         }
-                    }
-                })
+                    })
+                }
             } catch {
                 print(error)
             }

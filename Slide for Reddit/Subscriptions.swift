@@ -65,36 +65,53 @@ class Subscriptions{
         Subscriptions.sync(name: name, completion: completion)
     }
     
-    public static func getSubscriptionsUntilCompletion(session: Session, p: Paginator, tR: [Subreddit], completion: @escaping (_ result: [Subreddit]) -> Void){
+    public static func getSubscriptionsUntilCompletion(session: Session, p: Paginator, tR: [Subreddit], mR: [Multireddit], multis: Bool, completion: @escaping (_ result: [Subreddit], _ multis: [Multireddit]) -> Void){
         var toReturn = tR
+        var toReturnMultis = mR
         var paginator = p
         do{
+            if(!multis){
             try session.getUserRelatedSubreddit(.subscriber, paginator:paginator, completion: { (result) -> Void in
                 switch result {
                 case .failure:
                     print(result.error!)
-                    completion(toReturn)
+                    completion(toReturn, toReturnMultis)
+                    break
                 case .success(let listing):
                     toReturn += listing.children.flatMap({$0 as? Subreddit})
                     paginator = listing.paginator
                     print("Size is \(toReturn.count) and hasmore is \(paginator.hasMore())")
                     if(paginator.hasMore()){
-                        getSubscriptionsUntilCompletion(session: session, p: paginator, tR: toReturn, completion: completion)
+                        getSubscriptionsUntilCompletion(session: session, p: paginator, tR: toReturn, mR: toReturnMultis, multis: false, completion: completion)
                     } else {
-                        completion(toReturn)
+                        getSubscriptionsUntilCompletion(session: session, p: paginator, tR: toReturn, mR: toReturnMultis, multis: true, completion: completion)
                     }
                 }
             })
+            } else {
+                try session.getMineMultireddit({ (result) in
+                    switch result {
+                    case .failure:
+                        print(result.error!)
+                        completion(toReturn, toReturnMultis)
+                        break
+                    case .success(let multireddits):
+                        toReturnMultis.append(contentsOf: multireddits)
+                        completion(toReturn, toReturnMultis)
+                    }
+                })
+            }
         } catch {
-            completion(toReturn)
+            completion(toReturn, toReturnMultis)
         }
 
     }
     
-    public static func getSubscriptionsFully(session: Session, completion: @escaping (_ result: [Subreddit]) -> Void) {
+    public static func getSubscriptionsFully(session: Session, completion: @escaping (_ result: [Subreddit], _ multis: [Multireddit]) -> Void) {
         let toReturn: [Subreddit] = []
+        let toReturnMultis: [Multireddit] = []
         let paginator = Paginator()
-        getSubscriptionsUntilCompletion(session: session, p: paginator, tR: toReturn, completion: completion)
+        getSubscriptionsUntilCompletion(session: session, p: paginator, tR: toReturn, mR: toReturnMultis, multis: false, completion: completion)
     }
     
 }

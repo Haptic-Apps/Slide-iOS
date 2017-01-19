@@ -95,7 +95,7 @@ public struct Multireddit: SubredditURLPath {
     public let created: TimeInterval
     public let createdUtc: TimeInterval
     
-    public init(name: String) {
+    public init(name: String, user: String) {
         self.descriptionMd = ""
         self.displayName = name
         self.iconName = MultiredditIconName("")
@@ -104,7 +104,7 @@ public struct Multireddit: SubredditURLPath {
         self.subreddits = []
         self.weightingScheme = MultiredditWeightingScheme("")
         self.descriptionHtml = ""
-        self.path = name
+        self.path = "/user/" + user + "/m/" + name
         self.name = name
         self.iconUrl = ""
         self.canEdit = false
