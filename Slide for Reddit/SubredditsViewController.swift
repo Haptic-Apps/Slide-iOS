@@ -212,41 +212,7 @@ class SubredditsViewController:  ButtonBarPagerTabStripViewController {
     }
     
     func showMenu(_ sender: AnyObject){
-        let actionSheetController: UIAlertController = UIAlertController(title: "", message: "", preferredStyle: .actionSheet)
-        
-        var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
-            print("Cancel")
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        cancelActionButton = UIAlertAction(title: "Search", style: .default) { action -> Void in
-            (self.viewControllers[self.currentIndex] as? SubredditLinkViewController)?.search()
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        cancelActionButton = UIAlertAction(title: "Refresh", style: .default) { action -> Void in
-            (self.viewControllers[self.currentIndex] as? SubredditLinkViewController)?.refresh()
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        cancelActionButton = UIAlertAction(title: "Subreddit Theme", style: .default) { action -> Void in
-            (self.viewControllers[self.currentIndex] as? SubredditLinkViewController)?.pickTheme(parent: self)
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        cancelActionButton = UIAlertAction(title: "Base Theme", style: .default) { action -> Void in
-            self.showThemeMenu()
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        cancelActionButton = UIAlertAction(title: "Filter", style: .default) { action -> Void in
-            print("Filter")
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        
-        self.present(actionSheetController, animated: true, completion: nil)
-        
+        (self.viewControllers[self.currentIndex] as? SubredditLinkViewController)?.showMore(self, parentVC: self)
     }
     
     func showThemeMenu(){

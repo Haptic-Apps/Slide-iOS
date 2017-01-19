@@ -224,19 +224,16 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         score.numberOfLines = 1
         score.font = UIFont.systemFont(ofSize: 12)
         score.textColor = ColorUtil.fontColor
-        score.alpha = 0.87
         
         self.comments = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
         comments.numberOfLines = 1
         comments.font = UIFont.systemFont(ofSize: 12)
         comments.textColor = ColorUtil.fontColor
-        comments.alpha = 0.87
         
         self.info = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
         info.numberOfLines = 0
         info.font = UIFont.systemFont(ofSize: 12)
         info.textColor = ColorUtil.fontColor
-        info.alpha = 0.87
         
         self.box = UIStackView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
         self.buttons = UIStackView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
@@ -902,6 +899,9 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     
     func openComment(sender: UITapGestureRecognizer? = nil){
         if(!full){
+            if(parentViewController is SubredditLinkViewController){
+                (parentViewController as! SubredditLinkViewController).savedIndex = (self.superview?.superview as! UITableView).indexPath(for: self)!
+            }
             let comment = CommentViewController(submission: link!)
             (self.navViewController as? UINavigationController)?.pushViewController(comment, animated: true)
         }

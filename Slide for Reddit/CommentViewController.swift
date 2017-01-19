@@ -153,6 +153,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         heightArray = contents.filter{ !hidden.contains($0.id) }
     }
     
+    var sort: CommentSort = SettingValues.defaultCommentSorting
+    
     override func loadView(){
         self.view = UITableView(frame: CGRect.zero, style: .plain)
         self.tableView = self.view as! UITableView
@@ -175,7 +177,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         if let link = self.submission {
             do {
                 print("Context number is \(contextNumber)")
-                try session?.getArticles(link, sort:.top, comments:(context.isEmpty ? nil : [context]), context: contextNumber, completion: { (result) -> Void in
+                try session?.getArticles(link, sort:sort, comments:(context.isEmpty ? nil : [context]), context: contextNumber, completion: { (result) -> Void in
                     switch result {
                     case .failure(let error):
                         print(error)
@@ -413,7 +415,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             let sortB = UIBarButtonItem.init(customView: sort)
             
             let more = UIButton.init(type: .custom)
-            more.setImage(UIImage.init(named: "search")?.imageResize(sizeChange: CGSize.init(width: 20, height: 20)), for: UIControlState.normal)
+            more.setImage(UIImage.init(named: "search")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
             more.addTarget(self, action: #selector(self.search(_:)), for: UIControlEvents.touchUpInside)
             more.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
             let moreB = UIBarButtonItem.init(customView: more)

@@ -442,7 +442,7 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
             authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#64B5F6"), NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
         }
         
-        let infoString = NSMutableAttributedString()
+        let infoString = NSMutableAttributedString(string: "\u{00A0}")
         infoString.append(authorString)
         infoString.append(NSAttributedString(string:"  •  ", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor]))
         infoString.append(scoreString)

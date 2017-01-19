@@ -414,7 +414,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                 
                 let more = UIButton.init(type: .custom)
                 more.setImage(UIImage.init(named: "ic_more_vert_white"), for: UIControlState.normal)
-                more.addTarget(self, action: #selector(self.showMore(_:)), for: UIControlEvents.touchUpInside)
+                more.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControlEvents.touchUpInside)
                 more.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
                 let moreB = UIBarButtonItem.init(customView: more)
                 
@@ -429,7 +429,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                 
                 let more = UIButton.init(type: .custom)
                 more.setImage(UIImage.init(named: "ic_more_vert_white"), for: UIControlState.normal)
-                more.addTarget(self, action: #selector(self.showMore(_:)), for: UIControlEvents.touchUpInside)
+                more.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControlEvents.touchUpInside)
                 more.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
                 let moreB = UIBarButtonItem.init(customView: more)
                 
@@ -439,10 +439,16 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             paging = true
         }
         super.viewWillAppear(animated)
-        tableView.reloadData()
+        if(savedIndex != nil){
+            tableView.reloadRows(at: [savedIndex!], with: .none)
+        } else {
+            tableView.reloadData()
+        }
     }
     
-    
+    func showMoreNone(_ sender: AnyObject){
+        showMore(sender, parentVC: nil)
+    }
     
     func search(){
         let alert = UIAlertController(title: "Search", message: "", preferredStyle: .alert)
@@ -471,7 +477,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         
     }
     
-    func showMore(_ sender: AnyObject){
+    func showMore(_ sender: AnyObject, parentVC: SubredditsViewController? = nil){
         let actionSheetController: UIAlertController = UIAlertController(title: "", message: "", preferredStyle: .actionSheet)
         
         var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
@@ -489,10 +495,30 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         }
         actionSheetController.addAction(cancelActionButton)
         
-        cancelActionButton = UIAlertAction(title: "Subreddit Theme", style: .default) { action -> Void in
-            self.pickTheme(parent: nil)
+        cancelActionButton = UIAlertAction(title: "Gallery mode", style: .default) { action -> Void in
+            self.galleryMode()
         }
         actionSheetController.addAction(cancelActionButton)
+        
+        cancelActionButton = UIAlertAction(title: "Subreddit Theme", style: .default) { action -> Void in
+            if(parentVC != nil){
+                let p = (parentVC!)
+                self.pickTheme(parent: p)
+            } else {
+                self.pickTheme(parent: nil)
+            }
+
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        if(!single){
+        cancelActionButton = UIAlertAction(title: "Base Theme", style: .default) { action -> Void in
+            if(parentVC != nil){
+                (parentVC)!.showThemeMenu()
+            }
+        }
+        actionSheetController.addAction(cancelActionButton)
+        }
         
         cancelActionButton = UIAlertAction(title: "Filter", style: .default) { action -> Void in
             print("Filter")
@@ -501,9 +527,19 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         
         
         self.present(actionSheetController, animated: true, completion: nil)
-        
     }
     
+    func galleryMode(){
+        let controller = GalleryTableViewController()
+        var gLinks:[Link] = []
+        for l in links{
+            if (((((l.baseJson["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["url"] as? String) != nil {
+                gLinks.append(l)
+            }
+        }
+        controller.setLinks(links: gLinks)
+        show(controller, sender: self)
+    }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -549,8 +585,8 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         
     }
     
-    var sort = LinkSortType.hot
-    var time = TimeFilterWithin.day
+    var sort = SettingValues.defaultSorting
+    var time = SettingValues.defaultTimePeriod
     
     func indicatorInfo(for pagerTabStripController: PagerTabStripViewController) -> IndicatorInfo {
         return itemInfo
@@ -610,6 +646,8 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         refreshControl.beginRefreshing()
         load(reset: true)
     }
+    
+    var savedIndex: IndexPath?
     
     func load(reset: Bool){
         if(!loading){

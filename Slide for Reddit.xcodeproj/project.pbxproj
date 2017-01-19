@@ -77,6 +77,8 @@
 		BEBF45DB1E23383D00764BB8 /* seen.plist in Resources */ = {isa = PBXBuildFile; fileRef = BEBF45DA1E23383D00764BB8 /* seen.plist */; };
 		BEBF45DD1E23384500764BB8 /* comments.plist in Resources */ = {isa = PBXBuildFile; fileRef = BEBF45DC1E23384500764BB8 /* comments.plist */; };
 		BEBF45E11E23EED800764BB8 /* SettingValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEBF45E01E23EED800764BB8 /* SettingValues.swift */; };
+		BEC494281E307D57006618F3 /* GalleryTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC494271E307D57006618F3 /* GalleryTableViewController.swift */; };
+		BEC4942A1E307DDA006618F3 /* GalleryCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC494291E307DDA006618F3 /* GalleryCellView.swift */; };
 		BEDDA9911E19AB5D003CD6C3 /* WebsiteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEDDA9901E19AB5D003CD6C3 /* WebsiteViewController.swift */; };
 		BEDDA9931E19AEF2003CD6C3 /* AdDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEDDA9921E19AEF2003CD6C3 /* AdDictionary.swift */; };
 		BEE5BF621E119A9000E3C9AE /* SubredditsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE5BF611E119A9000E3C9AE /* SubredditsViewController.swift */; };
@@ -197,6 +199,8 @@
 		BEBF45DA1E23383D00764BB8 /* seen.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = seen.plist; sourceTree = "<group>"; };
 		BEBF45DC1E23384500764BB8 /* comments.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = comments.plist; sourceTree = "<group>"; };
 		BEBF45E01E23EED800764BB8 /* SettingValues.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingValues.swift; sourceTree = "<group>"; };
+		BEC494271E307D57006618F3 /* GalleryTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GalleryTableViewController.swift; sourceTree = "<group>"; };
+		BEC494291E307DDA006618F3 /* GalleryCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GalleryCellView.swift; sourceTree = "<group>"; };
 		BEDDA9901E19AB5D003CD6C3 /* WebsiteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebsiteViewController.swift; sourceTree = "<group>"; };
 		BEDDA9921E19AEF2003CD6C3 /* AdDictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdDictionary.swift; sourceTree = "<group>"; };
 		BEE5BF611E119A9000E3C9AE /* SubredditsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubredditsViewController.swift; sourceTree = "<group>"; };
@@ -424,6 +428,8 @@
 				BE1DA3951E26AD5700EC0A04 /* SearchViewController.swift */,
 				BE1DA3971E26ADEA00EC0A04 /* SearchContributionLoader.swift */,
 				BE86300E1E2E6A54004F0E1F /* PostFilter.swift */,
+				BEC494271E307D57006618F3 /* GalleryTableViewController.swift */,
+				BEC494291E307DDA006618F3 /* GalleryCellView.swift */,
 			);
 			path = "Slide for Reddit";
 			sourceTree = "<group>";
@@ -792,6 +798,7 @@
 				BE6EA6D51E1C1FC700E9E709 /* Channel.swift in Sources */,
 				BE2DEAB41E2693C100FBF0B5 /* SubredditHeaderView.swift in Sources */,
 				BE2B8A0B1E2602CD0053D493 /* SubredditReorderViewController.swift in Sources */,
+				BEC494281E307D57006618F3 /* GalleryTableViewController.swift in Sources */,
 				BEBF45E11E23EED800764BB8 /* SettingValues.swift in Sources */,
 				BE3E5C191E16BC3900749C0C /* StringHTML+util.swift in Sources */,
 				BE7439E91E201AEE008BB63B /* Subscriptions.swift in Sources */,
@@ -821,6 +828,7 @@
 				BE7439F31E20C9BE008BB63B /* CommentCellView.swift in Sources */,
 				BE8630111E2EDFB2004F0E1F /* FiltersViewController.swift in Sources */,
 				BE5E53751E1DAEB7004FE226 /* RedditLink.swift in Sources */,
+				BEC4942A1E307DDA006618F3 /* GalleryCellView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
