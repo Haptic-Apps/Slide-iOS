@@ -306,7 +306,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         search.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let searchB = UIBarButtonItem.init(customView: search)
         
-        navigationItem.rightBarButtonItems = [ searchB, sortB, moreB]
+        navigationItem.rightBarButtonItems = [moreB, sortB, searchB]
         
         navigationItem.titleView = savedTitleView
         
@@ -443,19 +443,25 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
         
         if(navigationController != nil){
+            let more = UIButton.init(type: .custom)
+            more.setImage(UIImage.init(named: "ic_more_vert_white"), for: UIControlState.normal)
+            more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
+            more.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+            let moreB = UIBarButtonItem.init(customView: more)
+            
             let sort = UIButton.init(type: .custom)
-            sort.setImage(UIImage.init(named: "ic_more_vert_white"), for: UIControlState.normal)
-            sort.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
+            sort.setImage(UIImage.init(named: "ic_sort_white"), for: UIControlState.normal)
+            sort.addTarget(self, action: #selector(self.sort(_:)), for: UIControlEvents.touchUpInside)
             sort.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
             let sortB = UIBarButtonItem.init(customView: sort)
             
-            let more = UIButton.init(type: .custom)
-            more.setImage(UIImage.init(named: "search")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
-            more.addTarget(self, action: #selector(self.search(_:)), for: UIControlEvents.touchUpInside)
-            more.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
-            let moreB = UIBarButtonItem.init(customView: more)
+            let search = UIButton.init(type: .custom)
+            search.setImage(UIImage.init(named: "search"), for: UIControlState.normal)
+            search.addTarget(self, action: #selector(self.search(_:)), for: UIControlEvents.touchUpInside)
+            search.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
+            let searchB = UIBarButtonItem.init(customView: search)
             
-            navigationItem.rightBarButtonItems = [ sortB, moreB]
+            navigationItem.rightBarButtonItems = [moreB, sortB, searchB]
         }
         
         updateToolbar()

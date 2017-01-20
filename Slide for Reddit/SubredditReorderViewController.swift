@@ -48,6 +48,11 @@ class SubredditReorderViewController: UITableViewController {
         })
     }
     
+    override func tableView(_ tableView: UITableView, willBeginEditingRowAt indexPath: IndexPath) {
+        let cell = tableView.cellForRow(at: indexPath)
+        cell?.backgroundColor = ColorUtil.foregroundColor
+    }
+
     func sync(_ selector: AnyObject){
         let alertController = UIAlertController(title: nil, message: "Syncing subscriptions...\n\n", preferredStyle: .alert)
         
@@ -102,6 +107,7 @@ class SubredditReorderViewController: UITableViewController {
         let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
         c.setSubreddit(subreddit: thing)
         cell = c
+        cell?.backgroundColor = ColorUtil.foregroundColor
         return cell!
     }
 

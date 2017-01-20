@@ -404,7 +404,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         refresh()
         
         let more = History.commentsSince(s: submission)
-        let commentText = NSMutableAttributedString(string: " \(submission.numComments)" + (more > 0 ? "(+\(more))" : ""), attributes: [NSFontAttributeName: comments.font, NSForegroundColorAttributeName: comments.textColor])
+        let commentText = NSMutableAttributedString(string: " \(submission.numComments)" + (more > 0 ? " (+\(more))" : ""), attributes: [NSFontAttributeName: comments.font, NSForegroundColorAttributeName: comments.textColor])
         
         comments.attributedText = commentText
         comments.addImage(imageName: "comments", afterLabel: false)
@@ -421,16 +421,17 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(submission.linkFlairText.isEmpty ? submission.linkFlairCssClass : submission.linkFlairText)\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 3, left: 3, bottom: 3, right: 3), kTTTBackgroundCornerRadiusAttributeName: 3])
         let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 2, left: 2, bottom: 2, right: 2), kTTTBackgroundCornerRadiusAttributeName: 3])
         let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(submission.gilded) ", attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor])
-        
+       
+        let locked = NSMutableAttributedString.init(string: "\u{00A0}LOCKED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 2, left: 2, bottom: 2, right: 2), kTTTBackgroundCornerRadiusAttributeName: 3])
+
+        let archived = NSMutableAttributedString.init(string: "\u{00A0}ARCHIVED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 3, left: 3, bottom: 3, right: 3), kTTTBackgroundCornerRadiusAttributeName: 3])
+
         let spacer = NSMutableAttributedString.init(string: "  ")
         if(!(submission.linkFlairText.isEmpty ? submission.linkFlairCssClass : submission.linkFlairText).isEmpty){
             attributedTitle.append(spacer)
             attributedTitle.append(flairTitle)
         }
-        if(submission.stickied){
-            attributedTitle.append(spacer)
-            attributedTitle.append(pinned)
-        }
+        
         if(submission.gilded > 0){
             attributedTitle.append(spacer)
             let attachment = NSTextAttachment()
@@ -440,6 +441,18 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             if(submission.gilded > 1){
                 attributedTitle.append(gilded)
             }
+        }
+        
+        if(submission.stickied){
+            attributedTitle.append(spacer)
+            attributedTitle.append(pinned)
+        }
+        
+        if(submission.locked){
+            attributedTitle.append(locked)
+        }
+        if(submission.archived){
+            attributedTitle.append(archived)
         }
         
         attributedTitle.append(NSAttributedString.init(string: "\n\n"))

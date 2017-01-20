@@ -176,6 +176,8 @@ class SettingsViewController: UITableViewController {
             show(SettingsGeneral(), sender: self)
         } else if(indexPath.section == 2 && indexPath.row == 3){
             show(FiltersViewController(), sender: self)
+        } else if(indexPath.section == 1 && indexPath.row == 2){
+            show(SubredditThemeViewController(), sender: self)
         }
     }
     /* maybe future

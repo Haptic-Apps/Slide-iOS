@@ -121,7 +121,6 @@ extension Session {
         ])
         var path = "\(privateSortType.path).json"
         if let subreddit = subreddit { path = "\(subreddit.path)\(privateSortType.path).json" }
-        print(path)
         guard let request = URLRequest.requestForOAuth(with: baseURL, path:path, parameter:parameter, method:"GET", token:token)
             else { throw ReddiftError.canNotCreateURLRequest as NSError }
         let closure = {(data: Data?, response: URLResponse?, error: NSError?) -> Result<Listing> in
