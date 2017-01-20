@@ -229,8 +229,6 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         
         self.score = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
         score.numberOfLines = 1
-        score.font = UIFont.systemFont(ofSize: 12)
-        score.textColor = ColorUtil.fontColor
         
         self.comments = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
         comments.numberOfLines = 1
@@ -350,18 +348,12 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     var bigConstraint : NSLayoutConstraint?
     var thumbConstraint : [NSLayoutConstraint] = []
     
-    
-    func setLink(submission: Link, parent: MediaViewController, nav: UIViewController?){
-        parentViewController = parent
-        let full = false
-        if(navViewController == nil && nav != nil){
-            navViewController = nav
-        }
+    func refreshLink(_ submission: Link){
         let attributedTitle = NSMutableAttributedString(string: submission.title, attributes: [NSFontAttributeName: title.font, NSForegroundColorAttributeName: ColorUtil.fontColor])
         let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(submission.linkFlairText.isEmpty ? submission.linkFlairCssClass : submission.linkFlairText)\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 3, left: 3, bottom: 3, right: 3), kTTTBackgroundCornerRadiusAttributeName: 3])
         let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 2, left: 2, bottom: 2, right: 2), kTTTBackgroundCornerRadiusAttributeName: 3])
         let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(submission.gilded) ", attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor])
-
+        
         let spacer = NSMutableAttributedString.init(string: "  ")
         if(!(submission.linkFlairText.isEmpty ? submission.linkFlairCssClass : submission.linkFlairText).isEmpty){
             attributedTitle.append(spacer)
@@ -374,7 +366,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         if(submission.gilded > 0){
             attributedTitle.append(spacer)
             let attachment = NSTextAttachment()
-            attachment.image = UIImage(named: "gold")?.imageResize(sizeChange: CGSize.init(width: 15, height: 15))
+            attachment.image = UIImage(named: "gold")?.imageResize(sizeChange: CGSize.init(width: 20, height: 20))
             let attachmentString = NSAttributedString(attachment: attachment)
             attributedTitle.append(attachmentString)
             if(submission.gilded > 1){
@@ -398,7 +390,75 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         infoString.append(boldString)
         infoString.append(endString)
         attributedTitle.append(infoString)
-
+        
+        title.attributedText = attributedTitle
+        link = submission
+        title.sizeToFit()
+        
+        let comment = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openComment(sender:)))
+        comment.delegate = self
+        self.addGestureRecognizer(comment)
+        
+        
+        title.sizeToFit()
+        refresh()
+        
+        let more = History.commentsSince(s: submission)
+        let commentText = NSMutableAttributedString(string: " \(submission.numComments)" + (more > 0 ? "(+\(more))" : ""), attributes: [NSFontAttributeName: comments.font, NSForegroundColorAttributeName: comments.textColor])
+        
+        comments.attributedText = commentText
+        comments.addImage(imageName: "comments", afterLabel: false)
+        
+    }
+    
+    func setLink(submission: Link, parent: MediaViewController, nav: UIViewController?){
+        parentViewController = parent
+        let full = false
+        if(navViewController == nil && nav != nil){
+            navViewController = nav
+        }
+        let attributedTitle = NSMutableAttributedString(string: submission.title, attributes: [NSFontAttributeName: title.font, NSForegroundColorAttributeName: ColorUtil.fontColor])
+        let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(submission.linkFlairText.isEmpty ? submission.linkFlairCssClass : submission.linkFlairText)\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 3, left: 3, bottom: 3, right: 3), kTTTBackgroundCornerRadiusAttributeName: 3])
+        let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 2, left: 2, bottom: 2, right: 2), kTTTBackgroundCornerRadiusAttributeName: 3])
+        let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(submission.gilded) ", attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor])
+        
+        let spacer = NSMutableAttributedString.init(string: "  ")
+        if(!(submission.linkFlairText.isEmpty ? submission.linkFlairCssClass : submission.linkFlairText).isEmpty){
+            attributedTitle.append(spacer)
+            attributedTitle.append(flairTitle)
+        }
+        if(submission.stickied){
+            attributedTitle.append(spacer)
+            attributedTitle.append(pinned)
+        }
+        if(submission.gilded > 0){
+            attributedTitle.append(spacer)
+            let attachment = NSTextAttachment()
+            attachment.image = UIImage(named: "gold")?.imageResize(sizeChange: CGSize.init(width: 20, height: 20))
+            let attachmentString = NSAttributedString(attachment: attachment)
+            attributedTitle.append(attachmentString)
+            if(submission.gilded > 1){
+                attributedTitle.append(gilded)
+            }
+        }
+        
+        attributedTitle.append(NSAttributedString.init(string: "\n\n"))
+        let attrs = [NSFontAttributeName : UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor] as [String: Any]
+        
+        let endString = NSMutableAttributedString(string:"  •  \(DateFormatter().timeSince(from: NSDate.init(timeIntervalSince1970: TimeInterval.init(submission.createdUtc)), numericDates: true))\((submission.edited > 0 ? ("(edit \(DateFormatter().timeSince(from: NSDate.init(timeIntervalSince1970: TimeInterval.init(submission.edited)), numericDates: true)))") : ""))  •  \(submission.author)", attributes: [NSFontAttributeName : UIFont.systemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor])
+        
+        let boldString = NSMutableAttributedString(string:"/r/\(submission.subreddit)", attributes:attrs)
+        
+        let color = ColorUtil.getColorForSub(sub: submission.subreddit)
+        if(color.hexValue() != ColorUtil.baseColor){
+            boldString.addAttribute(NSForegroundColorAttributeName, value: color, range: NSRange.init(location: 0, length: boldString.length))
+        }
+        
+        let infoString = NSMutableAttributedString()
+        infoString.append(boldString)
+        infoString.append(endString)
+        attributedTitle.append(infoString)
+        
         title.attributedText = attributedTitle
         link = submission
         title.sizeToFit()
@@ -645,15 +705,10 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         
         title.sizeToFit()
         
-        let subScore :String = (submission.score>=10000) ? String(format: " %0.1fk", (Double(submission.score)/Double(1000))) : " \(submission.score)"
-        score.text = subScore
-        score.addImage(imageName: "upvote", afterLabel: false)
-        
-        let comm = " \(submission.numComments)"
-        comments.text = comm
+        let mo = History.commentsSince(s: submission)
+        let commentText = NSMutableAttributedString(string: " \(submission.numComments)" + (mo > 0 ? "(+\(mo))" : ""), attributes: [NSFontAttributeName: comments.font, NSForegroundColorAttributeName: comments.textColor])
+        comments.attributedText = commentText
         comments.addImage(imageName: "comments", afterLabel: false)
-        
-        
         
         if(!registered && !full){
             parent.registerForPreviewing(with: self, sourceView: self.contentView)
@@ -730,7 +785,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             if(bigConstraint != nil){
                 thumbConstraint.append(bigConstraint!)
             }
-
+            
             
             self.contentView.addConstraints(thumbConstraint)
         } else {
@@ -761,8 +816,6 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             self.contentView.addConstraints(thumbConstraint)
             
         }
-        
-        
         refresh()
         
     }
@@ -771,26 +824,62 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         upvote.tintColor = ColorUtil.fontColor
         save.tintColor = ColorUtil.fontColor
         downvote.tintColor = ColorUtil.fontColor
+        var attrs: [String: Any] = [:]
         switch(ActionStates.getVoteDirection(s: link!)){
         case .down :
-            score.textColor = ColorUtil.downvoteColor
             downvote.tintColor = ColorUtil.downvoteColor
-            score.font = UIFont.boldSystemFont(ofSize: 12)
+            attrs = ([NSForegroundColorAttributeName: ColorUtil.downvoteColor!, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12)])
             break
         case .up:
-            score.textColor = ColorUtil.upvoteColor
             upvote.tintColor = ColorUtil.upvoteColor
-            score.font = UIFont.boldSystemFont(ofSize: 12)
+            attrs = ([NSForegroundColorAttributeName: ColorUtil.upvoteColor!, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12)])
             break
         default:
-            score.textColor = ColorUtil.fontColor
-            score.font = UIFont.systemFont(ofSize: 12)
+            attrs = ([NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: UIFont.systemFont(ofSize: 12)])
+            break
         }
+        
+        let subScore = NSMutableAttributedString(string: (link!.score>=10000) ? String(format: " %0.1fk", (Double(link!.score)/Double(1000))) : " \(link!.score)", attributes: attrs)
+
+        if(full){
+            let scoreRatio =
+                NSMutableAttributedString(string: (SettingValues.upvotePercentage && full && link!.upvoteRatio > 0) ?
+                    " (\(Int(link!.upvoteRatio * 100))%)" : "", attributes: [NSFontAttributeName: comments.font, NSForegroundColorAttributeName: comments.textColor] )
+            
+            var attrsNew: [String: Any] = [:]
+            if (scoreRatio.length > 0 ) {
+                let numb = (link!.upvoteRatio)
+                if (numb <= 0.5) {
+                    if (numb <= 0.1) {
+                        attrsNew = [NSForegroundColorAttributeName: GMColor.blue500Color()]
+                    } else if (numb <= 0.3) {
+                        attrsNew = [NSForegroundColorAttributeName: GMColor.blue400Color()]
+                    } else {
+                        attrsNew = [NSForegroundColorAttributeName: GMColor.blue300Color()]
+                    }
+                } else {
+                    if (numb >= 0.9) {
+                        attrsNew = [NSForegroundColorAttributeName: GMColor.orange500Color()]
+                    } else if (numb >= 0.7) {
+                        attrsNew = [NSForegroundColorAttributeName: GMColor.orange400Color()]
+                    } else {
+                        attrsNew = [NSForegroundColorAttributeName: GMColor.orange300Color()]
+                    }
+                }
+            }
+            
+            scoreRatio.addAttributes(attrsNew, range: NSRange.init(location: 0, length: scoreRatio.length))
+            
+            subScore.append(scoreRatio)
+        }
+        
+        score.attributedText = subScore
+        score.addImage(imageName: "upvote", afterLabel: false)
         
         if(ActionStates.isSaved(s: link!)){
             save.tintColor = UIColor.flatYellow()
         }
-        if(History.getSeen(s: link!)){
+        if(History.getSeen(s: link!) && !full){
             self.contentView.alpha = 0.9
         } else {
             self.contentView.alpha = 1
@@ -801,7 +890,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     var registered: Bool = false
     
     var previewActionItems: [UIPreviewActionItem] {
-
+        
         var toReturn: [UIPreviewAction] = []
         
         let likeAction = UIPreviewAction(title: "Share", style: .default) { (action, viewController) -> Void in
@@ -866,7 +955,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         if(viewControllerToCommit is GalleryViewController){
             parentViewController?.presentImageGallery(viewControllerToCommit as! GalleryViewController)
         } else {
-        parentViewController?.show(viewControllerToCommit, sender: parentViewController )
+            parentViewController?.show(viewControllerToCommit, sender: parentViewController )
         }
     }
     
@@ -908,14 +997,14 @@ extension UILabel
         
         if (bolAfterLabel)
         {
-            let strLabelText: NSMutableAttributedString = NSMutableAttributedString(string: self.text!)
+            let strLabelText: NSMutableAttributedString = NSMutableAttributedString.init(attributedString: self.attributedText!)
             strLabelText.append(attachmentString)
             
             self.attributedText = strLabelText
         }
         else
         {
-            let strLabelText: NSAttributedString = NSAttributedString(string: self.text!)
+            let strLabelText: NSMutableAttributedString = NSMutableAttributedString.init(attributedString: self.attributedText!)
             let mutableAttachmentString: NSMutableAttributedString = NSMutableAttributedString(attributedString: attachmentString)
             mutableAttachmentString.append(strLabelText)
             

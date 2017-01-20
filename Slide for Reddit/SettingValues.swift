@@ -40,9 +40,11 @@ class SettingValues{
     public static let pref_dataSavingEnableMobile = "DATASAVING_ENABLE_MOBILE"
     public static let pref_dataSavingEnableWiFi = "DATASAVING_ENABLE_WIFI"
     public static let pref_dataSavingImageQuality = "DATASAVING_IMAGE_QUALITY"
+    public static let pref_upvotePercentage = "UPVOTE_PERCENTAGE"
 
     public static var viewType = true
     public static var hiddenFAB = true
+    public static var upvotePercentage = true
     public static var defaultSorting = LinkSortType.hot
     public static var defaultTimePeriod = TimeFilterWithin.day
     public static var defaultCommentSorting = CommentSort.confidence

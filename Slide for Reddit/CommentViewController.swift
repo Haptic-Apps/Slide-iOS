@@ -239,6 +239,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                 }
                                 self.title = self.submission!.subreddit
                                 self.setBarColors(color: ColorUtil.getColorForSub(sub: self.title!))
+                            } else {
+                                self.headerCell?.refreshLink(self.submission!)
                             }
                             self.doArrays()
                             self.lastSeen = History.getSeenTime(s: link)
@@ -286,19 +288,25 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         (navigationController as? ScrollingNavigationController)?.showNavbar(animated: true)
         isSearching = false
         tableView.tableHeaderView = savedHeaderView!
-        let sort = UIButton.init(type: .custom)
-        sort.setImage(UIImage.init(named: "ic_more_vert_white"), for: UIControlState.normal)
-        sort.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
-        sort.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
-        let sortB = UIBarButtonItem.init(customView: sort)
-        
         let more = UIButton.init(type: .custom)
-        more.setImage(UIImage.init(named: "search"), for: UIControlState.normal)
-        more.addTarget(self, action: #selector(self.search(_:)), for: UIControlEvents.touchUpInside)
-        more.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
+        more.setImage(UIImage.init(named: "ic_more_vert_white"), for: UIControlState.normal)
+        more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
+        more.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let moreB = UIBarButtonItem.init(customView: more)
         
-        navigationItem.rightBarButtonItems = [ sortB, moreB]
+        let sort = UIButton.init(type: .custom)
+        sort.setImage(UIImage.init(named: "ic_sort_white"), for: UIControlState.normal)
+        sort.addTarget(self, action: #selector(self.sort(_:)), for: UIControlEvents.touchUpInside)
+        sort.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+        let sortB = UIBarButtonItem.init(customView: sort)
+
+        let search = UIButton.init(type: .custom)
+        search.setImage(UIImage.init(named: "search"), for: UIControlState.normal)
+        search.addTarget(self, action: #selector(self.search(_:)), for: UIControlEvents.touchUpInside)
+        search.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
+        let searchB = UIBarButtonItem.init(customView: search)
+        
+        navigationItem.rightBarButtonItems = [ searchB, sortB, moreB]
         
         navigationItem.titleView = savedTitleView
         
@@ -307,6 +315,26 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         hideSearchBar()
+    }
+    
+    func sort(_ sender: AnyObject){
+        let actionSheetController: UIAlertController = UIAlertController(title: "Default comment sorting", message: "", preferredStyle: .actionSheet)
+        
+        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
+            print("Cancel")
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        for c in CommentSort.cases {
+            let saveActionButton: UIAlertAction = UIAlertAction(title: c.description, style: .default)
+            { action -> Void in
+                self.sort = c
+                self.refresh(self)
+            }
+            actionSheetController.addAction(saveActionButton)
+        }
+        
+        self.present(actionSheetController, animated: true, completion: nil)
     }
     
     override func viewDidLoad() {

@@ -283,7 +283,8 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         if(single){
             sideMenu = UISideMenuNavigationController()
             menuNav = SubSidebarViewController.init(parentController: self, sub: sub, completion: { (success, subreddit) in
-                if(success){
+                if(success || self.sub == ("all") || self.sub == ("frontpage") || self.sub.hasPrefix("/m/")){
+                    if(self.sub != ("all") && self.sub != ("frontpage") && !self.sub.hasPrefix("/m/")){
                     if(SettingValues.saveHistory){
                         if(SettingValues.saveNSFWHistory && subreddit!.over18){
                             Subscriptions.addHistorySub(name: AccountController.currentName, sub: subreddit!.displayName)
@@ -291,6 +292,8 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                             Subscriptions.addHistorySub(name: AccountController.currentName, sub: subreddit!.displayName)
                         }
                     }
+                    }
+                    
                     self.load(reset: true)
                 } else {
                     let alert = UIAlertController.init(title: "Subreddit not found", message: "/r/\(self.sub) could not be found, is it spelled correctly?", preferredStyle: .alert)
@@ -637,6 +640,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             for t in TimeFilterWithin.cases {
                 let saveActionButton: UIAlertAction = UIAlertAction(title: t.param, style: .default)
                 { action -> Void in
+                    print("Sort is \(s) and time is \(t)")
                     self.sort = s
                     self.time = t
                     self.refresh()
@@ -686,6 +690,8 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                         }
                     })
                 } else {
+                    print("Sort is \(self.sort) and time is \(self.time)")
+
                     try session?.getList(paginator, subreddit: Subreddit.init(subreddit: sub) , sort: sort, timeFilterWithin: time, completion: { (result) in
                         switch result {
                         case .failure:
