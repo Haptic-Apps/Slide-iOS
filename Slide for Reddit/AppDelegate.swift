@@ -80,6 +80,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UIApplication.shared.statusBarStyle = .lightContent
         SettingValues.initialize()
         AccountController.initialize()
+        PostFilter.initialize()
         Subscriptions.sync(name: AccountController.currentName, completion: nil)
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
             (granted, error) in

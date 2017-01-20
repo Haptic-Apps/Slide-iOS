@@ -53,7 +53,9 @@ class Subscriptions{
     }
     
     public static func addHistorySub(name: String, sub: String){
-        historySubs.append(sub)
+        if(!historySubs.contains(name)){
+            historySubs.append(sub)
+        }
         UserDefaults.standard.set(historySubs, forKey: "historysubs" + name)
         UserDefaults.standard.synchronize()
     }

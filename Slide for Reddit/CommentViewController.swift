@@ -460,7 +460,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             cancelActionButton = UIAlertAction(title: "Collapse child comments", style: .default) { action -> Void in
                 self.collapseAll()
             }
-        
+            actionSheetController.addAction(cancelActionButton)
+
             self.present(actionSheetController, animated: true, completion: nil)
             
     
@@ -804,6 +805,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         for i in 0...dataArray.count - 1 {
             if(dataArray[i]  is Comment && matches(comment: dataArray[i] as! Comment, sort: .PARENTS)) {
                 hideNumber(n: dataArray[i], iB: i) - 1
+                    if (!hiddenPersons.contains(dataArray[i].getId())) {
+                        hiddenPersons.append(dataArray[i].getId());
+                    }
             }
         }
         doArrays()

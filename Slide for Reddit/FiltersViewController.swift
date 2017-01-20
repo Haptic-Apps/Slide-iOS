@@ -131,22 +131,22 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
     
     func doEnter(_ searchBar: UISearchBar){
         if(searchBar == domainEnter){
-            PostFilter.domains.append(domainEnter.text!)
+            PostFilter.domains.append(domainEnter.text! as NSString)
             domainEnter.text = ""
         } else if(searchBar == selftextEnter){
-            PostFilter.selftext.append(selftextEnter.text!)
+            PostFilter.selftext.append(selftextEnter.text! as NSString)
             selftextEnter.text = ""
         } else if(searchBar == titleEnter){
-            PostFilter.titles.append(titleEnter.text!)
+            PostFilter.titles.append(titleEnter.text! as NSString)
             titleEnter.text = ""
         } else if(searchBar == profileEnter){
-            PostFilter.profiles.append(profileEnter.text!)
+            PostFilter.profiles.append(profileEnter.text! as NSString)
             profileEnter.text = ""
         } else if(searchBar == subredditEnter){
-            PostFilter.subreddits.append(subredditEnter.text!)
+            PostFilter.subreddits.append(subredditEnter.text! as NSString)
             subredditEnter.text = ""
         } else if(searchBar == flairEnter){
-            PostFilter.flairs.append(flairEnter.text!)
+            PostFilter.flairs.append(flairEnter.text! as NSString)
             flairEnter.text = ""
         }
         PostFilter.saveAndUpdate()
@@ -195,22 +195,22 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
 
         switch(indexPath.section) {
         case 0:
-            cell.textLabel?.text = PostFilter.domains[indexPath.row]
+            cell.textLabel?.text = PostFilter.domains[indexPath.row] as String
             break
         case 1:
-            cell.textLabel?.text = PostFilter.selftext[indexPath.row]
+            cell.textLabel?.text = PostFilter.selftext[indexPath.row] as String
             break
         case 2:
-            cell.textLabel?.text = PostFilter.titles[indexPath.row]
+            cell.textLabel?.text = PostFilter.titles[indexPath.row] as String
             break
         case 3:
-            cell.textLabel?.text = PostFilter.profiles[indexPath.row]
+            cell.textLabel?.text = PostFilter.profiles[indexPath.row] as String
             break
         case 4:
-            cell.textLabel?.text = PostFilter.subreddits[indexPath.row]
+            cell.textLabel?.text = PostFilter.subreddits[indexPath.row] as String
             break
         case 5:
-            cell.textLabel?.text = PostFilter.flairs[indexPath.row]
+            cell.textLabel?.text = PostFilter.flairs[indexPath.row] as String
             break
         default: fatalError("Unknown section")
         }

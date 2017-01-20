@@ -10,20 +10,20 @@ import UIKit
 import reddift
 
 class PostFilter {
-    static var domains: [String] = []
-    static var selftext: [String] = []
-    static var titles: [String] = []
-    static var profiles: [String] = []
-    static var subreddits: [String] = []
-    static var flairs: [String] = []
+    static var domains: [NSString] = []
+    static var selftext: [NSString] = []
+    static var titles: [NSString] = []
+    static var profiles: [NSString] = []
+    static var subreddits: [NSString] = []
+    static var flairs: [NSString] = []
 
     public static func initialize(){
-        PostFilter.domains = UserDefaults.standard.array(forKey: "domainfilters") as! [String]? ?? []
-        PostFilter.selftext = UserDefaults.standard.array(forKey: "selftextfilters") as! [String]? ?? []
-        PostFilter.titles = UserDefaults.standard.array(forKey: "titlefilters") as! [String]? ?? []
-        PostFilter.profiles = UserDefaults.standard.array(forKey: "profilefilters") as! [String]? ?? []
-        PostFilter.subreddits = UserDefaults.standard.array(forKey: "subredditfilters") as! [String]? ?? []
-        PostFilter.flairs = UserDefaults.standard.array(forKey: "flairfilters") as! [String]? ?? []
+        PostFilter.domains = UserDefaults.standard.array(forKey: "domainfilters") as! [NSString]? ?? []
+        PostFilter.selftext = UserDefaults.standard.array(forKey: "selftextfilters") as! [NSString]? ?? []
+        PostFilter.titles = UserDefaults.standard.array(forKey: "titlefilters") as! [NSString]? ?? []
+        PostFilter.profiles = UserDefaults.standard.array(forKey: "profilefilters") as! [NSString]? ?? []
+        PostFilter.subreddits = UserDefaults.standard.array(forKey: "subredditfilters") as! [NSString]? ?? []
+        PostFilter.flairs = UserDefaults.standard.array(forKey: "flairfilters") as! [NSString]? ?? []
     }
     
     public static func saveAndUpdate(){
@@ -38,7 +38,7 @@ class PostFilter {
     }
 
     
-    public static func contains(_ array: [String], value: String) -> Bool{
+    public static func contains(_ array: [NSString], value: String) -> Bool{
         for text in array {
             if(text.localizedCaseInsensitiveContains(value)){
                 return true

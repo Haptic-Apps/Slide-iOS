@@ -152,7 +152,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         actionSheetController.addAction(cancelActionButton)
         
         cancelActionButton = UIAlertAction(title: "Posts by /u/\(link.author)", style: .default) { action -> Void in
-            PostFilter.profiles.append(link.author)
+            PostFilter.profiles.append(link.author as NSString)
             PostFilter.saveAndUpdate()
             self.links = PostFilter.filter(self.links, previous: nil)
             self.tableView.reloadData()
@@ -160,7 +160,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         actionSheetController.addAction(cancelActionButton)
         
         cancelActionButton = UIAlertAction(title: "Posts from /r/\(link.subreddit)", style: .default) { action -> Void in
-            PostFilter.subreddits.append(link.subreddit)
+            PostFilter.subreddits.append(link.subreddit as NSString)
             PostFilter.saveAndUpdate()
             self.links = PostFilter.filter(self.links, previous: nil)
             self.tableView.reloadData()
@@ -168,7 +168,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         actionSheetController.addAction(cancelActionButton)
         
         cancelActionButton = UIAlertAction(title: "Posts linking to \(link.domain)", style: .default) { action -> Void in
-            PostFilter.domains.append(link.domain)
+            PostFilter.domains.append(link.domain as NSString)
             PostFilter.saveAndUpdate()
             self.links = PostFilter.filter(self.links, previous: nil)
             self.tableView.reloadData()
