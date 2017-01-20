@@ -482,7 +482,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             actionSheetController.addAction(cancelActionButton)
             
             cancelActionButton = UIAlertAction(title: "Related submissions", style: .default) { action -> Void in
-                //todo this
+                let related = RelatedViewController.init(thing: self.submission!)
+                self.show(related, sender: self)
             }
             actionSheetController.addAction(cancelActionButton)
         

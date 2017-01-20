@@ -264,7 +264,7 @@ extension Session {
 //            "sr_detail": "true",
             "show"     : "all"
         ])
-        guard let request = URLRequest.requestForOAuth(with: baseURL, path:"/duplicates/" + thing.id, parameter:parameter, method:"GET", token:token)
+        guard let request = URLRequest.requestForOAuth(with: baseURL, path:"/duplicates/" + thing.id + ".json", parameter:parameter, method:"GET", token:token)
             else { throw ReddiftError.canNotCreateURLRequest as NSError }
         let closure = {(data: Data?, response: URLResponse?, error: NSError?) -> Result<(Listing, Listing)> in
             return Result(from: Response(data: data, urlResponse: response), optional:error)

@@ -14,6 +14,8 @@ class ProfileContributionLoader: ContributionLoader {
     var name: String
     var userContent: UserContent
     var color: UIColor
+    var canGetMore = true
+
     init(name: String, whereContent: UserContent){
         self.name = name
         color = ColorUtil.getColorForUser(name: name)

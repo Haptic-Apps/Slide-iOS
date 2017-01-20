@@ -134,7 +134,7 @@ class ContentListingViewController: MediaViewController, UITableViewDelegate, UI
              cell = tableView.dequeueReusableCell(withIdentifier: "submission", for: indexPath)
         }
         
-        if indexPath.row == baseData.content.count - 1 && !loading {
+        if indexPath.row == baseData.content.count - 1 && !loading && baseData.canGetMore {
             self.loadMore()
         }
         return cell!

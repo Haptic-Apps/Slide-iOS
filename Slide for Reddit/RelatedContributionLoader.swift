@@ -1,8 +1,8 @@
 //
-//  SearchContributionLoader.swift
+//  RelatedContributionLoader.swift
 //  Slide for Reddit
 //
-//  Created by Carlos Crane on 1/11/17.
+//  Created by Carlos Crane on 1/20/17.
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
@@ -10,19 +10,18 @@ import Foundation
 import reddift
 import XLPagerTabStrip
 
-class SearchContributionLoader: ContributionLoader {
-    var query: String
+class RelatedContributionLoader: ContributionLoader {
+    var thing: Thing
     var sub: String
     var color: UIColor
-    var canGetMore = true
     
-    init(query: String, sub: String){
-        self.query = query
+    init(thing: Thing, sub: String){
+        self.thing = thing
         self.sub = sub
         color = ColorUtil.getColorForUser(name: sub)
         paginator = Paginator()
         content = []
-        indicatorInfo = IndicatorInfo(title: "Searching")
+        indicatorInfo = IndicatorInfo(title: "Related")
     }
     
     
@@ -31,6 +30,7 @@ class SearchContributionLoader: ContributionLoader {
     var delegate: ContentListingViewController?
     var indicatorInfo: IndicatorInfo
     var paging = false
+    var canGetMore = false
     
     func getData(reload: Bool) {
         if(delegate != nil){
@@ -38,8 +38,7 @@ class SearchContributionLoader: ContributionLoader {
                 if(reload){
                     paginator = Paginator()
                 }
-                print("Subredd it is \(sub)")
-                try delegate?.session?.getSearch(Subreddit.init(subreddit: sub), query: query, paginator: paginator, sort: .relevance, completion: { (result) in
+                try delegate?.session?.getDuplicatedArticles(paginator, thing: thing, completion: { (result) in
                     switch result {
                     case .failure:
                         self.delegate?.failed(error: result.error!)
@@ -48,8 +47,8 @@ class SearchContributionLoader: ContributionLoader {
                         if(reload){
                             self.content = []
                         }
-                        self.content += listing.children.flatMap({$0})
-                        self.paginator = listing.paginator
+                        self.content += listing.1.children.flatMap({$0})
+                        self.paginator = listing.1.paginator
                         DispatchQueue.main.async{
                             self.delegate?.doneLoading()
                         }

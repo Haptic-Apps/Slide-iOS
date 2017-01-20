@@ -20,5 +20,6 @@ protocol ContributionLoader {
     var indicatorInfo: IndicatorInfo {get set}
     var color: UIColor {get set}
     var paging: Bool {get}
+    var canGetMore: Bool {get}
     
 }
