@@ -225,6 +225,14 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
                             sheet.dismiss(animated: true, completion: nil)
                         }
                     )
+                    var open = OpenInChromeController.init()
+                    if(open.isChromeInstalled()){
+                        sheet.addAction(
+                            UIAlertAction(title: "Open in Chrome", style: .default) { (action) in
+                                open.openInChrome(url, callbackURL: nil, createNewTab: true)
+                            }
+                        )
+                    }
                     sheet.addAction(
                         UIAlertAction(title: "Open in Safari", style: .default) { (action) in
                             UIApplication.shared.open(url, options: [:], completionHandler: nil)
@@ -277,7 +285,7 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
             
             if let (url, rect) = getInfo(locationInTextView: locationInTextView) {
                 previewingContext.sourceRect = info.convert(rect, from: info)
-                if let controller = parentController?.getControllerForUrl(url: url){
+                if let controller = parentController?.getControllerForUrl(baseUrl: url){
                     return controller
                 }
             }

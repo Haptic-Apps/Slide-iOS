@@ -150,7 +150,7 @@ public struct Link: Thing {
     /**
      example: false
      */
-    public let edited: Bool
+    public let edited: Int
     /**
      the CSS class of the link's flair.
      example:
@@ -265,7 +265,7 @@ public struct Link: Thing {
         hidden = false
         thumbnail = ""
         subredditId = ""
-        edited = false
+        edited = 0
         linkFlairCssClass = ""
         authorFlairCssClass = ""
         downs = 0
@@ -329,7 +329,7 @@ public struct Link: Thing {
         hidden = data["hidden"] as? Bool ?? false
         thumbnail = convertObjectToEscapedURLString(data["thumbnail"])
         subredditId = data["subreddit_id"] as? String ?? ""
-        edited = data["edited"] as? Bool ?? false
+        edited = data["edited"] as? Int ?? 0
         linkFlairCssClass = data["link_flair_css_class"] as? String ?? ""
         authorFlairCssClass = data["author_flair_css_class"] as? String ?? ""
         downs = data["downs"] as? Int ?? 0

@@ -9,16 +9,40 @@
 import UIKit
 import AMScrollingNavbar
 import WebKit
+import SafariServices
 
 class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     var url: URL?
     var webView: WKWebView = WKWebView()
     var myProgressView: UIProgressView = UIProgressView()
+    var sub: String
     
     init(url: URL, subreddit: String){
         self.url = url
+        self.sub = subreddit
         super.init(nibName: nil, bundle: nil)
         setBarColors(color: ColorUtil.getColorForSub(sub: subreddit))
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if(navigationController != nil){
+            let sort = UIButton.init(type: .custom)
+            sort.setImage(UIImage.init(named: "size"), for: UIControlState.normal)
+            sort.addTarget(self, action: #selector(self.readerMode(_:)), for: UIControlEvents.touchUpInside)
+            sort.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+            let sortB = UIBarButtonItem.init(customView: sort)
+            
+            navigationItem.rightBarButtonItems = [ sortB]
+        }
+        
+        webView.addObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), options: .new, context: nil)
+
+    }
+    
+    func readerMode(_ sender: AnyObject){
+        let safariVC = SFSafariViewController(url: webView.url!, entersReaderIfAvailable: true)
+        present(safariVC, animated: true, completion: nil)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -39,14 +63,14 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
 
         self.view.addSubview(webView)
         myProgressView = UIProgressView(frame: CGRect(x:0, y:webView.frame.origin.y, width: UIScreen.main.bounds.width, height:10))
-
+        myProgressView.progressTintColor = ColorUtil.accentColorForSub(sub: sub)
         self.view.addSubview(myProgressView)
-        webView.addObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), options: .new, context: nil)
 
-        loadUrl()
         if let navigationController = self.navigationController as? ScrollingNavigationController {
             navigationController.followScrollView(self.webView, delay: 50.0)
         }
+
+        loadUrl()
 
     }
     
@@ -58,6 +82,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
 
     
     func loadUrl(){
+        print(url!.absoluteString)
         let myURLRequest:URLRequest = URLRequest(url: url!)
         webView.load(myURLRequest)
         self.title = url!.host
@@ -94,7 +119,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     
     func hostMatches(host: String) -> Bool{
         if(AdDictionary.hosts.isEmpty){
-           //todo AdDictionary.doInit()
+           AdDictionary.doInit()
         }
         let firstPeriod = host.indexOf(".")
         return firstPeriod == nil || AdDictionary.hosts.contains(host) || firstPeriod! + 1 < host.length && AdDictionary.hosts.contains(host.substring(firstPeriod! + 1, length: host.length - (firstPeriod! + 1)))

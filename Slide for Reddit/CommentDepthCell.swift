@@ -41,6 +41,14 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
                             sheet.dismiss(animated: true, completion: nil)
                         }
                     )
+                    var open = OpenInChromeController.init()
+                    if(open.isChromeInstalled()){
+                        sheet.addAction(
+                            UIAlertAction(title: "Open in Chrome", style: .default) { (action) in
+                                open.openInChrome(url, callbackURL: nil, createNewTab: true)
+                            }
+                        )
+                    }
                     sheet.addAction(
                         UIAlertAction(title: "Open in Safari", style: .default) { (action) in
                             UIApplication.shared.open(url, options: [:], completionHandler: nil)
@@ -415,9 +423,9 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         }
         
         
-        let scoreString = NSMutableAttributedString(string: (comment.scoreHidden ? "[score hidden]" : "\(getScoreText(comment: comment))"), attributes: [NSForegroundColorAttributeName: color])
+        let scoreString = NSMutableAttributedString(string: ((comment.scoreHidden ? "[score hidden]" : "\(getScoreText(comment: comment))") + (comment.controversiality > 0 ? "†" : "" )), attributes: [NSForegroundColorAttributeName: color])
         
-        let endString = NSMutableAttributedString(string:"  •  \(DateFormatter().timeSince(from: NSDate.init(timeIntervalSince1970: TimeInterval.init(comment.createdUtc)), numericDates: true))",  attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor])
+        let endString = NSMutableAttributedString(string:"  •  \(DateFormatter().timeSince(from: NSDate.init(timeIntervalSince1970: TimeInterval.init(comment.createdUtc)), numericDates: true))" + (comment.edited > 0 ? ("(edit \(DateFormatter().timeSince(from: NSDate.init(timeIntervalSince1970: TimeInterval.init(comment.edited)), numericDates: true)))") : ""),  attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor])
         
         
         let authorString = NSMutableAttributedString(string: "\u{00A0}\(comment.author)\u{00A0}", attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor])
@@ -513,7 +521,7 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         
         if let (url, rect) = getInfo(locationInTextView: locationInTextView) {
             previewingContext.sourceRect = textView.convert(rect, from: textView)
-            if let controller = parent?.getControllerForUrl(url: url){
+            if let controller = parent?.getControllerForUrl(baseUrl: url){
                 return controller
             }
         }

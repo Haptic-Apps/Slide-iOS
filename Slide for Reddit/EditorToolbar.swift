@@ -8,13 +8,12 @@
 
 import UIKit
 
-class EditorToolbar : NSObject {
+class EditorToolbar {
     
     var textView: UITextView
     
     init(textView: UITextView){
         self.textView = textView
-        super.init()
         self.addToolbarToTextView()
     }
     
@@ -26,31 +25,31 @@ class EditorToolbar : NSObject {
         scrollView.backgroundColor = ColorUtil.backgroundColor
         var i = 0
         for button in ([
-            generateButtons(image: "save", action: #selector(saveDraft(_:))),
-            generateButtons(image: "folder", action: #selector(openDrafts(_:))),
-            generateButtons(image: "image", action: #selector(uploadImage(_:))),
-            generateButtons(image: "draw", action: #selector(draw(_:))),
-            generateButtons(image: "link", action: #selector(link(_:))),
-            generateButtons(image: "bold", action: #selector(bold(_:))),
-            generateButtons(image: "italic", action: #selector(italics(_:))),
-            generateButtons(image: "list", action: #selector(list(_:))),
-            generateButtons(image: "list_number", action: #selector(numberedList(_:))),
-            generateButtons(image: "size", action: #selector(size(_:))),
-            generateButtons(image: "strikethrough", action: #selector(strike(_:)))]) {
-                button.frame = CGRect.init(x: i * 50, y: 0, width: 50, height: 50);
-                scrollView.addSubview(button)
-                button.isUserInteractionEnabled = true
+            generateButtons(image: "save", action: #selector(EditorToolbar.saveDraft)),
+            generateButtons(image: "folder", action: #selector(EditorToolbar.openDrafts)),
+            generateButtons(image: "image", action: #selector(EditorToolbar.uploadImage)),
+            generateButtons(image: "draw", action: #selector(EditorToolbar.draw)),
+            generateButtons(image: "link", action: #selector(EditorToolbar.link)),
+            generateButtons(image: "bold", action: #selector(EditorToolbar.bold)),
+            generateButtons(image: "italic", action: #selector(EditorToolbar.italics)),
+            generateButtons(image: "list", action: #selector(EditorToolbar.list)),
+            generateButtons(image: "list_number", action: #selector(EditorToolbar.numberedList)),
+            generateButtons(image: "size", action: #selector(EditorToolbar.size)),
+            generateButtons(image: "strikethrough", action: #selector(EditorToolbar.strike))]) {
+                button.0.frame = CGRect.init(x: i * 50, y: 0, width: 50, height: 50);
+                scrollView.addSubview(button.0)
+                button.0.isUserInteractionEnabled = true
+                button.0.addTarget(self, action: button.1, for: UIControlEvents.touchUpInside)
                 i += 1
         }
         scrollView.delaysContentTouches = false
         textView.inputAccessoryView = scrollView
     }
     
-    func generateButtons(image: String, action: Selector) -> UIButton {
+    func generateButtons(image: String, action: Selector) -> (UIButton, Selector) {
         let more = UIButton.init(frame: CGRect.zero)
         more.setImage(UIImage.init(named: image)?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
-        more.addTarget(self, action: action, for: UIControlEvents.touchUpInside)
-        return more
+        return (more, action)
     }
     
     func wrapIn(_ value: String){
@@ -62,49 +61,49 @@ class EditorToolbar : NSObject {
     }
 
     
-    func saveDraft(_ sender: AnyObject){
+    @objc func saveDraft(){
         
     }
     
-    func openDrafts(_ sender: AnyObject){
+    @objc func openDrafts(){
         
     }
     
-    func uploadImage(_ sender: AnyObject){
+    @objc func uploadImage(){
         
     }
     
-    func draw(_ sender: AnyObject){
+    @objc func draw(){
         
     }
     
-    func link(_ sender: AnyObject){
+    @objc func link(){
         
     }
     
-    func bold(_ sender: AnyObject){
+    @objc func bold(){
         print("Bold")
         wrapIn("*")
     }
     
-    func italics(_ sender: AnyObject){
+    @objc func italics(){
         wrapIn("**")
     }
     
-    func list(_ sender: AnyObject){
+    @objc func list(){
         replaceIn("\n", with: "\n* ")
     }
     
-    func numberedList(_ sender: AnyObject){
+    @objc func numberedList(){
         replaceIn("\n", with: "\n1. ")
 
     }
     
-    func size(_ sender: AnyObject){
+    @objc func size(){
         replaceIn("\n", with: "\n#")
     }
     
-    func strike(_ sender: AnyObject){
+    @objc func strike(){
         wrapIn("~~")
     }
     

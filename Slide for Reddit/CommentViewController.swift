@@ -94,7 +94,14 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             //todo hide
         }
         actionSheetController.addAction(cancelActionButton)
-        
+        var open = OpenInChromeController.init()
+        if(open.isChromeInstalled()){
+            cancelActionButton = UIAlertAction(title: "Open in Chrome", style: .default) { action -> Void in
+                open.openInChrome(link.url!, callbackURL: nil, createNewTab: true)
+            }
+            actionSheetController.addAction(cancelActionButton)
+        }
+
         cancelActionButton = UIAlertAction(title: "Open in Safari", style: .default) { action -> Void in
             UIApplication.shared.open(link.url!, options: [:], completionHandler: nil)
         }
@@ -427,7 +434,36 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
     
     func showMenu(_ sender: AnyObject){
+            let link = submission!
+            let actionSheetController: UIAlertController = UIAlertController(title: link.title, message: "", preferredStyle: .actionSheet)
+            
+            var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
+                print("Cancel")
+            }
+            actionSheetController.addAction(cancelActionButton)
+            
+            cancelActionButton = UIAlertAction(title: "Refresh", style: .default) { action -> Void in
+                self.refresh(self)
+            }
+            actionSheetController.addAction(cancelActionButton)
+            
+            cancelActionButton = UIAlertAction(title: "Related submissions", style: .default) { action -> Void in
+                //todo this
+            }
+            actionSheetController.addAction(cancelActionButton)
         
+            cancelActionButton = UIAlertAction(title: "View sub sidebar", style: .default) { action -> Void in
+                //todo view sidebar
+            }
+            actionSheetController.addAction(cancelActionButton)
+            
+            cancelActionButton = UIAlertAction(title: "Collapse child comments", style: .default) { action -> Void in
+                self.collapseAll()
+            }
+        
+            self.present(actionSheetController, animated: true, completion: nil)
+            
+    
     }
     
     func search(_ sender: AnyObject){
@@ -764,6 +800,17 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         tableView.endUpdates()
     }
     
+    func collapseAll(){
+        for i in 0...dataArray.count - 1 {
+            if(dataArray[i]  is Comment && matches(comment: dataArray[i] as! Comment, sort: .PARENTS)) {
+                hideNumber(n: dataArray[i], iB: i) - 1
+            }
+        }
+        doArrays()
+        tableView.reloadData()
+    }
+
+    
     func hideAll(comment: Comment, i: Int){
         let counter = hideNumber(n: comment, iB: i) - 1
         doArrays()
@@ -1067,7 +1114,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                             case .success(let list):
                                 
                                 DispatchQueue.main.async(execute: { () -> Void in
-                                    let startDepth = self.cDepth[more.getId()] as! Int
+                                    let startDepth = self.cDepth[more.getId()] as! Int 
                                     
                                     var queue: [Thing] = []
                                     for child in list {

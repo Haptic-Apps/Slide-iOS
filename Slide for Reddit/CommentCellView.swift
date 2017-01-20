@@ -30,6 +30,14 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
                             sheet.dismiss(animated: true, completion: nil)
                         }
                     )
+                    var open = OpenInChromeController.init()
+                    if(open.isChromeInstalled()){
+                        sheet.addAction(
+                            UIAlertAction(title: "Open in Chrome", style: .default) { (action) in
+                                open.openInChrome(url, callbackURL: nil, createNewTab: true)
+                            }
+                        )
+                    }
                     sheet.addAction(
                         UIAlertAction(title: "Open in Safari", style: .default) { (action) in
                             UIApplication.shared.open(url, options: [:], completionHandler: nil)
@@ -272,7 +280,7 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
             if let (url, rect) = getInfo(locationInTextView: locationInTextView) {
                 currentLink = url
                 previewingContext.sourceRect = textView.convert(rect, from: textView)
-                if let controller = parentViewController?.getControllerForUrl(url: url){
+                if let controller = parentViewController?.getControllerForUrl(baseUrl: url){
                     return controller
                 }
             }

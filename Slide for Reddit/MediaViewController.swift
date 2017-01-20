@@ -87,11 +87,11 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
     }
     
 
-    func getControllerForUrl(url: URL) -> UIViewController? {
+    func getControllerForUrl(baseUrl: URL) -> UIViewController? {
         images = []
         photos = []
-        print(url )
-        contentUrl = url
+        print(baseUrl )
+        contentUrl = baseUrl
         var url = contentUrl?.absoluteString
         if(shouldTruncate(url: contentUrl!)){
             let content = contentUrl?.absoluteString
@@ -158,7 +158,7 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
             print("Showing video")
             return GifMWPhotoBrowser().create(url: (contentUrl?.absoluteString)!)
         } else if(type == ContentType.CType.LINK || type == ContentType.CType.NONE){
-            let web = WebsiteViewController(url: contentUrl!, subreddit: link == nil ? "" : link.subreddit)
+            let web = WebsiteViewController(url: baseUrl, subreddit: link == nil ? "" : link.subreddit)
             return web
         } else if(type == ContentType.CType.REDDIT){
             return RedditLink.getViewControllerForURL(urlS: contentUrl!)
@@ -168,7 +168,7 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
             let hash = getYouTubeHash(urlS: contentUrl!)
             //todo
         }
-        return WebsiteViewController(url: contentUrl!, subreddit: link == nil ? "" : link.subreddit)
+        return WebsiteViewController(url: baseUrl, subreddit: link == nil ? "" : link.subreddit)
     }
     var millis: Double = 0
     var playlist: String = ""
@@ -217,7 +217,7 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
         print(url)
         contentUrl = url
         images = []
-        let controller = getControllerForUrl(url: url)!
+        let controller = getControllerForUrl(baseUrl: url)!
         if(controller is GalleryViewController){
             presentImageGallery(controller as! GalleryViewController)
         } else {

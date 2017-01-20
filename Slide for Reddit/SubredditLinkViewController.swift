@@ -106,6 +106,14 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         }
         actionSheetController.addAction(cancelActionButton)
         
+        var open = OpenInChromeController.init()
+        if(open.isChromeInstalled()){
+            cancelActionButton = UIAlertAction(title: "Open in Chrome", style: .default) { action -> Void in
+                open.openInChrome(link.url!, callbackURL: nil, createNewTab: true)
+            }
+            actionSheetController.addAction(cancelActionButton)
+        }
+
         cancelActionButton = UIAlertAction(title: "Open in Safari", style: .default) { action -> Void in
             UIApplication.shared.open(link.url!, options: [:], completionHandler: nil)
         }
@@ -439,11 +447,12 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             paging = true
         }
         super.viewWillAppear(animated)
+        /* todo this, too slow currently
         if(savedIndex != nil){
             tableView.reloadRows(at: [savedIndex!], with: .none)
         } else {
             tableView.reloadData()
-        }
+        }*/
     }
     
     func showMoreNone(_ sender: AnyObject){
