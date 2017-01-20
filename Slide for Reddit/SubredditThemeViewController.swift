@@ -143,7 +143,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
     
     func complete(){
         alertController!.dismiss(animated: true, completion: nil)
-        self.navigationController?.view.makeToast("\(count) subs colored", duration: 4.0, position: .bottom)
+        self.navigationController?.view.makeToast("\(count) subs colored", duration: 4.0, position: .top)
         count = 0
         tableView.reloadData()
     }

@@ -17,7 +17,7 @@ target 'Slide for Reddit' do
   pod 'UZTextView', :git => 'https://github.com/sonsongithub/UZTextView'
   pod 'ImageViewer', :git => 'https://github.com/ccrama/ImageViewer'
   pod 'TTTAttributedLabel'
-  pod 'Toast-Swift', '~> 2.0.0'
+  pod "KCFloatingActionButton", "~> 2.1.0"
 
   target 'Slide for RedditTests' do
     inherit! :search_paths

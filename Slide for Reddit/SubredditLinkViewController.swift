@@ -13,9 +13,9 @@ import ChameleonFramework
 import XLPagerTabStrip
 import AMScrollingNavbar
 import SideMenu
+import KCFloatingActionButton
 
-
-class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, IndicatorInfoProvider, ScrollingNavigationControllerDelegate, LinkCellViewDelegate, ColorPickerDelegate {
+class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, IndicatorInfoProvider, ScrollingNavigationControllerDelegate, LinkCellViewDelegate, ColorPickerDelegate, KCFloatingActionButtonDelegate {
     
     var parentController: SubredditsViewController?
     var accentChosen: UIColor?
@@ -225,15 +225,42 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     func scrollingNavigationController(_ controller: ScrollingNavigationController, didChangeState state: NavigationBarState) {
         switch state {
         case .collapsed:
-            print("navbar collapsed")
+            hide(true)
+            break
         case .expanded:
-            print("navbar expanded")
+           show(true)
+            break
         case .scrolling:
-            print("navbar is moving")
+            break
         }
     }
     
+    func show(_ animated: Bool = true) {
+        if(fab != nil){
+        if animated == true {
+            fab!.isHidden = false
+            UIView.animate(withDuration: 0.3, animations: { () -> Void in
+                self.fab!.alpha = 1
+            })
+        } else {
+            fab!.isHidden = false
+        }
+        }
+    }
     
+    func hide(_ animated: Bool = true) {
+        if(fab != nil){
+        if animated == true {
+            UIView.animate(withDuration: 0.3, animations: { () -> Void in
+                self.fab!.alpha = 0
+            }, completion: { finished in
+                self.fab!.isHidden = true
+            })
+        } else {
+            fab!.isHidden = true
+        }
+        }
+    }
     
     override func loadView(){
         
@@ -330,9 +357,43 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             // Note that these continue to work on the Navigation Controller independent of the View Controller it displays!
             
         }
+        
+        if(SettingValues.hiddenFAB){
+        fab = KCFloatingActionButton()
+        fab!.buttonColor = ColorUtil.accentColorForSub(sub: sub)
+        fab!.buttonImage = UIImage.init(named: "hide")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30))
+        fab!.fabDelegate = self
+            fab!.sticky = true
+        self.view.addSubview(fab!)
+        }
         super.viewDidLoad()
         
     }
+    
+    func emptyKCFABSelected(_ fab: KCFloatingActionButton) {
+        tableView.beginUpdates()
+        
+        var indexPaths : [IndexPath] = []
+        var newLinks : [Link] = []
+
+        var count = 0
+        for submission in links {
+            if(History.getSeen(s: submission)){
+                indexPaths.append(IndexPath(row: count, section: 0))
+            } else {
+                newLinks.append(submission)
+            }
+            count += 1
+        }
+        
+        links = newLinks
+        tableView.deleteRows(at: indexPaths, with: .middle)
+        tableView.endUpdates()
+
+        print("Empty")
+    }
+    
+    var fab : KCFloatingActionButton?
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)

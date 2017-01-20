@@ -5,6 +5,7 @@ PODS:
     - ChameleonFramework/Default (= 2.1.0)
   - ChameleonFramework/Default (2.1.0)
   - ImageViewer (4.0)
+  - KCFloatingActionButton (2.1.2)
   - reddift (2.0.0):
     - reddift/MiniKeychain (= 2.0.0)
   - reddift/MiniKeychain (2.0.0)
@@ -12,7 +13,6 @@ PODS:
     - SDWebImage/Core (= 3.8.2)
   - SDWebImage/Core (3.8.2)
   - SideMenu (2.1.5)
-  - Toast-Swift (2.0.0)
   - TTTAttributedLabel (2.0.0)
   - UZTextView (1.0.6)
   - XLActionController (3.0.1):
@@ -25,10 +25,10 @@ DEPENDENCIES:
   - BGTableViewRowActionWithImage
   - ChameleonFramework
   - ImageViewer (from `https://github.com/ccrama/ImageViewer`)
+  - KCFloatingActionButton (~> 2.1.0)
   - reddift (from `https://github.com/ccrama/reddift`)
   - SDWebImage (~> 3.8)
   - SideMenu
-  - Toast-Swift (~> 2.0.0)
   - TTTAttributedLabel
   - UZTextView (from `https://github.com/sonsongithub/UZTextView`)
   - XLActionController
@@ -58,15 +58,15 @@ SPEC CHECKSUMS:
   BGTableViewRowActionWithImage: 3517276bcee26e559465bcca13151afc33ab6d2a
   ChameleonFramework: d21a3cc247abfe5e37609a283a8238b03575cf64
   ImageViewer: 364abc0309c33dda86d08ca25b0243e5c67d8cd3
+  KCFloatingActionButton: 1b22ce95d44b51915280df8a8b277eae4a06c3f1
   reddift: 3066e687c2a934b0f9aca6ee6e2161abc4c93a56
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
   SideMenu: bcd2d7b7d4395af088e213cebd11c3ac7d958f5a
-  Toast-Swift: 5b2f8f720f7e78e48511f693df1f9c9a6e38a25a
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   UZTextView: 96bd60ad22f7f5ea882c56a9f90621f86b443192
   XLActionController: 57fe0ce1642e2eed971b188b490762345fdbf963
   XLPagerTabStrip: c46e802a8dcac29edbcea573de8fe920e052455b
 
-PODFILE CHECKSUM: 9dce00b4bbc7475b88c933efb212fda5b88d68d1
+PODFILE CHECKSUM: cfd53f5fc96a88fa719c4087e2879d261bf9fc5a
 
 COCOAPODS: 1.1.1
