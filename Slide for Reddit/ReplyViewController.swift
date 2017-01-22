@@ -141,7 +141,74 @@ class ReplyViewController: UIViewController, UITextViewDelegate {
             self.alertView?.view.addSubview(self.progressBar)
         })
         
+        if assets.count > 1 {
+            Alamofire.request("https://api.imgur.com/3/album",  method: .post, parameters: nil,  encoding: JSONEncoding.default, headers: ["Authorization": "Client-ID bef87913eb202e9"])
+                .responseJSON { response in
+                    print(response)
+                    if let status = response.response?.statusCode {
+                        switch(status){
+                        case 201:
+                            print("example success")
+                        default:
+                            print("error with response status: \(status)")
+                        }
+                    }
+                    
+                    if let result = response.value {
+                        let json = JSON(result)
+                        print(json)
+                        let album = json["data"]["deletehash"].stringValue
+                        let url = "https://imgur.com/a/" + json["data"]["id"].stringValue
+                        self.uploadImages(assets, album: album, completion: { (last) in
+                            DispatchQueue.main.async {
+                                self.alertView!.dismiss(animated: true, completion: {
+                                    let alert = UIAlertController(title: "Link text", message: url, preferredStyle: .alert)
+                                    
+                                    alert.addTextField { (textField) in
+                                        textField.text = ""
+                                    }
+                                    alert.addAction(UIAlertAction(title: "Insert", style: .default, handler: { (action) in
+                                        let textField = alert.textFields![0] // Force unwrapping because we know it exists.
+                                        self.text!.insertText("[\(textField.text!)](\(url))")
+                                        
+                                    }))
+                                    
+                                    alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
+                                    self.present(alert, animated: true, completion: nil)
+                                })
+                            }
+                        })
+                    }
+                    
+            }
+
+        } else {
+            uploadImages(assets, album: "", completion: { (link) in
+                DispatchQueue.main.async {
+                    self.alertView!.dismiss(animated: true, completion: {
+                        let alert = UIAlertController(title: "Link text", message: link, preferredStyle: .alert)
+                        
+                        alert.addTextField { (textField) in
+                            textField.text = ""
+                        }
+                        alert.addAction(UIAlertAction(title: "Insert", style: .default, handler: { (action) in
+                            let textField = alert.textFields![0] // Force unwrapping because we know it exists.
+                            self.text!.insertText("[\(textField.text!)](\(link))")
+                            
+                        }))
+                        
+                        alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
+                        self.present(alert, animated: true, completion: nil)
+            })
+                }
+            })
+        }
+    }
+    
+    func uploadImages(_ assets: [PHAsset], album: String, completion: @escaping (String) -> Void ){
+        var count = 0
         for image in assets {
+            count += 1
             let parameters = [:] as [String: String]//todo albums
             var name = UUID.init().uuidString
             PHImageManager.default().requestImageData(for: image, options: nil, resultHandler: { (data, uti, _, info) in
@@ -149,34 +216,41 @@ class ReplyViewController: UIViewController, UITextViewDelegate {
                     name = fileName
                 }
                 let mime = UTTypeCopyPreferredTagWithClass(uti as! CFString, kUTTagClassMIMEType)?.takeRetainedValue()
-
-                Alamofire.upload(multipartFormData: { multipartFormData in
-                    multipartFormData.append(data!, withName: name, mimeType: mime as! String)
+                
+                Alamofire.upload(multipartFormData: { (multipartFormData) in
+                    multipartFormData.append(data!, withName: "image", fileName: name, mimeType: mime as! String)
                     for (key, value) in parameters {
                         multipartFormData.append((value.data(using: .utf8))!, withName: key)
-                    }}, to: "upload_url", method: .post, headers: ["Authorization": "Client-ID bef87913eb202e9"],
-                        encodingCompletion: { encodingResult in
-                            switch encodingResult {
-                            case .success(let upload, _, _):
-                                upload.progress { bytesWritten, totalBytesWritten, totalBytesExpectedToWrite in
-                                    print("1) \(bytesWritten)    2) \(totalBytesWritten)    3) \(totalBytesExpectedToWrite)")
-                                    
-                                    // This closure is NOT called on the main queue for performance
-                                    // reasons. To update your ui, dispatch to the main queue.
-                                    dispatch_async(dispatch_get_main_queue()) {
-                                        print("Total bytes written on main queue: \(totalBytesWritten)")
-                                    }
-                                }
-                                
-                                
-                                upload.responseData(self.handleResponse)
-                            case .failure:
-                                print("Error")
+                    }
+                    if(!album.isEmpty){
+                        multipartFormData.append(album.data(using: .utf8)!, withName: "album")
+                    }
+                }, to: "https://api.imgur.com/3/image", method: .post, headers: ["Authorization": "Client-ID bef87913eb202e9"], encodingCompletion: { (encodingResult) in
+                    switch encodingResult {
+                    case .success(let upload, _, _):
+                        print("Success")
+                        upload.uploadProgress { progress in
+                            DispatchQueue.main.async {
+                                self.progressBar.setProgress(Float(progress.fractionCompleted), animated: true)
                             }
-                }
-                    })
-            }
-        
+                        }
+                        upload.responseJSON { response in
+                            debugPrint(response)
+                            let link = JSON(response.value!)["data"]["link"].stringValue
+                            print("Link is \(link)")
+                            if(count == assets.count){
+                                completion(link)
+                            }
+                        }
+                        
+                    case .failure(let encodingError):
+                        //Show Alert in UI
+                        print("Avatar uploaded");
+                    }
+                })
+            })
+        }
+
     }
     
     func failedUpload(){
