@@ -226,6 +226,9 @@ class ContentListingViewController: MediaViewController, UITableViewDelegate, UI
         self.tableView.reloadData()
         self.refreshControl.endRefreshing()
         self.loading = false
+        if(baseData.content.count == 0){
+            self.view.makeToast("No content found")
+        }
     }
     
     

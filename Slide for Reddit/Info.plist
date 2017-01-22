@@ -73,5 +73,10 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Slide uses photos in order to attach images to comments and submissions</string>
+    <key>NSCameraUsageDescription</key>
+    <string>Slide uses the camera in order to attach images to comments and submissions</string>
+
 </dict>
 </plist>

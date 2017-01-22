@@ -11,7 +11,6 @@ import reddift
 import AudioToolbox.AudioServices
 import BGTableViewRowActionWithImage
 import AMScrollingNavbar
-import LNPopupController
 
 class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, UZTextViewCellDelegate, LinkCellViewDelegate, UISearchBarDelegate {
     
@@ -297,13 +296,13 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         let sort = UIButton.init(type: .custom)
         sort.setImage(UIImage.init(named: "ic_sort_white"), for: UIControlState.normal)
         sort.addTarget(self, action: #selector(self.sort(_:)), for: UIControlEvents.touchUpInside)
-        sort.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+        sort.frame = CGRect.init(x: 15, y: 0, width: 30, height: 30)
         let sortB = UIBarButtonItem.init(customView: sort)
 
         let search = UIButton.init(type: .custom)
-        search.setImage(UIImage.init(named: "search"), for: UIControlState.normal)
+        search.setImage(UIImage.init(named: "search")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
         search.addTarget(self, action: #selector(self.search(_:)), for: UIControlEvents.touchUpInside)
-        search.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
+        search.frame = CGRect.init(x: 15, y: 0, width: 30, height: 30)
         let searchB = UIBarButtonItem.init(customView: search)
         
         navigationItem.rightBarButtonItems = [moreB, sortB, searchB]
@@ -456,9 +455,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             let sortB = UIBarButtonItem.init(customView: sort)
             
             let search = UIButton.init(type: .custom)
-            search.setImage(UIImage.init(named: "search"), for: UIControlState.normal)
+            search.setImage(UIImage.init(named: "search")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
             search.addTarget(self, action: #selector(self.search(_:)), for: UIControlEvents.touchUpInside)
-            search.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
+            search.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
             let searchB = UIBarButtonItem.init(customView: search)
             
             navigationItem.rightBarButtonItems = [moreB, sortB, searchB]

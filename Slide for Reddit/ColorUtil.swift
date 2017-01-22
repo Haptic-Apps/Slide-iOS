@@ -20,11 +20,21 @@ class ColorUtil{
         foregroundColor = theme.foregroundColor
         backgroundColor = theme.backgroundColor
         fontColor = theme.fontColor
+        let color = UserDefaults.standard.colorForKey(key: "basecolor")
+        if(color != nil){
+            baseColor = color!
+        }
+        let accent = UserDefaults.standard.colorForKey(key: "accentcolor")
+        if(accent != nil){
+            baseAccent = accent!
+        }
+
     }
     static var foregroundColor = UIColor.white
     static var backgroundColor = UIColor.white
     static var fontColor = UIColor.black
-    static var baseColor:String = "#03A9F4"
+    static var baseColor = GMColor.blue500Color()
+    static var baseAccent = GMColor.cyanA200Color()
     public static var upvoteColor = UIColor.init(hexString: "#FF9800")
     public static var downvoteColor = UIColor.init(hexString: "#2196F3")
     
@@ -32,7 +42,7 @@ class ColorUtil{
     public static func getColorForSub(sub: String) -> UIColor {
         let color = UserDefaults.standard.colorForKey(key: "color+" + sub)
         if(color == nil){
-            return UIColor(hexString: baseColor)
+            return baseColor
         } else {
             return color!
         }
@@ -41,7 +51,7 @@ class ColorUtil{
     public static func getColorForUser(name: String) -> UIColor {
         let color = UserDefaults.standard.colorForKey(key: "user+" + name)
         if(color == nil){
-            return UIColor(hexString: baseColor)
+            return baseColor
         } else {
             return color!
         }
@@ -61,7 +71,7 @@ class ColorUtil{
     public static func accentColorForSub(sub: String) -> UIColor {
         let color = UserDefaults.standard.colorForKey(key: "accent+" + sub)
         if(color == nil){
-            return GMColor.cyanA200Color()
+            return baseAccent
         } else {
             return color!
         }

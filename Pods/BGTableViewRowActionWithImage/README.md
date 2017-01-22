@@ -8,6 +8,10 @@ A variation on the iOS 8.0+ `UITableViewRowAction` to support icons, with text b
 [![License](https://img.shields.io/cocoapods/l/BGTableViewRowActionWithImage.svg?style=flat)](http://cocoapods.org/pods/BGTableViewRowActionWithImage)
 [![Platform](https://img.shields.io/cocoapods/p/BGTableViewRowActionWithImage.svg?style=flat)](http://cocoapods.org/pods/BGTableViewRowActionWithImage)
 
+### Some other helpful Cocoa Pods:
+- **`BGPersistentStoreManager`** ([link](https://github.com/benguild/BGPersistentStoreManager)) — A simple singleton/wrapper/manager for the Apple iOS/macOS/etc. "Core Data" `NSPersistentStore` object/contexts.
+- **`BGRecursiveTableViewDataSource`** ([link](https://github.com/benguild/BGRecursiveTableViewDataSource)) — Recursive “stacking” and modularization of `UITableViewDataSource(s)` with Apple iOS's UIKit.
+
 ## Objective-C Usage
 
 ```objc

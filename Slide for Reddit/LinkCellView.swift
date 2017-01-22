@@ -182,8 +182,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         if(estimatedHeight == 0){
             title.sizeToFit()
             let he = title.frame.size.height
-            print("Height is \(he)")
-            estimatedHeight = CGFloat((he < 75 && thumb || he < 75 && !big) ? 75 : he) + CGFloat(66) + CGFloat(!hasText ? 0 : (content?.textHeight)!) +  CGFloat(big ? height + 40 : 0)
+            estimatedHeight = CGFloat((he < 75 && thumb || he < 75 && !big) ? 75 : he) + CGFloat(56) + CGFloat(!hasText || !full ? 0 : (content?.textHeight)!) +  CGFloat(big && !thumb ? height + 40 : 0)
         }
         return estimatedHeight
     }
@@ -382,7 +381,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         let boldString = NSMutableAttributedString(string:"/r/\(submission.subreddit)", attributes:attrs)
         
         let color = ColorUtil.getColorForSub(sub: submission.subreddit)
-        if(color.hexValue() != ColorUtil.baseColor){
+        if(color != ColorUtil.baseColor){
             boldString.addAttribute(NSForegroundColorAttributeName, value: color, range: NSRange.init(location: 0, length: boldString.length))
         }
         
@@ -463,7 +462,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         let boldString = NSMutableAttributedString(string:"/r/\(submission.subreddit)", attributes:attrs)
         
         let color = ColorUtil.getColorForSub(sub: submission.subreddit)
-        if(color.hexValue() != ColorUtil.baseColor){
+        if(color != ColorUtil.baseColor){
             boldString.addAttribute(NSForegroundColorAttributeName, value: color, range: NSRange.init(location: 0, length: boldString.length))
         }
         
@@ -752,7 +751,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                                               metrics: metrics,
                                                                               views: views))
             
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[label(>=60)]-10@1000-[box]-8-|",
+            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[label(>=60)]-10-[box]-8-|",
                                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                                               metrics: metrics,
                                                                               views: views))
@@ -764,12 +763,18 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             
             self.contentView.addConstraints(thumbConstraint)
         } else if(big) {
+            
+            
+            if(bigConstraint != nil){
+                thumbConstraint.append(bigConstraint!)
+            }
+
             thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[image(0)]",
                                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                                               metrics: metrics,
                                                                               views: views))
             
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[label]-8-[image]-12-|",
+            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[label]-12-|",
                                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                                               metrics: metrics,
                                                                               views: views))
@@ -780,7 +785,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                                               views: views))
             
             
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-4-[banner]-8-[label]-10@1000-[box]-8-|",
+            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-4-[banner]-8@999-[label]-10@999-[box]-8-|",
                                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                                               metrics: metrics,
                                                                               views: views))
@@ -794,10 +799,6 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                                               metrics: metrics,
                                                                               views: views))
-            
-            if(bigConstraint != nil){
-                thumbConstraint.append(bigConstraint!)
-            }
             
             
             self.contentView.addConstraints(thumbConstraint)
@@ -897,7 +898,6 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         } else {
             self.contentView.alpha = 1
         }
-        self.contentView.layoutIfNeeded()
     }
     
     var registered: Bool = false
@@ -999,6 +999,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         }
     }
     
+    public static var imageDictionary: NSMutableDictionary = NSMutableDictionary.init()
     
 }
 extension UILabel
@@ -1028,7 +1029,14 @@ extension UILabel
     func textAttachment(fontSize: CGFloat, imageName: String) -> NSTextAttachment {
         let font = UIFont.systemFont(ofSize: fontSize) //set accordingly to your font, you might pass it in the function
         let textAttachment = NSTextAttachment()
-        textAttachment.image = UIImage(named: imageName)?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: self.font.pointSize, height: self.font.pointSize))
+        let image = LinkCellView.imageDictionary.object(forKey: imageName)
+        if(image != nil){
+            textAttachment.image = image as? UIImage
+        } else {
+            let img = UIImage(named: imageName)?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: self.font.pointSize, height: self.font.pointSize))
+            textAttachment.image = img
+            LinkCellView.imageDictionary.setObject(img!, forKey: imageName as NSCopying)
+        }
         let mid = font.descender + font.capHeight
         textAttachment.bounds = CGRect(x: 0, y: font.descender - fontSize / 2 + mid + 2, width: fontSize, height: fontSize).integral
         return textAttachment
@@ -1039,6 +1047,8 @@ extension UILabel
         self.attributedText = nil
         self.text = text
     }
+    
+    
 }
 extension UIImage {
     func withColor(tintColor: UIColor) -> UIImage {
@@ -1051,4 +1061,3 @@ extension UIImage {
         return image
     }
 }
-

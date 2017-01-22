@@ -1,9 +1,11 @@
 PODS:
+  - Alamofire (4.3.0)
   - AMScrollingNavbar (3.2.0)
-  - BGTableViewRowActionWithImage (0.3.6)
+  - BGTableViewRowActionWithImage (0.4.0)
   - ChameleonFramework (2.1.0):
     - ChameleonFramework/Default (= 2.1.0)
   - ChameleonFramework/Default (2.1.0)
+  - ImagePickerSheetController (0.9.3)
   - ImageViewer (4.0)
   - KCFloatingActionButton (2.1.2)
   - reddift (2.0.0):
@@ -13,6 +15,7 @@ PODS:
     - SDWebImage/Core (= 3.8.2)
   - SDWebImage/Core (3.8.2)
   - SideMenu (2.1.5)
+  - SwiftyJSON (3.1.4)
   - TTTAttributedLabel (2.0.0)
   - UZTextView (1.0.6)
   - XLActionController (3.0.1):
@@ -21,20 +24,26 @@ PODS:
   - XLPagerTabStrip (6.0.0)
 
 DEPENDENCIES:
+  - Alamofire (~> 4.3)
   - AMScrollingNavbar
   - BGTableViewRowActionWithImage
   - ChameleonFramework
+  - ImagePickerSheetController (from `https://github.com/lbrndnr/ImagePickerSheetController`, branch `swift3`)
   - ImageViewer (from `https://github.com/ccrama/ImageViewer`)
   - KCFloatingActionButton (~> 2.1.0)
   - reddift (from `https://github.com/ccrama/reddift`)
   - SDWebImage (~> 3.8)
   - SideMenu
+  - SwiftyJSON
   - TTTAttributedLabel
   - UZTextView (from `https://github.com/sonsongithub/UZTextView`)
   - XLActionController
   - XLPagerTabStrip (~> 6.0)
 
 EXTERNAL SOURCES:
+  ImagePickerSheetController:
+    :branch: swift3
+    :git: https://github.com/lbrndnr/ImagePickerSheetController
   ImageViewer:
     :git: https://github.com/ccrama/ImageViewer
   reddift:
@@ -43,30 +52,36 @@ EXTERNAL SOURCES:
     :git: https://github.com/sonsongithub/UZTextView
 
 CHECKOUT OPTIONS:
+  ImagePickerSheetController:
+    :commit: e9b6c2ca937135335e9b5252a7792c94ce1497d4
+    :git: https://github.com/lbrndnr/ImagePickerSheetController
   ImageViewer:
     :commit: 1a6d7c365a23d86bdcdf8eb93058b75e07be1fb1
     :git: https://github.com/ccrama/ImageViewer
   reddift:
-    :commit: f20c69127be195b9b57d64260468011956aab712
+    :commit: a1594afac607854ff712faa5da9948015b1ce904
     :git: https://github.com/ccrama/reddift
   UZTextView:
     :commit: 94021870e65000cf332cb1f2ec70525b05c6ab16
     :git: https://github.com/sonsongithub/UZTextView
 
 SPEC CHECKSUMS:
+  Alamofire: 856a113053a7bc9cbe5d6367a555d773fc5cfef7
   AMScrollingNavbar: cf603d4d5f11061d466a0878b9ada136248927b2
-  BGTableViewRowActionWithImage: 3517276bcee26e559465bcca13151afc33ab6d2a
+  BGTableViewRowActionWithImage: 8ceb91c2ccdf472a3091ed5d058f52702a1b43e1
   ChameleonFramework: d21a3cc247abfe5e37609a283a8238b03575cf64
+  ImagePickerSheetController: 4789b06940e299431455c61be77fda440883c36c
   ImageViewer: 364abc0309c33dda86d08ca25b0243e5c67d8cd3
   KCFloatingActionButton: 1b22ce95d44b51915280df8a8b277eae4a06c3f1
   reddift: 3066e687c2a934b0f9aca6ee6e2161abc4c93a56
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
   SideMenu: bcd2d7b7d4395af088e213cebd11c3ac7d958f5a
+  SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   UZTextView: 96bd60ad22f7f5ea882c56a9f90621f86b443192
   XLActionController: 57fe0ce1642e2eed971b188b490762345fdbf963
   XLPagerTabStrip: c46e802a8dcac29edbcea573de8fe920e052455b
 
-PODFILE CHECKSUM: cfd53f5fc96a88fa719c4087e2879d261bf9fc5a
+PODFILE CHECKSUM: 24a9d7aa1178a6829f054df0397509345784bee5
 
 COCOAPODS: 1.1.1

@@ -18,6 +18,9 @@ target 'Slide for Reddit' do
   pod 'ImageViewer', :git => 'https://github.com/ccrama/ImageViewer'
   pod 'TTTAttributedLabel'
   pod "KCFloatingActionButton", "~> 2.1.0"
+  pod 'ImagePickerSheetController', :git => 'https://github.com/lbrndnr/ImagePickerSheetController’, :branch => ‘swift3’
+  pod 'Alamofire', '~> 4.3'
+    pod 'SwiftyJSON'
 
   target 'Slide for RedditTests' do
     inherit! :search_paths

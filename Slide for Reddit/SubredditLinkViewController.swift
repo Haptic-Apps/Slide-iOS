@@ -290,10 +290,6 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         return UITableViewAutomaticDimension
     }
     
-    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableViewAutomaticDimension
-    }
-    
     var sideMenu: UISideMenuNavigationController?
     var menuNav: SubSidebarViewController?
     
