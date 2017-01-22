@@ -13,6 +13,7 @@ import ImagePickerSheetController
 import Alamofire
 import MobileCoreServices
 import SwiftyJSON
+import ActionSheetPicker_3_0
 
 class ReplyViewController: UIViewController, UITextViewDelegate {
     
@@ -30,7 +31,7 @@ class ReplyViewController: UIViewController, UITextViewDelegate {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     override func viewWillDisappear(_ animated: Bool) {
         unregisterKeyboardNotifications()
     }
@@ -84,11 +85,38 @@ class ReplyViewController: UIViewController, UITextViewDelegate {
     
     
     func saveDraft(_ sender: UIButton!){
-        
+        if let toSave = text!.text {
+            if(!toSave.isEmpty()){
+                Drafts.addDraft(s: text!.text)
+                self.view.makeToast("Draft saved", duration: 4, position: .top)
+            }
+        }
     }
     
-    func openDrafts(_ sender: UIButton!){
-        
+    var picker: ActionSheetStringPicker?
+    var doneButton: UIBarButtonItem?
+    
+    func openDrafts(_ sender: AnyObject){
+        if(Drafts.drafts.isEmpty){
+            self.view.makeToast("No drafts found", duration: 4, position: .top)
+        } else {
+            picker = ActionSheetStringPicker(title: "Choose a draft", rows: Drafts.drafts, initialSelection: 0, doneBlock: { (picker, index, value) in
+                self.text!.insertText(Drafts.drafts[index] as String)
+            }, cancel: { (picker) in
+                return
+            }, origin: sender)
+            
+            doneButton = UIBarButtonItem.init(title: "Insert", style: .done, target: nil, action: nil)
+            picker?.setDoneButton(doneButton)
+            picker?.addCustomButton(withTitle: "Delete", target: self, selector: #selector(ReplyViewController.doDelete))
+            picker?.show()
+            
+        }
+    }
+    
+    func doDelete(){
+        Drafts.deleteDraft(s: Drafts.drafts[(picker?.selectedIndex)!] as String)
+        self.openDrafts(self)
     }
     
     func uploadImage(_ sender: UIButton!){
@@ -122,7 +150,7 @@ class ReplyViewController: UIViewController, UITextViewDelegate {
         }
         
         present(controller, animated: true, completion: nil)
-
+        
     }
     var progressBar = UIProgressView()
     var alertView: UIAlertController?
@@ -162,44 +190,58 @@ class ReplyViewController: UIViewController, UITextViewDelegate {
                         self.uploadImages(assets, album: album, completion: { (last) in
                             DispatchQueue.main.async {
                                 self.alertView!.dismiss(animated: true, completion: {
-                                    let alert = UIAlertController(title: "Link text", message: url, preferredStyle: .alert)
-                                    
-                                    alert.addTextField { (textField) in
-                                        textField.text = ""
-                                    }
-                                    alert.addAction(UIAlertAction(title: "Insert", style: .default, handler: { (action) in
-                                        let textField = alert.textFields![0] // Force unwrapping because we know it exists.
-                                        self.text!.insertText("[\(textField.text!)](\(url))")
+                                    if last != "Failure" {
                                         
-                                    }))
-                                    
-                                    alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
-                                    self.present(alert, animated: true, completion: nil)
+                                        let alert = UIAlertController(title: "Link text", message: url, preferredStyle: .alert)
+                                        
+                                        alert.addTextField { (textField) in
+                                            textField.text = ""
+                                        }
+                                        alert.addAction(UIAlertAction(title: "Insert", style: .default, handler: { (action) in
+                                            let textField = alert.textFields![0] // Force unwrapping because we know it exists.
+                                            self.text!.insertText("[\(textField.text!)](\(url))")
+                                            
+                                        }))
+                                        
+                                        alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
+                                        self.present(alert, animated: true, completion: nil)
+                                    } else {
+                                        let alert = UIAlertController(title: "Uploading failed", message: "Uh oh, something went wrong while uploading to Imgur. Please try again in a few minutes", preferredStyle: .alert)
+                                        alert.addAction(UIAlertAction.init(title: "Ok", style: .cancel, handler: nil))
+                                        self.present(alert, animated: true, completion: nil)
+                                    }
                                 })
                             }
                         })
                     }
                     
             }
-
+            
         } else {
             uploadImages(assets, album: "", completion: { (link) in
                 DispatchQueue.main.async {
                     self.alertView!.dismiss(animated: true, completion: {
-                        let alert = UIAlertController(title: "Link text", message: link, preferredStyle: .alert)
-                        
-                        alert.addTextField { (textField) in
-                            textField.text = ""
-                        }
-                        alert.addAction(UIAlertAction(title: "Insert", style: .default, handler: { (action) in
-                            let textField = alert.textFields![0] // Force unwrapping because we know it exists.
-                            self.text!.insertText("[\(textField.text!)](\(link))")
+                        if link != "Failure" {
+                            let alert = UIAlertController(title: "Link text", message: link, preferredStyle: .alert)
                             
-                        }))
+                            alert.addTextField { (textField) in
+                                textField.text = ""
+                            }
+                            alert.addAction(UIAlertAction(title: "Insert", style: .default, handler: { (action) in
+                                let textField = alert.textFields![0] // Force unwrapping because we know it exists.
+                                self.text!.insertText("[\(textField.text!)](\(link))")
+                                
+                            }))
+                            
+                            alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
+                            self.present(alert, animated: true, completion: nil)
+                        } else {
+                            let alert = UIAlertController(title: "Uploading failed", message: "Uh oh, something went wrong while uploading to Imgur. Please try again in a few minutes", preferredStyle: .alert)
+                            alert.addAction(UIAlertAction.init(title: "Ok", style: .cancel, handler: nil))
+                            self.present(alert, animated: true, completion: nil)
+                        }
                         
-                        alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
-                        self.present(alert, animated: true, completion: nil)
-            })
+                    })
                 }
             })
         }
@@ -243,23 +285,15 @@ class ReplyViewController: UIViewController, UITextViewDelegate {
                             }
                         }
                         
-                    case .failure(let encodingError):
-                        //Show Alert in UI
-                        print("Avatar uploaded");
+                    case .failure:
+                        completion("Failure")
                     }
                 })
             })
         }
-
-    }
-    
-    func failedUpload(){
         
     }
     
-    func successfulUpload(){
-        
-    }
     
     func draw(_ sender: UIButton!){
         
@@ -294,7 +328,7 @@ class ReplyViewController: UIViewController, UITextViewDelegate {
         wrapIn("~~")
     }
     
-
+    
     func registerKeyboardNotifications() {
         NotificationCenter.default.addObserver(self, selector: #selector(ReplyViewController.keyboardDidShow(notification:)), name: NSNotification.Name.UIKeyboardDidShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(ReplyViewController.keyboardWillHide(notification:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
@@ -325,7 +359,7 @@ class ReplyViewController: UIViewController, UITextViewDelegate {
         self.scrollView?.contentInset = contentInset!
         self.scrollView?.scrollIndicatorInsets = UIEdgeInsets.zero
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -355,7 +389,7 @@ class ReplyViewController: UIViewController, UITextViewDelegate {
         let sendB = UIBarButtonItem.init(customView: send)
         navigationItem.rightBarButtonItem = sendB
         registerKeyboardNotifications()
-
+        
     }
     
     func close(_ sender: AnyObject){
@@ -368,7 +402,7 @@ class ReplyViewController: UIViewController, UITextViewDelegate {
     }
     
     override func loadView() {
-         self.view = UITextView(frame: CGRect.zero)
+        self.view = UITextView(frame: CGRect.zero)
         text = self.view as? UITextView
         text?.isEditable = true
         text?.backgroundColor = ColorUtil.foregroundColor
@@ -382,15 +416,15 @@ class ReplyViewController: UIViewController, UITextViewDelegate {
     }
     
     /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
+     // MARK: - Navigation
+     
+     // In a storyboard-based application, you will often want to do a little preparation before navigation
+     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+     // Get the new view controller using segue.destinationViewController.
+     // Pass the selected object to the new view controller.
+     }
+     */
+    
 }
 extension UIView {
     

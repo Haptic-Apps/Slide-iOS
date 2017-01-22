@@ -1,7 +1,8 @@
 PODS:
+  - ActionSheetPicker-3.0 (2.2.0)
   - Alamofire (4.3.0)
   - AMScrollingNavbar (3.2.0)
-  - BGTableViewRowActionWithImage (0.4.0)
+  - BGTableViewRowActionWithImage (0.4.1)
   - ChameleonFramework (2.1.0):
     - ChameleonFramework/Default (= 2.1.0)
   - ChameleonFramework/Default (2.1.0)
@@ -24,6 +25,7 @@ PODS:
   - XLPagerTabStrip (6.0.0)
 
 DEPENDENCIES:
+  - ActionSheetPicker-3.0 (from `https://github.com/ccrama/ActionSheetPicker-3.0`)
   - Alamofire (~> 4.3)
   - AMScrollingNavbar
   - BGTableViewRowActionWithImage
@@ -41,6 +43,8 @@ DEPENDENCIES:
   - XLPagerTabStrip (~> 6.0)
 
 EXTERNAL SOURCES:
+  ActionSheetPicker-3.0:
+    :git: https://github.com/ccrama/ActionSheetPicker-3.0
   ImagePickerSheetController:
     :branch: swift3
     :git: https://github.com/lbrndnr/ImagePickerSheetController
@@ -52,6 +56,9 @@ EXTERNAL SOURCES:
     :git: https://github.com/sonsongithub/UZTextView
 
 CHECKOUT OPTIONS:
+  ActionSheetPicker-3.0:
+    :commit: 752459578d8162c11f6311987bd3463e6d85712b
+    :git: https://github.com/ccrama/ActionSheetPicker-3.0
   ImagePickerSheetController:
     :commit: e9b6c2ca937135335e9b5252a7792c94ce1497d4
     :git: https://github.com/lbrndnr/ImagePickerSheetController
@@ -66,9 +73,10 @@ CHECKOUT OPTIONS:
     :git: https://github.com/sonsongithub/UZTextView
 
 SPEC CHECKSUMS:
+  ActionSheetPicker-3.0: d11a4c12c6aaf704b8a3f56d179198c99f3e41e6
   Alamofire: 856a113053a7bc9cbe5d6367a555d773fc5cfef7
   AMScrollingNavbar: cf603d4d5f11061d466a0878b9ada136248927b2
-  BGTableViewRowActionWithImage: 8ceb91c2ccdf472a3091ed5d058f52702a1b43e1
+  BGTableViewRowActionWithImage: 6a0731a84662735f5ec28dc253e3fba6a73ebc5b
   ChameleonFramework: d21a3cc247abfe5e37609a283a8238b03575cf64
   ImagePickerSheetController: 4789b06940e299431455c61be77fda440883c36c
   ImageViewer: 364abc0309c33dda86d08ca25b0243e5c67d8cd3
@@ -82,6 +90,6 @@ SPEC CHECKSUMS:
   XLActionController: 57fe0ce1642e2eed971b188b490762345fdbf963
   XLPagerTabStrip: c46e802a8dcac29edbcea573de8fe920e052455b
 
-PODFILE CHECKSUM: 24a9d7aa1178a6829f054df0397509345784bee5
+PODFILE CHECKSUM: 8e911df4a54454fb79e35aacf79f3f6213d2cbea
 
 COCOAPODS: 1.1.1

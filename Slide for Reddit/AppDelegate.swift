@@ -81,6 +81,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         SettingValues.initialize()
         AccountController.initialize()
         PostFilter.initialize()
+        Drafts.initialize()
         Subscriptions.sync(name: AccountController.currentName, completion: nil)
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
             (granted, error) in

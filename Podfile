@@ -21,6 +21,7 @@ target 'Slide for Reddit' do
   pod 'ImagePickerSheetController', :git => 'https://github.com/lbrndnr/ImagePickerSheetController’, :branch => ‘swift3’
   pod 'Alamofire', '~> 4.3'
     pod 'SwiftyJSON'
+pod 'ActionSheetPicker-3.0’, :git => ‘https://github.com/ccrama/ActionSheetPicker-3.0'
 
   target 'Slide for RedditTests' do
     inherit! :search_paths

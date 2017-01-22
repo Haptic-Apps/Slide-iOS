@@ -67,6 +67,7 @@
 		BE780B601E32CA8F00DAA1EB /* RelatedContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE780B5F1E32CA8F00DAA1EB /* RelatedContributionLoader.swift */; };
 		BE780B621E32CB9600DAA1EB /* RelatedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE780B611E32CB9600DAA1EB /* RelatedViewController.swift */; };
 		BE780B641E3405F300DAA1EB /* SettingsTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE780B631E3405F300DAA1EB /* SettingsTheme.swift */; };
+		BE780B691E3527DA00DAA1EB /* Drafts.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE780B681E3527D900DAA1EB /* Drafts.swift */; };
 		BE8592C21E0EE72800836C1D /* reddift_config.json in Resources */ = {isa = PBXBuildFile; fileRef = BE8592C11E0EE72800836C1D /* reddift_config.json */; };
 		BE86300F1E2E6A54004F0E1F /* PostFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE86300E1E2E6A54004F0E1F /* PostFilter.swift */; };
 		BE8630111E2EDFB2004F0E1F /* FiltersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8630101E2EDFB2004F0E1F /* FiltersViewController.swift */; };
@@ -188,6 +189,7 @@
 		BE780B5F1E32CA8F00DAA1EB /* RelatedContributionLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RelatedContributionLoader.swift; sourceTree = "<group>"; };
 		BE780B611E32CB9600DAA1EB /* RelatedViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RelatedViewController.swift; sourceTree = "<group>"; };
 		BE780B631E3405F300DAA1EB /* SettingsTheme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsTheme.swift; sourceTree = "<group>"; };
+		BE780B681E3527D900DAA1EB /* Drafts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Drafts.swift; sourceTree = "<group>"; };
 		BE8592C11E0EE72800836C1D /* reddift_config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = reddift_config.json; sourceTree = "<group>"; };
 		BE86300E1E2E6A54004F0E1F /* PostFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostFilter.swift; sourceTree = "<group>"; };
 		BE8630101E2EDFB2004F0E1F /* FiltersViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FiltersViewController.swift; sourceTree = "<group>"; };
@@ -363,6 +365,18 @@
 			name = GfycatTranscoded;
 			sourceTree = "<group>";
 		};
+		BE780B671E35276600DAA1EB /* ContentUtilities */ = {
+			isa = PBXGroup;
+			children = (
+				BE7439E81E201AEE008BB63B /* Subscriptions.swift */,
+				BEBF45C71E230CC900764BB8 /* History.swift */,
+				BE7439F81E21A59C008BB63B /* ActionStates.swift */,
+				BE86300E1E2E6A54004F0E1F /* PostFilter.swift */,
+				BE780B681E3527D900DAA1EB /* Drafts.swift */,
+			);
+			name = ContentUtilities;
+			sourceTree = "<group>";
+		};
 		BE8FC9FB1E0C46090063B8EF = {
 			isa = PBXGroup;
 			children = (
@@ -397,13 +411,13 @@
 				BE6EA6C51E1C1E8000E9E709 /* Streamable */,
 				BE6EA6C01E1C1DC200E9E709 /* Gfycat */,
 				BE3E5C0F1E16BA1300749C0C /* Album */,
+				BE780B671E35276600DAA1EB /* ContentUtilities */,
 				BE8FCA071E0C46090063B8EF /* AppDelegate.swift */,
 				BEE5BF611E119A9000E3C9AE /* SubredditsViewController.swift */,
+				BE2B89FA1E253D610053D493 /* ReplyViewController.swift */,
 				BE8FCA091E0C46090063B8EF /* SubredditLinkViewController.swift */,
-				BE7439E81E201AEE008BB63B /* Subscriptions.swift */,
 				BE8FCA0B1E0C46090063B8EF /* Main.storyboard */,
 				BE8FCA0E1E0C46090063B8EF /* Assets.xcassets */,
-				BEBF45C71E230CC900764BB8 /* History.swift */,
 				BE8FCA101E0C46090063B8EF /* LaunchScreen.storyboard */,
 				BE8FCA131E0C46090063B8EF /* Info.plist */,
 				BE8592C11E0EE72800836C1D /* reddift_config.json */,
@@ -429,18 +443,15 @@
 				BE7439EC1E201C22008BB63B /* SubredditCellView.swift */,
 				BE7439F01E203D05008BB63B /* NavigationHeaderView.swift */,
 				BE7439F21E20C9BD008BB63B /* CommentCellView.swift */,
-				BE7439F81E21A59C008BB63B /* ActionStates.swift */,
 				BEBF45DA1E23383D00764BB8 /* seen.plist */,
 				BEBF45DC1E23384500764BB8 /* comments.plist */,
 				BE2B89EE1E2444D20053D493 /* Settings.bundle */,
 				BE2B89F21E2450D70053D493 /* ColorPicker.swift */,
 				BE2B89F81E2533990053D493 /* EditorToolbar.swift */,
-				BE2B89FA1E253D610053D493 /* ReplyViewController.swift */,
 				BE2DEAB11E26916700FBF0B5 /* SubSidebarViewController.swift */,
 				BE2DEAB31E2693C100FBF0B5 /* SubredditHeaderView.swift */,
 				BE1DA3951E26AD5700EC0A04 /* SearchViewController.swift */,
 				BE1DA3971E26ADEA00EC0A04 /* SearchContributionLoader.swift */,
-				BE86300E1E2E6A54004F0E1F /* PostFilter.swift */,
 				BEC494271E307D57006618F3 /* GalleryTableViewController.swift */,
 				BEC494291E307DDA006618F3 /* GalleryCellView.swift */,
 				BE780B5F1E32CA8F00DAA1EB /* RelatedContributionLoader.swift */,
@@ -799,6 +810,7 @@
 				BE6EA6DA1E1C1FC700E9E709 /* Watchers.swift in Sources */,
 				BEE5BF621E119A9000E3C9AE /* SubredditsViewController.swift in Sources */,
 				BE6EA6D61E1C1FC700E9E709 /* Formats.swift in Sources */,
+				BE780B691E3527DA00DAA1EB /* Drafts.swift in Sources */,
 				BEDDA9931E19AEF2003CD6C3 /* AdDictionary.swift in Sources */,
 				BE3E5C141E16BA2200749C0C /* Images.swift in Sources */,
 				BEF3ACE21E15C101005848B6 /* ContentType.swift in Sources */,
