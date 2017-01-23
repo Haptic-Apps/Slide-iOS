@@ -24,9 +24,13 @@ class SubredditsViewController:  ButtonBarPagerTabStripViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        if(SettingValues.viewType){
+            settings.style.buttonBarHeight = 1
+            buttonBarView.isHidden = true
+        }
+        self.title = currentTitle
         self.navigationController?.navigationBar.shadowImage = UIImage()
         self.navigationController?.navigationBar.barTintColor = self.tintColor
-        self.title = "Slide"
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -96,7 +100,7 @@ class SubredditsViewController:  ButtonBarPagerTabStripViewController {
         self.reloadPagerTabStripView()
         if let nav = self.menuNav {
             if(nav.tableView != nil){
-            nav.tableView.reloadData()
+                nav.tableView.reloadData()
             }
         }
         menuLeftNavigationController?.dismiss(animated: true, completion: {
@@ -114,7 +118,9 @@ class SubredditsViewController:  ButtonBarPagerTabStripViewController {
     var tintColor: UIColor = UIColor.white
     var menuLeftNavigationController: UISideMenuNavigationController?
     var menuNav: NavigationSidebarViewController?
+    var currentTitle = "Slide"
     override func viewDidLoad() {
+        self.title = currentTitle
         menuLeftNavigationController = UISideMenuNavigationController()
         menuLeftNavigationController?.leftSide = true
         menuNav = NavigationSidebarViewController()
@@ -129,7 +135,11 @@ class SubredditsViewController:  ButtonBarPagerTabStripViewController {
         SideMenuManager.menuAddPanGestureToPresent(toView: self.view)
         SideMenuManager.menuAddScreenEdgePanGesturesToPresent(toView: self.navigationController!.view)
         
-        if(!SettingValues.viewType){
+        if(SettingValues.viewType){
+            settings.style.buttonBarHeight = 1
+            buttonBarView.isHidden = true
+        }
+            
             settings.style.buttonBarItemFont = UIFont.systemFont(ofSize: 14)
             settings.style.selectedBarHeight = 3.0
             settings.style.buttonBarMinimumLineSpacing = 0
@@ -141,30 +151,24 @@ class SubredditsViewController:  ButtonBarPagerTabStripViewController {
             settings.style.buttonBarRightContentInset = 20
             settings.style.buttonBarItemBackgroundColor = .clear
             
-            
-            
-            
-            self.title = "Slide"
-            
-            
-            
-            let sort = UIButton.init(type: .custom)
-            sort.setImage(UIImage.init(named: "ic_sort_white"), for: UIControlState.normal)
-            sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControlEvents.touchUpInside)
-            sort.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
-            let sortB = UIBarButtonItem.init(customView: sort)
-            
-            let more = UIButton.init(type: .custom)
-            more.setImage(UIImage.init(named: "ic_more_vert_white"), for: UIControlState.normal)
-            more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
-            more.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
-            let moreB = UIBarButtonItem.init(customView: more)
-            
-            navigationItem.rightBarButtonItems = [ moreB, sortB]
-            
-        } else {
-            settings.style.buttonBarHeight = 0
-        }
+        
+        
+        self.title = "Slide"
+        
+        let sort = UIButton.init(type: .custom)
+        sort.setImage(UIImage.init(named: "ic_sort_white"), for: UIControlState.normal)
+        sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControlEvents.touchUpInside)
+        sort.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+        let sortB = UIBarButtonItem.init(customView: sort)
+        
+        let more = UIButton.init(type: .custom)
+        more.setImage(UIImage.init(named: "ic_more_vert_white"), for: UIControlState.normal)
+        more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
+        more.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
+        let moreB = UIBarButtonItem.init(customView: more)
+        
+        navigationItem.rightBarButtonItems = [ moreB, sortB]
+        
         view.backgroundColor = ColorUtil.backgroundColor
         // set up style before super view did load is executed
         // -
@@ -178,9 +182,14 @@ class SubredditsViewController:  ButtonBarPagerTabStripViewController {
             if((newCell?.label.text) != nil){
                 self.tintColor = ColorUtil.getColorForSub(sub: (newCell?.label.text)!)
                 self.navigationController?.navigationBar.barTintColor = self.tintColor
-                self.colorChanged()
                 self.menuNav?.setSubreddit(subreddit: (newCell?.label.text)!)
+                if(SettingValues.viewType){
+                    self.title = (newCell?.label.text)!
+                    self.currentTitle = self.title!
+                }
                 self.buttonBarView.selectedBar.backgroundColor = ColorUtil.accentColorForSub(sub: (newCell?.label.text)!)
+                    self.colorChanged()
+
             }
         }
         
@@ -244,7 +253,7 @@ class SubredditsViewController:  ButtonBarPagerTabStripViewController {
     override func viewControllers(for pagerTabStripController: PagerTabStripViewController) -> [UIViewController] {
         var controllers : [UIViewController] = []
         for subname in Subscriptions.subreddits {
-            controllers.append(SettingValues.viewType ? SubredditLinkViewController(subName: subname, single: true) : SubredditLinkViewController(subName: subname, parent: self))
+            controllers.append( SubredditLinkViewController(subName: subname, parent: self))
         }
         return Array(controllers)
     }

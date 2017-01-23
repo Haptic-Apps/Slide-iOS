@@ -86,7 +86,7 @@ class ContentListingViewController: MediaViewController, UITableViewDelegate, UI
         tableView.rowHeight = UITableViewAutomaticDimension
         self.tableView.register(LinkCellView.classForCoder(), forCellReuseIdentifier: "submission")
         self.tableView.register(CommentCellView.classForCoder(), forCellReuseIdentifier: "comment")
-        self.tableView.register(LinkCellView.classForCoder(), forCellReuseIdentifier: "message")
+        self.tableView.register(MessageCellView.classForCoder(), forCellReuseIdentifier: "message")
         
         session = (UIApplication.shared.delegate as! AppDelegate).session
         
@@ -131,7 +131,9 @@ class ContentListingViewController: MediaViewController, UITableViewDelegate, UI
             c.setComment(comment: (thing as! Comment), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
             cell = c
         } else {
-             cell = tableView.dequeueReusableCell(withIdentifier: "submission", for: indexPath)
+            let c = tableView.dequeueReusableCell(withIdentifier: "message", for: indexPath) as! MessageCellView
+            c.setMessage(message: (thing as! Message), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
+            cell = c
         }
         
         if indexPath.row == baseData.content.count - 1 && !loading && baseData.canGetMore {

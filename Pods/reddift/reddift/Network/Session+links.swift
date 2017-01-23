@@ -54,6 +54,22 @@ extension Session {
     }
     
     /**
+     Edit a Link or Comment.
+     
+     - parameter thing: Thing object to be edited.
+     - parameter newBody: String value of new body
+     - parameter completion: The completion handler to call when the load request is complete.
+     - returns: Data task which requests search to reddit.com.
+     */
+    @discardableResult
+    public func editCommentOrLink(_ name: String, newBody: String, completion: @escaping (Result<JSONAny>) -> Void) throws -> URLSessionDataTask {
+        let parameter = ["thing_id":name, "text": newBody]
+        guard let request = URLRequest.requestForOAuth(with: baseURL, path:"/api/editusertext", parameter:parameter, method:"POST", token:token)
+            else { throw ReddiftError.canNotCreateURLRequest as NSError }
+        return executeTask(request, handleResponse: handleResponse2JSON, completion: completion)
+    }
+    
+    /**
     Vote specified thing.
     
     - parameter direction: The type of voting direction as VoteDirection.

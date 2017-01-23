@@ -19,8 +19,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
     func save(_ cell: LinkCellView) {
         do {
-            try session?.setSave(!ActionStates.isSaved(s: cell.link!), name: (cell.link?.name)!, completion: { (result) in
-                
+            let state = !ActionStates.isSaved(s: cell.link!)
+            try session?.setSave(state, name: (cell.link?.name)!, completion: { (result) in
+                DispatchQueue.main.async{
+                self.view.makeToast(state ? "Saved" : "Unsaved", duration: 3, position: .top)
+                }
             })
             ActionStates.setSaved(s: cell.link!, saved: !ActionStates.isSaved(s: cell.link!))
             History.addSeen(s: cell.link!)
@@ -29,7 +32,21 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             
         }
     }
-    
+    func save(_ comment: Comment) {
+        do {
+            let state = !ActionStates.isSaved(s: comment)
+            try session?.setSave(state, name: comment.name, completion: { (result) in
+                DispatchQueue.main.async{
+                self.view.makeToast(state ? "Saved" : "Unsaved", duration: 3, position: .bottom)
+                }
+            })
+            ActionStates.setSaved(s: comment, saved: !ActionStates.isSaved(s: comment))
+            History.addSeen(s: comment)
+        } catch {
+            
+        }
+    }
+
     var searchBar = UISearchBar()
     
     func reply(_ cell: LinkCellView) {
@@ -40,7 +57,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 
                 let queue: [Thing] = [comment!]
                 self.cDepth[comment!.getId()] = startDepth
-            
+                
                 self.dataArray.insert(contentsOf: queue, at: 0)
                 self.comments.insert(contentsOf: queue, at: 0)
                 self.heightArray.insert(contentsOf: self.updateStringsSingle(queue), at: 0)
@@ -67,7 +84,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             
         }
     }
-
+    
     
     func downvote(_ cell: LinkCellView) {
         do {
@@ -109,7 +126,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
         
         cancelActionButton = UIAlertAction(title: "Report", style: .default) { action -> Void in
-            //todo report
+            self.report(self.submission!)
         }
         actionSheetController.addAction(cancelActionButton)
         
@@ -152,6 +169,33 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         
         self.present(actionSheetController, animated: true, completion: nil)
         
+    }
+    
+    func report(_ thing: Thing){
+        let alert = UIAlertController(title: "Report this content", message: "Enter a reason (not required)", preferredStyle: .alert)
+        
+        alert.addTextField { (textField) in
+            textField.text = ""
+        }
+        
+        alert.addAction(UIAlertAction(title: "Report", style: .destructive, handler: { [weak alert] (_) in
+            let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
+            do {
+            try self.session?.report(thing, reason: (textField?.text!)!, otherReason: "", completion: { (result) in
+                DispatchQueue.main.async{
+                self.view.makeToast("Report sent", duration: 3, position: .top)
+                }
+            })
+            } catch {
+                DispatchQueue.main.async{
+                self.view.makeToast("Error sending report", duration: 3, position: .top)
+                }
+            }
+        }))
+        
+        alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
+        
+        self.present(alert, animated: true, completion: nil)
     }
     
     var submission: Link? = nil
@@ -958,6 +1002,65 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         } catch { print(error) }
         ActionStates.setVoteDirection(s: comment, direction: direction)
     }
+    
+    func doDelete(comment: Thing, index: Int) {
+        let alert = UIAlertController.init(title: "Really delete this comment?", message: "", preferredStyle: .alert)
+        alert.addAction(UIAlertAction.init(title: "Yes", style: .destructive, handler: { (action) in
+            do{
+            try self.session?.deleteCommentOrLink(comment.getId(), completion: { (result) in
+                DispatchQueue.main.async {
+                    var realPosition = 0
+                    for c in self.comments{
+                        if(c.getId() == comment.getId()){
+                            break
+                        }
+                        realPosition += 1
+                    }
+                    self.contents[realPosition].attributedString = NSAttributedString(string: "[deleted]")
+                    self.doArrays()
+                    self.tableView.reloadData()
+                }
+            })
+            } catch {
+                
+            }
+        }))
+        alert.addAction(UIAlertAction.init(title: "No", style: .cancel, handler: nil))
+        self.present(alert, animated: true, completion: nil)
+    }
+
+    
+    func edit(comment: Thing, index: Int) {
+        let reply  = ReplyViewController.init(thing: comment, sub: (self.submission?.subreddit)!, editing: true) { (comment) in
+            DispatchQueue.main.async(execute: { () -> Void in
+                
+                var realPosition = 0
+                for c in self.comments{
+                    if(c.getId() == comment?.getId()){
+                        break
+                    }
+                    realPosition += 1
+                }
+                
+                self.dataArray.remove(at: index)
+                self.dataArray.insert(comment!, at: index)
+                self.comments.remove(at: realPosition)
+                self.comments.insert(comment!, at: realPosition)
+                self.heightArray.remove(at: index)
+                self.heightArray.insert(contentsOf: self.updateStringsSingle([comment!]), at: index)
+                self.contents.remove(at: realPosition)
+                self.contents.insert(contentsOf: self.updateStringsSingle([comment!]), at: realPosition)
+                self.doArrays()
+                self.tableView.reloadData()
+            })
+        }
+        
+        let navEditorViewController: UINavigationController = UINavigationController(rootViewController: reply)
+        self.prepareOverlayVC(overlayVC: navEditorViewController)
+        self.present(navEditorViewController, animated: true, completion: nil)
+    }
+
+    
     let overlayTransitioningDelegate = OverlayTransitioningDelegate()
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]?
@@ -965,7 +1068,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         var toReturn: [BGTableViewRowActionWithImage] = []
         let cell = tableView.cellForRow(at: indexPath) as! CommentDepthCell
         let color = ColorUtil.getColorForSub(sub: (submission?.subreddit)!)
-        if(!(submission?.archived)! && AccountController.isLoggedIn){
+        if(cell.content! is Comment){
+        let author = (cell.content! as! Comment).author
+        if(!(submission?.archived)! && AccountController.isLoggedIn && author != "[deleted]" && author != "[removed]"){
             let upimg = UIImage.init(named: "upvote")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25))
             let upvote = BGTableViewRowActionWithImage.rowAction(with: .normal, title: "    ", backgroundColor: UIColor.init(hexString: "#FF9800"), image: upimg, forCellHeight: UInt(cell.contentView.frame.size.height)) { (action, indexPath) in
                 tableView.setEditing(false, animated: true)
@@ -982,6 +1087,20 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             }
             toReturn.append(downvote!)
             
+            if(author == AccountController.currentName){
+                let editimg = UIImage.init(named: "edit")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25))
+                let edit = BGTableViewRowActionWithImage.rowAction(with: .normal, title: "    ", backgroundColor: color, image: editimg, forCellHeight: UInt(cell.contentView.frame.size.height)) { (action, indexPath) in
+                    tableView.setEditing(false, animated: true)
+                    self.edit(comment: cell.content!, index: (indexPath?.row)!)
+                }
+                toReturn.append(edit!)
+                let deleteimg = UIImage.init(named: "delete")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25))
+                let delete = BGTableViewRowActionWithImage.rowAction(with: .normal, title: "    ", backgroundColor: GMColor.red500Color(), image: deleteimg, forCellHeight: UInt(cell.contentView.frame.size.height)) { (action, indexPath) in
+                    tableView.setEditing(false, animated: true)
+                    self.doDelete(comment: cell.content!, index: (indexPath?.row)!)
+                }
+                toReturn.append(delete!)
+            }
             if(!(submission?.locked)!){
                 let rep = UIImage.init(named: "reply")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25))
                 let reply = BGTableViewRowActionWithImage.rowAction(with: .normal, title: "    ", backgroundColor: color, image: rep, forCellHeight: UInt(cell.contentView.frame.size.height)) { (action, indexPath) in
@@ -1023,12 +1142,47 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         let mor = UIImage.init(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25))
         let more = BGTableViewRowActionWithImage.rowAction(with: .normal, title: "    ", backgroundColor: color, image: mor, forCellHeight: UInt(cell.contentView.frame.size.height)) { (action, indexPath) in
             tableView.setEditing(false, animated: true)
-            cell.more()
+            self.more(cell.content! as! Comment)
         }
         toReturn.append(more!)
-        
+        }
         return toReturn
     }
+    
+    func more(_ comment: Comment){
+        let alertController = UIAlertController(title: "Comment by /u/\(comment.author)", message: "", preferredStyle: .actionSheet)
+        
+        
+        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
+            print("Cancel")
+        }
+        
+        alertController.addAction(cancelActionButton)
+        
+        let profile: UIAlertAction = UIAlertAction(title: "/u/\(comment.author)'s profile", style: .default) { action -> Void in
+            self.show(ProfileViewController.init(name: comment.author), sender: self)
+        }
+        
+        alertController.addAction(profile)
+        if(AccountController.isLoggedIn){
+            
+            let save: UIAlertAction = UIAlertAction(title: "Save", style: .default) { action -> Void in
+                self.save(comment)
+            }
+            
+            alertController.addAction(save)
+        }
+        
+        let report: UIAlertAction = UIAlertAction(title: "Report", style: .default) { action -> Void in
+            self.report(comment)
+        }
+        
+        alertController.addAction(report)
+        
+        
+        parent?.present(alertController, animated: true, completion: nil)
+    }
+
     
     private func prepareOverlayVC(overlayVC: UIViewController) {
         overlayVC.transitioningDelegate = overlayTransitioningDelegate

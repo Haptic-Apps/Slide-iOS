@@ -324,39 +324,6 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         updateDepthConstraints()
     }
     
-    func more(){
-        let alertController = UIAlertController(title: "Comment by /u/\(comment?.author)", message: "", preferredStyle: .actionSheet)
-        
-        
-        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
-            print("Cancel")
-        }
-        
-        alertController.addAction(cancelActionButton)
-        
-        let profile: UIAlertAction = UIAlertAction(title: "/u/\(comment!.author)'s profile", style: .default) { action -> Void in
-            self.parent!.show(ProfileViewController.init(name: self.comment!.author), sender: self.parent!)
-        }
-        
-        alertController.addAction(profile)
-        if(AccountController.isLoggedIn){
-            
-            let save: UIAlertAction = UIAlertAction(title: "Save", style: .default) { action -> Void in
-                //todo save
-            }
-            
-            alertController.addAction(save)
-        }
-        
-        let report: UIAlertAction = UIAlertAction(title: "Report", style: .default) { action -> Void in
-            //todo report
-        }
-        
-        alertController.addAction(report)
-        
-        
-        parent?.present(alertController, animated: true, completion: nil)
-    }
     func setComment(comment: Comment, depth: Int, parent: MediaViewController, hiddenCount: Int, date: Double, author: String?){
         self.comment = comment
         if(self.parent == nil){

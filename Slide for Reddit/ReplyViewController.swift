@@ -22,7 +22,32 @@ class ReplyViewController: UIViewController, UITextViewDelegate {
     var sub: String
     var scrollView: UIScrollView?
     var reply: (Comment?) -> Void = {(comment) in }
+    var edit = false
     
+    init(thing: Thing, sub: String, editing: Bool, completion: @escaping (Comment?) -> Void){
+        self.toReplyTo = thing
+        self.edit = true
+        self.sub = sub
+        super.init(nibName: nil, bundle: nil)
+        self.reply = {(comment) in
+            DispatchQueue.main.async {
+                if(comment == nil){
+                    self.saveDraft(self)
+                    self.alertController?.dismiss(animated: false, completion: { 
+                        let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your message has not been edited (but has been saved as a draft), please try again", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+                        self.present(alert, animated: true, completion: nil)
+                    })
+                } else {
+                    completion(comment)
+                    self.alertController?.dismiss(animated: false, completion: {
+                        self.dismiss(animated: true, completion: nil)
+                    })
+                }
+            }
+        }
+    }
+
     init(thing: Thing, sub: String, completion: @escaping (Comment?) -> Void){
         self.toReplyTo = thing
         self.sub = sub
@@ -30,9 +55,11 @@ class ReplyViewController: UIViewController, UITextViewDelegate {
         self.reply = {(comment) in
             DispatchQueue.main.async {
             if(comment == nil){
-                self.saveDraft(self)
-                let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your message has not been sent (but has been saved as a draft), please try again", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+                self.alertController?.dismiss(animated: false, completion: {
+                    let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your message has not been sent (but has been saved as a draft), please try again", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+                    self.present(alert, animated: true, completion: nil)
+                })
             } else {
                 completion(comment)
                 self.alertController?.dismiss(animated: false, completion: { 
@@ -386,7 +413,11 @@ class ReplyViewController: UIViewController, UITextViewDelegate {
         navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName : UIColor.white]
         navigationController?.navigationBar.tintColor = UIColor.white
         let author = (toReplyTo is Comment) ? ((toReplyTo as! Comment).author) : ((toReplyTo as! Link).author)
+        if(edit){
+            title = "Editing"
+        } else {
         title = "Reply to \(author)"
+        }
         
         let close = UIButton.init(type: .custom)
         close.setImage(UIImage.init(named: "close"), for: UIControlState.normal)
@@ -415,7 +446,50 @@ class ReplyViewController: UIViewController, UITextViewDelegate {
     var session: Session?
     var comment: Comment?
     
+    func getCommentEdited(_ name: String){
+        do {
+        try self.session?.getInfo([name], completion: { (res) in
+            switch res {
+            case .failure:
+                print(res.error ?? "Error?")
+            case .success(let listing):
+                if listing.children.count == 1 {
+                    if let comment = listing.children[0] as? Comment {
+                        self.comment = comment
+                        self.reply(self.comment)
+                    }
+                }
+            }
+            
+        })
+        } catch {
+            
+        }
+
+    }
+    
     func send(_ sender: AnyObject){
+        if(edit){
+            alertController = UIAlertController(title: nil, message: "Editing comment...\n\n", preferredStyle: .alert)
+            
+            let spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+            spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
+            spinnerIndicator.color = UIColor.black
+            spinnerIndicator.startAnimating()
+            
+            alertController?.view.addSubview(spinnerIndicator)
+            self.present(alertController!,animated: true, completion: nil)
+            
+            session = (UIApplication.shared.delegate as! AppDelegate).session
+            
+            do {
+                let name = toReplyTo.getId()
+                try self.session?.editCommentOrLink(name, newBody: text!.text, completion: { (result) in
+                    self.getCommentEdited(name)
+                })
+            } catch { print((error as NSError).description) }
+        
+        } else {
         alertController = UIAlertController(title: nil, message: "Sending reply...\n\n", preferredStyle: .alert)
         
         let spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
@@ -441,6 +515,7 @@ class ReplyViewController: UIViewController, UITextViewDelegate {
                 }
             })
         } catch { print((error as NSError).description) }
+        }
 
     }
     
@@ -452,6 +527,9 @@ class ReplyViewController: UIViewController, UITextViewDelegate {
         text?.textColor = ColorUtil.fontColor
         text?.delegate = self
         text?.font = UIFont.systemFont(ofSize: 18)
+        if(edit){
+            text!.text = (toReplyTo as! Comment).body
+        }
     }
     
     func dismiss(_ sender: AnyObject) {

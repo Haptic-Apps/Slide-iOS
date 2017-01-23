@@ -77,6 +77,11 @@
     <string>Slide uses photos in order to attach images to comments and submissions</string>
     <key>NSCameraUsageDescription</key>
     <string>Slide uses the camera in order to attach images to comments and submissions</string>
-
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+        <string>googlechrome</string>
+        <string>googlechrome-x-callback</string>
+        <string>googlechromes</string>
+    </array>
 </dict>
 </plist>

@@ -379,28 +379,40 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     
     func refreshLink(_ submission: Link){
         let attributedTitle = NSMutableAttributedString(string: submission.title, attributes: [NSFontAttributeName: title.font, NSForegroundColorAttributeName: ColorUtil.fontColor])
-        let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(submission.linkFlairText.isEmpty ? submission.linkFlairCssClass : submission.linkFlairText)\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 3, left: 3, bottom: 3, right: 3), kTTTBackgroundCornerRadiusAttributeName: 3])
-        let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 2, left: 2, bottom: 2, right: 2), kTTTBackgroundCornerRadiusAttributeName: 3])
+        let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(submission.linkFlairText.isEmpty ? submission.linkFlairCssClass : submission.linkFlairText)\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
+        let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
         let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(submission.gilded) ", attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor])
+        
+        let locked = NSMutableAttributedString.init(string: "\u{00A0}LOCKED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
+        
+        let archived = NSMutableAttributedString.init(string: "\u{00A0}ARCHIVED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
         
         let spacer = NSMutableAttributedString.init(string: "  ")
         if(!(submission.linkFlairText.isEmpty ? submission.linkFlairCssClass : submission.linkFlairText).isEmpty){
             attributedTitle.append(spacer)
             attributedTitle.append(flairTitle)
         }
+        
+        if(submission.gilded > 0){
+            attributedTitle.append(spacer)
+            attributedTitle.append(spacer)
+            let gild = NSMutableAttributedString.init(string: "G", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.amber500Color(), NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
+            attributedTitle.append(gild)
+            if(submission.gilded > 1){
+                attributedTitle.append(gilded)
+            }
+        }
+        
         if(submission.stickied){
             attributedTitle.append(spacer)
             attributedTitle.append(pinned)
         }
-        if(submission.gilded > 0){
-            attributedTitle.append(spacer)
-            let attachment = NSTextAttachment()
-            attachment.image = UIImage(named: "gold")?.imageResize(sizeChange: CGSize.init(width: 20, height: 20))
-            let attachmentString = NSAttributedString(attachment: attachment)
-            attributedTitle.append(attachmentString)
-            if(submission.gilded > 1){
-                attributedTitle.append(gilded)
-            }
+        
+        if(submission.locked){
+            attributedTitle.append(locked)
+        }
+        if(submission.archived){
+            attributedTitle.append(archived)
         }
         
         attributedTitle.append(NSAttributedString.init(string: "\n\n"))
@@ -447,13 +459,13 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             navViewController = nav
         }
         let attributedTitle = NSMutableAttributedString(string: submission.title, attributes: [NSFontAttributeName: title.font, NSForegroundColorAttributeName: ColorUtil.fontColor])
-        let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(submission.linkFlairText.isEmpty ? submission.linkFlairCssClass : submission.linkFlairText)\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 3, left: 3, bottom: 3, right: 3), kTTTBackgroundCornerRadiusAttributeName: 3])
-        let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 2, left: 2, bottom: 2, right: 2), kTTTBackgroundCornerRadiusAttributeName: 3])
+        let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(submission.linkFlairText.isEmpty ? submission.linkFlairCssClass : submission.linkFlairText)\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
+        let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
         let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(submission.gilded) ", attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor])
        
-        let locked = NSMutableAttributedString.init(string: "\u{00A0}LOCKED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 2, left: 2, bottom: 2, right: 2), kTTTBackgroundCornerRadiusAttributeName: 3])
+        let locked = NSMutableAttributedString.init(string: "\u{00A0}LOCKED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
 
-        let archived = NSMutableAttributedString.init(string: "\u{00A0}ARCHIVED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 3, left: 3, bottom: 3, right: 3), kTTTBackgroundCornerRadiusAttributeName: 3])
+        let archived = NSMutableAttributedString.init(string: "\u{00A0}ARCHIVED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
 
         let spacer = NSMutableAttributedString.init(string: "  ")
         if(!(submission.linkFlairText.isEmpty ? submission.linkFlairCssClass : submission.linkFlairText).isEmpty){
@@ -463,10 +475,9 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         
         if(submission.gilded > 0){
             attributedTitle.append(spacer)
-            let attachment = NSTextAttachment()
-            attachment.image = UIImage(named: "gold")?.imageResize(sizeChange: CGSize.init(width: 20, height: 20))
-            let attachmentString = NSAttributedString(attachment: attachment)
-            attributedTitle.append(attachmentString)
+            attributedTitle.append(spacer)
+            let gild = NSMutableAttributedString.init(string: "G", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.amber500Color(), NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
+            attributedTitle.append(gild)
             if(submission.gilded > 1){
                 attributedTitle.append(gilded)
             }
@@ -555,7 +566,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                 preview = preview?.replacingOccurrences(of: "&amp;", with: "&")
                 w = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["width"] as? Int)!
                 h = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["height"] as? Int)!
-                if (full) {
+                if (false) { //reduce height if full, currently broken though
                     if (!fullImage && height<50 && type != ContentType.CType.SELF) {
                         forceThumb = true;
                     } else if (cropImage) {
@@ -736,10 +747,9 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         if(big){
             let imageSize = CGSize.init(width:w, height:h);
             var aspect = imageSize.width / imageSize.height
-            if(aspect == 0 || aspect > 10000){
+            if(aspect == 0 || aspect > 10000 || aspect.isNaN){
                 aspect = 1
             }
-            
             bigConstraint = NSLayoutConstraint(item: bannerImage, attribute:  NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: bannerImage, attribute: NSLayoutAttribute.height, multiplier: aspect, constant: 0.0)
             
             bannerImage.isUserInteractionEnabled = true
@@ -775,7 +785,8 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             thumbConstraint = []
         }
         if(thumb){
-            
+            print("thumb")
+
             thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[image(75)]",
                                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                                               metrics: metrics,
@@ -803,7 +814,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             
             self.contentView.addConstraints(thumbConstraint)
         } else if(big) {
-            
+            print("big")
             
             if(bigConstraint != nil){
                 thumbConstraint.append(bigConstraint!)
@@ -843,6 +854,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             
             self.contentView.addConstraints(thumbConstraint)
         } else {
+            print("body")
             thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[image(0)]",
                                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                                               metrics: metrics,

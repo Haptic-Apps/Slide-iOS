@@ -1,8 +1,8 @@
 //
-//  CommentCellView.swift
+//  MessageCellView.swift
 //  Slide for Reddit
 //
-//  Created by Carlos Crane on 1/7/17.
+//  Created by Carlos Crane on 1/23/17.
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
@@ -13,7 +13,7 @@ import AMScrollingNavbar
 import UZTextView
 import ImageViewer
 
-class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextViewDelegate {
+class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextViewDelegate {
     
     var title = UILabel()
     var textView = UZTextView()
@@ -63,7 +63,7 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
             }
         }
     }
-
+    
     func selectionDidEnd(_ textView: UZTextView) {
     }
     
@@ -129,7 +129,7 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         
     }
     
-    init(comment: Comment, parent: MediaViewController, width: CGFloat) {
+    init(message: Message, parent: MediaViewController, width: CGFloat) {
         super.init(style: .default, reuseIdentifier: "none")
         self.single = true
         self.title = UILabel(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude));
@@ -160,9 +160,9 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         self.contentView.backgroundColor = ColorUtil.foregroundColor
         
         self.updateConstraints()
-        self.setComment(comment: comment, parent: parent, nav: parent.navigationController, width: width)
+        self.setMessage(message: message, parent: parent, nav: parent.navigationController, width: width)
     }
-
+    
     
     override func updateConstraints() {
         super.updateConstraints()
@@ -193,81 +193,85 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
     
     var lsC: [NSLayoutConstraint] = []
     
-    func setComment(comment: Comment, parent: MediaViewController, nav: UIViewController?, width: CGFloat){
+    func setMessage(message: Message, parent: MediaViewController, nav: UIViewController?, width: CGFloat){
         parentViewController = parent
         if(navViewController == nil && nav != nil){
             navViewController = nav
         }
-        title.text = comment.submissionTitle
-        self.comment = comment
+        title.text = message.subject
+        self.message = message
+        if(message.new){
+            title.textColor = GMColor.red500Color()
+        } else {
+            title.textColor = ColorUtil.fontColor
+        }
         title.sizeToFit()
-       
+        
         if(!lsC.isEmpty){
             self.contentView.removeConstraints(lsC)
         }
         
-        let commentClick = UITapGestureRecognizer(target: self, action: #selector(CommentCellView.openComment(sender:)))
-        commentClick.delegate = self
-        self.addGestureRecognizer(commentClick)
+        let messageClick = UITapGestureRecognizer(target: self, action: #selector(MessageCellView.doReply(sender:)))
+        messageClick.delegate = self
+        self.addGestureRecognizer(messageClick)
         
+        let endString = NSMutableAttributedString(string:"\(DateFormatter().timeSince(from: NSDate.init(timeIntervalSince1970: TimeInterval.init(message.createdUtc)), numericDates: true))  •  from \(message.author)")
         
-        title.sizeToFit()
-        
-        var uC : UIColor
-        switch(ActionStates.getVoteDirection(s: comment)){
-        case .down:
-            uC = ColorUtil.downvoteColor!
-            break
-        case .up:
-            uC = ColorUtil.upvoteColor!
-            break
-        default:
-            uC = ColorUtil.fontColor
-            break
-        }
-        
-        let attrs = [NSFontAttributeName : UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: uC] as [String : Any]
-        let endString = NSMutableAttributedString(string:"  •  \(DateFormatter().timeSince(from: NSDate.init(timeIntervalSince1970: TimeInterval.init(comment.createdUtc)), numericDates: true))  •  ")
-        
-        let boldString = NSMutableAttributedString(string: "\(comment.score)pts", attributes:attrs)
-        let subString = NSMutableAttributedString(string: "/r/\(comment.subreddit)")
-        let color = ColorUtil.getColorForSub(sub: comment.subreddit)
+        let subString = NSMutableAttributedString(string: "/r/\(message.subreddit)")
+        let color = ColorUtil.getColorForSub(sub: message.subreddit)
         if(color != ColorUtil.baseColor){
             subString.addAttribute(NSForegroundColorAttributeName, value: color, range: NSRange.init(location: 0, length: subString.length))
         }
         
         let infoString = NSMutableAttributedString()
-        infoString.append(boldString)
         infoString.append(endString)
+        if(!message.subreddit.isEmpty){
         infoString.append(subString)
-
+        }
+        
         info.attributedText = infoString
         
-        let accent = ColorUtil.accentColorForSub(sub: ((comment).subreddit))
-        if(!comment.body.isEmpty()){
-            let html = comment.bodyHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
+        let accent = ColorUtil.accentColorForSub(sub: "")
+            let html = message.bodyHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
             do {
                 let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
                 let font = UIFont(name: ".SFUIText-Light", size: 16) ?? UIFont.systemFont(ofSize: 16)
                 let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: accent)
-                content = CellContent.init(string:attr2, width:(width - 16))
+                content = CellContent.init(string:attr2, width:(width - 16 - (message.subject.hasPrefix("re:") ? 30 : 0)))
                 textView.attributedString = content?.attributedString
                 textView.frame.size.height = (content?.textHeight)!
                 hasText = true
             } catch {
             }
             parentViewController?.registerForPreviewing(with: self, sourceView: textView)
-        }
+        
         
         let metrics=["height": content?.textHeight]
         let views=["label":title, "body": textView, "info": info] as [String : Any]
         lsC = []
-        lsC.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[label]-4-[info]-4-[body(height)]-8-|",
-                                                                                     options: NSLayoutFormatOptions(rawValue: 0),
-                                                                                     metrics: metrics,
-                                                                                     views: views))
-        self.contentView.addConstraints(lsC)
+        if(message.subject.hasPrefix("re:")){
+            lsC.append(contentsOf :NSLayoutConstraint.constraints(withVisualFormat: "H:|-38-[label]-8-|",
+                                                                           options: NSLayoutFormatOptions(rawValue: 0),
+                                                                           metrics: metrics,
+                                                                           views: views))
+            
+            lsC.append(contentsOf :NSLayoutConstraint.constraints(withVisualFormat: "H:|-38-[body]-8-|",
+                                                                           options: NSLayoutFormatOptions(rawValue: 0),
+                                                                           metrics: metrics,
+                                                                           views: views))
+            
+            lsC.append(contentsOf :NSLayoutConstraint.constraints(withVisualFormat: "H:|-38-[info]-8-|",
+                                                                           options: NSLayoutFormatOptions(rawValue: 0),
+                                                                           metrics: metrics,
+                                                                           views: views))
 
+        }
+        lsC.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[label]-4-[info]-4-[body(height)]-8-|",
+                                                              options: NSLayoutFormatOptions(rawValue: 0),
+                                                              metrics: metrics,
+                                                              views: views))
+        self.contentView.addConstraints(lsC)
+        
     }
     
     var registered: Bool = false
@@ -275,15 +279,15 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing,
                            viewControllerForLocation location: CGPoint) -> UIViewController? {
-            let locationInTextView = textView.convert(location, to: textView)
-            
-            if let (url, rect) = getInfo(locationInTextView: locationInTextView) {
-                currentLink = url
-                previewingContext.sourceRect = textView.convert(rect, from: textView)
-                if let controller = parentViewController?.getControllerForUrl(baseUrl: url){
-                    return controller
-                }
+        let locationInTextView = textView.convert(location, to: textView)
+        
+        if let (url, rect) = getInfo(locationInTextView: locationInTextView) {
+            currentLink = url
+            previewingContext.sourceRect = textView.convert(rect, from: textView)
+            if let controller = parentViewController?.getControllerForUrl(baseUrl: url){
+                return controller
             }
+        }
         
         return nil
     }
@@ -323,7 +327,7 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         if(viewControllerToCommit is GalleryViewController){
             parentViewController?.presentImageGallery(viewControllerToCommit as! GalleryViewController)
         } else {
-        parentViewController?.show(viewControllerToCommit, sender: parentViewController )
+            parentViewController?.show(viewControllerToCommit, sender: parentViewController )
         }
     }
     
@@ -331,7 +335,7 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         fatalError("init(coder:) has not been implemented")
     }
     
-    var comment : Comment?
+    var message : Message?
     public var parentViewController: MediaViewController?
     public var navViewController: UIViewController?
     
@@ -340,9 +344,11 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
     }
     
     
-    func openComment(sender: UITapGestureRecognizer? = nil){
-        let comment = CommentViewController.init(submission: (self.comment?.linkId.substring(3, length: (self.comment?.linkId.length)! - 3))! , comment: self.comment!.id, context: 3, subreddit: (self.comment?.subreddit)!)
-            (self.navViewController as? UINavigationController)?.pushViewController(comment, animated: true)
+    func doReply(sender: UITapGestureRecognizer? = nil){
+        //todo reply
+        if(message?.wasComment)!{
+            parentViewController?.show(RedditLink.getViewControllerForURL(urlS: URL.init(string: "https://www.reddit.com\(message?.context))")!), sender: parentViewController)
         }
+    }
     
 }

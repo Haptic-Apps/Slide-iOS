@@ -285,6 +285,8 @@ public enum MessageWhere {
 	case inbox
 	case unread
 	case sent
+	case messages
+	case mentions
 	
 	public var  path: String {
 		switch self {
@@ -294,17 +296,25 @@ public enum MessageWhere {
 			return "/unread"
 		case .sent:
 			return "/sent"
+	        case .messages:
+			return "/messages"
+		case .mentions:
+			return "/mentions"
 		}
 	}
 	
 	public var  description: String {
 		switch self {
 		case .inbox:
-			return "inbox"
+			return "Inbox"
 		case .unread:
-			return "unread"
+			return "Unread"
 		case .sent:
-			return "sent"
+			return "Sent"
+        case .messages:
+            return "Messages"
+        case .mentions:
+            return "Mentions"
 		}
 	}
 }
