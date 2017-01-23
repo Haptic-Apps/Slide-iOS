@@ -434,10 +434,8 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         }
         if(comment.gilded > 0){
             infoString.append(spacer)
-            let attachment = NSTextAttachment()
-            attachment.image = UIImage(named: "gold")?.imageResize(sizeChange: CGSize.init(width: 15, height: 15))
-            let attachmentString = NSAttributedString(attachment: attachment)
-            infoString.append(attachmentString)
+            let gild = NSMutableAttributedString.init(string: "G", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.amber500Color(), NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
+            infoString.append(gild)
             if(comment.gilded > 1){
                 infoString.append(gilded)
             }

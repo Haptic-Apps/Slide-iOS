@@ -454,7 +454,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     
     func setLink(submission: Link, parent: MediaViewController, nav: UIViewController?){
         parentViewController = parent
-        let full = false//parent is CommentViewController
+        full = parent is CommentViewController
         if(navViewController == nil && nav != nil){
             navViewController = nav
         }
@@ -474,7 +474,6 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         }
         
         if(submission.gilded > 0){
-            attributedTitle.append(spacer)
             attributedTitle.append(spacer)
             let gild = NSMutableAttributedString.init(string: "G", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.amber500Color(), NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
             attributedTitle.append(gild)
@@ -516,6 +515,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         link = submission
         title.sizeToFit()
         reply.isHidden = true
+        
         if(submission.archived || !AccountController.isLoggedIn){
             upvote.isHidden = true
             downvote.isHidden = true
@@ -556,6 +556,8 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         if(bigConstraint != nil){
             self.contentView.removeConstraint(bigConstraint!)
         }
+        
+        full = false
         
         if (type == ContentType.CType.SELF && hideSelftextLeadImage
             || noImages && submission.isSelf) {
@@ -730,6 +732,8 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         if(thumb && type == .SELF){
             thumb = false
         }
+        
+        full = parent is CommentViewController
         addTouch(view: save, action: #selector(LinkCellView.save(sender:)))
         addTouch(view: upvote, action: #selector(LinkCellView.upvote(sender:)))
         addTouch(view: downvote, action: #selector(LinkCellView.downvote(sender:)))

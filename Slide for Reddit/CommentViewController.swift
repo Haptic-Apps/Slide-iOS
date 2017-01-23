@@ -51,7 +51,17 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     func reply(_ cell: LinkCellView) {
         print("Replying")
-        let reply  = ReplyViewController.init(thing: self.submission!, sub: (self.submission?.subreddit)!, view: cell.contentView) { (comment) in
+        
+        let c = LinkCellView()
+        c.delegate = self
+        c.setLink(submission: self.submission!, parent: self, nav: self.navigationController)
+        c.showBody(width: self.view.frame.size.width)
+        var frame = CGRect.zero
+        frame.size.width = self.tableView.bounds.size.width
+        frame.size.height = c.estimateHeight()
+        c.frame = frame
+
+        let reply  = ReplyViewController.init(thing: self.submission!, sub: (self.submission?.subreddit)!, view: c.contentView) { (comment) in
             DispatchQueue.main.async(execute: { () -> Void in
                 let startDepth = 0
                 
@@ -403,6 +413,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.register(LinkCellView.classForCoder(), forCellReuseIdentifier: "cell")
+        self.tableView.register(LinkCellView.classForCoder(), forCellReuseIdentifier: "repcell")
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: UIBarButtonItemStyle.plain, target: nil, action: nil)
         if let navigationController = self.navigationController as? ScrollingNavigationController {
             print("Following scroll")
