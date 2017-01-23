@@ -26,6 +26,7 @@ protocol LinkCellViewDelegate: class {
     func downvote(_ cell: LinkCellView)
     func save(_ cell: LinkCellView)
     func more(_ cell: LinkCellView)
+    func reply(_ cell: LinkCellView)
 }
 
 class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextViewDelegate {
@@ -35,6 +36,13 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             delegate.upvote(self)
         }
     }
+    
+    func reply(sender: UITapGestureRecognizer? = nil) {
+        if let delegate = self.delegate {
+            delegate.reply(self)
+        }
+    }
+
     func downvote(sender: UITapGestureRecognizer? = nil) {
         if let delegate = self.delegate {
             delegate.downvote(self)
@@ -62,6 +70,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     var textView = UZTextView()
     var save = UIImageView()
     var upvote = UIImageView()
+    var reply = UIImageView()
     var downvote = UIImageView()
     var more = UIImageView()
     var delegate: LinkCellViewDelegate? = nil
@@ -149,7 +158,11 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         if save.bounds.contains(pointForTargetViewsave) {
             return save
         }
-        
+        let pointForTargetViewreply: CGPoint = reply.convert(point, from: self)
+        if reply.bounds.contains(pointForTargetViewreply) {
+            return reply
+        }
+
         
         return super.hitTest(point, with: event)
     }
@@ -208,6 +221,10 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         upvote.image = UIImage.init(named: "upvote")?.withRenderingMode(.alwaysTemplate)
         upvote.tintColor = ColorUtil.fontColor
         
+        self.reply = UIImageView(frame: CGRect(x: 0, y:0, width: 20, height: 20))
+        reply.image = UIImage.init(named: "reply")?.withRenderingMode(.alwaysTemplate)
+        reply.tintColor = ColorUtil.fontColor
+
         self.save = UIImageView(frame: CGRect(x: 0, y:0, width: 20, height: 20))
         save.image = UIImage.init(named: "save")?.withRenderingMode(.alwaysTemplate)
         save.tintColor = ColorUtil.fontColor
@@ -248,9 +265,11 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         downvote.translatesAutoresizingMaskIntoConstraints = false
         more.translatesAutoresizingMaskIntoConstraints = false
         save.translatesAutoresizingMaskIntoConstraints = false
+        reply.translatesAutoresizingMaskIntoConstraints = false
         buttons.translatesAutoresizingMaskIntoConstraints = false
         addTouch(view: save, action: #selector(LinkCellView.save(sender:)))
         addTouch(view: upvote, action: #selector(LinkCellView.upvote(sender:)))
+        addTouch(view: reply, action: #selector(LinkCellView.reply(sender:)))
         addTouch(view: downvote, action: #selector(LinkCellView.downvote(sender:)))
         addTouch(view: more, action: #selector(LinkCellView.more(sender:)))
         
@@ -260,6 +279,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         self.contentView.addSubview(textView)
         box.addSubview(score)
         box.addSubview(comments)
+        buttons.addSubview(reply)
         buttons.addSubview(save)
         buttons.addSubview(upvote)
         buttons.addSubview(downvote)
@@ -289,7 +309,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         
         let metrics=["horizontalMargin":75,"top":0,"bottom":0,"separationBetweenLabels":0,"labelMinHeight":75,  "bannerHeight": height] as [String: Int]
         let views=["label":title, "body": textView, "image": thumbImage, "score": score, "comments": comments, "banner": bannerImage, "box": box] as [String : Any]
-        let views2=["buttons":buttons, "upvote": upvote, "downvote": downvote, "more": more, "save": save] as [String : Any]
+        let views2=["buttons":buttons, "upvote": upvote, "downvote": downvote, "reply": reply,"more": more, "save": save] as [String : Any]
         
         box.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[score(>=20)]-8-[comments(>=20)]",
                                                           options: NSLayoutFormatOptions(rawValue: 0),
@@ -311,11 +331,17 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                           metrics: metrics,
                                                           views: views))
         
-        buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[save(20)]-8-[upvote(20)]-8-[downvote(20)]-8-[more(20)]-0-|",
+        if(full){
+        buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[reply(20)]-8-[save(20)]-8-[upvote(20)]-8-[downvote(20)]-8-[more(20)]-0-|",
                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                               metrics: metrics,
                                                               views: views2))
-        
+        } else {
+            buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[save(20)]-8-[upvote(20)]-8-[downvote(20)]-8-[more(20)]-0-|",
+                                                                  options: NSLayoutFormatOptions(rawValue: 0),
+                                                                  metrics: metrics,
+                                                                  views: views2))
+        }
         buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[upvote(20)]-|",
                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                               metrics: metrics,
@@ -333,7 +359,11 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                               metrics: metrics,
                                                               views: views2))
-        
+        buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[reply(20)]-|",
+                                                              options: NSLayoutFormatOptions(rawValue: 0),
+                                                              metrics: metrics,
+                                                              views: views2))
+
     }
     
     func getHeightFromAspectRatio(imageHeight:Int, imageWidth: Int) -> Int {
@@ -412,7 +442,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     
     func setLink(submission: Link, parent: MediaViewController, nav: UIViewController?){
         parentViewController = parent
-        let full = false
+        let full = parent is CommentViewController
         if(navViewController == nil && nav != nil){
             navViewController = nav
         }
@@ -474,11 +504,19 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         title.attributedText = attributedTitle
         link = submission
         title.sizeToFit()
-        
+        reply.isHidden = true
         if(submission.archived || !AccountController.isLoggedIn){
             upvote.isHidden = true
             downvote.isHidden = true
             save.isHidden = true
+            reply.isHidden = true
+        } else {
+            upvote.isHidden = false
+            downvote.isHidden = false
+            save.isHidden = false
+            if(full){
+                reply.isHidden = false
+            }
         }
         
         let type = ContentType.getContentType(submission: submission)
@@ -685,6 +723,8 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         addTouch(view: upvote, action: #selector(LinkCellView.upvote(sender:)))
         addTouch(view: downvote, action: #selector(LinkCellView.downvote(sender:)))
         addTouch(view: more, action: #selector(LinkCellView.more(sender:)))
+        addTouch(view: reply, action: #selector(LinkCellView.reply(sender:)))
+
         
         if(!thumb){
             thumbImage.sd_setImage(with: URL.init(string: ""))

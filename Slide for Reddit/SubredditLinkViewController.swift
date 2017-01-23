@@ -30,6 +30,10 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         }
     }
     
+    func reply(_ cell: LinkCellView){
+        
+    }
+    
     func save(_ cell: LinkCellView) {
         do {
             try session?.setSave(!ActionStates.isSaved(s: cell.link!), name: (cell.link?.name)!, completion: { (result) in

@@ -32,6 +32,29 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     var searchBar = UISearchBar()
     
+    func reply(_ cell: LinkCellView) {
+        print("Replying")
+        let reply  = ReplyViewController.init(thing: self.submission!, sub: (self.submission?.subreddit)!) { (comment) in
+            DispatchQueue.main.async(execute: { () -> Void in
+                let startDepth = 0
+                
+                let queue: [Thing] = [comment!]
+                self.cDepth[comment!.getId()] = startDepth
+            
+                self.dataArray.insert(contentsOf: queue, at: 0)
+                self.comments.insert(contentsOf: queue, at: 0)
+                self.heightArray.insert(contentsOf: self.updateStringsSingle(queue), at: 0)
+                self.contents.insert(contentsOf: self.updateStringsSingle(queue), at: 0)
+                self.doArrays()
+                self.tableView.reloadData()
+            })
+        }
+        
+        let navEditorViewController: UINavigationController = UINavigationController(rootViewController: reply)
+        self.prepareOverlayVC(overlayVC: navEditorViewController)
+        self.present(navEditorViewController, animated: true, completion: nil)
+    }
+    
     func upvote(_ cell: LinkCellView) {
         do{
             try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up, name: (cell.link?.name)!, completion: { (result) in
@@ -44,6 +67,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             
         }
     }
+
     
     func downvote(_ cell: LinkCellView) {
         do {
@@ -100,7 +124,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             }
             actionSheetController.addAction(cancelActionButton)
         }
-
+        
         cancelActionButton = UIAlertAction(title: "Open in Safari", style: .default) { action -> Void in
             UIApplication.shared.open(link.url!, options: [:], completionHandler: nil)
         }
@@ -129,10 +153,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         self.present(actionSheetController, animated: true, completion: nil)
         
     }
-    
-    
-    
-    
     
     var submission: Link? = nil
     var session: Session? = nil
@@ -298,7 +318,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         sort.addTarget(self, action: #selector(self.sort(_:)), for: UIControlEvents.touchUpInside)
         sort.frame = CGRect.init(x: 15, y: 0, width: 30, height: 30)
         let sortB = UIBarButtonItem.init(customView: sort)
-
+        
         let search = UIButton.init(type: .custom)
         search.setImage(UIImage.init(named: "search")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
         search.addTarget(self, action: #selector(self.search(_:)), for: UIControlEvents.touchUpInside)
@@ -467,38 +487,38 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
     
     func showMenu(_ sender: AnyObject){
-            let link = submission!
-            let actionSheetController: UIAlertController = UIAlertController(title: link.title, message: "", preferredStyle: .actionSheet)
-            
-            var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
-                print("Cancel")
-            }
-            actionSheetController.addAction(cancelActionButton)
-            
-            cancelActionButton = UIAlertAction(title: "Refresh", style: .default) { action -> Void in
-                self.refresh(self)
-            }
-            actionSheetController.addAction(cancelActionButton)
-            
-            cancelActionButton = UIAlertAction(title: "Related submissions", style: .default) { action -> Void in
-                let related = RelatedViewController.init(thing: self.submission!)
-                self.show(related, sender: self)
-            }
-            actionSheetController.addAction(cancelActionButton)
+        let link = submission!
+        let actionSheetController: UIAlertController = UIAlertController(title: link.title, message: "", preferredStyle: .actionSheet)
         
-            cancelActionButton = UIAlertAction(title: "View sub sidebar", style: .default) { action -> Void in
-                //todo view sidebar
-            }
-            actionSheetController.addAction(cancelActionButton)
-            
-            cancelActionButton = UIAlertAction(title: "Collapse child comments", style: .default) { action -> Void in
-                self.collapseAll()
-            }
-            actionSheetController.addAction(cancelActionButton)
-
-            self.present(actionSheetController, animated: true, completion: nil)
-            
-    
+        var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
+            print("Cancel")
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        cancelActionButton = UIAlertAction(title: "Refresh", style: .default) { action -> Void in
+            self.refresh(self)
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        cancelActionButton = UIAlertAction(title: "Related submissions", style: .default) { action -> Void in
+            let related = RelatedViewController.init(thing: self.submission!)
+            self.show(related, sender: self)
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        cancelActionButton = UIAlertAction(title: "View sub sidebar", style: .default) { action -> Void in
+            //todo view sidebar
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        cancelActionButton = UIAlertAction(title: "Collapse child comments", style: .default) { action -> Void in
+            self.collapseAll()
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        self.present(actionSheetController, animated: true, completion: nil)
+        
+        
     }
     
     func search(_ sender: AnyObject){
@@ -574,11 +594,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             do {
                 let attr = try NSMutableAttributedString(data: html.data(using: .unicode)!, options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
                 do {
-                let regex = try NSRegularExpression.init(pattern: ("\\b\(searchBar.text!)\\b"), options: .caseInsensitive)
+                    let regex = try NSRegularExpression.init(pattern: ("\\b\(searchBar.text!)\\b"), options: .caseInsensitive)
                     
                     let substring = NSMutableAttributedString(string: searchBar.text!)
                     substring.addAttribute(NSForegroundColorAttributeName, value: ColorUtil.getColorForSub(sub: comment.subreddit), range: NSMakeRange(0, substring.string.length))
-
+                    
                     regex.replaceMatches(in: attr.mutableString, options: NSRegularExpression.MatchingOptions.anchored, range: NSRange.init(location: 0, length: attr.length), withTemplate: substring.string)
                 } catch {
                     print(error)
@@ -586,7 +606,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 
                 let font = UIFont(name: ".SFUIText-Light", size: 16) ?? UIFont.systemFont(ofSize: 16)
                 let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: UIColor.blue)
-
+                
                 return CellContent.init(string:attr2, width:(width - 25), hasRelies:false, id: comment.getId())
             } catch {
                 return CellContent(string:NSAttributedString(string: ""), width:width - 25, hasRelies:false, id: thing.getId())
@@ -839,15 +859,15 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         for i in 0...dataArray.count - 1 {
             if(dataArray[i]  is Comment && matches(comment: dataArray[i] as! Comment, sort: .PARENTS)) {
                 hideNumber(n: dataArray[i], iB: i) - 1
-                    if (!hiddenPersons.contains(dataArray[i].getId())) {
-                        hiddenPersons.append(dataArray[i].getId());
-                    }
+                if (!hiddenPersons.contains(dataArray[i].getId())) {
+                    hiddenPersons.append(dataArray[i].getId());
+                }
             }
         }
         doArrays()
         tableView.reloadData()
     }
-
+    
     
     func hideAll(comment: Comment, i: Int){
         let counter = hideNumber(n: comment, iB: i) - 1
@@ -855,7 +875,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         tableView.beginUpdates()
         
         var indexPaths : [IndexPath] = []
-        for row in i...counter{
+        for row in i...counter {
             indexPaths.append(IndexPath(row: row, section: 0))
         }
         tableView.deleteRows(at: indexPaths, with: .middle)
@@ -877,8 +897,15 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     func walkTree(n: Thing) -> [Thing] {
         var toReturn: [Thing] = []
         if n is Comment {
-            for obj in (n as! Comment).replies.children {
-                toReturn.append(obj)
+            let bounds = comments.index(where: { $0.getId() == n.getId() })! + 1
+            let parentDepth = (cDepth[n.getId()] as! Int)
+            for obj in stride(from: bounds, to: comments.count, by: 1) {
+                let current = comments[obj]
+                if((cDepth[current.getId()] as! Int) > parentDepth){
+                    toReturn.append(current)
+                } else {
+                    return toReturn
+                }
             }
         }
         return toReturn
@@ -888,8 +915,15 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         var toReturn: [Thing] = []
         toReturn.append(n)
         if n is Comment {
-            for obj in (n as! Comment).replies.children {
-                toReturn.append(contentsOf: walkTreeFully(n: obj))
+            let bounds = comments.index(where: { $0.getId() == n.getId() })! + 1
+            let parentDepth = (cDepth[n.getId()] as! Int)
+            for obj in stride(from: bounds, to: comments.count, by: 1) {
+                let current = comments[obj]
+                if((cDepth[current.getId()] as! Int) > parentDepth){
+                    toReturn.append(contentsOf: walkTreeFully(n: current))
+                } else {
+                    return toReturn
+                }
             }
         }
         return toReturn
@@ -952,7 +986,31 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 let rep = UIImage.init(named: "reply")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25))
                 let reply = BGTableViewRowActionWithImage.rowAction(with: .normal, title: "    ", backgroundColor: color, image: rep, forCellHeight: UInt(cell.contentView.frame.size.height)) { (action, indexPath) in
                     tableView.setEditing(false, animated: true)
-                    let reply  = ReplyViewController.init(thing: cell.content!, sub: (self.submission?.subreddit)!)
+                    let reply  = ReplyViewController.init(thing: cell.content!, sub: (self.submission?.subreddit)!) { (comment) in
+                        DispatchQueue.main.async(execute: { () -> Void in
+                            let startDepth = self.cDepth[cell.comment!.getId()] as! Int + 1
+                            
+                            let queue: [Thing] = [comment!]
+                            self.cDepth[comment!.getId()] = startDepth
+                            
+                            
+                            var realPosition = 0
+                            for c in self.comments{
+                                if(c.getId() == cell.comment!.getId()){
+                                    break
+                                }
+                                realPosition += 1
+                            }
+                            
+                            self.dataArray.insert(contentsOf: queue, at: (indexPath?.row)! + 1)
+                            self.comments.insert(contentsOf: queue, at: realPosition + 1)
+                            self.heightArray.insert(contentsOf: self.updateStringsSingle(queue), at: (indexPath?.row)! + 1)
+                            self.contents.insert(contentsOf: self.updateStringsSingle(queue), at: realPosition + 1)
+                            self.doArrays()
+                            self.tableView.reloadData()
+                        })
+                    }
+                    
                     let navEditorViewController: UINavigationController = UINavigationController(rootViewController: reply)
                     self.prepareOverlayVC(overlayVC: navEditorViewController)
                     self.present(navEditorViewController, animated: true, completion: nil)
@@ -1152,7 +1210,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                             case .success(let list):
                                 
                                 DispatchQueue.main.async(execute: { () -> Void in
-                                    let startDepth = self.cDepth[more.getId()] as! Int 
+                                    let startDepth = self.cDepth[more.getId()] as! Int
                                     
                                     var queue: [Thing] = []
                                     for child in list {
@@ -1178,7 +1236,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                     self.heightArray.remove(at: datasetPosition)
                                     
                                     if(queue.count != 0){
-                                        
                                         if(more.parentId.hasPrefix("t1")){
                                             var b = self.comments[datasetPosition - 1]
                                             for comment in self.comments {
@@ -1262,5 +1319,5 @@ extension UISearchBar {
             }
         }
     }
-} 
+}
 

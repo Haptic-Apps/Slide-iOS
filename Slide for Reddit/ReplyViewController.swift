@@ -21,11 +21,26 @@ class ReplyViewController: UIViewController, UITextViewDelegate {
     var text: UITextView?
     var sub: String
     var scrollView: UIScrollView?
+    var reply: (Comment?) -> Void = {(comment) in }
     
-    init(thing: Thing, sub: String){
+    init(thing: Thing, sub: String, completion: @escaping (Comment?) -> Void){
         self.toReplyTo = thing
         self.sub = sub
         super.init(nibName: nil, bundle: nil)
+        self.reply = {(comment) in
+            DispatchQueue.main.async {
+            if(comment == nil){
+                self.saveDraft(self)
+                let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your message has not been sent (but has been saved as a draft), please try again", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+            } else {
+                completion(comment)
+                self.alertController?.dismiss(animated: false, completion: { 
+                    self.dismiss(animated: true, completion: nil)
+                })
+            }
+            }
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -84,7 +99,7 @@ class ReplyViewController: UIViewController, UITextViewDelegate {
     }
     
     
-    func saveDraft(_ sender: UIButton!){
+    func saveDraft(_ sender: AnyObject){
         if let toSave = text!.text {
             if(!toSave.isEmpty()){
                 Drafts.addDraft(s: text!.text)
@@ -94,9 +109,9 @@ class ReplyViewController: UIViewController, UITextViewDelegate {
     }
     
     var picker: ActionSheetStringPicker?
-    var doneButton: UIBarButtonItem?
     
     func openDrafts(_ sender: AnyObject){
+        print("Opening drafts")
         if(Drafts.drafts.isEmpty){
             self.view.makeToast("No drafts found", duration: 4, position: .top)
         } else {
@@ -104,19 +119,19 @@ class ReplyViewController: UIViewController, UITextViewDelegate {
                 self.text!.insertText(Drafts.drafts[index] as String)
             }, cancel: { (picker) in
                 return
-            }, origin: sender)
+            }, origin: text!)
             
-            doneButton = UIBarButtonItem.init(title: "Insert", style: .done, target: nil, action: nil)
+            let doneButton = UIBarButtonItem.init(title: "Insert", style: .done, target: nil, action: nil)
             picker?.setDoneButton(doneButton)
-            picker?.addCustomButton(withTitle: "Delete", target: self, selector: #selector(ReplyViewController.doDelete))
+          //todo  picker?.addCustomButton(withTitle: "Delete", target: self, selector: #selector(ReplyViewController.doDelete(_:)))
             picker?.show()
             
         }
     }
     
-    func doDelete(){
+    func doDelete(_ sender: AnyObject){
         Drafts.deleteDraft(s: Drafts.drafts[(picker?.selectedIndex)!] as String)
-        self.openDrafts(self)
+        self.openDrafts(sender)
     }
     
     func uploadImage(_ sender: UIButton!){
@@ -396,9 +411,37 @@ class ReplyViewController: UIViewController, UITextViewDelegate {
         presentingViewController?.dismiss(animated: true, completion: nil)
     }
     
+    var alertController: UIAlertController?
+    var session: Session?
+    var comment: Comment?
+    
     func send(_ sender: AnyObject){
-        //todo this
-        self.close(sender)
+        alertController = UIAlertController(title: nil, message: "Sending reply...\n\n", preferredStyle: .alert)
+        
+        let spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+        spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
+        spinnerIndicator.color = UIColor.black
+        spinnerIndicator.startAnimating()
+        
+        alertController?.view.addSubview(spinnerIndicator)
+        self.present(alertController!,animated: true, completion: nil)
+        
+        session = (UIApplication.shared.delegate as! AppDelegate).session
+        
+        do {
+            let name = toReplyTo.getId()
+            try self.session?.postComment(text!.text, parentName:name, completion: { (result) -> Void in
+                switch result {
+                case .failure(let error):
+                    print(error.description)
+                    self.reply(nil)
+                case .success(let postedComment):
+                    self.comment = postedComment
+                    self.reply(self.comment)
+                }
+            })
+        } catch { print((error as NSError).description) }
+
     }
     
     override func loadView() {
