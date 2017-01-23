@@ -57,6 +57,30 @@ class ActionStates {
         }
     }
     
+    static func isRead(s: Message) -> Bool {
+        if(savedFullnames.contains(s.getId())){
+            return true
+        } else if(unSavedFullnames.contains(s.getId())){
+            return false
+        } else {
+            return !s.new
+        }
+    }
+    
+    static func setRead(s: Message, read: Bool){
+        let fullname = s.getId()
+        if let index = savedFullnames.index(of: fullname){
+            savedFullnames.remove(at: index)
+        }
+        
+        if(read){
+            savedFullnames.append(fullname)
+        } else {
+            unSavedFullnames.append(fullname)
+        }
+    }
+
+
     static func isSaved(s: Thing) -> Bool {
         if(savedFullnames.contains(s.getId())){
             return true

@@ -22,7 +22,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             let state = !ActionStates.isSaved(s: cell.link!)
             try session?.setSave(state, name: (cell.link?.name)!, completion: { (result) in
                 DispatchQueue.main.async{
-                self.view.makeToast(state ? "Saved" : "Unsaved", duration: 3, position: .top)
+                    self.view.makeToast(state ? "Saved" : "Unsaved", duration: 3, position: .top)
                 }
             })
             ActionStates.setSaved(s: cell.link!, saved: !ActionStates.isSaved(s: cell.link!))
@@ -37,7 +37,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             let state = !ActionStates.isSaved(s: comment)
             try session?.setSave(state, name: comment.name, completion: { (result) in
                 DispatchQueue.main.async{
-                self.view.makeToast(state ? "Saved" : "Unsaved", duration: 3, position: .bottom)
+                    self.view.makeToast(state ? "Saved" : "Unsaved", duration: 3, position: .bottom)
                 }
             })
             ActionStates.setSaved(s: comment, saved: !ActionStates.isSaved(s: comment))
@@ -46,12 +46,12 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             
         }
     }
-
+    
     var searchBar = UISearchBar()
     
     func reply(_ cell: LinkCellView) {
         print("Replying")
-        let reply  = ReplyViewController.init(thing: self.submission!, sub: (self.submission?.subreddit)!) { (comment) in
+        let reply  = ReplyViewController.init(thing: self.submission!, sub: (self.submission?.subreddit)!, view: cell.contentView) { (comment) in
             DispatchQueue.main.async(execute: { () -> Void in
                 let startDepth = 0
                 
@@ -181,14 +181,14 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         alert.addAction(UIAlertAction(title: "Report", style: .destructive, handler: { [weak alert] (_) in
             let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
             do {
-            try self.session?.report(thing, reason: (textField?.text!)!, otherReason: "", completion: { (result) in
-                DispatchQueue.main.async{
-                self.view.makeToast("Report sent", duration: 3, position: .top)
-                }
-            })
+                try self.session?.report(thing, reason: (textField?.text!)!, otherReason: "", completion: { (result) in
+                    DispatchQueue.main.async{
+                        self.view.makeToast("Report sent", duration: 3, position: .top)
+                    }
+                })
             } catch {
                 DispatchQueue.main.async{
-                self.view.makeToast("Error sending report", duration: 3, position: .top)
+                    self.view.makeToast("Error sending report", duration: 3, position: .top)
                 }
             }
         }))
@@ -418,6 +418,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         tableView.rowHeight = UITableViewAutomaticDimension
         
         self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "Cell")
+        self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "Reply")
         self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "MoreCell")
         
         tableView.separatorStyle = .none
@@ -1007,20 +1008,20 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         let alert = UIAlertController.init(title: "Really delete this comment?", message: "", preferredStyle: .alert)
         alert.addAction(UIAlertAction.init(title: "Yes", style: .destructive, handler: { (action) in
             do{
-            try self.session?.deleteCommentOrLink(comment.getId(), completion: { (result) in
-                DispatchQueue.main.async {
-                    var realPosition = 0
-                    for c in self.comments{
-                        if(c.getId() == comment.getId()){
-                            break
+                try self.session?.deleteCommentOrLink(comment.getId(), completion: { (result) in
+                    DispatchQueue.main.async {
+                        var realPosition = 0
+                        for c in self.comments{
+                            if(c.getId() == comment.getId()){
+                                break
+                            }
+                            realPosition += 1
                         }
-                        realPosition += 1
+                        self.contents[realPosition].attributedString = NSAttributedString(string: "[deleted]")
+                        self.doArrays()
+                        self.tableView.reloadData()
                     }
-                    self.contents[realPosition].attributedString = NSAttributedString(string: "[deleted]")
-                    self.doArrays()
-                    self.tableView.reloadData()
-                }
-            })
+                })
             } catch {
                 
             }
@@ -1028,7 +1029,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         alert.addAction(UIAlertAction.init(title: "No", style: .cancel, handler: nil))
         self.present(alert, animated: true, completion: nil)
     }
-
+    
     
     func edit(comment: Thing, index: Int) {
         let reply  = ReplyViewController.init(thing: comment, sub: (self.submission?.subreddit)!, editing: true) { (comment) in
@@ -1059,7 +1060,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         self.prepareOverlayVC(overlayVC: navEditorViewController)
         self.present(navEditorViewController, animated: true, completion: nil)
     }
-
+    
     
     let overlayTransitioningDelegate = OverlayTransitioningDelegate()
     
@@ -1069,82 +1070,91 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         let cell = tableView.cellForRow(at: indexPath) as! CommentDepthCell
         let color = ColorUtil.getColorForSub(sub: (submission?.subreddit)!)
         if(cell.content! is Comment){
-        let author = (cell.content! as! Comment).author
-        if(!(submission?.archived)! && AccountController.isLoggedIn && author != "[deleted]" && author != "[removed]"){
-            let upimg = UIImage.init(named: "upvote")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25))
-            let upvote = BGTableViewRowActionWithImage.rowAction(with: .normal, title: "    ", backgroundColor: UIColor.init(hexString: "#FF9800"), image: upimg, forCellHeight: UInt(cell.contentView.frame.size.height)) { (action, indexPath) in
-                tableView.setEditing(false, animated: true)
-                self.vote(comment: cell.content!, dir: .up)
-                cell.refresh(comment: cell.content! as! Comment, submissionAuthor: (self.submission?.author)!)
-            }
-            toReturn.append(upvote!)
-            
-            let downimg = UIImage.init(named: "downvote")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25))
-            let downvote = BGTableViewRowActionWithImage.rowAction(with: .normal, title: "    ", backgroundColor: UIColor.init(hexString: "#2196F3"), image: downimg, forCellHeight: UInt(cell.contentView.frame.size.height)) { (action, indexPath) in
-                tableView.setEditing(false, animated: true)
-                self.vote(comment: cell.content!, dir: .down)
-                cell.refresh(comment: cell.content! as! Comment, submissionAuthor: (self.submission?.author)!)
-            }
-            toReturn.append(downvote!)
-            
-            if(author == AccountController.currentName){
-                let editimg = UIImage.init(named: "edit")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25))
-                let edit = BGTableViewRowActionWithImage.rowAction(with: .normal, title: "    ", backgroundColor: color, image: editimg, forCellHeight: UInt(cell.contentView.frame.size.height)) { (action, indexPath) in
+            let author = (cell.content! as! Comment).author
+            if(!(submission?.archived)! && AccountController.isLoggedIn && author != "[deleted]" && author != "[removed]"){
+                let upimg = UIImage.init(named: "upvote")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25))
+                let upvote = BGTableViewRowActionWithImage.rowAction(with: .normal, title: "    ", backgroundColor: UIColor.init(hexString: "#FF9800"), image: upimg, forCellHeight: UInt(cell.contentView.frame.size.height)) { (action, indexPath) in
                     tableView.setEditing(false, animated: true)
-                    self.edit(comment: cell.content!, index: (indexPath?.row)!)
+                    self.vote(comment: cell.content!, dir: .up)
+                    cell.refresh(comment: cell.content! as! Comment, submissionAuthor: (self.submission?.author)!)
                 }
-                toReturn.append(edit!)
-                let deleteimg = UIImage.init(named: "delete")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25))
-                let delete = BGTableViewRowActionWithImage.rowAction(with: .normal, title: "    ", backgroundColor: GMColor.red500Color(), image: deleteimg, forCellHeight: UInt(cell.contentView.frame.size.height)) { (action, indexPath) in
-                    tableView.setEditing(false, animated: true)
-                    self.doDelete(comment: cell.content!, index: (indexPath?.row)!)
-                }
-                toReturn.append(delete!)
-            }
-            if(!(submission?.locked)!){
-                let rep = UIImage.init(named: "reply")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25))
-                let reply = BGTableViewRowActionWithImage.rowAction(with: .normal, title: "    ", backgroundColor: color, image: rep, forCellHeight: UInt(cell.contentView.frame.size.height)) { (action, indexPath) in
-                    tableView.setEditing(false, animated: true)
-                    let reply  = ReplyViewController.init(thing: cell.content!, sub: (self.submission?.subreddit)!) { (comment) in
-                        DispatchQueue.main.async(execute: { () -> Void in
-                            let startDepth = self.cDepth[cell.comment!.getId()] as! Int + 1
-                            
-                            let queue: [Thing] = [comment!]
-                            self.cDepth[comment!.getId()] = startDepth
-                            
-                            
-                            var realPosition = 0
-                            for c in self.comments{
-                                if(c.getId() == cell.comment!.getId()){
-                                    break
-                                }
-                                realPosition += 1
-                            }
-                            
-                            self.dataArray.insert(contentsOf: queue, at: (indexPath?.row)! + 1)
-                            self.comments.insert(contentsOf: queue, at: realPosition + 1)
-                            self.heightArray.insert(contentsOf: self.updateStringsSingle(queue), at: (indexPath?.row)! + 1)
-                            self.contents.insert(contentsOf: self.updateStringsSingle(queue), at: realPosition + 1)
-                            self.doArrays()
-                            self.tableView.reloadData()
-                        })
-                    }
-                    
-                    let navEditorViewController: UINavigationController = UINavigationController(rootViewController: reply)
-                    self.prepareOverlayVC(overlayVC: navEditorViewController)
-                    self.present(navEditorViewController, animated: true, completion: nil)
-                    
-                }
-                toReturn.append(reply!)
+                toReturn.append(upvote!)
                 
+                let downimg = UIImage.init(named: "downvote")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25))
+                let downvote = BGTableViewRowActionWithImage.rowAction(with: .normal, title: "    ", backgroundColor: UIColor.init(hexString: "#2196F3"), image: downimg, forCellHeight: UInt(cell.contentView.frame.size.height)) { (action, indexPath) in
+                    tableView.setEditing(false, animated: true)
+                    self.vote(comment: cell.content!, dir: .down)
+                    cell.refresh(comment: cell.content! as! Comment, submissionAuthor: (self.submission?.author)!)
+                }
+                toReturn.append(downvote!)
+                
+                if(author == AccountController.currentName){
+                    let editimg = UIImage.init(named: "edit")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25))
+                    let edit = BGTableViewRowActionWithImage.rowAction(with: .normal, title: "    ", backgroundColor: color, image: editimg, forCellHeight: UInt(cell.contentView.frame.size.height)) { (action, indexPath) in
+                        tableView.setEditing(false, animated: true)
+                        self.edit(comment: cell.content!, index: (indexPath?.row)!)
+                    }
+                    toReturn.append(edit!)
+                    let deleteimg = UIImage.init(named: "delete")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25))
+                    let delete = BGTableViewRowActionWithImage.rowAction(with: .normal, title: "    ", backgroundColor: GMColor.red500Color(), image: deleteimg, forCellHeight: UInt(cell.contentView.frame.size.height)) { (action, indexPath) in
+                        tableView.setEditing(false, animated: true)
+                        self.doDelete(comment: cell.content!, index: (indexPath?.row)!)
+                    }
+                    toReturn.append(delete!)
+                }
+                if(!(submission?.locked)!){
+                    let rep = UIImage.init(named: "reply")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25))
+                    let reply = BGTableViewRowActionWithImage.rowAction(with: .normal, title: "    ", backgroundColor: color, image: rep, forCellHeight: UInt(cell.contentView.frame.size.height)) { (action, indexPath) in
+                        tableView.setEditing(false, animated: true)
+                        
+                        let c = tableView.dequeueReusableCell(withIdentifier: "Reply", for: indexPath!) as! CommentDepthCell
+                        self.isReply = true
+                        let text = self.isSearching ? self.filteredHeights[indexPath!.row] :  self.heightArray[indexPath!.row]
+                        c.textView.attributedString = text.attributedString
+                        c.textView.frame.size.height = text.textHeight
+                        c.setComment(comment: self.dataArray[indexPath!.row] as! Comment, depth: self.cDepth[self.dataArray[indexPath!.row].getId()] as! Int, parent: self, hiddenCount: 0, date: self.lastSeen, author: self.submission?.author)
+                        
+                        let reply  = ReplyViewController.init(thing: cell.content!, sub: (self.submission?.subreddit)!, view: c.contentView) { (comment) in
+                            DispatchQueue.main.async(execute: { () -> Void in
+                                let startDepth = self.cDepth[cell.comment!.getId()] as! Int + 1
+                                
+                                let queue: [Thing] = [comment!]
+                                self.cDepth[comment!.getId()] = startDepth
+                                
+                                
+                                var realPosition = 0
+                                for c in self.comments{
+                                    if(c.getId() == cell.comment!.getId()){
+                                        break
+                                    }
+                                    realPosition += 1
+                                }
+                                
+                                self.dataArray.insert(contentsOf: queue, at: (indexPath?.row)! + 1)
+                                self.comments.insert(contentsOf: queue, at: realPosition + 1)
+                                self.heightArray.insert(contentsOf: self.updateStringsSingle(queue), at: (indexPath?.row)! + 1)
+                                self.contents.insert(contentsOf: self.updateStringsSingle(queue), at: realPosition + 1)
+                                self.doArrays()
+                                self.isReply = false
+                                self.tableView.reloadData()
+                            })
+                        }
+                        
+                        let navEditorViewController: UINavigationController = UINavigationController(rootViewController: reply)
+                        self.prepareOverlayVC(overlayVC: navEditorViewController)
+                        self.present(navEditorViewController, animated: true, completion: nil)
+                        
+                    }
+                    toReturn.append(reply!)
+                    
+                }
             }
-        }
-        let mor = UIImage.init(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25))
-        let more = BGTableViewRowActionWithImage.rowAction(with: .normal, title: "    ", backgroundColor: color, image: mor, forCellHeight: UInt(cell.contentView.frame.size.height)) { (action, indexPath) in
-            tableView.setEditing(false, animated: true)
-            self.more(cell.content! as! Comment)
-        }
-        toReturn.append(more!)
+            let mor = UIImage.init(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25))
+            let more = BGTableViewRowActionWithImage.rowAction(with: .normal, title: "    ", backgroundColor: color, image: mor, forCellHeight: UInt(cell.contentView.frame.size.height)) { (action, indexPath) in
+                tableView.setEditing(false, animated: true)
+                self.more(cell.content! as! Comment)
+            }
+            toReturn.append(more!)
         }
         return toReturn
     }
@@ -1182,7 +1192,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         
         parent?.present(alertController, animated: true, completion: nil)
     }
-
+    
     
     private func prepareOverlayVC(overlayVC: UIViewController) {
         overlayVC.transitioningDelegate = overlayTransitioningDelegate
@@ -1315,120 +1325,122 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
     }
     
+    var isReply = false
     
     func pushedSingleTap(_ cell: CommentDepthCell){
-        if(isSearching){
-            hideSearchBar()
-            context = cell.content!.getId()
-            var index = 0
-            if(!self.context.isEmpty()){
-                for comment in self.dataArray {
-                    if(comment.getId().contains(self.context)){
-                        self.goToCell(i: index)
-                        break
-                    } else {
-                        index += 1
+        if(!isReply){
+            if(isSearching){
+                hideSearchBar()
+                context = cell.content!.getId()
+                var index = 0
+                if(!self.context.isEmpty()){
+                    for comment in self.dataArray {
+                        if(comment.getId().contains(self.context)){
+                            self.goToCell(i: index)
+                            break
+                        } else {
+                            index += 1
+                        }
                     }
                 }
-            }
-            
-        } else {
-            if let comment = cell.content as? Comment {
-                let row = tableView.indexPath(for: cell)?.row
                 
-                if(hiddenPersons.contains((comment.getId()))) {
-                    hiddenPersons.remove(at: hiddenPersons.index(of: comment.getId())!)
-                    unhideAll(comment: comment, i: row!)
-                    cell.expand()
-                    //todo hide child number
-                } else {
-                    let childNumber = getChildNumber(n: comment);
-                    if (childNumber > 0) {
-                        hideAll(comment: comment, i: row! + 1);
-                        if (!hiddenPersons.contains(comment.getId())) {
-                            hiddenPersons.append(comment.getId());
-                        }
+            } else {
+                if let comment = cell.content as? Comment {
+                    let row = tableView.indexPath(for: cell)?.row
+                    
+                    if(hiddenPersons.contains((comment.getId()))) {
+                        hiddenPersons.remove(at: hiddenPersons.index(of: comment.getId())!)
+                        unhideAll(comment: comment, i: row!)
+                        cell.expand()
+                        //todo hide child number
+                    } else {
+                        let childNumber = getChildNumber(n: comment);
                         if (childNumber > 0) {
-                            cell.collapse(childNumber: childNumber)
+                            hideAll(comment: comment, i: row! + 1);
+                            if (!hiddenPersons.contains(comment.getId())) {
+                                hiddenPersons.append(comment.getId());
+                            }
+                            if (childNumber > 0) {
+                                cell.collapse(childNumber: childNumber)
+                            }
                         }
                     }
-                }
-            } else {
-                let datasetPosition = tableView.indexPath(for: cell)!.row
-                if let more = dataArray[datasetPosition] as? More, let link = self.submission {
-                    do {
-                        try session?.getMoreChildren(more.children, link:link, sort:.new, id: more.id, completion: { (result) -> Void in
-                            switch result {
-                            case .failure(let error):
-                                print(error)
-                            case .success(let list):
-                                
-                                DispatchQueue.main.async(execute: { () -> Void in
-                                    let startDepth = self.cDepth[more.getId()] as! Int
+                } else {
+                    let datasetPosition = tableView.indexPath(for: cell)!.row
+                    if let more = dataArray[datasetPosition] as? More, let link = self.submission {
+                        do {
+                            try session?.getMoreChildren(more.children, link:link, sort:.new, id: more.id, completion: { (result) -> Void in
+                                switch result {
+                                case .failure(let error):
+                                    print(error)
+                                case .success(let list):
                                     
-                                    var queue: [Thing] = []
-                                    for child in list {
-                                        let incoming = self.extendKeepMore(in: child, current: startDepth)
-                                        for i in incoming{
-                                            queue.append(i.0)
-                                            self.cDepth[i.0.getId()] = i.1
+                                    DispatchQueue.main.async(execute: { () -> Void in
+                                        let startDepth = self.cDepth[more.getId()] as! Int
+                                        
+                                        var queue: [Thing] = []
+                                        for child in list {
+                                            let incoming = self.extendKeepMore(in: child, current: startDepth)
+                                            for i in incoming{
+                                                queue.append(i.0)
+                                                self.cDepth[i.0.getId()] = i.1
+                                            }
                                         }
-                                    }
-                                    
-                                    var realPosition = 0
-                                    for comment in self.comments{
-                                        if(comment.getId() == more.getId()){
-                                            break
+                                        
+                                        var realPosition = 0
+                                        for comment in self.comments{
+                                            if(comment.getId() == more.getId()){
+                                                break
+                                            }
+                                            realPosition += 1
                                         }
-                                        realPosition += 1
-                                    }
-                                    
-                                    
-                                    self.comments.remove(at: realPosition)
-                                    self.dataArray.remove(at: datasetPosition)
-                                    self.contents.remove(at: realPosition)
-                                    self.heightArray.remove(at: datasetPosition)
-                                    
-                                    if(queue.count != 0){
-                                        if(more.parentId.hasPrefix("t1")){
-                                            var b = self.comments[datasetPosition - 1]
-                                            for comment in self.comments {
-                                                if(more.parentId.contains(comment.id) && comment is Comment){
-                                                    b = comment
-                                                    break
+                                        
+                                        
+                                        self.comments.remove(at: realPosition)
+                                        self.dataArray.remove(at: datasetPosition)
+                                        self.contents.remove(at: realPosition)
+                                        self.heightArray.remove(at: datasetPosition)
+                                        
+                                        if(queue.count != 0){
+                                            if(more.parentId.hasPrefix("t1")){
+                                                var b = self.comments[datasetPosition - 1]
+                                                for comment in self.comments {
+                                                    if(more.parentId.contains(comment.id) && comment is Comment){
+                                                        b = comment
+                                                        break
+                                                    }
                                                 }
+                                                
+                                                var baseComment = b as! Comment
+                                                baseComment.replies.children.remove(at: baseComment.replies.children.count - 1)
+                                                baseComment.replies.children.append(contentsOf: queue)
+                                                
+                                                self.dataArray.remove(at: datasetPosition - 1)
+                                                self.dataArray.insert(baseComment, at: datasetPosition - 1)
+                                                self.comments.remove(at: realPosition - 1)
+                                                self.comments.insert(baseComment, at: realPosition - 1)
                                             }
                                             
-                                            var baseComment = b as! Comment
-                                            baseComment.replies.children.remove(at: baseComment.replies.children.count - 1)
-                                            baseComment.replies.children.append(contentsOf: queue)
+                                            self.dataArray.insert(contentsOf: queue, at: datasetPosition)
+                                            self.comments.insert(contentsOf: queue, at: realPosition)
+                                            self.heightArray.insert(contentsOf: self.updateStringsSingle(queue), at: datasetPosition)
+                                            self.contents.insert(contentsOf: self.updateStringsSingle(queue), at: realPosition)
+                                            self.doArrays()
+                                            self.tableView.reloadData()
                                             
-                                            self.dataArray.remove(at: datasetPosition - 1)
-                                            self.dataArray.insert(baseComment, at: datasetPosition - 1)
-                                            self.comments.remove(at: realPosition - 1)
-                                            self.comments.insert(baseComment, at: realPosition - 1)
+                                        } else {
+                                            self.doArrays()
+                                            self.tableView.reloadData()
                                         }
-                                        
-                                        self.dataArray.insert(contentsOf: queue, at: datasetPosition)
-                                        self.comments.insert(contentsOf: queue, at: realPosition)
-                                        self.heightArray.insert(contentsOf: self.updateStringsSingle(queue), at: datasetPosition)
-                                        self.contents.insert(contentsOf: self.updateStringsSingle(queue), at: realPosition)
-                                        self.doArrays()
-                                        self.tableView.reloadData()
-                                        
-                                    } else {
-                                        self.doArrays()
-                                        self.tableView.reloadData()
-                                    }
-                                })
-                                
-                            }
-                        })
-                    } catch { print(error) }
+                                    })
+                                    
+                                }
+                            })
+                        } catch { print(error) }
+                    }
+                    
                 }
-                
             }
-            
         }
     }
 }

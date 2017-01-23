@@ -58,7 +58,7 @@ class RedditLink{
                 if (end.length >= 3) {
                     comment = end
                 }
-                if (endCopy.contains("?context=") || !endParameters.isEmpty()) {
+                if (endCopy.contains("?context=") ) {
                     if (!endParameters.isEmpty()) {
                         endCopy = endParameters;
                     }

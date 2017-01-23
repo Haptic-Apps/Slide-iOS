@@ -562,7 +562,7 @@ extension UIView {
             withVisualFormat: "|-(\(padding.left))-[view]-(\(padding.right))-|"
             , options: [], metrics: nil, views: ["view": self]))
         container.addConstraints(NSLayoutConstraint.constraints(
-            withVisualFormat: "V:|-(\(padding.top))-[view]-(\(padding.bottom))-|",
+            withVisualFormat: "V:|-(\(padding.top)@999)-[view]-(\(padding.bottom)@999)-|",
             options: [], metrics: nil, views: ["view": self]))
         return container
     }

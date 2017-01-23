@@ -43,13 +43,13 @@ class InboxViewController:  ButtonBarPagerTabStripViewController {
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: "")
         (navigationController as? ScrollingNavigationController)?.showNavbar(animated: true)
         let edit = UIButton.init(type: .custom)
-        edit.setImage(UIImage.init(named: "edit")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
+        edit.setImage(UIImage.init(named: "edit")?.imageResize(sizeChange: CGSize.init(width: 23, height: 23)), for: UIControlState.normal)
         edit.addTarget(self, action: #selector(self.new(_:)), for: UIControlEvents.touchUpInside)
         edit.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let editB = UIBarButtonItem.init(customView: edit)
         
         let read = UIButton.init(type: .custom)
-        read.setImage(UIImage.init(named: "read"), for: UIControlState.normal)
+        read.setImage(UIImage.init(named: "seen"), for: UIControlState.normal)
         read.addTarget(self, action: #selector(self.read(_:)), for: UIControlEvents.touchUpInside)
         read.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let readB = UIBarButtonItem.init(customView: read)
@@ -61,11 +61,41 @@ class InboxViewController:  ButtonBarPagerTabStripViewController {
     }
     
     func new(_ sender: AnyObject){
+        let reply  = ReplyViewController.init(message: nil) { (message) in
+            DispatchQueue.main.async(execute: { () -> Void in
+                self.view.makeToast("Message sent", duration: 4, position: .top)
+            })
+        }
+        
+        let navEditorViewController: UINavigationController = UINavigationController(rootViewController: reply)
+        prepareOverlayVC(overlayVC: navEditorViewController)
+        present(navEditorViewController, animated: true, completion: nil)
+        
         
     }
+    private func prepareOverlayVC(overlayVC: UIViewController) {
+        overlayVC.transitioningDelegate = overlayTransitioningDelegate
+        overlayVC.modalPresentationStyle = .custom
+    }
+    
+    let overlayTransitioningDelegate = OverlayTransitioningDelegate()
     
     func read(_ sender: AnyObject){
-        
+        do {
+            try session?.markAllMessagesAsRead(completion: { (result) in
+                switch(result){
+                case .success(_):
+                    DispatchQueue.main.async {
+                        self.view.makeToast("All messages marked as read", duration: 3, position: .top)
+                    }
+                    break
+                default: break
+                    
+                }
+            })
+        } catch {
+            
+        }
     }
     
     

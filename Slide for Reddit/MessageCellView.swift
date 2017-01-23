@@ -173,10 +173,10 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         if(message.wasComment){
             title.text = message.baseJson["link_title"] as? String
         } else {
-        title.text = message.subject
+            title.text = message.subject
         }
         self.message = message
-        if(message.new){
+        if(!ActionStates.isRead(s: message)){
             title.textColor = GMColor.red500Color()
         } else {
             title.textColor = ColorUtil.fontColor
@@ -203,24 +203,24 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         infoString.append(endString)
         if(!message.subreddit.isEmpty){
             infoString.append(NSAttributedString.init(string: "  •  "))
-        infoString.append(subString)
+            infoString.append(subString)
         }
         
         info.attributedText = infoString
         
         let accent = ColorUtil.accentColorForSub(sub: "")
-            let html = message.bodyHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
-            do {
-                let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
-                let font = UIFont(name: ".SFUIText-Light", size: 16) ?? UIFont.systemFont(ofSize: 16)
-                let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: accent)
-                content = CellContent.init(string:attr2, width:(width - 16 - (message.subject.hasPrefix("re:") ? 30 : 0)))
-                textView.attributedString = content?.attributedString
-                textView.frame.size.height = (content?.textHeight)!
-                hasText = true
-            } catch {
-            }
-            parentViewController?.registerForPreviewing(with: self, sourceView: textView)
+        let html = message.bodyHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
+        do {
+            let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
+            let font = UIFont(name: ".SFUIText-Light", size: 16) ?? UIFont.systemFont(ofSize: 16)
+            let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: accent)
+            content = CellContent.init(string:attr2, width:(width - 16 - (message.subject.hasPrefix("re:") ? 30 : 0)))
+            textView.attributedString = content?.attributedString
+            textView.frame.size.height = (content?.textHeight)!
+            hasText = true
+        } catch {
+        }
+        parentViewController?.registerForPreviewing(with: self, sourceView: textView)
         
         
         let metrics=["height": content?.textHeight]
@@ -228,20 +228,20 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         lsC = []
         if(message.subject.hasPrefix("re:")){
             lsC.append(contentsOf :NSLayoutConstraint.constraints(withVisualFormat: "H:|-38-[label]-8-|",
-                                                                           options: NSLayoutFormatOptions(rawValue: 0),
-                                                                           metrics: metrics,
-                                                                           views: views))
+                                                                  options: NSLayoutFormatOptions(rawValue: 0),
+                                                                  metrics: metrics,
+                                                                  views: views))
             
             lsC.append(contentsOf :NSLayoutConstraint.constraints(withVisualFormat: "H:|-38-[body]-8-|",
-                                                                           options: NSLayoutFormatOptions(rawValue: 0),
-                                                                           metrics: metrics,
-                                                                           views: views))
+                                                                  options: NSLayoutFormatOptions(rawValue: 0),
+                                                                  metrics: metrics,
+                                                                  views: views))
             
             lsC.append(contentsOf :NSLayoutConstraint.constraints(withVisualFormat: "H:|-38-[info]-8-|",
-                                                                           options: NSLayoutFormatOptions(rawValue: 0),
-                                                                           metrics: metrics,
-                                                                           views: views))
-
+                                                                  options: NSLayoutFormatOptions(rawValue: 0),
+                                                                  metrics: metrics,
+                                                                  views: views))
+            
         } else {
             lsC.append(contentsOf :NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[label]-8-|",
                                                                   options: NSLayoutFormatOptions(rawValue: 0),
@@ -337,13 +337,40 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
     
     
     func doReply(sender: UITapGestureRecognizer? = nil){
-        if(message?.wasComment)!{
-            let url = "https://www.reddit.com\(message!.context)"
-            print(url)
-            parentViewController?.show(RedditLink.getViewControllerForURL(urlS: URL.init(string: url)!), sender: parentViewController)
+        if(!ActionStates.isRead(s: message!)){
+            let session = (UIApplication.shared.delegate as! AppDelegate).session
+            do {
+                try session?.markMessagesAsRead([(message?.getId())!], completion: { (result) in
+                    
+                })
+            } catch {
+                
+            }
+            title.textColor = ColorUtil.fontColor
+            ActionStates.setRead(s: message!, read: true)
         } else {
-            //todo reply
+            if(message?.wasComment)!{
+                let url = "https://www.reddit.com\(message!.context)"
+                print(url)
+                parentViewController?.show(RedditLink.getViewControllerForURL(urlS: URL.init(string: url)!), sender: parentViewController)
+            } else {
+                let reply  = ReplyViewController.init(message: message!) { (message) in
+                    DispatchQueue.main.async(execute: { () -> Void in
+                        self.parentViewController?.view.makeToast("Message sent", duration: 4, position: .top)
+                    })
+                }
+                
+                let navEditorViewController: UINavigationController = UINavigationController(rootViewController: reply)
+                prepareOverlayVC(overlayVC: navEditorViewController)
+                parentViewController?.present(navEditorViewController, animated: true, completion: nil)
+            }
         }
+    }
+    let overlayTransitioningDelegate = OverlayTransitioningDelegate()
+    
+    private func prepareOverlayVC(overlayVC: UIViewController) {
+        overlayVC.transitioningDelegate = overlayTransitioningDelegate
+        overlayVC.modalPresentationStyle = .custom
     }
     
 }

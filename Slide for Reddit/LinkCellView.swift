@@ -454,7 +454,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     
     func setLink(submission: Link, parent: MediaViewController, nav: UIViewController?){
         parentViewController = parent
-        let full = parent is CommentViewController
+        let full = false//parent is CommentViewController
         if(navViewController == nil && nav != nil){
             navViewController = nav
         }

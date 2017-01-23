@@ -15,14 +15,64 @@ import MobileCoreServices
 import SwiftyJSON
 import ActionSheetPicker_3_0
 
-class ReplyViewController: UIViewController, UITextViewDelegate {
+class ReplyViewController: UITableViewController, UITextViewDelegate {
     
-    var toReplyTo: Thing
+    var toReplyTo: Thing?
     var text: UITextView?
+    var subjectCell = InputCell()
+    var recipientCell = InputCell()
+    var message = false
     var sub: String
     var scrollView: UIScrollView?
     var reply: (Comment?) -> Void = {(comment) in }
     var edit = false
+    var header: UIView?
+    
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        return message ? 1 : 0
+    }
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+            switch(indexPath.section) {
+            case 0:
+                switch(indexPath.row) {
+                case 0: return self.subjectCell
+                case 1: return self.recipientCell
+                default: fatalError("Unknown row in section 0")
+                }
+
+            default: fatalError("Unknown section")
+            }
+    }
+    
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if(message){
+            return 2
+        } else {
+            return 0
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 70
+    }
+    
+    init(message: Message?, completion: @escaping (Message?) -> Void){
+        self.toReplyTo = message
+        self.message = true
+        self.sub = ""
+        super.init(nibName: nil, bundle: nil)
+        self.reply = {(comment) in
+            DispatchQueue.main.async {
+                //todo check failed
+                    completion(nil)
+                    self.alertController?.dismiss(animated: false, completion: {
+                        self.dismiss(animated: true, completion: nil)
+                    })
+            }
+        }
+    }
+    
     
     init(thing: Thing, sub: String, editing: Bool, completion: @escaping (Comment?) -> Void){
         self.toReplyTo = thing
@@ -33,7 +83,7 @@ class ReplyViewController: UIViewController, UITextViewDelegate {
             DispatchQueue.main.async {
                 if(comment == nil){
                     self.saveDraft(self)
-                    self.alertController?.dismiss(animated: false, completion: { 
+                    self.alertController?.dismiss(animated: false, completion: {
                         let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your message has not been edited (but has been saved as a draft), please try again", preferredStyle: .alert)
                         alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
                         self.present(alert, animated: true, completion: nil)
@@ -47,25 +97,26 @@ class ReplyViewController: UIViewController, UITextViewDelegate {
             }
         }
     }
-
-    init(thing: Thing, sub: String, completion: @escaping (Comment?) -> Void){
+    
+    init(thing: Thing, sub: String, view: UIView?, completion: @escaping (Comment?) -> Void){
         self.toReplyTo = thing
         self.sub = sub
+        self.header = view
         super.init(nibName: nil, bundle: nil)
         self.reply = {(comment) in
             DispatchQueue.main.async {
-            if(comment == nil){
-                self.alertController?.dismiss(animated: false, completion: {
-                    let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your message has not been sent (but has been saved as a draft), please try again", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
-                    self.present(alert, animated: true, completion: nil)
-                })
-            } else {
-                completion(comment)
-                self.alertController?.dismiss(animated: false, completion: { 
-                    self.dismiss(animated: true, completion: nil)
-                })
-            }
+                if(comment == nil){
+                    self.alertController?.dismiss(animated: false, completion: {
+                        let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your message has not been sent (but has been saved as a draft), please try again", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+                        self.present(alert, animated: true, completion: nil)
+                    })
+                } else {
+                    completion(comment)
+                    self.alertController?.dismiss(animated: false, completion: {
+                        self.dismiss(animated: true, completion: nil)
+                    })
+                }
             }
         }
     }
@@ -150,7 +201,7 @@ class ReplyViewController: UIViewController, UITextViewDelegate {
             
             let doneButton = UIBarButtonItem.init(title: "Insert", style: .done, target: nil, action: nil)
             picker?.setDoneButton(doneButton)
-          //todo  picker?.addCustomButton(withTitle: "Delete", target: self, selector: #selector(ReplyViewController.doDelete(_:)))
+            //todo  picker?.addCustomButton(withTitle: "Delete", target: self, selector: #selector(ReplyViewController.doDelete(_:)))
             picker?.show()
             
         }
@@ -412,11 +463,15 @@ class ReplyViewController: UIViewController, UITextViewDelegate {
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub)
         navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName : UIColor.white]
         navigationController?.navigationBar.tintColor = UIColor.white
-        let author = (toReplyTo is Comment) ? ((toReplyTo as! Comment).author) : ((toReplyTo as! Link).author)
-        if(edit){
-            title = "Editing"
+        if(message){
+            title = "New message"
         } else {
-        title = "Reply to \(author)"
+            let author = (toReplyTo is Comment) ? ((toReplyTo as! Comment).author) : ((toReplyTo as! Link).author)
+            if(edit){
+                title = "Editing"
+            } else {
+                title = "Reply to \(author)"
+            }
         }
         
         let close = UIButton.init(type: .custom)
@@ -448,28 +503,68 @@ class ReplyViewController: UIViewController, UITextViewDelegate {
     
     func getCommentEdited(_ name: String){
         do {
-        try self.session?.getInfo([name], completion: { (res) in
-            switch res {
-            case .failure:
-                print(res.error ?? "Error?")
-            case .success(let listing):
-                if listing.children.count == 1 {
-                    if let comment = listing.children[0] as? Comment {
-                        self.comment = comment
-                        self.reply(self.comment)
+            try self.session?.getInfo([name], completion: { (res) in
+                switch res {
+                case .failure:
+                    print(res.error ?? "Error?")
+                case .success(let listing):
+                    if listing.children.count == 1 {
+                        if let comment = listing.children[0] as? Comment {
+                            self.comment = comment
+                            self.reply(self.comment)
+                        }
                     }
                 }
-            }
-            
-        })
+                
+            })
         } catch {
             
         }
-
+        
     }
     
     func send(_ sender: AnyObject){
-        if(edit){
+        if(message){
+            alertController = UIAlertController(title: nil, message: "Sending message...\n\n", preferredStyle: .alert)
+            let spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+            spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
+            spinnerIndicator.color = UIColor.black
+            spinnerIndicator.startAnimating()
+            
+            alertController?.view.addSubview(spinnerIndicator)
+            self.present(alertController!,animated: true, completion: nil)
+            
+            session = (UIApplication.shared.delegate as! AppDelegate).session
+
+            if(toReplyTo == nil){
+                do {
+                    try self.session?.composeMessage(recipientCell.cellLabel.text!, subject: subjectCell.cellLabel.text!, text: text!.text, completion: { (result) in
+                        switch result {
+                        case .failure(let error):
+                            print(error.description)
+                            self.reply(nil)
+                        case .success(let postedComment):
+                            self.reply(self.comment)
+                        }
+
+                    })
+                } catch { print((error as NSError).description) }
+            } else {
+            
+                do {
+                    let name = toReplyTo?.getId()
+                    try self.session?.replyMessage(text!.text, parentName:name!, completion: { (result) -> Void in
+                        switch result {
+                        case .failure(let error):
+                            print(error.description)
+                            self.reply(nil)
+                        case .success(let postedComment):
+                            self.reply(self.comment)
+                        }
+                    })
+                } catch { print((error as NSError).description) }
+            }
+        } else if(edit){
             alertController = UIAlertController(title: nil, message: "Editing comment...\n\n", preferredStyle: .alert)
             
             let spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
@@ -483,45 +578,48 @@ class ReplyViewController: UIViewController, UITextViewDelegate {
             session = (UIApplication.shared.delegate as! AppDelegate).session
             
             do {
-                let name = toReplyTo.getId()
-                try self.session?.editCommentOrLink(name, newBody: text!.text, completion: { (result) in
-                    self.getCommentEdited(name)
+                let name = toReplyTo?.getId()
+                try self.session?.editCommentOrLink(name!, newBody: text!.text, completion: { (result) in
+                    self.getCommentEdited(name!)
                 })
             } catch { print((error as NSError).description) }
-        
+            
         } else {
-        alertController = UIAlertController(title: nil, message: "Sending reply...\n\n", preferredStyle: .alert)
-        
-        let spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
-        spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
-        spinnerIndicator.color = UIColor.black
-        spinnerIndicator.startAnimating()
-        
-        alertController?.view.addSubview(spinnerIndicator)
-        self.present(alertController!,animated: true, completion: nil)
-        
-        session = (UIApplication.shared.delegate as! AppDelegate).session
-        
-        do {
-            let name = toReplyTo.getId()
-            try self.session?.postComment(text!.text, parentName:name, completion: { (result) -> Void in
-                switch result {
-                case .failure(let error):
-                    print(error.description)
-                    self.reply(nil)
-                case .success(let postedComment):
-                    self.comment = postedComment
-                    self.reply(self.comment)
-                }
-            })
-        } catch { print((error as NSError).description) }
+            alertController = UIAlertController(title: nil, message: "Sending reply...\n\n", preferredStyle: .alert)
+            
+            let spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+            spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
+            spinnerIndicator.color = UIColor.black
+            spinnerIndicator.startAnimating()
+            
+            alertController?.view.addSubview(spinnerIndicator)
+            self.present(alertController!,animated: true, completion: nil)
+            
+            session = (UIApplication.shared.delegate as! AppDelegate).session
+            
+            do {
+                let name = toReplyTo?.getId()
+                try self.session?.postComment(text!.text, parentName:name!, completion: { (result) -> Void in
+                    switch result {
+                    case .failure(let error):
+                        print(error.description)
+                        self.reply(nil)
+                    case .success(let postedComment):
+                        self.comment = postedComment
+                        self.reply(self.comment)
+                    }
+                })
+            } catch { print((error as NSError).description) }
         }
-
+        
     }
     
     override func loadView() {
-        self.view = UITextView(frame: CGRect.zero)
-        text = self.view as? UITextView
+        super.loadView()
+
+        self.tableView.backgroundColor = ColorUtil.backgroundColor
+        
+        text = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 500))
         text?.isEditable = true
         text?.backgroundColor = ColorUtil.foregroundColor
         text?.textColor = ColorUtil.fontColor
@@ -530,6 +628,26 @@ class ReplyViewController: UIViewController, UITextViewDelegate {
         if(edit){
             text!.text = (toReplyTo as! Comment).body
         }
+        
+        let lineView = UIView(frame: CGRect.init(x: 0, y: 0, width: (text?.frame.size.width)!, height: 1))
+        lineView.backgroundColor = ColorUtil.backgroundColor
+        text?.addSubview(lineView)
+
+        
+        subjectCell = InputCell.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 70), input: "[menu]Subject")
+        recipientCell = InputCell.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 70), input: "[profile]Recipient")
+        if(toReplyTo != nil && message){
+            subjectCell.cellLabel.text = "re: " + (toReplyTo as! Message).subject
+            subjectCell.cellLabel.isEditable = false
+            recipientCell.cellLabel.text = (toReplyTo as! Message).author
+            recipientCell.cellLabel.isEditable = false
+        }
+
+        tableView.tableFooterView = text
+        if(header != nil){
+            tableView.tableHeaderView = header
+        }
+
     }
     
     func dismiss(_ sender: AnyObject) {
@@ -592,6 +710,109 @@ extension ReplyViewController: ImagePickerSheetControllerDelegate {
     
     func controller(_ controller: ImagePickerSheetController, didDeselectAsset asset: PHAsset) {
         print("Did deselect an asset")
+    }
+    
+}
+
+
+class InputCell: UITableViewCell {
+    var cellLabel: UITextView!
+    
+    init(frame: CGRect, input: String) {
+        super.init(style: UITableViewCellStyle.default, reuseIdentifier: "cell")
+        
+        cellLabel = UITextView(frame: CGRect.init(x: 0, y: 0, width: self.frame.size.width, height: 70))
+        cellLabel.textColor = ColorUtil.fontColor
+        cellLabel.font = UIFont.boldSystemFont(ofSize: 16)
+        cellLabel.placeholder = input
+        
+        cellLabel.textContainerInset = UIEdgeInsets.init(top: 30, left: 10, bottom: 0, right: 0)
+        backgroundColor = ColorUtil.foregroundColor
+        
+        addSubview(cellLabel)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    }
+}
+
+extension UITextView: UITextViewDelegate {
+    
+    // Placeholder text
+    var placeholder: String? {
+        
+        get {
+            // Get the placeholder text from the label
+            var placeholderText: String?
+            
+            if let placeHolderLabel = self.viewWithTag(100) as? UILabel {
+                placeholderText = placeHolderLabel.text
+            }
+            return placeholderText
+        }
+        
+        set {
+            // Store the placeholder text in the label
+            let placeHolderLabel = self.viewWithTag(100) as! UILabel?
+            if placeHolderLabel == nil {
+                // Add placeholder label to text view
+                self.addPlaceholderLabel(placeholderText: newValue!)
+            }
+            else {
+                placeHolderLabel?.text = newValue
+                placeHolderLabel?.sizeToFit()
+            }
+        }
+    }
+    
+    // Hide the placeholder label if there is no text
+    // in the text viewotherwise, show the label
+    public func textViewDidChange(textView: UITextView) {
+        
+        let placeHolderLabel = self.viewWithTag(100)
+        
+        if !self.hasText {
+            // Get the placeholder label
+            placeHolderLabel?.isHidden = false
+        }
+        else {
+            placeHolderLabel?.isHidden = true
+        }
+    }
+    
+    // Add a placeholder label to the text view
+    func addPlaceholderLabel(placeholderText: String) {
+        
+        // Create the label and set its properties
+        let placeholderLabel = UILabel()
+        let placeholderImage = placeholderText.startsWith("[") ? placeholderText.substring(1, length: placeholderText.indexOf("]")! - 1) : ""
+        var text = placeholderText
+        if(!placeholderImage.isEmpty){
+            text = text.substring(placeholderText.indexOf("]")! + 1, length: text.length - placeholderText.indexOf("]")! - 1)
+        }
+        
+        placeholderLabel.text = " " + text
+        placeholderLabel.frame.origin.x = 10
+        placeholderLabel.frame.origin.y = 5
+        placeholderLabel.font = UIFont.systemFont(ofSize: 14)
+        placeholderLabel.textColor = ColorUtil.fontColor.withAlphaComponent(0.8)
+        placeholderLabel.tag = 100
+        if(!placeholderImage.isEmpty){
+            placeholderLabel.addImage(imageName: placeholderImage)
+        }
+        placeholderLabel.sizeToFit()
+
+        
+        // Hide the label if there is text in the text view
+        placeholderLabel.isHidden = ((self.text.length) > 0)
+        
+        self.addSubview(placeholderLabel)
+        self.delegate = self;
     }
     
 }
