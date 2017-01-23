@@ -9,6 +9,7 @@
 import UIKit
 import XLPagerTabStrip
 import reddift
+import AMScrollingNavbar
 
 class ProfileViewController:  ButtonBarPagerTabStripViewController {
     var content : [UserContent] = []
@@ -49,6 +50,7 @@ class ProfileViewController:  ButtonBarPagerTabStripViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        (navigationController as? ScrollingNavigationController)?.showNavbar(animated: true)
         self.title = name
         if(navigationController != nil){
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForUser(name: name)

@@ -16,6 +16,9 @@ class Parser: NSObject {
     /**
     */
     class func parse(dictionary data: JSONDictionary, of kind: String) -> Any? {
+        if(data["was_comment"] != nil){ //Override messages that appear to be comments
+            return Message(json: data)
+        }
         switch kind {
         case "t1":
             return Comment(json: data)

@@ -12,7 +12,7 @@ import XLPagerTabStrip
 
 class InboxContributionLoader: ContributionLoader {
     var color: UIColor
-
+    
     var messages: MessageWhere
     var canGetMore = true
     
@@ -45,7 +45,18 @@ class InboxContributionLoader: ContributionLoader {
                         if(reload){
                             self.content = []
                         }
-                        self.content += listing.children.flatMap({$0})
+                        for message in listing.children.flatMap({$0}){
+                            self.content.append(message)
+                            if((message as! Message).baseJson["replies"] != nil) {
+                                let json = (message as! Message).baseJson as JSONDictionary
+                                if let j = json["replies"] as? JSONDictionary, let data = j["data"] as? JSONDictionary, let things = data["children"] as? JSONArray {
+                                    for thing in things {
+                                        self.content.append(Message.init(json: (thing as! JSONDictionary)["data"] as! JSONDictionary))
+                                    }
+                                }
+                            }
+                        }
+                        
                         self.paginator = listing.paginator
                         DispatchQueue.main.async{
                             self.delegate?.doneLoading()

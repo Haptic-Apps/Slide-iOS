@@ -163,34 +163,6 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         self.setMessage(message: message, parent: parent, nav: parent.navigationController, width: width)
     }
     
-    
-    override func updateConstraints() {
-        super.updateConstraints()
-        
-        let metrics=["horizontalMargin":75,"top":0,"bottom":0,"separationBetweenLabels":0,"labelMinHeight":75]
-        let views=["label":title, "body": textView, "info": info] as [String : Any]
-        
-        
-        
-        self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[label]-8-|",
-                                                                       options: NSLayoutFormatOptions(rawValue: 0),
-                                                                       metrics: metrics,
-                                                                       views: views))
-        
-        self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[body]-8-|",
-                                                                       options: NSLayoutFormatOptions(rawValue: 0),
-                                                                       metrics: metrics,
-                                                                       views: views))
-        
-        self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[info]-8-|",
-                                                                       options: NSLayoutFormatOptions(rawValue: 0),
-                                                                       metrics: metrics,
-                                                                       views: views))
-        
-        
-        
-    }
-    
     var lsC: [NSLayoutConstraint] = []
     
     func setMessage(message: Message, parent: MediaViewController, nav: UIViewController?, width: CGFloat){
@@ -198,7 +170,11 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         if(navViewController == nil && nav != nil){
             navViewController = nav
         }
+        if(message.wasComment){
+            title.text = message.baseJson["link_title"] as? String
+        } else {
         title.text = message.subject
+        }
         self.message = message
         if(message.new){
             title.textColor = GMColor.red500Color()
@@ -226,6 +202,7 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         let infoString = NSMutableAttributedString()
         infoString.append(endString)
         if(!message.subreddit.isEmpty){
+            infoString.append(NSAttributedString.init(string: "  •  "))
         infoString.append(subString)
         }
         
@@ -265,6 +242,21 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
                                                                            metrics: metrics,
                                                                            views: views))
 
+        } else {
+            lsC.append(contentsOf :NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[label]-8-|",
+                                                                  options: NSLayoutFormatOptions(rawValue: 0),
+                                                                  metrics: metrics,
+                                                                  views: views))
+            
+            lsC.append(contentsOf :NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[body]-8-|",
+                                                                  options: NSLayoutFormatOptions(rawValue: 0),
+                                                                  metrics: metrics,
+                                                                  views: views))
+            
+            lsC.append(contentsOf :NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[info]-8-|",
+                                                                  options: NSLayoutFormatOptions(rawValue: 0),
+                                                                  metrics: metrics,
+                                                                  views: views))
         }
         lsC.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[label]-4-[info]-4-[body(height)]-8-|",
                                                               options: NSLayoutFormatOptions(rawValue: 0),
@@ -345,9 +337,12 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
     
     
     func doReply(sender: UITapGestureRecognizer? = nil){
-        //todo reply
         if(message?.wasComment)!{
-            parentViewController?.show(RedditLink.getViewControllerForURL(urlS: URL.init(string: "https://www.reddit.com\(message?.context))")!), sender: parentViewController)
+            let url = "https://www.reddit.com\(message!.context)"
+            print(url)
+            parentViewController?.show(RedditLink.getViewControllerForURL(urlS: URL.init(string: url)!), sender: parentViewController)
+        } else {
+            //todo reply
         }
     }
     

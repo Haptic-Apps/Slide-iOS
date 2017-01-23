@@ -16,6 +16,8 @@ public struct Message: Thing {
     public let id: String
     /// name of Thing, that is fullname, like t3_15bfi0.
     public let name: String
+    
+    public let baseJson: JSONDictionary
     /// type of Thing, like t3.
     public static let kind = "t4"
     
@@ -120,6 +122,7 @@ public struct Message: Thing {
         new = false
         distinguished = ""
         subject = ""
+        baseJson = JSONDictionary.init()
     }
     
     /**
@@ -129,6 +132,7 @@ public struct Message: Thing {
     - returns: Message object as Thing.
     */
     public init(json data: JSONDictionary) {
+        baseJson = data
         id = data["id"] as? String ?? ""
         body = data["body"] as? String ?? ""
         wasComment = data["was_comment"] as? Bool ?? false
