@@ -14,6 +14,7 @@ import XLPagerTabStrip
 import AMScrollingNavbar
 import SideMenu
 import KCFloatingActionButton
+import UZTextView
 
 class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, IndicatorInfoProvider, ScrollingNavigationControllerDelegate, LinkCellViewDelegate, ColorPickerDelegate, KCFloatingActionButtonDelegate {
     
@@ -117,7 +118,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             }
             actionSheetController.addAction(cancelActionButton)
         }
-
+        
         cancelActionButton = UIAlertAction(title: "Open in Safari", style: .default) { action -> Void in
             UIApplication.shared.open(link.url!, options: [:], completionHandler: nil)
         }
@@ -191,7 +192,6 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     weak var tableView : UITableView!
     var itemInfo : IndicatorInfo
     var single: Bool = false
-    var subreddit: Subreddit?
     
     /* override func previewActionItems() -> [UIPreviewActionItem] {
      let regularAction = UIPreviewAction(title: "Regular", style: .Default) { (action: UIPreviewAction, vc: UIViewController) -> Void in
@@ -232,7 +232,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             hide(true)
             break
         case .expanded:
-           show(true)
+            show(true)
             break
         case .scrolling:
             break
@@ -241,28 +241,28 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     
     func show(_ animated: Bool = true) {
         if(fab != nil){
-        if animated == true {
-            fab!.isHidden = false
-            UIView.animate(withDuration: 0.3, animations: { () -> Void in
-                self.fab!.alpha = 1
-            })
-        } else {
-            fab!.isHidden = false
-        }
+            if animated == true {
+                fab!.isHidden = false
+                UIView.animate(withDuration: 0.3, animations: { () -> Void in
+                    self.fab!.alpha = 1
+                })
+            } else {
+                fab!.isHidden = false
+            }
         }
     }
     
     func hide(_ animated: Bool = true) {
         if(fab != nil){
-        if animated == true {
-            UIView.animate(withDuration: 0.3, animations: { () -> Void in
-                self.fab!.alpha = 0
-            }, completion: { finished in
-                self.fab!.isHidden = true
-            })
-        } else {
-            fab!.isHidden = true
-        }
+            if animated == true {
+                UIView.animate(withDuration: 0.3, animations: { () -> Void in
+                    self.fab!.alpha = 0
+                }, completion: { finished in
+                    self.fab!.isHidden = true
+                })
+            } else {
+                fab!.isHidden = true
+            }
         }
     }
     
@@ -295,8 +295,8 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     }
     
     var sideMenu: UISideMenuNavigationController?
-    var menuNav: SubSidebarViewController?
-    
+    // var menuNav: SubSidebarViewController?
+    var subInfo: Subreddit?
     override func viewDidLoad() {
         self.tableView.register(LinkCellView.classForCoder(), forCellReuseIdentifier: "cell")
         session = (UIApplication.shared.delegate as! AppDelegate).session
@@ -309,65 +309,132 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         
         if(single){
             sideMenu = UISideMenuNavigationController()
-            menuNav = SubSidebarViewController.init(parentController: self, sub: sub, completion: { (success, subreddit) in
-                if(success || self.sub == ("all") || self.sub == ("frontpage") || self.sub.hasPrefix("/m/")){
-                    if(self.sub != ("all") && self.sub != ("frontpage") && !self.sub.hasPrefix("/m/")){
-                    if(SettingValues.saveHistory){
-                        if(SettingValues.saveNSFWHistory && subreddit!.over18){
-                            Subscriptions.addHistorySub(name: AccountController.currentName, sub: subreddit!.displayName)
-                        } else if(!subreddit!.over18){
-                            Subscriptions.addHistorySub(name: AccountController.currentName, sub: subreddit!.displayName)
+            
+            do {
+                try (UIApplication.shared.delegate as! AppDelegate).session?.about(sub, completion: { (result) in
+                    switch result {
+                    case .failure:
+                        DispatchQueue.main.async {
+                            if(self.sub == ("all") || self.sub == ("frontpage") || self.sub.hasPrefix("/m/")){
+                                self.load(reset: true)
+                            } else {
+                                let alert = UIAlertController.init(title: "Subreddit not found", message: "/r/\(self.sub) could not be found, is it spelled correctly?", preferredStyle: .alert)
+                                alert.addAction(UIAlertAction.init(title: "Ok", style: .default, handler: { (_) in
+                                    let presentingViewController: UIViewController! = self.presentingViewController
+                                    
+                                    self.dismiss(animated: false) {
+                                        // go back to MainMenuView as the eyes of the user
+                                        presentingViewController.dismiss(animated: false, completion: nil)
+                                    }
+                                    
+                                }))
+                                self.present(alert, animated: true, completion: nil)
+                            }
+                        }
+                    case .success(let r):
+                        self.subInfo = r
+                        DispatchQueue.main.async {
+                            if(self.sub != ("all") && self.sub != ("frontpage") && !self.sub.hasPrefix("/m/")){
+                                if(SettingValues.saveHistory){
+                                    if(SettingValues.saveNSFWHistory && self.subInfo!.over18){
+                                        Subscriptions.addHistorySub(name: AccountController.currentName, sub: self.subInfo!.displayName)
+                                    } else if(!self.subInfo!.over18){
+                                        Subscriptions.addHistorySub(name: AccountController.currentName, sub: self.subInfo!.displayName)
+                                    }
+                                }
+                            }
+                            
+                            self.load(reset: true)
+                            
                         }
                     }
-                    }
-                    
-                    self.load(reset: true)
-                } else {
-                    let alert = UIAlertController.init(title: "Subreddit not found", message: "/r/\(self.sub) could not be found, is it spelled correctly?", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction.init(title: "Ok", style: .default, handler: { (_) in
-                        let presentingViewController: UIViewController! = self.presentingViewController
-                        
-                        self.dismiss(animated: false) {
-                            // go back to MainMenuView as the eyes of the user
-                            presentingViewController.dismiss(animated: false, completion: nil)
-                        }
-                        
-                    }))
-                    self.present(alert, animated: true, completion: nil)
-                }
-            })
-            sideMenu?.addChildViewController(menuNav!)
-            // UISideMenuNavigationController is a subclass of UINavigationController, so do any additional configuration of it here like setting its viewControllers.
-            SideMenuManager.menuRightNavigationController = sideMenu
-            sideMenu?.navigationBar.isHidden = true
-            
-            // Enable gestures. The left and/or right menus must be set up above for these to work.
-            // Note that these continue to work on the Navigation Controller independent of the View Controller it displays!
-            
-        } else {
-            sideMenu = UISideMenuNavigationController()
-            print("Sub is \(sub)")
-            menuNav = SubSidebarViewController.init(parentController: self, sub: sub, completion: { (success) in })
-            sideMenu?.addChildViewController(menuNav!)
-            // UISideMenuNavigationController is a subclass of UINavigationController, so do any additional configuration of it here like setting its viewControllers.
-            SideMenuManager.menuRightNavigationController = sideMenu
-            sideMenu?.navigationBar.isHidden = true
-            
-            // Enable gestures. The left and/or right menus must be set up above for these to work.
-            // Note that these continue to work on the Navigation Controller independent of the View Controller it displays!
-            
+                })
+            } catch {
+            }
         }
         
         if(SettingValues.hiddenFAB){
-        fab = KCFloatingActionButton()
-        fab!.buttonColor = ColorUtil.accentColorForSub(sub: sub)
-        fab!.buttonImage = UIImage.init(named: "hide")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30))
-        fab!.fabDelegate = self
+            fab = KCFloatingActionButton()
+            fab!.buttonColor = ColorUtil.accentColorForSub(sub: sub)
+            fab!.buttonImage = UIImage.init(named: "hide")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30))
+            fab!.fabDelegate = self
             fab!.sticky = true
-        self.view.addSubview(fab!)
+            self.view.addSubview(fab!)
         }
         super.viewDidLoad()
         
+    }
+    
+    func doDisplaySidebar(_ sub: Subreddit){
+        let alrController = UIAlertController(title: sub.displayName + "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", message: "\(sub.accountsActive) here now\n\(sub.subscribers) subscribers", preferredStyle: UIAlertControllerStyle.actionSheet)
+        
+        let margin:CGFloat = 8.0
+        let rect = CGRect.init(x: margin, y: margin + 23, width: alrController.view.bounds.size.width - margin * 4.0, height: 300)
+        let scrollView = UIScrollView(frame: rect)
+        scrollView.backgroundColor = UIColor.clear
+        var info: UZTextView = UZTextView()
+        info = UZTextView(frame: CGRect(x: 0, y: 0, width: rect.size.width, height: CGFloat.greatestFiniteMagnitude))
+        //todo info.delegate = self
+        info.isUserInteractionEnabled = true
+        info.backgroundColor = .clear
+
+        if(!sub.description.isEmpty()){
+            let html = sub.descriptionHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
+            do {
+                let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
+                let font = UIFont(name: ".SFUIText-Light", size: 16) ?? UIFont.systemFont(ofSize: 16)
+                let attr2 = attr.reconstruct(with: font, color: UIColor.darkGray, linkColor: ColorUtil.accentColorForSub(sub: sub.displayName))
+                let contentInfo = CellContent.init(string:attr2, width: rect.size.width)
+                info.attributedString = contentInfo.attributedString
+                info.frame.size.height = (contentInfo.textHeight)
+                scrollView.contentSize = CGSize.init(width: rect.size.width, height: info.frame.size.height)
+                scrollView.addSubview(info)
+            } catch {
+            }
+            //todo parentController?.registerForPreviewing(with: self, sourceView: info)
+        }
+        
+        alrController.view.addSubview(scrollView)
+
+        var somethingAction = UIAlertAction(title: "Subscribe", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in print("something")})
+        alrController.addAction(somethingAction)
+        
+        somethingAction = UIAlertAction(title: "Submit a post", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in print("something")})
+        alrController.addAction(somethingAction)
+        
+        somethingAction = UIAlertAction(title: "Subreddit moderators", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in print("something")})
+        alrController.addAction(somethingAction)
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: {(alert: UIAlertAction!) in print("cancel")})
+        
+        alrController.addAction(cancelAction)
+        
+        self.present(alrController, animated: true, completion:{})
+    }
+    
+    func displaySidebar(){
+        if(subInfo != nil){
+           doDisplaySidebar(subInfo!)
+        } else {
+            do {
+                try (UIApplication.shared.delegate as! AppDelegate).session?.about(sub, completion: { (result) in
+                    switch result {
+                    case .success(let r):
+                        self.subInfo = r
+                        DispatchQueue.main.async {
+                            self.doDisplaySidebar(r)
+                        }
+                    default:
+                        DispatchQueue.main.async{
+                            self.view.makeToast("Subreddit sidebar not found", duration: 5, position: .bottom)
+                        }
+                        break
+                    }
+                })
+            } catch {
+            }
+
+        }
     }
     
     func emptyKCFABSelected(_ fab: KCFloatingActionButton) {
@@ -375,7 +442,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         
         var indexPaths : [IndexPath] = []
         var newLinks : [Link] = []
-
+        
         var count = 0
         for submission in links {
             if(History.getSeen(s: submission)){
@@ -389,7 +456,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         links = newLinks
         tableView.deleteRows(at: indexPaths, with: .middle)
         tableView.endUpdates()
-
+        
         print("Empty")
     }
     
@@ -512,11 +579,11 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         }
         super.viewWillAppear(animated)
         /* todo this, too slow currently
-        if(savedIndex != nil){
-            tableView.reloadRows(at: [savedIndex!], with: .none)
-        } else {
-            tableView.reloadData()
-        }*/
+         if(savedIndex != nil){
+         tableView.reloadRows(at: [savedIndex!], with: .none)
+         } else {
+         tableView.reloadData()
+         }*/
     }
     
     func showMoreNone(_ sender: AnyObject){
@@ -563,6 +630,11 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         }
         actionSheetController.addAction(cancelActionButton)
         
+        cancelActionButton = UIAlertAction(title: "Sidebar", style: .default) { action -> Void in
+            self.displaySidebar()
+        }
+        actionSheetController.addAction(cancelActionButton)
+
         cancelActionButton = UIAlertAction(title: "Refresh", style: .default) { action -> Void in
             self.refresh()
         }
@@ -580,17 +652,17 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             } else {
                 self.pickTheme(parent: nil)
             }
-
+            
         }
         actionSheetController.addAction(cancelActionButton)
         
         if(!single){
-        cancelActionButton = UIAlertAction(title: "Base Theme", style: .default) { action -> Void in
-            if(parentVC != nil){
-                (parentVC)!.showThemeMenu()
+            cancelActionButton = UIAlertAction(title: "Base Theme", style: .default) { action -> Void in
+                if(parentVC != nil){
+                    (parentVC)!.showThemeMenu()
+                }
             }
-        }
-        actionSheetController.addAction(cancelActionButton)
+            actionSheetController.addAction(cancelActionButton)
         }
         
         cancelActionButton = UIAlertAction(title: "Filter", style: .default) { action -> Void in
@@ -752,7 +824,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                     })
                 } else {
                     print("Sort is \(self.sort) and time is \(self.time)")
-
+                    
                     try session?.getList(paginator, subreddit: Subreddit.init(subreddit: sub) , sort: sort, timeFilterWithin: time, completion: { (result) in
                         switch result {
                         case .failure:

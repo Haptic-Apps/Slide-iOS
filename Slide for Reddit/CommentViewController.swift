@@ -56,10 +56,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         c.delegate = self
         c.setLink(submission: self.submission!, parent: self, nav: self.navigationController)
         c.showBody(width: self.view.frame.size.width)
-        var frame = CGRect.zero
-        frame.size.width = self.tableView.bounds.size.width
-        frame.size.height = c.estimateHeight()
-        c.frame = frame
+        c.frame = (tableView.tableHeaderView?.frame)!
+        c.layoutIfNeeded()
 
         let reply  = ReplyViewController.init(thing: self.submission!, sub: (self.submission?.subreddit)!, view: c.contentView) { (comment) in
             DispatchQueue.main.async(execute: { () -> Void in
