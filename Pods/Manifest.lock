@@ -9,19 +9,21 @@ PODS:
   - ImagePickerSheetController (0.9.3)
   - ImageViewer (4.0)
   - KCFloatingActionButton (2.1.2)
+  - Realm (2.3.0):
+    - Realm/Headers (= 2.3.0)
+  - Realm/Headers (2.3.0)
+  - RealmSwift (2.3.0):
+    - Realm (= 2.3.0)
   - reddift (2.0.0):
     - reddift/MiniKeychain (= 2.0.0)
   - reddift/MiniKeychain (2.0.0)
   - SDWebImage (3.8.2):
     - SDWebImage/Core (= 3.8.2)
   - SDWebImage/Core (3.8.2)
-  - SideMenu (2.1.5)
+  - SideMenu (2.2.0)
   - SwiftyJSON (3.1.4)
   - TTTAttributedLabel (2.0.0)
   - UZTextView (1.0.6)
-  - XLActionController (3.0.1):
-    - XLActionController/Core (= 3.0.1)
-  - XLActionController/Core (3.0.1)
   - XLPagerTabStrip (6.0.0)
 
 DEPENDENCIES:
@@ -33,13 +35,13 @@ DEPENDENCIES:
   - ImagePickerSheetController (from `https://github.com/lbrndnr/ImagePickerSheetController`, branch `swift3`)
   - ImageViewer (from `https://github.com/ccrama/ImageViewer`)
   - KCFloatingActionButton (~> 2.1.0)
+  - RealmSwift
   - reddift (from `https://github.com/ccrama/reddift`)
   - SDWebImage (~> 3.8)
   - SideMenu
   - SwiftyJSON
   - TTTAttributedLabel
   - UZTextView (from `https://github.com/sonsongithub/UZTextView`)
-  - XLActionController
   - XLPagerTabStrip (~> 6.0)
 
 EXTERNAL SOURCES:
@@ -66,7 +68,7 @@ CHECKOUT OPTIONS:
     :commit: 1a6d7c365a23d86bdcdf8eb93058b75e07be1fb1
     :git: https://github.com/ccrama/ImageViewer
   reddift:
-    :commit: a86372af8ecdc8812f0bb174fa61d4026b0646f2
+    :commit: 4cf4483c913b423aa0114ac7c4a399aae9e2d87a
     :git: https://github.com/ccrama/reddift
   UZTextView:
     :commit: 94021870e65000cf332cb1f2ec70525b05c6ab16
@@ -81,15 +83,16 @@ SPEC CHECKSUMS:
   ImagePickerSheetController: 4789b06940e299431455c61be77fda440883c36c
   ImageViewer: 364abc0309c33dda86d08ca25b0243e5c67d8cd3
   KCFloatingActionButton: 1b22ce95d44b51915280df8a8b277eae4a06c3f1
+  Realm: 69d7de9aa569a11eed490aaabc8f2109e3985ecf
+  RealmSwift: dc6f99ea55e59490cec69c860f91932b6bf7efb6
   reddift: 3066e687c2a934b0f9aca6ee6e2161abc4c93a56
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
-  SideMenu: bcd2d7b7d4395af088e213cebd11c3ac7d958f5a
+  SideMenu: eeff6b85456c5c6e14165655691d2033f6b24969
   SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   UZTextView: 96bd60ad22f7f5ea882c56a9f90621f86b443192
-  XLActionController: 57fe0ce1642e2eed971b188b490762345fdbf963
   XLPagerTabStrip: c46e802a8dcac29edbcea573de8fe920e052455b
 
-PODFILE CHECKSUM: 8e911df4a54454fb79e35aacf79f3f6213d2cbea
+PODFILE CHECKSUM: 6a67d2d3eab739e7b93db441c0f65542adcbefbb
 
 COCOAPODS: 1.1.1

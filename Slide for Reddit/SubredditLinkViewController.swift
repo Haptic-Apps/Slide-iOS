@@ -377,7 +377,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         //todo info.delegate = self
         info.isUserInteractionEnabled = true
         info.backgroundColor = .clear
-
+        
         if(!sub.description.isEmpty()){
             let html = sub.descriptionHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
             do {
@@ -395,8 +395,9 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         }
         
         alrController.view.addSubview(scrollView)
-
-        var somethingAction = UIAlertAction(title: "Subscribe", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in print("something")})
+        
+        let subscribed = sub.userIsSubscriber || subChanged && !sub.userIsSubscriber ? "Unsubscribe" : "Subscribe"
+        var somethingAction = UIAlertAction(title: subscribed, style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in self.subscribe(sub)})
         alrController.addAction(somethingAction)
         
         somethingAction = UIAlertAction(title: "Submit a post", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in print("something")})
@@ -412,9 +413,43 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         self.present(alrController, animated: true, completion:{})
     }
     
+    var subChanged = false
+    func subscribe(_ sub: Subreddit){
+        if(subChanged && !sub.userIsSubscriber || sub.userIsSubscriber){
+            //was not subscriber, changed, and unsubscribing again
+            Subscriptions.unsubscribe(sub.displayName, session: session!)
+            subChanged = false
+            self.view.makeToast("Unsubscribed", duration: 4, position: .bottom)
+        } else {
+            let alrController = UIAlertController.init(title: "Subscribe to \(sub.displayName)", message: nil, preferredStyle: .actionSheet)
+            if(AccountController.isLoggedIn){
+            let somethingAction = UIAlertAction(title: "Add to sub list and subscribe", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in
+                Subscriptions.subscribe(sub.displayName, true, session: self.session!)
+                self.subChanged = true
+                self.view.makeToast("Subscribed", duration: 4, position: .bottom)
+            })
+            alrController.addAction(somethingAction)
+            }
+            
+            let somethingAction = UIAlertAction(title: "Add to sub list", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in
+                Subscriptions.subscribe(sub.displayName, false, session: self.session!)
+                self.subChanged = true
+                self.view.makeToast("Added", duration: 4, position: .bottom)
+            })
+            alrController.addAction(somethingAction)
+            
+            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: {(alert: UIAlertAction!) in print("cancel")})
+            
+            alrController.addAction(cancelAction)
+            
+            self.present(alrController, animated: true, completion:{})
+
+        }
+    }
+    
     func displaySidebar(){
         if(subInfo != nil){
-           doDisplaySidebar(subInfo!)
+            doDisplaySidebar(subInfo!)
         } else {
             do {
                 try (UIApplication.shared.delegate as! AppDelegate).session?.about(sub, completion: { (result) in
@@ -433,7 +468,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                 })
             } catch {
             }
-
+            
         }
     }
     
@@ -634,7 +669,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             self.displaySidebar()
         }
         actionSheetController.addAction(cancelActionButton)
-
+        
         cancelActionButton = UIAlertAction(title: "Refresh", style: .default) { action -> Void in
             self.refresh()
         }

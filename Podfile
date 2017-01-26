@@ -12,7 +12,6 @@ target 'Slide for Reddit' do
   pod 'XLPagerTabStrip', '~> 6.0'
   pod 'AMScrollingNavbar'
   pod 'BGTableViewRowActionWithImage'
-  pod 'XLActionController'
   pod 'SideMenu'
   pod 'UZTextView', :git => 'https://github.com/sonsongithub/UZTextView'
   pod 'ImageViewer', :git => 'https://github.com/ccrama/ImageViewer'
@@ -22,6 +21,7 @@ target 'Slide for Reddit' do
   pod 'Alamofire', '~> 4.3'
     pod 'SwiftyJSON'
 pod 'ActionSheetPicker-3.0’, :git => ‘https://github.com/ccrama/ActionSheetPicker-3.0'
+  pod ‘RealmSwift’
 
   target 'Slide for RedditTests' do
     inherit! :search_paths

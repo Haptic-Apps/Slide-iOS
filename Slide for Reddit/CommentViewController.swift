@@ -11,6 +11,7 @@ import reddift
 import AudioToolbox.AudioServices
 import BGTableViewRowActionWithImage
 import AMScrollingNavbar
+import UZTextView
 
 class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, UZTextViewCellDelegate, LinkCellViewDelegate, UISearchBarDelegate {
     
@@ -561,7 +562,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         actionSheetController.addAction(cancelActionButton)
         
         cancelActionButton = UIAlertAction(title: "View sub sidebar", style: .default) { action -> Void in
-            //todo view sidebar
+            self.displaySidebar()
         }
         actionSheetController.addAction(cancelActionButton)
         
@@ -574,6 +575,111 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         
         
     }
+    
+    func doDisplaySidebar(_ sub: Subreddit){
+        let alrController = UIAlertController(title: sub.displayName + "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", message: "\(sub.accountsActive) here now\n\(sub.subscribers) subscribers", preferredStyle: UIAlertControllerStyle.actionSheet)
+        
+        let margin:CGFloat = 8.0
+        let rect = CGRect.init(x: margin, y: margin + 23, width: alrController.view.bounds.size.width - margin * 4.0, height: 300)
+        let scrollView = UIScrollView(frame: rect)
+        scrollView.backgroundColor = UIColor.clear
+        var info: UZTextView = UZTextView()
+        info = UZTextView(frame: CGRect(x: 0, y: 0, width: rect.size.width, height: CGFloat.greatestFiniteMagnitude))
+        //todo info.delegate = self
+        info.isUserInteractionEnabled = true
+        info.backgroundColor = .clear
+        
+        if(!sub.description.isEmpty()){
+            let html = sub.descriptionHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
+            do {
+                let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
+                let font = UIFont(name: ".SFUIText-Light", size: 16) ?? UIFont.systemFont(ofSize: 16)
+                let attr2 = attr.reconstruct(with: font, color: UIColor.darkGray, linkColor: ColorUtil.accentColorForSub(sub: sub.displayName))
+                let contentInfo = CellContent.init(string:attr2, width: rect.size.width)
+                info.attributedString = contentInfo.attributedString
+                info.frame.size.height = (contentInfo.textHeight)
+                scrollView.contentSize = CGSize.init(width: rect.size.width, height: info.frame.size.height)
+                scrollView.addSubview(info)
+            } catch {
+            }
+            //todo parentController?.registerForPreviewing(with: self, sourceView: info)
+        }
+        
+        alrController.view.addSubview(scrollView)
+        
+        let subscribed = sub.userIsSubscriber || subChanged && !sub.userIsSubscriber ? "Unsubscribe" : "Subscribe"
+        var somethingAction = UIAlertAction(title: subscribed, style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in self.subscribe(sub)})
+        alrController.addAction(somethingAction)
+        
+        somethingAction = UIAlertAction(title: "Submit a post", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in print("something")})
+        alrController.addAction(somethingAction)
+        
+        somethingAction = UIAlertAction(title: "Subreddit moderators", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in print("something")})
+        alrController.addAction(somethingAction)
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: {(alert: UIAlertAction!) in print("cancel")})
+        
+        alrController.addAction(cancelAction)
+        
+        self.present(alrController, animated: true, completion:{})
+    }
+    
+    var subChanged = false
+    func subscribe(_ sub: Subreddit){
+        if(subChanged && !sub.userIsSubscriber || sub.userIsSubscriber){
+            //was not subscriber, changed, and unsubscribing again
+            Subscriptions.unsubscribe(sub.displayName, session: session!)
+            subChanged = false
+            self.view.makeToast("Unsubscribed", duration: 4, position: .bottom)
+        } else {
+            let alrController = UIAlertController.init(title: "Subscribe to \(sub.displayName)", message: nil, preferredStyle: .actionSheet)
+            if(AccountController.isLoggedIn){
+                let somethingAction = UIAlertAction(title: "Add to sub list and subscribe", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in
+                    Subscriptions.subscribe(sub.displayName, true, session: self.session!)
+                    self.subChanged = true
+                    self.view.makeToast("Subscribed", duration: 4, position: .bottom)
+                })
+                alrController.addAction(somethingAction)
+            }
+            
+            let somethingAction = UIAlertAction(title: "Add to sub list", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in
+                Subscriptions.subscribe(sub.displayName, false, session: self.session!)
+                self.subChanged = true
+                self.view.makeToast("Added", duration: 4, position: .bottom)
+            })
+            alrController.addAction(somethingAction)
+            
+            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: {(alert: UIAlertAction!) in print("cancel")})
+            
+            alrController.addAction(cancelAction)
+            
+            self.present(alrController, animated: true, completion:{})
+            
+        }
+    }
+    
+    var subInfo: Subreddit?
+    
+    func displaySidebar(){
+            do {
+                try (UIApplication.shared.delegate as! AppDelegate).session?.about(submission!.subreddit, completion: { (result) in
+                    switch result {
+                    case .success(let r):
+                        self.subInfo = r
+                        DispatchQueue.main.async {
+                            self.doDisplaySidebar(r)
+                        }
+                    default:
+                        DispatchQueue.main.async{
+                            self.view.makeToast("Subreddit sidebar not found", duration: 5, position: .bottom)
+                        }
+                        break
+                    }
+                })
+            } catch {
+            }
+    }
+
     
     func search(_ sender: AnyObject){
         showSearchBar()
@@ -973,8 +1079,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             let parentDepth = (cDepth[n.getId()] as! Int)
             for obj in stride(from: bounds, to: comments.count, by: 1) {
                 let current = comments[obj]
-                if((cDepth[current.getId()] as! Int) > parentDepth){
+                var currentDepth = cDepth[current.getId()] as! Int
+                if(currentDepth > parentDepth){
+                    if(currentDepth == parentDepth + 1){
                     toReturn.append(contentsOf: walkTreeFully(n: current))
+                    }
                 } else {
                     return toReturn
                 }

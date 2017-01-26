@@ -59,6 +59,16 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>Realm.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>RealmSwift.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>SDWebImage.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -84,11 +94,6 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>XLActionController.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
 		<key>XLPagerTabStrip-XLPagerTabStrip.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -107,12 +112,12 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>1F5A0CEF95A998F754A58C44B7CAFC90</key>
+		<key>0F986064AFA3A21AF7EF5B8B1AC36A84</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>27C705BF1B4A0CC5923306EB03891D80</key>
+		<key>215085FD21B8FB103532BF74E0D1C01E</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -122,27 +127,27 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>3381435C9CF0A0434DB6035328498D9A</key>
+		<key>5DFC5F90214F91370E469314F6C20B95</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>55FB997258B8AD5F7F596883AADB55C3</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>5E1FB64852C4C828733794B8E17C2FDC</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>6B69090F3E7AF74E871BCC20A4EBA652</key>
+		<key>628319B4DEFEA44BC646989728859066</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
 		<key>6F983DF4CA4AE96FC7D664DC5BB622A8</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>708FF533486344B1A749863FEF6BA22E</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>7D045CE98B9DF8BBBC69A4733C702AC0</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -157,6 +162,11 @@
 			<key>primary</key>
 			<true/>
 		</dict>
+		<key>89652D3001732203B5B24C62C7BBB1FE</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>8A267660E1AD4832DE75665F2F87AEA3</key>
 		<dict>
 			<key>primary</key>
@@ -167,12 +177,12 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>9B7BEF22A2D2E5C2E4174836475BC47B</key>
+		<key>996CC8AAC551CC1BC7410F0E12F0FE0F</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>9E694C4FEC3B614C4B614D1EBF54C298</key>
+		<key>9B7BEF22A2D2E5C2E4174836475BC47B</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -182,12 +192,12 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>A6E9CEC9E5ACFE69D21456CCB70BEEA0</key>
+		<key>A4BA13FB522A6D6157F33F17AC73AF12</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>AEB709CC3FC2C9FB263960C25A44BA33</key>
+		<key>A6E9CEC9E5ACFE69D21456CCB70BEEA0</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -197,12 +207,12 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>F54EA33F971634620D0D5301379D5597</key>
+		<key>B3A85AC3C790C2E44039343E5329B68A</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>F8AED595A2B6FFEA9800D4538A9A08C6</key>
+		<key>DA5A8BE0C5971CBC51183B7F3A7B2430</key>
 		<dict>
 			<key>primary</key>
 			<true/>

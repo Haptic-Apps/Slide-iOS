@@ -202,7 +202,7 @@ extension Session {
      */
     @discardableResult
     public func setSubscribeSubreddit(_ subreddit: Subreddit, subscribe: Bool, completion: @escaping (Result<JSONAny>) -> Void) throws -> URLSessionDataTask {
-        var parameter = ["sr":subreddit.name]
+        var parameter = ["sr_name":subreddit.displayName]
         parameter["action"] = (subscribe) ? "sub" : "unsub"
         guard let request = URLRequest.requestForOAuth(with: baseURL, path:"/api/subscribe", parameter:parameter, method:"POST", token:token)
             else { throw ReddiftError.canNotCreateURLRequest as NSError }
