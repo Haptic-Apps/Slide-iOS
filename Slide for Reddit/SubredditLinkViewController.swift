@@ -15,6 +15,7 @@ import AMScrollingNavbar
 import SideMenu
 import KCFloatingActionButton
 import UZTextView
+import RealmSwift
 
 class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, IndicatorInfoProvider, ScrollingNavigationControllerDelegate, LinkCellViewDelegate, ColorPickerDelegate, KCFloatingActionButtonDelegate {
     
@@ -423,12 +424,12 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         } else {
             let alrController = UIAlertController.init(title: "Subscribe to \(sub.displayName)", message: nil, preferredStyle: .actionSheet)
             if(AccountController.isLoggedIn){
-            let somethingAction = UIAlertAction(title: "Add to sub list and subscribe", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in
-                Subscriptions.subscribe(sub.displayName, true, session: self.session!)
-                self.subChanged = true
-                self.view.makeToast("Subscribed", duration: 4, position: .bottom)
-            })
-            alrController.addAction(somethingAction)
+                let somethingAction = UIAlertAction(title: "Add to sub list and subscribe", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in
+                    Subscriptions.subscribe(sub.displayName, true, session: self.session!)
+                    self.subChanged = true
+                    self.view.makeToast("Subscribed", duration: 4, position: .bottom)
+                })
+                alrController.addAction(somethingAction)
             }
             
             let somethingAction = UIAlertAction(title: "Add to sub list", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in
@@ -443,7 +444,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             alrController.addAction(cancelAction)
             
             self.present(alrController, animated: true, completion:{})
-
+            
         }
     }
     
@@ -472,6 +473,8 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         }
     }
     
+    var listingId: String = "" //a random id for use in Realm
+    
     func emptyKCFABSelected(_ fab: KCFloatingActionButton) {
         tableView.beginUpdates()
         
@@ -489,6 +492,9 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         }
         
         links = newLinks
+        
+        //todo save realm
+        
         tableView.deleteRows(at: indexPaths, with: .middle)
         tableView.endUpdates()
         
@@ -829,6 +835,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     }
     
     var savedIndex: IndexPath?
+    var realmListing: RListing?
     
     func load(reset: Bool){
         if(!loading){
@@ -842,10 +849,45 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                     try session?.getList(paginator, subreddit: Multireddit.init(name: sub.substring(3, length: sub.length - 3), user: AccountController.currentName) , sort: sort, timeFilterWithin: time, completion: { (result) in
                         switch result {
                         case .failure:
+                            //test if realm exists and show that
+                            DispatchQueue.main.async {
+                                print("Getting realm data")
+                                do {
+                                    let realm = try Realm()
+                                    if let listing =  realm.objects(RListing.self).filter({ (item) -> Bool in
+                                        return item.subreddit == self.sub
+                                    }).sorted(by: { (listing1, listing2) -> Bool in
+                                        return listing1.created.timeIntervalSince1970 > listing2.created.timeIntervalSince1970
+                                    }).first {
+                                        self.links = []
+                                        for i in listing.links {
+                                            self.links.append(i)
+                                        }
+                                        
+                                        self.tableView.reloadData()
+                                    }
+                                    self.refreshControl.endRefreshing()
+                                    self.loading = false
+
+                                    if(self.links.isEmpty){
+                                        self.view.makeToast("No offline data found", duration: 10, position: .top)
+                                    } else {
+                                        self.view.makeToast("Showing offline data", duration: 10, position: .top)
+                                    }
+                                } catch {
+                                    
+                                }
+                            }
                             print(result.error!)
                         case .success(let listing):
                             if(reset){
                                 self.links = []
+                            }
+                            if(self.listingId.isEmpty || self.realmListing == nil){
+                                self.listingId = UUID.init().uuidString
+                                self.realmListing = RListing()
+                                self.realmListing!.id = self.listingId
+                                self.realmListing!.subreddit = self.sub
                             }
                             let links = listing.children.flatMap({$0 as? Link})
                             var converted : [RSubmission] = []
@@ -856,6 +898,23 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                             self.links += values
                             self.paginator = listing.paginator
                             DispatchQueue.main.async{
+                                do {
+                                    if(reset){
+                                        self.realmListing!.links.removeAll()
+                                    }
+                                    let realm = try! Realm()
+                                    //todo insert
+                                    realm.beginWrite()
+                                    for submission in self.links {
+                                        realm.create(type(of: submission), value: submission, update: true)
+                                        self.realmListing!.links.append(objectsIn: values)
+                                    }
+                                    realm.create(type(of: self.realmListing!), value: self.realmListing!, update: true)
+                                    try realm.commitWrite()
+                                } catch {
+                                    
+                                }
+                                
                                 self.tableView.reloadData()
                                 self.refreshControl.endRefreshing()
                                 self.loading = false
@@ -868,21 +927,75 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                     try session?.getList(paginator, subreddit: Subreddit.init(subreddit: sub) , sort: sort, timeFilterWithin: time, completion: { (result) in
                         switch result {
                         case .failure:
+                            //test if realm exists and show that
+                            DispatchQueue.main.async {
+                                print("Getting realm data")
+                                do {
+                                    let realm = try Realm()
+                                    if let listing =  realm.objects(RListing.self).filter({ (item) -> Bool in
+                                        return item.subreddit == self.sub
+                                    }).sorted(by: { (listing1, listing2) -> Bool in
+                                        return listing1.created.timeIntervalSince1970 > listing2.created.timeIntervalSince1970
+                                    }).first {
+                                        self.links = []
+                                        for i in listing.links {
+                                            self.links.append(i)
+                                        }
+                                        self.tableView.reloadData()
+                                    }
+                                    self.refreshControl.endRefreshing()
+                                    self.loading = false
+
+                                    if(self.links.isEmpty){
+                                        self.view.makeToast("No offline data found", duration: 10, position: .top)
+                                    } else {
+                                        self.view.makeToast("Showing offline data", duration: 10, position: .top)
+                                    }
+                                } catch {
+                                    
+                                }
+                            }
                             print(result.error!)
                         case .success(let listing):
+                            
+
                             if(reset){
                                 self.links = []
                             }
+                            if(self.listingId.isEmpty || self.realmListing == nil){
+                                self.listingId = UUID.init().uuidString
+                                self.realmListing = RListing()
+                                self.realmListing!.id = self.listingId
+                                self.realmListing!.subreddit = self.sub
+                            }
+
                             let links = listing.children.flatMap({$0 as? Link})
                             var converted : [RSubmission] = []
                             for link in links {
                                 converted.append(RealmDataWrapper.linkToRSubmission(submission: link))
                             }
-
+                            
                             let values = PostFilter.filter(converted, previous: self.links)
                             self.links += values
                             self.paginator = listing.paginator
                             DispatchQueue.main.async{
+                                do {
+                                    if(reset){
+                                        self.realmListing!.links.removeAll()
+                                    }
+                                    let realm = try! Realm()
+                                    //todo insert
+                                    realm.beginWrite()
+                                    for submission in self.links {
+                                        realm.create(type(of: submission), value: submission, update: true)
+                                        self.realmListing!.links.append(objectsIn: values)
+                                    }
+                                    realm.create(type(of: self.realmListing!), value: self.realmListing!, update: true)
+                                    try realm.commitWrite()
+                                } catch {
+                                    
+                                }
+
                                 self.tableView.reloadData()
                                 self.refreshControl.endRefreshing()
                                 self.loading = false

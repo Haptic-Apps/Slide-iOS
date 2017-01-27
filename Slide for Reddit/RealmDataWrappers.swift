@@ -200,6 +200,16 @@ class RealmDataWrapper {
 
 }
 
+class RListing: Object {
+    override static func primaryKey() -> String? {
+        return "id"
+    }
+    dynamic var created = NSDate(timeIntervalSince1970: 1)
+    dynamic var subreddit = ""
+    dynamic var id = ""
+    let links = List<RSubmission>()
+}
+
 class RSubmission: Object {
     override static func primaryKey() -> String? {
         return "id"

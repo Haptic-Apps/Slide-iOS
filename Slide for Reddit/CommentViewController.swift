@@ -497,7 +497,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     init(submission: String, subreddit: String?){
         self.submission = RSubmission()
-        self.submission!.id = submission
+        self.submission!.name = submission
         hasSubmission = false
         super.init(nibName: nil, bundle: nil)
         if(subreddit != nil){
@@ -507,7 +507,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     init(submission: String, comment: String, context: Int, subreddit: String){
         self.submission = RSubmission()
-        self.submission!.id = submission
+        self.submission!.name = submission
         hasSubmission = false
         self.context = comment
         self.contextNumber = context
