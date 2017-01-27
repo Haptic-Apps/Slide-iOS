@@ -164,7 +164,7 @@ class RealmDataWrapper {
     }
     
     static func messageToRMessage(message: Message) -> RMessage {
-       let title = message.baseJson["link_title"] as! String
+       let title = message.baseJson["link_title"] as? String ?? ""
         let bodyHtml = message.bodyHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
         let rMessage = RMessage()
         rMessage.htmlBody = bodyHtml
