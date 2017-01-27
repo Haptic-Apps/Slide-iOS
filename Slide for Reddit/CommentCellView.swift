@@ -129,7 +129,7 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         
     }
     
-    init(comment: Comment, parent: MediaViewController, width: CGFloat) {
+    init(comment: RComment, parent: MediaViewController, width: CGFloat) {
         super.init(style: .default, reuseIdentifier: "none")
         self.single = true
         self.title = UILabel(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude));
@@ -193,7 +193,7 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
     
     var lsC: [NSLayoutConstraint] = []
     
-    func setComment(comment: Comment, parent: MediaViewController, nav: UIViewController?, width: CGFloat){
+    func setComment(comment: RComment, parent: MediaViewController, nav: UIViewController?, width: CGFloat){
         parentViewController = parent
         if(navViewController == nil && nav != nil){
             navViewController = nav
@@ -331,7 +331,7 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         fatalError("init(coder:) has not been implemented")
     }
     
-    var comment : Comment?
+    var comment : RComment?
     public var parentViewController: MediaViewController?
     public var navViewController: UIViewController?
     

@@ -37,7 +37,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     
     func save(_ cell: LinkCellView) {
         do {
-            try session?.setSave(!ActionStates.isSaved(s: cell.link!), name: (cell.link?.name)!, completion: { (result) in
+            try session?.setSave(!ActionStates.isSaved(s: cell.link!), name: (cell.link?.getId())!, completion: { (result) in
                 
             })
             ActionStates.setSaved(s: cell.link!, saved: !ActionStates.isSaved(s: cell.link!))
@@ -50,7 +50,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     
     func upvote(_ cell: LinkCellView) {
         do{
-            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up, name: (cell.link?.name)!, completion: { (result) in
+            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up, name: (cell.link?.getId())!, completion: { (result) in
                 
             })
             ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up)
@@ -63,7 +63,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     
     func downvote(_ cell: LinkCellView) {
         do {
-            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down, name: (cell.link?.name)!, completion: { (result) in
+            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down, name: (cell.link?.getId())!, completion: { (result) in
                 
             })
             ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down)
@@ -148,7 +148,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         
     }
     
-    func showFilterMenu(_ link: Link){
+    func showFilterMenu(_ link: RSubmission){
         let actionSheetController: UIAlertController = UIAlertController(title: "What would you like to filter?", message: "", preferredStyle: .actionSheet)
         
         var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
@@ -185,7 +185,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     }
     
     
-    var links: [Link] = []
+    var links: [RSubmission] = []
     var paginator = Paginator()
     var sub : String
     var session: Session? = nil
@@ -476,7 +476,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         tableView.beginUpdates()
         
         var indexPaths : [IndexPath] = []
-        var newLinks : [Link] = []
+        var newLinks : [RSubmission] = []
         
         var count = 0
         for submission in links {
@@ -711,10 +711,10 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     
     func galleryMode(){
         let controller = GalleryTableViewController()
-        var gLinks:[Link] = []
+        var gLinks:[RSubmission] = []
         for l in links{
-            if (((((l.baseJson["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["url"] as? String) != nil {
-                gLinks.append(l)
+            if l.banner {
+                gLinks.append(l.bannerUrl)
             }
         }
         controller.setLinks(links: gLinks)
@@ -847,7 +847,12 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                             if(reset){
                                 self.links = []
                             }
-                            let values = PostFilter.filter(listing.children.flatMap({$0 as? Link}), previous: self.links)
+                            var links = listing.children.flatMap({$0 as? Link})
+                            var converted : [RSubmission] = []
+                            for link in links {
+                                converted.append(RealmDataWrapper.linkToRSubmission(submission: link))
+                            }
+                            let values = PostFilter.filter(converted, previous: self.links)
                             self.links += values
                             self.paginator = listing.paginator
                             DispatchQueue.main.async{
@@ -868,7 +873,10 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                             if(reset){
                                 self.links = []
                             }
-                            let values = PostFilter.filter(listing.children.flatMap({$0 as? Link}), previous: self.links)
+                            var links = listing.children.flatMap({$0 as? Link})
+                            var converted : [RSubmission] = []
+
+                            let values = PostFilter.filter(converted, previous: self.links)
                             self.links += values
                             self.paginator = listing.paginator
                             DispatchQueue.main.async{

@@ -168,13 +168,14 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     
     var content: CellContent?
     var hasText = false
-    func showBody(width: CGFloat, link: RSubmission){
+    func showBody(width: CGFloat){
         full = true
+        let link = self.link!
         let color = ColorUtil.accentColorForSub(sub: ((link).subreddit))
         if(!link.htmlBody.isEmpty){
             let html = link.htmlBody
             do {
-                let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!)!, options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
+                let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
                 let font = UIFont(name: ".SFUIText-Light", size: 16) ?? UIFont.systemFont(ofSize: 16)
                 let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
                 content = CellContent.init(string:attr2, width:(width - 24 - (thumb ? 75 : 0)))
@@ -377,6 +378,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     var thumbConstraint : [NSLayoutConstraint] = []
     
     func refreshLink(_ submission: RSubmission){
+        self.link = submission
         let attributedTitle = NSMutableAttributedString(string: submission.title, attributes: [NSFontAttributeName: title.font, NSForegroundColorAttributeName: ColorUtil.fontColor])
         let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(submission.flair)\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
         let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
@@ -450,9 +452,12 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         
     }
     
+    var link: RSubmission?
+    
     func setLink(submission: RSubmission, parent: MediaViewController, nav: UIViewController?){
         parentViewController = parent
         full = parent is CommentViewController
+        self.link = submission
         if(navViewController == nil && nav != nil){
             navViewController = nav
         }
@@ -543,55 +548,63 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             self.contentView.removeConstraint(bigConstraint!)
         }
         
-        if(!thumb){
-            thumbImage.sd_setImage(with: URL.init(string: ""))
-            self.thumbImage.frame.size.width = 0
-        } else {
-            addTouch(view: thumbImage, action: #selector(LinkCellView.openLink(sender:)))
-            thumbImage.sd_setImage(with: URL.init(string: submission.thumbnailUrl))
-        }
-        
         var height = submission.height
-        
+        let type = ContentType.getContentType(baseUrl: submission.url!)
+
         
         if(thumb && type == .SELF){
             thumb = false
         }
-        if (false) { //reduce height if full, currently broken though
-            if (!fullImage && height<50 && type != ContentType.CType.SELF) {
-                forceThumb = true;
-            } else if (cropImage) {
-                height = 200
-            } else {
-                let h2 = getHeightFromAspectRatio(imageHeight: h, imageWidth: w);
-                if (h2 != 0) {
-                    height = h2
-                } else {
-                    height = 200
-                }
-            }
-        } else if (bigPicCropped) {
-            if (!fullImage && height < 50) {
-                forceThumb = true;
-            } else {
+        
+        var fullImage = ContentType.fullImage(t: type)
+        
+        if(!fullImage && height < 50){
+            big = false
+            thumb = true
+        } else if(big && (SettingValues.bigPicCropped || full)){
+            height = 200
+        } else if(big){
+            height = getHeightFromAspectRatio(imageHeight: height, imageWidth: submission.width)
+            if(height == 0){
                 height = 200
             }
-        } else if (fullImage || height >= 50) {
-            let h2 = getHeightFromAspectRatio(imageHeight: h, imageWidth: w);
-            if (h2 != 0) {
-                height = h2
-            } else {
-                height = 200
-            }
-        } else {
-            forceThumb = true;
         }
-
-        if (type == ContentType.CType.SELF && hideSelftextLeadImage
-            || noImages && submission.isSelf) {
+        
+        if(type == .SELF && !SettingValues.showSelftextImages || SettingValues.showSelftextImages && !big){
             big = false
             thumb = false
         }
+        
+        if(height < 50){
+            thumb = true
+            big = false
+        }
+        
+        let shouldShowLq = SettingValues.lqEnabled && false //eventually check for network connection type
+        
+        
+
+        if (type == ContentType.CType.SELF && SettingValues.hideImageSelftext
+            || SettingValues.noImages && submission.isSelf) {
+            big = false
+            thumb = false
+        }
+        
+        if(thumb){
+            addTouch(view: thumbImage, action: #selector(LinkCellView.openLink(sender:)))
+            if(submission.thumbnailUrl == "nsfw"){
+                thumbImage.image = UIImage.init(named: "nsfw")
+            } else if(submission.thumbnailUrl == "link"){
+                thumbImage.image = UIImage.init(named: "link")
+            } else {
+                thumbImage.sd_setImage(with: URL.init(string: submission.thumbnailUrl))
+            }
+        } else {
+            thumbImage.sd_setImage(with: URL.init(string: ""))
+            self.thumbImage.frame.size.width = 0
+        }
+        
+
         if(big){
             let imageSize = CGSize.init(width:submission.width, height:height);
             var aspect = imageSize.width / imageSize.height
@@ -604,7 +617,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             let tap = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openLink(sender:)))
             tap.delegate = self
             bannerImage.addGestureRecognizer(tap)
-            bannerImage.sd_setImage(with: URL.init(submission.bannerUrl))
+            bannerImage.sd_setImage(with: URL.init(string: submission.bannerUrl))
         } else {
             bannerImage.sd_setImage(with: URL.init(string: ""))
         }
@@ -726,11 +739,12 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             self.contentView.addConstraints(thumbConstraint)
             
         }
-        refresh(submission)
+        refresh()
         
     }
     
-    func refresh(_link: RSubmission){
+    func refresh(){
+        let link = self.link!
         upvote.tintColor = ColorUtil.fontColor
         save.tintColor = ColorUtil.fontColor
         downvote.tintColor = ColorUtil.fontColor
@@ -749,12 +763,12 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             break
         }
         
-        let subScore = NSMutableAttributedString(string: (link.score>=10000) ? String(format: " %0.1fk", (Double(link!.score)/Double(1000))) : " \(link.score)", attributes: attrs)
+        let subScore = NSMutableAttributedString(string: (link.score>=10000) ? String(format: " %0.1fk", (Double(link.score)/Double(1000))) : " \(link.score)", attributes: attrs)
 
         if(full){
             let scoreRatio =
                 NSMutableAttributedString(string: (SettingValues.upvotePercentage && full && link.upvoteRatio > 0) ?
-                    " (\(Int(link!.upvoteRatio * 100))%)" : "", attributes: [NSFontAttributeName: comments.font, NSForegroundColorAttributeName: comments.textColor] )
+                    " (\(Int(link.upvoteRatio * 100))%)" : "", attributes: [NSFontAttributeName: comments.font, NSForegroundColorAttributeName: comments.textColor] )
             
             var attrsNew: [String: Any] = [:]
             if (scoreRatio.length > 0 ) {

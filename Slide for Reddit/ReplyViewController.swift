@@ -14,10 +14,11 @@ import Alamofire
 import MobileCoreServices
 import SwiftyJSON
 import ActionSheetPicker_3_0
+import RealmSwift
 
 class ReplyViewController: UITableViewController, UITextViewDelegate {
     
-    var toReplyTo: Thing?
+    var toReplyTo: Object?
     var text: UITextView?
     var subjectCell = InputCell()
     var recipientCell = InputCell()
@@ -57,7 +58,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
         return 70
     }
     
-    init(message: Message?, completion: @escaping (Message?) -> Void){
+    init(message: RMessage?, completion: @escaping (Message?) -> Void){
         self.toReplyTo = message
         self.message = true
         self.sub = ""
@@ -74,7 +75,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
     }
     
     
-    init(thing: Thing, sub: String, editing: Bool, completion: @escaping (Comment?) -> Void){
+    init(thing: Object, sub: String, editing: Bool, completion: @escaping (Comment?) -> Void){
         self.toReplyTo = thing
         self.edit = true
         self.sub = sub
@@ -98,7 +99,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
         }
     }
     
-    init(thing: Thing, sub: String, view: UIView?, completion: @escaping (Comment?) -> Void){
+    init(thing: Object, sub: String, view: UIView?, completion: @escaping (Comment?) -> Void){
         self.toReplyTo = thing
         self.sub = sub
         self.header = view

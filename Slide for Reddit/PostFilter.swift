@@ -47,13 +47,13 @@ class PostFilter {
         return false
     }
     
-    public static func matches(_ link: Link) -> Bool {
+    public static func matches(_ link: RSubmission) -> Bool {
         return (PostFilter.domains.contains(where: {$0.caseInsensitiveCompare(link.domain) == .orderedSame})) || PostFilter.profiles.contains(where: {$0.caseInsensitiveCompare(link.author) == .orderedSame}) || PostFilter.subreddits.contains(where: {$0.caseInsensitiveCompare(link.subreddit) == .orderedSame}) || contains(PostFilter.flairs, value: link.linkFlairText) || contains(PostFilter.selftext, value: link.selftext) || contains(PostFilter.titles, value: link.title)
     }
     
-    public static func filter(_ input: [Link], previous: [Link]?) -> [Link] {
+    public static func filter(_ input: [RSubmission], previous: [RSubmission]?) -> [RSubmission] {
         var ids: [String] = []
-        var toReturn: [Link] = []
+        var toReturn: [RSubmission] = []
         if(previous != nil){
             for p in previous! {
                 ids.append(p.getId())

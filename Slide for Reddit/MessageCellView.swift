@@ -129,7 +129,7 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         
     }
     
-    init(message: Message, parent: MediaViewController, width: CGFloat) {
+    init(message: RMessage, parent: MediaViewController, width: CGFloat) {
         super.init(style: .default, reuseIdentifier: "none")
         self.single = true
         self.title = UILabel(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude));
@@ -165,7 +165,7 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
     
     var lsC: [NSLayoutConstraint] = []
     
-    func setMessage(message: Message, parent: MediaViewController, nav: UIViewController?, width: CGFloat){
+    func setMessage(message: RMessage, parent: MediaViewController, nav: UIViewController?, width: CGFloat){
         parentViewController = parent
         if(navViewController == nil && nav != nil){
             navViewController = nav
@@ -327,7 +327,7 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         fatalError("init(coder:) has not been implemented")
     }
     
-    var message : Message?
+    var message : RMessage?
     public var parentViewController: MediaViewController?
     public var navViewController: UIViewController?
     

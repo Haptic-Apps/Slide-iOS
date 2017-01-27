@@ -103,4 +103,70 @@ class ActionStates {
             unSavedFullnames.append(fullname)
         }
     }
+    
+    //Realm
+    static func getVoteDirection(sb: Object) -> VoteDirection {
+        var id = (sb is RSubmission) ? ((RSubmission)sb).getId() : ((RComment)sb).getId()
+        if(upVotedFullnames.contains(id)){
+            return .up
+        } else if(downVotedFullnames.contains(s.getId())){
+            return .down
+        } else if(unvotedFullnames.contains(s.getId())){
+            return .none
+        } else {
+            return ((s is Comment) ? (s as! Comment).likes : (s as! Link).likes)
+        }
+    }
+    
+    static func setVoteDirection(s: RSubmission, direction: VoteDirection){
+        let fullname = s.getId()
+        
+        if let index = upVotedFullnames.index(of: fullname) {
+            upVotedFullnames.remove(at: index)
+        }
+        
+        if let index = downVotedFullnames.index(of: fullname) {
+            downVotedFullnames.remove(at: index)
+        }
+        
+        if let index = unvotedFullnames.index(of: fullname) {
+            unvotedFullnames.remove(at: index)
+        }
+        
+        switch(direction){
+        case .up:
+            upVotedFullnames.append(fullname)
+            break
+        case .down:
+            downVotedFullnames.append(fullname)
+            break
+        default:
+            unvotedFullnames.append(fullname)
+            break
+        }
+    }
+    
+    static func isSaved(s: RSubmission) -> Bool {
+        if(savedFullnames.contains(s.getId())){
+            return true
+        } else if(unSavedFullnames.contains(s.getId())){
+            return false
+        } else {
+            return ((s is Comment) ? (s as! Comment).saved : (s as! Link).saved)
+        }
+    }
+    
+    static func setSaved(s: RSubmission, saved: Bool){
+        let fullname = s.getId()
+        if let index = savedFullnames.index(of: fullname){
+            savedFullnames.remove(at: index)
+        }
+        
+        if(saved){
+            savedFullnames.append(fullname)
+        } else {
+            unSavedFullnames.append(fullname)
+        }
+    }
+
 }

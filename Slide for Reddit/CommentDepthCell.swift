@@ -28,7 +28,7 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
     var c: UIView = UIView()
     var children: UILabel = UILabel()
     var menu: UIView = UIView()
-    var comment:Comment?
+    var comment:RComment?
     var depth:Int = 0
     
     func textView(_ textView: UZTextView, didLongTapLinkAttribute value: Any?) {
@@ -101,7 +101,7 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
     }
     
     var delegate: UZTextViewCellDelegate? = nil
-    var content: Thing? = nil
+    var content: RComment? = nil
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
