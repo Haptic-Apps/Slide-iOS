@@ -117,7 +117,7 @@ class RealmDataWrapper {
         rSubmission.voted = submission.likes != .none
         rSubmission.upvoteRatio = submission.upvoteRatio
         rSubmission.vote = submission.likes == .up
-        rSubmission.name = submission.name
+        rSubmission.name = submission.id
         rSubmission.height = h
         rSubmission.width = w
         rSubmission.isSelf = submission.isSelf
@@ -211,6 +211,7 @@ class RSubmission: Object {
     dynamic var edited = NSDate(timeIntervalSince1970: 1)
     dynamic var gilded = 0
     dynamic var htmlBody = ""
+    dynamic var title = ""
     dynamic var subreddit = ""
     dynamic var archived = false
     dynamic var locked = false
@@ -221,7 +222,6 @@ class RSubmission: Object {
     }
 
     dynamic var isEdited = false
-    dynamic var title = ""
     dynamic var commentCount = 0
     dynamic var saved = false
     dynamic var stickied = false

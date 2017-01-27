@@ -548,7 +548,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             self.contentView.removeConstraint(bigConstraint!)
         }
         
-        var height = submission.height
+        height = submission.height
         let type = ContentType.getContentType(baseUrl: submission.url!)
 
         
@@ -581,16 +581,13 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         }
         
         let shouldShowLq = SettingValues.lqEnabled && false //eventually check for network connection type
-        
-        
-
         if (type == ContentType.CType.SELF && SettingValues.hideImageSelftext
             || SettingValues.noImages && submission.isSelf) {
             big = false
             thumb = false
         }
         
-        if(thumb){
+        if(thumb && !big){
             addTouch(view: thumbImage, action: #selector(LinkCellView.openLink(sender:)))
             if(submission.thumbnailUrl == "nsfw"){
                 thumbImage.image = UIImage.init(named: "nsfw")
@@ -630,7 +627,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         title.sizeToFit()
         
         let mo = History.commentsSince(s: submission)
-        let commentText = NSMutableAttributedString(string: " \(submission.comments)" + (mo > 0 ? "(+\(mo))" : ""), attributes: [NSFontAttributeName: comments.font, NSForegroundColorAttributeName: comments.textColor])
+        let commentText = NSMutableAttributedString(string: " \(submission.commentCount)" + (mo > 0 ? "(+\(mo))" : ""), attributes: [NSFontAttributeName: comments.font, NSForegroundColorAttributeName: comments.textColor])
         comments.attributedText = commentText
         comments.addImage(imageName: "comments", afterLabel: false)
         
@@ -646,7 +643,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             self.contentView.removeConstraints(thumbConstraint)
             thumbConstraint = []
         }
-        if(thumb){
+        if(thumb && !big){
             thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[image(75)]",
                                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                                               metrics: metrics,

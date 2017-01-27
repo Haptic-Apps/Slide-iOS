@@ -332,7 +332,7 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         }
         
         
-        if(date != 0 && date < Double(comment.created.timeIntervalSince1970)){
+        if(date != 0 && date < Double(comment.created.timeIntervalSince1970 * 1000)){
             self.rightSideViewSpace.backgroundColor = ColorUtil.getColorForSub(sub: comment.subreddit)
         } else {
             self.rightSideViewSpace.backgroundColor = ColorUtil.foregroundColor

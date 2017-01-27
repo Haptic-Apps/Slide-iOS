@@ -257,7 +257,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         if let link = self.submission {
             do {
                 print("Context number is \(contextNumber)")
-                try session?.getArticles(link.getId(), sort:sort, comments:(context.isEmpty ? nil : [context]), context: contextNumber, completion: { (result) -> Void in
+                print("Name is \(link.name)")
+                try session?.getArticles(link.name, sort:sort, comments:(context.isEmpty ? nil : [context]), context: contextNumber, completion: { (result) -> Void in
                     switch result {
                     case .failure(let error):
                         print(error)
@@ -273,21 +274,19 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                         
                         self.refreshControl.endRefreshing()
                         var allIncoming: [(Thing, Int)] = []
+                        self.submission!.comments.removeAll()
                         for child in listing.children {
                             let incoming = self.extendKeepMore(in: child, current: startDepth)
                             allIncoming.append(contentsOf: incoming)
                             for i in incoming{
-                                self.comments.append(RealmDataWrapper.commentToRealm(comment: i.0))
+                                let item = RealmDataWrapper.commentToRealm(comment: i.0)
+                                self.comments.append(item)
+                                if(item is RComment){
+                                self.submission!.comments.append(item as! RComment)
+                                }
                                 self.cDepth[i.0.getId()] = i.1
                             }
                         }
-                        
-                        let realm = try! Realm()
-                        self.submission!.comments.clearAll()
-                        self.submission!.comments.append(comments)
-                       //todo insert
-                        realm.insert(comments)
-                        realm.insert(self.submission!)
                         
                         var time = timeval(tv_sec: 0, tv_usec: 0)
                         gettimeofday(&time, nil)
@@ -297,6 +296,20 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                         self.paginator = listing.paginator
                         
                         DispatchQueue.main.async(execute: { () -> Void in
+                            do {
+                                let realm = try! Realm()
+                                //todo insert
+                                realm.beginWrite()
+                                for comment in self.comments {
+                                    realm.create(type(of: comment), value: comment, update: true)
+                                }
+                                realm.create(type(of: self.submission!), value: self.submission!, update: true)
+                                try realm.commitWrite()
+                            } catch {
+                                
+                            }
+                            
+
                             if(!self.hasSubmission){
                                 self.headerCell = LinkCellView()
                                 self.headerCell?.delegate = self
