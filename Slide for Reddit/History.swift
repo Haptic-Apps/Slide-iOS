@@ -14,7 +14,7 @@ class History {
     public static var commentCounts = NSMutableDictionary()
 
     //mark Submissions
-    public static func getSeen(s: Link)-> Bool {
+    public static func getSeen(s: RSubmission)-> Bool {
         let fullname = s.getId()
         if seenTimes.object(forKey: fullname) != nil{
             return true
@@ -22,7 +22,7 @@ class History {
         return (s.visited || s.likes != .none)
     }
 
-    public static func getSeenTime(s: Link)-> Double{
+    public static func getSeenTime(s: RSubmission)-> Double{
     let fullname = s.getId()
        if let time = seenTimes.object(forKey: fullname) {
         if(time is NSNumber){
@@ -35,21 +35,21 @@ class History {
         }
     }
 
-    public static func addSeen(s: Thing){
+    public static func addSeen(s: RSubmission){
         let fullname = s.getId()
         seenTimes.setValue(NSNumber(value: NSDate().timeIntervalSince1970), forKey: fullname)
     }
     
     //mark Comments
-    public static func commentsSince(s: Link) -> Int{
+    public static func commentsSince(s: RSubmission) -> Int{
         if let comments = commentCounts.object(forKey: s.getId()){
-            return s.numComments - (comments as! Int)
+            return s.commentCount - (comments as! Int)
         } else {
             return 0
         }
     }
     
-    public static func setComments(s: Link){
-        commentCounts.setValue(NSNumber(value: s.numComments), forKey: s.getId())
+    public static func setComments(s: RSubmission){
+        commentCounts.setValue(NSNumber(value: s.commentCount), forKey: s.getId())
     }
 }

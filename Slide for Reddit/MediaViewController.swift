@@ -22,12 +22,12 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
         return photos[index]
     }
     
-    var link:Link!
+    var link:RSubmission!
     var paging = false
     var images:[URL] = []
     var photos:[GalleryItem] = []
     
-    public func setLink(lnk: Link){
+    public func setLink(lnk: RSubmission){
         History.addSeen(s: lnk)
         self.link = lnk
         images = []

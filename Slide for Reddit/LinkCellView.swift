@@ -15,7 +15,6 @@
 //
 
 import UIKit
-import reddift
 import UZTextView
 import AMScrollingNavbar
 import ImageViewer
@@ -169,13 +168,13 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     
     var content: CellContent?
     var hasText = false
-    func showBody(width: CGFloat){
+    func showBody(width: CGFloat, link: RSubmission){
         full = true
-        let color = ColorUtil.accentColorForSub(sub: ((link)?.subreddit)!)
-        if(link?.selftextHtml != nil){
-            let html = link?.selftextHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
+        let color = ColorUtil.accentColorForSub(sub: ((link).subreddit))
+        if(!link.htmlBody.isEmpty){
+            let html = link.htmlBody
             do {
-                let attr = try NSMutableAttributedString(data: (html?.data(using: .unicode)!)!, options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
+                let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!)!, options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
                 let font = UIFont(name: ".SFUIText-Light", size: 16) ?? UIFont.systemFont(ofSize: 16)
                 let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
                 content = CellContent.init(string:attr2, width:(width - 24 - (thumb ? 75 : 0)))
@@ -377,9 +376,9 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     var bigConstraint : NSLayoutConstraint?
     var thumbConstraint : [NSLayoutConstraint] = []
     
-    func refreshLink(_ submission: Link){
+    func refreshLink(_ submission: RSubmission){
         let attributedTitle = NSMutableAttributedString(string: submission.title, attributes: [NSFontAttributeName: title.font, NSForegroundColorAttributeName: ColorUtil.fontColor])
-        let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(submission.linkFlairText.isEmpty ? submission.linkFlairCssClass : submission.linkFlairText)\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
+        let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(submission.flair)\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
         let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
         let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(submission.gilded) ", attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor])
         
@@ -388,7 +387,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         let archived = NSMutableAttributedString.init(string: "\u{00A0}ARCHIVED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
         
         let spacer = NSMutableAttributedString.init(string: "  ")
-        if(!(submission.linkFlairText.isEmpty ? submission.linkFlairCssClass : submission.linkFlairText).isEmpty){
+        if(!submission.flair.isEmpty){
             attributedTitle.append(spacer)
             attributedTitle.append(flairTitle)
         }
@@ -418,7 +417,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         attributedTitle.append(NSAttributedString.init(string: "\n\n"))
         let attrs = [NSFontAttributeName : UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor] as [String: Any]
         
-        let endString = NSMutableAttributedString(string:"  •  \(DateFormatter().timeSince(from: NSDate.init(timeIntervalSince1970: TimeInterval.init(submission.createdUtc)), numericDates: true))\((submission.edited > 0 ? ("(edit \(DateFormatter().timeSince(from: NSDate.init(timeIntervalSince1970: TimeInterval.init(submission.edited)), numericDates: true)))") : ""))  •  \(submission.author)", attributes: [NSFontAttributeName : UIFont.systemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor])
+        let endString = NSMutableAttributedString(string:"  •  \(DateFormatter().timeSince(from: submission.created, numericDates: true))\((submission.isEdited ? ("(edit \(submission.edited, numericDates: true)))") : ""))  •  \(submission.author)", attributes: [NSFontAttributeName : UIFont.systemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor])
         
         let boldString = NSMutableAttributedString(string:"/r/\(submission.subreddit)", attributes:attrs)
         
@@ -433,7 +432,6 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         attributedTitle.append(infoString)
         
         title.attributedText = attributedTitle
-        link = submission
         title.sizeToFit()
         
         let comment = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openComment(sender:)))
@@ -445,21 +443,21 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         refresh()
         
         let more = History.commentsSince(s: submission)
-        let commentText = NSMutableAttributedString(string: " \(submission.numComments)" + (more > 0 ? " (+\(more))" : ""), attributes: [NSFontAttributeName: comments.font, NSForegroundColorAttributeName: comments.textColor])
+        let commentText = NSMutableAttributedString(string: " \(submission.commentCount)" + (more > 0 ? " (+\(more))" : ""), attributes: [NSFontAttributeName: comments.font, NSForegroundColorAttributeName: comments.textColor])
         
         comments.attributedText = commentText
         comments.addImage(imageName: "comments", afterLabel: false)
         
     }
     
-    func setLink(submission: Link, parent: MediaViewController, nav: UIViewController?){
+    func setLink(submission: RSubmission, parent: MediaViewController, nav: UIViewController?){
         parentViewController = parent
         full = parent is CommentViewController
         if(navViewController == nil && nav != nil){
             navViewController = nav
         }
         let attributedTitle = NSMutableAttributedString(string: submission.title, attributes: [NSFontAttributeName: title.font, NSForegroundColorAttributeName: ColorUtil.fontColor])
-        let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(submission.linkFlairText.isEmpty ? submission.linkFlairCssClass : submission.linkFlairText)\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
+        let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(submission.flair)\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
         let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
         let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(submission.gilded) ", attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor])
        
@@ -468,7 +466,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         let archived = NSMutableAttributedString.init(string: "\u{00A0}ARCHIVED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
 
         let spacer = NSMutableAttributedString.init(string: "  ")
-        if(!(submission.linkFlairText.isEmpty ? submission.linkFlairCssClass : submission.linkFlairText).isEmpty){
+        if(!submission.flair.isEmpty){
             attributedTitle.append(spacer)
             attributedTitle.append(flairTitle)
         }
@@ -497,7 +495,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         attributedTitle.append(NSAttributedString.init(string: "\n\n"))
         let attrs = [NSFontAttributeName : UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor] as [String: Any]
         
-        let endString = NSMutableAttributedString(string:"  •  \(DateFormatter().timeSince(from: NSDate.init(timeIntervalSince1970: TimeInterval.init(submission.createdUtc)), numericDates: true))\((submission.edited > 0 ? ("(edit \(DateFormatter().timeSince(from: NSDate.init(timeIntervalSince1970: TimeInterval.init(submission.edited)), numericDates: true)))") : ""))  •  \(submission.author)", attributes: [NSFontAttributeName : UIFont.systemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor])
+        let endString = NSMutableAttributedString(string:"  •  \(DateFormatter().timeSince(from: submission.created, numericDates: true))\((submission.isEdited ? ("(edit \(submission.edited, numericDates: true)))") : ""))  •  \(submission.author)", attributes: [NSFontAttributeName : UIFont.systemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor])
         
         let boldString = NSMutableAttributedString(string:"/r/\(submission.subreddit)", attributes:attrs)
         
@@ -512,7 +510,6 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         attributedTitle.append(infoString)
         
         title.attributedText = attributedTitle
-        link = submission
         title.sizeToFit()
         reply.isHidden = true
         
@@ -530,226 +527,73 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             }
         }
         
-        let type = ContentType.getContentType(submission: submission)
-        
-        let fullImage = ContentType.fullImage(t: type)
-        
-        var thumbUsed = false
-        var forceThumb = false
-        var json: JSONDictionary? = nil
-        json = submission.baseJson
-        
-        let cropImage = false
-        //setting eventually
-        let noImages = false //setting eventually
-        var w: Int = 0
-        var h: Int = 0
-        thumb = false
-        big = false //same as setVisibility(gone)
-        let bigPicCropped = false //setting
-        let hideSelftextLeadImage = false //setting
-        let imgurLq = true //setting
-        var url: String = ""
-        var loadLq = false //check internet vs settings
-        
-        var preview  = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["url"] as? String)
-        if(bigConstraint != nil){
-            self.contentView.removeConstraint(bigConstraint!)
-        }
-        
-        full = false
-        
-        if (type == ContentType.CType.SELF && hideSelftextLeadImage
-            || noImages && submission.isSelf) {
-            big = false
-            thumb = false
-        } else {
-            if (preview != nil && !(preview?.isEmpty())!) {
-                preview = preview?.replacingOccurrences(of: "&amp;", with: "&")
-                w = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["width"] as? Int)!
-                h = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["height"] as? Int)!
-                if (false) { //reduce height if full, currently broken though
-                    if (!fullImage && height<50 && type != ContentType.CType.SELF) {
-                        forceThumb = true;
-                    } else if (cropImage) {
-                        height = 200
-                    } else {
-                        let h2 = getHeightFromAspectRatio(imageHeight: h, imageWidth: w);
-                        if (h2 != 0) {
-                            height = h2
-                        } else {
-                            height = 200
-                        }
-                    }
-                } else if (bigPicCropped) {
-                    if (!fullImage && height < 50) {
-                        forceThumb = true;
-                    } else {
-                        height = 200
-                    }
-                } else if (fullImage || height >= 50) {
-                    let h2 = getHeightFromAspectRatio(imageHeight: h, imageWidth: w);
-                    if (h2 != 0) {
-                        height = h2
-                    } else {
-                        height = 200
-                    }
-                } else {
-                    forceThumb = true;
-                }
                 
-            }
-            
-            let thumbnailType = ContentType.getThumbnailType(submission: submission)
-            
-            if (noImages && loadLq) {
-                big = false
-                if (!full && !submission.isSelf) {
-                    thumb = true
-                }
-                thumbImage.sd_setImage(with: URL.init(string: submission.thumbnail), placeholderImage: UIImage.init(named: "web"))
-                thumbUsed = true;
-            } else if (submission.over18
-                && thumbnailType == .NSFW) {
-                big = false
-                if (!full || forceThumb) {
-                    thumb = true
-                }
-                if (submission.isSelf && full) {
-                    thumb = false
-                } else {
-                    thumbImage.sd_setImage(with: URL.init(string: submission.thumbnail), placeholderImage: UIImage.init(named: "nsfw"))
-                    thumbUsed = true;
-                }
-            } else if (type != .IMAGE
-                && type != .SELF
-                && (!submission.thumbnail.isEmpty() && (thumbnailType != .URL)) || submission.thumbnail.isEmpty() && !submission.isSelf) {
-                
-                big = false
-                if (!full) {
-                    thumb = true
-                }
-                
-                thumbImage.sd_setImage(with: URL.init(string: submission.thumbnail), placeholderImage: UIImage.init(named: "web"))
-                thumbUsed = true;
-            } else if (type == .IMAGE && !submission.thumbnail.isEmpty()) {
-                /*todo this && submission.getThumbnails() != null
-                 && submission.getThumbnails().getVariations() != null
-                 && submission.getThumbnails().getVariations().length > 0*/
-                if (loadLq && false) {
-                    
-                    if (ContentType.isImgurImage(uri: submission.url!)) {
-                        url = (submission.url?.absoluteString)!
-                        /* do hashurl = url.substring(0, url.lastIndexOf(".")) + (SettingValues.imgurLq ? "m"
-                         : "h") + url.substring(url.lastIndexOf("."), url.length());*/
-                    } else {
-                        /* do this let length = submission.getThumbnails().getVariations().length;
-                         url = Html.fromHtml(
-                         submission.getThumbnails().getVariations()[length / 2].getUrl())
-                         .toString(); //unescape url characters*/
-                    }
-                    
-                } else {
-                    if (preview != nil && !(preview?.isEmpty)!) { //Load the preview image which has probably already been cached in memory instead of the direct link
-                        url = preview!
-                    } else {
-                        url = (submission.url?.absoluteString)!
-                    }
-                }
-                
-                //todo isPicsEnabled(sub)
-                if (!full && false || forceThumb) {
-                    
-                    if (!submission.isSelf || full) {
-                        if (!full) {
-                            thumb = true
-                        }
-                        if (!full) {
-                            thumbImage.sd_setImage(with: URL.init(string: submission.thumbnail), placeholderImage: UIImage.init(named: "web"))
-                        }
-                    } else {
-                        thumb = false
-                    }
-                    big = false
-                } else {
-                    if (!full) {
-                        bannerImage.sd_setImage(with: URL.init(string: url))
-                    }
-                    big = true
-                    if (!full) {
-                        thumb = false
-                    }
-                }
-            } else if (preview != nil) {
-                //todo submission.getThumbnails().getVariations().length != 0
-                if (loadLq && true) {
-                    if (ContentType.isImgurImage(uri: submission.url!)) {
-                        url = (submission.url?.absoluteString)!
-                        url = url.substring(0, length: url.lastIndexOf(".")!) + (imgurLq ? "m"
-                            : "h") + url.substring(url.lastIndexOf(".")!, length: url.length - url.lastIndexOf(".")!);
-                    } else {
-                        /*todo get half preview
-                         int length = submission.getThumbnails().getVariations().length;
-                         url = Html.fromHtml(
-                         submission.getThumbnails().getVariations()[length / 2].getUrl())
-                         .toString(); //unescape url characters*/
-                        url = preview!
-                    }
-                } else {
-                    url = preview!
-                }
-                
-                //todo is pic enabled
-                if (true && !full || forceThumb) {
-                    
-                    if (!full) {
-                        thumb = true
-                    }
-                    thumbImage.sd_setImage(with: URL.init(string: submission.thumbnail), placeholderImage: UIImage.init(named: "web"))
-                    big = false
-                    
-                } else {
-                    if (!full) {
-                        bannerImage.sd_setImage(with: URL.init(string: url))
-                    }
-                    big = true
-                    if (!full) {
-                        thumb = false
-                    }
-                }
-            } else if (!(thumbnailType == .URL || (thumbnailType != .NSFW))) {
-                
-                if (!full) {
-                    thumb  = true
-                }
-                thumbImage.sd_setImage(with: URL.init(string: submission.thumbnail), placeholderImage: UIImage.init(named: "web"))
-                big = false
-            } else {
-                thumb = false
-                big = false
-            }
-        }
-        if(thumb && type == .SELF){
-            thumb = false
-        }
-        
         full = parent is CommentViewController
         addTouch(view: save, action: #selector(LinkCellView.save(sender:)))
         addTouch(view: upvote, action: #selector(LinkCellView.upvote(sender:)))
         addTouch(view: downvote, action: #selector(LinkCellView.downvote(sender:)))
         addTouch(view: more, action: #selector(LinkCellView.more(sender:)))
         addTouch(view: reply, action: #selector(LinkCellView.reply(sender:)))
-
+        thumb = submission.thumbnail
+        big = submission.banner
+        //todo test if big image
+        //todo test if self and hideSelftextLeadImage, don't show anything
+        //test if should be LQ, get LQ image instead of banner image
+        if(bigConstraint != nil){
+            self.contentView.removeConstraint(bigConstraint!)
+        }
         
         if(!thumb){
             thumbImage.sd_setImage(with: URL.init(string: ""))
             self.thumbImage.frame.size.width = 0
         } else {
             addTouch(view: thumbImage, action: #selector(LinkCellView.openLink(sender:)))
+            thumbImage.sd_setImage(with: URL.init(string: submission.thumbnailUrl))
         }
         
+        var height = submission.height
+        
+        
+        if(thumb && type == .SELF){
+            thumb = false
+        }
+        if (false) { //reduce height if full, currently broken though
+            if (!fullImage && height<50 && type != ContentType.CType.SELF) {
+                forceThumb = true;
+            } else if (cropImage) {
+                height = 200
+            } else {
+                let h2 = getHeightFromAspectRatio(imageHeight: h, imageWidth: w);
+                if (h2 != 0) {
+                    height = h2
+                } else {
+                    height = 200
+                }
+            }
+        } else if (bigPicCropped) {
+            if (!fullImage && height < 50) {
+                forceThumb = true;
+            } else {
+                height = 200
+            }
+        } else if (fullImage || height >= 50) {
+            let h2 = getHeightFromAspectRatio(imageHeight: h, imageWidth: w);
+            if (h2 != 0) {
+                height = h2
+            } else {
+                height = 200
+            }
+        } else {
+            forceThumb = true;
+        }
+
+        if (type == ContentType.CType.SELF && hideSelftextLeadImage
+            || noImages && submission.isSelf) {
+            big = false
+            thumb = false
+        }
         if(big){
-            let imageSize = CGSize.init(width:w, height:h);
+            let imageSize = CGSize.init(width:submission.width, height:height);
             var aspect = imageSize.width / imageSize.height
             if(aspect == 0 || aspect > 10000 || aspect.isNaN){
                 aspect = 1
@@ -760,6 +604,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             let tap = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openLink(sender:)))
             tap.delegate = self
             bannerImage.addGestureRecognizer(tap)
+            bannerImage.sd_setImage(with: URL.init(submission.bannerUrl))
         } else {
             bannerImage.sd_setImage(with: URL.init(string: ""))
         }
@@ -772,7 +617,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         title.sizeToFit()
         
         let mo = History.commentsSince(s: submission)
-        let commentText = NSMutableAttributedString(string: " \(submission.numComments)" + (mo > 0 ? "(+\(mo))" : ""), attributes: [NSFontAttributeName: comments.font, NSForegroundColorAttributeName: comments.textColor])
+        let commentText = NSMutableAttributedString(string: " \(submission.comments)" + (mo > 0 ? "(+\(mo))" : ""), attributes: [NSFontAttributeName: comments.font, NSForegroundColorAttributeName: comments.textColor])
         comments.attributedText = commentText
         comments.addImage(imageName: "comments", afterLabel: false)
         
@@ -789,8 +634,6 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             thumbConstraint = []
         }
         if(thumb){
-            print("thumb")
-
             thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[image(75)]",
                                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                                               metrics: metrics,
@@ -818,8 +661,6 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             
             self.contentView.addConstraints(thumbConstraint)
         } else if(big) {
-            print("big")
-            
             if(bigConstraint != nil){
                 thumbConstraint.append(bigConstraint!)
             }
@@ -858,7 +699,6 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             
             self.contentView.addConstraints(thumbConstraint)
         } else {
-            print("body")
             thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[image(0)]",
                                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                                               metrics: metrics,
@@ -886,16 +726,16 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             self.contentView.addConstraints(thumbConstraint)
             
         }
-        refresh()
+        refresh(submission)
         
     }
     
-    func refresh(){
+    func refresh(_link: RSubmission){
         upvote.tintColor = ColorUtil.fontColor
         save.tintColor = ColorUtil.fontColor
         downvote.tintColor = ColorUtil.fontColor
         var attrs: [String: Any] = [:]
-        switch(ActionStates.getVoteDirection(s: link!)){
+        switch(ActionStates.getVoteDirection(s: link)){
         case .down :
             downvote.tintColor = ColorUtil.downvoteColor
             attrs = ([NSForegroundColorAttributeName: ColorUtil.downvoteColor!, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12)])
@@ -909,16 +749,16 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             break
         }
         
-        let subScore = NSMutableAttributedString(string: (link!.score>=10000) ? String(format: " %0.1fk", (Double(link!.score)/Double(1000))) : " \(link!.score)", attributes: attrs)
+        let subScore = NSMutableAttributedString(string: (link.score>=10000) ? String(format: " %0.1fk", (Double(link!.score)/Double(1000))) : " \(link.score)", attributes: attrs)
 
         if(full){
             let scoreRatio =
-                NSMutableAttributedString(string: (SettingValues.upvotePercentage && full && link!.upvoteRatio > 0) ?
+                NSMutableAttributedString(string: (SettingValues.upvotePercentage && full && link.upvoteRatio > 0) ?
                     " (\(Int(link!.upvoteRatio * 100))%)" : "", attributes: [NSFontAttributeName: comments.font, NSForegroundColorAttributeName: comments.textColor] )
             
             var attrsNew: [String: Any] = [:]
             if (scoreRatio.length > 0 ) {
-                let numb = (link!.upvoteRatio)
+                let numb = (link.upvoteRatio)
                 if (numb <= 0.5) {
                     if (numb <= 0.1) {
                         attrsNew = [NSForegroundColorAttributeName: GMColor.blue500Color()]
@@ -946,10 +786,10 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         score.attributedText = subScore
         score.addImage(imageName: "upvote", afterLabel: false)
         
-        if(ActionStates.isSaved(s: link!)){
+        if(ActionStates.isSaved(s: link)){
             save.tintColor = UIColor.flatYellow()
         }
-        if(History.getSeen(s: link!) && !full){
+        if(History.getSeen(s: link) && !full){
             self.contentView.alpha = 0.9
         } else {
             self.contentView.alpha = 1
@@ -957,38 +797,6 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     }
     
     var registered: Bool = false
-    
-    var previewActionItems: [UIPreviewActionItem] {
-        
-        var toReturn: [UIPreviewAction] = []
-        
-        let likeAction = UIPreviewAction(title: "Share", style: .default) { (action, viewController) -> Void in
-            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [self.link?.url! ?? ""], applicationActivities: nil);
-            let currentViewController:UIViewController = UIApplication.shared.keyWindow!.rootViewController!
-            currentViewController.present(activityViewController, animated: true, completion: nil);
-        }
-        toReturn.append(likeAction)
-        
-        let deleteAction = UIPreviewAction(title: "Open in Safari", style: .default) { (action, viewController) -> Void in
-            UIApplication.shared.open((self.link?.url!)!, options: [:], completionHandler: nil)
-        }
-        toReturn.append(deleteAction)
-        
-        if(AccountController.isLoggedIn){
-            
-            let upvote = UIPreviewAction(title: "Upvote", style: .default){ (action, viewController) -> Void in
-                self.upvote()
-            }
-            toReturn.append(upvote)
-        }
-        let comments = UIPreviewAction(title: "Comments", style: .default){ (action, viewController) -> Void in
-            self.openComment()
-        }
-        toReturn.append(comments)
-        return toReturn
-        
-    }
-    
     func previewingContext(_ previewingContext: UIViewControllerPreviewing,
                            viewControllerForLocation location: CGPoint) -> UIViewController? {
         if(full){
@@ -1032,7 +840,6 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         fatalError("init(coder:) has not been implemented")
     }
     
-    var link : Link?
     public var parentViewController: MediaViewController?
     public var navViewController: UIViewController?
     

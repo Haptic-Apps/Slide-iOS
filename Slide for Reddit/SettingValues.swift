@@ -59,6 +59,8 @@ class SettingValues{
     public static var hideButtonActionbar = false
     public static var saveButtonActionbar = true
     public static var enlargeLinks = true
+    public static var lqLow = true
+    public static var lqMid = true
     public static var showLinkContentType = true
     public static var commentFontSize = 16
     public static var postFontSize = 18
