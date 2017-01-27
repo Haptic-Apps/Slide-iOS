@@ -135,7 +135,7 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
                 if(ContentType.isGif(uri: link)){
                     var link = link.absoluteString.replacingOccurrences(of: ".gifv", with: ".mp4")
                     link = link.replacingOccurrences(of: ".gif", with: ".mp4")
-                    let photo = GalleryItem.video(fetchPreviewImageBlock: { (completion) in
+                    _ = GalleryItem.video(fetchPreviewImageBlock: { (completion) in
                         
                     }, videoURL: URL.init(string: link)!)
                 } else {

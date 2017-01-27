@@ -9,6 +9,7 @@
 import Foundation
 import reddift
 import XLPagerTabStrip
+import RealmSwift
 
 class InboxContributionLoader: ContributionLoader {
     var color: UIColor
@@ -26,7 +27,7 @@ class InboxContributionLoader: ContributionLoader {
     
     
     var paginator: Paginator
-    var content: [Thing]
+    var content: [Object]
     var delegate: ContentListingViewController?
     var indicatorInfo: IndicatorInfo
     var paging = true
@@ -46,12 +47,13 @@ class InboxContributionLoader: ContributionLoader {
                             self.content = []
                         }
                         for message in listing.children.flatMap({$0}){
-                            self.content.append(message)
+                            self.content.append(RealmDataWrapper.messageToRMessage(message: message as! Message))
                             if((message as! Message).baseJson["replies"] != nil) {
                                 let json = (message as! Message).baseJson as JSONDictionary
                                 if let j = json["replies"] as? JSONDictionary, let data = j["data"] as? JSONDictionary, let things = data["children"] as? JSONArray {
                                     for thing in things {
-                                        self.content.append(Message.init(json: (thing as! JSONDictionary)["data"] as! JSONDictionary))
+                                        self.content.append(RealmDataWrapper.messageToRMessage(message: Message.init(json: (thing as! JSONDictionary)["data"] as! JSONDictionary)))
+
                                     }
                                 }
                             }

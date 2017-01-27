@@ -11,9 +11,9 @@ import reddift
 
 class GalleryTableViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource {
     
-    var items: [Link] = []
+    var items: [RSubmission] = []
     
-    func setLinks(links: [Link]){
+    func setLinks(links: [RSubmission]){
         self.items = links
         tableView.reloadData()
     }
@@ -68,9 +68,8 @@ class GalleryTableViewController: MediaViewController, UITableViewDelegate, UITa
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let link = items[indexPath.row]
-        let json = link.baseJson
-        let w = (((((json["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["width"] as? Int)!
-        let h = (((((json["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["height"] as? Int)!
+        let w = link.width
+        let h = link.height
         return CGFloat(getHeightFromAspectRatio(imageHeight: h, imageWidth: w))
 
         

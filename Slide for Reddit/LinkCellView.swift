@@ -84,7 +84,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                             sheet.dismiss(animated: true, completion: nil)
                         }
                     )
-                    var open = OpenInChromeController.init()
+                    let open = OpenInChromeController.init()
                     if(open.isChromeInstalled()){
                         sheet.addAction(
                             UIAlertAction(title: "Open in Chrome", style: .default) { (action) in
@@ -556,7 +556,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             thumb = false
         }
         
-        var fullImage = ContentType.fullImage(t: type)
+        let fullImage = ContentType.fullImage(t: type)
         
         if(!fullImage && height < 50){
             big = false
@@ -570,7 +570,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             }
         }
         
-        if(type == .SELF && !SettingValues.showSelftextImages || SettingValues.showSelftextImages && !big){
+        if(type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big){
             big = false
             thumb = false
         }

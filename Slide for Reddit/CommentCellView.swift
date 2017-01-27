@@ -227,7 +227,7 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         }
         
         let attrs = [NSFontAttributeName : UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: uC] as [String : Any]
-        let endString = NSMutableAttributedString(string:"  •  \(DateFormatter().timeSince(from: NSDate.init(timeIntervalSince1970: TimeInterval.init(comment.createdUtc)), numericDates: true))  •  ")
+        let endString = NSMutableAttributedString(string:"  •  \(DateFormatter().timeSince(from: comment.created, numericDates: true))  •  ")
         
         let boldString = NSMutableAttributedString(string: "\(comment.score)pts", attributes:attrs)
         let subString = NSMutableAttributedString(string: "/r/\(comment.subreddit)")
@@ -245,7 +245,7 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         
         let accent = ColorUtil.accentColorForSub(sub: ((comment).subreddit))
         if(!comment.body.isEmpty()){
-            let html = comment.bodyHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
+            let html = comment.htmlText
             do {
                 let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
                 let font = UIFont(name: ".SFUIText-Light", size: 16) ?? UIFont.systemFont(ofSize: 16)
@@ -341,7 +341,7 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
     
     
     func openComment(sender: UITapGestureRecognizer? = nil){
-        let comment = CommentViewController.init(submission: (self.comment?.linkId.substring(3, length: (self.comment?.linkId.length)! - 3))! , comment: self.comment!.id, context: 3, subreddit: (self.comment?.subreddit)!)
+        let comment = CommentViewController.init(submission: (self.comment?.linkid.substring(3, length: (self.comment?.linkid.length)! - 3))! , comment: self.comment!.id, context: 3, subreddit: (self.comment?.subreddit)!)
             (self.navViewController as? UINavigationController)?.pushViewController(comment, animated: true)
         }
     

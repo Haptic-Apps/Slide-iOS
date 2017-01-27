@@ -110,9 +110,9 @@ public:
         /// Create a separate connection for each session. For testing purposes
         /// only.
         ///
-        // FIXME: This setting is ignored for now, due to limitations in the
-        // load balancer.
-        bool one_connection_per_session = false;
+        // FIXME: This setting defaults to true now, due to limitations in the
+        // load balancer. Do not set it to false in production.
+        bool one_connection_per_session = true;
 
         /// Do not access the local file system. Sessions will act as if
         /// initiated on behalf of an empty (or nonexisting) local Realm

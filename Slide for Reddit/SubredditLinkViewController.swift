@@ -111,7 +111,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         }
         actionSheetController.addAction(cancelActionButton)
         
-        var open = OpenInChromeController.init()
+        let open = OpenInChromeController.init()
         if(open.isChromeInstalled()){
             cancelActionButton = UIAlertAction(title: "Open in Chrome", style: .default) { action -> Void in
                 open.openInChrome(link.url!, callbackURL: nil, createNewTab: true)
@@ -714,7 +714,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         var gLinks:[RSubmission] = []
         for l in links{
             if l.banner {
-                gLinks.append(l.bannerUrl)
+                gLinks.append(l)
             }
         }
         controller.setLinks(links: gLinks)
@@ -847,7 +847,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                             if(reset){
                                 self.links = []
                             }
-                            var links = listing.children.flatMap({$0 as? Link})
+                            let links = listing.children.flatMap({$0 as? Link})
                             var converted : [RSubmission] = []
                             for link in links {
                                 converted.append(RealmDataWrapper.linkToRSubmission(submission: link))
@@ -873,8 +873,11 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                             if(reset){
                                 self.links = []
                             }
-                            var links = listing.children.flatMap({$0 as? Link})
+                            let links = listing.children.flatMap({$0 as? Link})
                             var converted : [RSubmission] = []
+                            for link in links {
+                                converted.append(RealmDataWrapper.linkToRSubmission(submission: link))
+                            }
 
                             let values = PostFilter.filter(converted, previous: self.links)
                             self.links += values

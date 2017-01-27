@@ -335,7 +335,7 @@ public:
                     return;
                 }
 
-                BinaryData changeset_data(uncompressed_body.data() + in.tellg(), changeset_size);
+                BinaryData changeset_data(uncompressed_body.data() + size_t(in.tellg()), changeset_size);
                 in.seekg(position);
 
                 if (logger.would_log(util::Logger::Level::trace)) {

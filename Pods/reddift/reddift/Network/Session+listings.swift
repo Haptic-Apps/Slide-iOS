@@ -258,13 +258,13 @@ extension Session {
     - returns: Data task which requests search to reddit.com.
      */
     @discardableResult
-    public func getDuplicatedArticles(_ paginator: Paginator, thing: Thing, limit: Int = 25, completion: @escaping  (Result<(Listing, Listing)>) -> Void) throws -> URLSessionDataTask {
+    public func getDuplicatedArticles(_ paginator: Paginator, name: String, limit: Int = 25, completion: @escaping  (Result<(Listing, Listing)>) -> Void) throws -> URLSessionDataTask {
         let parameter = paginator.dictionaryByAdding(parameters: [
             "limit"    : "\(limit)",
 //            "sr_detail": "true",
             "show"     : "all"
         ])
-        guard let request = URLRequest.requestForOAuth(with: baseURL, path:"/duplicates/t3_" + thing.id, parameter:parameter, method:"GET", token:token)
+        guard let request = URLRequest.requestForOAuth(with: baseURL, path:"/duplicates/t3_" + name, parameter:parameter, method:"GET", token:token)
             else { throw ReddiftError.canNotCreateURLRequest as NSError }
         let closure = {(data: Data?, response: URLResponse?, error: NSError?) -> Result<(Listing, Listing)> in
             return Result(from: Response(data: data, urlResponse: response), optional:error)

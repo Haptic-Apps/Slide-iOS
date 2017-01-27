@@ -36,7 +36,7 @@ class RedditLink{
         
         switch (type) {
         case .SHORTENED:
-            return CommentViewController.init(submission: parts[1])
+            return CommentViewController.init(submission: parts[1], subreddit: nil)
         case .LIVE:
             
             break
@@ -75,7 +75,7 @@ class RedditLink{
             return CommentViewController.init(submission: parts[4], subreddit: parts[2])
             
         case .SUBMISSION_WITHOUT_SUB:
-            return CommentViewController.init(submission: parts[2])
+            return CommentViewController.init(submission: parts[2], subreddit: nil)
             
         case .SUBREDDIT:
             return SubredditLinkViewController.init(subName: parts[2], single: true)

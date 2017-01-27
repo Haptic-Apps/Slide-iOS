@@ -9,11 +9,11 @@ PODS:
   - ImagePickerSheetController (0.9.3)
   - ImageViewer (4.0)
   - KCFloatingActionButton (2.1.2)
-  - Realm (2.3.0):
-    - Realm/Headers (= 2.3.0)
-  - Realm/Headers (2.3.0)
-  - RealmSwift (2.3.0):
-    - Realm (= 2.3.0)
+  - Realm (2.4.0):
+    - Realm/Headers (= 2.4.0)
+  - Realm/Headers (2.4.0)
+  - RealmSwift (2.4.0):
+    - Realm (= 2.4.0)
   - reddift (2.0.0):
     - reddift/MiniKeychain (= 2.0.0)
   - reddift/MiniKeychain (2.0.0)
@@ -68,7 +68,7 @@ CHECKOUT OPTIONS:
     :commit: 1a6d7c365a23d86bdcdf8eb93058b75e07be1fb1
     :git: https://github.com/ccrama/ImageViewer
   reddift:
-    :commit: 8218cbfc5b49e0d61dbb7b650204d7e81a004bfb
+    :commit: 913c41794ad3230c961fca771f029388b4098a91
     :git: https://github.com/ccrama/reddift
   UZTextView:
     :commit: 94021870e65000cf332cb1f2ec70525b05c6ab16
@@ -83,8 +83,8 @@ SPEC CHECKSUMS:
   ImagePickerSheetController: 4789b06940e299431455c61be77fda440883c36c
   ImageViewer: 364abc0309c33dda86d08ca25b0243e5c67d8cd3
   KCFloatingActionButton: 1b22ce95d44b51915280df8a8b277eae4a06c3f1
-  Realm: 69d7de9aa569a11eed490aaabc8f2109e3985ecf
-  RealmSwift: dc6f99ea55e59490cec69c860f91932b6bf7efb6
+  Realm: ee18a466779d058e525e79b3db76a20541f82eb6
+  RealmSwift: 9f77d226585c5d0c6fe02cb432b8230ad826f9cc
   reddift: 3066e687c2a934b0f9aca6ee6e2161abc4c93a56
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
   SideMenu: eeff6b85456c5c6e14165655691d2033f6b24969

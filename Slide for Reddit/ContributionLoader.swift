@@ -9,14 +9,14 @@
 import Foundation
 import reddift
 import XLPagerTabStrip
-
+import RealmSwift
 
 protocol ContributionLoader {
     
     var paginator: Paginator {get}
     var delegate: ContentListingViewController? {get set}
     func getData(reload: Bool)
-    var content: [Thing] {get}
+    var content: [Object] {get}
     var indicatorInfo: IndicatorInfo {get set}
     var color: UIColor {get set}
     var paging: Bool {get}

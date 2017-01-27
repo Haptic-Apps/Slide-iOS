@@ -16,7 +16,6 @@ class RealmDataWrapper {
     static func linkToRSubmission(submission: Link) -> RSubmission {
         let flair = submission.linkFlairText.isEmpty ? submission.linkFlairCssClass : submission.linkFlairText;
         let bodyHtml = submission.selftextHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
-        let type = ContentType.getContentType(submission: submission)
         
         var json: JSONDictionary? = nil
         json = submission.baseJson
@@ -111,6 +110,7 @@ class RealmDataWrapper {
         rSubmission.thumbnail = thumb
         rSubmission.banner = big
         rSubmission.lqUrl = lqUrl
+        rSubmission.domain = submission.domain
         rSubmission.lQ = lowq
         rSubmission.score = submission.score
         rSubmission.flair = flair
@@ -123,6 +123,14 @@ class RealmDataWrapper {
         rSubmission.isSelf = submission.isSelf
         rSubmission.permalink = submission.permalink
         return rSubmission
+    }
+    
+    static func commentToRealm(comment: Thing) -> Object {
+        if(comment is Comment) {
+            return commentToRComment(comment: comment as! Comment)
+        } else {
+            return moreToRMore(more: comment as! More)
+        }
     }
     
     //Takes a Comment from reddift and turns it into a Realm model
@@ -138,16 +146,57 @@ class RealmDataWrapper {
         rComment.gilded = comment.gilded
         rComment.htmlText = bodyHtml
         rComment.subreddit = comment.subreddit
+        rComment.submissionTitle = comment.submissionTitle
         rComment.saved = comment.saved
+        rComment.body = comment.body
         //todo rComment.pinned = comment.pinned
         rComment.score = comment.score
         rComment.flair = flair
+        rComment.linkid = comment.linkId
+        rComment.distinguished = comment.distinguished
+        rComment.controversiality = comment.controversiality
         rComment.voted = comment.likes != .none
         rComment.vote = comment.likes == .up
         rComment.name = comment.name
+        rComment.parentId = comment.parentId
         //todo rComment.permalink = comment.permalink
         return rComment
     }
+    
+    static func messageToRMessage(message: Message) -> RMessage {
+       let title = message.baseJson["link_title"] as! String
+        let bodyHtml = message.bodyHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
+        let rMessage = RMessage()
+        rMessage.htmlBody = bodyHtml
+        rMessage.name = message.name
+        rMessage.id = message.getId()
+        
+        rMessage.author = message.author
+        rMessage.subreddit = message.subreddit
+        rMessage.created = NSDate(timeIntervalSince1970: TimeInterval(message.created))
+        rMessage.new = message.new
+        rMessage.linkTitle = title
+        rMessage.context = message.context
+        rMessage.wasComment = message.wasComment
+        rMessage.subject = message.subject
+        return rMessage
+    }
+    
+    //Takes a More from reddift and turns it into a Realm model
+    static func moreToRMore(more: More) -> RMore {
+        let rMore = RMore()
+        rMore.id = more.getId()
+        rMore.name = more.name
+        rMore.parentId = more.parentId
+        rMore.count = more.count
+        for s in more.children {
+            let str = RString()
+            str.value = s
+            rMore.children.append(str)
+        }
+        return rMore
+    }
+
 
 }
 
@@ -166,9 +215,11 @@ class RSubmission: Object {
     dynamic var archived = false
     dynamic var locked = false
     dynamic var urlString = ""
+    
     var url: URL? {
-        return URL.init(string: urlString)
+        return URL.init(string: self.urlString)
     }
+
     dynamic var isEdited = false
     dynamic var title = ""
     dynamic var commentCount = 0
@@ -186,6 +237,7 @@ class RSubmission: Object {
     dynamic var score = 0
     dynamic var upvoteRatio: Double = 0
     dynamic var flair = ""
+    dynamic var domain = ""
     dynamic var voted = false
     dynamic var height = 0
     dynamic var width = 0
@@ -217,11 +269,11 @@ class RMessage: Object {
     dynamic var author = ""
     dynamic var created = NSDate(timeIntervalSince1970: 1)
     dynamic var htmlBody = ""
+    dynamic var new = false
+    dynamic var linkTitle = ""
+    dynamic var context = ""
+    dynamic var wasComment  = false
     dynamic var subreddit = ""
-    
-    var url: URL? {
-        return URL.init(string: urlString)
-    }
     dynamic var subject = ""
     
     func getId() -> String {
@@ -241,6 +293,7 @@ class RComment: Object {
 
     dynamic var id = ""
     dynamic var name = ""
+    dynamic var body = ""
     dynamic var author = ""
     dynamic var permalink = ""
     dynamic var created = NSDate(timeIntervalSince1970: 1)
@@ -248,11 +301,15 @@ class RComment: Object {
     dynamic var depth = 0
     dynamic var gilded = 0
     dynamic var htmlText = ""
+    dynamic var distinguished = ""
+    dynamic var linkid = ""
+    dynamic var submissionTitle = ""
     dynamic var pinned = false
-    dynamic var controlvertial = false
+    dynamic var controversiality = 0
     dynamic var isEdited = false
     dynamic var subreddit = ""
     dynamic var scoreHidden = false
+    dynamic var parentId = ""
     dynamic var score = 0
     dynamic var flair = ""
     dynamic var voted = false
@@ -269,6 +326,25 @@ class RComment: Object {
         }
         return .none
     }
+}
+
+class RString: Object {
+    dynamic var value = ""
+}
+
+class RMore: Object {
+    override static func primaryKey() -> String? {
+        return "id"
+    }
+    
+    func getId() -> String {
+        return id
+    }
+    dynamic var count = 0
+    dynamic var id = ""
+    dynamic var name = ""
+    dynamic var parentId = ""
+    let children = List<RString>()
 }
 
 class RSubmissionListing: Object {

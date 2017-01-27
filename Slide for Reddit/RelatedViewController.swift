@@ -11,7 +11,7 @@ import reddift
 
 class RelatedViewController: ContentListingViewController {
     
-    init(thing: Link){
+    init(thing: RSubmission){
         super.init(dataSource: RelatedContributionLoader.init(thing: thing, sub: thing.subreddit))
         baseData.delegate = self
         self.title = "Other discussions"

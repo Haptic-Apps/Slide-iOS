@@ -48,7 +48,7 @@ class PostFilter {
     }
     
     public static func matches(_ link: RSubmission) -> Bool {
-        return (PostFilter.domains.contains(where: {$0.caseInsensitiveCompare(link.domain) == .orderedSame})) || PostFilter.profiles.contains(where: {$0.caseInsensitiveCompare(link.author) == .orderedSame}) || PostFilter.subreddits.contains(where: {$0.caseInsensitiveCompare(link.subreddit) == .orderedSame}) || contains(PostFilter.flairs, value: link.linkFlairText) || contains(PostFilter.selftext, value: link.selftext) || contains(PostFilter.titles, value: link.title)
+        return (PostFilter.domains.contains(where: {$0.caseInsensitiveCompare(link.domain) == .orderedSame})) || PostFilter.profiles.contains(where: {$0.caseInsensitiveCompare(link.author) == .orderedSame}) || PostFilter.subreddits.contains(where: {$0.caseInsensitiveCompare(link.subreddit) == .orderedSame}) || contains(PostFilter.flairs, value: link.flair) || contains(PostFilter.selftext, value: link.htmlBody) || contains(PostFilter.titles, value: link.title)
     }
     
     public static func filter(_ input: [RSubmission], previous: [RSubmission]?) -> [RSubmission] {

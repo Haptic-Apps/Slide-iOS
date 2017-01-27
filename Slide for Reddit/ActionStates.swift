@@ -57,7 +57,7 @@ class ActionStates {
         }
     }
     
-    static func isRead(s: Message) -> Bool {
+    static func isRead(s: RMessage) -> Bool {
         if(savedFullnames.contains(s.getId())){
             return true
         } else if(unSavedFullnames.contains(s.getId())){
@@ -67,7 +67,7 @@ class ActionStates {
         }
     }
     
-    static func setRead(s: Message, read: Bool){
+    static func setRead(s: RMessage, read: Bool){
         let fullname = s.getId()
         if let index = savedFullnames.index(of: fullname){
             savedFullnames.remove(at: index)
@@ -105,16 +105,15 @@ class ActionStates {
     }
     
     //Realm
-    static func getVoteDirection(sb: Object) -> VoteDirection {
-        var id = (sb is RSubmission) ? ((RSubmission)sb).getId() : ((RComment)sb).getId()
-        if(upVotedFullnames.contains(id)){
+    static func getVoteDirection(s: RSubmission) -> VoteDirection {
+        if(upVotedFullnames.contains(s.getId())){
             return .up
         } else if(downVotedFullnames.contains(s.getId())){
             return .down
         } else if(unvotedFullnames.contains(s.getId())){
             return .none
         } else {
-            return ((s is Comment) ? (s as! Comment).likes : (s as! Link).likes)
+            return s.likes
         }
     }
     
@@ -152,7 +151,7 @@ class ActionStates {
         } else if(unSavedFullnames.contains(s.getId())){
             return false
         } else {
-            return ((s is Comment) ? (s as! Comment).saved : (s as! Link).saved)
+            return s.saved
         }
     }
     
@@ -168,5 +167,70 @@ class ActionStates {
             unSavedFullnames.append(fullname)
         }
     }
+    
+    //Realm comments
+    static func getVoteDirection(s: RComment) -> VoteDirection {
+        if(upVotedFullnames.contains(s.getId())){
+            return .up
+        } else if(downVotedFullnames.contains(s.getId())){
+            return .down
+        } else if(unvotedFullnames.contains(s.getId())){
+            return .none
+        } else {
+            return (s.likes)
+        }
+    }
+    
+    static func setVoteDirection(s: RComment, direction: VoteDirection){
+        let fullname = s.getId()
+        
+        if let index = upVotedFullnames.index(of: fullname) {
+            upVotedFullnames.remove(at: index)
+        }
+        
+        if let index = downVotedFullnames.index(of: fullname) {
+            downVotedFullnames.remove(at: index)
+        }
+        
+        if let index = unvotedFullnames.index(of: fullname) {
+            unvotedFullnames.remove(at: index)
+        }
+        
+        switch(direction){
+        case .up:
+            upVotedFullnames.append(fullname)
+            break
+        case .down:
+            downVotedFullnames.append(fullname)
+            break
+        default:
+            unvotedFullnames.append(fullname)
+            break
+        }
+    }
+    
+    static func isSaved(s: RComment) -> Bool {
+        if(savedFullnames.contains(s.getId())){
+            return true
+        } else if(unSavedFullnames.contains(s.getId())){
+            return false
+        } else {
+            return s.saved
+        }
+    }
+    
+    static func setSaved(s: RComment, saved: Bool){
+        let fullname = s.getId()
+        if let index = savedFullnames.index(of: fullname){
+            savedFullnames.remove(at: index)
+        }
+        
+        if(saved){
+            savedFullnames.append(fullname)
+        } else {
+            unSavedFullnames.append(fullname)
+        }
+    }
+
 
 }

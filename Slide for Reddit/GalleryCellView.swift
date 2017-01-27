@@ -21,19 +21,17 @@ class GalleryCellView: UITableViewCell {
     var commentsImage = UIImageView()
     
     var estimatedHeight = CGFloat(0)
-    var link: Link?
+    var link: RSubmission?
     
-    func setLink(_ link: Link, navigationVC: UINavigationController, parent: MediaViewController){
+    func setLink(_ link: RSubmission, navigationVC: UINavigationController, parent: MediaViewController){
         self.navViewController = navigationVC
         self.parentViewController = parent
         self.link = link
-        let json = link.baseJson
-        var preview  = (((((json["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["url"] as? String)
-        preview = preview?.replacingOccurrences(of: "&amp;", with: "&")
-        let w = (((((json["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["width"] as? Int)!
-        let h = (((((json["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["height"] as? Int)!
+        let preview = link.bannerUrl
+        let w = link.width
+        let h = link.height
         estimatedHeight = CGFloat(getHeightFromAspectRatio(imageHeight: h, imageWidth: w))
-        bannerImage.sd_setImage(with: URL.init(string: preview!))
+        bannerImage.sd_setImage(with: URL.init(string: preview))
         
         switch(ContentType.getContentType(submission: link)){
         case .ALBUM:
