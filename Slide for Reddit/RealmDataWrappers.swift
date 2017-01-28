@@ -91,7 +91,7 @@ class RealmDataWrapper {
         let rSubmission = RSubmission()
         rSubmission.id = submission.getId()
         rSubmission.author = submission.author
-        rSubmission.created = NSDate(timeIntervalSince1970: TimeInterval(submission.created))
+        rSubmission.created = NSDate(timeIntervalSince1970: TimeInterval(submission.createdUtc))
         rSubmission.isEdited = submission.edited > 0
         rSubmission.edited = NSDate(timeIntervalSince1970: TimeInterval(submission.edited))
         rSubmission.gilded = submission.gilded
@@ -140,7 +140,7 @@ class RealmDataWrapper {
         let rComment = RComment()
         rComment.id = comment.getId()
         rComment.author = comment.author
-        rComment.created = NSDate(timeIntervalSince1970: TimeInterval(comment.created))
+        rComment.created = NSDate(timeIntervalSince1970: TimeInterval(comment.createdUtc))
         rComment.isEdited = comment.edited > 0
         rComment.edited = NSDate(timeIntervalSince1970: TimeInterval(comment.edited))
         rComment.gilded = comment.gilded
@@ -174,7 +174,7 @@ class RealmDataWrapper {
         
         rMessage.author = message.author
         rMessage.subreddit = message.subreddit
-        rMessage.created = NSDate(timeIntervalSince1970: TimeInterval(message.created))
+        rMessage.created = NSDate(timeIntervalSince1970: TimeInterval(message.createdUtc))
         rMessage.new = message.new
         rMessage.linkTitle = title
         rMessage.context = message.context
