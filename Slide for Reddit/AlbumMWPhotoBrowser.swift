@@ -21,7 +21,7 @@ class AlbumMWPhotoBrowser: NSObject, GalleryItemsDataSource {
             GalleryConfigurationItem.presentationStyle(.fade),
             GalleryConfigurationItem.hideDecorationViewsOnLaunch(true),
             
-            GalleryConfigurationItem.swipeToDismissMode(.vertical),
+            GalleryConfigurationItem.swipeToDismissMode(.always),
             GalleryConfigurationItem.toggleDecorationViewsBySingleTap(true),
             
             GalleryConfigurationItem.overlayColor(UIColor(white: 0.035, alpha: 1)),
@@ -53,7 +53,7 @@ class AlbumMWPhotoBrowser: NSObject, GalleryItemsDataSource {
             GalleryConfigurationItem.displacementTransitionStyle(.springBounce(0.7)),
             GalleryConfigurationItem.displacementTimingCurve(.linear),
             
-            GalleryConfigurationItem.statusBarHidden(true),
+            GalleryConfigurationItem.statusBarHidden(false),
             GalleryConfigurationItem.displacementKeepOriginalInPlace(false),
             GalleryConfigurationItem.displacementInsetMargin(50),
             

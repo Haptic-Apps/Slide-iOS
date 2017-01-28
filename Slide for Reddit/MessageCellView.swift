@@ -101,7 +101,7 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         self.title = UILabel(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude));
         title.numberOfLines = 0
         title.lineBreakMode = NSLineBreakMode.byWordWrapping
-        title.font = UIFont.systemFont(ofSize: 18, weight: 1.15)
+        title.font = FontGenerator.fontOfSize(size: 18, submission: true)
         title.textColor = ColorUtil.fontColor
         
         self.textView = UZTextView(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
@@ -111,7 +111,7 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         
         self.info = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
         info.numberOfLines = 0
-        info.font = UIFont.systemFont(ofSize: 12)
+        info.font = FontGenerator.fontOfSize(size: 12, submission: true)
         info.textColor = ColorUtil.fontColor
         info.alpha = 0.87
         
@@ -135,7 +135,7 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         self.title = UILabel(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude));
         title.numberOfLines = 0
         title.lineBreakMode = NSLineBreakMode.byWordWrapping
-        title.font = UIFont.systemFont(ofSize: 18, weight: 1.15)
+        title.font = FontGenerator.fontOfSize(size: 18, submission: true)
         title.textColor = ColorUtil.fontColor
         
         self.textView = UZTextView(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
@@ -145,7 +145,7 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         
         self.info = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
         info.numberOfLines = 0
-        info.font = UIFont.systemFont(ofSize: 12)
+        info.font = FontGenerator.fontOfSize(size: 12, submission: true)
         info.textColor = ColorUtil.fontColor
         info.alpha = 0.87
         
@@ -212,9 +212,9 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         let html = message.htmlBody
         do {
             let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
-            let font = UIFont(name: ".SFUIText-Light", size: 16) ?? UIFont.systemFont(ofSize: 16)
+            let font = FontGenerator.fontOfSize(size: 16, submission: false)
             let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: accent)
-            content = CellContent.init(string:attr2, width:(width - 16 - (message.subject.hasPrefix("re:") ? 30 : 0)))
+            content = CellContent.init(string:LinkParser.parse(attr2), width:(width - 16 - (message.subject.hasPrefix("re:") ? 30 : 0)))
             textView.attributedString = content?.attributedString
             textView.frame.size.height = (content?.textHeight)!
             hasText = true

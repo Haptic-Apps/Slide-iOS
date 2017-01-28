@@ -65,7 +65,7 @@ CHECKOUT OPTIONS:
     :commit: e9b6c2ca937135335e9b5252a7792c94ce1497d4
     :git: https://github.com/lbrndnr/ImagePickerSheetController
   ImageViewer:
-    :commit: 1a6d7c365a23d86bdcdf8eb93058b75e07be1fb1
+    :commit: ccb14919d76beae820f59de74c3e1b28164be18b
     :git: https://github.com/ccrama/ImageViewer
   reddift:
     :commit: 75e057db8e50dad283c0d58397e85f0c2672ef66

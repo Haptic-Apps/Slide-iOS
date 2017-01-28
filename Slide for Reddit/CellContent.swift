@@ -27,7 +27,7 @@ struct CellContent {
     init(string: String, width: CGFloat, fontSize: CGFloat = 14, id: String) {
         self.id = id
         self.width =  width
-        let font = UIFont(name: UIFont.systemFont(ofSize: fontSize).fontName, size: fontSize) ?? UIFont.systemFont(ofSize: fontSize)
+        let font = FontGenerator.fontOfSize(size: fontSize, submission: id.hasPrefix("t3"))
         attributedString = NSAttributedString(string: string, attributes: [NSFontAttributeName : font])
         let horizontalMargin = CommentDepthCell.margin().left + CommentDepthCell.margin().right
         let verticalMargin = CommentDepthCell.margin().top + CommentDepthCell.margin().bottom
@@ -61,7 +61,7 @@ struct CellContent {
     init(string: String, width: CGFloat, hasRelies: Bool, fontSize: CGFloat = 14, id: String) {
         self.id = id
         self.width = width
-        let font = UIFont(name: UIFont.systemFont(ofSize: fontSize).fontName, size: fontSize) ?? UIFont.systemFont(ofSize: fontSize)
+        let font = FontGenerator.fontOfSize(size: fontSize, submission: id.hasPrefix("t3"))
         attributedString = NSAttributedString(string: string, attributes: [NSFontAttributeName : font])
         let horizontalMargin = CommentDepthCell.margin().left + CommentDepthCell.margin().right
         let verticalMargin = CommentDepthCell.margin().top + CommentDepthCell.margin().bottom

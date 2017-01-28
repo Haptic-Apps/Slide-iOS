@@ -35,6 +35,12 @@
 	<string>1</string>
 	<key>LSApplicationCategoryType</key>
 	<string></string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>googlechrome</string>
+		<string>googlechrome-x-callback</string>
+		<string>googlechromes</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<false/>
 	<key>NSAppTransportSecurity</key>
@@ -42,9 +48,23 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Slide uses the camera in order to attach images to comments and submissions</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Slide uses photos in order to attach images to comments and submissions</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>googleicon.ttf</string>
+		<string>Roboto-Bold.ttf</string>
+		<string>Roboto-Light.ttf</string>
+		<string>Roboto-Medium.ttf</string>
+		<string>RobotoCondensed-Bold.ttf</string>
+		<string>RobotoCondensed-Regular.ttf</string>
+		<string>Roboto-LightItalic.ttf</string>
+		<string>Roboto-MediumItalic.ttf</string>
+		<string>RobotoCondensed-BoldItalic.ttf</string>
+		<string>RobotoCondensed-Italic.ttf</string>
+		<string>Roboto-Italic.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>
@@ -73,15 +93,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-    <key>NSPhotoLibraryUsageDescription</key>
-    <string>Slide uses photos in order to attach images to comments and submissions</string>
-    <key>NSCameraUsageDescription</key>
-    <string>Slide uses the camera in order to attach images to comments and submissions</string>
-    <key>LSApplicationQueriesSchemes</key>
-    <array>
-        <string>googlechrome</string>
-        <string>googlechrome-x-callback</string>
-        <string>googlechromes</string>
-    </array>
 </dict>
 </plist>

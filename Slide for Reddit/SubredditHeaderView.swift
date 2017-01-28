@@ -127,7 +127,7 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
                 let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
                 let font = UIFont(name: ".SFUIText-Light", size: 16) ?? UIFont.systemFont(ofSize: 16)
                 let attr2 = attr.reconstruct(with: font, color: .white, linkColor: ColorUtil.accentColorForSub(sub: subreddit.displayName))
-                content = CellContent.init(string:attr2, width: self.frame.size.width)
+                content = CellContent.init(string:LinkParser.parse(attr2), width: self.frame.size.width)
                 desc.attributedString = content?.attributedString
                 desc.frame.size.height = (content?.textHeight)!
             } catch {
@@ -140,7 +140,7 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
                 let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
                 let font = UIFont(name: ".SFUIText-Light", size: 16) ?? UIFont.systemFont(ofSize: 16)
                 let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: ColorUtil.accentColorForSub(sub: subreddit.displayName))
-                contentInfo = CellContent.init(string:attr2, width: 250)
+                contentInfo = CellContent.init(string:LinkParser.parse(attr2), width: 250)
                 info.attributedString = contentInfo?.attributedString
                 info.frame.size.height = (contentInfo?.textHeight)!
             } catch {
