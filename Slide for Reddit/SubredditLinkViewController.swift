@@ -383,9 +383,9 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             let html = sub.descriptionHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
             do {
                 let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
-                let font = UIFont(name: ".SFUIText-Light", size: 16) ?? UIFont.systemFont(ofSize: 16)
+                let font = FontGenerator.fontOfSize(size: 16, submission: false)
                 let attr2 = attr.reconstruct(with: font, color: UIColor.darkGray, linkColor: ColorUtil.accentColorForSub(sub: sub.displayName))
-                let contentInfo = CellContent.init(string:attr2, width: rect.size.width)
+                let contentInfo = CellContent.init(string:LinkParser.parse(attr2), width: rect.size.width)
                 info.attributedString = contentInfo.attributedString
                 info.frame.size.height = (contentInfo.textHeight)
                 scrollView.contentSize = CGSize.init(width: rect.size.width, height: info.frame.size.height)

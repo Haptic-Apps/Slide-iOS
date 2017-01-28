@@ -65,8 +65,6 @@ class SettingValues{
     public static var lqMid = true
     public static var noImages = false
     public static var showLinkContentType = true
-    public static var commentFontSize = 16
-    public static var postFontSize = 18
     public static var internalGifView = true
     public static var internalAlbumView = true
     public static var internalImageView = true
@@ -77,6 +75,8 @@ class SettingValues{
     public static var dataSavingEnableMobile = false
     public static var dataSavingEnableWiFi = false
     public static var dataSavingImageQuality = "DATASAVING_IMAGE_QUALITY"
+    public static var postFontOffset = 0
+    public static var commentFontOffset = 0
     
     public static func initialize(){
         let settings = UserDefaults.standard

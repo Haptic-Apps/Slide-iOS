@@ -46,6 +46,24 @@ class SettingsGeneral: UITableViewController {
         UserDefaults.standard.synchronize()
     }
     
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let label : UILabel = UILabel()
+        label.textColor = ColorUtil.fontColor
+        label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
+        let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
+        toReturn.backgroundColor = ColorUtil.backgroundColor
+        
+        switch(section) {
+        case 0: label.text  = "Display"
+        break
+        case 1: label.text  = "Sorting"
+            break
+        default: label.text  = ""
+            break
+        }
+        return toReturn
+    }
+    
     override func loadView() {
         super.loadView()
         
@@ -188,13 +206,6 @@ class SettingsGeneral: UITableViewController {
 
     }
     
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        switch(section) {
-        case 0: return "Display"
-        case 1: return "Sorting"
-        default: fatalError("Unknown section")
-        }
-    }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch(section) {

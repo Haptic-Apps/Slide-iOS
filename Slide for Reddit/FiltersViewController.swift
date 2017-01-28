@@ -268,7 +268,7 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let label : UILabel = UILabel()
         label.textColor = ColorUtil.fontColor
-        label.font = UIFont.boldSystemFont(ofSize: 20)
+        label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
         toReturn.backgroundColor = ColorUtil.backgroundColor
         switch(section) {

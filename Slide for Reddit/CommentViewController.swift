@@ -651,9 +651,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             let html = sub.descriptionHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
             do {
                 let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
-                let font = UIFont(name: ".SFUIText-Light", size: 16) ?? UIFont.systemFont(ofSize: 16)
+                let font = FontGenerator.fontOfSize(size: 16, submission: false)
                 let attr2 = attr.reconstruct(with: font, color: UIColor.darkGray, linkColor: ColorUtil.accentColorForSub(sub: sub.displayName))
-                let contentInfo = CellContent.init(string:attr2, width: rect.size.width)
+                let contentInfo = CellContent.init(string:LinkParser.parse(attr2), width: rect.size.width)
                 info.attributedString = contentInfo.attributedString
                 info.frame.size.height = (contentInfo.textHeight)
                 scrollView.contentSize = CGSize.init(width: rect.size.width, height: info.frame.size.height)
@@ -771,9 +771,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 let html = comment.bodyHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
                 do {
                     let attr = try NSMutableAttributedString(data: html.data(using: .unicode)!, options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
-                    let font = UIFont(name: ".SFUIText-Light", size: 16) ?? UIFont.systemFont(ofSize: 16)
+                    let font = FontGenerator.fontOfSize(size: 16, submission: false)
                     let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
-                    return CellContent.init(string:attr2, width:(width - 25 - CGFloat(depth * 4)), hasRelies:false, id: comment.getId())
+                    return CellContent.init(string:LinkParser.parse(attr2), width:(width - 25 - CGFloat(depth * 4)), hasRelies:false, id: comment.getId())
                 } catch {
                     return CellContent(string:NSAttributedString(string: ""), width:width - 25, hasRelies:false, id: thing.getId())
                 }
@@ -790,17 +790,17 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 let html = comment.htmlText
                 do {
                     let attr = try NSMutableAttributedString(data: html.data(using: .unicode)!, options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
-                    let font = UIFont(name: ".SFUIText-Light", size: 16) ?? UIFont.systemFont(ofSize: 16)
+                    let font = FontGenerator.fontOfSize(size: 16, submission: false)
                     let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: UIColor.blue)
-                    return CellContent.init(string:attr2, width:(width - 25) - CGFloat((cDepth[comment.getId()] as! Int) * 4), hasRelies:false, id: comment.getId())
+                    return CellContent.init(string:LinkParser.parse(attr2), width:(width - 25) - CGFloat((cDepth[comment.getId()] as! Int) * 4), hasRelies:false, id: comment.getId())
                 } catch {
                     return CellContent(string:NSAttributedString(string: ""), width:width - 25, hasRelies:false, id: comment.getId())
                 }
             } else {
                 let attr = NSMutableAttributedString(string: "more")
-                let font = UIFont(name: ".SFUIText-Light", size: 16) ?? UIFont.systemFont(ofSize: 16)
+                let font = FontGenerator.fontOfSize(size: 16, submission: false)
                 let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: UIColor.blue)
-                return CellContent.init(string:attr2, width:(width - 25), hasRelies:false, id: (thing as! RMore).getId())
+                return CellContent.init(string:LinkParser.parse(attr2), width:(width - 25), hasRelies:false, id: (thing as! RMore).getId())
             }
         }
     }
@@ -822,18 +822,18 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     print(error)
                 }
                 
-                let font = UIFont(name: ".SFUIText-Light", size: 16) ?? UIFont.systemFont(ofSize: 16)
+                let font = FontGenerator.fontOfSize(size: 16, submission: false)
                 let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: UIColor.blue)
                 
-                return CellContent.init(string:attr2, width:(width - 25), hasRelies:false, id: comment.getId())
+                return CellContent.init(string:LinkParser.parse(attr2), width:(width - 25), hasRelies:false, id: comment.getId())
             } catch {
                 return CellContent(string:NSAttributedString(string: ""), width:width - 25, hasRelies:false, id: thing.getId())
             }
         } else {
             let attr = NSMutableAttributedString(string: "more")
-            let font = UIFont(name: ".SFUIText-Light", size: 16) ?? UIFont.systemFont(ofSize: 16)
+            let font = FontGenerator.fontOfSize(size: 16, submission: false)
             let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: UIColor.blue)
-            return CellContent.init(string:attr2, width:(width - 25), hasRelies:false, id: thing.getId())
+            return CellContent.init(string:LinkParser.parse(attr2), width:(width - 25), hasRelies:false, id: thing.getId())
         }
     }
     
@@ -1560,7 +1560,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                             for c in more.children {
                                 strings.append(c.value)
                             }
-                            try session?.getMoreChildren(strings, name: link.name, sort:.new, id: more.id, completion: { (result) -> Void in
+                            try session?.getMoreChildren(strings, name: link.id, sort:.new, id: more.id, completion: { (result) -> Void in
                                 switch result {
                                 case .failure(let error):
                                     print(error)
@@ -1574,6 +1574,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                             let incoming = self.extendKeepMore(in: child, current: startDepth)
                                             for i in incoming{
                                                 queue.append(i.0 is Comment ? RealmDataWrapper.commentToRComment(comment: i.0 as! Comment, depth: i.1) : RealmDataWrapper.moreToRMore(more: i.0 as! More))
+                                                print("Depth is \(i.1)")
                                                 self.cDepth[i.0.getId()] = i.1
                                             }
                                         }

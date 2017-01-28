@@ -724,7 +724,7 @@ class InputCell: UITableViewCell {
         
         cellLabel = UITextView(frame: CGRect.init(x: 0, y: 0, width: self.frame.size.width, height: 70))
         cellLabel.textColor = ColorUtil.fontColor
-        cellLabel.font = UIFont.boldSystemFont(ofSize: 16)
+        cellLabel.font = FontGenerator.boldFontOfSize(size: 16, submission: true)
         cellLabel.placeholder = input
         
         cellLabel.textContainerInset = UIEdgeInsets.init(top: 30, left: 10, bottom: 0, right: 0)

@@ -34,13 +34,14 @@ class GifMWPhotoBrowser: NSObject, GalleryItemsDataSource {
             GalleryConfigurationItem.presentationStyle(.fade),
             GalleryConfigurationItem.hideDecorationViewsOnLaunch(true),
             
-            GalleryConfigurationItem.swipeToDismissMode(.vertical),
+            GalleryConfigurationItem.swipeToDismissMode(.always),
             GalleryConfigurationItem.toggleDecorationViewsBySingleTap(true),
             
             GalleryConfigurationItem.overlayColor(UIColor(white: 0.035, alpha: 1)),
             GalleryConfigurationItem.overlayColorOpacity(1),
             GalleryConfigurationItem.overlayBlurOpacity(1),
             GalleryConfigurationItem.overlayBlurStyle(UIBlurEffectStyle.dark),
+            
             
             GalleryConfigurationItem.maximumZoomScale(8),
             GalleryConfigurationItem.swipeToDismissThresholdVelocity(500),
@@ -66,7 +67,7 @@ class GifMWPhotoBrowser: NSObject, GalleryItemsDataSource {
             GalleryConfigurationItem.displacementTransitionStyle(.springBounce(0.7)),
             GalleryConfigurationItem.displacementTimingCurve(.linear),
             
-            GalleryConfigurationItem.statusBarHidden(true),
+            GalleryConfigurationItem.statusBarHidden(false),
             GalleryConfigurationItem.displacementKeepOriginalInPlace(false),
             GalleryConfigurationItem.displacementInsetMargin(50),
             
