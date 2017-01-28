@@ -188,17 +188,14 @@ extension Session {
     - returns: Data task which requests search to reddit.com.
      */
     @discardableResult
-    public func composeMessage(_ to: Account, subject: String, text: String, fromSubreddit: Subreddit, captcha: String, captchaIden: String, completion: @escaping (Result<JSONAny>) -> Void) throws -> URLSessionDataTask {
-        let parameter = [
+    public func composeMessage(_ to: String, subject: String, text: String, completion: @escaping (Result<JSONAny>) -> Void) throws -> URLSessionDataTask {
+        var parameter = [
             "api_type" : "json",
-            "captcha" : captcha,
-            "iden" : captchaIden,
-            "from_sr" : fromSubreddit.displayName,
             "text" : text,
             "subject" : subject,
-            "to" : to.id
+            "to" : to
         ]
-        guard let request = URLRequest.requestForOAuth(with: baseURL, path:"/api/submit", parameter:parameter, method:"POST", token:token)
+        guard let request = URLRequest.requestForOAuth(with: baseURL, path:"/api/compose", parameter:parameter, method:"POST", token:token)
             else { throw ReddiftError.canNotCreateURLRequest as NSError }
         let closure = {(data: Data?, response: URLResponse?, error: NSError?) -> Result<JSONAny> in
             return Result(from: Response(data: data, urlResponse: response), optional:error)

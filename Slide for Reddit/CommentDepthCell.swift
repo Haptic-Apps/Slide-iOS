@@ -11,6 +11,7 @@ import reddift
 import UZTextView
 import ImageViewer
 import TTTAttributedLabel
+import RealmSwift
 
 protocol UZTextViewCellDelegate: class {
     func pushedMoreButton(_ cell: CommentDepthCell)
@@ -28,7 +29,7 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
     var c: UIView = UIView()
     var children: UILabel = UILabel()
     var menu: UIView = UIView()
-    var comment:Comment?
+    var comment:RComment?
     var depth:Int = 0
     
     func textView(_ textView: UZTextView, didLongTapLinkAttribute value: Any?) {
@@ -41,11 +42,11 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
                             sheet.dismiss(animated: true, completion: nil)
                         }
                     )
-                    var open = OpenInChromeController.init()
+                    let open = OpenInChromeController.init()
                     if(open.isChromeInstalled()){
                         sheet.addAction(
                             UIAlertAction(title: "Open in Chrome", style: .default) { (action) in
-                                open.openInChrome(url, callbackURL: nil, createNewTab: true)
+                                _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
                             }
                         )
                     }
@@ -101,7 +102,7 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
     }
     
     var delegate: UZTextViewCellDelegate? = nil
-    var content: Thing? = nil
+    var content: Object? = nil
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -292,7 +293,7 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
     var sideWidth: Int = 0
     var topMargin: Int = 0
     
-    func setMore(more: More, depth: Int){
+    func setMore(more: RMore, depth: Int){
         self.depth = depth
         c.alpha = 0
         rightSideViewSpace.backgroundColor = ColorUtil.foregroundColor
@@ -324,12 +325,14 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         updateDepthConstraints()
     }
     
-    func setComment(comment: Comment, depth: Int, parent: MediaViewController, hiddenCount: Int, date: Double, author: String?){
+    func setComment(comment: RComment, depth: Int, parent: MediaViewController, hiddenCount: Int, date: Double, author: String?){
         self.comment = comment
         if(self.parent == nil){
             self.parent = parent
         }
-        if(date != 0 && date < Double(comment.createdUtc)){
+        
+        
+        if(date != 0 && date < Double(comment.created.timeIntervalSince1970 * 1000)){
             self.rightSideViewSpace.backgroundColor = ColorUtil.getColorForSub(sub: comment.subreddit)
         } else {
             self.rightSideViewSpace.backgroundColor = ColorUtil.foregroundColor
@@ -374,7 +377,7 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         
     }
     
-    func refresh(comment: Comment, submissionAuthor: String?){
+    func refresh(comment: RComment, submissionAuthor: String?){
         var color: UIColor
         
         switch(ActionStates.getVoteDirection(s: comment)){
@@ -392,11 +395,11 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         
         let scoreString = NSMutableAttributedString(string: ((comment.scoreHidden ? "[score hidden]" : "\(getScoreText(comment: comment))") + (comment.controversiality > 0 ? "†" : "" )), attributes: [NSForegroundColorAttributeName: color])
         
-        let endString = NSMutableAttributedString(string:"  •  \(DateFormatter().timeSince(from: NSDate.init(timeIntervalSince1970: TimeInterval.init(comment.createdUtc)), numericDates: true))" + (comment.edited > 0 ? ("(edit \(DateFormatter().timeSince(from: NSDate.init(timeIntervalSince1970: TimeInterval.init(comment.edited)), numericDates: true)))") : ""),  attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor])
+        let endString = NSMutableAttributedString(string:"  •  \(DateFormatter().timeSince(from: comment.created, numericDates: true))" + (comment.isEdited ? ("(edit \(DateFormatter().timeSince(from: comment.edited, numericDates: true)))") : ""),  attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor])
         
         
         let authorString = NSMutableAttributedString(string: "\u{00A0}\(comment.author)\u{00A0}", attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor])
-        let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(comment.authorFlairText.isEmpty ? comment.authorFlairCssClass : comment.authorFlairText)\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
+        let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(comment.flair)\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
         let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
         let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(comment.gilded) ", attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12)])
         
@@ -423,12 +426,12 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         infoString.append(scoreString)
         infoString.append(endString)
         
-        if(!(comment.authorFlairText.isEmpty ? comment.authorFlairCssClass : comment.authorFlairText).isEmpty){
+        if(!comment.flair.isEmpty){
             infoString.append(spacer)
             infoString.append(flairTitle)
         }
         
-        if(comment.stickied){
+        if(comment.pinned){
             infoString.append(spacer)
             infoString.append(pinned)
         }
@@ -450,7 +453,7 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         rightSideViewSpace.backgroundColor = GMColor.yellow500Color()
     }
     
-    func getScoreText(comment: Comment) -> Int {
+    func getScoreText(comment: RComment) -> Int {
         var submissionScore = comment.score
         switch (ActionStates.getVoteDirection(s: comment)) {
         case .up:
@@ -536,7 +539,7 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
     }
     
     func longPressed(_ sender: AnyObject?) {
-        if let delegate = self.delegate {
+        if self.delegate != nil {
         }
     }
     

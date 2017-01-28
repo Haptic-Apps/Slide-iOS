@@ -129,7 +129,7 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         
     }
     
-    init(message: Message, parent: MediaViewController, width: CGFloat) {
+    init(message: RMessage, parent: MediaViewController, width: CGFloat) {
         super.init(style: .default, reuseIdentifier: "none")
         self.single = true
         self.title = UILabel(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude));
@@ -165,13 +165,13 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
     
     var lsC: [NSLayoutConstraint] = []
     
-    func setMessage(message: Message, parent: MediaViewController, nav: UIViewController?, width: CGFloat){
+    func setMessage(message: RMessage, parent: MediaViewController, nav: UIViewController?, width: CGFloat){
         parentViewController = parent
         if(navViewController == nil && nav != nil){
             navViewController = nav
         }
         if(message.wasComment){
-            title.text = message.baseJson["link_title"] as? String
+            title.text = message.linkTitle
         } else {
             title.text = message.subject
         }
@@ -191,7 +191,7 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         messageClick.delegate = self
         self.addGestureRecognizer(messageClick)
         
-        let endString = NSMutableAttributedString(string:"\(DateFormatter().timeSince(from: NSDate.init(timeIntervalSince1970: TimeInterval.init(message.createdUtc)), numericDates: true))  •  from \(message.author)")
+        let endString = NSMutableAttributedString(string:"\(DateFormatter().timeSince(from: message.created, numericDates: true))  •  from \(message.author)")
         
         let subString = NSMutableAttributedString(string: "/r/\(message.subreddit)")
         let color = ColorUtil.getColorForSub(sub: message.subreddit)
@@ -209,7 +209,7 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         info.attributedText = infoString
         
         let accent = ColorUtil.accentColorForSub(sub: "")
-        let html = message.bodyHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
+        let html = message.htmlBody
         do {
             let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
             let font = UIFont(name: ".SFUIText-Light", size: 16) ?? UIFont.systemFont(ofSize: 16)
@@ -327,7 +327,7 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         fatalError("init(coder:) has not been implemented")
     }
     
-    var message : Message?
+    var message : RMessage?
     public var parentViewController: MediaViewController?
     public var navViewController: UIViewController?
     

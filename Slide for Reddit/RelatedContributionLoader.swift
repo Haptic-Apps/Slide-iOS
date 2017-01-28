@@ -9,13 +9,14 @@
 import Foundation
 import reddift
 import XLPagerTabStrip
+import RealmSwift
 
 class RelatedContributionLoader: ContributionLoader {
-    var thing: Thing
+    var thing: RSubmission
     var sub: String
     var color: UIColor
     
-    init(thing: Thing, sub: String){
+    init(thing: RSubmission, sub: String){
         self.thing = thing
         self.sub = sub
         color = ColorUtil.getColorForUser(name: sub)
@@ -26,7 +27,7 @@ class RelatedContributionLoader: ContributionLoader {
     
     
     var paginator: Paginator
-    var content: [Thing]
+    var content: [Object]
     var delegate: ContentListingViewController?
     var indicatorInfo: IndicatorInfo
     var paging = false
@@ -38,7 +39,8 @@ class RelatedContributionLoader: ContributionLoader {
                 if(reload){
                     paginator = Paginator()
                 }
-                try delegate?.session?.getDuplicatedArticles(paginator, thing: thing, completion: { (result) in
+                let id = thing.name
+                try delegate?.session?.getDuplicatedArticles(paginator, name: id, completion: { (result) in
                     switch result {
                     case .failure:
                         self.delegate?.failed(error: result.error!)
@@ -47,7 +49,15 @@ class RelatedContributionLoader: ContributionLoader {
                         if(reload){
                             self.content = []
                         }
-                        self.content += listing.1.children.flatMap({$0})
+                        var baseContent = listing.1.children.flatMap({$0})
+                        for item in baseContent {
+                            if(item is Comment){
+                                self.content.append(RealmDataWrapper.commentToRComment(comment: item as! Comment, depth: 0))
+                            } else {
+                                self.content.append(RealmDataWrapper.linkToRSubmission(submission: item as! Link))
+                            }
+                        }
+
                         self.paginator = listing.1.paginator
                         DispatchQueue.main.async{
                             self.delegate?.doneLoading()

@@ -160,7 +160,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let request = UNNotificationRequest(identifier: identifier,
                                             content: content, trigger: trigger)
         center.add(request, withCompletionHandler: { (error) in
-            if let error = error {
+            if error != nil {
                 // Something went wrong
             }
         })
@@ -246,11 +246,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if let code = parameters["code"], let state = parameters["state"] {
             print(state)
             if code.characters.count > 0 {
-                do {
                     print(code)
-                } catch {
-                    print(error)
-                }
             }
         }
 
@@ -328,7 +324,7 @@ extension UIApplication {
 extension URL {
     func getKeyVals() -> Dictionary<String, String>? {
         var results = [String:String]()
-        var keyValues = self.query?.components(separatedBy: "&")
+        let keyValues = self.query?.components(separatedBy: "&")
         if (keyValues?.count)! > 0 {
             for pair in keyValues! {
                 let kv = pair.components(separatedBy: "=")

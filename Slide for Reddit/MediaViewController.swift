@@ -22,12 +22,12 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
         return photos[index]
     }
     
-    var link:Link!
+    var link:RSubmission!
     var paging = false
     var images:[URL] = []
     var photos:[GalleryItem] = []
     
-    public func setLink(lnk: Link){
+    public func setLink(lnk: RSubmission){
         History.addSeen(s: lnk)
         self.link = lnk
         images = []
@@ -135,7 +135,7 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
                 if(ContentType.isGif(uri: link)){
                     var link = link.absoluteString.replacingOccurrences(of: ".gifv", with: ".mp4")
                     link = link.replacingOccurrences(of: ".gif", with: ".mp4")
-                    let photo = GalleryItem.video(fetchPreviewImageBlock: { (completion) in
+                    _ = GalleryItem.video(fetchPreviewImageBlock: { (completion) in
                         
                     }, videoURL: URL.init(string: link)!)
                 } else {

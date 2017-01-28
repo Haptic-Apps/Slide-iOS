@@ -38,6 +38,34 @@ extension Session {
         return executeTask(request, handleResponse: closure, completion: completion)
     }
     
+     /**
+     Submit a reply to a message, whose parent is the fullname of the thing being replied to.
+     Its value changes the kind of object created by this request:
+     
+     - the fullname of a Link: a top-level comment in that Link's thread.
+     - the fullname of a Message: a message reply to that message.
+     
+     Response is JSON whose type is t1 Thing.
+     
+     - parameter text: The body of comment, should be the raw markdown body of the comment or message.
+     - parameter parentName: Name of Thing is commented or replied to.
+     - parameter completion: The completion handler to call when the load request is complete.
+     - returns: Data task which requests search to reddit.com.
+     */
+    @discardableResult
+    public func replyMessage(_ text: String, parentName: String, completion: @escaping (Result<RedditAny>) -> Void) throws -> URLSessionDataTask {
+        let parameter = ["thing_id":parentName, "api_type":"json", "text":text]
+        guard let request = URLRequest.requestForOAuth(with: baseURL, path:"/api/comment", parameter:parameter, method:"POST", token:token)
+            else { throw ReddiftError.canNotCreateURLRequest as NSError }
+        let closure = {(data: Data?, response: URLResponse?, error: NSError?) -> Result<RedditAny> in
+            return Result(from: Response(data: data, urlResponse: response), optional:error)
+                .flatMap(response2Data)
+                .flatMap(data2Json)
+                .flatMap(json2RedditAny)
+        }
+        return executeTask(request, handleResponse: closure, completion: completion)
+    }
+
     /**
     Delete a Link or Comment.
     
@@ -195,12 +223,12 @@ extension Session {
     - returns: Data task which requests search to reddit.com.
      */
     @discardableResult
-    public func report(_ thing: Thing, reason: String, otherReason: String, completion: @escaping (Result<RedditAny>) -> Void) throws -> URLSessionDataTask {
+    public func report(_ name: String, reason: String, otherReason: String, completion: @escaping (Result<RedditAny>) -> Void) throws -> URLSessionDataTask {
         let parameter = [
             "api_type"    :"json",
             "reason"      :reason,
             "other_reason":otherReason,
-            "thing_id"    :thing.name
+            "thing_id"    :name
         ]
         guard let request = URLRequest.requestForOAuth(with: baseURL, path:"/api/report", parameter:parameter, method:"POST", token:token)
             else { throw ReddiftError.canNotCreateURLRequest as NSError }
@@ -281,11 +309,11 @@ extension Session {
      - returns: Data task which requests search to reddit.com.
      */
     @discardableResult
-    public func getMoreChildren(_ children: [String], link: Link, sort: CommentSort, id: String? = nil, completion: @escaping (Result<[Thing]>) -> Void) throws -> URLSessionDataTask {
+    public func getMoreChildren(_ children: [String], name: String, sort: CommentSort, id: String? = nil, completion: @escaping (Result<[Thing]>) -> Void) throws -> URLSessionDataTask {
         let commaSeparatedChildren = children.joined(separator: ",")
         var parameter = [
             "children":commaSeparatedChildren,
-            "link_id":link.name,
+            "link_id":name,
             "sort":sort.type,
             "api_type":"json"
         ]

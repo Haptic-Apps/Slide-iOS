@@ -14,10 +14,11 @@ import Alamofire
 import MobileCoreServices
 import SwiftyJSON
 import ActionSheetPicker_3_0
+import RealmSwift
 
 class ReplyViewController: UITableViewController, UITextViewDelegate {
     
-    var toReplyTo: Thing?
+    var toReplyTo: Object?
     var text: UITextView?
     var subjectCell = InputCell()
     var recipientCell = InputCell()
@@ -57,7 +58,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
         return 70
     }
     
-    init(message: Message?, completion: @escaping (Message?) -> Void){
+    init(message: RMessage?, completion: @escaping (Message?) -> Void){
         self.toReplyTo = message
         self.message = true
         self.sub = ""
@@ -74,7 +75,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
     }
     
     
-    init(thing: Thing, sub: String, editing: Bool, completion: @escaping (Comment?) -> Void){
+    init(thing: Object, sub: String, editing: Bool, completion: @escaping (Comment?) -> Void){
         self.toReplyTo = thing
         self.edit = true
         self.sub = sub
@@ -98,7 +99,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
         }
     }
     
-    init(thing: Thing, sub: String, view: UIView?, completion: @escaping (Comment?) -> Void){
+    init(thing: Object, sub: String, view: UIView?, completion: @escaping (Comment?) -> Void){
         self.toReplyTo = thing
         self.sub = sub
         self.header = view
@@ -466,7 +467,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
         if(message){
             title = "New message"
         } else {
-            let author = (toReplyTo is Comment) ? ((toReplyTo as! Comment).author) : ((toReplyTo as! Link).author)
+            let author = (toReplyTo is RComment) ? ((toReplyTo as! RComment).author) : ((toReplyTo as! RSubmission).author)
             if(edit){
                 title = "Editing"
             } else {
@@ -543,7 +544,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
                         case .failure(let error):
                             print(error.description)
                             self.reply(nil)
-                        case .success(let postedComment):
+                        case .success( _):
                             self.reply(self.comment)
                         }
 
@@ -552,13 +553,13 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
             } else {
             
                 do {
-                    let name = toReplyTo?.getId()
-                    try self.session?.replyMessage(text!.text, parentName:name!, completion: { (result) -> Void in
+                    let name = toReplyTo is RMessage ? (toReplyTo as! RMessage).getId() : toReplyTo is RComment ? (toReplyTo as! RComment).getId() : (toReplyTo as! RSubmission).getId()
+                    try self.session?.replyMessage(text!.text, parentName:name, completion: { (result) -> Void in
                         switch result {
                         case .failure(let error):
                             print(error.description)
                             self.reply(nil)
-                        case .success(let postedComment):
+                        case .success( _):
                             self.reply(self.comment)
                         }
                     })
@@ -578,9 +579,9 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
             session = (UIApplication.shared.delegate as! AppDelegate).session
             
             do {
-                let name = toReplyTo?.getId()
-                try self.session?.editCommentOrLink(name!, newBody: text!.text, completion: { (result) in
-                    self.getCommentEdited(name!)
+                let name = toReplyTo is RMessage ? (toReplyTo as! RMessage).getId() : toReplyTo is RComment ? (toReplyTo as! RComment).getId() : (toReplyTo as! RSubmission).getId()
+                try self.session?.editCommentOrLink(name, newBody: text!.text, completion: { (result) in
+                    self.getCommentEdited(name)
                 })
             } catch { print((error as NSError).description) }
             
@@ -598,8 +599,8 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
             session = (UIApplication.shared.delegate as! AppDelegate).session
             
             do {
-                let name = toReplyTo?.getId()
-                try self.session?.postComment(text!.text, parentName:name!, completion: { (result) -> Void in
+                let name = toReplyTo is RMessage ? (toReplyTo as! RMessage).getId() : toReplyTo is RComment ? (toReplyTo as! RComment).getId() : (toReplyTo as! RSubmission).getId()
+                try self.session?.postComment(text!.text, parentName:name, completion: { (result) -> Void in
                     switch result {
                     case .failure(let error):
                         print(error.description)
@@ -626,7 +627,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
         text?.delegate = self
         text?.font = UIFont.systemFont(ofSize: 18)
         if(edit){
-            text!.text = (toReplyTo as! Comment).body
+            text!.text = (toReplyTo as! RComment).body
         }
         
         let lineView = UIView(frame: CGRect.init(x: 0, y: 0, width: (text?.frame.size.width)!, height: 1))
@@ -637,9 +638,9 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
         subjectCell = InputCell.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 70), input: "[menu]Subject")
         recipientCell = InputCell.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 70), input: "[profile]Recipient")
         if(toReplyTo != nil && message){
-            subjectCell.cellLabel.text = "re: " + (toReplyTo as! Message).subject
+            subjectCell.cellLabel.text = "re: " + (toReplyTo as! RMessage).subject
             subjectCell.cellLabel.isEditable = false
-            recipientCell.cellLabel.text = (toReplyTo as! Message).author
+            recipientCell.cellLabel.text = (toReplyTo as! RMessage).author
             recipientCell.cellLabel.isEditable = false
         }
 

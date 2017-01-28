@@ -122,17 +122,17 @@ class ContentListingViewController: MediaViewController, UITableViewDelegate, UI
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let thing = baseData.content[indexPath.row]
         var cell: UITableViewCell?
-        if(thing is Link){
+        if(thing is RSubmission){
             let c = tableView.dequeueReusableCell(withIdentifier: "submission", for: indexPath) as! LinkCellView
-            c.setLink(submission: (thing as! Link), parent: self, nav: self.navigationController)
+            c.setLink(submission: (thing as! RSubmission), parent: self, nav: self.navigationController)
             cell = c
-        } else if thing is Comment {
+        } else if thing is RComment {
             let c = tableView.dequeueReusableCell(withIdentifier: "comment", for: indexPath) as! CommentCellView
-            c.setComment(comment: (thing as! Comment), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
+            c.setComment(comment: (thing as! RComment), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
             cell = c
         } else {
             let c = tableView.dequeueReusableCell(withIdentifier: "message", for: indexPath) as! MessageCellView
-            c.setMessage(message: (thing as! Message), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
+            c.setMessage(message: (thing as! RMessage), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
             cell = c
         }
         

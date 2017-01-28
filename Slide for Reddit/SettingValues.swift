@@ -58,7 +58,12 @@ class SettingValues{
     public static var rightThumbnail = true
     public static var hideButtonActionbar = false
     public static var saveButtonActionbar = true
+    public static var bigPicCropped = false
     public static var enlargeLinks = true
+    public static var lqEnabled = true
+    public static var lqLow = true
+    public static var lqMid = true
+    public static var noImages = false
     public static var showLinkContentType = true
     public static var commentFontSize = 16
     public static var postFontSize = 18

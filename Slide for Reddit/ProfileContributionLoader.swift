@@ -9,6 +9,7 @@
 import Foundation
 import reddift
 import XLPagerTabStrip
+import RealmSwift
 
 class ProfileContributionLoader: ContributionLoader {
     var name: String
@@ -27,7 +28,7 @@ class ProfileContributionLoader: ContributionLoader {
     
     
     var paginator: Paginator
-    var content: [Thing]
+    var content: [Object]
     var delegate: ContentListingViewController?
     var indicatorInfo: IndicatorInfo
     var paging = true
@@ -47,7 +48,14 @@ class ProfileContributionLoader: ContributionLoader {
                         if(reload){
                             self.content = []
                         }
-                        self.content += listing.children.flatMap({$0})
+                        var baseContent = listing.children.flatMap({$0})
+                        for item in baseContent {
+                            if(item is Comment){
+                                self.content.append(RealmDataWrapper.commentToRComment(comment: item as! Comment, depth: 0))
+                            } else {
+                                self.content.append(RealmDataWrapper.linkToRSubmission(submission: item as! Link))
+                            }
+                        }
                         self.paginator = listing.paginator
                         DispatchQueue.main.async{
                             self.delegate?.doneLoading()

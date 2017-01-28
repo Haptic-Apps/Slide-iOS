@@ -225,7 +225,7 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
                             sheet.dismiss(animated: true, completion: nil)
                         }
                     )
-                    var open = OpenInChromeController.init()
+                    let open = OpenInChromeController.init()
                     if(open.isChromeInstalled()){
                         sheet.addAction(
                             UIAlertAction(title: "Open in Chrome", style: .default) { (action) in
