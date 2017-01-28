@@ -195,7 +195,9 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         if(estimatedHeight == 0){
             title.sizeToFit()
             let he = title.frame.size.height
-            estimatedHeight = CGFloat((he < 75 && thumb || he < 75 && !big) ? 75 : he) + CGFloat(56) + CGFloat(!hasText || !full ? 0 : (content?.textHeight)!) +  CGFloat(big && !thumb ? height + 40 : 0)
+            print("Height is \(height)")
+            estimatedHeight = CGFloat((he < 75 && thumb || he < 75 && !big) ? 75 : he) + CGFloat(56) + CGFloat(!hasText || !full ? 0 : (content?.textHeight)!) +  CGFloat(big && !thumb ? height + 20 : 0)
+            print("Est height is \(estimatedHeight)")
         }
         return estimatedHeight
     }
@@ -208,8 +210,8 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         thumbImage.contentMode = .scaleAspectFill
         
         self.bannerImage = UIImageView(frame: CGRect(x: 0, y: 8, width: CGFloat.greatestFiniteMagnitude, height: 0))
-        bannerImage.clipsToBounds = true;
-        bannerImage.contentMode = UIViewContentMode.scaleAspectFit
+        bannerImage.clipsToBounds = true
+        bannerImage.contentMode = UIViewContentMode.scaleAspectFill
         
         self.title = TTTAttributedLabel(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude));
         title.numberOfLines = 0
@@ -561,11 +563,11 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         if(!fullImage && height < 50){
             big = false
             thumb = true
-        } else if(big && (SettingValues.bigPicCropped || full)){
+        } else if(big && (SettingValues.bigPicCropped /*|| full*/)){
             height = 200
         } else if(big){
-            height = getHeightFromAspectRatio(imageHeight: height, imageWidth: submission.width)
-            if(height == 0){
+            let h = getHeightFromAspectRatio(imageHeight: height, imageWidth: submission.width)
+            if(h == 0){
                 height = 200
             }
         }
@@ -580,10 +582,16 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             big = false
         }
         
-        let shouldShowLq = SettingValues.lqEnabled && false //eventually check for network connection type
+        let shouldShowLq = SettingValues.lqEnabled && false && submission.lQ //eventually check for network connection type
         if (type == ContentType.CType.SELF && SettingValues.hideImageSelftext
             || SettingValues.noImages && submission.isSelf) {
             big = false
+            thumb = false
+        }
+        
+        print("Big is \(big) and height is \(height)")
+        
+        if(big || !submission.thumbnail){
             thumb = false
         }
         
@@ -609,12 +617,15 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                 aspect = 1
             }
             bigConstraint = NSLayoutConstraint(item: bannerImage, attribute:  NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: bannerImage, attribute: NSLayoutAttribute.height, multiplier: aspect, constant: 0.0)
-            
             bannerImage.isUserInteractionEnabled = true
             let tap = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openLink(sender:)))
             tap.delegate = self
             bannerImage.addGestureRecognizer(tap)
+            if(shouldShowLq){
+                bannerImage.sd_setImage(with: URL.init(string: submission.lqUrl))
+            } else {
             bannerImage.sd_setImage(with: URL.init(string: submission.bannerUrl))
+            }
         } else {
             bannerImage.sd_setImage(with: URL.init(string: ""))
         }

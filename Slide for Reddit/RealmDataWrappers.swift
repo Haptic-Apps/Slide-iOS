@@ -125,16 +125,16 @@ class RealmDataWrapper {
         return rSubmission
     }
     
-    static func commentToRealm(comment: Thing) -> Object {
+    static func commentToRealm(comment: Thing, depth: Int) -> Object {
         if(comment is Comment) {
-            return commentToRComment(comment: comment as! Comment)
+            return commentToRComment(comment: comment as! Comment, depth: depth)
         } else {
             return moreToRMore(more: comment as! More)
         }
     }
     
     //Takes a Comment from reddift and turns it into a Realm model
-    static func commentToRComment(comment: Comment) -> RComment {
+    static func commentToRComment(comment: Comment, depth: Int) -> RComment {
         let flair = comment.authorFlairCssClass.isEmpty ? comment.authorFlairCssClass : comment.authorFlairText;
         let bodyHtml = comment.bodyHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
         let rComment = RComment()
@@ -151,6 +151,7 @@ class RealmDataWrapper {
         rComment.body = comment.body
         //todo rComment.pinned = comment.pinned
         rComment.score = comment.score
+        rComment.depth = depth
         rComment.flair = flair
         rComment.linkid = comment.linkId
         rComment.distinguished = comment.distinguished

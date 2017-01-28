@@ -64,7 +64,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             DispatchQueue.main.async(execute: { () -> Void in
                 let startDepth = 0
                 
-                let queue: [Object] = [RealmDataWrapper.commentToRComment(comment: comment!)]
+                let queue: [Object] = [RealmDataWrapper.commentToRComment(comment: comment!, depth: 0)]
                 self.cDepth[comment!.getId()] = startDepth
                 
                 self.dataArray.insert(contentsOf: queue, at: 0)
@@ -262,6 +262,46 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     switch result {
                     case .failure(let error):
                         print(error)
+                        DispatchQueue.main.async {
+                            print("Getting realm data")
+                            do {
+                                let realm = try Realm()
+                                if let listing =  realm.objects(RSubmission.self).filter({ (item) -> Bool in
+                                    return item.name == self.submission!.name
+                                }).first{
+                                    
+                                    self.comments = []
+                                    self.hiddenPersons = []
+                                    self.hidden = []
+                                    self.contents = []
+                                    self.refreshControl.endRefreshing()
+                                    self.submission!.comments.removeAll()
+                                    for child in listing.comments {
+                                        self.comments.append(child)
+                                        self.cDepth[child.getId()] = child.depth
+                                    }
+                                    self.contents += (self.updateStringsSingle(self.comments))
+                                    
+                                    var time = timeval(tv_sec: 0, tv_usec: 0)
+                                    gettimeofday(&time, nil)
+                                    
+                                    self.doArrays()
+                                    self.lastSeen = History.getSeenTime(s: link)
+                                    self.tableView.reloadData()
+                                }
+                            } catch {
+                                
+                            }
+                            
+                            self.refreshControl.endRefreshing()
+                            
+                            if(self.comments.isEmpty){
+                                self.view.makeToast("No cached comments found", duration: 10, position: .top)
+                            } else {
+                                self.view.makeToast("Showing cached comments", duration: 10, position: .top)
+                            }
+                        }
+                        
                     case .success(let tuple):
                         let startDepth = 1
                         let listing = tuple.1
@@ -279,10 +319,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                             let incoming = self.extendKeepMore(in: child, current: startDepth)
                             allIncoming.append(contentsOf: incoming)
                             for i in incoming{
-                                let item = RealmDataWrapper.commentToRealm(comment: i.0)
+                                let item = RealmDataWrapper.commentToRealm(comment: i.0, depth: i.1)
                                 self.comments.append(item)
                                 if(item is RComment){
-                                self.submission!.comments.append(item as! RComment)
+                                    self.submission!.comments.append(item as! RComment)
                                 }
                                 self.cDepth[i.0.getId()] = i.1
                             }
@@ -309,7 +349,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                 
                             }
                             
-
+                            
                             if(!self.hasSubmission){
                                 self.headerCell = LinkCellView()
                                 self.headerCell?.delegate = self
@@ -985,7 +1025,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
     
     func updateToolbar() {
-        navigationController?.isToolbarHidden = false
+        navigationController?.setToolbarHidden(false, animated: false)
         let space = UIBarButtonItem(barButtonSystemItem:.flexibleSpace, target: nil, action: nil)
         var items: [UIBarButtonItem] = []
         if(!context.isEmpty()){
@@ -1184,7 +1224,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     }
                     realPosition += 1
                 }
-                let comment = RealmDataWrapper.commentToRComment(comment: cr!)
+                let comment = RealmDataWrapper.commentToRComment(comment: cr!, depth: 0)
                 self.dataArray.remove(at: index)
                 self.dataArray.insert(comment, at: index)
                 self.comments.remove(at: realPosition)
@@ -1262,7 +1302,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                             DispatchQueue.main.async(execute: { () -> Void in
                                 let startDepth = self.cDepth[cell.comment!.getId()] as! Int + 1
                                 
-                                let queue: [Object] = [RealmDataWrapper.commentToRComment(comment: comment!)]
+                                let queue: [Object] = [RealmDataWrapper.commentToRComment(comment: comment!, depth: startDepth)]
                                 self.cDepth[comment!.getId()] = startDepth
                                 
                                 
@@ -1533,7 +1573,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                         for child in list {
                                             let incoming = self.extendKeepMore(in: child, current: startDepth)
                                             for i in incoming{
-                                                queue.append(i.0 is Comment ? RealmDataWrapper.commentToRComment(comment: i.0 as! Comment) : RealmDataWrapper.moreToRMore(more: i.0 as! More))
+                                                queue.append(i.0 is Comment ? RealmDataWrapper.commentToRComment(comment: i.0 as! Comment, depth: i.1) : RealmDataWrapper.moreToRMore(more: i.0 as! More))
                                                 self.cDepth[i.0.getId()] = i.1
                                             }
                                         }
