@@ -176,7 +176,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             let html = link.htmlBody
             do {
                 let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
-                let font = FontGenerator.fontOfSize(size: 16, submission: true)
+                let font = FontGenerator.fontOfSize(size: 16, submission: false)
                 let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
                 content = CellContent.init(string:LinkParser.parse(attr2), width:(width - 24 - (thumb ? 75 : 0)))
                 textView.attributedString = content?.attributedString
@@ -454,6 +454,8 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         
     }
     
+    
+    
     var link: RSubmission?
     
     func setLink(submission: RSubmission, parent: MediaViewController, nav: UIViewController?){
@@ -569,6 +571,8 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             let h = getHeightFromAspectRatio(imageHeight: height, imageWidth: submission.width)
             if(h == 0){
                 height = 200
+            } else {
+                height  = h
             }
         }
         
@@ -611,11 +615,12 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         
 
         if(big){
-            let imageSize = CGSize.init(width:submission.width, height:height);
+            let imageSize = CGSize.init(width:submission.width, height:submission.height);
             var aspect = imageSize.width / imageSize.height
             if(aspect == 0 || aspect > 10000 || aspect.isNaN){
                 aspect = 1
             }
+            print("Aspect is \(aspect)")
             bigConstraint = NSLayoutConstraint(item: bannerImage, attribute:  NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: bannerImage, attribute: NSLayoutAttribute.height, multiplier: aspect, constant: 0.0)
             bannerImage.isUserInteractionEnabled = true
             let tap = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openLink(sender:)))
