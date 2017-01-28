@@ -39,24 +39,25 @@ class SearchContributionLoader: ContributionLoader {
                 if(reload){
                     paginator = Paginator()
                 }
-                print("Subredd it is \(sub)")
+                print("Subreddit is \(sub)")
                 try delegate?.session?.getSearch(Subreddit.init(subreddit: sub), query: query, paginator: paginator, sort: .relevance, completion: { (result) in
                     switch result {
                     case .failure:
+                        print(result.error!)
                         self.delegate?.failed(error: result.error!)
                     case .success(let listing):
-                        
                         if(reload){
                             self.content = []
                         }
-                        let baseContent = listing.children.flatMap({$0})
-                        for item in baseContent {
+                        for item in listing.children.flatMap({$0}) {
+                            print("Item")
                             if(item is Comment){
                                 self.content.append(RealmDataWrapper.commentToRComment(comment: item as! Comment, depth: 0))
                             } else {
                                 self.content.append(RealmDataWrapper.linkToRSubmission(submission: item as! Link))
                             }
                         }
+                        print("Done")
                         self.paginator = listing.paginator
                         DispatchQueue.main.async{
                             self.delegate?.doneLoading()
