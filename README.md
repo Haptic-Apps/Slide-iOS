@@ -1,7 +1,7 @@
 # Slide [![Snoonet](https://img.shields.io/badge/IRC-%23slide-CF49FF.svg)](https://kiwiirc.com/client/irc.snoonet.org/#slide)
 
 <img src="/slide_ios_rounded.png" align="left"
-width="200"
+width="150"
     hspace="10" vspace="10">
 
 Slide is an open source, ad free Reddit browser for iOS. It is based around
@@ -10,10 +10,6 @@ the [Reddift](https://github.com/sonsongithub/reddift).
 Slide is not yet avaliable for download on the App Store or for testing on TestFlight. For more information regarding availability, feel free to join us on [Reddit](https://www.reddit.com/slide_ios)  
 
 
-#
-#
-#
-#
 
 ## Contributing
 
