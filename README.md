@@ -10,7 +10,10 @@ the [Reddift](https://github.com/sonsongithub/reddift).
 Slide is not yet avaliable for download on the App Store or for testing on TestFlight. For more information regarding availability, feel free to join us on [Reddit](https://www.reddit.com/slide_ios)  
 
 
-
+#
+#
+#
+#
 
 ## Contributing
 
