@@ -9,6 +9,9 @@ the [Reddift](https://github.com/sonsongithub/reddift).
 
 Slide is not yet avaliable for download on the App Store or for testing on TestFlight. For more information regarding availability, feel free to join us on [Reddit](https://www.reddit.com/slide_ios)  
 
+
+
+
 ## Contributing
 
 ### Issues
@@ -42,7 +45,7 @@ commits](https://github.com/ccrama/Slide-ios/commits/master).
 
 ## Licensing
 
-Slide is licensed under the [Apache 2 License.](license.txt)
+Slide is licensed under the [Apache 2 License.](LICENSE)
 
-In addition to the terms set by the Apache 2 Public License, I ask that if you use
+In addition to the terms set by the Apache 2 License, I ask that if you use
 any code from this repository that you send me a message to let me know.
