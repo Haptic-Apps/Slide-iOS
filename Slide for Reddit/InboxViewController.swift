@@ -98,6 +98,7 @@ class InboxViewController:  ButtonBarPagerTabStripViewController {
         }
     }
     
+    var time: Double = 0
     
     override func viewDidLoad() {
         settings.style.buttonBarItemFont = UIFont.systemFont(ofSize: 14)
@@ -106,6 +107,8 @@ class InboxViewController:  ButtonBarPagerTabStripViewController {
         settings.style.buttonBarItemTitleColor = .black
         settings.style.buttonBarItemsShouldFillAvailiableWidth = true
         
+        time = History.getInboxSeen()
+        History.inboxSeen()
         
         settings.style.buttonBarLeftContentInset = 20
         settings.style.buttonBarRightContentInset = 20

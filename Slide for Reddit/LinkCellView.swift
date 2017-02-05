@@ -365,6 +365,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                               metrics: metrics,
                                                               views: views2))
+        self.contentView.addConstraints(thumbConstraint)
 
     }
     
@@ -553,7 +554,10 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         }
         
         height = submission.height
-        let type = ContentType.getContentType(baseUrl: submission.url!)
+        var type = ContentType.getContentType(baseUrl: submission.url!)
+        if(submission.isSelf){
+            type = .SELF
+        }
 
         
         if(thumb && type == .SELF){
@@ -565,7 +569,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         if(!fullImage && height < 50){
             big = false
             thumb = true
-        } else if(big && (SettingValues.bigPicCropped /*|| full*/)){
+        } else if(big && (SettingValues.bigPicCropped || full)){
             height = 200
         } else if(big){
             let h = getHeightFromAspectRatio(imageHeight: height, imageWidth: submission.width)
@@ -576,7 +580,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             }
         }
         
-        if(type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big){
+        if(type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big || type == .SELF && full){
             big = false
             thumb = false
         }
@@ -593,21 +597,26 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             thumb = false
         }
         
-        print("Big is \(big) and height is \(height)")
-        
         if(big || !submission.thumbnail){
             thumb = false
+        }
+        
+        if(!big && !thumb && submission.type != .SELF && submission.type != .NONE){ //If a submission has a link but no images, still show the web thumbnail
+            thumb = true
+            addTouch(view: thumbImage, action: #selector(LinkCellView.openLink(sender:)))
+            thumbImage.image = UIImage.init(named: "web")
         }
         
         if(thumb && !big){
             addTouch(view: thumbImage, action: #selector(LinkCellView.openLink(sender:)))
             if(submission.thumbnailUrl == "nsfw"){
                 thumbImage.image = UIImage.init(named: "nsfw")
-            } else if(submission.thumbnailUrl == "link"){
-                thumbImage.image = UIImage.init(named: "link")
+            } else if(submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty){
+                thumbImage.image = UIImage.init(named: "web")
             } else {
                 thumbImage.sd_setImage(with: URL.init(string: submission.thumbnailUrl))
             }
+            print("Showing \(submission.thumbnailUrl)")
         } else {
             thumbImage.sd_setImage(with: URL.init(string: ""))
             self.thumbImage.frame.size.width = 0
@@ -615,12 +624,11 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         
 
         if(big){
-            let imageSize = CGSize.init(width:submission.width, height:submission.height);
+            let imageSize = CGSize.init(width:submission.width, height: full ? 200 : submission.height);
             var aspect = imageSize.width / imageSize.height
             if(aspect == 0 || aspect > 10000 || aspect.isNaN){
                 aspect = 1
             }
-            print("Aspect is \(aspect)")
             bigConstraint = NSLayoutConstraint(item: bannerImage, attribute:  NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: bannerImage, attribute: NSLayoutAttribute.height, multiplier: aspect, constant: 0.0)
             bannerImage.isUserInteractionEnabled = true
             let tap = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openLink(sender:)))
@@ -685,7 +693,6 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                                               views: views))
             
             
-            self.contentView.addConstraints(thumbConstraint)
         } else if(big) {
             if(bigConstraint != nil){
                 thumbConstraint.append(bigConstraint!)
@@ -723,7 +730,6 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                                               views: views))
             
             
-            self.contentView.addConstraints(thumbConstraint)
         } else {
             thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[image(0)]",
                                                                               options: NSLayoutFormatOptions(rawValue: 0),
@@ -749,10 +755,11 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                                               metrics: metrics,
                                                                               views: views))
-            self.contentView.addConstraints(thumbConstraint)
             
         }
         refresh()
+        self.setNeedsUpdateConstraints()
+        self.setNeedsLayout()
         
     }
     

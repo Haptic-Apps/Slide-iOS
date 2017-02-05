@@ -762,6 +762,37 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         return buf
     }
     
+    public func extendForMore(parentId: String, comments: [Thing], current depth: Int) -> ([(Thing, Int)]) {
+        var buf: [(Thing, Int)] = []
+        
+        for thing in comments {
+            let pId = thing is Comment ? (thing as! Comment).parentId : (thing as! More).parentId
+            if(pId == parentId){
+                if let comment = thing as? Comment {
+                    var relativeDepth = 0
+                    for parent in buf {
+                        if(comment.parentId == parentId){
+                            relativeDepth = parent.1 - depth
+                            break
+                        }
+                    }
+                    buf.append((comment, depth + relativeDepth))
+                    buf.append(contentsOf: extendForMore(parentId: comment.getId(), comments: comments, current:depth + relativeDepth + 1))
+                } else if let more = thing as? More {
+                    var relativeDepth = 0
+                    for parent in buf {
+                        let parentId = parent.0 is Comment ? (parent.0 as! Comment).parentId : (parent.0 as! More).parentId
+                        if(more.parentId == parentId){
+                            relativeDepth = parent.1 - depth
+                            break
+                        }
+                    }
+                    buf.append((more, depth + relativeDepth))
+                }
+            }
+        }
+        return buf
+    }
     
     func updateStrings(_ newComments: [(Thing, Int)]) -> [CellContent] {
         let width = self.view.frame.size.width
@@ -785,13 +816,14 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     func updateStringsSingle(_ newComments: [Object]) -> [CellContent] {
         let width = self.view.frame.size.width
+        let color = ColorUtil.accentColorForSub(sub: ((newComments[0] as! RComment).subreddit))
         return newComments.map { (thing: Object) -> CellContent in
             if let comment = thing as? RComment {
                 let html = comment.htmlText
                 do {
                     let attr = try NSMutableAttributedString(data: html.data(using: .unicode)!, options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
                     let font = FontGenerator.fontOfSize(size: 16, submission: false)
-                    let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: UIColor.blue)
+                    let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
                     return CellContent.init(string:LinkParser.parse(attr2), width:(width - 25) - CGFloat((cDepth[comment.getId()] as! Int) * 4), hasRelies:false, id: comment.getId())
                 } catch {
                     return CellContent(string:NSAttributedString(string: ""), width:width - 25, hasRelies:false, id: comment.getId())
@@ -799,7 +831,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             } else {
                 let attr = NSMutableAttributedString(string: "more")
                 let font = FontGenerator.fontOfSize(size: 16, submission: false)
-                let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: UIColor.blue)
+                let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
                 return CellContent.init(string:LinkParser.parse(attr2), width:(width - 25), hasRelies:false, id: (thing as! RMore).getId())
             }
         }
@@ -807,6 +839,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     func updateStringSearch(_ thing: Thing) -> CellContent {
         let width = self.view.frame.size.width
+        let color = ColorUtil.accentColorForSub(sub: (thing as! RComment).subreddit)
         if let comment = thing as? Comment {
             let html = comment.bodyHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
             do {
@@ -823,7 +856,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 }
                 
                 let font = FontGenerator.fontOfSize(size: 16, submission: false)
-                let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: UIColor.blue)
+                let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
                 
                 return CellContent.init(string:LinkParser.parse(attr2), width:(width - 25), hasRelies:false, id: comment.getId())
             } catch {
@@ -832,7 +865,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         } else {
             let attr = NSMutableAttributedString(string: "more")
             let font = FontGenerator.fontOfSize(size: 16, submission: false)
-            let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: UIColor.blue)
+            let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
             return CellContent.init(string:LinkParser.parse(attr2), width:(width - 25), hasRelies:false, id: thing.getId())
         }
     }
@@ -1555,65 +1588,76 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 } else {
                     let datasetPosition = tableView.indexPath(for: cell)!.row
                     if let more = dataArray[datasetPosition] as? RMore, let link = self.submission {
-                        do {
-                            var strings: [String] = []
-                            for c in more.children {
-                                strings.append(c.value)
-                            }
-                            try session?.getMoreChildren(strings, name: link.id, sort:.new, id: more.id, completion: { (result) -> Void in
-                                switch result {
-                                case .failure(let error):
-                                    print(error)
-                                case .success(let list):
-                                    
-                                    DispatchQueue.main.async(execute: { () -> Void in
-                                        let startDepth = self.cDepth[more.getId()] as! Int
+                        if(more.children.isEmpty){
+                            let url = URL.init(string: "https://www.reddit.com" + submission!.permalink +  more.parentId.substring(3, length: more.parentId.length - 3))
+                            print(url!.absoluteString)
+                            show(RedditLink.getViewControllerForURL(urlS: url!), sender: self)
+                        } else {
+                            do {
+                                var strings: [String] = []
+                                for c in more.children {
+                                    strings.append(c.value)
+                                }
+                                cell.animateMore()
+                                try session?.getMoreChildren(strings, name: link.id, sort:.new, id: more.id, completion: { (result) -> Void in
+                                    switch result {
+                                    case .failure(let error):
+                                        print(error)
+                                    case .success(let list):
                                         
-                                        var queue: [Object] = []
-                                        for child in list {
-                                            let incoming = self.extendKeepMore(in: child, current: startDepth)
-                                            for i in incoming{
+                                        DispatchQueue.main.async(execute: { () -> Void in
+                                            let startDepth = self.cDepth[more.getId()] as! Int
+                                            
+                                            var queue: [Object] = []
+                                            for i in self.extendForMore(parentId: more.parentId, comments: list, current: startDepth) {
                                                 queue.append(i.0 is Comment ? RealmDataWrapper.commentToRComment(comment: i.0 as! Comment, depth: i.1) : RealmDataWrapper.moreToRMore(more: i.0 as! More))
                                                 print("Depth is \(i.1)")
                                                 self.cDepth[i.0.getId()] = i.1
                                             }
-                                        }
-                                        
-                                        var realPosition = 0
-                                        for comment in self.comments{
-                                            let id = comment is RComment ? (comment as! RComment).getId() : (comment as! RMore).getId()
-                                            if(id == more.getId()){
-                                                break
+                                            
+                                            var realPosition = 0
+                                            for comment in self.comments{
+                                                let id = comment is RComment ? (comment as! RComment).getId() : (comment as! RMore).getId()
+                                                if(id == more.getId()){
+                                                    break
+                                                }
+                                                realPosition += 1
                                             }
-                                            realPosition += 1
-                                        }
-                                        
-                                        
-                                        self.comments.remove(at: realPosition)
-                                        self.dataArray.remove(at: datasetPosition)
-                                        self.contents.remove(at: realPosition)
-                                        self.heightArray.remove(at: datasetPosition)
-                                        
-                                        if(queue.count != 0){
                                             
-                                            self.dataArray.insert(contentsOf: queue, at: datasetPosition)
-                                            self.comments.insert(contentsOf: queue, at: realPosition)
-                                            self.heightArray.insert(contentsOf: self.updateStringsSingle(queue), at: datasetPosition)
-                                            self.contents.insert(contentsOf: self.updateStringsSingle(queue), at: realPosition)
-                                            self.doArrays()
-                                            self.tableView.reloadData()
                                             
-                                        } else {
-                                            self.doArrays()
-                                            self.tableView.reloadData()
-                                        }
-                                    })
+                                            self.comments.remove(at: realPosition)
+                                            self.dataArray.remove(at: datasetPosition)
+                                            self.contents.remove(at: realPosition)
+                                            self.heightArray.remove(at: datasetPosition)
+                                            
+                                            if(queue.count != 0){
+                                                self.tableView.beginUpdates()
+                                                self.tableView.deleteRows(at: [IndexPath.init(row: realPosition, section: 0)], with: .fade)
+                                                self.dataArray.insert(contentsOf: queue, at: datasetPosition)
+                                                self.comments.insert(contentsOf: queue, at: realPosition)
+                                                self.heightArray.insert(contentsOf: self.updateStringsSingle(queue), at: datasetPosition)
+                                                self.contents.insert(contentsOf: self.updateStringsSingle(queue), at: realPosition)
+                                                self.doArrays()
+                                                var paths: [IndexPath] = []
+                                                for i in stride(from: datasetPosition, to: datasetPosition + queue.count, by: 1){
+                                                    paths.append(IndexPath.init(row: i, section: 0))
+                                                }
+                                                self.tableView.insertRows(at: paths, with: .left)
+                                                self.tableView.endUpdates()
+                                                
+                                            } else {
+                                                self.doArrays()
+                                                self.tableView.reloadData()
+                                            }
+                                        })
+                                        
+                                    }
                                     
-                                }
-                            })
-                        } catch { print(error) }
+                                })
+                                
+                            } catch { print(error) }
+                        }
                     }
-                    
                 }
             }
         }

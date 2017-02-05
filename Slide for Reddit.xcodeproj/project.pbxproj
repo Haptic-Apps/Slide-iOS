@@ -49,7 +49,7 @@
 		BE3E5C1D1E177B2C00749C0C /* CommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3E5C1C1E177B2C00749C0C /* CommentViewController.swift */; };
 		BE3E5C1F1E18223600749C0C /* CellContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3E5C1E1E18223600749C0C /* CellContent.swift */; };
 		BE3E5C211E18227500749C0C /* CommentDepthCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3E5C201E18227500749C0C /* CommentDepthCell.swift */; };
-		BE58AEA11E2D3647006D1B6F /* ProgressGalleryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE58AEA01E2D3647006D1B6F /* ProgressGalleryViewController.swift */; };
+		BE50892A1E3D65610026EAE1 /* InboxListingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5089291E3D65600026EAE1 /* InboxListingViewController.swift */; };
 		BE5E53751E1DAEB7004FE226 /* RedditLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5E53741E1DAEB7004FE226 /* RedditLink.swift */; };
 		BE6EA6BF1E1C1A3400E9E709 /* GifMWPhotoBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE6EA6BE1E1C1A3400E9E709 /* GifMWPhotoBrowser.swift */; };
 		BE6EA6C31E1C1DCE00E9E709 /* GfyItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE6EA6C11E1C1DCE00E9E709 /* GfyItem.swift */; };
@@ -189,7 +189,7 @@
 		BE3E5C1C1E177B2C00749C0C /* CommentViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentViewController.swift; sourceTree = "<group>"; };
 		BE3E5C1E1E18223600749C0C /* CellContent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CellContent.swift; sourceTree = "<group>"; };
 		BE3E5C201E18227500749C0C /* CommentDepthCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentDepthCell.swift; sourceTree = "<group>"; };
-		BE58AEA01E2D3647006D1B6F /* ProgressGalleryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressGalleryViewController.swift; sourceTree = "<group>"; };
+		BE5089291E3D65600026EAE1 /* InboxListingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxListingViewController.swift; sourceTree = "<group>"; };
 		BE5E53741E1DAEB7004FE226 /* RedditLink.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RedditLink.swift; sourceTree = "<group>"; };
 		BE6EA6BE1E1C1A3400E9E709 /* GifMWPhotoBrowser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GifMWPhotoBrowser.swift; sourceTree = "<group>"; };
 		BE6EA6C11E1C1DCE00E9E709 /* GfyItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GfyItem.swift; sourceTree = "<group>"; };
@@ -311,7 +311,6 @@
 				BEF6F5391E1AF10E002B03B6 /* AlbumMWPhotoBrowser.swift */,
 				BE6EA6BE1E1C1A3400E9E709 /* GifMWPhotoBrowser.swift */,
 				BE5E53741E1DAEB7004FE226 /* RedditLink.swift */,
-				BE58AEA01E2D3647006D1B6F /* ProgressGalleryViewController.swift */,
 				BE981D341E31855500BD3846 /* OpenInChrome.swift */,
 			);
 			name = ContentViewControllers;
@@ -518,6 +517,7 @@
 				BEB2B2361E35D48000BF761C /* InboxViewController.swift */,
 				BEB2B2381E35D64F00BF761C /* MessageCellView.swift */,
 				BED76E641E3A9576008E7717 /* RealmDataWrappers.swift */,
+				BE5089291E3D65600026EAE1 /* InboxListingViewController.swift */,
 			);
 			path = "Slide for Reddit";
 			sourceTree = "<group>";
@@ -922,7 +922,6 @@
 				BEB2B2391E35D64F00BF761C /* MessageCellView.swift in Sources */,
 				BEB2B2371E35D48000BF761C /* InboxViewController.swift in Sources */,
 				BEBF45C81E230CC900764BB8 /* History.swift in Sources */,
-				BE58AEA11E2D3647006D1B6F /* ProgressGalleryViewController.swift in Sources */,
 				BE6EA6E01E1C228100E9E709 /* GfycatTranscoded.swift in Sources */,
 				BEE5BF641E11A15500E3C9AE /* LinkCellView.swift in Sources */,
 				BE6EA6CA1E1C1E9400E9E709 /* Files.swift in Sources */,
@@ -934,6 +933,7 @@
 				BE6EA6DD1E1C211200E9E709 /* GfycatCheck.swift in Sources */,
 				BEE5BF6C1E12C92F00E3C9AE /* DateFormatter+util.swift in Sources */,
 				BE981D351E31855500BD3846 /* OpenInChrome.swift in Sources */,
+				BE50892A1E3D65610026EAE1 /* InboxListingViewController.swift in Sources */,
 				BE2B89F31E2450D70053D493 /* ColorPicker.swift in Sources */,
 				BE2DEAB21E26916700FBF0B5 /* SubSidebarViewController.swift in Sources */,
 				BE7439F31E20C9BE008BB63B /* CommentCellView.swift in Sources */,

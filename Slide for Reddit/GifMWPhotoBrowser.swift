@@ -127,7 +127,16 @@ class GifMWPhotoBrowser: NSObject, GalleryItemsDataSource {
                     let gif = StreamableJSONBase.init(dictionary: json)
                     
                     DispatchQueue.main.async{
-                        self.loadVideo(urlString: (gif?.files?.mp4?.url)!)
+                        var video = ""
+                        if let url = gif?.files?.mp4mobile?.url {
+                            video = url
+                        } else {
+                            video = (gif?.files?.mp4?.url!)!
+                        }
+                        if(video.hasPrefix("//")){
+                            video = "https:" + video
+                        }
+                        self.loadVideo(urlString: video)
                     }
                 } catch let error as NSError {
                     print(error)

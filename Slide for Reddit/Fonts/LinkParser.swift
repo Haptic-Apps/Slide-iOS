@@ -29,7 +29,7 @@ class LinkParser {
                                 break
                             case .EXTERNAL, .LINK, .EMBEDDED, .NONE:
                                 if(url.absoluteString != string.mutableString.substring(with: range)){
-                                    typeString.mutableString.setString("(\(url.host!))")
+                                    typeString.mutableString.setString("(\(url.host ?? url.absoluteString))")
                                 }
                                 break
                             case .DEVIANTART, .IMAGE, .TUMBLR, .XKCD:

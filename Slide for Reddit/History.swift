@@ -40,6 +40,22 @@ class History {
         seenTimes.setValue(NSNumber(value: NSDate().timeIntervalSince1970), forKey: fullname)
     }
     
+    public static func inboxSeen(){
+        seenTimes.setValue(NSNumber(value: NSDate().timeIntervalSince1970), forKey: "inbox")
+    }
+
+    public static func getInboxSeen()-> Double{
+        if let time = seenTimes.object(forKey: "inbox") {
+            if(time is NSNumber){
+                return Double(time as! NSNumber)
+            } else {
+                return 0
+            }
+        } else {
+            return 0
+        }
+    }
+    
     //mark Comments
     public static func commentsSince(s: RSubmission) -> Int{
         if let comments = commentCounts.object(forKey: s.getId()){

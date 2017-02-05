@@ -228,6 +228,17 @@ class RSubmission: Object {
     dynamic var locked = false
     dynamic var urlString = ""
     
+    var type: ContentType.CType {
+        if(isSelf){
+            return .SELF
+        }
+        if url != nil {
+        return ContentType.getContentType(baseUrl: url!)
+        } else {
+            return .NONE
+        }
+    }
+    
     var url: URL? {
         return URL.init(string: self.urlString)
     }

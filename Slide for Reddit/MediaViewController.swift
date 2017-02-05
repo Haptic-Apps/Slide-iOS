@@ -39,18 +39,18 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
         
         return [
             
-            GalleryConfigurationItem.closeButtonMode(.builtIn),
+            GalleryConfigurationItem.closeButtonMode(.none),
             
             GalleryConfigurationItem.pagingMode(.standard),
             GalleryConfigurationItem.presentationStyle(.fade),
-            GalleryConfigurationItem.hideDecorationViewsOnLaunch(true),
+            GalleryConfigurationItem.hideDecorationViewsOnLaunch(false),
             
             GalleryConfigurationItem.swipeToDismissMode(.always),
             GalleryConfigurationItem.toggleDecorationViewsBySingleTap(true),
             
             GalleryConfigurationItem.overlayColor(UIColor(white: 0.035, alpha: 1)),
-            GalleryConfigurationItem.overlayColorOpacity(1),
-            GalleryConfigurationItem.overlayBlurOpacity(1),
+            GalleryConfigurationItem.overlayColorOpacity(0.75),
+            GalleryConfigurationItem.overlayBlurOpacity(0.75),
             GalleryConfigurationItem.overlayBlurStyle(UIBlurEffectStyle.dark),
             
             GalleryConfigurationItem.maximumZoomScale(8),
@@ -78,13 +78,13 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
             GalleryConfigurationItem.displacementTimingCurve(.linear),
             
             GalleryConfigurationItem.statusBarHidden(false),
-            GalleryConfigurationItem.displacementKeepOriginalInPlace(false),
-            GalleryConfigurationItem.displacementInsetMargin(50),
             
             GalleryConfigurationItem.deleteButtonMode(.none),
             GalleryConfigurationItem.thumbnailsButtonMode(.none)
         ]
     }
+    
+    var image: UIImage?
     
 
     func getControllerForUrl(baseUrl: URL) -> UIViewController? {
@@ -144,6 +144,7 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
                             
                         }, completed: { (image, _, error, _) in
                             DispatchQueue.main.async {
+                                self.image = image
                                 completion(image)
                             }
                         })
@@ -152,6 +153,19 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
                 }
             }
             let browser = GalleryViewController.init(startIndex: 0, itemsDataSource: self, itemsDelegate: nil, displacedViewsDataSource: nil, configuration: galleryConfiguration())
+            var toolbar = UIToolbar()
+            let space = UIBarButtonItem(barButtonSystemItem:.flexibleSpace, target: nil, action: nil)
+            var items: [UIBarButtonItem] = []
+            
+                items.append(space)
+                items.append(UIBarButtonItem(image: UIImage(named: "download")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(MediaViewController.download(_:))))
+                items.append(UIBarButtonItem(image: UIImage(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(MediaViewController.showImageMenu(_:))))
+                        toolbar.items = items
+            toolbar.barTintColor = UIColor.clear
+            toolbar.backgroundColor = UIColor.clear
+            toolbar.tintColor = UIColor.white
+            browser.footerView?.backgroundColor = UIColor.clear
+            browser.footerView = toolbar
             return browser
             
         } else if(type == .GIF || type == .STREAMABLE || type == .VID_ME){
@@ -170,6 +184,15 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
         }
         return WebsiteViewController(url: baseUrl, subreddit: link == nil ? "" : link.subreddit)
     }
+    
+    func download(_ sender: AnyObject){
+        UIImageWriteToSavedPhotosAlbum(image!, nil, nil, nil)
+    }
+    
+    func showImageMenu(_ sender: AnyObject){
+        
+    }
+    
     var millis: Double = 0
     var playlist: String = ""
     

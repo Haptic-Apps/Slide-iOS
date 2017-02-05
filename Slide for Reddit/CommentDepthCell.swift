@@ -295,6 +295,7 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
     
     func setMore(more: RMore, depth: Int){
         self.depth = depth
+        loading = false
         c.alpha = 0
         rightSideViewSpace.backgroundColor = ColorUtil.foregroundColor
         if (depth - 1 > 0) {
@@ -318,23 +319,55 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         }
         
         title.text = ""
-        let attr = NSMutableAttributedString(string: "Load \(more.count) more")
+        var attr = NSMutableAttributedString()
+        if(more.children.isEmpty){
+            attr = NSMutableAttributedString(string: "Continue this thread")
+        } else {
+            attr = NSMutableAttributedString(string: "Load \(more.count) more")
+        }
         let font = FontGenerator.fontOfSize(size: 16, submission: false)
         let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: .white)
         textView.attributedString = attr2
         updateDepthConstraints()
     }
     
+    var numberOfDots = 3
+    var loading = false
+    func animateMore() {
+        loading = true
+        let attr = NSMutableAttributedString(string: "Loading...")
+        let font = FontGenerator.fontOfSize(size: 16, submission: false)
+        let attr2 = NSMutableAttributedString(attributedString: attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: UIColor.blue))
+        
+        
+        textView.attributedString = attr2
+        
+        /* possibly todo var timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { (timer) in
+         print("Firing")
+         let range = NSMakeRange(attr2.length - self.numberOfDots, self.numberOfDots)
+         attr2.addAttribute(NSForegroundColorAttributeName, value: UIColor.clear, range: range)
+         
+         self.textView.attributedString = attr2
+         self.numberOfDots -= 1
+         if self.numberOfDots < 0 {
+         self.numberOfDots = 3
+         }
+         if(self.loading == false){
+         timer.invalidate()
+         }
+         }*/
+    }
     func setComment(comment: RComment, depth: Int, parent: MediaViewController, hiddenCount: Int, date: Double, author: String?){
         self.comment = comment
+        loading = false
         if(self.parent == nil){
             self.parent = parent
         }
         
         if(date != 0 && date < Double(comment.created.timeIntervalSince1970 )){
-            self.rightSideViewSpace.backgroundColor = ColorUtil.getColorForSub(sub: comment.subreddit)
+            self.backgroundColor = ColorUtil.getColorForSub(sub: comment.subreddit).withAlphaComponent(0.3)
         } else {
-            self.rightSideViewSpace.backgroundColor = ColorUtil.foregroundColor
+            self.backgroundColor = ColorUtil.foregroundColor
         }
         
         if(hiddenCount > 0){
@@ -443,7 +476,7 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
             }
         }
         
-
+        
         
         title.attributedText = infoString
     }
@@ -510,7 +543,7 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         if(viewControllerToCommit is GalleryViewController){
             parent?.presentImageGallery(viewControllerToCommit as! GalleryViewController)
         } else {
-        parent?.show(viewControllerToCommit, sender: parent )
+            parent?.show(viewControllerToCommit, sender: parent )
         }
     }
     
