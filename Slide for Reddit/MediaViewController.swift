@@ -57,6 +57,7 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
             GalleryConfigurationItem.swipeToDismissThresholdVelocity(500),
             
             GalleryConfigurationItem.doubleTapToZoomDuration(0.15),
+            GalleryConfigurationItem.footerViewLayout(FooterLayout.pinRight(8, 0)),
             
             GalleryConfigurationItem.blurPresentDuration(0.5),
             GalleryConfigurationItem.blurPresentDelay(0),
@@ -85,7 +86,6 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
     }
     
     var image: UIImage?
-    
 
     func getControllerForUrl(baseUrl: URL) -> UIViewController? {
         images = []
@@ -161,8 +161,10 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
                 items.append(UIBarButtonItem(image: UIImage(named: "download")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(MediaViewController.download(_:))))
                 items.append(UIBarButtonItem(image: UIImage(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(MediaViewController.showImageMenu(_:))))
                         toolbar.items = items
-            toolbar.barTintColor = UIColor.clear
-            toolbar.backgroundColor = UIColor.clear
+            toolbar.setBackgroundImage(UIImage(),
+                                            forToolbarPosition: .any,
+                                            barMetrics: .default)
+            toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
             toolbar.tintColor = UIColor.white
             browser.footerView?.backgroundColor = UIColor.clear
             browser.footerView = toolbar
@@ -190,7 +192,35 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
     }
     
     func showImageMenu(_ sender: AnyObject){
-        
+        let alert = UIAlertController.init(title: contentUrl?.absoluteString, message: "", preferredStyle: .actionSheet)
+        let open = OpenInChromeController.init()
+        if(open.isChromeInstalled()){
+            alert.addAction(
+                UIAlertAction(title: "Open in Chrome", style: .default) { (action) in
+                    open.openInChrome(self.contentUrl!, callbackURL: nil, createNewTab: true)
+                }
+            )
+        }
+        alert.addAction(
+            UIAlertAction(title: "Open in Safari", style: .default) { (action) in
+                UIApplication.shared.open(self.contentUrl!, options: [:], completionHandler: nil)
+            }
+        )
+        alert.addAction(
+            UIAlertAction(title: "Share URL", style: .default) { (action) in
+                let shareItems:Array = [self.contentUrl!]
+                let activityViewController:UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+                self.present(activityViewController, animated: true, completion: nil)
+            }
+        )
+        alert.addAction(
+            UIAlertAction(title: "Share Image", style: .default) { (action) in
+                let shareItems:Array = [self.image!]
+                let activityViewController:UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+                self.present(activityViewController, animated: true, completion: nil)
+            }
+        )
+        self.present(alert, animated: true, completion: nil)
     }
     
     var millis: Double = 0
