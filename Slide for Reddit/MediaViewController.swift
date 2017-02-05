@@ -210,17 +210,33 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
             UIAlertAction(title: "Share URL", style: .default) { (action) in
                 let shareItems:Array = [self.contentUrl!]
                 let activityViewController:UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
-                self.present(activityViewController, animated: true, completion: nil)
+                let window = UIApplication.shared.keyWindow!
+                if let modalVC = window.rootViewController?.presentedViewController {
+                    modalVC.present(activityViewController, animated: true, completion: nil)
+                } else {
+                    window.rootViewController!.present(activityViewController, animated: true, completion: nil)
+                }
             }
         )
         alert.addAction(
             UIAlertAction(title: "Share Image", style: .default) { (action) in
                 let shareItems:Array = [self.image!]
                 let activityViewController:UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
-                self.present(activityViewController, animated: true, completion: nil)
+                let window = UIApplication.shared.keyWindow!
+                if let modalVC = window.rootViewController?.presentedViewController {
+                    modalVC.present(activityViewController, animated: true, completion: nil)
+                } else {
+                    window.rootViewController!.present(activityViewController, animated: true, completion: nil)
+                }
             }
         )
-        self.present(alert, animated: true, completion: nil)
+        
+        let window = UIApplication.shared.keyWindow!
+        if let modalVC = window.rootViewController?.presentedViewController {
+            modalVC.present(alert, animated: true, completion: nil)
+        } else {
+            window.rootViewController!.present(alert, animated: true, completion: nil)
+        }
     }
     
     var millis: Double = 0
