@@ -15,24 +15,25 @@ class AlbumMWPhotoBrowser: NSObject, GalleryItemsDataSource {
         
         return [
             
-            GalleryConfigurationItem.closeButtonMode(.builtIn),
+            GalleryConfigurationItem.closeButtonMode(.none),
             
-            GalleryConfigurationItem.pagingMode(.carousel),
+            GalleryConfigurationItem.pagingMode(.standard),
             GalleryConfigurationItem.presentationStyle(.fade),
-            GalleryConfigurationItem.hideDecorationViewsOnLaunch(true),
+            GalleryConfigurationItem.hideDecorationViewsOnLaunch(false),
             
             GalleryConfigurationItem.swipeToDismissMode(.always),
             GalleryConfigurationItem.toggleDecorationViewsBySingleTap(true),
             
             GalleryConfigurationItem.overlayColor(UIColor(white: 0.035, alpha: 1)),
-            GalleryConfigurationItem.overlayColorOpacity(1),
-            GalleryConfigurationItem.overlayBlurOpacity(1),
+            GalleryConfigurationItem.overlayColorOpacity(0.75),
+            GalleryConfigurationItem.overlayBlurOpacity(0.75),
             GalleryConfigurationItem.overlayBlurStyle(UIBlurEffectStyle.dark),
             
             GalleryConfigurationItem.maximumZoomScale(8),
             GalleryConfigurationItem.swipeToDismissThresholdVelocity(500),
             
             GalleryConfigurationItem.doubleTapToZoomDuration(0.15),
+            GalleryConfigurationItem.footerViewLayout(FooterLayout.pinRight(8, 0)),
             
             GalleryConfigurationItem.blurPresentDuration(0.5),
             GalleryConfigurationItem.blurPresentDelay(0),
@@ -54,8 +55,6 @@ class AlbumMWPhotoBrowser: NSObject, GalleryItemsDataSource {
             GalleryConfigurationItem.displacementTimingCurve(.linear),
             
             GalleryConfigurationItem.statusBarHidden(false),
-            GalleryConfigurationItem.displacementKeepOriginalInPlace(false),
-            GalleryConfigurationItem.displacementInsetMargin(50),
             
             GalleryConfigurationItem.deleteButtonMode(.none),
             GalleryConfigurationItem.thumbnailsButtonMode(.builtIn)

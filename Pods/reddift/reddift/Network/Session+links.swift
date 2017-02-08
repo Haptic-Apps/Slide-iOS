@@ -320,11 +320,9 @@ extension Session {
         if let id = id {
             parameter["id"] = id
         }
-        guard let request = URLRequest.requestForOAuth(with: baseURL, path:"/api/morechildren", parameter:parameter, method:"GET", token:token)
+        guard let request = URLRequest.requestForOAuth(with: "https://www.reddit.com", path:"/api/morechildren", parameter:parameter, method:"GET", token:token)
             else { throw ReddiftError.canNotCreateURLRequest as NSError }
         let closure = {(data: Data?, response: URLResponse?, error: NSError?) -> Result<[Thing]> in
-            print(response?.url?.absoluteString)
-            print(String(data: data!, encoding: String.Encoding.utf8))
             return Result(from: Response(data: data, urlResponse: response), optional:error)
                 .flatMap(response2Data)
                 .flatMap(data2Json)

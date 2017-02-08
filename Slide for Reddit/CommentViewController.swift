@@ -360,7 +360,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                 if let tableHeaderView = self.headerCell {
                                     var frame = CGRect.zero
                                     frame.size.width = self.tableView.bounds.size.width
-                                    frame.size.height = tableHeaderView.estimateHeight()
+                                    frame.size.height = tableHeaderView.estimateHeight(true)
                                     if self.tableView.tableHeaderView == nil || !frame.equalTo(tableHeaderView.frame) {
                                         tableHeaderView.frame = frame
                                         tableHeaderView.layoutIfNeeded()
@@ -515,7 +515,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             if let tableHeaderView = self.headerCell {
                 var frame = CGRect.zero
                 frame.size.width = self.tableView.bounds.size.width
-                frame.size.height = tableHeaderView.estimateHeight()
+                frame.size.height = tableHeaderView.estimateHeight(true)
                 if self.tableView.tableHeaderView == nil || !frame.equalTo(tableHeaderView.frame) {
                     tableHeaderView.frame = frame
                     tableHeaderView.layoutIfNeeded()
@@ -524,9 +524,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     self.tableView.tableHeaderView = view
                 }
             }
-            
         }
-        
     }
     
     init(submission: RSubmission){

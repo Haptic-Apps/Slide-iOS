@@ -94,16 +94,17 @@ extension Session {
      - returns: Data task which requests search to reddit.com.
      */
     @discardableResult
-    public func getMultireddit(_ multi: Multireddit, completion: @escaping (Result<[Multireddit]>) -> Void) throws -> URLSessionDataTask {
-        let parameter = ["multipath":multi.path, "expand_srs":"true"]
-        guard let request = URLRequest.requestForOAuth(with: baseURL, path:"/api/multi/" + multi.path, parameter:parameter, method:"GET", token:token)
+    public func getMultireddit(_ multi: Multireddit, completion: @escaping (Result<Multireddit>) -> Void) throws -> URLSessionDataTask {
+        let parameter = ["multipath":multi.path, "expand_srs":"false"]
+        guard let request = URLRequest.requestForOAuth(with: baseURL, path:"/api/multi" + multi.path, parameter:parameter, method:"GET", token:token)
             else { throw ReddiftError.canNotCreateURLRequest as NSError }
-        let closure = {(data: Data?, response: URLResponse?, error: NSError?) -> Result<[Multireddit]> in
+        let closure = {(data: Data?, response: URLResponse?, error: NSError?) -> Result<Multireddit> in
+            print(error)
+            print(request.url?.absoluteString)
             return Result(from: Response(data: data, urlResponse: response), optional:error)
                 .flatMap(response2Data)
                 .flatMap(data2Json)
-                .flatMap(json2RedditAny)
-                .flatMap(redditAny2MultiredditArray)
+                .flatMap(json2Multireddit)
         }
         return executeTask(request, handleResponse: closure, completion: completion)
     }
@@ -117,7 +118,7 @@ extension Session {
      */
     @discardableResult
     public func deleteMultireddit(_ multi: Multireddit, completion: @escaping (Result<String>) -> Void) throws -> URLSessionDataTask {
-        guard let request = URLRequest.requestForOAuth(with: baseURL, path:"/api/multi/" + multi.path, method:"DELETE", token:token)
+        guard let request = URLRequest.requestForOAuth(with: baseURL, path:"/api/multi" + multi.path, method:"DELETE", token:token)
             else { throw ReddiftError.canNotCreateURLRequest as NSError }
         let closure = {(data: Data?, response: URLResponse?, error: NSError?) -> Result<String> in
             return Result(from: Response(data: data, urlResponse: response), optional:error)

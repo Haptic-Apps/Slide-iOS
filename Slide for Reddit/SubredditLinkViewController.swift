@@ -414,6 +414,35 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         self.present(alrController, animated: true, completion:{})
     }
     
+    func doDisplayMultiSidebar(_ sub: Multireddit){
+        let alrController = UIAlertController(title: sub.displayName, message: sub.descriptionMd, preferredStyle: UIAlertControllerStyle.actionSheet)
+        for s in sub.subreddits {
+            let somethingAction = UIAlertAction(title: "/r/" + s, style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in
+                self.show(SubredditLinkViewController.init(subName: s, single: true), sender: self)
+            })
+            let color = ColorUtil.getColorForSub(sub: s)
+            if(color != ColorUtil.baseColor){
+                somethingAction.setValue(color, forKey: "titleTextColor")
+
+            }
+            alrController.addAction(somethingAction)
+
+        }
+        var somethingAction = UIAlertAction(title: "Edit multireddit", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in print("something")})
+        alrController.addAction(somethingAction)
+        
+        somethingAction = UIAlertAction(title: "Delete multireddit", style: UIAlertActionStyle.destructive, handler: {(alert: UIAlertAction!) in print("something")})
+        alrController.addAction(somethingAction)
+        
+
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: {(alert: UIAlertAction!) in print("cancel")})
+        
+        alrController.addAction(cancelAction)
+        
+        self.present(alrController, animated: true, completion:{})
+    }
+
+    
     var subChanged = false
     func subscribe(_ sub: Subreddit){
         if(subChanged && !sub.userIsSubscriber || sub.userIsSubscriber){
@@ -447,6 +476,29 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             
         }
     }
+    
+    func displayMultiredditSidebar(){
+            do {
+                print("Getting \(sub.substring(3, length: sub.length - 3))")
+                try (UIApplication.shared.delegate as! AppDelegate).session?.getMultireddit(Multireddit.init(name: sub.substring(3, length: sub.length - 3), user: AccountController.currentName), completion: { (result) in
+                    switch result {
+                    case .success(let r):
+                        DispatchQueue.main.async {
+                            self.doDisplayMultiSidebar(r)
+                        }
+                    default:
+                        print(result.error)
+                        DispatchQueue.main.async{
+                            self.view.makeToast("Multireddit info not found", duration: 5, position: .bottom)
+                        }
+                        break
+                    }
+
+                })
+            } catch {
+            }
+    }
+
     
     func displaySidebar(){
         if(subInfo != nil){
@@ -671,8 +723,14 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         }
         actionSheetController.addAction(cancelActionButton)
         
-        cancelActionButton = UIAlertAction(title: "Sidebar", style: .default) { action -> Void in
-            self.displaySidebar()
+        if(sub.contains("/m/")){
+            cancelActionButton = UIAlertAction(title: "Manage multireddit", style: .default) { action -> Void in
+                self.displayMultiredditSidebar()
+            }
+        } else {
+            cancelActionButton = UIAlertAction(title: "Sidebar", style: .default) { action -> Void in
+                self.displaySidebar()
+            }
         }
         actionSheetController.addAction(cancelActionButton)
         
@@ -868,7 +926,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                                     }
                                     self.refreshControl.endRefreshing()
                                     self.loading = false
-
+                                    
                                     if(self.links.isEmpty){
                                         self.view.makeToast("No offline data found", duration: 10, position: .top)
                                     } else {
@@ -945,7 +1003,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                                     }
                                     self.refreshControl.endRefreshing()
                                     self.loading = false
-
+                                    
                                     if(self.links.isEmpty){
                                         self.view.makeToast("No offline data found", duration: 10, position: .top)
                                     } else {
@@ -958,7 +1016,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                             print(result.error!)
                         case .success(let listing):
                             
-
+                            
                             if(reset){
                                 self.links = []
                             }
@@ -968,7 +1026,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                                 self.realmListing!.id = self.listingId
                                 self.realmListing!.subreddit = self.sub
                             }
-
+                            
                             let links = listing.children.flatMap({$0 as? Link})
                             var converted : [RSubmission] = []
                             for link in links {
@@ -995,7 +1053,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                                 } catch {
                                     
                                 }
-
+                                
                                 self.tableView.reloadData()
                                 self.refreshControl.endRefreshing()
                                 self.loading = false

@@ -230,7 +230,10 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
                 }
             }
         )
-        
+        alert.addAction(
+            UIAlertAction(title: "Cancel", style: .cancel) { (action) in
+            }
+        )
         let window = UIApplication.shared.keyWindow!
         if let modalVC = window.rootViewController?.presentedViewController {
             modalVC.present(alert, animated: true, completion: nil)
