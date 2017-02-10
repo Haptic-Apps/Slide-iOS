@@ -242,6 +242,13 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
         }
     }
     
+    let overlayTransitioningDelegate = OverlayTransitioningDelegate()
+
+    public func prepareOverlayVC(overlayVC: UIViewController) {
+        overlayVC.transitioningDelegate = overlayTransitioningDelegate
+        overlayVC.modalPresentationStyle = .custom
+    }
+    
     var millis: Double = 0
     var playlist: String = ""
     

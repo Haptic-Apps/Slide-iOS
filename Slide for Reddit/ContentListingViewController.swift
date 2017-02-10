@@ -103,7 +103,7 @@ class ContentListingViewController: MediaViewController, UITableViewDelegate, UI
         super.viewWillAppear(animated)
         if let navigationController = self.navigationController as? ScrollingNavigationController {
             print("Following scroll")
-            navigationController.followScrollView(self.tableView, delay: 50.0)
+       //     navigationController.followScrollView(self.tableView, delay: 50.0)
         }
 
     }

@@ -67,7 +67,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         self.view.addSubview(myProgressView)
 
         if let navigationController = self.navigationController as? ScrollingNavigationController {
-            navigationController.followScrollView(self.webView, delay: 50.0)
+       //     navigationController.followScrollView(self.webView, delay: 50.0)
         }
 
         loadUrl()

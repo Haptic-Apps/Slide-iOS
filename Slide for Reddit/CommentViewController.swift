@@ -139,10 +139,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
         actionSheetController.addAction(cancelActionButton)
         
-        cancelActionButton = UIAlertAction(title: "Hide", style: .default) { action -> Void in
-            //todo hide
-        }
-        actionSheetController.addAction(cancelActionButton)
         let open = OpenInChromeController.init()
         if(open.isChromeInstalled()){
             cancelActionButton = UIAlertAction(title: "Open in Chrome", style: .default) { action -> Void in
@@ -262,36 +258,38 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     switch result {
                     case .failure(let error):
                         print(error)
-                        DispatchQueue.main.async {
-                            print("Getting realm data")
-                            do {
-                                let realm = try Realm()
-                                if let listing =  realm.objects(RSubmission.self).filter({ (item) -> Bool in
-                                    return item.name == self.submission!.name
-                                }).first{
-                                    
-                                    self.comments = []
-                                    self.hiddenPersons = []
-                                    self.hidden = []
-                                    self.contents = []
-                                    self.refreshControl.endRefreshing()
-                                    self.submission!.comments.removeAll()
-                                    for child in listing.comments {
-                                        self.comments.append(child)
-                                        self.cDepth[child.getId()] = child.depth
-                                    }
-                                    self.contents += (self.updateStringsSingle(self.comments))
-                                    
-                                    var time = timeval(tv_sec: 0, tv_usec: 0)
-                                    gettimeofday(&time, nil)
-                                    
-                                    self.doArrays()
-                                    self.lastSeen = History.getSeenTime(s: link)
+                        print("Getting realm data")
+                        do {
+                            let realm = try Realm()
+                            if let listing =  realm.objects(RSubmission.self).filter({ (item) -> Bool in
+                                return item.name == self.submission!.name
+                            }).first{
+                                
+                                self.comments = []
+                                self.hiddenPersons = []
+                                self.hidden = []
+                                self.contents = []
+                                self.refreshControl.endRefreshing()
+                                self.submission!.comments.removeAll()
+                                for child in listing.comments {
+                                    self.comments.append(child)
+                                    self.cDepth[child.getId()] = child.depth
+                                }
+                                self.contents += (self.updateStringsSingle(self.comments))
+                                
+                                var time = timeval(tv_sec: 0, tv_usec: 0)
+                                gettimeofday(&time, nil)
+                                
+                                self.doArrays()
+                                self.lastSeen = History.getSeenTime(s: link)
+                                DispatchQueue.main.async {
                                     self.tableView.reloadData()
                                 }
-                            } catch {
-                                
                             }
+                        } catch {
+                            
+                        }
+                        DispatchQueue.main.async {
                             
                             self.refreshControl.endRefreshing()
                             
@@ -335,20 +333,20 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                         }
                         self.paginator = listing.paginator
                         
-                        DispatchQueue.main.async(execute: { () -> Void in
-                            do {
-                                let realm = try! Realm()
-                                //todo insert
-                                realm.beginWrite()
-                                for comment in self.comments {
-                                    realm.create(type(of: comment), value: comment, update: true)
-                                }
-                                realm.create(type(of: self.submission!), value: self.submission!, update: true)
-                                try realm.commitWrite()
-                            } catch {
-                                
+                        do {
+                            let realm = try! Realm()
+                            //todo insert
+                            realm.beginWrite()
+                            for comment in self.comments {
+                                realm.create(type(of: comment), value: comment, update: true)
                             }
+                            realm.create(type(of: self.submission!), value: self.submission!, update: true)
+                            try realm.commitWrite()
+                        } catch {
                             
+                        }
+                        
+                        DispatchQueue.main.async(execute: { () -> Void in
                             
                             if(!self.hasSubmission){
                                 self.headerCell = LinkCellView()
@@ -373,9 +371,13 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                 self.setBarColors(color: ColorUtil.getColorForSub(sub: self.title!))
                             } else {
                                 self.headerCell?.refreshLink(self.submission!)
+                                self.headerCell?.showBody(width: self.view.frame.size.width)
                             }
-                            self.doArrays()
-                            self.lastSeen = History.getSeenTime(s: link)
+                        })
+                        self.doArrays()
+                        self.lastSeen = History.getSeenTime(s: link)
+                        DispatchQueue.main.async(execute: { () -> Void in
+                            
                             self.tableView.reloadData()
                             History.setComments(s: link)
                             History.addSeen(s: link)
@@ -476,7 +478,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: UIBarButtonItemStyle.plain, target: nil, action: nil)
         if let navigationController = self.navigationController as? ScrollingNavigationController {
             print("Following scroll")
-            navigationController.followScrollView(self.tableView, delay: 50.0)
+            // navigationController.followScrollView(self.tableView, delay: 50.0)
         }
         
         searchBar.delegate = self
@@ -1275,8 +1277,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
     
     
-    let overlayTransitioningDelegate = OverlayTransitioningDelegate()
-    
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]?
     {
         var toReturn: [BGTableViewRowActionWithImage] = []
@@ -1407,12 +1407,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         
         
         parent?.present(alertController, animated: true, completion: nil)
-    }
-    
-    
-    private func prepareOverlayVC(overlayVC: UIViewController) {
-        overlayVC.transitioningDelegate = overlayTransitioningDelegate
-        overlayVC.modalPresentationStyle = .custom
     }
     
     func unhideNumber(n: Object, iB: Int) -> Int{

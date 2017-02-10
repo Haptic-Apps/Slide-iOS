@@ -121,6 +121,7 @@ class RealmDataWrapper {
         rSubmission.height = h
         rSubmission.width = w
         rSubmission.isSelf = submission.isSelf
+        rSubmission.body = submission.selftext
         rSubmission.permalink = submission.permalink
         return rSubmission
     }
@@ -160,6 +161,7 @@ class RealmDataWrapper {
         rComment.vote = comment.likes == .up
         rComment.name = comment.name
         rComment.parentId = comment.parentId
+        rComment.scoreHidden = comment.scoreHidden
         //todo rComment.permalink = comment.permalink
         return rComment
     }
@@ -222,6 +224,7 @@ class RSubmission: Object {
     dynamic var edited = NSDate(timeIntervalSince1970: 1)
     dynamic var gilded = 0
     dynamic var htmlBody = ""
+    dynamic var body = ""
     dynamic var title = ""
     dynamic var subreddit = ""
     dynamic var archived = false

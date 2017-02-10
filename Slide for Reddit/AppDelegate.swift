@@ -10,6 +10,7 @@ import UIKit
 import reddift
 import ChameleonFramework
 import UserNotifications
+import RealmSwift
 
 /// Posted when the OAuth2TokenRepository object succeed in saving a token successfully into Keychain.
 public let OAuth2TokenRepositoryDidSaveTokenName = Notification.Name(rawValue: "OAuth2TokenRepositoryDidSaveToken")
@@ -46,6 +47,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let documentDirectory = paths[0] as! String
         seenFile = documentDirectory.appending("/seen.plist")
         commentsFile = documentDirectory.appending("/comments.plist")
+
+        let config = Realm.Configuration(
+            schemaVersion: 1,
+            migrationBlock: { migration, oldSchemaVersion in
+                if (oldSchemaVersion < 1) {
+                }
+        })
+        
+        Realm.Configuration.defaultConfiguration = config
 
         let fileManager = FileManager.default
         if(!fileManager.fileExists(atPath: seenFile!)){

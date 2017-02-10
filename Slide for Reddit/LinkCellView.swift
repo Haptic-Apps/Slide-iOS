@@ -69,6 +69,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     var textView = UZTextView()
     var save = UIImageView()
     var upvote = UIImageView()
+    var edit = UIImageView()
     var reply = UIImageView()
     var downvote = UIImageView()
     var more = UIImageView()
@@ -161,7 +162,11 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         if reply.bounds.contains(pointForTargetViewreply) {
             return reply
         }
-        
+        let pointForTargetViewedit: CGPoint = edit.convert(point, from: self)
+        if edit.bounds.contains(pointForTargetViewedit) {
+            return edit
+        }
+
         
         return super.hitTest(point, with: event)
     }
@@ -227,6 +232,10 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         reply.image = UIImage.init(named: "reply")?.withRenderingMode(.alwaysTemplate)
         reply.tintColor = ColorUtil.fontColor
         
+        self.edit = UIImageView(frame: CGRect(x: 0, y:0, width: 20, height: 20))
+        edit.image = UIImage.init(named: "edit")?.withRenderingMode(.alwaysTemplate)
+        edit.tintColor = ColorUtil.fontColor
+
         self.save = UIImageView(frame: CGRect(x: 0, y:0, width: 20, height: 20))
         save.image = UIImage.init(named: "save")?.withRenderingMode(.alwaysTemplate)
         save.tintColor = ColorUtil.fontColor
@@ -266,6 +275,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         upvote.translatesAutoresizingMaskIntoConstraints = false
         downvote.translatesAutoresizingMaskIntoConstraints = false
         more.translatesAutoresizingMaskIntoConstraints = false
+        edit.translatesAutoresizingMaskIntoConstraints = false
         save.translatesAutoresizingMaskIntoConstraints = false
         reply.translatesAutoresizingMaskIntoConstraints = false
         buttons.translatesAutoresizingMaskIntoConstraints = false
@@ -274,13 +284,15 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         addTouch(view: reply, action: #selector(LinkCellView.reply(sender:)))
         addTouch(view: downvote, action: #selector(LinkCellView.downvote(sender:)))
         addTouch(view: more, action: #selector(LinkCellView.more(sender:)))
-        
+        addTouch(view: edit, action: #selector(LinkCellView.edit(sender:)))
+
         self.contentView.addSubview(bannerImage)
         self.contentView.addSubview(thumbImage)
         self.contentView.addSubview(title)
         self.contentView.addSubview(textView)
         box.addSubview(score)
         box.addSubview(comments)
+        buttons.addSubview(edit)
         buttons.addSubview(reply)
         buttons.addSubview(save)
         buttons.addSubview(upvote)
@@ -311,7 +323,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         
         let metrics=["horizontalMargin":75,"top":0,"bottom":0,"separationBetweenLabels":0,"labelMinHeight":75,  "bannerHeight": height] as [String: Int]
         let views=["label":title, "body": textView, "image": thumbImage, "score": score, "comments": comments, "banner": bannerImage, "box": box] as [String : Any]
-        let views2=["buttons":buttons, "upvote": upvote, "downvote": downvote, "reply": reply,"more": more, "save": save] as [String : Any]
+        let views2=["buttons":buttons, "upvote": upvote, "downvote": downvote, "reply": reply,"edit":edit, "more": more, "save": save] as [String : Any]
         
         box.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[score(>=20)]-8-[comments(>=20)]",
                                                           options: NSLayoutFormatOptions(rawValue: 0),
@@ -334,7 +346,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                           views: views))
         
         if(full){
-            buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[reply(20)]-8-[save(20)]-8-[upvote(20)]-8-[downvote(20)]-8-[more(20)]-0-|",
+            buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:\(AccountController.isLoggedIn && AccountController.currentName == link?.author ? "[edit(20)]-8-" : "")[reply(20)]-8-[save(20)]-8-[upvote(20)]-8-[downvote(20)]-8-[more(20)]-0-|",
                                                                   options: NSLayoutFormatOptions(rawValue: 0),
                                                                   metrics: metrics,
                                                                   views: views2))
@@ -362,6 +374,10 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                               metrics: metrics,
                                                               views: views2))
         buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[reply(20)]-|",
+                                                              options: NSLayoutFormatOptions(rawValue: 0),
+                                                              metrics: metrics,
+                                                              views: views2))
+        buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[edit(20)]-|",
                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                               metrics: metrics,
                                                               views: views2))
@@ -422,7 +438,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         attributedTitle.append(NSAttributedString.init(string: "\n\n"))
         let attrs = [NSFontAttributeName : FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor] as [String: Any]
         
-        let endString = NSMutableAttributedString(string:"  •  \(DateFormatter().timeSince(from: submission.created, numericDates: true))\((submission.isEdited ? ("(edit \(DateFormatter().timeSince(from: submission.edited, numericDates: true))))") : ""))  •  \(submission.author)", attributes: [NSFontAttributeName : FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor])
+        let endString = NSMutableAttributedString(string:"  •  \(DateFormatter().timeSince(from: submission.created, numericDates: true))\((submission.isEdited ? ("(edit \(DateFormatter().timeSince(from: submission.edited, numericDates: true)))") : ""))  •  \(submission.author)", attributes: [NSFontAttributeName : FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor])
         
         let boldString = NSMutableAttributedString(string:"/r/\(submission.subreddit)", attributes:attrs)
         
@@ -505,7 +521,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         attributedTitle.append(NSAttributedString.init(string: "\n\n"))
         let attrs = [NSFontAttributeName : FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor] as [String: Any]
         
-        let endString = NSMutableAttributedString(string:"  •  \(DateFormatter().timeSince(from: submission.created, numericDates: true))\((submission.isEdited ? ("(edit \(DateFormatter().timeSince(from: submission.edited, numericDates: true))))") : ""))  •  \(submission.author)", attributes: [NSFontAttributeName : FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor])
+        let endString = NSMutableAttributedString(string:"  •  \(DateFormatter().timeSince(from: submission.created, numericDates: true))\((submission.isEdited ? ("(edit \(DateFormatter().timeSince(from: submission.edited, numericDates: true)))") : ""))  •  \(submission.author)", attributes: [NSFontAttributeName : FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor])
         
         let boldString = NSMutableAttributedString(string:"/r/\(submission.subreddit)", attributes:attrs)
         
@@ -528,6 +544,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             downvote.isHidden = true
             save.isHidden = true
             reply.isHidden = true
+            edit.isHidden = true
         } else {
             upvote.isHidden = false
             downvote.isHidden = false
@@ -535,15 +552,22 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             if(full){
                 reply.isHidden = false
             }
+            edit.isHidden = true
         }
         
         
         full = parent is CommentViewController
+        
+        if(!submission.archived && AccountController.isLoggedIn && AccountController.currentName == submission.author && full){
+            edit.isHidden = false
+        }
+
         addTouch(view: save, action: #selector(LinkCellView.save(sender:)))
         addTouch(view: upvote, action: #selector(LinkCellView.upvote(sender:)))
         addTouch(view: downvote, action: #selector(LinkCellView.downvote(sender:)))
         addTouch(view: more, action: #selector(LinkCellView.more(sender:)))
         addTouch(view: reply, action: #selector(LinkCellView.reply(sender:)))
+        addTouch(view: edit, action: #selector(LinkCellView.edit(sender:)))
         thumb = submission.thumbnail
         big = submission.banner
         //todo test if big image
@@ -785,6 +809,66 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         self.setNeedsUpdateConstraints()
         self.setNeedsLayout()
         
+    }
+    
+    func edit(sender: AnyObject){
+        let link = self.link!
+        let actionSheetController: UIAlertController = UIAlertController(title: link.title, message: "Edit your submission", preferredStyle: .actionSheet)
+        
+        var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
+            print("Cancel")
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        if(link.isSelf){
+            cancelActionButton = UIAlertAction(title: "Edit selftext", style: .default) { action -> Void in
+                self.editSelftext()
+            }
+            actionSheetController.addAction(cancelActionButton)
+        }
+        
+        cancelActionButton = UIAlertAction(title: "Flair", style: .default) { action -> Void in
+            //todo delete
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+
+        cancelActionButton = UIAlertAction(title: "Delete", style: .destructive) { action -> Void in
+            self.deleteSelf()
+        }
+        actionSheetController.addAction(cancelActionButton)
+        print("PResenting")
+        parentViewController?.present(actionSheetController, animated: true, completion: nil)
+    }
+    
+    func editSelftext(){
+        let reply  = ReplyViewController.init(submission: link!, sub: (self.link?.subreddit)!, editing: true) { (cr) in
+            DispatchQueue.main.async(execute: { () -> Void in
+                self.setLink(submission: RealmDataWrapper.linkToRSubmission(submission: cr!), parent: self.parentViewController!, nav: self.navViewController!)
+                self.showBody(width: self.contentView.frame.size.width)
+            })
+        }
+        
+        let navEditorViewController: UINavigationController = UINavigationController(rootViewController: reply)
+        parentViewController?.prepareOverlayVC(overlayVC: navEditorViewController)
+        parentViewController?.present(navEditorViewController, animated: true, completion: nil)
+    }
+    
+    func deleteSelf(){
+        let alert = UIAlertController(title: "Really delete your submission?", message: nil, preferredStyle: .alert)
+        alert.addAction(
+            UIAlertAction(title: "Cancel", style: .cancel) { (action) in
+                alert.dismiss(animated: true, completion: nil)
+            }
+        )
+        alert.addAction(
+            UIAlertAction(title: "Yes", style: .destructive) { (action) in
+                //todo delete
+            }
+    )
+    
+        parentViewController?.present(alert, animated: true, completion: nil)
+
     }
     
     func refresh(){

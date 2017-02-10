@@ -26,6 +26,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
     var sub: String
     var scrollView: UIScrollView?
     var reply: (Comment?) -> Void = {(comment) in }
+    var replyS: (Link?) -> Void = {(link) in }
     var edit = false
     var header: UIView?
     
@@ -34,16 +35,16 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-            switch(indexPath.section) {
-            case 0:
-                switch(indexPath.row) {
-                case 0: return self.subjectCell
-                case 1: return self.recipientCell
-                default: fatalError("Unknown row in section 0")
-                }
-
-            default: fatalError("Unknown section")
+        switch(indexPath.section) {
+        case 0:
+            switch(indexPath.row) {
+            case 0: return self.subjectCell
+            case 1: return self.recipientCell
+            default: fatalError("Unknown row in section 0")
             }
+            
+        default: fatalError("Unknown section")
+        }
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -66,10 +67,10 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
         self.reply = {(comment) in
             DispatchQueue.main.async {
                 //todo check failed
-                    completion(nil)
-                    self.alertController?.dismiss(animated: false, completion: {
-                        self.dismiss(animated: true, completion: nil)
-                    })
+                completion(nil)
+                self.alertController?.dismiss(animated: false, completion: {
+                    self.dismiss(animated: true, completion: nil)
+                })
             }
         }
     }
@@ -98,6 +99,31 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
             }
         }
     }
+    
+    init(submission: RSubmission, sub: String, editing: Bool, completion: @escaping (Link?) -> Void){
+        self.toReplyTo = submission
+        self.edit = true
+        self.sub = sub
+        super.init(nibName: nil, bundle: nil)
+        self.replyS = {(link) in
+            DispatchQueue.main.async {
+                if(link == nil){
+                    self.saveDraft(self)
+                    self.alertController?.dismiss(animated: false, completion: {
+                        let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your submission has not been edited (but has been saved as a draft), please try again", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+                        self.present(alert, animated: true, completion: nil)
+                    })
+                } else {
+                    completion(link)
+                    self.alertController?.dismiss(animated: false, completion: {
+                        self.dismiss(animated: true, completion: nil)
+                    })
+                }
+            }
+        }
+    }
+    
     
     init(thing: Object, sub: String, view: UIView?, completion: @escaping (Comment?) -> Void){
         self.toReplyTo = thing
@@ -524,6 +550,28 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
         
     }
     
+    func getSubmissionEdited(_ name: String){
+        do {
+            try self.session?.getInfo([name], completion: { (res) in
+                switch res {
+                case .failure:
+                    print(res.error ?? "Error?")
+                case .success(let listing):
+                    if listing.children.count == 1 {
+                        if let submission = listing.children[0] as? Link {
+                            self.replyS(submission)
+                        }
+                    }
+                }
+                
+            })
+        } catch {
+            
+        }
+        
+    }
+
+    
     func send(_ sender: AnyObject){
         if(message){
             alertController = UIAlertController(title: nil, message: "Sending message...\n\n", preferredStyle: .alert)
@@ -536,7 +584,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
             self.present(alertController!,animated: true, completion: nil)
             
             session = (UIApplication.shared.delegate as! AppDelegate).session
-
+            
             if(toReplyTo == nil){
                 do {
                     try self.session?.composeMessage(recipientCell.cellLabel.text!, subject: subjectCell.cellLabel.text!, text: text!.text, completion: { (result) in
@@ -547,11 +595,11 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
                         case .success( _):
                             self.reply(self.comment)
                         }
-
+                        
                     })
                 } catch { print((error as NSError).description) }
             } else {
-            
+                
                 do {
                     let name = toReplyTo is RMessage ? (toReplyTo as! RMessage).getId() : toReplyTo is RComment ? (toReplyTo as! RComment).getId() : (toReplyTo as! RSubmission).getId()
                     try self.session?.replyMessage(text!.text, parentName:name, completion: { (result) -> Void in
@@ -566,25 +614,47 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
                 } catch { print((error as NSError).description) }
             }
         } else if(edit){
-            alertController = UIAlertController(title: nil, message: "Editing comment...\n\n", preferredStyle: .alert)
-            
-            let spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
-            spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
-            spinnerIndicator.color = UIColor.black
-            spinnerIndicator.startAnimating()
-            
-            alertController?.view.addSubview(spinnerIndicator)
-            self.present(alertController!,animated: true, completion: nil)
-            
-            session = (UIApplication.shared.delegate as! AppDelegate).session
-            
-            do {
-                let name = toReplyTo is RMessage ? (toReplyTo as! RMessage).getId() : toReplyTo is RComment ? (toReplyTo as! RComment).getId() : (toReplyTo as! RSubmission).getId()
-                try self.session?.editCommentOrLink(name, newBody: text!.text, completion: { (result) in
-                    self.getCommentEdited(name)
-                })
-            } catch { print((error as NSError).description) }
-            
+            if(toReplyTo is RSubmission){
+                alertController = UIAlertController(title: nil, message: "Editing submission...\n\n", preferredStyle: .alert)
+                
+                let spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+                spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
+                spinnerIndicator.color = UIColor.black
+                spinnerIndicator.startAnimating()
+                
+                alertController?.view.addSubview(spinnerIndicator)
+                self.present(alertController!,animated: true, completion: nil)
+                
+                session = (UIApplication.shared.delegate as! AppDelegate).session
+                
+                do {
+                    let name = toReplyTo is RMessage ? (toReplyTo as! RMessage).getId() : toReplyTo is RComment ? (toReplyTo as! RComment).getId() : (toReplyTo as! RSubmission).getId()
+                    try self.session?.editCommentOrLink(name, newBody: text!.text, completion: { (result) in
+                        self.getSubmissionEdited(name)
+                    })
+                } catch { print((error as NSError).description) }
+                
+                
+            } else {
+                alertController = UIAlertController(title: nil, message: "Editing comment...\n\n", preferredStyle: .alert)
+                
+                let spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+                spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
+                spinnerIndicator.color = UIColor.black
+                spinnerIndicator.startAnimating()
+                
+                alertController?.view.addSubview(spinnerIndicator)
+                self.present(alertController!,animated: true, completion: nil)
+                
+                session = (UIApplication.shared.delegate as! AppDelegate).session
+                
+                do {
+                    let name = toReplyTo is RMessage ? (toReplyTo as! RMessage).getId() : toReplyTo is RComment ? (toReplyTo as! RComment).getId() : (toReplyTo as! RSubmission).getId()
+                    try self.session?.editCommentOrLink(name, newBody: text!.text, completion: { (result) in
+                        self.getCommentEdited(name)
+                    })
+                } catch { print((error as NSError).description) }
+            }
         } else {
             alertController = UIAlertController(title: nil, message: "Sending reply...\n\n", preferredStyle: .alert)
             
@@ -617,7 +687,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
     
     override func loadView() {
         super.loadView()
-
+        
         self.tableView.backgroundColor = ColorUtil.backgroundColor
         
         text = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 500))
@@ -627,13 +697,17 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
         text?.delegate = self
         text?.font = UIFont.systemFont(ofSize: 18)
         if(edit){
+            if(toReplyTo is RComment){
             text!.text = (toReplyTo as! RComment).body
+            } else {
+                text!.text = (toReplyTo as! RSubmission).body
+            }
         }
         
         let lineView = UIView(frame: CGRect.init(x: 0, y: 0, width: (text?.frame.size.width)!, height: 1))
         lineView.backgroundColor = ColorUtil.backgroundColor
         text?.addSubview(lineView)
-
+        
         
         subjectCell = InputCell.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 70), input: "[menu]Subject")
         recipientCell = InputCell.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 70), input: "[profile]Recipient")
@@ -643,12 +717,12 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
             recipientCell.cellLabel.text = (toReplyTo as! RMessage).author
             recipientCell.cellLabel.isEditable = false
         }
-
+        
         tableView.tableFooterView = text
         if(header != nil){
             tableView.tableHeaderView = header
         }
-
+        
     }
     
     func dismiss(_ sender: AnyObject) {
@@ -807,7 +881,7 @@ extension UITextView: UITextViewDelegate {
             placeholderLabel.addImage(imageName: placeholderImage)
         }
         placeholderLabel.sizeToFit()
-
+        
         
         // Hide the label if there is text in the text view
         placeholderLabel.isHidden = ((self.text.length) > 0)

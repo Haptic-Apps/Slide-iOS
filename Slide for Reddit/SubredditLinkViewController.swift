@@ -103,7 +103,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         }
         
         cancelActionButton = UIAlertAction(title: "Report", style: .default) { action -> Void in
-            //todo report
+            self.report(cell.link!)
         }
         actionSheetController.addAction(cancelActionButton)
         
@@ -148,6 +148,35 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         self.present(actionSheetController, animated: true, completion: nil)
         
     }
+    
+    func report(_ thing: Object){
+        let alert = UIAlertController(title: "Report this content", message: "Enter a reason (not required)", preferredStyle: .alert)
+        
+        alert.addTextField { (textField) in
+            textField.text = ""
+        }
+        
+        alert.addAction(UIAlertAction(title: "Report", style: .destructive, handler: { [weak alert] (_) in
+            let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
+            do {
+                let name = (thing is RComment) ? (thing as! RComment).name : (thing as! RSubmission).name
+                try self.session?.report(name, reason: (textField?.text!)!, otherReason: "", completion: { (result) in
+                    DispatchQueue.main.async{
+                        self.view.makeToast("Report sent", duration: 3, position: .top)
+                    }
+                })
+            } catch {
+                DispatchQueue.main.async{
+                    self.view.makeToast("Error sending report", duration: 3, position: .top)
+                }
+            }
+        }))
+        
+        alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
+        
+        self.present(alert, animated: true, completion: nil)
+    }
+
     
     func showFilterMenu(_ link: RSubmission){
         let actionSheetController: UIAlertController = UIAlertController(title: "What would you like to filter?", message: "", preferredStyle: .actionSheet)
@@ -632,7 +661,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         navigationController?.navigationBar.isTranslucent = false
         (navigationController as? ScrollingNavigationController)?.showNavbar(animated: true)
         if let navigationController = self.navigationController as? ScrollingNavigationController {
-            navigationController.followScrollView(self.tableView, delay: 50.0)
+           /// navigationController.followScrollView(self.tableView, delay: 50.0)
             navigationController.scrollingNavbarDelegate = self
         }
         if(single){
@@ -1041,6 +1070,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                                     if(reset){
                                         self.realmListing!.links.removeAll()
                                     }
+
                                     let realm = try! Realm()
                                     //todo insert
                                     realm.beginWrite()
