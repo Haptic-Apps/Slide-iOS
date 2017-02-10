@@ -34,6 +34,8 @@ public struct Account: Thing {
     example: false
     */
     public let hideFromRobots: Bool
+    
+    public let isFriend: Bool
     /**
     
     example: 0
@@ -107,6 +109,7 @@ public struct Account: Thing {
         isMod = false
         goldExpiration = false
         hasVerifiedEmail = false
+        isFriend = false
         inboxCount = 0
     }
     
@@ -119,6 +122,7 @@ public struct Account: Thing {
     public init(json data: JSONDictionary) {
         id = data["id"] as? String ?? ""
         hasMail = data["has_mail"] as? Bool ?? false
+        isFriend = data["is_friend"] as? Bool ?? false
         name = data["name"] as? String ?? ""
         created = data["created"] as? Int ?? 0
         hideFromRobots = data["hide_from_robots"] as? Bool ?? false

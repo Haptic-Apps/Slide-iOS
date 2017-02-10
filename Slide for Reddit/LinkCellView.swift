@@ -212,10 +212,10 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         self.thumbImage = UIImageView(frame: CGRect(x: 0, y: 8, width: 75, height: 75))
         thumbImage.layer.cornerRadius = 5;
         thumbImage.clipsToBounds = true;
-        thumbImage.contentMode = .scaleAspectFill
+        thumbImage.contentMode = .scaleToFill
         
         self.bannerImage = UIImageView(frame: CGRect(x: 0, y: 8, width: CGFloat.greatestFiniteMagnitude, height: 0))
-        bannerImage.contentMode = UIViewContentMode.scaleAspectFill
+        bannerImage.contentMode = UIViewContentMode.scaleToFill
         bannerImage.clipsToBounds = true
         
         self.title = TTTAttributedLabel(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude));
@@ -666,7 +666,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             bannerImage.addGestureRecognizer(tap)
             if(shouldShowLq){
                 bannerImage.sd_setImage(with: URL.init(string: submission.lqUrl), completed: { (image, error, cache, url) in
-                    self.bannerImage.contentMode = .scaleAspectFill
+                    self.bannerImage.contentMode = .scaleToFill
                     if (cache == .none) {
                         UIView.animate(withDuration: 0.3, animations: {
                             self.bannerImage.alpha = 1
@@ -677,7 +677,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                 })
             } else {
                 bannerImage.sd_setImage(with: URL.init(string: submission.bannerUrl), completed: { (image, error, cache, url) in
-                    self.bannerImage.contentMode = .scaleAspectFill
+                    self.bannerImage.contentMode = .scaleToFill
                     if (cache == .none) {
                         UIView.animate(withDuration: 0.3, animations: {
                             self.bannerImage.alpha = 1

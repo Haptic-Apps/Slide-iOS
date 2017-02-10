@@ -982,6 +982,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                                 converted.append(RealmDataWrapper.linkToRSubmission(submission: link))
                             }
                             let values = PostFilter.filter(converted, previous: self.links)
+                            self.preloadImages(values)
                             self.links += values
                             self.paginator = listing.paginator
                             DispatchQueue.main.async{
@@ -1097,7 +1098,82 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             
         }
     }
-    
+
+    func preloadImages(_ values: [RSubmission]){
+        var urls : [URL] = []
+        for submission in values {
+            var thumb = submission.thumbnail
+            var big = submission.banner
+            var height = submission.height
+            var type = ContentType.getContentType(baseUrl: submission.url!)
+            if(submission.isSelf){
+                type = .SELF
+            }
+            
+            if(thumb && type == .SELF){
+                thumb = false
+            }
+            
+            let fullImage = ContentType.fullImage(t: type)
+            
+            if(!fullImage && height < 50){
+                big = false
+                thumb = true
+            } else if(big && (SettingValues.bigPicCropped)){
+                height = 200
+            }
+            
+            if(type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big || type == .SELF ){
+                big = false
+                thumb = false
+            }
+            
+            if(height < 50){
+                thumb = true
+                big = false
+            }
+            
+            let shouldShowLq = SettingValues.lqEnabled && false && submission.lQ
+            if (type == ContentType.CType.SELF && SettingValues.hideImageSelftext
+                || SettingValues.noImages && submission.isSelf) {
+                big = false
+                thumb = false
+            }
+            
+            if(big || !submission.thumbnail){
+                thumb = false
+            }
+            
+            if(!big && !thumb && submission.type != .SELF && submission.type != .NONE){
+                thumb = true
+            }
+            
+            if(thumb && !big){
+                if(submission.thumbnailUrl == "nsfw"){
+                } else if(submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty){
+                } else {
+                    if let url = URL.init(string: submission.thumbnailUrl) {
+                        urls.append(url)
+                    }
+                }
+            }
+            
+            if(big){
+                if(shouldShowLq){
+                    if let url = URL.init(string: submission.lqUrl) {
+                        urls.append(url)
+                    }
+                    
+                } else {
+                    if let url = URL.init(string: submission.bannerUrl) {
+                        urls.append(url)
+                    }
+                }
+            }
+            
+        }
+        SDWebImagePrefetcher.init().prefetchURLs(urls)
+    }
     
 }
 extension UIViewController {

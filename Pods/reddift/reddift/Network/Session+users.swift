@@ -47,7 +47,7 @@ extension Session {
         if !note.isEmpty { json["note"] = note }
         do {
             let data = try JSONSerialization.data(withJSONObject: json, options: [])
-            guard let request = URLRequest.requestForOAuth(with: Session.OAuthEndpointURL, path:"api/v1/me/friends/" + username, data:data, method:"PUT", token:token)
+            guard let request = URLRequest.requestForOAuth(with: Session.OAuthEndpointURL, path:"/api/v1/me/friends/" + username, data:data, method:"PUT", token:token)
                 else { throw ReddiftError.canNotCreateURLRequest as NSError }
             let closure = {(data: Data?, response: URLResponse?, error: NSError?) -> Result<JSONAny> in
                 return Result(from: Response(data: data, urlResponse: response), optional:error)
@@ -71,7 +71,7 @@ extension Session {
         let parameters = [
             "id":username
         ]
-        guard let request = URLRequest.requestForOAuth(with: Session.OAuthEndpointURL, path:"api/v1/me/friends/" + username, parameter:parameters, method:"DELETE", token:token)
+        guard let request = URLRequest.requestForOAuth(with: Session.OAuthEndpointURL, path:"/api/v1/me/friends/" + username, parameter:parameters, method:"DELETE", token:token)
             else { throw ReddiftError.canNotCreateURLRequest as NSError }
         let closure = {(data: Data?, response: URLResponse?, error: NSError?) -> Result<JSONAny> in
             return Result(from: Response(data: data, urlResponse: response), optional:error)

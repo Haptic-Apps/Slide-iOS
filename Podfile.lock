@@ -68,7 +68,7 @@ CHECKOUT OPTIONS:
     :commit: ccb14919d76beae820f59de74c3e1b28164be18b
     :git: https://github.com/ccrama/ImageViewer
   reddift:
-    :commit: 7fb2d349987619c16caf3368051c4bd87ec4534a
+    :commit: c82b21870a09153c5d96a984f08edc16f26ed28a
     :git: https://github.com/ccrama/reddift
   UZTextView:
     :commit: 94021870e65000cf332cb1f2ec70525b05c6ab16

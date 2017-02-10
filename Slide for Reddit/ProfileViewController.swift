@@ -62,17 +62,114 @@ class ProfileViewController:  ButtonBarPagerTabStripViewController {
         let sortB = UIBarButtonItem.init(customView: sort)
         
         let more = UIButton.init(type: .custom)
-        more.setImage(UIImage.init(named: "ic_more_vert_white"), for: UIControlState.normal)
+        more.setImage(UIImage.init(named: "info"), for: UIControlState.normal)
         more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
         more.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let moreB = UIBarButtonItem.init(customView: more)
         
         if(navigationController != nil){
-        navigationItem.rightBarButtonItems = [ moreB, sortB]
+            navigationItem.rightBarButtonItems = [ moreB, sortB]
         }
         
     }
     
+    func showMenu(user: Account){
+        let alrController = UIAlertController(title: user.name + "\n\n\n\n\n", message: "\(user.linkKarma) post karma\n\(user.commentKarma) comment karma\nRedditor for \("todo")", preferredStyle: UIAlertControllerStyle.actionSheet)
+        
+        let margin:CGFloat = 8.0
+        let rect = CGRect.init(x: margin, y: margin + 23, width: alrController.view.bounds.size.width - margin * 4.0, height:75)
+        let scrollView = UIScrollView(frame: rect)
+        scrollView.backgroundColor = UIColor.clear
+        
+        //todo add trophies
+        do {
+            try session?.getTrophies(user.name, completion: { (result) in
+                switch result {
+                case .failure(let error):
+                    print(error)
+                case .success(let trophies):
+                    var i = 0
+                    DispatchQueue.main.async {
+                        for trophy in trophies {
+                            var b = self.generateButtons(trophy: trophy)
+                            b.frame = CGRect.init(x: i * 75, y: 0, width: 70, height: 70)
+                            scrollView.addSubview(b)
+                            i += 1
+                        }
+                    }
+                }
+            })
+        } catch {
+            
+        }
+        scrollView.delaysContentTouches = false
+    
+        alrController.view.addSubview(scrollView)
+        if(AccountController.isLoggedIn){
+            alrController.addAction(UIAlertAction.init(title: "Private message", style: .default, handler: { (action) in
+                //todo send
+            }))
+            if(user.isFriend){
+                alrController.addAction(UIAlertAction.init(title: "Unfriend", style: .default, handler: { (action) in
+                    do {
+                        try self.session?.unfriend(user.name, completion: { (result) in
+                            DispatchQueue.main.async {
+                                self.view.makeToast("Unfriended /u/\(user.name)", duration: 4, position: .bottom)
+                            }
+                        })
+                    } catch {
+                        
+                    }
+                }))
+            } else {
+                alrController.addAction(UIAlertAction.init(title: "Friend", style: .default, handler: { (action) in
+                    do {
+                        try self.session?.friend(user.name, completion: { (result) in
+                            if(result.error != nil){
+                                print(result.error)
+                            }
+                            DispatchQueue.main.async {
+                                self.view.makeToast("Friended /u/\(user.name)", duration: 4, position: .bottom)
+                            }
+                        })
+                    } catch {
+                        
+                    }
+                }))
+            }
+        }
+        alrController.addAction(UIAlertAction.init(title: "Change color", style: .default, handler: { (action) in
+            //todo send
+        }))
+        
+        alrController.addAction(UIAlertAction.init(title: "Tag user", style: .default, handler: { (action) in
+            //todo send
+        }))
+        
+        alrController.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: { (action) in
+            //todo send
+        }))
+
+        
+        self.present(alrController, animated: true, completion:{})
+        
+    }
+    
+    
+    func generateButtons(trophy: Trophy) -> UIImageView {
+        let more = UIImageView.init(frame: CGRect.init(x: 0, y: 0, width: 70, height: 70))
+        more.sd_setImage(with: trophy.icon70!)
+        let singleTap = UITapGestureRecognizer(target: self, action: #selector(ProfileViewController.trophyTapped(_:)))
+        singleTap.numberOfTapsRequired = 1
+        
+        more.isUserInteractionEnabled = true
+        more.addGestureRecognizer(singleTap)
+        
+        return more
+    }
+    
+    func trophyTapped(_ sender: AnyObject){
+    }
     
     override func viewDidLoad() {
         settings.style.buttonBarItemFont = UIFont.systemFont(ofSize: 14)
@@ -109,41 +206,18 @@ class ProfileViewController:  ButtonBarPagerTabStripViewController {
     }
     
     func showMenu(_ sender: AnyObject){
-        let actionSheetController: UIAlertController = UIAlertController(title: "", message: "", preferredStyle: .actionSheet)
-        
-        var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
-            print("Cancel")
+        do {
+            try session?.getUserProfile(name, completion: { (result) in
+                switch result {
+                case .failure(let error):
+                    print(error)
+                case .success(let account):
+                    self.showMenu(user: account)
+                }
+            })
+        } catch {
+            
         }
-        actionSheetController.addAction(cancelActionButton)
-        
-        cancelActionButton = UIAlertAction(title: "Search", style: .default) { action -> Void in
-            print("Search")
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        cancelActionButton = UIAlertAction(title: "Refresh", style: .default) { action -> Void in
-            (self.viewControllers[self.currentIndex] as? SubredditLinkViewController)?.refresh()
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        cancelActionButton = UIAlertAction(title: "Subreddit Theme", style: .default) { action -> Void in
-            print("Subreddit Theme")
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        cancelActionButton = UIAlertAction(title: "Base Theme", style: .default) { action -> Void in
-            self.showThemeMenu()
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        cancelActionButton = UIAlertAction(title: "Filter", style: .default) { action -> Void in
-            print("Filter")
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        
-        self.present(actionSheetController, animated: true, completion: nil)
-        
     }
     
     func showThemeMenu(){
@@ -178,5 +252,5 @@ class ProfileViewController:  ButtonBarPagerTabStripViewController {
     func indicatorInfo(for pagerTabStripController: PagerTabStripViewController) -> IndicatorInfo {
         return IndicatorInfo(title: content[pagerTabStripController.currentIndex].title)
     }
-
+    
 }
