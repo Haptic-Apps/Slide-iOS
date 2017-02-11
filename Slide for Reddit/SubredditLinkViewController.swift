@@ -944,7 +944,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                                     if let listing =  realm.objects(RListing.self).filter({ (item) -> Bool in
                                         return item.subreddit == self.sub
                                     }).sorted(by: { (listing1, listing2) -> Bool in
-                                        return listing1.created.timeIntervalSince1970 > listing2.created.timeIntervalSince1970
+                                        return listing1.created.timeIntervalSince1970 < listing2.created.timeIntervalSince1970
                                     }).first {
                                         self.links = []
                                         for i in listing.links {

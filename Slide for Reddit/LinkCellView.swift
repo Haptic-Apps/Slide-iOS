@@ -66,6 +66,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     var box = UIStackView()
     var buttons = UIStackView()
     var comments = UILabel()
+    var info = UILabel()
     var textView = UZTextView()
     var save = UIImageView()
     var upvote = UIImageView()
@@ -194,6 +195,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     }
     
     var full = false
+    var b = UIView()
     var estimatedHeight = CGFloat(0)
     
     func estimateHeight(_ full: Bool) ->CGFloat {
@@ -212,10 +214,10 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         self.thumbImage = UIImageView(frame: CGRect(x: 0, y: 8, width: 75, height: 75))
         thumbImage.layer.cornerRadius = 5;
         thumbImage.clipsToBounds = true;
-        thumbImage.contentMode = .scaleToFill
+        thumbImage.contentMode = .scaleAspectFill
         
         self.bannerImage = UIImageView(frame: CGRect(x: 0, y: 8, width: CGFloat.greatestFiniteMagnitude, height: 0))
-        bannerImage.contentMode = UIViewContentMode.scaleToFill
+        bannerImage.contentMode = UIViewContentMode.scaleAspectFill
         bannerImage.clipsToBounds = true
         
         self.title = TTTAttributedLabel(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude));
@@ -262,6 +264,13 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         comments.font = FontGenerator.fontOfSize(size: 12, submission: true)
         comments.textColor = ColorUtil.fontColor
         
+        self.info = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
+        info.numberOfLines = 2
+        info.font = FontGenerator.fontOfSize(size: 12, submission: true)
+        info.textColor = .white
+        b = info.withPadding(padding: UIEdgeInsets.init(top: 4, left: 10, bottom: 4, right: 10))
+        b.backgroundColor = UIColor.black.withAlphaComponent(0.6)
+        
         self.box = UIStackView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
         self.buttons = UIStackView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
         
@@ -279,6 +288,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         save.translatesAutoresizingMaskIntoConstraints = false
         reply.translatesAutoresizingMaskIntoConstraints = false
         buttons.translatesAutoresizingMaskIntoConstraints = false
+        b.translatesAutoresizingMaskIntoConstraints = false
         addTouch(view: save, action: #selector(LinkCellView.save(sender:)))
         addTouch(view: upvote, action: #selector(LinkCellView.upvote(sender:)))
         addTouch(view: reply, action: #selector(LinkCellView.reply(sender:)))
@@ -290,6 +300,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         self.contentView.addSubview(thumbImage)
         self.contentView.addSubview(title)
         self.contentView.addSubview(textView)
+        self.contentView.addSubview(b)
         box.addSubview(score)
         box.addSubview(comments)
         buttons.addSubview(edit)
@@ -657,8 +668,10 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             if(!full){
                 bigConstraint = NSLayoutConstraint(item: bannerImage, attribute:  NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: bannerImage, attribute: NSLayoutAttribute.height, multiplier: aspect, constant: 0.0)
             } else {
+                aspect = self.contentView.frame.size.width / 200
+                height = 200
+                bigConstraint = NSLayoutConstraint(item: bannerImage, attribute:  NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: bannerImage, attribute: NSLayoutAttribute.height, multiplier: aspect, constant: 0.0)
                 
-                bigConstraint = NSLayoutConstraint(item: bannerImage, attribute:  NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: bannerImage, attribute: NSLayoutAttribute.height, multiplier: 0, constant: 200.0)
             }
             bannerImage.isUserInteractionEnabled = true
             let tap = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openLink(sender:)))
@@ -666,7 +679,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             bannerImage.addGestureRecognizer(tap)
             if(shouldShowLq){
                 bannerImage.sd_setImage(with: URL.init(string: submission.lqUrl), completed: { (image, error, cache, url) in
-                    self.bannerImage.contentMode = .scaleToFill
+                    self.bannerImage.contentMode = .scaleAspectFill
                     if (cache == .none) {
                         UIView.animate(withDuration: 0.3, animations: {
                             self.bannerImage.alpha = 1
@@ -677,7 +690,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                 })
             } else {
                 bannerImage.sd_setImage(with: URL.init(string: submission.bannerUrl), completed: { (image, error, cache, url) in
-                    self.bannerImage.contentMode = .scaleToFill
+                    self.bannerImage.contentMode = .scaleAspectFill
                     if (cache == .none) {
                         UIView.animate(withDuration: 0.3, animations: {
                             self.bannerImage.alpha = 1
@@ -709,7 +722,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         }
         
         let metrics=["horizontalMargin":75,"top":0,"bottom":0,"separationBetweenLabels":0,"labelMinHeight":75,  "bannerHeight": height] as [String: Int]
-        let views=["label":title, "body": textView, "image": thumbImage, "score": score, "comments": comments, "banner": bannerImage, "buttons":buttons, "box": box] as [String : Any]
+        let views=["label":title, "body": textView, "image": thumbImage, "info": b,  "score": score, "comments": comments, "banner": bannerImage, "buttons":buttons, "box": box] as [String : Any]
         
         if(!thumbConstraint.isEmpty){
             self.contentView.removeConstraints(thumbConstraint)
@@ -766,17 +779,25 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                                               metrics: metrics,
                                                                               views: views))
-            
+            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[info(45)]-8@999-[label]",
+                                                                              options: NSLayoutFormatOptions(rawValue: 0),
+                                                                              metrics: metrics,
+                                                                              views: views))
+
             thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[buttons]-8-|",
                                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                                               metrics: metrics,
                                                                               views: views))
             
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[banner]-12-|",
+            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-2-[banner]-2-|",
                                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                                               metrics: metrics,
                                                                               views: views))
-            
+            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-2-[info]-2-|",
+                                                                              options: NSLayoutFormatOptions(rawValue: 0),
+                                                                              metrics: metrics,
+                                                                              views: views))
+
             
         } else {
             thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[image(0)]",
@@ -809,6 +830,67 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         self.setNeedsUpdateConstraints()
         self.setNeedsLayout()
         
+        if(type != .IMAGE){
+            b.isHidden = false
+            var text = ""
+            switch(type) {
+            case .ALBUM:
+                text = ("Album")
+                break
+            case .EXTERNAL, .LINK, .EMBEDDED, .NONE:
+                text = "Link"
+                break
+            case .DEVIANTART:
+                text = "Deviantart"
+                    break
+            case .TUMBLR:
+                text = "Tumblr"
+                break
+                case .XKCD:
+                text =  ("XKCD")
+                break
+            case .GIF:
+                text = ("GIF")
+                break
+            case .IMGUR:
+                text = ("Imgur")
+                break
+            case .VIDEO:
+                text = "YouTube"
+                    break
+            case .STREAMABLE:
+                text = "Streamable"
+                    break
+                case .VID_ME:
+                text = ("Vid.me")
+                break
+            case .REDDIT:
+                text =  ("Reddit content")
+                break
+            default:
+                text = "Link"
+                break
+            }
+            let finalText = NSMutableAttributedString.init(string: text, attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 14, submission: true)])
+            finalText.append(NSAttributedString.init(string: "\n\(submission.domain)"))
+            info.attributedText = finalText
+
+        } else {
+            b.isHidden = true
+        }
+        
+        if(longPress == nil){
+            longPress = UILongPressGestureRecognizer(target: self, action: #selector(LinkCellView.handleLongPress(sender:)))
+        longPress?.minimumPressDuration = 0.5 // 1 second press
+        longPress?.delegate = self
+        self.contentView.addGestureRecognizer(longPress!)
+        }
+    
+    }
+    
+    var longPress: UILongPressGestureRecognizer?
+    func handleLongPress(sender: AnyObject){
+        more()
     }
     
     func edit(sender: AnyObject){
