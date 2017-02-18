@@ -240,7 +240,7 @@ public struct Link: Thing {
     /**
      example: false
      */
-    public let distinguished: Bool
+    public let distinguished: String
     
     public init(id: String) {
         self.id = id
@@ -282,7 +282,7 @@ public struct Link: Thing {
         upvoteRatio = 0
         visited = false
         numReports = 0
-        distinguished = false
+        distinguished = ""
         media = Media(json: [:])
         mediaEmbed = MediaEmbed(json: [:])
         
@@ -352,7 +352,7 @@ public struct Link: Thing {
         upvoteRatio = data["upvote_ratio"] as? Double ?? 0
         visited = data["visited"] as? Bool ?? false
         numReports = data["num_reports"] as? Int ?? 0
-        distinguished = data["distinguished"] as? Bool ?? false
+        distinguished = data["distinguished"] as? String ?? ""
         media = Media(json: data["media"] as? JSONDictionary ?? [:])
         mediaEmbed = MediaEmbed(json: data["media_embed"] as? JSONDictionary ?? [:])
         

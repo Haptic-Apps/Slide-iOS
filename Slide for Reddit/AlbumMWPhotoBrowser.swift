@@ -71,8 +71,34 @@ class AlbumMWPhotoBrowser: NSObject, GalleryItemsDataSource {
     func create(hash: String) -> GalleryViewController {
         browser = GalleryViewController.init(startIndex: 0, itemsDataSource: self, itemsDelegate: nil, displacedViewsDataSource: nil, configuration: galleryConfiguration())
         getAlbum(hash: hash)
+        
+        let frame = CGRect(x: 0, y: 0, width: 200, height: 24)
+        let headerView = CounterView(frame: frame, currentIndex: 0, count: photos.count)
+        let footerView = CaptionView(frame: frame)
+        
+        browser?.headerView = headerView
+        browser?.footerView = footerView
+        
+        browser?.launchedCompletion = { print("LAUNCHED") }
+        browser?.closedCompletion = { print("CLOSED") }
+        browser?.swipedToDismissCompletion = { print("SWIPE-DISMISSED") }
+        
+        browser?.landedPageAtIndexCompletion = { index in
+            
+            headerView.count = self.photos.count
+            headerView.currentIndex = index
+            let frame = CGRect(x: 8, y: 0, width: (self.browser?.currentController?.view.frame.size.width)! - 8, height: 200)
+            footerView.frame = frame
+            footerView.text = self.captions[index]
+            
+            self.browser?.footerView?.sizeToFit()
+        }
+        
+
         return browser!
     }
+    
+    var captions:[String] = [""]
     
     func itemCount() -> Int {
         return photos.count
@@ -107,6 +133,11 @@ class AlbumMWPhotoBrowser: NSObject, GalleryItemsDataSource {
                     
                     let album = AlbumJSONBase.init(dictionary: json)
                     for a in (album?.data?.images)!{
+                        if(a.description != nil){
+                            self.captions.append(a.description!)
+                        } else {
+                            self.captions.append("")
+                        }
                         let urls = "https://imgur.com/" + a.hash! + ((a.animated != nil && a.animated == "true") ? ".mp4" : ".png")
                         let url = URL.init(string: urls)
                         if(ContentType.isGif(uri: url!)){

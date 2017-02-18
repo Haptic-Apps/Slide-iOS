@@ -592,16 +592,17 @@ open class GalleryViewController: UIPageViewController, ItemControllerDelegate {
             })
         }
     }
+    
+    public weak var currentController: UIViewController?
 
     public func itemControllerDidAppear(_ controller: ItemController) {
 
         self.currentIndex = controller.index
-        self.landedPageAtIndexCompletion?(self.currentIndex)
         self.headerView?.sizeToFit()
         self.footerView?.sizeToFit()
 
         if let _ = controller as? VideoViewController {
-
+            currentController = controller as! VideoViewController
             if scrubber.alpha == 0 && decorationViewsHidden == false {
 
                 UIView.animate(withDuration: 0.3, animations: { [weak self] in
@@ -609,7 +610,12 @@ open class GalleryViewController: UIPageViewController, ItemControllerDelegate {
                     self?.scrubber.alpha = 1
                 })
             }
+        }  else if let _ = controller as? ImageViewController {
+            currentController = controller as! ImageViewController
         }
+        
+        self.landedPageAtIndexCompletion?(self.currentIndex)
+
     }
 
     public func itemControllerDidSingleTap(_ controller: ItemController) {

@@ -62,6 +62,27 @@ class ColorUtil{
         UserDefaults.standard.synchronize()
     }
     
+    public static func setTagForUser(name: String, tag: String){
+        UserDefaults.standard.set(tag, forKey: "tag+" + name)
+        UserDefaults.standard.synchronize()
+    }
+    
+    public static func getTagForUser(name: String) -> String {
+        return UserDefaults.standard.string(forKey: "tag+" + name) ?? ""
+    }
+    
+    public static func removeTagForUser(name: String){
+        UserDefaults.standard.removeObject( forKey: "tag+" + name)
+        UserDefaults.standard.synchronize()
+    }
+
+
+    public static func setColorForUser(name: String, color: UIColor){
+        UserDefaults.standard.setColor(color: color , forKey: "user+" + name)
+        UserDefaults.standard.synchronize()
+    }
+
+    
     public static func setAccentColorForSub(sub: String, color: UIColor){
         UserDefaults.standard.setColor(color: color , forKey: "accent+" + sub)
         UserDefaults.standard.synchronize()

@@ -120,6 +120,7 @@ class RealmDataWrapper {
         rSubmission.name = submission.id
         rSubmission.height = h
         rSubmission.width = w
+        rSubmission.distinguished = submission.distinguished
         rSubmission.isSelf = submission.isSelf
         rSubmission.body = submission.selftext
         rSubmission.permalink = submission.permalink
@@ -230,6 +231,7 @@ class RSubmission: Object {
     dynamic var archived = false
     dynamic var locked = false
     dynamic var urlString = ""
+    dynamic var distinguished = ""
     
     var type: ContentType.CType {
         if(isSelf){
