@@ -9,6 +9,14 @@
 #import <UIKit/UIKit.h>
 #import <CoreText/CoreText.h>
 
+//! Project version number for UZTextView.
+FOUNDATION_EXPORT double UZTextViewVersionNumber;
+
+//! Project version string for UZTextView.
+FOUNDATION_EXPORT const unsigned char UZTextViewVersionString[];
+
+// In this header, you should import all the public headers of your framework using statements like #import <UZTextView/PublicHeader.h>
+
 static NSString * _Nonnull const UZTextViewClickedRect	= @"_UZTextViewClickedRect";
 
 /**
