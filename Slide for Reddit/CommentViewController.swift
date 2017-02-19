@@ -1436,21 +1436,15 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         var i = iB
         
         let children = walkTree(n: n);
-        let id = n is RComment ? (n as! RComment).getId() : (n as! RMore).getId()
         
         for ignored in children {
             let name = ignored is RComment ? (ignored as! RComment).getId() : (ignored as! RMore).getId()
-            if(id != name){
-                
-                let fullname = name
-                
-                if(!hidden.contains(fullname)){
-                    i += 1
-                    hidden.append(fullname)
-                }
-            }
-            i += hideNumber(n: ignored, iB: 0)
             
+                if(!hidden.contains(name)){
+                    i += 1
+                    hidden.append(name)
+                }
+            i += hideNumber(n: ignored, iB: 0)
         }
         return i
     }
