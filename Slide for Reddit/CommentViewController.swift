@@ -497,7 +497,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         refreshControl.beginRefreshing()
         refresh(self)
         
-        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -569,6 +568,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.updateToolbar()
         title = submission?.subreddit
         if(hasSubmission && !comments.isEmpty){
             self.setBarColors(color: ColorUtil.getColorForSub(sub: self.title!))
@@ -595,8 +595,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             
             navigationItem.rightBarButtonItems = [moreB, sortB, searchB]
         }
-        
-        updateToolbar()
     }
     
     func showMenu(_ sender: AnyObject){
@@ -744,8 +742,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
     
     override func viewWillDisappear(_ animated: Bool) {
+        self.navigationController?.setToolbarHidden(true, animated: animated)
         super.viewWillDisappear(animated)
-        
     }
     
     public func extendKeepMore(in comment: Thing, current depth: Int) -> ([(Thing, Int)]) {
@@ -1056,9 +1054,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
         
     }
-    
+
     func updateToolbar() {
-        navigationController?.setToolbarHidden(false, animated: false)
+        navigationController?.setToolbarHidden(false, animated: true)
         let space = UIBarButtonItem(barButtonSystemItem:.flexibleSpace, target: nil, action: nil)
         var items: [UIBarButtonItem] = []
         if(!context.isEmpty()){
@@ -1412,6 +1410,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     func unhideNumber(n: Object, iB: Int) -> Int{
         var i = iB
         let children = walkTree(n: n);
+        var toHide : [String] = []
         for ignored in children {
             let parentHidden = self.parentHidden(comment: ignored)
             if(parentHidden){
@@ -1420,12 +1419,16 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             
             let name = ignored is RComment ? (ignored as! RComment).getId() : (ignored as! RMore).getId()
             
-            if(hidden.contains(name) || hiddenPersons.contains(name)){
-                hidden.remove(at: hidden.index(of: name)!)
+            if(hidden.contains(name)){
                 i += 1
             }
+            toHide.append(name)
+
             i += unhideNumber(n: ignored, iB: 0)
         }
+        self.hidden = self.hidden.filter({ (value) -> Bool in
+            return !toHide.contains(value)
+        })
         return i
     }
     
