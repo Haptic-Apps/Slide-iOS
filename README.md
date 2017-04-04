@@ -16,11 +16,11 @@ Slide is not yet avaliable for download on the App Store or for testing on TestF
 ### Getting started
 To get started with Slide iOS development, you need to set up Cocoapods integration and open the Coacoapods workspace, not the default xcodeproj. Below are the steps to getting started:
 
-1.Terminal: sudo gem install cocoapods
-2.Safari: Downloaded Slide from GitHub (clone or download -> Download Zip)
-3.Terminal: cd Downloads/Slide-iOS-Master/
-4.Terminal: pod install
-5.Open "Slide for Reddit.xcworkspace" through finder
+    1. Terminal: sudo gem install cocoapods
+    2. Safari: Downloaded Slide from GitHub (clone or download -> Download Zip)
+    3. Terminal: cd Downloads/Slide-iOS-Master/
+    4. Terminal: pod install
+    5. Open "Slide for Reddit.xcworkspace" through finder
 
 ### What needs to be done
 Slide is still in Pre-alpha, and a lot of work has yet to be done. I will be going through and adding more documentation soon (issue #4), and will be taking care of the Settings screens myself. Any issues are fair game, but any issue with the "Help Wanted" tag is an issue that I have not started on or that would be straightforward to implement with a single PR. If you have any questions or want to be pointed in the right direction, feel free to send me a PM on Reddit to /u/ccrama, or join us on our IRC channel (top banner)!
