@@ -14,7 +14,7 @@ Slide is not yet avaliable for download on the App Store or for testing on TestF
 ## Contributing
 
 ### Getting started
-To get started with Slide iOS development, you need to set up Cocoapods integration and open the Coacoapods workspace, not the default xcodeproj. Below are the steps to getting started:
+To get started with Slide iOS development, you need to set up Cocoapods integration and open the Coacoapods workspace, not the default xcworkspace. Below are the steps to getting started:
 
     1. Terminal: sudo gem install cocoapods
     2. Safari: Downloaded Slide from GitHub (clone or download -> Download Zip)
