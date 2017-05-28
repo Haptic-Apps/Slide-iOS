@@ -7,19 +7,89 @@
 //
 
 import UIKit
-import XLPagerTabStrip
 import reddift
 import AMScrollingNavbar
+import PagingMenuController
 
-class InboxViewController:  ButtonBarPagerTabStripViewController {
+class InboxViewController:  PagingMenuController {
     var content : [MessageWhere] = []
     var isReload = false
     var session: Session? = nil
     
+    static var viewControllers : [UIViewController] = []
+
+    struct PagingMenuOptionsBar: PagingMenuControllerCustomizable {
+        var componentType: ComponentType {
+            return .all(menuOptions: MenuOptions(), pagingControllers:viewControllers)
+        }
+    }
+    struct MenuItem: MenuItemViewCustomizable {
+        var horizontalMargin = 10
+        var displayMode: MenuItemDisplayMode
+    }
+
+    struct MenuOptions: MenuViewCustomizable {
+        static var color = UIColor.blue
+        
+        var itemsOptions: [MenuItemViewCustomizable] {
+            var menuitems: [MenuItemViewCustomizable] = []
+            for controller in viewControllers {
+                menuitems.append(MenuItem(horizontalMargin: 10, displayMode:( (controller as! ContentListingViewController).baseData.displayMode)))
+            }
+            return menuitems
+        }
+        
+        static func setColor(c: UIColor){
+            color = c
+        }
+        
+        var displayMode: MenuDisplayMode {
+            return MenuDisplayMode.standard(widthMode: .flexible, centerItem: true, scrollingMode: MenuScrollingMode.scrollEnabled)
+        }
+        
+        var backgroundColor: UIColor {
+            return ColorUtil.getColorForSub(sub: "")
+        }
+        var selectedBackgroundColor: UIColor {
+            return ColorUtil.getColorForSub(sub: "")
+        }
+        var height: CGFloat {
+            return 30
+        }
+        var animationDuration: TimeInterval {
+            return 0.3
+        }
+        var deceleratingRate: CGFloat {
+            return UIScrollViewDecelerationRateFast
+        }
+        var selectedItemCenter: Bool {
+            return true
+        }
+        var focusMode: MenuFocusMode {
+            return .underline(height: 3, color: ColorUtil.accentColorForSub(sub: ""), horizontalPadding: 0, verticalPadding: 0)
+        }
+        var dummyItemViewsSet: Int {
+            return 3
+        }
+        var menuPosition: MenuPosition {
+            return .top
+        }
+        var dividerImage: UIImage? {
+            return nil
+        }
+        
+    }
+    
     init(){
         self.session = (UIApplication.shared.delegate as! AppDelegate).session
         self.content = InboxViewController.doDefault()
-        super.init(nibName: nil, bundle: nil)
+        InboxViewController.viewControllers.removeAll()
+
+        for place in content {
+            InboxViewController.viewControllers.append(ContentListingViewController.init(dataSource: InboxContributionLoader(whereContent: place)))
+        }
+
+        super.init(options: PagingMenuOptionsBar())
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -101,39 +171,22 @@ class InboxViewController:  ButtonBarPagerTabStripViewController {
     var time: Double = 0
     
     override func viewDidLoad() {
-        settings.style.buttonBarItemFont = UIFont.systemFont(ofSize: 14)
-        settings.style.selectedBarHeight = 3.0
-        settings.style.buttonBarMinimumLineSpacing = 0
-        settings.style.buttonBarItemTitleColor = .black
-        settings.style.buttonBarItemsShouldFillAvailiableWidth = true
         
         time = History.getInboxSeen()
         History.inboxSeen()
-        
-        settings.style.buttonBarLeftContentInset = 20
-        settings.style.buttonBarRightContentInset = 20
-        settings.style.buttonBarItemBackgroundColor = .clear
-        
-        changeCurrentIndexProgressive = { (oldCell: ButtonBarViewCell?, newCell: ButtonBarViewCell?, progressPercentage: CGFloat, changeCurrentIndex: Bool, animated: Bool) -> Void in
-            guard changeCurrentIndex == true else { return }
-            oldCell?.label.alpha = 0.5
-            newCell?.label.alpha = 1
-            newCell?.label.textColor = .white
-            oldCell?.label.textColor = .white
-        }
-        view.backgroundColor = ColorUtil.backgroundColor
+                view.backgroundColor = ColorUtil.backgroundColor
         // set up style before super view did load is executed
         // -
         
         super.viewDidLoad()
         self.edgesForExtendedLayout = []
         
-        self.buttonBarView.backgroundColor = ColorUtil.getColorForSub(sub: "")
-        self.buttonBarView.selectedBar.backgroundColor = ColorUtil.accentColorForSub(sub: "")
+        
+        self.menuView?.backgroundColor = ColorUtil.getColorForSub(sub: "")
     }
     
     func showSortMenu(_ sender: AnyObject){
-        (viewControllers[currentIndex] as? SubredditLinkViewController)?.showMenu(sender)
+        (InboxViewController.viewControllers[currentPage] as? SubredditLinkViewController)?.showMenu(sender)
     }
     
     func showMenu(_ sender: AnyObject){
@@ -150,7 +203,7 @@ class InboxViewController:  ButtonBarPagerTabStripViewController {
         actionSheetController.addAction(cancelActionButton)
         
         cancelActionButton = UIAlertAction(title: "Refresh", style: .default) { action -> Void in
-            (self.viewControllers[self.currentIndex] as? SubredditLinkViewController)?.refresh()
+            (InboxViewController.viewControllers[self.currentPage] as? SubredditLinkViewController)?.refresh()
         }
         actionSheetController.addAction(cancelActionButton)
         
@@ -193,18 +246,6 @@ class InboxViewController:  ButtonBarPagerTabStripViewController {
         }
         
         self.present(actionSheetController, animated: true, completion: nil)
-    }
-    
-    override func viewControllers(for pagerTabStripController: PagerTabStripViewController) -> [UIViewController] {
-        var controllers : [UIViewController] = []
-        for place in content {
-            controllers.append(ContentListingViewController.init(dataSource: InboxContributionLoader(whereContent: place)))
-        }
-        return Array(controllers)
-    }
-    
-    func indicatorInfo(for pagerTabStripController: PagerTabStripViewController) -> IndicatorInfo {
-        return IndicatorInfo(title: content[pagerTabStripController.currentIndex].description)
     }
     
 }

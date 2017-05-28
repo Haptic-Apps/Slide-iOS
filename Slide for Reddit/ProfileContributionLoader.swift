@@ -8,10 +8,11 @@
 
 import Foundation
 import reddift
-import XLPagerTabStrip
 import RealmSwift
+import PagingMenuController
 
 class ProfileContributionLoader: ContributionLoader {
+    var displayMode: MenuItemDisplayMode
     var name: String
     var userContent: UserContent
     var color: UIColor
@@ -23,14 +24,13 @@ class ProfileContributionLoader: ContributionLoader {
         paginator = Paginator()
         content = []
         userContent = whereContent
-        indicatorInfo = IndicatorInfo(title: userContent.title)
+        displayMode = MenuItemDisplayMode.text(title: MenuItemText.init(text: userContent.title, color: UIColor.gray, selectedColor: UIColor.white, font: UIFont.systemFont(ofSize: 12), selectedFont: UIFont.boldSystemFont(ofSize: 12)))
     }
     
     
     var paginator: Paginator
     var content: [Object]
     var delegate: ContentListingViewController?
-    var indicatorInfo: IndicatorInfo
     var paging = true
     
     func getData(reload: Bool) {

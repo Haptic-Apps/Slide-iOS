@@ -366,6 +366,7 @@ class SettingsFont: UITableViewController {
             FontGenerator.initialize()
             doChecks()
         }
+        tableView.deselectRow(at: indexPath, animated: true)
         
     }
 

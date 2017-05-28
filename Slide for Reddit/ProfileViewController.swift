@@ -7,16 +7,81 @@
 //
 
 import UIKit
-import XLPagerTabStrip
 import reddift
 import AMScrollingNavbar
+import PagingMenuController
 
-class ProfileViewController:  ButtonBarPagerTabStripViewController, ColorPickerDelegate {
+class ProfileViewController:  PagingMenuController, ColorPickerDelegate {
     var content : [UserContent] = []
-    var name: String
+    static var name: String = ""
     var isReload = false
     var session: Session? = nil
+    static var viewControllers : [UIViewController] = []
     
+    struct PagingMenuOptionsBar: PagingMenuControllerCustomizable {
+        var componentType: ComponentType {
+            return .all(menuOptions: MenuOptions(), pagingControllers:viewControllers)
+        }
+    }
+    struct MenuItem: MenuItemViewCustomizable {
+        var horizontalMargin = 10
+        var displayMode: MenuItemDisplayMode
+    }
+    
+    struct MenuOptions: MenuViewCustomizable {
+        static var color = UIColor.blue
+        
+        var itemsOptions: [MenuItemViewCustomizable] {
+            var menuitems: [MenuItemViewCustomizable] = []
+            for controller in viewControllers {
+                menuitems.append(MenuItem(horizontalMargin: 10, displayMode:( (controller as! ContentListingViewController).baseData.displayMode)))
+            }
+            return menuitems
+        }
+        
+        static func setColor(c: UIColor){
+            color = c
+        }
+        
+        var displayMode: MenuDisplayMode {
+            return MenuDisplayMode.standard(widthMode: .flexible, centerItem: true, scrollingMode: MenuScrollingMode.scrollEnabled)
+        }
+        
+        var backgroundColor: UIColor {
+            return ColorUtil.getColorForUser(name: name)
+        }
+        var selectedBackgroundColor: UIColor {
+            return ColorUtil.getColorForUser(name: name)
+        }
+        
+        var height: CGFloat {
+            return 30
+        }
+        var animationDuration: TimeInterval {
+            return 0.3
+        }
+        var deceleratingRate: CGFloat {
+            return UIScrollViewDecelerationRateFast
+        }
+        var selectedItemCenter: Bool {
+            return true
+        }
+        var focusMode: MenuFocusMode {
+            return .underline(height: 3, color: ColorUtil.accentColorForSub(sub: ""), horizontalPadding: 0, verticalPadding: 0)
+        }
+        var dummyItemViewsSet: Int {
+            return 3
+        }
+        var menuPosition: MenuPosition {
+            return .top
+        }
+        var dividerImage: UIImage? {
+            return nil
+        }
+        
+    }
+
+
     func valueChanged(_ value: CGFloat, accent: Bool) {
             self.navigationController?.navigationBar.barTintColor = UIColor.init(cgColor: GMPalette.allCGColor()[Int(value * CGFloat(GMPalette.allCGColor().count))])
         
@@ -34,11 +99,11 @@ class ProfileViewController:  ButtonBarPagerTabStripViewController, ColorPickerD
         alertController.view.addSubview(customView)
         
         let somethingAction = UIAlertAction(title: "Save", style: .default, handler: {(alert: UIAlertAction!) in
-            ColorUtil.setColorForUser(name: self.name, color: (self.navigationController?.navigationBar.barTintColor)!)
+            ColorUtil.setColorForUser(name: ProfileViewController.name, color: (self.navigationController?.navigationBar.barTintColor)!)
         })
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: {(alert: UIAlertAction!) in
-            self.navigationController?.navigationBar.barTintColor = ColorUtil.getColorForUser(name: self.name)
+            self.navigationController?.navigationBar.barTintColor = ColorUtil.getColorForUser(name: ProfileViewController.name)
         })
         
         alertController.addAction(somethingAction)
@@ -48,19 +113,19 @@ class ProfileViewController:  ButtonBarPagerTabStripViewController, ColorPickerD
     }
     
     func tagUser(){
-        let alertController = UIAlertController(title: "Tag /u/\(self.name)", message: nil, preferredStyle: UIAlertControllerStyle.alert)
+        let alertController = UIAlertController(title: "Tag /u/\(ProfileViewController.name)", message: nil, preferredStyle: UIAlertControllerStyle.alert)
         let confirmAction = UIAlertAction(title: "Set", style: .default) { (_) in
             if let field = alertController.textFields?[0] {
                 print("Setting tag \(field.text!)")
-                ColorUtil.setTagForUser(name: self.name, tag: field.text!)
+                ColorUtil.setTagForUser(name: ProfileViewController.name, tag: field.text!)
             } else {
                 // user did not fill field
             }
         }
         
-        if(!ColorUtil.getTagForUser(name: self.name).isEmpty){
+        if(!ColorUtil.getTagForUser(name: ProfileViewController.name).isEmpty){
         let removeAction = UIAlertAction(title: "Remove tag", style: .default) { (_) in
-            ColorUtil.removeTagForUser(name: self.name)
+            ColorUtil.removeTagForUser(name: ProfileViewController.name)
         }
             alertController.addAction(removeAction)
         }
@@ -69,7 +134,7 @@ class ProfileViewController:  ButtonBarPagerTabStripViewController, ColorPickerD
         
         alertController.addTextField { (textField) in
             textField.placeholder = "Tag"
-            textField.text = ColorUtil.getTagForUser(name: self.name)
+            textField.text = ColorUtil.getTagForUser(name: ProfileViewController.name)
         }
         
         alertController.addAction(confirmAction)
@@ -80,7 +145,7 @@ class ProfileViewController:  ButtonBarPagerTabStripViewController, ColorPickerD
     }
 
     init(name: String){
-        self.name = name
+        ProfileViewController.name = name
         self.session = (UIApplication.shared.delegate as! AppDelegate).session
         if let n = (session?.token.flatMap { (token) -> String? in
             return token.name
@@ -93,7 +158,14 @@ class ProfileViewController:  ButtonBarPagerTabStripViewController, ColorPickerD
         } else {
             self.content = ProfileViewController.doDefault()
         }
-        super.init(nibName: nil, bundle: nil)
+        
+        
+        for place in content {
+            ProfileViewController.viewControllers.append(ContentListingViewController.init(dataSource: ProfileContributionLoader.init(name: name, whereContent: place)))
+        }
+        ProfileViewController.viewControllers.remove(at: 0)
+
+        super.init(options: PagingMenuOptionsBar())
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -113,9 +185,9 @@ class ProfileViewController:  ButtonBarPagerTabStripViewController, ColorPickerD
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         (navigationController as? ScrollingNavigationController)?.showNavbar(animated: true)
-        self.title = name
+        self.title = ProfileViewController.name
         if(navigationController != nil){
-            navigationController?.navigationBar.barTintColor = ColorUtil.getColorForUser(name: name)
+            navigationController?.navigationBar.barTintColor = ColorUtil.getColorForUser(name: ProfileViewController.name)
         }
         let sort = UIButton.init(type: .custom)
         sort.setImage(UIImage.init(named: "ic_sort_white"), for: UIControlState.normal)
@@ -205,7 +277,7 @@ class ProfileViewController:  ButtonBarPagerTabStripViewController, ColorPickerD
         alrController.addAction(UIAlertAction.init(title: "Change color", style: .default, handler: { (action) in
             self.pickColor()
         }))
-        let tag = ColorUtil.getTagForUser(name: self.name)
+        let tag = ColorUtil.getTagForUser(name: ProfileViewController.name)
         alrController.addAction(UIAlertAction.init(title: "Tag user\((!(tag.isEmpty)) ? " (currently \(tag))" : "")", style: .default, handler: { (action) in
             self.tagUser()
         }))
@@ -235,24 +307,7 @@ class ProfileViewController:  ButtonBarPagerTabStripViewController, ColorPickerD
     }
     
     override func viewDidLoad() {
-        settings.style.buttonBarItemFont = UIFont.systemFont(ofSize: 14)
-        settings.style.selectedBarHeight = 3.0
-        settings.style.buttonBarMinimumLineSpacing = 0
-        settings.style.buttonBarItemTitleColor = .black
-        settings.style.buttonBarItemsShouldFillAvailiableWidth = true
-        
-        
-        settings.style.buttonBarLeftContentInset = 20
-        settings.style.buttonBarRightContentInset = 20
-        settings.style.buttonBarItemBackgroundColor = .clear
-        
-        changeCurrentIndexProgressive = { (oldCell: ButtonBarViewCell?, newCell: ButtonBarViewCell?, progressPercentage: CGFloat, changeCurrentIndex: Bool, animated: Bool) -> Void in
-            guard changeCurrentIndex == true else { return }
-            oldCell?.label.alpha = 0.5
-            newCell?.label.alpha = 1
-            newCell?.label.textColor = .white
-            oldCell?.label.textColor = .white
-        }
+       
         view.backgroundColor = ColorUtil.backgroundColor
         // set up style before super view did load is executed
         // -
@@ -260,17 +315,16 @@ class ProfileViewController:  ButtonBarPagerTabStripViewController, ColorPickerD
         super.viewDidLoad()
         self.edgesForExtendedLayout = []
         
-        self.buttonBarView.backgroundColor = ColorUtil.getColorForUser(name: name)
-        self.buttonBarView.selectedBar.backgroundColor = ColorUtil.accentColorForSub(sub: "")
+        self.menuView?.backgroundColor = ColorUtil.getColorForUser(name: ProfileViewController.name)
     }
     
     func showSortMenu(_ sender: AnyObject){
-        (viewControllers[currentIndex] as? SubredditLinkViewController)?.showMenu(sender)
+        (ProfileViewController.viewControllers[currentPage] as? SubredditLinkViewController)?.showMenu(sender)
     }
     
     func showMenu(_ sender: AnyObject){
         do {
-            try session?.getUserProfile(name, completion: { (result) in
+            try session?.getUserProfile(ProfileViewController.name, completion: { (result) in
                 switch result {
                 case .failure(let error):
                     print(error)
@@ -303,17 +357,4 @@ class ProfileViewController:  ButtonBarPagerTabStripViewController, ColorPickerD
         
         self.present(actionSheetController, animated: true, completion: nil)
     }
-    
-    override func viewControllers(for pagerTabStripController: PagerTabStripViewController) -> [UIViewController] {
-        var controllers : [UIViewController] = []
-        for place in content {
-            controllers.append(ContentListingViewController.init(dataSource: ProfileContributionLoader.init(name: name, whereContent: place)))
-        }
-        return Array(controllers)
-    }
-    
-    func indicatorInfo(for pagerTabStripController: PagerTabStripViewController) -> IndicatorInfo {
-        return IndicatorInfo(title: content[pagerTabStripController.currentIndex].title)
-    }
-    
 }

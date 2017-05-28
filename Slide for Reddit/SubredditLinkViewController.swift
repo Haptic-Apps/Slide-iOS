@@ -10,14 +10,14 @@ import UIKit
 import reddift
 import SDWebImage
 import ChameleonFramework
-import XLPagerTabStrip
 import AMScrollingNavbar
 import SideMenu
 import KCFloatingActionButton
 import UZTextView
 import RealmSwift
+import PagingMenuController
 
-class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, IndicatorInfoProvider, ScrollingNavigationControllerDelegate, LinkCellViewDelegate, ColorPickerDelegate, KCFloatingActionButtonDelegate {
+class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, ScrollingNavigationControllerDelegate, LinkCellViewDelegate, ColorPickerDelegate, KCFloatingActionButtonDelegate {
     
     var parentController: SubredditsViewController?
     var accentChosen: UIColor?
@@ -190,7 +190,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             PostFilter.profiles.append(link.author as NSString)
             PostFilter.saveAndUpdate()
             self.links = PostFilter.filter(self.links, previous: nil)
-            self.tableView.reloadData()
+            self.reloadDataReset()
         }
         actionSheetController.addAction(cancelActionButton)
         
@@ -198,7 +198,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             PostFilter.subreddits.append(link.subreddit as NSString)
             PostFilter.saveAndUpdate()
             self.links = PostFilter.filter(self.links, previous: nil)
-            self.tableView.reloadData()
+            self.reloadDataReset()
         }
         actionSheetController.addAction(cancelActionButton)
         
@@ -206,7 +206,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             PostFilter.domains.append(link.domain as NSString)
             PostFilter.saveAndUpdate()
             self.links = PostFilter.filter(self.links, previous: nil)
-            self.tableView.reloadData()
+            self.reloadDataReset()
         }
         actionSheetController.addAction(cancelActionButton)
         
@@ -220,7 +220,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     var sub : String
     var session: Session? = nil
     weak var tableView : UITableView!
-    var itemInfo : IndicatorInfo
+    var displayMode: MenuItemDisplayMode
     var single: Bool = false
     
     /* override func previewActionItems() -> [UIPreviewActionItem] {
@@ -239,7 +239,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     init(subName: String, parent: SubredditsViewController){
         sub = subName;
         self.parentController = parent
-        itemInfo = IndicatorInfo(title: sub)
+        displayMode = MenuItemDisplayMode.text(title: MenuItemText.init(text: sub, color: UIColor.white, selectedColor: UIColor.white, font: UIFont.systemFont(ofSize: 12), selectedFont: UIFont.systemFont(ofSize: 12)))
         super.init(nibName:nil, bundle:nil)
         setBarColors(color: ColorUtil.getColorForSub(sub: subName))
     }
@@ -247,7 +247,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     init(subName: String, single: Bool){
         sub = subName
         self.single = true
-        itemInfo = IndicatorInfo(title: sub)
+        displayMode = MenuItemDisplayMode.text(title: MenuItemText.init(text: sub, color: UIColor.white, selectedColor: UIColor.white, font: UIFont.systemFont(ofSize: 12), selectedFont: UIFont.systemFont(ofSize: 12)))
         super.init(nibName:nil, bundle:nil)
         setBarColors(color: ColorUtil.getColorForSub(sub: subName))
     }
@@ -259,10 +259,10 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     func scrollingNavigationController(_ controller: ScrollingNavigationController, didChangeState state: NavigationBarState) {
         switch state {
         case .collapsed:
-            hide(true)
+           // hide(true)
             break
         case .expanded:
-            show(true)
+          //  show(true)
             break
         case .scrolling:
             break
@@ -320,8 +320,15 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         load(reset: true)
     }
     
+    var heightAtIndexPath = NSMutableDictionary()
+
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableViewAutomaticDimension
+        if let height = heightAtIndexPath.object(forKey: indexPath) as? NSNumber {
+            return CGFloat(height.floatValue)
+        } else {
+            return UITableViewAutomaticDimension
+        }
     }
     
     var sideMenu: UISideMenuNavigationController?
@@ -383,7 +390,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             }
         }
         
-        if(SettingValues.hiddenFAB){
+        if(false && SettingValues.hiddenFAB){
             fab = KCFloatingActionButton()
             fab!.buttonColor = ColorUtil.accentColorForSub(sub: sub)
             fab!.buttonImage = UIImage.init(named: "hide")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30))
@@ -586,8 +593,17 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        if let navigationController = navigationController as? ScrollingNavigationController {
+            navigationController.stopFollowingScrollView()
+        }
+
     }
     
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        let height = NSNumber(value: Float(cell.frame.size.height))
+        heightAtIndexPath.setObject(height, forKey: indexPath as NSCopying)
+    }
+
     func pickTheme(parent: SubredditsViewController?){
         parentController = parent
         let alertController = UIAlertController(title: "\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
@@ -602,13 +618,13 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         
         let somethingAction = UIAlertAction(title: "Save", style: .default, handler: {(alert: UIAlertAction!) in
             ColorUtil.setColorForSub(sub: self.sub, color: (self.navigationController?.navigationBar.barTintColor)!)
-            self.tableView.reloadData()
+            self.reloadDataReset()
         })
         
         let accentAction = UIAlertAction(title: "Accent color", style: .default, handler: {(alert: UIAlertAction!) in
             ColorUtil.setColorForSub(sub: self.sub, color: (self.navigationController?.navigationBar.barTintColor)!)
             self.pickAccent(parent: parent)
-            self.tableView.reloadData()
+            self.reloadDataReset()
         })
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: {(alert: UIAlertAction!) in
@@ -641,7 +657,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             if self.accentChosen != nil {
                 ColorUtil.setAccentColorForSub(sub: self.sub, color: self.accentChosen!)
             }
-            self.tableView.reloadData()
+            self.reloadDataReset()
         })
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: {(alert: UIAlertAction!) in
@@ -661,7 +677,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         navigationController?.navigationBar.isTranslucent = false
         (navigationController as? ScrollingNavigationController)?.showNavbar(animated: true)
         if let navigationController = self.navigationController as? ScrollingNavigationController {
-           /// navigationController.followScrollView(self.tableView, delay: 50.0)
+            navigationController.followScrollView(self.tableView, delay: 50.0)
             navigationController.scrollingNavbarDelegate = self
         }
         if(single){
@@ -700,12 +716,16 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             paging = true
         }
         super.viewWillAppear(animated)
-        /* todo this, too slow currently
          if(savedIndex != nil){
          tableView.reloadRows(at: [savedIndex!], with: .none)
          } else {
          tableView.reloadData()
-         }*/
+         }
+    }
+    
+    func reloadDataReset(){
+        heightAtIndexPath.removeAllObjects()
+        tableView.reloadData()
     }
     
     func showMoreNone(_ sender: AnyObject){
@@ -860,12 +880,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     
     var sort = SettingValues.defaultSorting
     var time = SettingValues.defaultTimePeriod
-    
-    func indicatorInfo(for pagerTabStripController: PagerTabStripViewController) -> IndicatorInfo {
-        return itemInfo
-    }
-    
-    func showMenu(_ selector: AnyObject){
+        func showMenu(_ selector: AnyObject){
         let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
         
         let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
@@ -916,7 +931,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     
     func refresh(){
         self.links = []
-        tableView.reloadData()
+        reloadDataReset()
         refreshControl.beginRefreshing()
         load(reset: true)
     }
@@ -951,7 +966,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                                             self.links.append(i)
                                         }
                                         
-                                        self.tableView.reloadData()
+                                        self.reloadDataReset()
                                     }
                                     self.refreshControl.endRefreshing()
                                     self.loading = false
@@ -1003,7 +1018,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                                     
                                 }
                                 
-                                self.tableView.reloadData()
+                                self.reloadDataReset()
                                 self.refreshControl.endRefreshing()
                                 self.loading = false
                             }
@@ -1029,7 +1044,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                                         for i in listing.links {
                                             self.links.append(i)
                                         }
-                                        self.tableView.reloadData()
+                                        self.reloadDataReset()
                                     }
                                     self.refreshControl.endRefreshing()
                                     self.loading = false
@@ -1085,7 +1100,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                                     
                                 }
                                 
-                                self.tableView.reloadData()
+                                self.reloadDataReset()
                                 self.refreshControl.endRefreshing()
                                 self.loading = false
                             }

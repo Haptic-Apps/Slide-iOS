@@ -44,6 +44,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>PagingMenuController.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>Pods-Slide for Reddit.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -94,16 +99,6 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>XLPagerTabStrip-XLPagerTabStrip.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>XLPagerTabStrip.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
 		<key>reddift.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -112,12 +107,7 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>0F986064AFA3A21AF7EF5B8B1AC36A84</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>215085FD21B8FB103532BF74E0D1C01E</key>
+		<key>04428BC810483CE7307A80F8182C11D7</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -127,12 +117,27 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>5DFC5F90214F91370E469314F6C20B95</key>
+		<key>564CE924D0D3D54A051717649C6C8D2B</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>628319B4DEFEA44BC646989728859066</key>
+		<key>56EE5E05FD07E19159B4E5DCA94FE940</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>683B0CBBB8BB9700E6B178B2DEA88377</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>68B62D50321A3A8F0935C38D7E79DE9B</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>6ADB3656BDFD85FB77E0CAB44BFF61E6</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -142,12 +147,7 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>708FF533486344B1A749863FEF6BA22E</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>7D045CE98B9DF8BBBC69A4733C702AC0</key>
+		<key>77DA4305DEED3A092B0B291D5F8703CF</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -162,22 +162,12 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>89652D3001732203B5B24C62C7BBB1FE</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
 		<key>8A267660E1AD4832DE75665F2F87AEA3</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
 		<key>965699190112DDBD9B7864D091660DBC</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>996CC8AAC551CC1BC7410F0E12F0FE0F</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -192,11 +182,6 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>A4BA13FB522A6D6157F33F17AC73AF12</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
 		<key>A6E9CEC9E5ACFE69D21456CCB70BEEA0</key>
 		<dict>
 			<key>primary</key>
@@ -207,12 +192,17 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>B3A85AC3C790C2E44039343E5329B68A</key>
+		<key>C6767F8BDBDF20BB867C5356985FA89A</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>DA5A8BE0C5971CBC51183B7F3A7B2430</key>
+		<key>C93733131560F95E47A3C1ADCD22E150</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>ED8143EAA384EF9E8081520A9E8C448A</key>
 		<dict>
 			<key>primary</key>
 			<true/>

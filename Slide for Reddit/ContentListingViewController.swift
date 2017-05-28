@@ -10,11 +10,11 @@ import UIKit
 import reddift
 import SDWebImage
 import ChameleonFramework
-import XLPagerTabStrip
 import AMScrollingNavbar
+import PagingMenuController
 
 
-class ContentListingViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, IndicatorInfoProvider {
+class ContentListingViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource {
     var baseData: ContributionLoader
     var session: Session? = nil
     weak var tableView : UITableView!
@@ -92,10 +92,6 @@ class ContentListingViewController: MediaViewController, UITableViewDelegate, UI
         
         refresh()
         //todo self.shyNavBarManager.scrollView = self.tableView;
-    }
-    
-    func indicatorInfo(for pagerTabStripController: PagerTabStripViewController) -> IndicatorInfo {
-        return baseData.indicatorInfo
     }
     
     override func viewWillAppear(_ animated: Bool) {

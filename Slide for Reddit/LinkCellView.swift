@@ -28,6 +28,10 @@ protocol LinkCellViewDelegate: class {
     func reply(_ cell: LinkCellView)
 }
 
+enum ConstraintType {
+    case desktop_big, desktop_thumb, desktop_text, normal_big, normal_thumb, normal_text, none;
+}
+
 class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextViewDelegate {
     
     func upvote(sender: UITapGestureRecognizer? = nil) {
@@ -75,6 +79,8 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     var downvote = UIImageView()
     var more = UIImageView()
     var delegate: LinkCellViewDelegate? = nil
+    
+    var old: ConstraintType = .none
     
     func textView(_ textView: UZTextView, didLongTapLinkAttribute value: Any?) {
         if let attr = value as? [String: Any]{
@@ -200,7 +206,9 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     
     func estimateHeight(_ full: Bool) ->CGFloat {
         if(estimatedHeight == 0){
-            title.sizeToFit()
+            if(full){
+               title.sizeToFit()
+            }
             let he = title.frame.size.height
             print("Height is \(height)")
             estimatedHeight = CGFloat((he < 75 && thumb || he < 75 && !big) ? 75 : he) + CGFloat(56) + CGFloat(!hasText || !full ? 0 : (content?.textHeight)!) +  CGFloat(big && !thumb ? (full ? 220 :height + 20) : 0)
@@ -503,16 +511,17 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         attributedTitle.append(infoString)
         
         title.attributedText = attributedTitle
-        title.sizeToFit()
         
         let comment = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openComment(sender:)))
         comment.delegate = self
         self.addGestureRecognizer(comment)
         
-        
-        title.sizeToFit()
+        if(full){
+            title.sizeToFit()
+        }
         refresh()
-        
+
+      
         let more = History.commentsSince(s: submission)
         let commentText = NSMutableAttributedString(string: " \(submission.commentCount)" + (more > 0 ? " (+\(more))" : ""), attributes: [NSFontAttributeName: comments.font, NSForegroundColorAttributeName: comments.textColor])
         
@@ -612,7 +621,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         attributedTitle.append(infoString)
         
         title.attributedText = attributedTitle
-        title.sizeToFit()
+        //title.sizeToFit()
         reply.isHidden = true
         
         if(submission.archived || !AccountController.isLoggedIn){
@@ -774,7 +783,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         self.addGestureRecognizer(comment)
         
         
-        title.sizeToFit()
+        //title.sizeToFit()
         
         let mo = History.commentsSince(s: submission)
         let commentText = NSMutableAttributedString(string: " \(submission.commentCount)" + (mo > 0 ? "(+\(mo))" : ""), attributes: [NSFontAttributeName: comments.font, NSForegroundColorAttributeName: comments.textColor])
@@ -789,17 +798,21 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         let metrics=["horizontalMargin":75,"top":0,"bottom":0,"separationBetweenLabels":0,"labelMinHeight":75,  "bannerHeight": height] as [String: Int]
         let views=["label":title, "body": textView, "image": thumbImage, "info": b, "upvote": upvote, "downvote" : downvote, "score": score, "comments": comments, "banner": bannerImage, "buttons":buttons, "box": box] as [String : Any]
         
-        if(!thumbConstraint.isEmpty){
-            self.contentView.removeConstraints(thumbConstraint)
-            thumbConstraint = []
-        }
         if(!full && SettingValues.postViewMode == .DESKTOP) {
+            
             thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-4-[downvote(25)]",
                                                                   options: NSLayoutFormatOptions(rawValue: 0),
                                                                   metrics: metrics,
                                                                   views: views))
 
             if(thumb && !big){
+                if(old != .desktop_thumb){
+                    if(!thumbConstraint.isEmpty){
+                        self.contentView.removeConstraints(thumbConstraint)
+                        thumbConstraint = []
+                    }
+                    
+              
                 thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[image(75)]",
                                                                                   options: NSLayoutFormatOptions(rawValue: 0),
                                                                                   metrics: metrics,
@@ -827,13 +840,18 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                                                   options: NSLayoutFormatOptions(rawValue: 0),
                                                                                   metrics: metrics,
                                                                                   views: views))
-                
-                
+                    old = .desktop_thumb
+                  }
             } else if(big) {
-                if(bigConstraint != nil){
-                    thumbConstraint.append(bigConstraint!)
-                }
                 
+                if(old != .desktop_big || bigConstraint != nil){
+                    if(!thumbConstraint.isEmpty){
+                        self.contentView.removeConstraints(thumbConstraint)
+                        thumbConstraint = []
+                    }
+                    if(bigConstraint != nil){
+                        thumbConstraint.append(bigConstraint!)
+                    }
                 thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[image(0)]",
                                                                                   options: NSLayoutFormatOptions(rawValue: 0),
                                                                                   metrics: metrics,
@@ -876,9 +894,16 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                                                   options: NSLayoutFormatOptions(rawValue: 0),
                                                                                   metrics: metrics,
                                                                                   views: views))
-                
+                    old = .desktop_big
+
+                }
                 
             } else {
+                if(old != .desktop_text){
+                    if(!thumbConstraint.isEmpty){
+                        self.contentView.removeConstraints(thumbConstraint)
+                        thumbConstraint = []
+                    }
                 thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[image(0)]",
                                                                                   options: NSLayoutFormatOptions(rawValue: 0),
                                                                                   metrics: metrics,
@@ -907,10 +932,17 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                                                   options: NSLayoutFormatOptions(rawValue: 0),
                                                                                   metrics: metrics,
                                                                                   views: views))
-                
+                    old = .desktop_text
+
+                }
             }
         } else {
             if(thumb && !big){
+                if(old != .normal_thumb){
+                    if(!thumbConstraint.isEmpty){
+                        self.contentView.removeConstraints(thumbConstraint)
+                        thumbConstraint = []
+                    }
                 thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[image(75)]",
                                                                                   options: NSLayoutFormatOptions(rawValue: 0),
                                                                                   metrics: metrics,
@@ -934,13 +966,23 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                                                   options: NSLayoutFormatOptions(rawValue: 0),
                                                                                   metrics: metrics,
                                                                                   views: views))
-                
-                
-            } else if(big) {
-                if(bigConstraint != nil){
-                    thumbConstraint.append(bigConstraint!)
+                    old = .normal_thumb
+
                 }
                 
+            } else if(big) {
+                
+
+                if(old != .normal_big || bigConstraint != nil){
+                    if(!thumbConstraint.isEmpty){
+                        self.contentView.removeConstraints(thumbConstraint)
+                        thumbConstraint = []
+                    }
+
+                    if(bigConstraint != nil){
+                        thumbConstraint.append(bigConstraint!)
+                    }
+
                 thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[image(0)]",
                                                                                   options: NSLayoutFormatOptions(rawValue: 0),
                                                                                   metrics: metrics,
@@ -979,9 +1021,16 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                                                   options: NSLayoutFormatOptions(rawValue: 0),
                                                                                   metrics: metrics,
                                                                                   views: views))
-                
-                
+                    old = .normal_big
+
+                }
             } else {
+                if(old != .normal_text){
+                    if(!thumbConstraint.isEmpty){
+                        self.contentView.removeConstraints(thumbConstraint)
+                        thumbConstraint = []
+                    }
+
                 thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[image(0)]",
                                                                                   options: NSLayoutFormatOptions(rawValue: 0),
                                                                                   metrics: metrics,
@@ -1006,14 +1055,19 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                                                   options: NSLayoutFormatOptions(rawValue: 0),
                                                                                   metrics: metrics,
                                                                                   views: views))
-                
+                    old = .normal_text
+
+                }
             }
         }
-        refresh()
         self.setNeedsUpdateConstraints()
-        self.setNeedsLayout()
+        refresh()
+        if(full){
+            self.setNeedsLayout()
+        }
+     
         
-        if(type != .IMAGE && type != .SELF){
+        if(type != .IMAGE && type != .SELF && !thumb){
             b.isHidden = false
             var text = ""
             switch(type) {

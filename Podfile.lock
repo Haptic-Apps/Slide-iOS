@@ -9,6 +9,7 @@ PODS:
   - ImagePickerSheetController (0.9.3)
   - ImageViewer (4.0)
   - KCFloatingActionButton (2.1.2)
+  - PagingMenuController (2.2.0)
   - Realm (2.4.2):
     - Realm/Headers (= 2.4.2)
   - Realm/Headers (2.4.2)
@@ -24,7 +25,6 @@ PODS:
   - SwiftyJSON (3.1.4)
   - TTTAttributedLabel (2.0.0)
   - UZTextView (1.0.6)
-  - XLPagerTabStrip (6.0.0)
 
 DEPENDENCIES:
   - ActionSheetPicker-3.0 (from `https://github.com/ccrama/ActionSheetPicker-3.0`)
@@ -35,6 +35,7 @@ DEPENDENCIES:
   - ImagePickerSheetController (from `https://github.com/lbrndnr/ImagePickerSheetController`, branch `swift3`)
   - ImageViewer (from `https://github.com/ccrama/ImageViewer`)
   - KCFloatingActionButton (~> 2.1.0)
+  - PagingMenuController
   - RealmSwift
   - reddift (from `https://github.com/ccrama/reddift`)
   - SDWebImage (~> 3.8)
@@ -42,7 +43,6 @@ DEPENDENCIES:
   - SwiftyJSON
   - TTTAttributedLabel
   - UZTextView (from `https://github.com/sonsongithub/UZTextView`)
-  - XLPagerTabStrip (~> 6.0)
 
 EXTERNAL SOURCES:
   ActionSheetPicker-3.0:
@@ -83,6 +83,7 @@ SPEC CHECKSUMS:
   ImagePickerSheetController: 4789b06940e299431455c61be77fda440883c36c
   ImageViewer: 364abc0309c33dda86d08ca25b0243e5c67d8cd3
   KCFloatingActionButton: 1b22ce95d44b51915280df8a8b277eae4a06c3f1
+  PagingMenuController: 6176618987bb170096664f2da097313e45ed9c31
   Realm: d27b758e12d62a3371879a065d4c40aa212c5a54
   RealmSwift: 9556c0fe0f0cfecacfb755ae9e68ff379fc6bead
   reddift: 3066e687c2a934b0f9aca6ee6e2161abc4c93a56
@@ -91,8 +92,7 @@ SPEC CHECKSUMS:
   SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   UZTextView: 96bd60ad22f7f5ea882c56a9f90621f86b443192
-  XLPagerTabStrip: c46e802a8dcac29edbcea573de8fe920e052455b
 
-PODFILE CHECKSUM: 6a67d2d3eab739e7b93db441c0f65542adcbefbb
+PODFILE CHECKSUM: 9c955de26985dfad070c1c78a3932813b3895485
 
 COCOAPODS: 1.1.1

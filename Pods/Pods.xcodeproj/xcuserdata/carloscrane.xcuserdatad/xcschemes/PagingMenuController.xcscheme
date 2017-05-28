@@ -14,10 +14,10 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = 'DA5A8BE0C5971CBC51183B7F3A7B2430'
-               BlueprintName = 'XLPagerTabStrip'
+               BlueprintIdentifier = '6ADB3656BDFD85FB77E0CAB44BFF61E6'
+               BlueprintName = 'PagingMenuController'
                ReferencedContainer = 'container:Pods.xcodeproj'
-               BuildableName = 'XLPagerTabStrip.framework'>
+               BuildableName = 'PagingMenuController.framework'>
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

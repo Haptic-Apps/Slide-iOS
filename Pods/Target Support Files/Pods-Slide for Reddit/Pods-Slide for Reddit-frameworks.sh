@@ -92,6 +92,7 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "$BUILT_PRODUCTS_DIR/ImagePickerSheetController/ImagePickerSheetController.framework"
   install_framework "$BUILT_PRODUCTS_DIR/ImageViewer/ImageViewer.framework"
   install_framework "$BUILT_PRODUCTS_DIR/KCFloatingActionButton/KCFloatingActionButton.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/PagingMenuController/PagingMenuController.framework"
   install_framework "$BUILT_PRODUCTS_DIR/Realm/Realm.framework"
   install_framework "$BUILT_PRODUCTS_DIR/RealmSwift/RealmSwift.framework"
   install_framework "$BUILT_PRODUCTS_DIR/SDWebImage/SDWebImage.framework"
@@ -99,7 +100,6 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "$BUILT_PRODUCTS_DIR/SwiftyJSON/SwiftyJSON.framework"
   install_framework "$BUILT_PRODUCTS_DIR/TTTAttributedLabel/TTTAttributedLabel.framework"
   install_framework "$BUILT_PRODUCTS_DIR/UZTextView/UZTextView.framework"
-  install_framework "$BUILT_PRODUCTS_DIR/XLPagerTabStrip/XLPagerTabStrip.framework"
   install_framework "$BUILT_PRODUCTS_DIR/reddift/reddift.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
@@ -111,6 +111,7 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "$BUILT_PRODUCTS_DIR/ImagePickerSheetController/ImagePickerSheetController.framework"
   install_framework "$BUILT_PRODUCTS_DIR/ImageViewer/ImageViewer.framework"
   install_framework "$BUILT_PRODUCTS_DIR/KCFloatingActionButton/KCFloatingActionButton.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/PagingMenuController/PagingMenuController.framework"
   install_framework "$BUILT_PRODUCTS_DIR/Realm/Realm.framework"
   install_framework "$BUILT_PRODUCTS_DIR/RealmSwift/RealmSwift.framework"
   install_framework "$BUILT_PRODUCTS_DIR/SDWebImage/SDWebImage.framework"
@@ -118,6 +119,5 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "$BUILT_PRODUCTS_DIR/SwiftyJSON/SwiftyJSON.framework"
   install_framework "$BUILT_PRODUCTS_DIR/TTTAttributedLabel/TTTAttributedLabel.framework"
   install_framework "$BUILT_PRODUCTS_DIR/UZTextView/UZTextView.framework"
-  install_framework "$BUILT_PRODUCTS_DIR/XLPagerTabStrip/XLPagerTabStrip.framework"
   install_framework "$BUILT_PRODUCTS_DIR/reddift/reddift.framework"
 fi

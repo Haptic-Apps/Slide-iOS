@@ -595,6 +595,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             
             navigationItem.rightBarButtonItems = [moreB, sortB, searchB]
         }
+        
+            if let navigationController = navigationController as? ScrollingNavigationController {
+                navigationController.followScrollView(tableView, delay: 50.0)
+            }
+
     }
     
     func showMenu(_ sender: AnyObject){
@@ -744,6 +749,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     override func viewWillDisappear(_ animated: Bool) {
         self.navigationController?.setToolbarHidden(true, animated: animated)
         super.viewWillDisappear(animated)
+        
+            if let navigationController = navigationController as? ScrollingNavigationController {
+                navigationController.stopFollowingScrollView()
+            }
+    
     }
     
     public func extendKeepMore(in comment: Thing, current depth: Int) -> ([(Thing, Int)]) {

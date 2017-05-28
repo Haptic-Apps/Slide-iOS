@@ -23,7 +23,6 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
     var moreButton: UIButton = UIButton()
     var sideView: UIView = UIView()
     var sideViewSpace: UIView = UIView()
-    var rightSideViewSpace: UIView = UIView()
     var topViewSpace: UIView = UIView()
     var title: TTTAttributedLabel = TTTAttributedLabel.init(frame: CGRect.zero)
     var c: UIView = UIView()
@@ -134,7 +133,6 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         self.sideView = UIView(frame: CGRect(x: 0, y: 0, width: 4, height: CGFloat.greatestFiniteMagnitude))
         self.sideViewSpace = UIView(frame: CGRect(x: 0, y: 0, width: 4, height: CGFloat.greatestFiniteMagnitude))
         self.topViewSpace = UIView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 4))
-        self.rightSideViewSpace = UIView(frame: CGRect(x: 0, y: 0, width: 4, height: CGFloat.greatestFiniteMagnitude))
         
         self.c = children.withPadding(padding: padding)
         c.alpha = 0
@@ -151,7 +149,6 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         menu.translatesAutoresizingMaskIntoConstraints = false
         children.translatesAutoresizingMaskIntoConstraints = false
         c.translatesAutoresizingMaskIntoConstraints = false
-        rightSideViewSpace.translatesAutoresizingMaskIntoConstraints = false
         
         self.contentView.addSubview(textView)
         self.contentView.addSubview(moreButton)
@@ -161,7 +158,6 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         self.contentView.addSubview(title)
         self.contentView.addSubview(menu)
         self.contentView.addSubview(c)
-        self.contentView.addSubview(rightSideViewSpace)
         
         moreButton.addTarget(self, action: #selector(CommentDepthCell.pushedMoreButton(_:)), for: UIControlEvents.touchUpInside)
         
@@ -208,14 +204,14 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
             self.contentView.removeConstraints(sideConstraint!)
         }
         let metrics=["topMargin": topMargin, "ntopMargin": -topMargin, "horizontalMargin":75,"top":0,"bottom":0,"separationBetweenLabels":0,"labelMinHeight":75, "sidewidth":4*(depth ), "width":sideWidth]
-        let views=["text":textView, "title": title, "right": rightSideViewSpace, "menu":menu, "topviewspace":topViewSpace, "more": moreButton, "side":sideView, "cell":self.contentView, "sideviewspace":sideViewSpace] as [String : Any]
+        let views=["text":textView, "title": title, "menu":menu, "topviewspace":topViewSpace, "more": moreButton, "side":sideView, "cell":self.contentView, "sideviewspace":sideViewSpace] as [String : Any]
         
         
         sideConstraint = NSLayoutConstraint.constraints(withVisualFormat: "H:|-(-8)-[sideviewspace(sidewidth)]-0-[side(width)]",
                                                         options: NSLayoutFormatOptions(rawValue: 0),
                                                         metrics: metrics,
                                                         views: views)
-        sideConstraint!.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(-8)-[sideviewspace(sidewidth)]-0-[side(width)]-8-[title]-2-[right(4)]-0-|",
+        sideConstraint!.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(-8)-[sideviewspace(sidewidth)]-0-[side(width)]-8-[title]-2-|",
                                                                           options: NSLayoutFormatOptions(rawValue: 0),
                                                                           metrics: metrics,
                                                                           views: views))
@@ -226,19 +222,19 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         super.updateConstraints()
         
         let metrics=["topMargin": topMargin, "ntopMargin": -topMargin, "horizontalMargin":75,"top":0,"bottom":0,"separationBetweenLabels":0,"labelMinHeight":75, "sidewidth":4*(depth ), "width":sideWidth]
-        let views=["text":textView, "title": title, "children":c, "right": rightSideViewSpace, "menu":menu, "topviewspace":topViewSpace, "more": moreButton, "side":sideView, "cell":self.contentView, "sideviewspace":sideViewSpace] as [String : Any]
+        let views=["text":textView, "title": title, "children":c, "menu":menu, "topviewspace":topViewSpace, "more": moreButton, "side":sideView, "cell":self.contentView, "sideviewspace":sideViewSpace] as [String : Any]
         
         
         
         contentView.bounds = CGRect.init(x: 0,y: 0, width: contentView.frame.size.width , height: contentView.frame.size.height + CGFloat(topMargin))
         
         var constraint:[NSLayoutConstraint] = []
-        constraint = NSLayoutConstraint.constraints(withVisualFormat: "H:|-(-8)-[sideviewspace]-0-[side]-10-[text]-2-[right(4)]-0-|",
+        constraint = NSLayoutConstraint.constraints(withVisualFormat: "H:|-(-8)-[sideviewspace]-0-[side]-10-[text]-2-|",
                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                     metrics: metrics,
                                                     views: views)
         
-        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(-8)-[sideviewspace]-0-[side]-8-[title]-2-[right(4)]-0-|",
+        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(-8)-[sideviewspace]-0-[side]-8-[title]-2-|",
                                                                      options: NSLayoutFormatOptions(rawValue: 0),
                                                                      metrics: metrics,
                                                                      views: views))
@@ -279,10 +275,6 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                                     metrics: metrics,
                                                                     views: views))
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[right]-0-|",
-                                                                    options: NSLayoutFormatOptions(rawValue: 0),
-                                                                    metrics: metrics,
-                                                                    views: views))
         
         
         self.contentView.addConstraints(constraint)
@@ -297,7 +289,7 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         self.depth = depth
         loading = false
         c.alpha = 0
-        rightSideViewSpace.backgroundColor = ColorUtil.foregroundColor
+        self.contentView.backgroundColor = UIColor.clear
         if (depth - 1 > 0) {
             sideWidth = 4
             topMargin = 1
@@ -364,10 +356,9 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
             self.parent = parent
         }
         
+        print(date)
         if(date != 0 && date < Double(comment.created.timeIntervalSince1970 )){
-            self.backgroundColor = ColorUtil.getColorForSub(sub: comment.subreddit).withAlphaComponent(0.3)
-        } else {
-            self.backgroundColor = ColorUtil.foregroundColor
+            setIsNew(sub: comment.subreddit)
         }
         
         if(hiddenCount > 0){
@@ -491,8 +482,13 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
     }
     
     func setIsContext(){
-        rightSideViewSpace.backgroundColor = GMColor.yellow500Color()
+        self.contentView.backgroundColor = GMColor.yellow500Color().withAlphaComponent(0.5)
     }
+    
+    func setIsNew(sub: String){
+        self.contentView.backgroundColor = ColorUtil.getColorForSub(sub: sub).withAlphaComponent(0.5)
+    }
+
     
     func getScoreText(comment: RComment) -> Int {
         var submissionScore = comment.score
