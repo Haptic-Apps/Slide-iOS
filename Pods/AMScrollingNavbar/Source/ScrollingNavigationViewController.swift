@@ -3,7 +3,7 @@ import UIKit
 /**
  A custom `UIViewController` that implements the base configuration.
  */
-open class ScrollingNavigationViewController: UIViewController, UIScrollViewDelegate {
+open class ScrollingNavigationViewController: UIViewController, UIScrollViewDelegate, UINavigationControllerDelegate {
 
   // MARK: - ScrollView config
 
@@ -25,7 +25,6 @@ open class ScrollingNavigationViewController: UIViewController, UIScrollViewDele
     super.viewWillDisappear(animated)
 
     if let navigationController = self.navigationController as? ScrollingNavigationController {
-      //use func`viewDidDisappear`, below func `stopFollowingScrollView` never been executed
       navigationController.stopFollowingScrollView()
     }
   }

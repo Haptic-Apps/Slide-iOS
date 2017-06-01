@@ -95,7 +95,6 @@ class CommentDepthCell: MarginedTableViewCell, UZTextViewDelegate, UIViewControl
     }
     
     func didTapTextDoesNotIncludeLinkTextView(_ textView: UZTextView) {
-        self.pushedSingleTap(textView)
     }
     
     func upvote(){
@@ -167,10 +166,16 @@ class CommentDepthCell: MarginedTableViewCell, UZTextViewDelegate, UIViewControl
       //  tap.cancelsTouchesInView = false
       //  self.contentView.addGestureRecognizer(tap)
         
-        let tap = UITapGestureRecognizer(target: self, action: #selector(self.vote))
-          tap.cancelsTouchesInView = false
-        tap.numberOfTapsRequired = 2
-         self.contentView.addGestureRecognizer(tap)
+        let tap2 = UITapGestureRecognizer(target: self, action: #selector(self.vote))
+          tap2.cancelsTouchesInView = false
+        tap2.numberOfTapsRequired = 2
+         self.contentView.addGestureRecognizer(tap2)
+
+        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(self.pushedSingleTap(_:)))
+        tap.cancelsTouchesInView = false
+        tap.require(toFail: tap2)
+        self.contentView.addGestureRecognizer(tap)
 
         self.contentView.isUserInteractionEnabled = true
         self.contentView.backgroundColor = ColorUtil.foregroundColor
@@ -645,8 +650,10 @@ class CommentDepthCell: MarginedTableViewCell, UZTextViewDelegate, UIViewControl
     }
     
     func pushedSingleTap(_ sender: AnyObject?) {
+        if(!textView.isTouching()){
         if let delegate = self.delegate {
             delegate.pushedSingleTap(self)
+        }
         }
     }
     

@@ -13,7 +13,7 @@ target 'Slide for Reddit' do
   pod 'AMScrollingNavbar'
   pod 'BGTableViewRowActionWithImage'
   pod 'SideMenu'
-  pod 'UZTextView', :git => 'https://github.com/sonsongithub/UZTextView'
+  pod 'UZTextView', :git => 'https://github.com/ccrama/UZTextView'
   pod 'ImageViewer', :git => 'https://github.com/ccrama/ImageViewer'
   pod 'TTTAttributedLabel'
   pod "KCFloatingActionButton", "~> 2.1.0"

@@ -30,6 +30,7 @@
 #include <realm/util/logger.hpp>
 #include <realm/util/network.hpp>
 #include <realm/impl/continuous_transactions_history.hpp>
+#include <realm/sync/history.hpp>
 
 namespace realm {
 namespace sync {
@@ -75,30 +76,6 @@ public:
         /// all logging happens on behalf of the thread that executes run().
         util::Logger* logger = nullptr;
 
-        /// verify_servers_ssl_certificate controls whether the server certificate
-        /// is verified for SSL connections. It should always be true in production.
-        ///
-        /// A server certificate is verified by first checking that the
-        /// certificate has a valid signature chain back to a trust/anchor certificate,
-        /// and secondly checking that the host name of the Realm URL matches
-        /// a host name contained in the certificate.
-        /// The host name of the certificate is stored in either Common Name or
-        /// the Alternative Subject Name (DNS section).
-        ///
-        /// From the point of view of OpenSSL, setting verify_servers_ssl_certificate
-        /// to false means calling `SSL_set_verify()` with `SSL_VERIFY_NONE`.
-        /// Setting verify_servers_ssl_certificate to true means calling `SSL_set_verify()`
-        /// with `SSL_VERIFY_PEER`, and setting the host name using the function
-        /// X509_VERIFY_PARAM_set1_host() (OpenSSL version 1.0.2 or newer).
-        /// For other platforms, an equivalent procedure is followed.
-        bool verify_servers_ssl_certificate = true;
-
-        /// ssl_trust_certificate_path is the path of a trust/anchor certificate
-        /// used by the client to verify the server certificate.
-        /// If ssl_trust_certificate_path is None (default), the default device
-        /// trust/anchor store is used.
-        util::Optional<std::string> ssl_trust_certificate_path; // default None
-
         /// Use ports 80 and 443 by default instead of 7800 and 7801
         /// respectively. Ideally, these default ports should have been made
         /// available via a different URI scheme instead (http/https or ws/wss).
@@ -110,9 +87,9 @@ public:
         /// Create a separate connection for each session. For testing purposes
         /// only.
         ///
-        // FIXME: This setting defaults to true now, due to limitations in the
-        // load balancer. Do not set it to false in production.
-        bool one_connection_per_session = true;
+        // FIXME: This setting is ignored for now, due to limitations in the
+        // load balancer.
+        bool one_connection_per_session = false;
 
         /// Do not access the local file system. Sessions will act as if
         /// initiated on behalf of an empty (or nonexisting) local Realm
@@ -120,12 +97,27 @@ public:
         /// ignored. No UPLOAD messages will be generated. For testing purposes
         /// only.
         bool dry_run = false;
+
+        /// The default changeset cooker to be used by new sessions. Can be
+        /// overridden by Session::Config::changeset_cooker.
+        ///
+        /// \sa make_client_history(), TrivialChangesetCooker.
+        std::shared_ptr<ClientHistory::ChangesetCooker> changeset_cooker;
+
+        /// The number of ms between periodic keep-alive pings.
+        uint_fast64_t ping_keepalive_period_ms = 600000;
+
+        /// The number of ms to wait for keep-alive pongs.
+        uint_fast64_t pong_keepalive_timeout_ms = 300000;
+
+        /// The number of ms to wait for urgent pongs.
+        uint_fast64_t pong_urgent_timeout_ms = 5000;
     };
 
     /// \throw util::EventLoop::Implementation::NotAvailable if no event loop
     /// implementation was specified, and
     /// util::EventLoop::Implementation::get_default() throws it.
-    Client(Config = Config());
+    Client(Config = {});
     Client(Client&&) noexcept;
     ~Client() noexcept;
 
@@ -169,12 +161,33 @@ enum class Protocol {
 class BadServerUrl; // Exception
 
 
-/// Session objects must be destroyed before the Client object with which they
-/// are assocoated is destroyed.
+/// \brief Client-side representation of a Realm file synchronization session.
 ///
-/// It is an error to create two Session objects for a particular Realm file if
-/// those Session objects overlap in time, or if they are associated with two
-/// different Client objects that overlap in time.
+/// A synchronization session deals with precisely one local Realm file. To
+/// synchronize multiple local Realm files, you need multiple sessions.
+///
+/// A session object is always associated with a particular client object (\ref
+/// Client). The application must ensure that the destruction of the associated
+/// client object never happens before the destruction of the session
+/// object. The consequences of a violation are unspecified.
+///
+/// A session object is always associated with a particular local Realm file,
+/// however, a session object does not represent a session until it is bound to
+/// a server side Realm, i.e., until bind() is called. From the point of view of
+/// the thread that calls bind(), the session starts precisely when the
+/// execution of bind() starts, i.e., before bind() returns.
+///
+/// At most one session is allowed to exist for a particular local Realm file
+/// (file system inode) at any point in time. Multiple objects may coexists, as
+/// long as bind() has been called on at most one of them. Additionally, two
+/// sessions are allowed to exist at different times, and with no overlap in
+/// time, as long as they are associated with the same client object, or with
+/// two different client objects that do not overlap in time. This means, in
+/// particular, that it is an error to create two nonoverlapping sessions for
+/// the same local Realm file, it they are associated with two different client
+/// objects that overlap in time. It is the responsibility of the application to
+/// ensure that these rules are adhered to. The consequences of a violation are
+/// unspecified.
 ///
 /// Thread-safety: It is safe for multiple threads to construct, use (with some
 /// exceptions), and destroy session objects concurrently, regardless of whether
@@ -186,9 +199,39 @@ public:
     using port_type = util::network::Endpoint::port_type;
     using version_type = _impl::History::version_type;
     using SyncTransactCallback = void(VersionID old_version, VersionID new_version);
-    using ProgressHandler = void(uint_fast64_t downloaded_bytes, uint_fast64_t downloadable_bytes,
-                                 uint_fast64_t uploaded_bytes, uint_fast64_t uploadable_bytes);
+    using ProgressHandler = void(std::uint_fast64_t downloaded_bytes,
+                                 std::uint_fast64_t downloadable_bytes,
+                                 std::uint_fast64_t uploaded_bytes,
+                                 std::uint_fast64_t uploadable_bytes,
+                                 std::uint_fast64_t progress_version);
     using WaitOperCompletionHandler = std::function<void(std::error_code)>;
+
+    class Config {
+    public:
+        Config() {}
+
+        /// If not null, overrides whatever is specified by
+        /// Client::Config::changeset_cooker.
+        ///
+        /// The shared ownership over the cooker will be relinquished shortly
+        /// after the destruction of the session object as long as the event
+        /// loop of the client is being executed (Client::run()).
+        ///
+        /// CAUTION: ChangesetCooker::cook_changeset() of the specified cooker
+        /// may get called before the call to bind() returns, and it may get
+        /// called (or continue to execute) after the session object is
+        /// destroyed. The application must specify an object for which that
+        /// function can safely be called, and continue to execute from the
+        /// point in time where bind() starts executing, and up until the point
+        /// in time where the last invocation of `client.run()` returns. Here,
+        /// `client` refers to the associated Client object.
+        ///
+        /// \sa make_client_history(), TrivialChangesetCooker.
+        std::shared_ptr<ClientHistory::ChangesetCooker> changeset_cooker;
+
+        /// The encryption key the SharedGroup will be opened with.
+        Optional<std::array<char, 64>> encryption_key;
+    };
 
     /// \brief Start a new session for the specified client-side Realm.
     ///
@@ -198,7 +241,7 @@ public:
     ///
     /// \param realm_path The file-system path of a local client-side Realm
     /// file.
-    Session(Client&, std::string realm_path);
+    Session(Client&, std::string realm_path, Config = {});
 
     Session(Session&&) noexcept;
 
@@ -239,7 +282,8 @@ public:
     /// The handler must have signature
     ///
     ///     void(uint_fast64_t downloaded_bytes, uint_fast64_t downloadable_bytes,
-    ///          uint_fast64_t uploaded_bytes, uint_fast64_t uploadable_bytes);
+    ///          uint_fast64_t uploaded_bytes, uint_fast64_t uploadable_bytes,
+    ///          uint_fast64_t progress_version);
     ///
     /// downloaded_bytes is the size in bytes of all downloaded changesets.
     /// downloadable_bytes is the size in bytes of the part of the server
@@ -284,6 +328,15 @@ public:
     ///        (downloaded_bytes - initial_downloaded_bytes)
     ///       -----------------------------------------------
     ///       (downloadable_bytes - initial_downloaded_bytes)
+    ///
+    /// progress_version is 0 at the start of a session. When at least one
+    /// DOWNLOAD message has been received from the server, progress_version is
+    /// positive. progress_version can be used to ensure that the reported
+    /// progress contains information obtained from the server in the current
+    /// session. The server will send a message as soon as possible, and the
+    /// progress handler will eventually be called with a positive progress_version
+    /// unless the session is interrupted before a message from the server has
+    /// been received.
     ///
     /// The handler is called on the event loop thread.
     /// The handler is called after or during set_progress_handler(),
@@ -407,13 +460,41 @@ public:
     /// \param server_port If zero, use the default port for the specified
     /// protocol. See \ref Protocol for information on default ports.
     ///
+    /// \param verify_servers_ssl_certificate controls whether the server
+    /// certificate is verified for SSL connections. It should generally be true
+    /// in production. The default value of verify_servers_ssl_certificate is
+    /// true.
+    ///
+    /// A server certificate is verified by first checking that the
+    /// certificate has a valid signature chain back to a trust/anchor certificate,
+    /// and secondly checking that the host name of the Realm URL matches
+    /// a host name contained in the certificate.
+    /// The host name of the certificate is stored in either Common Name or
+    /// the Alternative Subject Name (DNS section).
+    ///
+    /// From the point of view of OpenSSL, setting verify_servers_ssl_certificate
+    /// to false means calling `SSL_set_verify()` with `SSL_VERIFY_NONE`.
+    /// Setting verify_servers_ssl_certificate to true means calling `SSL_set_verify()`
+    /// with `SSL_VERIFY_PEER`, and setting the host name using the function
+    /// X509_VERIFY_PARAM_set1_host() (OpenSSL version 1.0.2 or newer).
+    /// For other platforms, an equivalent procedure is followed.
+    ///
+    /// \param ssl_trust_certificate_path is the path of a trust/anchor
+    /// certificate used by the client to verify the server certificate.
+    /// If ssl_trust_certificate_path is None (default), the default device
+    /// trust/anchor store is used.
+    ///
     /// \param protocol See \ref Protocol.
     ///
     /// \throw BadServerUrl if the specified server URL is malformed.
-    void bind(std::string server_url, std::string signed_user_token);
+    void bind(std::string server_url, std::string signed_user_token,
+            bool verify_servers_ssl_certificate = true,
+            util::Optional<std::string> ssl_trust_certificate_path = util::none);
     void bind(std::string server_address, std::string server_path,
-              std::string signed_user_token, port_type server_port = 0,
-              Protocol protocol = Protocol::realm);
+            std::string signed_user_token, port_type server_port = 0,
+            Protocol protocol = Protocol::realm,
+            bool verify_servers_ssl_certificate = true,
+            util::Optional<std::string> ssl_trust_certificate_path = util::none);
     /// @}
 
     /// \brief Refresh the user token associated with this session.
@@ -592,6 +673,7 @@ enum class Client::Error {
     bad_request_ident           = 113, ///< Bad request identifier (MARK)
     bad_error_code              = 114, ///< Bad error code (ERROR),
     bad_compression             = 115, ///< Bad compression (DOWNLOAD)
+    bad_client_version          = 116, ///< Bad last integrated client version in changeset header (DOWNLOAD)
 };
 
 const std::error_category& client_error_category() noexcept;

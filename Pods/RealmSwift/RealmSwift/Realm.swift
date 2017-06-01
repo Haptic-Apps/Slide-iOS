@@ -93,6 +93,37 @@ public final class Realm {
         try self.init(configuration: configuration)
     }
 
+    // MARK: Async
+
+    /**
+     Asynchronously open a Realm and deliver it to a block on the given queue.
+
+     Opening a Realm asynchronously will perform all work needed to get the Realm to
+     a usable state (such as running potentially time-consuming migrations) on a
+     background thread before dispatching to the given queue. In addition,
+     synchronized Realms wait for all remote content available at the time the
+     operation began to be downloaded and available locally.
+
+     - parameter configuration: A configuration object to use when opening the Realm.
+     - parameter callbackQueue: The dispatch queue on which the callback should be run.
+     - parameter callback:      A callback block. If the Realm was successfully opened, an
+                                it will be passed in as an argument.
+                                Otherwise, a `Swift.Error` describing what went wrong will be
+                                passed to the block instead.
+
+     - note: The returned Realm is confined to the thread on which it was created.
+             Because GCD does not guarantee that queues will always use the same
+             thread, accessing the returned Realm outside the callback block (even if
+             accessed from `callbackQueue`) is unsafe.
+     */
+    public static func asyncOpen(configuration: Realm.Configuration = .defaultConfiguration,
+                                 callbackQueue: DispatchQueue = .main,
+                                 callback: @escaping (Realm?, Swift.Error?) -> Void) {
+        RLMRealm.asyncOpen(with: configuration.rlmConfiguration, callbackQueue: callbackQueue) { rlmRealm, error in
+            callback(rlmRealm.flatMap(Realm.init), error)
+        }
+    }
+
     // MARK: Transactions
 
     /**
@@ -302,7 +333,7 @@ public final class Realm {
         if update && schema[typeName]?.primaryKeyProperty == nil {
             throwRealmException("'\(typeName)' does not have a primary key and can not be updated")
         }
-        return unsafeBitCast(RLMCreateObjectInRealmWithValue(rlmRealm, typeName, value, update), to: T.self)
+        return unsafeDowncast(RLMCreateObjectInRealmWithValue(rlmRealm, typeName, value, update), to: T.self)
     }
 
     /**
@@ -340,7 +371,8 @@ public final class Realm {
         if update && schema[typeName]?.primaryKeyProperty == nil {
             throwRealmException("'\(typeName)' does not have a primary key and can not be updated")
         }
-        return unsafeBitCast(RLMCreateObjectInRealmWithValue(rlmRealm, typeName, value, update), to: DynamicObject.self)
+        return noWarnUnsafeBitCast(RLMCreateObjectInRealmWithValue(rlmRealm, typeName, value, update),
+                                   to: DynamicObject.self)
     }
 
     // MARK: Deleting objects
@@ -359,10 +391,17 @@ public final class Realm {
     /**
      Deletes zero or more objects from the Realm.
 
+     Do not pass in a slice to a `Results` or any other auto-updating Realm collection
+     type (for example, the type returned by the Swift `suffix(_:)` standard library
+     method). Instead, make a copy of the objects to delete using `Array()`, and pass
+     that instead. Directly passing in a view into an auto-updating collection may
+     result in 'index out of bounds' exceptions being thrown.
+
      - warning: This method may only be called during a write transaction.
 
-     - parameter objects:   The objects to be deleted. This can be a `List<Object>`, `Results<Object>`, or any other
-                            Swift `Sequence` whose elements are `Object`s.
+     - parameter objects:   The objects to be deleted. This can be a `List<Object>`,
+                            `Results<Object>`, or any other Swift `Sequence` whose
+                            elements are `Object`s (subject to the caveats above).
      */
     public func delete<S: Sequence>(_ objects: S) where S.Iterator.Element: Object {
         for obj in objects {
@@ -616,7 +655,7 @@ public final class Realm {
 
 extension Realm: Equatable {
     /// Returns whether two `Realm` isntances are equal.
-    public static func == (lhs: Realm, rhs: Realm) -> Bool { // swiftlint:disable:this valid_docs
+    public static func == (lhs: Realm, rhs: Realm) -> Bool {
         return lhs.rlmRealm == rhs.rlmRealm
     }
 }

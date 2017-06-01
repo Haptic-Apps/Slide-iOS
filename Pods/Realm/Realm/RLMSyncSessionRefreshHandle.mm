@@ -22,6 +22,7 @@
 #import "RLMNetworkClient.h"
 #import "RLMSyncManager_Private.h"
 #import "RLMSyncUser_Private.hpp"
+#import "RLMSyncUtil_Private.hpp"
 #import "RLMTokenModels.h"
 #import "RLMUtil.hpp"
 
@@ -144,22 +145,25 @@ using namespace realm;
         }
     }
     if (self.completionBlock) {
-        self.completionBlock(success ? nil : [NSError errorWithDomain:RLMSyncErrorDomain
-                                                                 code:RLMSyncErrorClientSessionError
-                                                             userInfo:nil]);
+        self.completionBlock(success ? nil : make_auth_error_client_issue());
     }
     return success;
 }
 
 /// Handler for network requests that failed before the JSON parsing stage.
 - (BOOL)_handleFailedRequest:(NSError *)error strongUser:(RLMSyncUser *)user {
-    NSError *syncError = [NSError errorWithDomain:RLMSyncErrorDomain
-                                             code:RLMSyncErrorBadResponse
-                                         userInfo:@{kRLMSyncUnderlyingErrorKey: error}];
-    if (self.completionBlock) {
-        self.completionBlock(syncError);
+    NSError *authError;
+    if ([error.domain isEqualToString:RLMSyncAuthErrorDomain]) {
+        // Network client may return sync related error
+        authError = error;
+    } else {
+        // Something else went wrong
+        authError = make_auth_error_bad_response();
     }
-    [[RLMSyncManager sharedManager] _fireError:syncError];
+    if (self.completionBlock) {
+        self.completionBlock(authError);
+    }
+    [[RLMSyncManager sharedManager] _fireError:make_sync_error(authError)];
     // Certain errors related to network connectivity should trigger a retry.
     NSDate *nextTryDate = nil;
     if (error.domain == NSURLErrorDomain) {
@@ -205,15 +209,12 @@ using namespace realm;
             return [self _handleSuccessfulRequest:model strongUser:user];
         }
         // Otherwise, malformed JSON
-        error = [NSError errorWithDomain:RLMSyncErrorDomain
-                                    code:RLMSyncErrorBadResponse
-                                userInfo:@{kRLMSyncErrorJSONKey: json}];
         [user _unregisterRefreshHandleForURLPath:self.pathToRealm];
         [self.timer invalidate];
         if (self.completionBlock) {
             self.completionBlock(error);
         }
-        [[RLMSyncManager sharedManager] _fireError:error];
+        [[RLMSyncManager sharedManager] _fireError:make_sync_error(make_auth_error_bad_response(json))];
         return NO;
     } else {
         REALM_ASSERT(error);
@@ -240,8 +241,9 @@ using namespace realm;
                            kRLMSyncAppIDKey: [RLMSyncManager sharedManager].appID,
                            };
 
+    __weak RLMSyncSessionRefreshHandle *weakSelf = self;
     RLMSyncCompletionBlock handler = ^(NSError *error, NSDictionary *json) {
-        [self _onRefreshCompletionWithError:error json:json];
+        [weakSelf _onRefreshCompletionWithError:error json:json];
     };
     [RLMNetworkClient postRequestToEndpoint:RLMServerEndpointAuth
                                      server:user.authenticationServer

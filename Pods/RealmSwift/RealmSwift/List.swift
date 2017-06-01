@@ -245,7 +245,7 @@ public final class List<T: Object>: ListBase {
      - parameter property: The name of a property whose minimum value is desired.
      */
     public func min<U: MinMaxType>(ofProperty property: String) -> U? {
-        return filter(NSPredicate(value: true)).min(ofProperty: property)
+        return _rlmArray.min(ofProperty: property).map(dynamicBridgeCast)
     }
 
     /**
@@ -257,7 +257,7 @@ public final class List<T: Object>: ListBase {
      - parameter property: The name of a property whose maximum value is desired.
      */
     public func max<U: MinMaxType>(ofProperty property: String) -> U? {
-        return filter(NSPredicate(value: true)).max(ofProperty: property)
+        return _rlmArray.max(ofProperty: property).map(dynamicBridgeCast)
     }
 
     /**
@@ -268,7 +268,7 @@ public final class List<T: Object>: ListBase {
      - parameter property: The name of a property whose values should be summed.
      */
     public func sum<U: AddableType>(ofProperty property: String) -> U {
-        return filter(NSPredicate(value: true)).sum(ofProperty: property)
+        return dynamicBridgeCast(fromObjectiveC: _rlmArray.sum(ofProperty: property))
     }
 
     /**
@@ -279,7 +279,7 @@ public final class List<T: Object>: ListBase {
      - parameter property: The name of a property whose average value should be calculated.
      */
     public func average<U: AddableType>(ofProperty property: String) -> U? {
-        return filter(NSPredicate(value: true)).average(ofProperty: property)
+        return _rlmArray.average(ofProperty: property).map(dynamicBridgeCast)
     }
 
     // MARK: Mutation
@@ -381,7 +381,7 @@ public final class List<T: Object>: ListBase {
      - parameter from:  The index of the object to be moved.
      - parameter to:    index to which the object at `from` should be moved.
      */
-    public func move(from: Int, to: Int) { // swiftlint:disable:this variable_name
+    public func move(from: Int, to: Int) {
         throwForNegativeIndex(from)
         throwForNegativeIndex(to)
         _rlmArray.moveObject(at: UInt(from), to: UInt(to))
@@ -467,7 +467,7 @@ public final class List<T: Object>: ListBase {
     }
 }
 
-extension List : RealmCollection, RangeReplaceableCollection {
+extension List: RealmCollection, RangeReplaceableCollection {
     // MARK: Sequence Support
 
     /// Returns a `RLMIterator` that yields successive elements in the `List`.
@@ -477,10 +477,22 @@ extension List : RealmCollection, RangeReplaceableCollection {
 
     // MARK: RangeReplaceableCollection Support
 
+#if swift(>=3.1)
+    // These should not be necessary, but Swift 3.1's compiler fails to infer the `SubSequence`,
+    // and the standard library neglects to provide the default implementation of `subscript`
+    /// :nodoc:
+    public typealias SubSequence = RangeReplaceableRandomAccessSlice<List>
+
+    /// :nodoc:
+    public subscript(slice: Range<Int>) -> SubSequence {
+        return SubSequence(base: self, bounds: slice)
+    }
+#endif
+
     /**
      Replace the given `subRange` of elements with `newElements`.
 
-    - parameter subRange:    The range of elements to be replaced.
+    - parameter subrange:    The range of elements to be replaced.
     - parameter newElements: The new elements to be inserted into the List.
     */
     public func replaceSubrange<C: Collection>(_ subrange: Range<Int>, with newElements: C)

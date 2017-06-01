@@ -1,4 +1,5 @@
 import UIKit
+import WebKit
 
 /**
  Implements the main functions providing constants values and computed ones
@@ -16,7 +17,7 @@ extension ScrollingNavigationController {
   }
 
   var statusBarHeight: CGFloat {
-    return UIApplication.shared.statusBarFrame.size.height
+    return CGFloat.minimum(20, UIApplication.shared.statusBarFrame.size.height)
   }
 
   var tabBarOffset: CGFloat {
@@ -30,6 +31,8 @@ extension ScrollingNavigationController {
   func scrollView() -> UIScrollView? {
     if let webView = self.scrollableView as? UIWebView {
       return webView.scrollView
+    } else if let wkWebView = self.scrollableView as? WKWebView {
+      return wkWebView.scrollView
     } else {
       return scrollableView as? UIScrollView
     }

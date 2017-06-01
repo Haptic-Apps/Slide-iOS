@@ -1,7 +1,7 @@
 PODS:
   - ActionSheetPicker-3.0 (2.2.0)
-  - Alamofire (4.3.0)
-  - AMScrollingNavbar (3.2.0)
+  - Alamofire (4.4.0)
+  - AMScrollingNavbar (3.3.3)
   - BGTableViewRowActionWithImage (0.4.1)
   - ChameleonFramework (2.1.0):
     - ChameleonFramework/Default (= 2.1.0)
@@ -10,21 +10,21 @@ PODS:
   - ImageViewer (4.0)
   - KCFloatingActionButton (2.1.2)
   - PagingMenuController (2.2.0)
-  - Realm (2.4.2):
-    - Realm/Headers (= 2.4.2)
-  - Realm/Headers (2.4.2)
-  - RealmSwift (2.4.2):
-    - Realm (= 2.4.2)
+  - Realm (2.7.0):
+    - Realm/Headers (= 2.7.0)
+  - Realm/Headers (2.7.0)
+  - RealmSwift (2.7.0):
+    - Realm (= 2.7.0)
   - reddift (2.0.0):
     - reddift/MiniKeychain (= 2.0.0)
   - reddift/MiniKeychain (2.0.0)
   - SDWebImage (3.8.2):
     - SDWebImage/Core (= 3.8.2)
   - SDWebImage/Core (3.8.2)
-  - SideMenu (2.2.0)
+  - SideMenu (2.3.2)
   - SwiftyJSON (3.1.4)
   - TTTAttributedLabel (2.0.0)
-  - UZTextView (1.0.6)
+  - UZTextView (1.0.8)
 
 DEPENDENCIES:
   - ActionSheetPicker-3.0 (from `https://github.com/ccrama/ActionSheetPicker-3.0`)
@@ -42,7 +42,7 @@ DEPENDENCIES:
   - SideMenu
   - SwiftyJSON
   - TTTAttributedLabel
-  - UZTextView (from `https://github.com/sonsongithub/UZTextView`)
+  - UZTextView (from `https://github.com/ccrama/UZTextView`)
 
 EXTERNAL SOURCES:
   ActionSheetPicker-3.0:
@@ -55,7 +55,7 @@ EXTERNAL SOURCES:
   reddift:
     :git: https://github.com/ccrama/reddift
   UZTextView:
-    :git: https://github.com/sonsongithub/UZTextView
+    :git: https://github.com/ccrama/UZTextView
 
 CHECKOUT OPTIONS:
   ActionSheetPicker-3.0:
@@ -65,34 +65,34 @@ CHECKOUT OPTIONS:
     :commit: e9b6c2ca937135335e9b5252a7792c94ce1497d4
     :git: https://github.com/lbrndnr/ImagePickerSheetController
   ImageViewer:
-    :commit: 6f55394be2e4a5ed60f36e381cdb988da8156b33
+    :commit: 13920b37b2a651c292809c4810c001bb336532a3
     :git: https://github.com/ccrama/ImageViewer
   reddift:
     :commit: a8e41c416bfae22276c590f788da2f997e13f1ee
     :git: https://github.com/ccrama/reddift
   UZTextView:
-    :commit: 23cdac6079b9bc3e1813cdb61e4a629c1a0d2c20
-    :git: https://github.com/sonsongithub/UZTextView
+    :commit: 613ebb22f0c0787379b28f2f12899bcac686224e
+    :git: https://github.com/ccrama/UZTextView
 
 SPEC CHECKSUMS:
   ActionSheetPicker-3.0: d11a4c12c6aaf704b8a3f56d179198c99f3e41e6
-  Alamofire: 856a113053a7bc9cbe5d6367a555d773fc5cfef7
-  AMScrollingNavbar: cf603d4d5f11061d466a0878b9ada136248927b2
+  Alamofire: dc44b1600b800eb63da6a19039a0083d62a6a62d
+  AMScrollingNavbar: 6a2c01a912b96aa36581268759f18d85b3d1575e
   BGTableViewRowActionWithImage: 6a0731a84662735f5ec28dc253e3fba6a73ebc5b
   ChameleonFramework: d21a3cc247abfe5e37609a283a8238b03575cf64
   ImagePickerSheetController: 4789b06940e299431455c61be77fda440883c36c
   ImageViewer: 364abc0309c33dda86d08ca25b0243e5c67d8cd3
   KCFloatingActionButton: 1b22ce95d44b51915280df8a8b277eae4a06c3f1
   PagingMenuController: 6176618987bb170096664f2da097313e45ed9c31
-  Realm: d27b758e12d62a3371879a065d4c40aa212c5a54
-  RealmSwift: 9556c0fe0f0cfecacfb755ae9e68ff379fc6bead
+  Realm: 07e5d3a9e0e41d65fd5f9f05150ed6295d0f093b
+  RealmSwift: 6d06425d3900c86473c4f323bf6949b43fca22bc
   reddift: 3066e687c2a934b0f9aca6ee6e2161abc4c93a56
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
-  SideMenu: eeff6b85456c5c6e14165655691d2033f6b24969
+  SideMenu: 3fa07dd05d4bade2b6f9889fb1877e312e1ba319
   SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
-  UZTextView: 96bd60ad22f7f5ea882c56a9f90621f86b443192
+  UZTextView: d8d45a8459b0de6f2c393458a05c65352f89e00a
 
-PODFILE CHECKSUM: 9c955de26985dfad070c1c78a3932813b3895485
+PODFILE CHECKSUM: 7b9d734a52ae4b3490804d174bc396f539a1c893
 
 COCOAPODS: 1.1.1

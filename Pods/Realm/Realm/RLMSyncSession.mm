@@ -20,6 +20,7 @@
 
 #import "RLMSyncConfiguration_Private.hpp"
 #import "RLMSyncUser_Private.hpp"
+#import "RLMSyncUtil_Private.hpp"
 #import "sync/sync_session.hpp"
 
 using namespace realm;
@@ -69,7 +70,20 @@ using namespace realm;
 
 @end
 
+@interface RLMSyncSession ()
+@property (class, nonatomic, readonly) dispatch_queue_t notificationsQueue;
+@end
+
 @implementation RLMSyncSession
+
++ (dispatch_queue_t)notificationsQueue {
+    static dispatch_queue_t queue;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        queue = dispatch_queue_create("io.realm.sync.sessionsNotificationQueue", DISPATCH_QUEUE_SERIAL);
+    });
+    return queue;
+}
 
 - (instancetype)initWithSyncSession:(std::shared_ptr<SyncSession>)session {
     if (self = [super init]) {
@@ -118,28 +132,34 @@ using namespace realm;
     return RLMSyncSessionStateInvalid;
 }
 
-- (BOOL)waitForUploadCompletionOnQueue:(dispatch_queue_t)queue callback:(void(^)(void))callback {
+- (BOOL)waitForUploadCompletionOnQueue:(dispatch_queue_t)queue callback:(void(^)(NSError *))callback {
     if (auto session = _session.lock()) {
         if (session->state() == SyncSession::PublicState::Error) {
             return NO;
         }
         queue = queue ?: dispatch_get_main_queue();
-        session->wait_for_upload_completion([=](std::error_code) { // FIXME: report error to user
-            dispatch_async(queue, callback);
+        session->wait_for_upload_completion([=](std::error_code err) {
+            NSError *error = (err == std::error_code{}) ? nil : make_sync_error(err);
+            dispatch_async(queue, ^{
+                callback(error);
+            });
         });
         return YES;
     }
     return NO;
 }
 
-- (BOOL)waitForDownloadCompletionOnQueue:(dispatch_queue_t)queue callback:(void(^)(void))callback {
+- (BOOL)waitForDownloadCompletionOnQueue:(dispatch_queue_t)queue callback:(void(^)(NSError *))callback {
     if (auto session = _session.lock()) {
         if (session->state() == SyncSession::PublicState::Error) {
             return NO;
         }
         queue = queue ?: dispatch_get_main_queue();
-        session->wait_for_download_completion([=](std::error_code) { // FIXME: report error to user
-            dispatch_async(queue, callback);
+        session->wait_for_download_completion([=](std::error_code err) {
+            NSError *error = (err == std::error_code{}) ? nil : make_sync_error(err);
+            dispatch_async(queue, ^{
+                callback(error);
+            });
         });
         return YES;
     }
@@ -153,17 +173,15 @@ using namespace realm;
         if (session->state() == SyncSession::PublicState::Error) {
             return nil;
         }
-        // Get the current runloop, or create one if necessary.
-        CFRunLoopRef currentRunLoop = CFRunLoopGetCurrent();
+        dispatch_queue_t queue = RLMSyncSession.notificationsQueue;
         auto notifier_direction = (direction == RLMSyncProgressDirectionUpload
                                    ? SyncSession::NotifierType::upload
                                    : SyncSession::NotifierType::download);
         bool is_streaming = (mode == RLMSyncProgressReportIndefinitely);
         uint64_t token = session->register_progress_notifier([=](uint64_t transferred, uint64_t transferrable) {
-            CFRunLoopPerformBlock(currentRunLoop, kCFRunLoopCommonModes, ^{
+            dispatch_async(queue, ^{
                 block((NSUInteger)transferred, (NSUInteger)transferrable);
             });
-            CFRunLoopWakeUp(currentRunLoop);
         }, notifier_direction, is_streaming);
         return [[RLMProgressNotificationToken alloc] initWithTokenValue:token session:std::move(session)];
     }

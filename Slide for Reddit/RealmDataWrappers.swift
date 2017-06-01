@@ -178,7 +178,7 @@ class RealmDataWrapper {
         rMessage.author = message.author
         rMessage.subreddit = message.subreddit
         rMessage.created = NSDate(timeIntervalSince1970: TimeInterval(message.createdUtc))
-        rMessage.new = message.new
+        rMessage.isNew = message.new
         rMessage.linkTitle = title
         rMessage.context = message.context
         rMessage.wasComment = message.wasComment
@@ -296,7 +296,7 @@ class RMessage: Object {
     dynamic var author = ""
     dynamic var created = NSDate(timeIntervalSince1970: 1)
     dynamic var htmlBody = ""
-    dynamic var new = false
+    dynamic var isNew = false
     dynamic var linkTitle = ""
     dynamic var context = ""
     dynamic var wasComment  = false
