@@ -12,6 +12,7 @@ import reddift
 import AMScrollingNavbar
 import UZTextView
 import ImageViewer
+import MaterialComponents.MaterialSnackbar
 
 class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextViewDelegate {
     
@@ -356,7 +357,9 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
             } else {
                 let reply  = ReplyViewController.init(message: message!) { (message) in
                     DispatchQueue.main.async(execute: { () -> Void in
-                        self.parentViewController?.view.makeToast("Message sent", duration: 4, position: .top)
+                        let message = MDCSnackbarMessage()
+                        message.text = "Message sent!"
+                        MDCSnackbarManager.show(message)
                     })
                 }
                 

@@ -10,6 +10,7 @@ import UIKit
 import reddift
 import AMScrollingNavbar
 import PagingMenuController
+import MaterialComponents.MaterialSnackbar
 
 class ProfileViewController:  PagingMenuController, ColorPickerDelegate {
     var content : [UserContent] = []
@@ -250,7 +251,9 @@ class ProfileViewController:  PagingMenuController, ColorPickerDelegate {
                     do {
                         try self.session?.unfriend(user.name, completion: { (result) in
                             DispatchQueue.main.async {
-                                self.view.makeToast("Unfriended /u/\(user.name)", duration: 4, position: .bottom)
+                                let message = MDCSnackbarMessage()
+                                message.text = "Unfriended /u/\(user.name)"
+                                MDCSnackbarManager.show(message)
                             }
                         })
                     } catch {
@@ -265,7 +268,9 @@ class ProfileViewController:  PagingMenuController, ColorPickerDelegate {
                                 print(result.error)
                             }
                             DispatchQueue.main.async {
-                                self.view.makeToast("Friended /u/\(user.name)", duration: 4, position: .bottom)
+                                let message = MDCSnackbarMessage()
+                                message.text = "Friended /u/\(user.name)"
+                                MDCSnackbarManager.show(message)
                             }
                         })
                     } catch {

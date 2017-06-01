@@ -12,7 +12,7 @@ import SDWebImage
 import ChameleonFramework
 import AMScrollingNavbar
 import PagingMenuController
-
+import MaterialComponents.MaterialSnackbar
 
 class ContentListingViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource {
     var baseData: ContributionLoader
@@ -225,7 +225,9 @@ class ContentListingViewController: MediaViewController, UITableViewDelegate, UI
         self.refreshControl.endRefreshing()
         self.loading = false
         if(baseData.content.count == 0){
-            self.view.makeToast("No content found")
+            let message = MDCSnackbarMessage()
+            message.text = "No content found"
+            MDCSnackbarManager.show(message)
         }
     }
     

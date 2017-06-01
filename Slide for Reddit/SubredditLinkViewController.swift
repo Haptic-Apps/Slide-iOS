@@ -16,6 +16,7 @@ import KCFloatingActionButton
 import UZTextView
 import RealmSwift
 import PagingMenuController
+import MaterialComponents.MaterialSnackbar
 
 class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, ScrollingNavigationControllerDelegate, LinkCellViewDelegate, ColorPickerDelegate, KCFloatingActionButtonDelegate {
     
@@ -162,12 +163,16 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                 let name = (thing is RComment) ? (thing as! RComment).name : (thing as! RSubmission).name
                 try self.session?.report(name, reason: (textField?.text!)!, otherReason: "", completion: { (result) in
                     DispatchQueue.main.async{
-                        self.view.makeToast("Report sent", duration: 3, position: .top)
+                        let message = MDCSnackbarMessage()
+                        message.text = "Report sent"
+                        MDCSnackbarManager.show(message)
                     }
                 })
             } catch {
                 DispatchQueue.main.async{
-                    self.view.makeToast("Error sending report", duration: 3, position: .top)
+                    let message = MDCSnackbarMessage()
+                    message.text = "Error sending report"
+                    MDCSnackbarManager.show(message)
                 }
             }
         }))
@@ -485,14 +490,18 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             //was not subscriber, changed, and unsubscribing again
             Subscriptions.unsubscribe(sub.displayName, session: session!)
             subChanged = false
-            self.view.makeToast("Unsubscribed", duration: 4, position: .bottom)
+            let message = MDCSnackbarMessage()
+            message.text = "Unsubscribed"
+            MDCSnackbarManager.show(message)
         } else {
             let alrController = UIAlertController.init(title: "Subscribe to \(sub.displayName)", message: nil, preferredStyle: .actionSheet)
             if(AccountController.isLoggedIn){
                 let somethingAction = UIAlertAction(title: "Add to sub list and subscribe", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in
                     Subscriptions.subscribe(sub.displayName, true, session: self.session!)
                     self.subChanged = true
-                    self.view.makeToast("Subscribed", duration: 4, position: .bottom)
+                    let message = MDCSnackbarMessage()
+                    message.text = "Subscribed"
+                    MDCSnackbarManager.show(message)
                 })
                 alrController.addAction(somethingAction)
             }
@@ -500,7 +509,9 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             let somethingAction = UIAlertAction(title: "Add to sub list", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in
                 Subscriptions.subscribe(sub.displayName, false, session: self.session!)
                 self.subChanged = true
-                self.view.makeToast("Added", duration: 4, position: .bottom)
+                let message = MDCSnackbarMessage()
+                message.text = "Added"
+                MDCSnackbarManager.show(message)
             })
             alrController.addAction(somethingAction)
             
@@ -525,7 +536,9 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                     default:
                         print(result.error)
                         DispatchQueue.main.async{
-                            self.view.makeToast("Multireddit info not found", duration: 5, position: .bottom)
+                            let message = MDCSnackbarMessage()
+                            message.text = "Multireddit info not found"
+                            MDCSnackbarManager.show(message)
                         }
                         break
                     }
@@ -550,7 +563,9 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                         }
                     default:
                         DispatchQueue.main.async{
-                            self.view.makeToast("Subreddit sidebar not found", duration: 5, position: .bottom)
+                            let message = MDCSnackbarMessage()
+                            message.text = "Subreddit sidebar not found"
+                            MDCSnackbarManager.show(message)
                         }
                         break
                     }
@@ -973,9 +988,13 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                                     self.loading = false
                                     
                                     if(self.links.isEmpty){
-                                        self.view.makeToast("No offline data found", duration: 10, position: .top)
+                                        let message = MDCSnackbarMessage()
+                                        message.text = "No offline content found"
+                                        MDCSnackbarManager.show(message)
                                     } else {
-                                        self.view.makeToast("Showing offline data", duration: 10, position: .top)
+                                        let message = MDCSnackbarMessage()
+                                        message.text = "Showing offline content"
+                                        MDCSnackbarManager.show(message)
                                     }
                                 } catch {
                                     
@@ -1052,9 +1071,13 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                                     self.loading = false
                                     
                                     if(self.links.isEmpty){
-                                        self.view.makeToast("No offline data found", duration: 10, position: .top)
+                                        let message = MDCSnackbarMessage()
+                                        message.text = "No offline content found"
+                                        MDCSnackbarManager.show(message)
                                     } else {
-                                        self.view.makeToast("Showing offline data", duration: 10, position: .top)
+                                        let message = MDCSnackbarMessage()
+                                        message.text = "Showing offline content"
+                                        MDCSnackbarManager.show(message)
                                     }
                                 } catch {
                                     

@@ -8,6 +8,7 @@
 
 import UIKit
 import reddift
+import MaterialComponents.MaterialSnackbar
 
 class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
     
@@ -143,7 +144,9 @@ class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
     
     func complete(){
         alertController!.dismiss(animated: true, completion: nil)
-        self.navigationController?.view.makeToast("\(count) subs colored", duration: 4.0, position: .top)
+        let message = MDCSnackbarMessage()
+        message.text = "\(count) subs colored"
+        MDCSnackbarManager.show(message)
         count = 0
         tableView.reloadData()
     }

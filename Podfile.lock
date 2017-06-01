@@ -9,6 +9,45 @@ PODS:
   - ImagePickerSheetController (0.9.3)
   - ImageViewer (4.0)
   - KCFloatingActionButton (2.1.2)
+  - MaterialComponents/AnimationTiming (23.4.1)
+  - MaterialComponents/Buttons (23.4.1):
+    - MaterialComponents/Ink
+    - MaterialComponents/private/Math
+    - MaterialComponents/ShadowElevations
+    - MaterialComponents/ShadowLayer
+    - MaterialComponents/Typography
+    - MDFTextAccessibility
+  - MaterialComponents/Dialogs (23.4.1):
+    - MaterialComponents/Buttons
+    - MaterialComponents/private/KeyboardWatcher
+    - MaterialComponents/private/RTL
+    - MaterialComponents/ShadowElevations
+    - MaterialComponents/ShadowLayer
+  - MaterialComponents/Ink (23.4.1)
+  - MaterialComponents/OverlayWindow (23.4.1):
+    - MaterialComponents/private/Application
+  - MaterialComponents/private/Application (23.4.1)
+  - MaterialComponents/private/KeyboardWatcher (23.4.1):
+    - MaterialComponents/private/Application
+  - MaterialComponents/private/Math (23.4.1)
+  - MaterialComponents/private/Overlay (23.4.1)
+  - MaterialComponents/private/RTL (23.4.1)
+  - MaterialComponents/ProgressView (23.4.1):
+    - MaterialComponents/private/Math
+    - MaterialComponents/private/RTL
+  - MaterialComponents/ShadowElevations (23.4.1)
+  - MaterialComponents/ShadowLayer (23.4.1)
+  - MaterialComponents/Snackbar (23.4.1):
+    - MaterialComponents/AnimationTiming
+    - MaterialComponents/Buttons
+    - MaterialComponents/OverlayWindow
+    - MaterialComponents/private/Application
+    - MaterialComponents/private/KeyboardWatcher
+    - MaterialComponents/private/Overlay
+    - MaterialComponents/Typography
+  - MaterialComponents/Typography (23.4.1):
+    - MaterialComponents/private/Application
+  - MDFTextAccessibility (1.2.0)
   - PagingMenuController (2.2.0)
   - Realm (2.7.0):
     - Realm/Headers (= 2.7.0)
@@ -35,6 +74,13 @@ DEPENDENCIES:
   - ImagePickerSheetController (from `https://github.com/lbrndnr/ImagePickerSheetController`, branch `swift3`)
   - ImageViewer (from `https://github.com/ccrama/ImageViewer`)
   - KCFloatingActionButton (~> 2.1.0)
+  - MaterialComponents/AnimationTiming
+  - MaterialComponents/Buttons
+  - MaterialComponents/Dialogs
+  - MaterialComponents/Ink
+  - MaterialComponents/ProgressView
+  - MaterialComponents/ShadowElevations
+  - MaterialComponents/Snackbar
   - PagingMenuController
   - RealmSwift
   - reddift (from `https://github.com/ccrama/reddift`)
@@ -83,6 +129,8 @@ SPEC CHECKSUMS:
   ImagePickerSheetController: 4789b06940e299431455c61be77fda440883c36c
   ImageViewer: 364abc0309c33dda86d08ca25b0243e5c67d8cd3
   KCFloatingActionButton: 1b22ce95d44b51915280df8a8b277eae4a06c3f1
+  MaterialComponents: baaab2cdd2d4a4f75eb40beae6df360e5fedd3a2
+  MDFTextAccessibility: 94098925e0853551c5a311ce7c1ecefbe297cdb6
   PagingMenuController: 6176618987bb170096664f2da097313e45ed9c31
   Realm: 07e5d3a9e0e41d65fd5f9f05150ed6295d0f093b
   RealmSwift: 6d06425d3900c86473c4f323bf6949b43fca22bc
@@ -93,6 +141,6 @@ SPEC CHECKSUMS:
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   UZTextView: d8d45a8459b0de6f2c393458a05c65352f89e00a
 
-PODFILE CHECKSUM: 7b9d734a52ae4b3490804d174bc396f539a1c893
+PODFILE CHECKSUM: 6ef4d9765090250ab18979e06893cfcb4c41fed7
 
 COCOAPODS: 1.1.1

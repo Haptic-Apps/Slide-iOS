@@ -50,7 +50,7 @@ class SettingValues{
     public static var defaultCommentSorting = CommentSort.confidence
     public static var tintingMode = "TINTING_MODE"
     public static var onlyTintOutside = false
-    public static var postViewMode = PostViewType.DESKTOP
+    public static var postViewMode = PostViewType.LIST
     public static var pictureMode = "PICTURE_MODE"
     public static var hideImageSelftext = false
     public static var abbreviateScores = true
@@ -87,6 +87,6 @@ class SettingValues{
     public static func initialize(){
         let settings = UserDefaults.standard
         SettingValues.viewType = settings.bool(forKey: SettingValues.pref_viewType)
-        SettingValues.postViewMode = PostViewType.init(rawValue: settings.string(forKey: SettingValues.pref_postViewMode) ?? "list")!
+        SettingValues.postViewMode = PostViewType.init(rawValue: settings.string(forKey: SettingValues.pref_postViewMode) ?? "card")!
     }
 }

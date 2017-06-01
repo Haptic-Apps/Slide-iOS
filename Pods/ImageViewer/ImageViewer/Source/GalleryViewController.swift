@@ -20,6 +20,7 @@ open class GalleryViewController: UIPageViewController, ItemControllerDelegate {
     fileprivate var thumbnailsButton: UIButton? = UIButton.thumbnailsButton()
     fileprivate var deleteButton: UIButton? = UIButton.deleteButton()
     fileprivate let scrubber = VideoScrubber()
+    public var task: URLSessionDownloadTask?
 
     fileprivate weak var initialItemController: ItemController?
 
@@ -457,6 +458,15 @@ open class GalleryViewController: UIPageViewController, ItemControllerDelegate {
         guard let firstVC = viewControllers?.first, let itemController = firstVC as? ItemController else { return }
 
         itemController.fetchImage()
+    }
+    override open func removeFromParentViewController() {
+        super.removeFromParentViewController()
+        
+        print("Closing")
+        if let t = task {
+            t.cancel()
+        }
+        // your code here
     }
 
     // MARK: - Animations

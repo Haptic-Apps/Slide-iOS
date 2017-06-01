@@ -11,6 +11,7 @@ import reddift
 import SDWebImage
 import AMScrollingNavbar
 import ImageViewer
+import MaterialComponents.MaterialProgressView
 
 class MediaViewController: UIViewController, GalleryItemsDataSource {
     
@@ -140,11 +141,20 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
                     }, videoURL: URL.init(string: link)!)
                 } else {
                     let photo = GalleryItem.image(fetchImageBlock: { (completion) in
-                        SDWebImageDownloader.shared().downloadImage(with: link, options: .allowInvalidSSLCertificates, progress: { (current, total) in
-                            
+                        SDWebImageDownloader.shared().downloadImage(with: link, options: .allowInvalidSSLCertificates, progress: { (current:NSInteger, total:NSInteger) in
+                            var average: Float = 0
+                            average = (Float (current) / Float(total))
+                            let countBytes = ByteCountFormatter()
+                            countBytes.allowedUnits = [.useMB]
+                            countBytes.countStyle = .file
+                            let fileSize = countBytes.string(fromByteCount: Int64(total))
+                            self.size!.text = fileSize
+                            self.progressView!.progress = average
                         }, completed: { (image, _, error, _) in
                             DispatchQueue.main.async {
                                 self.image = image
+                                self.progressView?.setHidden(true, animated: true)
+                                self.size?.isHidden = true
                                 completion(image)
                             }
                         })
@@ -152,6 +162,7 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
                     photos.append(photo)
                 }
             }
+            
             let browser = GalleryViewController.init(startIndex: 0, itemsDataSource: self, itemsDelegate: nil, displacedViewsDataSource: nil, configuration: galleryConfiguration())
             var toolbar = UIToolbar()
             let space = UIBarButtonItem(barButtonSystemItem:.flexibleSpace, target: nil, action: nil)
@@ -166,6 +177,21 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
                                             barMetrics: .default)
             toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
             toolbar.tintColor = UIColor.white
+            progressView = MDCProgressView()
+            progressView?.progress = 0
+            
+            size = UILabel(frame: CGRect(x:5,y: toolbar.bounds.height,width: 250,height: 50))
+            size?.textAlignment = .left
+            size?.textColor = .white
+            size?.text="mb"
+            size?.font = UIFont.boldSystemFont(ofSize: 12)
+            toolbar.addSubview(size!)
+
+            
+            let progressViewHeight = CGFloat(5)
+            progressView?.frame = CGRect(x: 0, y: toolbar.bounds.height, width: toolbar.bounds.width, height: progressViewHeight)
+            toolbar.addSubview(progressView!)
+
             browser.footerView?.backgroundColor = UIColor.clear
             browser.footerView = toolbar
             return browser
@@ -186,6 +212,9 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
         }
         return WebsiteViewController(url: baseUrl, subreddit: link == nil ? "" : link.subreddit)
     }
+    
+    var size: UILabel?
+    var progressView: MDCProgressView?
     
     func download(_ sender: AnyObject){
         UIImageWriteToSavedPhotosAlbum(image!, nil, nil, nil)
@@ -280,7 +309,6 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
         return video.hasPrefix("/") ? video.substring(1, length: video.length - 1) : video
     }
     
-    var progress: UIProgressView = UIProgressView()
     
     // Do any additional setup after loading the view.
     

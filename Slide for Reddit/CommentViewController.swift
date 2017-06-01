@@ -13,6 +13,7 @@ import BGTableViewRowActionWithImage
 import AMScrollingNavbar
 import UZTextView
 import RealmSwift
+import MaterialComponents.MaterialSnackbar
 
 class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, UZTextViewCellDelegate, LinkCellViewDelegate, UISearchBarDelegate {
     
@@ -24,7 +25,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             let state = !ActionStates.isSaved(s: cell.link!)
             try session?.setSave(state, name: (cell.link?.name)!, completion: { (result) in
                 DispatchQueue.main.async{
-                    self.view.makeToast(state ? "Saved" : "Unsaved", duration: 3, position: .top)
+                    let message = MDCSnackbarMessage()
+                    message.text = state ? "Saved" : "Unsaved"
+                    message.duration = 3
+                    MDCSnackbarManager.show(message)
                 }
             })
             ActionStates.setSaved(s: cell.link!, saved: !ActionStates.isSaved(s: cell.link!))
@@ -39,7 +43,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             let state = !ActionStates.isSaved(s: comment)
             try session?.setSave(state, name: comment.name, completion: { (result) in
                 DispatchQueue.main.async{
-                    self.view.makeToast(state ? "Saved" : "Unsaved", duration: 3, position: .bottom)
+                    let message = MDCSnackbarMessage()
+                    message.text = state ? "Saved" : "Unsaved"
+                    message.duration = 3
+                    MDCSnackbarManager.show(message)
                 }
             })
             ActionStates.setSaved(s: comment, saved: !ActionStates.isSaved(s: comment))
@@ -189,12 +196,16 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 let name = (thing is RComment) ? (thing as! RComment).name : (thing as! RSubmission).name
                 try self.session?.report(name, reason: (textField?.text!)!, otherReason: "", completion: { (result) in
                     DispatchQueue.main.async{
-                        self.view.makeToast("Report sent", duration: 3, position: .top)
+                        let message = MDCSnackbarMessage()
+                        message.text = "Report sent"
+                        MDCSnackbarManager.show(message)
                     }
                 })
             } catch {
                 DispatchQueue.main.async{
-                    self.view.makeToast("Error sending report", duration: 3, position: .top)
+                    let message = MDCSnackbarMessage()
+                    message.text = "Error sending report. Try again later"
+                    MDCSnackbarManager.show(message)
                 }
             }
         }))
@@ -246,6 +257,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         refreshControl.addTarget(self, action: #selector(CommentViewController.refresh(_:)), for: UIControlEvents.valueChanged)
         tableView.addSubview(refreshControl) // not required when using UITableViewController
         
+    }
+    
+    func getSelf() -> CommentViewController {
+        return self;
     }
     
     func refresh(_ sender:AnyObject) {
@@ -302,9 +317,13 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                             self.refreshControl.endRefreshing()
                             
                             if(self.comments.isEmpty){
-                                self.view.makeToast("No cached comments found", duration: 10, position: .top)
+                                let message = MDCSnackbarMessage()
+                                message.text = "No cached comments found"
+                                MDCSnackbarManager.show(message)
                             } else {
-                                self.view.makeToast("Showing cached comments", duration: 10, position: .top)
+                                let message = MDCSnackbarMessage()
+                                message.text = "Showing cached comments"
+                                MDCSnackbarManager.show(message)
                             }
                         }
                         break
@@ -703,14 +722,18 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             //was not subscriber, changed, and unsubscribing again
             Subscriptions.unsubscribe(sub.displayName, session: session!)
             subChanged = false
-            self.view.makeToast("Unsubscribed", duration: 4, position: .bottom)
+            let message = MDCSnackbarMessage()
+            message.text = "Unsubscribed"
+            MDCSnackbarManager.show(message)
         } else {
             let alrController = UIAlertController.init(title: "Subscribe to \(sub.displayName)", message: nil, preferredStyle: .actionSheet)
             if(AccountController.isLoggedIn){
                 let somethingAction = UIAlertAction(title: "Add to sub list and subscribe", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in
                     Subscriptions.subscribe(sub.displayName, true, session: self.session!)
                     self.subChanged = true
-                    self.view.makeToast("Subscribed", duration: 4, position: .bottom)
+                    let message = MDCSnackbarMessage()
+                    message.text = "Subscribed"
+                    MDCSnackbarManager.show(message)
                 })
                 alrController.addAction(somethingAction)
             }
@@ -718,7 +741,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             let somethingAction = UIAlertAction(title: "Add to sub list", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in
                 Subscriptions.subscribe(sub.displayName, false, session: self.session!)
                 self.subChanged = true
-                self.view.makeToast("Added", duration: 4, position: .bottom)
+                let message = MDCSnackbarMessage()
+                message.text = "Added"
+                MDCSnackbarManager.show(message)
             })
             alrController.addAction(somethingAction)
             
@@ -744,7 +769,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     }
                 default:
                     DispatchQueue.main.async{
-                        self.view.makeToast("Subreddit sidebar not found", duration: 5, position: .bottom)
+                        let message = MDCSnackbarMessage()
+                        message.text = "Subreddit sidebar not found"
+                        MDCSnackbarManager.show(message)
                     }
                     break
                 }

@@ -15,6 +15,7 @@ import MobileCoreServices
 import SwiftyJSON
 import ActionSheetPicker_3_0
 import RealmSwift
+import MaterialComponents.MaterialSnackbar
 
 class ReplyViewController: UITableViewController, UITextViewDelegate {
     
@@ -208,7 +209,9 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
         if let toSave = text!.text {
             if(!toSave.isEmpty()){
                 Drafts.addDraft(s: text!.text)
-                self.view.makeToast("Draft saved", duration: 4, position: .top)
+                let message = MDCSnackbarMessage()
+                message.text = "Draft saved"
+                MDCSnackbarManager.show(message)
             }
         }
     }

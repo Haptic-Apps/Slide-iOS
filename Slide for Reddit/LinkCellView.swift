@@ -19,6 +19,7 @@ import UZTextView
 import AMScrollingNavbar
 import ImageViewer
 import TTTAttributedLabel
+import MaterialComponents
 
 protocol LinkCellViewDelegate: class {
     func upvote(_ cell: LinkCellView)
@@ -263,8 +264,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         self.more = UIImageView(frame: CGRect(x: 0, y:0, width: 20, height: 20))
         more.image = UIImage.init(named: "ic_more_vert_white")?.withRenderingMode(.alwaysTemplate)
         more.tintColor = ColorUtil.fontColor
-        
-        
+            
         self.textView = UZTextView(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
         self.textView.delegate = self
         self.textView.isUserInteractionEnabled = true
@@ -347,6 +347,18 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     
     override func updateConstraints() {
         super.updateConstraints()
+        var topmargin = 0
+        var bottommargin =  0
+        var leftmargin = 0
+        var rightmargin = 0
+        var innerpadding = 0
+        
+        if(SettingValues.postViewMode == .CARD){
+            topmargin = 5
+            bottommargin = 5
+            leftmargin = 5
+            rightmargin = 5
+        }
         
         let metrics=["horizontalMargin":75,"top":0,"bottom":0,"separationBetweenLabels":0,"labelMinHeight":75,  "bannerHeight": height] as [String: Int]
         let views=["label":title, "body": textView, "image": thumbImage, "score": score, "comments": comments, "banner": bannerImage, "box": box] as [String : Any]

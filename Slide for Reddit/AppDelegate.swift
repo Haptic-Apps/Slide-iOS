@@ -11,6 +11,7 @@ import reddift
 import ChameleonFramework
 import UserNotifications
 import RealmSwift
+import SDWebImage
 
 /// Posted when the OAuth2TokenRepository object succeed in saving a token successfully into Keychain.
 public let OAuth2TokenRepositoryDidSaveTokenName = Notification.Name(rawValue: "OAuth2TokenRepositoryDidSaveToken")
@@ -30,7 +31,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var login: SubredditsViewController?
     var seenFile: String?
     var commentsFile: String?
-
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         application.setMinimumBackgroundFetchInterval(UIApplicationBackgroundFetchIntervalMinimum)
 

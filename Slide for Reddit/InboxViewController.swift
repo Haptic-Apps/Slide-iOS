@@ -10,6 +10,7 @@ import UIKit
 import reddift
 import AMScrollingNavbar
 import PagingMenuController
+import MaterialComponents.MaterialSnackbar
 
 class InboxViewController:  PagingMenuController {
     var content : [MessageWhere] = []
@@ -133,7 +134,9 @@ class InboxViewController:  PagingMenuController {
     func new(_ sender: AnyObject){
         let reply  = ReplyViewController.init(message: nil) { (message) in
             DispatchQueue.main.async(execute: { () -> Void in
-                self.view.makeToast("Message sent", duration: 4, position: .top)
+                let message = MDCSnackbarMessage()
+                message.text = "Message sent!"
+                MDCSnackbarManager.show(message)
             })
         }
         
@@ -156,7 +159,9 @@ class InboxViewController:  PagingMenuController {
                 switch(result){
                 case .success(_):
                     DispatchQueue.main.async {
-                        self.view.makeToast("All messages marked as read", duration: 3, position: .top)
+                        let message = MDCSnackbarMessage()
+                        message.text = "All messages marked as read"
+                        MDCSnackbarManager.show(message)
                     }
                     break
                 default: break
