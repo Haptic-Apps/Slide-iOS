@@ -677,10 +677,11 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         navigationController?.navigationBar.isTranslucent = false
         (navigationController as? ScrollingNavigationController)?.showNavbar(animated: true)
         if let navigationController = self.navigationController as? ScrollingNavigationController {
-            navigationController.followScrollView(self.tableView, delay: 50.0)
-            navigationController.scrollingNavbarDelegate = self
+         //   navigationController.followScrollView(self.tableView, delay: 50.0)
+         //   navigationController.scrollingNavbarDelegate = self
         }
         if(single){
+            self.navigationController?.navigationBar.barTintColor = UIColor.white
             if(navigationController != nil){
                 self.title = sub
                 let sort = UIButton.init(type: .custom)
@@ -996,6 +997,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                             for link in links {
                                 converted.append(RealmDataWrapper.linkToRSubmission(submission: link))
                             }
+                            self.links.append(contentsOf: converted)
                             let values = PostFilter.filter(converted, previous: self.links)
                             self.preloadImages(values)
                             self.links += values

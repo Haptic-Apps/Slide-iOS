@@ -211,7 +211,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             }
             let he = title.frame.size.height
             print("Height is \(height)")
-            estimatedHeight = CGFloat((he < 75 && thumb || he < 75 && !big) ? 75 : he) + CGFloat(56) + CGFloat(!hasText || !full ? 0 : (content?.textHeight)!) +  CGFloat(big && !thumb ? (full ? 220 :height + 20) : 0)
+            estimatedHeight = CGFloat((he < 75 && thumb || he < 75 && !big) ? 75 : he) + CGFloat(56) + CGFloat(!hasText || !full ? 0 : (content?.textHeight)!) +  CGFloat(big && !thumb ? (full ? 240 :height + 20) : 0)
             print("Est height is \(estimatedHeight)")
         }
         return estimatedHeight
@@ -220,14 +220,20 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.thumbImage = UIImageView(frame: CGRect(x: 0, y: 8, width: 75, height: 75))
-        thumbImage.layer.cornerRadius = 5;
+        thumbImage.layer.cornerRadius = 15;
+        thumbImage.backgroundColor = UIColor.white
         thumbImage.clipsToBounds = true;
         thumbImage.contentMode = .scaleAspectFill
-        
+        thumbImage.elevate(elevation: 2.0)
+
         self.bannerImage = UIImageView(frame: CGRect(x: 0, y: 8, width: CGFloat.greatestFiniteMagnitude, height: 0))
         bannerImage.contentMode = UIViewContentMode.scaleAspectFill
+        bannerImage.layer.cornerRadius = 15;
         bannerImage.clipsToBounds = true
+        bannerImage.backgroundColor = UIColor.white
         
+        bannerImage.elevate(elevation: 2.0)
+
         self.title = TTTAttributedLabel(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude));
         title.numberOfLines = 0
         title.lineBreakMode = NSLineBreakMode.byWordWrapping
@@ -278,6 +284,8 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         info.textColor = .white
         b = info.withPadding(padding: UIEdgeInsets.init(top: 4, left: 10, bottom: 4, right: 10))
         b.backgroundColor = UIColor.black.withAlphaComponent(0.6)
+        b.clipsToBounds  = true
+        b.layer.cornerRadius = 5
         
         self.box = UIStackView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
         self.buttons = UIStackView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
@@ -1065,7 +1073,17 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         if(full){
             self.setNeedsLayout()
         }
-     
+        bannerImage.contentMode = UIViewContentMode.scaleAspectFill
+        bannerImage.layer.cornerRadius = 5;
+        bannerImage.clipsToBounds = true
+        bannerImage.backgroundColor = UIColor.white
+        thumbImage.layer.cornerRadius = 5;
+        thumbImage.backgroundColor = UIColor.white
+        thumbImage.clipsToBounds = true;
+        thumbImage.contentMode = .scaleAspectFill
+        
+        
+
         
         if(type != .IMAGE && type != .SELF && !thumb){
             b.isHidden = false
@@ -1384,4 +1402,18 @@ extension UIImage {
         UIGraphicsEndImageContext()
         return image
     }
+}
+
+extension UIView: MaterialView {
+    func elevate(elevation: Double) {
+        self.layer.masksToBounds = false
+        self.layer.shadowColor = UIColor.black.cgColor
+        self.layer.shadowOffset = CGSize(width: 0, height: elevation)
+        self.layer.shadowRadius = CGFloat(elevation)
+        self.layer.shadowOpacity = 0.24
+    }
+}
+
+protocol MaterialView {
+    func elevate(elevation: Double)
 }

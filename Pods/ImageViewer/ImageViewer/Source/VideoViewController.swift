@@ -29,6 +29,17 @@ public class VideoViewController: ItemBaseController<VideoView> {
         self.videoURL = videoURL
         self.scrubber = scrubber
         self.player = AVPlayer(url: self.videoURL)
+        do {
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
+        } catch let error as NSError {
+            print(error)
+        }
+        
+        do {
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch let error as NSError {
+            print(error)
+        }
 
         super.init(index: index, itemCount: itemCount, fetchImageBlock: fetchImageBlock, configuration: configuration, isInitialController: isInitialController)
     }
@@ -87,6 +98,8 @@ public class VideoViewController: ItemBaseController<VideoView> {
 
         self.player.pause()
     }
+    
+    var castedLayer: AVPlayerLayer?
 
     override public func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -94,6 +107,13 @@ public class VideoViewController: ItemBaseController<VideoView> {
         let isLandscape = itemView.bounds.width >= itemView.bounds.height
         itemView.bounds.size = aspectFitSize(forContentOfSize: isLandscape ? fullHDScreenSizeLandscape : fullHDScreenSizePortrait, inBounds: self.scrollView.bounds.size)
         itemView.center = scrollView.boundsCenter
+        
+        castedLayer = AVPlayerLayer.init(player: self.player)
+        castedLayer?.frame = itemView.bounds
+        castedLayer?.videoGravity  = AVLayerVideoGravityResizeAspect
+        
+        itemView.layer.addSublayer(castedLayer!)
+        
     }
 
     func playVideoInitially() {

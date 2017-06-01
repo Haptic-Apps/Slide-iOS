@@ -272,6 +272,11 @@ class SubredditsViewController:  PagingMenuController {
             switch state {
             case let .willMoveController(menuController, previousMenuController):
                 print(previousMenuController)
+                (self.navigationController as? ScrollingNavigationController)?.showNavbar(animated: true)
+                if let navigationController = self.navigationController as? ScrollingNavigationController {
+               //todo?     navigationController.followScrollView(((menuController as! SubredditLinkViewController).tableView), delay: 50.0)
+                //    navigationController.scrollingNavbarDelegate = (menuController as! SubredditLinkViewController)
+                }
                 print(menuController)
                 self.navigationController?.navigationBar.barStyle = .black;
                 SubredditsViewController.current = (menuController as! SubredditLinkViewController).sub

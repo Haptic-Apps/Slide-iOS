@@ -103,6 +103,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         ColorUtil.doInit()
+        let textAttributes = [NSForegroundColorAttributeName:UIColor.white]
+        UINavigationBar.appearance().titleTextAttributes = textAttributes
+
         return true
     }
     

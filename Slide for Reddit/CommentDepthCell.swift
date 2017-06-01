@@ -18,7 +18,7 @@ protocol UZTextViewCellDelegate: class {
     func pushedSingleTap(_ cell: CommentDepthCell)
 }
 
-class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPreviewingDelegate {
+class CommentDepthCell: MarginedTableViewCell, UZTextViewDelegate, UIViewControllerPreviewingDelegate {
     var textView: UZTextView = UZTextView()
     var moreButton: UIButton = UIButton()
     var sideView: UIView = UIView()
@@ -75,7 +75,7 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         }
     }
     
-    var parent: MediaViewController?
+    var parent: CommentViewController?
     
     func textView(_ textView: UZTextView, didClickLinkAttribute value: Any?) {
         if((parent) != nil){
@@ -91,9 +91,11 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
     }
     
     func selectionDidBegin(_ textView: UZTextView) {
+        textView.cancelSelectedText()
     }
     
     func didTapTextDoesNotIncludeLinkTextView(_ textView: UZTextView) {
+        self.pushedSingleTap(textView)
     }
     
     func upvote(){
@@ -161,10 +163,15 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         
         moreButton.addTarget(self, action: #selector(CommentDepthCell.pushedMoreButton(_:)), for: UIControlEvents.touchUpInside)
         
-        let tap = UITapGestureRecognizer(target: self, action: #selector(self.pushedSingleTap(_:)))
-        tap.cancelsTouchesInView = false
-        self.contentView.addGestureRecognizer(tap)
+       //todo maybe let tap = UILongPressGestureRecognizer(target: self, action: #selector(self.more))
+      //  tap.cancelsTouchesInView = false
+      //  self.contentView.addGestureRecognizer(tap)
         
+        let tap = UITapGestureRecognizer(target: self, action: #selector(self.vote))
+          tap.cancelsTouchesInView = false
+        tap.numberOfTapsRequired = 2
+         self.contentView.addGestureRecognizer(tap)
+
         self.contentView.isUserInteractionEnabled = true
         self.contentView.backgroundColor = ColorUtil.foregroundColor
         sideViewSpace.backgroundColor = ColorUtil.backgroundColor
@@ -173,6 +180,73 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         self.clipsToBounds = true
     }
     
+    func vote(){
+        if(content is RComment){
+        let current = ActionStates.getVoteDirection(s: comment!)
+        var dir = (current == VoteDirection.none) ? VoteDirection.up : VoteDirection.none
+        var direction = dir
+        switch(ActionStates.getVoteDirection(s: comment!)){
+        case .up:
+            if(dir == .up){
+                direction = .none
+            }
+            break
+        case .down:
+            if(dir == .down){
+                direction = .none
+            }
+            break
+        default:
+            break
+        }
+        do {
+            try parent?.session?.setVote(direction, name: (comment!.name), completion: { (result) -> Void in
+                switch result {
+                case .failure(let error):
+                    print(error)
+                case .success(let check):
+                    print(check)
+                }
+            })
+        } catch { print(error) }
+        ActionStates.setVoteDirection(s: comment!, direction: direction)
+        refresh(comment: content as! RComment, submissionAuthor: savedAuthor)
+        }
+    }
+    
+    func more(_ par: CommentViewController){
+        let alertController = UIAlertController(title: "Comment by /u/\(comment!.author)", message: "", preferredStyle: .actionSheet)
+        
+        
+        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
+            print("Cancel")
+        }
+        
+        alertController.addAction(cancelActionButton)
+        
+        let profile: UIAlertAction = UIAlertAction(title: "/u/\(comment!.author)'s profile", style: .default) { action -> Void in
+            par.show(ProfileViewController.init(name: self.comment!.author), sender: self)
+        }
+        
+        alertController.addAction(profile)
+        if(AccountController.isLoggedIn){
+            
+            let save: UIAlertAction = UIAlertAction(title: "Save", style: .default) { action -> Void in
+                par.saveComment(self.comment!)
+            }
+            
+            alertController.addAction(save)
+        }
+        
+        let report: UIAlertAction = UIAlertAction(title: "Report", style: .default) { action -> Void in
+            par.report(self.comment!)
+        }
+        
+        alertController.addAction(report)
+        
+        
+        par.parent?.present(alertController, animated: true, completion: nil)
+    }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -289,7 +363,7 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         self.depth = depth
         loading = false
         c.alpha = 0
-        self.contentView.backgroundColor = UIColor.clear
+        self.contentView.backgroundColor = ColorUtil.foregroundColor
         if (depth - 1 > 0) {
             sideWidth = 4
             topMargin = 1
@@ -349,14 +423,16 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
          }
          }*/
     }
-    func setComment(comment: RComment, depth: Int, parent: MediaViewController, hiddenCount: Int, date: Double, author: String?){
+    
+    
+    func setComment(comment: RComment, depth: Int, parent: CommentViewController, hiddenCount: Int, date: Double, author: String?){
         self.comment = comment
+        self.contentView.backgroundColor = ColorUtil.foregroundColor
         loading = false
         if(self.parent == nil){
             self.parent = parent
         }
         
-        print(date)
         if(date != 0 && date < Double(comment.created.timeIntervalSince1970 )){
             setIsNew(sub: comment.subreddit)
         }
@@ -400,8 +476,11 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         
     }
     
+    var savedAuthor: String = ""
     func refresh(comment: RComment, submissionAuthor: String?){
         var color: UIColor
+        
+        savedAuthor = submissionAuthor!
         
         switch(ActionStates.getVoteDirection(s: comment)){
         case .down:
@@ -553,22 +632,7 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
     }
     
     var menuShowing: Bool = false
-    
-    func showMenu(){
-        menuShowing = true
-        let color = ColorUtil.getColorForSub(sub: (comment?.subreddit)!)
-        let colorNew = color.withAlphaComponent(0.5)
-        self.contentView.backgroundColor = colorNew
-        self.contentView.layoutIfNeeded() // force any pending operations to finish
         
-        UIView.animate(withDuration: 0.2, animations: { () -> Void in
-            self.menu.frame.size.height = 50
-            self.menu.layoutIfNeeded()
-        })
-        menu.backgroundColor = color
-        contentView.addSubview(menu)
-    }
-    
     func pushedMoreButton(_ sender: AnyObject?) {
         if let delegate = self.delegate {
             delegate.pushedMoreButton(self)
@@ -587,7 +651,7 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
     }
     
     class func margin() -> UIEdgeInsets {
-        return UIEdgeInsetsMake(5, 0, 25, 0)
+        return UIEdgeInsetsMake(4, 0, 2, 0)
     }
     
 }
