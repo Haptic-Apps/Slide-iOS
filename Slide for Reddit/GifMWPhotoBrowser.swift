@@ -84,10 +84,51 @@ class GifMWPhotoBrowser: NSObject, GalleryItemsDataSource {
         self.url = url
         browser = GalleryViewController.init(startIndex: 0, itemsDataSource: self, itemsDelegate: nil, displacedViewsDataSource: nil, configuration: galleryConfiguration())
         print("Loading gif \(url)")
+        var toolbar = UIToolbar()
+        let space = UIBarButtonItem(barButtonSystemItem:.flexibleSpace, target: nil, action: nil)
+        var items: [UIBarButtonItem] = []
+        
+        items.append(space)
+        items.append(UIBarButtonItem(image: UIImage(named: "download")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(GifMWPhotoBrowser.download(_:))))
+        items.append(UIBarButtonItem(image: UIImage(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(GifMWPhotoBrowser.showImageMenu(_:))))
+        toolbar.items = items
+        toolbar.setBackgroundImage(UIImage(),
+                                   forToolbarPosition: .any,
+                                   barMetrics: .default)
+        toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
+        toolbar.tintColor = UIColor.white
+        progressView = MDCProgressView()
+        progressView?.progress = 0
+        
+        let progressViewHeight = CGFloat(5)
+        progressView?.frame = CGRect(x: 0, y: toolbar.bounds.height, width: toolbar.bounds.width, height: progressViewHeight)
+        
+        size = UILabel(frame: CGRect(x:5,y: toolbar.bounds.height,width: 250,height: 50))
+        size?.textAlignment = .left
+        size?.textColor = .white
+        size?.text="Loading..."
+        size?.font = UIFont.boldSystemFont(ofSize: 12)
+        toolbar.addSubview(size!)
+        toolbar.addSubview(progressView!)
+        
+        browser!.footerView?.backgroundColor = UIColor.clear
+        browser!.footerView = toolbar
+        browser?.closedCompletion = {
+            print("Cancelling")
+            self.cancelled = true
+            self.request?.cancel()
+        }
+        browser?.swipedToDismissCompletion = {
+            print("Cancelling")
+            self.cancelled = true
+            self.request?.cancel()
+        }
+
         getGif(urlS: url)
         return browser!
     }
     
+    var cancelled = false
     var photos: [GalleryItem] = []
     
     
@@ -277,52 +318,25 @@ class GifMWPhotoBrowser: NSObject, GalleryItemsDataSource {
     }
     
     func refresh(_ toLoad:String){
-        var toolbar = UIToolbar()
-        let space = UIBarButtonItem(barButtonSystemItem:.flexibleSpace, target: nil, action: nil)
-        var items: [UIBarButtonItem] = []
-        
-        items.append(space)
-        items.append(UIBarButtonItem(image: UIImage(named: "download")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(GifMWPhotoBrowser.download(_:))))
-        items.append(UIBarButtonItem(image: UIImage(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(GifMWPhotoBrowser.showImageMenu(_:))))
-        toolbar.items = items
-        toolbar.setBackgroundImage(UIImage(),
-                                   forToolbarPosition: .any,
-                                   barMetrics: .default)
-        toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
-        toolbar.tintColor = UIColor.white
-        progressView = MDCProgressView()
-        progressView?.progress = 0
-        
-                let progressViewHeight = CGFloat(5)
-        progressView?.frame = CGRect(x: 0, y: toolbar.bounds.height, width: toolbar.bounds.width, height: progressViewHeight)
-        
-        size = UILabel(frame: CGRect(x:5,y: toolbar.bounds.height,width: 250,height: 50))
-        size?.textAlignment = .left
-        size?.textColor = .white
-        size?.text="mb"
-        size?.font = UIFont.boldSystemFont(ofSize: 12)
-        toolbar.addSubview(size!)
-        toolbar.addSubview(progressView!)
-
-        browser!.footerView?.backgroundColor = UIColor.clear
-        browser!.footerView = toolbar
-        
-        
+        if(!cancelled){
+        print("Set footer view")
         let disallowedChars = CharacterSet.urlPathAllowed.inverted
         var key = toLoad.components(separatedBy: disallowedChars).joined(separator: "_")
         key = key.replacingOccurrences(of: ":", with: "")
         key = key.replacingOccurrences(of: "/", with: "")
         key = key.replacingOccurrences(of: ".", with: "")
         key = key + ".mp4"
-        
+            print(key)
+            if(key.length > 200){
+                key = key.substring(0, length: 200)
+            }
         if(FileManager.default.fileExists(atPath: SDImageCache.shared().makeDiskCachePath(key)) ){
             display(URL.init(fileURLWithPath:SDImageCache.shared().makeDiskCachePath(key)))
         } else {
             let localUrl =   URL.init(fileURLWithPath:SDImageCache.shared().makeDiskCachePath(key))
-            
-            
-            Alamofire.download(toLoad, method: .get, to: { (url, response) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
-                return (localUrl, [.removePreviousFile, .createIntermediateDirectories])
+            print(localUrl)
+            request = Alamofire.download(toLoad, method: .get, to: { (url, response) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
+                return (localUrl, [.createIntermediateDirectories])
 
             }).downloadProgress() { progress in
                 DispatchQueue.main.async {
@@ -332,23 +346,30 @@ class GifMWPhotoBrowser: NSObject, GalleryItemsDataSource {
                     countBytes.countStyle = .file
                     let fileSize = countBytes.string(fromByteCount: Int64(progress.totalUnitCount))
                     self.size!.text = fileSize
+                    print("Progress is \(progress.fractionCompleted)")
                 }
                 
                 }
                 .responseData { response in
                     if let error = response.error {
+                        print(error)
                     } else { //no errors
                         self.display(localUrl)
                         print("File downloaded successfully: \(localUrl)")
                     }
             }
+
         }
-        
+        }
     }
     
+    var request: DownloadRequest?
+    
     var size: UILabel?
+    var progressView: MDCProgressView?
 
     func display(_ file: URL){
+        if(!cancelled){
         print("Displaying \(file)")
         progressView!.setHidden(true, animated: true)
         size?.isHidden = true
@@ -360,6 +381,7 @@ class GifMWPhotoBrowser: NSObject, GalleryItemsDataSource {
         let vc = browser!.pagingDataSource.createItemController(0)
         
         browser!.setViewControllers([vc], direction: UIPageViewControllerNavigationDirection.reverse, animated: true, completion: nil)
+        }
     }
     
     func download(_ sender: AnyObject){
@@ -417,7 +439,6 @@ class GifMWPhotoBrowser: NSObject, GalleryItemsDataSource {
         }
     }
     
-    var progressView: MDCProgressView?
     
     func formatUrl(sS: String) -> String {
         var s = sS

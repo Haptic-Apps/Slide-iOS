@@ -51,7 +51,7 @@ class SubredditsViewController:  PagingMenuController {
         }
 
         var displayMode: MenuDisplayMode {
-            return MenuDisplayMode.standard(widthMode: .flexible, centerItem: true, scrollingMode: MenuScrollingMode.scrollEnabled)
+            return MenuDisplayMode.standard(widthMode: .flexible, centerItem: true, scrollingMode: MenuScrollingMode.scrollEnabledAndBouces)
         }
         
         var backgroundColor: UIColor {

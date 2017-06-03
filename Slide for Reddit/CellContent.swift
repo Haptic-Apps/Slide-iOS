@@ -35,6 +35,7 @@ struct CellContent {
         textHeight = size.height + verticalMargin
     }
     
+    //Used in comments
     init(string: NSAttributedString, width: CGFloat, hasRelies: Bool, id: String) {
         attributedString = string
         self.id = id

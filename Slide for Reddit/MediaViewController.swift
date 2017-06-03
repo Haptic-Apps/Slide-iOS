@@ -120,6 +120,7 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
             }
             
             let hash = getHash(sS: rawDat);
+            print("Hash is \(hash)")
             return AlbumMWPhotoBrowser().create(hash:hash)
             
         } else if (contentUrl != nil && ContentType.displayImage(t: type)) {

@@ -49,7 +49,7 @@ public class AlbumJSONBase {
 */
 	required public init?(dictionary: NSDictionary) {
 
-		if (dictionary["data"] != nil && ((dictionary["data"] as! String)).isEmpty ) { data = AlbumData(dictionary: dictionary["data"] as! NSDictionary) }
+		if (dictionary["data"] != nil) { data = AlbumData(dictionary: dictionary["data"] as! NSDictionary) }
 		success = dictionary["success"] as? String
 		status = dictionary["status"] as? Int
 	}

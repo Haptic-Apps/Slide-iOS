@@ -372,7 +372,6 @@
 		BE3E5C0F1E16BA1300749C0C /* Album */ = {
 			isa = PBXGroup;
 			children = (
-				BE7439F41E2162A8008BB63B /* AccountController.swift */,
 				BE3E5C101E16BA2200749C0C /* AlbumData.swift */,
 				BE3E5C111E16BA2200749C0C /* Images.swift */,
 				BE3E5C121E16BA2200749C0C /* AlbumJSONBase.swift */,
@@ -466,6 +465,7 @@
 		BE8FCA061E0C46090063B8EF /* Slide for Reddit */ = {
 			isa = PBXGroup;
 			children = (
+				BE7439F41E2162A8008BB63B /* AccountController.swift */,
 				BE1DA39A1E26E85500EC0A04 /* Overlay */,
 				BE1DA3991E26D52500EC0A04 /* ContentViewControllers */,
 				BE2DEAAC1E26828B00FBF0B5 /* Settings */,

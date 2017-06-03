@@ -112,7 +112,6 @@ class InboxViewController:  PagingMenuController {
         self.title = "Inbox"
         navigationController?.navigationBar.tintColor = .white
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: "")
-        (navigationController as? ScrollingNavigationController)?.showNavbar(animated: true)
         let edit = UIButton.init(type: .custom)
         edit.setImage(UIImage.init(named: "edit")?.imageResize(sizeChange: CGSize.init(width: 23, height: 23)), for: UIControlState.normal)
         edit.addTarget(self, action: #selector(self.new(_:)), for: UIControlEvents.touchUpInside)

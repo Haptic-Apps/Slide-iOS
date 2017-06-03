@@ -843,6 +843,20 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         return buf
     }
     
+    
+    
+    func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+        if contents.indices ~= (indexPath as NSIndexPath).row {
+            if(!context.isEmpty()){
+            let datasetPosition = (indexPath as NSIndexPath).row;
+            let thing = isSearching ? filteredData[datasetPosition] : dataArray[datasetPosition]
+                if(((thing is RComment) ? (thing as! RComment).getId() : (thing as! RMore).getId()).contains(context) && !context.isEmpty()){
+                    return true
+                }
+        }
+        }
+            return false
+    }
     func updateStrings(_ newComments: [(Thing, Int)]) -> [CellContent] {
         let width = self.view.frame.size.width
         let color = ColorUtil.accentColorForSub(sub: ((newComments[0].0 as! Comment).subreddit))
@@ -853,7 +867,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     let attr = try NSMutableAttributedString(data: html.data(using: .unicode)!, options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
                     let font = FontGenerator.fontOfSize(size: 16, submission: false)
                     let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
-                    return CellContent.init(string:LinkParser.parse(attr2), width:(width - 25 - CGFloat(depth * 4)), hasRelies:false, id: comment.getId())
+                    return CellContent.init(string:LinkParser.parse(attr2), width:(width - CGFloat((depth + 2) * 4)), hasRelies:false, id: comment.getId())
                 } catch {
                     return CellContent(string:NSAttributedString(string: ""), width:width - 25, hasRelies:false, id: thing.getId())
                 }
@@ -1335,8 +1349,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         let color = ColorUtil.getColorForSub(sub: (submission?.subreddit)!)
         if(cell.content! is RComment){
             let author = (cell.content as! RComment).author
+            let upimg = UIImage.init(named: "upvote")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25))
             if(!(submission?.archived)! && AccountController.isLoggedIn && author != "[deleted]" && author != "[removed]"){
-                let upimg = UIImage.init(named: "upvote")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25))
                 let upvote = BGTableViewRowActionWithImage.rowAction(with: .normal, title: "    ", backgroundColor: UIColor.init(hexString: "#FF9800"), image: upimg, forCellHeight: UInt(cell.contentView.frame.size.height)) { (action, indexPath) in
                     tableView.setEditing(false, animated: true)
                     self.vote(comment: cell.content! as! RComment, dir: .up)
@@ -1498,7 +1512,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 }
                 cell.content = thing
                 if(((thing is RComment) ? (thing as! RComment).getId() : (thing as! RMore).getId()).contains(context) && !context.isEmpty()){
-                    cell.setIsContext()
+                  //  cell.setIsContext()
                 }
             }
             return cell
