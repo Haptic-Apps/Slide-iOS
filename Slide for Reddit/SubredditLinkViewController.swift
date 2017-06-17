@@ -17,16 +17,23 @@ import UZTextView
 import RealmSwift
 import PagingMenuController
 import MaterialComponents.MaterialSnackbar
+import MaterialComponents.MDCFloatingButton
 
-class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, ScrollingNavigationControllerDelegate, LinkCellViewDelegate, ColorPickerDelegate, KCFloatingActionButtonDelegate {
+class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, ScrollingNavigationControllerDelegate, LinkCellViewDelegate, ColorPickerDelegate, KCFloatingActionButtonDelegate, UIGestureRecognizerDelegate {
     
     var parentController: SubredditsViewController?
     var accentChosen: UIColor?
     func valueChanged(_ value: CGFloat, accent: Bool) {
         if(accent){
-            accentChosen = UIColor.init(cgColor: GMPalette.allAccentCGColor()[Int(value * CGFloat(GMPalette.allAccentCGColor().count))])
+            let c = UIColor.init(cgColor: GMPalette.allAccentCGColor()[Int(value * CGFloat(GMPalette.allAccentCGColor().count))])
+            accentChosen = c
+            hide.backgroundColor = c
         } else {
-            self.navigationController?.navigationBar.barTintColor = UIColor.init(cgColor: GMPalette.allCGColor()[Int(value * CGFloat(GMPalette.allCGColor().count))])
+            let c = UIColor.init(cgColor: GMPalette.allCGColor()[Int(value * CGFloat(GMPalette.allCGColor().count))])
+            self.navigationController?.navigationBar.barTintColor = c
+                sideView.backgroundColor = c
+            add.backgroundColor = c
+            sideView.backgroundColor = c
             if(parentController != nil){
                 parentController?.colorChanged()
             }
@@ -224,7 +231,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     var paginator = Paginator()
     var sub : String
     var session: Session? = nil
-    weak var tableView : UITableView!
+    var tableView : UITableView = UITableView()
     var displayMode: MenuItemDisplayMode
     var single: Bool = false
     
@@ -301,25 +308,8 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         }
     }
     
-    override func loadView(){
-        
-        self.view = UITableView(frame: CGRect.zero, style: .plain)
-        self.tableView = self.view as! UITableView
-        self.tableView.delegate = self
-        self.tableView.dataSource = self
-        
-        tableView.backgroundColor = ColorUtil.backgroundColor
-        tableView.separatorColor = ColorUtil.backgroundColor
-        tableView.separatorInset = .zero
-        
-        refreshControl = UIRefreshControl()
-        self.tableView.contentOffset = CGPoint.init(x: 0, y: -self.refreshControl.frame.size.height)
-        refreshControl.tintColor = ColorUtil.fontColor
-        refreshControl.attributedTitle = NSAttributedString(string: "")
-        refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControlEvents.valueChanged)
-        tableView.addSubview(refreshControl) // not required when using UITableViewController
-        
-    }
+    var sideView: UIView = UIView()
+    var subb: UIButton = UIButton()
     
     func drefresh(_ sender:AnyObject) {
         load(reset: true)
@@ -336,10 +326,151 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         }
     }
     
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        if(navigationController!.viewControllers.count > 1){
+            return true
+        }
+        return false
+    }
+    
     var sideMenu: UISideMenuNavigationController?
     // var menuNav: SubSidebarViewController?
     var subInfo: Subreddit?
     override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        self.tableView = UITableView(frame: self.view.bounds, style: .plain)
+        self.view = UIView.init(frame: CGRect.zero)
+
+        self.view.addSubview(tableView)
+        self.tableView.delegate = self
+        self.tableView.dataSource = self
+        
+        tableView.backgroundColor = ColorUtil.backgroundColor
+        tableView.separatorColor = ColorUtil.backgroundColor
+        tableView.separatorInset = .zero
+        
+        refreshControl = UIRefreshControl()
+        self.tableView.contentOffset = CGPoint.init(x: 0, y: -self.refreshControl.frame.size.height)
+        refreshControl.tintColor = ColorUtil.fontColor
+        refreshControl.attributedTitle = NSAttributedString(string: "")
+        refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControlEvents.valueChanged)
+        tableView.addSubview(refreshControl) // not required when using UITableViewController
+        
+        var label = UILabel.init(frame: CGRect.init(x: 00, y: 0, width: self.tableView.bounds.width, height: 70))
+        label.text =  "     \(sub)"
+        label.textColor = ColorUtil.fontColor
+        label.font = UIFont.boldSystemFont(ofSize: 40)
+        tableView.tableHeaderView = label
+        
+        let sort = UIButton.init(type: .custom)
+        sort.setImage(UIImage.init(named: "ic_sort_white")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
+        sort.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
+        sort.frame = CGRect.init(x: 0, y: 20, width: 30, height: 30)
+        sort.translatesAutoresizingMaskIntoConstraints = false
+        label.addSubview(sort)
+        
+        let more = UIButton.init(type: .custom)
+        more.setImage(UIImage.init(named: "ic_more_vert_white")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
+        more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
+        more.frame = CGRect.init(x: 0, y: 20, width: 30, height: 30)
+        more.translatesAutoresizingMaskIntoConstraints = false
+        label.addSubview(more)
+        
+        subb = UIButton.init(type: .custom)
+        subb.setImage(UIImage.init(named: "subbed")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
+        subb.addTarget(self, action: #selector(self.subscribeSingle(_:)), for: UIControlEvents.touchUpInside)
+        subb.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        subb.translatesAutoresizingMaskIntoConstraints = false
+        if(sub == "all" || sub == "frontpage" || sub == "friends" || sub == "popular"){
+            subb.isHidden = true
+        }
+        label.addSubview(subb)
+        if(Subscriptions.isSubscriber(sub)){
+            subb.imageView?.tintColor = GMColor.green500Color()
+        }
+        
+         add = MDCFloatingButton.init(shape: .default)
+        add.backgroundColor = ColorUtil.getColorForSub(sub: sub)
+        add.setImage(UIImage.init(named: "add"), for: .normal)
+        add.sizeToFit()
+        add.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(add)
+        
+         hide = MDCFloatingButton.init(shape: .mini)
+        hide.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
+        hide.setImage(UIImage.init(named: "hide"), for: .normal)
+        hide.sizeToFit()
+        hide.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(hide)
+        
+        sideView = UIView()
+        sideView = UIView(frame: CGRect(x: 0, y: 0, width: 4, height: CGFloat.greatestFiniteMagnitude))
+        sideView.backgroundColor = ColorUtil.getColorForSub(sub: sub)
+        sideView.translatesAutoresizingMaskIntoConstraints = false
+        
+        label.addSubview(sideView)
+        
+        let metrics=["topMargin": 0]
+        let views=["more": more, "add": add, "hide": hide, "superview": view, "sort":sort, "sub": subb, "side":sideView, "label" : label] as [String : Any]
+        var constraint:[NSLayoutConstraint] = []
+        constraint = NSLayoutConstraint.constraints(withVisualFormat:  "V:[superview]-(<=1)-[add]",
+                                                    options: NSLayoutFormatOptions.alignAllCenterX,
+                                                    metrics: metrics,
+                                                    views: views)
+        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[add(55)]-5-|",
+                                                                     options: NSLayoutFormatOptions(rawValue: 0),
+                                                                     metrics: metrics,
+                                                                     views: views))
+        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[hide]-10-|",
+                                                                     options: NSLayoutFormatOptions(rawValue: 0),
+                                                                     metrics: metrics,
+                                                                     views: views))
+        
+        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[hide]-20-|",
+                                                                     options: NSLayoutFormatOptions(rawValue: 0),
+                                                                     metrics: metrics,
+                                                                     views: views))
+        self.view.addConstraints(constraint)
+        
+        
+        constraint = NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[side(20)]-8-[label]",
+                                                    options: NSLayoutFormatOptions(rawValue: 0),
+                                                    metrics: metrics,
+                                                    views: views)
+        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[sub(25)]-8-[sort]-4-[more]-20-|",
+                                                                     options: NSLayoutFormatOptions(rawValue: 0),
+                                                                     metrics: metrics,
+                                                                     views: views))
+        
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-(20)-[more]-(20)-|",
+                                                                    options: NSLayoutFormatOptions(rawValue: 0),
+                                                                    metrics: metrics,
+                                                                    views: views))
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-(22.5)-[sub(25)]-(22.5)-|",
+                                                                    options: NSLayoutFormatOptions(rawValue: 0),
+                                                                    metrics: metrics,
+                                                                    views: views))
+        
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-(20)-[sort]-(20)-|",
+                                                                    options: NSLayoutFormatOptions(rawValue: 0),
+                                                                    metrics: metrics,
+                                                                    views: views))
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-(27)-[side(20)]-(27)-|",
+                                                                    options: NSLayoutFormatOptions(rawValue: 0),
+                                                                    metrics: metrics,
+                                                                    views: views))
+        
+        label.addConstraints(constraint)
+        sideView.layer.cornerRadius = 10
+        sideView.clipsToBounds = true
+        
+        self.automaticallyAdjustsScrollViewInsets = false
+        tableView.contentInset = UIEdgeInsetsMake(40, 0, 0, 0)
+        
+
+        navigationController?.interactivePopGestureRecognizer?.delegate = self
+
         self.tableView.register(LinkCellView.classForCoder(), forCellReuseIdentifier: "cell")
         session = (UIApplication.shared.delegate as! AppDelegate).session
         if self.links.count == 0 && !single {
@@ -403,8 +534,31 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             fab!.sticky = true
             self.view.addSubview(fab!)
         }
-        super.viewDidLoad()
         
+    }
+    var lastY: CGFloat = CGFloat(0)
+    var add : MDCFloatingButton = MDCFloatingButton()
+    var hide : MDCFloatingButton = MDCFloatingButton()
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        
+            var currentY = scrollView.contentOffset.y;
+            let headerHeight = CGFloat(70);
+            
+            if ((lastY <= headerHeight) && (currentY > headerHeight) && (navigationController?.isNavigationBarHidden)!) {
+                (navigationController)?.setNavigationBarHidden(false, animated: true)
+                if(ColorUtil.theme == .LIGHT || ColorUtil.theme == .SEPIA){
+                    UIApplication.shared.statusBarStyle = .lightContent
+                }
+            }
+        
+            if ((lastY > headerHeight) && (currentY <= headerHeight) && !(navigationController?.isNavigationBarHidden)!) {
+                (navigationController)?.setNavigationBarHidden(true, animated: true)
+                if(ColorUtil.theme == .LIGHT || ColorUtil.theme == .SEPIA){
+                    UIApplication.shared.statusBarStyle = .default
+                }
+            }
+        lastY = currentY
     }
     
     func doDisplaySidebar(_ sub: Subreddit){
@@ -493,6 +647,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             let message = MDCSnackbarMessage()
             message.text = "Unsubscribed"
             MDCSnackbarManager.show(message)
+            subb.tintColor = ColorUtil.fontColor
         } else {
             let alrController = UIAlertController.init(title: "Subscribe to \(sub.displayName)", message: nil, preferredStyle: .actionSheet)
             if(AccountController.isLoggedIn){
@@ -502,6 +657,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                     let message = MDCSnackbarMessage()
                     message.text = "Subscribed"
                     MDCSnackbarManager.show(message)
+                    self.subb.tintColor = GMColor.green500Color()
                 })
                 alrController.addAction(somethingAction)
             }
@@ -512,6 +668,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                 let message = MDCSnackbarMessage()
                 message.text = "Added"
                 MDCSnackbarManager.show(message)
+                self.subb.tintColor = GMColor.green500Color()
             })
             alrController.addAction(somethingAction)
             
@@ -522,6 +679,49 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             self.present(alrController, animated: true, completion:{})
             
         }
+    }
+
+    func subscribeSingle(_ selector: AnyObject){
+        if(subChanged && !Subscriptions.isSubscriber(sub) || Subscriptions.isSubscriber(sub)){
+            //was not subscriber, changed, and unsubscribing again
+            Subscriptions.unsubscribe(sub, session: session!)
+            subChanged = false
+            let message = MDCSnackbarMessage()
+            message.text = "Unsubscribed"
+            MDCSnackbarManager.show(message)
+            subb.tintColor = ColorUtil.fontColor
+        } else {
+            let alrController = UIAlertController.init(title: "Subscribe to \(sub)", message: nil, preferredStyle: .actionSheet)
+            if(AccountController.isLoggedIn){
+                let somethingAction = UIAlertAction(title: "Add to sub list and subscribe", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in
+                    Subscriptions.subscribe(self.sub, true, session: self.session!)
+                    self.subChanged = true
+                    let message = MDCSnackbarMessage()
+                    message.text = "Subscribed"
+                    MDCSnackbarManager.show(message)
+                    self.subb.tintColor = GMColor.green500Color()
+                })
+                alrController.addAction(somethingAction)
+            }
+            
+            let somethingAction = UIAlertAction(title: "Add to sub list", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in
+                Subscriptions.subscribe(self.sub, false, session: self.session!)
+                self.subChanged = true
+                let message = MDCSnackbarMessage()
+                message.text = "Added"
+                MDCSnackbarManager.show(message)
+                self.subb.tintColor = GMColor.green500Color()
+            })
+            alrController.addAction(somethingAction)
+            
+            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: {(alert: UIAlertAction!) in print("cancel")})
+            
+            alrController.addAction(cancelAction)
+            
+            self.present(alrController, animated: true, completion:{})
+            
+        }
+        
     }
     
     func displayMultiredditSidebar(){
@@ -608,10 +808,10 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        if let navigationController = navigationController as? ScrollingNavigationController {
-            navigationController.stopFollowingScrollView()
+        UIApplication.shared.statusBarStyle = .lightContent
+        if(navigationController?.isNavigationBarHidden ?? false){
+        navigationController?.setNavigationBarHidden(false, animated: true)
         }
-
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -678,6 +878,9 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: {(alert: UIAlertAction!) in
             if(parent != nil){
                 parent?.resetColors()
+                self.sideView.backgroundColor = ColorUtil.getColorForSub(sub: self.sub)
+                self.add.backgroundColor = ColorUtil.getColorForSub(sub: self.sub)
+                self.hide.backgroundColor = ColorUtil.accentColorForSub(sub: self.sub)
             }
         })
         
@@ -688,12 +891,34 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     }
     
     
+    var first = true
+    
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.navigationBar.isTranslucent = false
-        (navigationController as? ScrollingNavigationController)?.showNavbar(animated: true)
+        self.automaticallyAdjustsScrollViewInsets = false
+        var currentY = tableView.contentOffset.y;
+        self.edgesForExtendedLayout = []
+        
+        if (!first && (lastY <= 70) && (currentY > 70) && (navigationController?.isNavigationBarHidden)!) {
+            (navigationController)?.setNavigationBarHidden(false, animated: true)
+            if(ColorUtil.theme == .LIGHT || ColorUtil.theme == .SEPIA){
+                UIApplication.shared.statusBarStyle = .lightContent
+            }
+
+        }
+        
+        if (first || (lastY > 70) && (currentY <= 70) && !(navigationController?.isNavigationBarHidden)!) {
+            (navigationController)?.setNavigationBarHidden(true, animated: true)
+            if(ColorUtil.theme == .LIGHT || ColorUtil.theme == .SEPIA){
+                UIApplication.shared.statusBarStyle = .default
+            }
+        }
+        first = false
+        
+        tableView.delegate = self
         if let navigationController = self.navigationController as? ScrollingNavigationController {
          //   navigationController.followScrollView(self.tableView, delay: 50.0)
-         //   navigationController.scrollingNavbarDelegate = self
+          //  navigationController.scrollingNavbarDelegate = self
         }
         if(single){
             self.navigationController?.navigationBar.barTintColor = UIColor.white
@@ -859,9 +1084,11 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         return links.count
     }
     
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! LinkCellView
         
+        cell.preservesSuperviewLayoutMargins = false
         let link = self.links[(indexPath as NSIndexPath).row]
         cell.setLink(submission: link, parent: self, nav: self.navigationController)
         cell.delegate = self

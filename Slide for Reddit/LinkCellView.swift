@@ -210,16 +210,15 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             if(full){
                title.sizeToFit()
             }
-            let he = title.frame.size.height
-            print("Height is \(height)")
-            estimatedHeight = CGFloat((he < 75 && thumb || he < 75 && !big) ? 75 : he) + CGFloat(56) + CGFloat(!hasText || !full ? 0 : (content?.textHeight)!) +  CGFloat(big && !thumb ? (full ? 240 :height + 20) : 0)
-            print("Est height is \(estimatedHeight)")
+            let he = title.frame.size.height + CGFloat(20)
+            estimatedHeight = CGFloat((he < 75 && thumb || he < 75 && !big) ? 75 : he) + CGFloat(54) + CGFloat(!hasText || !full ? 0 : (content?.textHeight)!) +  CGFloat(big && !thumb ? (full ? 240 :height + 20) : 0)
         }
         return estimatedHeight
     }
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+    
         self.thumbImage = UIImageView(frame: CGRect(x: 0, y: 8, width: 75, height: 75))
         thumbImage.layer.cornerRadius = 15;
         thumbImage.backgroundColor = UIColor.white
@@ -227,13 +226,14 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         thumbImage.contentMode = .scaleAspectFill
         thumbImage.elevate(elevation: 2.0)
 
-        self.bannerImage = UIImageView(frame: CGRect(x: 0, y: 8, width: CGFloat.greatestFiniteMagnitude, height: 0))
+        self.bannerImage = UIImageView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 0))
         bannerImage.contentMode = UIViewContentMode.scaleAspectFill
         bannerImage.layer.cornerRadius = 15;
         bannerImage.clipsToBounds = true
         bannerImage.backgroundColor = UIColor.white
         
         bannerImage.elevate(elevation: 2.0)
+        
 
         self.title = TTTAttributedLabel(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude));
         title.numberOfLines = 0
@@ -285,7 +285,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         b = info.withPadding(padding: UIEdgeInsets.init(top: 4, left: 10, bottom: 4, right: 10))
         b.backgroundColor = UIColor.black.withAlphaComponent(0.6)
         b.clipsToBounds  = true
-        b.layer.cornerRadius = 5
+        b.layer.cornerRadius = 4
         
         self.box = UIStackView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
         self.buttons = UIStackView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
@@ -352,15 +352,19 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         var leftmargin = 0
         var rightmargin = 0
         var innerpadding = 0
+        var radius = 0
         
-        if(SettingValues.postViewMode == .CARD){
+        if(SettingValues.postViewMode == .CARD && !full){
             topmargin = 5
             bottommargin = 5
             leftmargin = 5
             rightmargin = 5
+            innerpadding = 5
+            radius = 10
+            self.contentView.layoutMargins = UIEdgeInsets.init(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin))
         }
         
-        let metrics=["horizontalMargin":75,"top":0,"bottom":0,"separationBetweenLabels":0,"labelMinHeight":75,  "bannerHeight": height] as [String: Int]
+        let metrics=["horizontalMargin":75,"top":topmargin,"bottom":bottommargin,"separationBetweenLabels":0,"labelMinHeight":75,  "bannerHeight": height, "left":leftmargin, "padding" : innerpadding] as [String: Int]
         let views=["label":title, "body": textView, "image": thumbImage, "score": score, "comments": comments, "banner": bannerImage, "box": box] as [String : Any]
         let views2=["buttons":buttons, "upvote": upvote, "downvote": downvote, "reply": reply,"edit":edit, "more": more, "save": save] as [String : Any]
         
@@ -383,6 +387,11 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                           options: NSLayoutFormatOptions(rawValue: 0),
                                                           metrics: metrics,
                                                           views: views))
+        
+        self.contentView.layer.cornerRadius = CGFloat(radius)
+        self.contentView.layer.masksToBounds = true
+        self.backgroundColor = .clear
+
         
         if(!full && SettingValues.postViewMode == .DESKTOP) {
             self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[save(20)]-8-[more(20)]-0-|",
@@ -597,7 +606,6 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             attributedTitle.append(archived)
         }
         
-        attributedTitle.append(NSAttributedString.init(string: "\n\n"))
         let attrs = [NSFontAttributeName : FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor] as [String: Any]
         
         let endString = NSMutableAttributedString(string:"  •  \(DateFormatter().timeSince(from: submission.created, numericDates: true))\((submission.isEdited ? ("(edit \(DateFormatter().timeSince(from: submission.edited, numericDates: true)))") : ""))  •  ", attributes: [NSFontAttributeName : FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor])
@@ -638,10 +646,15 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         let infoString = NSMutableAttributedString()
         infoString.append(boldString)
         infoString.append(endString)
-        attributedTitle.append(infoString)
+        infoString.append(NSAttributedString.init(string: "\n"))
+        infoString.append(attributedTitle)
+        if(SettingValues.postViewMode == .CARD){
+            infoString.append(NSAttributedString.init(string: "\nasedf"))
+        }
         
-        title.attributedText = attributedTitle
-        //title.sizeToFit()
+        title.attributedText = infoString
+        title.sizeToFit()
+
         reply.isHidden = true
         
         if(submission.archived || !AccountController.isLoggedIn){
@@ -683,6 +696,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         }
         
         height = submission.height
+
         var type = ContentType.getContentType(baseUrl: submission.url!)
         if(submission.isSelf){
             type = .SELF
@@ -852,7 +866,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                                                   metrics: metrics,
                                                                                   views: views))
                 
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[label(>=60)]-10-[box]-8-|",
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[label(>=70)]-12-[box]-8-|",
                                                                                   options: NSLayoutFormatOptions(rawValue: 0),
                                                                                   metrics: metrics,
                                                                                   views: views))
@@ -892,7 +906,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                                                   views: views))
                 
                 
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-4-[banner]-8@999-[label]-10@999-[box]-8-|",
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[banner]-8@999-[label]-12@999-[box]-8-|",
                                                                                   options: NSLayoutFormatOptions(rawValue: 0),
                                                                                   metrics: metrics,
                                                                                   views: views))
@@ -906,11 +920,11 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                                                   metrics: metrics,
                                                                                   views: views))
                 
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-2-[banner]-2-|",
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[banner]-0-|",
                                                                                   options: NSLayoutFormatOptions(rawValue: 0),
                                                                                   metrics: metrics,
                                                                                   views: views))
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-2-[info]-2-|",
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[info]-0-|",
                                                                                   options: NSLayoutFormatOptions(rawValue: 0),
                                                                                   metrics: metrics,
                                                                                   views: views))
@@ -1019,7 +1033,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                                                   views: views))
                 
                 
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-4-[banner]-8@999-[label]-10@999-[box]-8-|",
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[banner]-8@999-[label]-10@999-[box]-8-|",
                                                                                   options: NSLayoutFormatOptions(rawValue: 0),
                                                                                   metrics: metrics,
                                                                                   views: views))
@@ -1033,11 +1047,11 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                                                   metrics: metrics,
                                                                                   views: views))
                 
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-2-[banner]-2-|",
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[banner]-0-|",
                                                                                   options: NSLayoutFormatOptions(rawValue: 0),
                                                                                   metrics: metrics,
                                                                                   views: views))
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-2-[info]-2-|",
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[info]-0-|",
                                                                                   options: NSLayoutFormatOptions(rawValue: 0),
                                                                                   metrics: metrics,
                                                                                   views: views))
@@ -1287,6 +1301,31 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         }
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        var topmargin = 0
+        var bottommargin =  0
+        var leftmargin = 0
+        var rightmargin = 0
+        var innerpadding = 0
+        var radius = 0
+        
+        if(SettingValues.postViewMode == .CARD && !full){
+            topmargin = 5
+            bottommargin = 5
+            leftmargin = 5
+            rightmargin = 5
+            innerpadding = 5
+            radius = 10
+            self.contentView.elevate(elevation: 2)
+        }
+        
+        let f = self.contentView.frame
+        let fr = UIEdgeInsetsInsetRect(f, UIEdgeInsetsMake(CGFloat(topmargin), CGFloat(leftmargin), CGFloat(bottommargin), CGFloat(rightmargin)))
+        self.contentView.frame = fr
+    }
+    
+
     var registered: Bool = false
     func previewingContext(_ previewingContext: UIViewControllerPreviewing,
                            viewControllerForLocation location: CGPoint) -> UIViewController? {
@@ -1402,7 +1441,7 @@ extension UILabel
         self.text = text
     }
     
-    
+   
 }
 extension UIImage {
     func withColor(tintColor: UIColor) -> UIImage {

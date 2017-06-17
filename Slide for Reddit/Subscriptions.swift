@@ -28,6 +28,15 @@ class Subscriptions{
         return accountSubs
     }
     
+    public static func isSubscriber(_ sub: String) -> Bool{
+        for s in subreddits {
+            if(s.lowercased() == sub.lowercased()){
+                return true
+            }
+        }
+        return false
+    }
+    
     public static var historySubs: [String] = []
     private static var accountSubs: [String] = []
     

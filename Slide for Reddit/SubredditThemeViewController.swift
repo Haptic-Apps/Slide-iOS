@@ -190,6 +190,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
     
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
         let item = subs[indexPath.row]
         let actionSheetController: UIAlertController = UIAlertController(title: item, message: "", preferredStyle: .actionSheet)
         

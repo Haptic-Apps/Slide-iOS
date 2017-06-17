@@ -14,6 +14,7 @@ import AMScrollingNavbar
 import UZTextView
 import RealmSwift
 import MaterialComponents.MaterialSnackbar
+import MaterialComponents.MDCProgressView
 
 class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, UZTextViewCellDelegate, LinkCellViewDelegate, UISearchBarDelegate {
     
@@ -285,7 +286,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                 self.hidden = []
                                 self.contents = []
                                 self.refreshControl.endRefreshing()
-                                
+                                self.progressViewA?.setHidden(true, animated: true)
+
                                 DispatchQueue.global(qos: .background).async {
                                     self.submission!.comments.removeAll()
                                     for child in listing.comments {
@@ -315,6 +317,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                         DispatchQueue.main.async {
                             
                             self.refreshControl.endRefreshing()
+                            self.progressViewA?.setHidden(true, animated: true)
                             
                             if(self.comments.isEmpty){
                                 let message = MDCSnackbarMessage()
@@ -338,7 +341,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                         self.submission = RealmDataWrapper.linkToRSubmission(submission: tuple.0.children[0] as! Link)
                         
                         self.refreshControl.endRefreshing()
-                        
+                        self.progressViewA?.setHidden(true, animated: true)
+
                         DispatchQueue.global().async(execute: { () -> Void in
                             var allIncoming: [(Thing, Int)] = []
                             self.submission!.comments.removeAll()
@@ -500,6 +504,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         self.present(actionSheetController, animated: true, completion: nil)
     }
     
+    var progressViewA: MDCProgressView?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.register(LinkCellView.classForCoder(), forCellReuseIdentifier: "cell")
@@ -523,7 +529,12 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "MoreCell")
         
         tableView.separatorStyle = .none
-        refreshControl.beginRefreshing()
+        progressViewA = MDCProgressView()
+        progressViewA?.progress = 0.5
+        
+        let progressViewAHeight = CGFloat(5)
+        progressViewA?.frame = CGRect(x: 0, y: headerCell?.estimateHeight(true) ?? CGFloat(0), width: self.tableView.bounds.width, height: progressViewAHeight)
+
         refresh(self)
         
     }
@@ -552,6 +563,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     let view = UIView(frame: tableHeaderView.frame)
                     view.addSubview(tableHeaderView)
                     self.tableView.tableHeaderView = view
+                    view.addSubview(progressViewA!)
+
                 }
             }
         }
@@ -597,7 +610,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        (navigationController)?.setNavigationBarHidden(false, animated: false)
+        if(navigationController != nil){
         self.updateToolbar()
+        }
         title = submission?.subreddit
         self.navigationItem.backBarButtonItem?.title = ""
 
@@ -788,7 +804,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        self.navigationController?.setToolbarHidden(true, animated: false)
         super.viewWillDisappear(animated)
         
             if let navigationController = navigationController as? ScrollingNavigationController {
@@ -1449,11 +1464,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         let children = walkTree(n: n);
         var toHide : [String] = []
         for ignored in children {
-            let parentHidden = self.parentHidden(comment: ignored)
-            if(parentHidden){
-                continue
-            }
-            
             let name = ignored is RComment ? (ignored as! RComment).getId() : (ignored as! RMore).getId()
             
             if(hidden.contains(name)){

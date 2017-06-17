@@ -199,7 +199,7 @@ class SettingsTheme: UITableViewController, ColorPickerDelegate {
         
     }
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+        tableView.deselectRow(at: indexPath, animated: true)
     if(indexPath.section == 0 && indexPath.row == 0){
             pickTheme()
         } else  if(indexPath.section == 0 && indexPath.row == 1){

@@ -172,9 +172,9 @@ class CommentDepthCell: MarginedTableViewCell, UZTextViewDelegate, UIViewControl
          self.contentView.addGestureRecognizer(tap2)
 
         
-        let tap = UITapGestureRecognizer(target: self, action: #selector(self.pushedSingleTap(_:)))
+        let tap = UISwipeGestureRecognizer(target: self, action: #selector(self.pushedSingleTap(_:)))
         tap.cancelsTouchesInView = false
-        tap.require(toFail: tap2)
+        tap.direction = UISwipeGestureRecognizerDirection.right
         self.contentView.addGestureRecognizer(tap)
 
         self.contentView.isUserInteractionEnabled = true

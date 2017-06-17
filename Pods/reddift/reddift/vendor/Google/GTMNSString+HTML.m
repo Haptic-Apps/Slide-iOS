@@ -77,8 +77,8 @@ static HTMLEscapeMap gAsciiHTMLEscapeMap[] = {
   { @"&AElig;", 198 }, 
   { @"&Ccedil;", 199 }, 
   { @"&Egrave;", 200 }, 
-  { @"&Eacute;", 201 }, 
-  { @"&Ecirc;", 202 }, 
+  { @"&Eacute;", 201 },
+  { @"&Ecirc;", 202 },
   { @"&Euml;", 203 }, 
   { @"&Igrave;", 204 }, 
   { @"&Iacute;", 205 }, 
@@ -473,7 +473,7 @@ static int EscapeMapCompare(const void *ucharVoid, const void *mapVoid) {
     NSUInteger length = [escapeString length];
     // a squence must be longer than 3 (&lt;) and less than 11 (&thetasym;)
     if (length > 3 && length < 11) {
-      if ([escapeString characterAtIndex:1] == '#') {
+        if ([escapeString characterAtIndex:1] == '#') {
         unichar char2 = [escapeString characterAtIndex:2];
         if (char2 == 'x' || char2 == 'X') {
           // Hex escape squences &#xa3;

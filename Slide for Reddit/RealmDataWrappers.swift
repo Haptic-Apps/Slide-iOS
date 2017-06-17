@@ -62,7 +62,7 @@ class RealmDataWrapper {
         
         if(big){ //check for low quality image
             if(previews != nil && !previews!.isEmpty){
-                if (ContentType.isImgurImage(uri: submission.url!)) {
+                if (submission.url != nil && ContentType.isImgurImage(uri: submission.url!)) {
                     lqUrl = (submission.url?.absoluteString)!
                     lqUrl = lqUrl.substring(0, length: lqUrl.lastIndexOf(".")!) + (SettingValues.lqLow ? "m" : (SettingValues.lqMid ? "l" : "h")) + lqUrl.substring(lqUrl.lastIndexOf(".")!, length: lqUrl.length - lqUrl.lastIndexOf(".")!)
                 } else {
@@ -99,7 +99,7 @@ class RealmDataWrapper {
         rSubmission.subreddit = submission.subreddit
         rSubmission.archived = submission.archived
         rSubmission.locked = submission.locked
-        rSubmission.urlString = (submission.url?.absoluteString) ?? ""
+        rSubmission.urlString =  try! ((submission.url?.absoluteString) ?? "").convertHtmlSymbols() ?? ""
         rSubmission.title = submission.title
         rSubmission.commentCount = submission.numComments
         rSubmission.saved = submission.saved
@@ -379,4 +379,11 @@ class RSubmissionListing: Object {
     dynamic var accessed = NSDate(timeIntervalSince1970: 1)
     dynamic var comments = false
     let submissions = List<RSubmission>()
+}
+extension String {
+    func convertHtmlSymbols() throws -> String? {
+        guard let data = data(using: .utf8) else { return nil }
+        
+        return try NSAttributedString(data: data, options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType, NSCharacterEncodingDocumentAttribute: String.Encoding.utf8.rawValue], documentAttributes: nil).string
+    }
 }

@@ -21,18 +21,17 @@ class NavigationHeaderView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame:frame)
-        self.search = UISearchBar(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 50))
-        
-        self.accounts = UIButton(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 50))
-        self.multis = UIButton(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 50))
-        self.profile = UIButton(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 50))
-        self.settings = UIButton(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 50))
-        self.you = UIButton(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 50))
-        self.inbox = UIButton(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 50))
+        self.search = UISearchBar(frame: CGRect(x: 0, y: 0, width: 3, height: 50))
+        self.accounts = UIButton(frame: CGRect(x: 0, y: 0, width: 3, height: 50))
+        self.multis = UIButton(frame: CGRect(x: 0, y: 0, width: 3, height: 50))
+        self.profile = UIButton(frame: CGRect(x: 0, y: 0, width: 3, height: 50))
+        self.settings = UIButton(frame: CGRect(x: 0, y: 0, width: 3, height: 50))
+        self.you = UIButton(frame: CGRect(x: 0, y: 0, width: 3, height: 50))
+        self.inbox = UIButton(frame: CGRect(x: 0, y: 0, width: 3, height: 50))
 
         backgroundColor = ColorUtil.foregroundColor
         
-        self.logo = UIImageView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
+        self.logo = UIImageView(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
         self.logo.image = UIImage.init(named: "slogo")?.addImagePadding(x: 20, y: 20)
         self.logo.contentMode = .scaleAspectFit
         
@@ -229,7 +228,7 @@ class NavigationHeaderView: UIView {
         var constraint:[NSLayoutConstraint] = []
         
         
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "H:|-(0)-[logo]-(0)-|",
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[logo]-0-|",
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                                     metrics: metrics,
                                                                     views: views))
@@ -286,6 +285,6 @@ class NavigationHeaderView: UIView {
     }
     
     func getEstHeight()-> CGFloat{
-        return CGFloat(60 * (AccountController.isLoggedIn ? 7 : 5)) + 150
+        return CGFloat((60 * (AccountController.isLoggedIn ? 7 : 5)) + 150)
     }
 }

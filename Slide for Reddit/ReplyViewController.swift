@@ -160,6 +160,8 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
         super.viewDidLoad()
         text?.becomeFirstResponder()
         addToolbarToTextView()
+        self.view.layer.cornerRadius = 5
+        self.view.layer.masksToBounds = true
     }
     
     func addToolbarToTextView(){
@@ -493,6 +495,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub)
         navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName : UIColor.white]
         navigationController?.navigationBar.tintColor = UIColor.white
+
         if(message){
             title = "New message"
         } else {

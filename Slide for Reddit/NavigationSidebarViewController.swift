@@ -41,7 +41,7 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
         filteredContent = []
         isSearching = false
         tableView.reloadData()
-        
+        tableView.deselectRow(at: indexPath, animated: true)
     }
     
     var searchBar:UISearchBar?

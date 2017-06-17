@@ -95,7 +95,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Subscriptions.sync(name: AccountController.currentName, completion: nil)
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
             (granted, error) in
-            
+            if((error) != nil){
+                print(error?.localizedDescription)
+            }
         }
         UIApplication.shared.registerForRemoteNotifications()
 

@@ -178,8 +178,6 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
                                             barMetrics: .default)
             toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
             toolbar.tintColor = UIColor.white
-            progressView = MDCProgressView()
-            progressView?.progress = 0
             
             size = UILabel(frame: CGRect(x:5,y: toolbar.bounds.height,width: 250,height: 50))
             size?.textAlignment = .left
@@ -188,7 +186,9 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
             size?.font = UIFont.boldSystemFont(ofSize: 12)
             toolbar.addSubview(size!)
 
-            
+            progressView = MDCProgressView()
+            progressView?.progress = 0
+
             let progressViewHeight = CGFloat(5)
             progressView?.frame = CGRect(x: 0, y: toolbar.bounds.height, width: toolbar.bounds.width, height: progressViewHeight)
             toolbar.addSubview(progressView!)
@@ -277,6 +277,9 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
     public func prepareOverlayVC(overlayVC: UIViewController) {
         overlayVC.transitioningDelegate = overlayTransitioningDelegate
         overlayVC.modalPresentationStyle = .custom
+        overlayVC.view.layer.cornerRadius = 5
+        overlayVC.view.layer.masksToBounds = true
+
     }
     
     var millis: Double = 0

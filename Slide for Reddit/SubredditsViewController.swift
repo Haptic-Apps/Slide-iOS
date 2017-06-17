@@ -1,3 +1,4 @@
+
 //
 //  SubredditsViewController.swift
 //  Slide for Reddit
@@ -104,6 +105,11 @@ class SubredditsViewController:  PagingMenuController {
         
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        (navigationController)?.setNavigationBarHidden(false, animated: true)
+
+    }
+    
     func addAccount(){
         menuLeftNavigationController?.dismiss(animated: true, completion: nil)
         doLogin(token: nil)
@@ -205,6 +211,7 @@ class SubredditsViewController:  PagingMenuController {
     var currentTitle = "Slide"
     override func viewDidLoad() {
         self.title = currentTitle
+
         menuLeftNavigationController = UISideMenuNavigationController()
         menuLeftNavigationController?.leftSide = true
         menuNav = NavigationSidebarViewController()
@@ -218,7 +225,7 @@ class SubredditsViewController:  PagingMenuController {
         // Enable gestures. The left and/or right menus must be set up above for these to work.
         // Note that these continue to work on the Navigation Controller independent of the View Controller it displays!
         SideMenuManager.menuAddScreenEdgePanGesturesToPresent(toView: self.view, forMenu: UIRectEdge.left)
-        SideMenuManager.menuAddScreenEdgePanGesturesToPresent(toView: self.navigationController!.view, forMenu: UIRectEdge.left)
+        SideMenuManager.menuAddScreenEdgePanGesturesToPresent(toView: self.navigationController!.view, forMenu: UIRectEdge.left) //todo check thi out
         
         if(SubredditsViewController.viewControllers.count == 1){
             for subname in Subscriptions.subreddits {
@@ -323,6 +330,8 @@ class SubredditsViewController:  PagingMenuController {
         
         super.viewDidLoad()
         self.edgesForExtendedLayout = []
+        self.automaticallyAdjustsScrollViewInsets = false
+
         
     }
     func resetColors(){
@@ -339,6 +348,10 @@ class SubredditsViewController:  PagingMenuController {
     }
     
     func showDrawer(_ sender: AnyObject){
+       // let navEditorViewController: UINavigationController = UINavigationController(rootViewController: menuNav)
+      //  self.prepareOverlayVC(overlayVC: navEditorViewController)
+      //  self.present(navEditorViewController, animated: true, completion: nil)
+
         present(SideMenuManager.menuLeftNavigationController!, animated: true, completion: nil)
     }
     
