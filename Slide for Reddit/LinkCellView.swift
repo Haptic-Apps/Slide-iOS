@@ -497,7 +497,6 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             attributedTitle.append(archived)
         }
         
-        attributedTitle.append(NSAttributedString.init(string: "\n\n"))
         let attrs = [NSFontAttributeName : FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor] as [String: Any]
         
         let endString = NSMutableAttributedString(string:"  •  \(DateFormatter().timeSince(from: submission.created, numericDates: true))\((submission.isEdited ? ("(edit \(DateFormatter().timeSince(from: submission.edited, numericDates: true)))") : ""))  •  ", attributes: [NSFontAttributeName : FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor])
@@ -928,7 +927,11 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                                                           options: NSLayoutFormatOptions(rawValue: 0),
                                                                                           metrics: metrics,
                                                                                           views: views))
-                        thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[label]-8@999-[info(45)]",
+                        thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[info(45)]-8-[banner]",
+                                                                                          options: NSLayoutFormatOptions.alignAllLastBaseline,
+                                                                                          metrics: metrics,
+                                                                                          views: views))
+                        thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[info(45)]",
                                                                                           options: NSLayoutFormatOptions(rawValue: 0),
                                                                                           metrics: metrics,
                                                                                           views: views))
@@ -1069,7 +1072,11 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                                                           options: NSLayoutFormatOptions(rawValue: 0),
                                                                                           metrics: metrics,
                                                                                           views: views))
-                        thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[label]-8@999-[info(45)]",
+                        thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[info]-8-[banner]",
+                                                                                          options: NSLayoutFormatOptions.alignAllLastBaseline,
+                                                                                          metrics: metrics,
+                                                                                          views: views))
+                        thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[info(45)]",
                                                                                           options: NSLayoutFormatOptions(rawValue: 0),
                                                                                           metrics: metrics,
                                                                                           views: views))

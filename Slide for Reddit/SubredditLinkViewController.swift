@@ -551,7 +551,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                 links.remove(at: index)
             }
         }
-        tableView.reloadData(with: .left)
+        tableView.reloadData(with: .automatic)
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
