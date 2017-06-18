@@ -41,6 +41,10 @@ class SettingValues{
     public static let pref_dataSavingEnableWiFi = "DATASAVING_ENABLE_WIFI"
     public static let pref_dataSavingImageQuality = "DATASAVING_IMAGE_QUALITY"
     public static let pref_upvotePercentage = "UPVOTE_PERCENTAGE"
+    public static let pref_cropBigPic = "BIG_PIC_CROPPED"
+    public static let pref_bannerHidden = "BANNER_HIDDEN"
+    public static let pref_centerLead = "CENTER_LEAD_IMAGE"
+    public static let pref_largerThumbnail = "LARGER_THUMBNAIL"
 
     public static var viewType = true
     public static var hiddenFAB = true
@@ -50,12 +54,15 @@ class SettingValues{
     public static var defaultCommentSorting = CommentSort.confidence
     public static var tintingMode = "TINTING_MODE"
     public static var onlyTintOutside = false
+    public static var bannerHidden = false
     public static var postViewMode = PostViewType.LIST
     public static var pictureMode = "PICTURE_MODE"
     public static var hideImageSelftext = false
     public static var abbreviateScores = true
     public static var commentCountLastVisit = true
     public static var rightThumbnail = true
+    public static var centerLeadImage = true
+
     public static var hideButtonActionbar = false
     public static var saveButtonActionbar = true
     public static var bigPicCropped = false
@@ -77,7 +84,8 @@ class SettingValues{
     public static var dataSavingImageQuality = "DATASAVING_IMAGE_QUALITY"
     public static var postFontOffset = 0
     public static var commentFontOffset = 0
-    
+    public static var largerThumbnail = true
+
     enum PostViewType: String {
         case LIST = "list"
         case DESKTOP = "desktop"
@@ -86,7 +94,12 @@ class SettingValues{
     
     public static func initialize(){
         let settings = UserDefaults.standard
+        SettingValues.bigPicCropped = settings.bool(forKey: SettingValues.pref_cropBigPic)
+        SettingValues.largerThumbnail = settings.object(forKey: SettingValues.pref_largerThumbnail) == nil ? true : settings.bool(forKey: SettingValues.pref_largerThumbnail)
+        SettingValues.bannerHidden = settings.bool(forKey: SettingValues.pref_bannerHidden)
         SettingValues.viewType = settings.bool(forKey: SettingValues.pref_viewType)
-        SettingValues.postViewMode = PostViewType.init(rawValue: settings.string(forKey: SettingValues.pref_postViewMode) ?? "card")!
+        SettingValues.centerLeadImage = settings.bool(forKey: SettingValues.pref_centerLead)
+        SettingValues.hideButtonActionbar = settings.bool(forKey: SettingValues.pref_hideButtonActionbar)
+        SettingValues.postViewMode = PostViewType.init(rawValue: settings.string(forKey: SettingValues.pref_postViewMode) ?? "list")!
     }
 }

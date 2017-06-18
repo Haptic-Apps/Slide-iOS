@@ -189,6 +189,8 @@ class SettingsViewController: UITableViewController {
             show(SettingsTheme(), sender: self)
         }  else if(indexPath.section == 1 && indexPath.row == 3){
             show(SettingsFont(), sender: self)
+        }  else if(indexPath.section == 1 && indexPath.row == 1){
+            show(SettingsLayout(), sender: self)
         }
     }
     /* maybe future

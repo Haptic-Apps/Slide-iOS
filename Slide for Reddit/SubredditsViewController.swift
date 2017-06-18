@@ -92,6 +92,8 @@ class SubredditsViewController:  PagingMenuController {
         super.viewWillAppear(animated)
         
         self.title = currentTitle
+        self.edgesForExtendedLayout = UIRectEdge.all
+        self.extendedLayoutIncludesOpaqueBars = true
         
         self.navigationController?.navigationBar.shadowImage = UIImage()
         self.navigationController?.navigationBar.barTintColor = self.tintColor

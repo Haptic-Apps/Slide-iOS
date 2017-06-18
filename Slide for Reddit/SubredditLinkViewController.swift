@@ -17,9 +17,9 @@ import UZTextView
 import RealmSwift
 import PagingMenuController
 import MaterialComponents.MaterialSnackbar
-import MaterialComponents.MDCFloatingButton
 
-class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, ScrollingNavigationControllerDelegate, LinkCellViewDelegate, ColorPickerDelegate, KCFloatingActionButtonDelegate, UIGestureRecognizerDelegate {
+
+class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, ScrollingNavigationControllerDelegate, LinkCellViewDelegate, ColorPickerDelegate, KCFloatingActionButtonDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate {
     
     var parentController: SubredditsViewController?
     var accentChosen: UIColor?
@@ -82,6 +82,21 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             
         }
     }
+    
+    func hideUI(inHeader: Bool){
+        (navigationController)?.setNavigationBarHidden(true, animated: true)
+        if(inHeader){
+        hide.isHidden = true
+        add.isHidden = true
+        }
+    }
+    
+    func showUI(){
+        (navigationController)?.setNavigationBarHidden(false, animated: true)
+        hide.isHidden = false
+        add.isHidden = false
+    }
+
     
     func more(_ cell: LinkCellView){
         let link = cell.link!
@@ -268,19 +283,6 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         fatalError("init(coder:) has not been implemented")
     }
     
-    func scrollingNavigationController(_ controller: ScrollingNavigationController, didChangeState state: NavigationBarState) {
-        switch state {
-        case .collapsed:
-           // hide(true)
-            break
-        case .expanded:
-          //  show(true)
-            break
-        case .scrolling:
-            break
-        }
-    }
-    
     func show(_ animated: Bool = true) {
         if(fab != nil){
             if animated == true {
@@ -360,7 +362,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         var label = UILabel.init(frame: CGRect.init(x: 00, y: 0, width: self.tableView.bounds.width, height: 70))
         label.text =  "     \(sub)"
         label.textColor = ColorUtil.fontColor
-        label.font = UIFont.boldSystemFont(ofSize: 40)
+        label.font = UIFont.boldSystemFont(ofSize: 35)
         tableView.tableHeaderView = label
         
         let sort = UIButton.init(type: .custom)
@@ -392,20 +394,21 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         
          add = MDCFloatingButton.init(shape: .default)
         add.backgroundColor = ColorUtil.getColorForSub(sub: sub)
-        add.setImage(UIImage.init(named: "add"), for: .normal)
+        add.setImage(UIImage.init(named: "plus"), for: .normal)
         add.sizeToFit()
         add.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(add)
         
          hide = MDCFloatingButton.init(shape: .mini)
         hide.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
-        hide.setImage(UIImage.init(named: "hide"), for: .normal)
+        hide.setImage(UIImage.init(named: "hide")?.imageResize(sizeChange: CGSize.init(width: 20, height: 20)), for: .normal)
         hide.sizeToFit()
+        hide.addTarget(self, action:#selector(self.hideAll(_:)), for: .touchUpInside)
         hide.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(hide)
         
         sideView = UIView()
-        sideView = UIView(frame: CGRect(x: 0, y: 0, width: 4, height: CGFloat.greatestFiniteMagnitude))
+        sideView = UIView(frame: CGRect(x: 0, y: 0, width: 8, height: CGFloat.greatestFiniteMagnitude))
         sideView.backgroundColor = ColorUtil.getColorForSub(sub: sub)
         sideView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -418,7 +421,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                                                     options: NSLayoutFormatOptions.alignAllCenterX,
                                                     metrics: metrics,
                                                     views: views)
-        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[add(55)]-5-|",
+        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[add(56)]-5-|",
                                                                      options: NSLayoutFormatOptions(rawValue: 0),
                                                                      metrics: metrics,
                                                                      views: views))
@@ -438,7 +441,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                     metrics: metrics,
                                                     views: views)
-        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[sub(25)]-8-[sort]-4-[more]-20-|",
+        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[sub(25)]-8-[sort]-4-[more]-8-|",
                                                                      options: NSLayoutFormatOptions(rawValue: 0),
                                                                      metrics: metrics,
                                                                      views: views))
@@ -539,13 +542,32 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     var lastY: CGFloat = CGFloat(0)
     var add : MDCFloatingButton = MDCFloatingButton()
     var hide : MDCFloatingButton = MDCFloatingButton()
+    var lastYUsed = CGFloat(0)
+    
+    func hideAll(_ sender: AnyObject){
+        for submission in links {
+            if(History.getSeen(s: submission)){
+                let index = links.index(of: submission)!
+                links.remove(at: index)
+            }
+        }
+        tableView.reloadData(with: .left)
+    }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         
             var currentY = scrollView.contentOffset.y;
             let headerHeight = CGFloat(70);
-            
-            if ((lastY <= headerHeight) && (currentY > headerHeight) && (navigationController?.isNavigationBarHidden)!) {
+        var didHide = false
+        
+        if(currentY > lastYUsed) {
+            hideUI(inHeader: (currentY > headerHeight) )
+            didHide = true
+        } else if(currentY < lastYUsed + 20 && ((currentY > headerHeight) )){
+            showUI()
+        }
+        lastYUsed = currentY
+            if ((lastY <= headerHeight) && (currentY > headerHeight) && (navigationController?.isNavigationBarHidden)! && !didHide) {
                 (navigationController)?.setNavigationBarHidden(false, animated: true)
                 if(ColorUtil.theme == .LIGHT || ColorUtil.theme == .SEPIA){
                     UIApplication.shared.statusBarStyle = .lightContent
@@ -895,6 +917,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.navigationBar.isTranslucent = false
+        self.navigationController?.delegate = self
         self.automaticallyAdjustsScrollViewInsets = false
         var currentY = tableView.contentOffset.y;
         self.edgesForExtendedLayout = []
