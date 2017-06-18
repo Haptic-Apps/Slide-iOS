@@ -83,6 +83,35 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         }
     }
     
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        
+        var currentY = scrollView.contentOffset.y;
+        let headerHeight = CGFloat(70);
+        var didHide = false
+        
+        if(currentY > lastYUsed ) {
+            hideUI(inHeader: (currentY > headerHeight) )
+            didHide = true
+        } else if(currentY < lastYUsed + 20 && ((currentY > headerHeight))){
+            showUI()
+        }
+        lastYUsed = currentY
+        if ((lastY <= headerHeight) && (currentY > headerHeight) && (navigationController?.isNavigationBarHidden)! && !didHide) {
+            (navigationController)?.setNavigationBarHidden(false, animated: true)
+            if(ColorUtil.theme == .LIGHT || ColorUtil.theme == .SEPIA){
+                UIApplication.shared.statusBarStyle = .lightContent
+            }
+        }
+        
+        if ((lastY > headerHeight) && (currentY <= headerHeight) && !(navigationController?.isNavigationBarHidden)!) {
+            (navigationController)?.setNavigationBarHidden(true, animated: true)
+            if(ColorUtil.theme == .LIGHT || ColorUtil.theme == .SEPIA){
+                UIApplication.shared.statusBarStyle = .default
+            }
+        }
+        lastY = currentY
+    }
+
     func hideUI(inHeader: Bool){
         (navigationController)?.setNavigationBarHidden(true, animated: true)
         if(inHeader){
@@ -470,9 +499,6 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         
         self.automaticallyAdjustsScrollViewInsets = false
         tableView.contentInset = UIEdgeInsetsMake(40, 0, 0, 0)
-        
-
-        navigationController?.interactivePopGestureRecognizer?.delegate = self
 
         self.tableView.register(LinkCellView.classForCoder(), forCellReuseIdentifier: "cell")
         session = (UIApplication.shared.delegate as! AppDelegate).session
@@ -554,34 +580,6 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         tableView.reloadData(with: .automatic)
     }
     
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        
-            var currentY = scrollView.contentOffset.y;
-            let headerHeight = CGFloat(70);
-        var didHide = false
-        
-        if(currentY > lastYUsed) {
-            hideUI(inHeader: (currentY > headerHeight) )
-            didHide = true
-        } else if(currentY < lastYUsed + 20 && ((currentY > headerHeight) )){
-            showUI()
-        }
-        lastYUsed = currentY
-            if ((lastY <= headerHeight) && (currentY > headerHeight) && (navigationController?.isNavigationBarHidden)! && !didHide) {
-                (navigationController)?.setNavigationBarHidden(false, animated: true)
-                if(ColorUtil.theme == .LIGHT || ColorUtil.theme == .SEPIA){
-                    UIApplication.shared.statusBarStyle = .lightContent
-                }
-            }
-        
-            if ((lastY > headerHeight) && (currentY <= headerHeight) && !(navigationController?.isNavigationBarHidden)!) {
-                (navigationController)?.setNavigationBarHidden(true, animated: true)
-                if(ColorUtil.theme == .LIGHT || ColorUtil.theme == .SEPIA){
-                    UIApplication.shared.statusBarStyle = .default
-                }
-            }
-        lastY = currentY
-    }
     
     func doDisplaySidebar(_ sub: Subreddit){
         let alrController = UIAlertController(title: sub.displayName + "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", message: "\(sub.accountsActive) here now\n\(sub.subscribers) subscribers", preferredStyle: UIAlertControllerStyle.actionSheet)
@@ -919,7 +917,12 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         navigationController?.navigationBar.isTranslucent = false
         self.navigationController?.delegate = self
         self.automaticallyAdjustsScrollViewInsets = false
-        var currentY = tableView.contentOffset.y;
+        self.edgesForExtendedLayout = UIRectEdge.all
+        self.extendedLayoutIncludesOpaqueBars = true
+        
+        self.navigationController?.interactivePopGestureRecognizer?.delegate = self
+        
+        let currentY = tableView.contentOffset.y;
         self.edgesForExtendedLayout = []
         
         if (!first && (lastY <= 70) && (currentY > 70) && (navigationController?.isNavigationBarHidden)!) {
@@ -930,7 +933,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
 
         }
         
-        if (first || (lastY > 70) && (currentY <= 70) && !(navigationController?.isNavigationBarHidden)!) {
+        if (first || ((lastY > 70) && (currentY <= 70) && !(navigationController?.isNavigationBarHidden)!)) {
             (navigationController)?.setNavigationBarHidden(true, animated: true)
             if(ColorUtil.theme == .LIGHT || ColorUtil.theme == .SEPIA){
                 UIApplication.shared.statusBarStyle = .default
@@ -939,10 +942,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         first = false
         
         tableView.delegate = self
-        if let navigationController = self.navigationController as? ScrollingNavigationController {
-         //   navigationController.followScrollView(self.tableView, delay: 50.0)
-          //  navigationController.scrollingNavbarDelegate = self
-        }
+
         if(single){
             self.navigationController?.navigationBar.barTintColor = UIColor.white
             if(navigationController != nil){
@@ -1115,7 +1115,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         let link = self.links[(indexPath as NSIndexPath).row]
         cell.setLink(submission: link, parent: self, nav: self.navigationController)
         cell.delegate = self
-        if indexPath.row == self.links.count - 1 && !loading {
+        if indexPath.row == self.links.count - 1 && !loading && !nomore {
             self.loadMore()
         }
         
@@ -1123,6 +1123,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     }
     
     var loading = false
+    var nomore = false
     
     func loadMore(){
         if(!showing){
@@ -1356,6 +1357,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                             let values = PostFilter.filter(converted, previous: self.links)
                             self.links += values
                             self.paginator = listing.paginator
+                            self.nomore = !listing.paginator.hasMore()
                             DispatchQueue.main.async{
                                 do {
                                     if(reset){

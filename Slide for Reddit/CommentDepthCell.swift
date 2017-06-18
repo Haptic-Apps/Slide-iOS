@@ -18,8 +18,7 @@ protocol UZTextViewCellDelegate: class {
     func pushedSingleTap(_ cell: CommentDepthCell)
 }
 
-class CommentDepthCell: MarginedTableViewCell, UZTextViewDelegate, UIViewControllerPreviewingDelegate {
-    var textView: UZTextView = UZTextView()
+class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIViewControllerPreviewingDelegate {
     var moreButton: UIButton = UIButton()
     var sideView: UIView = UIView()
     var sideViewSpace: UIView = UIView()
@@ -31,70 +30,50 @@ class CommentDepthCell: MarginedTableViewCell, UZTextViewDelegate, UIViewControl
     var comment:RComment?
     var depth:Int = 0
     
-    func textView(_ textView: UZTextView, didLongTapLinkAttribute value: Any?) {
-        if let attr = value as? [String: Any]{
-            if let url = attr[NSLinkAttributeName] as? URL {
-                if parent != nil{
-                    let sheet = UIAlertController(title: url.absoluteString, message: nil, preferredStyle: .actionSheet)
-                    sheet.addAction(
-                        UIAlertAction(title: "Close", style: .cancel) { (action) in
-                            sheet.dismiss(animated: true, completion: nil)
-                        }
-                    )
-                    let open = OpenInChromeController.init()
-                    if(open.isChromeInstalled()){
-                        sheet.addAction(
-                            UIAlertAction(title: "Open in Chrome", style: .default) { (action) in
-                                _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
-                            }
-                        )
-                    }
-                    sheet.addAction(
-                        UIAlertAction(title: "Open in Safari", style: .default) { (action) in
-                            UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                            sheet.dismiss(animated: true, completion: nil)
-                        }
-                    )
-                    sheet.addAction(
-                        UIAlertAction(title: "Open", style: .default) { (action) in
-                            /* let controller = WebViewController(nibName: nil, bundle: nil)
-                             controller.url = url
-                             let nav = UINavigationController(rootViewController: controller)
-                             self.present(nav, animated: true, completion: nil)*/
-                        }
-                    )
-                    sheet.addAction(
-                        UIAlertAction(title: "Copy URL", style: .default) { (action) in
-                            UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
-                            sheet.dismiss(animated: true, completion: nil)
-                        }
-                    )
-                    parent?.present(sheet, animated: true, completion: nil)
+    func attributedLabel(_ label: TTTAttributedLabel!, didLongPressLinkWith url: URL!, at point: CGPoint) {
+        if parent != nil{
+            let sheet = UIAlertController(title: url.absoluteString, message: nil, preferredStyle: .actionSheet)
+            sheet.addAction(
+                UIAlertAction(title: "Close", style: .cancel) { (action) in
+                    sheet.dismiss(animated: true, completion: nil)
                 }
+            )
+            let open = OpenInChromeController.init()
+            if(open.isChromeInstalled()){
+                sheet.addAction(
+                    UIAlertAction(title: "Open in Chrome", style: .default) { (action) in
+                        _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
+                    }
+                )
             }
+            sheet.addAction(
+                UIAlertAction(title: "Open in Safari", style: .default) { (action) in
+                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    sheet.dismiss(animated: true, completion: nil)
+                }
+            )
+            sheet.addAction(
+                UIAlertAction(title: "Open", style: .default) { (action) in
+                    /* let controller = WebViewController(nibName: nil, bundle: nil)
+                     controller.url = url
+                     let nav = UINavigationController(rootViewController: controller)
+                     self.present(nav, animated: true, completion: nil)*/
+                }
+            )
+            sheet.addAction(
+                UIAlertAction(title: "Copy URL", style: .default) { (action) in
+                    UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
+                    sheet.dismiss(animated: true, completion: nil)
+                }
+            )
+            parent?.present(sheet, animated: true, completion: nil)
         }
     }
     
     var parent: CommentViewController?
     
-    func textView(_ textView: UZTextView, didClickLinkAttribute value: Any?) {
-        if((parent) != nil){
-            if let attr = value as? [String: Any] {
-                if let url = attr[NSLinkAttributeName] as? URL {
-                    parent?.doShow(url: url)
-                }
-            }
-        }
-    }
-    
-    func selectionDidEnd(_ textView: UZTextView) {
-    }
-    
-    func selectionDidBegin(_ textView: UZTextView) {
-        textView.cancelSelectedText()
-    }
-    
-    func didTapTextDoesNotIncludeLinkTextView(_ textView: UZTextView) {
+    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
+        parent?.doShow(url: url)
     }
     
     func upvote(){
@@ -107,14 +86,12 @@ class CommentDepthCell: MarginedTableViewCell, UZTextViewDelegate, UIViewControl
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        self.textView = UZTextView(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
-        self.textView.delegate = self
-        self.textView.isUserInteractionEnabled = true
-        self.textView.backgroundColor = .clear
         
         self.title = TTTAttributedLabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
         title.numberOfLines = 0
         title.font = FontGenerator.fontOfSize(size: 12, submission: false)
+        title.isUserInteractionEnabled = true
+        title.delegate = self
         title.textColor = ColorUtil.fontColor
         
         self.children = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 15))
@@ -142,7 +119,6 @@ class CommentDepthCell: MarginedTableViewCell, UZTextViewDelegate, UIViewControl
         c.clipsToBounds = true
         
         moreButton.translatesAutoresizingMaskIntoConstraints = false
-        textView.translatesAutoresizingMaskIntoConstraints = false
         sideView.translatesAutoresizingMaskIntoConstraints = false
         sideViewSpace.translatesAutoresizingMaskIntoConstraints = false
         topViewSpace.translatesAutoresizingMaskIntoConstraints = false
@@ -151,7 +127,6 @@ class CommentDepthCell: MarginedTableViewCell, UZTextViewDelegate, UIViewControl
         children.translatesAutoresizingMaskIntoConstraints = false
         c.translatesAutoresizingMaskIntoConstraints = false
         
-        self.contentView.addSubview(textView)
         self.contentView.addSubview(moreButton)
         self.contentView.addSubview(sideView)
         self.contentView.addSubview(sideViewSpace)
@@ -166,18 +141,15 @@ class CommentDepthCell: MarginedTableViewCell, UZTextViewDelegate, UIViewControl
       //  tap.cancelsTouchesInView = false
       //  self.contentView.addGestureRecognizer(tap)
         
-        let tap2 = UITapGestureRecognizer(target: self, action: #selector(self.vote))
-          tap2.cancelsTouchesInView = false
-        tap2.numberOfTapsRequired = 2
+        let tap2 = UISwipeGestureRecognizer(target: self, action: #selector(self.vote))
+        tap2.direction = .right
          self.contentView.addGestureRecognizer(tap2)
 
-        
-        let tap = UISwipeGestureRecognizer(target: self, action: #selector(self.pushedSingleTap(_:)))
-        tap.cancelsTouchesInView = false
-        tap.direction = UISwipeGestureRecognizerDirection.right
-        self.contentView.addGestureRecognizer(tap)
+        let tapGestureRecognizer = UITapGestureRecognizer.init(target: self, action: #selector(self.pushedSingleTap(_:)))
+        tapGestureRecognizer.cancelsTouchesInView = false
+        tapGestureRecognizer.delegate = self
+        self.title.addGestureRecognizer(tapGestureRecognizer)
 
-        self.contentView.isUserInteractionEnabled = true
         self.contentView.backgroundColor = ColorUtil.foregroundColor
         sideViewSpace.backgroundColor = ColorUtil.backgroundColor
         topViewSpace.backgroundColor = ColorUtil.backgroundColor
@@ -185,6 +157,12 @@ class CommentDepthCell: MarginedTableViewCell, UZTextViewDelegate, UIViewControl
         self.clipsToBounds = true
     }
     
+    override func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        if(gestureRecognizer.view == self.title){
+            return self.title.link(at: touch.location(in: self.title)) == nil
+        }
+        return true
+    }
     func vote(){
         if(content is RComment){
         let current = ActionStates.getVoteDirection(s: comment!)
@@ -208,14 +186,13 @@ class CommentDepthCell: MarginedTableViewCell, UZTextViewDelegate, UIViewControl
             try parent?.session?.setVote(direction, name: (comment!.name), completion: { (result) -> Void in
                 switch result {
                 case .failure(let error):
-                    print(error)
-                case .success(let check):
-                    print(check)
+                    print(error.description)
+                case .success(let check): break
                 }
             })
         } catch { print(error) }
         ActionStates.setVoteDirection(s: comment!, direction: direction)
-        refresh(comment: content as! RComment, submissionAuthor: savedAuthor)
+        refresh(comment: content as! RComment, submissionAuthor: savedAuthor, text: cellContent!)
         }
     }
     
@@ -283,7 +260,7 @@ class CommentDepthCell: MarginedTableViewCell, UZTextViewDelegate, UIViewControl
             self.contentView.removeConstraints(sideConstraint!)
         }
         let metrics=["topMargin": topMargin, "ntopMargin": -topMargin, "horizontalMargin":75,"top":0,"bottom":0,"separationBetweenLabels":0,"labelMinHeight":75, "sidewidth":4*(depth ), "width":sideWidth]
-        let views=["text":textView, "title": title, "menu":menu, "topviewspace":topViewSpace, "more": moreButton, "side":sideView, "cell":self.contentView, "sideviewspace":sideViewSpace] as [String : Any]
+        let views=["title": title, "menu":menu, "topviewspace":topViewSpace, "more": moreButton, "side":sideView, "cell":self.contentView, "sideviewspace":sideViewSpace] as [String : Any]
         
         
         sideConstraint = NSLayoutConstraint.constraints(withVisualFormat: "H:|-(-8)-[sideviewspace(sidewidth)]-0-[side(width)]",
@@ -301,17 +278,13 @@ class CommentDepthCell: MarginedTableViewCell, UZTextViewDelegate, UIViewControl
         super.updateConstraints()
         
         let metrics=["topMargin": topMargin, "ntopMargin": -topMargin, "horizontalMargin":75,"top":0,"bottom":0,"separationBetweenLabels":0,"labelMinHeight":75, "sidewidth":4*(depth ), "width":sideWidth]
-        let views=["text":textView, "title": title, "children":c, "menu":menu, "topviewspace":topViewSpace, "more": moreButton, "side":sideView, "cell":self.contentView, "sideviewspace":sideViewSpace] as [String : Any]
+        let views=["title": title, "children":c, "menu":menu, "topviewspace":topViewSpace, "more": moreButton, "side":sideView, "cell":self.contentView, "sideviewspace":sideViewSpace] as [String : Any]
         
         
         
         contentView.bounds = CGRect.init(x: 0,y: 0, width: contentView.frame.size.width , height: contentView.frame.size.height + CGFloat(topMargin))
         
         var constraint:[NSLayoutConstraint] = []
-        constraint = NSLayoutConstraint.constraints(withVisualFormat: "H:|-(-8)-[sideviewspace]-0-[side]-10-[text]-2-|",
-                                                    options: NSLayoutFormatOptions(rawValue: 0),
-                                                    metrics: metrics,
-                                                    views: views)
         
         constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(-8)-[sideviewspace]-0-[side]-8-[title]-2-|",
                                                                      options: NSLayoutFormatOptions(rawValue: 0),
@@ -326,7 +299,7 @@ class CommentDepthCell: MarginedTableViewCell, UZTextViewDelegate, UIViewControl
                                                                      metrics: metrics,
                                                                      views: views))
         
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[topviewspace(topMargin)]-2-[title]-4-[text]-2-|",
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[topviewspace(topMargin)]-2-[title]-2-|",
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                                     metrics: metrics,
                                                                     views: views))
@@ -389,7 +362,6 @@ class CommentDepthCell: MarginedTableViewCell, UZTextViewDelegate, UIViewControl
             sideWidth = 0
         }
         
-        title.text = ""
         var attr = NSMutableAttributedString()
         if(more.children.isEmpty){
             attr = NSMutableAttributedString(string: "Continue this thread")
@@ -398,7 +370,7 @@ class CommentDepthCell: MarginedTableViewCell, UZTextViewDelegate, UIViewControl
         }
         let font = FontGenerator.fontOfSize(size: 16, submission: false)
         let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: .white)
-        textView.attributedString = attr2
+        title.setText(attr2)
         updateDepthConstraints()
     }
     
@@ -411,7 +383,7 @@ class CommentDepthCell: MarginedTableViewCell, UZTextViewDelegate, UIViewControl
         let attr2 = NSMutableAttributedString(attributedString: attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: UIColor.blue))
         
         
-        textView.attributedString = attr2
+        title.setText(attr2)
         
         /* possibly todo var timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { (timer) in
          print("Firing")
@@ -430,8 +402,9 @@ class CommentDepthCell: MarginedTableViewCell, UZTextViewDelegate, UIViewControl
     }
     
     
-    func setComment(comment: RComment, depth: Int, parent: CommentViewController, hiddenCount: Int, date: Double, author: String?){
+    func setComment(comment: RComment, depth: Int, parent: CommentViewController, hiddenCount: Int, date: Double, author: String?, text: CellContent){
         self.comment = comment
+        self.cellContent = text
         self.contentView.backgroundColor = ColorUtil.foregroundColor
         loading = false
         if(self.parent == nil){
@@ -471,18 +444,21 @@ class CommentDepthCell: MarginedTableViewCell, UZTextViewDelegate, UIViewControl
             sideWidth = 0
         }
         
-        refresh(comment: comment, submissionAuthor: author)
+        
+        refresh(comment: comment, submissionAuthor: author, text: text)
         
         if(!registered){
-            parent.registerForPreviewing(with: self, sourceView: textView)
+            parent.registerForPreviewing(with: self, sourceView: title)
             registered = true
         }
         updateDepthConstraints()
         
     }
     
+    var cellContent: CellContent?
+    
     var savedAuthor: String = ""
-    func refresh(comment: RComment, submissionAuthor: String?){
+    func refresh(comment: RComment, submissionAuthor: String?, text: CellContent){
         var color: UIColor
         
         savedAuthor = submissionAuthor!
@@ -560,10 +536,21 @@ class CommentDepthCell: MarginedTableViewCell, UZTextViewDelegate, UIViewControl
             }
         }
         
-        
-        
-        title.attributedText = infoString
+        infoString.append(NSAttributedString.init(string: "\n"))
+        infoString.append(text.attributedString)
+
+        if(!setLinkAttrs){
+        let activeLinkAttributes = NSMutableDictionary(dictionary: title.activeLinkAttributes)
+        activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.getColorForSub(sub: comment.subreddit)
+        title.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+        title.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+            setLinkAttrs = true
+        }
+        title.setText(infoString)
+
     }
+    
+    var setLinkAttrs = false
     
     func setIsContext(){
         self.contentView.backgroundColor = GMColor.yellow500Color().withAlphaComponent(0.5)
@@ -606,10 +593,10 @@ class CommentDepthCell: MarginedTableViewCell, UZTextViewDelegate, UIViewControl
     func previewingContext(_ previewingContext: UIViewControllerPreviewing,
                            viewControllerForLocation location: CGPoint) -> UIViewController? {
         
-        let locationInTextView = textView.convert(location, to: textView)
+        let locationInTextView = title.convert(location, to: title)
         
         if let (url, rect) = getInfo(locationInTextView: locationInTextView) {
-            previewingContext.sourceRect = textView.convert(rect, from: textView)
+            previewingContext.sourceRect = title.convert(rect, from: title)
             if let controller = parent?.getControllerForUrl(baseUrl: url){
                 return controller
             }
@@ -619,11 +606,11 @@ class CommentDepthCell: MarginedTableViewCell, UZTextViewDelegate, UIViewControl
     }
     
     func getInfo(locationInTextView: CGPoint) -> (URL, CGRect)? {
-        if let attr = textView.attributes(at: locationInTextView) {
-            if let url = attr[NSLinkAttributeName] as? URL,
-                let value = attr[UZTextViewClickedRect] as? CGRect {
-                return (url, value)
+        if let attr = title.link(at: locationInTextView) {
+            if let url = attr.result.url {
+                return (url, title.bounds)
             }
+            
         }
         return nil
     }
@@ -650,10 +637,8 @@ class CommentDepthCell: MarginedTableViewCell, UZTextViewDelegate, UIViewControl
     }
     
     func pushedSingleTap(_ sender: AnyObject?) {
-        if(!textView.isTouching()){
         if let delegate = self.delegate {
             delegate.pushedSingleTap(self)
-        }
         }
     }
     

@@ -142,6 +142,16 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
                     }, videoURL: URL.init(string: link)!)
                 } else {
                     let photo = GalleryItem.image(fetchImageBlock: { (completion) in
+                        if(SDWebImageManager.shared().cachedImageExists(for: link)){
+                            DispatchQueue.main.async {
+                                var image = SDWebImageManager.shared().imageCache.imageFromDiskCache(forKey: link.absoluteString)
+                                self.image = image
+                                self.progressView?.setHidden(true, animated: true)
+                                self.size?.isHidden = true
+                                completion(image)
+                            }
+
+                        } else {
                         SDWebImageDownloader.shared().downloadImage(with: link, options: .allowInvalidSSLCertificates, progress: { (current:NSInteger, total:NSInteger) in
                             var average: Float = 0
                             average = (Float (current) / Float(total))
@@ -152,6 +162,7 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
                             self.size!.text = fileSize
                             self.progressView!.progress = average
                         }, completed: { (image, _, error, _) in
+                            SDWebImageManager.shared().saveImage(toCache: image, for: link)
                             DispatchQueue.main.async {
                                 self.image = image
                                 self.progressView?.setHidden(true, animated: true)
@@ -159,6 +170,7 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
                                 completion(image)
                             }
                         })
+                        }
                     })
                     photos.append(photo)
                 }

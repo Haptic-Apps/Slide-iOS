@@ -45,6 +45,7 @@ class SettingValues{
     public static let pref_bannerHidden = "BANNER_HIDDEN"
     public static let pref_centerLead = "CENTER_LEAD_IMAGE"
     public static let pref_largerThumbnail = "LARGER_THUMBNAIL"
+    public static let pref_scoreInTitle = "SCORE_IN_TITLE"
 
     public static var viewType = true
     public static var hiddenFAB = true
@@ -73,6 +74,7 @@ class SettingValues{
     public static var noImages = false
     public static var showLinkContentType = true
     public static var internalGifView = true
+    public static var scoreInTitle = false
     public static var internalAlbumView = true
     public static var internalImageView = true
     public static var forceExternalBrowserLinks : [String] = []
@@ -99,6 +101,8 @@ class SettingValues{
         SettingValues.bannerHidden = settings.bool(forKey: SettingValues.pref_bannerHidden)
         SettingValues.viewType = settings.bool(forKey: SettingValues.pref_viewType)
         SettingValues.centerLeadImage = settings.bool(forKey: SettingValues.pref_centerLead)
+        SettingValues.abbreviateScores = settings.bool(forKey: SettingValues.pref_abbreviateScores)
+        SettingValues.scoreInTitle = settings.bool(forKey: SettingValues.pref_scoreInTitle)
         SettingValues.hideButtonActionbar = settings.bool(forKey: SettingValues.pref_hideButtonActionbar)
         SettingValues.postViewMode = PostViewType.init(rawValue: settings.string(forKey: SettingValues.pref_postViewMode) ?? "list")!
     }

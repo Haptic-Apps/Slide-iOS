@@ -28,6 +28,14 @@ class SettingsLayout: UITableViewController {
 
     var largerThumbnailCell: UITableViewCell = UITableViewCell()
     var largerThumbnail = UISwitch()
+    
+    var scoreTitleCell: UITableViewCell = UITableViewCell()
+    var scoreTitle = UISwitch()
+
+    var abbreviateScoreCell: UITableViewCell = UITableViewCell()
+    var abbreviateScore = UISwitch()
+
+    var link = LinkCellView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -69,11 +77,66 @@ class SettingsLayout: UITableViewController {
         } else if(changed == largerThumbnail){
             SettingValues.largerThumbnail = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_largerThumbnail)
+        } else if(changed == abbreviateScore){
+            SettingValues.abbreviateScores = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_abbreviateScores)
+        } else if(changed == scoreTitle){
+            SettingValues.scoreInTitle = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_scoreInTitle)
         }
         UserDefaults.standard.synchronize()
         doDisables()
+        doLink()
+        tableView.reloadData()
     }
     
+    func doLink(){
+        link = LinkCellView()
+        let fakesub = RSubmission.init()
+        let calendar: NSCalendar! = NSCalendar(calendarIdentifier: NSCalendar.Identifier.gregorian)
+        let now: NSDate! = NSDate()
+        
+        let date0 = calendar.date(bySettingHour: 0, minute: 0, second: 0, of: now as Date, options: NSCalendar.Options.matchFirst)!
+        
+        fakesub.id = "234"
+        fakesub.name = "234"
+        fakesub.author = "ccrama"
+        fakesub.created = date0 as NSDate
+        fakesub.edited = NSDate(timeIntervalSince1970: 1)
+        fakesub.gilded = 0
+        fakesub.htmlBody = ""
+        fakesub.body = ""
+        fakesub.title = "Chameleons are cool!"
+        fakesub.subreddit = "all"
+        fakesub.archived = false
+        fakesub.locked = false
+        fakesub.urlString = "http://i.imgur.com/mAs9Lk3.png"
+        fakesub.distinguished = ""
+        fakesub.isEdited = false
+        fakesub.commentCount = 42
+        fakesub.saved = false
+        fakesub.stickied = false
+        fakesub.visited = false
+        fakesub.isSelf = false
+        fakesub.permalink = ""
+        fakesub.bannerUrl = "http://i.imgur.com/mAs9Lk3.png"
+        fakesub.thumbnailUrl = "http://i.imgur.com/mAs9Lk3s.png"
+        fakesub.lqUrl = "http://i.imgur.com/mAs9Lk3m.png"
+        fakesub.lQ = false
+        fakesub.thumbnail = true
+        fakesub.banner = true
+        fakesub.score = 52314
+        fakesub.flair = "Cool!"
+        fakesub.domain = "imgur.com"
+        fakesub.voted = false
+        fakesub.height = 288
+        fakesub.width = 636
+        fakesub.vote = false
+        
+        
+        self.link.setLinkForPreview(submission: fakesub)
+        self.link.isUserInteractionEnabled = false
+    }
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let label : UILabel = UILabel()
         label.textColor = ColorUtil.fontColor
@@ -82,9 +145,11 @@ class SettingsLayout: UITableViewController {
         toReturn.backgroundColor = ColorUtil.backgroundColor
         
         switch(section) {
-        case 0: label.text  = "Display"
+        case 0: label.text  = "Preview"
             break
-        case 1: label.text  = "Sorting"
+        case 1: label.text  = "Display"
+            break
+        case 2: label.text = "Actionbar"
             break
         default: label.text  = ""
             break
@@ -92,9 +157,13 @@ class SettingsLayout: UITableViewController {
         return toReturn
     }
     
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
     override func loadView() {
         super.loadView()
-        
+        doLink()
         self.view.backgroundColor = ColorUtil.backgroundColor
         // set the title
         self.title = "General"
@@ -153,6 +222,24 @@ class SettingsLayout: UITableViewController {
         largerThumbnailCell.textLabel?.textColor = ColorUtil.fontColor
         largerThumbnailCell.selectionStyle = UITableViewCellSelectionStyle.none
 
+        scoreTitle = UISwitch()
+        scoreTitle.isOn = SettingValues.scoreInTitle
+        scoreTitle.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+        scoreTitleCell.textLabel?.text = "Score and comments in title"
+        scoreTitleCell.accessoryView = scoreTitle
+        scoreTitleCell.backgroundColor = ColorUtil.foregroundColor
+        scoreTitleCell.textLabel?.textColor = ColorUtil.fontColor
+        scoreTitleCell.selectionStyle = UITableViewCellSelectionStyle.none
+
+        abbreviateScore = UISwitch()
+        abbreviateScore.isOn = SettingValues.abbreviateScores
+        abbreviateScore.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+        abbreviateScoreCell.textLabel?.text = "Abbreviate scores"
+        abbreviateScoreCell.accessoryView = abbreviateScore
+        abbreviateScoreCell.backgroundColor = ColorUtil.foregroundColor
+        abbreviateScoreCell.textLabel?.textColor = ColorUtil.fontColor
+        abbreviateScoreCell.selectionStyle = UITableViewCellSelectionStyle.none
+
         doDisables()
     }
     
@@ -168,13 +255,16 @@ class SettingsLayout: UITableViewController {
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return 3
     }
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 70
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if(indexPath.section == 0){
+            return link.estimateHeight(false)
+        }
         return 60
     }
     
@@ -185,13 +275,21 @@ class SettingsLayout: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch(indexPath.section) {
         case 0:
+            return link
+        case 1:
             switch(indexPath.row) {
             case 0: return self.cardModeCell
             case 1: return self.hideBannerImageCell
             case 2: return self.cropBigPicCell
             case 3: return self.centerLeadImageCell
-            case 4: return self.hideActionbarCell
-            case 5: return self.largerThumbnailCell
+            case 4: return self.largerThumbnailCell
+            default: fatalError("Unknown row in section 0")
+            }
+        case 2:
+            switch(indexPath.row) {
+            case 0: return self.hideActionbarCell
+            case 1: return self.scoreTitleCell
+            case 2: return self.abbreviateScoreCell
             default: fatalError("Unknown row in section 0")
             }
         default: fatalError("Unknown section")
@@ -229,53 +327,12 @@ class SettingsLayout: UITableViewController {
     }
     
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        if(indexPath.section == 1 && indexPath.row == 0){
-            let actionSheetController: UIAlertController = UIAlertController(title: "Default post sorting", message: "", preferredStyle: .actionSheet)
-            
-            let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
-                print("Cancel")
-            }
-            actionSheetController.addAction(cancelActionButton)
-            
-            for link in LinkSortType.cases {
-                let saveActionButton: UIAlertAction = UIAlertAction(title: link.description, style: .default)
-                { action -> Void in
-                    self.showTimeMenu(s: link)
-                }
-                actionSheetController.addAction(saveActionButton)
-            }
-            
-            self.present(actionSheetController, animated: true, completion: nil)
-        } else if(indexPath.section == 1 && indexPath.row == 1){
-            let actionSheetController: UIAlertController = UIAlertController(title: "Default comment sorting", message: "", preferredStyle: .actionSheet)
-            
-            let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
-                print("Cancel")
-            }
-            actionSheetController.addAction(cancelActionButton)
-            
-            for c in CommentSort.cases {
-                let saveActionButton: UIAlertAction = UIAlertAction(title: c.description, style: .default)
-                { action -> Void in
-                    SettingValues.defaultCommentSorting = c
-                    UserDefaults.standard.set(c.type, forKey: SettingValues.pref_defaultCommentSorting)
-                    UserDefaults.standard.synchronize()
-                }
-                actionSheetController.addAction(saveActionButton)
-            }
-            
-            self.present(actionSheetController, animated: true, completion: nil)
-        }
-        
-    }
-    
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch(section) {
-        case 0: return 6    // section 0 has 2 rows
-        case 1: return 2    // section 1 has 1 row
+        case 0: return 1    // section 0 has 2 rows
+        case 1: return 5    // section 1 has 1 row
+        case 2: return 3
         default: fatalError("Unknown number of sections")
         }
     }

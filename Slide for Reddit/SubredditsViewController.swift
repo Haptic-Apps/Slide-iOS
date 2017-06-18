@@ -126,11 +126,9 @@ class SubredditsViewController:  PagingMenuController {
         if(Subscriptions.subreddits.contains(subreddit)){
             let index = Subscriptions.subreddits.index(of: subreddit)
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForUser(name: subreddit)
-           //todo  self.buttonBarView.backgroundColor = self.navigationController?.navigationBar.barTintColor
             move(toPage: index!)
         } else {
             show(RedditLink.getViewControllerForURL(urlS: URL.init(string: "/r/" + subreddit)!), sender: self)
-            (navigationController as? ScrollingNavigationController)?.showNavbar(animated: true)
         }
         menuLeftNavigationController?.dismiss(animated: true, completion: nil)
     }
@@ -227,7 +225,6 @@ class SubredditsViewController:  PagingMenuController {
         // Enable gestures. The left and/or right menus must be set up above for these to work.
         // Note that these continue to work on the Navigation Controller independent of the View Controller it displays!
         SideMenuManager.menuAddScreenEdgePanGesturesToPresent(toView: self.view, forMenu: UIRectEdge.left)
-        SideMenuManager.menuAddScreenEdgePanGesturesToPresent(toView: self.navigationController!.view, forMenu: UIRectEdge.left) //todo check thi out
         
         if(SubredditsViewController.viewControllers.count == 1){
             for subname in Subscriptions.subreddits {

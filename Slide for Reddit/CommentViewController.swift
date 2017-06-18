@@ -16,7 +16,7 @@ import RealmSwift
 import MaterialComponents.MaterialSnackbar
 import MaterialComponents.MDCProgressView
 
-class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, UZTextViewCellDelegate, LinkCellViewDelegate, UISearchBarDelegate {
+class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, UZTextViewCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate {
     
     internal func pushedMoreButton(_ cell: CommentDepthCell) {
         
@@ -611,6 +611,13 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         (navigationController)?.setNavigationBarHidden(false, animated: false)
+        self.navigationController?.delegate = self
+        self.automaticallyAdjustsScrollViewInsets = false
+        self.edgesForExtendedLayout = UIRectEdge.all
+        self.extendedLayoutIncludesOpaqueBars = true
+        
+        self.navigationController?.interactivePopGestureRecognizer?.delegate = self
+
         if(navigationController != nil){
         self.updateToolbar()
         }
@@ -1369,7 +1376,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 let upvote = BGTableViewRowActionWithImage.rowAction(with: .normal, title: "    ", backgroundColor: UIColor.init(hexString: "#FF9800"), image: upimg, forCellHeight: UInt(cell.contentView.frame.size.height)) { (action, indexPath) in
                     tableView.setEditing(false, animated: true)
                     self.vote(comment: cell.content! as! RComment, dir: .up)
-                    cell.refresh(comment: cell.content! as! RComment, submissionAuthor: (self.submission?.author)!)
+                    cell.refresh(comment: cell.content! as! RComment, submissionAuthor: (self.submission?.author)!, text: cell.cellContent!)
                 }
                 toReturn.append(upvote!)
                 
@@ -1377,7 +1384,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 let downvote = BGTableViewRowActionWithImage.rowAction(with: .normal, title: "    ", backgroundColor: UIColor.init(hexString: "#2196F3"), image: downimg, forCellHeight: UInt(cell.contentView.frame.size.height)) { (action, indexPath) in
                     tableView.setEditing(false, animated: true)
                     self.vote(comment: cell.content as! RComment, dir: .down)
-                    cell.refresh(comment: cell.content as! RComment, submissionAuthor: (self.submission?.author)!)
+                    cell.refresh(comment: cell.content as! RComment, submissionAuthor: (self.submission?.author)!, text: cell.cellContent!)
                 }
                 toReturn.append(downvote!)
                 
@@ -1402,12 +1409,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                         
                         let c = tableView.dequeueReusableCell(withIdentifier: "Reply", for: indexPath!) as! CommentDepthCell
                         self.isReply = true
-                        let text = self.isSearching ? self.filteredHeights[indexPath!.row] :  self.heightArray[indexPath!.row]
-                        c.textView.attributedString = text.attributedString
-                        c.textView.frame.size.height = text.textHeight
+                        c.title.attributedText = cell.title.attributedText
                         let gid = self.dataArray[indexPath!.row]
                         let id = gid is RComment ? (gid as! RComment).getId() : (gid as! RMore).getId()
-                        c.setComment(comment: self.dataArray[indexPath!.row] as! RComment, depth: self.cDepth[id] as! Int, parent: self, hiddenCount: 0, date: self.lastSeen, author: self.submission?.author)
+                        c.setComment(comment: self.dataArray[indexPath!.row] as! RComment, depth: self.cDepth[id] as! Int, parent: self, hiddenCount: 0, date: self.lastSeen, author: self.submission?.author, text: cell.cellContent!)
                         
                         let reply  = ReplyViewController.init(thing: cell.content!, sub: (self.submission?.subreddit)!, view: c.contentView) { (comment) in
                             DispatchQueue.main.async(execute: { () -> Void in
@@ -1496,6 +1501,32 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         return i
     }
     
+    var lastYUsed =  CGFloat(0)
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        
+        var currentY = scrollView.contentOffset.y;
+        let headerHeight = CGFloat(70);
+        var didHide = false
+        
+        if(currentY > lastYUsed ) {
+            hideUI(inHeader: (currentY > headerHeight) )
+            didHide = true
+        } else if((currentY < 70 || currentY < lastYUsed + 20)){
+            showUI()
+        }
+        lastYUsed = currentY
+    }
+    
+    func hideUI(inHeader: Bool){
+        (navigationController)?.setNavigationBarHidden(true, animated: true)
+    }
+    
+    func showUI(){
+        (navigationController)?.setNavigationBarHidden(false, animated: true)
+    }
+    
+
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell: UITableViewCell! = nil
@@ -1510,13 +1541,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 let thing = isSearching ? filteredData[datasetPosition] : dataArray[datasetPosition]
                 if(thing is RComment){
                     let text = isSearching ? filteredHeights[datasetPosition] :  heightArray[datasetPosition]
-                    cell.textView.attributedString = text.attributedString
-                    cell.textView.frame.size.height = text.textHeight
                     var count = 0
                     if(hiddenPersons.contains((thing as! RComment).getId())){
                         count = getChildNumber(n: thing as! RComment)
                     }
-                    cell.setComment(comment: thing as! RComment, depth: cDepth[(thing as! RComment).getId()] as! Int, parent: self, hiddenCount: count, date: lastSeen, author: submission?.author)
+                    cell.setComment(comment: thing as! RComment, depth: cDepth[(thing as! RComment).getId()] as! Int, parent: self, hiddenCount: count, date: lastSeen, author: submission?.author, text: text)
                 } else {
                     cell.setMore(more: (thing as! RMore), depth: cDepth[(thing as! RMore).getId()] as! Int)
                 }
