@@ -24,7 +24,7 @@ class InboxContributionLoader: ContributionLoader {
         content = []
         color = ColorUtil.getColorForSub(sub: "")
         messages = whereContent
-        displayMode = MenuItemDisplayMode.text(title: MenuItemText.init(text: whereContent.description, color: UIColor.white, selectedColor: UIColor.white, font: UIFont.systemFont(ofSize: 12), selectedFont: UIFont.systemFont(ofSize: 12)))
+        displayMode = MenuItemDisplayMode.text(title: MenuItemText.init(text: whereContent.description, color: UIColor.white, selectedColor: ColorUtil.getColorForSub(sub: ""), font: UIFont.systemFont(ofSize: 12), selectedFont: UIFont.boldSystemFont(ofSize:  12)))
     }
     
     

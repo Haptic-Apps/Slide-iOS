@@ -218,10 +218,7 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
         } else if(type == ContentType.CType.REDDIT){
             return RedditLink.getViewControllerForURL(urlS: contentUrl!)
         } else if(type == ContentType.CType.VIDEO){
-            print("Showing youtube")
-            
-            let hash = getYouTubeHash(urlS: contentUrl!)
-            //todo
+            return YouTubeViewController.init(bUrl: contentUrl!, parent: self)
         }
         return WebsiteViewController(url: baseUrl, subreddit: link == nil ? "" : link.subreddit)
     }
@@ -343,6 +340,8 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
         let controller = getControllerForUrl(baseUrl: url)!
         if(controller is GalleryViewController){
             presentImageGallery(controller as! GalleryViewController)
+        } else if( controller is YouTubeViewController){
+            present(controller, animated: false, completion: nil)
         } else {
         show(controller, sender: self)
         }

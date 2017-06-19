@@ -103,6 +103,7 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "$BUILT_PRODUCTS_DIR/TTTAttributedLabel/TTTAttributedLabel.framework"
   install_framework "$BUILT_PRODUCTS_DIR/UZTextView/UZTextView.framework"
   install_framework "$BUILT_PRODUCTS_DIR/reddift/reddift.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/youtube-ios-player-helper/youtube_ios_player_helper.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "$BUILT_PRODUCTS_DIR/AMScrollingNavbar/AMScrollingNavbar.framework"
@@ -124,4 +125,5 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "$BUILT_PRODUCTS_DIR/TTTAttributedLabel/TTTAttributedLabel.framework"
   install_framework "$BUILT_PRODUCTS_DIR/UZTextView/UZTextView.framework"
   install_framework "$BUILT_PRODUCTS_DIR/reddift/reddift.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/youtube-ios-player-helper/youtube_ios_player_helper.framework"
 fi

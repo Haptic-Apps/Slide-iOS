@@ -12,6 +12,7 @@ import PagingMenuController
 import SideMenu
 import AMScrollingNavbar
 import reddift
+import MaterialComponents.MaterialSnackbar
 
 
 class SubredditsViewController:  PagingMenuController {
@@ -25,11 +26,18 @@ class SubredditsViewController:  PagingMenuController {
         var isScrollEnabled: Bool {
             return false
         }
+        var lazyLoadingPage: LazyLoadingPage {
+            return LazyLoadingPage.one
+        }
     }
     struct PagingMenuOptionsBar: PagingMenuControllerCustomizable {
         var componentType: ComponentType {
             return .all(menuOptions: MenuOptions(), pagingControllers:viewControllers)
         }
+        var lazyLoadingPage: LazyLoadingPage {
+            return LazyLoadingPage.one
+        }
+
     }
     struct MenuItem: MenuItemViewCustomizable {
         var horizontalMargin = 10
@@ -77,7 +85,7 @@ class SubredditsViewController:  PagingMenuController {
             return .underline(height: 3, color: ColorUtil.accentColorForSub(sub: current), horizontalPadding: 0, verticalPadding: 0)
         }
         var dummyItemViewsSet: Int {
-            return 3
+            return 1
         }
         var menuPosition: MenuPosition {
             return .top
@@ -97,6 +105,46 @@ class SubredditsViewController:  PagingMenuController {
         
         self.navigationController?.navigationBar.shadowImage = UIImage()
         self.navigationController?.navigationBar.barTintColor = self.tintColor
+        
+        if(AccountController.isLoggedIn){
+            checkForMail()
+        }
+    }
+    
+    func checkForMail(){
+        let lastMail = UserDefaults.standard.integer(forKey: "mail")
+        let session = (UIApplication.shared.delegate as! AppDelegate).session
+
+            do {
+                try session?.getProfile({ (result) in
+            switch(result){
+            case .failure(let error):
+                print(error)
+            case .success(let profile):
+                let unread = profile.inboxCount
+                let diff = unread - lastMail
+                DispatchQueue.main.async {
+                    if(diff > 0){
+                        let action = MDCSnackbarMessageAction()
+                        let actionHandler = {() in
+                            let inbox = InboxViewController.init()
+                            self.show(inbox, sender: self)
+                        }
+                        action.handler = actionHandler
+                        action.title = "VIEW"
+                        let mes = MDCSnackbarMessage.init(text: "\(diff) new message\(diff > 1 ? "s" : "")!")
+                        mes?.action = action
+                        MDCSnackbarManager.show(mes)
+                        UserDefaults.standard.set(diff, forKey: "mail")
+                    }
+                }
+                break
+                
+                    }
+        })
+            } catch {
+            
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -105,11 +153,6 @@ class SubredditsViewController:  PagingMenuController {
             self.restartVC()
         }
         
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        (navigationController)?.setNavigationBarHidden(false, animated: true)
-
     }
     
     func addAccount(){
@@ -126,6 +169,7 @@ class SubredditsViewController:  PagingMenuController {
         if(Subscriptions.subreddits.contains(subreddit)){
             let index = Subscriptions.subreddits.index(of: subreddit)
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForUser(name: subreddit)
+            navigationController?.setNavigationBarHidden(true, animated: true)
             move(toPage: index!)
         } else {
             show(RedditLink.getViewControllerForURL(urlS: URL.init(string: "/r/" + subreddit)!), sender: self)
@@ -166,6 +210,8 @@ class SubredditsViewController:  PagingMenuController {
     }
     
     func restartVC(){
+        
+        SubredditReorderViewController.changed = true
     
         if(SettingValues.viewType){
             setup(PagingMenuOptionsBar() as PagingMenuControllerCustomizable)

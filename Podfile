@@ -21,6 +21,7 @@ pod 'MaterialComponents/ProgressView'
 pod 'MaterialComponents/ShadowElevations'
 pod 'MaterialComponents/Snackbar'
 pod 'MaterialComponents/ActivityIndicator'
+pod "youtube-ios-player-helper", "~> 0.1.4"
 
   pod 'UZTextView', :git => 'https://github.com/ccrama/UZTextView'
   pod 'ImageViewer', :git => 'https://github.com/ccrama/ImageViewer'

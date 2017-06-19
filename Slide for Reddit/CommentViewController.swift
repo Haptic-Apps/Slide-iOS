@@ -14,7 +14,7 @@ import AMScrollingNavbar
 import UZTextView
 import RealmSwift
 import MaterialComponents.MaterialSnackbar
-import MaterialComponents.MDCProgressView
+import MaterialComponents.MDCActivityIndicator
 
 class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, UZTextViewCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate {
     
@@ -221,7 +221,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     var cDepth: NSMutableDictionary = NSMutableDictionary()
     var comments: [Object] = []
     var hiddenPersons: [String] = []
-    var hidden: [String] = []
+    var hidden: Set<String> = Set<String>()
     var contents: [CellContent] = []
     weak var tableView : UITableView!
     var headerCell : LinkCellView?
@@ -286,7 +286,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                 self.hidden = []
                                 self.contents = []
                                 self.refreshControl.endRefreshing()
-                                self.progressViewA?.setHidden(true, animated: true)
+                                self.indicator.stopAnimating()
 
                                 DispatchQueue.global(qos: .background).async {
                                     self.submission!.comments.removeAll()
@@ -317,7 +317,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                         DispatchQueue.main.async {
                             
                             self.refreshControl.endRefreshing()
-                            self.progressViewA?.setHidden(true, animated: true)
+                            self.indicator.stopAnimating()
                             
                             if(self.comments.isEmpty){
                                 let message = MDCSnackbarMessage()
@@ -340,9 +340,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                         
                         self.submission = RealmDataWrapper.linkToRSubmission(submission: tuple.0.children[0] as! Link)
                         
-                        self.refreshControl.endRefreshing()
-                        self.progressViewA?.setHidden(true, animated: true)
-
                         DispatchQueue.global().async(execute: { () -> Void in
                             var allIncoming: [(Thing, Int)] = []
                             self.submission!.comments.removeAll()
@@ -409,6 +406,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                     self.headerCell?.refreshLink(self.submission!)
                                     self.headerCell?.showBody(width: self.view.frame.size.width)
                                 }
+                                self.refreshControl.endRefreshing()
+                                self.indicator.stopAnimating()
 
                                 self.tableView.reloadData(with: .top)
                                 
@@ -504,7 +503,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         self.present(actionSheetController, animated: true, completion: nil)
     }
     
-    var progressViewA: MDCProgressView?
+    var indicator: MDCActivityIndicator = MDCActivityIndicator()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -515,7 +514,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             print("Following scroll")
             // navigationController.followScrollView(self.tableView, delay: 50.0)
         }
-        
+
         searchBar.delegate = self
         searchBar.searchBarStyle = UISearchBarStyle.minimal
         searchBar.textColor = .white
@@ -529,14 +528,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "MoreCell")
         
         tableView.separatorStyle = .none
-        progressViewA = MDCProgressView()
-        progressViewA?.progress = 0.5
-        
-        let progressViewAHeight = CGFloat(5)
-        progressViewA?.frame = CGRect(x: 0, y: headerCell?.estimateHeight(true) ?? CGFloat(0), width: self.tableView.bounds.width, height: progressViewAHeight)
-
         refresh(self)
-        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -563,10 +555,19 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     let view = UIView(frame: tableHeaderView.frame)
                     view.addSubview(tableHeaderView)
                     self.tableView.tableHeaderView = view
-                    view.addSubview(progressViewA!)
-
                 }
+                indicator = MDCActivityIndicator.init(frame: CGRect.init(x: CGFloat(0), y: CGFloat(0), width: CGFloat(80), height: CGFloat(80)))
+                indicator.strokeWidth = 5
+                indicator.radius = 20
+                indicator.indicatorMode = .indeterminate
+                indicator.cycleColors = [ColorUtil.getColorForSub(sub: submission?.subreddit ?? ""), ColorUtil.accentColorForSub(sub: submission?.subreddit ?? "")]
+                var center = CGPoint.init(x: self.tableView.center.x, y: CGFloat(tableHeaderView.estimateHeight(true) + ((self.tableView.bounds.height - tableHeaderView.estimateHeight(true)) / 2)))
+                indicator.center = center
+                self.tableView.addSubview(indicator)
+                indicator.startAnimating()
+
             }
+
         }
     }
     
@@ -615,7 +616,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         self.automaticallyAdjustsScrollViewInsets = false
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
-        
+        tableView.contentInset = UIEdgeInsetsMake(56, 0, 0, 0)
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
 
         if(navigationController != nil){
@@ -632,22 +633,23 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             let more = UIButton.init(type: .custom)
             more.setImage(UIImage.init(named: "ic_more_vert_white"), for: UIControlState.normal)
             more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
-            more.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+            more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let moreB = UIBarButtonItem.init(customView: more)
             
             let sort = UIButton.init(type: .custom)
             sort.setImage(UIImage.init(named: "ic_sort_white"), for: UIControlState.normal)
             sort.addTarget(self, action: #selector(self.sort(_:)), for: UIControlEvents.touchUpInside)
-            sort.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+            sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let sortB = UIBarButtonItem.init(customView: sort)
             
             let search = UIButton.init(type: .custom)
             search.setImage(UIImage.init(named: "search")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
             search.addTarget(self, action: #selector(self.search(_:)), for: UIControlEvents.touchUpInside)
-            search.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+            search.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let searchB = UIBarButtonItem.init(customView: search)
             
             navigationItem.rightBarButtonItems = [moreB, sortB, searchB]
+            navigationItem.rightBarButtonItem?.imageInsets = UIEdgeInsetsMake(0, 0, 0, -20)
         }
         
             if let navigationController = navigationController as? ScrollingNavigationController {
@@ -1180,17 +1182,20 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
     
     func unhideAll(comment: Object, i : Int){
-        let counter = unhideNumber(n: comment, iB: i)
-        doArrays()
-        //notify inserted to counter from i
-        tableView.beginUpdates()
-        
-        var indexPaths : [IndexPath] = []
-        for row in (i+1)...counter{
-            indexPaths.append(IndexPath(row: row, section: 0))
+        DispatchQueue.global(qos: .background).async {
+            let counter = self.unhideNumber(n: comment, iB: i)
+            self.doArrays()
+            DispatchQueue.main.async {
+                self.tableView.beginUpdates()
+
+                var indexPaths : [IndexPath] = []
+                for row in (i+1)...counter{
+                    indexPaths.append(IndexPath(row: row, section: 0))
+                }
+                self.tableView.insertRows(at: indexPaths, with: .middle)
+                self.tableView.endUpdates()
+            }
         }
-        tableView.insertRows(at: indexPaths, with: .middle)
-        tableView.endUpdates()
     }
     
     func collapseAll(){
@@ -1210,16 +1215,20 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     
     func hideAll(comment: Object, i: Int){
-        let counter = hideNumber(n: comment, iB: i) - 1
-        doArrays()
-        tableView.beginUpdates()
-        
-        var indexPaths : [IndexPath] = []
-        for row in i...counter {
-            indexPaths.append(IndexPath(row: row, section: 0))
+        DispatchQueue.global(qos: .background).async {
+            let counter = self.hideNumber(n: comment, iB: i) - 1
+            self.doArrays()
+            DispatchQueue.main.async {
+                self.tableView.beginUpdates()
+                
+                var indexPaths : [IndexPath] = []
+                for row in i...counter {
+                    indexPaths.append(IndexPath(row: row, section: 0))
+                }
+                self.tableView.deleteRows(at: indexPaths, with: .middle)
+                self.tableView.endUpdates()
+            }
         }
-        tableView.deleteRows(at: indexPaths, with: .middle)
-        tableView.endUpdates()
         
         //notify inserted at i
     }
@@ -1478,9 +1487,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
             i += unhideNumber(n: ignored, iB: 0)
         }
-        self.hidden = self.hidden.filter({ (value) -> Bool in
-            return !toHide.contains(value)
-        })
+        for s in hidden {
+            if(toHide.contains(s)){
+                hidden.remove(s)
+            }
+        }
         return i
     }
     
@@ -1494,7 +1505,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             
                 if(!hidden.contains(name)){
                     i += 1
-                    hidden.append(name)
+                    hidden.insert(name)
                 }
             i += hideNumber(n: ignored, iB: 0)
         }
@@ -1509,7 +1520,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         let headerHeight = CGFloat(70);
         var didHide = false
         
-        if(currentY > lastYUsed ) {
+        if(currentY > lastYUsed && currentY > 0 ) {
             hideUI(inHeader: (currentY > headerHeight) )
             didHide = true
         } else if((currentY < 70 || currentY < lastYUsed + 20)){

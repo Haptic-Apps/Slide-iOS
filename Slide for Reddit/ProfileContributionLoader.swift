@@ -24,7 +24,7 @@ class ProfileContributionLoader: ContributionLoader {
         paginator = Paginator()
         content = []
         userContent = whereContent
-        displayMode = MenuItemDisplayMode.text(title: MenuItemText.init(text: userContent.title, color: UIColor.gray, selectedColor: UIColor.white, font: UIFont.systemFont(ofSize: 12), selectedFont: UIFont.boldSystemFont(ofSize: 12)))
+        displayMode = MenuItemDisplayMode.text(title: MenuItemText.init(text: userContent.title, color: UIColor.white, selectedColor: ColorUtil.getColorForUser(name: name), font: UIFont.systemFont(ofSize: 12), selectedFont: UIFont.boldSystemFont(ofSize: 12)))
     }
     
     

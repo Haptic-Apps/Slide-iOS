@@ -17,6 +17,7 @@ import UZTextView
 import RealmSwift
 import PagingMenuController
 import MaterialComponents.MaterialSnackbar
+import MaterialComponents.MDCActivityIndicator
 
 
 class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, ScrollingNavigationControllerDelegate, LinkCellViewDelegate, ColorPickerDelegate, KCFloatingActionButtonDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate {
@@ -347,7 +348,6 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     }
     
     var heightAtIndexPath = NSMutableDictionary()
-
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if let height = heightAtIndexPath.object(forKey: indexPath) as? NSNumber {
@@ -358,10 +358,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     }
     
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        if(navigationController!.viewControllers.count > 1){
-            return true
-        }
-        return false
+        return true
     }
     
     var sideMenu: UISideMenuNavigationController?
@@ -376,19 +373,31 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         self.view.addSubview(tableView)
         self.tableView.delegate = self
         self.tableView.dataSource = self
-        
+        refreshControl = UIRefreshControl()
+        self.tableView.contentOffset = CGPoint.init(x: 0, y: -self.refreshControl.frame.size.height)
+        indicator = MDCActivityIndicator.init(frame: CGRect.init(x: CGFloat(0), y: CGFloat(0), width: CGFloat(80), height: CGFloat(80)))
+        indicator.strokeWidth = 5
+        indicator.radius = 20
+        indicator.indicatorMode = .indeterminate
+        indicator.cycleColors = [ColorUtil.getColorForSub(sub: sub), ColorUtil.accentColorForSub(sub: sub)]
+        indicator.center = self.tableView.center
+        self.tableView.addSubview(indicator)
+        indicator.startAnimating()
+
+        reloadNeedingColor()
+    }
+    
+    func reloadNeedingColor(){
         tableView.backgroundColor = ColorUtil.backgroundColor
         tableView.separatorColor = ColorUtil.backgroundColor
         tableView.separatorInset = .zero
         
-        refreshControl = UIRefreshControl()
-        self.tableView.contentOffset = CGPoint.init(x: 0, y: -self.refreshControl.frame.size.height)
         refreshControl.tintColor = ColorUtil.fontColor
         refreshControl.attributedTitle = NSAttributedString(string: "")
         refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControlEvents.valueChanged)
         tableView.addSubview(refreshControl) // not required when using UITableViewController
         
-        var label = UILabel.init(frame: CGRect.init(x: 00, y: 0, width: self.tableView.bounds.width, height: 70))
+        let label = UILabel.init(frame: CGRect.init(x: 00, y: 0, width: self.tableView.bounds.width, height: 70))
         label.text =  "     \(sub)"
         label.textColor = ColorUtil.fontColor
         label.font = UIFont.boldSystemFont(ofSize: 35)
@@ -421,14 +430,14 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             subb.imageView?.tintColor = GMColor.green500Color()
         }
         
-         add = MDCFloatingButton.init(shape: .default)
+        add = MDCFloatingButton.init(shape: .default)
         add.backgroundColor = ColorUtil.getColorForSub(sub: sub)
         add.setImage(UIImage.init(named: "plus"), for: .normal)
         add.sizeToFit()
         add.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(add)
         
-         hide = MDCFloatingButton.init(shape: .mini)
+        hide = MDCFloatingButton.init(shape: .mini)
         hide.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
         hide.setImage(UIImage.init(named: "hide")?.imageResize(sizeChange: CGSize.init(width: 20, height: 20)), for: .normal)
         hide.sizeToFit()
@@ -499,7 +508,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         
         self.automaticallyAdjustsScrollViewInsets = false
         tableView.contentInset = UIEdgeInsetsMake(40, 0, 0, 0)
-
+        
         self.tableView.register(LinkCellView.classForCoder(), forCellReuseIdentifier: "cell")
         session = (UIApplication.shared.delegate as! AppDelegate).session
         if self.links.count == 0 && !single {
@@ -563,8 +572,8 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             fab!.sticky = true
             self.view.addSubview(fab!)
         }
-        
     }
+    
     var lastY: CGFloat = CGFloat(0)
     var add : MDCFloatingButton = MDCFloatingButton()
     var hide : MDCFloatingButton = MDCFloatingButton()
@@ -912,33 +921,25 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     
     
     var first = true
+    var indicator: MDCActivityIndicator = MDCActivityIndicator()
     
     override func viewWillAppear(_ animated: Bool) {
+
+        if(SubredditReorderViewController.changed){
+            self.reloadNeedingColor()
+            self.tableView.reloadData()
+        }
+        
         navigationController?.navigationBar.isTranslucent = false
         self.navigationController?.delegate = self
         self.automaticallyAdjustsScrollViewInsets = false
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
-        
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
         
         let currentY = tableView.contentOffset.y;
         self.edgesForExtendedLayout = []
         
-        if (!first && (lastY <= 70) && (currentY > 70) && (navigationController?.isNavigationBarHidden)!) {
-            (navigationController)?.setNavigationBarHidden(false, animated: true)
-            if(ColorUtil.theme == .LIGHT || ColorUtil.theme == .SEPIA){
-                UIApplication.shared.statusBarStyle = .lightContent
-            }
-
-        }
-        
-        if (first || ((lastY > 70) && (currentY <= 70) && !(navigationController?.isNavigationBarHidden)!)) {
-            (navigationController)?.setNavigationBarHidden(true, animated: true)
-            if(ColorUtil.theme == .LIGHT || ColorUtil.theme == .SEPIA){
-                UIApplication.shared.statusBarStyle = .default
-            }
-        }
         first = false
         
         tableView.delegate = self
@@ -985,6 +986,11 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
          } else {
          tableView.reloadData()
          }
+        (navigationController)?.setNavigationBarHidden(true, animated: true)
+        if(ColorUtil.theme == .LIGHT || ColorUtil.theme == .SEPIA){
+            UIApplication.shared.statusBarStyle = .default
+        }
+
     }
     
     func reloadDataReset(){
@@ -1112,12 +1118,14 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! LinkCellView
         
         cell.preservesSuperviewLayoutMargins = false
-        let link = self.links[(indexPath as NSIndexPath).row]
-        cell.setLink(submission: link, parent: self, nav: self.navigationController)
         cell.delegate = self
         if indexPath.row == self.links.count - 1 && !loading && !nomore {
             self.loadMore()
         }
+        
+        let link = self.links[(indexPath as NSIndexPath).row]
+        (cell).setLink(submission: link, parent: self, nav: self.navigationController)
+
         
         return cell
     }
@@ -1199,7 +1207,6 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     func refresh(){
         self.links = []
         reloadDataReset()
-        refreshControl.beginRefreshing()
         load(reset: true)
     }
     
@@ -1210,7 +1217,6 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         if(!loading){
             do {
                 loading = true
-                refreshControl.beginRefreshing()
                 if(reset){
                     paginator = Paginator()
                 }
@@ -1236,6 +1242,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                                         self.reloadDataReset()
                                     }
                                     self.refreshControl.endRefreshing()
+                                    self.indicator.stopAnimating()
                                     self.loading = false
                                     
                                     if(self.links.isEmpty){
@@ -1292,6 +1299,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                                 
                                 self.reloadDataReset()
                                 self.refreshControl.endRefreshing()
+                                self.indicator.stopAnimating()
                                 self.loading = false
                             }
                         }
@@ -1319,6 +1327,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                                         self.reloadDataReset()
                                     }
                                     self.refreshControl.endRefreshing()
+                                    self.indicator.stopAnimating()
                                     self.loading = false
                                     
                                     if(self.links.isEmpty){
@@ -1379,6 +1388,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                                 
                                 self.reloadDataReset()
                                 self.refreshControl.endRefreshing()
+                                self.indicator.stopAnimating()
                                 self.loading = false
                             }
                         }

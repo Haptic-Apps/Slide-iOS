@@ -23,6 +23,7 @@ class ProfileViewController:  PagingMenuController, ColorPickerDelegate {
         var componentType: ComponentType {
             return .all(menuOptions: MenuOptions(), pagingControllers:viewControllers)
         }
+        
     }
     struct MenuItem: MenuItemViewCustomizable {
         var horizontalMargin = 10
@@ -44,8 +45,9 @@ class ProfileViewController:  PagingMenuController, ColorPickerDelegate {
             color = c
         }
         
+        
         var displayMode: MenuDisplayMode {
-            return MenuDisplayMode.standard(widthMode: .flexible, centerItem: true, scrollingMode: MenuScrollingMode.scrollEnabled)
+            return MenuDisplayMode.segmentedControl
         }
         
         var backgroundColor: UIColor {
@@ -56,7 +58,7 @@ class ProfileViewController:  PagingMenuController, ColorPickerDelegate {
         }
         
         var height: CGFloat {
-            return 30
+            return 40
         }
         var animationDuration: TimeInterval {
             return 0.3
@@ -68,7 +70,7 @@ class ProfileViewController:  PagingMenuController, ColorPickerDelegate {
             return true
         }
         var focusMode: MenuFocusMode {
-            return .underline(height: 3, color: ColorUtil.accentColorForSub(sub: ""), horizontalPadding: 0, verticalPadding: 0)
+            return .roundRect(radius: 5, horizontalPadding: 5, verticalPadding: 5, selectedColor: .white)
         }
         var dummyItemViewsSet: Int {
             return 3
@@ -146,6 +148,7 @@ class ProfileViewController:  PagingMenuController, ColorPickerDelegate {
     }
 
     init(name: String){
+        ProfileViewController.viewControllers = []
         ProfileViewController.name = name
         self.session = (UIApplication.shared.delegate as! AppDelegate).session
         if let n = (session?.token.flatMap { (token) -> String? in
@@ -167,6 +170,17 @@ class ProfileViewController:  PagingMenuController, ColorPickerDelegate {
         ProfileViewController.viewControllers.remove(at: 0)
 
         super.init(options: PagingMenuOptionsBar())
+        
+        for view in (menuView?.subviews[0].subviews)! {
+            if(view is MenuItemView){
+                for viewchild in view.subviews {
+                    if(viewchild is UILabel){
+            viewchild.layer.borderWidth = 2
+            viewchild.layer.borderColor = UIColor.white.cgColor
+                    }
+                }
+            }
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -179,9 +193,7 @@ class ProfileViewController:  PagingMenuController, ColorPickerDelegate {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
     }
-    
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)

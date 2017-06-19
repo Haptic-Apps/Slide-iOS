@@ -208,7 +208,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     func estimateHeight(_ full: Bool) ->CGFloat {
         if(estimatedHeight == 0){
             if(full){
-               title.sizeToFit()
+                title.sizeToFit()
             }
             let he = title.frame.size.height + CGFloat(20)
             let thumbheight = CGFloat(SettingValues.largerThumbnail ? 75 : 50)
@@ -219,14 +219,14 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-    
+        
         self.thumbImage = UIImageView(frame: CGRect(x: 0, y: 8, width: (SettingValues.largerThumbnail ? 75 : 50), height: (SettingValues.largerThumbnail ? 75 : 50)))
         thumbImage.layer.cornerRadius = 15;
         thumbImage.backgroundColor = UIColor.white
         thumbImage.clipsToBounds = true;
         thumbImage.contentMode = .scaleAspectFill
         thumbImage.elevate(elevation: 2.0)
-
+        
         self.bannerImage = UIImageView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 0))
         bannerImage.contentMode = UIViewContentMode.scaleAspectFill
         bannerImage.layer.cornerRadius = 15;
@@ -235,12 +235,11 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         
         bannerImage.elevate(elevation: 2.0)
         
-
+        
         self.title = TTTAttributedLabel(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude));
         title.numberOfLines = 0
         title.lineBreakMode = NSLineBreakMode.byWordWrapping
         title.font = FontGenerator.fontOfSize(size: 18, submission: true)
-        title.textColor = ColorUtil.fontColor
         
         self.upvote = UIImageView(frame: CGRect(x: 0, y:0, width: 20, height: 20))
         upvote.image = UIImage.init(named: "upvote")?.withRenderingMode(.alwaysTemplate)
@@ -265,7 +264,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         self.more = UIImageView(frame: CGRect(x: 0, y:0, width: 20, height: 20))
         more.image = UIImage.init(named: "ic_more_vert_white")?.withRenderingMode(.alwaysTemplate)
         more.tintColor = ColorUtil.fontColor
-            
+        
         self.textView = UZTextView(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
         self.textView.delegate = self
         self.textView.isUserInteractionEnabled = true
@@ -277,7 +276,6 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         self.comments = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
         comments.numberOfLines = 1
         comments.font = FontGenerator.fontOfSize(size: 12, submission: true)
-        comments.textColor = ColorUtil.fontColor
         
         self.info = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
         info.numberOfLines = 2
@@ -329,7 +327,6 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         self.contentView.addSubview(box)
         self.contentView.addSubview(buttons)
         
-        self.contentView.backgroundColor = ColorUtil.foregroundColor
         self.updateConstraints()
         
         buttons.isUserInteractionEnabled = true
@@ -392,28 +389,28 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         self.contentView.layer.cornerRadius = CGFloat(radius)
         self.contentView.layer.masksToBounds = true
         self.backgroundColor = .clear
-
         
-         if(full){
-                buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:\(AccountController.isLoggedIn && AccountController.currentName == link?.author ? "[edit(20)]-8-" : "")[reply(20)]-8-[save(20)]-8-[upvote(20)]-8-[downvote(20)]-8-[more(20)]-0-|",
-                    options: NSLayoutFormatOptions(rawValue: 0),
-                    metrics: metrics,
-                    views: views2))
-            } else {
-                buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[save(20)]-8-[upvote(20)]-8-[downvote(20)]-8-[more(20)]-0-|",
-                                                                      options: NSLayoutFormatOptions(rawValue: 0),
-                                                                      metrics: metrics,
-                                                                      views: views2))
-            }
-            buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[upvote(20)]-|",
+        
+        if(full){
+            buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:\(AccountController.isLoggedIn && AccountController.currentName == link?.author ? "[edit(20)]-8-" : "")[reply(20)]-8-[save(20)]-8-[upvote(20)]-8-[downvote(20)]-8-[more(20)]-0-|",
+                options: NSLayoutFormatOptions(rawValue: 0),
+                metrics: metrics,
+                views: views2))
+        } else {
+            buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[save(20)]-8-[upvote(20)]-8-[downvote(20)]-8-[more(20)]-0-|",
                                                                   options: NSLayoutFormatOptions(rawValue: 0),
                                                                   metrics: metrics,
                                                                   views: views2))
-            
-            buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[downvote(20)]-|",
-                                                                  options: NSLayoutFormatOptions(rawValue: 0),
-                                                                  metrics: metrics,
-                                                                  views: views2))
+        }
+        buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[upvote(20)]-|",
+                                                              options: NSLayoutFormatOptions(rawValue: 0),
+                                                              metrics: metrics,
+                                                              views: views2))
+        
+        buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[downvote(20)]-|",
+                                                              options: NSLayoutFormatOptions(rawValue: 0),
+                                                              metrics: metrics,
+                                                              views: views2))
         
         buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[save(20)]-|",
                                                               options: NSLayoutFormatOptions(rawValue: 0),
@@ -432,7 +429,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                               metrics: metrics,
                                                               views: views2))
         self.contentView.addConstraints(thumbConstraint)
-
+        
     }
     
     func getHeightFromAspectRatio(imageHeight:Int, imageWidth: Int) -> Int {
@@ -529,18 +526,6 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         infoString.append(NSAttributedString.init(string: "\n"))
         infoString.append(attributedTitle)
         
-        if(SettingValues.scoreInTitle){
-            infoString.append(NSAttributedString.init(string: "\n"))
-            var scoreString: NSAttributedString = NSAttributedString()
-            if(SettingValues.abbreviateScores){
-               let text = (submission.score>=10000 && SettingValues.abbreviateScores) ? String(format: "%0.1fk ", (Double(submission.score)/Double(1000))) : " \(submission.score)"
-                scoreString = NSMutableAttributedString(string: "\(submission.commentCount)cmts \(text)pts", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
-            }  else {
-            scoreString = NSMutableAttributedString(string: "\(submission.commentCount)cmts \(submission.score)pts", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
-            }
-            infoString.append(scoreString)
-        }
-        
         title.attributedText = infoString
         
         let comment = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openComment(sender:)))
@@ -551,8 +536,8 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             title.sizeToFit()
         }
         refresh()
-
-      
+        
+        
         let more = History.commentsSince(s: submission)
         let commentText = NSMutableAttributedString(string: " \(submission.commentCount)" + (more > 0 ? " (+\(more))" : ""), attributes: [NSFontAttributeName: comments.font, NSForegroundColorAttributeName: comments.textColor])
         
@@ -566,6 +551,10 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     var link: RSubmission?
     
     func setLink(submission: RSubmission, parent: MediaViewController, nav: UIViewController?){
+        self.contentView.backgroundColor = ColorUtil.foregroundColor
+        comments.textColor = ColorUtil.fontColor
+        title.textColor = ColorUtil.fontColor
+        
         parentViewController = parent
         full = parent is CommentViewController
         self.link = submission
@@ -651,13 +640,26 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         infoString.append(endString)
         infoString.append(NSAttributedString.init(string: "\n"))
         infoString.append(attributedTitle)
+        if(SettingValues.scoreInTitle){
+            infoString.append(NSAttributedString.init(string: "\n"))
+            var scoreString: NSAttributedString = NSAttributedString()
+            if(SettingValues.abbreviateScores){
+                let text = (submission.score>=10000 && SettingValues.abbreviateScores) ? String(format: "%0.1fk ", (Double(submission.score)/Double(1000))) : " \(submission.score)"
+                scoreString = NSMutableAttributedString(string: "\(submission.commentCount)cmts \(text)pts", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
+            }  else {
+                scoreString = NSMutableAttributedString(string: "\(submission.commentCount)cmts \(submission.score)pts", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
+            }
+            infoString.append(scoreString)
+        }
+        
+        
         if(SettingValues.postViewMode == .CARD && !full){
-            infoString.append(NSAttributedString.init(string: "\nasedf"))
+            infoString.append(NSAttributedString.init(string: "\n "))
         }
         
         title.attributedText = infoString
         title.sizeToFit()
-
+        
         reply.isHidden = true
         
         if(submission.archived || !AccountController.isLoggedIn){
@@ -699,7 +701,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         }
         
         height = submission.height
-
+        
         var type = ContentType.getContentType(baseUrl: submission.url!)
         if(submission.isSelf){
             type = .SELF
@@ -709,7 +711,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             big = false
             thumb = true
         }
-
+        
         if(thumb && type == .SELF){
             thumb = false
         }
@@ -841,7 +843,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             registered = true
         }
         
-        let metrics=["horizontalMargin":75,"top":0,"bottom":0,"separationBetweenLabels":0,"labelMinHeight":75,  "thumb": (SettingValues.largerThumbnail ? 75 : 50), "bannerHeight": height] as [String: Int]
+        let metrics=["horizontalMargin":75,"top":0,"bottom":0,"separationBetweenLabels":0,"size": full ? 16 : 8, "labelMinHeight":75,  "thumb": (SettingValues.largerThumbnail ? 75 : 50), "bannerHeight": height] as [String: Int]
         let views=["label":title, "body": textView, "image": thumbImage, "info": b, "upvote": upvote, "downvote" : downvote, "score": score, "comments": comments, "banner": bannerImage, "buttons":buttons, "box": box] as [String : Any]
         var bt = "[buttons]-8-"
         var bx = "[box]-8-"
@@ -849,12 +851,12 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             bt = "[buttons(0)]-4-"
             bx = "[box(0)]-4-"
         }
-                    if(thumb && !big){
-                if(old != .normal_thumb){
-                    if(!thumbConstraint.isEmpty){
-                        self.contentView.removeConstraints(thumbConstraint)
-                        thumbConstraint = []
-                    }
+        if(thumb && !big){
+            if(old != .normal_thumb){
+                if(!thumbConstraint.isEmpty){
+                    self.contentView.removeConstraints(thumbConstraint)
+                    thumbConstraint = []
+                }
                 thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[image(thumb)]",
                                                                                   options: NSLayoutFormatOptions(rawValue: 0),
                                                                                   metrics: metrics,
@@ -866,31 +868,31 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                                                   views: views))
                 
                 
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[label(>=60)]-10-\(bx)|",
-                                                                                  options: NSLayoutFormatOptions(rawValue: 0),
-                                                                                  metrics: metrics,
-                                                                                  views: views))
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[label]-10-\(bx)|",
+                    options: NSLayoutFormatOptions(rawValue: 0),
+                    metrics: metrics,
+                    views: views))
                 thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[image]-(>=4)-\(bt)|",
-                                                                                  options: NSLayoutFormatOptions(rawValue: 0),
-                                                                                  metrics: metrics,
-                                                                                  views: views))
-                    old = .normal_thumb
-
+                    options: NSLayoutFormatOptions(rawValue: 0),
+                    metrics: metrics,
+                    views: views))
+                old = .normal_thumb
+                
+            }
+            
+        } else if(big) {
+            
+            
+            if(old != .normal_big || bigConstraint != nil){
+                if(!thumbConstraint.isEmpty){
+                    self.contentView.removeConstraints(thumbConstraint)
+                    thumbConstraint = []
                 }
                 
-            } else if(big) {
+                if(bigConstraint != nil){
+                    thumbConstraint.append(bigConstraint!)
+                }
                 
-
-                if(old != .normal_big || bigConstraint != nil){
-                    if(!thumbConstraint.isEmpty){
-                        self.contentView.removeConstraints(thumbConstraint)
-                        thumbConstraint = []
-                    }
-
-                    if(bigConstraint != nil){
-                        thumbConstraint.append(bigConstraint!)
-                    }
-
                 thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[image(0)]",
                                                                                   options: NSLayoutFormatOptions(rawValue: 0),
                                                                                   metrics: metrics,
@@ -907,45 +909,45 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                                                   views: views))
                 
                 
-                    if(SettingValues.centerLeadImage || full){
-                        thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[label]-8@999-[banner]-12@999-\(bx)|",
-                                                                                          options: NSLayoutFormatOptions(rawValue: 0),
-                                                                                          metrics: metrics,
-                                                                                          views: views))
-                        thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[info]-[banner]",
-                                                                                          options: NSLayoutFormatOptions.alignAllLastBaseline,
-                                                                                          metrics: metrics,
-                                                                                          views: views))
-                        thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[info(45)]-8-[buttons]",
-                                                                                          options: NSLayoutFormatOptions(rawValue: 0),
-                                                                                          metrics: metrics,
-                                                                                          views: views))
-                        thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[info]-8-[box]",
-                                                                                          options: NSLayoutFormatOptions(rawValue: 0),
-                                                                                          metrics: metrics,
-                                                                                          views: views))
-
-                    } else {
-                        
-                        thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[banner]-8@999-[label]-12@999-\(bx)|",
-                                                                                          options: NSLayoutFormatOptions(rawValue: 0),
-                                                                                          metrics: metrics,
-                                                                                          views: views))
-                        thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[info(45)]-8@999-[label]",
-                                                                                          options: NSLayoutFormatOptions(rawValue: 0),
-                                                                                          metrics: metrics,
-                                                                                          views: views))
-                    }
-                
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:\(bt)|",
-                                                                                  options: NSLayoutFormatOptions(rawValue: 0),
-                                                                                  metrics: metrics,
-                                                                                  views: views))
-                    thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:\(bx)|",
+                if(SettingValues.centerLeadImage || full){
+                    thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[label]-8@999-[banner]-12@999-\(bx)|",
                         options: NSLayoutFormatOptions(rawValue: 0),
                         metrics: metrics,
                         views: views))
-
+                    thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[info]-[banner]",
+                                                                                      options: NSLayoutFormatOptions.alignAllLastBaseline,
+                                                                                      metrics: metrics,
+                                                                                      views: views))
+                    thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[info(45)]-8-[buttons]",
+                                                                                      options: NSLayoutFormatOptions(rawValue: 0),
+                                                                                      metrics: metrics,
+                                                                                      views: views))
+                    thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[info]-8-[box]",
+                                                                                      options: NSLayoutFormatOptions(rawValue: 0),
+                                                                                      metrics: metrics,
+                                                                                      views: views))
+                    
+                } else {
+                    
+                    thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[banner]-8@999-[label]-12@999-\(bx)|",
+                        options: NSLayoutFormatOptions(rawValue: 0),
+                        metrics: metrics,
+                        views: views))
+                    thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[info(45)]-8@999-[label]",
+                                                                                      options: NSLayoutFormatOptions(rawValue: 0),
+                                                                                      metrics: metrics,
+                                                                                      views: views))
+                }
+                
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:\(bt)|",
+                    options: NSLayoutFormatOptions(rawValue: 0),
+                    metrics: metrics,
+                    views: views))
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:\(bx)|",
+                    options: NSLayoutFormatOptions(rawValue: 0),
+                    metrics: metrics,
+                    views: views))
+                
                 thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[banner]-0-|",
                                                                                   options: NSLayoutFormatOptions(rawValue: 0),
                                                                                   metrics: metrics,
@@ -954,16 +956,16 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                                                   options: NSLayoutFormatOptions(rawValue: 0),
                                                                                   metrics: metrics,
                                                                                   views: views))
-                    old = .normal_big
-
+                old = .normal_big
+                
+            }
+        } else {
+            if(old != .normal_text){
+                if(!thumbConstraint.isEmpty){
+                    self.contentView.removeConstraints(thumbConstraint)
+                    thumbConstraint = []
                 }
-            } else {
-                if(old != .normal_text){
-                    if(!thumbConstraint.isEmpty){
-                        self.contentView.removeConstraints(thumbConstraint)
-                        thumbConstraint = []
-                    }
-
+                
                 thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[image(0)]",
                                                                                   options: NSLayoutFormatOptions(rawValue: 0),
                                                                                   metrics: metrics,
@@ -980,18 +982,18 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                                                   metrics: metrics,
                                                                                   views: views))
                 
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[label]-4@1000-[body]-10@1000-\(bx)|",
-                                                                                  options: NSLayoutFormatOptions(rawValue: 0),
-                                                                                  metrics: metrics,
-                                                                                  views: views))
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-size-[label]-4@1000-[body]-12@1000-\(bx)|",
+                    options: NSLayoutFormatOptions(rawValue: 0),
+                    metrics: metrics,
+                    views: views))
                 thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:\(bt)|",
-                                                                                  options: NSLayoutFormatOptions(rawValue: 0),
-                                                                                  metrics: metrics,
-                                                                                  views: views))
-                    old = .normal_text
-
-                }
+                    options: NSLayoutFormatOptions(rawValue: 0),
+                    metrics: metrics,
+                    views: views))
+                old = .normal_text
+                
             }
+        }
         
         self.setNeedsUpdateConstraints()
         refresh()
@@ -1008,7 +1010,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         thumbImage.contentMode = .scaleAspectFill
         
         
-
+        
         
         if(type != .IMAGE && type != .SELF && !thumb){
             b.isHidden = false
@@ -1069,438 +1071,449 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     }
     
     func setLinkForPreview(submission: RSubmission){
-            full = false
-            self.link = submission
-            let attributedTitle = NSMutableAttributedString(string: submission.title, attributes: [NSFontAttributeName: title.font, NSForegroundColorAttributeName: ColorUtil.fontColor])
-            let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(submission.flair)\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
-            let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
-            let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(submission.gilded) ", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor])
-            
-            let locked = NSMutableAttributedString.init(string: "\u{00A0}LOCKED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
-            
-            let archived = NSMutableAttributedString.init(string: "\u{00A0}ARCHIVED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
-            
-            let spacer = NSMutableAttributedString.init(string: "  ")
-            if(!submission.flair.isEmpty){
-                attributedTitle.append(spacer)
-                attributedTitle.append(flairTitle)
-            }
+        full = false
+        self.link = submission
+        let attributedTitle = NSMutableAttributedString(string: submission.title, attributes: [NSFontAttributeName: title.font, NSForegroundColorAttributeName: ColorUtil.fontColor])
+        let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(submission.flair)\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
+        let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
+        let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(submission.gilded) ", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor])
         
-            let attrs = [NSFontAttributeName : FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor] as [String: Any]
-            
-            let endString = NSMutableAttributedString(string:"  •  \(DateFormatter().timeSince(from: submission.created, numericDates: true))\((submission.isEdited ? ("(edit \(DateFormatter().timeSince(from: submission.edited, numericDates: true)))") : ""))  •  ", attributes: [NSFontAttributeName : FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor])
-            
-            let authorString = NSMutableAttributedString(string: "\u{00A0}\(submission.author)\u{00A0}", attributes: [NSFontAttributeName : FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor])
-            
-            
-            let userColor = ColorUtil.getColorForUser(name: submission.author)
-            if (submission.distinguished == "admin") {
-                authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#E57373"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-            } else if (submission.distinguished == "special") {
-                authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#F44336"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-            } else if (submission.distinguished == "moderator") {
-                authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#81C784"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-            } else if (AccountController.currentName == submission.author) {
-                authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#FFB74D"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-            } else if (userColor != ColorUtil.baseColor) {
-                authorString.addAttributes([kTTTBackgroundFillColorAttributeName: userColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-            }
-            
-            endString.append(authorString)
-            
-            let tag = ColorUtil.getTagForUser(name: submission.author)
-            if(!tag.isEmpty){
-                let tagString = NSMutableAttributedString(string: "\u{00A0}\(tag)\u{00A0}", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
-                tagString.addAttributes([kTTTBackgroundFillColorAttributeName: GMColor.blue500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: tagString.length))
-                endString.append(spacer)
-                endString.append(tagString)
-            }
-            
-            let boldString = NSMutableAttributedString(string:"/r/\(submission.subreddit)", attributes:attrs)
-            
-            let color = ColorUtil.getColorForSub(sub: submission.subreddit)
-            if(color != ColorUtil.baseColor){
-                boldString.addAttribute(NSForegroundColorAttributeName, value: color, range: NSRange.init(location: 0, length: boldString.length))
-            }
-            
-            let infoString = NSMutableAttributedString()
-            infoString.append(boldString)
-            infoString.append(endString)
+        let locked = NSMutableAttributedString.init(string: "\u{00A0}LOCKED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
+        
+        let archived = NSMutableAttributedString.init(string: "\u{00A0}ARCHIVED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
+        
+        let spacer = NSMutableAttributedString.init(string: "  ")
+        if(!submission.flair.isEmpty){
+            attributedTitle.append(spacer)
+            attributedTitle.append(flairTitle)
+        }
+        
+        let attrs = [NSFontAttributeName : FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor] as [String: Any]
+        
+        let endString = NSMutableAttributedString(string:"  •  \(DateFormatter().timeSince(from: submission.created, numericDates: true))\((submission.isEdited ? ("(edit \(DateFormatter().timeSince(from: submission.edited, numericDates: true)))") : ""))  •  ", attributes: [NSFontAttributeName : FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor])
+        
+        let authorString = NSMutableAttributedString(string: "\u{00A0}\(submission.author)\u{00A0}", attributes: [NSFontAttributeName : FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor])
+        
+        
+        let userColor = ColorUtil.getColorForUser(name: submission.author)
+        if (submission.distinguished == "admin") {
+            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#E57373"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
+        } else if (submission.distinguished == "special") {
+            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#F44336"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
+        } else if (submission.distinguished == "moderator") {
+            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#81C784"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
+        } else if (AccountController.currentName == submission.author) {
+            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#FFB74D"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
+        } else if (userColor != ColorUtil.baseColor) {
+            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: userColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
+        }
+        
+        endString.append(authorString)
+        
+        let tag = ColorUtil.getTagForUser(name: submission.author)
+        if(!tag.isEmpty){
+            let tagString = NSMutableAttributedString(string: "\u{00A0}\(tag)\u{00A0}", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
+            tagString.addAttributes([kTTTBackgroundFillColorAttributeName: GMColor.blue500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: tagString.length))
+            endString.append(spacer)
+            endString.append(tagString)
+        }
+        
+        let boldString = NSMutableAttributedString(string:"/r/\(submission.subreddit)", attributes:attrs)
+        
+        let color = ColorUtil.getColorForSub(sub: submission.subreddit)
+        if(color != ColorUtil.baseColor){
+            boldString.addAttribute(NSForegroundColorAttributeName, value: color, range: NSRange.init(location: 0, length: boldString.length))
+        }
+        
+        let infoString = NSMutableAttributedString()
+        infoString.append(boldString)
+        infoString.append(endString)
+        infoString.append(NSAttributedString.init(string: "\n"))
+        infoString.append(attributedTitle)
+        if(SettingValues.scoreInTitle){
             infoString.append(NSAttributedString.init(string: "\n"))
-            infoString.append(attributedTitle)
-            if(SettingValues.postViewMode == .CARD && !full){
-                infoString.append(NSAttributedString.init(string: "\nasedf"))
+            var scoreString: NSAttributedString = NSAttributedString()
+            if(SettingValues.abbreviateScores){
+                let text = (submission.score>=10000 && SettingValues.abbreviateScores) ? String(format: "%0.1fk ", (Double(submission.score)/Double(1000))) : " \(submission.score)"
+                scoreString = NSMutableAttributedString(string: "\(submission.commentCount)cmts \(text)pts", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
+            }  else {
+                scoreString = NSMutableAttributedString(string: "\(submission.commentCount)cmts \(submission.score)pts", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
             }
-            
-            title.attributedText = infoString
-            title.sizeToFit()
-            
-            reply.isHidden = true
-            
-                upvote.isHidden = false
-                downvote.isHidden = false
-                save.isHidden = false
-                edit.isHidden = true
+            infoString.append(scoreString)
+        }
         
-            
-            
         
-            thumb = submission.thumbnail
-            big = submission.banner
-            //todo test if big image
-            //todo test if self and hideSelftextLeadImage, don't show anything
-            //test if should be LQ, get LQ image instead of banner image
-            if(bigConstraint != nil){
-                self.contentView.removeConstraint(bigConstraint!)
-            }
-            
-            height = submission.height
-            
-            var type = ContentType.getContentType(baseUrl: submission.url!)
-            if(submission.isSelf){
-                type = .SELF
-            }
-            
-            if(SettingValues.bannerHidden && !full){
-                big = false
-                thumb = true
-            }
-            
-            if(thumb && type == .SELF){
-                thumb = false
-            }
-            
-            let fullImage = ContentType.fullImage(t: type)
-            
-            if(!fullImage && height < 50){
-                big = false
-                thumb = true
-            } else if(big && (SettingValues.bigPicCropped || full)){
+        if(SettingValues.postViewMode == .CARD && !full){
+            infoString.append(NSAttributedString.init(string: "\nasedf"))
+        }
+        
+        title.attributedText = infoString
+        title.sizeToFit()
+        
+        reply.isHidden = true
+        
+        upvote.isHidden = false
+        downvote.isHidden = false
+        save.isHidden = false
+        edit.isHidden = true
+        
+        
+        
+        
+        thumb = submission.thumbnail
+        big = submission.banner
+        //todo test if big image
+        //todo test if self and hideSelftextLeadImage, don't show anything
+        //test if should be LQ, get LQ image instead of banner image
+        if(bigConstraint != nil){
+            self.contentView.removeConstraint(bigConstraint!)
+        }
+        
+        height = submission.height
+        
+        var type = ContentType.getContentType(baseUrl: submission.url!)
+        if(submission.isSelf){
+            type = .SELF
+        }
+        
+        if(SettingValues.bannerHidden && !full){
+            big = false
+            thumb = true
+        }
+        
+        if(thumb && type == .SELF){
+            thumb = false
+        }
+        
+        let fullImage = ContentType.fullImage(t: type)
+        
+        if(!fullImage && height < 50){
+            big = false
+            thumb = true
+        } else if(big && (SettingValues.bigPicCropped || full)){
+            height = 200
+        } else if(big){
+            let h = getHeightFromAspectRatio(imageHeight: height, imageWidth: submission.width)
+            if(h == 0){
                 height = 200
-            } else if(big){
-                let h = getHeightFromAspectRatio(imageHeight: height, imageWidth: submission.width)
-                if(h == 0){
-                    height = 200
-                } else {
-                    height  = h
-                }
+            } else {
+                height  = h
             }
-            
-            if(SettingValues.hideButtonActionbar && !full){
-                buttons.isHidden = true
-                box.isHidden = true
-            }
-            
-            if(type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big || type == .SELF && full ){
-                big = false
-                thumb = false
-            }
-            
-            if(height < 50){
-                thumb = true
-                big = false
-            }
-            
-            let shouldShowLq = SettingValues.lqEnabled && false && submission.lQ //eventually check for network connection type
-            if (type == ContentType.CType.SELF && SettingValues.hideImageSelftext
-                || SettingValues.noImages && submission.isSelf) {
-                big = false
-                thumb = false
-            }
-            
-            if(big || !submission.thumbnail){
-                thumb = false
-            }
-            
-            
-            if(!big && !thumb && submission.type != .SELF && submission.type != .NONE){ //If a submission has a link but no images, still show the web thumbnail
-                thumb = true
-                addTouch(view: thumbImage, action: #selector(LinkCellView.openLink(sender:)))
+        }
+        
+        if(SettingValues.hideButtonActionbar && !full){
+            buttons.isHidden = true
+            box.isHidden = true
+        }
+        
+        if(type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big || type == .SELF && full ){
+            big = false
+            thumb = false
+        }
+        
+        if(height < 50){
+            thumb = true
+            big = false
+        }
+        
+        let shouldShowLq = SettingValues.lqEnabled && false && submission.lQ //eventually check for network connection type
+        if (type == ContentType.CType.SELF && SettingValues.hideImageSelftext
+            || SettingValues.noImages && submission.isSelf) {
+            big = false
+            thumb = false
+        }
+        
+        if(big || !submission.thumbnail){
+            thumb = false
+        }
+        
+        
+        if(!big && !thumb && submission.type != .SELF && submission.type != .NONE){ //If a submission has a link but no images, still show the web thumbnail
+            thumb = true
+            addTouch(view: thumbImage, action: #selector(LinkCellView.openLink(sender:)))
+            thumbImage.image = UIImage.init(named: "web")
+        }
+        
+        if(thumb && !big){
+            addTouch(view: thumbImage, action: #selector(LinkCellView.openLink(sender:)))
+            if(submission.thumbnailUrl == "nsfw"){
+                thumbImage.image = UIImage.init(named: "nsfw")
+            } else if(submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty){
                 thumbImage.image = UIImage.init(named: "web")
-            }
-            
-            if(thumb && !big){
-                addTouch(view: thumbImage, action: #selector(LinkCellView.openLink(sender:)))
-                if(submission.thumbnailUrl == "nsfw"){
-                    thumbImage.image = UIImage.init(named: "nsfw")
-                } else if(submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty){
-                    thumbImage.image = UIImage.init(named: "web")
-                } else {
-                    thumbImage.sd_setImage(with: URL.init(string: submission.thumbnailUrl), placeholderImage: UIImage.init(named: "web"))
-                }
-                print("Showing \(submission.thumbnailUrl)")
             } else {
-                thumbImage.sd_setImage(with: URL.init(string: ""))
-                self.thumbImage.frame.size.width = 0
+                thumbImage.sd_setImage(with: URL.init(string: submission.thumbnailUrl), placeholderImage: UIImage.init(named: "web"))
             }
-            
-            
-            if(big){
-                bannerImage.alpha = 0
-                let imageSize = CGSize.init(width:submission.width, height: full ? 200 : submission.height);
-                var aspect = imageSize.width / imageSize.height
-                if(aspect == 0 || aspect > 10000 || aspect.isNaN){
-                    aspect = 1
-                }
-                if(!full){
-                    bigConstraint = NSLayoutConstraint(item: bannerImage, attribute:  NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: bannerImage, attribute: NSLayoutAttribute.height, multiplier: aspect, constant: 0.0)
-                } else {
-                    aspect = self.contentView.frame.size.width / 200
-                    height = 200
-                    bigConstraint = NSLayoutConstraint(item: bannerImage, attribute:  NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: bannerImage, attribute: NSLayoutAttribute.height, multiplier: aspect, constant: 0.0)
-                    
-                }
-                bannerImage.isUserInteractionEnabled = true
-                let tap = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openLink(sender:)))
-                tap.delegate = self
-                bannerImage.addGestureRecognizer(tap)
-                if(shouldShowLq){
-                    bannerImage.sd_setImage(with: URL.init(string: submission.lqUrl), completed: { (image, error, cache, url) in
-                        self.bannerImage.contentMode = .scaleAspectFill
-                        if (cache == .none) {
-                            UIView.animate(withDuration: 0.3, animations: {
-                                self.bannerImage.alpha = 1
-                            })
-                        } else {
-                            self.bannerImage.alpha = 1
-                        }
-                    })
-                } else {
-                    bannerImage.sd_setImage(with: URL.init(string: submission.bannerUrl), completed: { (image, error, cache, url) in
-                        self.bannerImage.contentMode = .scaleAspectFill
-                        if (cache == .none) {
-                            UIView.animate(withDuration: 0.3, animations: {
-                                self.bannerImage.alpha = 1
-                            })
-                        } else {
-                            self.bannerImage.alpha = 1
-                        }
-                    })
-                }
+            print("Showing \(submission.thumbnailUrl)")
+        } else {
+            thumbImage.sd_setImage(with: URL.init(string: ""))
+            self.thumbImage.frame.size.width = 0
+        }
+        
+        
+        if(big){
+            bannerImage.alpha = 0
+            let imageSize = CGSize.init(width:submission.width, height: full ? 200 : submission.height);
+            var aspect = imageSize.width / imageSize.height
+            if(aspect == 0 || aspect > 10000 || aspect.isNaN){
+                aspect = 1
+            }
+            if(!full){
+                bigConstraint = NSLayoutConstraint(item: bannerImage, attribute:  NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: bannerImage, attribute: NSLayoutAttribute.height, multiplier: aspect, constant: 0.0)
             } else {
-                bannerImage.sd_setImage(with: URL.init(string: ""))
+                aspect = self.contentView.frame.size.width / 200
+                height = 200
+                bigConstraint = NSLayoutConstraint(item: bannerImage, attribute:  NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: bannerImage, attribute: NSLayoutAttribute.height, multiplier: aspect, constant: 0.0)
+                
             }
-        
-            let commentText = NSMutableAttributedString(string: " \(submission.commentCount)", attributes: [NSFontAttributeName: comments.font, NSForegroundColorAttributeName: comments.textColor])
-            comments.attributedText = commentText
-            comments.addImage(imageName: "comments", afterLabel: false)
-        
-            let metrics=["horizontalMargin":75,"top":0,"bottom":0,"separationBetweenLabels":0,"labelMinHeight":75,  "thumb": (SettingValues.largerThumbnail ? 75 : 50), "bannerHeight": height] as [String: Int]
-            let views=["label":title, "body": textView, "image": thumbImage, "info": b, "upvote": upvote, "downvote" : downvote, "score": score, "comments": comments, "banner": bannerImage, "buttons":buttons, "box": box] as [String : Any]
-            var bt = "[buttons]-8-"
-            var bx = "[box]-8-"
-            if(SettingValues.hideButtonActionbar && !full){
-                bt = "[buttons(0)]-4-"
-                bx = "[box(0)]-4-"
-            }
-            if(thumb && !big){
-                if(old != .normal_thumb){
-                    if(!thumbConstraint.isEmpty){
-                        self.contentView.removeConstraints(thumbConstraint)
-                        thumbConstraint = []
-                    }
-                    thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[image(thumb)]",
-                                                                                      options: NSLayoutFormatOptions(rawValue: 0),
-                                                                                      metrics: metrics,
-                                                                                      views: views))
-                    
-                    thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[label]-8-[image(thumb)]-12-|",
-                                                                                      options: NSLayoutFormatOptions(rawValue: 0),
-                                                                                      metrics: metrics,
-                                                                                      views: views))
-                    
-                    thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[label(>=60)]-10-\(bx)|",
-                        options: NSLayoutFormatOptions(rawValue: 0),
-                        metrics: metrics,
-                        views: views))
-                    thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[image]-(>=4)-\(bt)|",
-                        options: NSLayoutFormatOptions(rawValue: 0),
-                        metrics: metrics,
-                        views: views))
-                    old = .normal_thumb
-                    
-                }
-                
-            } else if(big) {
-                
-                
-                if(old != .normal_big || bigConstraint != nil){
-                    if(!thumbConstraint.isEmpty){
-                        self.contentView.removeConstraints(thumbConstraint)
-                        thumbConstraint = []
-                    }
-                    
-                    if(bigConstraint != nil){
-                        thumbConstraint.append(bigConstraint!)
-                    }
-                    
-                    thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[image(0)]",
-                                                                                      options: NSLayoutFormatOptions(rawValue: 0),
-                                                                                      metrics: metrics,
-                                                                                      views: views))
-                    
-                    thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[label]-12-|",
-                                                                                      options: NSLayoutFormatOptions(rawValue: 0),
-                                                                                      metrics: metrics,
-                                                                                      views: views))
-                    
-                    thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[body]-12-|",
-                                                                                      options: NSLayoutFormatOptions(rawValue: 0),
-                                                                                      metrics: metrics,
-                                                                                      views: views))
-                    
-                    
-                    if((SettingValues.centerLeadImage || full) && big){
-                        thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[label]-8@999-[banner]-12@999-\(bx)|",
-                            options: NSLayoutFormatOptions(rawValue: 0),
-                            metrics: metrics,
-                            views: views))
-                        thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[info]-[banner]",
-                                                                                          options: NSLayoutFormatOptions.alignAllLastBaseline,
-                                                                                          metrics: metrics,
-                                                                                          views: views))
-                        thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[info(45)]-8-[buttons]",
-                                                                                          options: NSLayoutFormatOptions(rawValue: 0),
-                                                                                          metrics: metrics,
-                                                                                          views: views))
-                        thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[info]-8-[box]",
-                                                                                          options: NSLayoutFormatOptions(rawValue: 0),
-                                                                                          metrics: metrics,
-                                                                                          views: views))
-                        
+            bannerImage.isUserInteractionEnabled = true
+            let tap = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openLink(sender:)))
+            tap.delegate = self
+            bannerImage.addGestureRecognizer(tap)
+            if(shouldShowLq){
+                bannerImage.sd_setImage(with: URL.init(string: submission.lqUrl), completed: { (image, error, cache, url) in
+                    self.bannerImage.contentMode = .scaleAspectFill
+                    if (cache == .none) {
+                        UIView.animate(withDuration: 0.3, animations: {
+                            self.bannerImage.alpha = 1
+                        })
                     } else {
-                        
-                        thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[banner]-8@999-[label]-12@999-\(bx)|",
-                            options: NSLayoutFormatOptions(rawValue: 0),
-                            metrics: metrics,
-                            views: views))
-                        thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[info(45)]-8@999-[label]",
-                                                                                          options: NSLayoutFormatOptions(rawValue: 0),
-                                                                                          metrics: metrics,
-                                                                                          views: views))
+                        self.bannerImage.alpha = 1
                     }
-                    
-                    thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:\(bt)|",
-                        options: NSLayoutFormatOptions(rawValue: 0),
-                        metrics: metrics,
-                        views: views))
-                    thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:\(bx)|",
-                        options: NSLayoutFormatOptions(rawValue: 0),
-                        metrics: metrics,
-                        views: views))
-                    
-                    thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[banner]-0-|",
-                                                                                      options: NSLayoutFormatOptions(rawValue: 0),
-                                                                                      metrics: metrics,
-                                                                                      views: views))
-                    thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[info]-0-|",
-                                                                                      options: NSLayoutFormatOptions(rawValue: 0),
-                                                                                      metrics: metrics,
-                                                                                      views: views))
-                    old = .normal_big
-                    
-                }
+                })
             } else {
-                if(old != .normal_text){
-                    if(!thumbConstraint.isEmpty){
-                        self.contentView.removeConstraints(thumbConstraint)
-                        thumbConstraint = []
+                bannerImage.sd_setImage(with: URL.init(string: submission.bannerUrl), completed: { (image, error, cache, url) in
+                    self.bannerImage.contentMode = .scaleAspectFill
+                    if (cache == .none) {
+                        UIView.animate(withDuration: 0.3, animations: {
+                            self.bannerImage.alpha = 1
+                        })
+                    } else {
+                        self.bannerImage.alpha = 1
                     }
-                    
-                    thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[image(0)]",
-                                                                                      options: NSLayoutFormatOptions(rawValue: 0),
-                                                                                      metrics: metrics,
-                                                                                      views: views))
-                    
-                    
-                    thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[label]-12-|",
-                                                                                      options: NSLayoutFormatOptions(rawValue: 0),
-                                                                                      metrics: metrics,
-                                                                                      views: views))
-                    
-                    thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[body]-12-|",
-                                                                                      options: NSLayoutFormatOptions(rawValue: 0),
-                                                                                      metrics: metrics,
-                                                                                      views: views))
-                    
-                    thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[label]-4@1000-[body]-10@1000-\(bx)|",
-                        options: NSLayoutFormatOptions(rawValue: 0),
-                        metrics: metrics,
-                        views: views))
-                    thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:\(bt)|",
-                        options: NSLayoutFormatOptions(rawValue: 0),
-                        metrics: metrics,
-                        views: views))
-                    old = .normal_text
-                    
-                }
+                })
             }
-            
-            self.setNeedsUpdateConstraints()
-            refresh()
-            if(full){
-                self.setNeedsLayout()
-            }
-            bannerImage.contentMode = UIViewContentMode.scaleAspectFill
-            bannerImage.layer.cornerRadius = 5;
-            bannerImage.clipsToBounds = true
-            bannerImage.backgroundColor = UIColor.white
-            thumbImage.layer.cornerRadius = 5;
-            thumbImage.backgroundColor = UIColor.white
-            thumbImage.clipsToBounds = true;
-            thumbImage.contentMode = .scaleAspectFill
-            
-            
-            
-            
-            if(type != .IMAGE && type != .SELF && !thumb){
-                b.isHidden = false
-                var text = ""
-                switch(type) {
-                case .ALBUM:
-                    text = ("Album")
-                    break
-                case .EXTERNAL, .LINK, .EMBEDDED, .NONE:
-                    text = "Link"
-                    break
-                case .DEVIANTART:
-                    text = "Deviantart"
-                    break
-                case .TUMBLR:
-                    text = "Tumblr"
-                    break
-                case .XKCD:
-                    text =  ("XKCD")
-                    break
-                case .GIF:
-                    text = ("GIF")
-                    break
-                case .IMGUR:
-                    text = ("Imgur")
-                    break
-                case .VIDEO:
-                    text = "YouTube"
-                    break
-                case .STREAMABLE:
-                    text = "Streamable"
-                    break
-                case .VID_ME:
-                    text = ("Vid.me")
-                    break
-                case .REDDIT:
-                    text =  ("Reddit content")
-                    break
-                default:
-                    text = "Link"
-                    break
+        } else {
+            bannerImage.sd_setImage(with: URL.init(string: ""))
+        }
+        
+        let commentText = NSMutableAttributedString(string: " \(submission.commentCount)", attributes: [NSFontAttributeName: comments.font, NSForegroundColorAttributeName: comments.textColor])
+        comments.attributedText = commentText
+        comments.addImage(imageName: "comments", afterLabel: false)
+        
+        let metrics=["horizontalMargin":75,"top":0,"bottom":0,"separationBetweenLabels":0,"labelMinHeight":75,  "thumb": (SettingValues.largerThumbnail ? 75 : 50), "bannerHeight": height] as [String: Int]
+        let views=["label":title, "body": textView, "image": thumbImage, "info": b, "upvote": upvote, "downvote" : downvote, "score": score, "comments": comments, "banner": bannerImage, "buttons":buttons, "box": box] as [String : Any]
+        var bt = "[buttons]-8-"
+        var bx = "[box]-8-"
+        if(SettingValues.hideButtonActionbar && !full){
+            bt = "[buttons(0)]-4-"
+            bx = "[box(0)]-4-"
+        }
+        if(thumb && !big){
+            if(old != .normal_thumb){
+                if(!thumbConstraint.isEmpty){
+                    self.contentView.removeConstraints(thumbConstraint)
+                    thumbConstraint = []
                 }
-                let finalText = NSMutableAttributedString.init(string: text, attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 14, submission: true)])
-                finalText.append(NSAttributedString.init(string: "\n\(submission.domain)"))
-                info.attributedText = finalText
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[image(thumb)]",
+                                                                                  options: NSLayoutFormatOptions(rawValue: 0),
+                                                                                  metrics: metrics,
+                                                                                  views: views))
                 
-            } else {
-                b.isHidden = true
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[label]-8-[image(thumb)]-12-|",
+                                                                                  options: NSLayoutFormatOptions(rawValue: 0),
+                                                                                  metrics: metrics,
+                                                                                  views: views))
+                
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[label(>=60)]-10-\(bx)|",
+                    options: NSLayoutFormatOptions(rawValue: 0),
+                    metrics: metrics,
+                    views: views))
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[image]-(>=4)-\(bt)|",
+                    options: NSLayoutFormatOptions(rawValue: 0),
+                    metrics: metrics,
+                    views: views))
+                old = .normal_thumb
+                
             }
+            
+        } else if(big) {
+            
+            
+            if(old != .normal_big || bigConstraint != nil){
+                if(!thumbConstraint.isEmpty){
+                    self.contentView.removeConstraints(thumbConstraint)
+                    thumbConstraint = []
+                }
+                
+                if(bigConstraint != nil){
+                    thumbConstraint.append(bigConstraint!)
+                }
+                
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[image(0)]",
+                                                                                  options: NSLayoutFormatOptions(rawValue: 0),
+                                                                                  metrics: metrics,
+                                                                                  views: views))
+                
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[label]-12-|",
+                                                                                  options: NSLayoutFormatOptions(rawValue: 0),
+                                                                                  metrics: metrics,
+                                                                                  views: views))
+                
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[body]-12-|",
+                                                                                  options: NSLayoutFormatOptions(rawValue: 0),
+                                                                                  metrics: metrics,
+                                                                                  views: views))
+                
+                
+                if((SettingValues.centerLeadImage || full) && big){
+                    thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[label]-8@999-[banner]-12@999-\(bx)|",
+                        options: NSLayoutFormatOptions(rawValue: 0),
+                        metrics: metrics,
+                        views: views))
+                    thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[info]-[banner]",
+                                                                                      options: NSLayoutFormatOptions.alignAllLastBaseline,
+                                                                                      metrics: metrics,
+                                                                                      views: views))
+                    thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[info(45)]-8-[buttons]",
+                                                                                      options: NSLayoutFormatOptions(rawValue: 0),
+                                                                                      metrics: metrics,
+                                                                                      views: views))
+                    thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[info]-8-[box]",
+                                                                                      options: NSLayoutFormatOptions(rawValue: 0),
+                                                                                      metrics: metrics,
+                                                                                      views: views))
+                    
+                } else {
+                    
+                    thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[banner]-8@999-[label]-12@999-\(bx)|",
+                        options: NSLayoutFormatOptions(rawValue: 0),
+                        metrics: metrics,
+                        views: views))
+                    thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[info(45)]-8@999-[label]",
+                                                                                      options: NSLayoutFormatOptions(rawValue: 0),
+                                                                                      metrics: metrics,
+                                                                                      views: views))
+                }
+                
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:\(bt)|",
+                    options: NSLayoutFormatOptions(rawValue: 0),
+                    metrics: metrics,
+                    views: views))
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:\(bx)|",
+                    options: NSLayoutFormatOptions(rawValue: 0),
+                    metrics: metrics,
+                    views: views))
+                
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[banner]-0-|",
+                                                                                  options: NSLayoutFormatOptions(rawValue: 0),
+                                                                                  metrics: metrics,
+                                                                                  views: views))
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[info]-0-|",
+                                                                                  options: NSLayoutFormatOptions(rawValue: 0),
+                                                                                  metrics: metrics,
+                                                                                  views: views))
+                old = .normal_big
+                
+            }
+        } else {
+            if(old != .normal_text){
+                if(!thumbConstraint.isEmpty){
+                    self.contentView.removeConstraints(thumbConstraint)
+                    thumbConstraint = []
+                }
+                
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[image(0)]",
+                                                                                  options: NSLayoutFormatOptions(rawValue: 0),
+                                                                                  metrics: metrics,
+                                                                                  views: views))
+                
+                
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[label]-12-|",
+                                                                                  options: NSLayoutFormatOptions(rawValue: 0),
+                                                                                  metrics: metrics,
+                                                                                  views: views))
+                
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[body]-12-|",
+                                                                                  options: NSLayoutFormatOptions(rawValue: 0),
+                                                                                  metrics: metrics,
+                                                                                  views: views))
+                
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[label]-4-[body]-10-\(bx)|",
+                    options: NSLayoutFormatOptions(rawValue: 0),
+                    metrics: metrics,
+                    views: views))
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:\(bt)|",
+                    options: NSLayoutFormatOptions(rawValue: 0),
+                    metrics: metrics,
+                    views: views))
+                old = .normal_text
+                
+            }
+        }
+        
+        self.setNeedsUpdateConstraints()
+        refresh()
+        if(full){
+            self.setNeedsLayout()
+        }
+        bannerImage.contentMode = UIViewContentMode.scaleAspectFill
+        bannerImage.layer.cornerRadius = 5;
+        bannerImage.clipsToBounds = true
+        bannerImage.backgroundColor = UIColor.white
+        thumbImage.layer.cornerRadius = 5;
+        thumbImage.backgroundColor = UIColor.white
+        thumbImage.clipsToBounds = true;
+        thumbImage.contentMode = .scaleAspectFill
+        
+        
+        if(type != .IMAGE && type != .SELF && !thumb){
+            b.isHidden = false
+            var text = ""
+            switch(type) {
+            case .ALBUM:
+                text = ("Album")
+                break
+            case .EXTERNAL, .LINK, .EMBEDDED, .NONE:
+                text = "Link"
+                break
+            case .DEVIANTART:
+                text = "Deviantart"
+                break
+            case .TUMBLR:
+                text = "Tumblr"
+                break
+            case .XKCD:
+                text =  ("XKCD")
+                break
+            case .GIF:
+                text = ("GIF")
+                break
+            case .IMGUR:
+                text = ("Imgur")
+                break
+            case .VIDEO:
+                text = "YouTube"
+                break
+            case .STREAMABLE:
+                text = "Streamable"
+                break
+            case .VID_ME:
+                text = ("Vid.me")
+                break
+            case .REDDIT:
+                text =  ("Reddit content")
+                break
+            default:
+                text = "Link"
+                break
+            }
+            let finalText = NSMutableAttributedString.init(string: text, attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 14, submission: true)])
+            finalText.append(NSAttributedString.init(string: "\n\(submission.domain)"))
+            info.attributedText = finalText
+            
+        } else {
+            b.isHidden = true
+        }
     }
     
     var longPress: UILongPressGestureRecognizer?
@@ -1660,7 +1673,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         self.contentView.frame = fr
     }
     
-
+    
     var registered: Bool = false
     func previewingContext(_ previewingContext: UIViewControllerPreviewing,
                            viewControllerForLocation location: CGPoint) -> UIViewController? {
@@ -1776,7 +1789,7 @@ extension UILabel
         self.text = text
     }
     
-   
+    
 }
 extension UIImage {
     func withColor(tintColor: UIColor) -> UIImage {
