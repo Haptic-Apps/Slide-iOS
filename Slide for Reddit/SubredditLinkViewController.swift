@@ -350,11 +350,14 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     var heightAtIndexPath = NSMutableDictionary()
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return UITableViewAutomaticDimension
+
+        /*
         if let height = heightAtIndexPath.object(forKey: indexPath) as? NSNumber {
             return CGFloat(height.floatValue)
         } else {
             return UITableViewAutomaticDimension
-        }
+        }*/
     }
     
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
@@ -399,7 +402,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControlEvents.valueChanged)
         tableView.addSubview(refreshControl) // not required when using UITableViewController
         
-        let label = UILabel.init(frame: CGRect.init(x: 00, y: 0, width: self.tableView.bounds.width - 250, height: 70))
+        let label = UILabel.init(frame: CGRect.init(x: 00, y: 0, width: self.tableView.bounds.width - 350, height: 70))
         label.text =  "     \(sub)"
         label.textColor = ColorUtil.fontColor
         label.adjustsFontSizeToFitWidth = true
@@ -1141,7 +1144,6 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         let link = self.links[(indexPath as NSIndexPath).row]
         (cell).setLink(submission: link, parent: self, nav: self.navigationController, baseSub: sub)
 
-        
         return cell
     }
     

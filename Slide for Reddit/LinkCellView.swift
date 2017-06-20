@@ -895,7 +895,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                     options: NSLayoutFormatOptions(rawValue: 0),
                     metrics: metrics,
                     views: views))
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[image]-(>=4)-\(bt)|",
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[image]-(>=5)-\(bt)|",
                     options: NSLayoutFormatOptions(rawValue: 0),
                     metrics: metrics,
                     views: views))
@@ -1005,7 +1005,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                                                   metrics: metrics,
                                                                                   views: views))
                 
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-size-[label]-4@1000-[body]-12@1000-\(bx)|",
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-size-[label]-5@1000-[body]-12@1000-\(bx)|",
                     options: NSLayoutFormatOptions(rawValue: 0),
                     metrics: metrics,
                     views: views))
@@ -1341,8 +1341,8 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         var bt = "[buttons]-8-"
         var bx = "[box]-8-"
         if(SettingValues.hideButtonActionbar && !full){
-            bt = "[buttons(0)]-4-"
-            bx = "[box(0)]-4-"
+            bt = "[buttons(0)]-5-"
+            bx = "[box(0)]-5-"
         }
         if(thumb && !big){
             if(old != .normal_thumb){
@@ -1364,7 +1364,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                     options: NSLayoutFormatOptions(rawValue: 0),
                     metrics: metrics,
                     views: views))
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[image]-(>=4)-\(bt)|",
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[image]-(>=5)-\(bt)|",
                     options: NSLayoutFormatOptions(rawValue: 0),
                     metrics: metrics,
                     views: views))

@@ -66,7 +66,7 @@ class YouTubeViewController: UIViewController {
             inv = inv.substring(0, length: inv.length - 1)
         }
         let slashindex = inv.lastIndexOf("/")!
-        inv = inv.substring(slashindex, length: inv.length - slashindex - 1)
+        inv = inv.substring(slashindex + 1, length: inv.length - slashindex)
         return inv
     }
     var millis = 0
