@@ -119,6 +119,6 @@ class SettingValues{
         SettingValues.abbreviateScores = settings.bool(forKey: SettingValues.pref_abbreviateScores)
         SettingValues.scoreInTitle = settings.bool(forKey: SettingValues.pref_scoreInTitle)
         SettingValues.hideButtonActionbar = settings.bool(forKey: SettingValues.pref_hideButtonActionbar)
-        SettingValues.postViewMode = PostViewType.init(rawValue: settings.string(forKey: SettingValues.pref_postViewMode) ?? "list")!
+        SettingValues.postViewMode = PostViewType.init(rawValue: settings.string(forKey: SettingValues.pref_postViewMode) ?? "card")!
     }
 }

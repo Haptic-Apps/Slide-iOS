@@ -135,7 +135,8 @@ class SubredditsViewController:  PagingMenuController {
                         let mes = MDCSnackbarMessage.init(text: "\(diff) new message\(diff > 1 ? "s" : "")!")
                         mes?.action = action
                         MDCSnackbarManager.show(mes)
-                        UserDefaults.standard.set(diff, forKey: "mail")
+                        UserDefaults.standard.set(unread, forKey: "mail")
+                        UserDefaults.standard.synchronize()
                     }
                 }
                 break
@@ -372,6 +373,12 @@ class SubredditsViewController:  PagingMenuController {
         //todoself.buttonBarView.backgroundColor = self.navigationController?.navigationBar.barTintColor
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if(navigationController?.isNavigationBarHidden ?? false){
+            navigationController?.setNavigationBarHidden(false, animated: true)
+        }
+    }
     func showSortMenu(_ sender: AnyObject){
         (SubredditsViewController.viewControllers[currentPage] as? SubredditLinkViewController)?.showMenu(sender)
     }

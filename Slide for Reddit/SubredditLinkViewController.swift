@@ -399,9 +399,10 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControlEvents.valueChanged)
         tableView.addSubview(refreshControl) // not required when using UITableViewController
         
-        let label = UILabel.init(frame: CGRect.init(x: 00, y: 0, width: self.tableView.bounds.width, height: 70))
+        let label = UILabel.init(frame: CGRect.init(x: 00, y: 0, width: self.tableView.bounds.width - 250, height: 70))
         label.text =  "     \(sub)"
         label.textColor = ColorUtil.fontColor
+        label.adjustsFontSizeToFitWidth = true
         label.font = UIFont.boldSystemFont(ofSize: 35)
         tableView.tableHeaderView = label
         
@@ -852,6 +853,9 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         UIApplication.shared.statusBarStyle = .lightContent
+        if(navigationController?.isNavigationBarHidden ?? false && single){
+        navigationController?.setNavigationBarHidden(false, animated: true)
+        }
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {

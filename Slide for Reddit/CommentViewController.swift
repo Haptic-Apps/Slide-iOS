@@ -561,7 +561,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 indicator.radius = 20
                 indicator.indicatorMode = .indeterminate
                 indicator.cycleColors = [ColorUtil.getColorForSub(sub: submission?.subreddit ?? ""), ColorUtil.accentColorForSub(sub: submission?.subreddit ?? "")]
-                var center = CGPoint.init(x: self.tableView.center.x, y: CGFloat(tableHeaderView.estimateHeight(true) + ((self.tableView.bounds.height - tableHeaderView.estimateHeight(true)) / 2)))
+                var center = CGPoint.init(x: self.tableView.center.x, y: CGFloat(tableView.bounds.height - 100))
                 indicator.center = center
                 self.tableView.addSubview(indicator)
                 indicator.startAnimating()
