@@ -1435,7 +1435,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                 big = false
             }
             
-            let shouldShowLq = SettingValues.lqEnabled && false && submission.lQ
+            let shouldShowLq = SettingValues.dataSavingEnabled && submission.lQ && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi())
             if (type == ContentType.CType.SELF && SettingValues.hideImageSelftext
                 || SettingValues.noImages && submission.isSelf) {
                 big = false
@@ -1480,7 +1480,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
 }
 extension UIViewController {
     func topMostViewController() -> UIViewController {
-        // Handling Modal views
+        // Handling Modal views/Users/carloscrane/Desktop/Slide for Reddit/Slide for Reddit/SettingValues.swift
         if let presentedViewController = self.presentedViewController {
             return presentedViewController.topMostViewController()
         }

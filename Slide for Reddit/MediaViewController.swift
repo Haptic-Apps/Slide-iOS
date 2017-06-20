@@ -28,12 +28,17 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
     var images:[URL] = []
     var photos:[GalleryItem] = []
     
-    public func setLink(lnk: RSubmission){
+    public func setLink(lnk: RSubmission, shownURL: URL?, lq : Bool){ //lq is should load lq and did load lq
         History.addSeen(s: lnk)
         self.link = lnk
         images = []
-        print(link.url ?? "Null link")
-        doShow(url: link.url!);
+        if(ContentType.imageType(t: lnk.type) && !lq && shownURL != nil){
+            doShow(url: shownURL!)
+        } else if(ContentType.imageType(t: lnk.type) && lq && !SettingValues.loadContentHQ){
+            doShow(url: shownURL!)
+        } else {
+            doShow(url: link.url!)
+        }
     }
     
     func galleryConfiguration() -> GalleryConfiguration {

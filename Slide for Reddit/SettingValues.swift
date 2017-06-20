@@ -37,15 +37,17 @@ class SettingValues{
     public static let pref_saveHistory = "SAVE_HISTORY"
     public static let pref_saveNSFWHistory = "SAVE_HISTORY_NSFW"
     public static let pref_markReadOnScroll = "MARK_READ_ON_SCROLL"
-    public static let pref_dataSavingEnableMobile = "DATASAVING_ENABLE_MOBILE"
-    public static let pref_dataSavingEnableWiFi = "DATASAVING_ENABLE_WIFI"
-    public static let pref_dataSavingImageQuality = "DATASAVING_IMAGE_QUALITY"
     public static let pref_upvotePercentage = "UPVOTE_PERCENTAGE"
     public static let pref_cropBigPic = "BIG_PIC_CROPPED"
     public static let pref_bannerHidden = "BANNER_HIDDEN"
     public static let pref_centerLead = "CENTER_LEAD_IMAGE"
     public static let pref_largerThumbnail = "LARGER_THUMBNAIL"
     public static let pref_scoreInTitle = "SCORE_IN_TITLE"
+    public static let pref_dataSavingEnabled = "DATA_SAVING_ENABLED"
+    public static let pref_dataSavingDisableWifi = "DATA_SAVING_D_WIFI"
+    public static let pref_loadContentHQ = "LOAD_CONTENT_HQ"
+    public static let pref_lqLow = "LQ_LOW"
+    public static let pref_noImg = "NO_IMAGES"
 
     public static var viewType = true
     public static var hiddenFAB = true
@@ -68,9 +70,6 @@ class SettingValues{
     public static var saveButtonActionbar = true
     public static var bigPicCropped = false
     public static var enlargeLinks = true
-    public static var lqEnabled = true
-    public static var lqLow = true
-    public static var lqMid = true
     public static var noImages = false
     public static var showLinkContentType = true
     public static var internalGifView = true
@@ -79,14 +78,15 @@ class SettingValues{
     public static var internalImageView = true
     public static var forceExternalBrowserLinks : [String] = []
     public static var saveHistory = true
-    public static var saveNSFWHistory = true
+    public static var saveNSFWHistory = false
     public static var markReadOnScroll = false
-    public static var dataSavingEnableMobile = false
-    public static var dataSavingEnableWiFi = false
-    public static var dataSavingImageQuality = "DATASAVING_IMAGE_QUALITY"
+    public static var dataSavingEnabled = true
+    public static var loadContentHQ = false
+    public static var dataSavingDisableWiFi = false
     public static var postFontOffset = 0
     public static var commentFontOffset = 0
     public static var largerThumbnail = true
+    public static var lqLow = true
 
     enum PostViewType: String {
         case LIST = "list"
@@ -97,6 +97,11 @@ class SettingValues{
     public static func initialize(){
         let settings = UserDefaults.standard
         SettingValues.bigPicCropped = settings.bool(forKey: SettingValues.pref_cropBigPic)
+        SettingValues.dataSavingEnabled = settings.bool(forKey: SettingValues.pref_dataSavingEnabled)
+        SettingValues.dataSavingDisableWiFi = settings.bool(forKey: SettingValues.pref_dataSavingDisableWifi)
+        SettingValues.loadContentHQ = settings.bool(forKey: SettingValues.pref_loadContentHQ)
+        SettingValues.noImages = settings.bool(forKey: SettingValues.pref_noImg)
+        SettingValues.lqLow = settings.bool(forKey: SettingValues.pref_lqLow)
         SettingValues.largerThumbnail = settings.object(forKey: SettingValues.pref_largerThumbnail) == nil ? true : settings.bool(forKey: SettingValues.pref_largerThumbnail)
         SettingValues.bannerHidden = settings.bool(forKey: SettingValues.pref_bannerHidden)
         SettingValues.viewType = settings.bool(forKey: SettingValues.pref_viewType)

@@ -204,6 +204,10 @@ class ContentType {
         }
     }
     
+    public static func imageType(t: CType) -> Bool {
+        return (t == .IMAGE || t == .IMGUR)
+    }
+    
     public static func fullImage(t: CType) -> Bool {
         switch (t) {
             

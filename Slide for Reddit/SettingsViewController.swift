@@ -191,6 +191,8 @@ class SettingsViewController: UITableViewController {
             show(SettingsFont(), sender: self)
         }  else if(indexPath.section == 1 && indexPath.row == 1){
             show(SettingsLayout(), sender: self)
+        }  else if(indexPath.section == 2 && indexPath.row == 2){
+            show(SettingsData(), sender: self)
         }
     }
     /* maybe future

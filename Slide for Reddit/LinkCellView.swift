@@ -81,6 +81,9 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     var more = UIImageView()
     var delegate: LinkCellViewDelegate? = nil
     
+    var loadedImage: URL?
+    var lq = false
+    
     var old: ConstraintType = .none
     
     func textView(_ textView: UZTextView, didLongTapLinkAttribute value: Any?) {
@@ -551,6 +554,8 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     var link: RSubmission?
     
     func setLink(submission: RSubmission, parent: MediaViewController, nav: UIViewController?){
+        loadedImage = nil
+        lq = false
         self.contentView.backgroundColor = ColorUtil.foregroundColor
         comments.textColor = ColorUtil.fontColor
         title.textColor = ColorUtil.fontColor
@@ -747,7 +752,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             big = false
         }
         
-        let shouldShowLq = SettingValues.lqEnabled && false && submission.lQ //eventually check for network connection type
+        let shouldShowLq = SettingValues.dataSavingEnabled && submission.lQ && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi())
         if (type == ContentType.CType.SELF && SettingValues.hideImageSelftext
             || SettingValues.noImages && submission.isSelf) {
             big = false
@@ -755,6 +760,11 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         }
         
         if(big || !submission.thumbnail){
+            thumb = false
+        }
+        
+        if(SettingValues.noImages){
+            big = false
             thumb = false
         }
         
@@ -800,6 +810,8 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             tap.delegate = self
             bannerImage.addGestureRecognizer(tap)
             if(shouldShowLq){
+                lq = true
+                loadedImage = URL.init(string: submission.lqUrl)
                 bannerImage.sd_setImage(with: URL.init(string: submission.lqUrl), completed: { (image, error, cache, url) in
                     self.bannerImage.contentMode = .scaleAspectFill
                     if (cache == .none) {
@@ -811,6 +823,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                     }
                 })
             } else {
+                loadedImage = URL.init(string: submission.bannerUrl)
                 bannerImage.sd_setImage(with: URL.init(string: submission.bannerUrl), completed: { (image, error, cache, url) in
                     self.bannerImage.contentMode = .scaleAspectFill
                     if (cache == .none) {
@@ -1070,6 +1083,19 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         
     }
     
+    public static func checkWiFi() -> Bool {
+        
+        let networkStatus = Reachability().connectionStatus()
+        switch networkStatus {
+        case .Unknown, .Offline:
+            return false
+        case .Online(.WWAN):
+            return false
+        case .Online(.WiFi):
+            return true
+        }
+    }
+
     func setLinkForPreview(submission: RSubmission){
         full = false
         self.link = submission
@@ -1216,7 +1242,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             big = false
         }
         
-        let shouldShowLq = SettingValues.lqEnabled && false && submission.lQ //eventually check for network connection type
+        let shouldShowLq = false
         if (type == ContentType.CType.SELF && SettingValues.hideImageSelftext
             || SettingValues.noImages && submission.isSelf) {
             big = false
@@ -1727,7 +1753,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     
     
     func openLink(sender: UITapGestureRecognizer? = nil){
-        (parentViewController)?.setLink(lnk: link!)
+        (parentViewController)?.setLink(lnk: link!, shownURL: loadedImage, lq: lq)
     }
     
     func openComment(sender: UITapGestureRecognizer? = nil){

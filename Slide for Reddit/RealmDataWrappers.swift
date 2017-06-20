@@ -29,10 +29,8 @@ class RealmDataWrapper {
         var turl: String = "" //thumbnail url
         var lqUrl: String = "" //lq banner url
         
-        let previews = ((json?["preview"] as? [String: Any])?["images"] as? [Any])
-        let preview  = ((previews?.first as? [String: Any])?["source"] as? [String: Any])?["url"] as? String
-        
-        
+        let previews = ((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["resolutions"] as? [Any])
+        let preview  = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["url"] as? String)
         
         if (preview != nil && !(preview?.isEmpty())!) {
             burl = (preview!.replacingOccurrences(of: "&amp;", with: "&"))
@@ -61,23 +59,23 @@ class RealmDataWrapper {
         }
         
         if(big){ //check for low quality image
-            if(previews != nil && !previews!.isEmpty){
+            if(previews != nil && !(previews?.isEmpty)!){
                 if (submission.url != nil && ContentType.isImgurImage(uri: submission.url!)) {
                     lqUrl = (submission.url?.absoluteString)!
-                    lqUrl = lqUrl.substring(0, length: lqUrl.lastIndexOf(".")!) + (SettingValues.lqLow ? "m" : (SettingValues.lqMid ? "l" : "h")) + lqUrl.substring(lqUrl.lastIndexOf(".")!, length: lqUrl.length - lqUrl.lastIndexOf(".")!)
+                    lqUrl = lqUrl.substring(0, length: lqUrl.lastIndexOf(".")!) + (SettingValues.lqLow ? "m" : (SettingValues.lqMed ? "l" : "h")) + lqUrl.substring(lqUrl.lastIndexOf(".")!, length: lqUrl.length - lqUrl.lastIndexOf(".")!)
                 } else {
-                    let length = previews!.count
-                    if (SettingValues.lqLow && length >= 3)
+                    let length = previews?.count
+                    if (SettingValues.lqLow && length! >= 3)
                     {
-                        lqUrl = ((((previews!.first as! [String: Any])["resolutions"] as? [Any])?[2] as? [String: Any])?["url"] as? String)!
+                        lqUrl = ((previews?[1] as? [String: Any])?["url"] as? String)!
                     }
-                    else if (SettingValues.lqMid && length >= 4)
+                    else if (SettingValues.lqMed && length! >= 4)
                     {
-                        lqUrl = ((((previews!.first as! [String: Any])["resolutions"] as? [Any])?[2] as? [String: Any])?["url"] as? String)!
+                        lqUrl = ((previews?[2] as? [String: Any])?["url"] as? String)!
                     }
-                    else if (length >= 5)
+                    else if (length! >= 5)
                     {
-                        lqUrl = ((((previews!.first as! [String: Any])["resolutions"] as? [Any])?[length - 1] as? [String: Any])?["url"] as? String)!
+                        lqUrl = ((previews?[length! - 1] as? [String: Any])?["url"] as? String)!
                     }
                     else
                     {
@@ -109,7 +107,7 @@ class RealmDataWrapper {
         rSubmission.thumbnailUrl = turl
         rSubmission.thumbnail = thumb
         rSubmission.banner = big
-        rSubmission.lqUrl = lqUrl
+        rSubmission.lqUrl = String.init(htmlEncodedString: lqUrl)
         rSubmission.domain = submission.domain
         rSubmission.lQ = lowq
         rSubmission.score = submission.score
@@ -135,7 +133,7 @@ class RealmDataWrapper {
         }
     }
     
-    //Takes a Comment from reddift and turns it into a Realm model
+       //Takes a Comment from reddift and turns it into a Realm model
     static func commentToRComment(comment: Comment, depth: Int) -> RComment {
         let flair = comment.authorFlairCssClass.isEmpty ? comment.authorFlairCssClass : comment.authorFlairText;
         let bodyHtml = comment.bodyHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
@@ -387,3 +385,27 @@ extension String {
         return try NSAttributedString(data: data, options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType, NSCharacterEncodingDocumentAttribute: String.Encoding.utf8.rawValue], documentAttributes: nil).string
     }
 }
+extension String {
+    init(htmlEncodedString: String) {
+        self.init()
+        guard let encodedData = htmlEncodedString.data(using: .utf8) else {
+            self = htmlEncodedString
+            return
+        }
+        
+        let attributedOptions: [String : Any] = [
+            NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType,
+            NSCharacterEncodingDocumentAttribute: String.Encoding.utf8.rawValue
+        ]
+        
+        do {
+            let attributedString = try NSAttributedString(data: encodedData, options: attributedOptions, documentAttributes: nil)
+            self = attributedString.string
+        } catch {
+            print("Error: \(error)")
+            self = htmlEncodedString
+        }
+    }
+}
+
+

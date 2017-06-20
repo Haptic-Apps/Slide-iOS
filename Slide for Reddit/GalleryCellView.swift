@@ -100,7 +100,7 @@ class GalleryCellView: UITableViewCell {
     }
     
     func openLink(sender: AnyObject){
-        (parentViewController)?.setLink(lnk: link!)
+        (parentViewController)?.setLink(lnk: link!, shownURL: nil, lq: false)
     }
 
 

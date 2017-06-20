@@ -31,6 +31,8 @@
 		BE2F3F4C1EF62021003C1B28 /* SettingsLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2F3F4B1EF62020003C1B28 /* SettingsLayout.swift */; };
 		BE2F3F4E1EF707DB003C1B28 /* YouTubeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2F3F4D1EF707DB003C1B28 /* YouTubeViewController.swift */; };
 		BE2F3F561EF70FC2003C1B28 /* YTPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = BE2F3F551EF70FC2003C1B28 /* YTPlayerView.m */; };
+		BE2F3F581EF886D9003C1B28 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2F3F571EF886D9003C1B28 /* Reachability.swift */; };
+		BE2F3F5A1EF8DD3D003C1B28 /* SettingsData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2F3F591EF8DD3D003C1B28 /* SettingsData.swift */; };
 		BE35216A1E3D22B000C30B8D /* Roboto-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BE3521651E3D22B000C30B8D /* Roboto-Bold.ttf */; };
 		BE35216B1E3D22B000C30B8D /* Roboto-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BE3521661E3D22B000C30B8D /* Roboto-Light.ttf */; };
 		BE35216C1E3D22B000C30B8D /* Roboto-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BE3521671E3D22B000C30B8D /* Roboto-Medium.ttf */; };
@@ -179,6 +181,8 @@
 		BE2F3F531EF70FC1003C1B28 /* Slide for Reddit-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Slide for Reddit-Bridging-Header.h"; sourceTree = "<group>"; };
 		BE2F3F541EF70FC2003C1B28 /* YTPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YTPlayerView.h; path = "../../../Downloads/youtube-ios-player-helper-master/Classes/YTPlayerView.h"; sourceTree = "<group>"; };
 		BE2F3F551EF70FC2003C1B28 /* YTPlayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = YTPlayerView.m; path = "../../../Downloads/youtube-ios-player-helper-master/Classes/YTPlayerView.m"; sourceTree = "<group>"; };
+		BE2F3F571EF886D9003C1B28 /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
+		BE2F3F591EF8DD3D003C1B28 /* SettingsData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsData.swift; sourceTree = "<group>"; };
 		BE3521651E3D22B000C30B8D /* Roboto-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Bold.ttf"; sourceTree = "<group>"; };
 		BE3521661E3D22B000C30B8D /* Roboto-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Light.ttf"; sourceTree = "<group>"; };
 		BE3521671E3D22B000C30B8D /* Roboto-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Medium.ttf"; sourceTree = "<group>"; };
@@ -355,6 +359,7 @@
 				BE780B631E3405F300DAA1EB /* SettingsTheme.swift */,
 				BE35217D1E3D325A00C30B8D /* SettingsFont.swift */,
 				BE2F3F4B1EF62020003C1B28 /* SettingsLayout.swift */,
+				BE2F3F591EF8DD3D003C1B28 /* SettingsData.swift */,
 			);
 			name = Settings;
 			sourceTree = "<group>";
@@ -548,6 +553,7 @@
 				BED76E641E3A9576008E7717 /* RealmDataWrappers.swift */,
 				BE5089291E3D65600026EAE1 /* InboxListingViewController.swift */,
 				BE8C29201EDE8001004D7514 /* MarginedTableViewCell.swift */,
+				BE2F3F571EF886D9003C1B28 /* Reachability.swift */,
 			);
 			path = "Slide for Reddit";
 			sourceTree = "<group>";
@@ -952,9 +958,11 @@
 				BE2B89FB1E253D610053D493 /* ReplyViewController.swift in Sources */,
 				BE6EA6D71E1C1FC700E9E709 /* VidMeJSONBase.swift in Sources */,
 				BE3E5C171E16BC1A00749C0C /* String+util.swift in Sources */,
+				BE2F3F581EF886D9003C1B28 /* Reachability.swift in Sources */,
 				BE8FCA0A1E0C46090063B8EF /* SubredditLinkViewController.swift in Sources */,
 				BEB2B2391E35D64F00BF761C /* MessageCellView.swift in Sources */,
 				BEB2B2371E35D48000BF761C /* InboxViewController.swift in Sources */,
+				BE2F3F5A1EF8DD3D003C1B28 /* SettingsData.swift in Sources */,
 				BEBF45C81E230CC900764BB8 /* History.swift in Sources */,
 				BE6EA6E01E1C228100E9E709 /* GfycatTranscoded.swift in Sources */,
 				BEE5BF641E11A15500E3C9AE /* LinkCellView.swift in Sources */,
