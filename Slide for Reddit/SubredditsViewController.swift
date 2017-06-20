@@ -35,7 +35,7 @@ class SubredditsViewController:  PagingMenuController {
             return .all(menuOptions: MenuOptions(), pagingControllers:viewControllers)
         }
         var lazyLoadingPage: LazyLoadingPage {
-            return LazyLoadingPage.one
+            return LazyLoadingPage.three
         }
 
     }
@@ -323,19 +323,17 @@ class SubredditsViewController:  PagingMenuController {
         onMove = { state in
             switch state {
             case let .willMoveController(menuController, previousMenuController):
-                print(previousMenuController)
-                (self.navigationController as? ScrollingNavigationController)?.showNavbar(animated: true)
-                if let navigationController = self.navigationController as? ScrollingNavigationController {
-               //todo?     navigationController.followScrollView(((menuController as! SubredditLinkViewController).tableView), delay: 50.0)
-                //    navigationController.scrollingNavbarDelegate = (menuController as! SubredditLinkViewController)
-                }
-                print(menuController)
                 self.navigationController?.navigationBar.barStyle = .black;
                 SubredditsViewController.current = (menuController as! SubredditLinkViewController).sub
                 if(SubredditsViewController.current != nil){
                     self.tintColor = ColorUtil.getColorForSub(sub: SubredditsViewController.current)
                     self.navigationController?.navigationBar.barTintColor = self.tintColor
                     self.menuNav?.setSubreddit(subreddit: SubredditsViewController.current)
+                    
+                    if (menuController as! SubredditLinkViewController).links.count == 0  {
+                        (menuController as! SubredditLinkViewController).load(reset: true)
+                    }
+                    
                     if(!SettingValues.viewType){
                         self.title = SubredditsViewController.current
                         self.currentTitle = self.title!

@@ -511,25 +511,47 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         
         self.tableView.register(LinkCellView.classForCoder(), forCellReuseIdentifier: "cell")
         session = (UIApplication.shared.delegate as! AppDelegate).session
-        if self.links.count == 0 && !single {
+        
+        /* old if self.links.count == 0 && !single {
             load(reset: true)
-        }
+        }*/
         
         tableView.estimatedRowHeight = 400.0
         tableView.rowHeight = UITableViewAutomaticDimension
         
         if(single){
             sideMenu = UISideMenuNavigationController()
-            
             do {
                 try (UIApplication.shared.delegate as! AppDelegate).session?.about(sub, completion: { (result) in
                     switch result {
                     case .failure:
+                        print(result.error!.description)
                         DispatchQueue.main.async {
                             if(self.sub == ("all") || self.sub == ("frontpage") || self.sub.hasPrefix("/m/")){
                                 self.load(reset: true)
                             } else {
-                                let alert = UIAlertController.init(title: "Subreddit not found", message: "/r/\(self.sub) could not be found, is it spelled correctly?", preferredStyle: .alert)
+                                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.2) {
+                                    let alert = UIAlertController.init(title: "Subreddit not found", message: "/r/\(self.sub) could not be found, is it spelled correctly?", preferredStyle: .alert)
+                                    alert.addAction(UIAlertAction.init(title: "Ok", style: .default, handler: { (_) in
+                                        let presentingViewController: UIViewController! = self.presentingViewController
+                                        
+                                        self.dismiss(animated: false) {
+                                            // go back to MainMenuView as the eyes of the user
+                                            presentingViewController.dismiss(animated: false, completion: nil)
+                                        }
+                                        
+                                    }))
+                                    self.present(alert, animated: true, completion: nil)
+                                }
+
+                            }
+                        }
+                    case .success(let r):
+                        self.subInfo = r
+                        DispatchQueue.main.async {
+                            if(self.subInfo!.over18 && !SettingValues.nsfwEnabled){
+                                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.2) {
+                                let alert = UIAlertController.init(title: "/r/\(self.subInfo!.name) is NSFW", message: "If you are 18 and willing to see adult content, enable NSFW content in Settings > Content", preferredStyle: .alert)
                                 alert.addAction(UIAlertAction.init(title: "Ok", style: .default, handler: { (_) in
                                     let presentingViewController: UIViewController! = self.presentingViewController
                                     
@@ -540,11 +562,8 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                                     
                                 }))
                                 self.present(alert, animated: true, completion: nil)
-                            }
-                        }
-                    case .success(let r):
-                        self.subInfo = r
-                        DispatchQueue.main.async {
+                                }
+                            } else {
                             if(self.sub != ("all") && self.sub != ("frontpage") && !self.sub.hasPrefix("/m/")){
                                 if(SettingValues.saveHistory){
                                     if(SettingValues.saveNSFWHistory && self.subInfo!.over18){
@@ -554,8 +573,9 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                                     }
                                 }
                             }
-                            
+                            print("Loading")
                             self.load(reset: true)
+                            }
                             
                         }
                     }
@@ -1362,7 +1382,6 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                             for link in links {
                                 converted.append(RealmDataWrapper.linkToRSubmission(submission: link))
                             }
-                            
                             let values = PostFilter.filter(converted, previous: self.links)
                             self.links += values
                             self.paginator = listing.paginator
