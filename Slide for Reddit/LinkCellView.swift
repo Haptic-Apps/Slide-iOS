@@ -553,7 +553,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     
     var link: RSubmission?
     
-    func setLink(submission: RSubmission, parent: MediaViewController, nav: UIViewController?){
+    func setLink(submission: RSubmission, parent: MediaViewController, nav: UIViewController?, baseSub: String){
         loadedImage = nil
         lq = false
         self.contentView.backgroundColor = ColorUtil.foregroundColor
@@ -763,19 +763,29 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             thumb = false
         }
         
+        if(submission.nsfw && !SettingValues.nsfwPreviews){
+            big = false
+            thumb = true
+        }
+        
+        if(submission.nsfw && SettingValues.hideNSFWCollection && (baseSub == "all" || baseSub == "frontpage" || baseSub == "popular")){
+            big = false
+            thumb = true
+        }
+
+        
         if(SettingValues.noImages){
             big = false
             thumb = false
         }
         
         
+        
         if(!big && !thumb && submission.type != .SELF && submission.type != .NONE){ //If a submission has a link but no images, still show the web thumbnail
             thumb = true
             addTouch(view: thumbImage, action: #selector(LinkCellView.openLink(sender:)))
             thumbImage.image = UIImage.init(named: "web")
-        }
-        
-        if(thumb && !big){
+        } else if(thumb && !big){
             addTouch(view: thumbImage, action: #selector(LinkCellView.openLink(sender:)))
             if(submission.thumbnailUrl == "nsfw"){
                 thumbImage.image = UIImage.init(named: "nsfw")
@@ -1580,7 +1590,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     func editSelftext(){
         let reply  = ReplyViewController.init(submission: link!, sub: (self.link?.subreddit)!, editing: true) { (cr) in
             DispatchQueue.main.async(execute: { () -> Void in
-                self.setLink(submission: RealmDataWrapper.linkToRSubmission(submission: cr!), parent: self.parentViewController!, nav: self.navViewController!)
+                self.setLink(submission: RealmDataWrapper.linkToRSubmission(submission: cr!), parent: self.parentViewController!, nav: self.navViewController!, baseSub: (self.link?.subreddit)!)
                 self.showBody(width: self.contentView.frame.size.width)
             })
         }

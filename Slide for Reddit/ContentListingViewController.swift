@@ -120,7 +120,7 @@ class ContentListingViewController: MediaViewController, UITableViewDelegate, UI
         var cell: UITableViewCell?
         if(thing is RSubmission){
             let c = tableView.dequeueReusableCell(withIdentifier: "submission", for: indexPath) as! LinkCellView
-            c.setLink(submission: (thing as! RSubmission), parent: self, nav: self.navigationController)
+            c.setLink(submission: (thing as! RSubmission), parent: self, nav: self.navigationController, baseSub: "all")
             cell = c
         } else if thing is RComment {
             let c = tableView.dequeueReusableCell(withIdentifier: "comment", for: indexPath) as! CommentCellView

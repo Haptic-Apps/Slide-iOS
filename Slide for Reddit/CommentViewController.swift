@@ -63,7 +63,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         
         let c = LinkCellView()
         c.delegate = self
-        c.setLink(submission: self.submission!, parent: self, nav: self.navigationController)
+        c.setLink(submission: self.submission!, parent: self, nav: self.navigationController, baseSub: self.submission!.subreddit)
         c.showBody(width: self.view.frame.size.width)
         c.frame = (tableView.tableHeaderView?.frame)!
         c.layoutIfNeeded()
@@ -384,7 +384,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                     self.headerCell = LinkCellView()
                                     self.headerCell?.delegate = self
                                     self.hasDone = true
-                                    self.headerCell?.setLink(submission: self.submission!, parent: self, nav: self.navigationController)
+                                    self.headerCell?.setLink(submission: self.submission!, parent: self, nav: self.navigationController, baseSub: self.submission!.subreddit)
                                     self.headerCell?.showBody(width: self.view.frame.size.width)
                                     self.tableView.tableHeaderView = UIView(frame: CGRect.init(x:0, y:0, width:self.tableView.frame.width, height:0.01))
                                     if let tableHeaderView = self.headerCell {
@@ -542,7 +542,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             headerCell = LinkCellView()
             headerCell?.delegate = self
             hasDone = true
-            headerCell?.setLink(submission: submission!, parent: self, nav: self.navigationController)
+            headerCell?.setLink(submission: submission!, parent: self, nav: self.navigationController, baseSub: submission!.subreddit)
             headerCell?.showBody(width: self.view.frame.size.width)
             self.tableView.tableHeaderView = UIView(frame: CGRect.init(x:0, y:0, width:self.tableView.frame.width, height:0.01))
             if let tableHeaderView = self.headerCell {

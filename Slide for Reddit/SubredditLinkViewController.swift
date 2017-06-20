@@ -1124,7 +1124,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         }
         
         let link = self.links[(indexPath as NSIndexPath).row]
-        (cell).setLink(submission: link, parent: self, nav: self.navigationController)
+        (cell).setLink(submission: link, parent: self, nav: self.navigationController, baseSub: sub)
 
         
         return cell
@@ -1366,7 +1366,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                             let values = PostFilter.filter(converted, previous: self.links)
                             self.links += values
                             self.paginator = listing.paginator
-                            self.nomore = !listing.paginator.hasMore()
+                            self.nomore = !listing.paginator.hasMore() || values.isEmpty
                             DispatchQueue.main.async{
                                 do {
                                     if(reset){

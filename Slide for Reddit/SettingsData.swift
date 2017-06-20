@@ -1,5 +1,5 @@
 //
-//  SettingsDataViewController.swift
+//  SettingsData.swift
 //  Slide for Reddit
 //
 //  Created by Carlos Crane on 6/19/17.
@@ -144,13 +144,13 @@ class SettingsData: UITableViewController {
             disableOnWifi.isEnabled = true
             loadHQViewer.isEnabled = true
             lowerQualityMode.isEnabled = true
-            dontLoadImagePreviews.isEnabled = true
+            dontLoadImagePreviews.isEnabled = false
         } else {
             loadHQViewer.isEnabled = false
-            enableDataSaving.isEnabled = false
             disableOnWifi.isEnabled = false
             loadHQViewer.isEnabled = false
             lowerQualityMode.isEnabled = false
+            dontLoadImagePreviews.isEnabled = true
         }
         if(SettingValues.noImages){
             enableDataSaving.isEnabled = false

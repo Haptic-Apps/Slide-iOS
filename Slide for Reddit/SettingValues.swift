@@ -48,6 +48,9 @@ class SettingValues{
     public static let pref_loadContentHQ = "LOAD_CONTENT_HQ"
     public static let pref_lqLow = "LQ_LOW"
     public static let pref_noImg = "NO_IMAGES"
+    public static let pref_nsfwEnabled = "NSFW_ENABLED"
+    public static let pref_nsfwPreviews = "NSFW_PREVIEWS"
+    public static let pref_hideNSFWCollection = "NSFW_COLLECTION"
 
     public static var viewType = true
     public static var hiddenFAB = true
@@ -87,6 +90,9 @@ class SettingValues{
     public static var commentFontOffset = 0
     public static var largerThumbnail = true
     public static var lqLow = true
+    public static var nsfwEnabled = false
+    public static var nsfwPreviews = false
+    public static var hideNSFWCollection = false
 
     enum PostViewType: String {
         case LIST = "list"
@@ -97,6 +103,10 @@ class SettingValues{
     public static func initialize(){
         let settings = UserDefaults.standard
         SettingValues.bigPicCropped = settings.bool(forKey: SettingValues.pref_cropBigPic)
+        SettingValues.nsfwEnabled = settings.bool(forKey: SettingValues.pref_nsfwEnabled)
+        SettingValues.nsfwPreviews = settings.bool(forKey: SettingValues.pref_nsfwPreviews)
+        SettingValues.hideNSFWCollection = settings.bool(forKey: SettingValues.pref_hideNSFWCollection)
+
         SettingValues.dataSavingEnabled = settings.bool(forKey: SettingValues.pref_dataSavingEnabled)
         SettingValues.dataSavingDisableWiFi = settings.bool(forKey: SettingValues.pref_dataSavingDisableWifi)
         SettingValues.loadContentHQ = settings.bool(forKey: SettingValues.pref_loadContentHQ)

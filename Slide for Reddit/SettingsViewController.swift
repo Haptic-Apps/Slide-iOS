@@ -21,6 +21,7 @@ class SettingsViewController: UITableViewController {
     var history: UITableViewCell = UITableViewCell()
     var dataSaving: UITableViewCell = UITableViewCell()
     var filters: UITableViewCell = UITableViewCell()
+    var content: UITableViewCell = UITableViewCell()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -121,6 +122,13 @@ class SettingsViewController: UITableViewController {
         self.dataSaving.imageView?.image = UIImage.init(named: "data")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
         self.dataSaving.imageView?.tintColor = ColorUtil.fontColor
         
+        self.content.textLabel?.text = "Content"
+        self.content.accessoryType = .disclosureIndicator
+        self.content.backgroundColor = ColorUtil.foregroundColor
+        self.content.textLabel?.textColor = ColorUtil.fontColor
+        self.content.imageView?.image = UIImage.init(named: "image")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
+        self.content.imageView?.tintColor = ColorUtil.fontColor
+
         self.filters.textLabel?.text = "Filters"
         self.filters.accessoryType = .disclosureIndicator
         self.filters.backgroundColor = ColorUtil.foregroundColor
@@ -168,7 +176,8 @@ class SettingsViewController: UITableViewController {
             case 0: return self.linkHandling
             case 1: return self.history
             case 2: return self.dataSaving
-            case 3: return self.filters
+            case 3: return self.content
+            case 4: return self.filters
             default: fatalError("Unknown row in section 2")
             }
         default: fatalError("Unknown section")
@@ -181,7 +190,7 @@ class SettingsViewController: UITableViewController {
             show(SubredditReorderViewController(), sender: self)
         } else  if(indexPath.section == 0 && indexPath.row == 0){
             show(SettingsGeneral(), sender: self)
-        } else if(indexPath.section == 2 && indexPath.row == 3){
+        } else if(indexPath.section == 2 && indexPath.row == 4){
             show(FiltersViewController(), sender: self)
         } else if(indexPath.section == 1 && indexPath.row == 2){
             show(SubredditThemeViewController(), sender: self)
@@ -193,6 +202,8 @@ class SettingsViewController: UITableViewController {
             show(SettingsLayout(), sender: self)
         }  else if(indexPath.section == 2 && indexPath.row == 2){
             show(SettingsData(), sender: self)
+        }  else if(indexPath.section == 2 && indexPath.row == 3){
+            show(SettingsContent(), sender: self)
         }
     }
     /* maybe future
@@ -265,7 +276,7 @@ class SettingsViewController: UITableViewController {
         switch(section) {
         case 0: return 2    // section 0 has 2 rows
         case 1: return 5    // section 1 has 1 row
-        case 2: return 4
+        case 2: return 5
         default: fatalError("Unknown number of sections")
         }
     }

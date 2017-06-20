@@ -62,14 +62,14 @@ class RealmDataWrapper {
             if(previews != nil && !(previews?.isEmpty)!){
                 if (submission.url != nil && ContentType.isImgurImage(uri: submission.url!)) {
                     lqUrl = (submission.url?.absoluteString)!
-                    lqUrl = lqUrl.substring(0, length: lqUrl.lastIndexOf(".")!) + (SettingValues.lqLow ? "m" : (SettingValues.lqMed ? "l" : "h")) + lqUrl.substring(lqUrl.lastIndexOf(".")!, length: lqUrl.length - lqUrl.lastIndexOf(".")!)
+                    lqUrl = lqUrl.substring(0, length: lqUrl.lastIndexOf(".")!) + (SettingValues.lqLow ? "m" : "l") + lqUrl.substring(lqUrl.lastIndexOf(".")!, length: lqUrl.length - lqUrl.lastIndexOf(".")!)
                 } else {
                     let length = previews?.count
                     if (SettingValues.lqLow && length! >= 3)
                     {
                         lqUrl = ((previews?[1] as? [String: Any])?["url"] as? String)!
                     }
-                    else if (SettingValues.lqMed && length! >= 4)
+                    else if (length! >= 4)
                     {
                         lqUrl = ((previews?[2] as? [String: Any])?["url"] as? String)!
                     }
@@ -106,6 +106,7 @@ class RealmDataWrapper {
         rSubmission.bannerUrl = burl
         rSubmission.thumbnailUrl = turl
         rSubmission.thumbnail = thumb
+        rSubmission.nsfw = submission.over18
         rSubmission.banner = big
         rSubmission.lqUrl = String.init(htmlEncodedString: lqUrl)
         rSubmission.domain = submission.domain
@@ -259,6 +260,7 @@ class RSubmission: Object {
     dynamic var lQ = false
     dynamic var thumbnail = false
     dynamic var banner = false
+    dynamic var nsfw = false
     dynamic var score = 0
     dynamic var upvoteRatio: Double = 0
     dynamic var flair = ""
