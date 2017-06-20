@@ -169,7 +169,6 @@ class SubredditsViewController:  PagingMenuController {
         if(Subscriptions.subreddits.contains(subreddit)){
             let index = Subscriptions.subreddits.index(of: subreddit)
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForUser(name: subreddit)
-            navigationController?.setNavigationBarHidden(true, animated: true)
             move(toPage: index!)
         } else {
             show(RedditLink.getViewControllerForURL(urlS: URL.init(string: "/r/" + subreddit)!), sender: self)
@@ -322,7 +321,7 @@ class SubredditsViewController:  PagingMenuController {
         // -
         onMove = { state in
             switch state {
-            case let .willMoveController(menuController, previousMenuController):
+            case let .didMoveController(menuController, previousMenuController):
                 self.navigationController?.navigationBar.barStyle = .black;
                 SubredditsViewController.current = (menuController as! SubredditLinkViewController).sub
                 if(SubredditsViewController.current != nil){
@@ -343,21 +342,8 @@ class SubredditsViewController:  PagingMenuController {
                     self.colorChanged()
                     
                 }
-            case let .didMoveController(menuController, previousMenuController):
-                print(previousMenuController)
-                print(menuController)
-               
-
-            case let .willMoveItem(menuItemView, previousMenuItemView):
-                print(previousMenuItemView)
-                print(menuItemView)
-            case let .didMoveItem(menuItemView, previousMenuItemView):
-                print(previousMenuItemView)
-                print(menuItemView)
-            case .didScrollStart:
-                print("Scroll start")
-            case .didScrollEnd:
-                print("Scroll end")
+                
+            default: break
             }
         }
 

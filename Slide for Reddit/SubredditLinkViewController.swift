@@ -387,6 +387,8 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         reloadNeedingColor()
     }
     
+    static var firstPresented = true
+    
     func reloadNeedingColor(){
         tableView.backgroundColor = ColorUtil.backgroundColor
         tableView.separatorColor = ColorUtil.backgroundColor
@@ -512,9 +514,10 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         self.tableView.register(LinkCellView.classForCoder(), forCellReuseIdentifier: "cell")
         session = (UIApplication.shared.delegate as! AppDelegate).session
         
-        /* old if self.links.count == 0 && !single {
+        if (SubredditLinkViewController.firstPresented && !single) || (self.links.count == 0 && !single && !SettingValues.viewType) {
             load(reset: true)
-        }*/
+            SubredditLinkViewController.firstPresented = false
+        }
         
         tableView.estimatedRowHeight = 400.0
         tableView.rowHeight = UITableViewAutomaticDimension
@@ -530,15 +533,11 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                             if(self.sub == ("all") || self.sub == ("frontpage") || self.sub.hasPrefix("/m/")){
                                 self.load(reset: true)
                             } else {
-                                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.2) {
+                                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
                                     let alert = UIAlertController.init(title: "Subreddit not found", message: "/r/\(self.sub) could not be found, is it spelled correctly?", preferredStyle: .alert)
-                                    alert.addAction(UIAlertAction.init(title: "Ok", style: .default, handler: { (_) in
-                                        let presentingViewController: UIViewController! = self.presentingViewController
-                                        
-                                        self.dismiss(animated: false) {
-                                            // go back to MainMenuView as the eyes of the user
-                                            presentingViewController.dismiss(animated: false, completion: nil)
-                                        }
+                                    alert.addAction(UIAlertAction.init(title: "Close", style: .default, handler: { (_) in
+                                        self.navigationController?.popViewController(animated: true)
+                                        self.dismiss(animated: true, completion: nil)
                                         
                                     }))
                                     self.present(alert, animated: true, completion: nil)
@@ -550,16 +549,11 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                         self.subInfo = r
                         DispatchQueue.main.async {
                             if(self.subInfo!.over18 && !SettingValues.nsfwEnabled){
-                                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.2) {
-                                let alert = UIAlertController.init(title: "/r/\(self.subInfo!.name) is NSFW", message: "If you are 18 and willing to see adult content, enable NSFW content in Settings > Content", preferredStyle: .alert)
-                                alert.addAction(UIAlertAction.init(title: "Ok", style: .default, handler: { (_) in
-                                    let presentingViewController: UIViewController! = self.presentingViewController
-                                    
-                                    self.dismiss(animated: false) {
-                                        // go back to MainMenuView as the eyes of the user
-                                        presentingViewController.dismiss(animated: false, completion: nil)
-                                    }
-                                    
+                                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
+                                let alert = UIAlertController.init(title: "/r/\(self.sub) is NSFW", message: "If you are 18 and willing to see adult content, enable NSFW content in Settings > Content", preferredStyle: .alert)
+                                alert.addAction(UIAlertAction.init(title: "Close", style: .default, handler: { (_) in
+                                    self.navigationController?.popViewController(animated: true)
+                                    self.dismiss(animated: true, completion: nil)
                                 }))
                                 self.present(alert, animated: true, completion: nil)
                                 }
@@ -858,9 +852,6 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         UIApplication.shared.statusBarStyle = .lightContent
-        if(navigationController?.isNavigationBarHidden ?? false){
-        navigationController?.setNavigationBarHidden(false, animated: true)
-        }
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
