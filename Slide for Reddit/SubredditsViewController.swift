@@ -10,10 +10,9 @@
 import UIKit
 import PagingMenuController
 import SideMenu
-import AMScrollingNavbar
 import reddift
 import MaterialComponents.MaterialSnackbar
-
+import SAHistoryNavigationViewController
 
 class SubredditsViewController:  PagingMenuController {
     var isReload = false
@@ -257,6 +256,7 @@ class SubredditsViewController:  PagingMenuController {
     var currentTitle = "Slide"
     override func viewDidLoad() {
         self.title = currentTitle
+        (self.navigationController as? SAHistoryNavigationViewController)?.historyBackgroundColor = .black
 
         menuLeftNavigationController = UISideMenuNavigationController()
         menuLeftNavigationController?.leftSide = true

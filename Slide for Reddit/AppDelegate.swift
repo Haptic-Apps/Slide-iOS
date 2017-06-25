@@ -8,7 +8,6 @@
 
 import UIKit
 import reddift
-import ChameleonFramework
 import UserNotifications
 import RealmSwift
 import SDWebImage
@@ -108,7 +107,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         ColorUtil.doInit()
         let textAttributes = [NSForegroundColorAttributeName:UIColor.white]
         UINavigationBar.appearance().titleTextAttributes = textAttributes
-
+        
         return true
     }
     

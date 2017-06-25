@@ -9,7 +9,6 @@
 import UIKit
 import reddift
 import SDWebImage
-import AMScrollingNavbar
 import ImageViewer
 import MaterialComponents.MaterialProgressView
 
@@ -350,7 +349,7 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
         } else {
         show(controller, sender: self)
         }
-        (navigationController as? ScrollingNavigationController)?.showNavbar(animated: true)
+        navigationController?.setNavigationBarHidden(false, animated: true)
     }
     
     var color: UIColor?
@@ -362,7 +361,7 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
     
     func setNavColors(){
         if(navigationController != nil){
-            (navigationController as? ScrollingNavigationController)?.showNavbar(animated: true)
+            navigationController?.setNavigationBarHidden(false, animated: true)
             self.navigationController?.navigationBar.shadowImage = UIImage()
             navigationController?.navigationBar.barTintColor = color
             navigationController?.navigationBar.tintColor = .white

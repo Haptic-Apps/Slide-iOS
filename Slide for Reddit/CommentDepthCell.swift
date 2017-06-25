@@ -259,7 +259,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         if(sideConstraint != nil){
             self.contentView.removeConstraints(sideConstraint!)
         }
-        let metrics=["topMargin": topMargin, "ntopMargin": -topMargin, "horizontalMargin":75,"top":0,"bottom":0,"separationBetweenLabels":0,"labelMinHeight":75, "sidewidth":4*(depth ), "width":sideWidth]
+        let metrics=["marginTop": marginTop, "nmarginTop": -marginTop, "horizontalMargin":75,"top":0,"bottom":0,"separationBetweenLabels":0,"labelMinHeight":75, "sidewidth":4*(depth ), "width":sideWidth]
         let views=["title": title, "menu":menu, "topviewspace":topViewSpace, "more": moreButton, "side":sideView, "cell":self.contentView, "sideviewspace":sideViewSpace] as [String : Any]
         
         
@@ -277,12 +277,12 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
     override func updateConstraints() {
         super.updateConstraints()
         
-        let metrics=["topMargin": topMargin, "ntopMargin": -topMargin, "horizontalMargin":75,"top":0,"bottom":0,"separationBetweenLabels":0,"labelMinHeight":75, "sidewidth":4*(depth ), "width":sideWidth]
+        let metrics=["marginTop": marginTop, "nmarginTop": -marginTop, "horizontalMargin":75,"top":0,"bottom":0,"separationBetweenLabels":0,"labelMinHeight":75, "sidewidth":4*(depth ), "width":sideWidth]
         let views=["title": title, "children":c, "menu":menu, "topviewspace":topViewSpace, "more": moreButton, "side":sideView, "cell":self.contentView, "sideviewspace":sideViewSpace] as [String : Any]
         
         
         
-        contentView.bounds = CGRect.init(x: 0,y: 0, width: contentView.frame.size.width , height: contentView.frame.size.height + CGFloat(topMargin))
+        contentView.bounds = CGRect.init(x: 0,y: 0, width: contentView.frame.size.width , height: contentView.frame.size.height + CGFloat(marginTop))
         
         var constraint:[NSLayoutConstraint] = []
         
@@ -299,7 +299,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
                                                                      metrics: metrics,
                                                                      views: views))
         
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[topviewspace(topMargin)]-2-[title]-2-|",
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[topviewspace(marginTop)]-2-[title]-2-|",
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                                     metrics: metrics,
                                                                     views: views))
@@ -319,11 +319,11 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
                                                                     metrics: metrics,
                                                                     views: views))
         
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[topviewspace(topMargin)]-(ntopMargin)-[side]-(-1)-|",
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[topviewspace(marginTop)]-(nmarginTop)-[side]-(-1)-|",
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                                     metrics: metrics,
                                                                     views: views))
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[topviewspace(topMargin)]-(ntopMargin)-[sideviewspace]-0-|",
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[topviewspace(marginTop)]-(nmarginTop)-[sideviewspace]-0-|",
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                                     metrics: metrics,
                                                                     views: views))
@@ -335,7 +335,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         
     }
     var sideWidth: Int = 0
-    var topMargin: Int = 0
+    var marginTop: Int = 0
     
     func setMore(more: RMore, depth: Int){
         self.depth = depth
@@ -344,21 +344,21 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         self.contentView.backgroundColor = ColorUtil.foregroundColor
         if (depth - 1 > 0) {
             sideWidth = 4
-            topMargin = 1
+            marginTop = 1
             let i22 = depth - 2;
             if (i22 % 5 == 0) {
-                sideView.backgroundColor = UIColor.flatBlue()
+                sideView.backgroundColor = GMColor.blue500Color()
             } else if (i22 % 4 == 0) {
-                sideView.backgroundColor = UIColor.flatGreen()
+                sideView.backgroundColor = GMColor.green500Color()
             } else if (i22 % 3 == 0) {
-                sideView.backgroundColor = UIColor.flatYellow()
+                sideView.backgroundColor = GMColor.yellow500Color()
             } else if (i22 % 2 == 0) {
-                sideView.backgroundColor = UIColor.flatOrange()
+                sideView.backgroundColor = GMColor.orange500Color()
             } else {
-                sideView.backgroundColor = UIColor.flatRed()
+                sideView.backgroundColor = GMColor.red500Color()
             }
         } else {
-            topMargin = 8
+            marginTop = 8
             sideWidth = 0
         }
         
@@ -425,22 +425,22 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         self.depth = depth
         if (depth - 1 > 0) {
             sideWidth = 4
-            topMargin = 1
+            marginTop = 1
             let i22 = depth - 2;
             if (i22 % 5 == 0) {
-                sideView.backgroundColor = UIColor.flatBlue()
+                sideView.backgroundColor = GMColor.blue500Color()
             } else if (i22 % 4 == 0) {
-                sideView.backgroundColor = UIColor.flatGreen()
+                sideView.backgroundColor = GMColor.green500Color()
             } else if (i22 % 3 == 0) {
-                sideView.backgroundColor = UIColor.flatYellow()
+                sideView.backgroundColor = GMColor.yellow500Color()
             } else if (i22 % 2 == 0) {
-                sideView.backgroundColor = UIColor.flatOrange()
+                sideView.backgroundColor = GMColor.orange500Color()
             } else {
-                sideView.backgroundColor = UIColor.flatRed()
+                sideView.backgroundColor = GMColor.red500Color()
             }
         } else {
-            //topMargin = 8
-            topMargin = 1
+            //marginTop = 8
+            marginTop = 1
             sideWidth = 0
         }
         
@@ -465,10 +465,10 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         
         switch(ActionStates.getVoteDirection(s: comment)){
         case .down:
-            color = ColorUtil.downvoteColor!
+            color = ColorUtil.downvoteColor
             break
         case .up:
-            color = ColorUtil.upvoteColor!
+            color = ColorUtil.upvoteColor
             break
         default:
             color = ColorUtil.fontColor
@@ -616,7 +616,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
     }
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
-        if(viewControllerToCommit is GalleryViewController){
+        if(viewControllerToCommit is GalleryViewController || viewControllerToCommit is YouTubeViewController){
             parent?.presentImageGallery(viewControllerToCommit as! GalleryViewController)
         } else {
             parent?.show(viewControllerToCommit, sender: parent )

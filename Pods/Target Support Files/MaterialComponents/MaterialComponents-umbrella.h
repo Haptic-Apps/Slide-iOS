@@ -53,7 +53,7 @@
 #import "MDCKeyboardWatcher.h"
 #import "MaterialMath.h"
 #import "MDCMath.h"
-#import "MaterialOverlays.h"
+#import "MaterialOverlay.h"
 #import "MDCOverlayImplementor.h"
 #import "MDCOverlayObserver.h"
 #import "MDCOverlayTransitioning.h"

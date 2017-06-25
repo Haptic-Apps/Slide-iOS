@@ -16,7 +16,6 @@
 
 import UIKit
 import UZTextView
-import AMScrollingNavbar
 import ImageViewer
 import TTTAttributedLabel
 import MaterialComponents
@@ -213,7 +212,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             }
             let he = title.frame.size.height + CGFloat(20)
             let thumbheight = CGFloat(SettingValues.largerThumbnail ? 75 : 50)
-            estimatedHeight = CGFloat((he < thumbheight && thumb || he < thumbheight && !big) ? thumbheight : he) + CGFloat(54) + CGFloat(!hasText || !full ? 0 : (content?.textHeight)!) +  CGFloat(big && !thumb ? (full ? 240 :height + 20) : 0)
+            estimatedHeight = CGFloat((he < thumbheight && thumb || he < thumbheight && !big) ? thumbheight : he) + CGFloat(54) + CGFloat(!hasText || !full ? 0 : (content?.textHeight)!) +  CGFloat(big && !thumb ? (full ? 240 :submissionHeight + 20) : 0)
         }
         return estimatedHeight
     }
@@ -342,7 +341,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     }
     
     var thumb = true
-    var height:Int = 0
+    var submissionHeight:Int = 0
     
     override func updateConstraints() {
         super.updateConstraints()
@@ -363,7 +362,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             self.contentView.layoutMargins = UIEdgeInsets.init(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin))
         }
         
-        let metrics=["horizontalMargin":75,"top":topmargin,"bottom":bottommargin,"separationBetweenLabels":0,"labelMinHeight":75,  "bannerHeight": height, "left":leftmargin, "padding" : innerpadding] as [String: Int]
+        let metrics=["horizontalMargin":75,"top":topmargin,"bottom":bottommargin,"separationBetweenLabels":0,"labelMinHeight":75,  "bannerHeight": submissionHeight, "left":leftmargin, "padding" : innerpadding] as [String: Int]
         let views=["label":title, "body": textView, "image": thumbImage, "score": score, "comments": comments, "banner": bannerImage, "box": box] as [String : Any]
         let views2=["buttons":buttons, "upvote": upvote, "downvote": downvote, "reply": reply,"edit":edit, "more": more, "save": save] as [String : Any]
         
@@ -701,7 +700,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             self.contentView.removeConstraint(bigConstraint!)
         }
         
-        height = submission.height
+        submissionHeight = submission.height
         
         var type = ContentType.getContentType(baseUrl: submission.url!)
         if(submission.isSelf){
@@ -719,17 +718,17 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         
         let fullImage = ContentType.fullImage(t: type)
         
-        if(!fullImage && height < 50){
+        if(!fullImage && submissionHeight < 50){
             big = false
             thumb = true
         } else if(big && (SettingValues.bigPicCropped || full)){
-            height = 200
+            submissionHeight = 200
         } else if(big){
-            let h = getHeightFromAspectRatio(imageHeight: height, imageWidth: submission.width)
+            let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: submission.width)
             if(h == 0){
-                height = 200
+                submissionHeight = 200
             } else {
-                height  = h
+                submissionHeight  = h
             }
         }
         
@@ -743,7 +742,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             thumb = false
         }
         
-        if(height < 50){
+        if(submissionHeight < 50){
             thumb = true
             big = false
         }
@@ -806,7 +805,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             }
             if(full || SettingValues.bigPicCropped){
                 aspect = self.contentView.frame.size.width / 200
-                height = 200
+                submissionHeight = 200
                 bigConstraint = NSLayoutConstraint(item: bannerImage, attribute:  NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: bannerImage, attribute: NSLayoutAttribute.height, multiplier: aspect, constant: 0.0)
             } else {
                 bigConstraint = NSLayoutConstraint(item: bannerImage, attribute:  NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: bannerImage, attribute: NSLayoutAttribute.height, multiplier: aspect, constant: 0.0)
@@ -959,7 +958,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             return
         }
         
-        let metrics=["horizontalMargin":75,"top":0,"bottom":0,"separationBetweenLabels":0,"size": full ? 16 : 8, "labelMinHeight":75,  "thumb": (SettingValues.largerThumbnail ? 75 : 50), "bannerHeight": height] as [String: Int]
+        let metrics=["horizontalMargin":75,"top":0,"bottom":0,"separationBetweenLabels":0,"size": full ? 16 : 8, "labelMinHeight":75,  "thumb": (SettingValues.largerThumbnail ? 75 : 50), "bannerHeight": submissionHeight] as [String: Int]
         let views=["label":title, "body": textView, "image": thumbImage, "info": b, "upvote": upvote, "downvote" : downvote, "score": score, "comments": comments, "banner": bannerImage, "buttons":buttons, "box": box] as [String : Any]
         var bt = "[buttons]-8-"
         var bx = "[box]-8-"
@@ -1195,7 +1194,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             self.contentView.removeConstraint(bigConstraint!)
         }
         
-        height = submission.height
+        submissionHeight = submission.height
         
         var type = ContentType.getContentType(baseUrl: submission.url!)
         if(submission.isSelf){
@@ -1213,17 +1212,17 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         
         let fullImage = ContentType.fullImage(t: type)
         
-        if(!fullImage && height < 50){
+        if(!fullImage && submissionHeight < 50){
             big = false
             thumb = true
         } else if(big && (SettingValues.bigPicCropped || full)){
-            height = 200
+            submissionHeight = 200
         } else if(big){
-            let h = getHeightFromAspectRatio(imageHeight: height, imageWidth: submission.width)
+            let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: submission.width)
             if(h == 0){
-                height = 200
+                submissionHeight = 200
             } else {
-                height  = h
+                submissionHeight  = h
             }
         }
         
@@ -1237,7 +1236,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             thumb = false
         }
         
-        if(height < 50){
+        if(submissionHeight < 50){
             thumb = true
             big = false
         }
@@ -1287,7 +1286,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                 bigConstraint = NSLayoutConstraint(item: bannerImage, attribute:  NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: bannerImage, attribute: NSLayoutAttribute.height, multiplier: aspect, constant: 0.0)
             } else {
                 aspect = self.contentView.frame.size.width / 200
-                height = 200
+                submissionHeight = 200
                 bigConstraint = NSLayoutConstraint(item: bannerImage, attribute:  NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: bannerImage, attribute: NSLayoutAttribute.height, multiplier: aspect, constant: 0.0)
                 
             }
@@ -1463,11 +1462,11 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         switch(ActionStates.getVoteDirection(s: link)){
         case .down :
             downvote.tintColor = ColorUtil.downvoteColor
-            attrs = ([NSForegroundColorAttributeName: ColorUtil.downvoteColor!, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
+            attrs = ([NSForegroundColorAttributeName: ColorUtil.downvoteColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
             break
         case .up:
             upvote.tintColor = ColorUtil.upvoteColor
-            attrs = ([NSForegroundColorAttributeName: ColorUtil.upvoteColor!, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
+            attrs = ([NSForegroundColorAttributeName: ColorUtil.upvoteColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
             break
         default:
             attrs = ([NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true)])
@@ -1513,7 +1512,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         score.addImage(imageName: "upvote", afterLabel: false)
         
         if(ActionStates.isSaved(s: link)){
-            save.tintColor = UIColor.flatYellow()
+            save.tintColor = GMColor.yellow500Color()
         }
         if(History.getSeen(s: link) && !full){
             self.contentView.alpha = 0.7
@@ -1580,7 +1579,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
-        if(viewControllerToCommit is GalleryViewController){
+        if(viewControllerToCommit is GalleryViewController || viewControllerToCommit is YouTubeViewController){
             parentViewController?.presentImageGallery(viewControllerToCommit as! GalleryViewController)
         } else {
             parentViewController?.show(viewControllerToCommit, sender: parentViewController )
@@ -1647,7 +1646,7 @@ extension UILabel
         if(image != nil){
             textAttachment.image = image as? UIImage
         } else {
-            let img = UIImage(named: imageName)?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: self.font.pointSize, height: self.font.pointSize))
+            let img = UIImage(named: imageName)?.imageResize(sizeChange: CGSize.init(width: self.font.pointSize, height: self.font.pointSize)).withColor(tintColor: ColorUtil.fontColor)
             textAttachment.image = img
             LinkCellView.imageDictionary.setObject(img!, forKey: imageName as NSCopying)
         }

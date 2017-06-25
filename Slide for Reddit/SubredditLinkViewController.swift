@@ -9,8 +9,6 @@
 import UIKit
 import reddift
 import SDWebImage
-import ChameleonFramework
-import AMScrollingNavbar
 import SideMenu
 import KCFloatingActionButton
 import UZTextView
@@ -20,7 +18,7 @@ import MaterialComponents.MaterialSnackbar
 import MaterialComponents.MDCActivityIndicator
 
 
-class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, ScrollingNavigationControllerDelegate, LinkCellViewDelegate, ColorPickerDelegate, KCFloatingActionButtonDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate {
+class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, LinkCellViewDelegate, ColorPickerDelegate, KCFloatingActionButtonDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate {
     
     var parentController: SubredditsViewController?
     var accentChosen: UIColor?
@@ -515,7 +513,10 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         self.automaticallyAdjustsScrollViewInsets = false
         tableView.contentInset = UIEdgeInsetsMake(40, 0, 0, 0)
         
-        self.tableView.register(LinkCellView.classForCoder(), forCellReuseIdentifier: "cell")
+        self.tableView.register(BannerLinkCellView.classForCoder(), forCellReuseIdentifier: "banner")
+        self.tableView.register(ThumbnailLinkCellView.classForCoder(), forCellReuseIdentifier: "thumb")
+        self.tableView.register(TextLinkCellView.classForCoder(), forCellReuseIdentifier: "text")
+
         session = (UIApplication.shared.delegate as! AppDelegate).session
         
         if (SubredditLinkViewController.firstPresented && !single) || (self.links.count == 0 && !single && !SettingValues.viewType) {
@@ -1134,18 +1135,87 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! LinkCellView
         
-        cell.preservesSuperviewLayoutMargins = false
-        cell.delegate = self
+        var target = CurrentType.none
+        let submission = self.links[(indexPath as NSIndexPath).row]
+        
+        var thumb = submission.thumbnail
+        var big = submission.banner
+        var height = submission.height
+        
+        var type = ContentType.getContentType(baseUrl: submission.url!)
+        if(submission.isSelf){
+            type = .SELF
+        }
+        
+        if(SettingValues.bannerHidden){
+            big = false
+            thumb = true
+        }
+        
+        if(thumb && type == .SELF){
+            thumb = false
+        }
+        
+        let fullImage = ContentType.fullImage(t: type)
+        
+        if(!fullImage && height < 50){
+            big = false
+            thumb = true
+        }
+        
+        if(type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big){
+            big = false
+            thumb = false
+        }
+        
+        if(height < 50){
+            thumb = true
+            big = false
+        }
+        
+        if (type == ContentType.CType.SELF && SettingValues.hideImageSelftext
+            || SettingValues.noImages && submission.isSelf) {
+            big = false
+            thumb = false
+        }
+        
+        if(big || !submission.thumbnail){
+            thumb = false
+        }
+        
+        
+        if(!big && !thumb && submission.type != .SELF && submission.type != .NONE){ //If a submission has a link but no images, still show the web thumbnail
+            thumb = true
+        }
+
+        
+        if(thumb && !big){
+            target = .thumb
+        } else if(big){
+            target = .banner
+        } else {
+            target = .text
+        }
+
+        var cell: LinkCellView?
+        if(target == .thumb){
+          cell = tableView.dequeueReusableCell(withIdentifier: "thumb", for: indexPath) as! ThumbnailLinkCellView
+        } else if(target == .banner){
+            cell = tableView.dequeueReusableCell(withIdentifier: "banner", for: indexPath) as! BannerLinkCellView
+        } else {
+            cell = tableView.dequeueReusableCell(withIdentifier: "text", for: indexPath) as! TextLinkCellView
+        }
+        
+        cell?.preservesSuperviewLayoutMargins = false
+        cell?.delegate = self
         if indexPath.row == self.links.count - 1 && !loading && !nomore {
             self.loadMore()
         }
         
-        let link = self.links[(indexPath as NSIndexPath).row]
-        (cell).setLink(submission: link, parent: self, nav: self.navigationController, baseSub: sub)
+        (cell)!.setLink(submission: submission, parent: self, nav: self.navigationController, baseSub: sub)
 
-        return cell
+        return cell!
     }
     
     var loading = false

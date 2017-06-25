@@ -10,7 +10,6 @@ import UIKit
 import reddift
 import AudioToolbox.AudioServices
 import BGTableViewRowActionWithImage
-import AMScrollingNavbar
 import UZTextView
 import RealmSwift
 import MaterialComponents.MaterialSnackbar
@@ -271,9 +270,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         session = (UIApplication.shared.delegate as! AppDelegate).session
         if let link = self.submission {
             do {
-                print("Context number is \(contextNumber)")
-                print("Name is \(link.id)")
-                try session?.getArticles(link.id, sort:sort, comments:(context.isEmpty ? nil : [context]), context: contextNumber, completion: { (result) -> Void in
+                try session?.getArticles(link.name, sort:sort, comments:(context.isEmpty ? nil : [context]), context: contextNumber, completion: { (result) -> Void in
                     switch result {
                     case .failure(let error):
                         print(error)
@@ -454,7 +451,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
     
     func hideSearchBar() {
-        (navigationController as? ScrollingNavigationController)?.showNavbar(animated: true)
+        navigationController?.setNavigationBarHidden(true, animated: true)
         isSearching = false
         tableView.tableHeaderView = savedHeaderView!
         let more = UIButton.init(type: .custom)
@@ -513,10 +510,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         self.tableView.register(LinkCellView.classForCoder(), forCellReuseIdentifier: "cell")
         self.tableView.register(LinkCellView.classForCoder(), forCellReuseIdentifier: "repcell")
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: UIBarButtonItemStyle.plain, target: nil, action: nil)
-        if let navigationController = self.navigationController as? ScrollingNavigationController {
-            print("Following scroll")
-            // navigationController.followScrollView(self.tableView, delay: 50.0)
-        }
 
         searchBar.delegate = self
         searchBar.searchBarStyle = UISearchBarStyle.minimal
@@ -670,12 +663,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             navigationItem.rightBarButtonItems = [moreB, sortB, searchB]
             navigationItem.rightBarButtonItem?.imageInsets = UIEdgeInsetsMake(0, 0, 0, -20)
         }
-        
-            if let navigationController = navigationController as? ScrollingNavigationController {
-              //  navigationController.followScrollView(tableView, delay: 50.0)
             }
-
-    }
     
     func showMenu(_ sender: AnyObject){
         let link = submission!
@@ -833,11 +821,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
-            if let navigationController = navigationController as? ScrollingNavigationController {
-                navigationController.stopFollowingScrollView()
-            }
-    
     }
     
     public func extendKeepMore(in comment: Thing, current depth: Int) -> ([(Thing, Int)]) {

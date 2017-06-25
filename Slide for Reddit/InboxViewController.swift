@@ -8,7 +8,6 @@
 
 import UIKit
 import reddift
-import AMScrollingNavbar
 import PagingMenuController
 import MaterialComponents.MaterialSnackbar
 

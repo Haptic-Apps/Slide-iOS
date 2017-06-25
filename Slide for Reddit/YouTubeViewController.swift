@@ -7,9 +7,8 @@
 //
 
 import UIKit
-import youtube_ios_player_helper
 
-class YouTubeViewController: UIViewController {
+class YouTubeViewController: UIViewController, YTPlayerViewDelegate {
     var panGestureRecognizer: UIPanGestureRecognizer?
     var originalPosition: CGPoint?
     var currentPositionTouched: CGPoint?
@@ -66,7 +65,8 @@ class YouTubeViewController: UIViewController {
             inv = inv.substring(0, length: inv.length - 1)
         }
         let slashindex = inv.lastIndexOf("/")!
-        inv = inv.substring(slashindex + 1, length: inv.length - slashindex)
+        print("Index is \(slashindex)")
+        inv = inv.substring(slashindex + 1, length: inv.length - slashindex - 1)
         return inv
     }
     var millis = 0
@@ -93,26 +93,34 @@ class YouTubeViewController: UIViewController {
     }
     
     var player = YTPlayerView()
+    func playerViewDidBecomeReady(_ playerView: YTPlayerView) {
+        self.player.playVideo()
+        
+    }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        player = YTPlayerView.init(frame: CGRect.zero)
-        player.translatesAutoresizingMaskIntoConstraints = false
-        self.view.addSubview(player)
-        self.view.backgroundColor = UIColor.black.withAlphaComponent(0.5)
-        var constraints : [NSLayoutConstraint] = []
-        constraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[player]-0-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: [:], views: ["player":player]))
-        constraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[player]-0-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: [:], views: ["player":player]))
-        self.view.addConstraints(constraints)
+    override func loadView() {
+        self.view = YTPlayerView(frame: CGRect.zero)
+        self.player = self.view as! YTPlayerView
+        self.player.delegate = self
         if(!playlist.isEmpty){
             player.load(withPlaylistId: playlist)
         } else {
-            player.loadVideo(byId: video, startSeconds: Float(millis), suggestedQuality: YTPlaybackQuality.auto)
+            player.load(withVideoId: video, playerVars: ["controls":1,"playsinline":1,"start":millis,"fs":0])
         }
-        print("Video id is \(video)")
-        player.playVideo()
+
+    }
+
+    override var prefersStatusBarHidden: Bool {
+        return true
+    }
+
+    override func viewDidLoad() {
+        modalPresentationStyle = .currentContext
+        super.viewDidLoad()
+        
+        self.view.backgroundColor = UIColor.clear
         panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panGestureAction(_:)))
-        view.addGestureRecognizer(panGestureRecognizer!)
+        player.addGestureRecognizer(panGestureRecognizer!)
     }
     
     func panGestureAction(_ panGesture: UIPanGestureRecognizer) {

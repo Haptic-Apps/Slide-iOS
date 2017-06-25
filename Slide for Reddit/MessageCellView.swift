@@ -9,7 +9,6 @@
 
 import UIKit
 import reddift
-import AMScrollingNavbar
 import UZTextView
 import ImageViewer
 import MaterialComponents.MaterialSnackbar
@@ -317,7 +316,7 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
     
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
-        if(viewControllerToCommit is GalleryViewController){
+        if(viewControllerToCommit is GalleryViewController || viewControllerToCommit is YouTubeViewController){
             parentViewController?.presentImageGallery(viewControllerToCommit as! GalleryViewController)
         } else {
             parentViewController?.show(viewControllerToCommit, sender: parentViewController )

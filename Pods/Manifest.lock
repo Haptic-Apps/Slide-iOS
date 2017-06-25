@@ -1,38 +1,34 @@
 PODS:
   - ActionSheetPicker-3.0 (2.2.0)
   - Alamofire (4.5.0)
-  - AMScrollingNavbar (3.3.4)
   - BGTableViewRowActionWithImage (0.4.1)
-  - ChameleonFramework (2.1.0):
-    - ChameleonFramework/Default (= 2.1.0)
-  - ChameleonFramework/Default (2.1.0)
   - ImagePickerSheetController (0.9.3)
   - ImageViewer (4.0)
   - KCFloatingActionButton (2.1.2)
-  - MaterialComponents/ActivityIndicator (25.0.0):
-    - MaterialComponents/ActivityIndicator/ColorThemer (= 25.0.0)
-    - MaterialComponents/ActivityIndicator/Component (= 25.0.0)
+  - MaterialComponents/ActivityIndicator (25.1.0):
+    - MaterialComponents/ActivityIndicator/ColorThemer (= 25.1.0)
+    - MaterialComponents/ActivityIndicator/Component (= 25.1.0)
     - MaterialComponents/private/Application
     - MaterialComponents/private/RTL
-  - MaterialComponents/ActivityIndicator/ColorThemer (25.0.0):
+  - MaterialComponents/ActivityIndicator/ColorThemer (25.1.0):
     - MaterialComponents/ActivityIndicator/Component
     - MaterialComponents/private/Application
     - MaterialComponents/private/RTL
     - MaterialComponents/Themes
-  - MaterialComponents/ActivityIndicator/Component (25.0.0):
+  - MaterialComponents/ActivityIndicator/Component (25.1.0):
     - MaterialComponents/private/Application
     - MaterialComponents/private/RTL
-  - MaterialComponents/AnimationTiming (25.0.0)
-  - MaterialComponents/Buttons (25.0.0):
-    - MaterialComponents/Buttons/ColorThemer (= 25.0.0)
-    - MaterialComponents/Buttons/Component (= 25.0.0)
+  - MaterialComponents/AnimationTiming (25.1.0)
+  - MaterialComponents/Buttons (25.1.0):
+    - MaterialComponents/Buttons/ColorThemer (= 25.1.0)
+    - MaterialComponents/Buttons/Component (= 25.1.0)
     - MaterialComponents/Ink
     - MaterialComponents/private/Math
     - MaterialComponents/ShadowElevations
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
     - MDFTextAccessibility
-  - MaterialComponents/Buttons/ColorThemer (25.0.0):
+  - MaterialComponents/Buttons/ColorThemer (25.1.0):
     - MaterialComponents/Buttons/Component
     - MaterialComponents/Ink
     - MaterialComponents/private/Math
@@ -41,52 +37,52 @@ PODS:
     - MaterialComponents/Themes
     - MaterialComponents/Typography
     - MDFTextAccessibility
-  - MaterialComponents/Buttons/Component (25.0.0):
+  - MaterialComponents/Buttons/Component (25.1.0):
     - MaterialComponents/Ink
     - MaterialComponents/private/Math
     - MaterialComponents/ShadowElevations
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
     - MDFTextAccessibility
-  - MaterialComponents/Dialogs (25.0.0):
-    - MaterialComponents/Dialogs/ColorThemer (= 25.0.0)
-    - MaterialComponents/Dialogs/Component (= 25.0.0)
-  - MaterialComponents/Dialogs/ColorThemer (25.0.0):
+  - MaterialComponents/Dialogs (25.1.0):
+    - MaterialComponents/Dialogs/ColorThemer (= 25.1.0)
+    - MaterialComponents/Dialogs/Component (= 25.1.0)
+  - MaterialComponents/Dialogs/ColorThemer (25.1.0):
     - MaterialComponents/Dialogs/Component
     - MaterialComponents/Themes
-  - MaterialComponents/Dialogs/Component (25.0.0):
+  - MaterialComponents/Dialogs/Component (25.1.0):
     - MaterialComponents/Buttons
     - MaterialComponents/private/KeyboardWatcher
     - MaterialComponents/private/RTL
     - MaterialComponents/ShadowElevations
     - MaterialComponents/ShadowLayer
-  - MaterialComponents/Ink (25.0.0):
-    - MaterialComponents/Ink/ColorThemer (= 25.0.0)
-    - MaterialComponents/Ink/Component (= 25.0.0)
-  - MaterialComponents/Ink/ColorThemer (25.0.0):
+  - MaterialComponents/Ink (25.1.0):
+    - MaterialComponents/Ink/ColorThemer (= 25.1.0)
+    - MaterialComponents/Ink/Component (= 25.1.0)
+  - MaterialComponents/Ink/ColorThemer (25.1.0):
     - MaterialComponents/Ink/Component
     - MaterialComponents/Themes
-  - MaterialComponents/Ink/Component (25.0.0)
-  - MaterialComponents/OverlayWindow (25.0.0):
+  - MaterialComponents/Ink/Component (25.1.0)
+  - MaterialComponents/OverlayWindow (25.1.0):
     - MaterialComponents/private/Application
-  - MaterialComponents/private/Application (25.0.0)
-  - MaterialComponents/private/KeyboardWatcher (25.0.0):
+  - MaterialComponents/private/Application (25.1.0)
+  - MaterialComponents/private/KeyboardWatcher (25.1.0):
     - MaterialComponents/private/Application
-  - MaterialComponents/private/Math (25.0.0)
-  - MaterialComponents/private/Overlay (25.0.0)
-  - MaterialComponents/private/RTL (25.0.0)
-  - MaterialComponents/ProgressView (25.0.0):
-    - MaterialComponents/ProgressView/ColorThemer (= 25.0.0)
-    - MaterialComponents/ProgressView/Component (= 25.0.0)
-  - MaterialComponents/ProgressView/ColorThemer (25.0.0):
+  - MaterialComponents/private/Math (25.1.0)
+  - MaterialComponents/private/Overlay (25.1.0)
+  - MaterialComponents/private/RTL (25.1.0)
+  - MaterialComponents/ProgressView (25.1.0):
+    - MaterialComponents/ProgressView/ColorThemer (= 25.1.0)
+    - MaterialComponents/ProgressView/Component (= 25.1.0)
+  - MaterialComponents/ProgressView/ColorThemer (25.1.0):
     - MaterialComponents/ProgressView/Component
     - MaterialComponents/Themes
-  - MaterialComponents/ProgressView/Component (25.0.0):
+  - MaterialComponents/ProgressView/Component (25.1.0):
     - MaterialComponents/private/Math
     - MaterialComponents/private/RTL
-  - MaterialComponents/ShadowElevations (25.0.0)
-  - MaterialComponents/ShadowLayer (25.0.0)
-  - MaterialComponents/Snackbar (25.0.0):
+  - MaterialComponents/ShadowElevations (25.1.0)
+  - MaterialComponents/ShadowLayer (25.1.0)
+  - MaterialComponents/Snackbar (25.1.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Buttons
     - MaterialComponents/OverlayWindow
@@ -94,19 +90,22 @@ PODS:
     - MaterialComponents/private/KeyboardWatcher
     - MaterialComponents/private/Overlay
     - MaterialComponents/Typography
-  - MaterialComponents/Themes (25.0.0)
-  - MaterialComponents/Typography (25.0.0):
+  - MaterialComponents/Themes (25.1.0)
+  - MaterialComponents/Typography (25.1.0):
     - MaterialComponents/private/Application
   - MDFTextAccessibility (1.2.0)
+  - MisterFusion (2.2.0)
   - PagingMenuController (2.2.0)
-  - Realm (2.8.2):
-    - Realm/Headers (= 2.8.2)
-  - Realm/Headers (2.8.2)
-  - RealmSwift (2.8.2):
-    - Realm (= 2.8.2)
+  - Realm (2.8.3):
+    - Realm/Headers (= 2.8.3)
+  - Realm/Headers (2.8.3)
+  - RealmSwift (2.8.3):
+    - Realm (= 2.8.3)
   - reddift (2.0.0):
     - reddift/MiniKeychain (= 2.0.0)
   - reddift/MiniKeychain (2.0.0)
+  - SAHistoryNavigationViewController (3.1.1):
+    - MisterFusion
   - SDWebImage (3.8.2):
     - SDWebImage/Core (= 3.8.2)
   - SDWebImage/Core (3.8.2)
@@ -114,14 +113,11 @@ PODS:
   - SwiftyJSON (3.1.4)
   - TTTAttributedLabel (2.0.0)
   - UZTextView (1.0.8)
-  - youtube-ios-player-helper (0.1.6)
 
 DEPENDENCIES:
   - ActionSheetPicker-3.0 (from `https://github.com/ccrama/ActionSheetPicker-3.0`)
   - Alamofire (~> 4.3)
-  - AMScrollingNavbar
   - BGTableViewRowActionWithImage
-  - ChameleonFramework
   - ImagePickerSheetController (from `https://github.com/lbrndnr/ImagePickerSheetController`, branch `swift3`)
   - ImageViewer (from `https://github.com/ccrama/ImageViewer`)
   - KCFloatingActionButton (~> 2.1.0)
@@ -136,12 +132,12 @@ DEPENDENCIES:
   - PagingMenuController
   - RealmSwift
   - reddift (from `https://github.com/ccrama/reddift`)
+  - SAHistoryNavigationViewController
   - SDWebImage (~> 3.8)
   - SideMenu
   - SwiftyJSON
   - TTTAttributedLabel
   - UZTextView (from `https://github.com/ccrama/UZTextView`)
-  - youtube-ios-player-helper (~> 0.1.4)
 
 EXTERNAL SOURCES:
   ActionSheetPicker-3.0:
@@ -167,7 +163,7 @@ CHECKOUT OPTIONS:
     :commit: f4d3b461ffc8338c1a5d6e0026fa2d30832f3593
     :git: https://github.com/ccrama/ImageViewer
   reddift:
-    :commit: eaaac22ced76a36fb61b812b6f7768ee90f3fd0d
+    :commit: 326de440d1ca32405ae558f41972845001f54ed1
     :git: https://github.com/ccrama/reddift
   UZTextView:
     :commit: 15b553d05544ddc429b76f23b413fc9be256901d
@@ -176,25 +172,24 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   ActionSheetPicker-3.0: d11a4c12c6aaf704b8a3f56d179198c99f3e41e6
   Alamofire: f28cdffd29de33a7bfa022cbd63ae95a27fae140
-  AMScrollingNavbar: 4a49d5b74abf33d2a08279dcad07080d7d3f31b6
   BGTableViewRowActionWithImage: 6a0731a84662735f5ec28dc253e3fba6a73ebc5b
-  ChameleonFramework: d21a3cc247abfe5e37609a283a8238b03575cf64
   ImagePickerSheetController: 4789b06940e299431455c61be77fda440883c36c
   ImageViewer: 364abc0309c33dda86d08ca25b0243e5c67d8cd3
   KCFloatingActionButton: 1b22ce95d44b51915280df8a8b277eae4a06c3f1
-  MaterialComponents: 56ec9b0785ab6e463f218fe15684fa586d5d92b2
+  MaterialComponents: 18ef3524558622476f3edd7c1579efbca431c5dd
   MDFTextAccessibility: 94098925e0853551c5a311ce7c1ecefbe297cdb6
+  MisterFusion: f243f4db57c523b5f55d7d9df6a298ffaac8695e
   PagingMenuController: 6176618987bb170096664f2da097313e45ed9c31
-  Realm: 0e262abf087c7054013e00579274f7e070486d4a
-  RealmSwift: 73565e91bc403c1149e4acf31ff9de506b2f9459
+  Realm: 3601ef091c8c499a31101d8563b991e75546cdce
+  RealmSwift: 8183818515471b01a99abdd2970f8e4fd52b6f4a
   reddift: 3066e687c2a934b0f9aca6ee6e2161abc4c93a56
+  SAHistoryNavigationViewController: fbe7ad886f3f846a5c5742180d57ae7545b810a7
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
   SideMenu: 3fa07dd05d4bade2b6f9889fb1877e312e1ba319
   SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   UZTextView: d8d45a8459b0de6f2c393458a05c65352f89e00a
-  youtube-ios-player-helper: 21ab92db027c7ff86cb17a3843a3f6eafc8158d2
 
-PODFILE CHECKSUM: 62a19c91494a94947a37b2a8169db36c84a960c4
+PODFILE CHECKSUM: d9bfa7c7d4caaa7d49d6a0919849fab541ea13fe
 
 COCOAPODS: 1.1.1

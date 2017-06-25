@@ -101,6 +101,10 @@
 		BE8FCA121E0C46090063B8EF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BE8FCA101E0C46090063B8EF /* LaunchScreen.storyboard */; };
 		BE8FCA1D1E0C46090063B8EF /* Slide_for_RedditTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8FCA1C1E0C46090063B8EF /* Slide_for_RedditTests.swift */; };
 		BE8FCA281E0C46090063B8EF /* Slide_for_RedditUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8FCA271E0C46090063B8EF /* Slide_for_RedditUITests.swift */; };
+		BE97422C1F00116D00BF48E0 /* BannerLinkCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE97422B1F00116D00BF48E0 /* BannerLinkCellView.swift */; };
+		BE97422E1F0011BE00BF48E0 /* ThumbnailLinkCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE97422D1F0011BE00BF48E0 /* ThumbnailLinkCellView.swift */; };
+		BE9742301F0011E500BF48E0 /* TextLinkCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE97422F1F0011E500BF48E0 /* TextLinkCellView.swift */; };
+		BE9742321F001BEC00BF48E0 /* YTPlayer.html in Resources */ = {isa = PBXBuildFile; fileRef = BE9742311F001BEC00BF48E0 /* YTPlayer.html */; };
 		BE981D351E31855500BD3846 /* OpenInChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE981D341E31855500BD3846 /* OpenInChrome.swift */; };
 		BEB2B2351E35D25100BF761C /* InboxContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB2B2341E35D25100BF761C /* InboxContributionLoader.swift */; };
 		BEB2B2371E35D48000BF761C /* InboxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB2B2361E35D48000BF761C /* InboxViewController.swift */; };
@@ -258,6 +262,10 @@
 		BE8FCA231E0C46090063B8EF /* Slide for RedditUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Slide for RedditUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE8FCA271E0C46090063B8EF /* Slide_for_RedditUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Slide_for_RedditUITests.swift; sourceTree = "<group>"; };
 		BE8FCA291E0C46090063B8EF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BE97422B1F00116D00BF48E0 /* BannerLinkCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BannerLinkCellView.swift; sourceTree = "<group>"; };
+		BE97422D1F0011BE00BF48E0 /* ThumbnailLinkCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThumbnailLinkCellView.swift; sourceTree = "<group>"; };
+		BE97422F1F0011E500BF48E0 /* TextLinkCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextLinkCellView.swift; sourceTree = "<group>"; };
+		BE9742311F001BEC00BF48E0 /* YTPlayer.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = YTPlayer.html; sourceTree = "<group>"; };
 		BE981D341E31855500BD3846 /* OpenInChrome.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenInChrome.swift; sourceTree = "<group>"; };
 		BEB2B2341E35D25100BF761C /* InboxContributionLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxContributionLoader.swift; sourceTree = "<group>"; };
 		BEB2B2361E35D48000BF761C /* InboxViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxViewController.swift; sourceTree = "<group>"; };
@@ -471,6 +479,7 @@
 		BE8FC9FB1E0C46090063B8EF = {
 			isa = PBXGroup;
 			children = (
+				BE9742311F001BEC00BF48E0 /* YTPlayer.html */,
 				BE8FCA061E0C46090063B8EF /* Slide for Reddit */,
 				BE8FCA1B1E0C46090063B8EF /* Slide for RedditTests */,
 				BE8FCA261E0C46090063B8EF /* Slide for RedditUITests */,
@@ -493,6 +502,7 @@
 		BE8FCA061E0C46090063B8EF /* Slide for Reddit */ = {
 			isa = PBXGroup;
 			children = (
+				BE97422A1F00112F00BF48E0 /* LinkCellViews */,
 				BE2F3F501EF70EB2003C1B28 /* YTPlayerHelper */,
 				BE7439F41E2162A8008BB63B /* AccountController.swift */,
 				BE1DA39A1E26E85500EC0A04 /* Overlay */,
@@ -516,7 +526,6 @@
 				BE8FCA101E0C46090063B8EF /* LaunchScreen.storyboard */,
 				BE8FCA131E0C46090063B8EF /* Info.plist */,
 				BE8592C11E0EE72800836C1D /* reddift_config.json */,
-				BEE5BF631E11A15500E3C9AE /* LinkCellView.swift */,
 				BEE5BF6B1E12C92F00E3C9AE /* DateFormatter+util.swift */,
 				BEF3ACE11E15C101005848B6 /* ContentType.swift */,
 				BE3E5C0B1E160D7000749C0C /* ColorUtil.swift */,
@@ -577,6 +586,17 @@
 				BE8FCA291E0C46090063B8EF /* Info.plist */,
 			);
 			path = "Slide for RedditUITests";
+			sourceTree = "<group>";
+		};
+		BE97422A1F00112F00BF48E0 /* LinkCellViews */ = {
+			isa = PBXGroup;
+			children = (
+				BEE5BF631E11A15500E3C9AE /* LinkCellView.swift */,
+				BE97422B1F00116D00BF48E0 /* BannerLinkCellView.swift */,
+				BE97422D1F0011BE00BF48E0 /* ThumbnailLinkCellView.swift */,
+				BE97422F1F0011E500BF48E0 /* TextLinkCellView.swift */,
+			);
+			name = LinkCellViews;
 			sourceTree = "<group>";
 		};
 		CA62E6258F89232082F52D05 /* Pods */ = {
@@ -721,6 +741,7 @@
 				BE35217A1E3D2E3B00C30B8D /* Roboto-MediumItalic.ttf in Resources */,
 				BE2B89EF1E2444D20053D493 /* Settings.bundle in Resources */,
 				BE35217C1E3D2E4000C30B8D /* RobotoCondensed-Italic.ttf in Resources */,
+				BE9742321F001BEC00BF48E0 /* YTPlayer.html in Resources */,
 				BE35217B1E3D2E3D00C30B8D /* RobotoCondensed-BoldItalic.ttf in Resources */,
 				BE8FCA121E0C46090063B8EF /* LaunchScreen.storyboard in Resources */,
 				BE3521791E3D2E3900C30B8D /* Roboto-LightItalic.ttf in Resources */,
@@ -952,6 +973,7 @@
 				BED76E651E3A9576008E7717 /* RealmDataWrappers.swift in Sources */,
 				BE3E5C191E16BC3900749C0C /* StringHTML+util.swift in Sources */,
 				BE7439E91E201AEE008BB63B /* Subscriptions.swift in Sources */,
+				BE97422C1F00116D00BF48E0 /* BannerLinkCellView.swift in Sources */,
 				BE3521701E3D238400C30B8D /* FontGenerator.swift in Sources */,
 				BE2B89F71E246CA60053D493 /* GMPalette.swift in Sources */,
 				BE3E5C1F1E18223600749C0C /* CellContent.swift in Sources */,
@@ -963,6 +985,7 @@
 				BE6EA6D71E1C1FC700E9E709 /* VidMeJSONBase.swift in Sources */,
 				BE3E5C171E16BC1A00749C0C /* String+util.swift in Sources */,
 				BE2F3F581EF886D9003C1B28 /* Reachability.swift in Sources */,
+				BE9742301F0011E500BF48E0 /* TextLinkCellView.swift in Sources */,
 				BE8FCA0A1E0C46090063B8EF /* SubredditLinkViewController.swift in Sources */,
 				BEB2B2391E35D64F00BF761C /* MessageCellView.swift in Sources */,
 				BEB2B2371E35D48000BF761C /* InboxViewController.swift in Sources */,
@@ -989,6 +1012,7 @@
 				BE06109B1E510A1C0073DB2F /* CaptionView.swift in Sources */,
 				BE5E53751E1DAEB7004FE226 /* RedditLink.swift in Sources */,
 				BEC4942A1E307DDA006618F3 /* GalleryCellView.swift in Sources */,
+				BE97422E1F0011BE00BF48E0 /* ThumbnailLinkCellView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1148,11 +1172,7 @@
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
-					"\"AMScrollingNavbar\"",
-					"-framework",
 					"\"BGTableViewRowActionWithImage\"",
-					"-framework",
-					"\"ChameleonFramework\"",
 					"-framework",
 					"\"SDWebImage\"",
 					"-framework",
@@ -1183,11 +1203,7 @@
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
-					"\"AMScrollingNavbar\"",
-					"-framework",
 					"\"BGTableViewRowActionWithImage\"",
-					"-framework",
-					"\"ChameleonFramework\"",
 					"-framework",
 					"\"SDWebImage\"",
 					"-framework",

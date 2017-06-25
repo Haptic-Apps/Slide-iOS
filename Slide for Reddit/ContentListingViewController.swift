@@ -9,8 +9,6 @@
 import UIKit
 import reddift
 import SDWebImage
-import ChameleonFramework
-import AMScrollingNavbar
 import PagingMenuController
 import MaterialComponents.MaterialSnackbar
 
@@ -97,11 +95,6 @@ class ContentListingViewController: MediaViewController, UITableViewDelegate, UI
     override func viewWillAppear(_ animated: Bool) {
         paging = baseData.paging
         super.viewWillAppear(animated)
-        if let navigationController = self.navigationController as? ScrollingNavigationController {
-            print("Following scroll")
-       //     navigationController.followScrollView(self.tableView, delay: 50.0)
-        }
-
     }
     
     var tC: UIViewController?

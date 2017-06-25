@@ -8,9 +8,7 @@ target 'Slide for Reddit' do
 
   pod 'reddift', :git =>  'https://github.com/ccrama/reddift'
   pod 'SDWebImage', '~>3.8'
-  pod 'ChameleonFramework'
   pod "PagingMenuController"
-  pod 'AMScrollingNavbar'
   pod 'BGTableViewRowActionWithImage'
   pod 'SideMenu'
 pod 'MaterialComponents/AnimationTiming'
@@ -21,14 +19,12 @@ pod 'MaterialComponents/ProgressView'
 pod 'MaterialComponents/ShadowElevations'
 pod 'MaterialComponents/Snackbar'
 pod 'MaterialComponents/ActivityIndicator'
-pod "youtube-ios-player-helper", "~> 0.1.4"
-
+pod "SAHistoryNavigationViewController"
   pod 'UZTextView', :git => 'https://github.com/ccrama/UZTextView'
   pod 'ImageViewer', :git => 'https://github.com/ccrama/ImageViewer'
   pod 'TTTAttributedLabel'
   pod "KCFloatingActionButton", "~> 2.1.0"
   pod 'ImagePickerSheetController', :git => 'https://github.com/lbrndnr/ImagePickerSheetController’, :branch => ‘swift3’
-pod 'AMScrollingNavbar'
   pod 'Alamofire', '~> 4.3'
     pod 'SwiftyJSON'
 pod 'ActionSheetPicker-3.0’, :git => ‘https://github.com/ccrama/ActionSheetPicker-3.0'

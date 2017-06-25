@@ -9,7 +9,6 @@
 
 import UIKit
 import reddift
-import AMScrollingNavbar
 import UZTextView
 import ImageViewer
 
@@ -217,10 +216,10 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         var uC : UIColor
         switch(ActionStates.getVoteDirection(s: comment)){
         case .down:
-            uC = ColorUtil.downvoteColor!
+            uC = ColorUtil.downvoteColor
             break
         case .up:
-            uC = ColorUtil.upvoteColor!
+            uC = ColorUtil.upvoteColor
             break
         default:
             uC = ColorUtil.fontColor
@@ -321,7 +320,7 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
     
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
-        if(viewControllerToCommit is GalleryViewController){
+        if(viewControllerToCommit is GalleryViewController || viewControllerToCommit is YouTubeViewController){
             parentViewController?.presentImageGallery(viewControllerToCommit as! GalleryViewController)
         } else {
         parentViewController?.show(viewControllerToCommit, sender: parentViewController )

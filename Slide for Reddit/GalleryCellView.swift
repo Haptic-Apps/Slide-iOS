@@ -9,7 +9,6 @@
 import UIKit
 import reddift
 import UZTextView
-import AMScrollingNavbar
 import ImageViewer
 import TTTAttributedLabel
 
@@ -109,7 +108,6 @@ class GalleryCellView: UITableViewCell {
     }
     
     var thumb = true
-    var height:Int = 0
     
     override func updateConstraints() {
         super.updateConstraints()

@@ -4,11 +4,6 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>AMScrollingNavbar.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
 		<key>ActionSheetPicker-3.0.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -20,11 +15,6 @@
 			<false/>
 		</dict>
 		<key>BGTableViewRowActionWithImage.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>ChameleonFramework.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -50,6 +40,11 @@
 			<false/>
 		</dict>
 		<key>MaterialComponents.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>MisterFusion.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -84,6 +79,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>SAHistoryNavigationViewController.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>SDWebImage.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -114,30 +114,20 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>youtube-ios-player-helper.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>0917C6666A41FDFEE4FAEC49B87A298E</key>
+		<key>18470281470199FCA5FF5EE1512A04E4</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>16A4F5E0FCDAEE0267908E871E7C0222</key>
+		<key>1EF02227982E1A39B4C6017FE6AF405B</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>221F7204427C54098968CA2F3BD2D7E5</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>2C627D64F6FB4CE70A3F667AAAD5641C</key>
+		<key>26DB73BA2649F09FECAE26C590420D76</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -147,12 +137,32 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>4E10FAEB431872978ECC7F9DB878E4C0</key>
+		<key>2FAE019B40ECFE89EA3CFAF9140BDFC2</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>4E85FB86BE4F3CA82E01B7CAC8251C91</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5ED9E677895FB06324EA8B210B96CB36</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>61A43D154843D72037B94A8B03A07791</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
 		<key>6ADB3656BDFD85FB77E0CAB44BFF61E6</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>6AF20103C93C17F528FDB650CFB2008E</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -172,11 +182,6 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>8A267660E1AD4832DE75665F2F87AEA3</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
 		<key>965699190112DDBD9B7864D091660DBC</key>
 		<dict>
 			<key>primary</key>
@@ -187,12 +192,17 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>9B7BEF22A2D2E5C2E4174836475BC47B</key>
+		<key>98F8E14B9097E282E551CF585B336D82</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
 		<key>A0973466942E44837DDE381BEF94D8D4</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A1D49106527C166F525788CF455698FD</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -207,32 +217,12 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>AA0072B717E8E95871C70BD0BF681203</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
 		<key>B1332F0085BCA14BA5A2949B0B399447</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>BEF3AE16AF81E7A12A5D40068900EAE0</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>CFE0DB578067C6FF53E5377476C9755B</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>E4909D5724194C8088F49C82AE82686B</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>F8CECC898B32150AB5473CCB9F40256A</key>
+		<key>D4B57B7FC81E3374C6EA213B172A1450</key>
 		<dict>
 			<key>primary</key>
 			<true/>
