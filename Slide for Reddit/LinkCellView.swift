@@ -647,9 +647,9 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             var scoreString: NSAttributedString = NSAttributedString()
             if(SettingValues.abbreviateScores){
                 let text = (submission.score>=10000 && SettingValues.abbreviateScores) ? String(format: "%0.1fk ", (Double(submission.score)/Double(1000))) : " \(submission.score)"
-                scoreString = NSMutableAttributedString(string: "\(submission.commentCount)cmts \(text)pts", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
+                scoreString = NSMutableAttributedString(string: "\(text)pts \(submission.commentCount)cmts", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
             }  else {
-                scoreString = NSMutableAttributedString(string: "\(submission.commentCount)cmts \(submission.score)pts", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
+                scoreString = NSMutableAttributedString(string: "\(submission.score)pts \(submission.commentCount)cmts", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
             }
             infoString.append(scoreString)
         }
@@ -950,6 +950,8 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             target = .text
         }
         
+        print(currentType == target)
+        
         if(currentType == target && target != .banner){
             return //work is already done
         } else if(currentType == target && target == .banner && bigConstraint != nil){
@@ -1159,16 +1161,16 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             var scoreString: NSAttributedString = NSAttributedString()
             if(SettingValues.abbreviateScores){
                 let text = (submission.score>=10000 && SettingValues.abbreviateScores) ? String(format: "%0.1fk ", (Double(submission.score)/Double(1000))) : " \(submission.score)"
-                scoreString = NSMutableAttributedString(string: "\(submission.commentCount)cmts \(text)pts", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
+                scoreString = NSMutableAttributedString(string: "\(text)pts \(submission.commentCount)cmts", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
             }  else {
-                scoreString = NSMutableAttributedString(string: "\(submission.commentCount)cmts \(submission.score)pts", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
+                scoreString = NSMutableAttributedString(string: "\(submission.score)pts \(submission.commentCount)cmts", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
             }
             infoString.append(scoreString)
         }
         
         
         if(SettingValues.postViewMode == .CARD && !full){
-            infoString.append(NSAttributedString.init(string: "\nasedf"))
+            infoString.append(NSAttributedString.init(string: "\n\n"))
         }
         
         title.setText(infoString)

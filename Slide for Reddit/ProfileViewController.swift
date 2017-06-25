@@ -170,17 +170,6 @@ class ProfileViewController:  PagingMenuController, ColorPickerDelegate {
         ProfileViewController.viewControllers.remove(at: 0)
 
         super.init(options: PagingMenuOptionsBar())
-        
-        for view in (menuView?.subviews[0].subviews)! {
-            if(view is MenuItemView){
-                for viewchild in view.subviews {
-                    if(viewchild is UILabel){
-            viewchild.layer.borderWidth = 2
-            viewchild.layer.borderColor = UIColor.white.cgColor
-                    }
-                }
-            }
-        }
     }
     
     required init?(coder aDecoder: NSCoder) {

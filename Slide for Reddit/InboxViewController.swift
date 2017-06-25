@@ -44,18 +44,20 @@ class InboxViewController:  PagingMenuController {
             color = c
         }
         
+        
         var displayMode: MenuDisplayMode {
-            return MenuDisplayMode.standard(widthMode: .flexible, centerItem: true, scrollingMode: MenuScrollingMode.scrollEnabled)
+            return MenuDisplayMode.segmentedControl
         }
         
         var backgroundColor: UIColor {
-            return ColorUtil.getColorForSub(sub: "")
+            return ColorUtil.getColorForUser(name: AccountController.currentName)
         }
         var selectedBackgroundColor: UIColor {
-            return ColorUtil.getColorForSub(sub: "")
+            return ColorUtil.getColorForUser(name: AccountController.currentName)
         }
+        
         var height: CGFloat {
-            return 30
+            return 40
         }
         var animationDuration: TimeInterval {
             return 0.3
@@ -67,7 +69,7 @@ class InboxViewController:  PagingMenuController {
             return true
         }
         var focusMode: MenuFocusMode {
-            return .underline(height: 3, color: ColorUtil.accentColorForSub(sub: ""), horizontalPadding: 0, verticalPadding: 0)
+            return .roundRect(radius: 5, horizontalPadding: 5, verticalPadding: 5, selectedColor: .white)
         }
         var dummyItemViewsSet: Int {
             return 3

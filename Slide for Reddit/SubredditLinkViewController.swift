@@ -946,6 +946,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         if(SubredditReorderViewController.changed){
             self.reloadNeedingColor()
             self.tableView.reloadData()
+            SubredditReorderViewController.changed = false
         }
         
         navigationController?.navigationBar.isTranslucent = false

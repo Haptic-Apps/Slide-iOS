@@ -24,7 +24,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     func save(_ cell: LinkCellView) {
         do {
             let state = !ActionStates.isSaved(s: cell.link!)
-            try session?.setSave(state, name: (cell.link?.name)!, completion: { (result) in
+            print(cell.link!.id)
+            try session?.setSave(state, name: (cell.link?.id)!, completion: { (result) in
+                if(result.error != nil){
+                    print(result.error!)
+                }
                 DispatchQueue.main.async{
                     let message = MDCSnackbarMessage()
                     message.text = state ? "Saved" : "Unsaved"
@@ -36,13 +40,12 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             History.addSeen(s: cell.link!)
             cell.refresh()
         } catch {
-            
         }
     }
     func saveComment(_ comment: RComment) {
         do {
             let state = !ActionStates.isSaved(s: comment)
-            try session?.setSave(state, name: comment.name, completion: { (result) in
+            try session?.setSave(state, name: comment.id, completion: { (result) in
                 DispatchQueue.main.async{
                     let message = MDCSnackbarMessage()
                     message.text = state ? "Saved" : "Unsaved"
@@ -91,7 +94,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     func upvote(_ cell: LinkCellView) {
         do{
-            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up, name: (cell.link?.name)!, completion: { (result) in
+            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up, name:  (cell.link?.id)!, completion: { (result) in
                 
             })
             ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up)
@@ -105,7 +108,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     func downvote(_ cell: LinkCellView) {
         do {
-            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down, name: (cell.link?.name)!, completion: { (result) in
+            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down, name: (cell.link?.id)!, completion: { (result) in
                 
             })
             ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down)
@@ -194,7 +197,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         alert.addAction(UIAlertAction(title: "Report", style: .destructive, handler: { [weak alert] (_) in
             let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
             do {
-                let name = (thing is RComment) ? (thing as! RComment).name : (thing as! RSubmission).name
+                let name = (thing is RComment) ? (thing as! RComment).id : (thing as! RSubmission).id
                 try self.session?.report(name, reason: (textField?.text!)!, otherReason: "", completion: { (result) in
                     DispatchQueue.main.async{
                         let message = MDCSnackbarMessage()
@@ -269,8 +272,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         if let link = self.submission {
             do {
                 print("Context number is \(contextNumber)")
-                print("Name is \(link.name)")
-                try session?.getArticles(link.name, sort:sort, comments:(context.isEmpty ? nil : [context]), context: contextNumber, completion: { (result) -> Void in
+                print("Name is \(link.id)")
+                try session?.getArticles(link.id, sort:sort, comments:(context.isEmpty ? nil : [context]), context: contextNumber, completion: { (result) -> Void in
                     switch result {
                     case .failure(let error):
                         print(error)
@@ -278,7 +281,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                         do {
                             let realm = try Realm()
                             if let listing =  realm.objects(RSubmission.self).filter({ (item) -> Bool in
-                                return item.name == self.submission!.name
+                                return item.id == self.submission!.id
                             }).first{
                                 
                                 self.comments = []
@@ -286,7 +289,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                 self.hidden = []
                                 self.contents = []
                                 self.refreshControl.endRefreshing()
-                                self.indicator.stopAnimating()
+                                self.indicator?.stopAnimating()
 
                                 DispatchQueue.global(qos: .background).async {
                                     self.submission!.comments.removeAll()
@@ -317,7 +320,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                         DispatchQueue.main.async {
                             
                             self.refreshControl.endRefreshing()
-                            self.indicator.stopAnimating()
+                            self.indicator?.stopAnimating()
                             
                             if(self.comments.isEmpty){
                                 let message = MDCSnackbarMessage()
@@ -407,7 +410,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                     self.headerCell?.showBody(width: self.view.frame.size.width)
                                 }
                                 self.refreshControl.endRefreshing()
-                                self.indicator.stopAnimating()
+                                self.indicator?.stopAnimating()
 
                                 self.tableView.reloadData(with: .top)
                                 
@@ -503,7 +506,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         self.present(actionSheetController, animated: true, completion: nil)
     }
     
-    var indicator: MDCActivityIndicator = MDCActivityIndicator()
+    var indicator: MDCActivityIndicator? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -529,9 +532,35 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         
         tableView.separatorStyle = .none
         refresh(self)
+       
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        if(indicator == nil){
+        if(hasSubmission){
+            indicator = MDCActivityIndicator.init(frame: CGRect.init(x: CGFloat(0), y: CGFloat(0), width: CGFloat(80), height: CGFloat(80)))
+            indicator?.strokeWidth = 5
+            indicator?.radius = 20
+            indicator?.indicatorMode = .indeterminate
+            indicator?.cycleColors = [ColorUtil.getColorForSub(sub: submission?.subreddit ?? ""), ColorUtil.accentColorForSub(sub: submission?.subreddit ?? "")]
+            var center = CGPoint.init(x: self.tableView.center.x, y: CGFloat(tableView.bounds.height - 200))
+            indicator?.center = center
+            self.tableView.addSubview(indicator!)
+            indicator?.startAnimating()
+            
+        } else {
+            indicator = MDCActivityIndicator.init(frame: CGRect.init(x: CGFloat(0), y: CGFloat(0), width: CGFloat(80), height: CGFloat(80)))
+            indicator?.strokeWidth = 5
+            indicator?.radius = 20
+            indicator?.indicatorMode = .indeterminate
+            indicator?.cycleColors = [ColorUtil.getColorForSub(sub: submission?.subreddit ?? ""), ColorUtil.accentColorForSub(sub: submission?.subreddit ?? "")]
+            var center = CGPoint.init(x: self.tableView.center.x, y: self.tableView.center.y)
+            indicator?.center = center
+            self.tableView.addSubview(indicator!)
+            indicator?.startAnimating()
+            
+        }
+        }
         super.viewDidAppear(animated)
     }
     
@@ -556,16 +585,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     view.addSubview(tableHeaderView)
                     self.tableView.tableHeaderView = view
                 }
-                indicator = MDCActivityIndicator.init(frame: CGRect.init(x: CGFloat(0), y: CGFloat(0), width: CGFloat(80), height: CGFloat(80)))
-                indicator.strokeWidth = 5
-                indicator.radius = 20
-                indicator.indicatorMode = .indeterminate
-                indicator.cycleColors = [ColorUtil.getColorForSub(sub: submission?.subreddit ?? ""), ColorUtil.accentColorForSub(sub: submission?.subreddit ?? "")]
-                var center = CGPoint.init(x: self.tableView.center.x, y: CGFloat(tableView.bounds.height - 200))
-                indicator.center = center
-                self.tableView.addSubview(indicator)
-                indicator.startAnimating()
-
             }
 
         }
@@ -579,7 +598,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     init(submission: String, subreddit: String?){
         self.submission = RSubmission()
-        self.submission!.name = submission
+        self.submission!.id = submission
         hasSubmission = false
         super.init(nibName: nil, bundle: nil)
         if(subreddit != nil){
@@ -589,7 +608,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     init(submission: String, comment: String, context: Int, subreddit: String){
         self.submission = RSubmission()
-        self.submission!.name = submission
+        self.submission!.id = submission
         hasSubmission = false
         self.context = comment
         self.contextNumber = context
@@ -960,7 +979,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     func vote(_ direction: VoteDirection) {
         if let link = self.submission {
             do {
-                try session?.setVote(direction, name: link.name, completion: { (result) -> Void in
+                try session?.setVote(direction, name: link.id, completion: { (result) -> Void in
                     switch result {
                     case .failure(let error):
                         print(error)
@@ -976,7 +995,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     func hide(_ hide: Bool) {
         if let link = self.submission {
             do {
-                try session?.setHide(hide, name: link.name, completion: { (result) -> Void in
+                try session?.setHide(hide, name: link.id, completion: { (result) -> Void in
                     switch result {
                     case .failure(let error):
                         print(error)
@@ -1301,7 +1320,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             break
         }
         do {
-            try session?.setVote(direction, name: comment.name, completion: { (result) -> Void in
+            try session?.setVote(direction, name: comment.id, completion: { (result) -> Void in
                 switch result {
                 case .failure(let error):
                     print(error)
