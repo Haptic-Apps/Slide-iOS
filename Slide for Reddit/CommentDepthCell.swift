@@ -346,16 +346,30 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
             sideWidth = 4
             marginTop = 1
             let i22 = depth - 2;
-            if (i22 % 5 == 0) {
-                sideView.backgroundColor = GMColor.blue500Color()
-            } else if (i22 % 4 == 0) {
-                sideView.backgroundColor = GMColor.green500Color()
-            } else if (i22 % 3 == 0) {
-                sideView.backgroundColor = GMColor.yellow500Color()
-            } else if (i22 % 2 == 0) {
-                sideView.backgroundColor = GMColor.orange500Color()
+            if(SettingValues.disableColor){
+                if (i22 % 5 == 0) {
+                    sideView.backgroundColor = GMColor.grey100Color()
+                } else if (i22 % 4 == 0) {
+                    sideView.backgroundColor = GMColor.grey200Color()
+                } else if (i22 % 3 == 0) {
+                    sideView.backgroundColor = GMColor.grey300Color()
+                } else if (i22 % 2 == 0) {
+                    sideView.backgroundColor = GMColor.grey400Color()
+                } else {
+                    sideView.backgroundColor = GMColor.grey500Color()
+                }
             } else {
-                sideView.backgroundColor = GMColor.red500Color()
+                if (i22 % 5 == 0) {
+                    sideView.backgroundColor = GMColor.blue500Color()
+                } else if (i22 % 4 == 0) {
+                    sideView.backgroundColor = GMColor.green500Color()
+                } else if (i22 % 3 == 0) {
+                    sideView.backgroundColor = GMColor.yellow500Color()
+                } else if (i22 % 2 == 0) {
+                    sideView.backgroundColor = GMColor.orange500Color()
+                } else {
+                    sideView.backgroundColor = GMColor.red500Color()
+                }
             }
         } else {
             marginTop = 8
@@ -427,16 +441,30 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
             sideWidth = 4
             marginTop = 1
             let i22 = depth - 2;
-            if (i22 % 5 == 0) {
-                sideView.backgroundColor = GMColor.blue500Color()
-            } else if (i22 % 4 == 0) {
-                sideView.backgroundColor = GMColor.green500Color()
-            } else if (i22 % 3 == 0) {
-                sideView.backgroundColor = GMColor.yellow500Color()
-            } else if (i22 % 2 == 0) {
-                sideView.backgroundColor = GMColor.orange500Color()
+            if(SettingValues.disableColor){
+                if (i22 % 5 == 0) {
+                    sideView.backgroundColor = GMColor.grey100Color()
+                } else if (i22 % 4 == 0) {
+                    sideView.backgroundColor = GMColor.grey200Color()
+                } else if (i22 % 3 == 0) {
+                    sideView.backgroundColor = GMColor.grey300Color()
+                } else if (i22 % 2 == 0) {
+                    sideView.backgroundColor = GMColor.grey400Color()
+                } else {
+                    sideView.backgroundColor = GMColor.grey500Color()
+                }
             } else {
-                sideView.backgroundColor = GMColor.red500Color()
+                if (i22 % 5 == 0) {
+                    sideView.backgroundColor = GMColor.blue500Color()
+                } else if (i22 % 4 == 0) {
+                    sideView.backgroundColor = GMColor.green500Color()
+                } else if (i22 % 3 == 0) {
+                    sideView.backgroundColor = GMColor.yellow500Color()
+                } else if (i22 % 2 == 0) {
+                    sideView.backgroundColor = GMColor.orange500Color()
+                } else {
+                    sideView.backgroundColor = GMColor.red500Color()
+                }
             }
         } else {
             //marginTop = 8

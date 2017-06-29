@@ -32,7 +32,7 @@ enum CurrentType {
     case thumb, banner, text, none;
 }
 
-class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextViewDelegate {
+class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, TTTAttributedLabelDelegate {
     
     func upvote(sender: UITapGestureRecognizer? = nil) {
         if let delegate = self.delegate {
@@ -71,7 +71,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     var buttons = UIStackView()
     var comments = UILabel()
     var info = UILabel()
-    var textView = UZTextView()
+    var textView = TTTAttributedLabel.init(frame: CGRect.zero)
     var save = UIImageView()
     var upvote = UIImageView()
     var edit = UIImageView()
@@ -83,68 +83,53 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     var loadedImage: URL?
     var lq = false
     
-    func textView(_ textView: UZTextView, didLongTapLinkAttribute value: Any?) {
-        if let attr = value as? [String: Any]{
-            if let url = attr[NSLinkAttributeName] as? URL {
-                if parentViewController != nil{
-                    let sheet = UIAlertController(title: url.absoluteString, message: nil, preferredStyle: .actionSheet)
-                    sheet.addAction(
-                        UIAlertAction(title: "Close", style: .cancel) { (action) in
-                            sheet.dismiss(animated: true, completion: nil)
-                        }
-                    )
-                    let open = OpenInChromeController.init()
-                    if(open.isChromeInstalled()){
-                        sheet.addAction(
-                            UIAlertAction(title: "Open in Chrome", style: .default) { (action) in
-                                open.openInChrome(url, callbackURL: nil, createNewTab: true)
-                            }
-                        )
+    func attributedLabel(_ label: TTTAttributedLabel!, didLongPressLinkWith url: URL!, at point: CGPoint) {
+        if let attr = url{
+            if parentViewController != nil{
+                let sheet = UIAlertController(title: url.absoluteString, message: nil, preferredStyle: .actionSheet)
+                sheet.addAction(
+                    UIAlertAction(title: "Close", style: .cancel) { (action) in
+                        sheet.dismiss(animated: true, completion: nil)
                     }
+                )
+                let open = OpenInChromeController.init()
+                if(open.isChromeInstalled()){
                     sheet.addAction(
-                        UIAlertAction(title: "Open in Safari", style: .default) { (action) in
-                            UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                            sheet.dismiss(animated: true, completion: nil)
+                        UIAlertAction(title: "Open in Chrome", style: .default) { (action) in
+                            open.openInChrome(url, callbackURL: nil, createNewTab: true)
                         }
                     )
-                    sheet.addAction(
-                        UIAlertAction(title: "Open", style: .default) { (action) in
-                            /* let controller = WebViewController(nibName: nil, bundle: nil)
-                             controller.url = url
-                             let nav = UINavigationController(rootViewController: controller)
-                             self.present(nav, animated: true, completion: nil)*/
-                        }
-                    )
-                    sheet.addAction(
-                        UIAlertAction(title: "Copy URL", style: .default) { (action) in
-                            UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
-                            sheet.dismiss(animated: true, completion: nil)
-                        }
-                    )
-                    parentViewController?.present(sheet, animated: true, completion: nil)
                 }
+                sheet.addAction(
+                    UIAlertAction(title: "Open in Safari", style: .default) { (action) in
+                        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                        sheet.dismiss(animated: true, completion: nil)
+                    }
+                )
+                sheet.addAction(
+                    UIAlertAction(title: "Open", style: .default) { (action) in
+                        /* let controller = WebViewController(nibName: nil, bundle: nil)
+                         controller.url = url
+                         let nav = UINavigationController(rootViewController: controller)
+                         self.present(nav, animated: true, completion: nil)*/
+                    }
+                )
+                sheet.addAction(
+                    UIAlertAction(title: "Copy URL", style: .default) { (action) in
+                        UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
+                        sheet.dismiss(animated: true, completion: nil)
+                    }
+                )
+                parentViewController?.present(sheet, animated: true, completion: nil)
             }
         }
     }
     
-    func textView(_ textView: UZTextView, didClickLinkAttribute value: Any?) {
-        print("Clicked")
+    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
         if((parentViewController) != nil){
-            if let attr = value as? [String: Any] {
-                if let url = attr[NSLinkAttributeName] as? URL {
-                    parentViewController?.doShow(url: url)
-                }
-            }
+            parentViewController?.doShow(url: url)
         }
-    }
-    
-    func selectionDidEnd(_ textView: UZTextView) {
-    }
-    
-    func selectionDidBegin(_ textView: UZTextView) {
-    }
-    
-    func didTapTextDoesNotIncludeLinkTextView(_ textView: UZTextView) {
+        
     }
     
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
@@ -192,7 +177,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                 let font = FontGenerator.fontOfSize(size: 16, submission: false)
                 let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
                 content = CellContent.init(string:LinkParser.parse(attr2), width:(width - 24 - (thumb ? 75 : 0)))
-                textView.attributedString = content?.attributedString
+                textView.setText( content?.attributedString )
                 textView.frame.size.height = (content?.textHeight)!
                 hasText = true
             } catch {
@@ -265,8 +250,9 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         more.image = UIImage.init(named: "ic_more_vert_white")?.withRenderingMode(.alwaysTemplate)
         more.tintColor = ColorUtil.fontColor
         
-        self.textView = UZTextView(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
+        self.textView = TTTAttributedLabel(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
         self.textView.delegate = self
+        self.textView.numberOfLines = 0
         self.textView.isUserInteractionEnabled = true
         self.textView.backgroundColor = .clear
         
@@ -362,7 +348,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             self.contentView.layoutMargins = UIEdgeInsets.init(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin))
         }
         
-        let metrics=["horizontalMargin":75,"top":topmargin,"bottom":bottommargin,"separationBetweenLabels":0,"labelMinHeight":75,  "bannerHeight": submissionHeight, "left":leftmargin, "padding" : innerpadding] as [String: Int]
+        let metrics=["horizontalMargin":75,"top":topmargin,"bottom":bottommargin,"separationBetweenLabels":0,"labelMinHeight":75,  "bannerHeight": submissionHeight, "left":leftmargin, "padding" : innerpadding, "ishidden":!full && SettingValues.hideButtonActionbar ? 0 : 20] as [String: Int]
         let views=["label":title, "body": textView, "image": thumbImage, "score": score, "comments": comments, "banner": bannerImage, "box": box] as [String : Any]
         let views2=["buttons":buttons, "upvote": upvote, "downvote": downvote, "reply": reply,"edit":edit, "more": more, "save": save] as [String : Any]
         
@@ -402,29 +388,29 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
                                                                   metrics: metrics,
                                                                   views: views2))
         }
-        buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[upvote(20)]-|",
+        buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[upvote(ishidden)]-|",
                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                               metrics: metrics,
                                                               views: views2))
         
-        buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[downvote(20)]-|",
+        buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[downvote(ishidden)]-|",
                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                               metrics: metrics,
                                                               views: views2))
         
-        buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[save(20)]-|",
+        buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[save(ishidden)]-|",
                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                               metrics: metrics,
                                                               views: views2))
-        buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[more(20)]-|",
+        buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[more(ishidden)]-|",
                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                               metrics: metrics,
                                                               views: views2))
-        buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[reply(20)]-|",
+        buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[reply(ishidden)]-|",
                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                               metrics: metrics,
                                                               views: views2))
-        buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[edit(20)]-|",
+        buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[edit(ishidden)]-|",
                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                               metrics: metrics,
                                                               views: views2))
@@ -503,7 +489,10 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         }
         
         endString.append(authorString)
-        
+        if(SettingValues.domainInInfo && !full){
+            endString.append(NSAttributedString.init(string: "  •  \(submission.domain)"))
+        }
+
         let tag = ColorUtil.getTagForUser(name: submission.author)
         if(!tag.isEmpty){
             let tagString = NSMutableAttributedString(string: "\u{00A0}\(tag)\u{00A0}", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
@@ -641,7 +630,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         infoString.append(endString)
         infoString.append(NSAttributedString.init(string: "\n"))
         infoString.append(attributedTitle)
-        if(SettingValues.scoreInTitle){
+        if(SettingValues.scoreInTitle && !full){
             infoString.append(NSAttributedString.init(string: "\n"))
             var scoreString: NSAttributedString = NSAttributedString()
             if(SettingValues.abbreviateScores){
@@ -767,7 +756,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             big = false
             thumb = true
         }
-
+        
         
         if(SettingValues.noImages){
             big = false
@@ -939,7 +928,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     //This function will update constraints if they need to be changed to change the display type
     
     func doConstraints(){
-         var target = CurrentType.none
+        var target = CurrentType.none
         
         if(thumb && !big){
             target = .thumb
@@ -966,7 +955,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             bt = "[buttons(0)]-4-"
             bx = "[box(0)]-4-"
         }
-
+        
         self.contentView.removeConstraints(thumbConstraint)
         thumbConstraint = []
         
@@ -1089,7 +1078,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
             return true
         }
     }
-
+    
     func setLinkForPreview(submission: RSubmission){
         full = false
         lq = false
@@ -1134,6 +1123,9 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         }
         
         endString.append(authorString)
+        if(SettingValues.domainInInfo && !full){
+            endString.append(NSAttributedString.init(string: "  •  \(submission.domain)"))
+        }
         
         let tag = ColorUtil.getTagForUser(name: submission.author)
         if(!tag.isEmpty){
@@ -1181,9 +1173,6 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         downvote.isHidden = false
         save.isHidden = false
         edit.isHidden = true
-        
-        
-        
         
         thumb = submission.thumbnail
         big = submission.banner
@@ -1326,7 +1315,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
         comments.addImage(imageName: "comments", afterLabel: false)
         
         doConstraints()
-
+        
         refresh()
         bannerImage.contentMode = UIViewContentMode.scaleAspectFill
         bannerImage.layer.cornerRadius = 5;
@@ -1567,11 +1556,8 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextV
     }
     
     func getInfo(locationInTextView: CGPoint) -> (URL, CGRect)? {
-        if let attr = textView.attributes(at: locationInTextView) {
-            if let url = attr[NSLinkAttributeName] as? URL,
-                let value = attr[UZTextViewClickedRect] as? CGRect {
-                return (url, value)
-            }
+        if let attr = textView.link(at: locationInTextView) {
+                return (attr.result.url!, attr.accessibilityFrame)
         }
         return nil
     }

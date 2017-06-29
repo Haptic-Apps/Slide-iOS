@@ -42,6 +42,7 @@ extension Session {
     public func markMessagesAsRead(_ fullnames: [String], modhash: String = "", completion: @escaping (Result<JSONAny>) -> Void) throws -> URLSessionDataTask {
         let commaSeparatedFullameString = fullnames.joined(separator: ",")
         let parameter = ["id":commaSeparatedFullameString]
+        print(parameter)
         guard let request = URLRequest.requestForOAuth(with: baseURL, path:"/api/read_message", parameter:parameter, method:"POST", token:token)
             else { throw ReddiftError.canNotCreateURLRequest as NSError }
         let closure = {(data: Data?, response: URLResponse?, error: NSError?) -> Result<JSONAny> in

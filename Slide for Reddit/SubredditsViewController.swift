@@ -9,10 +9,10 @@
 
 import UIKit
 import PagingMenuController
-import SideMenu
 import reddift
 import MaterialComponents.MaterialSnackbar
 import SAHistoryNavigationViewController
+import SideMenu
 
 class SubredditsViewController:  PagingMenuController {
     var isReload = false
@@ -97,7 +97,7 @@ class SubredditsViewController:  PagingMenuController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+
         self.title = currentTitle
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
@@ -108,6 +108,7 @@ class SubredditsViewController:  PagingMenuController {
         if(AccountController.isLoggedIn){
             checkForMail()
         }
+    
     }
     
     func checkForMail(){
@@ -123,6 +124,8 @@ class SubredditsViewController:  PagingMenuController {
                 let unread = profile.inboxCount
                 let diff = unread - lastMail
                 DispatchQueue.main.async {
+                    self.menuNav?.setmail(mailcount: unread)
+
                     if(diff > 0){
                         let action = MDCSnackbarMessageAction()
                         let actionHandler = {() in
@@ -148,12 +151,15 @@ class SubredditsViewController:  PagingMenuController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
         if(SubredditReorderViewController.changed){
             SubredditReorderViewController.changed = false
             self.restartVC()
         }
-        
     }
+    
+    var menuLeftNavigationController: UISideMenuNavigationController?
     
     func addAccount(){
         menuLeftNavigationController?.dismiss(animated: true, completion: nil)
@@ -161,7 +167,7 @@ class SubredditsViewController:  PagingMenuController {
     }
     
     func addAccount(token: OAuth2Token){
-        menuLeftNavigationController?.dismiss(animated: true, completion: nil)
+         menuLeftNavigationController?.dismiss(animated: true, completion: nil)
         doLogin(token: token)
     }
     
@@ -173,7 +179,7 @@ class SubredditsViewController:  PagingMenuController {
         } else {
             show(RedditLink.getViewControllerForURL(urlS: URL.init(string: "/r/" + subreddit)!), sender: self)
         }
-        menuLeftNavigationController?.dismiss(animated: true, completion: nil)
+         menuLeftNavigationController?.dismiss(animated: true, completion: nil)
     }
     
     var alertController: UIAlertController?
@@ -238,8 +244,7 @@ class SubredditsViewController:  PagingMenuController {
                 nav.tableView.reloadData()
             }
         }
-        menuLeftNavigationController?.dismiss(animated: true, completion: {
-        })
+         menuLeftNavigationController?.dismiss(animated: true, completion: {})
     }
     
     func doLogin(token: OAuth2Token?){
@@ -250,28 +255,14 @@ class SubredditsViewController:  PagingMenuController {
             setToken(token: token!)
         }
     }
+    
     var tintColor: UIColor = UIColor.white
-    var menuLeftNavigationController: UISideMenuNavigationController?
     var menuNav: NavigationSidebarViewController?
     var currentTitle = "Slide"
     override func viewDidLoad() {
-        self.title = currentTitle
         (self.navigationController as? SAHistoryNavigationViewController)?.historyBackgroundColor = .black
 
-        menuLeftNavigationController = UISideMenuNavigationController()
-        menuLeftNavigationController?.leftSide = true
-        menuNav = NavigationSidebarViewController()
-        menuNav?.setViewController(controller: self)
-        menuLeftNavigationController?.addChildViewController(menuNav!)
-        // UISideMenuNavigationController is a subclass of UINavigationController, so do any additional configuration of it here like setting its viewControllers.
-        SideMenuManager.menuLeftNavigationController = menuLeftNavigationController
-        SideMenuManager.menuPresentMode = .menuSlideIn
-        menuLeftNavigationController?.navigationBar.isHidden = true
-        
-        // Enable gestures. The left and/or right menus must be set up above for these to work.
-        // Note that these continue to work on the Navigation Controller independent of the View Controller it displays!
-        SideMenuManager.menuAddScreenEdgePanGesturesToPresent(toView: self.view, forMenu: UIRectEdge.left)
-        
+
         if(SubredditsViewController.viewControllers.count == 1){
             for subname in Subscriptions.subreddits {
                 SubredditsViewController.viewControllers.append( SubredditLinkViewController(subName: subname, parent: self))
@@ -341,7 +332,8 @@ class SubredditsViewController:  PagingMenuController {
                     
                     MenuOptions.setColor(c: ColorUtil.accentColorForSub(sub: SubredditsViewController.current))
                     self.colorChanged()
-                    
+                    SideMenuManager.menuAddScreenEdgePanGesturesToPresent(toView: menuController.view)
+
                 }
                 
             default: break
@@ -361,9 +353,27 @@ class SubredditsViewController:  PagingMenuController {
         super.viewDidLoad()
         self.edgesForExtendedLayout = []
         self.automaticallyAdjustsScrollViewInsets = false
+        menuNav = NavigationSidebarViewController()
+        menuNav?.setViewController(controller: self)
+        self.menuNav?.setSubreddit(subreddit: SubredditsViewController.current)
 
+        menuLeftNavigationController = UISideMenuNavigationController(rootViewController: menuNav!)
+        menuLeftNavigationController?.leftSide = true
+        // UISideMenuNavigationController is a subclass of UINavigationController, so do any additional configuration
+        // of it here like setting its viewControllers. If you're using storyboards, you'll want to do something like:
+        // let menuLeftNavigationController = storyboard!.instantiateViewController(withIdentifier: "LeftMenuNavigationController") as! UISideMenuNavigationController
+        SideMenuManager.menuLeftNavigationController = menuLeftNavigationController
         
+        SideMenuManager.menuPresentMode = .menuSlideIn
+        SideMenuManager.menuAnimationFadeStrength = 0.2
+        SideMenuManager.menuParallaxStrength = 2
+        SideMenuManager.menuFadeStatusBar = false
+        
+        // Enable gestures. The left and/or right menus must be set up above for these to work.
+        // Note that these continue to work on the Navigation Controller independent of the view controller it displays!
+        SideMenuManager.menuAddScreenEdgePanGesturesToPresent(toView: self.view)
     }
+    
     func resetColors(){
         self.navigationController?.navigationBar.barTintColor = self.tintColor
        //todo self.buttonBarView.backgroundColor = self.tintColor
@@ -371,6 +381,8 @@ class SubredditsViewController:  PagingMenuController {
     
     func colorChanged(){
         //todoself.buttonBarView.backgroundColor = self.navigationController?.navigationBar.barTintColor
+        menuNav?.header.doColors()
+        menuNav?.tableView.reloadData()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -383,12 +395,19 @@ class SubredditsViewController:  PagingMenuController {
         (SubredditsViewController.viewControllers[currentPage] as? SubredditLinkViewController)?.showMenu(sender)
     }
     
+    
     func showDrawer(_ sender: AnyObject){
        // let navEditorViewController: UINavigationController = UINavigationController(rootViewController: menuNav)
       //  self.prepareOverlayVC(overlayVC: navEditorViewController)
       //  self.present(navEditorViewController, animated: true, completion: nil)
 
-        present(SideMenuManager.menuLeftNavigationController!, animated: true, completion: nil)
+        // create animator object with instance of modal view controller
+        // we need to keep it in property with strong reference so it will not get release
+        
+        // set transition delegate of modal view controller to our object
+        
+        // if you modal cover all behind view controller, use UIModalPresentationFullScreen
+        present(SideMenuManager.menuLeftNavigationController!, animated: true)
     }
     
     func showMenu(_ sender: AnyObject){

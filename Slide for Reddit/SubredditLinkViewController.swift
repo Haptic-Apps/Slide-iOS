@@ -431,7 +431,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         }
         label.addSubview(subb)
         if(Subscriptions.isSubscriber(sub)){
-            subb.imageView?.tintColor = GMColor.green500Color()
+            subb.setImage(UIImage.init(named: "subbed")?.withColor(tintColor: GMColor.green500Color()), for: UIControlState.normal)
         }
         
         add = MDCFloatingButton.init(shape: .default)

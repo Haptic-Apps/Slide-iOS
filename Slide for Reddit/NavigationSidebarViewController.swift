@@ -105,6 +105,7 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
         searchBar?.isTranslucent = true
         searchBar?.barStyle = .blackTranslucent
         searchBar?.delegate = self
+        self.navigationController?.setNavigationBarHidden(true, animated: false)
     }
     
     func setSubreddit(subreddit: String){
@@ -112,7 +113,9 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
         header.frame.size.height = header.getEstHeight()
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForUser(name: subreddit)
     }
-    
+    func setmail(mailcount: Int){
+        header.setMail(mailcount)
+    }
     override func viewWillAppear(_ animated: Bool) {
         self.tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "sub")
         super.viewWillAppear(animated)

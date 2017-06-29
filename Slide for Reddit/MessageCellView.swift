@@ -340,8 +340,10 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         if(!ActionStates.isRead(s: message!)){
             let session = (UIApplication.shared.delegate as! AppDelegate).session
             do {
-                try session?.markMessagesAsRead([(message?.getId())!], completion: { (result) in
-                    
+                try session?.markMessagesAsRead([(message?.name.contains("_"))! ? (message?.name)! : ((message?.wasComment)! ? "t1_" : "t4_") + (message?.name)!], completion: { (result) in
+                    if(result.error != nil){
+                        print(result.error!.description)
+                    }
                 })
             } catch {
                 

@@ -275,6 +275,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     case .failure(let error):
                         print(error)
                         print("Getting realm data")
+                        DispatchQueue.main.async {
+
                         do {
                             let realm = try Realm()
                             if let listing =  realm.objects(RSubmission.self).filter({ (item) -> Bool in
@@ -300,7 +302,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                     gettimeofday(&time, nil)
                                     
                                     self.doArrays()
-                                    self.lastSeen = History.getSeenTime(s: link)
+                                    self.lastSeen = (self.context.isEmpty ? History.getSeenTime(s: link) :  Double(0))
                                     
                                     DispatchQueue.main.async {
                                         self.tableView.beginUpdates()
@@ -314,7 +316,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                         } catch {
                             
                         }
-                        DispatchQueue.main.async {
                             
                             self.refreshControl.endRefreshing()
                             self.indicator?.stopAnimating()
@@ -408,8 +409,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                 }
                                 self.refreshControl.endRefreshing()
                                 self.indicator?.stopAnimating()
-
+                                if(SettingValues.collapseDefault){
+                                    self.collapseAll()
+                                } else {
                                 self.tableView.reloadData(with: .top)
+                                }
                                 
                                 var index = 0
                                 if(!self.context.isEmpty()){
@@ -529,31 +533,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        if(indicator == nil){
-        if(hasSubmission){
-            indicator = MDCActivityIndicator.init(frame: CGRect.init(x: CGFloat(0), y: CGFloat(0), width: CGFloat(80), height: CGFloat(80)))
-            indicator?.strokeWidth = 5
-            indicator?.radius = 20
-            indicator?.indicatorMode = .indeterminate
-            indicator?.cycleColors = [ColorUtil.getColorForSub(sub: submission?.subreddit ?? ""), ColorUtil.accentColorForSub(sub: submission?.subreddit ?? "")]
-            var center = CGPoint.init(x: self.tableView.center.x, y: CGFloat(tableView.bounds.height - 200))
-            indicator?.center = center
-            self.tableView.addSubview(indicator!)
-            indicator?.startAnimating()
-            
-        } else {
-            indicator = MDCActivityIndicator.init(frame: CGRect.init(x: CGFloat(0), y: CGFloat(0), width: CGFloat(80), height: CGFloat(80)))
-            indicator?.strokeWidth = 5
-            indicator?.radius = 20
-            indicator?.indicatorMode = .indeterminate
-            indicator?.cycleColors = [ColorUtil.getColorForSub(sub: submission?.subreddit ?? ""), ColorUtil.accentColorForSub(sub: submission?.subreddit ?? "")]
-            var center = CGPoint.init(x: self.tableView.center.x, y: self.tableView.center.y)
-            indicator?.center = center
-            self.tableView.addSubview(indicator!)
-            indicator?.startAnimating()
-            
-        }
-        }
         super.viewDidAppear(animated)
     }
     
@@ -581,6 +560,32 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             }
 
         }
+        if(indicator == nil){
+            if(hasSubmission){
+                indicator = MDCActivityIndicator.init(frame: CGRect.init(x: CGFloat(0), y: CGFloat(0), width: CGFloat(80), height: CGFloat(80)))
+                indicator?.strokeWidth = 5
+                indicator?.radius = 20
+                indicator?.indicatorMode = .indeterminate
+                indicator?.cycleColors = [ColorUtil.getColorForSub(sub: submission?.subreddit ?? ""), ColorUtil.accentColorForSub(sub: submission?.subreddit ?? "")]
+                let center = CGPoint.init(x: self.tableView.center.x, y: CGFloat(tableView.bounds.height - 200))
+                indicator?.center = center
+                self.tableView.addSubview(indicator!)
+                indicator?.startAnimating()
+                
+            } else {
+                indicator = MDCActivityIndicator.init(frame: CGRect.init(x: CGFloat(0), y: CGFloat(0), width: CGFloat(80), height: CGFloat(80)))
+                indicator?.strokeWidth = 5
+                indicator?.radius = 20
+                indicator?.indicatorMode = .indeterminate
+                indicator?.cycleColors = [ColorUtil.getColorForSub(sub: submission?.subreddit ?? ""), ColorUtil.accentColorForSub(sub: submission?.subreddit ?? "")]
+                let center = CGPoint.init(x: self.tableView.center.x, y: self.tableView.center.y)
+                indicator?.center = center
+                self.tableView.addSubview(indicator!)
+                indicator?.startAnimating()
+                
+            }
+        }
+
     }
     
     init(submission: RSubmission){
@@ -591,7 +596,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     init(submission: String, subreddit: String?){
         self.submission = RSubmission()
-        self.submission!.id = submission
+        self.submission!.name = submission
         hasSubmission = false
         super.init(nibName: nil, bundle: nil)
         if(subreddit != nil){
@@ -601,7 +606,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     init(submission: String, comment: String, context: Int, subreddit: String){
         self.submission = RSubmission()
-        self.submission!.id = submission
+        self.submission!.name = submission
         hasSubmission = false
         self.context = comment
         self.contextNumber = context
@@ -1147,6 +1152,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
 
     func updateToolbar() {
+        if(!SettingValues.disableNavigationBar){
         if(navigationController?.isToolbarHidden)!{
         navigationController?.setToolbarHidden(false, animated: false)
         }
@@ -1168,6 +1174,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         self.toolbarItems = items
         navigationController?.toolbar.barTintColor = UIColor.black.withAlphaComponent(0.4)
         navigationController?.toolbar.tintColor = UIColor.white
+        }
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {

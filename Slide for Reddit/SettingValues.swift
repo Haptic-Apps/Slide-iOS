@@ -51,6 +51,11 @@ class SettingValues{
     public static let pref_nsfwEnabled = "NSFW_ENABLED"
     public static let pref_nsfwPreviews = "NSFW_PREVIEWS"
     public static let pref_hideNSFWCollection = "NSFW_COLLECTION"
+    public static let pref_domainInInfo = "DOMAIN_INFO"
+    public static let pref_disableNavigationBar = "DISABLE_NAV"
+    public static let pref_disableColor = "DISABLE_COLOR"
+    public static let pref_collapseDefault = "COLLAPSE_DEFAULT"
+    public static let pref_volumeButtonNavigation = "VOLUME_NAV"
 
     public static var viewType = true
     public static var hiddenFAB = true
@@ -93,6 +98,11 @@ class SettingValues{
     public static var nsfwEnabled = false
     public static var nsfwPreviews = false
     public static var hideNSFWCollection = false
+    public static var domainInInfo = false
+    public static var disableNavigationBar = false
+    public static var disableColor = false
+    public static var collapseDefault = false
+    public static var volumeButtonNavigation = false
 
     enum PostViewType: String {
         case LIST = "list"
@@ -106,6 +116,11 @@ class SettingValues{
         SettingValues.nsfwEnabled = settings.bool(forKey: SettingValues.pref_nsfwEnabled)
         SettingValues.nsfwPreviews = settings.bool(forKey: SettingValues.pref_nsfwPreviews)
         SettingValues.hideNSFWCollection = settings.bool(forKey: SettingValues.pref_hideNSFWCollection)
+        SettingValues.domainInInfo = settings.bool(forKey: SettingValues.pref_domainInInfo)
+        SettingValues.disableNavigationBar = settings.bool(forKey: SettingValues.pref_disableNavigationBar)
+        SettingValues.disableColor = settings.bool(forKey: SettingValues.pref_disableColor)
+        SettingValues.collapseDefault = settings.bool(forKey: SettingValues.pref_collapseDefault)
+        SettingValues.volumeButtonNavigation = settings.bool(forKey: SettingValues.pref_volumeButtonNavigation)
 
         SettingValues.dataSavingEnabled = settings.bool(forKey: SettingValues.pref_dataSavingEnabled)
         SettingValues.dataSavingDisableWiFi = settings.bool(forKey: SettingValues.pref_dataSavingDisableWifi)

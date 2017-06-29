@@ -17,6 +17,7 @@ pod 'MaterialComponents/Dialogs'
 pod 'MaterialComponents/Ink'
 pod 'MaterialComponents/ProgressView'
 pod 'MaterialComponents/ShadowElevations'
+pod "GMStepper"
 pod 'MaterialComponents/Snackbar'
 pod 'MaterialComponents/ActivityIndicator'
 pod "SAHistoryNavigationViewController"

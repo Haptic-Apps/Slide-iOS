@@ -10,114 +10,83 @@ import UIKit
 import reddift
 
 class NavigationHeaderView: UIView {
-    var logo: UIImageView = UIImageView()
-    var accounts: UIButton = UIButton()
-    var multis: UIButton = UIButton()
-    var profile: UIButton = UIButton()
-    var you: UIButton = UIButton()
-    var inbox: UIButton = UIButton()
-    var settings: UIButton = UIButton()
+    var title = UILabel()
+    var switchp: UIButton = UIButton()
+    var more: UIButton = UIButton()
+    var inbox: UILabel = UILabel()
     var search: UISearchBar = UISearchBar()
     
+    func doColors(){
+        switchp.setImage(UIImage(named: "down")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
+        more.setImage(UIImage(named: "ic_more_vert_white")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
+        title.textColor = ColorUtil.fontColor
+        backgroundColor = ColorUtil.foregroundColor
+    }
+    
+
     override init(frame: CGRect) {
         super.init(frame:frame)
         self.search = UISearchBar(frame: CGRect(x: 0, y: 0, width: 3, height: 50))
-        self.accounts = UIButton(frame: CGRect(x: 0, y: 0, width: 3, height: 50))
-        self.multis = UIButton(frame: CGRect(x: 0, y: 0, width: 3, height: 50))
-        self.profile = UIButton(frame: CGRect(x: 0, y: 0, width: 3, height: 50))
-        self.settings = UIButton(frame: CGRect(x: 0, y: 0, width: 3, height: 50))
-        self.you = UIButton(frame: CGRect(x: 0, y: 0, width: 3, height: 50))
-        self.inbox = UIButton(frame: CGRect(x: 0, y: 0, width: 3, height: 50))
+        self.switchp = UIButton(frame: CGRect(x: 0, y: 0, width: 3, height: 50))
+        self.more = UIButton(frame: CGRect(x: 0, y: 0, width: 3, height: 50))
+        self.inbox = UILabel(frame: CGRect(x: 0, y: 0, width: 3, height: 50))
+        self.title = UILabel(frame: CGRect(x: 0, y: 0, width: 3, height: 50))
 
-        backgroundColor = ColorUtil.foregroundColor
         
-        self.logo = UIImageView(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
-        self.logo.image = UIImage.init(named: "slogo")?.addImagePadding(x: 20, y: 20)
-        self.logo.contentMode = .scaleAspectFit
         
-        logo.translatesAutoresizingMaskIntoConstraints = false
-        accounts.translatesAutoresizingMaskIntoConstraints = false
-        multis.translatesAutoresizingMaskIntoConstraints = false
-        profile.translatesAutoresizingMaskIntoConstraints = false
-        settings.translatesAutoresizingMaskIntoConstraints = false
         search.translatesAutoresizingMaskIntoConstraints = false
-        you.translatesAutoresizingMaskIntoConstraints = false
+        title.translatesAutoresizingMaskIntoConstraints = false
+        switchp.translatesAutoresizingMaskIntoConstraints = false
+        search.translatesAutoresizingMaskIntoConstraints = false
+        more.translatesAutoresizingMaskIntoConstraints = false
         inbox.translatesAutoresizingMaskIntoConstraints = false
         
-        accounts.setTitle("Manage accounts", for: .normal)
-        accounts.setImage(UIImage(named: "add")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
-        accounts.contentHorizontalAlignment = .left
-        accounts.titleEdgeInsets = UIEdgeInsetsMake(0, 8, 0, 0)
-        accounts.tintColor = ColorUtil.fontColor
-        accounts.setTitleColor(ColorUtil.fontColor, for: .normal)
+        switchp.contentHorizontalAlignment = .left
+        switchp.titleEdgeInsets = UIEdgeInsetsMake(0, 8, 0, 0)
+        switchp.tintColor = ColorUtil.fontColor
         
-        multis.setTitle("Multireddits", for: .normal)
-        multis.setImage(UIImage(named: "multis")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
-        multis.contentHorizontalAlignment = .left
-        multis.titleEdgeInsets = UIEdgeInsetsMake(0, 8, 0, 0)
-        multis.tintColor = ColorUtil.fontColor
-        multis.setTitleColor(ColorUtil.fontColor, for: .normal)
+        more.contentHorizontalAlignment = .left
+        more.titleEdgeInsets = UIEdgeInsetsMake(0, 8, 0, 0)
+        more.tintColor = ColorUtil.fontColor
         
-        you.setTitle("You", for: .normal)
-        you.setImage(UIImage(named: "profile")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
-        you.contentHorizontalAlignment = .left
-        you.titleEdgeInsets = UIEdgeInsetsMake(0, 8, 0, 0)
-        you.tintColor = ColorUtil.fontColor
-        you.setTitleColor(ColorUtil.fontColor, for: .normal)
-
-        inbox.setTitle("Inbox", for: .normal)
-        inbox.setImage(UIImage(named: "messages")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
-        inbox.contentHorizontalAlignment = .left
-        inbox.titleEdgeInsets = UIEdgeInsetsMake(0, 8, 0, 0)
-        inbox.tintColor = ColorUtil.fontColor
-        inbox.setTitleColor(ColorUtil.fontColor, for: .normal)
-
-        profile.setTitle("Go to profile", for: .normal)
-        profile.setImage(UIImage(named: "profile")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
-        profile.contentHorizontalAlignment = .left
-        profile.titleEdgeInsets = UIEdgeInsetsMake(0, 8, 0, 0)
-        profile.tintColor = ColorUtil.fontColor
-        profile.setTitleColor(ColorUtil.fontColor, for: .normal)
-
-        settings.setTitle("Settings", for: .normal)
-        settings.setImage(UIImage(named: "settings")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
-        settings.contentHorizontalAlignment = .left
-        settings.titleEdgeInsets = UIEdgeInsetsMake(0, 8, 0, 0)
-        settings.tintColor = ColorUtil.fontColor
-        settings.setTitleColor(ColorUtil.fontColor, for: .normal)
-
+        inbox.textColor = .white
+        inbox.font = UIFont.boldSystemFont(ofSize: 16)
+        inbox.backgroundColor = GMColor.red300Color()
+        inbox.layer.cornerRadius = 10
+        inbox.layer.masksToBounds = true
+        
+        title.font = UIFont.boldSystemFont(ofSize: 26)
+        
         let aTap = UITapGestureRecognizer(target: self, action: #selector(self.switchAccounts(_:)))
-        accounts.addGestureRecognizer(aTap)
-        accounts.isUserInteractionEnabled = true
+        switchp.addGestureRecognizer(aTap)
+        switchp.isUserInteractionEnabled = true
         
-        let pTap = UITapGestureRecognizer(target: self, action: #selector(self.showProfileDialog(_:)))
-        profile.addGestureRecognizer(pTap)
-        profile.isUserInteractionEnabled = true
-        
-        let sTap = UITapGestureRecognizer(target: self, action: #selector(self.settings(_:)))
-        settings.addGestureRecognizer(sTap)
-        settings.isUserInteractionEnabled = true
+        let sTap = UITapGestureRecognizer(target: self, action: #selector(self.showMore(_:)))
+        more.addGestureRecognizer(sTap)
+        more.isUserInteractionEnabled = true
 
-        let yTap = UITapGestureRecognizer(target: self, action: #selector(self.you(_:)))
-        you.addGestureRecognizer(yTap)
-        you.isUserInteractionEnabled = true
+        if(AccountController.isLoggedIn){
+            let yTap = UITapGestureRecognizer(target: self, action: #selector(self.you(_:)))
+            title.addGestureRecognizer(yTap)
+        } else {
+            let yTap = UITapGestureRecognizer(target: self, action: #selector(self.switchAccounts(_:)))
+            title.addGestureRecognizer(yTap)
+        }
+        title.isUserInteractionEnabled = true
 
         let iTap = UITapGestureRecognizer(target: self, action: #selector(self.inbox(_:)))
         inbox.addGestureRecognizer(iTap)
         inbox.isUserInteractionEnabled = true
 
-        addSubview(logo)
-        addSubview(accounts)
-        addSubview(multis)
-        addSubview(profile)
-        addSubview(settings)
+        addSubview(switchp)
+        addSubview(more)
         addSubview(search)
-        addSubview(you)
+        addSubview(title)
         addSubview(inbox)
-
+        
         self.clipsToBounds = true
         updateConstraints()
-        
+        doColors()
     }
     
     func you(_ sender: AnyObject){
@@ -129,6 +98,39 @@ class NavigationHeaderView: UIView {
         let inbox = InboxViewController.init()
         self.parentController?.show(inbox, sender: self.parentController)
     }
+    
+    func showMore(_ sender: AnyObject){
+        let optionMenu = UIAlertController(title: nil, message: "Navigate", preferredStyle: .actionSheet)
+        
+        let prof = UIAlertAction(title: "Go to a profile", style: .default, handler: {
+            (alert: UIAlertAction!) -> Void in
+            self.showProfileDialog(self.switchp)
+        })
+        optionMenu.addAction(prof)
+        
+        let saved = UIAlertAction(title: "Your saved content", style: .default, handler: {
+            (alert: UIAlertAction!) -> Void in
+            let profile = ProfileViewController.init(name: AccountController.currentName)
+            self.parentController?.show(profile, sender: self.parentController)
+        })
+        optionMenu.addAction(saved)
+
+        let inbox = UIAlertAction(title: "Inbox", style: .default, handler: {
+            (alert: UIAlertAction!) -> Void in
+            self.inbox(self.switchp)
+        })
+        optionMenu.addAction(inbox)
+        
+        let settings = UIAlertAction(title: "Settings", style: .default, handler: {
+            (alert: UIAlertAction!) -> Void in
+            self.settings(self.switchp)
+        })
+        optionMenu.addAction(settings)
+        parentController?.present(optionMenu, animated: true, completion: nil)
+
+    }
+    
+
     
     func showProfileDialog(_ sender: AnyObject){
         let alert = UIAlertController(title: "Enter a username", message: "", preferredStyle: .alert)
@@ -210,7 +212,6 @@ class NavigationHeaderView: UIView {
     func setSubreddit(subreddit: String, parent: UIViewController){
         self.subreddit = subreddit
         self.parentController = parent
-        logo.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
         updateConstraints()
     }
     required init?(coder aDecoder: NSCoder) {
@@ -223,38 +224,12 @@ class NavigationHeaderView: UIView {
         super.updateConstraints()
         
         let metrics=["topMargin": 0]
-        let views=["accounts": accounts, "logo":logo, "multis": multis, "search":search, "inbox": inbox, "profile":profile, "you": you, "settings":settings] as [String : Any]
+        let views=["title": title, "switchp":switchp, "inbox": inbox, "more":more, "search":search] as [String : Any]
         
         var constraint:[NSLayoutConstraint] = []
         
         
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[logo]-0-|",
-                                                                    options: NSLayoutFormatOptions(rawValue: 0),
-                                                                    metrics: metrics,
-                                                                    views: views))
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "H:|-(12)-[accounts]-(12)-|",
-                                                                    options: NSLayoutFormatOptions(rawValue: 0),
-                                                                    metrics: metrics,
-                                                                    views: views))
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "H:|-(12)-[you]-(12)-|",
-                                                                    options: NSLayoutFormatOptions(rawValue: 0),
-                                                                    metrics: metrics,
-                                                                    views: views))
-
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "H:|-(12)-[multis]-(12)-|",
-                                                                    options: NSLayoutFormatOptions(rawValue: 0),
-                                                                    metrics: metrics,
-                                                                    views: views))
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "H:|-(12)-[profile]-(12)-|",
-                                                                    options: NSLayoutFormatOptions(rawValue: 0),
-                                                                    metrics: metrics,
-                                                                    views: views))
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "H:|-(12)-[inbox]-(12)-|",
-                                                                    options: NSLayoutFormatOptions(rawValue: 0),
-                                                                    metrics: metrics,
-                                                                    views: views))
-
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "H:|-(12)-[settings]-(12)-|",
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[title]-2-[switchp(30)]-(>=8)-[inbox]-4-[more(30)]-4-|",
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                                     metrics: metrics,
                                                                     views: views))
@@ -263,28 +238,41 @@ class NavigationHeaderView: UIView {
                                                                     metrics: metrics,
                                                                     views: views))
         
-        if(AccountController.isLoggedIn){
-            you.isHidden = false
-            inbox.isHidden = false
-            constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[logo(150)]-0-[you(60)]-0-[inbox(60)]-0-[accounts(60)]-0-[profile(60)]-0-[settings(60)]-0-[multis(60)]-4-[search]-0-|",
-                                                                        options: NSLayoutFormatOptions(rawValue: 0),
-                                                                        metrics: metrics,
-                                                                        views: views))
-
-        } else {
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[logo(150)]-0-[accounts(60)]-0-[profile(60)]-0-[settings(60)]-0-[multis(60)]-4-[search]-0-|",
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-36-[inbox(30)]-4-|",
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                                     metrics: metrics,
                                                                     views: views))
-            you.isHidden = true
-            inbox.isHidden = true
-        }
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-36-[more(30)]-4-|",
+                                                                    options: NSLayoutFormatOptions(rawValue: 0),
+                                                                    metrics: metrics,
+                                                                    views: views))
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-36-[title]-8-[search]-4-|",
+                                                                    options: NSLayoutFormatOptions(rawValue: 0),
+                                                                    metrics: metrics,
+                                                                    views: views))
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-36-[switchp(30)]-4-|",
+                                                                    options: NSLayoutFormatOptions(rawValue: 0),
+                                                                    metrics: metrics,
+                                                                    views: views))
+
         
+        if(AccountController.isLoggedIn){
+            title.text = AccountController.currentName
+            inbox.isHidden = false
+        } else {
+            inbox.isHidden = true
+            switchp.isHidden = true
+            title.text = "guest"
+        }
         
         addConstraints(constraint)
     }
     
     func getEstHeight()-> CGFloat{
-        return CGFloat((60 * (AccountController.isLoggedIn ? 7 : 5)) + 150)
+        return CGFloat((120))
+    }
+    
+    func setMail(_ mailcount: Int){
+        inbox.text = " \(mailcount) "
     }
 }

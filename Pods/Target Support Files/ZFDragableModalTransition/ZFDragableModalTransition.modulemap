@@ -1,0 +1,6 @@
+framework module ZFDragableModalTransition {
+  umbrella header "ZFDragableModalTransition-umbrella.h"
+
+  export *
+  module * { export * }
+}

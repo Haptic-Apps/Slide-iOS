@@ -2,9 +2,11 @@ PODS:
   - ActionSheetPicker-3.0 (2.2.0)
   - Alamofire (4.5.0)
   - BGTableViewRowActionWithImage (0.4.1)
+  - GMStepper (2.0.0)
   - ImagePickerSheetController (0.9.3)
   - ImageViewer (4.0)
   - KCFloatingActionButton (2.1.2)
+  - LGSideMenuController (2.1.1)
   - MaterialComponents/ActivityIndicator (25.1.0):
     - MaterialComponents/ActivityIndicator/ColorThemer (= 25.1.0)
     - MaterialComponents/ActivityIndicator/Component (= 25.1.0)
@@ -113,14 +115,17 @@ PODS:
   - SwiftyJSON (3.1.4)
   - TTTAttributedLabel (2.0.0)
   - UZTextView (1.0.8)
+  - ZFDragableModalTransition (0.6)
 
 DEPENDENCIES:
   - ActionSheetPicker-3.0 (from `https://github.com/ccrama/ActionSheetPicker-3.0`)
   - Alamofire (~> 4.3)
   - BGTableViewRowActionWithImage
+  - GMStepper
   - ImagePickerSheetController (from `https://github.com/lbrndnr/ImagePickerSheetController`, branch `swift3`)
   - ImageViewer (from `https://github.com/ccrama/ImageViewer`)
   - KCFloatingActionButton (~> 2.1.0)
+  - LGSideMenuController
   - MaterialComponents/ActivityIndicator
   - MaterialComponents/AnimationTiming
   - MaterialComponents/Buttons
@@ -138,6 +143,7 @@ DEPENDENCIES:
   - SwiftyJSON
   - TTTAttributedLabel
   - UZTextView (from `https://github.com/ccrama/UZTextView`)
+  - ZFDragableModalTransition
 
 EXTERNAL SOURCES:
   ActionSheetPicker-3.0:
@@ -173,9 +179,11 @@ SPEC CHECKSUMS:
   ActionSheetPicker-3.0: d11a4c12c6aaf704b8a3f56d179198c99f3e41e6
   Alamofire: f28cdffd29de33a7bfa022cbd63ae95a27fae140
   BGTableViewRowActionWithImage: 6a0731a84662735f5ec28dc253e3fba6a73ebc5b
+  GMStepper: 6aff0c881afac2f432e5c9b0df71e44e14110a06
   ImagePickerSheetController: 4789b06940e299431455c61be77fda440883c36c
   ImageViewer: 364abc0309c33dda86d08ca25b0243e5c67d8cd3
   KCFloatingActionButton: 1b22ce95d44b51915280df8a8b277eae4a06c3f1
+  LGSideMenuController: ae40c80983ab8b8801c7cef0a6804d43aaa72d45
   MaterialComponents: 18ef3524558622476f3edd7c1579efbca431c5dd
   MDFTextAccessibility: 94098925e0853551c5a311ce7c1ecefbe297cdb6
   MisterFusion: f243f4db57c523b5f55d7d9df6a298ffaac8695e
@@ -189,7 +197,8 @@ SPEC CHECKSUMS:
   SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   UZTextView: d8d45a8459b0de6f2c393458a05c65352f89e00a
+  ZFDragableModalTransition: 0d294eaaba6edfcb9839595de765f9ca06a4b524
 
-PODFILE CHECKSUM: d9bfa7c7d4caaa7d49d6a0919849fab541ea13fe
+PODFILE CHECKSUM: f95b33adddc0f5866e3139b260dcb457c5bc9139
 
 COCOAPODS: 1.1.1

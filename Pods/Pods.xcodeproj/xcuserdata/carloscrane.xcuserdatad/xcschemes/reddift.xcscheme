@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '61A43D154843D72037B94A8B03A07791'
+               BlueprintIdentifier = 'FCB89A53D5A642C03AF06FC08114003F'
                BlueprintName = 'reddift'
                ReferencedContainer = 'container:Pods.xcodeproj'
                BuildableName = 'reddift.framework'>

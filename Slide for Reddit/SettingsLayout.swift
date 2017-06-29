@@ -35,6 +35,9 @@ class SettingsLayout: UITableViewController {
     var abbreviateScoreCell: UITableViewCell = UITableViewCell()
     var abbreviateScore = UISwitch()
 
+    var domainInfoCell: UITableViewCell = UITableViewCell()
+    var domainInfo = UISwitch()
+
     var link = LinkCellView()
 
     override func viewDidLoad() {
@@ -83,6 +86,9 @@ class SettingsLayout: UITableViewController {
         } else if(changed == scoreTitle){
             SettingValues.scoreInTitle = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_scoreInTitle)
+        } else if(changed == domainInfo){
+            SettingValues.domainInInfo = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_domainInInfo)
         }
         UserDefaults.standard.synchronize()
         doDisables()
@@ -177,6 +183,7 @@ class SettingsLayout: UITableViewController {
         cropBigPicCell.textLabel?.textColor = ColorUtil.fontColor
         cropBigPicCell.selectionStyle = UITableViewCellSelectionStyle.none
         
+        
         hideBannerImage = UISwitch()
         hideBannerImage.isOn = SettingValues.bannerHidden
         hideBannerImage.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
@@ -240,6 +247,15 @@ class SettingsLayout: UITableViewController {
         abbreviateScoreCell.textLabel?.textColor = ColorUtil.fontColor
         abbreviateScoreCell.selectionStyle = UITableViewCellSelectionStyle.none
 
+        domainInfo = UISwitch()
+        domainInfo.isOn = SettingValues.domainInInfo
+        domainInfo.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+        domainInfoCell.textLabel?.text = "Domain in info line"
+        domainInfoCell.accessoryView = domainInfo
+        domainInfoCell.backgroundColor = ColorUtil.foregroundColor
+        domainInfoCell.textLabel?.textColor = ColorUtil.fontColor
+        domainInfoCell.selectionStyle = UITableViewCellSelectionStyle.none
+
         doDisables()
     }
     
@@ -293,6 +309,8 @@ class SettingsLayout: UITableViewController {
             case 0: return self.hideActionbarCell
             case 1: return self.scoreTitleCell
             case 2: return self.abbreviateScoreCell
+            case 3: return self.domainInfoCell
+
             default: fatalError("Unknown row in section 0")
             }
         default: fatalError("Unknown section")
@@ -335,7 +353,7 @@ class SettingsLayout: UITableViewController {
         switch(section) {
         case 0: return 1    // section 0 has 2 rows
         case 1: return 5    // section 1 has 1 row
-        case 2: return 3
+        case 2: return 4
         default: fatalError("Unknown number of sections")
         }
     }

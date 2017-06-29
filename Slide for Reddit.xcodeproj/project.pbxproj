@@ -105,6 +105,7 @@
 		BE97422E1F0011BE00BF48E0 /* ThumbnailLinkCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE97422D1F0011BE00BF48E0 /* ThumbnailLinkCellView.swift */; };
 		BE9742301F0011E500BF48E0 /* TextLinkCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE97422F1F0011E500BF48E0 /* TextLinkCellView.swift */; };
 		BE9742321F001BEC00BF48E0 /* YTPlayer.html in Resources */ = {isa = PBXBuildFile; fileRef = BE9742311F001BEC00BF48E0 /* YTPlayer.html */; };
+		BE9742381F0409BA00BF48E0 /* SettingsComments.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9742371F0409BA00BF48E0 /* SettingsComments.swift */; };
 		BE981D351E31855500BD3846 /* OpenInChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE981D341E31855500BD3846 /* OpenInChrome.swift */; };
 		BEB2B2351E35D25100BF761C /* InboxContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB2B2341E35D25100BF761C /* InboxContributionLoader.swift */; };
 		BEB2B2371E35D48000BF761C /* InboxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB2B2361E35D48000BF761C /* InboxViewController.swift */; };
@@ -266,6 +267,7 @@
 		BE97422D1F0011BE00BF48E0 /* ThumbnailLinkCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThumbnailLinkCellView.swift; sourceTree = "<group>"; };
 		BE97422F1F0011E500BF48E0 /* TextLinkCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextLinkCellView.swift; sourceTree = "<group>"; };
 		BE9742311F001BEC00BF48E0 /* YTPlayer.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = YTPlayer.html; sourceTree = "<group>"; };
+		BE9742371F0409BA00BF48E0 /* SettingsComments.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsComments.swift; sourceTree = "<group>"; };
 		BE981D341E31855500BD3846 /* OpenInChrome.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenInChrome.swift; sourceTree = "<group>"; };
 		BEB2B2341E35D25100BF761C /* InboxContributionLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxContributionLoader.swift; sourceTree = "<group>"; };
 		BEB2B2361E35D48000BF761C /* InboxViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxViewController.swift; sourceTree = "<group>"; };
@@ -371,6 +373,7 @@
 				BE2F3F4B1EF62020003C1B28 /* SettingsLayout.swift */,
 				BE2F3F591EF8DD3D003C1B28 /* SettingsData.swift */,
 				BE2F3F5C1EF96877003C1B28 /* SettingsContent.swift */,
+				BE9742371F0409BA00BF48E0 /* SettingsComments.swift */,
 			);
 			name = Settings;
 			sourceTree = "<group>";
@@ -984,6 +987,7 @@
 				BE2B89FB1E253D610053D493 /* ReplyViewController.swift in Sources */,
 				BE6EA6D71E1C1FC700E9E709 /* VidMeJSONBase.swift in Sources */,
 				BE3E5C171E16BC1A00749C0C /* String+util.swift in Sources */,
+				BE9742381F0409BA00BF48E0 /* SettingsComments.swift in Sources */,
 				BE2F3F581EF886D9003C1B28 /* Reachability.swift in Sources */,
 				BE9742301F0011E500BF48E0 /* TextLinkCellView.swift in Sources */,
 				BE8FCA0A1E0C46090063B8EF /* SubredditLinkViewController.swift in Sources */,

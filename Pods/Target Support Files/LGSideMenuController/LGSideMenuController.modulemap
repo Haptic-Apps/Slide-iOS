@@ -1,0 +1,6 @@
+framework module LGSideMenuController {
+  umbrella header "LGSideMenuController-umbrella.h"
+
+  export *
+  module * { export * }
+}
