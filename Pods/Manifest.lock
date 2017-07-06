@@ -6,7 +6,6 @@ PODS:
   - ImagePickerSheetController (0.9.3)
   - ImageViewer (4.0)
   - KCFloatingActionButton (2.1.2)
-  - LGSideMenuController (2.1.1)
   - MaterialComponents/ActivityIndicator (25.1.0):
     - MaterialComponents/ActivityIndicator/ColorThemer (= 25.1.0)
     - MaterialComponents/ActivityIndicator/Component (= 25.1.0)
@@ -113,9 +112,9 @@ PODS:
   - SDWebImage/Core (3.8.2)
   - SideMenu (2.3.2)
   - SwiftyJSON (3.1.4)
+  - SwipeCellKit (1.9.0)
   - TTTAttributedLabel (2.0.0)
   - UZTextView (1.0.8)
-  - ZFDragableModalTransition (0.6)
 
 DEPENDENCIES:
   - ActionSheetPicker-3.0 (from `https://github.com/ccrama/ActionSheetPicker-3.0`)
@@ -125,7 +124,6 @@ DEPENDENCIES:
   - ImagePickerSheetController (from `https://github.com/lbrndnr/ImagePickerSheetController`, branch `swift3`)
   - ImageViewer (from `https://github.com/ccrama/ImageViewer`)
   - KCFloatingActionButton (~> 2.1.0)
-  - LGSideMenuController
   - MaterialComponents/ActivityIndicator
   - MaterialComponents/AnimationTiming
   - MaterialComponents/Buttons
@@ -134,16 +132,16 @@ DEPENDENCIES:
   - MaterialComponents/ProgressView
   - MaterialComponents/ShadowElevations
   - MaterialComponents/Snackbar
-  - PagingMenuController
+  - PagingMenuController (from `https://github.com/ccrama/PagingMenuController`)
   - RealmSwift
   - reddift (from `https://github.com/ccrama/reddift`)
   - SAHistoryNavigationViewController
   - SDWebImage (~> 3.8)
   - SideMenu
   - SwiftyJSON
+  - SwipeCellKit
   - TTTAttributedLabel
   - UZTextView (from `https://github.com/ccrama/UZTextView`)
-  - ZFDragableModalTransition
 
 EXTERNAL SOURCES:
   ActionSheetPicker-3.0:
@@ -153,6 +151,8 @@ EXTERNAL SOURCES:
     :git: https://github.com/lbrndnr/ImagePickerSheetController
   ImageViewer:
     :git: https://github.com/ccrama/ImageViewer
+  PagingMenuController:
+    :git: https://github.com/ccrama/PagingMenuController
   reddift:
     :git: https://github.com/ccrama/reddift
   UZTextView:
@@ -168,6 +168,9 @@ CHECKOUT OPTIONS:
   ImageViewer:
     :commit: f4d3b461ffc8338c1a5d6e0026fa2d30832f3593
     :git: https://github.com/ccrama/ImageViewer
+  PagingMenuController:
+    :commit: 366f1bcf312fb0cb6478c03706af0d540a54c658
+    :git: https://github.com/ccrama/PagingMenuController
   reddift:
     :commit: 326de440d1ca32405ae558f41972845001f54ed1
     :git: https://github.com/ccrama/reddift
@@ -183,11 +186,10 @@ SPEC CHECKSUMS:
   ImagePickerSheetController: 4789b06940e299431455c61be77fda440883c36c
   ImageViewer: 364abc0309c33dda86d08ca25b0243e5c67d8cd3
   KCFloatingActionButton: 1b22ce95d44b51915280df8a8b277eae4a06c3f1
-  LGSideMenuController: ae40c80983ab8b8801c7cef0a6804d43aaa72d45
   MaterialComponents: 18ef3524558622476f3edd7c1579efbca431c5dd
   MDFTextAccessibility: 94098925e0853551c5a311ce7c1ecefbe297cdb6
   MisterFusion: f243f4db57c523b5f55d7d9df6a298ffaac8695e
-  PagingMenuController: 6176618987bb170096664f2da097313e45ed9c31
+  PagingMenuController: acdb8e0ff7f977182b0586656d19ba1d992390a6
   Realm: 3601ef091c8c499a31101d8563b991e75546cdce
   RealmSwift: 8183818515471b01a99abdd2970f8e4fd52b6f4a
   reddift: 3066e687c2a934b0f9aca6ee6e2161abc4c93a56
@@ -195,10 +197,10 @@ SPEC CHECKSUMS:
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
   SideMenu: 3fa07dd05d4bade2b6f9889fb1877e312e1ba319
   SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
+  SwipeCellKit: 893661973276ae3512a84ac0a47055923b10731e
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   UZTextView: d8d45a8459b0de6f2c393458a05c65352f89e00a
-  ZFDragableModalTransition: 0d294eaaba6edfcb9839595de765f9ca06a4b524
 
-PODFILE CHECKSUM: f95b33adddc0f5866e3139b260dcb457c5bc9139
+PODFILE CHECKSUM: 9046908e68ef36da33a075abd77b862b7112bbdf
 
 COCOAPODS: 1.1.1

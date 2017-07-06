@@ -36,10 +36,9 @@ class SubredditsViewController:  PagingMenuController {
         var lazyLoadingPage: LazyLoadingPage {
             return LazyLoadingPage.three
         }
-
     }
     struct MenuItem: MenuItemViewCustomizable {
-        var horizontalMargin = 10
+        var horizontalMargin = 00
         var displayMode: MenuItemDisplayMode
     }
    
@@ -49,7 +48,8 @@ class SubredditsViewController:  PagingMenuController {
         var itemsOptions: [MenuItemViewCustomizable] {
             var menuitems: [MenuItemViewCustomizable] = []
             for controller in viewControllers {
-                menuitems.append(MenuItem(horizontalMargin: 10, displayMode:( (controller as! SubredditLinkViewController).displayMode)))
+                let m = MenuItem(horizontalMargin: 10, displayMode:( (controller as! SubredditLinkViewController).displayMode))
+                menuitems.append(m)
             }
             return menuitems
         }
@@ -57,20 +57,28 @@ class SubredditsViewController:  PagingMenuController {
         static func setColor(c: UIColor){
             color = c
         }
+        
+        var isAutoSelectAtScrollEnd: Bool {
+            return false
+        }
 
         var displayMode: MenuDisplayMode {
-            return MenuDisplayMode.standard(widthMode: .flexible, centerItem: true, scrollingMode: MenuScrollingMode.scrollEnabledAndBouces)
+            return MenuDisplayMode.standard(widthMode: .flexible, centerItem: true, scrollingMode: MenuScrollingMode.scrollEnabled)
         }
         
         var backgroundColor: UIColor {
-            return ColorUtil.getColorForSub(sub: current)
+            return ColorUtil.backgroundColor
         }
         var selectedBackgroundColor: UIColor {
-            return ColorUtil.getColorForSub(sub: current)
+            return ColorUtil.backgroundColor
         }
         var height: CGFloat {
-            return 30
+            return 56
         }
+        var marginTop: CGFloat {
+            return 20
+        }
+
         var animationDuration: TimeInterval {
             return 0.3
         }
@@ -81,7 +89,7 @@ class SubredditsViewController:  PagingMenuController {
             return true
         }
         var focusMode: MenuFocusMode {
-            return .underline(height: 3, color: ColorUtil.accentColorForSub(sub: current), horizontalPadding: 0, verticalPadding: 0)
+            return .none
         }
         var dummyItemViewsSet: Int {
             return 1
@@ -89,6 +97,7 @@ class SubredditsViewController:  PagingMenuController {
         var menuPosition: MenuPosition {
             return .top
         }
+    
         var dividerImage: UIImage? {
             return nil
         }
@@ -108,7 +117,10 @@ class SubredditsViewController:  PagingMenuController {
         if(AccountController.isLoggedIn){
             checkForMail()
         }
-    
+        menuNav?.header.doColors()
+        if(menuNav?.tableView != nil){
+        menuNav?.tableView.reloadData()
+        }
     }
     
     func checkForMail(){
@@ -245,6 +257,8 @@ class SubredditsViewController:  PagingMenuController {
             }
         }
          menuLeftNavigationController?.dismiss(animated: true, completion: {})
+        self.menuView?.withPadding(padding: UIEdgeInsetsMake(20, 0, 0, 0))
+
     }
     
     func doLogin(token: OAuth2Token?){
@@ -266,7 +280,6 @@ class SubredditsViewController:  PagingMenuController {
         if(SubredditsViewController.viewControllers.count == 1){
             for subname in Subscriptions.subreddits {
                 SubredditsViewController.viewControllers.append( SubredditLinkViewController(subName: subname, parent: self))
-                print(subname)
             }
         }
         
@@ -313,14 +326,15 @@ class SubredditsViewController:  PagingMenuController {
         // -
         onMove = { state in
             switch state {
-            case let .didMoveController(menuController, previousMenuController):
+            case let .didMoveController(menuController, _):
                 self.navigationController?.navigationBar.barStyle = .black;
                 SubredditsViewController.current = (menuController as! SubredditLinkViewController).sub
-                if(SubredditsViewController.current != nil){
                     self.tintColor = ColorUtil.getColorForSub(sub: SubredditsViewController.current)
                     self.navigationController?.navigationBar.barTintColor = self.tintColor
                     self.menuNav?.setSubreddit(subreddit: SubredditsViewController.current)
-                    
+                if(SettingValues.viewType){
+                    self.title = SubredditsViewController.current
+                }
                     if (menuController as! SubredditLinkViewController).links.count == 0  {
                         (menuController as! SubredditLinkViewController).load(reset: true)
                     }
@@ -333,14 +347,12 @@ class SubredditsViewController:  PagingMenuController {
                     MenuOptions.setColor(c: ColorUtil.accentColorForSub(sub: SubredditsViewController.current))
                     self.colorChanged()
                     SideMenuManager.menuAddScreenEdgePanGesturesToPresent(toView: menuController.view)
-
-                }
                 
             default: break
             }
         }
 
-            navigationController?.navigationBar.shadowImage = UIImage()
+        navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         
         let menu = UIButton.init(type: .custom)
@@ -382,7 +394,9 @@ class SubredditsViewController:  PagingMenuController {
     func colorChanged(){
         //todoself.buttonBarView.backgroundColor = self.navigationController?.navigationBar.barTintColor
         menuNav?.header.doColors()
+        if(menuNav?.tableView != nil){
         menuNav?.tableView.reloadData()
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {

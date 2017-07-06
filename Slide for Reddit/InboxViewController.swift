@@ -29,6 +29,10 @@ class InboxViewController:  PagingMenuController {
     }
 
     struct MenuOptions: MenuViewCustomizable {
+        var marginTop: CGFloat {
+            return 0
+        }
+
         static var color = UIColor.blue
         
         var itemsOptions: [MenuItemViewCustomizable] {

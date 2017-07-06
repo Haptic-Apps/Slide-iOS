@@ -43,10 +43,17 @@ open class MenuView: UIScrollView {
         default: return false
         }
     }
-    fileprivate var contentOffsetX: CGFloat {
+        fileprivate var contentOffsetX: CGFloat {
         switch menuOptions.displayMode {
         case .standard(_, let centerItem, _) where centerItem:
             return centerOfScreenWidth
+        // added below case
+        case .standard(_, let centerItem, _) where !centerItem:
+            if self.contentView.frame.width < self.frame.width {
+                return contentOffset.x
+            } else {
+                return contentOffsetXForCurrentPage
+            }
         case .segmentedControl:
             return contentOffset.x
         case .infinite:
@@ -55,6 +62,7 @@ open class MenuView: UIScrollView {
             return contentOffsetXForCurrentPage
         }
     }
+
     fileprivate var centerOfScreenWidth: CGFloat {
         let screenWidth: CGFloat
         if let width = UIApplication.shared.keyWindow?.bounds.width {
@@ -73,7 +81,7 @@ open class MenuView: UIScrollView {
     
     // MARK: - Lifecycle
     internal init(menuOptions: MenuViewCustomizable) {
-        super.init(frame: CGRect(x: 0, y: 0, width: 0, height: menuOptions.height))
+        super.init(frame: CGRect(x: 0, y: 0, width: 0, height: menuOptions.height + menuOptions.marginTop))
         
         self.menuOptions = menuOptions
         
@@ -178,7 +186,7 @@ open class MenuView: UIScrollView {
     
     fileprivate func layoutScrollView() {
         let viewsDictionary = ["menuView": self]
-        let metrics = ["height": menuOptions.height]
+        let metrics = ["height": menuOptions.height + menuOptions.marginTop, "margin": menuOptions.marginTop]
         NSLayoutConstraint.activate(
             NSLayoutConstraint.constraints(withVisualFormat: "V:[menuView(height)]", options: [], metrics: metrics, views: viewsDictionary)
         )

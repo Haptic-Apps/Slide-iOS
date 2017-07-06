@@ -282,7 +282,6 @@ class GifMWPhotoBrowser: NSObject, GalleryItemsDataSource {
     }
     
     func loadVideo(urlString: String){
-        print("Showing \(urlString)")
         refresh(urlString)
     }
     func getGif(urlS: String){

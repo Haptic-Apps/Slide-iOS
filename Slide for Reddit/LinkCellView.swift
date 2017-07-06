@@ -19,9 +19,10 @@ import UZTextView
 import ImageViewer
 import TTTAttributedLabel
 import MaterialComponents
+import SwipeCellKit
 
 protocol LinkCellViewDelegate: class {
-    func upvote(_ cell: LinkCellView)
+    func upvote(_ cell: LinkCellView, action: SwipeAction?)
     func downvote(_ cell: LinkCellView)
     func save(_ cell: LinkCellView)
     func more(_ cell: LinkCellView)
@@ -35,29 +36,29 @@ enum CurrentType {
 class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, TTTAttributedLabelDelegate {
     
     func upvote(sender: UITapGestureRecognizer? = nil) {
-        if let delegate = self.delegate {
-            delegate.upvote(self)
+        if let delegate = self.del {
+            delegate.upvote(self, action: nil)
         }
     }
     
     func reply(sender: UITapGestureRecognizer? = nil) {
-        if let delegate = self.delegate {
+        if let delegate = self.del {
             delegate.reply(self)
         }
     }
     
     func downvote(sender: UITapGestureRecognizer? = nil) {
-        if let delegate = self.delegate {
+        if let delegate = self.del {
             delegate.downvote(self)
         }
     }
     func more(sender: UITapGestureRecognizer? = nil) {
-        if let delegate = self.delegate {
+        if let delegate = self.del {
             delegate.more(self)
         }
     }
     func save(sender: UITapGestureRecognizer? = nil) {
-        if let delegate = self.delegate {
+        if let delegate = self.del {
             delegate.save(self)
         }
     }
@@ -78,7 +79,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, TTTAttr
     var reply = UIImageView()
     var downvote = UIImageView()
     var more = UIImageView()
-    var delegate: LinkCellViewDelegate? = nil
+    var del: LinkCellViewDelegate? = nil
     
     var loadedImage: URL?
     var lq = false
@@ -312,9 +313,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, TTTAttr
         buttons.addSubview(more)
         self.contentView.addSubview(box)
         self.contentView.addSubview(buttons)
-        
-        self.updateConstraints()
-        
+                
         buttons.isUserInteractionEnabled = true
         
     }
@@ -348,7 +347,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, TTTAttr
             self.contentView.layoutMargins = UIEdgeInsets.init(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin))
         }
         
-        let metrics=["horizontalMargin":75,"top":topmargin,"bottom":bottommargin,"separationBetweenLabels":0,"labelMinHeight":75,  "bannerHeight": submissionHeight, "left":leftmargin, "padding" : innerpadding, "ishidden":!full && SettingValues.hideButtonActionbar ? 0 : 20] as [String: Int]
+        let metrics=["horizontalMargin":75,"top":topmargin,"bottom":bottommargin,"separationBetweenLabels":0,"labelMinHeight":75,  "bannerHeight": submissionHeight, "left":leftmargin, "padding" : innerpadding, "ishidden": !full && SettingValues.hideButtonActionbar ? 0 : 20] as [String: Int]
         let views=["label":title, "body": textView, "image": thumbImage, "score": score, "comments": comments, "banner": bannerImage, "box": box] as [String : Any]
         let views2=["buttons":buttons, "upvote": upvote, "downvote": downvote, "reply": reply,"edit":edit, "more": more, "save": save] as [String : Any]
         
@@ -357,17 +356,17 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, TTTAttr
                                                           metrics: metrics,
                                                           views: views))
         
-        box.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[score(20)]-|",
+        box.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[score(ishidden)]-|",
                                                           options: NSLayoutFormatOptions(rawValue: 0),
                                                           metrics: metrics,
                                                           views: views))
         
-        self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[buttons]-12-|",
+        self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[buttons(ishidden)]-12-|",
                                                                        options: NSLayoutFormatOptions(rawValue: 0),
                                                                        metrics: metrics,
                                                                        views: views2))
         
-        box.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[comments(20)]-|",
+        box.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[comments(ishidden)]-|",
                                                           options: NSLayoutFormatOptions(rawValue: 0),
                                                           metrics: metrics,
                                                           views: views))
@@ -375,7 +374,6 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, TTTAttr
         self.contentView.layer.cornerRadius = CGFloat(radius)
         self.contentView.layer.masksToBounds = true
         self.backgroundColor = .clear
-        
         
         if(full){
             buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:\(AccountController.isLoggedIn && AccountController.currentName == link?.author ? "[edit(20)]-8-" : "")[reply(20)]-8-[save(20)]-8-[upvote(20)]-8-[downvote(20)]-8-[more(20)]-0-|",
@@ -778,7 +776,6 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, TTTAttr
             } else {
                 thumbImage.sd_setImage(with: URL.init(string: submission.thumbnailUrl), placeholderImage: UIImage.init(named: "web"))
             }
-            print("Showing \(submission.thumbnailUrl)")
         } else {
             thumbImage.sd_setImage(with: URL.init(string: ""))
             self.thumbImage.frame.size.width = 0
@@ -1257,7 +1254,6 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, TTTAttr
             } else {
                 thumbImage.sd_setImage(with: URL.init(string: submission.thumbnailUrl), placeholderImage: UIImage.init(named: "web"))
             }
-            print("Showing \(submission.thumbnailUrl)")
         } else {
             thumbImage.sd_setImage(with: URL.init(string: ""))
             self.thumbImage.frame.size.width = 0
@@ -1312,7 +1308,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, TTTAttr
         
         let commentText = NSMutableAttributedString(string: " \(submission.commentCount)", attributes: [NSFontAttributeName: comments.font, NSForegroundColorAttributeName: comments.textColor])
         comments.attributedText = commentText
-        comments.addImage(imageName: "comments", afterLabel: false)
+      //  comments.addImage(imageName: "comments", afterLabel: false)
         
         doConstraints()
         

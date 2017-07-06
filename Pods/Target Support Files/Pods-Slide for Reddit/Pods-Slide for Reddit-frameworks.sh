@@ -91,7 +91,6 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "$BUILT_PRODUCTS_DIR/ImagePickerSheetController/ImagePickerSheetController.framework"
   install_framework "$BUILT_PRODUCTS_DIR/ImageViewer/ImageViewer.framework"
   install_framework "$BUILT_PRODUCTS_DIR/KCFloatingActionButton/KCFloatingActionButton.framework"
-  install_framework "$BUILT_PRODUCTS_DIR/LGSideMenuController/LGSideMenuController.framework"
   install_framework "$BUILT_PRODUCTS_DIR/MDFTextAccessibility/MDFTextAccessibility.framework"
   install_framework "$BUILT_PRODUCTS_DIR/MaterialComponents/MaterialComponents.framework"
   install_framework "$BUILT_PRODUCTS_DIR/MisterFusion/MisterFusion.framework"
@@ -102,9 +101,9 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "$BUILT_PRODUCTS_DIR/SDWebImage/SDWebImage.framework"
   install_framework "$BUILT_PRODUCTS_DIR/SideMenu/SideMenu.framework"
   install_framework "$BUILT_PRODUCTS_DIR/SwiftyJSON/SwiftyJSON.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/SwipeCellKit/SwipeCellKit.framework"
   install_framework "$BUILT_PRODUCTS_DIR/TTTAttributedLabel/TTTAttributedLabel.framework"
   install_framework "$BUILT_PRODUCTS_DIR/UZTextView/UZTextView.framework"
-  install_framework "$BUILT_PRODUCTS_DIR/ZFDragableModalTransition/ZFDragableModalTransition.framework"
   install_framework "$BUILT_PRODUCTS_DIR/reddift/reddift.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
@@ -115,7 +114,6 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "$BUILT_PRODUCTS_DIR/ImagePickerSheetController/ImagePickerSheetController.framework"
   install_framework "$BUILT_PRODUCTS_DIR/ImageViewer/ImageViewer.framework"
   install_framework "$BUILT_PRODUCTS_DIR/KCFloatingActionButton/KCFloatingActionButton.framework"
-  install_framework "$BUILT_PRODUCTS_DIR/LGSideMenuController/LGSideMenuController.framework"
   install_framework "$BUILT_PRODUCTS_DIR/MDFTextAccessibility/MDFTextAccessibility.framework"
   install_framework "$BUILT_PRODUCTS_DIR/MaterialComponents/MaterialComponents.framework"
   install_framework "$BUILT_PRODUCTS_DIR/MisterFusion/MisterFusion.framework"
@@ -126,8 +124,8 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "$BUILT_PRODUCTS_DIR/SDWebImage/SDWebImage.framework"
   install_framework "$BUILT_PRODUCTS_DIR/SideMenu/SideMenu.framework"
   install_framework "$BUILT_PRODUCTS_DIR/SwiftyJSON/SwiftyJSON.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/SwipeCellKit/SwipeCellKit.framework"
   install_framework "$BUILT_PRODUCTS_DIR/TTTAttributedLabel/TTTAttributedLabel.framework"
   install_framework "$BUILT_PRODUCTS_DIR/UZTextView/UZTextView.framework"
-  install_framework "$BUILT_PRODUCTS_DIR/ZFDragableModalTransition/ZFDragableModalTransition.framework"
   install_framework "$BUILT_PRODUCTS_DIR/reddift/reddift.framework"
 fi

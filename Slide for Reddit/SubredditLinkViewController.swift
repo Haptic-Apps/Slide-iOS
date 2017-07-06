@@ -16,9 +16,9 @@ import RealmSwift
 import PagingMenuController
 import MaterialComponents.MaterialSnackbar
 import MaterialComponents.MDCActivityIndicator
+import SwipeCellKit
 
-
-class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, LinkCellViewDelegate, ColorPickerDelegate, KCFloatingActionButtonDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate {
+class SubredditLinkViewController: MediaViewController, UITableViewDelegate, SwipeTableViewCellDelegate, UITableViewDataSource, LinkCellViewDelegate, ColorPickerDelegate, KCFloatingActionButtonDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate {
     
     var parentController: SubredditsViewController?
     var accentChosen: UIColor?
@@ -56,7 +56,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         }
     }
     
-    func upvote(_ cell: LinkCellView) {
+    func upvote(_ cell: LinkCellView, action: SwipeAction?) {
         do{
             try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up, name: (cell.link?.getId())!, completion: { (result) in
                 
@@ -66,6 +66,9 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             cell.refresh()
         } catch {
             
+        }
+        if(action != nil){
+            action!.fulfill(with: .reset)
         }
     }
     
@@ -294,7 +297,8 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     init(subName: String, parent: SubredditsViewController){
         sub = subName;
         self.parentController = parent
-        displayMode = MenuItemDisplayMode.text(title: MenuItemText.init(text: sub, color: UIColor.white, selectedColor: UIColor.white, font: UIFont.systemFont(ofSize: 12), selectedFont: UIFont.systemFont(ofSize: 12)))
+
+        displayMode = MenuItemDisplayMode.text(title: MenuItemText.init(text: sub, color: ColorUtil.fontColor, selectedColor: ColorUtil.fontColor, font: UIFont.boldSystemFont(ofSize: 16), selectedFont: UIFont.boldSystemFont(ofSize: 25)))
         super.init(nibName:nil, bundle:nil)
         setBarColors(color: ColorUtil.getColorForSub(sub: subName))
     }
@@ -302,7 +306,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     init(subName: String, single: Bool){
         sub = subName
         self.single = true
-        displayMode = MenuItemDisplayMode.text(title: MenuItemText.init(text: sub, color: UIColor.white, selectedColor: UIColor.white, font: UIFont.systemFont(ofSize: 12), selectedFont: UIFont.systemFont(ofSize: 12)))
+        displayMode = MenuItemDisplayMode.text(title: MenuItemText.init(text: sub, color: ColorUtil.fontColor, selectedColor: ColorUtil.fontColor, font: UIFont.boldSystemFont(ofSize: 16), selectedFont: UIFont.boldSystemFont(ofSize: 25)))
         super.init(nibName:nil, bundle:nil)
         setBarColors(color: ColorUtil.getColorForSub(sub: subName))
     }
@@ -386,6 +390,8 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         indicator.startAnimating()
 
         reloadNeedingColor()
+        
+        
     }
     
     static var firstPresented = true
@@ -400,13 +406,15 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControlEvents.valueChanged)
         tableView.addSubview(refreshControl) // not required when using UITableViewController
         
-        let label = UILabel.init(frame: CGRect.init(x: 00, y: 0, width: self.tableView.bounds.width - 350, height: 70))
+        let label = UILabel.init(frame: CGRect.init(x: 00, y: 0, width: self.tableView.bounds.width - 350, height: !SettingValues.viewType || single ? 70 : 40))
+        if(!SettingValues.viewType || single){
         label.text =  "     \(sub)"
+        }
         label.textColor = ColorUtil.fontColor
         label.adjustsFontSizeToFitWidth = true
         label.font = UIFont.boldSystemFont(ofSize: 35)
         tableView.tableHeaderView = label
-        
+
         let sort = UIButton.init(type: .custom)
         sort.setImage(UIImage.init(named: "ic_sort_white")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
         sort.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
@@ -416,10 +424,15 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         
         let more = UIButton.init(type: .custom)
         more.setImage(UIImage.init(named: "ic_more_vert_white")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
-        more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
+        more.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControlEvents.touchUpInside)
         more.frame = CGRect.init(x: 0, y: 20, width: 30, height: 30)
         more.translatesAutoresizingMaskIntoConstraints = false
         label.addSubview(more)
+        label.isUserInteractionEnabled = true
+        
+        sort.isUserInteractionEnabled = true
+        more.isUserInteractionEnabled = true
+        
         
         subb = UIButton.init(type: .custom)
         subb.setImage(UIImage.init(named: "subbed")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
@@ -456,14 +469,14 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         
         label.addSubview(sideView)
         
-        let metrics=["topMargin": 0]
+        let metrics=["topMargin": !SettingValues.viewType || single ? 20 : 5]
         let views=["more": more, "add": add, "hide": hide, "superview": view, "sort":sort, "sub": subb, "side":sideView, "label" : label] as [String : Any]
         var constraint:[NSLayoutConstraint] = []
         constraint = NSLayoutConstraint.constraints(withVisualFormat:  "V:[superview]-(<=1)-[add]",
                                                     options: NSLayoutFormatOptions.alignAllCenterX,
                                                     metrics: metrics,
                                                     views: views)
-        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[add(56)]-5-|",
+        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[add]-5-|",
                                                                      options: NSLayoutFormatOptions(rawValue: 0),
                                                                      metrics: metrics,
                                                                      views: views))
@@ -488,20 +501,20 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                                                                      metrics: metrics,
                                                                      views: views))
         
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-(20)-[more]-(20)-|",
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-(topMargin)-[more]-(topMargin)-|",
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                                     metrics: metrics,
                                                                     views: views))
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-(22.5)-[sub(25)]-(22.5)-|",
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-(topMargin)-[sub(25)]-(topMargin)-|",
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                                     metrics: metrics,
                                                                     views: views))
         
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-(20)-[sort]-(20)-|",
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-(topMargin)-[sort]-(topMargin)-|",
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                                     metrics: metrics,
                                                                     views: views))
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-(27)-[side(20)]-(27)-|",
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-(topMargin)-[side(20)]-(topMargin)-|",
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                                     metrics: metrics,
                                                                     views: views))
@@ -511,7 +524,9 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         sideView.clipsToBounds = true
         
         self.automaticallyAdjustsScrollViewInsets = false
+        if(!SettingValues.viewType || single){
         tableView.contentInset = UIEdgeInsetsMake(40, 0, 0, 0)
+        }
         
         self.tableView.register(BannerLinkCellView.classForCoder(), forCellReuseIdentifier: "banner")
         self.tableView.register(ThumbnailLinkCellView.classForCoder(), forCellReuseIdentifier: "thumb")
@@ -956,12 +971,11 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
-        
+
         let currentY = tableView.contentOffset.y;
         self.edgesForExtendedLayout = []
         
         first = false
-        
         tableView.delegate = self
 
         if(single){
@@ -1208,15 +1222,36 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         }
         
         cell?.preservesSuperviewLayoutMargins = false
-        cell?.delegate = self
+      //  cell?.delegate = self
         if indexPath.row == self.links.count - 1 && !loading && !nomore {
             self.loadMore()
         }
         
         (cell)!.setLink(submission: submission, parent: self, nav: self.navigationController, baseSub: sub)
-
         return cell!
     }
+    
+    func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeTableOptions {
+        var options = SwipeTableOptions()
+        options.expansionStyle = SwipeExpansionStyle.fill
+        options.transitionStyle = SwipeTransitionStyle.drag
+        return options
+    }
+    
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
+        guard orientation == .right else { return nil }
+        
+        let deleteAction = SwipeAction(style: SwipeActionStyle.default, title: "Upvote") { action, indexPath in
+            self.upvote(tableView.cellForRow(at: indexPath) as! LinkCellView, action: action)
+        }
+        
+        // customize the action appearance
+        deleteAction.image = UIImage(named: "upvote")
+        
+        return [deleteAction]
+    }
+
+
     
     var loading = false
     var nomore = false

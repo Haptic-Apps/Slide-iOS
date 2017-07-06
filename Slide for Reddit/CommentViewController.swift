@@ -14,6 +14,7 @@ import UZTextView
 import RealmSwift
 import MaterialComponents.MaterialSnackbar
 import MaterialComponents.MDCActivityIndicator
+import SwipeCellKit
 
 class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, UZTextViewCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate {
     
@@ -64,7 +65,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         print("Replying")
         
         let c = LinkCellView()
-        c.delegate = self
+        c.del = self
         c.setLink(submission: self.submission!, parent: self, nav: self.navigationController, baseSub: self.submission!.subreddit)
         c.showBody(width: self.view.frame.size.width)
         c.frame = (tableView.tableHeaderView?.frame)!
@@ -91,7 +92,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         self.present(navEditorViewController, animated: true, completion: nil)
     }
     
-    func upvote(_ cell: LinkCellView) {
+    func upvote(_ cell: LinkCellView, action: SwipeAction? = nil) {
         do{
             try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up, name:  (cell.link?.id)!, completion: { (result) in
                 
@@ -377,13 +378,13 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                 
                             }
                             self.doArrays()
-                            self.lastSeen = History.getSeenTime(s: link)
+                            self.lastSeen = (self.context.isEmpty ? History.getSeenTime(s: link) :  Double(0))
                             History.setComments(s: link)
                             History.addSeen(s: link)
                             DispatchQueue.main.async(execute: { () -> Void in
                                 if(!self.hasSubmission){
                                     self.headerCell = LinkCellView()
-                                    self.headerCell?.delegate = self
+                                    self.headerCell?.del = self
                                     self.hasDone = true
                                     self.headerCell?.setLink(submission: self.submission!, parent: self, nav: self.navigationController, baseSub: self.submission!.subreddit)
                                     self.headerCell?.showBody(width: self.view.frame.size.width)
@@ -541,7 +542,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         super.viewDidLayoutSubviews()
         if(hasSubmission && self.view.frame.size.width != 0 && !hasDone){
             headerCell = LinkCellView()
-            headerCell?.delegate = self
+            headerCell?.del = self
             hasDone = true
             headerCell?.setLink(submission: submission!, parent: self, nav: self.navigationController, baseSub: submission!.subreddit)
             headerCell?.showBody(width: self.view.frame.size.width)

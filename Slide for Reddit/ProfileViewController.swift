@@ -31,7 +31,10 @@ class ProfileViewController:  PagingMenuController, ColorPickerDelegate {
     
     struct MenuOptions: MenuViewCustomizable {
         static var color = UIColor.blue
-        
+        var marginTop: CGFloat {
+            return 0
+        }
+
         var itemsOptions: [MenuItemViewCustomizable] {
             var menuitems: [MenuItemViewCustomizable] = []
             for controller in viewControllers {

@@ -202,7 +202,7 @@ open class MenuItemView: UIView {
             descriptionLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
             descriptionLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
             descriptionWidthConstraint,
-            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: verticalMargin),
+            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: verticalMargin + menuOptions.marginTop),
             titleLabel.bottomAnchor.constraint(equalTo: descriptionLabel.topAnchor, constant: 0),
             descriptionLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: verticalMargin),
             titleLabel.heightAnchor.constraint(equalToConstant: titleLabelSize.height),
