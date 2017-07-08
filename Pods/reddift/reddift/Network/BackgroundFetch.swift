@@ -35,6 +35,7 @@ public class BackgroundFetch: NSObject, URLSessionDelegate {
     }
     
     func handleTask(with response: HTTPURLResponse, didFinishDownloadingToURL: URL, requestForRefreshToken: URLRequest) {
+        print("Handling task")
         if response.statusCode == HttpStatus.unauthorized.rawValue {
             if firstTry {
                 if let tokenURLSession = self.tokenURLSession {

@@ -38,6 +38,9 @@ class SettingsLayout: UITableViewController {
     var domainInfoCell: UITableViewCell = UITableViewCell()
     var domainInfo = UISwitch()
 
+    var leftThumbCell: UITableViewCell = UITableViewCell()
+    var leftThumb = UISwitch()
+
     var link = LinkCellView()
 
     override func viewDidLoad() {
@@ -89,6 +92,9 @@ class SettingsLayout: UITableViewController {
         } else if(changed == domainInfo){
             SettingValues.domainInInfo = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_domainInInfo)
+        } else if(changed == leftThumb){
+            SettingValues.leftThumbnail = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_leftThumbnail)
         }
         UserDefaults.standard.synchronize()
         doDisables()
@@ -256,6 +262,15 @@ class SettingsLayout: UITableViewController {
         domainInfoCell.textLabel?.textColor = ColorUtil.fontColor
         domainInfoCell.selectionStyle = UITableViewCellSelectionStyle.none
 
+        leftThumb = UISwitch()
+        leftThumb.isOn = SettingValues.leftThumbnail
+        leftThumb.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+        leftThumbCell.textLabel?.text = "Thumbnail on left"
+        leftThumbCell.accessoryView = leftThumb
+        leftThumbCell.backgroundColor = ColorUtil.foregroundColor
+        leftThumbCell.textLabel?.textColor = ColorUtil.fontColor
+        leftThumbCell.selectionStyle = UITableViewCellSelectionStyle.none
+
         doDisables()
     }
     
@@ -302,6 +317,8 @@ class SettingsLayout: UITableViewController {
             case 2: return self.cropBigPicCell
             case 3: return self.centerLeadImageCell
             case 4: return self.largerThumbnailCell
+            case 5: return self.leftThumbCell
+
             default: fatalError("Unknown row in section 0")
             }
         case 2:
@@ -352,7 +369,7 @@ class SettingsLayout: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch(section) {
         case 0: return 1    // section 0 has 2 rows
-        case 1: return 5    // section 1 has 1 row
+        case 1: return 6    // section 1 has 1 row
         case 2: return 4
         default: fatalError("Unknown number of sections")
         }

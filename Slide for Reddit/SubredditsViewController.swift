@@ -73,7 +73,7 @@ class SubredditsViewController:  PagingMenuController {
             return ColorUtil.backgroundColor
         }
         var height: CGFloat {
-            return 56
+            return 45
         }
         var marginTop: CGFloat {
             return 20

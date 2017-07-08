@@ -184,6 +184,7 @@ extension Session {
         if let subreddit = subreddit { path = "\(subreddit.path)/\(type).json" }
         guard let request = URLRequest.requestForOAuth(with: baseURL, path:path, parameter:parameter, method:"GET", token:token)
             else { throw ReddiftError.canNotCreateURLRequest as NSError }
+        print(request.url?.absoluteString)
         let closure = {(data: Data?, response: URLResponse?, error: NSError?) -> Result<Listing> in
             return Result(from: Response(data: data, urlResponse: response), optional:error)
                 .flatMap(response2Data)

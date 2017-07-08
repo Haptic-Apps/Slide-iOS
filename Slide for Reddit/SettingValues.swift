@@ -56,6 +56,7 @@ class SettingValues{
     public static let pref_disableColor = "DISABLE_COLOR"
     public static let pref_collapseDefault = "COLLAPSE_DEFAULT"
     public static let pref_volumeButtonNavigation = "VOLUME_NAV"
+    public static let pref_leftThumbnail = "LEFT_THUMB"
 
     public static var viewType = true
     public static var hiddenFAB = true
@@ -103,6 +104,7 @@ class SettingValues{
     public static var disableColor = false
     public static var collapseDefault = false
     public static var volumeButtonNavigation = false
+    public static var leftThumbnail = false
 
     enum PostViewType: String {
         case LIST = "list"
@@ -121,6 +123,7 @@ class SettingValues{
         SettingValues.disableColor = settings.bool(forKey: SettingValues.pref_disableColor)
         SettingValues.collapseDefault = settings.bool(forKey: SettingValues.pref_collapseDefault)
         SettingValues.volumeButtonNavigation = settings.bool(forKey: SettingValues.pref_volumeButtonNavigation)
+        SettingValues.leftThumbnail = settings.bool(forKey: SettingValues.pref_leftThumbnail)
 
         SettingValues.dataSavingEnabled = settings.bool(forKey: SettingValues.pref_dataSavingEnabled)
         SettingValues.dataSavingDisableWiFi = settings.bool(forKey: SettingValues.pref_dataSavingDisableWifi)

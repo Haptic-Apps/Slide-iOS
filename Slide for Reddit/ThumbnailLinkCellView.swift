@@ -41,14 +41,22 @@ class ThumbnailLinkCellView: LinkCellView {
         thumbConstraint = []
         
         if(target == .thumb){
+            
             thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[image(thumb)]",
                                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                                               metrics: metrics,
                                                                               views: views))
+            if(SettingValues.leftThumbnail){
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[image(thumb)]-8-[label]-12-|",
+                                                                                  options: NSLayoutFormatOptions(rawValue: 0),
+                                                                                  metrics: metrics,
+                                                                                  views: views))
+            } else {
             thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[label]-8-[image(thumb)]-12-|",
                                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                                               metrics: metrics,
                                                                               views: views))
+            }
             thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[label]-10-\(bx)|",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,

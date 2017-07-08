@@ -398,6 +398,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
                         print("Success")
                         upload.uploadProgress { progress in
                             DispatchQueue.main.async {
+                                print(progress.fractionCompleted)
                                 self.progressBar.setProgress(Float(progress.fractionCompleted), animated: true)
                             }
                         }

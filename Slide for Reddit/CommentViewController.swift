@@ -291,12 +291,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                 self.refreshControl.endRefreshing()
                                 self.indicator?.stopAnimating()
 
-                                DispatchQueue.global(qos: .background).async {
-                                    self.submission!.comments.removeAll()
                                     for child in listing.comments {
                                         self.comments.append(child)
                                         self.cDepth[child.getId()] = child.depth
                                     }
+                                if(!self.comments.isEmpty){
                                     self.contents += (self.updateStringsSingle(self.comments))
                                     
                                     var time = timeval(tv_sec: 0, tv_usec: 0)
@@ -305,13 +304,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                     self.doArrays()
                                     self.lastSeen = (self.context.isEmpty ? History.getSeenTime(s: link) :  Double(0))
                                     
-                                    DispatchQueue.main.async {
                                         self.tableView.beginUpdates()
                                         let range = NSMakeRange(0, self.tableView.numberOfRows(inSection: 0))
                                         let sections = NSIndexSet(indexesIn: range)
                                         self.tableView.reloadSections(sections as IndexSet, with: .automatic)
                                         self.tableView.endUpdates()
-                                    }
                                 }
                             }
                         } catch {
@@ -371,7 +368,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                 realm.beginWrite()
                                 for comment in self.comments {
                                     realm.create(type(of: comment), value: comment, update: true)
+                                    if(comment is RComment){
+                                    self.submission!.comments.append(comment as! RComment)
+                                    }
                                 }
+                                self.submission!.comments.removeAll()
                                 realm.create(type(of: self.submission!), value: self.submission!, update: true)
                                 try realm.commitWrite()
                             } catch {

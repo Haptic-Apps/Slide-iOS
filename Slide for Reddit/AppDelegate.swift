@@ -40,14 +40,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         commentsFile = documentDirectory.appending("/comments.plist")
 
         let config = Realm.Configuration(
-            schemaVersion: 2,
+            schemaVersion: 3,
             migrationBlock: { migration, oldSchemaVersion in
-                if (oldSchemaVersion < 2) {
+                if (oldSchemaVersion < 3) {
                 }
         })
         
         Realm.Configuration.defaultConfiguration = config
-
+        application.setMinimumBackgroundFetchInterval(TimeInterval.init(900))
         let fileManager = FileManager.default
         if(!fileManager.fileExists(atPath: seenFile!)){
             if let bundlePath = Bundle.main.path(forResource: "seen", ofType: "plist"){
@@ -113,12 +113,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         if let session = session {
+            self.postLocalNotification("Checking notifs.")
             do {
                 let request = try session.requestForGettingProfile()
+                print(request.url?.absoluteString)
                 let fetcher = BackgroundFetch(current: session,
                                               request: request,
                                               taskHandler: { (response, dataURL, error) -> Void in
+                                                print("Doing")
+
                                                 if let response = response, let dataURL = dataURL {
+                                                    
                                                     if response.statusCode == HttpStatus.ok.rawValue {
                                                         
                                                         do {
@@ -153,10 +158,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 fetcher.resume()
                 self.fetcher = fetcher
             } catch {
+                print(error.localizedDescription)
                 postLocalNotification("\(error)")
                 completionHandler(.failed)
             }
         } else {
+            print("Fail")
             postLocalNotification("session is not available.")
             completionHandler(.failed)
         }
@@ -175,6 +182,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                             content: content, trigger: trigger)
         center.add(request, withCompletionHandler: { (error) in
             if error != nil {
+                print(error?.localizedDescription)
                 // Something went wrong
             }
         })
@@ -308,7 +316,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func applicationWillEnterForeground(_ application: UIApplication) {
-        // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
+        self.refreshSession()
     }
     
     func applicationDidBecomeActive(_ application: UIApplication) {
@@ -316,10 +324,44 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func applicationWillTerminate(_ application: UIApplication) {
+        History.seenTimes.write(toFile: seenFile!, atomically: true)
+        History.commentCounts.write(toFile: commentsFile!, atomically: true)
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
     
     
+    func refreshSession() {
+        // refresh current session token
+        do {
+            try self.session?.refreshToken({ (result) -> Void in
+                switch result {
+                case .failure(let error):
+                    print(error)
+                case .success(let token):
+                    DispatchQueue.main.async(execute: { () -> Void in
+                        print(token)
+                        NotificationCenter.default.post(name: OAuth2TokenRepositoryDidSaveTokenName, object: nil, userInfo: nil)
+                    })
+                }
+            })
+        } catch { print(error) }
+    }
+    func reloadSession() {
+        // reddit username is save NSUserDefaults using "currentName" key.
+        // create an authenticated or anonymous session object
+        if let currentName = UserDefaults.standard.object(forKey: "currentName") as? String {
+            do {
+                let token = try OAuth2TokenRepository.token(of: currentName)
+                self.session = Session(token: token)
+                self.refreshSession()
+            } catch { print(error) }
+        } else {
+            self.session = Session()
+        }
+        
+        NotificationCenter.default.post(name: OAuth2TokenRepositoryDidSaveTokenName, object: nil, userInfo: nil)
+    }
+
 }
 extension UIApplication {
     class func topViewController(base: UIViewController? = UIApplication.shared.keyWindow?.rootViewController) -> UINavigationController? {
