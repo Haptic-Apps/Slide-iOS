@@ -439,7 +439,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
         subb.addTarget(self, action: #selector(self.subscribeSingle(_:)), for: UIControlEvents.touchUpInside)
         subb.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         subb.translatesAutoresizingMaskIntoConstraints = false
-        if(sub == "all" || sub == "frontpage" || sub == "friends" || sub == "popular"){
+        if(sub == "all" || sub == "frontpage" || sub == "friends" || sub == "popular" || sub.startsWith("/m/")){
             subb.isHidden = true
         }
         label.addSubview(subb)
@@ -469,7 +469,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
         
         label.addSubview(sideView)
         
-        let metrics=["topMargin": !SettingValues.viewType || single ? 20 : 5]
+        let metrics=["topMargin": !SettingValues.viewType || single ? 20 : 5,"topMarginS":!SettingValues.viewType || single ? 22.5 : 7.5]
         let views=["more": more, "add": add, "hide": hide, "superview": view, "sort":sort, "sub": subb, "side":sideView, "label" : label] as [String : Any]
         var constraint:[NSLayoutConstraint] = []
         constraint = NSLayoutConstraint.constraints(withVisualFormat:  "V:[superview]-(<=1)-[add]",
@@ -492,7 +492,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
         self.view.addConstraints(constraint)
         
         
-        constraint = NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[side(20)]-8-[label]",
+        constraint = NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[side(25)]-8-[label]",
                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                     metrics: metrics,
                                                     views: views)
@@ -505,7 +505,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                                     metrics: metrics,
                                                                     views: views))
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-(topMargin)-[sub(25)]-(topMargin)-|",
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-(topMarginS)-[sub(25)]-(topMarginS)-|",
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                                     metrics: metrics,
                                                                     views: views))
@@ -514,13 +514,15 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                                     metrics: metrics,
                                                                     views: views))
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-(topMargin)-[side(20)]-(topMargin)-|",
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-(topMarginS)-[side(25)]-(topMarginS)-|",
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                                     metrics: metrics,
                                                                     views: views))
         
         label.addConstraints(constraint)
-        sideView.layer.cornerRadius = 10
+        label.fitFontForSize(minFontSize: 8, maxFontSize: 35, accuracy: 0.1)
+
+        sideView.layer.cornerRadius = 15
         sideView.clipsToBounds = true
         
         self.automaticallyAdjustsScrollViewInsets = false
@@ -973,7 +975,6 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
 
         let currentY = tableView.contentOffset.y;
-        self.edgesForExtendedLayout = []
         
         first = false
         tableView.delegate = self
@@ -1239,7 +1240,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
         }
         
         cell?.preservesSuperviewLayoutMargins = false
-      //  cell?.delegate = self
+        cell?.del = self
         if indexPath.row == self.links.count - 1 && !loading && !nomore {
             self.loadMore()
         }
@@ -1567,4 +1568,29 @@ extension UINavigationController {
     override func topMostViewController() -> UIViewController {
         return self.visibleViewController!.topMostViewController()
     }
+}
+extension UILabel {
+    
+    func fitFontForSize( minFontSize : CGFloat = 5.0, maxFontSize : CGFloat = 300.0, accuracy : CGFloat = 1.0) {
+        var minFontSize = minFontSize
+        var maxFontSize = maxFontSize
+        assert(maxFontSize > minFontSize)
+        layoutIfNeeded()
+        let constrainedSize = bounds.size
+        while maxFontSize - minFontSize > accuracy {
+            let midFontSize : CGFloat = ((minFontSize + maxFontSize) / 2)
+            font = font.withSize(midFontSize)
+            sizeToFit()
+            let checkSize : CGSize = bounds.size
+            if  checkSize.height < constrainedSize.height && checkSize.width < constrainedSize.width {
+                minFontSize = midFontSize
+            } else {
+                maxFontSize = midFontSize
+            }
+        }
+        font = font.withSize(minFontSize)
+        sizeToFit()
+        layoutIfNeeded()
+    }
+    
 }

@@ -299,7 +299,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
                                                                      metrics: metrics,
                                                                      views: views))
         
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[topviewspace(marginTop)]-2-[title]-2-|",
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[topviewspace(marginTop)]-4-[title]-4-|",
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                                     metrics: metrics,
                                                                     views: views))
@@ -416,7 +416,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
     }
     
     
-    func setComment(comment: RComment, depth: Int, parent: CommentViewController, hiddenCount: Int, date: Double, author: String?, text: CellContent){
+    func setComment(comment: RComment, depth: Int, parent: CommentViewController, hiddenCount: Int, date: Double, author: String?, text: NSAttributedString){
         self.comment = comment
         self.cellContent = text
         self.contentView.backgroundColor = ColorUtil.foregroundColor
@@ -483,10 +483,10 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         
     }
     
-    var cellContent: CellContent?
+    var cellContent: NSAttributedString?
     
     var savedAuthor: String = ""
-    func refresh(comment: RComment, submissionAuthor: String?, text: CellContent){
+    func refresh(comment: RComment, submissionAuthor: String?, text: NSAttributedString){
         var color: UIColor
         
         savedAuthor = submissionAuthor!
@@ -565,7 +565,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         }
         
         infoString.append(NSAttributedString.init(string: "\n"))
-        infoString.append(text.attributedString)
+        infoString.append(text)
 
         if(!setLinkAttrs){
         let activeLinkAttributes = NSMutableDictionary(dictionary: title.activeLinkAttributes)

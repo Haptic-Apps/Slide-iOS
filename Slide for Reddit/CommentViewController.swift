@@ -80,8 +80,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 
                 self.dataArray.insert(contentsOf: queue, at: 0)
                 self.comments.insert(contentsOf: queue, at: 0)
-                self.heightArray.insert(contentsOf: self.updateStringsSingle(queue), at: 0)
-                self.contents.insert(contentsOf: self.updateStringsSingle(queue), at: 0)
                 self.doArrays()
                 self.tableView.reloadData()
             })
@@ -225,7 +223,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     var comments: [Object] = []
     var hiddenPersons: [String] = []
     var hidden: Set<String> = Set<String>()
-    var contents: [CellContent] = []
     weak var tableView : UITableView!
     var headerCell : LinkCellView?
     var hasSubmission = true
@@ -235,13 +232,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     var contextNumber: Int = 0
     
     var dataArray : [Object] = []
-    var heightArray : [CellContent] = []
     var filteredData : [Object] = []
-    var filteredHeights : [CellContent] = []
     
     func doArrays(){
         dataArray = comments.filter{ !hidden.contains($0 is RComment ? ($0 as! RComment).getId() : ($0 as! RMore).getId()) }
-        heightArray = contents.filter{ !hidden.contains($0.id) }
     }
     
     var sort: CommentSort = SettingValues.defaultCommentSorting
@@ -287,7 +281,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                 self.comments = []
                                 self.hiddenPersons = []
                                 self.hidden = []
-                                self.contents = []
+                                self.text = [:]
                                 self.refreshControl.endRefreshing()
                                 self.indicator?.stopAnimating()
 
@@ -296,8 +290,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                         self.cDepth[child.getId()] = child.depth
                                     }
                                 if(!self.comments.isEmpty){
-                                    self.contents += (self.updateStringsSingle(self.comments))
-                                    
+                                    self.updateStringsSingle(self.comments)
                                     var time = timeval(tv_sec: 0, tv_usec: 0)
                                     gettimeofday(&time, nil)
                                     
@@ -335,7 +328,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                         self.comments = []
                         self.hiddenPersons = []
                         self.hidden = []
-                        self.contents = []
+                        self.text = [:]
                         
                         self.submission = RealmDataWrapper.linkToRSubmission(submission: tuple.0.children[0] as! Link)
                         
@@ -358,7 +351,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                             var time = timeval(tv_sec: 0, tv_usec: 0)
                             gettimeofday(&time, nil)
                             if(!allIncoming.isEmpty){
-                                self.contents += self.updateStrings(allIncoming)
+                                self.updateStrings(allIncoming)
                             }
                             self.paginator = listing.paginator
                             
@@ -635,7 +628,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         self.automaticallyAdjustsScrollViewInsets = false
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
-        tableView.contentInset = UIEdgeInsetsMake(56, 0, 0, 0)
+        tableView.contentInset = UIEdgeInsetsMake(56, 0, 30, 0)
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
 
         if(navigationController != nil){
@@ -876,60 +869,50 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         return buf
     }
     
-    
-    
-    func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        if contents.indices ~= (indexPath as NSIndexPath).row {
-            if(!context.isEmpty()){
-            let datasetPosition = (indexPath as NSIndexPath).row;
-            let thing = isSearching ? filteredData[datasetPosition] : dataArray[datasetPosition]
-                if(((thing is RComment) ? (thing as! RComment).getId() : (thing as! RMore).getId()).contains(context) && !context.isEmpty()){
-                    return true
-                }
-        }
-        }
-            return false
-    }
-    func updateStrings(_ newComments: [(Thing, Int)]) -> [CellContent] {
-        let width = self.view.frame.size.width
+    func updateStrings(_ newComments: [(Thing, Int)]) {
         let color = ColorUtil.accentColorForSub(sub: ((newComments[0].0 as! Comment).subreddit))
-        return newComments.map { (thing: Thing, depth: Int) -> CellContent in
-            if let comment = thing as? Comment {
+        for thing in newComments {
+            if let comment = thing.0 as? Comment {
                 let html = comment.bodyHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
                 do {
                     let attr = try NSMutableAttributedString(data: html.data(using: .unicode)!, options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
                     let font = FontGenerator.fontOfSize(size: 16, submission: false)
                     let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
-                    return CellContent.init(string:LinkParser.parse(attr2), width:(width - CGFloat((depth + 2) * 4)), hasRelies:false, id: comment.getId())
+                    self.text[comment.getId()] = LinkParser.parse(attr2)
                 } catch {
-                    return CellContent(string:NSAttributedString(string: ""), width:width - 25, hasRelies:false, id: thing.getId())
+                    self.text[comment.getId()] = NSAttributedString(string: "")
                 }
             } else {
-                return CellContent(string:"more", width:width - 25, hasRelies:false, id: thing.getId())
+                let attr = NSMutableAttributedString(string: "more")
+                let font = FontGenerator.fontOfSize(size: 16, submission: false)
+                let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
+                self.text[(thing.0 as! More).getId()] = LinkParser.parse(attr2)
             }
         }
     }
     
-    func updateStringsSingle(_ newComments: [Object]) -> [CellContent] {
-        let width = self.view.frame.size.width
+    var text: [String:NSAttributedString] = [:]
+    
+    func updateStringsSingle(_ newComments: [Object]) {
         let color = ColorUtil.accentColorForSub(sub: ((newComments[0] as! RComment).subreddit))
-        return newComments.map { (thing: Object) -> CellContent in
+        for thing in newComments {
             if let comment = thing as? RComment {
                 let html = comment.htmlText
                 do {
                     let attr = try NSMutableAttributedString(data: html.data(using: .unicode)!, options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
                     let font = FontGenerator.fontOfSize(size: 16, submission: false)
                     let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
-                    return CellContent.init(string:LinkParser.parse(attr2), width:(width - 25) - CGFloat((cDepth[comment.getId()] as! Int) * 4), hasRelies:false, id: comment.getId())
+                    self.text[comment.getId()] = LinkParser.parse(attr2)
                 } catch {
-                    return CellContent(string:NSAttributedString(string: ""), width:width - 25, hasRelies:false, id: comment.getId())
+                    self.text[comment.getId()] = NSAttributedString(string: "")
                 }
             } else {
                 let attr = NSMutableAttributedString(string: "more")
                 let font = FontGenerator.fontOfSize(size: 16, submission: false)
                 let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
-                return CellContent.init(string:LinkParser.parse(attr2), width:(width - 25), hasRelies:false, id: (thing as! RMore).getId())
+                self.text[(thing as! RMore).getId()] = LinkParser.parse(attr2)
             }
+
         }
     }
     
@@ -1188,8 +1171,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let datasetPosition = (indexPath as NSIndexPath).row;
-        return CGFloat.init(((!(dataArray[indexPath.row] is RMore)) ? 25 : 6) + (isSearching ? filteredHeights[datasetPosition].textHeight : heightArray[datasetPosition].textHeight))
+        return UITableViewAutomaticDimension
     }
     
     func unhideAll(comment: Object, i : Int){
@@ -1338,7 +1320,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                             }
                             realPosition += 1
                         }
-                        self.contents[realPosition].attributedString = NSAttributedString(string: "[deleted]")
+                        self.text[comment.getId()] = NSAttributedString(string: "[deleted]")
                         self.doArrays()
                         self.tableView.reloadData()
                     }
@@ -1369,10 +1351,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 self.dataArray.insert(comment, at: index)
                 self.comments.remove(at: realPosition)
                 self.comments.insert(comment, at: realPosition)
-                self.heightArray.remove(at: index)
-                self.heightArray.insert(contentsOf: self.updateStringsSingle([comment]), at: index)
-                self.contents.remove(at: realPosition)
-                self.contents.insert(contentsOf: self.updateStringsSingle([comment]), at: realPosition)
+                self.updateStringsSingle([comment])
                 self.doArrays()
                 self.tableView.reloadData()
             })
@@ -1453,8 +1432,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                 
                                 self.dataArray.insert(contentsOf: queue, at: (indexPath?.row)! + 1)
                                 self.comments.insert(contentsOf: queue, at: realPosition + 1)
-                                self.heightArray.insert(contentsOf: self.updateStringsSingle(queue), at: (indexPath?.row)! + 1)
-                                self.contents.insert(contentsOf: self.updateStringsSingle(queue), at: realPosition + 1)
+                                self.updateStringsSingle(queue)
                                 self.doArrays()
                                 self.isReply = false
                                 self.tableView.reloadData()
@@ -1553,21 +1531,17 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell: UITableViewCell! = nil
         
-        
-        if contents.indices ~= (indexPath as NSIndexPath).row {
-            
             let datasetPosition = (indexPath as NSIndexPath).row;
             cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as UITableViewCell
             if let cell = cell as? CommentDepthCell {
                 cell.delegate = self
                 let thing = isSearching ? filteredData[datasetPosition] : dataArray[datasetPosition]
                 if(thing is RComment){
-                    let text = isSearching ? filteredHeights[datasetPosition] :  heightArray[datasetPosition]
                     var count = 0
                     if(hiddenPersons.contains((thing as! RComment).getId())){
                         count = getChildNumber(n: thing as! RComment)
                     }
-                    cell.setComment(comment: thing as! RComment, depth: cDepth[(thing as! RComment).getId()] as! Int, parent: self, hiddenCount: count, date: lastSeen, author: submission?.author, text: text)
+                    cell.setComment(comment: thing as! RComment, depth: cDepth[(thing as! RComment).getId()] as! Int, parent: self, hiddenCount: count, date: lastSeen, author: submission?.author, text: text[(thing as! RComment).getId()]!)
                 } else {
                     cell.setMore(more: (thing as! RMore), depth: cDepth[(thing as! RMore).getId()] as! Int)
                 }
@@ -1577,10 +1551,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 }
             }
             return cell
-        } else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as UITableViewCell
-            return cell
-        }
     }
     
     
@@ -1607,7 +1577,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     func searchBar(_ searchBar: UISearchBar, textDidChange textSearched: String)
     {
         filteredData = []
-        filteredHeights = []
         if(textSearched.length != 0) {
             isSearching = true
             searchTableList()
@@ -1625,7 +1594,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             if(s is RComment){
                 if ((s as! RComment).htmlText.localizedCaseInsensitiveContains(searchString!)) {
                     filteredData.append(s)
-                    filteredHeights.append(highlight(heightArray[count]))
                 }
             }
             count += 1
@@ -1694,12 +1662,12 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                         
                                         DispatchQueue.main.async(execute: { () -> Void in
                                             let startDepth = self.cDepth[more.getId()] as! Int
-                                            
+
                                             var queue: [Object] = []
                                             for i in self.extendForMore(parentId: more.parentId, comments: list, current: startDepth) {
                                                 queue.append(i.0 is Comment ? RealmDataWrapper.commentToRComment(comment: i.0 as! Comment, depth: i.1) : RealmDataWrapper.moreToRMore(more: i.0 as! More))
-                                                print("Depth is \(i.1)")
                                                 self.cDepth[i.0.getId()] = i.1
+                                                self.updateStrings([i])
                                             }
                                             
                                             var realPosition = 0
@@ -1711,19 +1679,14 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                                 realPosition += 1
                                             }
                                             
-                                            
                                             self.comments.remove(at: realPosition)
                                             self.dataArray.remove(at: datasetPosition)
-                                            self.contents.remove(at: realPosition)
-                                            self.heightArray.remove(at: datasetPosition)
                                             
                                             if(queue.count != 0){
                                                 self.tableView.beginUpdates()
-                                                self.tableView.deleteRows(at: [IndexPath.init(row: realPosition, section: 0)], with: .fade)
+                                                self.tableView.deleteRows(at: [IndexPath.init(row: datasetPosition, section: 0)], with: .fade)
                                                 self.dataArray.insert(contentsOf: queue, at: datasetPosition)
                                                 self.comments.insert(contentsOf: queue, at: realPosition)
-                                                self.heightArray.insert(contentsOf: self.updateStringsSingle(queue), at: datasetPosition)
-                                                self.contents.insert(contentsOf: self.updateStringsSingle(queue), at: realPosition)
                                                 self.doArrays()
                                                 var paths: [IndexPath] = []
                                                 for i in stride(from: datasetPosition, to: datasetPosition + queue.count, by: 1){
