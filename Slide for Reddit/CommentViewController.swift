@@ -10,13 +10,13 @@ import UIKit
 import reddift
 import AudioToolbox.AudioServices
 import BGTableViewRowActionWithImage
-import UZTextView
+import TTTAttributedLabel
 import RealmSwift
 import MaterialComponents.MaterialSnackbar
 import MaterialComponents.MDCActivityIndicator
 import SwipeCellKit
 
-class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, UZTextViewCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate {
+class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, UZTextViewCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate, TTTAttributedLabelDelegate {
     
     internal func pushedMoreButton(_ cell: CommentDepthCell) {
         
@@ -264,6 +264,12 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     func refresh(_ sender:AnyObject) {
         session = (UIApplication.shared.delegate as! AppDelegate).session
         if let link = self.submission {
+            sub = link.subreddit
+            self.title = link.subreddit
+            if(Subscriptions.isSubscriber(link.subreddit)){
+                doSubbed()
+            }
+
             do {
                 try session?.getArticles(link.name, sort:sort, comments:(context.isEmpty ? nil : [context]), context: contextNumber, completion: { (result) -> Void in
                     switch result {
@@ -456,25 +462,25 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         let more = UIButton.init(type: .custom)
         more.setImage(UIImage.init(named: "ic_more_vert_white"), for: UIControlState.normal)
         more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
-        more.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+        more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let moreB = UIBarButtonItem.init(customView: more)
         
         let sort = UIButton.init(type: .custom)
         sort.setImage(UIImage.init(named: "ic_sort_white"), for: UIControlState.normal)
         sort.addTarget(self, action: #selector(self.sort(_:)), for: UIControlEvents.touchUpInside)
-        sort.frame = CGRect.init(x: 15, y: 0, width: 30, height: 30)
+        sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let sortB = UIBarButtonItem.init(customView: sort)
         
         let search = UIButton.init(type: .custom)
         search.setImage(UIImage.init(named: "search")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
         search.addTarget(self, action: #selector(self.search(_:)), for: UIControlEvents.touchUpInside)
-        search.frame = CGRect.init(x: 15, y: 0, width: 30, height: 30)
+        search.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let searchB = UIBarButtonItem.init(customView: search)
         
         navigationItem.rightBarButtonItems = [moreB, sortB, searchB]
         
         navigationItem.titleView = savedTitleView
-        
+
         tableView.reloadData()
     }
     
@@ -628,7 +634,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         self.automaticallyAdjustsScrollViewInsets = false
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
-        tableView.contentInset = UIEdgeInsetsMake(56, 0, 30, 0)
+        tableView.contentInset = UIEdgeInsetsMake(56, 0, 45, 0)
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
 
         if(navigationController != nil){
@@ -662,8 +668,30 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             
             navigationItem.rightBarButtonItems = [moreB, sortB, searchB]
             navigationItem.rightBarButtonItem?.imageInsets = UIEdgeInsetsMake(0, 0, 0, -20)
+            doSubbed()
+            
+
         }
             }
+    
+    func doSubbed(){
+        let sub = UIButton.init(type: .custom)
+        var image = UIImage.init()
+        if(Subscriptions.isSubscriber((submission?.subreddit)!)){
+            sub.setImage(UIImage.init(named: "subbed")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withColor(tintColor:  GMColor.green500Color()), for: UIControlState.normal)
+
+        } else {
+            sub.setImage(UIImage.init(named: "subbed")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
+        }
+        sub.addTarget(self, action: #selector(self.subscribeSingle(_:)), for: UIControlEvents.touchUpInside)
+        sub.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        let subB = UIBarButtonItem.init(customView: sub)
+        navigationItem.leftBarButtonItems = [subB]
+        if(Subscriptions.isSubscriber(self.title!)){
+            
+        }
+
+    }
     
     func showMenu(_ sender: AnyObject){
         let link = submission!
@@ -686,7 +714,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         actionSheetController.addAction(cancelActionButton)
         
         cancelActionButton = UIAlertAction(title: "View sub sidebar", style: .default) { action -> Void in
-            self.displaySidebar()
+            Sidebar.init(parent: self, subname: self.submission!.subreddit).displaySidebar()
         }
         actionSheetController.addAction(cancelActionButton)
         
@@ -700,82 +728,39 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         
     }
     
-    func doDisplaySidebar(_ sub: Subreddit){
-        let alrController = UIAlertController(title: sub.displayName + "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", message: "\(sub.accountsActive) here now\n\(sub.subscribers) subscribers", preferredStyle: UIAlertControllerStyle.actionSheet)
-        
-        let margin:CGFloat = 8.0
-        let rect = CGRect.init(x: margin, y: margin + 23, width: alrController.view.bounds.size.width - margin * 4.0, height: 300)
-        let scrollView = UIScrollView(frame: rect)
-        scrollView.backgroundColor = UIColor.clear
-        var info: UZTextView = UZTextView()
-        info = UZTextView(frame: CGRect(x: 0, y: 0, width: rect.size.width, height: CGFloat.greatestFiniteMagnitude))
-        //todo info.delegate = self
-        info.isUserInteractionEnabled = true
-        info.backgroundColor = .clear
-        
-        if(!sub.description.isEmpty()){
-            let html = sub.descriptionHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
-            do {
-                let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
-                let font = FontGenerator.fontOfSize(size: 16, submission: false)
-                let attr2 = attr.reconstruct(with: font, color: UIColor.darkGray, linkColor: ColorUtil.accentColorForSub(sub: sub.displayName))
-                let contentInfo = CellContent.init(string:LinkParser.parse(attr2), width: rect.size.width)
-                info.attributedString = contentInfo.attributedString
-                info.frame.size.height = (contentInfo.textHeight)
-                scrollView.contentSize = CGSize.init(width: rect.size.width, height: info.frame.size.height)
-                scrollView.addSubview(info)
-            } catch {
-            }
-            //todo parentController?.registerForPreviewing(with: self, sourceView: info)
-        }
-        
-        alrController.view.addSubview(scrollView)
-        
-        let subscribed = sub.userIsSubscriber || subChanged && !sub.userIsSubscriber ? "Unsubscribe" : "Subscribe"
-        var somethingAction = UIAlertAction(title: subscribed, style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in self.subscribe(sub)})
-        alrController.addAction(somethingAction)
-        
-        somethingAction = UIAlertAction(title: "Submit a post", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in print("something")})
-        alrController.addAction(somethingAction)
-        
-        somethingAction = UIAlertAction(title: "Subreddit moderators", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in print("something")})
-        alrController.addAction(somethingAction)
-        
-        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: {(alert: UIAlertAction!) in print("cancel")})
-        
-        alrController.addAction(cancelAction)
-        
-        self.present(alrController, animated: true, completion:{})
-    }
+       
+    var sub: String = ""
     
-    var subChanged = false
-    func subscribe(_ sub: Subreddit){
-        if(subChanged && !sub.userIsSubscriber || sub.userIsSubscriber){
+    func subscribeSingle(_ selector: AnyObject){
+        if(subChanged && !Subscriptions.isSubscriber(sub) || Subscriptions.isSubscriber(sub)){
             //was not subscriber, changed, and unsubscribing again
-            Subscriptions.unsubscribe(sub.displayName, session: session!)
+            Subscriptions.unsubscribe(sub, session: session!)
             subChanged = false
             let message = MDCSnackbarMessage()
             message.text = "Unsubscribed"
             MDCSnackbarManager.show(message)
+            doSubbed()
         } else {
-            let alrController = UIAlertController.init(title: "Subscribe to \(sub.displayName)", message: nil, preferredStyle: .actionSheet)
+            let alrController = UIAlertController.init(title: "Subscribe to \(sub)", message: nil, preferredStyle: .actionSheet)
             if(AccountController.isLoggedIn){
                 let somethingAction = UIAlertAction(title: "Add to sub list and subscribe", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in
-                    Subscriptions.subscribe(sub.displayName, true, session: self.session!)
+                    Subscriptions.subscribe(self.sub, true, session: self.session!)
                     self.subChanged = true
                     let message = MDCSnackbarMessage()
                     message.text = "Subscribed"
                     MDCSnackbarManager.show(message)
+                    self.doSubbed()
                 })
                 alrController.addAction(somethingAction)
             }
             
             let somethingAction = UIAlertAction(title: "Add to sub list", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in
-                Subscriptions.subscribe(sub.displayName, false, session: self.session!)
+                Subscriptions.subscribe(self.sub, false, session: self.session!)
                 self.subChanged = true
                 let message = MDCSnackbarMessage()
                 message.text = "Added"
                 MDCSnackbarManager.show(message)
+                self.doSubbed()
             })
             alrController.addAction(somethingAction)
             
@@ -786,31 +771,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             self.present(alrController, animated: true, completion:{})
             
         }
+        
     }
-    
+
     var subInfo: Subreddit?
-    
-    func displaySidebar(){
-        do {
-            try (UIApplication.shared.delegate as! AppDelegate).session?.about(submission!.subreddit, completion: { (result) in
-                switch result {
-                case .success(let r):
-                    self.subInfo = r
-                    DispatchQueue.main.async {
-                        self.doDisplaySidebar(r)
-                    }
-                default:
-                    DispatchQueue.main.async{
-                        let message = MDCSnackbarMessage()
-                        message.text = "Subreddit sidebar not found"
-                        MDCSnackbarManager.show(message)
-                    }
-                    break
-                }
-            })
-        } catch {
-        }
-    }
     
     
     func search(_ sender: AnyObject){
@@ -1020,7 +984,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     
     func goDown(_ sender: AnyObject){
-        let topCell = (tableView.indexPathsForVisibleRows?[0].row)!
+        var topCell = (tableView.indexPathsForVisibleRows?[0].row)!
+        while((dataArray[topCell] is RMore || (dataArray[topCell] as! RComment).depth > 1) && dataArray.count > topCell){
+            topCell += 1
+        }
         for i in (topCell + 1)...dataArray.count - 1 {
             if(dataArray[i]  is RComment && matches(comment: dataArray[i] as! RComment, sort: currentSort)) {
                 goToCell(i: i)
@@ -1091,8 +1058,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
     
     func goUp(_ sender: AnyObject){
-        let topCell = (tableView.indexPathsForVisibleRows?[0].row)!
-        for i in stride(from: (topCell - 1) , to: -1, by: -1) {
+        var topCell = (tableView.indexPathsForVisibleRows?[0].row)!
+        while((dataArray[topCell] is RMore || (dataArray[topCell] as! RComment).depth > 1 ) && dataArray.count > topCell){
+            topCell -= 1
+        }
+        for i in stride(from: (topCell - 1) , to: 0, by: -1) {
             if(dataArray[i]  is RComment && matches(comment: dataArray[i] as! RComment, sort: currentSort)) {
                 goToCell(i: i)
                 break
@@ -1541,7 +1511,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     if(hiddenPersons.contains((thing as! RComment).getId())){
                         count = getChildNumber(n: thing as! RComment)
                     }
-                    cell.setComment(comment: thing as! RComment, depth: cDepth[(thing as! RComment).getId()] as! Int, parent: self, hiddenCount: count, date: lastSeen, author: submission?.author, text: text[(thing as! RComment).getId()]!)
+                    var t = text[(thing as! RComment).getId()]!
+                    if(isSearching){
+                        t = highlight(t)
+                    }
+                    cell.setComment(comment: thing as! RComment, depth: cDepth[(thing as! RComment).getId()] as! Int, parent: self, hiddenCount: count, date: lastSeen, author: submission?.author, text: t)
                 } else {
                     cell.setMore(more: (thing as! RMore), depth: cDepth[(thing as! RMore).getId()] as! Int)
                 }
@@ -1560,16 +1534,13 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         return children.count - 1
     }
     
-    func highlight(_ cc: CellContent) -> CellContent {
-        let base = NSMutableAttributedString.init(attributedString: cc.attributedString)
+    func highlight(_ cc: NSAttributedString) -> NSAttributedString {
+        let base = NSMutableAttributedString.init(attributedString: cc)
         let r = base.mutableString.range(of: "\(searchBar.text!)", options: .caseInsensitive, range: NSMakeRange(0, base.string.length))
         if r.length > 0 {
-            print("Range found")
             base.addAttribute(NSForegroundColorAttributeName, value: ColorUtil.getColorForSub(sub: ""), range: r)
-        } else {
-            print("Not found")
         }
-        return CellContent.init(string: base.attributedSubstring(from: NSRange.init(location: 0, length: base.length)), width: cc.width, hasRelies: false, id: cc.id)
+        return base.attributedSubstring(from: NSRange.init(location: 0, length: base.length))
     }
     
     var isSearching  = false

@@ -569,7 +569,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
 
         if(!setLinkAttrs){
         let activeLinkAttributes = NSMutableDictionary(dictionary: title.activeLinkAttributes)
-        activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.getColorForSub(sub: comment.subreddit)
+        activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.accentColorForSub(sub: comment.subreddit)
         title.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
         title.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
             setLinkAttrs = true

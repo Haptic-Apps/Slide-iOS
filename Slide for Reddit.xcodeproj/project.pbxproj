@@ -90,6 +90,7 @@
 		BE780B621E32CB9600DAA1EB /* RelatedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE780B611E32CB9600DAA1EB /* RelatedViewController.swift */; };
 		BE780B641E3405F300DAA1EB /* SettingsTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE780B631E3405F300DAA1EB /* SettingsTheme.swift */; };
 		BE780B691E3527DA00DAA1EB /* Drafts.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE780B681E3527D900DAA1EB /* Drafts.swift */; };
+		BE7BFB421F128F9B009CA2E1 /* Sidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7BFB411F128F9B009CA2E1 /* Sidebar.swift */; };
 		BE8592C21E0EE72800836C1D /* reddift_config.json in Resources */ = {isa = PBXBuildFile; fileRef = BE8592C11E0EE72800836C1D /* reddift_config.json */; };
 		BE86300F1E2E6A54004F0E1F /* PostFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE86300E1E2E6A54004F0E1F /* PostFilter.swift */; };
 		BE8630111E2EDFB2004F0E1F /* FiltersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8630101E2EDFB2004F0E1F /* FiltersViewController.swift */; };
@@ -246,6 +247,7 @@
 		BE780B611E32CB9600DAA1EB /* RelatedViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RelatedViewController.swift; sourceTree = "<group>"; };
 		BE780B631E3405F300DAA1EB /* SettingsTheme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsTheme.swift; sourceTree = "<group>"; };
 		BE780B681E3527D900DAA1EB /* Drafts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Drafts.swift; sourceTree = "<group>"; };
+		BE7BFB411F128F9B009CA2E1 /* Sidebar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sidebar.swift; sourceTree = "<group>"; };
 		BE8592C11E0EE72800836C1D /* reddift_config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = reddift_config.json; sourceTree = "<group>"; };
 		BE86300E1E2E6A54004F0E1F /* PostFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostFilter.swift; sourceTree = "<group>"; };
 		BE8630101E2EDFB2004F0E1F /* FiltersViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FiltersViewController.swift; sourceTree = "<group>"; };
@@ -569,6 +571,7 @@
 				BE5089291E3D65600026EAE1 /* InboxListingViewController.swift */,
 				BE8C29201EDE8001004D7514 /* MarginedTableViewCell.swift */,
 				BE2F3F571EF886D9003C1B28 /* Reachability.swift */,
+				BE7BFB411F128F9B009CA2E1 /* Sidebar.swift */,
 			);
 			path = "Slide for Reddit";
 			sourceTree = "<group>";
@@ -933,6 +936,7 @@
 				BE6EA6CC1E1C1E9400E9E709 /* StremableMp4Mobile.swift in Sources */,
 				BE6EA6C31E1C1DCE00E9E709 /* GfyItem.swift in Sources */,
 				BEDDA9911E19AB5D003CD6C3 /* WebsiteViewController.swift in Sources */,
+				BE7BFB421F128F9B009CA2E1 /* Sidebar.swift in Sources */,
 				BE3E5C131E16BA2200749C0C /* AlbumData.swift in Sources */,
 				BE6EA6C41E1C1DCE00E9E709 /* GfycatJSONBase.swift in Sources */,
 				BE6EA6D91E1C1FC700E9E709 /* Video.swift in Sources */,

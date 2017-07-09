@@ -413,6 +413,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
         label.textColor = ColorUtil.fontColor
         label.adjustsFontSizeToFitWidth = true
         label.font = UIFont.boldSystemFont(ofSize: 35)
+        label
         tableView.tableHeaderView = label
 
         let sort = UIButton.init(type: .custom)
@@ -469,7 +470,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
         
         label.addSubview(sideView)
         
-        let metrics=["topMargin": !SettingValues.viewType || single ? 20 : 5,"topMarginS":!SettingValues.viewType || single ? 22.5 : 7.5]
+        let metrics=["topMargin": !SettingValues.viewType || single ? 20 : 5,"topMarginS":!SettingValues.viewType || single ? 22.5 : 7.5,"topMarginSS":!SettingValues.viewType || single ? 25 : 10]
         let views=["more": more, "add": add, "hide": hide, "superview": view, "sort":sort, "sub": subb, "side":sideView, "label" : label] as [String : Any]
         var constraint:[NSLayoutConstraint] = []
         constraint = NSLayoutConstraint.constraints(withVisualFormat:  "V:[superview]-(<=1)-[add]",
@@ -492,7 +493,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
         self.view.addConstraints(constraint)
         
         
-        constraint = NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[side(25)]-8-[label]",
+        constraint = NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[side(20)]-8-[label]",
                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                     metrics: metrics,
                                                     views: views)
@@ -514,15 +515,13 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                                     metrics: metrics,
                                                                     views: views))
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-(topMarginS)-[side(25)]-(topMarginS)-|",
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-(topMarginSS)-[side(20)]-(topMarginSS)-|",
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                                     metrics: metrics,
                                                                     views: views))
         
         label.addConstraints(constraint)
-        label.fitFontForSize(minFontSize: 8, maxFontSize: 35, accuracy: 0.1)
-
-        sideView.layer.cornerRadius = 15
+        sideView.layer.cornerRadius = 10
         sideView.clipsToBounds = true
         
         self.automaticallyAdjustsScrollViewInsets = false
@@ -626,53 +625,6 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
     }
     
     
-    func doDisplaySidebar(_ sub: Subreddit){
-        let alrController = UIAlertController(title: sub.displayName + "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", message: "\(sub.accountsActive) here now\n\(sub.subscribers) subscribers", preferredStyle: UIAlertControllerStyle.actionSheet)
-        
-        let margin:CGFloat = 8.0
-        let rect = CGRect.init(x: margin, y: margin + 23, width: alrController.view.bounds.size.width - margin * 4.0, height: 300)
-        let scrollView = UIScrollView(frame: rect)
-        scrollView.backgroundColor = UIColor.clear
-        var info: UZTextView = UZTextView()
-        info = UZTextView(frame: CGRect(x: 0, y: 0, width: rect.size.width, height: CGFloat.greatestFiniteMagnitude))
-        //todo info.delegate = self
-        info.isUserInteractionEnabled = true
-        info.backgroundColor = .clear
-        
-        if(!sub.description.isEmpty()){
-            let html = sub.descriptionHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
-            do {
-                let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
-                let font = FontGenerator.fontOfSize(size: 16, submission: false)
-                let attr2 = attr.reconstruct(with: font, color: UIColor.darkGray, linkColor: ColorUtil.accentColorForSub(sub: sub.displayName))
-                let contentInfo = CellContent.init(string:LinkParser.parse(attr2), width: rect.size.width)
-                info.attributedString = contentInfo.attributedString
-                info.frame.size.height = (contentInfo.textHeight)
-                scrollView.contentSize = CGSize.init(width: rect.size.width, height: info.frame.size.height)
-                scrollView.addSubview(info)
-            } catch {
-            }
-            //todo parentController?.registerForPreviewing(with: self, sourceView: info)
-        }
-        
-        alrController.view.addSubview(scrollView)
-        
-        let subscribed = sub.userIsSubscriber || subChanged && !sub.userIsSubscriber ? "Unsubscribe" : "Subscribe"
-        var somethingAction = UIAlertAction(title: subscribed, style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in self.subscribe(sub)})
-        alrController.addAction(somethingAction)
-        
-        somethingAction = UIAlertAction(title: "Submit a post", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in print("something")})
-        alrController.addAction(somethingAction)
-        
-        somethingAction = UIAlertAction(title: "Subreddit moderators", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in print("something")})
-        alrController.addAction(somethingAction)
-        
-        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: {(alert: UIAlertAction!) in print("cancel")})
-        
-        alrController.addAction(cancelAction)
-        
-        self.present(alrController, animated: true, completion:{})
-    }
     
     func doDisplayMultiSidebar(_ sub: Multireddit){
         let alrController = UIAlertController(title: sub.displayName, message: sub.descriptionMd, preferredStyle: UIAlertControllerStyle.actionSheet)
@@ -700,50 +652,6 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
         alrController.addAction(cancelAction)
         
         self.present(alrController, animated: true, completion:{})
-    }
-
-    
-    var subChanged = false
-    func subscribe(_ sub: Subreddit){
-        if(subChanged && !sub.userIsSubscriber || sub.userIsSubscriber){
-            //was not subscriber, changed, and unsubscribing again
-            Subscriptions.unsubscribe(sub.displayName, session: session!)
-            subChanged = false
-            let message = MDCSnackbarMessage()
-            message.text = "Unsubscribed"
-            MDCSnackbarManager.show(message)
-            subb.tintColor = ColorUtil.fontColor
-        } else {
-            let alrController = UIAlertController.init(title: "Subscribe to \(sub.displayName)", message: nil, preferredStyle: .actionSheet)
-            if(AccountController.isLoggedIn){
-                let somethingAction = UIAlertAction(title: "Add to sub list and subscribe", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in
-                    Subscriptions.subscribe(sub.displayName, true, session: self.session!)
-                    self.subChanged = true
-                    let message = MDCSnackbarMessage()
-                    message.text = "Subscribed"
-                    MDCSnackbarManager.show(message)
-                    self.subb.tintColor = GMColor.green500Color()
-                })
-                alrController.addAction(somethingAction)
-            }
-            
-            let somethingAction = UIAlertAction(title: "Add to sub list", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in
-                Subscriptions.subscribe(sub.displayName, false, session: self.session!)
-                self.subChanged = true
-                let message = MDCSnackbarMessage()
-                message.text = "Added"
-                MDCSnackbarManager.show(message)
-                self.subb.tintColor = GMColor.green500Color()
-            })
-            alrController.addAction(somethingAction)
-            
-            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: {(alert: UIAlertAction!) in print("cancel")})
-            
-            alrController.addAction(cancelAction)
-            
-            self.present(alrController, animated: true, completion:{})
-            
-        }
     }
 
     func subscribeSingle(_ selector: AnyObject){
@@ -813,34 +721,6 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
             }
     }
 
-    
-    func displaySidebar(){
-        if(subInfo != nil){
-            doDisplaySidebar(subInfo!)
-        } else {
-            do {
-                try (UIApplication.shared.delegate as! AppDelegate).session?.about(sub, completion: { (result) in
-                    switch result {
-                    case .success(let r):
-                        self.subInfo = r
-                        DispatchQueue.main.async {
-                            self.doDisplaySidebar(r)
-                        }
-                    default:
-                        DispatchQueue.main.async{
-                            let message = MDCSnackbarMessage()
-                            message.text = "Subreddit sidebar not found"
-                            MDCSnackbarManager.show(message)
-                        }
-                        break
-                    }
-                })
-            } catch {
-            }
-            
-        }
-    }
-    
     var listingId: String = "" //a random id for use in Realm
     
     func emptyKCFABSelected(_ fab: KCFloatingActionButton) {
@@ -1050,7 +930,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
             self.parentController?.show(search, sender: self.parentController)
         }))
         
-        if(sub != "all" && sub != "frontpage" && sub != "friends"){
+        if(sub != "all" && sub != "frontpage" && sub != "friends" && !sub.startsWith("/m/")){
             alert.addAction(UIAlertAction(title: "Search \(sub)", style: .default, handler: { [weak alert] (_) in
                 let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
                 let search = SearchViewController.init(subreddit: self.sub, searchFor: (textField?.text!)!)
@@ -1083,7 +963,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
             }
         } else {
             cancelActionButton = UIAlertAction(title: "Sidebar", style: .default) { action -> Void in
-                self.displaySidebar()
+                Sidebar.init(parent: self, subname: self.sub).displaySidebar()
             }
         }
         actionSheetController.addAction(cancelActionButton)

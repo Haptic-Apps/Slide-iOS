@@ -14,6 +14,8 @@ import MaterialComponents.MaterialProgressView
 
 class MediaViewController: UIViewController, GalleryItemsDataSource {
     
+    var subChanged = false
+    
     func itemCount() -> Int {
         return photos.count
     }
