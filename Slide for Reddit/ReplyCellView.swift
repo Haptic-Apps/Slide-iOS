@@ -67,7 +67,7 @@ class ReplyCellView: UITableViewCell, UITextViewDelegate {
     var comment: Comment?
     
     func edit(_ sender: AnyObject){
-        alertController = UIAlertController(title: nil, message: "Editing submission...\n\n", preferredStyle: .alert)
+        alertController = UIAlertController(title: nil, message: "Editing comment...\n\n", preferredStyle: .alert)
         
         let spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
         spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
@@ -109,6 +109,7 @@ class ReplyCellView: UITableViewCell, UITextViewDelegate {
                                 self.alertController?.dismiss(animated: false, completion: {
                                     self.parent!.dismiss(animated: true, completion: nil)
                                 })
+                                print("Editing done")
                                 self.delegate!.editSent(cr: self.comment)
                             }
 

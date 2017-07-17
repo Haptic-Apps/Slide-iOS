@@ -56,6 +56,13 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
         }
     }
     
+
+    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if(SettingValues.markReadOnScroll){
+        History.addSeen(s: links[indexPath.row])
+        }
+    }
+    
     func upvote(_ cell: LinkCellView, action: SwipeAction?) {
         do{
             try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up, name: (cell.link?.getId())!, completion: { (result) in

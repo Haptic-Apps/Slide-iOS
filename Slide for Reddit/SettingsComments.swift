@@ -47,6 +47,7 @@ class SettingsComments: UITableViewController {
             SettingValues.disableColor = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_disableColor)
         } else if(changed == collapseDefault){
+            SettingValues.collapseDefault = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_collapseDefault)
         } else if(changed == volumeButtonNavigation){
             SettingValues.volumeButtonNavigation = changed.isOn

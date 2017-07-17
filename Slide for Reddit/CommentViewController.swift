@@ -68,9 +68,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 self.comments.insert(comment, at: realPosition)
                 self.updateStringsSingle([comment])
                 self.doArrays()
-                self.tableView.beginUpdates()
-                self.tableView.reloadRows(at: [IndexPath.init(row: self.menuIndex - 1, section: 0)], with: .automatic)
-                self.tableView.endUpdates()
+                self.tableView.reloadData()
+                self.discard()
             })
 
         }
@@ -351,7 +350,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             }
 
             do {
-                try session?.getArticles(link.name, sort:sort, comments:(context.isEmpty ? nil : [context]), context: contextNumber, completion: { (result) -> Void in
+                try session?.getArticles(link.name, sort:sort, comments:(context.isEmpty ? nil : [context]), context: 3, completion: { (result) -> Void in
                     switch result {
                     case .failure(let error):
                         print(error)
@@ -465,6 +464,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                 if(!self.hasSubmission){
                                     self.headerCell = LinkCellView()
                                     self.headerCell?.del = self
+                                    self.headerCell?.parentViewController = self
                                     self.hasDone = true
                                     self.headerCell?.setLink(submission: self.submission!, parent: self, nav: self.navigationController, baseSub: self.submission!.subreddit)
                                     self.headerCell?.showBody(width: self.view.frame.size.width)
@@ -490,10 +490,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                 }
                                 self.refreshControl.endRefreshing()
                                 self.indicator?.stopAnimating()
-                                if(SettingValues.collapseDefault){
+                                self.tableView.reloadData(with: .fade)
+                                if(SettingValues.collapseDefault && self.context.isEmpty()){
                                     self.collapseAll()
-                                } else {
-                                self.tableView.reloadData(with: .top)
                                 }
                                 
                                 var index = 0
@@ -629,6 +628,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         if(hasSubmission && self.view.frame.size.width != 0 && !hasDone){
             headerCell = LinkCellView()
             headerCell?.del = self
+            self.headerCell?.parentViewController = self
             hasDone = true
             headerCell?.setLink(submission: submission!, parent: self, nav: self.navigationController, baseSub: submission!.subreddit)
             headerCell?.showBody(width: self.view.frame.size.width)

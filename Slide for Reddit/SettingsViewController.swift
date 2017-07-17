@@ -204,6 +204,12 @@ class SettingsViewController: UITableViewController {
             show(SettingsData(), sender: self)
         }  else if(indexPath.section == 2 && indexPath.row == 3){
             show(SettingsContent(), sender: self)
+        }  else if(indexPath.section == 1 && indexPath.row == 4){
+            show(SettingsComments(), sender: self)
+        }  else if(indexPath.section == 2 && indexPath.row == 0){
+            show(SettingsLinkHandling(), sender: self)
+        }  else if(indexPath.section == 2 && indexPath.row == 1){
+            show(SettingsHistory(), sender: self)
         }
     }
     /* maybe future

@@ -190,6 +190,7 @@ class ProfileViewController:  PagingMenuController, ColorPickerDelegate {
         super.viewWillAppear(animated)
         self.title = ProfileViewController.name
         navigationController?.navigationBar.tintColor = .white
+        self.navigationController?.setNavigationBarHidden(false, animated: true)
         
         if(navigationController != nil){
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForUser(name: ProfileViewController.name)

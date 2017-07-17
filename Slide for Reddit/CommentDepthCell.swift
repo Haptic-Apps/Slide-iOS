@@ -100,8 +100,10 @@ class CommentMenuCell: UITableViewCell {
         let metrics:[String:Int]=["width":Int(width), "full": Int(self.contentView.frame.size.width)]
         let views=["upvote": upvote, "downvote":downvote, "edit":edit, "delete":delete, "view":contentView, "more":more, "reply":reply] as [String : Any]
         
-        let replyStuff = archived ? "[reply(width)]-0-[downvote(width)]-0-[upvote(width)]-" : ""
-        let editStuff = (!archived && editShown) ? "[edit(width)]-0-[delete(width)]-" : ""
+        let replyStuff = !archived ? "[reply(width)]-0-[downvote(width)]-0-[upvote(width)]-0-" : ""
+        let editStuff = (!archived && editShown) ? "[edit(width)]-0-[delete(width)]-0-" : ""
+        self.contentView.removeConstraints(sideConstraint)
+        print("Did H:[more(width)]-0-\(editStuff)\(replyStuff)|")
         sideConstraint = NSLayoutConstraint.constraints(withVisualFormat: "H:[more(width)]-0-\(editStuff)\(replyStuff)|",
                                                         options: NSLayoutFormatOptions(rawValue: 0),
                                                         metrics: metrics,
@@ -154,7 +156,7 @@ class CommentMenuCell: UITableViewCell {
         more.addTarget(self, action: #selector(CommentMenuCell.more(_:)), for: UIControlEvents.touchUpInside)
         reply.addTarget(self, action: #selector(CommentMenuCell.reply(_:)), for: UIControlEvents.touchUpInside)
         edit.addTarget(self, action: #selector(CommentMenuCell.edit(_:)), for: UIControlEvents.touchUpInside)
-        delete.addTarget(self, action: #selector(CommentMenuCell.delete(_:)), for: UIControlEvents.touchUpInside)
+        delete.addTarget(self, action: #selector(CommentMenuCell.doDelete(_:)), for: UIControlEvents.touchUpInside)
 
         updateConstraints()
     }

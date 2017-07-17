@@ -106,7 +106,7 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
         }
         let type = ContentType.getContentType(baseUrl: contentUrl!)
         
-        if(type == ContentType.CType.ALBUM){
+        if(type == ContentType.CType.ALBUM && SettingValues.internalAlbumView){
             print("Showing album")
             if(url?.contains("/layout/"))!{
                 url = url?.substring(0, length: (url?.indexOf("/layout")!)!);
@@ -130,7 +130,7 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
             let ctrl = AlbumTableViewController()
             ctrl.getAlbum(hash: hash)
             return ctrl
-        } else if (contentUrl != nil && ContentType.displayImage(t: type)) {
+        } else if (contentUrl != nil && ContentType.displayImage(t: type) && SettingValues.internalImageView) {
             print("Showing photo")
             
             if (ContentType.isImgurHash(uri: contentUrl!)) {
@@ -216,7 +216,7 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
             browser.footerView = toolbar
             return browser
             
-        } else if(type == .GIF || type == .STREAMABLE || type == .VID_ME){
+        } else if((type == .GIF && SettingValues.internalGifView) || type == .STREAMABLE || type == .VID_ME){
             print("Showing video")
             return GifMWPhotoBrowser().create(url: (contentUrl?.absoluteString)!)
         } else if(type == ContentType.CType.LINK || type == ContentType.CType.NONE){
@@ -224,7 +224,7 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
             return web
         } else if(type == ContentType.CType.REDDIT){
             return RedditLink.getViewControllerForURL(urlS: contentUrl!)
-        } else if(type == ContentType.CType.VIDEO){
+        } else if(type == ContentType.CType.VIDEO && SettingValues.internalYouTube){
             return YouTubeViewController.init(bUrl: contentUrl!, parent: self)
         }
         return WebsiteViewController(url: baseUrl, subreddit: link == nil ? "" : link.subreddit)

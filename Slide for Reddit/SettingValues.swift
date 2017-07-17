@@ -59,6 +59,11 @@ class SettingValues{
     public static let pref_leftThumbnail = "LEFT_THUMB"
     public static let pref_hideButton = "HIDE_BUTTON"
     public static let pref_saveButton = "SAVE_BUTTON"
+    public static let pref_internalGif = "INTERNAL_GIF"
+    public static let pref_internalImage = "INTERNAL_IMAGE"
+    public static let pref_internalAlbum = "INTERNAL_ALBUM"
+    public static let pref_internalYouTube = "INTERNAL_YOUTUBE"
+
 
     public static var viewType = true
     public static var hiddenFAB = true
@@ -109,6 +114,10 @@ class SettingValues{
     public static var leftThumbnail = false
     public static var hideButton = false
     public static var saveButton = false
+    public static var internalImage = true
+    public static var internalAlbum = true
+    public static var internalGif = true
+    public static var internalYouTube = true
 
     enum PostViewType: String {
         case LIST = "list"
@@ -119,6 +128,9 @@ class SettingValues{
     public static func initialize(){
         let settings = UserDefaults.standard
         SettingValues.bigPicCropped = settings.bool(forKey: SettingValues.pref_cropBigPic)
+        SettingValues.saveNSFWHistory = settings.bool(forKey: SettingValues.pref_saveNSFWHistory)
+        SettingValues.saveHistory = settings.bool(forKey: SettingValues.pref_saveHistory)
+        SettingValues.markReadOnScroll = settings.bool(forKey: SettingValues.pref_markReadOnScroll)
         SettingValues.nsfwEnabled = settings.bool(forKey: SettingValues.pref_nsfwEnabled)
         SettingValues.nsfwPreviews = settings.bool(forKey: SettingValues.pref_nsfwPreviews)
         SettingValues.hideNSFWCollection = settings.bool(forKey: SettingValues.pref_hideNSFWCollection)
@@ -145,5 +157,11 @@ class SettingValues{
         SettingValues.scoreInTitle = settings.bool(forKey: SettingValues.pref_scoreInTitle)
         SettingValues.hideButtonActionbar = settings.bool(forKey: SettingValues.pref_hideButtonActionbar)
         SettingValues.postViewMode = PostViewType.init(rawValue: settings.string(forKey: SettingValues.pref_postViewMode) ?? "card")!
+        
+        SettingValues.internalImage = settings.object(forKey: SettingValues.pref_internalImage) == nil ? true : settings.bool(forKey: SettingValues.pref_internalImage)
+        SettingValues.internalGif = settings.object(forKey: SettingValues.pref_internalGif) == nil ? true : settings.bool(forKey: SettingValues.pref_internalGif)
+        SettingValues.internalAlbum = settings.object(forKey: SettingValues.pref_internalAlbum) == nil ? true : settings.bool(forKey: SettingValues.pref_internalAlbum)
+        SettingValues.internalYouTube = settings.object(forKey: SettingValues.pref_internalYouTube) == nil ? true : settings.bool(forKey: SettingValues.pref_internalYouTube)
+
     }
 }

@@ -36,8 +36,16 @@ class History {
     }
 
     public static func addSeen(s: RSubmission){
+        if(!SettingValues.saveNSFWHistory && s.nsfw){
+            
+        } else if(SettingValues.saveHistory){
         let fullname = s.getId()
         seenTimes.setValue(NSNumber(value: NSDate().timeIntervalSince1970), forKey: fullname)
+        }
+    }
+    
+    public static func clearHistory(){
+        seenTimes.removeAllObjects()
     }
     
     public static func inboxSeen(){

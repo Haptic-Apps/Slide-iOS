@@ -201,13 +201,13 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, TTTAttr
                 textView.setText( content?.attributedString )
                 textView.frame.size.height = (content?.textHeight)!
                 textView.delegate = self
+                textView.isUserInteractionEnabled = true
                 hasText = true
             } catch {
             }
             parentViewController?.registerForPreviewing(with: self, sourceView: textView)
         }
     }
-    
     
     var full = false
     var b = UIView()
@@ -1309,7 +1309,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, TTTAttr
         
         if(thumb && !big){
             addTouch(view: thumbImage, action: #selector(LinkCellView.openLink(sender:)))
-            if(submission.thumbnailUrl == "nsfw" || submission.nsfw && !SettingValues.nsfwPreviews){
+            if(submission.thumbnailUrl == "nsfw" || (submission.nsfw && !SettingValues.nsfwPreviews)){
                 thumbImage.image = UIImage.init(named: "nsfw")
             } else if(submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty){
                 thumbImage.image = UIImage.init(named: "web")
