@@ -57,6 +57,8 @@ class SettingValues{
     public static let pref_collapseDefault = "COLLAPSE_DEFAULT"
     public static let pref_volumeButtonNavigation = "VOLUME_NAV"
     public static let pref_leftThumbnail = "LEFT_THUMB"
+    public static let pref_hideButton = "HIDE_BUTTON"
+    public static let pref_saveButton = "SAVE_BUTTON"
 
     public static var viewType = true
     public static var hiddenFAB = true
@@ -105,6 +107,8 @@ class SettingValues{
     public static var collapseDefault = false
     public static var volumeButtonNavigation = false
     public static var leftThumbnail = false
+    public static var hideButton = false
+    public static var saveButton = false
 
     enum PostViewType: String {
         case LIST = "list"
@@ -130,6 +134,9 @@ class SettingValues{
         SettingValues.loadContentHQ = settings.bool(forKey: SettingValues.pref_loadContentHQ)
         SettingValues.noImages = settings.bool(forKey: SettingValues.pref_noImg)
         SettingValues.lqLow = settings.bool(forKey: SettingValues.pref_lqLow)
+        SettingValues.saveButton = settings.object(forKey: SettingValues.pref_saveButton) == nil ? true : settings.bool(forKey: SettingValues.pref_saveButton)
+        SettingValues.hideButton = settings.bool(forKey: SettingValues.pref_hideButton)
+
         SettingValues.largerThumbnail = settings.object(forKey: SettingValues.pref_largerThumbnail) == nil ? true : settings.bool(forKey: SettingValues.pref_largerThumbnail)
         SettingValues.bannerHidden = settings.bool(forKey: SettingValues.pref_bannerHidden)
         SettingValues.viewType = settings.bool(forKey: SettingValues.pref_viewType)

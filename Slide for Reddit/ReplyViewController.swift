@@ -289,7 +289,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
             let margin:CGFloat = 8.0
             let rect = CGRect.init(x: margin, y: 72.0, width: (self.alertView?.view.frame.width)! - margin * 2.0 , height: 2.0)
             self.progressBar = UIProgressView(frame: rect)
-            self.progressBar.progress = 0.5
+            self.progressBar.progress = 0
             self.progressBar.tintColor = ColorUtil.accentColorForSub(sub: self.sub)
             self.alertView?.view.addSubview(self.progressBar)
         })

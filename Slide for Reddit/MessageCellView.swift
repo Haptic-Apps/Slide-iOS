@@ -12,6 +12,7 @@ import reddift
 import UZTextView
 import ImageViewer
 import MaterialComponents.MaterialSnackbar
+import AudioToolbox
 
 class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextViewDelegate {
     
@@ -188,9 +189,13 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         }
         
         let messageClick = UITapGestureRecognizer(target: self, action: #selector(MessageCellView.doReply(sender:)))
+        let messageLongClick = UILongPressGestureRecognizer(target: self, action: #selector(MessageCellView.showMenu(_:)))
+        messageLongClick.minimumPressDuration = 0.25
+        messageLongClick.delegate = self
         messageClick.delegate = self
         self.addGestureRecognizer(messageClick)
-        
+        self.addGestureRecognizer(messageLongClick)
+
         let endString = NSMutableAttributedString(string:"\(DateFormatter().timeSince(from: message.created, numericDates: true))  •  from \(message.author)")
         
         let subString = NSMutableAttributedString(string: "/r/\(message.subreddit)")
@@ -266,6 +271,94 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         
     }
     
+    var timer : Timer?
+    var cancelled = false
+    func showMenu(_ sender: UILongPressGestureRecognizer){
+        if(sender.state == UIGestureRecognizerState.began){
+            cancelled = false
+            timer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: false, block: { (timer) in
+                timer.invalidate()
+                AudioServicesPlaySystemSound(1519)
+                if(!self.cancelled){
+                    //todo show menu
+                    //read reply full thread
+                    let alertController = UIAlertController(title: "Message from \(self.message!.author)", message: "", preferredStyle: .actionSheet)
+                    
+                    
+                    let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
+                        print("Cancel")
+                    }
+                    
+                    alertController.addAction(cancelActionButton)
+                    
+                    let profile: UIAlertAction = UIAlertAction(title: "/u/\(self.message!.author)'s profile", style: .default) { action -> Void in
+                        self.parentViewController!.show(ProfileViewController.init(name: self.message!.author), sender: self)
+                    }
+                    
+                    alertController.addAction(profile)
+                    
+                    
+                    let reply: UIAlertAction = UIAlertAction(title: "Reply", style: .default) { action -> Void in
+                            self.doReply()
+                        }
+                        
+                        alertController.addAction(reply)
+                
+                    let read: UIAlertAction = UIAlertAction(title: ActionStates.isRead(s: self.message!) ? "Mark unread" : "Mark read", style: .default) { action -> Void in
+                        if( ActionStates.isRead(s: self.message!)){
+                            let session = (UIApplication.shared.delegate as! AppDelegate).session
+                            do {
+                                try session?.markMessagesAsUnread([(self.message?.name.contains("_"))! ? (self.message?.name)! : ((self.message?.wasComment)! ? "t1_" : "t4_") + (self.message?.name)!], completion: { (result) in
+                                    if(result.error != nil){
+                                        print(result.error!.description)
+                                    }
+                                })
+                            } catch {
+                                
+                            }
+                            self.title.textColor = GMColor.red500Color()
+                            ActionStates.setRead(s: self.message!, read: false)
+
+                            } else {
+                            let session = (UIApplication.shared.delegate as! AppDelegate).session
+                            do {
+                                try session?.markMessagesAsRead([(self.message?.name.contains("_"))! ? (self.message?.name)! : ((self.message?.wasComment)! ? "t1_" : "t4_") + (self.message?.name)!], completion: { (result) in
+                                    if(result.error != nil){
+                                        print(result.error!.description)
+                                    }
+                                })
+                            } catch {
+                                
+                            }
+                            self.title.textColor = ColorUtil.fontColor
+                            ActionStates.setRead(s: self.message!, read: true)
+
+                        }
+                    }
+                    
+                    alertController.addAction(read)
+
+                    
+                    if(self.message!.wasComment){
+                        let full: UIAlertAction = UIAlertAction(title: "Full thread", style: .default) { action -> Void in
+                            let url = "https://www.reddit.com\(self.message!.context)"
+                            print(url)
+                            self.parentViewController?.show(RedditLink.getViewControllerForURL(urlS: URL.init(string: url)!), sender: self.parentViewController)
+                        }
+                        alertController.addAction(full)
+                    }
+                    self.parentViewController?.present(alertController, animated: true, completion: nil)
+
+                }
+                
+            })
+        }
+        if (sender.state == UIGestureRecognizerState.ended) {
+            timer!.invalidate()
+            cancelled = true
+        }
+    }
+
     var registered: Bool = false
     var currentLink: URL?
     

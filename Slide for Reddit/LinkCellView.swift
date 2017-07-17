@@ -20,6 +20,7 @@ import ImageViewer
 import TTTAttributedLabel
 import MaterialComponents
 import SwipeCellKit
+import AudioToolbox
 
 protocol LinkCellViewDelegate: class {
     func upvote(_ cell: LinkCellView, action: SwipeAction?)
@@ -27,6 +28,7 @@ protocol LinkCellViewDelegate: class {
     func save(_ cell: LinkCellView)
     func more(_ cell: LinkCellView)
     func reply(_ cell: LinkCellView)
+    func hide(_ cell: LinkCellView)
 }
 
 enum CurrentType {
@@ -41,6 +43,13 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, TTTAttr
         }
     }
     
+    func hide(sender: UITapGestureRecognizer? = nil) {
+        if let delegate = self.del {
+            delegate.hide(self)
+        }
+    }
+    
+
     func reply(sender: UITapGestureRecognizer? = nil) {
         if let delegate = self.del {
             delegate.reply(self)
@@ -75,6 +84,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, TTTAttr
     var textView = TTTAttributedLabel.init(frame: CGRect.zero)
     var save = UIImageView()
     var upvote = UIImageView()
+    var hide = UIImageView()
     var edit = UIImageView()
     var reply = UIImageView()
     var downvote = UIImageView()
@@ -152,6 +162,11 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, TTTAttr
         if save.bounds.contains(pointForTargetViewsave) {
             return save
         }
+        let pointForTargetViewh: CGPoint = hide.convert(point, from: self)
+        if hide.bounds.contains(pointForTargetViewh) {
+            return hide
+        }
+
         let pointForTargetViewreply: CGPoint = reply.convert(point, from: self)
         if reply.bounds.contains(pointForTargetViewreply) {
             return reply
@@ -238,6 +253,11 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, TTTAttr
         upvote.image = UIImage.init(named: "upvote")?.withRenderingMode(.alwaysTemplate)
         upvote.tintColor = ColorUtil.fontColor
         
+        self.hide = UIImageView(frame: CGRect(x: 0, y:0, width: 20, height: 20))
+        hide.image = UIImage.init(named: "hide")?.withRenderingMode(.alwaysTemplate)
+        hide.tintColor = ColorUtil.fontColor
+        
+
         self.reply = UIImageView(frame: CGRect(x: 0, y:0, width: 20, height: 20))
         reply.image = UIImage.init(named: "reply")?.withRenderingMode(.alwaysTemplate)
         reply.tintColor = ColorUtil.fontColor
@@ -291,6 +311,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, TTTAttr
         box.translatesAutoresizingMaskIntoConstraints = false
         textView.translatesAutoresizingMaskIntoConstraints = false
         upvote.translatesAutoresizingMaskIntoConstraints = false
+        hide.translatesAutoresizingMaskIntoConstraints = false
         downvote.translatesAutoresizingMaskIntoConstraints = false
         more.translatesAutoresizingMaskIntoConstraints = false
         edit.translatesAutoresizingMaskIntoConstraints = false
@@ -304,7 +325,8 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, TTTAttr
         addTouch(view: downvote, action: #selector(LinkCellView.downvote(sender:)))
         addTouch(view: more, action: #selector(LinkCellView.more(sender:)))
         addTouch(view: edit, action: #selector(LinkCellView.edit(sender:)))
-        
+        addTouch(view: hide, action: #selector(LinkCellView.hide(sender:)))
+
         self.contentView.addSubview(bannerImage)
         self.contentView.addSubview(thumbImage)
         self.contentView.addSubview(title)
@@ -315,6 +337,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, TTTAttr
         buttons.addSubview(edit)
         buttons.addSubview(reply)
         buttons.addSubview(save)
+        buttons.addSubview(hide)
         buttons.addSubview(upvote)
         buttons.addSubview(downvote)
         buttons.addSubview(more)
@@ -356,7 +379,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, TTTAttr
         
         let metrics=["horizontalMargin":75,"top":topmargin,"bottom":bottommargin,"separationBetweenLabels":0,"labelMinHeight":75,  "bannerHeight": submissionHeight, "left":leftmargin, "padding" : innerpadding, "ishidden": !full && SettingValues.hideButtonActionbar ? 0 : 20] as [String: Int]
         let views=["label":title, "body": textView, "image": thumbImage, "score": score, "comments": comments, "banner": bannerImage, "box": box] as [String : Any]
-        let views2=["buttons":buttons, "upvote": upvote, "downvote": downvote, "reply": reply,"edit":edit, "more": more, "save": save] as [String : Any]
+        let views2=["buttons":buttons, "upvote": upvote, "downvote": downvote, "hide": hide, "reply": reply,"edit":edit, "more": more, "save": save] as [String : Any]
         
         box.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[score(>=20)]-8-[comments(>=20)]",
                                                           options: NSLayoutFormatOptions(rawValue: 0),
@@ -388,7 +411,9 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, TTTAttr
                 metrics: metrics,
                 views: views2))
         } else {
-            buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[save(20)]-8-[upvote(20)]-8-[downvote(20)]-8-[more(20)]-0-|",
+            var hideString = SettingValues.hideButton ? "[hide(20)]-8-" : ""
+            var saveString = SettingValues.saveButton ? "[save(20)]-8-" : ""
+            buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:\(hideString)\(saveString)[upvote(20)]-8-[downvote(20)]-8-[more(20)]-0-|",
                                                                   options: NSLayoutFormatOptions(rawValue: 0),
                                                                   metrics: metrics,
                                                                   views: views2))
@@ -407,6 +432,11 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, TTTAttr
                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                               metrics: metrics,
                                                               views: views2))
+        buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[hide(ishidden)]-|",
+                                                              options: NSLayoutFormatOptions(rawValue: 0),
+                                                              metrics: metrics,
+                                                              views: views2))
+
         buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[more(ishidden)]-|",
                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                               metrics: metrics,
@@ -656,6 +686,16 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, TTTAttr
         
         reply.isHidden = true
         
+        if(!SettingValues.hideButton){
+            hide.isHidden = true
+        } else {
+            hide.isHidden = false
+        }
+        if(!SettingValues.saveButton){
+            save.isHidden = true
+        } else {
+            save.isHidden = false
+        }
         if(submission.archived || !AccountController.isLoggedIn){
             upvote.isHidden = true
             downvote.isHidden = true
@@ -665,9 +705,9 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, TTTAttr
         } else {
             upvote.isHidden = false
             downvote.isHidden = false
-            save.isHidden = false
             if(full){
                 reply.isHidden = false
+                hide.isHidden = true
             }
             edit.isHidden = true
         }
@@ -682,6 +722,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, TTTAttr
         addTouch(view: save, action: #selector(LinkCellView.save(sender:)))
         addTouch(view: upvote, action: #selector(LinkCellView.upvote(sender:)))
         addTouch(view: downvote, action: #selector(LinkCellView.downvote(sender:)))
+        addTouch(view: hide, action: #selector(LinkCellView.hide(sender:)))
         addTouch(view: more, action: #selector(LinkCellView.more(sender:)))
         addTouch(view: reply, action: #selector(LinkCellView.reply(sender:)))
         addTouch(view: edit, action: #selector(LinkCellView.edit(sender:)))
@@ -704,10 +745,6 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, TTTAttr
         if(SettingValues.bannerHidden && !full){
             big = false
             thumb = true
-        }
-        
-        if(thumb && type == .SELF){
-            thumb = false
         }
         
         let fullImage = ContentType.fullImage(t: type)
@@ -768,7 +805,9 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, TTTAttr
             thumb = false
         }
         
-        
+        if(thumb && type == .SELF){
+            thumb = false
+        }
         
         if(!big && !thumb && submission.type != .SELF && submission.type != .NONE){ //If a submission has a link but no images, still show the web thumbnail
             thumb = true
@@ -919,8 +958,8 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, TTTAttr
         }
         
         if(longPress == nil){
-            longPress = UILongPressGestureRecognizer(target: self, action: #selector(LinkCellView.handleLongPress(sender:)))
-            longPress?.minimumPressDuration = 0.5 // 1 second press
+            longPress = UILongPressGestureRecognizer(target: self, action: #selector(LinkCellView.handleLongPress(_:)))
+            longPress?.minimumPressDuration = 0.25 // 1 second press
             longPress?.delegate = self
             self.contentView.addGestureRecognizer(longPress!)
         }
@@ -1179,10 +1218,19 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, TTTAttr
         title.sizeToFit()
         
         reply.isHidden = true
-        
+        if(!SettingValues.hideButton){
+            hide.isHidden = true
+        } else {
+            hide.isHidden = false
+        }
+        if(!SettingValues.saveButton){
+            save.isHidden = true
+        } else {
+            save.isHidden = false
+        }
+
         upvote.isHidden = false
         downvote.isHidden = false
-        save.isHidden = false
         edit.isHidden = true
         
         thumb = submission.thumbnail
@@ -1206,9 +1254,6 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, TTTAttr
             thumb = true
         }
         
-        if(thumb && type == .SELF){
-            thumb = false
-        }
         
         let fullImage = ContentType.fullImage(t: type)
         
@@ -1251,7 +1296,10 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, TTTAttr
         if(big || !submission.thumbnail){
             thumb = false
         }
-        
+        if(thumb && type == .SELF){
+            thumb = false
+        }
+
         
         if(!big && !thumb && submission.type != .SELF && submission.type != .NONE){ //If a submission has a link but no images, still show the web thumbnail
             thumb = true
@@ -1261,7 +1309,7 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, TTTAttr
         
         if(thumb && !big){
             addTouch(view: thumbImage, action: #selector(LinkCellView.openLink(sender:)))
-            if(submission.thumbnailUrl == "nsfw"){
+            if(submission.thumbnailUrl == "nsfw" || submission.nsfw && !SettingValues.nsfwPreviews){
                 thumbImage.image = UIImage.init(named: "nsfw")
             } else if(submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty){
                 thumbImage.image = UIImage.init(named: "web")
@@ -1388,9 +1436,27 @@ class LinkCellView: UITableViewCell, UIViewControllerPreviewingDelegate, TTTAttr
     }
     
     var longPress: UILongPressGestureRecognizer?
-    func handleLongPress(sender: AnyObject){
-        more()
+    var timer : Timer?
+    var cancelled = false
+    
+    func handleLongPress(_ sender: UILongPressGestureRecognizer){
+        if(sender.state == UIGestureRecognizerState.began){
+            cancelled = false
+            timer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: false, block: { (timer) in
+                timer.invalidate()
+                AudioServicesPlaySystemSound(1519)
+                if(!self.cancelled){
+                    self.more()
+                }
+                
+            })
+        }
+        if (sender.state == UIGestureRecognizerState.ended) {
+            timer!.invalidate()
+            cancelled = true
+        }
     }
+    
     
     func edit(sender: AnyObject){
         let link = self.link!

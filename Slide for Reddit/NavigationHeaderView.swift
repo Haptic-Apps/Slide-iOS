@@ -13,12 +13,15 @@ class NavigationHeaderView: UIView {
     var title = UILabel()
     var switchp: UIButton = UIButton()
     var more: UIButton = UIButton()
+    var settings: UIButton = UIButton()
     var inbox: UILabel = UILabel()
     var search: UISearchBar = UISearchBar()
     
     func doColors(){
         switchp.setImage(UIImage(named: "down")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
-        more.setImage(UIImage(named: "ic_more_vert_white")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
+        more.setImage(UIImage(named: "ic_more_vert_white")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 30)), for: .normal)
+        settings.setImage(UIImage(named: "settings")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
+
         title.textColor = ColorUtil.fontColor
         backgroundColor = ColorUtil.foregroundColor
     }
@@ -29,6 +32,7 @@ class NavigationHeaderView: UIView {
         self.search = UISearchBar(frame: CGRect(x: 0, y: 0, width: 3, height: 50))
         self.switchp = UIButton(frame: CGRect(x: 0, y: 0, width: 3, height: 50))
         self.more = UIButton(frame: CGRect(x: 0, y: 0, width: 3, height: 50))
+        self.settings = UIButton(frame: CGRect(x: 0, y: 0, width: 3, height: 50))
         self.inbox = UILabel(frame: CGRect(x: 0, y: 0, width: 3, height: 50))
         self.title = UILabel(frame: CGRect(x: 0, y: 0, width: 3, height: 50))
 
@@ -40,7 +44,8 @@ class NavigationHeaderView: UIView {
         search.translatesAutoresizingMaskIntoConstraints = false
         more.translatesAutoresizingMaskIntoConstraints = false
         inbox.translatesAutoresizingMaskIntoConstraints = false
-        
+        settings.translatesAutoresizingMaskIntoConstraints = false
+
         switchp.contentHorizontalAlignment = .left
         switchp.titleEdgeInsets = UIEdgeInsetsMake(0, 8, 0, 0)
         switchp.tintColor = ColorUtil.fontColor
@@ -48,6 +53,10 @@ class NavigationHeaderView: UIView {
         more.contentHorizontalAlignment = .left
         more.titleEdgeInsets = UIEdgeInsetsMake(0, 8, 0, 0)
         more.tintColor = ColorUtil.fontColor
+        
+        settings.contentHorizontalAlignment = .left
+        settings.tintColor = ColorUtil.fontColor
+
         
         inbox.textColor = .white
         inbox.font = UIFont.boldSystemFont(ofSize: 16)
@@ -65,6 +74,10 @@ class NavigationHeaderView: UIView {
         more.addGestureRecognizer(sTap)
         more.isUserInteractionEnabled = true
 
+        let setTap = UITapGestureRecognizer(target: self, action: #selector(self.settings(_:)))
+        settings.addGestureRecognizer(setTap)
+        settings.isUserInteractionEnabled = true
+
         if(AccountController.isLoggedIn){
             let yTap = UITapGestureRecognizer(target: self, action: #selector(self.you(_:)))
             title.addGestureRecognizer(yTap)
@@ -80,6 +93,7 @@ class NavigationHeaderView: UIView {
 
         addSubview(switchp)
         addSubview(more)
+        addSubview(settings)
         addSubview(search)
         addSubview(title)
         addSubview(inbox)
@@ -224,12 +238,12 @@ class NavigationHeaderView: UIView {
         super.updateConstraints()
         
         let metrics=["topMargin": 0]
-        let views=["title": title, "switchp":switchp, "inbox": inbox, "more":more, "search":search] as [String : Any]
+        let views=["title": title, "switchp":switchp, "inbox": inbox, "settings":settings, "more":more, "search":search] as [String : Any]
         
         var constraint:[NSLayoutConstraint] = []
         
         
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[title]-2-[switchp(30)]-(>=8)-[inbox]-4-[more(30)]-4-|",
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[title]-2-[switchp(30)]-(>=8)-[inbox]-4-[settings(30)]-4-[more(20)]-4-|",
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                                     metrics: metrics,
                                                                     views: views))
@@ -242,6 +256,11 @@ class NavigationHeaderView: UIView {
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                                     metrics: metrics,
                                                                     views: views))
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-36-[settings(30)]-4-|",
+                                                                    options: NSLayoutFormatOptions(rawValue: 0),
+                                                                    metrics: metrics,
+                                                                    views: views))
+
         constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-36-[more(30)]-4-|",
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                                     metrics: metrics,

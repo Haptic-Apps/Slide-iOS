@@ -85,6 +85,42 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
         }
     }
     
+    func hide(_ cell: LinkCellView) {
+        do {
+            try session?.setHide(true, name: cell.link!.getId(), completion: {(result) in })
+            let id = cell.link!.getId()
+            var location = 0
+            var item = links[0]
+            for submission in links {
+                if(submission.getId() == id){
+                    item = links[location]
+                    links.remove(at: location)
+                    break
+                }
+                location += 1
+            }
+            tableView.deleteRows(at: [IndexPath.init(item: location, section: 0)], with: .middle)
+            var message = MDCSnackbarMessage.init(text: "Submission hidden forever")
+            let action = MDCSnackbarMessageAction()
+            let actionHandler = {() in
+                self.links.insert(item, at: location)
+                self.tableView.insertRows(at: [IndexPath.init(item: location, section: 0)], with: .middle)
+                do {
+                try self.session?.setHide(false, name: cell.link!.getId(), completion: {(result) in })
+                }catch {
+                    
+                }
+            }
+            action.handler = actionHandler
+            action.title = "UNDO"
+
+            message!.action = action
+            MDCSnackbarManager.show(message)
+            } catch {
+            
+        }
+    }
+
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         
         var currentY = scrollView.contentOffset.y;
@@ -328,7 +364,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
         }
     }
     
-    func hide(_ animated: Bool = true) {
+    func hideFab(_ animated: Bool = true) {
         if(fab != nil){
             if animated == true {
                 UIView.animate(withDuration: 0.3, animations: { () -> Void in
@@ -406,14 +442,13 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
         refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControlEvents.valueChanged)
         tableView.addSubview(refreshControl) // not required when using UITableViewController
         
-        let label = UILabel.init(frame: CGRect.init(x: 00, y: 0, width: self.tableView.bounds.width - 350, height: !SettingValues.viewType || single ? 70 : 40))
+        let label = UILabel.init(frame: CGRect.init(x: 00, y: 0, width: 400, height: !SettingValues.viewType || single ? 70 : 40))
         if(!SettingValues.viewType || single){
         label.text =  "     \(sub)"
         }
         label.textColor = ColorUtil.fontColor
         label.adjustsFontSizeToFitWidth = true
         label.font = UIFont.boldSystemFont(ofSize: 35)
-        label
         tableView.tableHeaderView = label
 
         let sort = UIButton.init(type: .custom)
@@ -436,7 +471,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
         
         
         subb = UIButton.init(type: .custom)
-        subb.setImage(UIImage.init(named: "subbed")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
+        subb.setImage(UIImage.init(named: "addcircle")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
         subb.addTarget(self, action: #selector(self.subscribeSingle(_:)), for: UIControlEvents.touchUpInside)
         subb.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         subb.translatesAutoresizingMaskIntoConstraints = false
@@ -445,7 +480,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
         }
         label.addSubview(subb)
         if(Subscriptions.isSubscriber(sub)){
-            subb.setImage(UIImage.init(named: "subbed")?.withColor(tintColor: GMColor.green500Color()), for: UIControlState.normal)
+            subb.setImage(UIImage.init(named: "subbed")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
         }
         
         add = MDCFloatingButton.init(shape: .default)
@@ -551,7 +586,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
                     case .failure:
                         print(result.error!.description)
                         DispatchQueue.main.async {
-                            if(self.sub == ("all") || self.sub == ("frontpage") || self.sub.hasPrefix("/m/")){
+                            if(self.sub == ("all") || self.sub == ("frontpage") || self.sub.hasPrefix("/m/") || self.sub.contains("+")){
                                 self.load(reset: true)
                             } else {
                                 DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
@@ -662,7 +697,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
             let message = MDCSnackbarMessage()
             message.text = "Unsubscribed"
             MDCSnackbarManager.show(message)
-            subb.tintColor = ColorUtil.fontColor
+            subb.setImage(UIImage.init(named: "addcircle")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
         } else {
             let alrController = UIAlertController.init(title: "Subscribe to \(sub)", message: nil, preferredStyle: .actionSheet)
             if(AccountController.isLoggedIn){
@@ -672,7 +707,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
                     let message = MDCSnackbarMessage()
                     message.text = "Subscribed"
                     MDCSnackbarManager.show(message)
-                    self.subb.tintColor = GMColor.green500Color()
+                    self.subb.setImage(UIImage.init(named: "subbed")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
                 })
                 alrController.addAction(somethingAction)
             }
@@ -683,7 +718,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
                 let message = MDCSnackbarMessage()
                 message.text = "Added"
                 MDCSnackbarManager.show(message)
-                self.subb.tintColor = GMColor.green500Color()
+                self.subb.setImage(UIImage.init(named: "subbed")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
             })
             alrController.addAction(somethingAction)
             
@@ -1048,10 +1083,6 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
             thumb = true
         }
         
-        if(thumb && type == .SELF){
-            thumb = false
-        }
-        
         let fullImage = ContentType.fullImage(t: type)
         
         if(!fullImage && height < 50){
@@ -1099,8 +1130,9 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
             big = false
             thumb = false
         }
-        
-
+        if(thumb && type == .SELF){
+            thumb = false
+        }
         
         if(thumb && !big){
             target = .thumb
@@ -1291,6 +1323,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
                             if(reset){
                                 self.links = []
                             }
+                            var before = self.links.count
                             if(self.realmListing == nil){
                                 self.realmListing = RListing()
                                 self.realmListing!.subreddit = self.sub
@@ -1324,7 +1357,18 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
                                     
                                 }
                                 
-                                self.reloadDataReset()
+                                if(reset){
+                                    self.tableView.reloadData()
+                                } else {
+                                    var paths : [IndexPath] = []
+                                    for i in (before)...(self.links.count - 1) {
+                                        paths.append(IndexPath.init(row: i, section: 0))
+                                    }
+                                    self.tableView.beginUpdates()
+                                    self.tableView.insertRows(at: paths, with: .bottom)
+                                    self.tableView.endUpdates()
+                                }
+                                
                                 self.refreshControl.endRefreshing()
                                 self.indicator.stopAnimating()
                                 self.loading = false

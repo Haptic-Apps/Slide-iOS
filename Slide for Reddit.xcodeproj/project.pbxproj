@@ -91,6 +91,9 @@
 		BE780B641E3405F300DAA1EB /* SettingsTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE780B631E3405F300DAA1EB /* SettingsTheme.swift */; };
 		BE780B691E3527DA00DAA1EB /* Drafts.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE780B681E3527D900DAA1EB /* Drafts.swift */; };
 		BE7BFB421F128F9B009CA2E1 /* Sidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7BFB411F128F9B009CA2E1 /* Sidebar.swift */; };
+		BE7BFB441F1333DD009CA2E1 /* AlbumTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7BFB431F1333DD009CA2E1 /* AlbumTableViewController.swift */; };
+		BE7BFB461F1335C1009CA2E1 /* AlbumCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7BFB451F1335C1009CA2E1 /* AlbumCellView.swift */; };
+		BE7BFB481F1997BA009CA2E1 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE7BFB471F1997BA009CA2E1 /* MapKit.framework */; };
 		BE8592C21E0EE72800836C1D /* reddift_config.json in Resources */ = {isa = PBXBuildFile; fileRef = BE8592C11E0EE72800836C1D /* reddift_config.json */; };
 		BE86300F1E2E6A54004F0E1F /* PostFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE86300E1E2E6A54004F0E1F /* PostFilter.swift */; };
 		BE8630111E2EDFB2004F0E1F /* FiltersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8630101E2EDFB2004F0E1F /* FiltersViewController.swift */; };
@@ -120,6 +123,7 @@
 		BED76E651E3A9576008E7717 /* RealmDataWrappers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED76E641E3A9576008E7717 /* RealmDataWrappers.swift */; };
 		BEDDA9911E19AB5D003CD6C3 /* WebsiteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEDDA9901E19AB5D003CD6C3 /* WebsiteViewController.swift */; };
 		BEDDA9931E19AEF2003CD6C3 /* AdDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEDDA9921E19AEF2003CD6C3 /* AdDictionary.swift */; };
+		BEE206F41F1B0D53008BB5F1 /* ReplyCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE206F31F1B0D53008BB5F1 /* ReplyCellView.swift */; };
 		BEE5BF621E119A9000E3C9AE /* SubredditsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE5BF611E119A9000E3C9AE /* SubredditsViewController.swift */; };
 		BEE5BF641E11A15500E3C9AE /* LinkCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE5BF631E11A15500E3C9AE /* LinkCellView.swift */; };
 		BEE5BF6C1E12C92F00E3C9AE /* DateFormatter+util.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE5BF6B1E12C92F00E3C9AE /* DateFormatter+util.swift */; };
@@ -248,6 +252,9 @@
 		BE780B631E3405F300DAA1EB /* SettingsTheme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsTheme.swift; sourceTree = "<group>"; };
 		BE780B681E3527D900DAA1EB /* Drafts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Drafts.swift; sourceTree = "<group>"; };
 		BE7BFB411F128F9B009CA2E1 /* Sidebar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sidebar.swift; sourceTree = "<group>"; };
+		BE7BFB431F1333DD009CA2E1 /* AlbumTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlbumTableViewController.swift; sourceTree = "<group>"; };
+		BE7BFB451F1335C1009CA2E1 /* AlbumCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlbumCellView.swift; sourceTree = "<group>"; };
+		BE7BFB471F1997BA009CA2E1 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		BE8592C11E0EE72800836C1D /* reddift_config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = reddift_config.json; sourceTree = "<group>"; };
 		BE86300E1E2E6A54004F0E1F /* PostFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostFilter.swift; sourceTree = "<group>"; };
 		BE8630101E2EDFB2004F0E1F /* FiltersViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FiltersViewController.swift; sourceTree = "<group>"; };
@@ -283,6 +290,7 @@
 		BED76E641E3A9576008E7717 /* RealmDataWrappers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmDataWrappers.swift; sourceTree = "<group>"; };
 		BEDDA9901E19AB5D003CD6C3 /* WebsiteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebsiteViewController.swift; sourceTree = "<group>"; };
 		BEDDA9921E19AEF2003CD6C3 /* AdDictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdDictionary.swift; sourceTree = "<group>"; };
+		BEE206F31F1B0D53008BB5F1 /* ReplyCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReplyCellView.swift; sourceTree = "<group>"; };
 		BEE5BF611E119A9000E3C9AE /* SubredditsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubredditsViewController.swift; sourceTree = "<group>"; };
 		BEE5BF631E11A15500E3C9AE /* LinkCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkCellView.swift; sourceTree = "<group>"; };
 		BEE5BF6B1E12C92F00E3C9AE /* DateFormatter+util.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DateFormatter+util.swift"; sourceTree = "<group>"; };
@@ -302,6 +310,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE7BFB481F1997BA009CA2E1 /* MapKit.framework in Frameworks */,
 				BE2B8A071E25D9CD0053D493 /* Pods_Slide_for_Reddit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -328,6 +337,7 @@
 		298777278D5F06761FD8FF4B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BE7BFB471F1997BA009CA2E1 /* MapKit.framework */,
 				E10B0B547111FDC79C24DA78 /* Pods_Slide_for_Reddit.framework */,
 				CE1DDF77D2F040B83CE26E0F /* Pods_Slide_for_RedditTests.framework */,
 				C29CF7355B69CCB84BE2FD6B /* Pods_Slide_for_RedditUITests.framework */,
@@ -347,6 +357,8 @@
 				BE0610981E5109F30073DB2F /* CounterView.swift */,
 				BE06109A1E510A1C0073DB2F /* CaptionView.swift */,
 				BE2F3F4D1EF707DB003C1B28 /* YouTubeViewController.swift */,
+				BE7BFB431F1333DD009CA2E1 /* AlbumTableViewController.swift */,
+				BE7BFB451F1335C1009CA2E1 /* AlbumCellView.swift */,
 			);
 			name = ContentViewControllers;
 			sourceTree = "<group>";
@@ -572,6 +584,7 @@
 				BE8C29201EDE8001004D7514 /* MarginedTableViewCell.swift */,
 				BE2F3F571EF886D9003C1B28 /* Reachability.swift */,
 				BE7BFB411F128F9B009CA2E1 /* Sidebar.swift */,
+				BEE206F31F1B0D53008BB5F1 /* ReplyCellView.swift */,
 			);
 			path = "Slide for Reddit";
 			sourceTree = "<group>";
@@ -701,6 +714,9 @@
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+							com.apple.Maps.iOS = {
 								enabled = 1;
 							};
 						};
@@ -975,7 +991,9 @@
 				BE6EA6D51E1C1FC700E9E709 /* Channel.swift in Sources */,
 				BE2DEAB41E2693C100FBF0B5 /* SubredditHeaderView.swift in Sources */,
 				BE2B8A0B1E2602CD0053D493 /* SubredditReorderViewController.swift in Sources */,
+				BE7BFB441F1333DD009CA2E1 /* AlbumTableViewController.swift in Sources */,
 				BEC494281E307D57006618F3 /* GalleryTableViewController.swift in Sources */,
+				BEE206F41F1B0D53008BB5F1 /* ReplyCellView.swift in Sources */,
 				BEBF45E11E23EED800764BB8 /* SettingValues.swift in Sources */,
 				BED76E651E3A9576008E7717 /* RealmDataWrappers.swift in Sources */,
 				BE3E5C191E16BC3900749C0C /* StringHTML+util.swift in Sources */,
@@ -992,6 +1010,7 @@
 				BE6EA6D71E1C1FC700E9E709 /* VidMeJSONBase.swift in Sources */,
 				BE3E5C171E16BC1A00749C0C /* String+util.swift in Sources */,
 				BE9742381F0409BA00BF48E0 /* SettingsComments.swift in Sources */,
+				BE7BFB461F1335C1009CA2E1 /* AlbumCellView.swift in Sources */,
 				BE2F3F581EF886D9003C1B28 /* Reachability.swift in Sources */,
 				BE9742301F0011E500BF48E0 /* TextLinkCellView.swift in Sources */,
 				BE8FCA0A1E0C46090063B8EF /* SubredditLinkViewController.swift in Sources */,

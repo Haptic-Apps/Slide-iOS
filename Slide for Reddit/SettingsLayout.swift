@@ -41,6 +41,12 @@ class SettingsLayout: UITableViewController {
     var leftThumbCell: UITableViewCell = UITableViewCell()
     var leftThumb = UISwitch()
 
+    var hideCell: UITableViewCell = UITableViewCell()
+    var hide = UISwitch()
+
+    var saveCell: UITableViewCell = UITableViewCell()
+    var save = UISwitch()
+
     var link = LinkCellView()
 
     override func viewDidLoad() {
@@ -95,6 +101,12 @@ class SettingsLayout: UITableViewController {
         } else if(changed == leftThumb){
             SettingValues.leftThumbnail = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_leftThumbnail)
+        } else if(changed == hide){
+            SettingValues.hideButton = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_hideButton)
+        } else if(changed == save){
+            SettingValues.saveButton = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_saveButton)
         }
         UserDefaults.standard.synchronize()
         doDisables()
@@ -271,6 +283,24 @@ class SettingsLayout: UITableViewController {
         leftThumbCell.textLabel?.textColor = ColorUtil.fontColor
         leftThumbCell.selectionStyle = UITableViewCellSelectionStyle.none
 
+        hide = UISwitch()
+        hide.isOn = SettingValues.hideButton
+        hide.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+        hideCell.textLabel?.text = "Hide post button"
+        hideCell.accessoryView = hide
+        hideCell.backgroundColor = ColorUtil.foregroundColor
+        hideCell.textLabel?.textColor = ColorUtil.fontColor
+        hideCell.selectionStyle = UITableViewCellSelectionStyle.none
+
+        save = UISwitch()
+        save.isOn = SettingValues.saveButton
+        save.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+        saveCell.textLabel?.text = "Save button"
+        saveCell.accessoryView = save
+        saveCell.backgroundColor = ColorUtil.foregroundColor
+        saveCell.textLabel?.textColor = ColorUtil.fontColor
+        saveCell.selectionStyle = UITableViewCellSelectionStyle.none
+
         doDisables()
     }
     
@@ -281,6 +311,13 @@ class SettingsLayout: UITableViewController {
         } else {
             centerLeadImage.isEnabled = true
             cropBigPic.isEnabled = true
+        }
+        if(SettingValues.hideButtonActionbar){
+            hide.isEnabled = false
+            save.isEnabled = false
+        } else {
+            hide.isEnabled = true
+            save.isEnabled = true
         }
     
     }
@@ -327,6 +364,8 @@ class SettingsLayout: UITableViewController {
             case 1: return self.scoreTitleCell
             case 2: return self.abbreviateScoreCell
             case 3: return self.domainInfoCell
+            case 4: return self.hideCell
+            case 5: return self.saveCell
 
             default: fatalError("Unknown row in section 0")
             }
@@ -370,7 +409,7 @@ class SettingsLayout: UITableViewController {
         switch(section) {
         case 0: return 1    // section 0 has 2 rows
         case 1: return 6    // section 1 has 1 row
-        case 2: return 4
+        case 2: return 6
         default: fatalError("Unknown number of sections")
         }
     }

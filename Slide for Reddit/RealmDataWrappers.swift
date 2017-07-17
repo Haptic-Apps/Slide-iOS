@@ -155,6 +155,7 @@ class RealmDataWrapper {
         rComment.depth = depth
         rComment.flair = flair
         rComment.linkid = comment.linkId
+        rComment.archived = comment.archived
         rComment.distinguished = comment.distinguished
         rComment.controversiality = comment.controversiality
         rComment.voted = comment.likes != .none
@@ -336,6 +337,7 @@ class RComment: Object {
     dynamic var subreddit = ""
     dynamic var scoreHidden = false
     dynamic var parentId = ""
+    dynamic var archived = false
     dynamic var score = 0
     dynamic var flair = ""
     dynamic var voted = false
