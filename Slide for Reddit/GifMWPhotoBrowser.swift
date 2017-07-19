@@ -84,7 +84,7 @@ class GifMWPhotoBrowser: NSObject, GalleryItemsDataSource {
         self.url = url
         browser = GalleryViewController.init(startIndex: 0, itemsDataSource: self, itemsDelegate: nil, displacedViewsDataSource: nil, configuration: galleryConfiguration())
         print("Loading gif \(url)")
-        var toolbar = UIToolbar()
+        let toolbar = UIToolbar()
         let space = UIBarButtonItem(barButtonSystemItem:.flexibleSpace, target: nil, action: nil)
         var items: [UIBarButtonItem] = []
         

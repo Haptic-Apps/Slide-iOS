@@ -17,9 +17,13 @@ import PagingMenuController
 import MaterialComponents.MaterialSnackbar
 import MaterialComponents.MDCActivityIndicator
 import SwipeCellKit
+import TTTAttributedLabel
 
-class SubredditLinkViewController: MediaViewController, UITableViewDelegate, SwipeTableViewCellDelegate, UITableViewDataSource, LinkCellViewDelegate, ColorPickerDelegate, KCFloatingActionButtonDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate {
+class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate, SwipeTableViewCellDelegate, UICollectionViewDataSource, LinkCellViewDelegate, ColorPickerDelegate, KCFloatingActionButtonDelegate, UIGestureRecognizerDelegate, WrappingFlowLayoutDelegate, UINavigationControllerDelegate {
     
+    let margin: CGFloat = 10
+    let cellsPerRow = 3
+
     var parentController: SubredditsViewController?
     var accentChosen: UIColor?
     func valueChanged(_ value: CGFloat, accent: Bool) {
@@ -56,8 +60,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
         }
     }
     
-
-    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+    func collectionView(_ tableView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forRowAt indexPath: IndexPath) {
         if(SettingValues.markReadOnScroll){
         History.addSeen(s: links[indexPath.row])
         }
@@ -106,23 +109,28 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
                 }
                 location += 1
             }
-            tableView.deleteRows(at: [IndexPath.init(item: location, section: 0)], with: .middle)
-            var message = MDCSnackbarMessage.init(text: "Submission hidden forever")
-            let action = MDCSnackbarMessageAction()
-            let actionHandler = {() in
-                self.links.insert(item, at: location)
-                self.tableView.insertRows(at: [IndexPath.init(item: location, section: 0)], with: .middle)
-                do {
-                try self.session?.setHide(false, name: cell.link!.getId(), completion: {(result) in })
-                }catch {
+            tableView.performBatchUpdates({
+                self.tableView.deleteItems(at: [IndexPath.init(item: location, section: 0)])
+                var message = MDCSnackbarMessage.init(text: "Submission hidden forever")
+                let action = MDCSnackbarMessageAction()
+                let actionHandler = {() in
+                    self.links.insert(item, at: location)
+                    self.tableView.insertItems(at: [IndexPath.init(item: location, section: 0)])
+                    do {
+                        try self.session?.setHide(false, name: cell.link!.getId(), completion: {(result) in })
+                    }catch {
+                        
+                    }
                     
                 }
-            }
-            action.handler = actionHandler
-            action.title = "UNDO"
+                action.handler = actionHandler
+                action.title = "UNDO"
+                
+                message!.action = action
+                MDCSnackbarManager.show(message)
 
-            message!.action = action
-            MDCSnackbarManager.show(message)
+            }, completion: nil)
+
             } catch {
             
         }
@@ -241,7 +249,12 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
         }
         actionSheetController.addAction(cancelActionButton)
         
-        
+        actionSheetController.modalPresentationStyle = .popover
+        if let presenter = actionSheetController.popoverPresentationController {
+            presenter.sourceView = cell.contentView
+            presenter.sourceRect = cell.contentView.bounds
+        }
+
         self.present(actionSheetController, animated: true, completion: nil)
         
     }
@@ -315,12 +328,192 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
         
     }
     
+    func collectionView(_ collectionView: UICollectionView, itemWidth: CGFloat, indexPath: IndexPath) -> CGSize {
+        let submission = links[indexPath.row]
+        
+        var thumb = submission.thumbnail
+        var big = submission.banner
+        var height = submission.height
+        
+        var type = ContentType.getContentType(baseUrl: submission.url!)
+        if(submission.isSelf){
+            type = .SELF
+        }
+        
+        if(SettingValues.bannerHidden){
+            big = false
+            thumb = true
+        }
+        
+        let fullImage = ContentType.fullImage(t: type)
+        
+        if(!fullImage && height < 50){
+            big = false
+            thumb = true
+        }
+        
+        if(type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big){
+            big = false
+            thumb = false
+        }
+        
+        if(height < 50){
+            thumb = true
+            big = false
+        }
+        
+        if (type == ContentType.CType.SELF && SettingValues.hideImageSelftext
+            || SettingValues.noImages && submission.isSelf) {
+            big = false
+            thumb = false
+        }
+        
+        if(big || !submission.thumbnail){
+            thumb = false
+        }
+        
+        
+        if(!big && !thumb && submission.type != .SELF && submission.type != .NONE){ //If a submission has a link but no images, still show the web thumbnail
+            thumb = true
+        }
+        
+        if(submission.nsfw && !SettingValues.nsfwPreviews){
+            big = false
+            thumb = true
+        }
+        
+        if(submission.nsfw && SettingValues.hideNSFWCollection && (sub == "all" || sub == "frontpage" || sub == "popular")){
+            big = false
+            thumb = true
+        }
+        
+        
+        if(SettingValues.noImages){
+            big = false
+            thumb = false
+        }
+        if(thumb && type == .SELF){
+            thumb = false
+        }
+
+        let attributedTitle = NSMutableAttributedString(string: submission.title, attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size:18, submission:true), NSForegroundColorAttributeName: ColorUtil.fontColor])
+        let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(submission.flair)\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
+        let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
+        let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(submission.gilded) ", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor])
+        
+        let locked = NSMutableAttributedString.init(string: "\u{00A0}LOCKED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
+        
+        let archived = NSMutableAttributedString.init(string: "\u{00A0}ARCHIVED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
+        
+        let spacer = NSMutableAttributedString.init(string: "  ")
+        if(!submission.flair.isEmpty){
+            attributedTitle.append(spacer)
+            attributedTitle.append(flairTitle)
+        }
+        
+        if(submission.gilded > 0){
+            attributedTitle.append(spacer)
+            attributedTitle.append(spacer)
+            let gild = NSMutableAttributedString.init(string: "G", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.amber500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
+            attributedTitle.append(gild)
+            if(submission.gilded > 1){
+                attributedTitle.append(gilded)
+            }
+        }
+        
+        if(submission.stickied){
+            attributedTitle.append(spacer)
+            attributedTitle.append(pinned)
+        }
+        
+        if(submission.locked){
+            attributedTitle.append(spacer)
+            attributedTitle.append(locked)
+        }
+        if(submission.archived){
+            attributedTitle.append(archived)
+        }
+        
+        let attrs = [NSFontAttributeName : FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor] as [String: Any]
+        
+        let endString = NSMutableAttributedString(string:"  •  \(DateFormatter().timeSince(from: submission.created, numericDates: true))\((submission.isEdited ? ("(edit \(DateFormatter().timeSince(from: submission.edited, numericDates: true)))") : ""))  •  ", attributes: [NSFontAttributeName : FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor])
+        
+        let authorString = NSMutableAttributedString(string: "\u{00A0}\(submission.author)\u{00A0}", attributes: [NSFontAttributeName : FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor])
+        
+        
+        let userColor = ColorUtil.getColorForUser(name: submission.author)
+        if (submission.distinguished == "admin") {
+            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#E57373"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
+        } else if (submission.distinguished == "special") {
+            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#F44336"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
+        } else if (submission.distinguished == "moderator") {
+            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#81C784"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
+        } else if (AccountController.currentName == submission.author) {
+            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#FFB74D"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
+        } else if (userColor != ColorUtil.baseColor) {
+            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: userColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
+        }
+        
+        endString.append(authorString)
+        if(SettingValues.domainInInfo){
+            endString.append(NSAttributedString.init(string: "  •  \(submission.domain)"))
+        }
+        
+        let tag = ColorUtil.getTagForUser(name: submission.author)
+        if(!tag.isEmpty){
+            let tagString = NSMutableAttributedString(string: "\u{00A0}\(tag)\u{00A0}", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
+            tagString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor(rgb: 0x2196f3), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
+            endString.append(spacer)
+            endString.append(tagString)
+        }
+        
+        let boldString = NSMutableAttributedString(string:"/r/\(submission.subreddit)", attributes:attrs)
+        
+        let color = ColorUtil.getColorForSub(sub: submission.subreddit)
+        if(color != ColorUtil.baseColor){
+            boldString.addAttribute(NSForegroundColorAttributeName, value: color, range: NSRange.init(location: 0, length: boldString.length))
+        }
+        
+        let infoString = NSMutableAttributedString()
+        infoString.append(boldString)
+        infoString.append(endString)
+        infoString.append(attributedTitle)
+        var submissionHeight = submission.height
+        
+        if(!fullImage && submissionHeight < 50){
+        } else if(big && (SettingValues.bigPicCropped)){
+            submissionHeight = 200
+        } else if(big){
+            
+            let ratio = Double(submissionHeight)/Double(submission.width)
+            let width = Double(itemWidth);
+            let h = Int(width * ratio)
+
+            if(h == 0){
+                submissionHeight = 200
+            } else {
+                submissionHeight  = h
+            }
+        }
+
+
+        let he = infoString.boundingRect(with: CGSize.init(width: itemWidth - 24 - (thumb ? (SettingValues.largerThumbnail ? 75 : 50) + 28 : 0), height:10000), options: [.usesLineFragmentOrigin , .usesFontLeading], context: nil).height
+                let thumbheight = CGFloat(SettingValues.largerThumbnail ? 75 : 50)
+                var estimatedHeight = CGFloat((he < thumbheight && thumb || he < thumbheight && !big) ? thumbheight : he) + CGFloat(54) +  CGFloat(big && !thumb ? (submissionHeight + 20) : 0)
+        return CGSize(width: itemWidth, height: estimatedHeight)
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        tableView.collectionViewLayout.invalidateLayout()
+        super.viewWillTransition(to: size, with: coordinator)
+    }
+
     
     var links: [RSubmission] = []
     var paginator = Paginator()
     var sub : String
     var session: Session? = nil
-    var tableView : UITableView = UITableView()
+    var tableView : UICollectionView = UICollectionView.init(frame: CGRect.zero, collectionViewLayout: UICollectionViewLayout.init())
     var displayMode: MenuItemDisplayMode
     var single: Bool = false
     
@@ -412,13 +605,15 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
     var sideMenu: UISideMenuNavigationController?
     // var menuNav: SubSidebarViewController?
     var subInfo: Subreddit?
+    var flowLayout: WrappingFlowLayout = WrappingFlowLayout.init()
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        self.tableView = UITableView(frame: self.view.bounds, style: .plain)
+        flowLayout.delegate = self
+        self.tableView = UICollectionView(frame: self.view.bounds, collectionViewLayout: flowLayout)
         self.view = UIView.init(frame: CGRect.zero)
 
         self.view.addSubview(tableView)
+
         self.tableView.delegate = self
         self.tableView.dataSource = self
         refreshControl = UIRefreshControl()
@@ -433,31 +628,32 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
         indicator.startAnimating()
 
         reloadNeedingColor()
-        
+        if(!SettingValues.viewType || single){
+            tableView.contentInset = UIEdgeInsetsMake(40  + (single ? 70 : 40), 0, 0, 0)
+        }
+
         
     }
     
     static var firstPresented = true
     
+
     func reloadNeedingColor(){
         tableView.backgroundColor = ColorUtil.backgroundColor
-        tableView.separatorColor = ColorUtil.backgroundColor
-        tableView.separatorInset = .zero
         
         refreshControl.tintColor = ColorUtil.fontColor
         refreshControl.attributedTitle = NSAttributedString(string: "")
         refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControlEvents.valueChanged)
         tableView.addSubview(refreshControl) // not required when using UITableViewController
         
-        let label = UILabel.init(frame: CGRect.init(x: 00, y: 0, width: 400, height: !SettingValues.viewType || single ? 70 : 40))
+        let label = UILabel.init(frame: CGRect.init(x: 5, y: -1 * (single ? 90 : 60), width: 375, height: !SettingValues.viewType || single ? 70 : 40))
         if(!SettingValues.viewType || single){
-        label.text =  "     \(sub)"
+            label.text =  "     \(sub)"
         }
         label.textColor = ColorUtil.fontColor
         label.adjustsFontSizeToFitWidth = true
         label.font = UIFont.boldSystemFont(ofSize: 35)
-        tableView.tableHeaderView = label
-
+        
         let sort = UIButton.init(type: .custom)
         sort.setImage(UIImage.init(named: "ic_sort_white")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
         sort.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
@@ -566,14 +762,13 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
         sideView.layer.cornerRadius = 10
         sideView.clipsToBounds = true
         
+        tableView.addSubview(label)
         self.automaticallyAdjustsScrollViewInsets = false
-        if(!SettingValues.viewType || single){
-        tableView.contentInset = UIEdgeInsetsMake(40, 0, 0, 0)
-        }
         
-        self.tableView.register(BannerLinkCellView.classForCoder(), forCellReuseIdentifier: "banner")
-        self.tableView.register(ThumbnailLinkCellView.classForCoder(), forCellReuseIdentifier: "thumb")
-        self.tableView.register(TextLinkCellView.classForCoder(), forCellReuseIdentifier: "text")
+        
+        self.tableView.register(BannerLinkCellView.classForCoder(), forCellWithReuseIdentifier: "banner")
+        self.tableView.register(ThumbnailLinkCellView.classForCoder(), forCellWithReuseIdentifier: "thumb")
+        self.tableView.register(TextLinkCellView.classForCoder(), forCellWithReuseIdentifier: "text")
 
         session = (UIApplication.shared.delegate as! AppDelegate).session
         
@@ -581,9 +776,6 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
             load(reset: true)
             SubredditLinkViewController.firstPresented = false
         }
-        
-        tableView.estimatedRowHeight = 400.0
-        tableView.rowHeight = UITableViewAutomaticDimension
         
         if(single){
             sideMenu = UISideMenuNavigationController()
@@ -663,7 +855,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
                 links.remove(at: index)
             }
         }
-        tableView.reloadData(with: .automatic)
+        tableView.reloadData()
     }
     
     
@@ -733,6 +925,12 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
             
             alrController.addAction(cancelAction)
             
+            alrController.modalPresentationStyle = .fullScreen
+            if let presenter = alrController.popoverPresentationController {
+                presenter.sourceView = subb
+                presenter.sourceRect = subb.bounds
+            }
+
             self.present(alrController, animated: true, completion:{})
             
         }
@@ -766,8 +964,6 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
     var listingId: String = "" //a random id for use in Realm
     
     func emptyKCFABSelected(_ fab: KCFloatingActionButton) {
-        tableView.beginUpdates()
-        
         var indexPaths : [IndexPath] = []
         var newLinks : [RSubmission] = []
         
@@ -785,8 +981,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
         
         //todo save realm
         
-        tableView.deleteRows(at: indexPaths, with: .middle)
-        tableView.endUpdates()
+        tableView.deleteItems(at: indexPaths)
         
         print("Empty")
     }
@@ -881,6 +1076,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
     var first = true
     var indicator: MDCActivityIndicator = MDCActivityIndicator()
     
+
     override func viewWillAppear(_ animated: Bool) {
 
         if(SubredditReorderViewController.changed){
@@ -939,7 +1135,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
         }
         super.viewWillAppear(animated)
          if(savedIndex != nil){
-         tableView.reloadRows(at: [savedIndex!], with: .none)
+         tableView.reloadItems(at: [savedIndex!])
          } else {
          tableView.reloadData()
          }
@@ -1045,6 +1241,18 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
         }
         actionSheetController.addAction(cancelActionButton)
         
+        actionSheetController.modalPresentationStyle = .fullScreen
+        if let presenter = actionSheetController.popoverPresentationController {
+            presenter.sourceView = self.view
+            presenter.sourceRect = self.view.bounds
+        }
+
+        actionSheetController.modalPresentationStyle = .popover
+        if let presenter = actionSheetController.popoverPresentationController {
+            presenter.sourceView = subb
+            presenter.sourceRect = subb.bounds
+        }
+
         
         self.present(actionSheetController, animated: true, completion: nil)
     }
@@ -1066,13 +1274,10 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
         // Dispose of any resources that can be recreated.
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return links.count
     }
-    
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         var target = CurrentType.none
         let submission = self.links[(indexPath as NSIndexPath).row]
         
@@ -1148,14 +1353,14 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
         } else {
             target = .text
         }
-
+        
         var cell: LinkCellView?
         if(target == .thumb){
-          cell = tableView.dequeueReusableCell(withIdentifier: "thumb", for: indexPath) as! ThumbnailLinkCellView
+            cell = tableView.dequeueReusableCell(withReuseIdentifier: "thumb", for: indexPath) as! ThumbnailLinkCellView
         } else if(target == .banner){
-            cell = tableView.dequeueReusableCell(withIdentifier: "banner", for: indexPath) as! BannerLinkCellView
+            cell = tableView.dequeueReusableCell(withReuseIdentifier: "banner", for: indexPath) as! BannerLinkCellView
         } else {
-            cell = tableView.dequeueReusableCell(withIdentifier: "text", for: indexPath) as! TextLinkCellView
+            cell = tableView.dequeueReusableCell(withReuseIdentifier: "text", for: indexPath) as! TextLinkCellView
         }
         
         cell?.preservesSuperviewLayoutMargins = false
@@ -1166,6 +1371,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
         
         (cell)!.setLink(submission: submission, parent: self, nav: self.navigationController, baseSub: sub)
         return cell!
+
     }
     
     func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeTableOptions {
@@ -1203,14 +1409,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
     var showing = false
     func showLoader() {
         showing = true
-        let spinner = UIActivityIndicatorView(activityIndicatorStyle: .gray)
-        spinner.frame = CGRect(x: 0, y: 0.0, width: 80.0, height: 80.0)
-        spinner.center = CGPoint(x: tableView.frame.size.width  / 2,
-                                 y: tableView.frame.size.height / 2);
-        
-        tableView.tableFooterView = spinner
-        spinner.startAnimating()
-        
+        //todo maybe?
     }
     
     var sort = SettingValues.defaultSorting
@@ -1330,7 +1529,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
                             if(reset){
                                 self.links = []
                             }
-                            var before = self.links.count
+                            let before = self.links.count
                             if(self.realmListing == nil){
                                 self.realmListing = RListing()
                                 self.realmListing!.subreddit = self.sub
@@ -1364,17 +1563,16 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
                                     
                                 }
                                 
-                                if(reset){
-                                    self.tableView.reloadData()
-                                } else {
-                                    var paths : [IndexPath] = []
-                                    for i in (before)...(self.links.count - 1) {
-                                        paths.append(IndexPath.init(row: i, section: 0))
-                                    }
-                                    self.tableView.beginUpdates()
-                                    self.tableView.insertRows(at: paths, with: .bottom)
-                                    self.tableView.endUpdates()
-                                }
+                                //todo if(reset){
+                                DispatchQueue.main.async(execute: self.tableView.reloadData)
+                                //} else {
+                                //    var paths : [IndexPath] = []
+                                //    self.tableView.performBatchUpdates({
+                                //    for i in (before)...(self.links.count - 1) {
+                                //        self.tableView.insertItems(at: [IndexPath.init(row: i, section: 0)])
+                                //    }
+                                //    }, completion: nil)
+                                //}
                                 
                                 self.refreshControl.endRefreshing()
                                 self.indicator.stopAnimating()
@@ -1465,6 +1663,13 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, Swi
         SDWebImagePrefetcher.init().prefetchURLs(urls)
     }
     
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        tableView.frame = self.view.bounds
+        flowLayout.reset()
+        
+        flowLayout.invalidateLayout()
+    }
 }
 extension UIViewController {
     func topMostViewController() -> UIViewController {

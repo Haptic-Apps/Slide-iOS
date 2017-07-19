@@ -345,8 +345,8 @@ class SettingsLayout: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch(indexPath.section) {
-        case 0:
-            return link
+      //  case 0:
+          //todo  return link
         case 1:
             switch(indexPath.row) {
             case 0: return self.cardModeCell

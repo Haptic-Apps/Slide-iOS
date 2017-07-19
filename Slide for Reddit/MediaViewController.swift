@@ -350,7 +350,19 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
         } else if( controller is YouTubeViewController){
             present(controller, animated: false, completion: nil)
         } else {
-        show(controller, sender: self)
+            if(controller is CommentViewController){
+                if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(view.bounds.width / CGFloat(320))) > 1){
+                    let navigationController = UINavigationController(rootViewController: controller)
+                    navigationController.modalPresentationStyle = .formSheet
+                    navigationController.modalTransitionStyle = .crossDissolve
+                    present(navigationController, animated: true, completion: nil)
+                } else {
+                    show(controller, sender: self)
+                }
+
+            } else {
+                show(controller, sender: self)
+            }
         }
         navigationController?.setNavigationBarHidden(false, animated: true)
     }

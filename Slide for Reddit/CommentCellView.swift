@@ -57,6 +57,12 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
                             sheet.dismiss(animated: true, completion: nil)
                         }
                     )
+                    sheet.modalPresentationStyle = .popover
+                    if let presenter = sheet.popoverPresentationController {
+                        presenter.sourceView = textView
+                        presenter.sourceRect = textView.bounds
+                    }
+
                     parentViewController?.present(sheet, animated: true, completion: nil)
                 }
             }
@@ -342,7 +348,15 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
     
     func openComment(sender: UITapGestureRecognizer? = nil){
         let comment = CommentViewController.init(submission: (self.comment?.linkid.substring(3, length: (self.comment?.linkid.length)! - 3))! , comment: self.comment!.id, context: 3, subreddit: (self.comment?.subreddit)!)
+        if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.parentViewController!.view.bounds.width / CGFloat(320))) > 1){
+            let navigationController = UINavigationController(rootViewController: comment)
+            navigationController.modalPresentationStyle = .formSheet
+            navigationController.modalTransitionStyle = .crossDissolve
+            parentViewController?.present(navigationController, animated: true, completion: nil)
+        } else {
             (self.navViewController as? UINavigationController)?.pushViewController(comment, animated: true)
+        }
+
         }
     
 }

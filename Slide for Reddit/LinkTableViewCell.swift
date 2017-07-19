@@ -1,18 +1,13 @@
 //
-//  LinkCellViewTableViewCell.swift
+//  LinkTableViewCell.swift
 //  Slide for Reddit
 //
-//  Created by Carlos Crane on 12/26/16.
-//  Copyright © 2016 Haptic Apps. All rights reserved.
+//  Created by Carlos Crane on 7/19/17.
+//  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
-//
-//  LinkCellView.swift
-//  Slide for Reddit
-//
-//  Created by Carlos Crane on 12/24/16.
-//  Copyright © 2016 Haptic Apps. All rights reserved.
-//
+
+//This is just a temporary solution until I convert the rest of the UITableViews to UICollectionViews
 
 import UIKit
 import UZTextView
@@ -22,20 +17,16 @@ import MaterialComponents
 import SwipeCellKit
 import AudioToolbox
 
-protocol LinkCellViewDelegate: class {
-    func upvote(_ cell: LinkCellView, action: SwipeAction?)
-    func downvote(_ cell: LinkCellView)
-    func save(_ cell: LinkCellView)
-    func more(_ cell: LinkCellView)
-    func reply(_ cell: LinkCellView)
-    func hide(_ cell: LinkCellView)
+protocol LinkTableViewCellDelegate: class {
+    func upvote(_ cell: LinkTableViewCell, action: SwipeAction?)
+    func downvote(_ cell: LinkTableViewCell)
+    func save(_ cell: LinkTableViewCell)
+    func more(_ cell: LinkTableViewCell)
+    func reply(_ cell: LinkTableViewCell)
+    func hide(_ cell: LinkTableViewCell)
 }
 
-enum CurrentType {
-    case thumb, banner, text, none;
-}
-
-class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TTTAttributedLabelDelegate, UIGestureRecognizerDelegate {
+class LinkTableViewCell: UITableViewCell, UIViewControllerPreviewingDelegate, TTTAttributedLabelDelegate {
     
     func upvote(sender: UITapGestureRecognizer? = nil) {
         if let delegate = self.del {
@@ -89,7 +80,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var reply = UIImageView()
     var downvote = UIImageView()
     var more = UIImageView()
-    var del: LinkCellViewDelegate? = nil
+    var del: LinkTableViewCellDelegate? = nil
     
     var loadedImage: URL?
     var lq = false
@@ -215,15 +206,19 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     
     func estimateHeight(_ full: Bool) ->CGFloat {
         if(estimatedHeight == 0){
-            let he = (title.attributedText).boundingRect(with: CGSize.init(width: aspectWidth - 24 - (thumb ? (SettingValues.largerThumbnail ? 75 : 50) + 28 : 0), height:10000), options: [.usesLineFragmentOrigin , .usesFontLeading], context: nil).height
+            if(full){
+                title.sizeToFit()
+            }
+            let he = title.frame.size.height + CGFloat(20)
             let thumbheight = CGFloat(SettingValues.largerThumbnail ? 75 : 50)
-            estimatedHeight = CGFloat((he < thumbheight && thumb || he < thumbheight && !big) ? thumbheight : he) + CGFloat(54) +  CGFloat(big && !thumb ? (submissionHeight + 20) : 0)
+            estimatedHeight = CGFloat((he < thumbheight && thumb || he < thumbheight && !big) ? thumbheight : he) + CGFloat(54) + CGFloat(!hasText || !full ? 0 : (content?.textHeight)!) +  CGFloat(big && !thumb ? (full ? 240 :submissionHeight + 20) : 0)
         }
         return estimatedHeight
     }
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        
         self.thumbImage = UIImageView(frame: CGRect(x: 0, y: 8, width: (SettingValues.largerThumbnail ? 75 : 50), height: (SettingValues.largerThumbnail ? 75 : 50)))
         thumbImage.layer.cornerRadius = 15;
         thumbImage.backgroundColor = UIColor.white
@@ -551,6 +546,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         comment.delegate = self
         self.addGestureRecognizer(comment)
         
+        if(full){
+            title.sizeToFit()
+        }
         refresh()
         
         
@@ -565,7 +563,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     
     
     var link: RSubmission?
-    var aspectWidth = CGFloat(0)
     
     func setLink(submission: RSubmission, parent: MediaViewController, nav: UIViewController?, baseSub: String){
         loadedImage = nil
@@ -673,7 +670,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         
         if(SettingValues.postViewMode == .CARD && !full){
-            infoString.append(NSAttributedString.init(string: "\n"))
+            infoString.append(NSAttributedString.init(string: "\n "))
         }
         
         title.setText(infoString)
@@ -830,7 +827,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 aspect = 1
             }
             if(full || SettingValues.bigPicCropped){
-                aspect = (full ? aspectWidth : self.contentView.frame.size.width) / 200
+                aspect = self.contentView.frame.size.width / 200
                 submissionHeight = 200
                 bigConstraint = NSLayoutConstraint(item: bannerImage, attribute:  NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: bannerImage, attribute: NSLayoutAttribute.height, multiplier: aspect, constant: 0.0)
             } else {
@@ -984,7 +981,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             return
         }
         
-        let metrics=["horizontalMargin":75,"top":0,"bottom":0,"separationBetweenLabels":0,"full": Int(contentView.frame.size.width),"size": full ? 16 : 8, "labelMinHeight":75,  "thumb": (SettingValues.largerThumbnail ? 75 : 50), "bannerHeight": submissionHeight] as [String: Int]
+        let metrics=["horizontalMargin":75,"top":0,"bottom":0,"separationBetweenLabels":0,"size": full ? 16 : 8, "labelMinHeight":75,  "thumb": (SettingValues.largerThumbnail ? 75 : 50), "bannerHeight": submissionHeight] as [String: Int]
         let views=["label":title, "body": textView, "image": thumbImage, "info": b, "upvote": upvote, "downvote" : downvote, "score": score, "comments": comments, "banner": bannerImage, "buttons":buttons, "box": box] as [String : Any]
         var bt = "[buttons]-8-"
         var bx = "[box]-8-"
@@ -1205,7 +1202,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         
         if(SettingValues.postViewMode == .CARD && !full){
-            infoString.append(NSAttributedString.init(string: "\n"))
+            infoString.append(NSAttributedString.init(string: "\n\n"))
         }
         
         title.setText(infoString)
@@ -1478,14 +1475,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             self.deleteSelf()
         }
         actionSheetController.addAction(cancelActionButton)
-        
-        actionSheetController.modalPresentationStyle = .popover
-        if let presenter = actionSheetController.popoverPresentationController {
-            presenter.sourceView = edit
-            presenter.sourceRect = edit.bounds
-        }
-        
-        
+        print("PResenting")
         parentViewController?.present(actionSheetController, animated: true, completion: nil)
     }
     
@@ -1514,12 +1504,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 //todo delete
             }
         )
-        
-        alert.modalPresentationStyle = .fullScreen
-        if let presenter = alert.popoverPresentationController {
-            presenter.sourceView = edit
-            presenter.sourceRect = edit.bounds
-        }
         
         parentViewController?.present(alert, animated: true, completion: nil)
         
@@ -1662,6 +1646,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     public var parentViewController: MediaViewController?
     public var navViewController: UIViewController?
     
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        super.setSelected(selected, animated: animated)
+    }
+    
     
     func openLink(sender: UITapGestureRecognizer? = nil){
         (parentViewController)?.setLink(lnk: link!, shownURL: loadedImage, lq: lq)
@@ -1683,77 +1671,4 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     
     public static var imageDictionary: NSMutableDictionary = NSMutableDictionary.init()
     
-}
-extension UILabel
-{
-    func addImage(imageName: String, afterLabel bolAfterLabel: Bool = false)
-    {
-        let attachment: NSTextAttachment = textAttachment(fontSize: self.font.pointSize, imageName: imageName)
-        let attachmentString: NSAttributedString = NSAttributedString(attachment: attachment)
-        
-        if (bolAfterLabel)
-        {
-            let strLabelText: NSMutableAttributedString = NSMutableAttributedString.init(attributedString: self.attributedText!)
-            strLabelText.append(attachmentString)
-            
-            self.attributedText = strLabelText
-        }
-        else
-        {
-            let strLabelText: NSMutableAttributedString = NSMutableAttributedString.init(attributedString: self.attributedText!)
-            let mutableAttachmentString: NSMutableAttributedString = NSMutableAttributedString(attributedString: attachmentString)
-            mutableAttachmentString.append(strLabelText)
-            
-            self.attributedText = mutableAttachmentString
-        }
-        self.baselineAdjustment = .alignCenters
-    }
-    func textAttachment(fontSize: CGFloat, imageName: String) -> NSTextAttachment {
-        let font = FontGenerator.fontOfSize(size: fontSize, submission: true) //set accordingly to your font, you might pass it in the function
-        let textAttachment = NSTextAttachment()
-        let image = LinkCellView.imageDictionary.object(forKey: imageName)
-        if(image != nil){
-            textAttachment.image = image as? UIImage
-        } else {
-            let img = UIImage(named: imageName)?.imageResize(sizeChange: CGSize.init(width: self.font.pointSize, height: self.font.pointSize)).withColor(tintColor: ColorUtil.fontColor)
-            textAttachment.image = img
-            LinkCellView.imageDictionary.setObject(img!, forKey: imageName as NSCopying)
-        }
-        let mid = font.descender + font.capHeight
-        textAttachment.bounds = CGRect(x: 0, y: font.descender - fontSize / 2 + mid + 2, width: fontSize, height: fontSize).integral
-        return textAttachment
-    }
-    func removeImage()
-    {
-        let text = self.text
-        self.attributedText = nil
-        self.text = text
-    }
-    
-    
-}
-extension UIImage {
-    func withColor(tintColor: UIColor) -> UIImage {
-        var image = withRenderingMode(.alwaysTemplate)
-        UIGraphicsBeginImageContextWithOptions(size, false, scale)
-        tintColor.set()
-        image.draw(in: CGRect(x: 0, y: 0, width: size.width, height: size.height))
-        image = UIGraphicsGetImageFromCurrentImageContext()!
-        UIGraphicsEndImageContext()
-        return image
-    }
-}
-
-extension UIView: MaterialView {
-    func elevate(elevation: Double) {
-        self.layer.masksToBounds = false
-        self.layer.shadowColor = UIColor.black.cgColor
-        self.layer.shadowOffset = CGSize(width: 0, height: elevation)
-        self.layer.shadowRadius = CGFloat(elevation)
-        self.layer.shadowOpacity = 0.24
-    }
-}
-
-protocol MaterialView {
-    func elevate(elevation: Double)
 }

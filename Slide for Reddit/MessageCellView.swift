@@ -347,6 +347,13 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
                         }
                         alertController.addAction(full)
                     }
+                    
+                    alertController.modalPresentationStyle = .popover
+                    if let presenter = alertController.popoverPresentationController {
+                        presenter.sourceView = self.contentView
+                        presenter.sourceRect = self.contentView.bounds
+                    }
+
                     self.parentViewController?.present(alertController, animated: true, completion: nil)
 
                 }
@@ -447,7 +454,16 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
             if(message?.wasComment)!{
                 let url = "https://www.reddit.com\(message!.context)"
                 print(url)
-                parentViewController?.show(RedditLink.getViewControllerForURL(urlS: URL.init(string: url)!), sender: parentViewController)
+                let vc = RedditLink.getViewControllerForURL(urlS: URL.init(string: url)!)
+                if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.parentViewController!.view.bounds.width / CGFloat(320))) > 1){
+                    let navigationController = UINavigationController(rootViewController: vc)
+                    navigationController.modalPresentationStyle = .formSheet
+                    navigationController.modalTransitionStyle = .crossDissolve
+                    parentViewController?.present(navigationController, animated: true, completion: nil)
+                } else {
+                    (self.navViewController as? UINavigationController)?.show(vc, sender: self)
+                }
+
             } else {
                 let reply  = ReplyViewController.init(message: message!) { (message) in
                     DispatchQueue.main.async(execute: { () -> Void in

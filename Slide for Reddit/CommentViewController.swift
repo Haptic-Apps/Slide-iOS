@@ -145,6 +145,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         
         let c = LinkCellView()
         c.del = self
+        c.aspectWidth = self.tableView.bounds.size.width
         c.setLink(submission: self.submission!, parent: self, nav: self.navigationController, baseSub: self.submission!.subreddit)
         c.showBody(width: self.view.frame.size.width)
         c.frame = (tableView.tableHeaderView?.frame)!
@@ -259,7 +260,13 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
         actionSheetController.addAction(cancelActionButton)
         
+        actionSheetController.modalPresentationStyle = .popover
+        if let presenter = actionSheetController.popoverPresentationController {
+            presenter.sourceView = cell.contentView
+            presenter.sourceRect = cell.contentView.bounds
+        }
         
+
         self.present(actionSheetController, animated: true, completion: nil)
         
     }
@@ -292,6 +299,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }))
         
         alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
+        
         
         self.present(alert, animated: true, completion: nil)
     }
@@ -458,14 +466,15 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                             }
                             self.doArrays()
                             self.lastSeen = (self.context.isEmpty ? History.getSeenTime(s: self.submission!) :  Double(0))
-                            History.setComments(s: link)
-                            History.addSeen(s: link)
                             DispatchQueue.main.async(execute: { () -> Void in
+                                History.setComments(s: link)
+                                History.addSeen(s: link)
                                 if(!self.hasSubmission){
                                     self.headerCell = LinkCellView()
                                     self.headerCell?.del = self
                                     self.headerCell?.parentViewController = self
                                     self.hasDone = true
+                                    self.headerCell?.aspectWidth = self.tableView.bounds.size.width
                                     self.headerCell?.setLink(submission: self.submission!, parent: self, nav: self.navigationController, baseSub: self.submission!.subreddit)
                                     self.headerCell?.showBody(width: self.view.frame.size.width)
                                     self.tableView.tableHeaderView = UIView(frame: CGRect.init(x:0, y:0, width:self.tableView.frame.width, height:0.01))
@@ -585,6 +594,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             actionSheetController.addAction(saveActionButton)
         }
         
+        actionSheetController.modalPresentationStyle = .formSheet
         self.present(actionSheetController, animated: true, completion: nil)
     }
     
@@ -592,10 +602,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.tableView.register(LinkCellView.classForCoder(), forCellReuseIdentifier: "cell")
+        tableView.contentInset = UIEdgeInsetsMake(56, 0, 45, 0)
         self.tableView.register(CommentMenuCell.classForCoder(), forCellReuseIdentifier: "menu")
         self.tableView.register(ReplyCellView.classForCoder(), forCellReuseIdentifier: "dreply")
-        self.tableView.register(LinkCellView.classForCoder(), forCellReuseIdentifier: "repcell")
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: UIBarButtonItemStyle.plain, target: nil, action: nil)
 
         searchBar.delegate = self
@@ -617,9 +626,51 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         refresh(self)
        
     }
+    var panGestureRecognizer: UIPanGestureRecognizer?
+    var originalPosition: CGPoint?
+    var currentPositionTouched: CGPoint?
     
+    func panGestureAction(_ panGesture: UIPanGestureRecognizer) {
+        let translation = panGesture.translation(in: view)
+        
+        if panGesture.state == .began {
+            originalPosition = view.center
+            currentPositionTouched = panGesture.location(in: view)
+        } else if panGesture.state == .changed {
+            self.navigationController!.view.frame.origin = CGPoint(
+                x: self.view.frame.origin.x,
+                y: translation.y
+            )
+        } else if panGesture.state == .ended {
+            let velocity = panGesture.velocity(in: view)
+            
+            if velocity.y >= 1500 {
+                UIView.animate(withDuration: 0.2
+                    , animations: {
+                        self.view.frame.origin = CGPoint(
+                            x: self.view.frame.origin.x,
+                            y: self.view.frame.size.height
+                        )
+                }, completion: { (isCompleted) in
+                    if isCompleted {
+                        self.dismiss(animated: true, completion: nil)
+                    }
+                })
+            } else {
+                UIView.animate(withDuration: 0.2, animations: {
+                    self.navigationController!.view.center = self.originalPosition!
+                })
+            }
+        }
+    }
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.view.bounds.width / CGFloat(320))) > 1){
+            panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panGestureAction(_:)))
+            self.navigationController!.view.addGestureRecognizer(panGestureRecognizer!)
+            self.navigationController!.view.backgroundColor = .clear
+        }
     }
     
     var hasDone = false
@@ -630,6 +681,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             headerCell?.del = self
             self.headerCell?.parentViewController = self
             hasDone = true
+            headerCell?.aspectWidth = self.tableView.bounds.size.width
             headerCell?.setLink(submission: submission!, parent: self, nav: self.navigationController, baseSub: submission!.subreddit)
             headerCell?.showBody(width: self.view.frame.size.width)
             self.tableView.tableHeaderView = UIView(frame: CGRect.init(x:0, y:0, width:self.tableView.frame.width, height:0.01))
@@ -714,13 +766,13 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     // MARK: - Table view data source
     
     override func viewWillAppear(_ animated: Bool) {
+
         super.viewWillAppear(animated)
         (navigationController)?.setNavigationBarHidden(false, animated: false)
         self.navigationController?.delegate = self
         self.automaticallyAdjustsScrollViewInsets = false
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
-        tableView.contentInset = UIEdgeInsetsMake(56, 0, 45, 0)
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
 
         if(navigationController != nil){
@@ -758,7 +810,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             
 
         }
-            }
+    }
     
     func doSubbed(){
         let sub = UIButton.init(type: .custom)
@@ -867,11 +919,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         showSearchBar()
         }
     }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-    }
-    
+
     public func extendKeepMore(in comment: Thing, current depth: Int) -> ([(Thing, Int)]) {
         var buf: [(Thing, Int)] = []
         

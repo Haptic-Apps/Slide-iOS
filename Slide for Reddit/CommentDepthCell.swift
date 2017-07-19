@@ -76,8 +76,7 @@ class CommentMenuCell: UITableViewCell {
     var sideConstraint: [NSLayoutConstraint] = []
     override func updateConstraints() {
         super.updateConstraints()
-        var width = self.contentView.frame.size.width
-        width += 40
+        var width = 375
         width = width/(archived ? 1 : (editShown ? 6 : 4))
         
         
@@ -100,10 +99,9 @@ class CommentMenuCell: UITableViewCell {
         let metrics:[String:Int]=["width":Int(width), "full": Int(self.contentView.frame.size.width)]
         let views=["upvote": upvote, "downvote":downvote, "edit":edit, "delete":delete, "view":contentView, "more":more, "reply":reply] as [String : Any]
         
-        let replyStuff = !archived ? "[reply(width)]-0-[downvote(width)]-0-[upvote(width)]-0-" : ""
+        let replyStuff = !archived && AccountController.isLoggedIn ? "[reply(width)]-0-[downvote(width)]-0-[upvote(width)]-0-" : ""
         let editStuff = (!archived && editShown) ? "[edit(width)]-0-[delete(width)]-0-" : ""
         self.contentView.removeConstraints(sideConstraint)
-        print("Did H:[more(width)]-0-\(editStuff)\(replyStuff)|")
         sideConstraint = NSLayoutConstraint.constraints(withVisualFormat: "H:[more(width)]-0-\(editStuff)\(replyStuff)|",
                                                         options: NSLayoutFormatOptions(rawValue: 0),
                                                         metrics: metrics,
@@ -213,6 +211,12 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
                     sheet.dismiss(animated: true, completion: nil)
                 }
             )
+            sheet.modalPresentationStyle = .popover
+            if let presenter = sheet.popoverPresentationController {
+                presenter.sourceView = label
+                presenter.sourceRect = label.bounds
+            }
+
             parent?.present(sheet, animated: true, completion: nil)
         }
     }
@@ -418,7 +422,12 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         
         alertController.addAction(report)
         
-        
+        alertController.modalPresentationStyle = .popover
+        if let presenter = alertController.popoverPresentationController {
+            presenter.sourceView = moreButton
+            presenter.sourceRect = moreButton.bounds
+        }
+
         par.parent?.present(alertController, animated: true, completion: nil)
     }
     
@@ -475,7 +484,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         oldDepth = depth
         depth = 1
         updateDepthConstraints()
-        self.contentView.backgroundColor = ColorUtil.getColorForSub(sub: ((content as! RComment).subreddit)).withAlphaComponent(0.5)
+        self.contentView.backgroundColor = ColorUtil.getColorForSub(sub: ((comment as! RComment).subreddit)).withAlphaComponent(0.5)
     }
     
     func doUnHighlight(){

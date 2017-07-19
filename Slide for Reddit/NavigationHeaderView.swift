@@ -219,6 +219,13 @@ class NavigationHeaderView: UIView {
         })
         optionMenu.addAction(cancelAction)
         
+        optionMenu.modalPresentationStyle = .overFullScreen
+        if let presenter = optionMenu.popoverPresentationController {
+            presenter.sourceView = self
+            presenter.sourceRect = self.bounds
+        }
+        
+
         parentController?.present(optionMenu, animated: true, completion: nil)
     }
     
