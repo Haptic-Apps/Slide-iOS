@@ -129,7 +129,7 @@ class SettingValues{
         let settings = UserDefaults.standard
         SettingValues.bigPicCropped = settings.bool(forKey: SettingValues.pref_cropBigPic)
         SettingValues.saveNSFWHistory = settings.bool(forKey: SettingValues.pref_saveNSFWHistory)
-        SettingValues.saveHistory = settings.bool(forKey: SettingValues.pref_saveHistory)
+        SettingValues.saveHistory = settings.object(forKey: SettingValues.pref_saveHistory) == nil ? true : settings.bool(forKey: SettingValues.pref_saveHistory)
         SettingValues.markReadOnScroll = settings.bool(forKey: SettingValues.pref_markReadOnScroll)
         SettingValues.nsfwEnabled = settings.bool(forKey: SettingValues.pref_nsfwEnabled)
         SettingValues.nsfwPreviews = settings.bool(forKey: SettingValues.pref_nsfwPreviews)

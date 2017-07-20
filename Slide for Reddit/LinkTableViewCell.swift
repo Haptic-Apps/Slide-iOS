@@ -1475,7 +1475,11 @@ class LinkTableViewCell: UITableViewCell, UIViewControllerPreviewingDelegate, TT
             self.deleteSelf()
         }
         actionSheetController.addAction(cancelActionButton)
-        print("PResenting")
+        actionSheetController.modalPresentationStyle = .popover
+        if let presenter = actionSheetController.popoverPresentationController {
+            presenter.sourceView = edit
+            presenter.sourceRect = edit.bounds
+        }
         parentViewController?.present(actionSheetController, animated: true, completion: nil)
     }
     
@@ -1504,7 +1508,12 @@ class LinkTableViewCell: UITableViewCell, UIViewControllerPreviewingDelegate, TT
                 //todo delete
             }
         )
-        
+        alert.modalPresentationStyle = .fullScreen
+        if let presenter = alert.popoverPresentationController {
+            presenter.sourceView = edit
+            presenter.sourceRect = edit.bounds
+        }
+
         parentViewController?.present(alert, animated: true, completion: nil)
         
     }
@@ -1664,7 +1673,13 @@ class LinkTableViewCell: UITableViewCell, UIViewControllerPreviewingDelegate, TT
                 navigationController.modalTransitionStyle = .crossDissolve
                 self.parentViewController?.present(navigationController, animated: true, completion: nil)
             } else {
-                (self.navViewController as? UINavigationController)?.pushViewController(comment, animated: true)
+                if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad){
+                    let nav = UINavigationController(rootViewController:comment)
+                    (self.navViewController as? UINavigationController)?.splitViewController?.showDetailViewController(nav, sender: nil)
+                } else {
+                    (self.navViewController as? UINavigationController)?.pushViewController(comment, animated: true)
+                }
+
             }
         }
     }

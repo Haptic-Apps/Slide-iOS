@@ -461,7 +461,12 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
                     navigationController.modalTransitionStyle = .crossDissolve
                     parentViewController?.present(navigationController, animated: true, completion: nil)
                 } else {
-                    (self.navViewController as? UINavigationController)?.show(vc, sender: self)
+                    if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad){
+                    var nav = UINavigationController(rootViewController:vc)
+                    self.parentViewController?.splitViewController?.showDetailViewController(nav, sender: nil)
+                    } else {
+                        self.parentViewController?.splitViewController?.showDetailViewController(vc, sender: nil)
+                    }
                 }
 
             } else {

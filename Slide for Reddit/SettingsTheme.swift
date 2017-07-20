@@ -52,6 +52,12 @@ class SettingsTheme: UITableViewController, ColorPickerDelegate {
         alertController.addAction(somethingAction)
         alertController.addAction(cancelAction)
         
+        alertController.modalPresentationStyle = .popover
+        if let presenter = alertController.popoverPresentationController {
+            presenter.sourceView = selectedTableView
+            presenter.sourceRect = selectedTableView.bounds
+        }
+
         present(alertController, animated: true, completion: nil)
     }
     
@@ -81,7 +87,12 @@ class SettingsTheme: UITableViewController, ColorPickerDelegate {
         
         alertController.addAction(somethingAction)
         alertController.addAction(cancelAction)
-        
+        alertController.modalPresentationStyle = .popover
+        if let presenter = alertController.popoverPresentationController {
+            presenter.sourceView = selectedTableView
+            presenter.sourceRect = selectedTableView.bounds
+        }
+
         present(alertController, animated: true, completion: nil)
     }
 
@@ -202,7 +213,10 @@ class SettingsTheme: UITableViewController, ColorPickerDelegate {
         }
         
     }
+    
+    var selectedTableView = UIView()
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        selectedTableView = tableView.cellForRow(at: indexPath)!.contentView
         tableView.deselectRow(at: indexPath, animated: true)
     if(indexPath.section == 0 && indexPath.row == 0){
             pickTheme()
@@ -235,7 +249,12 @@ class SettingsTheme: UITableViewController, ColorPickerDelegate {
             }
             actionSheetController.addAction(saveActionButton)
         }
-        
+        actionSheetController.modalPresentationStyle = .popover
+        if let presenter = actionSheetController.popoverPresentationController {
+            presenter.sourceView = selectedTableView
+            presenter.sourceRect = selectedTableView.bounds
+        }
+
         self.present(actionSheetController, animated: true, completion: nil)
     }
     

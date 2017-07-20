@@ -1370,6 +1370,10 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         }
         
         (cell)!.setLink(submission: submission, parent: self, nav: self.navigationController, baseSub: sub)
+        
+        cell?.layer.shouldRasterize = true
+        cell?.layer.rasterizationScale = UIScreen.main.scale
+
         return cell!
 
     }
@@ -1564,7 +1568,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
                                 }
                                 
                                 //todo if(reset){
-                                DispatchQueue.main.async(execute: self.tableView.reloadData)
+                                self.tableView.reloadData()
                                 //} else {
                                 //    var paths : [IndexPath] = []
                                 //    self.tableView.performBatchUpdates({

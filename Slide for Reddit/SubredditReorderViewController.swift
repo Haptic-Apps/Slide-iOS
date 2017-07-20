@@ -33,16 +33,19 @@ class SubredditReorderViewController: UITableViewController {
         top.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let topB = UIBarButtonItem.init(customView: top)
         
-        let delete = UIButton.init(type: .custom)
+        delete = UIButton.init(type: .custom)
         delete.setImage(UIImage.init(named: "delete"), for: UIControlState.normal)
         delete.addTarget(self, action: #selector(self.remove(_:)), for: UIControlEvents.touchUpInside)
         delete.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
-        let deleteB = UIBarButtonItem.init(customView: delete)
+        var deleteB = UIBarButtonItem.init(customView: delete)
         
         let save = UIBarButtonItem.init(title: "Save", style: .done, target: self, action: #selector(self.save(_:)))
         
         self.navigationItem.rightBarButtonItems = [save, syncB, deleteB, topB]
     }
+    
+    var delete = UIButton()
+
     public static var changed = false
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -189,7 +192,12 @@ class SubredditReorderViewController: UITableViewController {
             
         }
         actionSheetController.addAction(cancelActionButton)
-        
+            actionSheetController.modalPresentationStyle = .popover
+            if let presenter = actionSheetController.popoverPresentationController {
+                presenter.sourceView = delete
+                presenter.sourceRect = delete.bounds
+            }
+
         self.present(actionSheetController, animated: true, completion: nil)
         }
 

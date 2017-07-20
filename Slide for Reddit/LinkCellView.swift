@@ -217,7 +217,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if(estimatedHeight == 0){
             let he = (title.attributedText).boundingRect(with: CGSize.init(width: aspectWidth - 24 - (thumb ? (SettingValues.largerThumbnail ? 75 : 50) + 28 : 0), height:10000), options: [.usesLineFragmentOrigin , .usesFontLeading], context: nil).height
             let thumbheight = CGFloat(SettingValues.largerThumbnail ? 75 : 50)
-            estimatedHeight = CGFloat((he < thumbheight && thumb || he < thumbheight && !big) ? thumbheight : he) + CGFloat(54) +  CGFloat(big && !thumb ? (submissionHeight + 20) : 0)
+            estimatedHeight = CGFloat((he < thumbheight && thumb || he < thumbheight && !big) ? thumbheight : he) + CGFloat(54) + CGFloat(!hasText || !full ? 0 : (content?.textHeight)!) +  CGFloat(big && !thumb ? (submissionHeight + 20) : 0)
         }
         return estimatedHeight
     }
@@ -238,7 +238,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         bannerImage.backgroundColor = UIColor.white
         
         bannerImage.elevate(elevation: 2.0)
-        
         
         self.title = TTTAttributedLabel(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude));
         title.numberOfLines = 0
@@ -341,7 +340,15 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         self.contentView.addSubview(buttons)
         
         buttons.isUserInteractionEnabled = true
-        
+        bannerImage.contentMode = UIViewContentMode.scaleAspectFill
+        bannerImage.layer.cornerRadius = 5;
+        bannerImage.clipsToBounds = true
+        bannerImage.backgroundColor = UIColor.white
+        thumbImage.layer.cornerRadius = 5;
+        thumbImage.backgroundColor = UIColor.white
+        thumbImage.clipsToBounds = true;
+        thumbImage.contentMode = .scaleAspectFill
+
     }
     
     func addTouch(view: UIView, action: Selector){
@@ -893,14 +900,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if(full){
             self.setNeedsLayout()
         }
-        bannerImage.contentMode = UIViewContentMode.scaleAspectFill
-        bannerImage.layer.cornerRadius = 5;
-        bannerImage.clipsToBounds = true
-        bannerImage.backgroundColor = UIColor.white
-        thumbImage.layer.cornerRadius = 5;
-        thumbImage.backgroundColor = UIColor.white
-        thumbImage.clipsToBounds = true;
-        thumbImage.contentMode = .scaleAspectFill
         
         if(type != .IMAGE && type != .SELF && !thumb){
             b.isHidden = false

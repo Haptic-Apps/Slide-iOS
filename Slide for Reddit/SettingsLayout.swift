@@ -47,7 +47,7 @@ class SettingsLayout: UITableViewController {
     var saveCell: UITableViewCell = UITableViewCell()
     var save = UISwitch()
 
-    var link = LinkCellView()
+    var link = LinkTableViewCell()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -115,7 +115,7 @@ class SettingsLayout: UITableViewController {
     }
     
     func doLink(){
-        link = LinkCellView()
+        link = LinkTableViewCell()
         let fakesub = RSubmission.init()
         let calendar: NSCalendar! = NSCalendar(calendarIdentifier: NSCalendar.Identifier.gregorian)
         let now: NSDate! = NSDate()
@@ -345,8 +345,8 @@ class SettingsLayout: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch(indexPath.section) {
-      //  case 0:
-          //todo  return link
+        case 0:
+          return link
         case 1:
             switch(indexPath.row) {
             case 0: return self.cardModeCell
@@ -373,38 +373,6 @@ class SettingsLayout: UITableViewController {
         }
         
     }
-    
-    func showTimeMenu(s: LinkSortType){
-        if(s == .hot || s == .new){
-            SettingValues.defaultSorting = s
-            UserDefaults.standard.set(s.path, forKey: SettingValues.pref_defaultSorting)
-            UserDefaults.standard.synchronize()
-            return
-        } else {
-            let actionSheetController: UIAlertController = UIAlertController(title: "Time Period", message: "", preferredStyle: .actionSheet)
-            
-            let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
-                print("Cancel")
-            }
-            actionSheetController.addAction(cancelActionButton)
-            
-            for t in TimeFilterWithin.cases {
-                let saveActionButton: UIAlertAction = UIAlertAction(title: t.param, style: .default)
-                { action -> Void in
-                    SettingValues.defaultSorting = s
-                    UserDefaults.standard.set(s.path, forKey: SettingValues.pref_defaultSorting)
-                    SettingValues.defaultTimePeriod = t
-                    UserDefaults.standard.set(t.param, forKey: SettingValues.pref_defaultTimePeriod)
-                    UserDefaults.standard.synchronize()
-                }
-                actionSheetController.addAction(saveActionButton)
-            }
-            self.present(actionSheetController, animated: true, completion: nil)
-        }
-    }
-    
-    
-    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch(section) {
         case 0: return 1    // section 0 has 2 rows

@@ -93,6 +93,7 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
     }
     
     var image: UIImage?
+    var menuB : UIBarButtonItem?
 
     func getControllerForUrl(baseUrl: URL) -> UIViewController? {
         images = []
@@ -190,7 +191,8 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
             
                 items.append(space)
                 items.append(UIBarButtonItem(image: UIImage(named: "download")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(MediaViewController.download(_:))))
-                items.append(UIBarButtonItem(image: UIImage(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(MediaViewController.showImageMenu(_:))))
+            menuB = UIBarButtonItem(image: UIImage(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(MediaViewController.showImageMenu(_:)))
+                items.append(menuB!)
                         toolbar.items = items
             toolbar.setBackgroundImage(UIImage(),
                                             forToolbarPosition: .any,
@@ -281,6 +283,14 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
             }
         )
         let window = UIApplication.shared.keyWindow!
+        alert.modalPresentationStyle = .popover
+        
+        if let presenter = alert.popoverPresentationController {
+            presenter.sourceView = menuB!.value(forKey: "view") as! UIView
+            presenter.sourceRect = (menuB!.value(forKey: "view") as! UIView).bounds
+        }
+        
+
         if let modalVC = window.rootViewController?.presentedViewController {
             modalVC.present(alert, animated: true, completion: nil)
         } else {

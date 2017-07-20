@@ -79,6 +79,8 @@ class GifMWPhotoBrowser: NSObject, GalleryItemsDataSource {
     
     var browser: GalleryViewController?
     var url: String = ""
+    var more : UIBarButtonItem?
+    
     func create(url: String) -> GalleryViewController {
         photos = []
         self.url = url
@@ -90,7 +92,8 @@ class GifMWPhotoBrowser: NSObject, GalleryItemsDataSource {
         
         items.append(space)
         items.append(UIBarButtonItem(image: UIImage(named: "download")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(GifMWPhotoBrowser.download(_:))))
-        items.append(UIBarButtonItem(image: UIImage(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(GifMWPhotoBrowser.showImageMenu(_:))))
+        more = UIBarButtonItem(image: UIImage(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(GifMWPhotoBrowser.showImageMenu(_:)))
+        items.append(more!)
         toolbar.items = items
         toolbar.setBackgroundImage(UIImage(),
                                    forToolbarPosition: .any,
@@ -430,6 +433,13 @@ class GifMWPhotoBrowser: NSObject, GalleryItemsDataSource {
             UIAlertAction(title: "Cancel", style: .cancel) { (action) in
             }
         )
+        
+        alert.modalPresentationStyle = .popover
+        if let presenter = alert.popoverPresentationController {
+            presenter.sourceView = more!.value(forKey: "view") as! UIView
+            presenter.sourceRect = (more!.value(forKey: "view") as! UIView).bounds
+        }
+
         let window = UIApplication.shared.keyWindow!
         if let modalVC = window.rootViewController?.presentedViewController {
             modalVC.present(alert, animated: true, completion: nil)

@@ -34,6 +34,12 @@ class SettingsViewController: UITableViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.splitViewController?.maximumPrimaryColumnWidth = 375
+        self.splitViewController?.preferredPrimaryColumnWidthFraction = 0.5
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: "")
@@ -186,30 +192,39 @@ class SettingsViewController: UITableViewController {
     }
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        var ch : UIViewController?
         if(indexPath.section == 0 && indexPath.row == 1){
-            show(SubredditReorderViewController(), sender: self)
+ch = SubredditReorderViewController()
         } else  if(indexPath.section == 0 && indexPath.row == 0){
-            show(SettingsGeneral(), sender: self)
+ch = SettingsGeneral()
         } else if(indexPath.section == 2 && indexPath.row == 4){
-            show(FiltersViewController(), sender: self)
+ch = FiltersViewController()
         } else if(indexPath.section == 1 && indexPath.row == 2){
-            show(SubredditThemeViewController(), sender: self)
+ch = SubredditThemeViewController()
         }  else if(indexPath.section == 1 && indexPath.row == 0){
-            show(SettingsTheme(), sender: self)
+ch = SettingsTheme()
         }  else if(indexPath.section == 1 && indexPath.row == 3){
-            show(SettingsFont(), sender: self)
+ch = SettingsFont()
         }  else if(indexPath.section == 1 && indexPath.row == 1){
-            show(SettingsLayout(), sender: self)
+ch = SettingsLayout()
         }  else if(indexPath.section == 2 && indexPath.row == 2){
-            show(SettingsData(), sender: self)
+ch = SettingsData()
         }  else if(indexPath.section == 2 && indexPath.row == 3){
-            show(SettingsContent(), sender: self)
+ch = SettingsContent()
         }  else if(indexPath.section == 1 && indexPath.row == 4){
-            show(SettingsComments(), sender: self)
+            ch = SettingsComments()
         }  else if(indexPath.section == 2 && indexPath.row == 0){
-            show(SettingsLinkHandling(), sender: self)
+            ch = SettingsLinkHandling()
         }  else if(indexPath.section == 2 && indexPath.row == 1){
-            show(SettingsHistory(), sender: self)
+            ch = SettingsHistory()
+        }
+        if let n = ch {
+            if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad ){
+            let nav = UINavigationController(rootViewController:n)
+            splitViewController?.showDetailViewController(nav, sender: self)
+            } else {
+                splitViewController?.showDetailViewController(n, sender: self)
+            }
         }
     }
     /* maybe future

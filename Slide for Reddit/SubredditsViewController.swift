@@ -14,7 +14,7 @@ import MaterialComponents.MaterialSnackbar
 import SAHistoryNavigationViewController
 import SideMenu
 
-class SubredditsViewController:  PagingMenuController {
+class SubredditsViewController:  PagingMenuController , UISplitViewControllerDelegate {
     var isReload = false
     public static var viewControllers : [UIViewController] = [UIViewController()]
     public static var current: String = ""
@@ -164,6 +164,9 @@ class SubredditsViewController:  PagingMenuController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        self.splitViewController?.delegate = self
+        self.splitViewController?.maximumPrimaryColumnWidth = 10000
+        self.splitViewController?.preferredPrimaryColumnWidthFraction = 1
 
         if(SubredditReorderViewController.changed){
             SubredditReorderViewController.changed = false
@@ -369,7 +372,8 @@ class SubredditsViewController:  PagingMenuController {
         menuNav?.setViewController(controller: self)
         self.menuNav?.setSubreddit(subreddit: SubredditsViewController.current)
 
-        menuLeftNavigationController = UISideMenuNavigationController(rootViewController: menuNav!)
+        menuLeftNavigationController = UISideMenuNavigationController.init(rootViewController: menuNav!)
+
         menuLeftNavigationController?.leftSide = true
         // UISideMenuNavigationController is a subclass of UINavigationController, so do any additional configuration
         // of it here like setting its viewControllers. If you're using storyboards, you'll want to do something like:
@@ -448,5 +452,19 @@ class SubredditsViewController:  PagingMenuController {
         }
         
         self.present(actionSheetController, animated: true, completion: nil)
+    }
+}
+extension UISplitViewController {
+    func toggleMasterView() {
+        var nextDisplayMode: UISplitViewControllerDisplayMode
+        switch(self.preferredDisplayMode){
+        case .primaryHidden:
+            nextDisplayMode = .allVisible
+        default:
+            nextDisplayMode = .primaryHidden
+        }
+        UIView.animate(withDuration: 0.5) { () -> Void in
+            self.preferredDisplayMode = nextDisplayMode
+        }
     }
 }

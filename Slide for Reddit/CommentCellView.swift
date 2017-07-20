@@ -354,7 +354,12 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
             navigationController.modalTransitionStyle = .crossDissolve
             parentViewController?.present(navigationController, animated: true, completion: nil)
         } else {
-            (self.navViewController as? UINavigationController)?.pushViewController(comment, animated: true)
+            if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad){
+                let nav = UINavigationController(rootViewController:comment)
+                (self.navViewController as? UINavigationController)?.splitViewController?.showDetailViewController(nav, sender: nil)
+            } else {
+                (self.navViewController as? UINavigationController)?.pushViewController(comment, animated: true)
+            }
         }
 
         }

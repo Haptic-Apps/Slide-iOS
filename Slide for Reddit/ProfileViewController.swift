@@ -114,6 +114,12 @@ class ProfileViewController:  PagingMenuController, ColorPickerDelegate {
         alertController.addAction(somethingAction)
         alertController.addAction(cancelAction)
         
+        alertController.modalPresentationStyle = .popover
+        if let presenter = alertController.popoverPresentationController {
+            presenter.sourceView = moreB!.value(forKey: "view") as! UIView
+            presenter.sourceRect = (moreB!.value(forKey: "view") as! UIView).bounds
+        }
+
         present(alertController, animated: true, completion: nil)
     }
     
@@ -145,6 +151,12 @@ class ProfileViewController:  PagingMenuController, ColorPickerDelegate {
         alertController.addAction(confirmAction)
         alertController.addAction(cancelAction)
         
+        alertController.modalPresentationStyle = .popover
+        if let presenter = alertController.popoverPresentationController {
+            presenter.sourceView = moreB!.value(forKey: "view") as! UIView
+            presenter.sourceRect = (moreB!.value(forKey: "view") as! UIView).bounds
+        }
+
         self.present(alertController, animated: true, completion: nil)
 
     }
@@ -186,6 +198,9 @@ class ProfileViewController:  PagingMenuController, ColorPickerDelegate {
         super.viewWillDisappear(animated)
     }
     
+    var moreB: UIBarButtonItem?
+    var sortB: UIBarButtonItem?
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.title = ProfileViewController.name
@@ -195,20 +210,20 @@ class ProfileViewController:  PagingMenuController, ColorPickerDelegate {
         if(navigationController != nil){
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForUser(name: ProfileViewController.name)
         }
-        let sort = UIButton.init(type: .custom)
+        var sort = UIButton.init(type: .custom)
         sort.setImage(UIImage.init(named: "ic_sort_white"), for: UIControlState.normal)
         sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControlEvents.touchUpInside)
         sort.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
-        let sortB = UIBarButtonItem.init(customView: sort)
+         sortB = UIBarButtonItem.init(customView: sort)
         
-        let more = UIButton.init(type: .custom)
+        var more = UIButton.init(type: .custom)
         more.setImage(UIImage.init(named: "info"), for: UIControlState.normal)
         more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
         more.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
-        let moreB = UIBarButtonItem.init(customView: more)
+         moreB = UIBarButtonItem.init(customView: more)
         
         if(navigationController != nil){
-            navigationItem.rightBarButtonItems = [ moreB, sortB]
+            navigationItem.rightBarButtonItems = [ moreB!, sortB!]
         }
         
     }
@@ -295,11 +310,23 @@ class ProfileViewController:  PagingMenuController, ColorPickerDelegate {
         alrController.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: { (action) in
         }))
 
+        alrController.modalPresentationStyle = .popover
+        if let presenter = alrController.popoverPresentationController {
+            presenter.sourceView = moreB!.value(forKey: "view") as! UIView
+            presenter.sourceRect = (moreB!.value(forKey: "view") as! UIView).bounds
+        }
+
         
         self.present(alrController, animated: true, completion:{})
         
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.splitViewController?.maximumPrimaryColumnWidth = 375
+        self.splitViewController?.preferredPrimaryColumnWidthFraction = 0.5
+    }
+
     
     func generateButtons(trophy: Trophy) -> UIImageView {
         let more = UIImageView.init(frame: CGRect.init(x: 0, y: 0, width: 70, height: 70))
@@ -347,24 +374,4 @@ class ProfileViewController:  PagingMenuController, ColorPickerDelegate {
         }
     }
     
-    func showThemeMenu(){
-        let actionSheetController: UIAlertController = UIAlertController(title: "Select a base theme", message: "", preferredStyle: .actionSheet)
-        
-        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
-            print("Cancel")
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        for theme in ColorUtil.Theme.cases {
-            let saveActionButton: UIAlertAction = UIAlertAction(title: theme.rawValue , style: .default)
-            { action -> Void in
-                UserDefaults.standard.set(theme.rawValue, forKey: "theme")
-                UserDefaults.standard.synchronize()
-                ColorUtil.doInit()
-            }
-            actionSheetController.addAction(saveActionButton)
-        }
-        
-        self.present(actionSheetController, animated: true, completion: nil)
-    }
 }

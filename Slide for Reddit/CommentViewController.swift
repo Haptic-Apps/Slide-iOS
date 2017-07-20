@@ -300,7 +300,12 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         
         alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
         
-        
+        alert.modalPresentationStyle = .popover
+        if let presenter = alert.popoverPresentationController {
+            presenter.sourceView = self.headerCell!.contentView
+            presenter.sourceRect = self.headerCell!.contentView.bounds
+        }
+
         self.present(alert, animated: true, completion: nil)
     }
     
@@ -509,7 +514,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                     for comment in self.comments {
                                         if(comment is RComment && (comment as! RComment).getId().contains(self.context)){
                                             self.goToCell(i: index)
-                                            self.showCommentMenu(self.tableView.cellForRow(at: IndexPath.init(row: index, section: 0)) as! CommentDepthCell)
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                                                self.showCommentMenu(self.tableView.cellForRow(at: IndexPath.init(row: index, section: 0)) as! CommentDepthCell)
+                                            }
                                             break
                                         } else {
                                             index += 1
@@ -666,7 +673,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.view.bounds.width / CGFloat(320))) > 1){
+        if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.view.bounds.width / CGFloat(320))) > 1 && false){
             panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panGestureAction(_:)))
             self.navigationController!.view.addGestureRecognizer(panGestureRecognizer!)
             self.navigationController!.view.backgroundColor = .clear
@@ -746,6 +753,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     init(submission: String, comment: String, context: Int, subreddit: String){
         self.submission = RSubmission()
         self.submission!.name = submission
+        self.submission!.subreddit = subreddit
         hasSubmission = false
         self.context = comment
         self.contextNumber = context
@@ -781,7 +789,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         title = submission?.subreddit
         self.navigationItem.backBarButtonItem?.title = ""
 
-        if(hasSubmission && !comments.isEmpty){
+        if(submission != nil){
             self.setBarColors(color: ColorUtil.getColorForSub(sub: self.title!))
         }
         
