@@ -39,6 +39,7 @@ class WrappingFlowLayout: UICollectionViewLayout{
         cache = []
         prepare()
     }
+    
     override func prepare() {
         // 1
         if cache.isEmpty {

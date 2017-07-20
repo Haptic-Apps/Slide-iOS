@@ -1568,6 +1568,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
                                 }
                                 
                                 //todo if(reset){
+                                self.flowLayout.reset()
                                 self.tableView.reloadData()
                                 //} else {
                                 //    var paths : [IndexPath] = []

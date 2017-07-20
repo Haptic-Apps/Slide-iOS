@@ -756,6 +756,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         self.submission!.subreddit = subreddit
         hasSubmission = false
         self.context = comment
+        print("Context is \(context)")
         self.contextNumber = context
         super.init(nibName: nil, bundle: nil)
         setBarColors(color: ColorUtil.getColorForSub(sub: subreddit))

@@ -89,6 +89,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var reply = UIImageView()
     var downvote = UIImageView()
     var more = UIImageView()
+    var commenticon = UIImageView()
+    var submissionicon = UIImageView()
     var del: LinkCellViewDelegate? = nil
     
     var loadedImage: URL?
@@ -273,6 +275,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         more.image = UIImage.init(named: "ic_more_vert_white")?.withRenderingMode(.alwaysTemplate)
         more.tintColor = ColorUtil.fontColor
         
+        self.commenticon = UIImageView(frame: CGRect(x: 0, y:0, width: 12, height: 12))
+        commenticon.image = UIImage.init(named: "comments")?.withRenderingMode(.alwaysTemplate)
+        commenticon.tintColor = ColorUtil.fontColor
+
+        self.submissionicon = UIImageView(frame: CGRect(x: 0, y:0, width: 12, height: 12))
+        submissionicon.image = UIImage.init(named: "upvote")?.withRenderingMode(.alwaysTemplate)
+        submissionicon.tintColor = ColorUtil.fontColor
+
         self.textView = TTTAttributedLabel(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
         self.textView.delegate = self
         self.textView.numberOfLines = 0
@@ -314,6 +324,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         reply.translatesAutoresizingMaskIntoConstraints = false
         buttons.translatesAutoresizingMaskIntoConstraints = false
         b.translatesAutoresizingMaskIntoConstraints = false
+        
+        commenticon.translatesAutoresizingMaskIntoConstraints = false
+        submissionicon.translatesAutoresizingMaskIntoConstraints = false
+
+        if(!addTouch){
         addTouch(view: save, action: #selector(LinkCellView.save(sender:)))
         addTouch(view: upvote, action: #selector(LinkCellView.upvote(sender:)))
         addTouch(view: reply, action: #selector(LinkCellView.reply(sender:)))
@@ -321,6 +336,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         addTouch(view: more, action: #selector(LinkCellView.more(sender:)))
         addTouch(view: edit, action: #selector(LinkCellView.edit(sender:)))
         addTouch(view: hide, action: #selector(LinkCellView.hide(sender:)))
+            addTouch = true
+        }
         
         self.contentView.addSubview(bannerImage)
         self.contentView.addSubview(thumbImage)
@@ -329,6 +346,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         self.contentView.addSubview(b)
         box.addSubview(score)
         box.addSubview(comments)
+        box.addSubview(commenticon)
+        box.addSubview(submissionicon)
+
         buttons.addSubview(edit)
         buttons.addSubview(reply)
         buttons.addSubview(save)
@@ -360,6 +380,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     
     var thumb = true
     var submissionHeight:Int = 0
+    var addTouch = false
     
     override func updateConstraints() {
         super.updateConstraints()
@@ -380,11 +401,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             self.contentView.layoutMargins = UIEdgeInsets.init(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin))
         }
         
-        let metrics=["horizontalMargin":75,"top":topmargin,"bottom":bottommargin,"separationBetweenLabels":0,"labelMinHeight":75,  "bannerHeight": submissionHeight, "left":leftmargin, "padding" : innerpadding, "ishidden": !full && SettingValues.hideButtonActionbar ? 0 : 20] as [String: Int]
-        let views=["label":title, "body": textView, "image": thumbImage, "score": score, "comments": comments, "banner": bannerImage, "box": box] as [String : Any]
+        let metrics=["horizontalMargin":75,"top":topmargin,"bottom":bottommargin,"separationBetweenLabels":0,"labelMinHeight":75,  "bannerHeight": submissionHeight, "left":leftmargin, "padding" : innerpadding, "ishidden": !full && SettingValues.hideButtonActionbar ? 0 : 20, "ishiddeni": !full && SettingValues.hideButtonActionbar ? 0 : 12] as [String: Int]
+        let views=["label":title, "body": textView, "image": thumbImage, "score": score, "comments": comments, "banner": bannerImage, "scorei":submissionicon, "commenti":commenticon, "box": box] as [String : Any]
         let views2=["buttons":buttons, "upvote": upvote, "downvote": downvote, "hide": hide, "reply": reply,"edit":edit, "more": more, "save": save] as [String : Any]
         
-        box.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[score(>=20)]-8-[comments(>=20)]",
+        box.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[scorei(12)]-2-[score(>=20)]-8-[commenti(12)]-2-[comments(>=20)]",
                                                           options: NSLayoutFormatOptions(rawValue: 0),
                                                           metrics: metrics,
                                                           views: views))
@@ -393,7 +414,15 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                                                           options: NSLayoutFormatOptions(rawValue: 0),
                                                           metrics: metrics,
                                                           views: views))
-        
+        box.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:[scorei(ishiddeni)]-4-|",
+                                                          options: NSLayoutFormatOptions(rawValue: 0),
+                                                          metrics: metrics,
+                                                          views: views))
+        box.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:[commenti(ishiddeni)]-4-|",
+                                                          options: NSLayoutFormatOptions(rawValue: 0),
+                                                          metrics: metrics,
+                                                          views: views))
+
         self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[buttons(ishidden)]-12-|",
                                                                        options: NSLayoutFormatOptions(rawValue: 0),
                                                                        metrics: metrics,
@@ -406,7 +435,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         self.contentView.layer.cornerRadius = CGFloat(radius)
         self.contentView.layer.masksToBounds = true
-        self.backgroundColor = .clear
         
         if(full){
             buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:\(AccountController.isLoggedIn && AccountController.currentName == link?.author ? "[edit(20)]-8-" : "")[reply(20)]-8-[save(20)]-8-[upvote(20)]-8-[downvote(20)]-8-[more(20)]-0-|",
@@ -565,10 +593,15 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         let commentText = NSMutableAttributedString(string: " \(submission.commentCount)" + (more > 0 ? " (+\(more))" : ""), attributes: [NSFontAttributeName: comments.font, NSForegroundColorAttributeName: comments.textColor])
         
         comments.attributedText = commentText
+        if(!commentImage){
         comments.addImage(imageName: "comments", afterLabel: false)
+            commentImage = true
+        }
         
     }
     
+    var commentImage = true
+    var submissionImage = true
     
     
     var link: RSubmission?
@@ -887,7 +920,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         let mo = History.commentsSince(s: submission)
         let commentText = NSMutableAttributedString(string: " \(submission.commentCount)" + (mo > 0 ? "(+\(mo))" : ""), attributes: [NSFontAttributeName: comments.font, NSForegroundColorAttributeName: comments.textColor])
         comments.attributedText = commentText
+        if(!commentImage){
         comments.addImage(imageName: "comments", afterLabel: false)
+            commentImage = true
+        }
         
         if(!registered && !full){
             parent.registerForPreviewing(with: self, sourceView: self.contentView)
@@ -1580,15 +1616,18 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
         
         score.attributedText = subScore
+        if(!submissionImage){
         score.addImage(imageName: "upvote", afterLabel: false)
+            submissionImage = true
+        }
         
         if(ActionStates.isSaved(s: link)){
             save.tintColor = GMColor.yellow500Color()
         }
         if(History.getSeen(s: link) && !full){
-            self.contentView.alpha = 0.7
+         self.title.alpha = 0.7
         } else {
-            self.contentView.alpha = 1
+         self.title.alpha = 1
         }
     }
     
