@@ -832,13 +832,26 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         sub.addTarget(self, action: #selector(self.subscribeSingle(_:)), for: UIControlEvents.touchUpInside)
         sub.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let subB = UIBarButtonItem.init(customView: sub)
-        navigationItem.leftBarButtonItems = [subB]
+        
+        
+        let close = UIButton.init(type: .custom)
+        close.setImage(UIImage.init(named: "close")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
+        close.addTarget(self, action: #selector(self.close(_:)), for: UIControlEvents.touchUpInside)
+        close.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        let closeB = UIBarButtonItem.init(customView: close)
+        
+
+        
+        navigationItem.leftBarButtonItems = [closeB, subB]
         if(Subscriptions.isSubscriber(self.title!)){
             
         }
 
     }
     
+    func close(_ sender: AnyObject){
+        self.navigationController?.dismiss(animated: true, completion: nil)
+    }
     func showMenu(_ sender: AnyObject){
         let link = submission!
         let actionSheetController: UIAlertController = UIAlertController(title: link.title, message: "", preferredStyle: .actionSheet)

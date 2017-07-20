@@ -580,6 +580,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         infoString.append(NSAttributedString.init(string: "\n"))
         infoString.append(attributedTitle)
         
+        if(SettingValues.postViewMode == .CARD && !full){
+            infoString.append(NSAttributedString.init(string: "\n"))
+        }
+
         title.setText(infoString)
         
         let comment = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openComment(sender:)))
@@ -1240,7 +1244,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         
         if(SettingValues.postViewMode == .CARD && !full){
-            infoString.append(NSAttributedString.init(string: "\n"))
+            infoString.append(NSAttributedString.init(string: "\n\n"))
         }
         
         title.setText(infoString)
