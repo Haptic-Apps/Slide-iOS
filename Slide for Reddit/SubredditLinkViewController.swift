@@ -24,6 +24,97 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
     let margin: CGFloat = 10
     let cellsPerRow = 3
 
+    func collectionView(_ collectionView: UICollectionView, width: CGFloat, indexPath: IndexPath) -> CGSize {
+        
+        var itemWidth = width
+        if(SettingValues.postViewMode == .CARD ){
+            itemWidth -= 10
+        }
+        
+        let submission = links[indexPath.row]
+        
+        var thumb = submission.thumbnail
+        var big = submission.banner
+        var height = submission.height
+        
+        var type = ContentType.getContentType(baseUrl: submission.url!)
+        if(submission.isSelf){
+            type = .SELF
+        }
+        
+        if(SettingValues.bannerHidden){
+            big = false
+            thumb = true
+        }
+        
+        let fullImage = ContentType.fullImage(t: type)
+        var submissionHeight = submission.height
+
+        if(!fullImage && submissionHeight < 50){
+            big = false
+            thumb = true
+        } else if(big && (SettingValues.bigPicCropped )){
+            submissionHeight = 200
+        } else if(big){
+            let ratio = Double(submissionHeight)/Double(submission.width)
+            let width = Double(itemWidth);
+
+            let h = width*ratio
+            if(h == 0){
+                submissionHeight = 200
+            } else {
+                submissionHeight  = Int(h)
+            }
+        }
+        
+        
+        if(type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big){
+            big = false
+            thumb = false
+        }
+        
+        if(submissionHeight < 50){
+            thumb = true
+            big = false
+        }
+
+        
+        if(big || !submission.thumbnail){
+            thumb = false
+        }
+        
+        
+        if(!big && !thumb && submission.type != .SELF && submission.type != .NONE){ //If a submission has a link but no images, still show the web thumbnail
+            thumb = true
+        }
+        
+        if(submission.nsfw && !SettingValues.nsfwPreviews){
+            big = false
+            thumb = true
+        }
+        
+        if(submission.nsfw && SettingValues.hideNSFWCollection && (sub == "all" || sub == "frontpage" || sub == "popular")){
+            big = false
+            thumb = true
+        }
+        
+        
+        if(SettingValues.noImages){
+            big = false
+            thumb = false
+        }
+        if(thumb && type == .SELF){
+            thumb = false
+        }
+        
+        
+        let he = CachedTitle.getTitle(submission: submission, full: false, false).boundingRect(with: CGSize.init(width: itemWidth - 24 - (thumb ? (SettingValues.largerThumbnail ? 75 : 50) + 28 : 0), height:10000), options: [.usesLineFragmentOrigin , .usesFontLeading], context: nil).height
+        let thumbheight = CGFloat(SettingValues.largerThumbnail ? 83 : 58)
+        var estimatedHeight = CGFloat((he < thumbheight && thumb || he < thumbheight && !big) ? thumbheight : he) + CGFloat(54) +  CGFloat(big && !thumb ? (submissionHeight + 20) : 0)
+        return CGSize(width: itemWidth, height: estimatedHeight)
+    }
+
+    
     var parentController: SubredditsViewController?
     var accentChosen: UIColor?
     func valueChanged(_ value: CGFloat, accent: Bool) {
@@ -60,9 +151,9 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         }
     }
     
-    func collectionView(_ tableView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forRowAt indexPath: IndexPath) {
+    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         if(SettingValues.markReadOnScroll){
-        History.addSeen(s: links[indexPath.row])
+            History.addSeen(s: links[indexPath.row])
         }
     }
     
@@ -328,180 +419,6 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         
     }
     
-    func collectionView(_ collectionView: UICollectionView, itemWidth: CGFloat, indexPath: IndexPath) -> CGSize {
-        let submission = links[indexPath.row]
-        
-        var thumb = submission.thumbnail
-        var big = submission.banner
-        var height = submission.height
-        
-        var type = ContentType.getContentType(baseUrl: submission.url!)
-        if(submission.isSelf){
-            type = .SELF
-        }
-        
-        if(SettingValues.bannerHidden){
-            big = false
-            thumb = true
-        }
-        
-        let fullImage = ContentType.fullImage(t: type)
-        
-        if(!fullImage && height < 50){
-            big = false
-            thumb = true
-        }
-        
-        if(type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big){
-            big = false
-            thumb = false
-        }
-        
-        if(height < 50){
-            thumb = true
-            big = false
-        }
-        
-        if (type == ContentType.CType.SELF && SettingValues.hideImageSelftext
-            || SettingValues.noImages && submission.isSelf) {
-            big = false
-            thumb = false
-        }
-        
-        if(big || !submission.thumbnail){
-            thumb = false
-        }
-        
-        
-        if(!big && !thumb && submission.type != .SELF && submission.type != .NONE){ //If a submission has a link but no images, still show the web thumbnail
-            thumb = true
-        }
-        
-        if(submission.nsfw && !SettingValues.nsfwPreviews){
-            big = false
-            thumb = true
-        }
-        
-        if(submission.nsfw && SettingValues.hideNSFWCollection && (sub == "all" || sub == "frontpage" || sub == "popular")){
-            big = false
-            thumb = true
-        }
-        
-        
-        if(SettingValues.noImages){
-            big = false
-            thumb = false
-        }
-        if(thumb && type == .SELF){
-            thumb = false
-        }
-
-        let attributedTitle = NSMutableAttributedString(string: submission.title, attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size:18, submission:true), NSForegroundColorAttributeName: ColorUtil.fontColor])
-        let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(submission.flair)\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
-        let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
-        let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(submission.gilded) ", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor])
-        
-        let locked = NSMutableAttributedString.init(string: "\u{00A0}LOCKED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
-        
-        let archived = NSMutableAttributedString.init(string: "\u{00A0}ARCHIVED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
-        
-        let spacer = NSMutableAttributedString.init(string: "  ")
-        if(!submission.flair.isEmpty){
-            attributedTitle.append(spacer)
-            attributedTitle.append(flairTitle)
-        }
-        
-        if(submission.gilded > 0){
-            attributedTitle.append(spacer)
-            attributedTitle.append(spacer)
-            let gild = NSMutableAttributedString.init(string: "G", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.amber500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
-            attributedTitle.append(gild)
-            if(submission.gilded > 1){
-                attributedTitle.append(gilded)
-            }
-        }
-        
-        if(submission.stickied){
-            attributedTitle.append(spacer)
-            attributedTitle.append(pinned)
-        }
-        
-        if(submission.locked){
-            attributedTitle.append(spacer)
-            attributedTitle.append(locked)
-        }
-        if(submission.archived){
-            attributedTitle.append(archived)
-        }
-        
-        let attrs = [NSFontAttributeName : FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor] as [String: Any]
-        
-        let endString = NSMutableAttributedString(string:"  •  \(DateFormatter().timeSince(from: submission.created, numericDates: true))\((submission.isEdited ? ("(edit \(DateFormatter().timeSince(from: submission.edited, numericDates: true)))") : ""))  •  ", attributes: [NSFontAttributeName : FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor])
-        
-        let authorString = NSMutableAttributedString(string: "\u{00A0}\(submission.author)\u{00A0}", attributes: [NSFontAttributeName : FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor])
-        
-        
-        let userColor = ColorUtil.getColorForUser(name: submission.author)
-        if (submission.distinguished == "admin") {
-            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#E57373"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-        } else if (submission.distinguished == "special") {
-            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#F44336"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-        } else if (submission.distinguished == "moderator") {
-            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#81C784"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-        } else if (AccountController.currentName == submission.author) {
-            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#FFB74D"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-        } else if (userColor != ColorUtil.baseColor) {
-            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: userColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-        }
-        
-        endString.append(authorString)
-        if(SettingValues.domainInInfo){
-            endString.append(NSAttributedString.init(string: "  •  \(submission.domain)"))
-        }
-        
-        let tag = ColorUtil.getTagForUser(name: submission.author)
-        if(!tag.isEmpty){
-            let tagString = NSMutableAttributedString(string: "\u{00A0}\(tag)\u{00A0}", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
-            tagString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor(rgb: 0x2196f3), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-            endString.append(spacer)
-            endString.append(tagString)
-        }
-        
-        let boldString = NSMutableAttributedString(string:"/r/\(submission.subreddit)", attributes:attrs)
-        
-        let color = ColorUtil.getColorForSub(sub: submission.subreddit)
-        if(color != ColorUtil.baseColor){
-            boldString.addAttribute(NSForegroundColorAttributeName, value: color, range: NSRange.init(location: 0, length: boldString.length))
-        }
-        
-        let infoString = NSMutableAttributedString()
-        infoString.append(boldString)
-        infoString.append(endString)
-        infoString.append(attributedTitle)
-        var submissionHeight = submission.height
-        
-        if(!fullImage && submissionHeight < 50){
-        } else if(big && (SettingValues.bigPicCropped)){
-            submissionHeight = 200
-        } else if(big){
-            
-            let ratio = Double(submissionHeight)/Double(submission.width)
-            let width = Double(itemWidth);
-            let h = Int(width * ratio)
-
-            if(h == 0){
-                submissionHeight = 200
-            } else {
-                submissionHeight  = h
-            }
-        }
-
-
-        let he = infoString.boundingRect(with: CGSize.init(width: itemWidth - 24 - (thumb ? (SettingValues.largerThumbnail ? 75 : 50) + 28 : 0), height:10000), options: [.usesLineFragmentOrigin , .usesFontLeading], context: nil).height
-                let thumbheight = CGFloat(SettingValues.largerThumbnail ? 75 : 50)
-                var estimatedHeight = CGFloat((he < thumbheight && thumb || he < thumbheight && !big) ? thumbheight : he) + CGFloat(54) +  CGFloat(big && !thumb ? (submissionHeight + 20) : 0)
-        return CGSize(width: itemWidth, height: estimatedHeight)
-    }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         tableView.collectionViewLayout.invalidateLayout()
@@ -1546,12 +1463,15 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
                             let links = listing.children.flatMap({$0 as? Link})
                             var converted : [RSubmission] = []
                             for link in links {
-                                converted.append(RealmDataWrapper.linkToRSubmission(submission: link))
+                                let newRS = RealmDataWrapper.linkToRSubmission(submission: link)
+                                converted.append(newRS)
+                                CachedTitle.addTitle(s: newRS)
                             }
                             let values = PostFilter.filter(converted, previous: self.links)
                             self.links += values
                             self.paginator = listing.paginator
                             self.nomore = !listing.paginator.hasMore() || values.isEmpty
+                            
                             DispatchQueue.main.async{
                                 do {
                                     let realm = try! Realm()

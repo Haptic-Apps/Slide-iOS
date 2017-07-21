@@ -1736,7 +1736,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                         t = highlight(t)
                     }
                     cell.setComment(comment: thing as! RComment, depth: cDepth[(thing as! RComment).getId()] as! Int, parent: self, hiddenCount: count, date: lastSeen, author: submission?.author, text: t)
-                    if((thing as! RComment).getId() == menuId){
+                    if((thing as! RComment).getId() == menuId && menuShown){
                         cell.doHighlight()
                     }
                 } else {

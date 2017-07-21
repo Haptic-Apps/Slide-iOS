@@ -9,7 +9,7 @@
 import Foundation
 
 protocol WrappingFlowLayoutDelegate {
-    func collectionView(_ collectionView: UICollectionView, itemWidth: CGFloat, indexPath: IndexPath) -> CGSize
+    func collectionView(_ collectionView: UICollectionView, width: CGFloat, indexPath: IndexPath) -> CGSize
 }
 
 class WrappingFlowLayout: UICollectionViewLayout{
@@ -59,7 +59,7 @@ class WrappingFlowLayout: UICollectionViewLayout{
                 
                 // 4
                 let width = columnWidth - (cellPadding * 2)
-                let height1 = delegate.collectionView(collectionView!, itemWidth: width,
+                let height1 = delegate.collectionView(collectionView!, width: width,
                                                           indexPath:indexPath).height
                 let height = cellPadding +  height1 + cellPadding
                 let frame = CGRect(x: xOffset[column], y: yOffset[column], width: columnWidth, height: height)

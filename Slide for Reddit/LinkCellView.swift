@@ -247,41 +247,29 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         title.font = FontGenerator.fontOfSize(size: 18, submission: true)
         
         self.upvote = UIImageView(frame: CGRect(x: 0, y:0, width: 20, height: 20))
-        upvote.image = UIImage.init(named: "upvote")?.withRenderingMode(.alwaysTemplate)
-        upvote.tintColor = ColorUtil.fontColor
         
         self.hide = UIImageView(frame: CGRect(x: 0, y:0, width: 20, height: 20))
-        hide.image = UIImage.init(named: "hide")?.withRenderingMode(.alwaysTemplate)
-        hide.tintColor = ColorUtil.fontColor
+        hide.image = UIImage.init(named: "hide")?.withColor(tintColor: ColorUtil.fontColor)
         
         
         self.reply = UIImageView(frame: CGRect(x: 0, y:0, width: 20, height: 20))
-        reply.image = UIImage.init(named: "reply")?.withRenderingMode(.alwaysTemplate)
-        reply.tintColor = ColorUtil.fontColor
+        reply.image = UIImage.init(named: "reply")?.withColor(tintColor: ColorUtil.fontColor)
         
         self.edit = UIImageView(frame: CGRect(x: 0, y:0, width: 20, height: 20))
-        edit.image = UIImage.init(named: "edit")?.withRenderingMode(.alwaysTemplate)
-        edit.tintColor = ColorUtil.fontColor
+        edit.image = UIImage.init(named: "edit")?.withColor(tintColor: ColorUtil.fontColor)
         
         self.save = UIImageView(frame: CGRect(x: 0, y:0, width: 20, height: 20))
-        save.image = UIImage.init(named: "save")?.withRenderingMode(.alwaysTemplate)
-        save.tintColor = ColorUtil.fontColor
         
         self.downvote = UIImageView(frame: CGRect(x: 0, y:0, width: 20, height: 20))
-        downvote.image = UIImage.init(named: "downvote")?.withRenderingMode(.alwaysTemplate)
-        downvote.tintColor = ColorUtil.fontColor
         
         self.more = UIImageView(frame: CGRect(x: 0, y:0, width: 20, height: 20))
-        more.image = UIImage.init(named: "ic_more_vert_white")?.withRenderingMode(.alwaysTemplate)
-        more.tintColor = ColorUtil.fontColor
+        more.image = UIImage.init(named: "ic_more_vert_white")?.withColor(tintColor: ColorUtil.fontColor)
         
         self.commenticon = UIImageView(frame: CGRect(x: 0, y:0, width: 12, height: 12))
-        commenticon.image = UIImage.init(named: "comments")?.withRenderingMode(.alwaysTemplate)
-        commenticon.tintColor = ColorUtil.fontColor
+        commenticon.image = UIImage.init(named: "comments")?.withColor(tintColor: ColorUtil.fontColor)
 
         self.submissionicon = UIImageView(frame: CGRect(x: 0, y:0, width: 12, height: 12))
-        submissionicon.image = UIImage.init(named: "upvote")?.withRenderingMode(.alwaysTemplate)
-        submissionicon.tintColor = ColorUtil.fontColor
+        submissionicon.image = UIImage.init(named: "upvote")?.withColor(tintColor: ColorUtil.fontColor)
 
         self.textView = TTTAttributedLabel(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
         self.textView.delegate = self
@@ -291,10 +279,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         self.score = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
         score.numberOfLines = 1
+        score.font = FontGenerator.fontOfSize(size: 12, submission: true)
+        score.textColor = ColorUtil.fontColor
+
         
         self.comments = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
         comments.numberOfLines = 1
         comments.font = FontGenerator.fontOfSize(size: 12, submission: true)
+        comments.textColor = ColorUtil.fontColor
         
         self.info = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
         info.numberOfLines = 2
@@ -496,95 +488,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     
     func refreshLink(_ submission: RSubmission){
         self.link = submission
-        let attributedTitle = NSMutableAttributedString(string: submission.title, attributes: [NSFontAttributeName: title.font, NSForegroundColorAttributeName: ColorUtil.fontColor])
-        let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(submission.flair)\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
-        let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
-        let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(submission.gilded) ", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor])
-        
-        let locked = NSMutableAttributedString.init(string: "\u{00A0}LOCKED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
-        
-        let archived = NSMutableAttributedString.init(string: "\u{00A0}ARCHIVED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
-        
-        let spacer = NSMutableAttributedString.init(string: "  ")
-        if(!submission.flair.isEmpty){
-            attributedTitle.append(spacer)
-            attributedTitle.append(flairTitle)
-        }
-        
-        if(submission.gilded > 0){
-            attributedTitle.append(spacer)
-            attributedTitle.append(spacer)
-            let gild = NSMutableAttributedString.init(string: "G", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.amber500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
-            attributedTitle.append(gild)
-            if(submission.gilded > 1){
-                attributedTitle.append(gilded)
-            }
-        }
-        
-        if(submission.stickied){
-            attributedTitle.append(spacer)
-            attributedTitle.append(pinned)
-        }
-        
-        if(submission.locked){
-            attributedTitle.append(spacer)
-            attributedTitle.append(locked)
-        }
-        if(submission.archived){
-            attributedTitle.append(archived)
-        }
-        
-        let attrs = [NSFontAttributeName : FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor] as [String: Any]
-        
-        let endString = NSMutableAttributedString(string:"  •  \(DateFormatter().timeSince(from: submission.created, numericDates: true))\((submission.isEdited ? ("(edit \(DateFormatter().timeSince(from: submission.edited, numericDates: true)))") : ""))  •  ", attributes: [NSFontAttributeName : FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor])
-        
-        let authorString = NSMutableAttributedString(string: "\u{00A0}\(submission.author)\u{00A0}", attributes: [NSFontAttributeName : FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor])
-        
-        
-        let userColor = ColorUtil.getColorForUser(name: submission.author)
-        if (submission.distinguished == "admin") {
-            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#E57373"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-        } else if (submission.distinguished == "special") {
-            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#F44336"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-        } else if (submission.distinguished == "moderator") {
-            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#81C784"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-        } else if (AccountController.currentName == submission.author) {
-            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#FFB74D"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-        } else if (userColor != ColorUtil.baseColor) {
-            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: userColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-        }
-        
-        endString.append(authorString)
-        if(SettingValues.domainInInfo && !full){
-            endString.append(NSAttributedString.init(string: "  •  \(submission.domain)"))
-        }
-        
-        let tag = ColorUtil.getTagForUser(name: submission.author)
-        if(!tag.isEmpty){
-            let tagString = NSMutableAttributedString(string: "\u{00A0}\(tag)\u{00A0}", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
-            tagString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor(rgb: 0x2196f3), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-            endString.append(spacer)
-            endString.append(tagString)
-        }
-        
-        let boldString = NSMutableAttributedString(string:"/r/\(submission.subreddit)", attributes:attrs)
-        
-        let color = ColorUtil.getColorForSub(sub: submission.subreddit)
-        if(color != ColorUtil.baseColor){
-            boldString.addAttribute(NSForegroundColorAttributeName, value: color, range: NSRange.init(location: 0, length: boldString.length))
-        }
-        
-        let infoString = NSMutableAttributedString()
-        infoString.append(boldString)
-        infoString.append(endString)
-        infoString.append(NSAttributedString.init(string: "\n"))
-        infoString.append(attributedTitle)
-        
-        if(SettingValues.postViewMode == .CARD && !full){
-            infoString.append(NSAttributedString.init(string: "\n"))
-        }
 
-        title.setText(infoString)
+        title.setText(CachedTitle.getTitle(submission: submission, full: full, true))
         
         let comment = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openComment(sender:)))
         comment.delegate = self
@@ -594,9 +499,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         
         let more = History.commentsSince(s: submission)
-        let commentText = NSMutableAttributedString(string: " \(submission.commentCount)" + (more > 0 ? " (+\(more))" : ""), attributes: [NSFontAttributeName: comments.font, NSForegroundColorAttributeName: comments.textColor])
         
-        comments.attributedText = commentText
+        comments.text = " \(submission.commentCount)" + (more > 0 ? " (+\(more))" : "")
         if(!commentImage){
         comments.addImage(imageName: "comments", afterLabel: false)
             commentImage = true
@@ -624,103 +528,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if(navViewController == nil && nav != nil){
             navViewController = nav
         }
-        let attributedTitle = NSMutableAttributedString(string: submission.title, attributes: [NSFontAttributeName: title.font, NSForegroundColorAttributeName: ColorUtil.fontColor])
-        let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(submission.flair)\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
-        let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
-        let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(submission.gilded) ", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor])
         
-        let locked = NSMutableAttributedString.init(string: "\u{00A0}LOCKED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
-        
-        let archived = NSMutableAttributedString.init(string: "\u{00A0}ARCHIVED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
-        
-        let spacer = NSMutableAttributedString.init(string: "  ")
-        if(!submission.flair.isEmpty){
-            attributedTitle.append(spacer)
-            attributedTitle.append(flairTitle)
-        }
-        
-        if(submission.gilded > 0){
-            attributedTitle.append(spacer)
-            let gild = NSMutableAttributedString.init(string: "G", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.amber500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
-            attributedTitle.append(gild)
-            if(submission.gilded > 1){
-                attributedTitle.append(gilded)
-            }
-        }
-        
-        if(submission.stickied){
-            attributedTitle.append(spacer)
-            attributedTitle.append(pinned)
-        }
-        
-        if(submission.locked){
-            attributedTitle.append(spacer)
-            attributedTitle.append(locked)
-        }
-        if(submission.archived){
-            attributedTitle.append(archived)
-        }
-        
-        let attrs = [NSFontAttributeName : FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor] as [String: Any]
-        
-        let endString = NSMutableAttributedString(string:"  •  \(DateFormatter().timeSince(from: submission.created, numericDates: true))\((submission.isEdited ? ("(edit \(DateFormatter().timeSince(from: submission.edited, numericDates: true)))") : ""))  •  ", attributes: [NSFontAttributeName : FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor])
-        
-        let authorString = NSMutableAttributedString(string: "\u{00A0}\(submission.author)\u{00A0}", attributes: [NSFontAttributeName : FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor])
-        
-        
-        let userColor = ColorUtil.getColorForUser(name: submission.author)
-        if (submission.distinguished == "admin") {
-            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#E57373"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-        } else if (submission.distinguished == "special") {
-            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#F44336"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-        } else if (submission.distinguished == "moderator") {
-            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#81C784"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-        } else if (AccountController.currentName == submission.author) {
-            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#FFB74D"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-        } else if (userColor != ColorUtil.baseColor) {
-            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: userColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-        }
-        
-        endString.append(authorString)
-        
-        let tag = ColorUtil.getTagForUser(name: submission.author)
-        if(!tag.isEmpty){
-            let tagString = NSMutableAttributedString(string: "\u{00A0}\(tag)\u{00A0}", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
-            tagString.addAttributes([kTTTBackgroundFillColorAttributeName: GMColor.blue500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: tagString.length))
-            endString.append(spacer)
-            endString.append(tagString)
-        }
-        
-        let boldString = NSMutableAttributedString(string:"/r/\(submission.subreddit)", attributes:attrs)
-        
-        let color = ColorUtil.getColorForSub(sub: submission.subreddit)
-        if(color != ColorUtil.baseColor){
-            boldString.addAttribute(NSForegroundColorAttributeName, value: color, range: NSRange.init(location: 0, length: boldString.length))
-        }
-        
-        let infoString = NSMutableAttributedString()
-        infoString.append(boldString)
-        infoString.append(endString)
-        infoString.append(NSAttributedString.init(string: "\n"))
-        infoString.append(attributedTitle)
-        if(SettingValues.scoreInTitle && !full){
-            infoString.append(NSAttributedString.init(string: "\n"))
-            var scoreString: NSAttributedString = NSAttributedString()
-            if(SettingValues.abbreviateScores){
-                let text = (submission.score>=10000 && SettingValues.abbreviateScores) ? String(format: "%0.1fk ", (Double(submission.score)/Double(1000))) : " \(submission.score)"
-                scoreString = NSMutableAttributedString(string: "\(text)pts \(submission.commentCount)cmts", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
-            }  else {
-                scoreString = NSMutableAttributedString(string: "\(submission.score)pts \(submission.commentCount)cmts", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
-            }
-            infoString.append(scoreString)
-        }
-        
-        
-        if(SettingValues.postViewMode == .CARD && !full){
-            infoString.append(NSAttributedString.init(string: "\n"))
-        }
-        
-        title.setText(infoString)
+        title.setText(CachedTitle.getTitle(submission: submission, full: full, false))
         
         reply.isHidden = true
         
@@ -757,6 +566,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             edit.isHidden = false
         }
         
+        if(!addTouch){
         addTouch(view: save, action: #selector(LinkCellView.save(sender:)))
         addTouch(view: upvote, action: #selector(LinkCellView.upvote(sender:)))
         addTouch(view: downvote, action: #selector(LinkCellView.downvote(sender:)))
@@ -764,11 +574,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         addTouch(view: more, action: #selector(LinkCellView.more(sender:)))
         addTouch(view: reply, action: #selector(LinkCellView.reply(sender:)))
         addTouch(view: edit, action: #selector(LinkCellView.edit(sender:)))
+            addTouch = true
+        }
         thumb = submission.thumbnail
         big = submission.banner
-        //todo test if big image
-        //todo test if self and hideSelftextLeadImage, don't show anything
-        //test if should be LQ, get LQ image instead of banner image
+
         if(bigConstraint != nil){
             self.contentView.removeConstraint(bigConstraint!)
         }
@@ -922,12 +732,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         //title.sizeToFit()
         
         let mo = History.commentsSince(s: submission)
-        let commentText = NSMutableAttributedString(string: " \(submission.commentCount)" + (mo > 0 ? "(+\(mo))" : ""), attributes: [NSFontAttributeName: comments.font, NSForegroundColorAttributeName: comments.textColor])
-        comments.attributedText = commentText
-        if(!commentImage){
-        comments.addImage(imageName: "comments", afterLabel: false)
-            commentImage = true
-        }
+        comments.text = " \(submission.commentCount)" + (mo > 0 ? "(+\(mo))" : "")
         
         if(!registered && !full){
             parent.registerForPreviewing(with: self, sourceView: self.contentView)
@@ -1170,84 +975,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         title.textColor = ColorUtil.fontColor
         
         self.link = submission
-        let attributedTitle = NSMutableAttributedString(string: submission.title, attributes: [NSFontAttributeName: title.font, NSForegroundColorAttributeName: ColorUtil.fontColor])
-        let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(submission.flair)\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
-        let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
-        let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(submission.gilded) ", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor])
         
-        let locked = NSMutableAttributedString.init(string: "\u{00A0}LOCKED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
-        
-        let archived = NSMutableAttributedString.init(string: "\u{00A0}ARCHIVED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
-        
-        let spacer = NSMutableAttributedString.init(string: "  ")
-        if(!submission.flair.isEmpty){
-            attributedTitle.append(spacer)
-            attributedTitle.append(flairTitle)
-        }
-        
-        let attrs = [NSFontAttributeName : FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor] as [String: Any]
-        
-        let endString = NSMutableAttributedString(string:"  •  \(DateFormatter().timeSince(from: submission.created, numericDates: true))\((submission.isEdited ? ("(edit \(DateFormatter().timeSince(from: submission.edited, numericDates: true)))") : ""))  •  ", attributes: [NSFontAttributeName : FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor])
-        
-        let authorString = NSMutableAttributedString(string: "\u{00A0}\(submission.author)\u{00A0}", attributes: [NSFontAttributeName : FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor])
-        
-        
-        let userColor = ColorUtil.getColorForUser(name: submission.author)
-        if (submission.distinguished == "admin") {
-            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#E57373"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-        } else if (submission.distinguished == "special") {
-            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#F44336"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-        } else if (submission.distinguished == "moderator") {
-            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#81C784"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-        } else if (AccountController.currentName == submission.author) {
-            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#FFB74D"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-        } else if (userColor != ColorUtil.baseColor) {
-            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: userColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-        }
-        
-        endString.append(authorString)
-        if(SettingValues.domainInInfo && !full){
-            endString.append(NSAttributedString.init(string: "  •  \(submission.domain)"))
-        }
-        
-        let tag = ColorUtil.getTagForUser(name: submission.author)
-        if(!tag.isEmpty){
-            let tagString = NSMutableAttributedString(string: "\u{00A0}\(tag)\u{00A0}", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
-            tagString.addAttributes([kTTTBackgroundFillColorAttributeName: GMColor.blue500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: tagString.length))
-            endString.append(spacer)
-            endString.append(tagString)
-        }
-        
-        let boldString = NSMutableAttributedString(string:"/r/\(submission.subreddit)", attributes:attrs)
-        
-        let color = ColorUtil.getColorForSub(sub: submission.subreddit)
-        if(color != ColorUtil.baseColor){
-            boldString.addAttribute(NSForegroundColorAttributeName, value: color, range: NSRange.init(location: 0, length: boldString.length))
-        }
-        
-        let infoString = NSMutableAttributedString()
-        infoString.append(boldString)
-        infoString.append(endString)
-        infoString.append(NSAttributedString.init(string: "\n"))
-        infoString.append(attributedTitle)
-        if(SettingValues.scoreInTitle){
-            infoString.append(NSAttributedString.init(string: "\n"))
-            var scoreString: NSAttributedString = NSAttributedString()
-            if(SettingValues.abbreviateScores){
-                let text = (submission.score>=10000 && SettingValues.abbreviateScores) ? String(format: "%0.1fk ", (Double(submission.score)/Double(1000))) : " \(submission.score)"
-                scoreString = NSMutableAttributedString(string: "\(text)pts \(submission.commentCount)cmts", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
-            }  else {
-                scoreString = NSMutableAttributedString(string: "\(submission.score)pts \(submission.commentCount)cmts", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
-            }
-            infoString.append(scoreString)
-        }
-        
-        
-        if(SettingValues.postViewMode == .CARD && !full){
-            infoString.append(NSAttributedString.init(string: "\n\n"))
-        }
-        
-        title.setText(infoString)
+        title.setText(CachedTitle.getTitle(submission: submission, full: false, false))
         title.sizeToFit()
         
         reply.isHidden = true
@@ -1401,21 +1130,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             bannerImage.sd_setImage(with: URL.init(string: ""))
         }
         
-        let commentText = NSMutableAttributedString(string: " \(submission.commentCount)", attributes: [NSFontAttributeName: comments.font, NSForegroundColorAttributeName: comments.textColor])
-        comments.attributedText = commentText
-        //  comments.addImage(imageName: "comments", afterLabel: false)
+        comments.text = " \(submission.commentCount)"
         
         doConstraints()
         
         refresh()
-        bannerImage.contentMode = UIViewContentMode.scaleAspectFill
-        bannerImage.layer.cornerRadius = 5;
-        bannerImage.clipsToBounds = true
-        bannerImage.backgroundColor = UIColor.white
-        thumbImage.layer.cornerRadius = 5;
-        thumbImage.backgroundColor = UIColor.white
-        thumbImage.clipsToBounds = true;
-        thumbImage.contentMode = .scaleAspectFill
         
         
         if(type != .IMAGE && type != .SELF && !thumb){
@@ -1566,17 +1285,18 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     
     func refresh(){
         let link = self.link!
-        upvote.tintColor = ColorUtil.fontColor
-        save.tintColor = ColorUtil.fontColor
-        downvote.tintColor = ColorUtil.fontColor
+        upvote.image = UIImage.init(named: "upvote")?.withColor(tintColor: ColorUtil.fontColor)
+        save.image = UIImage.init(named: "save")?.withColor(tintColor: ColorUtil.fontColor)
+        downvote.image = UIImage.init(named: "downvote")?.withColor(tintColor: ColorUtil.fontColor)
         var attrs: [String: Any] = [:]
         switch(ActionStates.getVoteDirection(s: link)){
         case .down :
-            downvote.tintColor = ColorUtil.downvoteColor
+            downvote.image = UIImage.init(named: "downvote")?.withColor(tintColor: ColorUtil.downvoteColor)
+
             attrs = ([NSForegroundColorAttributeName: ColorUtil.downvoteColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
             break
         case .up:
-            upvote.tintColor = ColorUtil.upvoteColor
+            upvote.image = UIImage.init(named: "upvote")?.withColor(tintColor: ColorUtil.upvoteColor)
             attrs = ([NSForegroundColorAttributeName: ColorUtil.upvoteColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
             break
         default:
@@ -1585,9 +1305,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
         
         
-        let subScore = NSMutableAttributedString(string: (link.score>=10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(link.score)/Double(1000))) : " \(link.score)", attributes: attrs)
         
         if(full){
+            let subScore = NSMutableAttributedString(string: (link.score>=10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(link.score)/Double(1000))) : " \(link.score)", attributes: attrs)
             let scoreRatio =
                 NSMutableAttributedString(string: (SettingValues.upvotePercentage && full && link.upvoteRatio > 0) ?
                     " (\(Int(link.upvoteRatio * 100))%)" : "", attributes: [NSFontAttributeName: comments.font, NSForegroundColorAttributeName: comments.textColor] )
@@ -1617,16 +1337,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             scoreRatio.addAttributes(attrsNew, range: NSRange.init(location: 0, length: scoreRatio.length))
             
             subScore.append(scoreRatio)
+            score.attributedText = subScore
+        } else {
+            score.text = (link.score>=10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(link.score)/Double(1000))) : " \(link.score)"
         }
         
-        score.attributedText = subScore
-        if(!submissionImage){
-        score.addImage(imageName: "upvote", afterLabel: false)
-            submissionImage = true
-        }
         
         if(ActionStates.isSaved(s: link)){
-            save.tintColor = GMColor.yellow500Color()
+            save.image = UIImage.init(named: "save")?.withColor(tintColor: GMColor.yellow500Color())
         }
         if(History.getSeen(s: link) && !full){
          self.title.alpha = 0.7

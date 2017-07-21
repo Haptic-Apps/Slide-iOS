@@ -119,6 +119,7 @@ class InboxViewController:  PagingMenuController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.splitViewController?.preferredDisplayMode = UISplitViewControllerDisplayMode.allVisible
         self.title = "Inbox"
         navigationController?.navigationBar.tintColor = .white
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: "")

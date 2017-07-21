@@ -203,6 +203,7 @@ class ProfileViewController:  PagingMenuController, ColorPickerDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.splitViewController?.preferredDisplayMode = UISplitViewControllerDisplayMode.allVisible
         self.title = ProfileViewController.name
         navigationController?.navigationBar.tintColor = .white
         self.navigationController?.setNavigationBarHidden(false, animated: true)
