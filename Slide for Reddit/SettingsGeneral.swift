@@ -160,13 +160,24 @@ class SettingsGeneral: UITableViewController {
                 }
                 actionSheetController.addAction(saveActionButton)
             }
+            
+            actionSheetController.modalPresentationStyle = .popover
+            if let presenter = actionSheetController.popoverPresentationController {
+                presenter.sourceView = timeMenuView
+                presenter.sourceRect = timeMenuView.bounds
+            }
+
             self.present(actionSheetController, animated: true, completion: nil)
         }
     }
+    
+    var timeMenuView: UIView = UIView()
 
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        self.timeMenuView = self.tableView.cellForRow(at: indexPath)!.contentView
+
         if(indexPath.section == 1 && indexPath.row == 0){
             let actionSheetController: UIAlertController = UIAlertController(title: "Default post sorting", message: "", preferredStyle: .actionSheet)
             
@@ -174,7 +185,6 @@ class SettingsGeneral: UITableViewController {
                 print("Cancel")
             }
             actionSheetController.addAction(cancelActionButton)
-            
             for link in LinkSortType.cases {
                 let saveActionButton: UIAlertAction = UIAlertAction(title: link.description, style: .default)
                 { action -> Void in
@@ -182,7 +192,12 @@ class SettingsGeneral: UITableViewController {
                 }
                 actionSheetController.addAction(saveActionButton)
             }
-            
+            actionSheetController.modalPresentationStyle = .popover
+            if let presenter = actionSheetController.popoverPresentationController {
+                presenter.sourceView = timeMenuView
+                presenter.sourceRect = timeMenuView.bounds
+            }
+
             self.present(actionSheetController, animated: true, completion: nil)
         } else if(indexPath.section == 1 && indexPath.row == 1){
             let actionSheetController: UIAlertController = UIAlertController(title: "Default comment sorting", message: "", preferredStyle: .actionSheet)
@@ -201,7 +216,12 @@ class SettingsGeneral: UITableViewController {
                 }
                 actionSheetController.addAction(saveActionButton)
             }
-            
+            actionSheetController.modalPresentationStyle = .popover
+            if let presenter = actionSheetController.popoverPresentationController {
+                presenter.sourceView = timeMenuView
+                presenter.sourceRect = timeMenuView.bounds
+            }
+
             self.present(actionSheetController, animated: true, completion: nil)
         }
 

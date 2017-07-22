@@ -16,22 +16,18 @@
 
 #import <UIKit/UIKit.h>
 
-#if !defined(__IPHONE_8_0) || (__IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_8_0)
-#error "This component only supports iOS 8.0 and above."
-#endif
-
-@class MDCDialogPresentationController;
+@class MDCButton;
 
 /**
- Material Dialog UIViewController Category
+ A Mutator that will change an instance of MDCButton to have a high enough contrast text between
+ its background.
  */
-@interface UIViewController (MaterialDialogs)
+@interface MDCButtonTitleColorAccessibilityMutator : NSObject
 
 /**
- The Material dialog presentation controller that is managing the current view controller.
-
- @return nil if the view controller is not managed by a Material dialog presentaiton controller.
+ This method will change the title color for each state of the button to ensure a high accessiblity
+ contrast with its background.
  */
-@property(nonatomic, nullable, readonly) MDCDialogPresentationController *mdc_dialogPresentationController;
++ (void)changeTitleColorOfButton:(MDCButton *)button;
 
 @end

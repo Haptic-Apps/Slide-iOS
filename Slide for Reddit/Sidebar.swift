@@ -57,6 +57,7 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate  {
                         sheet.dismiss(animated: true, completion: nil)
                     }
                 )
+                
                 parent?.present(sheet, animated: true, completion: nil)
             }
         }
@@ -178,6 +179,8 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate  {
         
         alrController.addAction(cancelAction)
         
+        alrController.modalPresentationStyle = .fullScreen
+
         parent?.present(alrController, animated: true, completion:{})
     }
     
@@ -214,7 +217,12 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate  {
             let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: {(alert: UIAlertAction!) in print("cancel")})
             
             alrController.addAction(cancelAction)
-            
+            alrController.modalPresentationStyle = .popover
+            if let presenter = alrController.popoverPresentationController {
+                presenter.sourceView = parent!.view
+                presenter.sourceRect = parent!.view.bounds
+            }
+
             parent?.present(alrController, animated: true, completion:{})
             
         }

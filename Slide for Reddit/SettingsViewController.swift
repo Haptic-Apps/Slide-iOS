@@ -22,6 +22,9 @@ class SettingsViewController: UITableViewController {
     var dataSaving: UITableViewCell = UITableViewCell()
     var filters: UITableViewCell = UITableViewCell()
     var content: UITableViewCell = UITableViewCell()
+    
+    var multiColumnCell: UITableViewCell = UITableViewCell()
+    var multiColumn = UISwitch()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,6 +35,12 @@ class SettingsViewController: UITableViewController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.splitViewController?.maximumPrimaryColumnWidth = 375
+        self.splitViewController?.preferredPrimaryColumnWidthFraction = 0.5
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -136,8 +145,27 @@ class SettingsViewController: UITableViewController {
         self.filters.imageView?.image = UIImage.init(named: "filter")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
         self.filters.imageView?.tintColor = ColorUtil.fontColor
         
+        multiColumn = UISwitch()
+        multiColumn.isOn = SettingValues.multiColumn
+        multiColumn.addTarget(self, action: #selector(SettingsViewController.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+        multiColumnCell.textLabel?.text = "Multi Column mode"
+        multiColumnCell.accessoryView = multiColumn
+        multiColumnCell.backgroundColor = ColorUtil.foregroundColor
+        multiColumnCell.textLabel?.textColor = ColorUtil.fontColor
+        multiColumnCell.selectionStyle = UITableViewCellSelectionStyle.none
+        self.multiColumnCell.imageView?.image = UIImage.init(named: "multi")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
+
+        
         self.tableView.reloadData()
     }
+    
+    func switchIsChanged(_ changed: UISwitch) {
+        if(changed == multiColumn){
+            SettingValues.multiColumn = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_multiColumn)
+        }
+    }
+
  
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 3
@@ -160,6 +188,7 @@ class SettingsViewController: UITableViewController {
             switch(indexPath.row) {
             case 0: return self.general
             case 1: return self.manageSubs
+            case 2: return self.multiColumnCell
             default: fatalError("Unknown row in section 0")
             }
         case 1:
@@ -186,30 +215,39 @@ class SettingsViewController: UITableViewController {
     }
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        var ch : UIViewController?
         if(indexPath.section == 0 && indexPath.row == 1){
-            show(SubredditReorderViewController(), sender: self)
+ch = SubredditReorderViewController()
         } else  if(indexPath.section == 0 && indexPath.row == 0){
-            show(SettingsGeneral(), sender: self)
+ch = SettingsGeneral()
         } else if(indexPath.section == 2 && indexPath.row == 4){
-            show(FiltersViewController(), sender: self)
+ch = FiltersViewController()
         } else if(indexPath.section == 1 && indexPath.row == 2){
-            show(SubredditThemeViewController(), sender: self)
+ch = SubredditThemeViewController()
         }  else if(indexPath.section == 1 && indexPath.row == 0){
-            show(SettingsTheme(), sender: self)
+ch = SettingsTheme()
         }  else if(indexPath.section == 1 && indexPath.row == 3){
-            show(SettingsFont(), sender: self)
+ch = SettingsFont()
         }  else if(indexPath.section == 1 && indexPath.row == 1){
-            show(SettingsLayout(), sender: self)
+ch = SettingsLayout()
         }  else if(indexPath.section == 2 && indexPath.row == 2){
-            show(SettingsData(), sender: self)
+ch = SettingsData()
         }  else if(indexPath.section == 2 && indexPath.row == 3){
-            show(SettingsContent(), sender: self)
+ch = SettingsContent()
         }  else if(indexPath.section == 1 && indexPath.row == 4){
-            show(SettingsComments(), sender: self)
+            ch = SettingsComments()
         }  else if(indexPath.section == 2 && indexPath.row == 0){
-            show(SettingsLinkHandling(), sender: self)
+            ch = SettingsLinkHandling()
         }  else if(indexPath.section == 2 && indexPath.row == 1){
-            show(SettingsHistory(), sender: self)
+            ch = SettingsHistory()
+        }
+        if let n = ch {
+            if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad ){
+            let nav = UINavigationController(rootViewController:n)
+            splitViewController?.showDetailViewController(nav, sender: self)
+            } else {
+                splitViewController?.showDetailViewController(n, sender: self)
+            }
         }
     }
     /* maybe future
@@ -280,7 +318,7 @@ class SettingsViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch(section) {
-        case 0: return 2    // section 0 has 2 rows
+        case 0: return 3    // section 0 has 2 rows
         case 1: return 5    // section 1 has 1 row
         case 2: return 5
         default: fatalError("Unknown number of sections")

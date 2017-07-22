@@ -111,9 +111,15 @@ class InboxViewController:  PagingMenuController {
         
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.splitViewController?.maximumPrimaryColumnWidth = 375
+        self.splitViewController?.preferredPrimaryColumnWidthFraction = 0.5
+    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.splitViewController?.preferredDisplayMode = UISplitViewControllerDisplayMode.allVisible
         self.title = "Inbox"
         navigationController?.navigationBar.tintColor = .white
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: "")
@@ -132,7 +138,6 @@ class InboxViewController:  PagingMenuController {
         if(navigationController != nil){
             navigationItem.rightBarButtonItems = [ readB, editB]
         }
-        
     }
     
     func new(_ sender: AnyObject){
@@ -193,68 +198,4 @@ class InboxViewController:  PagingMenuController {
         
         self.menuView?.backgroundColor = ColorUtil.getColorForSub(sub: "")
     }
-    
-    func showSortMenu(_ sender: AnyObject){
-        (InboxViewController.viewControllers[currentPage] as? SubredditLinkViewController)?.showMenu(sender)
-    }
-    
-    func showMenu(_ sender: AnyObject){
-        let actionSheetController: UIAlertController = UIAlertController(title: "", message: "", preferredStyle: .actionSheet)
-        
-        var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
-            print("Cancel")
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        cancelActionButton = UIAlertAction(title: "Search", style: .default) { action -> Void in
-            print("Search")
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        cancelActionButton = UIAlertAction(title: "Refresh", style: .default) { action -> Void in
-            (InboxViewController.viewControllers[self.currentPage] as? SubredditLinkViewController)?.refresh()
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        cancelActionButton = UIAlertAction(title: "Subreddit Theme", style: .default) { action -> Void in
-            print("Subreddit Theme")
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        cancelActionButton = UIAlertAction(title: "Base Theme", style: .default) { action -> Void in
-            self.showThemeMenu()
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        cancelActionButton = UIAlertAction(title: "Filter", style: .default) { action -> Void in
-            print("Filter")
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        
-        self.present(actionSheetController, animated: true, completion: nil)
-        
-    }
-    
-    func showThemeMenu(){
-        let actionSheetController: UIAlertController = UIAlertController(title: "Select a base theme", message: "", preferredStyle: .actionSheet)
-        
-        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
-            print("Cancel")
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        for theme in ColorUtil.Theme.cases {
-            let saveActionButton: UIAlertAction = UIAlertAction(title: theme.rawValue , style: .default)
-            { action -> Void in
-                UserDefaults.standard.set(theme.rawValue, forKey: "theme")
-                UserDefaults.standard.synchronize()
-                ColorUtil.doInit()
-            }
-            actionSheetController.addAction(saveActionButton)
-        }
-        
-        self.present(actionSheetController, animated: true, completion: nil)
-    }
-    
 }

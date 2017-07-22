@@ -107,7 +107,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         ColorUtil.doInit()
         let textAttributes = [NSForegroundColorAttributeName:UIColor.white]
         UINavigationBar.appearance().titleTextAttributes = textAttributes
-        
+        let statusBar = UIView()
+        statusBar.frame = CGRect(x: 0, y: 0, width: (self.window?.frame.size.width)!, height: 20)
+        statusBar.backgroundColor = UIColor.black.withAlphaComponent(0.15)
+        self.window?.rootViewController?.view.addSubview(statusBar)
+
         return true
     }
     

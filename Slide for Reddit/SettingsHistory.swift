@@ -117,10 +117,10 @@ class SettingsHistory: UITableViewController {
         clearHistory.textLabel?.textColor = ColorUtil.fontColor
         clearHistory.selectionStyle = UITableViewCellSelectionStyle.none
 
-        clearHistory.textLabel?.text = "Clear subreddit history"
-        clearHistory.backgroundColor = ColorUtil.foregroundColor
-        clearHistory.textLabel?.textColor = ColorUtil.fontColor
-        clearHistory.selectionStyle = UITableViewCellSelectionStyle.none
+        clearSubs.textLabel?.text = "Clear subreddit history"
+        clearSubs.backgroundColor = ColorUtil.foregroundColor
+        clearSubs.textLabel?.textColor = ColorUtil.fontColor
+        clearSubs.selectionStyle = UITableViewCellSelectionStyle.none
 
         doDisables()
     }

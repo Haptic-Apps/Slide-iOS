@@ -61,6 +61,7 @@ class InboxContributionLoader: ContributionLoader {
                         }
                         
                         self.paginator = listing.paginator
+                        self.canGetMore = !self.paginator.hasMore()
                         DispatchQueue.main.async{
                             self.delegate?.doneLoading()
                         }

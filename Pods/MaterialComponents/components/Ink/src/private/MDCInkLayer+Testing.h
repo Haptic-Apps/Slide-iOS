@@ -14,19 +14,28 @@
  limitations under the License.
  */
 
-#import "MDCAlertColorThemer.h"
-#import "MaterialButtons.h"
+#import "MDCInkLayer.h"
 
-@implementation MDCAlertColorThemer
+@protocol MDCInkLayerRippleDelegate <NSObject>
 
-+ (void)applyColorScheme:(NSObject<MDCColorScheme> *)colorScheme {
-  #if defined(__IPHONE_9_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_9_0
-  [[MDCButton appearanceWhenContainedInInstancesOfClasses:@[[MDCAlertController class]]]
-      setTitleColor:colorScheme.primaryColor forState:UIControlStateNormal];
-  #else
-  [[MDCButton appearanceWhenContainedIn:[MDCAlertController class], nil]
-      setTitleColor:colorScheme.primaryColor forState:UIControlStateNormal];
-  #endif
-}
+@optional
 
+- (void)animationDidStop:(CAAnimation *)anim
+              shapeLayer:(CAShapeLayer *)shapeLayer
+                finished:(BOOL)finished;
+
+@end
+
+@interface MDCInkLayer ()  <MDCInkLayerRippleDelegate>
+@end
+
+@interface MDCInkLayerRipple : CAShapeLayer
+@end
+
+@interface MDCInkLayerForegroundRipple : MDCInkLayerRipple
+- (void)exit:(BOOL)animated;
+@end
+
+@interface MDCInkLayerBackgroundRipple : MDCInkLayerRipple
+- (void)exit:(BOOL)animated;
 @end
