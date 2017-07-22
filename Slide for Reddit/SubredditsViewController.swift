@@ -232,6 +232,8 @@ class SubredditsViewController:  PagingMenuController , UISplitViewControllerDel
     
     func restartVC(){
         
+        CachedTitle.titles.removeAll()
+        
         SubredditReorderViewController.changed = true
     
         if(SettingValues.viewType){

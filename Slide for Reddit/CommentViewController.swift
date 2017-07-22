@@ -534,7 +534,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                 var index = 0
                                 if(!self.context.isEmpty()){
                                     for comment in self.comments {
-                                        if(comment is RComment && (comment as! RComment).getIdentifier().contains(self.context)){
+                                        if(comment.contains(self.context)){
                                             self.goToCell(i: index)
                                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
                                                 self.showCommentMenu(self.tableView.cellForRow(at: IndexPath.init(row: index, section: 0)) as! CommentDepthCell)
@@ -1294,8 +1294,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableViewAutomaticDimension
     }
-    
-    func unhideAll(comment: Object, i : Int){
+     var isCurrentlyChanging = false
+    func unhideAll(comment: String, i : Int){
+        if(!isCurrentlyChanging){
+            isCurrentlyChanging = true
         DispatchQueue.global(qos: .background).async {
             let counter = self.unhideNumber(n: comment, iB: i)
             self.doArrays()
@@ -1308,6 +1310,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 }
                 self.tableView.insertRows(at: indexPaths, with: .middle)
                 self.tableView.endUpdates()
+                self.isCurrentlyChanging = false
+            }
             }
         }
     }
@@ -1315,7 +1319,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     func collapseAll(){
         for i in 0...dataArray.count - 1 {
             if(content[dataArray[i]]  is RComment && matches(comment: content[dataArray[i]] as! RComment, sort: .PARENTS)) {
-                hideNumber(n: content[dataArray[i]]!, iB: i)
+                hideNumber(n: dataArray[i], iB: i)
                 let t = content[dataArray[i]]
                 let id = (t is RComment) ? (t as! RComment).getIdentifier() : (t as! RMore).getIdentifier()
                 if (!hiddenPersons.contains(id)) {
@@ -1328,7 +1332,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
     
     
-    func hideAll(comment: Object, i: Int){
+    func hideAll(comment: String, i: Int){
+        if(!isCurrentlyChanging){
+            isCurrentlyChanging = true
         DispatchQueue.global(qos: .background).async {
             let counter = self.hideNumber(n: comment, iB: i) - 1
             self.doArrays()
@@ -1341,10 +1347,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 }
                 self.tableView.deleteRows(at: indexPaths, with: .middle)
                 self.tableView.endUpdates()
+                self.isCurrentlyChanging = false
             }
         }
+        }
         
-        //notify inserted at i
     }
     
     func parentHidden(comment: Object)->Bool{
@@ -1357,16 +1364,14 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         return hiddenPersons.contains(n) || hidden.contains(n)
     }
     
-    func walkTree(n: Object) -> [Object] {
-        var toReturn: [Object] = []
-        if n is RComment {
-            let bounds = comments.index(where: { (content[$0] is RComment) && (content[$0] as! RComment).getIdentifier() == (n as! RComment).getIdentifier() })! + 1
-            let parentDepth = (cDepth[(n as! RComment).getIdentifier()] as! Int)
+    func walkTree(n: String) -> [String] {
+        var toReturn: [String] = []
+        if content[n] is RComment {
+            let bounds = comments.index(where: { ($0 == n )})! + 1
+            let parentDepth = (cDepth[n] as! Int)
             for obj in stride(from: bounds, to: comments.count, by: 1) {
-                let current = content[comments[obj]]
-                let id = current is RComment ? (current as! RComment).getIdentifier() : (current as! RMore).getIdentifier()
-                if((cDepth[id] as! Int) > parentDepth){
-                    toReturn.append(current!)
+                if((cDepth[comments[obj]] as! Int) > parentDepth){
+                    toReturn.append(comments[obj])
                 } else {
                     return toReturn
                 }
@@ -1375,18 +1380,17 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         return toReturn
     }
     
-    func walkTreeFully(n: Object) -> [Object] {
-        var toReturn: [Object] = []
+    func walkTreeFully(n: String) -> [String] {
+        var toReturn: [String] = []
         toReturn.append(n)
-        if n is RComment {
-            let bounds = comments.index(where: { (content[$0] is RComment) && (content[$0] as! RComment).getIdentifier() == (n as! RComment).getIdentifier() })! + 1
-            let parentDepth = (cDepth[(n as! RComment).getIdentifier()] as! Int)
+        if content[n] is RComment {
+            let bounds = comments.index(where: { $0 == n})! + 1
+            let parentDepth = (cDepth[n] as! Int)
             for obj in stride(from: bounds, to: comments.count, by: 1) {
-                let current = comments[obj]
-                let currentDepth = cDepth[current] as! Int
+                let currentDepth = cDepth[comments[obj]] as! Int
                 if(currentDepth > parentDepth){
                     if(currentDepth == parentDepth + 1){
-                        toReturn.append(contentsOf: walkTreeFully(n: content[current]!))
+                        toReturn.append(contentsOf: walkTreeFully(n: comments[obj]))
                     }
                 } else {
                     return toReturn
@@ -1664,20 +1668,19 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         tableView.contentInset = UIEdgeInsetsMake(56, 0, 45, 0)
     }
 
-    func unhideNumber(n: Object, iB: Int) -> Int{
+    func unhideNumber(n: String, iB: Int) -> Int{
         var i = iB
         let children = walkTree(n: n);
         var toHide : [String] = []
-        for ignored in children {
-            let name = ignored.getIdentifier()
+        for name in children {
             
             if(hidden.contains(name)){
                 i += 1
             }
             toHide.append(name)
 
-            if(!hiddenPersons.contains(n.getIdentifier())) {
-            i += unhideNumber(n: ignored, iB: 0)
+            if(!hiddenPersons.contains(n)) {
+                i += unhideNumber(n: name, iB: 0)
             }
         }
         for s in hidden {
@@ -1688,19 +1691,18 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         return i
     }
     
-    func hideNumber(n: Object, iB : Int) -> Int{
+    func hideNumber(n: String, iB : Int) -> Int{
         var i = iB
         
         let children = walkTree(n: n);
         
-        for ignored in children {
-            let name = ignored is RComment ? (ignored as! RComment).getIdentifier() : (ignored as! RMore).getIdentifier()
+        for name in children {
             
                 if(!hidden.contains(name)){
                     i += 1
                     hidden.insert(name)
                 }
-            i += hideNumber(n: ignored, iB: 0)
+            i += hideNumber(n: name, iB: 0)
         }
         return i
     }
@@ -1755,7 +1757,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 if(content[thing] is RComment){
                     var count = 0
                     if(hiddenPersons.contains(thing)){
-                        count = getChildNumber(n: content[thing] as! RComment)
+                        count = getChildNumber(n: content[thing]!.getIdentifier())
                     }
                     var t = text[thing]!
                     if(isSearching){
@@ -1775,7 +1777,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     
     
-    func getChildNumber(n: RComment) -> Int{
+    func getChildNumber(n: String) -> Int{
         let children = walkTreeFully(n: n);
         return children.count - 1
     }
@@ -1844,13 +1846,13 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     let id = comment.getIdentifier()
                     if(hiddenPersons.contains((id))) {
                         hiddenPersons.remove(at: hiddenPersons.index(of: id)!)
-                        unhideAll(comment: comment, i: row!)
+                        unhideAll(comment: comment.getId(), i: row!)
                         cell.expand()
                         //todo hide child number
                     } else {
-                        let childNumber = getChildNumber(n: comment );
+                        let childNumber = getChildNumber(n: comment.getIdentifier());
                         if (childNumber > 0) {
-                            hideAll(comment: comment, i: row! + 1);
+                            hideAll(comment: comment.getIdentifier(), i: row! + 1);
                             if (!hiddenPersons.contains(id)) {
                                 hiddenPersons.insert(id);
                             }
