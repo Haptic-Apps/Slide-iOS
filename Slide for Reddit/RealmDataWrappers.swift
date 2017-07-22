@@ -271,7 +271,7 @@ class RSubmission: Object {
     dynamic var vote = false
     let comments = List<RComment>()
     
-    func getId() -> String {
+     func getId() -> String {
         return id
     }
     
