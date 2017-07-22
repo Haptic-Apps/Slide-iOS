@@ -633,53 +633,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         refresh(self)
        
     }
-    var panGestureRecognizer: UIPanGestureRecognizer?
-    var originalPosition: CGPoint?
-    var currentPositionTouched: CGPoint?
-    
-    func panGestureAction(_ panGesture: UIPanGestureRecognizer) {
-        let translation = panGesture.translation(in: view)
-        
-        if panGesture.state == .began {
-            originalPosition = view.center
-            currentPositionTouched = panGesture.location(in: view)
-        } else if panGesture.state == .changed {
-            self.navigationController!.view.frame.origin = CGPoint(
-                x: self.view.frame.origin.x,
-                y: translation.y
-            )
-        } else if panGesture.state == .ended {
-            let velocity = panGesture.velocity(in: view)
-            
-            if velocity.y >= 1500 {
-                UIView.animate(withDuration: 0.2
-                    , animations: {
-                        self.view.frame.origin = CGPoint(
-                            x: self.view.frame.origin.x,
-                            y: self.view.frame.size.height
-                        )
-                }, completion: { (isCompleted) in
-                    if isCompleted {
-                        self.dismiss(animated: true, completion: nil)
-                    }
-                })
-            } else {
-                UIView.animate(withDuration: 0.2, animations: {
-                    self.navigationController!.view.center = self.originalPosition!
-                })
-            }
-        }
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.view.bounds.width / CGFloat(320))) > 1 && false){
-            panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panGestureAction(_:)))
-            self.navigationController!.view.addGestureRecognizer(panGestureRecognizer!)
-            self.navigationController!.view.backgroundColor = .clear
-        }
-    }
-    
     var hasDone = false
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -819,8 +772,49 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             
 
         }
+
+    }
+    var panGestureRecognizer: UIPanGestureRecognizer?
+    var originalPosition: CGPoint?
+    var currentPositionTouched: CGPoint?
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.view.bounds.width / CGFloat(320))) > 1 && false){
+            self.navigationController!.view.backgroundColor = .clear
+        }
+        panGestureRecognizer = DirectionalPanGestureRecognizer(target: self, action: #selector(CommentViewController.popViewController(recognizer:)))
+        self.view.addGestureRecognizer(panGestureRecognizer!)
     }
     
+
+    var duringAnimation = false
+    var interactionController : UIPercentDrivenInteractiveTransition?
+    func popViewController(recognizer: UIPanGestureRecognizer) {
+        let view = self.navigationController?.view
+        if (recognizer.state == .began) {
+            if (self.navigationController!.viewControllers.count > 1 && !self.duringAnimation) {
+                interactionController = UIPercentDrivenInteractiveTransition.init()
+                self.interactionController?.completionCurve = UIViewAnimationCurve.easeOut
+                self.navigationController!.popViewController(animated: true)
+            }
+        } else if (recognizer.state == .changed && view != nil) {
+            let translation = recognizer.translation(in: view)
+            // Cumulative translation.x can be less than zero because user can pan slightly to the right and then back to the left.
+            var d = translation.x > 0 ? translation.x / view!.bounds.width : 0;
+            self.interactionController?.update(d)
+        } else if (recognizer.state == .ended || recognizer.state == .cancelled) {
+            if (recognizer.velocity(in: view).x > 0) {
+                self.interactionController?.finish()
+            } else {
+                self.interactionController?.cancel()
+                // When the transition is cancelled, `navigationController:didShowViewController:animated:` isn't called, so we have to maintain `duringAnimation`'s state here too.
+                self.duringAnimation = false;
+            }
+            self.interactionController = nil
+        }
+    }
+
     func doSubbed(){
         let sub = UIButton.init(type: .custom)
         var image = UIImage.init()
@@ -850,7 +844,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
     
     func close(_ sender: AnyObject){
-        self.navigationController?.dismiss(animated: true, completion: nil)
+self.navigationController?.popViewController(animated: true)
     }
     func showMenu(_ sender: AnyObject){
         let link = submission!
@@ -1951,4 +1945,47 @@ extension UITableView {
     func reloadData(with animation: UITableViewRowAnimation) {
         reloadSections(IndexSet(integersIn: 0..<numberOfSections), with: animation)
     }
+}
+
+enum SSWPanDirection {
+    case Right
+    case Down
+    case Left
+    case Up
+}
+class DirectionalPanGestureRecognizer: UIPanGestureRecognizer {
+    var dragging = false
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent) {
+        
+        super.touchesMoved(touches, with: event)
+        if(self.state == .failed){
+            return
+        }
+        
+        var velocity = self.velocity(in: self.view)
+        if(!dragging && !velocity.equalTo(CGPoint.zero)){
+            var velocities = [SSWPanDirection.Right: velocity.x,
+                              SSWPanDirection.Down: velocity.y,
+                              SSWPanDirection.Left: -velocity.x,
+                              SSWPanDirection.Up: -velocity.y
+            ]
+            
+            let keysSorted = velocities.sorted(by: { (A, B) -> Bool in
+                A.value < B.value
+            })
+            
+            if(keysSorted.last?.key != .Right){
+                self.state = .failed
+            }
+            
+            self.dragging = true
+        }
+        
+    }
+    
+    override func reset() {
+        super.reset()
+        self.dragging = false
+    }
+
 }

@@ -110,7 +110,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         
         let he = CachedTitle.getTitle(submission: submission, full: false, false).boundingRect(with: CGSize.init(width: itemWidth - 24 - (thumb ? (SettingValues.largerThumbnail ? 75 : 50) + 28 : 0), height:10000), options: [.usesLineFragmentOrigin , .usesFontLeading], context: nil).height
         let thumbheight = CGFloat(SettingValues.largerThumbnail ? 83 : 58)
-        var estimatedHeight = CGFloat((he < thumbheight && thumb || he < thumbheight && !big) ? thumbheight : he) + CGFloat(54) +  CGFloat(big && !thumb ? (submissionHeight + 20) : 0)
+        var estimatedHeight = CGFloat((he < thumbheight && thumb || he < thumbheight && !big) ? thumbheight : he) + CGFloat(54)  + (SettingValues.hideButtonActionbar ? -28 : 0) +  CGFloat(big && !thumb ? (submissionHeight + 20) : 0)
         return CGSize(width: itemWidth, height: estimatedHeight)
     }
 

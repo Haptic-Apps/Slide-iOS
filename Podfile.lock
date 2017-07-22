@@ -6,30 +6,31 @@ PODS:
   - ImagePickerSheetController (0.9.3)
   - ImageViewer (4.0)
   - KCFloatingActionButton (2.1.2)
-  - MaterialComponents/ActivityIndicator (25.1.0):
-    - MaterialComponents/ActivityIndicator/ColorThemer (= 25.1.0)
-    - MaterialComponents/ActivityIndicator/Component (= 25.1.0)
+  - MaterialComponents/ActivityIndicator (28.0.0):
+    - MaterialComponents/ActivityIndicator/ColorThemer (= 28.0.0)
+    - MaterialComponents/ActivityIndicator/Component (= 28.0.0)
     - MaterialComponents/private/Application
     - MaterialComponents/private/RTL
-  - MaterialComponents/ActivityIndicator/ColorThemer (25.1.0):
+  - MaterialComponents/ActivityIndicator/ColorThemer (28.0.0):
     - MaterialComponents/ActivityIndicator/Component
     - MaterialComponents/private/Application
     - MaterialComponents/private/RTL
     - MaterialComponents/Themes
-  - MaterialComponents/ActivityIndicator/Component (25.1.0):
+  - MaterialComponents/ActivityIndicator/Component (28.0.0):
     - MaterialComponents/private/Application
     - MaterialComponents/private/RTL
-  - MaterialComponents/AnimationTiming (25.1.0)
-  - MaterialComponents/Buttons (25.1.0):
-    - MaterialComponents/Buttons/ColorThemer (= 25.1.0)
-    - MaterialComponents/Buttons/Component (= 25.1.0)
+  - MaterialComponents/AnimationTiming (28.0.0)
+  - MaterialComponents/Buttons (28.0.0):
+    - MaterialComponents/Buttons/ColorThemer (= 28.0.0)
+    - MaterialComponents/Buttons/Component (= 28.0.0)
+    - MaterialComponents/Buttons/TitleColorAccessibilityMutator (= 28.0.0)
     - MaterialComponents/Ink
     - MaterialComponents/private/Math
     - MaterialComponents/ShadowElevations
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
     - MDFTextAccessibility
-  - MaterialComponents/Buttons/ColorThemer (25.1.0):
+  - MaterialComponents/Buttons/ColorThemer (28.0.0):
     - MaterialComponents/Buttons/Component
     - MaterialComponents/Ink
     - MaterialComponents/private/Math
@@ -38,52 +39,60 @@ PODS:
     - MaterialComponents/Themes
     - MaterialComponents/Typography
     - MDFTextAccessibility
-  - MaterialComponents/Buttons/Component (25.1.0):
+  - MaterialComponents/Buttons/Component (28.0.0):
     - MaterialComponents/Ink
     - MaterialComponents/private/Math
     - MaterialComponents/ShadowElevations
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
     - MDFTextAccessibility
-  - MaterialComponents/Dialogs (25.1.0):
-    - MaterialComponents/Dialogs/ColorThemer (= 25.1.0)
-    - MaterialComponents/Dialogs/Component (= 25.1.0)
-  - MaterialComponents/Dialogs/ColorThemer (25.1.0):
+  - MaterialComponents/Buttons/TitleColorAccessibilityMutator (28.0.0):
+    - MaterialComponents/Buttons/Component
+    - MaterialComponents/Ink
+    - MaterialComponents/private/Math
+    - MaterialComponents/ShadowElevations
+    - MaterialComponents/ShadowLayer
+    - MaterialComponents/Typography
+    - MDFTextAccessibility
+  - MaterialComponents/Dialogs (28.0.0):
+    - MaterialComponents/Dialogs/ColorThemer (= 28.0.0)
+    - MaterialComponents/Dialogs/Component (= 28.0.0)
+  - MaterialComponents/Dialogs/ColorThemer (28.0.0):
     - MaterialComponents/Dialogs/Component
     - MaterialComponents/Themes
-  - MaterialComponents/Dialogs/Component (25.1.0):
+  - MaterialComponents/Dialogs/Component (28.0.0):
     - MaterialComponents/Buttons
     - MaterialComponents/private/KeyboardWatcher
     - MaterialComponents/private/RTL
     - MaterialComponents/ShadowElevations
     - MaterialComponents/ShadowLayer
-  - MaterialComponents/Ink (25.1.0):
-    - MaterialComponents/Ink/ColorThemer (= 25.1.0)
-    - MaterialComponents/Ink/Component (= 25.1.0)
-  - MaterialComponents/Ink/ColorThemer (25.1.0):
+  - MaterialComponents/Ink (28.0.0):
+    - MaterialComponents/Ink/ColorThemer (= 28.0.0)
+    - MaterialComponents/Ink/Component (= 28.0.0)
+  - MaterialComponents/Ink/ColorThemer (28.0.0):
     - MaterialComponents/Ink/Component
     - MaterialComponents/Themes
-  - MaterialComponents/Ink/Component (25.1.0)
-  - MaterialComponents/OverlayWindow (25.1.0):
+  - MaterialComponents/Ink/Component (28.0.0)
+  - MaterialComponents/OverlayWindow (28.0.0):
     - MaterialComponents/private/Application
-  - MaterialComponents/private/Application (25.1.0)
-  - MaterialComponents/private/KeyboardWatcher (25.1.0):
+  - MaterialComponents/private/Application (28.0.0)
+  - MaterialComponents/private/KeyboardWatcher (28.0.0):
     - MaterialComponents/private/Application
-  - MaterialComponents/private/Math (25.1.0)
-  - MaterialComponents/private/Overlay (25.1.0)
-  - MaterialComponents/private/RTL (25.1.0)
-  - MaterialComponents/ProgressView (25.1.0):
-    - MaterialComponents/ProgressView/ColorThemer (= 25.1.0)
-    - MaterialComponents/ProgressView/Component (= 25.1.0)
-  - MaterialComponents/ProgressView/ColorThemer (25.1.0):
+  - MaterialComponents/private/Math (28.0.0)
+  - MaterialComponents/private/Overlay (28.0.0)
+  - MaterialComponents/private/RTL (28.0.0)
+  - MaterialComponents/ProgressView (28.0.0):
+    - MaterialComponents/ProgressView/ColorThemer (= 28.0.0)
+    - MaterialComponents/ProgressView/Component (= 28.0.0)
+  - MaterialComponents/ProgressView/ColorThemer (28.0.0):
     - MaterialComponents/ProgressView/Component
     - MaterialComponents/Themes
-  - MaterialComponents/ProgressView/Component (25.1.0):
+  - MaterialComponents/ProgressView/Component (28.0.0):
     - MaterialComponents/private/Math
     - MaterialComponents/private/RTL
-  - MaterialComponents/ShadowElevations (25.1.0)
-  - MaterialComponents/ShadowLayer (25.1.0)
-  - MaterialComponents/Snackbar (25.1.0):
+  - MaterialComponents/ShadowElevations (28.0.0)
+  - MaterialComponents/ShadowLayer (28.0.0)
+  - MaterialComponents/Snackbar (28.0.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Buttons
     - MaterialComponents/OverlayWindow
@@ -91,8 +100,8 @@ PODS:
     - MaterialComponents/private/KeyboardWatcher
     - MaterialComponents/private/Overlay
     - MaterialComponents/Typography
-  - MaterialComponents/Themes (25.1.0)
-  - MaterialComponents/Typography (25.1.0):
+  - MaterialComponents/Themes (28.0.0)
+  - MaterialComponents/Typography (28.0.0):
     - MaterialComponents/private/Application
   - MDFTextAccessibility (1.2.0)
   - MisterFusion (2.2.0)
@@ -110,7 +119,7 @@ PODS:
   - SDWebImage (3.8.2):
     - SDWebImage/Core (= 3.8.2)
   - SDWebImage/Core (3.8.2)
-  - SideMenu (2.3.2)
+  - SideMenu (2.3.3)
   - SwiftyJSON (3.1.4)
   - SwipeCellKit (1.9.0)
   - TTTAttributedLabel (2.0.0)
@@ -169,10 +178,10 @@ CHECKOUT OPTIONS:
     :commit: f4d3b461ffc8338c1a5d6e0026fa2d30832f3593
     :git: https://github.com/ccrama/ImageViewer
   PagingMenuController:
-    :commit: 366f1bcf312fb0cb6478c03706af0d540a54c658
+    :commit: 98c20f7e9db14d4ec833f10ddd1d9bf4df186f47
     :git: https://github.com/ccrama/PagingMenuController
   reddift:
-    :commit: 326de440d1ca32405ae558f41972845001f54ed1
+    :commit: 2d98230d53e5de36a3d5e7c7606d3c436c3c20bb
     :git: https://github.com/ccrama/reddift
   UZTextView:
     :commit: 15b553d05544ddc429b76f23b413fc9be256901d
@@ -186,7 +195,7 @@ SPEC CHECKSUMS:
   ImagePickerSheetController: 4789b06940e299431455c61be77fda440883c36c
   ImageViewer: 364abc0309c33dda86d08ca25b0243e5c67d8cd3
   KCFloatingActionButton: 1b22ce95d44b51915280df8a8b277eae4a06c3f1
-  MaterialComponents: 18ef3524558622476f3edd7c1579efbca431c5dd
+  MaterialComponents: 8307865c3150da217dabdcf1ad921a7fd6663dd8
   MDFTextAccessibility: 94098925e0853551c5a311ce7c1ecefbe297cdb6
   MisterFusion: f243f4db57c523b5f55d7d9df6a298ffaac8695e
   PagingMenuController: acdb8e0ff7f977182b0586656d19ba1d992390a6
@@ -195,7 +204,7 @@ SPEC CHECKSUMS:
   reddift: 3066e687c2a934b0f9aca6ee6e2161abc4c93a56
   SAHistoryNavigationViewController: fbe7ad886f3f846a5c5742180d57ae7545b810a7
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
-  SideMenu: 3fa07dd05d4bade2b6f9889fb1877e312e1ba319
+  SideMenu: a447554ae5c982e8077666389e1c8b0c8656e065
   SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
   SwipeCellKit: 893661973276ae3512a84ac0a47055923b10731e
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656

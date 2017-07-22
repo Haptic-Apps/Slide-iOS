@@ -284,10 +284,6 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         self.contentView.addSubview(c)
         
         moreButton.addTarget(self, action: #selector(CommentDepthCell.pushedMoreButton(_:)), for: UIControlEvents.touchUpInside)
-        
-        let tap2 = UISwipeGestureRecognizer(target: self, action: #selector(self.vote))
-        tap2.direction = .right
-         self.contentView.addGestureRecognizer(tap2)
 
         let tapGestureRecognizer = UITapGestureRecognizer.init(target: self, action: #selector(self.handleShortPress(_:)))
         tapGestureRecognizer.cancelsTouchesInView = false
@@ -484,7 +480,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         oldDepth = depth
         depth = 1
         updateDepthConstraints()
-        self.contentView.backgroundColor = ColorUtil.getColorForSub(sub: ((comment as! RComment).subreddit)).withAlphaComponent(0.5)
+        self.contentView.backgroundColor = ColorUtil.getColorForSub(sub: ((comment)!.subreddit)).withAlphaComponent(0.25)
     }
     
     func doUnHighlight(){

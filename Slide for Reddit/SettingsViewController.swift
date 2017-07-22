@@ -22,6 +22,9 @@ class SettingsViewController: UITableViewController {
     var dataSaving: UITableViewCell = UITableViewCell()
     var filters: UITableViewCell = UITableViewCell()
     var content: UITableViewCell = UITableViewCell()
+    
+    var multiColumnCell: UITableViewCell = UITableViewCell()
+    var multiColumn = UISwitch()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -142,8 +145,27 @@ class SettingsViewController: UITableViewController {
         self.filters.imageView?.image = UIImage.init(named: "filter")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
         self.filters.imageView?.tintColor = ColorUtil.fontColor
         
+        multiColumn = UISwitch()
+        multiColumn.isOn = SettingValues.multiColumn
+        multiColumn.addTarget(self, action: #selector(SettingsViewController.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+        multiColumnCell.textLabel?.text = "Multi Column mode"
+        multiColumnCell.accessoryView = multiColumn
+        multiColumnCell.backgroundColor = ColorUtil.foregroundColor
+        multiColumnCell.textLabel?.textColor = ColorUtil.fontColor
+        multiColumnCell.selectionStyle = UITableViewCellSelectionStyle.none
+        self.multiColumnCell.imageView?.image = UIImage.init(named: "multi")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
+
+        
         self.tableView.reloadData()
     }
+    
+    func switchIsChanged(_ changed: UISwitch) {
+        if(changed == multiColumn){
+            SettingValues.multiColumn = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_multiColumn)
+        }
+    }
+
  
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 3
@@ -166,6 +188,7 @@ class SettingsViewController: UITableViewController {
             switch(indexPath.row) {
             case 0: return self.general
             case 1: return self.manageSubs
+            case 2: return self.multiColumnCell
             default: fatalError("Unknown row in section 0")
             }
         case 1:
@@ -295,7 +318,7 @@ ch = SettingsContent()
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch(section) {
-        case 0: return 2    // section 0 has 2 rows
+        case 0: return 3    // section 0 has 2 rows
         case 1: return 5    // section 1 has 1 row
         case 2: return 5
         default: fatalError("Unknown number of sections")

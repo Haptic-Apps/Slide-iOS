@@ -63,6 +63,7 @@ class SettingValues{
     public static let pref_internalImage = "INTERNAL_IMAGE"
     public static let pref_internalAlbum = "INTERNAL_ALBUM"
     public static let pref_internalYouTube = "INTERNAL_YOUTUBE"
+    public static let pref_multiColumn = "MULTI_COLUMN"
 
 
     public static var viewType = true
@@ -118,6 +119,7 @@ class SettingValues{
     public static var internalAlbum = true
     public static var internalGif = true
     public static var internalYouTube = true
+    public static var multiColumn = false
 
     enum PostViewType: String {
         case LIST = "list"
@@ -130,6 +132,8 @@ class SettingValues{
         SettingValues.bigPicCropped = settings.bool(forKey: SettingValues.pref_cropBigPic)
         SettingValues.saveNSFWHistory = settings.bool(forKey: SettingValues.pref_saveNSFWHistory)
         SettingValues.saveHistory = settings.object(forKey: SettingValues.pref_saveHistory) == nil ? true : settings.bool(forKey: SettingValues.pref_saveHistory)
+        SettingValues.multiColumn = settings.object(forKey: SettingValues.pref_multiColumn) == nil ? true : settings.bool(forKey: SettingValues.pref_multiColumn)
+
         SettingValues.markReadOnScroll = settings.bool(forKey: SettingValues.pref_markReadOnScroll)
         SettingValues.nsfwEnabled = settings.bool(forKey: SettingValues.pref_nsfwEnabled)
         SettingValues.nsfwPreviews = settings.bool(forKey: SettingValues.pref_nsfwPreviews)

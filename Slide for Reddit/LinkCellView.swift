@@ -1430,13 +1430,17 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     func openComment(sender: UITapGestureRecognizer? = nil){
         if(!full){
             let comment = CommentViewController(submission: link!)
-            if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.parentViewController!.view.bounds.width / CGFloat(320))) > 1){
+            if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.parentViewController!.view.bounds.width / CGFloat(320))) > 1 && SettingValues.multiColumn){
                 let navigationController = UINavigationController(rootViewController: comment)
                 navigationController.modalPresentationStyle = .formSheet
                 navigationController.modalTransitionStyle = .crossDissolve
                 self.parentViewController?.present(navigationController, animated: true, completion: nil)
-            } else {
+            } else if(UIScreen.main.traitCollection.userInterfaceIdiom != .pad){
                 (self.navViewController as? UINavigationController)?.pushViewController(comment, animated: true)
+            } else {
+                var nav = UINavigationController.init(rootViewController: comment)
+                (self.parentViewController?.splitViewController)?.showDetailViewController(nav, sender: self)
+
             }
         }
     }

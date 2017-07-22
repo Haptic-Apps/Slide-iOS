@@ -165,9 +165,10 @@ class SubredditsViewController:  PagingMenuController , UISplitViewControllerDel
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.splitViewController?.delegate = self
+        if(SettingValues.multiColumn){
         self.splitViewController?.maximumPrimaryColumnWidth = 10000
         self.splitViewController?.preferredPrimaryColumnWidthFraction = 1
-
+        }
         if(SubredditReorderViewController.changed){
             SubredditReorderViewController.changed = false
             self.restartVC()
