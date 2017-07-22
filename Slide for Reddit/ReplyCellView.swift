@@ -457,10 +457,10 @@ class ReplyCellView: UITableViewCell, UITextViewDelegate {
                 if let fileName = (info?["PHImageFileURLKey"] as? NSURL)?.lastPathComponent {
                     name = fileName
                 }
-                let mime = UTTypeCopyPreferredTagWithClass(uti as! CFString, kUTTagClassMIMEType)?.takeRetainedValue()
+                let mime = UTTypeCopyPreferredTagWithClass(uti! as CFString, kUTTagClassMIMEType)?.takeRetainedValue()
                 
                 Alamofire.upload(multipartFormData: { (multipartFormData) in
-                    multipartFormData.append(data!, withName: "image", fileName: name, mimeType: mime as! String)
+                    multipartFormData.append(data!, withName: "image", fileName: name, mimeType: mime! as String)
                     for (key, value) in parameters {
                         multipartFormData.append((value.data(using: .utf8))!, withName: key)
                     }

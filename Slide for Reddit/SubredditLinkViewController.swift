@@ -16,10 +16,9 @@ import RealmSwift
 import PagingMenuController
 import MaterialComponents.MaterialSnackbar
 import MaterialComponents.MDCActivityIndicator
-import SwipeCellKit
 import TTTAttributedLabel
 
-class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate, SwipeTableViewCellDelegate, UICollectionViewDataSource, LinkCellViewDelegate, ColorPickerDelegate, KCFloatingActionButtonDelegate, UIGestureRecognizerDelegate, WrappingFlowLayoutDelegate, UINavigationControllerDelegate {
+class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate,  UICollectionViewDataSource, LinkCellViewDelegate, ColorPickerDelegate, KCFloatingActionButtonDelegate, UIGestureRecognizerDelegate, WrappingFlowLayoutDelegate, UINavigationControllerDelegate {
     
     let margin: CGFloat = 10
     let cellsPerRow = 3
@@ -35,7 +34,6 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         
         var thumb = submission.thumbnail
         var big = submission.banner
-        var height = submission.height
         
         var type = ContentType.getContentType(baseUrl: submission.url!)
         if(submission.isSelf){
@@ -110,7 +108,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         
         let he = CachedTitle.getTitle(submission: submission, full: false, false).boundingRect(with: CGSize.init(width: itemWidth - 24 - (thumb ? (SettingValues.largerThumbnail ? 75 : 50) + 28 : 0), height:10000), options: [.usesLineFragmentOrigin , .usesFontLeading], context: nil).height
         let thumbheight = CGFloat(SettingValues.largerThumbnail ? 83 : 58)
-        var estimatedHeight = CGFloat((he < thumbheight && thumb || he < thumbheight && !big) ? thumbheight : he) + CGFloat(54)  + (SettingValues.hideButtonActionbar ? -28 : 0) +  CGFloat(big && !thumb ? (submissionHeight + 20) : 0)
+        let estimatedHeight = CGFloat((he < thumbheight && thumb || he < thumbheight && !big) ? thumbheight : he) + CGFloat(54)  + (SettingValues.hideButtonActionbar ? -28 : 0) +  CGFloat(big && !thumb ? (submissionHeight + 20) : 0)
         return CGSize(width: itemWidth, height: estimatedHeight)
     }
 
@@ -157,7 +155,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         }
     }
     
-    func upvote(_ cell: LinkCellView, action: SwipeAction?) {
+    func upvote(_ cell: LinkCellView) {
         do{
             try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up, name: (cell.link?.getId())!, completion: { (result) in
                 
@@ -167,9 +165,6 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
             cell.refresh()
         } catch {
             
-        }
-        if(action != nil){
-            action!.fulfill(with: .reset)
         }
     }
     
@@ -202,7 +197,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
             }
             tableView.performBatchUpdates({
                 self.tableView.deleteItems(at: [IndexPath.init(item: location, section: 0)])
-                var message = MDCSnackbarMessage.init(text: "Submission hidden forever")
+                let message = MDCSnackbarMessage.init(text: "Submission hidden forever")
                 let action = MDCSnackbarMessageAction()
                 let actionHandler = {() in
                     self.links.insert(item, at: location)
@@ -229,7 +224,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         
-        var currentY = scrollView.contentOffset.y;
+        let currentY = scrollView.contentOffset.y;
         let headerHeight = CGFloat(70);
         var didHide = false
         
@@ -317,7 +312,11 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         }
         
         cancelActionButton = UIAlertAction(title: "Open in Safari", style: .default) { action -> Void in
-            UIApplication.shared.open(link.url!, options: [:], completionHandler: nil)
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open(link.url!, options: [:], completionHandler: nil)
+            } else {
+                UIApplication.shared.openURL(link.url!)
+            }
         }
         actionSheetController.addAction(cancelActionButton)
         
@@ -864,7 +863,6 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
                             self.doDisplayMultiSidebar(r)
                         }
                     default:
-                        print(result.error)
                         DispatchQueue.main.async{
                             let message = MDCSnackbarMessage()
                             message.text = "Multireddit info not found"
@@ -1008,8 +1006,6 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
-
-        let currentY = tableView.contentOffset.y;
         
         first = false
         tableView.delegate = self
@@ -1200,7 +1196,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         
         var thumb = submission.thumbnail
         var big = submission.banner
-        var height = submission.height
+        let height = submission.height
         
         var type = ContentType.getContentType(baseUrl: submission.url!)
         if(submission.isSelf){
@@ -1294,28 +1290,6 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         return cell!
 
     }
-    
-    func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeTableOptions {
-        var options = SwipeTableOptions()
-        options.expansionStyle = SwipeExpansionStyle.fill
-        options.transitionStyle = SwipeTransitionStyle.drag
-        return options
-    }
-    
-    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
-        guard orientation == .right else { return nil }
-        
-        let deleteAction = SwipeAction(style: SwipeActionStyle.default, title: "Upvote") { action, indexPath in
-            self.upvote(tableView.cellForRow(at: indexPath) as! LinkCellView, action: action)
-        }
-        
-        // customize the action appearance
-        deleteAction.image = UIImage(named: "upvote")
-        
-        return [deleteAction]
-    }
-
-
     
     var loading = false
     var nomore = false

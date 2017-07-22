@@ -95,7 +95,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
                         for sub in subs{
                             toReturn.append(sub.displayName)
                             let color = (UIColor.init(hexString: sub.keyColor))
-                            if(color != nil && UserDefaults.standard.colorForKey(key: "color+" + sub.displayName) == nil){
+                            if(UserDefaults.standard.colorForKey(key: "color+" + sub.displayName) == nil){
                                 defaults.setColor(color: color , forKey: "color+" + sub.displayName)
                                 self.count += 1
                             }
@@ -112,7 +112,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
                     for sub in subs {
                         toReturn.append(sub.displayName)
                         let color = (UIColor.init(hexString: sub.keyColor))
-                        if(color != nil && UserDefaults.standard.colorForKey(key: "color+" + sub.displayName) == nil){
+                        if(UserDefaults.standard.colorForKey(key: "color+" + sub.displayName) == nil){
                             defaults.setColor(color: color , forKey: "color+" + sub.displayName)
                             self.count += 1
                         }
@@ -120,7 +120,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
                     for m in multis {
                         toReturn.append("/m/" + m.displayName)
                         let color = (UIColor.init(hexString: m.keyColor))
-                        if(color != nil && UserDefaults.standard.colorForKey(key: "color+" + m.displayName) == nil){
+                        if(UserDefaults.standard.colorForKey(key: "color+" + m.displayName) == nil){
                             defaults.setColor(color: color , forKey: "color+" + m.displayName)
                             self.count += 1
                         }
@@ -210,7 +210,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
         }
         actionSheetController.addAction(cancelActionButton)
         actionSheetController.modalPresentationStyle = .popover
-        var view = tableView.cellForRow(at: indexPath)!.contentView
+        let view = tableView.cellForRow(at: indexPath)!.contentView
         savedView = view
         if let presenter = actionSheetController.popoverPresentationController {
             presenter.sourceView = view

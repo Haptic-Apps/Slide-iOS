@@ -21,7 +21,7 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate  {
         self.subname = subname
     }
     func attributedLabel(_ label: TTTAttributedLabel!, didLongPressLinkWith url: URL!, at point: CGPoint) {
-        if let attr = url{
+        if (url) != nil{
             if parent != nil{
                 let sheet = UIAlertController(title: url.absoluteString, message: nil, preferredStyle: .actionSheet)
                 sheet.addAction(
@@ -39,7 +39,11 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate  {
                 }
                 sheet.addAction(
                     UIAlertAction(title: "Open in Safari", style: .default) { (action) in
-                        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                        if #available(iOS 10.0, *) {
+                            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                        } else {
+                            UIApplication.shared.openURL(url)
+                        }
                         sheet.dismiss(animated: true, completion: nil)
                     }
                 )
@@ -134,7 +138,7 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate  {
         let rect = CGRect.init(x: margin, y: margin + 5, width: alrController.view.bounds.size.width - margin * 4.0, height: 300)
         let scrollView = UIScrollView(frame: rect)
         scrollView.backgroundColor = UIColor.clear
-        var info: TTTAttributedLabel = TTTAttributedLabel(frame: CGRect(x: 0, y: 40, width: rect.size.width, height: CGFloat.greatestFiniteMagnitude))
+        let info: TTTAttributedLabel = TTTAttributedLabel(frame: CGRect(x: 0, y: 40, width: rect.size.width, height: CGFloat.greatestFiniteMagnitude))
         //todo info.delegate = self
         info.isUserInteractionEnabled = true
         info.numberOfLines = 0

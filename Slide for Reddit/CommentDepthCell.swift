@@ -193,7 +193,11 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
             }
             sheet.addAction(
                 UIAlertAction(title: "Open in Safari", style: .default) { (action) in
-                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    if #available(iOS 10.0, *) {
+                        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    } else {
+                        UIApplication.shared.openURL(url)
+                    }
                     sheet.dismiss(animated: true, completion: nil)
                 }
             )
@@ -301,28 +305,31 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         
         self.clipsToBounds = true
     }
-    
+    func doLongClick(){
+        timer!.invalidate()
+        AudioServicesPlaySystemSound(1519)
+        if(!self.cancelled){
+            if(false){
+                if(self.delegate!.menuShown ){ //todo check if comment id is the same as this comment id
+                    self.showMenu(nil)
+                } else {
+                    self.pushedSingleTap(nil)
+                }
+            } else {
+                self.showMenu(nil)
+            }
+        }
+    }
     var timer : Timer?
     var cancelled = false
     func handleLongPress(_ sender: UILongPressGestureRecognizer){
         if(sender.state == UIGestureRecognizerState.began){
             cancelled = false
-            timer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: false, block: { (timer) in
-                timer.invalidate()
-                AudioServicesPlaySystemSound(1519)
-                if(!self.cancelled){
-                    if(false){
-                        if(self.delegate!.menuShown ){ //todo check if comment id is the same as this comment id
-                            self.showMenu(sender)
-                        } else {
-                            self.pushedSingleTap(sender)
-                        }
-                    } else {
-                        self.showMenu(sender)
-                    }
-                }
-
-            })
+            timer = Timer.scheduledTimer(timeInterval: 0.25,
+                                         target: self,
+                                         selector: #selector(self.doLongClick),
+                                         userInfo: nil,
+                                         repeats: false)
         }
         if (sender.state == UIGestureRecognizerState.ended) {
         timer!.invalidate()
@@ -345,7 +352,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         return true
     }
     var long = UILongPressGestureRecognizer.init(target: self, action: nil)
-    func showMenu(_ sender: AnyObject){
+    func showMenu(_ sender: AnyObject?){
         if let del = self.delegate {
             if(del.menuShown && del.menuId == (content as! RComment).getId()){
                 del.hideCommentMenu(self)
@@ -358,7 +365,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
     func vote(){
         if(content is RComment){
         let current = ActionStates.getVoteDirection(s: comment!)
-        var dir = (current == VoteDirection.none) ? VoteDirection.up : VoteDirection.none
+        let dir = (current == VoteDirection.none) ? VoteDirection.up : VoteDirection.none
         var direction = dir
         switch(ActionStates.getVoteDirection(s: comment!)){
         case .up:
@@ -379,7 +386,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
                 switch result {
                 case .failure(let error):
                     print(error.description)
-                case .success(let check): break
+                case .success( _): break
                 }
             })
         } catch { print(error) }
@@ -403,6 +410,14 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         }
         
         alertController.addAction(profile)
+        
+        let share: UIAlertAction = UIAlertAction(title: "Share comment permalink", style: .default) { action -> Void in
+            let activityViewController = UIActivityViewController(activityItems: [self.comment!.permalink], applicationActivities: nil)
+            par.present(activityViewController, animated: true, completion: {})
+        }
+        
+        alertController.addAction(share)
+
         if(AccountController.isLoggedIn){
             
             let save: UIAlertAction = UIAlertAction(title: "Save", style: .default) { action -> Void in
@@ -731,7 +746,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(comment.gilded) ", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false)])
         
         let spacer = NSMutableAttributedString.init(string: "  ")
-        var userColor = ColorUtil.getColorForUser(name: comment.author)
+        let userColor = ColorUtil.getColorForUser(name: comment.author)
         if (comment.distinguished == "admin") {
             
             authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#E57373"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))

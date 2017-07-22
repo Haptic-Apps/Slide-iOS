@@ -243,7 +243,6 @@ class SubredditsViewController:  PagingMenuController , UISplitViewControllerDel
         }
         
         SubredditsViewController.current = (SubredditsViewController.viewControllers[0] as! SubredditLinkViewController).sub
-        if(SubredditsViewController.current != nil){
             self.tintColor = ColorUtil.getColorForSub(sub: SubredditsViewController.current)
             self.navigationController?.navigationBar.barTintColor = self.tintColor
             self.menuNav?.setSubreddit(subreddit: SubredditsViewController.current)
@@ -255,7 +254,6 @@ class SubredditsViewController:  PagingMenuController , UISplitViewControllerDel
             MenuOptions.setColor(c: ColorUtil.accentColorForSub(sub: SubredditsViewController.current))
             self.colorChanged()
             
-        }
         
         if let nav = self.menuNav {
             if(nav.tableView != nil){
@@ -263,7 +261,7 @@ class SubredditsViewController:  PagingMenuController , UISplitViewControllerDel
             }
         }
          menuLeftNavigationController?.dismiss(animated: true, completion: {})
-        self.menuView?.withPadding(padding: UIEdgeInsetsMake(20, 0, 0, 0))
+        let _ = self.menuView?.withPadding(padding: UIEdgeInsetsMake(20, 0, 0, 0))
 
     }
     
@@ -297,7 +295,6 @@ class SubredditsViewController:  PagingMenuController , UISplitViewControllerDel
             setup(PagingMenuOptionsSingle() as PagingMenuControllerCustomizable)
         }
         SubredditsViewController.current = (SubredditsViewController.viewControllers[0] as! SubredditLinkViewController).sub
-        if(SubredditsViewController.current != nil){
             self.tintColor = ColorUtil.getColorForSub(sub: SubredditsViewController.current)
             self.navigationController?.navigationBar.barTintColor = self.tintColor
             self.menuNav?.setSubreddit(subreddit: SubredditsViewController.current)
@@ -308,8 +305,6 @@ class SubredditsViewController:  PagingMenuController , UISplitViewControllerDel
             
             MenuOptions.setColor(c: ColorUtil.accentColorForSub(sub: SubredditsViewController.current))
             self.colorChanged()
-            
-        }
 
         self.title = "Slide"
         

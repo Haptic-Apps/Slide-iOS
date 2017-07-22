@@ -152,7 +152,7 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
                     let photo = GalleryItem.image(fetchImageBlock: { (completion) in
                         if(SDWebImageManager.shared().cachedImageExists(for: link)){
                             DispatchQueue.main.async {
-                                var image = SDWebImageManager.shared().imageCache.imageFromDiskCache(forKey: link.absoluteString)
+                                let image = SDWebImageManager.shared().imageCache.imageFromDiskCache(forKey: link.absoluteString)
                                 self.image = image
                                 self.progressView?.setHidden(true, animated: true)
                                 self.size?.isHidden = true
@@ -185,7 +185,7 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
             }
             
             let browser = GalleryViewController.init(startIndex: 0, itemsDataSource: self, itemsDelegate: nil, displacedViewsDataSource: nil, configuration: galleryConfiguration())
-            var toolbar = UIToolbar()
+            let toolbar = UIToolbar()
             let space = UIBarButtonItem(barButtonSystemItem:.flexibleSpace, target: nil, action: nil)
             var items: [UIBarButtonItem] = []
             
@@ -251,7 +251,11 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
         }
         alert.addAction(
             UIAlertAction(title: "Open in Safari", style: .default) { (action) in
-                UIApplication.shared.open(self.contentUrl!, options: [:], completionHandler: nil)
+                if #available(iOS 10.0, *) {
+                    UIApplication.shared.open(self.contentUrl!, options: [:], completionHandler: nil)
+                } else {
+                    UIApplication.shared.openURL(self.contentUrl!)
+                }
             }
         )
         alert.addAction(
@@ -286,7 +290,7 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
         alert.modalPresentationStyle = .popover
         
         if let presenter = alert.popoverPresentationController {
-            presenter.sourceView = menuB!.value(forKey: "view") as! UIView
+            presenter.sourceView = (menuB!.value(forKey: "view") as! UIView)
             presenter.sourceRect = (menuB!.value(forKey: "view") as! UIView).bounds
         }
         

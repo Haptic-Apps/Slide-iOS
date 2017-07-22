@@ -14,11 +14,10 @@ import UZTextView
 import ImageViewer
 import TTTAttributedLabel
 import MaterialComponents
-import SwipeCellKit
 import AudioToolbox
 
 protocol LinkTableViewCellDelegate: class {
-    func upvote(_ cell: LinkTableViewCell, action: SwipeAction?)
+    func upvote(_ cell: LinkTableViewCell)
     func downvote(_ cell: LinkTableViewCell)
     func save(_ cell: LinkTableViewCell)
     func more(_ cell: LinkTableViewCell)
@@ -30,7 +29,7 @@ class LinkTableViewCell: UITableViewCell, UIViewControllerPreviewingDelegate, TT
     
     func upvote(sender: UITapGestureRecognizer? = nil) {
         if let delegate = self.del {
-            delegate.upvote(self, action: nil)
+            delegate.upvote(self)
         }
     }
     
@@ -86,7 +85,7 @@ class LinkTableViewCell: UITableViewCell, UIViewControllerPreviewingDelegate, TT
     var lq = false
     
     func attributedLabel(_ label: TTTAttributedLabel!, didLongPressLinkWith url: URL!, at point: CGPoint) {
-        if let attr = url{
+        if (url) != nil{
             if parentViewController != nil{
                 let sheet = UIAlertController(title: url.absoluteString, message: nil, preferredStyle: .actionSheet)
                 sheet.addAction(
@@ -104,7 +103,11 @@ class LinkTableViewCell: UITableViewCell, UIViewControllerPreviewingDelegate, TT
                 }
                 sheet.addAction(
                     UIAlertAction(title: "Open in Safari", style: .default) { (action) in
-                        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                        if #available(iOS 10.0, *) {
+                            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                        } else {
+                            UIApplication.shared.openURL(url)
+                        }
                         sheet.dismiss(animated: true, completion: nil)
                     }
                 )
@@ -402,8 +405,8 @@ class LinkTableViewCell: UITableViewCell, UIViewControllerPreviewingDelegate, TT
                 metrics: metrics,
                 views: views2))
         } else {
-            var hideString = SettingValues.hideButton ? "[hide(20)]-8-" : ""
-            var saveString = SettingValues.saveButton ? "[save(20)]-8-" : ""
+            let hideString = SettingValues.hideButton ? "[hide(20)]-8-" : ""
+            let saveString = SettingValues.saveButton ? "[save(20)]-8-" : ""
             buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:\(hideString)\(saveString)[upvote(20)]-8-[downvote(20)]-8-[more(20)]-0-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
@@ -1130,12 +1133,6 @@ class LinkTableViewCell: UITableViewCell, UIViewControllerPreviewingDelegate, TT
         self.link = submission
         let attributedTitle = NSMutableAttributedString(string: submission.title, attributes: [NSFontAttributeName: title.font, NSForegroundColorAttributeName: ColorUtil.fontColor])
         let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(submission.flair)\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
-        let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
-        let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(submission.gilded) ", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor])
-        
-        let locked = NSMutableAttributedString.init(string: "\u{00A0}LOCKED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
-        
-        let archived = NSMutableAttributedString.init(string: "\u{00A0}ARCHIVED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
         
         let spacer = NSMutableAttributedString.init(string: "  ")
         if(!submission.flair.isEmpty){
@@ -1430,17 +1427,24 @@ class LinkTableViewCell: UITableViewCell, UIViewControllerPreviewingDelegate, TT
     var timer : Timer?
     var cancelled = false
     
+    func doMore(){
+        timer!.invalidate()
+        AudioServicesPlaySystemSound(1519)
+        if(!self.cancelled){
+            self.more()
+        }
+
+    }
+    
     func handleLongPress(_ sender: UILongPressGestureRecognizer){
         if(sender.state == UIGestureRecognizerState.began){
             cancelled = false
-            timer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: false, block: { (timer) in
-                timer.invalidate()
-                AudioServicesPlaySystemSound(1519)
-                if(!self.cancelled){
-                    self.more()
-                }
-                
-            })
+            timer = Timer.scheduledTimer(timeInterval: 0.25,
+                                         target: self,
+                                         selector: #selector(self.doMore),
+                                         userInfo: nil,
+                                         repeats: false)
+
         }
         if (sender.state == UIGestureRecognizerState.ended) {
             timer!.invalidate()
@@ -1592,16 +1596,12 @@ class LinkTableViewCell: UITableViewCell, UIViewControllerPreviewingDelegate, TT
         var bottommargin =  0
         var leftmargin = 0
         var rightmargin = 0
-        var innerpadding = 0
-        var radius = 0
         
         if(SettingValues.postViewMode == .CARD && !full){
             topmargin = 5
             bottommargin = 5
             leftmargin = 5
             rightmargin = 5
-            innerpadding = 5
-            radius = 10
             self.contentView.elevate(elevation: 2)
         }
         

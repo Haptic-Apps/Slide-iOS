@@ -14,7 +14,6 @@ import TTTAttributedLabel
 import RealmSwift
 import MaterialComponents.MaterialSnackbar
 import MaterialComponents.MDCActivityIndicator
-import SwipeCellKit
 
 class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, UZTextViewCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate, TTTAttributedLabelDelegate, ReplyDelegate {
     
@@ -184,7 +183,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         self.present(navEditorViewController, animated: true, completion: nil)
     }
     
-    func upvote(_ cell: LinkCellView, action: SwipeAction? = nil) {
+    func upvote(_ cell: LinkCellView) {
         do{
             try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up, name:  (cell.link?.id)!, completion: { (result) in
                 
@@ -251,7 +250,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
         
         cancelActionButton = UIAlertAction(title: "Open in Safari", style: .default) { action -> Void in
-            UIApplication.shared.open(link.url!, options: [:], completionHandler: nil)
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open(link.url!, options: [:], completionHandler: nil)
+            } else {
+                UIApplication.shared.openURL(link.url!)
+            }
         }
         actionSheetController.addAction(cancelActionButton)
         
@@ -481,7 +484,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                 realm.beginWrite()
                                 for comment in self.comments {
                                     realm.create(type(of: self.content[comment]!), value: self.content[comment]!, update: true)
-                                    if(comment is RComment){
+                                    if(self.content[comment]! is RComment){
                                     self.submission!.comments.append(self.content[comment] as! RComment)
                                     }
                                 }
@@ -823,7 +826,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         } else if (recognizer.state == .changed && view != nil) {
             let translation = recognizer.translation(in: view)
             // Cumulative translation.x can be less than zero because user can pan slightly to the right and then back to the left.
-            var d = translation.x > 0 ? translation.x / view!.bounds.width : 0;
+            let d = translation.x > 0 ? translation.x / view!.bounds.width : 0;
             self.interactionController?.update(d)
         } else if (recognizer.state == .ended || recognizer.state == .cancelled) {
             if (recognizer.velocity(in: view).x > 0) {
@@ -839,7 +842,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     func doSubbed(){
         let sub = UIButton.init(type: .custom)
-        var image = UIImage.init()
         if(Subscriptions.isSubscriber((submission?.subreddit)!)){
             sub.setImage(UIImage.init(named: "subbed")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
         } else {
@@ -1136,11 +1138,12 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     func goDown(_ sender: AnyObject){
         var topCell = (tableView.indexPathsForVisibleRows?[0].row)!
-        while((dataArray[topCell] is RMore || (dataArray[topCell] as! RComment).depth > 1) && dataArray.count > topCell){
+        let contents = content[dataArray[topCell]]
+        while((contents is RMore || (contents as! RComment).depth > 1) && dataArray.count > topCell){
             topCell += 1
         }
         for i in (topCell + 1)...dataArray.count - 1 {
-            if(dataArray[i]  is RComment && matches(comment: dataArray[i] as! RComment, sort: currentSort)) {
+            if(contents  is RComment && matches(comment: contents as! RComment, sort: currentSort)) {
                 goToCell(i: i)
                 break
             }
@@ -1150,7 +1153,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     func getCount(sort: CommentNavType) -> Int {
         var count = 0
         for comment in dataArray {
-            if(comment is RComment && matches(comment: comment as! RComment, sort: sort)){
+            let contents = content[comment]
+            if(contents is RComment && matches(comment: contents as! RComment, sort: sort)){
                 count += 1
             }
         }
@@ -1319,7 +1323,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     func collapseAll(){
         for i in 0...dataArray.count - 1 {
             if(content[dataArray[i]]  is RComment && matches(comment: content[dataArray[i]] as! RComment, sort: .PARENTS)) {
-                hideNumber(n: dataArray[i], iB: i)
+                let _ = hideNumber(n: dataArray[i], iB: i)
                 let t = content[dataArray[i]]
                 let id = (t is RComment) ? (t as! RComment).getIdentifier() : (t as! RMore).getIdentifier()
                 if (!hiddenPersons.contains(id)) {
@@ -1463,7 +1467,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             DispatchQueue.main.async(execute: { () -> Void in
                 
                 var realPosition = 0
-                var id = comment.getIdentifier()
+                let id = comment.getIdentifier()
                 for c in self.comments{
                     if(id == c){
                         break
@@ -1711,13 +1715,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         
-        var currentY = scrollView.contentOffset.y;
+        let currentY = scrollView.contentOffset.y;
         let headerHeight = CGFloat(70);
-        var didHide = false
         
         if(currentY > lastYUsed && currentY > 0 ) {
             hideUI(inHeader: (currentY > headerHeight) )
-            didHide = true
         } else if((currentY < 70 || currentY < lastYUsed + 20)){
             showUI()
         }
@@ -2004,9 +2006,9 @@ class DirectionalPanGestureRecognizer: UIPanGestureRecognizer {
             return
         }
         
-        var velocity = self.velocity(in: self.view)
+        let velocity = self.velocity(in: self.view)
         if(!dragging && !velocity.equalTo(CGPoint.zero)){
-            var velocities = [SSWPanDirection.Right: velocity.x,
+            let velocities = [SSWPanDirection.Right: velocity.x,
                               SSWPanDirection.Down: velocity.y,
                               SSWPanDirection.Left: -velocity.x,
                               SSWPanDirection.Up: -velocity.y

@@ -49,7 +49,7 @@ class AlbumCellView: UITableViewCell {
         let attr = NSMutableAttributedString(string: text!)
         let font = FontGenerator.fontOfSize(size: 16, submission: false)
         let attr2 = attr.reconstruct(with: font, color: .white, linkColor: ColorUtil.getColorForSub(sub: ""))
-        var content = CellContent.init(string:LinkParser.parse(attr2), width:(self.frame.size.width))
+        let content = CellContent.init(string:LinkParser.parse(attr2), width:(self.frame.size.width))
         let activeLinkAttributes = NSMutableDictionary(dictionary: textView!.activeLinkAttributes)
         activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.accentColorForSub(sub: "")
         textView!.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
@@ -76,7 +76,7 @@ class AlbumCellView: UITableViewCell {
 
         if(SDWebImageManager.shared().cachedImageExists(for: url)){
             DispatchQueue.main.async {
-                var image = SDWebImageManager.shared().imageCache.imageFromDiskCache(forKey: url.absoluteString)
+                let image = SDWebImageManager.shared().imageCache.imageFromDiskCache(forKey: url.absoluteString)
                 //self.progressView?.setHidden(true, animated: true)
                 self.bannerImage.image = image
             }
