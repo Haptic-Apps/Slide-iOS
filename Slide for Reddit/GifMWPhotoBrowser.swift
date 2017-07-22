@@ -402,12 +402,16 @@ class GifMWPhotoBrowser: NSObject, GalleryItemsDataSource {
         }
         alert.addAction(
             UIAlertAction(title: "Open in Safari", style: .default) { (action) in
-                UIApplication.shared.open(URL.init(string: self.url)!, options: [:], completionHandler: nil)
+                if #available(iOS 10.0, *) {
+                    UIApplication.shared.open(URL.init(string: self.url)!, options: [:], completionHandler: nil)
+                } else {
+                    UIApplication.shared.openURL(URL.init(string: self.url)!)
+                }
             }
         )
         alert.addAction(
             UIAlertAction(title: "Share URL", style: .default) { (action) in
-                let shareItems:Array = [URL.init(string: self.url)]
+                let shareItems:Array = [URL.init(string: self.url)!]
                 let activityViewController:UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
                 let window = UIApplication.shared.keyWindow!
                 if let modalVC = window.rootViewController?.presentedViewController {
@@ -419,7 +423,7 @@ class GifMWPhotoBrowser: NSObject, GalleryItemsDataSource {
         )
         alert.addAction(
             UIAlertAction(title: "Share Image", style: .default) { (action) in
-                let shareItems:Array = [URL.init(string: self.url)]
+                let shareItems:Array = [URL.init(string: self.url)!]
                 let activityViewController:UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
                 let window = UIApplication.shared.keyWindow!
                 if let modalVC = window.rootViewController?.presentedViewController {
@@ -436,7 +440,7 @@ class GifMWPhotoBrowser: NSObject, GalleryItemsDataSource {
         
         alert.modalPresentationStyle = .popover
         if let presenter = alert.popoverPresentationController {
-            presenter.sourceView = more!.value(forKey: "view") as! UIView
+            presenter.sourceView = (more!.value(forKey: "view") as! UIView)
             presenter.sourceRect = (more!.value(forKey: "view") as! UIView).bounds
         }
 

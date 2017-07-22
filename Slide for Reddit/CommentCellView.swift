@@ -39,7 +39,11 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
                     }
                     sheet.addAction(
                         UIAlertAction(title: "Open in Safari", style: .default) { (action) in
-                            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                            if #available(iOS 10.0, *) {
+                                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                            } else {
+                                UIApplication.shared.openURL(url)
+                            }
                             sheet.dismiss(animated: true, completion: nil)
                         }
                     )
@@ -265,7 +269,7 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
             parentViewController?.registerForPreviewing(with: self, sourceView: textView)
         }
         
-        let metrics=["height": content?.textHeight]
+        let metrics=["height": content?.textHeight] as [String: Any]
         let views=["label":title, "body": textView, "info": info] as [String : Any]
         lsC = []
         lsC.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[label]-4-[info]-4-[body(height)]-8-|",
@@ -306,7 +310,11 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         toReturn.append(likeAction)
         
         let deleteAction = UIPreviewAction(title: "Open in Safari", style: .default) { (action, viewController) -> Void in
-            UIApplication.shared.open((self.currentLink)!, options: [:], completionHandler: nil)
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open((self.currentLink)!, options: [:], completionHandler: nil)
+            } else {
+                UIApplication.shared.openURL(self.currentLink!)
+            }
         }
         toReturn.append(deleteAction)
         

@@ -37,7 +37,7 @@ class SubredditReorderViewController: UITableViewController {
         delete.setImage(UIImage.init(named: "delete"), for: UIControlState.normal)
         delete.addTarget(self, action: #selector(self.remove(_:)), for: UIControlEvents.touchUpInside)
         delete.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
-        var deleteB = UIBarButtonItem.init(customView: delete)
+        let deleteB = UIBarButtonItem.init(customView: delete)
         
         let save = UIBarButtonItem.init(title: "Save", style: .done, target: self, action: #selector(self.save(_:)))
         

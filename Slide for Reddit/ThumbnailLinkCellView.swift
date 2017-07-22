@@ -19,7 +19,7 @@ class ThumbnailLinkCellView: LinkCellView {
      */
     
     override func doConstraints() {
-        var target = CurrentType.thumb
+        let target = CurrentType.thumb
                 
         if(currentType == target && target != .banner){
             return //work is already done

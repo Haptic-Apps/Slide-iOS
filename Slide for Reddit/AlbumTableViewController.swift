@@ -107,7 +107,7 @@ class AlbumTableViewController: MediaViewController, UITableViewDelegate, UITabl
             let attr = NSMutableAttributedString(string: t!)
             let font = FontGenerator.fontOfSize(size: 16, submission: false)
             let attr2 = attr.reconstruct(with: font, color: .white, linkColor: ColorUtil.getColorForSub(sub: ""))
-            var content = CellContent.init(string:LinkParser.parse(attr2), width:(self.tableView.frame.size.width))
+            let content = CellContent.init(string:LinkParser.parse(attr2), width:(self.tableView.frame.size.width))
             return CGFloat(getHeightFromAspectRatio(imageHeight: h!, imageWidth: w!)) + content.textHeight + CGFloat(10)
             
         }

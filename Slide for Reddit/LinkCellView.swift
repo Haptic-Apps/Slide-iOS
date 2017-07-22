@@ -19,11 +19,10 @@ import UZTextView
 import ImageViewer
 import TTTAttributedLabel
 import MaterialComponents
-import SwipeCellKit
 import AudioToolbox
 
 protocol LinkCellViewDelegate: class {
-    func upvote(_ cell: LinkCellView, action: SwipeAction?)
+    func upvote(_ cell: LinkCellView)
     func downvote(_ cell: LinkCellView)
     func save(_ cell: LinkCellView)
     func more(_ cell: LinkCellView)
@@ -39,7 +38,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     
     func upvote(sender: UITapGestureRecognizer? = nil) {
         if let delegate = self.del {
-            delegate.upvote(self, action: nil)
+            delegate.upvote(self)
         }
     }
     
@@ -97,7 +96,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var lq = false
     
     func attributedLabel(_ label: TTTAttributedLabel!, didLongPressLinkWith url: URL!, at point: CGPoint) {
-        if let attr = url{
+        if (url) != nil{
             if parentViewController != nil{
                 let sheet = UIAlertController(title: url.absoluteString, message: nil, preferredStyle: .actionSheet)
                 sheet.addAction(
@@ -115,7 +114,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 }
                 sheet.addAction(
                     UIAlertAction(title: "Open in Safari", style: .default) { (action) in
-                        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                        if #available(iOS 10.0, *) {
+                            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                        } else {
+                            UIApplication.shared.openURL(url)
+                        }
                         sheet.dismiss(animated: true, completion: nil)
                     }
                 )
@@ -434,8 +437,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 metrics: metrics,
                 views: views2))
         } else {
-            var hideString = SettingValues.hideButton ? "[hide(20)]-8-" : ""
-            var saveString = SettingValues.saveButton ? "[save(20)]-8-" : ""
+            let hideString = SettingValues.hideButton ? "[hide(20)]-8-" : ""
+            let saveString = SettingValues.saveButton ? "[save(20)]-8-" : ""
             buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:\(hideString)\(saveString)[upvote(20)]-8-[downvote(20)]-8-[more(20)]-0-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
@@ -1191,17 +1194,23 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var timer : Timer?
     var cancelled = false
     
+    func showMore(){
+        timer!.invalidate()
+        AudioServicesPlaySystemSound(1519)
+        if(!self.cancelled){
+            self.more()
+        }
+    }
     func handleLongPress(_ sender: UILongPressGestureRecognizer){
         if(sender.state == UIGestureRecognizerState.began){
             cancelled = false
-            timer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: false, block: { (timer) in
-                timer.invalidate()
-                AudioServicesPlaySystemSound(1519)
-                if(!self.cancelled){
-                    self.more()
-                }
-                
-            })
+            timer = Timer.scheduledTimer(timeInterval: 0.25,
+                                         target: self,
+                                         selector: #selector(self.showMore),
+                                         userInfo: nil,
+                                         repeats: false)
+            
+
         }
         if (sender.state == UIGestureRecognizerState.ended) {
             timer!.invalidate()
@@ -1359,16 +1368,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         var bottommargin =  0
         var leftmargin = 0
         var rightmargin = 0
-        var innerpadding = 0
-        var radius = 0
         
         if(SettingValues.postViewMode == .CARD && !full){
             topmargin = 5
             bottommargin = 5
             leftmargin = 5
             rightmargin = 5
-            innerpadding = 5
-            radius = 10
             self.contentView.elevate(elevation: 2)
         }
         
@@ -1438,7 +1443,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             } else if(UIScreen.main.traitCollection.userInterfaceIdiom != .pad){
                 (self.navViewController as? UINavigationController)?.pushViewController(comment, animated: true)
             } else {
-                var nav = UINavigationController.init(rootViewController: comment)
+                let nav = UINavigationController.init(rootViewController: comment)
                 (self.parentViewController?.splitViewController)?.showDetailViewController(nav, sender: self)
 
             }

@@ -116,7 +116,7 @@ class ProfileViewController:  PagingMenuController, ColorPickerDelegate {
         
         alertController.modalPresentationStyle = .popover
         if let presenter = alertController.popoverPresentationController {
-            presenter.sourceView = moreB!.value(forKey: "view") as! UIView
+            presenter.sourceView = (moreB!.value(forKey: "view") as! UIView)
             presenter.sourceRect = (moreB!.value(forKey: "view") as! UIView).bounds
         }
 
@@ -153,7 +153,7 @@ class ProfileViewController:  PagingMenuController, ColorPickerDelegate {
         
         alertController.modalPresentationStyle = .popover
         if let presenter = alertController.popoverPresentationController {
-            presenter.sourceView = moreB!.value(forKey: "view") as! UIView
+            presenter.sourceView = (moreB!.value(forKey: "view") as! UIView)
             presenter.sourceRect = (moreB!.value(forKey: "view") as! UIView).bounds
         }
 
@@ -211,13 +211,13 @@ class ProfileViewController:  PagingMenuController, ColorPickerDelegate {
         if(navigationController != nil){
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForUser(name: ProfileViewController.name)
         }
-        var sort = UIButton.init(type: .custom)
+        let sort = UIButton.init(type: .custom)
         sort.setImage(UIImage.init(named: "ic_sort_white"), for: UIControlState.normal)
         sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControlEvents.touchUpInside)
         sort.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
          sortB = UIBarButtonItem.init(customView: sort)
         
-        var more = UIButton.init(type: .custom)
+        let more = UIButton.init(type: .custom)
         more.setImage(UIImage.init(named: "info"), for: UIControlState.normal)
         more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
         more.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
@@ -247,7 +247,7 @@ class ProfileViewController:  PagingMenuController, ColorPickerDelegate {
                     var i = 0
                     DispatchQueue.main.async {
                         for trophy in trophies {
-                            var b = self.generateButtons(trophy: trophy)
+                            let b = self.generateButtons(trophy: trophy)
                             b.frame = CGRect.init(x: i * 75, y: 0, width: 70, height: 70)
                             scrollView.addSubview(b)
                             i += 1
@@ -286,7 +286,7 @@ class ProfileViewController:  PagingMenuController, ColorPickerDelegate {
                     do {
                         try self.session?.friend(user.name, completion: { (result) in
                             if(result.error != nil){
-                                print(result.error)
+                                print(result.error!)
                             }
                             DispatchQueue.main.async {
                                 let message = MDCSnackbarMessage()
@@ -313,7 +313,7 @@ class ProfileViewController:  PagingMenuController, ColorPickerDelegate {
 
         alrController.modalPresentationStyle = .popover
         if let presenter = alrController.popoverPresentationController {
-            presenter.sourceView = moreB!.value(forKey: "view") as! UIView
+            presenter.sourceView = (moreB!.value(forKey: "view") as! UIView)
             presenter.sourceRect = (moreB!.value(forKey: "view") as! UIView).bounds
         }
 
