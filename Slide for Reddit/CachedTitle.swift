@@ -115,7 +115,7 @@ class CachedTitle {
         if(SettingValues.showFirstParagraph && submission.isSelf && !full && !submission.htmlBody.trimmed().isEmpty){
             infoString.append(NSAttributedString.init(string: "\n\n"))
             print(submission.htmlBody)
-            var text = submission.body.substring(0, length: submission.htmlBody.indexOf("\n") ?? submission.htmlBody.length - 1)
+            var text = submission.body.substring(0, length: submission.htmlBody.indexOf("\n") ?? submission.htmlBody.length - 2)
             let attrs2 = [NSFontAttributeName : FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor] as [String: Any]
             let bodyString = NSMutableAttributedString(string: text, attributes: attrs2)
                 infoString.append(bodyString)

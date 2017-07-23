@@ -120,7 +120,7 @@ class SettingValues{
     public static var internalGif = true
     public static var internalYouTube = true
     public static var multiColumn = false
-    public static var showFirstParagraph = true
+    public static var showFirstParagraph = false
 
     enum PostViewType: String {
         case LIST = "list"
