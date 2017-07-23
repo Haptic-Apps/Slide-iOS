@@ -140,7 +140,7 @@ extension WKWebView {
         self.evaluateJavaScript(script, completionHandler: {(result: Any?, error: Error?) -> Void in
             if error == nil {
                 if result != nil {
-                    resultString = "\(result)"
+                    resultString = "\(error.debugDescription)"
                 }
             }
             else {

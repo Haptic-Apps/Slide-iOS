@@ -105,12 +105,16 @@ class NavigationHeaderView: UIView {
     
     func you(_ sender: AnyObject){
         let profile = ProfileViewController.init(name: AccountController.currentName)
-        self.parentController?.show(profile, sender: self.parentController)
+        (self.parentController as! NavigationSidebarViewController).parentController?.navigationController?.pushViewController(profile, animated: true)
+        self.parentController!.dismiss(animated: true, completion: nil)
+
     }
     
     func inbox(_ sender: AnyObject){
         let inbox = InboxViewController.init()
-        self.parentController?.show(inbox, sender: self.parentController)
+        (self.parentController as! NavigationSidebarViewController).parentController?.navigationController?.pushViewController(inbox, animated: true)
+        self.parentController!.dismiss(animated: true, completion: nil)
+
     }
     
     func showMore(_ sender: AnyObject){
@@ -125,7 +129,9 @@ class NavigationHeaderView: UIView {
         let saved = UIAlertAction(title: "Your saved content", style: .default, handler: {
             (alert: UIAlertAction!) -> Void in
             let profile = ProfileViewController.init(name: AccountController.currentName)
-            self.parentController?.show(profile, sender: self.parentController)
+            (self.parentController as! NavigationSidebarViewController).parentController?.navigationController?.pushViewController(profile, animated: true)
+            self.parentController!.dismiss(animated: true, completion: nil)
+
         })
         optionMenu.addAction(saved)
 
@@ -140,6 +146,13 @@ class NavigationHeaderView: UIView {
             self.settings(self.switchp)
         })
         optionMenu.addAction(settings)
+        
+        optionMenu.modalPresentationStyle = .popover
+        if let presenter = optionMenu.popoverPresentationController {
+            presenter.sourceView = more
+            presenter.sourceRect = more.bounds
+        }
+
         parentController?.present(optionMenu, animated: true, completion: nil)
 
     }
@@ -156,7 +169,9 @@ class NavigationHeaderView: UIView {
         alert.addAction(UIAlertAction(title: "Go to user", style: .default, handler: { [weak alert] (_) in
             let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
             let profile = ProfileViewController.init(name: (textField?.text!)!)
-            self.parentController?.show(profile, sender: self.parentController)
+            (self.parentController as! NavigationSidebarViewController).parentController?.navigationController?.pushViewController(profile, animated: true)
+            self.parentController!.dismiss(animated: true, completion: nil)
+
         }))
         
         alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
@@ -165,7 +180,9 @@ class NavigationHeaderView: UIView {
     }
     
     func settings(_ sender: AnyObject){
-        self.parentController?.show(SettingsViewController.init(), sender: self.parentController!)
+        (self.parentController as! NavigationSidebarViewController).parentController?.navigationController?.pushViewController(SettingsViewController.init(), animated: true)
+        self.parentController!.dismiss(animated: true, completion: nil)
+
     }
     func switchAccounts(_ sender: AnyObject){
         let optionMenu = UIAlertController(title: nil, message: "Choose Option", preferredStyle: .actionSheet)
@@ -219,6 +236,13 @@ class NavigationHeaderView: UIView {
         })
         optionMenu.addAction(cancelAction)
         
+        optionMenu.modalPresentationStyle = .overFullScreen
+        if let presenter = optionMenu.popoverPresentationController {
+            presenter.sourceView = self
+            presenter.sourceRect = self.bounds
+        }
+        
+
         parentController?.present(optionMenu, animated: true, completion: nil)
     }
     

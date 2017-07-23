@@ -81,7 +81,7 @@ open class MenuView: UIScrollView {
     
     // MARK: - Lifecycle
     internal init(menuOptions: MenuViewCustomizable) {
-        super.init(frame: CGRect(x: 0, y: 0, width: 0, height: menuOptions.height + menuOptions.marginTop))
+        super.init(frame: CGRect(x: 0, y: 0, width: 0, height: menuOptions.height))
         
         self.menuOptions = menuOptions
         
@@ -186,7 +186,7 @@ open class MenuView: UIScrollView {
     
     fileprivate func layoutScrollView() {
         let viewsDictionary = ["menuView": self]
-        let metrics = ["height": menuOptions.height + menuOptions.marginTop, "margin": menuOptions.marginTop]
+        let metrics = ["height": menuOptions.height, "margin": menuOptions.marginTop]
         NSLayoutConstraint.activate(
             NSLayoutConstraint.constraints(withVisualFormat: "V:[menuView(height)]", options: [], metrics: metrics, views: viewsDictionary)
         )

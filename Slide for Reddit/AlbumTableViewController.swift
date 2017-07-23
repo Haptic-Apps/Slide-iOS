@@ -8,7 +8,7 @@
 
 import UIKit
 
-class AlbumTableViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource {
+class AlbumTableViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate {
         
     func getAlbum(hash: String){
         let urlString = "http://imgur.com/ajaxalbums/getimages/\(hash)/hit.json?all=true"
@@ -40,6 +40,8 @@ class AlbumTableViewController: MediaViewController, UITableViewDelegate, UITabl
             
             }.resume()
     }
+    var isTrackingPanLocation = false
+    var panGestureRecognizer : UIPanGestureRecognizer!
 
         var items: [Images] = []
         
@@ -71,9 +73,59 @@ class AlbumTableViewController: MediaViewController, UITableViewDelegate, UITabl
             self.tableView.delegate = self
             self.tableView.dataSource = self
         }
-        
+    public func panRecognized(_ recognizer:UIPanGestureRecognizer)
+    {
+        if recognizer.state == .began && tableView.contentOffset.y == 0
+        {
+            recognizer.setTranslation(CGPoint.zero, in : tableView)
+            
+            isTrackingPanLocation = true
+        }
+        else if recognizer.state != .ended && recognizer.state != .cancelled &&
+            recognizer.state != .failed && isTrackingPanLocation
+        {
+            let panOffset = recognizer.translation(in: tableView)
+            
+            // determine offset of the pan from the start here.
+            // When offset is far enough from table view top edge -
+            // dismiss your view controller. Additionally you can
+            // determine if pan goes in the wrong direction and
+            // then reset flag isTrackingPanLocation to false
+            
+            let eligiblePanOffset = panOffset.y > 200
+            if eligiblePanOffset
+            {
+                recognizer.isEnabled = false
+                recognizer.isEnabled = true
+                self.dismiss(animated: true, completion: nil)
+            }
+            
+            if panOffset.y < 0
+            {
+                isTrackingPanLocation = false
+            }
+        }
+        else
+        {
+            isTrackingPanLocation = false
+        }
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
+                           shouldRecognizeSimultaneouslyWith 
+        otherGestureRecognizer : UIGestureRecognizer)->Bool
+    {
+        return true
+    }
+
         override func viewDidLoad() {
             super.viewDidLoad()
+            tableView.bounces = false
+            
+            panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector ( self.panRecognized(_:)))
+            panGestureRecognizer.delegate = self
+            tableView.addGestureRecognizer(panGestureRecognizer)
+
             self.tableView.register(AlbumCellView.classForCoder(), forCellReuseIdentifier: "cell")
             self.tableView.backgroundColor = UIColor.black
             self.tableView.separatorStyle = .none
@@ -107,7 +159,7 @@ class AlbumTableViewController: MediaViewController, UITableViewDelegate, UITabl
             let attr = NSMutableAttributedString(string: t!)
             let font = FontGenerator.fontOfSize(size: 16, submission: false)
             let attr2 = attr.reconstruct(with: font, color: .white, linkColor: ColorUtil.getColorForSub(sub: ""))
-            var content = CellContent.init(string:LinkParser.parse(attr2), width:(self.tableView.frame.size.width))
+            let content = CellContent.init(string:LinkParser.parse(attr2), width:(self.tableView.frame.size.width))
             return CGFloat(getHeightFromAspectRatio(imageHeight: h!, imageWidth: w!)) + content.textHeight + CGFloat(10)
             
         }
@@ -125,7 +177,7 @@ class AlbumTableViewController: MediaViewController, UITableViewDelegate, UITabl
         
         func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
             let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! AlbumCellView
-            cell.setLink(self.items[indexPath.row], navigationVC: self.navigationController!, parent: self)
+            cell.setLink(self.items[indexPath.row], parent: self)
             // Configure the cell...
             
             return cell

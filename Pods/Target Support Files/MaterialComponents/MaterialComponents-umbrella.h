@@ -14,6 +14,7 @@
 #import "MDCFlatButton.h"
 #import "MDCFloatingButton.h"
 #import "MDCRaisedButton.h"
+#import "MDCButtonTitleColorAccessibilityMutator.h"
 #import "MDCAlertColorThemer.h"
 #import "MaterialDialogs.h"
 #import "MDCAlertController.h"

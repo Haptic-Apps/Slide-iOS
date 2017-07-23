@@ -19,7 +19,7 @@ class TextLinkCellView: LinkCellView {
      */
     
     override func doConstraints() {
-        var target = CurrentType.text
+        let target = CurrentType.text
         
         if(currentType == target && target != .banner){
             return //work is already done

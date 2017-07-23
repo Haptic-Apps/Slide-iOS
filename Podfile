@@ -21,7 +21,6 @@ pod "GMStepper"
 pod 'MaterialComponents/Snackbar'
 pod 'MaterialComponents/ActivityIndicator'
 pod "SAHistoryNavigationViewController"
-pod 'SwipeCellKit'
   pod 'UZTextView', :git => 'https://github.com/ccrama/UZTextView'
   pod 'ImageViewer', :git => 'https://github.com/ccrama/ImageViewer'
   pod 'TTTAttributedLabel'

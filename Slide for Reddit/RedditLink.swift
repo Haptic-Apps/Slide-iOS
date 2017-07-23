@@ -13,13 +13,11 @@ class RedditLink{
     
     public static func getViewControllerForURL(urlS: URL) -> UIViewController {
         let oldUrl = urlS
-        var np = false;
         
         var url = formatRedditUrl(urlS: urlS)
         if (url.isEmpty()) {
             return WebsiteViewController.init(url: oldUrl, subreddit: "")
         } else if (url.hasPrefix("np")) {
-            np = true;
             url = url.substring(2, length: url.length - 2)
         }
         

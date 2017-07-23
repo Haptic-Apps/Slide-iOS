@@ -95,7 +95,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
                         for sub in subs{
                             toReturn.append(sub.displayName)
                             let color = (UIColor.init(hexString: sub.keyColor))
-                            if(color != nil && UserDefaults.standard.colorForKey(key: "color+" + sub.displayName) == nil){
+                            if(UserDefaults.standard.colorForKey(key: "color+" + sub.displayName) == nil){
                                 defaults.setColor(color: color , forKey: "color+" + sub.displayName)
                                 self.count += 1
                             }
@@ -112,7 +112,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
                     for sub in subs {
                         toReturn.append(sub.displayName)
                         let color = (UIColor.init(hexString: sub.keyColor))
-                        if(color != nil && UserDefaults.standard.colorForKey(key: "color+" + sub.displayName) == nil){
+                        if(UserDefaults.standard.colorForKey(key: "color+" + sub.displayName) == nil){
                             defaults.setColor(color: color , forKey: "color+" + sub.displayName)
                             self.count += 1
                         }
@@ -120,7 +120,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
                     for m in multis {
                         toReturn.append("/m/" + m.displayName)
                         let color = (UIColor.init(hexString: m.keyColor))
-                        if(color != nil && UserDefaults.standard.colorForKey(key: "color+" + m.displayName) == nil){
+                        if(UserDefaults.standard.colorForKey(key: "color+" + m.displayName) == nil){
                             defaults.setColor(color: color , forKey: "color+" + m.displayName)
                             self.count += 1
                         }
@@ -188,6 +188,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
         return false
     }
     
+    var savedView = UIView()
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
@@ -208,7 +209,14 @@ class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
             self.doDelete(item)
         }
         actionSheetController.addAction(cancelActionButton)
-        
+        actionSheetController.modalPresentationStyle = .popover
+        let view = tableView.cellForRow(at: indexPath)!.contentView
+        savedView = view
+        if let presenter = actionSheetController.popoverPresentationController {
+            presenter.sourceView = view
+            presenter.sourceRect = view.bounds
+        }
+
         self.present(actionSheetController, animated: true, completion: nil)
     }
     
@@ -247,7 +255,12 @@ class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
             alertController.addAction(accentAction)
             alertController.addAction(somethingAction)
             alertController.addAction(cancelAction)
-            
+        alertController.modalPresentationStyle = .popover
+        if let presenter = alertController.popoverPresentationController {
+            presenter.sourceView = savedView
+            presenter.sourceRect = savedView.bounds
+        }
+
             present(alertController, animated: true, completion: nil)
     }
     

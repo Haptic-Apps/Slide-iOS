@@ -76,8 +76,7 @@ class CommentMenuCell: UITableViewCell {
     var sideConstraint: [NSLayoutConstraint] = []
     override func updateConstraints() {
         super.updateConstraints()
-        var width = self.contentView.frame.size.width
-        width += 40
+        var width = 375
         width = width/(archived ? 1 : (editShown ? 6 : 4))
         
         
@@ -100,10 +99,9 @@ class CommentMenuCell: UITableViewCell {
         let metrics:[String:Int]=["width":Int(width), "full": Int(self.contentView.frame.size.width)]
         let views=["upvote": upvote, "downvote":downvote, "edit":edit, "delete":delete, "view":contentView, "more":more, "reply":reply] as [String : Any]
         
-        let replyStuff = !archived ? "[reply(width)]-0-[downvote(width)]-0-[upvote(width)]-0-" : ""
+        let replyStuff = !archived && AccountController.isLoggedIn ? "[reply(width)]-0-[downvote(width)]-0-[upvote(width)]-0-" : ""
         let editStuff = (!archived && editShown) ? "[edit(width)]-0-[delete(width)]-0-" : ""
         self.contentView.removeConstraints(sideConstraint)
-        print("Did H:[more(width)]-0-\(editStuff)\(replyStuff)|")
         sideConstraint = NSLayoutConstraint.constraints(withVisualFormat: "H:[more(width)]-0-\(editStuff)\(replyStuff)|",
                                                         options: NSLayoutFormatOptions(rawValue: 0),
                                                         metrics: metrics,
@@ -195,7 +193,11 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
             }
             sheet.addAction(
                 UIAlertAction(title: "Open in Safari", style: .default) { (action) in
-                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    if #available(iOS 10.0, *) {
+                        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    } else {
+                        UIApplication.shared.openURL(url)
+                    }
                     sheet.dismiss(animated: true, completion: nil)
                 }
             )
@@ -213,6 +215,12 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
                     sheet.dismiss(animated: true, completion: nil)
                 }
             )
+            sheet.modalPresentationStyle = .popover
+            if let presenter = sheet.popoverPresentationController {
+                presenter.sourceView = label
+                presenter.sourceRect = label.bounds
+            }
+
             parent?.present(sheet, animated: true, completion: nil)
         }
     }
@@ -280,10 +288,6 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         self.contentView.addSubview(c)
         
         moreButton.addTarget(self, action: #selector(CommentDepthCell.pushedMoreButton(_:)), for: UIControlEvents.touchUpInside)
-        
-        let tap2 = UISwipeGestureRecognizer(target: self, action: #selector(self.vote))
-        tap2.direction = .right
-         self.contentView.addGestureRecognizer(tap2)
 
         let tapGestureRecognizer = UITapGestureRecognizer.init(target: self, action: #selector(self.handleShortPress(_:)))
         tapGestureRecognizer.cancelsTouchesInView = false
@@ -301,28 +305,31 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         
         self.clipsToBounds = true
     }
-    
+    func doLongClick(){
+        timer!.invalidate()
+        AudioServicesPlaySystemSound(1519)
+        if(!self.cancelled){
+            if(false){
+                if(self.delegate!.menuShown ){ //todo check if comment id is the same as this comment id
+                    self.showMenu(nil)
+                } else {
+                    self.pushedSingleTap(nil)
+                }
+            } else {
+                self.showMenu(nil)
+            }
+        }
+    }
     var timer : Timer?
     var cancelled = false
     func handleLongPress(_ sender: UILongPressGestureRecognizer){
         if(sender.state == UIGestureRecognizerState.began){
             cancelled = false
-            timer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: false, block: { (timer) in
-                timer.invalidate()
-                AudioServicesPlaySystemSound(1519)
-                if(!self.cancelled){
-                    if(false){
-                        if(self.delegate!.menuShown ){ //todo check if comment id is the same as this comment id
-                            self.showMenu(sender)
-                        } else {
-                            self.pushedSingleTap(sender)
-                        }
-                    } else {
-                        self.showMenu(sender)
-                    }
-                }
-
-            })
+            timer = Timer.scheduledTimer(timeInterval: 0.25,
+                                         target: self,
+                                         selector: #selector(self.doLongClick),
+                                         userInfo: nil,
+                                         repeats: false)
         }
         if (sender.state == UIGestureRecognizerState.ended) {
         timer!.invalidate()
@@ -345,7 +352,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         return true
     }
     var long = UILongPressGestureRecognizer.init(target: self, action: nil)
-    func showMenu(_ sender: AnyObject){
+    func showMenu(_ sender: AnyObject?){
         if let del = self.delegate {
             if(del.menuShown && del.menuId == (content as! RComment).getId()){
                 del.hideCommentMenu(self)
@@ -358,7 +365,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
     func vote(){
         if(content is RComment){
         let current = ActionStates.getVoteDirection(s: comment!)
-        var dir = (current == VoteDirection.none) ? VoteDirection.up : VoteDirection.none
+        let dir = (current == VoteDirection.none) ? VoteDirection.up : VoteDirection.none
         var direction = dir
         switch(ActionStates.getVoteDirection(s: comment!)){
         case .up:
@@ -379,7 +386,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
                 switch result {
                 case .failure(let error):
                     print(error.description)
-                case .success(let check): break
+                case .success( _): break
                 }
             })
         } catch { print(error) }
@@ -403,6 +410,14 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         }
         
         alertController.addAction(profile)
+        
+        let share: UIAlertAction = UIAlertAction(title: "Share comment permalink", style: .default) { action -> Void in
+            let activityViewController = UIActivityViewController(activityItems: [self.comment!.permalink], applicationActivities: nil)
+            par.present(activityViewController, animated: true, completion: {})
+        }
+        
+        alertController.addAction(share)
+
         if(AccountController.isLoggedIn){
             
             let save: UIAlertAction = UIAlertAction(title: "Save", style: .default) { action -> Void in
@@ -418,7 +433,12 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         
         alertController.addAction(report)
         
-        
+        alertController.modalPresentationStyle = .popover
+        if let presenter = alertController.popoverPresentationController {
+            presenter.sourceView = moreButton
+            presenter.sourceRect = moreButton.bounds
+        }
+
         par.parent?.present(alertController, animated: true, completion: nil)
     }
     
@@ -475,7 +495,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         oldDepth = depth
         depth = 1
         updateDepthConstraints()
-        self.contentView.backgroundColor = ColorUtil.getColorForSub(sub: ((content as! RComment).subreddit)).withAlphaComponent(0.5)
+        self.contentView.backgroundColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.getColorForSub(sub: ((comment)!.subreddit)).withAlphaComponent(0.5))
     }
     
     func doUnHighlight(){
@@ -726,7 +746,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(comment.gilded) ", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false)])
         
         let spacer = NSMutableAttributedString.init(string: "  ")
-        var userColor = ColorUtil.getColorForUser(name: comment.author)
+        let userColor = ColorUtil.getColorForUser(name: comment.author)
         if (comment.distinguished == "admin") {
             
             authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#E57373"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
@@ -882,7 +902,29 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
     class func margin() -> UIEdgeInsets {
         return UIEdgeInsetsMake(4, 0, 2, 0)
     }
-    
+}
+
+extension UIColor {
+    func add(overlay: UIColor) -> UIColor {
+        var bgR: CGFloat = 0
+        var bgG: CGFloat = 0
+        var bgB: CGFloat = 0
+        var bgA: CGFloat = 0
+        
+        var fgR: CGFloat = 0
+        var fgG: CGFloat = 0
+        var fgB: CGFloat = 0
+        var fgA: CGFloat = 0
+        
+        self.getRed(&bgR, green: &bgG, blue: &bgB, alpha: &bgA)
+        overlay.getRed(&fgR, green: &fgG, blue: &fgB, alpha: &fgA)
+        
+        let r = fgA * fgR + (1 - fgA) * bgR
+        let g = fgA * fgG + (1 - fgA) * bgG
+        let b = fgA * fgB + (1 - fgA) * bgB
+        
+        return UIColor(red: r, green: g, blue: b, alpha: 1.0)
+    }
 }
 
 extension UIView {

@@ -14,7 +14,7 @@ import MaterialComponents.MaterialSnackbar
 import SAHistoryNavigationViewController
 import SideMenu
 
-class SubredditsViewController:  PagingMenuController {
+class SubredditsViewController:  PagingMenuController , UISplitViewControllerDelegate {
     var isReload = false
     public static var viewControllers : [UIViewController] = [UIViewController()]
     public static var current: String = ""
@@ -162,9 +162,19 @@ class SubredditsViewController:  PagingMenuController {
         }
     }
     
+    func splitViewController(_ svc: UISplitViewController, shouldHide vc: UIViewController, in orientation: UIInterfaceOrientation) -> Bool {
+        return false
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
+        self.splitViewController?.delegate = self
+        self.splitViewController?.preferredDisplayMode = UISplitViewControllerDisplayMode.allVisible
+        if(SettingValues.multiColumn){
+        self.splitViewController?.maximumPrimaryColumnWidth = 10000
+        self.splitViewController?.preferredPrimaryColumnWidthFraction = 1
+            
+        }
         if(SubredditReorderViewController.changed){
             SubredditReorderViewController.changed = false
             self.restartVC()
@@ -228,6 +238,8 @@ class SubredditsViewController:  PagingMenuController {
     
     func restartVC(){
         
+        CachedTitle.titles.removeAll()
+        
         SubredditReorderViewController.changed = true
     
         if(SettingValues.viewType){
@@ -237,7 +249,6 @@ class SubredditsViewController:  PagingMenuController {
         }
         
         SubredditsViewController.current = (SubredditsViewController.viewControllers[0] as! SubredditLinkViewController).sub
-        if(SubredditsViewController.current != nil){
             self.tintColor = ColorUtil.getColorForSub(sub: SubredditsViewController.current)
             self.navigationController?.navigationBar.barTintColor = self.tintColor
             self.menuNav?.setSubreddit(subreddit: SubredditsViewController.current)
@@ -249,7 +260,6 @@ class SubredditsViewController:  PagingMenuController {
             MenuOptions.setColor(c: ColorUtil.accentColorForSub(sub: SubredditsViewController.current))
             self.colorChanged()
             
-        }
         
         if let nav = self.menuNav {
             if(nav.tableView != nil){
@@ -257,7 +267,7 @@ class SubredditsViewController:  PagingMenuController {
             }
         }
          menuLeftNavigationController?.dismiss(animated: true, completion: {})
-        self.menuView?.withPadding(padding: UIEdgeInsetsMake(20, 0, 0, 0))
+        let _ = self.menuView?.withPadding(padding: UIEdgeInsetsMake(20, 0, 0, 0))
 
     }
     
@@ -276,6 +286,12 @@ class SubredditsViewController:  PagingMenuController {
     override func viewDidLoad() {
         (self.navigationController as? SAHistoryNavigationViewController)?.historyBackgroundColor = .black
 
+        self.splitViewController?.preferredDisplayMode = UISplitViewControllerDisplayMode.allVisible
+        if(SettingValues.multiColumn){
+            self.splitViewController?.maximumPrimaryColumnWidth = 10000
+            self.splitViewController?.preferredPrimaryColumnWidthFraction = 1
+            
+        }
 
         if(SubredditsViewController.viewControllers.count == 1){
             for subname in Subscriptions.subreddits {
@@ -291,7 +307,6 @@ class SubredditsViewController:  PagingMenuController {
             setup(PagingMenuOptionsSingle() as PagingMenuControllerCustomizable)
         }
         SubredditsViewController.current = (SubredditsViewController.viewControllers[0] as! SubredditLinkViewController).sub
-        if(SubredditsViewController.current != nil){
             self.tintColor = ColorUtil.getColorForSub(sub: SubredditsViewController.current)
             self.navigationController?.navigationBar.barTintColor = self.tintColor
             self.menuNav?.setSubreddit(subreddit: SubredditsViewController.current)
@@ -302,8 +317,6 @@ class SubredditsViewController:  PagingMenuController {
             
             MenuOptions.setColor(c: ColorUtil.accentColorForSub(sub: SubredditsViewController.current))
             self.colorChanged()
-            
-        }
 
         self.title = "Slide"
         
@@ -369,7 +382,8 @@ class SubredditsViewController:  PagingMenuController {
         menuNav?.setViewController(controller: self)
         self.menuNav?.setSubreddit(subreddit: SubredditsViewController.current)
 
-        menuLeftNavigationController = UISideMenuNavigationController(rootViewController: menuNav!)
+        menuLeftNavigationController = UISideMenuNavigationController.init(rootViewController: menuNav!)
+
         menuLeftNavigationController?.leftSide = true
         // UISideMenuNavigationController is a subclass of UINavigationController, so do any additional configuration
         // of it here like setting its viewControllers. If you're using storyboards, you'll want to do something like:

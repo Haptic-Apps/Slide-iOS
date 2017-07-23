@@ -93,6 +93,7 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
     }
     
     var image: UIImage?
+    var menuB : UIBarButtonItem?
 
     func getControllerForUrl(baseUrl: URL) -> UIViewController? {
         images = []
@@ -151,7 +152,7 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
                     let photo = GalleryItem.image(fetchImageBlock: { (completion) in
                         if(SDWebImageManager.shared().cachedImageExists(for: link)){
                             DispatchQueue.main.async {
-                                var image = SDWebImageManager.shared().imageCache.imageFromDiskCache(forKey: link.absoluteString)
+                                let image = SDWebImageManager.shared().imageCache.imageFromDiskCache(forKey: link.absoluteString)
                                 self.image = image
                                 self.progressView?.setHidden(true, animated: true)
                                 self.size?.isHidden = true
@@ -184,13 +185,14 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
             }
             
             let browser = GalleryViewController.init(startIndex: 0, itemsDataSource: self, itemsDelegate: nil, displacedViewsDataSource: nil, configuration: galleryConfiguration())
-            var toolbar = UIToolbar()
+            let toolbar = UIToolbar()
             let space = UIBarButtonItem(barButtonSystemItem:.flexibleSpace, target: nil, action: nil)
             var items: [UIBarButtonItem] = []
             
                 items.append(space)
                 items.append(UIBarButtonItem(image: UIImage(named: "download")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(MediaViewController.download(_:))))
-                items.append(UIBarButtonItem(image: UIImage(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(MediaViewController.showImageMenu(_:))))
+            menuB = UIBarButtonItem(image: UIImage(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(MediaViewController.showImageMenu(_:)))
+                items.append(menuB!)
                         toolbar.items = items
             toolbar.setBackgroundImage(UIImage(),
                                             forToolbarPosition: .any,
@@ -249,7 +251,11 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
         }
         alert.addAction(
             UIAlertAction(title: "Open in Safari", style: .default) { (action) in
-                UIApplication.shared.open(self.contentUrl!, options: [:], completionHandler: nil)
+                if #available(iOS 10.0, *) {
+                    UIApplication.shared.open(self.contentUrl!, options: [:], completionHandler: nil)
+                } else {
+                    UIApplication.shared.openURL(self.contentUrl!)
+                }
             }
         )
         alert.addAction(
@@ -281,6 +287,14 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
             }
         )
         let window = UIApplication.shared.keyWindow!
+        alert.modalPresentationStyle = .popover
+        
+        if let presenter = alert.popoverPresentationController {
+            presenter.sourceView = (menuB!.value(forKey: "view") as! UIView)
+            presenter.sourceRect = (menuB!.value(forKey: "view") as! UIView).bounds
+        }
+        
+
         if let modalVC = window.rootViewController?.presentedViewController {
             modalVC.present(alert, animated: true, completion: nil)
         } else {
@@ -349,8 +363,22 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
             presentImageGallery(controller as! GalleryViewController)
         } else if( controller is YouTubeViewController){
             present(controller, animated: false, completion: nil)
+        } else if( controller is AlbumTableViewController){
+            present(controller, animated: true, completion: nil)
         } else {
-        show(controller, sender: self)
+            if(controller is CommentViewController){
+                if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(view.bounds.width / CGFloat(320))) > 1){
+                    let navigationController = UINavigationController(rootViewController: controller)
+                    navigationController.modalPresentationStyle = .formSheet
+                    navigationController.modalTransitionStyle = .crossDissolve
+                    present(navigationController, animated: true, completion: nil)
+                } else {
+                    show(controller, sender: self)
+                }
+
+            } else {
+                show(controller, sender: self)
+            }
         }
         navigationController?.setNavigationBarHidden(false, animated: true)
     }

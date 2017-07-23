@@ -51,8 +51,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let fileManager = FileManager.default
         if(!fileManager.fileExists(atPath: seenFile!)){
             if let bundlePath = Bundle.main.path(forResource: "seen", ofType: "plist"){
-                let result = NSMutableDictionary(contentsOfFile: bundlePath)
-                print("Bundle file seen.plist is -> \(result?.description)")
+                _ = NSMutableDictionary(contentsOfFile: bundlePath)
                 do{
                     try fileManager.copyItem(atPath: bundlePath, toPath: seenFile!)
                 }catch{
@@ -67,8 +66,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         if(!fileManager.fileExists(atPath: commentsFile!)){
             if let bundlePath = Bundle.main.path(forResource: "comments", ofType: "plist"){
-                let result = NSMutableDictionary(contentsOfFile: bundlePath)
-                print("Bundle file comments.plist is -> \(result?.description)")
+                _ = NSMutableDictionary(contentsOfFile: bundlePath)
                 do{
                     try fileManager.copyItem(atPath: bundlePath, toPath: commentsFile!)
                 }catch{
@@ -92,14 +90,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         PostFilter.initialize()
         Drafts.initialize()
         Subscriptions.sync(name: AccountController.currentName, completion: nil)
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
-            (granted, error) in
-            if((error) != nil){
-                print(error?.localizedDescription)
+        if #available(iOS 10.0, *) {
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
+                (granted, error) in
+                if((error) != nil){
+                    print(error!.localizedDescription)
+                }
             }
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
+                (granted, error) in
+                if((error) != nil){
+                    print(error!.localizedDescription)
+                }
+            }
+            UIApplication.shared.registerForRemoteNotifications()
+        } else {
+            // Fallback on earlier versions
         }
-        UIApplication.shared.registerForRemoteNotifications()
-
         if !UserDefaults.standard.bool(forKey: "sc" + name){
             syncColors(subredditController: nil)
         }
@@ -107,7 +114,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         ColorUtil.doInit()
         let textAttributes = [NSForegroundColorAttributeName:UIColor.white]
         UINavigationBar.appearance().titleTextAttributes = textAttributes
-        
+        let statusBar = UIView()
+        statusBar.frame = CGRect(x: 0, y: 0, width: (self.window?.frame.size.width)!, height: 20)
+        statusBar.backgroundColor = UIColor.black.withAlphaComponent(0.15)
+        self.window?.rootViewController?.view.addSubview(statusBar)
+
         return true
     }
     
@@ -116,7 +127,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self.postLocalNotification("Checking notifs.")
             do {
                 let request = try session.requestForGettingProfile()
-                print(request.url?.absoluteString)
                 let fetcher = BackgroundFetch(current: session,
                                               request: request,
                                               taskHandler: { (response, dataURL, error) -> Void in
@@ -170,7 +180,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func postLocalNotification(_ message: String) {
-        let center = UNUserNotificationCenter.current()
+        if #available(iOS 10.0, *) {
+            let center = UNUserNotificationCenter.current()
+       
         let content = UNMutableNotificationContent()
         content.title = "New messages!"
         content.body = message
@@ -182,12 +194,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                             content: content, trigger: trigger)
         center.add(request, withCompletionHandler: { (error) in
             if error != nil {
-                print(error?.localizedDescription)
+                print(error!.localizedDescription)
                 // Something went wrong
             }
         })
-
-
+        } else {
+            // Fallback on earlier versions
+        }
     }
     
 
@@ -208,7 +221,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     for sub in self.subreddits{
                         toReturn.append(sub.displayName)
                             let color = (UIColor.init(hexString: sub.keyColor))
-                            if(color != nil && defaults.object(forKey: "color" + sub.displayName) == nil){
+                            if(defaults.object(forKey: "color" + sub.displayName) == nil){
                                 defaults.setColor(color: color , forKey: "color+" + sub.displayName)
                             }
                         }
@@ -226,14 +239,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     for sub in subs {
                         toReturn.append(sub.displayName)
                         let color = (UIColor.init(hexString: sub.keyColor))
-                        if(color != nil && defaults.object(forKey: "color" + sub.displayName) == nil){
+                        if(defaults.object(forKey: "color" + sub.displayName) == nil){
                             defaults.setColor(color: color , forKey: "color+" + sub.displayName)
                         }
                     }
                     for m in multis {
                         toReturn.append("/m/" + m.displayName)
                         let color = (UIColor.init(hexString: m.keyColor))
-                        if(color != nil && defaults.object(forKey: "color" + m.displayName) == nil){
+                        if(defaults.object(forKey: "color" + m.displayName) == nil){
                             defaults.setColor(color: color , forKey: "color+" + m.displayName)
                         }
                     }

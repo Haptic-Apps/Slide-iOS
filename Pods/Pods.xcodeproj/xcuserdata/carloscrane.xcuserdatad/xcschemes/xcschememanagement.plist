@@ -104,11 +104,6 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>SwipeCellKit.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
 		<key>TTTAttributedLabel.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -142,27 +137,12 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>3B3201973C6B25D1A57304DC7F1C866B</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
 		<key>40BCA090D5C17E6D6D0266CFA0DB1645</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>468F418203AE6DB5B8E79CCE9EF9264E</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
 		<key>5293D673464406D7CE8343C79307BBCA</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>56B0D775AF392E0A7F942617047EE60C</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -217,22 +197,12 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>98629F0FE124C42EDB505E0A7BF1D53C</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
 		<key>9CC16608DDB726EC4A0490E43C3B8BEB</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
 		<key>A0973466942E44837DDE381BEF94D8D4</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>A4D04043C043BB718FB53A2B6967E897</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -252,22 +222,7 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>B756AC54274A0C41EF34D92E04536465</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
 		<key>B96748A7A272087F0E8711486AC24093</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>CB39F0AD42699127CAA8ED98CEC45D53</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>CDBFD09BC3AAD7E05A5E74E53246D5FC</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -277,32 +232,7 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>D4E53515060DFC7F3F1E714805EC59C7</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>DA66BCFDC898BCC2AB78B1C53218607B</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
 		<key>DBC7237A676BE719EF4B85C301CF4429</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>F0EB4BDCE508F242FF5F70FF7DD358EB</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>F4DD154DD040CDD7D340610D38F79665</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>F580D8353D9BAB8F7AF66C15BE865DE9</key>
 		<dict>
 			<key>primary</key>
 			<true/>

@@ -79,18 +79,21 @@ class GifMWPhotoBrowser: NSObject, GalleryItemsDataSource {
     
     var browser: GalleryViewController?
     var url: String = ""
+    var more : UIBarButtonItem?
+    
     func create(url: String) -> GalleryViewController {
         photos = []
         self.url = url
         browser = GalleryViewController.init(startIndex: 0, itemsDataSource: self, itemsDelegate: nil, displacedViewsDataSource: nil, configuration: galleryConfiguration())
         print("Loading gif \(url)")
-        var toolbar = UIToolbar()
+        let toolbar = UIToolbar()
         let space = UIBarButtonItem(barButtonSystemItem:.flexibleSpace, target: nil, action: nil)
         var items: [UIBarButtonItem] = []
         
         items.append(space)
         items.append(UIBarButtonItem(image: UIImage(named: "download")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(GifMWPhotoBrowser.download(_:))))
-        items.append(UIBarButtonItem(image: UIImage(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(GifMWPhotoBrowser.showImageMenu(_:))))
+        more = UIBarButtonItem(image: UIImage(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(GifMWPhotoBrowser.showImageMenu(_:)))
+        items.append(more!)
         toolbar.items = items
         toolbar.setBackgroundImage(UIImage(),
                                    forToolbarPosition: .any,
@@ -399,12 +402,16 @@ class GifMWPhotoBrowser: NSObject, GalleryItemsDataSource {
         }
         alert.addAction(
             UIAlertAction(title: "Open in Safari", style: .default) { (action) in
-                UIApplication.shared.open(URL.init(string: self.url)!, options: [:], completionHandler: nil)
+                if #available(iOS 10.0, *) {
+                    UIApplication.shared.open(URL.init(string: self.url)!, options: [:], completionHandler: nil)
+                } else {
+                    UIApplication.shared.openURL(URL.init(string: self.url)!)
+                }
             }
         )
         alert.addAction(
             UIAlertAction(title: "Share URL", style: .default) { (action) in
-                let shareItems:Array = [URL.init(string: self.url)]
+                let shareItems:Array = [URL.init(string: self.url)!]
                 let activityViewController:UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
                 let window = UIApplication.shared.keyWindow!
                 if let modalVC = window.rootViewController?.presentedViewController {
@@ -416,7 +423,7 @@ class GifMWPhotoBrowser: NSObject, GalleryItemsDataSource {
         )
         alert.addAction(
             UIAlertAction(title: "Share Image", style: .default) { (action) in
-                let shareItems:Array = [URL.init(string: self.url)]
+                let shareItems:Array = [URL.init(string: self.url)!]
                 let activityViewController:UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
                 let window = UIApplication.shared.keyWindow!
                 if let modalVC = window.rootViewController?.presentedViewController {
@@ -430,6 +437,13 @@ class GifMWPhotoBrowser: NSObject, GalleryItemsDataSource {
             UIAlertAction(title: "Cancel", style: .cancel) { (action) in
             }
         )
+        
+        alert.modalPresentationStyle = .popover
+        if let presenter = alert.popoverPresentationController {
+            presenter.sourceView = (more!.value(forKey: "view") as! UIView)
+            presenter.sourceRect = (more!.value(forKey: "view") as! UIView).bounds
+        }
+
         let window = UIApplication.shared.keyWindow!
         if let modalVC = window.rootViewController?.presentedViewController {
             modalVC.present(alert, animated: true, completion: nil)
