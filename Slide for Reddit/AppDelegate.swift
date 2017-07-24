@@ -114,13 +114,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         ColorUtil.doInit()
         let textAttributes = [NSForegroundColorAttributeName:UIColor.white]
         UINavigationBar.appearance().titleTextAttributes = textAttributes
-        let statusBar = UIView()
         statusBar.frame = CGRect(x: 0, y: 0, width: (self.window?.frame.size.width)!, height: 20)
         statusBar.backgroundColor = UIColor.black.withAlphaComponent(0.15)
         self.window?.rootViewController?.view.addSubview(statusBar)
 
         return true
     }
+    
+    var statusBar = UIView()
+
     
     func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         if let session = session {
@@ -220,10 +222,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     self.paginator = listing.paginator
                     for sub in self.subreddits{
                         toReturn.append(sub.displayName)
+                        if(!sub.keyColor.isEmpty){
                             let color = (UIColor.init(hexString: sub.keyColor))
                             if(defaults.object(forKey: "color" + sub.displayName) == nil){
                                 defaults.setColor(color: color , forKey: "color+" + sub.displayName)
                             }
+                        }
                         }
                     
                 }
@@ -238,16 +242,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 Subscriptions.getSubscriptionsFully(session: session!, completion: { (subs, multis) in
                     for sub in subs {
                         toReturn.append(sub.displayName)
+                        if(!sub.keyColor.isEmpty){
                         let color = (UIColor.init(hexString: sub.keyColor))
                         if(defaults.object(forKey: "color" + sub.displayName) == nil){
                             defaults.setColor(color: color , forKey: "color+" + sub.displayName)
                         }
+                        }
                     }
                     for m in multis {
                         toReturn.append("/m/" + m.displayName)
+                        if(!m.keyColor.isEmpty){
+
                         let color = (UIColor.init(hexString: m.keyColor))
                         if(defaults.object(forKey: "color" + m.displayName) == nil){
                             defaults.setColor(color: color , forKey: "color+" + m.displayName)
+                        }
                         }
                     }
                     

@@ -66,6 +66,15 @@ class ColorUtil{
         }
     }
     
+    public static func getColorForSubBackground(sub: String) -> UIColor {
+        let color = UserDefaults.standard.colorForKey(key: "color+" + sub)
+        if(color == nil){
+            return foregroundColor
+        } else {
+            return color!
+        }
+    }
+
     public static func getColorForUser(name: String) -> UIColor {
         let color = UserDefaults.standard.colorForKey(key: "user+" + name)
         if(color == nil){

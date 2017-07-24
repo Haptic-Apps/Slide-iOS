@@ -1034,7 +1034,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
             self.tableView.reloadData()
             SubredditReorderViewController.changed = false
         }
-        
+                
         navigationController?.navigationBar.isTranslucent = false
         self.navigationController?.delegate = self
         self.automaticallyAdjustsScrollViewInsets = false
@@ -1275,16 +1275,10 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
             thumb = true
         }
         
-        if(submission.nsfw && !SettingValues.nsfwPreviews){
+        if(submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && (sub == "all" || sub == "frontpage" || sub.contains("/m/") || sub.contains("+") || sub == "popular"))){
             big = false
             thumb = true
         }
-        
-        if(submission.nsfw && SettingValues.hideNSFWCollection && (sub == "all" || sub == "frontpage" || sub == "popular")){
-            big = false
-            thumb = true
-        }
-        
         
         if(SettingValues.noImages){
             big = false

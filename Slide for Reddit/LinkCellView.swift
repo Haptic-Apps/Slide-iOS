@@ -521,13 +521,19 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     
     func setLink(submission: RSubmission, parent: MediaViewController, nav: UIViewController?, baseSub: String){
         loadedImage = nil
+        full = parent is CommentViewController
         lq = false
+        if(true || full){ //todo logic for this
         self.contentView.backgroundColor = ColorUtil.foregroundColor
-        comments.textColor = ColorUtil.fontColor
-        title.textColor = ColorUtil.fontColor
+            comments.textColor = ColorUtil.fontColor
+            title.textColor = ColorUtil.fontColor
+        } else {
+            self.contentView.backgroundColor = ColorUtil.getColorForSubBackground(sub: submission.subreddit)
+            comments.textColor = .white
+            title.textColor = .white
+        }
         
         parentViewController = parent
-        full = parent is CommentViewController
         self.link = submission
         if(navViewController == nil && nav != nil){
             navViewController = nav
@@ -640,13 +646,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if(big || !submission.thumbnail){
             thumb = false
         }
-        
-        if(submission.nsfw && !SettingValues.nsfwPreviews){
-            big = false
-            thumb = true
-        }
-        
-        if(submission.nsfw && SettingValues.hideNSFWCollection && (baseSub == "all" || baseSub == "frontpage" || baseSub == "popular")){
+                
+        if(submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && (baseSub == "all" || baseSub == "frontpage" || baseSub.contains("/m/") || baseSub.contains("+") || baseSub == "popular"))){
             big = false
             thumb = true
         }
@@ -667,7 +668,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             thumbImage.image = UIImage.init(named: "web")
         } else if(thumb && !big){
             addTouch(view: thumbImage, action: #selector(LinkCellView.openLink(sender:)))
-            if(submission.thumbnailUrl == "nsfw"){
+            if(submission.nsfw){
                 thumbImage.image = UIImage.init(named: "nsfw")
             } else if(submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty){
                 thumbImage.image = UIImage.init(named: "web")

@@ -37,12 +37,18 @@ class CachedTitle {
         
         let archived = NSMutableAttributedString.init(string: "\u{00A0}ARCHIVED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
         
+        let nsfw = NSMutableAttributedString.init(string: "\u{00A0}NSFW\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.red500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
+
         let spacer = NSMutableAttributedString.init(string: "  ")
         if(!submission.flair.isEmpty){
             attributedTitle.append(spacer)
             attributedTitle.append(flairTitle)
         }
-        
+        if(submission.nsfw){
+            attributedTitle.append(spacer)
+            attributedTitle.append(nsfw)
+        }
+
         if(submission.gilded > 0){
             attributedTitle.append(spacer)
             attributedTitle.append(spacer)
@@ -114,7 +120,6 @@ class CachedTitle {
         
         if(SettingValues.showFirstParagraph && submission.isSelf && !full && !submission.htmlBody.trimmed().isEmpty){
             infoString.append(NSAttributedString.init(string: "\n\n"))
-            print(submission.htmlBody)
             var text = submission.body.substring(0, length: submission.htmlBody.indexOf("\n") ?? submission.htmlBody.length - 2)
             let attrs2 = [NSFontAttributeName : FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor] as [String: Any]
             let bodyString = NSMutableAttributedString(string: text, attributes: attrs2)

@@ -41,9 +41,8 @@ class PagingCommentViewController : UIPageViewController, UIPageViewControllerDa
         super.viewDidLoad()
         self.dataSource = self
         self.delegate = self
-        self.navigationController?.view.backgroundColor = .clear
-
-        self.view.backgroundColor = .clear
+        self.navigationController?.view.backgroundColor = UIColor.clear
+        self.view.backgroundColor = UIColor.clear
          let firstViewController = vCs[1]
         
         (firstViewController as! CommentViewController).refresh(firstViewController)
@@ -53,10 +52,9 @@ class PagingCommentViewController : UIPageViewController, UIPageViewControllerDa
                                completion: nil)
 
     }
-    func pageViewController(_ pageViewController: UIPageViewController,
-                            willTransitionTo pendingViewControllers: [UIViewController]){
-        print("Transitioning")
-        if(pendingViewControllers[0] == vCs[0]){
+    
+    func pageViewController(_ pageViewController : UIPageViewController, didFinishAnimating: Bool, previousViewControllers: [UIViewController], transitionCompleted: Bool) {
+        if(pageViewController.viewControllers?.first == vCs[0]){
             if(self.navigationController!.modalPresentationStyle == .formSheet){
                 self.navigationController?.dismiss(animated: true, completion: nil)
             } else {
@@ -90,7 +88,9 @@ class PagingCommentViewController : UIPageViewController, UIPageViewControllerDa
             return nil
         }
         
+        if(!(viewController as! CommentViewController).loaded){
         (viewController as! CommentViewController).refresh(viewController)
+        }
         
         let nextIndex = viewControllerIndex + 1
         let orderedViewControllersCount = vCs.count
@@ -112,6 +112,7 @@ class ClearVC : UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         self.view.backgroundColor = .clear
+        self.navigationController!.navigationBar.backgroundColor = UIColor.clear
     }
     
 }

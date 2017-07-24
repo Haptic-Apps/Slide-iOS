@@ -394,6 +394,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                         print("Getting realm data")
                         DispatchQueue.main.async {
 
+                            self.loaded = true
                         do {
                             let realm = try Realm()
                             if let listing =  realm.objects(RSubmission.self).filter({ (item) -> Bool in
@@ -455,7 +456,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                         self.hidden = []
                         self.text = [:]
                         self.content = [:]
-                        
+                        self.loaded = true
                         self.submission = RealmDataWrapper.linkToRSubmission(submission: tuple.0.children[0] as! Link)
                         
                         DispatchQueue.global().async(execute: { () -> Void in
@@ -482,6 +483,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                             }
                             self.paginator = listing.paginator
                             
+                            if(!self.comments.isEmpty){
                             do {
                                 let realm = try! Realm()
                                 //todo insert
@@ -497,6 +499,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                 try realm.commitWrite()
                             } catch {
                                 
+                            }
                             }
                             self.doArrays()
                             self.lastSeen = (self.context.isEmpty ? History.getSeenTime(s: self.submission!) :  Double(0))
@@ -562,6 +565,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
     }
     
+    var loaded = false
+    
     var lastSeen: Double = NSDate().timeIntervalSince1970
     var savedTitleView: UIView?
     var savedHeaderView: UIView?
@@ -573,7 +578,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             return super.navigationItem
         }
     }
-    
     
     func showSearchBar() {
         searchBar.alpha = 0
@@ -1303,7 +1307,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             items.append(UIBarButtonItem(image: UIImage(named: "down")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(CommentViewController.goDown(_:))))
             items.append(space)
         }
-        self.toolbarItems = items
+        self.navigationController?.toolbarItems = items
         navigationController?.toolbar.barTintColor = UIColor.black.withAlphaComponent(0.4)
         navigationController?.toolbar.tintColor = UIColor.white
         }
@@ -1868,13 +1872,13 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 if let comment = cell.content as? RComment {
                     let row = tableView.indexPath(for: cell)?.row
                     let id = comment.getIdentifier()
-                    if(hiddenPersons.contains((id))) {
+                    let childNumber = getChildNumber(n: comment.getIdentifier());
+                    if(hiddenPersons.contains((id)) && childNumber > 0) {
                         hiddenPersons.remove(at: hiddenPersons.index(of: id)!)
                         unhideAll(comment: comment.getId(), i: row!)
                         cell.expand()
                         //todo hide child number
                     } else {
-                        let childNumber = getChildNumber(n: comment.getIdentifier());
                         if (childNumber > 0) {
                             hideAll(comment: comment.getIdentifier(), i: row! + 1);
                             if (!hiddenPersons.contains(id)) {
