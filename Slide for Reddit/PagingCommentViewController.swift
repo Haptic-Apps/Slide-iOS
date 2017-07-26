@@ -23,6 +23,14 @@ class PagingCommentViewController : UIPageViewController, UIPageViewControllerDa
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
     }
     
+    public init(comments: [CommentViewController]){
+        for c in comments {
+            vCs.append(c)
+        }
+        super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+    }
+
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -34,7 +42,8 @@ class PagingCommentViewController : UIPageViewController, UIPageViewControllerDa
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
       //  self.navigationController?.interactivePopGestureRecognizer?.delegate = self
-
+        self.view.backgroundColor = UIColor.clear
+        self.navigationController?.view.backgroundColor = .clear
     }
     
     override func viewDidLoad(){
@@ -42,7 +51,6 @@ class PagingCommentViewController : UIPageViewController, UIPageViewControllerDa
         self.dataSource = self
         self.delegate = self
         self.navigationController?.view.backgroundColor = UIColor.clear
-        self.view.backgroundColor = UIColor.clear
          let firstViewController = vCs[1]
         
         (firstViewController as! CommentViewController).refresh(firstViewController)
@@ -58,7 +66,7 @@ class PagingCommentViewController : UIPageViewController, UIPageViewControllerDa
             if(self.navigationController!.modalPresentationStyle == .formSheet){
                 self.navigationController?.dismiss(animated: true, completion: nil)
             } else {
-                self.navigationController?.popViewController(animated: true)
+                self.navigationController?.dismiss(animated: true, completion: nil)
             }
         }
     }
@@ -112,7 +120,9 @@ class ClearVC : UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         self.view.backgroundColor = .clear
-        self.navigationController!.navigationBar.backgroundColor = UIColor.clear
+        self.navigationController?.navigationBar.backgroundColor = UIColor.clear
+        self.navigationController?.setToolbarHidden(true, animated: true)
+        self.navigationController?.setNavigationBarHidden(true, animated: true)
     }
     
 }

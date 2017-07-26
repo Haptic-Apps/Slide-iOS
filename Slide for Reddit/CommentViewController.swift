@@ -546,7 +546,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                     for comment in self.comments {
                                         if(comment.contains(self.context)){
                                             self.goToCell(i: index)
-                                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
                                                 self.showCommentMenu(self.tableView.cellForRow(at: IndexPath.init(row: index, section: 0)) as! CommentDepthCell)
                                             }
                                             break
@@ -867,17 +867,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
 
     func doSubbed(){
-        let sub = UIButton.init(type: .custom)
-        if(Subscriptions.isSubscriber((submission?.subreddit)!)){
-            sub.setImage(UIImage.init(named: "subbed")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
-        } else {
-            sub.setImage(UIImage.init(named: "addcircle")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
-        }
-        sub.addTarget(self, action: #selector(self.subscribeSingle(_:)), for: UIControlEvents.touchUpInside)
-        sub.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-        let subB = UIBarButtonItem.init(customView: sub)
-        
-        
         let close = UIButton.init(type: .custom)
         close.setImage(UIImage.init(named: "close")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
         close.addTarget(self, action: #selector(self.close(_:)), for: UIControlEvents.touchUpInside)
@@ -885,12 +874,18 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         let closeB = UIBarButtonItem.init(customView: close)
         
 
-        
-        navigationItem.leftBarButtonItems = [closeB, subB]
-        if(Subscriptions.isSubscriber(self.navigationItem.title!)){
-            
-        }
+        if(!Subscriptions.isSubscriber((submission?.subreddit)!)){
 
+        let sub = UIButton.init(type: .custom)
+            sub.setImage(UIImage.init(named: "addcircle")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
+        sub.addTarget(self, action: #selector(self.subscribeSingle(_:)), for: UIControlEvents.touchUpInside)
+        sub.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        let subB = UIBarButtonItem.init(customView: sub)
+            navigationItem.leftBarButtonItems = [closeB, subB]
+
+        } else {
+            navigationItem.leftBarButtonItems = [closeB]
+        }
     }
     
     func close(_ sender: AnyObject){
@@ -1290,7 +1285,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     func updateToolbar() {
         if(!SettingValues.disableNavigationBar){
         if(navigationController?.isToolbarHidden)!{
-        navigationController?.setToolbarHidden(false, animated: false)
+            navigationController?.setToolbarHidden(false, animated: false)
         }
         let space = UIBarButtonItem(barButtonSystemItem:.flexibleSpace, target: nil, action: nil)
         var items: [UIBarButtonItem] = []
@@ -1347,6 +1342,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
     
     func collapseAll(){
+        if(dataArray.count > 0){
         for i in 0...dataArray.count - 1 {
             if(content[dataArray[i]]  is RComment && matches(comment: content[dataArray[i]] as! RComment, sort: .PARENTS)) {
                 let _ = hideNumber(n: dataArray[i], iB: i)
@@ -1358,7 +1354,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             }
         }
         doArrays()
-        tableView.reloadData()
+            tableView.reloadData()
+        }
     }
     
     

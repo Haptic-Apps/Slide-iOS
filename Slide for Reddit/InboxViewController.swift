@@ -121,6 +121,7 @@ class InboxViewController:  PagingMenuController {
         super.viewWillAppear(animated)
         self.splitViewController?.preferredDisplayMode = UISplitViewControllerDisplayMode.allVisible
         self.title = "Inbox"
+        navigationController?.setNavigationBarHidden(false, animated: true)
         navigationController?.navigationBar.tintColor = .white
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: "")
         let edit = UIButton.init(type: .custom)

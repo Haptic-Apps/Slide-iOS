@@ -355,21 +355,24 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
     
     
     func openComment(sender: UITapGestureRecognizer? = nil){
-        let comment = CommentViewController.init(submission: (self.comment?.linkid.substring(3, length: (self.comment?.linkid.length)! - 3))! , comment: self.comment!.id, context: 3, subreddit: (self.comment?.subreddit)!)
-        if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.parentViewController!.view.bounds.width / CGFloat(320))) > 1){
+        let commentB = CommentViewController.init(submission: (self.comment?.linkid.substring(3, length: (self.comment?.linkid.length)! - 3))! , comment: self.comment!.id, context: 3, subreddit: (self.comment?.subreddit)!)
+
+        let comment = PagingCommentViewController.init(comments: [commentB])
+        
+        if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.contentView.bounds.width / CGFloat(320))) > 1 && SettingValues.multiColumn){
             let navigationController = UINavigationController(rootViewController: comment)
             navigationController.modalPresentationStyle = .formSheet
             navigationController.modalTransitionStyle = .crossDissolve
-            parentViewController?.present(navigationController, animated: true, completion: nil)
+            self.parentViewController!.present(navigationController, animated: true, completion: nil)
+        } else if(UIScreen.main.traitCollection.userInterfaceIdiom != .pad){
+            let navigationController = UINavigationController(rootViewController: comment)
+            navigationController.modalPresentationStyle = .overCurrentContext
+            navigationController.modalTransitionStyle = .crossDissolve
+            self.parentViewController!.present(navigationController, animated: true, completion: nil)
         } else {
-            if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad){
-                let nav = UINavigationController(rootViewController:comment)
-                (self.navViewController as? UINavigationController)?.splitViewController?.showDetailViewController(nav, sender: nil)
-            } else {
-                (self.navViewController as? UINavigationController)?.pushViewController(comment, animated: true)
-            }
+            let nav = UINavigationController.init(rootViewController: comment)
+            self.parentViewController!.splitViewController?.showDetailViewController(nav, sender: self)
+            
         }
-
-        }
-    
+    }
 }

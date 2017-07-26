@@ -100,8 +100,8 @@ class SettingValues{
     public static var dataSavingEnabled = true
     public static var loadContentHQ = false
     public static var dataSavingDisableWiFi = false
-    public static var postFontOffset = 0
-    public static var commentFontOffset = 0
+    public static var postFontOffset = -4
+    public static var commentFontOffset = -4
     public static var largerThumbnail = true
     public static var lqLow = true
     public static var nsfwEnabled = false
@@ -134,6 +134,10 @@ class SettingValues{
         SettingValues.saveNSFWHistory = settings.bool(forKey: SettingValues.pref_saveNSFWHistory)
         SettingValues.saveHistory = settings.object(forKey: SettingValues.pref_saveHistory) == nil ? true : settings.bool(forKey: SettingValues.pref_saveHistory)
         SettingValues.multiColumn = settings.object(forKey: SettingValues.pref_multiColumn) == nil ? true : settings.bool(forKey: SettingValues.pref_multiColumn)
+        
+        SettingValues.postFontOffset = settings.object(forKey: SettingValues.pref_postFontSize) == nil ? 0 : settings.integer(forKey: SettingValues.pref_postFontSize)
+        SettingValues.commentFontOffset = settings.object(forKey: SettingValues.pref_commentFontSize) == nil ? 0 : settings.integer(forKey: SettingValues.pref_commentFontSize)
+
 
         SettingValues.markReadOnScroll = settings.bool(forKey: SettingValues.pref_markReadOnScroll)
         SettingValues.nsfwEnabled = settings.bool(forKey: SettingValues.pref_nsfwEnabled)

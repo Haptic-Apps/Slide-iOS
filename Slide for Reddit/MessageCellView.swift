@@ -468,18 +468,22 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
                 let url = "https://www.reddit.com\(message!.context)"
                 print(url)
                 let vc = RedditLink.getViewControllerForURL(urlS: URL.init(string: url)!)
-                if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.parentViewController!.view.bounds.width / CGFloat(320))) > 1){
-                    let navigationController = UINavigationController(rootViewController: vc)
+                let comment = PagingCommentViewController.init(comments: [vc as! CommentViewController])
+
+                if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.contentView.bounds.width / CGFloat(320))) > 1 && SettingValues.multiColumn){
+                    let navigationController = UINavigationController(rootViewController: comment)
                     navigationController.modalPresentationStyle = .formSheet
                     navigationController.modalTransitionStyle = .crossDissolve
-                    parentViewController?.present(navigationController, animated: true, completion: nil)
+                    self.parentViewController!.present(navigationController, animated: true, completion: nil)
+                } else if(UIScreen.main.traitCollection.userInterfaceIdiom != .pad){
+                    let navigationController = UINavigationController(rootViewController: comment)
+                    navigationController.modalPresentationStyle = .overCurrentContext
+                    navigationController.modalTransitionStyle = .crossDissolve
+                    self.parentViewController!.present(navigationController, animated: true, completion: nil)
                 } else {
-                    if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad){
-                    let nav = UINavigationController(rootViewController:vc)
-                    self.parentViewController?.splitViewController?.showDetailViewController(nav, sender: nil)
-                    } else {
-                        self.parentViewController?.splitViewController?.showDetailViewController(vc, sender: nil)
-                    }
+                    let nav = UINavigationController.init(rootViewController: comment)
+                    self.parentViewController!.splitViewController?.showDetailViewController(nav, sender: self)
+                    
                 }
 
             } else {
