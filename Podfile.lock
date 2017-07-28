@@ -120,6 +120,7 @@ PODS:
     - SDWebImage/Core (= 3.8.2)
   - SDWebImage/Core (3.8.2)
   - SideMenu (2.3.3)
+  - SloppySwiper (0.6)
   - SwiftyJSON (3.1.4)
   - TTTAttributedLabel (2.0.0)
   - UZTextView (1.0.8)
@@ -146,6 +147,7 @@ DEPENDENCIES:
   - SAHistoryNavigationViewController
   - SDWebImage (~> 3.8)
   - SideMenu
+  - SloppySwiper (from `https://github.com/fastred/SloppySwiper`)
   - SwiftyJSON
   - TTTAttributedLabel
   - UZTextView (from `https://github.com/ccrama/UZTextView`)
@@ -162,6 +164,8 @@ EXTERNAL SOURCES:
     :git: https://github.com/ccrama/PagingMenuController
   reddift:
     :git: https://github.com/ccrama/reddift
+  SloppySwiper:
+    :git: https://github.com/fastred/SloppySwiper
   UZTextView:
     :git: https://github.com/ccrama/UZTextView
 
@@ -181,6 +185,9 @@ CHECKOUT OPTIONS:
   reddift:
     :commit: 1749810abfeff07ffa1edcb5dae985001f443a2d
     :git: https://github.com/ccrama/reddift
+  SloppySwiper:
+    :commit: 90e1566555734d08a4c72619595f5a2157c104b3
+    :git: https://github.com/fastred/SloppySwiper
   UZTextView:
     :commit: 15b553d05544ddc429b76f23b413fc9be256901d
     :git: https://github.com/ccrama/UZTextView
@@ -203,10 +210,11 @@ SPEC CHECKSUMS:
   SAHistoryNavigationViewController: fbe7ad886f3f846a5c5742180d57ae7545b810a7
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
   SideMenu: a447554ae5c982e8077666389e1c8b0c8656e065
+  SloppySwiper: 37e38f6da8df5c805914c6f32ec6ec8da63abe7c
   SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   UZTextView: d8d45a8459b0de6f2c393458a05c65352f89e00a
 
-PODFILE CHECKSUM: 8286d7385a33befa893c3d1455ce7b8152df6e5b
+PODFILE CHECKSUM: b68a518e9dc00828c950536dd83d10ff2884b439
 
 COCOAPODS: 1.1.1

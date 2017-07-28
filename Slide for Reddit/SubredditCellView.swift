@@ -7,10 +7,12 @@
 //
 
 import UIKit
+import AudioToolbox
 
 class SubredditCellView: UITableViewCell {
     var sideView: UIView = UIView()
     var title: UILabel = UILabel()
+    var navController: UIViewController?
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -27,13 +29,50 @@ class SubredditCellView: UITableViewCell {
         self.contentView.addSubview(sideView)
         self.contentView.addSubview(title)
         
+        let   longPress = UILongPressGestureRecognizer(target: self, action: #selector(self.handleLongPress(_:name:)))
+        longPress.minimumPressDuration = 0.25
+        longPress.delegate = self
+        self.contentView.addGestureRecognizer(longPress)
+
+        
         self.clipsToBounds = true
     }
     
-    func setSubreddit(subreddit: String){
+    func handleLongPress(_ sender: UILongPressGestureRecognizer, name: String){
+        if(sender.state == UIGestureRecognizerState.began){
+            cancelled = false
+            timer = Timer.scheduledTimer(timeInterval: 0.25,
+                                         target: self,
+                                         selector: #selector(self.openFull(_:)),
+                                         userInfo: nil,
+                                         repeats: false)
+            
+            
+        }
+        if (sender.state == UIGestureRecognizerState.ended) {
+            timer!.invalidate()
+            cancelled = true
+        }
+    }
+    
+    var cancelled = false
+    
+    func openFull(_ selectedName: String){
+        timer!.invalidate()
+        if(navController != nil){
+        AudioServicesPlaySystemSound(1519)
+        if(!self.cancelled){
+            navController!.show(SubredditLinkViewController.init(subName: selectedName, single: true), sender: self)
+        }
+        }
+    }
+
+    var timer : Timer?
+    func setSubreddit(subreddit: String, nav: UIViewController?){
         title.textColor = ColorUtil.fontColor
         self.contentView.backgroundColor = ColorUtil.foregroundColor
 
+        self.navController = nav
         self.subreddit = subreddit
         title.text = subreddit
         sideView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)

@@ -41,16 +41,12 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
             navigationController.modalTransitionStyle = .crossDissolve
             self.present(navigationController, animated: true, completion: nil)
         } else if(UIScreen.main.traitCollection.userInterfaceIdiom != .pad){
-            let navigationController = UINavigationController(rootViewController: comment)
-            navigationController.modalPresentationStyle = .overCurrentContext
-            navigationController.modalTransitionStyle = .crossDissolve
-            self.present(navigationController, animated: true, completion: nil)
+            self.navigationController?.pushViewController(comment, animated: true)
         } else {
             let nav = UINavigationController.init(rootViewController: comment)
             self.splitViewController?.showDetailViewController(nav, sender: self)
             
         }
-
     }
 
     

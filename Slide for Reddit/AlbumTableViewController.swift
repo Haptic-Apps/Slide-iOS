@@ -48,11 +48,21 @@ class AlbumTableViewController: MediaViewController, UITableViewDelegate, UITabl
         func setImages(images: [Images]){
             self.items = images
             tableView.reloadData()
+            var headerHeight: CGFloat = (tableView.frame.size.height - CGFloat(Int(tableView.rowHeight) * tableView.numberOfRows(inSection: 0))) / 2
+            if headerHeight > 0 {
+                tableView.contentInset = UIEdgeInsetsMake(headerHeight, 0, 0/*-headerHeight*/, 0)
+            } else {
+                headerHeight = 0
+                tableView.contentInset = UIEdgeInsetsMake(headerHeight, 0, 0/*-headerHeight*/, 0)
+            }
+
         }
         
         override func viewWillAppear(_ animated: Bool) {
             super.viewWillAppear(animated)
-            navigationController?.navigationBar.isHidden = true
+            navigationController?.navigationBar.backgroundColor = .black
+            
+            
         }
         
         override func viewDidDisappear(_ animated: Bool) {

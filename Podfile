@@ -21,6 +21,7 @@ pod "GMStepper"
 pod 'MaterialComponents/Snackbar'
 pod 'MaterialComponents/ActivityIndicator'
 pod "SAHistoryNavigationViewController"
+  pod “SloppySwiper”, :git => ‘https://github.com/fastred/SloppySwiper'
   pod 'UZTextView', :git => 'https://github.com/ccrama/UZTextView'
   pod 'ImageViewer', :git => 'https://github.com/ccrama/ImageViewer'
   pod 'TTTAttributedLabel'

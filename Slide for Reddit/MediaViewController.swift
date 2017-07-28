@@ -128,9 +128,11 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
             
             let hash = getHash(sS: rawDat);
             print("Hash is \(hash)")
+
             let ctrl = AlbumTableViewController()
             ctrl.getAlbum(hash: hash)
-            return ctrl
+            let nav = UINavigationController.init(rootViewController: ctrl)
+            return nav
         } else if (contentUrl != nil && ContentType.displayImage(t: type) && SettingValues.internalImageView) {
             print("Showing photo")
             

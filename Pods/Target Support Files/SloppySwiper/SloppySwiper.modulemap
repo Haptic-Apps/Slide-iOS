@@ -1,0 +1,6 @@
+framework module SloppySwiper {
+  umbrella header "SloppySwiper-umbrella.h"
+
+  export *
+  module * { export * }
+}

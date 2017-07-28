@@ -8,11 +8,12 @@
 
 import Foundation
 import PagingMenuController
+import SloppySwiper
 
 class PagingCommentViewController : UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     var submissions: [RSubmission] = []
     var vCs: [UIViewController] = [ClearVC()]
-    
+    var swiper: SloppySwiper?
 
     public init(submissions: [RSubmission]){
         self.submissions = submissions
@@ -29,6 +30,8 @@ class PagingCommentViewController : UIPageViewController, UIPageViewControllerDa
         }
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
     }
+    
+    var firstPage = true
 
     
     required init?(coder aDecoder: NSCoder) {
@@ -41,7 +44,6 @@ class PagingCommentViewController : UIPageViewController, UIPageViewControllerDa
         self.automaticallyAdjustsScrollViewInsets = false
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
-      //  self.navigationController?.interactivePopGestureRecognizer?.delegate = self
         self.view.backgroundColor = UIColor.clear
         self.navigationController?.view.backgroundColor = .clear
     }
@@ -53,6 +55,17 @@ class PagingCommentViewController : UIPageViewController, UIPageViewControllerDa
         self.navigationController?.view.backgroundColor = UIColor.clear
          let firstViewController = vCs[1]
         
+
+        swiper = SloppySwiper.init(navigationController: self.navigationController!)
+        self.navigationController!.delegate = swiper!
+        for view in view.subviews {
+            if (view is UIScrollView){
+                var scrollView = view as! UIScrollView
+               // swiper!.panRecognizer.require(toFail:scrollView.panGestureRecognizer)
+                scrollView.panGestureRecognizer.require(toFail: swiper!.panRecognizer)
+            }
+        }
+
         (firstViewController as! CommentViewController).refresh(firstViewController)
             setViewControllers([firstViewController],
                                direction: .forward,
@@ -64,9 +77,9 @@ class PagingCommentViewController : UIPageViewController, UIPageViewControllerDa
     func pageViewController(_ pageViewController : UIPageViewController, didFinishAnimating: Bool, previousViewControllers: [UIViewController], transitionCompleted: Bool) {
         if(pageViewController.viewControllers?.first == vCs[0]){
             if(self.navigationController!.modalPresentationStyle == .formSheet){
-                self.navigationController?.dismiss(animated: true, completion: nil)
+               // self.navigationController?.dismiss(animated: true, completion: nil)
             } else {
-                self.navigationController?.dismiss(animated: true, completion: nil)
+               // self.navigationController?.dismiss(animated: true, completion: nil)
             }
         }
     }
@@ -121,8 +134,6 @@ class ClearVC : UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         self.view.backgroundColor = .clear
         self.navigationController?.navigationBar.backgroundColor = UIColor.clear
-        self.navigationController?.setToolbarHidden(true, animated: true)
-        self.navigationController?.setNavigationBarHidden(true, animated: true)
     }
     
 }

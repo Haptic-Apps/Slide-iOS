@@ -137,34 +137,7 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
             return Subscriptions.subreddits.count
         }
     }
-    
-    var cancelled = false
-    
-    func openFull(_ selectedName: String){
-        timer!.invalidate()
-        AudioServicesPlaySystemSound(1519)
-        if(!self.cancelled){
-            parentController!.show(SubredditLinkViewController.init(subName: selectedName, single: true), sender: self)
-        }
-    }
-    func handleLongPress(_ sender: UILongPressGestureRecognizer, name: String){
-        if(sender.state == UIGestureRecognizerState.began){
-            cancelled = false
-            timer = Timer.scheduledTimer(timeInterval: 0.25,
-                                         target: self,
-                                         selector: #selector(self.openFull(_:)),
-                                         userInfo: nil,
-                                         repeats: false)
-            
-            
-        }
-        if (sender.state == UIGestureRecognizerState.ended) {
-            timer!.invalidate()
-            cancelled = true
-        }
-    }
-    
-    var timer : Timer?
+      
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var thing = ""
@@ -175,14 +148,9 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
         }
         var cell: SubredditCellView?
         let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
-        c.setSubreddit(subreddit: thing)
+        c.setSubreddit(subreddit: thing, nav: parentController!)
         cell = c
     
-        let   longPress = UILongPressGestureRecognizer(target: self, action: #selector(self.handleLongPress(_:name:)))
-            longPress.minimumPressDuration = 0.25
-            longPress.delegate = self
-            cell!.addGestureRecognizer(longPress)
-
         return cell!
     }
     

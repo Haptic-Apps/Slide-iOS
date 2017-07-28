@@ -121,7 +121,7 @@ class SubredditReorderViewController: UITableViewController {
         let thing = subs[indexPath.row]
         var cell: SubredditCellView?
         let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
-        c.setSubreddit(subreddit: thing)
+        c.setSubreddit(subreddit: thing, nav: nil)
         cell = c
         cell?.backgroundColor = ColorUtil.foregroundColor
         return cell!
@@ -133,7 +133,7 @@ class SubredditReorderViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
-        return true
+        return false
     }
     
     override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {

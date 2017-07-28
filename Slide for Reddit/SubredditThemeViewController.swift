@@ -30,10 +30,9 @@ class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
         self.tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "sub")
         self.tableView.isEditing = true
         self.tableView.allowsSelectionDuringEditing = true
+        self.tableView.allowsMultipleSelectionDuringEditing = true
         for sub in Subscriptions.subreddits {
-            if UserDefaults.standard.colorForKey(key: "color+" + sub) != nil || UserDefaults.standard.colorForKey(key: "accent+" + sub) != nil {
                 subs.append(sub)
-            }
         }
         tableView.reloadData()
         
@@ -48,12 +47,30 @@ class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
         add.addTarget(self, action: #selector(self.add(_:)), for: UIControlEvents.touchUpInside)
         add.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let addB = UIBarButtonItem.init(customView: add)
+        
+        let delete = UIButton.init(type: .custom)
+        delete.setImage(UIImage.init(named: "delete"), for: UIControlState.normal)
+        delete.addTarget(self, action: #selector(self.remove(_:)), for: UIControlEvents.touchUpInside)
+        delete.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
+        let deleteB = UIBarButtonItem.init(customView: delete)
 
-        self.navigationItem.rightBarButtonItems = [addB, syncB]
+        self.navigationItem.rightBarButtonItems = [addB, deleteB, syncB]
     }
     
     public func add(_ selector: AnyObject){
+        var selected : [String] = []
+        for i in tableView.indexPathsForSelectedRows! {
+            selected.append(subs[i.row])
+        }
+        self.edit(selected)
+    }
     
+    public func remove(_ selector: AnyObject){
+        for i in tableView.indexPathsForSelectedRows! {
+            doDelete(subs[i.row])
+            tableView.deselectRow(at: i, animated: true)
+        }
+        self.tableView.reloadData()
     }
     
     public static var changed = false
@@ -169,7 +186,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
         let thing = subs[indexPath.row]
         var cell: SubredditCellView?
         let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
-        c.setSubreddit(subreddit: thing)
+        c.setSubreddit(subreddit: thing, nav: nil)
         cell = c
         cell?.backgroundColor = ColorUtil.foregroundColor
         return cell!
@@ -181,7 +198,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
     }
     
     override func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
-        return true
+        return false
     }
     
     override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
@@ -190,7 +207,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
     
     var savedView = UIView()
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAtDeprecated indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let item = subs[indexPath.row]
         let actionSheetController: UIAlertController = UIAlertController(title: item, message: "", preferredStyle: .actionSheet)
@@ -201,7 +218,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
         actionSheetController.addAction(cancelActionButton)
         
         cancelActionButton = UIAlertAction(title: "Edit", style: .default) { action -> Void in
-            self.edit(item)
+           // self.edit(item)
         }
         actionSheetController.addAction(cancelActionButton)
         
@@ -220,10 +237,10 @@ class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
         self.present(actionSheetController, animated: true, completion: nil)
     }
     
-    var editSub: String = ""
+    var editSubs: [String] = []
     
-    func edit(_ sub: String){
-        editSub = sub
+    func edit(_ sub: [String]){
+        editSubs = sub
             let alertController = UIAlertController(title: "\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
             
             let margin:CGFloat = 10.0
@@ -236,14 +253,18 @@ class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
             
             let somethingAction = UIAlertAction(title: "Save", style: .default, handler: {(alert: UIAlertAction!) in
                 if(self.colorChosen != nil){
+                    for sub in self.editSubs {
                 ColorUtil.setColorForSub(sub: sub, color: self.colorChosen!)
+                    }
                 }
                 self.tableView.reloadData()
             })
             
             let accentAction = UIAlertAction(title: "Accent color", style: .default, handler: {(alert: UIAlertAction!) in
                 if(self.colorChosen != nil){
+                    for sub in self.editSubs {
                     ColorUtil.setColorForSub(sub: sub, color: self.colorChosen!)
+                    }
                 }
                 self.pickAccent(sub)
                 self.tableView.reloadData()
@@ -264,7 +285,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
             present(alertController, animated: true, completion: nil)
     }
     
-    func pickAccent(_ sub: String){
+    func pickAccent(_ sub: [String]){
         let alertController = UIAlertController(title: "\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
         
         let margin:CGFloat = 10.0
@@ -278,7 +299,9 @@ class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
         
         let somethingAction = UIAlertAction(title: "Save", style: .default, handler: {(alert: UIAlertAction!) in
             if self.accentChosen != nil {
+                for sub in self.editSubs {
                 ColorUtil.setAccentColorForSub(sub: sub, color: self.accentChosen!)
+                }
             }
             self.tableView.reloadData()
         })
@@ -301,9 +324,6 @@ class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
         UserDefaults.standard.removeObject(forKey: "color+" + sub)
         UserDefaults.standard.removeObject(forKey: "accent+" + sub)
         UserDefaults.standard.synchronize()
-        let index = subs.index(of: sub)!
-        subs.remove(at: index)
-        tableView.deleteRows(at: [IndexPath.init(item: index, section: 0)], with: .fade)
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath)

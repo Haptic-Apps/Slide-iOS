@@ -784,11 +784,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
         super.viewWillAppear(animated)
         (navigationController)?.setNavigationBarHidden(false, animated: false)
-        self.navigationController?.delegate = self
         self.automaticallyAdjustsScrollViewInsets = false
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
-        self.navigationController?.interactivePopGestureRecognizer?.delegate = self
 
         if(navigationController != nil){
         self.updateToolbar()
@@ -827,7 +825,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
 
     }
-    var panGestureRecognizer: UIPanGestureRecognizer?
+
     var originalPosition: CGPoint?
     var currentPositionTouched: CGPoint?
     
@@ -841,31 +839,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     var duringAnimation = false
     var interactionController : UIPercentDrivenInteractiveTransition?
-    func popViewController(recognizer: UIPanGestureRecognizer) {
-        let view = self.navigationController?.view
-        if (recognizer.state == .began) {
-            if (self.navigationController!.viewControllers.count > 1 && !self.duringAnimation) {
-                interactionController = UIPercentDrivenInteractiveTransition.init()
-                self.interactionController?.completionCurve = UIViewAnimationCurve.easeOut
-                self.navigationController!.popViewController(animated: true)
-            }
-        } else if (recognizer.state == .changed && view != nil) {
-            let translation = recognizer.translation(in: view)
-            // Cumulative translation.x can be less than zero because user can pan slightly to the right and then back to the left.
-            let d = translation.x > 0 ? translation.x / view!.bounds.width : 0;
-            self.interactionController?.update(d)
-        } else if (recognizer.state == .ended || recognizer.state == .cancelled) {
-            if (recognizer.velocity(in: view).x > 0) {
-                self.interactionController?.finish()
-            } else {
-                self.interactionController?.cancel()
-                // When the transition is cancelled, `navigationController:didShowViewController:animated:` isn't called, so we have to maintain `duringAnimation`'s state here too.
-                self.duringAnimation = false;
-            }
-            self.interactionController = nil
-        }
-    }
 
+    
+    
     func doSubbed(){
         let close = UIButton.init(type: .custom)
         close.setImage(UIImage.init(named: "close")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
@@ -2012,49 +1988,6 @@ extension UITableView {
     func reloadData(with animation: UITableViewRowAnimation) {
         reloadSections(IndexSet(integersIn: 0..<numberOfSections), with: animation)
     }
-}
-
-enum SSWPanDirection {
-    case Right
-    case Down
-    case Left
-    case Up
-}
-class DirectionalPanGestureRecognizer: UIPanGestureRecognizer {
-    var dragging = false
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent) {
-        
-        super.touchesMoved(touches, with: event)
-        if(self.state == .failed){
-            return
-        }
-        
-        let velocity = self.velocity(in: self.view)
-        if(!dragging && !velocity.equalTo(CGPoint.zero)){
-            let velocities = [SSWPanDirection.Right: velocity.x,
-                              SSWPanDirection.Down: velocity.y,
-                              SSWPanDirection.Left: -velocity.x,
-                              SSWPanDirection.Up: -velocity.y
-            ]
-            
-            let keysSorted = velocities.sorted(by: { (A, B) -> Bool in
-                A.value < B.value
-            })
-            
-            if(keysSorted.last?.key != .Right){
-                self.state = .failed
-            }
-            
-            self.dragging = true
-        }
-        
-    }
-    
-    override func reset() {
-        super.reset()
-        self.dragging = false
-    }
-
 }
 extension Object {
     func getIdentifier() -> String {

@@ -466,27 +466,20 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         } else {
             if(message?.wasComment)!{
                 let url = "https://www.reddit.com\(message!.context)"
-                print(url)
                 let vc = RedditLink.getViewControllerForURL(urlS: URL.init(string: url)!)
-                let comment = PagingCommentViewController.init(comments: [vc as! CommentViewController])
-
-                if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.contentView.bounds.width / CGFloat(320))) > 1 && SettingValues.multiColumn){
-                    let navigationController = UINavigationController(rootViewController: comment)
+                if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.parentViewController!.view.bounds.width / CGFloat(320))) > 1){
+                    let navigationController = UINavigationController(rootViewController: vc)
                     navigationController.modalPresentationStyle = .formSheet
                     navigationController.modalTransitionStyle = .crossDissolve
-                    self.parentViewController!.present(navigationController, animated: true, completion: nil)
-                } else if(UIScreen.main.traitCollection.userInterfaceIdiom != .pad){
-                    let navigationController = UINavigationController(rootViewController: comment)
-                    navigationController.modalPresentationStyle = .overCurrentContext
-                    navigationController.modalTransitionStyle = .crossDissolve
-                    self.parentViewController!.present(navigationController, animated: true, completion: nil)
+                    parentViewController?.present(navigationController, animated: true, completion: nil)
                 } else {
-                    let nav = UINavigationController.init(rootViewController: comment)
-                    self.parentViewController!.splitViewController?.showDetailViewController(nav, sender: self)
-                    
-                }
-
-            } else {
+                    if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad){
+                        let nav = UINavigationController(rootViewController:vc)
+                        self.parentViewController?.splitViewController?.showDetailViewController(nav, sender: nil)
+                    } else {
+                        self.parentViewController?.splitViewController?.showDetailViewController(vc, sender: nil)
+                    }
+                }            } else {
                 let reply  = ReplyViewController.init(message: message!) { (message) in
                     DispatchQueue.main.async(execute: { () -> Void in
                         let message = MDCSnackbarMessage()

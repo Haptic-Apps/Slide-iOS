@@ -567,15 +567,14 @@ extension PagingMenuController {
         switch options.componentType {
         case .pagingController(let pagingControllers):
             maxCount = pagingControllers.count
-            print("Max count set")
         case .all(_, let pagingControllers):
             maxCount = pagingControllers.count
         case .menuView(let menuOptions):
             maxCount = menuOptions.itemsOptions.count
         }
-        print("Page is \(maxCount) and default page is \(options.defaultPage)")
-
+        
         guard options.defaultPage >= maxCount || options.defaultPage < 0 else { return }
+        
         raise("default page is invalid")
     }
     
