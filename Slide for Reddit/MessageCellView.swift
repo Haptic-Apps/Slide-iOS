@@ -9,9 +9,10 @@
 
 import UIKit
 import reddift
-import AMScrollingNavbar
 import UZTextView
 import ImageViewer
+import MaterialComponents.MaterialSnackbar
+import AudioToolbox
 
 class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextViewDelegate {
     
@@ -40,7 +41,11 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
                     }
                     sheet.addAction(
                         UIAlertAction(title: "Open in Safari", style: .default) { (action) in
-                            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                            if #available(iOS 10.0, *) {
+                                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                            } else {
+                                UIApplication.shared.openURL(url)
+                            }
                             sheet.dismiss(animated: true, completion: nil)
                         }
                     )
@@ -188,9 +193,13 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         }
         
         let messageClick = UITapGestureRecognizer(target: self, action: #selector(MessageCellView.doReply(sender:)))
+        let messageLongClick = UILongPressGestureRecognizer(target: self, action: #selector(MessageCellView.showMenu(_:)))
+        messageLongClick.minimumPressDuration = 0.25
+        messageLongClick.delegate = self
         messageClick.delegate = self
         self.addGestureRecognizer(messageClick)
-        
+        self.addGestureRecognizer(messageLongClick)
+
         let endString = NSMutableAttributedString(string:"\(DateFormatter().timeSince(from: message.created, numericDates: true))  •  from \(message.author)")
         
         let subString = NSMutableAttributedString(string: "/r/\(message.subreddit)")
@@ -223,7 +232,7 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         parentViewController?.registerForPreviewing(with: self, sourceView: textView)
         
         
-        let metrics=["height": content?.textHeight]
+        let metrics=["height": content?.textHeight] as [String:Any]
         let views=["label":title, "body": textView, "info": info] as [String : Any]
         lsC = []
         if(message.subject.hasPrefix("re:")){
@@ -266,6 +275,106 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         
     }
     
+    var timer : Timer?
+    var cancelled = false
+    
+    func showLongMenu(){
+        timer!.invalidate()
+        AudioServicesPlaySystemSound(1519)
+        if(!self.cancelled){
+            //todo show menu
+            //read reply full thread
+            let alertController = UIAlertController(title: "Message from \(self.message!.author)", message: "", preferredStyle: .actionSheet)
+            
+            
+            let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
+                print("Cancel")
+            }
+            
+            alertController.addAction(cancelActionButton)
+            
+            let profile: UIAlertAction = UIAlertAction(title: "/u/\(self.message!.author)'s profile", style: .default) { action -> Void in
+                self.parentViewController!.show(ProfileViewController.init(name: self.message!.author), sender: self)
+            }
+            
+            alertController.addAction(profile)
+            
+            
+            let reply: UIAlertAction = UIAlertAction(title: "Reply", style: .default) { action -> Void in
+                self.doReply()
+            }
+            
+            alertController.addAction(reply)
+            
+            let read: UIAlertAction = UIAlertAction(title: ActionStates.isRead(s: self.message!) ? "Mark unread" : "Mark read", style: .default) { action -> Void in
+                if( ActionStates.isRead(s: self.message!)){
+                    let session = (UIApplication.shared.delegate as! AppDelegate).session
+                    do {
+                        try session?.markMessagesAsUnread([(self.message?.name.contains("_"))! ? (self.message?.name)! : ((self.message?.wasComment)! ? "t1_" : "t4_") + (self.message?.name)!], completion: { (result) in
+                            if(result.error != nil){
+                                print(result.error!.description)
+                            }
+                        })
+                    } catch {
+                        
+                    }
+                    self.title.textColor = GMColor.red500Color()
+                    ActionStates.setRead(s: self.message!, read: false)
+                    
+                } else {
+                    let session = (UIApplication.shared.delegate as! AppDelegate).session
+                    do {
+                        try session?.markMessagesAsRead([(self.message?.name.contains("_"))! ? (self.message?.name)! : ((self.message?.wasComment)! ? "t1_" : "t4_") + (self.message?.name)!], completion: { (result) in
+                            if(result.error != nil){
+                                print(result.error!.description)
+                            }
+                        })
+                    } catch {
+                        
+                    }
+                    self.title.textColor = ColorUtil.fontColor
+                    ActionStates.setRead(s: self.message!, read: true)
+                    
+                }
+            }
+            
+            alertController.addAction(read)
+            
+            
+            if(self.message!.wasComment){
+                let full: UIAlertAction = UIAlertAction(title: "Full thread", style: .default) { action -> Void in
+                    let url = "https://www.reddit.com\(self.message!.context)"
+                    print(url)
+                    self.parentViewController?.show(RedditLink.getViewControllerForURL(urlS: URL.init(string: url)!), sender: self.parentViewController)
+                }
+                alertController.addAction(full)
+            }
+            
+            alertController.modalPresentationStyle = .popover
+            if let presenter = alertController.popoverPresentationController {
+                presenter.sourceView = self.contentView
+                presenter.sourceRect = self.contentView.bounds
+            }
+            
+            self.parentViewController?.present(alertController, animated: true, completion: nil)
+            
+        }
+    }
+    func showMenu(_ sender: UILongPressGestureRecognizer){
+        if(sender.state == UIGestureRecognizerState.began){
+            cancelled = false
+            timer = Timer.scheduledTimer(timeInterval: 0.25,
+                                 target: self,
+                                 selector: #selector(self.showLongMenu),
+                                 userInfo: nil,
+                                 repeats: false)
+        }
+        if (sender.state == UIGestureRecognizerState.ended) {
+            timer!.invalidate()
+            cancelled = true
+        }
+    }
+
     var registered: Bool = false
     var currentLink: URL?
     
@@ -296,7 +405,11 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         toReturn.append(likeAction)
         
         let deleteAction = UIPreviewAction(title: "Open in Safari", style: .default) { (action, viewController) -> Void in
-            UIApplication.shared.open((self.currentLink)!, options: [:], completionHandler: nil)
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open(self.currentLink!, options: [:], completionHandler: nil)
+            } else {
+                UIApplication.shared.openURL(self.currentLink!)
+            }
         }
         toReturn.append(deleteAction)
         
@@ -316,7 +429,7 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
     
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
-        if(viewControllerToCommit is GalleryViewController){
+        if(viewControllerToCommit is GalleryViewController || viewControllerToCommit is YouTubeViewController){
             parentViewController?.presentImageGallery(viewControllerToCommit as! GalleryViewController)
         } else {
             parentViewController?.show(viewControllerToCommit, sender: parentViewController )
@@ -340,8 +453,10 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         if(!ActionStates.isRead(s: message!)){
             let session = (UIApplication.shared.delegate as! AppDelegate).session
             do {
-                try session?.markMessagesAsRead([(message?.getId())!], completion: { (result) in
-                    
+                try session?.markMessagesAsRead([(message?.name.contains("_"))! ? (message?.name)! : ((message?.wasComment)! ? "t1_" : "t4_") + (message?.name)!], completion: { (result) in
+                    if(result.error != nil){
+                        print(result.error!.description)
+                    }
                 })
             } catch {
                 
@@ -352,11 +467,31 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
             if(message?.wasComment)!{
                 let url = "https://www.reddit.com\(message!.context)"
                 print(url)
-                parentViewController?.show(RedditLink.getViewControllerForURL(urlS: URL.init(string: url)!), sender: parentViewController)
+                let vc = RedditLink.getViewControllerForURL(urlS: URL.init(string: url)!)
+                let comment = PagingCommentViewController.init(comments: [vc as! CommentViewController])
+
+                if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.contentView.bounds.width / CGFloat(320))) > 1 && SettingValues.multiColumn){
+                    let navigationController = UINavigationController(rootViewController: comment)
+                    navigationController.modalPresentationStyle = .formSheet
+                    navigationController.modalTransitionStyle = .crossDissolve
+                    self.parentViewController!.present(navigationController, animated: true, completion: nil)
+                } else if(UIScreen.main.traitCollection.userInterfaceIdiom != .pad){
+                    let navigationController = UINavigationController(rootViewController: comment)
+                    navigationController.modalPresentationStyle = .overCurrentContext
+                    navigationController.modalTransitionStyle = .crossDissolve
+                    self.parentViewController!.present(navigationController, animated: true, completion: nil)
+                } else {
+                    let nav = UINavigationController.init(rootViewController: comment)
+                    self.parentViewController!.splitViewController?.showDetailViewController(nav, sender: self)
+                    
+                }
+
             } else {
                 let reply  = ReplyViewController.init(message: message!) { (message) in
                     DispatchQueue.main.async(execute: { () -> Void in
-                        self.parentViewController?.view.makeToast("Message sent", duration: 4, position: .top)
+                        let message = MDCSnackbarMessage()
+                        message.text = "Message sent!"
+                        MDCSnackbarManager.show(message)
                     })
                 }
                 

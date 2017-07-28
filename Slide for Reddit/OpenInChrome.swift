@@ -47,7 +47,7 @@ open class OpenInChromeController {
         return UIApplication.shared.canOpenURL(simpleURL) || UIApplication.shared.canOpenURL(callbackURL);
     }
     
-    open func openInChrome(_ url: URL, callbackURL: URL? = nil, createNewTab: Bool = false) -> Bool {
+    open func openInChrome(_ url: URL, callbackURL: URL? = nil, createNewTab: Bool = false) {
         let chromeSimpleURL = URL(string: googleChromeHTTPScheme)!
         let chromeCallbackURL = URL(string: googleChromeCallbackScheme)!
         if UIApplication.shared.canOpenURL(chromeCallbackURL) {
@@ -65,7 +65,7 @@ open class OpenInChromeController {
                 if createNewTab {
                     chromeURLString += "&create-new-tab"
                 }
-                return UIApplication.shared.openURL(URL(string: chromeURLString)!)
+                UIApplication.shared.openURL(URL(string: chromeURLString)!)
             }
         } else if UIApplication.shared.canOpenURL(chromeSimpleURL) {
             let scheme = url.scheme?.lowercased()
@@ -78,9 +78,8 @@ open class OpenInChromeController {
             if let chromeScheme = chromeScheme {
                 let absoluteURLString = url.absoluteString
                 let chromeURLString = chromeScheme + absoluteURLString.substring(from: absoluteURLString.range(of: ":")!.lowerBound)
-                return UIApplication.shared.openURL(URL(string: chromeURLString)!)
+                UIApplication.shared.openURL(URL(string: chromeURLString)!)
             }
         }
-        return false;
     }
 }

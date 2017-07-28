@@ -28,8 +28,8 @@ import Realm.Private
 
  ```swift
  class Dog: Object {
-     dynamic var name: String = ""
-     dynamic var adopted: Bool = false
+     @objc dynamic var name: String = ""
+     @objc dynamic var adopted: Bool = false
      let siblings = List<Dog>()
  }
  ```
@@ -53,7 +53,7 @@ import Realm.Private
  number, use `RealmOptional<Int>`, `RealmOptional<Float>`, `RealmOptional<Double>`, or `RealmOptional<Bool>` instead,
  which wraps an optional numeric value.
 
- All property types except for `List` and `RealmOptional` *must* be declared as `dynamic var`. `List` and
+ All property types except for `List` and `RealmOptional` *must* be declared as `@objc dynamic var`. `List` and
  `RealmOptional` properties must be declared as non-dynamic `let` properties. Swift `lazy` properties are not allowed.
 
  Note that none of the restrictions listed above apply to properties that are configured to be ignored by Realm.
@@ -155,7 +155,7 @@ open class Object: RLMObjectBase, ThreadConfined {
 
      - returns: The name of the property designated as the primary key, or `nil` if the model has no primary key.
      */
-    open class func primaryKey() -> String? { return nil }
+    @objc open class func primaryKey() -> String? { return nil }
 
     /**
      Override this method to specify the names of properties to ignore. These properties will not be managed by
@@ -163,7 +163,7 @@ open class Object: RLMObjectBase, ThreadConfined {
 
      - returns: An array of property names to ignore.
      */
-    open class func ignoredProperties() -> [String] { return [] }
+    @objc open class func ignoredProperties() -> [String] { return [] }
 
     /**
      Returns an array of property names for properties which should be indexed.
@@ -172,12 +172,12 @@ open class Object: RLMObjectBase, ThreadConfined {
 
      - returns: An array of property names.
      */
-    open class func indexedProperties() -> [String] { return [] }
+    @objc open class func indexedProperties() -> [String] { return [] }
 
     // MARK: Key-Value Coding & Subscripting
 
     /// Returns or sets the value of the property with the given name.
-    open subscript(key: String) -> Any? {
+    @objc open subscript(key: String) -> Any? {
         get {
             if realm == nil {
                 return value(forKey: key)
@@ -202,7 +202,7 @@ open class Object: RLMObjectBase, ThreadConfined {
      deletes the object or modifies any of the managed properties of the object,
      including self-assignments that set a property to its existing value.
 
-     For write transactions performed on different threads or in differen
+     For write transactions performed on different threads or in different
      processes, the block will be called when the managing Realm is
      (auto)refreshed to a version including the changes, while for local write
      transactions it will be called at some point in the future after the write
@@ -213,7 +213,7 @@ open class Object: RLMObjectBase, ThreadConfined {
      notifications can't be delivered instantly, multiple notifications may be
      coalesced into a single notification.
 
-     Unlike with List` and `Results`, there is no "initial" callback made after
+     Unlike with `List` and `Results`, there is no "initial" callback made after
      you add a new notification block.
 
      Only objects which are managed by a Realm can be observed in this way. You
@@ -263,8 +263,8 @@ open class Object: RLMObjectBase, ThreadConfined {
      :nodoc:
      */
     public func dynamicList(_ propertyName: String) -> List<DynamicObject> {
-        return unsafeBitCast(RLMDynamicGetByName(self, propertyName, true) as! RLMListBase,
-                             to: List<DynamicObject>.self)
+        return noWarnUnsafeBitCast(RLMDynamicGetByName(self, propertyName, true) as! RLMListBase,
+                                   to: List<DynamicObject>.self)
     }
 
     // MARK: Equatable
@@ -313,11 +313,11 @@ public struct PropertyChange {
 
     /**
      Value of the property before the change occurred. This is not supplied if
-     the change happened on the same thread as the notification and for List
+     the change happened on the same thread as the notification and for `List`
      properties.
 
      For object properties this will give the object which was previously
-     linked to, but that boject will have its new values and not the values it
+     linked to, but that object will have its new values and not the values it
      had before the changes. This means that `previousValue` may be a deleted
      object, and you will need to check `isInvalidated` before accessing any
      of its properties.
@@ -326,13 +326,13 @@ public struct PropertyChange {
 
     /**
      The value of the property after the change occurred. This is not supplied
-     for List properties and will always be nil.
+     for `List` properties and will always be nil.
     */
     public let newValue: Any?
 }
 
 /**
- Information about the changes made to an object which is passed to `Object's
+ Information about the changes made to an object which is passed to `Object`'s
  notification blocks.
  */
 public enum ObjectChange {
@@ -341,7 +341,7 @@ public enum ObjectChange {
      result and an `NSError` containing details about the error. Currently the
      only errors which can occur are when opening the Realm on a background
      worker thread to calculate the change set. The callback will never be
-     called again after .error is delivered.
+     called again after `.error` is delivered.
      */
     case error(_: NSError)
     /**
@@ -449,7 +449,7 @@ public class ObjectUtil: NSObject {
             } else if type is RealmOptional<Bool>.Type {
                 properties[name] = NSNumber(value: PropertyType.bool.rawValue)
             } else if prop.value as? RLMOptionalBase != nil {
-                throwRealmException("'\(type)' is not a a valid RealmOptional type.")
+                throwRealmException("'\(type)' is not a valid RealmOptional type.")
             } else if mirror.displayStyle == .optional || type is ExpressibleByNilLiteral.Type {
                 properties[name] = NSNull()
             }

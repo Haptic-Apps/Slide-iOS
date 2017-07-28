@@ -48,12 +48,20 @@ ObjectSchema::ObjectSchema() = default;
 ObjectSchema::~ObjectSchema() = default;
 
 ObjectSchema::ObjectSchema(std::string name, std::initializer_list<Property> persisted_properties)
+: ObjectSchema(std::move(name), persisted_properties, {})
+{
+}
+
+ObjectSchema::ObjectSchema(std::string name, std::initializer_list<Property> persisted_properties,
+                           std::initializer_list<Property> computed_properties)
 : name(std::move(name))
 , persisted_properties(persisted_properties)
+, computed_properties(computed_properties)
 {
     for (auto const& prop : persisted_properties) {
         if (prop.is_primary) {
             primary_key = prop.name;
+            break;
         }
     }
 }
@@ -70,6 +78,9 @@ ObjectSchema::ObjectSchema(Group const& group, StringData name, size_t index) : 
     size_t count = table->get_column_count();
     persisted_properties.reserve(count);
     for (size_t col = 0; col < count; col++) {
+        if (table->get_column_type(col) == type_Table)
+            continue;
+
         Property property;
         property.name = table->get_column_name(col).data();
         property.type = (PropertyType)table->get_column_type(col);

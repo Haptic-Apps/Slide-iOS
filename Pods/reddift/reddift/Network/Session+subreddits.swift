@@ -99,8 +99,9 @@ extension Session {
      */
     @discardableResult
     public func about(_ subredditName: String, completion: @escaping (Result<Subreddit>) -> Void) throws -> URLSessionDataTask {
-        guard let request = URLRequest.requestForOAuth(with: baseURL, path:"/r/\(subredditName)/about", method:"GET", token:token)
+        guard let request = URLRequest.requestForOAuth(with: baseURL, path:"/r/\(subredditName)/about.json", method:"GET", token:token)
             else { throw ReddiftError.canNotCreateURLRequest as NSError }
+
         let closure = {(data: Data?, response: URLResponse?, error: NSError?) -> Result<Subreddit> in
             return Result(from: Response(data: data, urlResponse: response), optional:error)
                 .flatMap(response2Data)

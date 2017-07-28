@@ -18,7 +18,6 @@ class SubredditCellView: UITableViewCell {
         self.title = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
         title.numberOfLines = 0
         title.font = FontGenerator.fontOfSize(size: 16, submission: true)
-        title.textColor = ColorUtil.fontColor
         
         self.sideView = UIView(frame: CGRect(x: 0, y: 0, width: 4, height: CGFloat.greatestFiniteMagnitude))
         
@@ -29,10 +28,12 @@ class SubredditCellView: UITableViewCell {
         self.contentView.addSubview(title)
         
         self.clipsToBounds = true
-        self.contentView.backgroundColor = ColorUtil.foregroundColor
     }
     
     func setSubreddit(subreddit: String){
+        title.textColor = ColorUtil.fontColor
+        self.contentView.backgroundColor = ColorUtil.foregroundColor
+
         self.subreddit = subreddit
         title.text = subreddit
         sideView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)

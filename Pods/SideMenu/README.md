@@ -4,20 +4,25 @@
 [![License](https://img.shields.io/cocoapods/l/SideMenu.svg?style=flat)](http://cocoapods.org/pods/SideMenu)
 [![Platform](https://img.shields.io/cocoapods/p/SideMenu.svg?style=flat)](http://cocoapods.org/pods/SideMenu)
 
-### If you like SideMenu, give it a ★ at the top right of its [GitHub](https://github.com/jonkykong/SideMenu) page.
-#### Using SideMenu in your app? [Send](mailto:contact@jonkent.me?subject=SideMenu in action!) me a link to your app in the app store!
+### If you like SideMenu, give it a ★ at the top right of this page.
+#### Using SideMenu in your app? [Send](mailto:yo@massappeal.co?subject=SideMenu%20in%20action!) me a link to your app in the app store!
 
-> I'm Jon Kent and I freelance iOS design, development, and mobile strategies. I love coffee and play the drums. [**Hire me**](mailto:contact@jonkent.me?subject=Let's build something amazing.) to help you make cool stuff. I also have a [website](http://jonkent.me). *Note: If you're having a problem with SideMenu, please open an [issue](https://github.com/jonkykong/SideMenu/issues/new) and do not email me.*
+> Hi, I'm Jon Kent and I am an iOS designer, developer, and mobile strategist. I love coffee and play the drums.
+> * [**Hire me**](mailto:yo@massappeal.co?subject=Let's%20build%20something%20amazing) to help you make cool stuff. *Note: If you're having a problem with SideMenu, please open an [issue](https://github.com/jonkykong/SideMenu/issues/new) and do not email me.*
+> * [Website](http://massappeal.co).
+> * Building and maintaining this free library takes time. Help keep me awake and buy me a coffee ☕️ via [PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=contact%40jonkent%2eme&lc=US&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted).
 
 ## Overview
 
 SideMenu is a simple and versatile side menu control written in Swift.
-* **It can be implemented in storyboard without a single line of [code](#code-less-storyboard-implementation).**
-* Four standard animation styles to choose from (even parallax if you want to get weird).
-* Highly customizable without needing to write tons of custom code.
-* Supports continuous swiping between side menus on boths sides in a single gesture.
-* Global menu configuration. Set-up once and be done for all screens.
-* Menus can be presented and dismissed the same as any other View Controller since this control uses custom transitions.
+ * **It can be implemented in storyboard without a single line of [code](#code-less-storyboard-implementation).**
+ * Four standard animation styles to choose from (there's even a parallax effect if you want to get weird).
+ * Highly customizable without needing to write tons of custom code.
+ * Supports continuous swiping between side menus on boths sides in a single gesture.
+ * Global menu configuration. Set-up once and be done for all screens.
+ * Menus can be presented and dismissed the same as any other view controller since this control uses [custom transitions](https://developer.apple.com/library/content/featuredarticles/ViewControllerPGforiPhoneOS/CustomizingtheTransitionAnimations.html).
+ * Animations use your view controllers, not snapshots.
+ * Properly handles screen rotation and in-call status bar height changes.
 
 Check out the example project to see it in action!
 ### Preview Samples
@@ -26,7 +31,7 @@ Check out the example project to see it in action!
 | ![](etc/SlideOut.gif) | ![](etc/SlideIn.gif) | ![](etc/Dissolve.gif) | ![](etc/InOut.gif) |
 
 ## Requirements
-* iOS 8 or higher
+ * iOS 8 or higher
 
 ## Installation
 ### CocoaPods
@@ -46,7 +51,7 @@ use_frameworks!
 
 pod 'SideMenu'
 
-# For Swift 2.3, use:
+# For Swift 2.3 (no longer maintained), use:
 # pod 'SideMenu', '~> 1.2.1'
 ```
 
@@ -75,13 +80,13 @@ github "jonkykong/SideMenu" "master"
 
 ## Usage
 ### Code-less Storyboard Implementation
-1. Create a Navigation Controller for a side menu. Set the custom class of the Navigation Controller to be `UISideMenuNavigationController` in the **Identity Inspector**. Create a Root View Controller for the Navigation Controller (shown as a UITableViewController below). Set up any Triggered Segues you want in that View Controller.
+1. Create a Navigation Controller for a side menu. Set the `Custom Class` of the Navigation Controller to be `UISideMenuNavigationController` in the **Identity Inspector**. Set the `Module` to `SideMenu` (ignore this step if you've manually added SideMenu to your project). Create a Root View Controller for the Navigation Controller (shown as a UITableViewController below). Set up any Triggered Segues you want in that view controller.
 ![](etc/Screenshot1.png)
 
 2. Set the `Left Side` property of the `UISideMenuNavigationController` to On if you want it to appear from the left side of the screen, or Off/Default if you want it to appear from the right side.
 ![](etc/Screenshot2.png)
 
-3. Add a UIButton or UIBarButton to a View Controller that you want to display the menu from. Set that button's Triggered Segues action to modally present the Navigation Controller from step 1.
+3. Add a UIButton or UIBarButton to a view controller that you want to display the menu from. Set that button's Triggered Segues action to modally present the Navigation Controller from step 1.
 ![](etc/Screenshot3.png)
 
 That's it. *Note: you can only enable gestures in code.*
@@ -91,24 +96,24 @@ First:
 import SideMenu
 ```
 
-In your View Controller's `viewDidLoad` event, do something like this:
+In your view controller's `viewDidLoad` event, do something like this (**IMPORTANT: If you're seeing a black menu when you use gestures, read this section carefully!**):
 ``` swift
 // Define the menus
-let menuLeftNavigationController = UISideMenuNavigationController()
+let menuLeftNavigationController = UISideMenuNavigationController(rootViewController: YourViewController)
 menuLeftNavigationController.leftSide = true
 // UISideMenuNavigationController is a subclass of UINavigationController, so do any additional configuration 
 // of it here like setting its viewControllers. If you're using storyboards, you'll want to do something like:
 // let menuLeftNavigationController = storyboard!.instantiateViewController(withIdentifier: "LeftMenuNavigationController") as! UISideMenuNavigationController
 SideMenuManager.menuLeftNavigationController = menuLeftNavigationController
 
-let menuRightNavigationController = UISideMenuNavigationController()
+let menuRightNavigationController = UISideMenuNavigationController(rootViewController: YourViewController)
 // UISideMenuNavigationController is a subclass of UINavigationController, so do any additional configuration
 // of it here like setting its viewControllers. If you're using storyboards, you'll want to do something like:
 // let menuRightNavigationController = storyboard!.instantiateViewController(withIdentifier: "RightMenuNavigationController") as! UISideMenuNavigationController
 SideMenuManager.menuRightNavigationController = menuRightNavigationController
 
 // Enable gestures. The left and/or right menus must be set up above for these to work.
-// Note that these continue to work on the Navigation Controller independent of the View Controller it displays!
+// Note that these continue to work on the Navigation Controller independent of the view controller it displays!
 SideMenuManager.menuAddPanGestureToPresent(toView: self.navigationController!.navigationBar)
 SideMenuManager.menuAddScreenEdgePanGesturesToPresent(toView: self.navigationController!.view)
 ```
@@ -119,7 +124,7 @@ present(SideMenuManager.menuLeftNavigationController!, animated: true, completio
 // Similarly, to dismiss a menu programmatically, you would do this:
 dismiss(animated: true, completion: nil)
 
-// For Swift 2.3, use:
+// For Swift 2.3 (no longer maintained), use:
 // presentViewController(SideMenuManager.menuLeftNavigationController!, animated: true, completion: nil)
 ```
 That's it.
@@ -186,7 +191,7 @@ open static weak var menuLeftSwipeToDismissGesture: UIPanGestureRecognizer?
 /// The right menu swipe to dismiss gesture.
 open static weak var menuRightSwipeToDismissGesture: UIPanGestureRecognizer?
 
-/// Enable or disable gestures that would swipe to present or dismiss the menu. Default is true.
+/// Enable or disable gestures that would swipe to dismiss the menu. Default is true.
 open static var menuEnableSwipeGestures: Bool = true
 
 /// Enable or disable interaction with the presenting view controller while the menu is displayed. Enabling may make it difficult to dismiss the menu or cause exceptions if the user tries to present and already presented menu. Default is false.
@@ -206,6 +211,14 @@ open static var menuAnimationUsingSpringWithDamping: CGFloat = 1
 
 /// The animation initial spring velocity when a menu is displayed. Ignored when displayed with a gesture.
 open static var menuAnimationInitialSpringVelocity: CGFloat = 1
+
+/** 
+Automatically dismisses the menu when another view is pushed from it.
+
+Note: to prevent the menu from dismissing when presenting, set modalPresentationStyle = .overFullScreen
+of the view controller being presented in storyboard or during its initalization.
+*/
+open static var menuDismissOnPush = true
 
 /**
  The blur effect style of the menu if the menu's root view controller is a UITableViewController or UICollectionViewController.

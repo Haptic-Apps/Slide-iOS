@@ -9,6 +9,7 @@
 import UIKit
 import ImageViewer
 import SDWebImage
+import MaterialComponents.MaterialProgressView
 
 class AlbumMWPhotoBrowser: NSObject, GalleryItemsDataSource {
     func galleryConfiguration() -> GalleryConfiguration {
@@ -61,43 +62,16 @@ class AlbumMWPhotoBrowser: NSObject, GalleryItemsDataSource {
         ]
     }
     
-
+    
     func getThumbnailUrl(hash: String) -> String {
-    return "https://i.imgur.com/" + hash + "s.png";
-    }
-
-    var browser: GalleryViewController?
-
-    func create(hash: String) -> GalleryViewController {
-        browser = GalleryViewController.init(startIndex: 0, itemsDataSource: self, itemsDelegate: nil, displacedViewsDataSource: nil, configuration: galleryConfiguration())
-        getAlbum(hash: hash)
-        
-        let frame = CGRect(x: 0, y: 0, width: 200, height: 24)
-        let headerView = CounterView(frame: frame, currentIndex: 0, count: photos.count)
-        let footerView = CaptionView(frame: frame)
-        
-        browser?.headerView = headerView
-        browser?.footerView = footerView
-        
-        browser?.launchedCompletion = { print("LAUNCHED") }
-        browser?.closedCompletion = { print("CLOSED") }
-        browser?.swipedToDismissCompletion = { print("SWIPE-DISMISSED") }
-        
-        browser?.landedPageAtIndexCompletion = { index in
-            
-            headerView.count = self.photos.count
-            headerView.currentIndex = index
-            let frame = CGRect(x: 8, y: 0, width: (self.browser?.currentController?.view.frame.size.width)! - 8, height: 200)
-            footerView.frame = frame
-            footerView.text = self.captions[index]
-            
-            self.browser?.footerView?.sizeToFit()
-        }
-        
-
-        return browser!
+        return "https://i.imgur.com/" + hash + "s.png";
     }
     
+    var browser: GalleryViewController?
+    
+     var size: UILabel?
+    var progressView: MDCProgressView?
+
     var captions:[String] = [""]
     
     func itemCount() -> Int {
@@ -118,81 +92,20 @@ class AlbumMWPhotoBrowser: NSObject, GalleryItemsDataSource {
     var albumImages:[URL]=[]
     var photos: [GalleryItem] = []
     
-    func getAlbum(hash: String){
-        let urlString = "http://imgur.com/ajaxalbums/getimages/\(hash)/hit.json?all=true"
-        print(urlString)
-        let url = URL(string: urlString)
-        URLSession.shared.dataTask(with:url!) { (data, response, error) in
-            if error != nil {
-                print(error ?? "Error loading album...")
-            } else {
-                do {
-                    guard let json = try JSONSerialization.jsonObject(with: data!, options: []) as? NSDictionary else {
-                        return
-                    }
-                    
-                    let album = AlbumJSONBase.init(dictionary: json)
-                    for a in (album?.data?.images)!{
-                        if(a.description != nil){
-                            self.captions.append(a.description!)
-                        } else {
-                            self.captions.append("")
-                        }
-                        let urls = "https://imgur.com/" + a.hash! + ((a.animated != nil && a.animated == "true") ? ".mp4" : ".png")
-                        let url = URL.init(string: urls)
-                        if(ContentType.isGif(uri: url!)){
-                            let photo = GalleryItem.video(fetchPreviewImageBlock: { (completion) in
-                                
-                            }, videoURL: url!)
-                            if((a.description) != nil){
-                                //todo desc
-                            }
-                            self.photos.append(photo)
-                        } else {
-                            let photo = GalleryItem.image(fetchImageBlock: { (completion) in
-                                SDWebImageDownloader.shared().downloadImage(with: url!, options: .allowInvalidSSLCertificates, progress: { (current, total) in
-                                    
-                                   // self.browser?.updateProgress(current: current, total: total)
-                                    
-                                }, completed: { (image, _, error, _) in
-                                    DispatchQueue.main.async {
-                                        completion(image)
-                                    }
-                                })
-
-                            })
-                            if((a.description) != nil){
-                                //todo desc
-                            }
-                            self.photos.append(photo)
-                        }
-
-                    }
-
-                    DispatchQueue.main.async{
-                    self.refresh()
-                    }
-                } catch let error as NSError {
-                    print(error)
-                }
-            }
-            
-            }.resume()
-    }
     
     func refresh(){
         let vc = browser!.pagingDataSource.createItemController(0)
         browser!.setViewControllers([vc], direction: UIPageViewControllerNavigationDirection.reverse, animated: true, completion: nil)
     }
-
+    
     /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
+     // MARK: - Navigation
+     
+     // In a storyboard-based application, you will often want to do a little preparation before navigation
+     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+     // Get the new view controller using segue.destinationViewController.
+     // Pass the selected object to the new view controller.
+     }
+     */
+    
 }

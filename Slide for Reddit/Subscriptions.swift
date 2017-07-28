@@ -10,7 +10,7 @@ import Foundation
 import reddift
 
 class Subscriptions{
-    private static var defaultSubs = ["frontpage", "all", "announcements", "Art", "AskReddit", "askscience",
+    private static var defaultSubs = ["frontpage", "slide_ios", "all", "announcements", "Art", "AskReddit", "askscience",
                                       "aww", "blog", "books", "creepy", "dataisbeautiful", "DIY", "Documentaries",
                                       "EarthPorn", "explainlikeimfive", "Fitness", "food", "funny", "Futurology",
                                       "gadgets", "gaming", "GetMotivated", "gifs", "history", "IAmA",
@@ -26,6 +26,15 @@ class Subscriptions{
             return defaultSubs
         }
         return accountSubs
+    }
+    
+    public static func isSubscriber(_ sub: String) -> Bool{
+        for s in subreddits {
+            if(s.lowercased() == sub.lowercased()){
+                return true
+            }
+        }
+        return false
     }
     
     public static var historySubs: [String] = []
@@ -53,12 +62,22 @@ class Subscriptions{
     }
     
     public static func addHistorySub(name: String, sub: String){
-        if(!historySubs.contains(name)){
-            historySubs.append(sub)
+        for string in historySubs {
+            if(string.lowercased() == sub.lowercased()){
+                return
+            }
         }
+            historySubs.append(sub)
         UserDefaults.standard.set(historySubs, forKey: "historysubs" + name)
         UserDefaults.standard.synchronize()
     }
+    
+    public static func clearSubHistory(){
+        historySubs.removeAll()
+        UserDefaults.standard.set(historySubs, forKey: "historysubs" + AccountController.currentName)
+        UserDefaults.standard.synchronize()
+    }
+
     
     public static func set(name: String, subs: [String], completion: @escaping () -> Void){
         print("Setting subs")

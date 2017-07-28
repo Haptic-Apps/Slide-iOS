@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import AMScrollingNavbar
 import WebKit
 import SafariServices
 
@@ -55,6 +54,8 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.setNavigationBarHidden(false, animated: false)
+
         self.navigationController?.navigationBar.backItem?.title = ""
         webView = WKWebView(frame: CGRect(x:0, y:0, width: UIScreen.main.bounds.width, height:UIScreen.main.bounds.height))
        // self.shyNavBarManager.scrollView = self.webView.scrollView
@@ -65,10 +66,6 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         myProgressView = UIProgressView(frame: CGRect(x:0, y:webView.frame.origin.y, width: UIScreen.main.bounds.width, height:10))
         myProgressView.progressTintColor = ColorUtil.accentColorForSub(sub: sub)
         self.view.addSubview(myProgressView)
-
-        if let navigationController = self.navigationController as? ScrollingNavigationController {
-       //     navigationController.followScrollView(self.webView, delay: 50.0)
-        }
 
         loadUrl()
 
@@ -143,7 +140,7 @@ extension WKWebView {
         self.evaluateJavaScript(script, completionHandler: {(result: Any?, error: Error?) -> Void in
             if error == nil {
                 if result != nil {
-                    resultString = "\(result)"
+                    resultString = "\(error.debugDescription)"
                 }
             }
             else {

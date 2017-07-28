@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <QuartzCore/QuartzCore.h>
 
 @interface UZLoupeView : UIView <CAAnimationDelegate> {
 	CGFloat		_loupeRadius;

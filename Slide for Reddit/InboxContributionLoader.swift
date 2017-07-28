@@ -8,10 +8,12 @@
 
 import Foundation
 import reddift
-import XLPagerTabStrip
 import RealmSwift
+import PagingMenuController
 
 class InboxContributionLoader: ContributionLoader {
+    var displayMode: MenuItemDisplayMode
+
     var color: UIColor
     
     var messages: MessageWhere
@@ -22,14 +24,13 @@ class InboxContributionLoader: ContributionLoader {
         content = []
         color = ColorUtil.getColorForSub(sub: "")
         messages = whereContent
-        indicatorInfo = IndicatorInfo(title: whereContent.description)
+        displayMode = MenuItemDisplayMode.text(title: MenuItemText.init(text: whereContent.description, color: UIColor.white, selectedColor: ColorUtil.getColorForSub(sub: ""), font: UIFont.systemFont(ofSize: 12), selectedFont: UIFont.boldSystemFont(ofSize:  12)))
     }
     
     
     var paginator: Paginator
     var content: [Object]
     var delegate: ContentListingViewController?
-    var indicatorInfo: IndicatorInfo
     var paging = true
     
     func getData(reload: Bool) {
@@ -60,6 +61,7 @@ class InboxContributionLoader: ContributionLoader {
                         }
                         
                         self.paginator = listing.paginator
+                        self.canGetMore = !self.paginator.hasMore()
                         DispatchQueue.main.async{
                             self.delegate?.doneLoading()
                         }

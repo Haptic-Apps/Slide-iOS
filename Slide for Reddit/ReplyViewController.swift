@@ -15,6 +15,7 @@ import MobileCoreServices
 import SwiftyJSON
 import ActionSheetPicker_3_0
 import RealmSwift
+import MaterialComponents.MaterialSnackbar
 
 class ReplyViewController: UITableViewController, UITextViewDelegate {
     
@@ -159,6 +160,8 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
         super.viewDidLoad()
         text?.becomeFirstResponder()
         addToolbarToTextView()
+        self.view.layer.cornerRadius = 5
+        self.view.layer.masksToBounds = true
     }
     
     func addToolbarToTextView(){
@@ -208,7 +211,9 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
         if let toSave = text!.text {
             if(!toSave.isEmpty()){
                 Drafts.addDraft(s: text!.text)
-                self.view.makeToast("Draft saved", duration: 4, position: .top)
+                let message = MDCSnackbarMessage()
+                message.text = "Draft saved"
+                MDCSnackbarManager.show(message)
             }
         }
     }
@@ -284,7 +289,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
             let margin:CGFloat = 8.0
             let rect = CGRect.init(x: margin, y: 72.0, width: (self.alertView?.view.frame.width)! - margin * 2.0 , height: 2.0)
             self.progressBar = UIProgressView(frame: rect)
-            self.progressBar.progress = 0.5
+            self.progressBar.progress = 0
             self.progressBar.tintColor = ColorUtil.accentColorForSub(sub: self.sub)
             self.alertView?.view.addSubview(self.progressBar)
         })
@@ -377,10 +382,10 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
                 if let fileName = (info?["PHImageFileURLKey"] as? NSURL)?.lastPathComponent {
                     name = fileName
                 }
-                let mime = UTTypeCopyPreferredTagWithClass(uti as! CFString, kUTTagClassMIMEType)?.takeRetainedValue()
+                let mime = UTTypeCopyPreferredTagWithClass(uti! as CFString, kUTTagClassMIMEType)?.takeRetainedValue()
                 
                 Alamofire.upload(multipartFormData: { (multipartFormData) in
-                    multipartFormData.append(data!, withName: "image", fileName: name, mimeType: mime as! String)
+                    multipartFormData.append(data!, withName: "image", fileName: name, mimeType: mime! as String)
                     for (key, value) in parameters {
                         multipartFormData.append((value.data(using: .utf8))!, withName: key)
                     }
@@ -393,6 +398,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
                         print("Success")
                         upload.uploadProgress { progress in
                             DispatchQueue.main.async {
+                                print(progress.fractionCompleted)
                                 self.progressBar.setProgress(Float(progress.fractionCompleted), animated: true)
                             }
                         }
@@ -490,6 +496,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub)
         navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName : UIColor.white]
         navigationController?.navigationBar.tintColor = UIColor.white
+
         if(message){
             title = "New message"
         } else {

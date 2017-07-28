@@ -20,12 +20,13 @@ open class GalleryViewController: UIPageViewController, ItemControllerDelegate {
     fileprivate var thumbnailsButton: UIButton? = UIButton.thumbnailsButton()
     fileprivate var deleteButton: UIButton? = UIButton.deleteButton()
     fileprivate let scrubber = VideoScrubber()
+    public var task: URLSessionDownloadTask?
 
     fileprivate weak var initialItemController: ItemController?
 
     // LOCAL STATE
     // represents the current page index, updated when the root view of the view controller representing the page stops animating inside visible bounds and stays on screen.
-    var currentIndex: Int
+    public var currentIndex: Int
     // Picks up the initial value from configuration, if provided. Subsequently also works as local state for the setting.
     fileprivate var decorationViewsHidden = false
     fileprivate var isAnimating = false
@@ -457,6 +458,15 @@ open class GalleryViewController: UIPageViewController, ItemControllerDelegate {
         guard let firstVC = viewControllers?.first, let itemController = firstVC as? ItemController else { return }
 
         itemController.fetchImage()
+    }
+    override open func removeFromParentViewController() {
+        super.removeFromParentViewController()
+        
+        print("Closing")
+        if let t = task {
+            t.cancel()
+        }
+        // your code here
     }
 
     // MARK: - Animations

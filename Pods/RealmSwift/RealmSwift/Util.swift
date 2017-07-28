@@ -21,6 +21,12 @@ import Realm
 
 // MARK: Internal Helpers
 
+// Swift 3.1 provides fixits for some of our uses of unsafeBitCast
+// to use unsafeDowncast instead, but the bitcast is required.
+internal func noWarnUnsafeBitCast<T, U>(_ x: T, to type: U.Type) -> U {
+    return unsafeBitCast(x, to: type)
+}
+
 internal func notFoundToNil(index: UInt) -> Int? {
     if index == UInt(NSNotFound) {
         return nil
@@ -73,10 +79,19 @@ internal func dynamicBridgeCast<T>(fromSwift x: T) -> Any {
 
 // Used for conversion from Objective-C types to Swift types
 internal protocol CustomObjectiveCBridgeable {
-    /* FIXME: Remove protocol once SR-2393 bridges all integer types to `NSNumber`
-     *        At this point, use `as! [SwiftType]` to cast between. */
     static func bridging(objCValue: Any) -> Self
     var objCValue: Any { get }
+}
+
+// FIXME: needed with swift 3.2
+// Double isn't though?
+extension Float: CustomObjectiveCBridgeable {
+    static func bridging(objCValue: Any) -> Float {
+        return (objCValue as! NSNumber).floatValue
+    }
+    var objCValue: Any {
+        return NSNumber(value: self)
+    }
 }
 
 extension Int8: CustomObjectiveCBridgeable {

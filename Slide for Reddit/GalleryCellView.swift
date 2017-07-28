@@ -9,7 +9,6 @@
 import UIKit
 import reddift
 import UZTextView
-import AMScrollingNavbar
 import ImageViewer
 import TTTAttributedLabel
 
@@ -100,7 +99,7 @@ class GalleryCellView: UITableViewCell {
     }
     
     func openLink(sender: AnyObject){
-        (parentViewController)?.setLink(lnk: link!)
+        (parentViewController)?.setLink(lnk: link!, shownURL: nil, lq: false)
     }
 
 
@@ -109,7 +108,6 @@ class GalleryCellView: UITableViewCell {
     }
     
     var thumb = true
-    var height:Int = 0
     
     override func updateConstraints() {
         super.updateConstraints()

@@ -8,6 +8,9 @@
 
 import UIKit
 import ImageViewer
+import MaterialComponents.MaterialProgressView
+import SDWebImage
+import Alamofire
 
 class GifMWPhotoBrowser: NSObject, GalleryItemsDataSource {
     
@@ -21,7 +24,7 @@ class GifMWPhotoBrowser: NSObject, GalleryItemsDataSource {
                 
             })
         } else {
-        return photos[index]
+            return photos[index]
         }
     }
     func galleryConfiguration() -> GalleryConfiguration {
@@ -73,17 +76,62 @@ class GifMWPhotoBrowser: NSObject, GalleryItemsDataSource {
             GalleryConfigurationItem.thumbnailsButtonMode(.none)
         ]
     }
-
+    
     var browser: GalleryViewController?
+    var url: String = ""
+    var more : UIBarButtonItem?
     
     func create(url: String) -> GalleryViewController {
         photos = []
+        self.url = url
         browser = GalleryViewController.init(startIndex: 0, itemsDataSource: self, itemsDelegate: nil, displacedViewsDataSource: nil, configuration: galleryConfiguration())
         print("Loading gif \(url)")
+        let toolbar = UIToolbar()
+        let space = UIBarButtonItem(barButtonSystemItem:.flexibleSpace, target: nil, action: nil)
+        var items: [UIBarButtonItem] = []
+        
+        items.append(space)
+        items.append(UIBarButtonItem(image: UIImage(named: "download")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(GifMWPhotoBrowser.download(_:))))
+        more = UIBarButtonItem(image: UIImage(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(GifMWPhotoBrowser.showImageMenu(_:)))
+        items.append(more!)
+        toolbar.items = items
+        toolbar.setBackgroundImage(UIImage(),
+                                   forToolbarPosition: .any,
+                                   barMetrics: .default)
+        toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
+        toolbar.tintColor = UIColor.white
+        progressView = MDCProgressView()
+        progressView?.progress = 0
+        
+        let progressViewHeight = CGFloat(5)
+        progressView?.frame = CGRect(x: 0, y: toolbar.bounds.height, width: toolbar.bounds.width, height: progressViewHeight)
+        
+        size = UILabel(frame: CGRect(x:5,y: toolbar.bounds.height,width: 250,height: 50))
+        size?.textAlignment = .left
+        size?.textColor = .white
+        size?.text="Loading..."
+        size?.font = UIFont.boldSystemFont(ofSize: 12)
+        toolbar.addSubview(size!)
+        toolbar.addSubview(progressView!)
+        
+        browser!.footerView?.backgroundColor = UIColor.clear
+        browser!.footerView = toolbar
+        browser?.closedCompletion = {
+            print("Cancelling")
+            self.cancelled = true
+            self.request?.cancel()
+        }
+        browser?.swipedToDismissCompletion = {
+            print("Cancelling")
+            self.cancelled = true
+            self.request?.cancel()
+        }
+
         getGif(urlS: url)
         return browser!
     }
     
+    var cancelled = false
     var photos: [GalleryItem] = []
     
     
@@ -237,12 +285,7 @@ class GifMWPhotoBrowser: NSObject, GalleryItemsDataSource {
     }
     
     func loadVideo(urlString: String){
-        print("Showing \(urlString)")
-        let photo = GalleryItem.video(fetchPreviewImageBlock: { (completion) in
-            
-        }, videoURL: URL.init(string: urlString)!)
-        self.photos.append(photo)
-        refresh()
+        refresh(urlString)
     }
     func getGif(urlS: String){
         
@@ -258,7 +301,7 @@ class GifMWPhotoBrowser: NSObject, GalleryItemsDataSource {
         case .DIRECT:
             fallthrough
         case .IMGUR:
-                self.loadVideo(urlString: url)
+            self.loadVideo(urlString: url)
             break
         case .STREAMABLE:
             let hash = url.substring(url.lastIndexOf("/")! + 1, length: url.length - (url.lastIndexOf("/")! + 1));
@@ -276,10 +319,137 @@ class GifMWPhotoBrowser: NSObject, GalleryItemsDataSource {
         }
     }
     
-    func refresh(){
+    func refresh(_ toLoad:String){
+        if(!cancelled){
+        print("Set footer view")
+        let disallowedChars = CharacterSet.urlPathAllowed.inverted
+        var key = toLoad.components(separatedBy: disallowedChars).joined(separator: "_")
+        key = key.replacingOccurrences(of: ":", with: "")
+        key = key.replacingOccurrences(of: "/", with: "")
+        key = key.replacingOccurrences(of: ".", with: "")
+        key = key + ".mp4"
+            print(key)
+            if(key.length > 200){
+                key = key.substring(0, length: 200)
+            }
+        if(FileManager.default.fileExists(atPath: SDImageCache.shared().makeDiskCachePath(key)) ){
+            display(URL.init(fileURLWithPath:SDImageCache.shared().makeDiskCachePath(key)))
+        } else {
+            let localUrl =   URL.init(fileURLWithPath:SDImageCache.shared().makeDiskCachePath(key))
+            print(localUrl)
+            request = Alamofire.download(toLoad, method: .get, to: { (url, response) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
+                return (localUrl, [.createIntermediateDirectories])
+
+            }).downloadProgress() { progress in
+                DispatchQueue.main.async {
+                    self.progressView!.progress = Float(progress.fractionCompleted)
+                    let countBytes = ByteCountFormatter()
+                    countBytes.allowedUnits = [.useMB]
+                    countBytes.countStyle = .file
+                    let fileSize = countBytes.string(fromByteCount: Int64(progress.totalUnitCount))
+                    self.size!.text = fileSize
+                    print("Progress is \(progress.fractionCompleted)")
+                }
+                
+                }
+                .responseData { response in
+                    if let error = response.error {
+                        print(error)
+                    } else { //no errors
+                        self.display(localUrl)
+                        print("File downloaded successfully: \(localUrl)")
+                    }
+            }
+
+        }
+        }
+    }
+    
+    var request: DownloadRequest?
+    
+    var size: UILabel?
+    var progressView: MDCProgressView?
+
+    func display(_ file: URL){
+        if(!cancelled){
+        print("Displaying \(file)")
+        progressView!.setHidden(true, animated: true)
+        size?.isHidden = true
+        let photo = GalleryItem.video(fetchPreviewImageBlock: { (completion) in
+            
+        }, videoURL: file)
+        self.photos.append(photo)
         
         let vc = browser!.pagingDataSource.createItemController(0)
+        
         browser!.setViewControllers([vc], direction: UIPageViewControllerNavigationDirection.reverse, animated: true, completion: nil)
+        }
+    }
+    
+    func download(_ sender: AnyObject){
+        //todo  UIImageWriteToSavedPhotosAlbum(image!, nil, nil, nil)
+    }
+    
+    func showImageMenu(_ sender: AnyObject){
+        let alert = UIAlertController.init(title: url, message: "", preferredStyle: .actionSheet)
+        let open = OpenInChromeController.init()
+        if(open.isChromeInstalled()){
+            alert.addAction(
+                UIAlertAction(title: "Open in Chrome", style: .default) { (action) in
+                    open.openInChrome(URL.init(string: self.url)!, callbackURL: nil, createNewTab: true)
+                }
+            )
+        }
+        alert.addAction(
+            UIAlertAction(title: "Open in Safari", style: .default) { (action) in
+                if #available(iOS 10.0, *) {
+                    UIApplication.shared.open(URL.init(string: self.url)!, options: [:], completionHandler: nil)
+                } else {
+                    UIApplication.shared.openURL(URL.init(string: self.url)!)
+                }
+            }
+        )
+        alert.addAction(
+            UIAlertAction(title: "Share URL", style: .default) { (action) in
+                let shareItems:Array = [URL.init(string: self.url)!]
+                let activityViewController:UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+                let window = UIApplication.shared.keyWindow!
+                if let modalVC = window.rootViewController?.presentedViewController {
+                    modalVC.present(activityViewController, animated: true, completion: nil)
+                } else {
+                    window.rootViewController!.present(activityViewController, animated: true, completion: nil)
+                }
+            }
+        )
+        alert.addAction(
+            UIAlertAction(title: "Share Image", style: .default) { (action) in
+                let shareItems:Array = [URL.init(string: self.url)!]
+                let activityViewController:UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+                let window = UIApplication.shared.keyWindow!
+                if let modalVC = window.rootViewController?.presentedViewController {
+                    modalVC.present(activityViewController, animated: true, completion: nil)
+                } else {
+                    window.rootViewController!.present(activityViewController, animated: true, completion: nil)
+                }
+            }
+        )
+        alert.addAction(
+            UIAlertAction(title: "Cancel", style: .cancel) { (action) in
+            }
+        )
+        
+        alert.modalPresentationStyle = .popover
+        if let presenter = alert.popoverPresentationController {
+            presenter.sourceView = (more!.value(forKey: "view") as! UIView)
+            presenter.sourceRect = (more!.value(forKey: "view") as! UIView).bounds
+        }
+
+        let window = UIApplication.shared.keyWindow!
+        if let modalVC = window.rootViewController?.presentedViewController {
+            modalVC.present(alert, animated: true, completion: nil)
+        } else {
+            window.rootViewController!.present(alert, animated: true, completion: nil)
+        }
     }
     
     

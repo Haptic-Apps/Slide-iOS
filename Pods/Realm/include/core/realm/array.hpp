@@ -47,7 +47,6 @@ Searching: The main finding function is:
 
 #include <cstdint> // unint8_t etc
 
-#include <realm/util/meta.hpp>
 #include <realm/util/assert.hpp>
 #include <realm/util/file_mapper.hpp>
 #include <realm/utilities.hpp>
@@ -101,7 +100,8 @@ inline T no0(T v)
 const size_t npos = size_t(-1);
 
 // Maximum number of bytes that the payload of an array can be
-const size_t max_array_payload = 0x00ffffffL;
+const size_t max_array_payload         = 0x00ffffffL;
+const size_t max_array_payload_aligned = 0x00fffff8L;
 
 /// Alias for realm::npos.
 const size_t not_found = npos;
@@ -117,12 +117,13 @@ class ArrayWriterBase;
 }
 
 
-#ifdef REALM_DEBUG
 struct MemStats {
     size_t allocated = 0;
     size_t used = 0;
     size_t array_count = 0;
 };
+
+#ifdef REALM_DEBUG
 template <class C, class T>
 std::basic_ostream<C, T>& operator<<(std::basic_ostream<C, T>& out, MemStats stats);
 #endif
@@ -558,6 +559,7 @@ public:
     ///
     /// This information is guaranteed to be cached in the array accessor.
     bool has_refs() const noexcept;
+    void set_has_refs(bool) noexcept;
 
     /// This information is guaranteed to be cached in the array accessor.
     ///
@@ -844,17 +846,20 @@ public:
     /// FIXME: Belongs in IntegerArray
     static size_t calc_aligned_byte_size(size_t size, int width);
 
+    class MemUsageHandler {
+    public:
+        virtual void handle(ref_type ref, size_t allocated, size_t used) = 0;
+    };
+
+    void report_memory_usage(MemUsageHandler&) const;
+
+    void stats(MemStats& stats_dest) const noexcept;
+
 #ifdef REALM_DEBUG
     void print() const;
     void verify() const;
     typedef size_t (*LeafVerifier)(MemRef, Allocator&);
     void verify_bptree(LeafVerifier) const;
-    class MemUsageHandler {
-    public:
-        virtual void handle(ref_type ref, size_t allocated, size_t used) = 0;
-    };
-    void report_memory_usage(MemUsageHandler&) const;
-    void stats(MemStats& stats_dest) const;
     typedef void (*LeafDumper)(MemRef, Allocator&, std::ostream&, int level);
     void dump_bptree_structure(std::ostream&, int level, LeafDumper) const;
     void to_dot(std::ostream&, StringData title = StringData()) const;
@@ -874,8 +879,8 @@ public:
     // The encryption layer relies on headers always fitting within a single page.
     static_assert(header_size == 8, "Header must always fit in entirely on a page");
 
-private:
-    Array& operator=(const Array&); // not allowed
+    Array& operator=(const Array&) = delete; // not allowed
+    Array(const Array&) = delete; // not allowed
 protected:
     typedef bool (*CallbackDummy)(int64_t);
 
@@ -936,6 +941,9 @@ protected:
     void copy_on_write();
 
 private:
+    void do_copy_on_write(size_t minimum_size = 0);
+    void do_ensure_minimum_width(int_fast64_t);
+
     template <size_t w>
     int64_t sum(size_t start, size_t end) const;
 
@@ -979,6 +987,8 @@ protected:
 
     std::pair<ref_type, size_t> get_to_dot_parent(size_t ndx_in_parent) const override;
 
+    bool is_read_only() const noexcept;
+
 protected:
     // Getters and Setters for adaptive-packed arrays
     typedef int64_t (Array::*Getter)(size_t) const; // Note: getters must not throw
@@ -1001,9 +1011,7 @@ protected:
     /// log2. Posssible results {0, 1, 2, 4, 8, 16, 32, 64}
     static size_t bit_width(int64_t value);
 
-#ifdef REALM_DEBUG
     void report_memory_usage_2(MemUsageHandler&) const;
-#endif
 
 private:
     Getter m_getter = nullptr; // cached to avoid indirection
@@ -1411,6 +1419,15 @@ inline bool Array::has_refs() const noexcept
     return m_has_refs;
 }
 
+inline void Array::set_has_refs(bool value) noexcept
+{
+    if (m_has_refs != value) {
+        REALM_ASSERT(!is_read_only());
+        m_has_refs = value;
+        set_header_hasrefs(value);
+    }
+}
+
 inline bool Array::get_context_flag() const noexcept
 {
     return m_context_flag;
@@ -1418,8 +1435,11 @@ inline bool Array::get_context_flag() const noexcept
 
 inline void Array::set_context_flag(bool value) noexcept
 {
-    m_context_flag = value;
-    set_header_context_flag(value);
+    if (m_context_flag != value) {
+        REALM_ASSERT(!is_read_only());
+        m_context_flag = value;
+        set_header_context_flag(value);
+    }
 }
 
 inline ref_type Array::get_ref() const noexcept
@@ -1942,6 +1962,33 @@ inline void Array::update_child_ref(size_t child_ndx, ref_type new_ref)
 inline ref_type Array::get_child_ref(size_t child_ndx) const noexcept
 {
     return get_as_ref(child_ndx);
+}
+
+inline bool Array::is_read_only() const noexcept
+{
+    REALM_ASSERT_DEBUG(is_attached());
+    return m_alloc.is_read_only(m_ref);
+}
+
+inline void Array::copy_on_write()
+{
+#if REALM_ENABLE_MEMDEBUG
+    // We want to relocate this array regardless if there is a need or not, in order to catch use-after-free bugs.
+    // Only exception is inside GroupWriter::write_group() (see explanation at the definition of the m_no_relocation
+    // member)
+    if (!m_no_relocation) {
+#else
+    if (is_read_only()) {
+#endif
+        do_copy_on_write();
+    }
+}
+
+inline void Array::ensure_minimum_width(int_fast64_t value)
+{
+    if (value >= m_lbound && value <= m_ubound)
+        return;
+    do_ensure_minimum_width(value);
 }
 
 

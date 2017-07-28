@@ -9,23 +9,157 @@
 import UIKit
 import reddift
 import SDWebImage
-import ChameleonFramework
-import XLPagerTabStrip
-import AMScrollingNavbar
 import SideMenu
 import KCFloatingActionButton
 import UZTextView
 import RealmSwift
+import PagingMenuController
+import MaterialComponents.MaterialSnackbar
+import MaterialComponents.MDCActivityIndicator
+import TTTAttributedLabel
 
-class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, IndicatorInfoProvider, ScrollingNavigationControllerDelegate, LinkCellViewDelegate, ColorPickerDelegate, KCFloatingActionButtonDelegate {
+class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate,  UICollectionViewDataSource, LinkCellViewDelegate, ColorPickerDelegate, KCFloatingActionButtonDelegate, UIGestureRecognizerDelegate, WrappingFlowLayoutDelegate, UINavigationControllerDelegate {
+    
+    func openComments(id: String) {
+        var index = 0
+        for s in links {
+            if(s.getId() == id){
+                break
+            }
+            index += 1
+        }
+        var newLinks : [RSubmission] = []
+        for i in index...links.count - 1{
+            newLinks.append(links[i])
+        }
+        
+        let comment = PagingCommentViewController.init(submissions: newLinks)
+        
+        if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.view.bounds.width / CGFloat(320))) > 1 && SettingValues.multiColumn){
+            let navigationController = UINavigationController(rootViewController: comment)
+            navigationController.modalPresentationStyle = .formSheet
+            navigationController.modalTransitionStyle = .crossDissolve
+            self.present(navigationController, animated: true, completion: nil)
+        } else if(UIScreen.main.traitCollection.userInterfaceIdiom != .pad){
+            let navigationController = UINavigationController(rootViewController: comment)
+            navigationController.modalPresentationStyle = .overCurrentContext
+            navigationController.modalTransitionStyle = .crossDissolve
+            self.present(navigationController, animated: true, completion: nil)
+        } else {
+            let nav = UINavigationController.init(rootViewController: comment)
+            self.splitViewController?.showDetailViewController(nav, sender: self)
+            
+        }
+
+    }
+
+    
+    let margin: CGFloat = 10
+    let cellsPerRow = 3
+
+    func collectionView(_ collectionView: UICollectionView, width: CGFloat, indexPath: IndexPath) -> CGSize {
+        
+        var itemWidth = width
+        if(SettingValues.postViewMode == .CARD ){
+            itemWidth -= 10
+        }
+        
+        let submission = links[indexPath.row]
+        
+        var thumb = submission.thumbnail
+        var big = submission.banner
+        
+        var type = ContentType.getContentType(baseUrl: submission.url!)
+        if(submission.isSelf){
+            type = .SELF
+        }
+        
+        if(SettingValues.bannerHidden){
+            big = false
+            thumb = true
+        }
+        
+        let fullImage = ContentType.fullImage(t: type)
+        var submissionHeight = submission.height
+
+        if(!fullImage && submissionHeight < 50){
+            big = false
+            thumb = true
+        } else if(big && (SettingValues.bigPicCropped )){
+            submissionHeight = 200
+        } else if(big){
+            let ratio = Double(submissionHeight)/Double(submission.width)
+            let width = Double(itemWidth);
+
+            let h = width*ratio
+            if(h == 0){
+                submissionHeight = 200
+            } else {
+                submissionHeight  = Int(h)
+            }
+        }
+        
+        
+        if(type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big){
+            big = false
+            thumb = false
+        }
+        
+        if(submissionHeight < 50){
+            thumb = true
+            big = false
+        }
+
+        
+        if(big || !submission.thumbnail){
+            thumb = false
+        }
+        
+        
+        if(!big && !thumb && submission.type != .SELF && submission.type != .NONE){ //If a submission has a link but no images, still show the web thumbnail
+            thumb = true
+        }
+        
+        if(submission.nsfw && !SettingValues.nsfwPreviews){
+            big = false
+            thumb = true
+        }
+        
+        if(submission.nsfw && SettingValues.hideNSFWCollection && (sub == "all" || sub == "frontpage" || sub == "popular")){
+            big = false
+            thumb = true
+        }
+        
+        
+        if(SettingValues.noImages){
+            big = false
+            thumb = false
+        }
+        if(thumb && type == .SELF){
+            thumb = false
+        }
+        
+        
+        let he = CachedTitle.getTitle(submission: submission, full: false, false).boundingRect(with: CGSize.init(width: itemWidth - 24 - (thumb ? (SettingValues.largerThumbnail ? 75 : 50) + 28 : 0), height:10000), options: [.usesLineFragmentOrigin , .usesFontLeading], context: nil).height
+        let thumbheight = CGFloat(SettingValues.largerThumbnail ? 83 : 58)
+        let estimatedHeight = CGFloat((he < thumbheight && thumb || he < thumbheight && !big) ? thumbheight : he) + CGFloat(48)  + (SettingValues.hideButtonActionbar ? -28 : 0) +  CGFloat(big && !thumb ? (submissionHeight + 20) : 0)
+        return CGSize(width: itemWidth, height: estimatedHeight)
+    }
+
     
     var parentController: SubredditsViewController?
     var accentChosen: UIColor?
     func valueChanged(_ value: CGFloat, accent: Bool) {
         if(accent){
-            accentChosen = UIColor.init(cgColor: GMPalette.allAccentCGColor()[Int(value * CGFloat(GMPalette.allAccentCGColor().count))])
+            let c = UIColor.init(cgColor: GMPalette.allAccentCGColor()[Int(value * CGFloat(GMPalette.allAccentCGColor().count))])
+            accentChosen = c
+            hide.backgroundColor = c
         } else {
-            self.navigationController?.navigationBar.barTintColor = UIColor.init(cgColor: GMPalette.allCGColor()[Int(value * CGFloat(GMPalette.allCGColor().count))])
+            let c = UIColor.init(cgColor: GMPalette.allCGColor()[Int(value * CGFloat(GMPalette.allCGColor().count))])
+            self.navigationController?.navigationBar.barTintColor = c
+                sideView.backgroundColor = c
+            add.backgroundColor = c
+            sideView.backgroundColor = c
             if(parentController != nil){
                 parentController?.colorChanged()
             }
@@ -46,6 +180,12 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             cell.refresh()
         } catch {
             
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if(SettingValues.markReadOnScroll){
+            History.addSeen(s: links[indexPath.row])
         }
     }
     
@@ -74,6 +214,93 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             
         }
     }
+    
+    func hide(_ cell: LinkCellView) {
+        do {
+            try session?.setHide(true, name: cell.link!.getId(), completion: {(result) in })
+            let id = cell.link!.getId()
+            var location = 0
+            var item = links[0]
+            for submission in links {
+                if(submission.getId() == id){
+                    item = links[location]
+                    links.remove(at: location)
+                    break
+                }
+                location += 1
+            }
+            
+            tableView.performBatchUpdates({
+                self.tableView.deleteItems(at: [IndexPath.init(item: location, section: 0)])
+                self.flowLayout.reset()
+                let message = MDCSnackbarMessage.init(text: "Submission hidden forever")
+                let action = MDCSnackbarMessageAction()
+                let actionHandler = {() in
+                    self.links.insert(item, at: location)
+                    self.tableView.insertItems(at: [IndexPath.init(item: location, section: 0)])
+                    do {
+                        try self.session?.setHide(false, name: cell.link!.getId(), completion: {(result) in })
+                    }catch {
+                        
+                    }
+                    
+                }
+                action.handler = actionHandler
+                action.title = "UNDO"
+                
+                message!.action = action
+                MDCSnackbarManager.show(message)
+
+            }, completion: nil)
+
+            } catch {
+            
+        }
+    }
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        
+        let currentY = scrollView.contentOffset.y;
+        let headerHeight = CGFloat(70);
+        var didHide = false
+        
+        if(currentY > lastYUsed ) {
+            hideUI(inHeader: (currentY > headerHeight) )
+            didHide = true
+        } else if(currentY < lastYUsed + 20 && ((currentY > headerHeight))){
+            showUI()
+        }
+        lastYUsed = currentY
+        if ((lastY <= headerHeight) && (currentY > headerHeight) && (navigationController?.isNavigationBarHidden)! && !didHide) {
+            (navigationController)?.setNavigationBarHidden(false, animated: true)
+            if(ColorUtil.theme == .LIGHT || ColorUtil.theme == .SEPIA){
+                UIApplication.shared.statusBarStyle = .lightContent
+            }
+        }
+        
+        if ((lastY > headerHeight) && (currentY <= headerHeight) && !(navigationController?.isNavigationBarHidden)!) {
+            (navigationController)?.setNavigationBarHidden(true, animated: true)
+            if(ColorUtil.theme == .LIGHT || ColorUtil.theme == .SEPIA){
+                UIApplication.shared.statusBarStyle = .default
+            }
+        }
+        lastY = currentY
+    }
+
+    func hideUI(inHeader: Bool){
+        (navigationController)?.setNavigationBarHidden(true, animated: true)
+        if(inHeader){
+        hide.isHidden = true
+        add.isHidden = true
+        }
+    }
+    
+    func showUI(){
+        (navigationController)?.setNavigationBarHidden(false, animated: true)
+        hide.isHidden = false
+        add.isHidden = false
+    }
+
     
     func more(_ cell: LinkCellView){
         let link = cell.link!
@@ -121,7 +348,11 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         }
         
         cancelActionButton = UIAlertAction(title: "Open in Safari", style: .default) { action -> Void in
-            UIApplication.shared.open(link.url!, options: [:], completionHandler: nil)
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open(link.url!, options: [:], completionHandler: nil)
+            } else {
+                UIApplication.shared.openURL(link.url!)
+            }
         }
         actionSheetController.addAction(cancelActionButton)
         
@@ -144,7 +375,12 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         }
         actionSheetController.addAction(cancelActionButton)
         
-        
+        actionSheetController.modalPresentationStyle = .popover
+        if let presenter = actionSheetController.popoverPresentationController {
+            presenter.sourceView = cell.contentView
+            presenter.sourceRect = cell.contentView.bounds
+        }
+
         self.present(actionSheetController, animated: true, completion: nil)
         
     }
@@ -162,12 +398,16 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                 let name = (thing is RComment) ? (thing as! RComment).name : (thing as! RSubmission).name
                 try self.session?.report(name, reason: (textField?.text!)!, otherReason: "", completion: { (result) in
                     DispatchQueue.main.async{
-                        self.view.makeToast("Report sent", duration: 3, position: .top)
+                        let message = MDCSnackbarMessage()
+                        message.text = "Report sent"
+                        MDCSnackbarManager.show(message)
                     }
                 })
             } catch {
                 DispatchQueue.main.async{
-                    self.view.makeToast("Error sending report", duration: 3, position: .top)
+                    let message = MDCSnackbarMessage()
+                    message.text = "Error sending report"
+                    MDCSnackbarManager.show(message)
                 }
             }
         }))
@@ -190,7 +430,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             PostFilter.profiles.append(link.author as NSString)
             PostFilter.saveAndUpdate()
             self.links = PostFilter.filter(self.links, previous: nil)
-            self.tableView.reloadData()
+            self.reloadDataReset()
         }
         actionSheetController.addAction(cancelActionButton)
         
@@ -198,7 +438,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             PostFilter.subreddits.append(link.subreddit as NSString)
             PostFilter.saveAndUpdate()
             self.links = PostFilter.filter(self.links, previous: nil)
-            self.tableView.reloadData()
+            self.reloadDataReset()
         }
         actionSheetController.addAction(cancelActionButton)
         
@@ -206,7 +446,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             PostFilter.domains.append(link.domain as NSString)
             PostFilter.saveAndUpdate()
             self.links = PostFilter.filter(self.links, previous: nil)
-            self.tableView.reloadData()
+            self.reloadDataReset()
         }
         actionSheetController.addAction(cancelActionButton)
         
@@ -215,12 +455,18 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     }
     
     
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        tableView.collectionViewLayout.invalidateLayout()
+        super.viewWillTransition(to: size, with: coordinator)
+    }
+
+    
     var links: [RSubmission] = []
     var paginator = Paginator()
     var sub : String
     var session: Session? = nil
-    weak var tableView : UITableView!
-    var itemInfo : IndicatorInfo
+    var tableView : UICollectionView = UICollectionView.init(frame: CGRect.zero, collectionViewLayout: UICollectionViewLayout.init())
+    var displayMode: MenuItemDisplayMode
     var single: Bool = false
     
     /* override func previewActionItems() -> [UIPreviewActionItem] {
@@ -239,7 +485,8 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     init(subName: String, parent: SubredditsViewController){
         sub = subName;
         self.parentController = parent
-        itemInfo = IndicatorInfo(title: sub)
+
+        displayMode = MenuItemDisplayMode.text(title: MenuItemText.init(text: sub, color: ColorUtil.fontColor, selectedColor: ColorUtil.fontColor, font: UIFont.boldSystemFont(ofSize: 16), selectedFont: UIFont.boldSystemFont(ofSize: 25)))
         super.init(nibName:nil, bundle:nil)
         setBarColors(color: ColorUtil.getColorForSub(sub: subName))
     }
@@ -247,26 +494,13 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     init(subName: String, single: Bool){
         sub = subName
         self.single = true
-        itemInfo = IndicatorInfo(title: sub)
+        displayMode = MenuItemDisplayMode.text(title: MenuItemText.init(text: sub, color: ColorUtil.fontColor, selectedColor: ColorUtil.fontColor, font: UIFont.boldSystemFont(ofSize: 16), selectedFont: UIFont.boldSystemFont(ofSize: 25)))
         super.init(nibName:nil, bundle:nil)
         setBarColors(color: ColorUtil.getColorForSub(sub: subName))
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    func scrollingNavigationController(_ controller: ScrollingNavigationController, didChangeState state: NavigationBarState) {
-        switch state {
-        case .collapsed:
-            hide(true)
-            break
-        case .expanded:
-            show(true)
-            break
-        case .scrolling:
-            break
-        }
     }
     
     func show(_ animated: Bool = true) {
@@ -282,7 +516,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         }
     }
     
-    func hide(_ animated: Bool = true) {
+    func hideFab(_ animated: Bool = true) {
         if(fab != nil){
             if animated == true {
                 UIView.animate(withDuration: 0.3, animations: { () -> Void in
@@ -296,74 +530,242 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         }
     }
     
-    override func loadView(){
-        
-        self.view = UITableView(frame: CGRect.zero, style: .plain)
-        self.tableView = self.view as! UITableView
-        self.tableView.delegate = self
-        self.tableView.dataSource = self
-        
-        tableView.backgroundColor = ColorUtil.backgroundColor
-        tableView.separatorColor = ColorUtil.backgroundColor
-        tableView.separatorInset = .zero
-        
-        refreshControl = UIRefreshControl()
-        self.tableView.contentOffset = CGPoint.init(x: 0, y: -self.refreshControl.frame.size.height)
-        refreshControl.tintColor = ColorUtil.fontColor
-        refreshControl.attributedTitle = NSAttributedString(string: "")
-        refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControlEvents.valueChanged)
-        tableView.addSubview(refreshControl) // not required when using UITableViewController
-        
-    }
+    var sideView: UIView = UIView()
+    var subb: UIButton = UIButton()
     
     func drefresh(_ sender:AnyObject) {
         load(reset: true)
     }
     
+    
+    var heightAtIndexPath = NSMutableDictionary()
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableViewAutomaticDimension
+
+        /*
+        if let height = heightAtIndexPath.object(forKey: indexPath) as? NSNumber {
+            return CGFloat(height.floatValue)
+        } else {
+            return UITableViewAutomaticDimension
+        }*/
+    }
+    
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
     }
     
     var sideMenu: UISideMenuNavigationController?
     // var menuNav: SubSidebarViewController?
     var subInfo: Subreddit?
+    var flowLayout: WrappingFlowLayout = WrappingFlowLayout.init()
     override func viewDidLoad() {
-        self.tableView.register(LinkCellView.classForCoder(), forCellReuseIdentifier: "cell")
-        session = (UIApplication.shared.delegate as! AppDelegate).session
-        if self.links.count == 0 && !single {
-            load(reset: true)
+        super.viewDidLoad()
+        flowLayout.delegate = self
+        self.tableView = UICollectionView(frame: self.view.bounds, collectionViewLayout: flowLayout)
+        self.view = UIView.init(frame: CGRect.zero)
+
+        self.view.addSubview(tableView)
+
+        self.tableView.delegate = self
+        self.tableView.dataSource = self
+        refreshControl = UIRefreshControl()
+        self.tableView.contentOffset = CGPoint.init(x: 0, y: -self.refreshControl.frame.size.height)
+        indicator = MDCActivityIndicator.init(frame: CGRect.init(x: CGFloat(0), y: CGFloat(0), width: CGFloat(80), height: CGFloat(80)))
+        indicator.strokeWidth = 5
+        indicator.radius = 20
+        indicator.indicatorMode = .indeterminate
+        indicator.cycleColors = [ColorUtil.getColorForSub(sub: sub), ColorUtil.accentColorForSub(sub: sub)]
+        indicator.center = self.tableView.center
+        self.tableView.addSubview(indicator)
+        indicator.startAnimating()
+
+        reloadNeedingColor()
+        if(!SettingValues.viewType || single){
+            tableView.contentInset = UIEdgeInsetsMake(40  + (single ? 70 : 40), 0, 0, 0)
+        }
+
+        
+    }
+    
+    static var firstPresented = true
+    
+
+    func reloadNeedingColor(){
+        tableView.backgroundColor = ColorUtil.backgroundColor
+        
+        refreshControl.tintColor = ColorUtil.fontColor
+        refreshControl.attributedTitle = NSAttributedString(string: "")
+        refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControlEvents.valueChanged)
+        tableView.addSubview(refreshControl) // not required when using UITableViewController
+        
+        let label = UILabel.init(frame: CGRect.init(x: 5, y: -1 * (single ? 90 : 60), width: 375, height: !SettingValues.viewType || single ? 70 : 40))
+        if(!SettingValues.viewType || single){
+            label.text =  "     \(sub)"
+        }
+        label.textColor = ColorUtil.fontColor
+        label.adjustsFontSizeToFitWidth = true
+        label.font = UIFont.boldSystemFont(ofSize: 35)
+        
+        let sort = UIButton.init(type: .custom)
+        sort.setImage(UIImage.init(named: "ic_sort_white")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
+        sort.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
+        sort.frame = CGRect.init(x: 0, y: 20, width: 30, height: 30)
+        sort.translatesAutoresizingMaskIntoConstraints = false
+        label.addSubview(sort)
+        
+        let more = UIButton.init(type: .custom)
+        more.setImage(UIImage.init(named: "ic_more_vert_white")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
+        more.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControlEvents.touchUpInside)
+        more.frame = CGRect.init(x: 0, y: 20, width: 30, height: 30)
+        more.translatesAutoresizingMaskIntoConstraints = false
+        label.addSubview(more)
+        label.isUserInteractionEnabled = true
+        
+        sort.isUserInteractionEnabled = true
+        more.isUserInteractionEnabled = true
+        
+        
+        subb = UIButton.init(type: .custom)
+        subb.setImage(UIImage.init(named: "addcircle")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
+        subb.addTarget(self, action: #selector(self.subscribeSingle(_:)), for: UIControlEvents.touchUpInside)
+        subb.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        subb.translatesAutoresizingMaskIntoConstraints = false
+        if(sub == "all" || sub == "frontpage" || sub == "friends" || sub == "popular" || sub.startsWith("/m/")){
+            subb.isHidden = true
+        }
+        label.addSubview(subb)
+        if(Subscriptions.isSubscriber(sub)){
+            subb.setImage(UIImage.init(named: "subbed")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
         }
         
-        tableView.estimatedRowHeight = 400.0
-        tableView.rowHeight = UITableViewAutomaticDimension
+        add = MDCFloatingButton.init(shape: .default)
+        add.backgroundColor = ColorUtil.getColorForSub(sub: sub)
+        add.setImage(UIImage.init(named: "plus"), for: .normal)
+        add.sizeToFit()
+        add.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(add)
+        
+        hide = MDCFloatingButton.init(shape: .mini)
+        hide.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
+        hide.setImage(UIImage.init(named: "hide")?.imageResize(sizeChange: CGSize.init(width: 20, height: 20)), for: .normal)
+        hide.sizeToFit()
+        hide.addTarget(self, action:#selector(self.hideAll(_:)), for: .touchUpInside)
+        hide.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(hide)
+        
+        sideView = UIView()
+        sideView = UIView(frame: CGRect(x: 0, y: 0, width: 8, height: CGFloat.greatestFiniteMagnitude))
+        sideView.backgroundColor = ColorUtil.getColorForSub(sub: sub)
+        sideView.translatesAutoresizingMaskIntoConstraints = false
+        
+        label.addSubview(sideView)
+        
+        let metrics=["topMargin": !SettingValues.viewType || single ? 20 : 5,"topMarginS":!SettingValues.viewType || single ? 22.5 : 7.5,"topMarginSS":!SettingValues.viewType || single ? 25 : 10]
+        let views=["more": more, "add": add, "hide": hide, "superview": view, "sort":sort, "sub": subb, "side":sideView, "label" : label] as [String : Any]
+        var constraint:[NSLayoutConstraint] = []
+        constraint = NSLayoutConstraint.constraints(withVisualFormat:  "V:[superview]-(<=1)-[add]",
+                                                    options: NSLayoutFormatOptions.alignAllCenterX,
+                                                    metrics: metrics,
+                                                    views: views)
+        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[add]-5-|",
+                                                                     options: NSLayoutFormatOptions(rawValue: 0),
+                                                                     metrics: metrics,
+                                                                     views: views))
+        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[hide]-10-|",
+                                                                     options: NSLayoutFormatOptions(rawValue: 0),
+                                                                     metrics: metrics,
+                                                                     views: views))
+        
+        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[hide]-20-|",
+                                                                     options: NSLayoutFormatOptions(rawValue: 0),
+                                                                     metrics: metrics,
+                                                                     views: views))
+        self.view.addConstraints(constraint)
+        
+        
+        constraint = NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[side(20)]-8-[label]",
+                                                    options: NSLayoutFormatOptions(rawValue: 0),
+                                                    metrics: metrics,
+                                                    views: views)
+        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[sub(25)]-8-[sort]-4-[more]-8-|",
+                                                                     options: NSLayoutFormatOptions(rawValue: 0),
+                                                                     metrics: metrics,
+                                                                     views: views))
+        
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-(topMargin)-[more]-(topMargin)-|",
+                                                                    options: NSLayoutFormatOptions(rawValue: 0),
+                                                                    metrics: metrics,
+                                                                    views: views))
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-(topMarginS)-[sub(25)]-(topMarginS)-|",
+                                                                    options: NSLayoutFormatOptions(rawValue: 0),
+                                                                    metrics: metrics,
+                                                                    views: views))
+        
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-(topMargin)-[sort]-(topMargin)-|",
+                                                                    options: NSLayoutFormatOptions(rawValue: 0),
+                                                                    metrics: metrics,
+                                                                    views: views))
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-(topMarginSS)-[side(20)]-(topMarginSS)-|",
+                                                                    options: NSLayoutFormatOptions(rawValue: 0),
+                                                                    metrics: metrics,
+                                                                    views: views))
+        
+        label.addConstraints(constraint)
+        sideView.layer.cornerRadius = 10
+        sideView.clipsToBounds = true
+        
+        tableView.addSubview(label)
+        self.automaticallyAdjustsScrollViewInsets = false
+        
+        
+        self.tableView.register(BannerLinkCellView.classForCoder(), forCellWithReuseIdentifier: "banner")
+        self.tableView.register(ThumbnailLinkCellView.classForCoder(), forCellWithReuseIdentifier: "thumb")
+        self.tableView.register(TextLinkCellView.classForCoder(), forCellWithReuseIdentifier: "text")
+
+        session = (UIApplication.shared.delegate as! AppDelegate).session
+        
+        if (SubredditLinkViewController.firstPresented && !single) || (self.links.count == 0 && !single && !SettingValues.viewType) {
+            load(reset: true)
+            SubredditLinkViewController.firstPresented = false
+        }
         
         if(single){
             sideMenu = UISideMenuNavigationController()
-            
             do {
                 try (UIApplication.shared.delegate as! AppDelegate).session?.about(sub, completion: { (result) in
                     switch result {
                     case .failure:
+                        print(result.error!.description)
                         DispatchQueue.main.async {
-                            if(self.sub == ("all") || self.sub == ("frontpage") || self.sub.hasPrefix("/m/")){
+                            if(self.sub == ("all") || self.sub == ("frontpage") || self.sub.hasPrefix("/m/") || self.sub.contains("+")){
                                 self.load(reset: true)
                             } else {
-                                let alert = UIAlertController.init(title: "Subreddit not found", message: "/r/\(self.sub) could not be found, is it spelled correctly?", preferredStyle: .alert)
-                                alert.addAction(UIAlertAction.init(title: "Ok", style: .default, handler: { (_) in
-                                    let presentingViewController: UIViewController! = self.presentingViewController
-                                    
-                                    self.dismiss(animated: false) {
-                                        // go back to MainMenuView as the eyes of the user
-                                        presentingViewController.dismiss(animated: false, completion: nil)
-                                    }
-                                    
-                                }))
-                                self.present(alert, animated: true, completion: nil)
+                                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
+                                    let alert = UIAlertController.init(title: "Subreddit not found", message: "/r/\(self.sub) could not be found, is it spelled correctly?", preferredStyle: .alert)
+                                    alert.addAction(UIAlertAction.init(title: "Close", style: .default, handler: { (_) in
+                                        self.navigationController?.popViewController(animated: true)
+                                        self.dismiss(animated: true, completion: nil)
+                                        
+                                    }))
+                                    self.present(alert, animated: true, completion: nil)
+                                }
+
                             }
                         }
                     case .success(let r):
                         self.subInfo = r
                         DispatchQueue.main.async {
+                            if(self.subInfo!.over18 && !SettingValues.nsfwEnabled){
+                                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
+                                let alert = UIAlertController.init(title: "/r/\(self.sub) is NSFW", message: "If you are 18 and willing to see adult content, enable NSFW content in Settings > Content", preferredStyle: .alert)
+                                alert.addAction(UIAlertAction.init(title: "Close", style: .default, handler: { (_) in
+                                    self.navigationController?.popViewController(animated: true)
+                                    self.dismiss(animated: true, completion: nil)
+                                }))
+                                self.present(alert, animated: true, completion: nil)
+                                }
+                            } else {
                             if(self.sub != ("all") && self.sub != ("frontpage") && !self.sub.hasPrefix("/m/")){
                                 if(SettingValues.saveHistory){
                                     if(SettingValues.saveNSFWHistory && self.subInfo!.over18){
@@ -373,8 +775,9 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                                     }
                                 }
                             }
-                            
+                            print("Loading")
                             self.load(reset: true)
+                            }
                             
                         }
                     }
@@ -383,7 +786,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             }
         }
         
-        if(SettingValues.hiddenFAB){
+        if(false && SettingValues.hiddenFAB){
             fab = KCFloatingActionButton()
             fab!.buttonColor = ColorUtil.accentColorForSub(sub: sub)
             fab!.buttonImage = UIImage.init(named: "hide")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30))
@@ -391,57 +794,25 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             fab!.sticky = true
             self.view.addSubview(fab!)
         }
-        super.viewDidLoad()
-        
     }
     
-    func doDisplaySidebar(_ sub: Subreddit){
-        let alrController = UIAlertController(title: sub.displayName + "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", message: "\(sub.accountsActive) here now\n\(sub.subscribers) subscribers", preferredStyle: UIAlertControllerStyle.actionSheet)
-        
-        let margin:CGFloat = 8.0
-        let rect = CGRect.init(x: margin, y: margin + 23, width: alrController.view.bounds.size.width - margin * 4.0, height: 300)
-        let scrollView = UIScrollView(frame: rect)
-        scrollView.backgroundColor = UIColor.clear
-        var info: UZTextView = UZTextView()
-        info = UZTextView(frame: CGRect(x: 0, y: 0, width: rect.size.width, height: CGFloat.greatestFiniteMagnitude))
-        //todo info.delegate = self
-        info.isUserInteractionEnabled = true
-        info.backgroundColor = .clear
-        
-        if(!sub.description.isEmpty()){
-            let html = sub.descriptionHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
-            do {
-                let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
-                let font = FontGenerator.fontOfSize(size: 16, submission: false)
-                let attr2 = attr.reconstruct(with: font, color: UIColor.darkGray, linkColor: ColorUtil.accentColorForSub(sub: sub.displayName))
-                let contentInfo = CellContent.init(string:LinkParser.parse(attr2), width: rect.size.width)
-                info.attributedString = contentInfo.attributedString
-                info.frame.size.height = (contentInfo.textHeight)
-                scrollView.contentSize = CGSize.init(width: rect.size.width, height: info.frame.size.height)
-                scrollView.addSubview(info)
-            } catch {
+    var lastY: CGFloat = CGFloat(0)
+    var add : MDCFloatingButton = MDCFloatingButton()
+    var hide : MDCFloatingButton = MDCFloatingButton()
+    var lastYUsed = CGFloat(0)
+    
+    func hideAll(_ sender: AnyObject){
+        for submission in links {
+            if(History.getSeen(s: submission)){
+                let index = links.index(of: submission)!
+                links.remove(at: index)
             }
-            //todo parentController?.registerForPreviewing(with: self, sourceView: info)
         }
-        
-        alrController.view.addSubview(scrollView)
-        
-        let subscribed = sub.userIsSubscriber || subChanged && !sub.userIsSubscriber ? "Unsubscribe" : "Subscribe"
-        var somethingAction = UIAlertAction(title: subscribed, style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in self.subscribe(sub)})
-        alrController.addAction(somethingAction)
-        
-        somethingAction = UIAlertAction(title: "Submit a post", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in print("something")})
-        alrController.addAction(somethingAction)
-        
-        somethingAction = UIAlertAction(title: "Subreddit moderators", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in print("something")})
-        alrController.addAction(somethingAction)
-        
-        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: {(alert: UIAlertAction!) in print("cancel")})
-        
-        alrController.addAction(cancelAction)
-        
-        self.present(alrController, animated: true, completion:{})
+        tableView.reloadData()
+        self.flowLayout.reset()
     }
+    
+    
     
     func doDisplayMultiSidebar(_ sub: Multireddit){
         let alrController = UIAlertController(title: sub.displayName, message: sub.descriptionMd, preferredStyle: UIAlertControllerStyle.actionSheet)
@@ -471,29 +842,36 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         self.present(alrController, animated: true, completion:{})
     }
 
-    
-    var subChanged = false
-    func subscribe(_ sub: Subreddit){
-        if(subChanged && !sub.userIsSubscriber || sub.userIsSubscriber){
+    func subscribeSingle(_ selector: AnyObject){
+        if(subChanged && !Subscriptions.isSubscriber(sub) || Subscriptions.isSubscriber(sub)){
             //was not subscriber, changed, and unsubscribing again
-            Subscriptions.unsubscribe(sub.displayName, session: session!)
+            Subscriptions.unsubscribe(sub, session: session!)
             subChanged = false
-            self.view.makeToast("Unsubscribed", duration: 4, position: .bottom)
+            let message = MDCSnackbarMessage()
+            message.text = "Unsubscribed"
+            MDCSnackbarManager.show(message)
+            subb.setImage(UIImage.init(named: "addcircle")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
         } else {
-            let alrController = UIAlertController.init(title: "Subscribe to \(sub.displayName)", message: nil, preferredStyle: .actionSheet)
+            let alrController = UIAlertController.init(title: "Subscribe to \(sub)", message: nil, preferredStyle: .actionSheet)
             if(AccountController.isLoggedIn){
                 let somethingAction = UIAlertAction(title: "Add to sub list and subscribe", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in
-                    Subscriptions.subscribe(sub.displayName, true, session: self.session!)
+                    Subscriptions.subscribe(self.sub, true, session: self.session!)
                     self.subChanged = true
-                    self.view.makeToast("Subscribed", duration: 4, position: .bottom)
+                    let message = MDCSnackbarMessage()
+                    message.text = "Subscribed"
+                    MDCSnackbarManager.show(message)
+                    self.subb.setImage(UIImage.init(named: "subbed")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
                 })
                 alrController.addAction(somethingAction)
             }
             
             let somethingAction = UIAlertAction(title: "Add to sub list", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in
-                Subscriptions.subscribe(sub.displayName, false, session: self.session!)
+                Subscriptions.subscribe(self.sub, false, session: self.session!)
                 self.subChanged = true
-                self.view.makeToast("Added", duration: 4, position: .bottom)
+                let message = MDCSnackbarMessage()
+                message.text = "Added"
+                MDCSnackbarManager.show(message)
+                self.subb.setImage(UIImage.init(named: "subbed")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
             })
             alrController.addAction(somethingAction)
             
@@ -501,9 +879,16 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             
             alrController.addAction(cancelAction)
             
+            alrController.modalPresentationStyle = .fullScreen
+            if let presenter = alrController.popoverPresentationController {
+                presenter.sourceView = subb
+                presenter.sourceRect = subb.bounds
+            }
+
             self.present(alrController, animated: true, completion:{})
             
         }
+        
     }
     
     func displayMultiredditSidebar(){
@@ -516,9 +901,10 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                             self.doDisplayMultiSidebar(r)
                         }
                     default:
-                        print(result.error)
                         DispatchQueue.main.async{
-                            self.view.makeToast("Multireddit info not found", duration: 5, position: .bottom)
+                            let message = MDCSnackbarMessage()
+                            message.text = "Multireddit info not found"
+                            MDCSnackbarManager.show(message)
                         }
                         break
                     }
@@ -528,37 +914,9 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             }
     }
 
-    
-    func displaySidebar(){
-        if(subInfo != nil){
-            doDisplaySidebar(subInfo!)
-        } else {
-            do {
-                try (UIApplication.shared.delegate as! AppDelegate).session?.about(sub, completion: { (result) in
-                    switch result {
-                    case .success(let r):
-                        self.subInfo = r
-                        DispatchQueue.main.async {
-                            self.doDisplaySidebar(r)
-                        }
-                    default:
-                        DispatchQueue.main.async{
-                            self.view.makeToast("Subreddit sidebar not found", duration: 5, position: .bottom)
-                        }
-                        break
-                    }
-                })
-            } catch {
-            }
-            
-        }
-    }
-    
     var listingId: String = "" //a random id for use in Realm
     
     func emptyKCFABSelected(_ fab: KCFloatingActionButton) {
-        tableView.beginUpdates()
-        
         var indexPaths : [IndexPath] = []
         var newLinks : [RSubmission] = []
         
@@ -576,8 +934,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         
         //todo save realm
         
-        tableView.deleteRows(at: indexPaths, with: .middle)
-        tableView.endUpdates()
+        tableView.deleteItems(at: indexPaths)
         
         print("Empty")
     }
@@ -586,8 +943,17 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        UIApplication.shared.statusBarStyle = .lightContent
+        if(navigationController?.isNavigationBarHidden ?? false && single){
+        navigationController?.setNavigationBarHidden(false, animated: true)
+        }
     }
     
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        let height = NSNumber(value: Float(cell.frame.size.height))
+        heightAtIndexPath.setObject(height, forKey: indexPath as NSCopying)
+    }
+
     func pickTheme(parent: SubredditsViewController?){
         parentController = parent
         let alertController = UIAlertController(title: "\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
@@ -602,13 +968,13 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         
         let somethingAction = UIAlertAction(title: "Save", style: .default, handler: {(alert: UIAlertAction!) in
             ColorUtil.setColorForSub(sub: self.sub, color: (self.navigationController?.navigationBar.barTintColor)!)
-            self.tableView.reloadData()
+            self.reloadDataReset()
         })
         
         let accentAction = UIAlertAction(title: "Accent color", style: .default, handler: {(alert: UIAlertAction!) in
             ColorUtil.setColorForSub(sub: self.sub, color: (self.navigationController?.navigationBar.barTintColor)!)
             self.pickAccent(parent: parent)
-            self.tableView.reloadData()
+            self.reloadDataReset()
         })
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: {(alert: UIAlertAction!) in
@@ -641,12 +1007,15 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             if self.accentChosen != nil {
                 ColorUtil.setAccentColorForSub(sub: self.sub, color: self.accentChosen!)
             }
-            self.tableView.reloadData()
+            self.reloadDataReset()
         })
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: {(alert: UIAlertAction!) in
             if(parent != nil){
                 parent?.resetColors()
+                self.sideView.backgroundColor = ColorUtil.getColorForSub(sub: self.sub)
+                self.add.backgroundColor = ColorUtil.getColorForSub(sub: self.sub)
+                self.hide.backgroundColor = ColorUtil.accentColorForSub(sub: self.sub)
             }
         })
         
@@ -657,14 +1026,30 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     }
     
     
+    var first = true
+    var indicator: MDCActivityIndicator = MDCActivityIndicator()
+    
+
     override func viewWillAppear(_ animated: Bool) {
-        navigationController?.navigationBar.isTranslucent = false
-        (navigationController as? ScrollingNavigationController)?.showNavbar(animated: true)
-        if let navigationController = self.navigationController as? ScrollingNavigationController {
-           /// navigationController.followScrollView(self.tableView, delay: 50.0)
-            navigationController.scrollingNavbarDelegate = self
+
+        if(SubredditReorderViewController.changed){
+            self.reloadNeedingColor()
+            self.tableView.reloadData()
+            SubredditReorderViewController.changed = false
         }
+                
+        navigationController?.navigationBar.isTranslucent = false
+        self.navigationController?.delegate = self
+        self.automaticallyAdjustsScrollViewInsets = false
+        self.edgesForExtendedLayout = UIRectEdge.all
+        self.extendedLayoutIncludesOpaqueBars = true
+        self.navigationController?.interactivePopGestureRecognizer?.delegate = self
+        
+        first = false
+        tableView.delegate = self
+
         if(single){
+            self.navigationController?.navigationBar.barTintColor = UIColor.white
             if(navigationController != nil){
                 self.title = sub
                 let sort = UIButton.init(type: .custom)
@@ -700,12 +1085,21 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             paging = true
         }
         super.viewWillAppear(animated)
-        /* todo this, too slow currently
          if(savedIndex != nil){
-         tableView.reloadRows(at: [savedIndex!], with: .none)
+         tableView.reloadItems(at: [savedIndex!])
          } else {
          tableView.reloadData()
-         }*/
+         }
+        (navigationController)?.setNavigationBarHidden(true, animated: true)
+        if(ColorUtil.theme == .LIGHT || ColorUtil.theme == .SEPIA){
+            UIApplication.shared.statusBarStyle = .default
+        }
+
+    }
+    
+    func reloadDataReset(){
+        heightAtIndexPath.removeAllObjects()
+        tableView.reloadData()
     }
     
     func showMoreNone(_ sender: AnyObject){
@@ -725,7 +1119,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             self.parentController?.show(search, sender: self.parentController)
         }))
         
-        if(sub != "all" && sub != "frontpage" && sub != "friends"){
+        if(sub != "all" && sub != "frontpage" && sub != "friends" && !sub.startsWith("/m/")){
             alert.addAction(UIAlertAction(title: "Search \(sub)", style: .default, handler: { [weak alert] (_) in
                 let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
                 let search = SearchViewController.init(subreddit: self.sub, searchFor: (textField?.text!)!)
@@ -758,7 +1152,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
             }
         } else {
             cancelActionButton = UIAlertAction(title: "Sidebar", style: .default) { action -> Void in
-                self.displaySidebar()
+                Sidebar.init(parent: self, subname: self.sub).displaySidebar()
             }
         }
         actionSheetController.addAction(cancelActionButton)
@@ -798,6 +1192,18 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         }
         actionSheetController.addAction(cancelActionButton)
         
+        actionSheetController.modalPresentationStyle = .fullScreen
+        if let presenter = actionSheetController.popoverPresentationController {
+            presenter.sourceView = self.view
+            presenter.sourceRect = self.view.bounds
+        }
+
+        actionSheetController.modalPresentationStyle = .popover
+        if let presenter = actionSheetController.popoverPresentationController {
+            presenter.sourceView = subb
+            presenter.sourceRect = subb.bounds
+        }
+
         
         self.present(actionSheetController, animated: true, completion: nil)
     }
@@ -819,24 +1225,106 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         // Dispose of any resources that can be recreated.
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return links.count
     }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! LinkCellView
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        var target = CurrentType.none
+        let submission = self.links[(indexPath as NSIndexPath).row]
         
-        let link = self.links[(indexPath as NSIndexPath).row]
-        cell.setLink(submission: link, parent: self, nav: self.navigationController)
-        cell.delegate = self
-        if indexPath.row == self.links.count - 1 && !loading {
+        var thumb = submission.thumbnail
+        var big = submission.banner
+        let height = submission.height
+        
+        var type = ContentType.getContentType(baseUrl: submission.url!)
+        if(submission.isSelf){
+            type = .SELF
+        }
+        
+        if(SettingValues.bannerHidden){
+            big = false
+            thumb = true
+        }
+        
+        let fullImage = ContentType.fullImage(t: type)
+        
+        if(!fullImage && height < 50){
+            big = false
+            thumb = true
+        }
+        
+        if(type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big){
+            big = false
+            thumb = false
+        }
+        
+        if(height < 50){
+            thumb = true
+            big = false
+        }
+        
+        if (type == ContentType.CType.SELF && SettingValues.hideImageSelftext
+            || SettingValues.noImages && submission.isSelf) {
+            big = false
+            thumb = false
+        }
+        
+        if(big || !submission.thumbnail){
+            thumb = false
+        }
+        
+        
+        if(!big && !thumb && submission.type != .SELF && submission.type != .NONE){ //If a submission has a link but no images, still show the web thumbnail
+            thumb = true
+        }
+        
+        if(submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && (sub == "all" || sub == "frontpage" || sub.contains("/m/") || sub.contains("+") || sub == "popular"))){
+            big = false
+            thumb = true
+        }
+        
+        if(SettingValues.noImages){
+            big = false
+            thumb = false
+        }
+        if(thumb && type == .SELF){
+            thumb = false
+        }
+        
+        if(thumb && !big){
+            target = .thumb
+        } else if(big){
+            target = .banner
+        } else {
+            target = .text
+        }
+        
+        var cell: LinkCellView?
+        if(target == .thumb){
+            cell = tableView.dequeueReusableCell(withReuseIdentifier: "thumb", for: indexPath) as! ThumbnailLinkCellView
+        } else if(target == .banner){
+            cell = tableView.dequeueReusableCell(withReuseIdentifier: "banner", for: indexPath) as! BannerLinkCellView
+        } else {
+            cell = tableView.dequeueReusableCell(withReuseIdentifier: "text", for: indexPath) as! TextLinkCellView
+        }
+        
+        cell?.preservesSuperviewLayoutMargins = false
+        cell?.del = self
+        if indexPath.row == self.links.count - 1 && !loading && !nomore {
             self.loadMore()
         }
         
-        return cell
+        (cell)!.setLink(submission: submission, parent: self, nav: self.navigationController, baseSub: sub)
+        
+        cell?.layer.shouldRasterize = true
+        cell?.layer.rasterizationScale = UIScreen.main.scale
+
+        return cell!
+
     }
     
     var loading = false
+    var nomore = false
     
     func loadMore(){
         if(!showing){
@@ -848,24 +1336,12 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     var showing = false
     func showLoader() {
         showing = true
-        let spinner = UIActivityIndicatorView(activityIndicatorStyle: .gray)
-        spinner.frame = CGRect(x: 0, y: 0.0, width: 80.0, height: 80.0)
-        spinner.center = CGPoint(x: tableView.frame.size.width  / 2,
-                                 y: tableView.frame.size.height / 2);
-        
-        tableView.tableFooterView = spinner
-        spinner.startAnimating()
-        
+        //todo maybe?
     }
     
     var sort = SettingValues.defaultSorting
     var time = SettingValues.defaultTimePeriod
-    
-    func indicatorInfo(for pagerTabStripController: PagerTabStripViewController) -> IndicatorInfo {
-        return itemInfo
-    }
-    
-    func showMenu(_ selector: AnyObject){
+        func showMenu(_ selector: AnyObject){
         let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
         
         let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
@@ -916,8 +1392,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
     
     func refresh(){
         self.links = []
-        tableView.reloadData()
-        refreshControl.beginRefreshing()
+        reloadDataReset()
         load(reset: true)
     }
     
@@ -928,91 +1403,17 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         if(!loading){
             do {
                 loading = true
-                refreshControl.beginRefreshing()
                 if(reset){
                     paginator = Paginator()
                 }
+                var subreddit: SubredditURLPath = Subreddit.init(subreddit: sub)
+                
                 if(sub.hasPrefix("/m/")){
-                    try session?.getList(paginator, subreddit: Multireddit.init(name: sub.substring(3, length: sub.length - 3), user: AccountController.currentName) , sort: sort, timeFilterWithin: time, completion: { (result) in
-                        switch result {
-                        case .failure:
-                            //test if realm exists and show that
-                            DispatchQueue.main.async {
-                                print("Getting realm data")
-                                do {
-                                    let realm = try Realm()
-                                    if let listing =  realm.objects(RListing.self).filter({ (item) -> Bool in
-                                        return item.subreddit == self.sub
-                                    }).sorted(by: { (listing1, listing2) -> Bool in
-                                        return listing1.created.timeIntervalSince1970 < listing2.created.timeIntervalSince1970
-                                    }).first {
-                                        self.links = []
-                                        for i in listing.links {
-                                            self.links.append(i)
-                                        }
-                                        
-                                        self.tableView.reloadData()
-                                    }
-                                    self.refreshControl.endRefreshing()
-                                    self.loading = false
-                                    
-                                    if(self.links.isEmpty){
-                                        self.view.makeToast("No offline data found", duration: 10, position: .top)
-                                    } else {
-                                        self.view.makeToast("Showing offline data", duration: 10, position: .top)
-                                    }
-                                } catch {
-                                    
-                                }
-                            }
-                            print(result.error!)
-                        case .success(let listing):
-                            if(reset){
-                                self.links = []
-                            }
-                            if(self.listingId.isEmpty || self.realmListing == nil){
-                                self.listingId = UUID.init().uuidString
-                                self.realmListing = RListing()
-                                self.realmListing!.id = self.listingId
-                                self.realmListing!.subreddit = self.sub
-                            }
-                            let links = listing.children.flatMap({$0 as? Link})
-                            var converted : [RSubmission] = []
-                            for link in links {
-                                converted.append(RealmDataWrapper.linkToRSubmission(submission: link))
-                            }
-                            let values = PostFilter.filter(converted, previous: self.links)
-                            self.preloadImages(values)
-                            self.links += values
-                            self.paginator = listing.paginator
-                            DispatchQueue.main.async{
-                                do {
-                                    if(reset){
-                                        self.realmListing!.links.removeAll()
-                                    }
-                                    let realm = try! Realm()
-                                    //todo insert
-                                    realm.beginWrite()
-                                    for submission in self.links {
-                                        realm.create(type(of: submission), value: submission, update: true)
-                                        self.realmListing!.links.append(objectsIn: values)
-                                    }
-                                    realm.create(type(of: self.realmListing!), value: self.realmListing!, update: true)
-                                    try realm.commitWrite()
-                                } catch {
-                                    
-                                }
-                                
-                                self.tableView.reloadData()
-                                self.refreshControl.endRefreshing()
-                                self.loading = false
-                            }
-                        }
-                    })
-                } else {
+                    subreddit = Multireddit.init(name: sub.substring(3, length: sub.length - 3), user: AccountController.currentName)
+                }
                     print("Sort is \(self.sort) and time is \(self.time)")
                     
-                    try session?.getList(paginator, subreddit: Subreddit.init(subreddit: sub) , sort: sort, timeFilterWithin: time, completion: { (result) in
+                    try session?.getList(paginator, subreddit: subreddit, sort: sort, timeFilterWithin: time, completion: { (result) in
                         switch result {
                         case .failure:
                             //test if realm exists and show that
@@ -1020,24 +1421,30 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                                 print("Getting realm data")
                                 do {
                                     let realm = try Realm()
+                                    var updated = NSDate()
                                     if let listing =  realm.objects(RListing.self).filter({ (item) -> Bool in
                                         return item.subreddit == self.sub
-                                    }).sorted(by: { (listing1, listing2) -> Bool in
-                                        return listing1.created.timeIntervalSince1970 > listing2.created.timeIntervalSince1970
                                     }).first {
                                         self.links = []
                                         for i in listing.links {
                                             self.links.append(i)
                                         }
-                                        self.tableView.reloadData()
+                                        updated = listing.updated
+                                        self.flowLayout.reset()
+                                        self.reloadDataReset()
                                     }
                                     self.refreshControl.endRefreshing()
+                                    self.indicator.stopAnimating()
                                     self.loading = false
                                     
                                     if(self.links.isEmpty){
-                                        self.view.makeToast("No offline data found", duration: 10, position: .top)
+                                        let message = MDCSnackbarMessage()
+                                        message.text = "No offline content found"
+                                        MDCSnackbarManager.show(message)
                                     } else {
-                                        self.view.makeToast("Showing offline data", duration: 10, position: .top)
+                                        let message = MDCSnackbarMessage()
+                                        message.text = "Showing offline content (\(DateFormatter().timeSince(from: updated, numericDates: true)))"
+                                        MDCSnackbarManager.show(message)
                                     }
                                 } catch {
                                     
@@ -1050,34 +1457,36 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                             if(reset){
                                 self.links = []
                             }
-                            if(self.listingId.isEmpty || self.realmListing == nil){
-                                self.listingId = UUID.init().uuidString
+                            let before = self.links.count
+                            if(self.realmListing == nil){
                                 self.realmListing = RListing()
-                                self.realmListing!.id = self.listingId
                                 self.realmListing!.subreddit = self.sub
+                                self.realmListing!.updated = NSDate()
+                            }
+                            if(reset && self.realmListing!.links.count > 0){
+                                self.realmListing!.links.removeAll()
                             }
                             
                             let links = listing.children.flatMap({$0 as? Link})
                             var converted : [RSubmission] = []
                             for link in links {
-                                converted.append(RealmDataWrapper.linkToRSubmission(submission: link))
+                                let newRS = RealmDataWrapper.linkToRSubmission(submission: link)
+                                converted.append(newRS)
+                                CachedTitle.addTitle(s: newRS)
                             }
-                            
                             let values = PostFilter.filter(converted, previous: self.links)
                             self.links += values
                             self.paginator = listing.paginator
+                            self.nomore = !listing.paginator.hasMore() || values.isEmpty
+                            
                             DispatchQueue.main.async{
                                 do {
-                                    if(reset){
-                                        self.realmListing!.links.removeAll()
-                                    }
-
                                     let realm = try! Realm()
                                     //todo insert
                                     realm.beginWrite()
                                     for submission in self.links {
                                         realm.create(type(of: submission), value: submission, update: true)
-                                        self.realmListing!.links.append(objectsIn: values)
+                                        self.realmListing!.links.append(submission)
                                     }
                                     realm.create(type(of: self.realmListing!), value: self.realmListing!, update: true)
                                     try realm.commitWrite()
@@ -1085,13 +1494,24 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                                     
                                 }
                                 
+                                //todo if(reset){
                                 self.tableView.reloadData()
+                                self.flowLayout.reset()
+                                //} else {
+                                //    var paths : [IndexPath] = []
+                                //    self.tableView.performBatchUpdates({
+                                //    for i in (before)...(self.links.count - 1) {
+                                //        self.tableView.insertItems(at: [IndexPath.init(row: i, section: 0)])
+                                //    }
+                                //    }, completion: nil)
+                                //}
+                                
                                 self.refreshControl.endRefreshing()
+                                self.indicator.stopAnimating()
                                 self.loading = false
                             }
                         }
                     })
-                }
             } catch {
                 print(error)
             }
@@ -1133,7 +1553,7 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
                 big = false
             }
             
-            let shouldShowLq = SettingValues.lqEnabled && false && submission.lQ
+            let shouldShowLq = SettingValues.dataSavingEnabled && submission.lQ && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi())
             if (type == ContentType.CType.SELF && SettingValues.hideImageSelftext
                 || SettingValues.noImages && submission.isSelf) {
                 big = false
@@ -1175,10 +1595,17 @@ class SubredditLinkViewController: MediaViewController, UITableViewDelegate, UIT
         SDWebImagePrefetcher.init().prefetchURLs(urls)
     }
     
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        tableView.frame = self.view.bounds
+        flowLayout.reset()
+        
+        flowLayout.invalidateLayout()
+    }
 }
 extension UIViewController {
     func topMostViewController() -> UIViewController {
-        // Handling Modal views
+        // Handling Modal views/Users/carloscrane/Desktop/Slide for Reddit/Slide for Reddit/SettingValues.swift
         if let presentedViewController = self.presentedViewController {
             return presentedViewController.topMostViewController()
         }
@@ -1209,4 +1636,29 @@ extension UINavigationController {
     override func topMostViewController() -> UIViewController {
         return self.visibleViewController!.topMostViewController()
     }
+}
+extension UILabel {
+    
+    func fitFontForSize( minFontSize : CGFloat = 5.0, maxFontSize : CGFloat = 300.0, accuracy : CGFloat = 1.0) {
+        var minFontSize = minFontSize
+        var maxFontSize = maxFontSize
+        assert(maxFontSize > minFontSize)
+        layoutIfNeeded()
+        let constrainedSize = bounds.size
+        while maxFontSize - minFontSize > accuracy {
+            let midFontSize : CGFloat = ((minFontSize + maxFontSize) / 2)
+            font = font.withSize(midFontSize)
+            sizeToFit()
+            let checkSize : CGSize = bounds.size
+            if  checkSize.height < constrainedSize.height && checkSize.width < constrainedSize.width {
+                minFontSize = midFontSize
+            } else {
+                maxFontSize = midFontSize
+            }
+        }
+        font = font.withSize(minFontSize)
+        sizeToFit()
+        layoutIfNeeded()
+    }
+    
 }

@@ -8,12 +8,20 @@ target 'Slide for Reddit' do
 
   pod 'reddift', :git =>  'https://github.com/ccrama/reddift'
   pod 'SDWebImage', '~>3.8'
-  pod 'ChameleonFramework'
-  pod 'XLPagerTabStrip', '~> 6.0'
-  pod 'AMScrollingNavbar'
+  pod "PagingMenuController”, :git => ‘https://github.com/ccrama/PagingMenuController'
   pod 'BGTableViewRowActionWithImage'
   pod 'SideMenu'
-  pod 'UZTextView', :git => 'https://github.com/sonsongithub/UZTextView'
+pod 'MaterialComponents/AnimationTiming'
+pod 'MaterialComponents/Buttons'
+pod 'MaterialComponents/Dialogs'
+pod 'MaterialComponents/Ink'
+pod 'MaterialComponents/ProgressView'
+pod 'MaterialComponents/ShadowElevations'
+pod "GMStepper"
+pod 'MaterialComponents/Snackbar'
+pod 'MaterialComponents/ActivityIndicator'
+pod "SAHistoryNavigationViewController"
+  pod 'UZTextView', :git => 'https://github.com/ccrama/UZTextView'
   pod 'ImageViewer', :git => 'https://github.com/ccrama/ImageViewer'
   pod 'TTTAttributedLabel'
   pod "KCFloatingActionButton", "~> 2.1.0"

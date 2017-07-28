@@ -8,9 +8,9 @@
 
 import UIKit
 import reddift
-import ChameleonFramework
 import UserNotifications
 import RealmSwift
+import SDWebImage
 
 /// Posted when the OAuth2TokenRepository object succeed in saving a token successfully into Keychain.
 public let OAuth2TokenRepositoryDidSaveTokenName = Notification.Name(rawValue: "OAuth2TokenRepositoryDidSaveToken")
@@ -30,7 +30,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var login: SubredditsViewController?
     var seenFile: String?
     var commentsFile: String?
-
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         application.setMinimumBackgroundFetchInterval(UIApplicationBackgroundFetchIntervalMinimum)
 
@@ -40,19 +40,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         commentsFile = documentDirectory.appending("/comments.plist")
 
         let config = Realm.Configuration(
-            schemaVersion: 2,
+            schemaVersion: 4,
             migrationBlock: { migration, oldSchemaVersion in
-                if (oldSchemaVersion < 2) {
+                if (oldSchemaVersion < 4) {
                 }
         })
         
         Realm.Configuration.defaultConfiguration = config
-
+        application.setMinimumBackgroundFetchInterval(TimeInterval.init(900))
         let fileManager = FileManager.default
         if(!fileManager.fileExists(atPath: seenFile!)){
             if let bundlePath = Bundle.main.path(forResource: "seen", ofType: "plist"){
-                let result = NSMutableDictionary(contentsOfFile: bundlePath)
-                print("Bundle file seen.plist is -> \(result?.description)")
+                _ = NSMutableDictionary(contentsOfFile: bundlePath)
                 do{
                     try fileManager.copyItem(atPath: bundlePath, toPath: seenFile!)
                 }catch{
@@ -67,8 +66,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         if(!fileManager.fileExists(atPath: commentsFile!)){
             if let bundlePath = Bundle.main.path(forResource: "comments", ofType: "plist"){
-                let result = NSMutableDictionary(contentsOfFile: bundlePath)
-                print("Bundle file comments.plist is -> \(result?.description)")
+                _ = NSMutableDictionary(contentsOfFile: bundlePath)
                 do{
                     try fileManager.copyItem(atPath: bundlePath, toPath: commentsFile!)
                 }catch{
@@ -92,28 +90,52 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         PostFilter.initialize()
         Drafts.initialize()
         Subscriptions.sync(name: AccountController.currentName, completion: nil)
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
-            (granted, error) in
-            
+        if #available(iOS 10.0, *) {
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
+                (granted, error) in
+                if((error) != nil){
+                    print(error!.localizedDescription)
+                }
+            }
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
+                (granted, error) in
+                if((error) != nil){
+                    print(error!.localizedDescription)
+                }
+            }
+            UIApplication.shared.registerForRemoteNotifications()
+        } else {
+            // Fallback on earlier versions
         }
-        UIApplication.shared.registerForRemoteNotifications()
-
         if !UserDefaults.standard.bool(forKey: "sc" + name){
             syncColors(subredditController: nil)
         }
 
         ColorUtil.doInit()
+        let textAttributes = [NSForegroundColorAttributeName:UIColor.white]
+        UINavigationBar.appearance().titleTextAttributes = textAttributes
+        statusBar.frame = CGRect(x: 0, y: 0, width: (self.window?.frame.size.width)!, height: 20)
+        statusBar.backgroundColor = UIColor.black.withAlphaComponent(0.15)
+        self.window?.rootViewController?.view.addSubview(statusBar)
+
         return true
     }
     
+    var statusBar = UIView()
+
+    
     func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         if let session = session {
+            self.postLocalNotification("Checking notifs.")
             do {
                 let request = try session.requestForGettingProfile()
                 let fetcher = BackgroundFetch(current: session,
                                               request: request,
                                               taskHandler: { (response, dataURL, error) -> Void in
+                                                print("Doing")
+
                                                 if let response = response, let dataURL = dataURL {
+                                                    
                                                     if response.statusCode == HttpStatus.ok.rawValue {
                                                         
                                                         do {
@@ -148,17 +170,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 fetcher.resume()
                 self.fetcher = fetcher
             } catch {
+                print(error.localizedDescription)
                 postLocalNotification("\(error)")
                 completionHandler(.failed)
             }
         } else {
+            print("Fail")
             postLocalNotification("session is not available.")
             completionHandler(.failed)
         }
     }
     
     func postLocalNotification(_ message: String) {
-        let center = UNUserNotificationCenter.current()
+        if #available(iOS 10.0, *) {
+            let center = UNUserNotificationCenter.current()
+       
         let content = UNMutableNotificationContent()
         content.title = "New messages!"
         content.body = message
@@ -170,11 +196,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                             content: content, trigger: trigger)
         center.add(request, withCompletionHandler: { (error) in
             if error != nil {
+                print(error!.localizedDescription)
                 // Something went wrong
             }
         })
-
-
+        } else {
+            // Fallback on earlier versions
+        }
     }
     
 
@@ -194,10 +222,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     self.paginator = listing.paginator
                     for sub in self.subreddits{
                         toReturn.append(sub.displayName)
+                        if(!sub.keyColor.isEmpty){
                             let color = (UIColor.init(hexString: sub.keyColor))
-                            if(color != nil && defaults.object(forKey: "color" + sub.displayName) == nil){
+                            if(defaults.object(forKey: "color" + sub.displayName) == nil){
                                 defaults.setColor(color: color , forKey: "color+" + sub.displayName)
                             }
+                        }
                         }
                     
                 }
@@ -212,22 +242,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 Subscriptions.getSubscriptionsFully(session: session!, completion: { (subs, multis) in
                     for sub in subs {
                         toReturn.append(sub.displayName)
+                        if(!sub.keyColor.isEmpty){
                         let color = (UIColor.init(hexString: sub.keyColor))
-                        if(color != nil && defaults.object(forKey: "color" + sub.displayName) == nil){
+                        if(defaults.object(forKey: "color" + sub.displayName) == nil){
                             defaults.setColor(color: color , forKey: "color+" + sub.displayName)
+                        }
                         }
                     }
                     for m in multis {
                         toReturn.append("/m/" + m.displayName)
+                        if(!m.keyColor.isEmpty){
+
                         let color = (UIColor.init(hexString: m.keyColor))
-                        if(color != nil && defaults.object(forKey: "color" + m.displayName) == nil){
+                        if(defaults.object(forKey: "color" + m.displayName) == nil){
                             defaults.setColor(color: color , forKey: "color+" + m.displayName)
+                        }
                         }
                     }
                     
 
                     toReturn = toReturn.sorted{ $0.localizedCaseInsensitiveCompare($1) == ComparisonResult.orderedAscending }
                     toReturn.insert("all", at: 0)
+                    toReturn.insert("slide_ios", at: 0)
                     toReturn.insert("frontpage", at: 0)
                     if(subredditController != nil){
                         DispatchQueue.main.async (execute: { () -> Void in
@@ -295,6 +331,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func applicationDidEnterBackground(_ application: UIApplication) {
+        print("background")
         History.seenTimes.write(toFile: seenFile!, atomically: true)
         History.commentCounts.write(toFile: commentsFile!, atomically: true)
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
@@ -302,7 +339,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func applicationWillEnterForeground(_ application: UIApplication) {
-        // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
+        self.refreshSession()
     }
     
     func applicationDidBecomeActive(_ application: UIApplication) {
@@ -310,10 +347,44 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func applicationWillTerminate(_ application: UIApplication) {
+        History.seenTimes.write(toFile: seenFile!, atomically: true)
+        History.commentCounts.write(toFile: commentsFile!, atomically: true)
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
     
     
+    func refreshSession() {
+        // refresh current session token
+        do {
+            try self.session?.refreshToken({ (result) -> Void in
+                switch result {
+                case .failure(let error):
+                    print(error)
+                case .success(let token):
+                    DispatchQueue.main.async(execute: { () -> Void in
+                        print(token)
+                        NotificationCenter.default.post(name: OAuth2TokenRepositoryDidSaveTokenName, object: nil, userInfo: nil)
+                    })
+                }
+            })
+        } catch { print(error) }
+    }
+    func reloadSession() {
+        // reddit username is save NSUserDefaults using "currentName" key.
+        // create an authenticated or anonymous session object
+        if let currentName = UserDefaults.standard.object(forKey: "currentName") as? String {
+            do {
+                let token = try OAuth2TokenRepository.token(of: currentName)
+                self.session = Session(token: token)
+                self.refreshSession()
+            } catch { print(error) }
+        } else {
+            self.session = Session()
+        }
+        
+        NotificationCenter.default.post(name: OAuth2TokenRepositoryDidSaveTokenName, object: nil, userInfo: nil)
+    }
+
 }
 extension UIApplication {
     class func topViewController(base: UIViewController? = UIApplication.shared.keyWindow?.rootViewController) -> UINavigationController? {

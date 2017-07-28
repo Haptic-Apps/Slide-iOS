@@ -9,12 +9,10 @@
 import UIKit
 import reddift
 import SDWebImage
-import ChameleonFramework
-import XLPagerTabStrip
-import AMScrollingNavbar
+import PagingMenuController
+import MaterialComponents.MaterialSnackbar
 
-
-class ContentListingViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, IndicatorInfoProvider {
+class ContentListingViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource {
     var baseData: ContributionLoader
     var session: Session? = nil
     weak var tableView : UITableView!
@@ -84,7 +82,7 @@ class ContentListingViewController: MediaViewController, UITableViewDelegate, UI
         super.viewDidLoad()
         tableView.estimatedRowHeight = 400.0
         tableView.rowHeight = UITableViewAutomaticDimension
-        self.tableView.register(LinkCellView.classForCoder(), forCellReuseIdentifier: "submission")
+        self.tableView.register(LinkTableViewCell.classForCoder(), forCellReuseIdentifier: "submission")
         self.tableView.register(CommentCellView.classForCoder(), forCellReuseIdentifier: "comment")
         self.tableView.register(MessageCellView.classForCoder(), forCellReuseIdentifier: "message")
         
@@ -94,18 +92,9 @@ class ContentListingViewController: MediaViewController, UITableViewDelegate, UI
         //todo self.shyNavBarManager.scrollView = self.tableView;
     }
     
-    func indicatorInfo(for pagerTabStripController: PagerTabStripViewController) -> IndicatorInfo {
-        return baseData.indicatorInfo
-    }
-    
     override func viewWillAppear(_ animated: Bool) {
         paging = baseData.paging
         super.viewWillAppear(animated)
-        if let navigationController = self.navigationController as? ScrollingNavigationController {
-            print("Following scroll")
-       //     navigationController.followScrollView(self.tableView, delay: 50.0)
-        }
-
     }
     
     var tC: UIViewController?
@@ -118,13 +107,13 @@ class ContentListingViewController: MediaViewController, UITableViewDelegate, UI
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return baseData.content.count
     }
-    
+        
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let thing = baseData.content[indexPath.row]
         var cell: UITableViewCell?
         if(thing is RSubmission){
-            let c = tableView.dequeueReusableCell(withIdentifier: "submission", for: indexPath) as! LinkCellView
-            c.setLink(submission: (thing as! RSubmission), parent: self, nav: self.navigationController)
+           let c = tableView.dequeueReusableCell(withIdentifier: "submission", for: indexPath) as! LinkTableViewCell
+            c.setLink(submission: (thing as! RSubmission), parent: self, nav: self.navigationController, baseSub: "all")
             cell = c
         } else if thing is RComment {
             let c = tableView.dequeueReusableCell(withIdentifier: "comment", for: indexPath) as! CommentCellView
@@ -174,6 +163,8 @@ class ContentListingViewController: MediaViewController, UITableViewDelegate, UI
             actionSheetController.addAction(saveActionButton)
         }
         
+        //todo ipad popover controller
+        
         self.present(actionSheetController, animated: true, completion: nil)
         
     }
@@ -200,6 +191,9 @@ class ContentListingViewController: MediaViewController, UITableViewDelegate, UI
                 }
                 actionSheetController.addAction(saveActionButton)
             }
+            
+            //todo iPad popover controller 
+            
             self.present(actionSheetController, animated: true, completion: nil)
         }
     }
@@ -229,7 +223,9 @@ class ContentListingViewController: MediaViewController, UITableViewDelegate, UI
         self.refreshControl.endRefreshing()
         self.loading = false
         if(baseData.content.count == 0){
-            self.view.makeToast("No content found")
+            let message = MDCSnackbarMessage()
+            message.text = "No content found"
+            MDCSnackbarManager.show(message)
         }
     }
     

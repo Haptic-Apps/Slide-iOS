@@ -8,10 +8,11 @@
 
 import Foundation
 import reddift
-import XLPagerTabStrip
 import RealmSwift
+import PagingMenuController
 
 class ProfileContributionLoader: ContributionLoader {
+    var displayMode: MenuItemDisplayMode
     var name: String
     var userContent: UserContent
     var color: UIColor
@@ -23,14 +24,13 @@ class ProfileContributionLoader: ContributionLoader {
         paginator = Paginator()
         content = []
         userContent = whereContent
-        indicatorInfo = IndicatorInfo(title: userContent.title)
+        displayMode = MenuItemDisplayMode.text(title: MenuItemText.init(text: userContent.title, color: UIColor.white, selectedColor: ColorUtil.getColorForUser(name: name), font: UIFont.systemFont(ofSize: 12), selectedFont: UIFont.boldSystemFont(ofSize: 12)))
     }
     
     
     var paginator: Paginator
     var content: [Object]
     var delegate: ContentListingViewController?
-    var indicatorInfo: IndicatorInfo
     var paging = true
     
     func getData(reload: Bool) {
@@ -48,7 +48,7 @@ class ProfileContributionLoader: ContributionLoader {
                         if(reload){
                             self.content = []
                         }
-                        var baseContent = listing.children.flatMap({$0})
+                        let baseContent = listing.children.flatMap({$0})
                         for item in baseContent {
                             if(item is Comment){
                                 self.content.append(RealmDataWrapper.commentToRComment(comment: item as! Comment, depth: 0))

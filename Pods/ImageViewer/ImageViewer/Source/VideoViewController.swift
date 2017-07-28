@@ -29,6 +29,17 @@ public class VideoViewController: ItemBaseController<VideoView> {
         self.videoURL = videoURL
         self.scrubber = scrubber
         self.player = AVPlayer(url: self.videoURL)
+        do {
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
+        } catch let error as NSError {
+            print(error)
+        }
+        
+        do {
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch let error as NSError {
+            print(error)
+        }
 
         super.init(index: index, itemCount: itemCount, fetchImageBlock: fetchImageBlock, configuration: configuration, isInitialController: isInitialController)
     }

@@ -9,7 +9,6 @@
 import UIKit
 import reddift
 import SDWebImage
-import ChameleonFramework
 import SideMenu
 
 class SubSidebarViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {

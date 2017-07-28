@@ -8,6 +8,7 @@
 
 import UIKit
 import reddift
+import MaterialComponents.MaterialSnackbar
 
 class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
     
@@ -94,7 +95,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
                         for sub in subs{
                             toReturn.append(sub.displayName)
                             let color = (UIColor.init(hexString: sub.keyColor))
-                            if(color != nil && UserDefaults.standard.colorForKey(key: "color+" + sub.displayName) == nil){
+                            if(UserDefaults.standard.colorForKey(key: "color+" + sub.displayName) == nil){
                                 defaults.setColor(color: color , forKey: "color+" + sub.displayName)
                                 self.count += 1
                             }
@@ -111,7 +112,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
                     for sub in subs {
                         toReturn.append(sub.displayName)
                         let color = (UIColor.init(hexString: sub.keyColor))
-                        if(color != nil && UserDefaults.standard.colorForKey(key: "color+" + sub.displayName) == nil){
+                        if(UserDefaults.standard.colorForKey(key: "color+" + sub.displayName) == nil){
                             defaults.setColor(color: color , forKey: "color+" + sub.displayName)
                             self.count += 1
                         }
@@ -119,7 +120,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
                     for m in multis {
                         toReturn.append("/m/" + m.displayName)
                         let color = (UIColor.init(hexString: m.keyColor))
-                        if(color != nil && UserDefaults.standard.colorForKey(key: "color+" + m.displayName) == nil){
+                        if(UserDefaults.standard.colorForKey(key: "color+" + m.displayName) == nil){
                             defaults.setColor(color: color , forKey: "color+" + m.displayName)
                             self.count += 1
                         }
@@ -143,7 +144,9 @@ class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
     
     func complete(){
         alertController!.dismiss(animated: true, completion: nil)
-        self.navigationController?.view.makeToast("\(count) subs colored", duration: 4.0, position: .top)
+        let message = MDCSnackbarMessage()
+        message.text = "\(count) subs colored"
+        MDCSnackbarManager.show(message)
         count = 0
         tableView.reloadData()
     }
@@ -185,8 +188,10 @@ class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
         return false
     }
     
+    var savedView = UIView()
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
         let item = subs[indexPath.row]
         let actionSheetController: UIAlertController = UIAlertController(title: item, message: "", preferredStyle: .actionSheet)
         
@@ -204,7 +209,14 @@ class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
             self.doDelete(item)
         }
         actionSheetController.addAction(cancelActionButton)
-        
+        actionSheetController.modalPresentationStyle = .popover
+        let view = tableView.cellForRow(at: indexPath)!.contentView
+        savedView = view
+        if let presenter = actionSheetController.popoverPresentationController {
+            presenter.sourceView = view
+            presenter.sourceRect = view.bounds
+        }
+
         self.present(actionSheetController, animated: true, completion: nil)
     }
     
@@ -243,7 +255,12 @@ class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
             alertController.addAction(accentAction)
             alertController.addAction(somethingAction)
             alertController.addAction(cancelAction)
-            
+        alertController.modalPresentationStyle = .popover
+        if let presenter = alertController.popoverPresentationController {
+            presenter.sourceView = savedView
+            presenter.sourceRect = savedView.bounds
+        }
+
             present(alertController, animated: true, completion: nil)
     }
     
@@ -785,11 +802,11 @@ public extension UIView {
             titleLabel?.backgroundColor = UIColor.clear
             titleLabel?.text = title;
             
-            let maxTitleSize = CGSize(width: (self.bounds.size.width * style.maxWidthPercentage) - imageRect.size.width, height: self.bounds.size.height * style.maxHeightPercentage)
-            let titleSize = titleLabel?.sizeThatFits(maxTitleSize)
-            if let titleSize = titleSize {
-                titleLabel?.frame = CGRect(x: 0.0, y: 0.0, width: titleSize.width, height: titleSize.height)
-            }
+       //     let maxTitleSize = CGSize(width: (self.bounds.size.width * style.maxWidthPercentage) - imageRect.size.width, height: self.bounds.size.height * style.maxHeightPercentage)
+          //  let titleSize = titleLabel?.sizeThatFits(maxTitleSize)
+          //  if let titleSize = titleSize {
+         //       titleLabel?.frame = CGRect(x: 0.0, y: 0.0, width: titleSize.width, height: titleSize.height)
+         //   }
         }
         
         if let message = message {
@@ -802,13 +819,13 @@ public extension UIView {
             messageLabel?.textColor = style.messageColor
             messageLabel?.backgroundColor = UIColor.clear
             
-            let maxMessageSize = CGSize(width: (self.bounds.size.width * style.maxWidthPercentage) - imageRect.size.width, height: self.bounds.size.height * style.maxHeightPercentage)
-            let messageSize = messageLabel?.sizeThatFits(maxMessageSize)
-            if let messageSize = messageSize {
-                let actualWidth = min(messageSize.width, maxMessageSize.width)
-                let actualHeight = min(messageSize.height, maxMessageSize.height)
-                messageLabel?.frame = CGRect(x: 0.0, y: 0.0, width: actualWidth, height: actualHeight)
-            }
+          //  let maxMessageSize = CGSize(width: (self.bounds.size.width * style.maxWidthPercentage) - imageRect.size.width, height: self.bounds.size.height * style.maxHeightPercentage)
+          //  let messageSize = messageLabel?.sizeThatFits(maxMessageSize)
+          //  if let messageSize = messageSize {
+          ////      let actualWidth = min(messageSize.width, maxMessageSize.width)
+           //     let actualHeight = min(messageSize.height, maxMessageSize.height)
+           //     messageLabel?.frame = CGRect(x: 0.0, y: 0.0, width: actualWidth, height: actualHeight)
+           // }
         }
         
         var titleRect = CGRect.zero

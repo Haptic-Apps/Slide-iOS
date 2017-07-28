@@ -9,7 +9,6 @@
 
 import UIKit
 import reddift
-import AMScrollingNavbar
 import UZTextView
 import ImageViewer
 
@@ -40,7 +39,11 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
                     }
                     sheet.addAction(
                         UIAlertAction(title: "Open in Safari", style: .default) { (action) in
-                            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                            if #available(iOS 10.0, *) {
+                                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                            } else {
+                                UIApplication.shared.openURL(url)
+                            }
                             sheet.dismiss(animated: true, completion: nil)
                         }
                     )
@@ -58,6 +61,12 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
                             sheet.dismiss(animated: true, completion: nil)
                         }
                     )
+                    sheet.modalPresentationStyle = .popover
+                    if let presenter = sheet.popoverPresentationController {
+                        presenter.sourceView = textView
+                        presenter.sourceRect = textView.bounds
+                    }
+
                     parentViewController?.present(sheet, animated: true, completion: nil)
                 }
             }
@@ -217,10 +226,10 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         var uC : UIColor
         switch(ActionStates.getVoteDirection(s: comment)){
         case .down:
-            uC = ColorUtil.downvoteColor!
+            uC = ColorUtil.downvoteColor
             break
         case .up:
-            uC = ColorUtil.upvoteColor!
+            uC = ColorUtil.upvoteColor
             break
         default:
             uC = ColorUtil.fontColor
@@ -260,7 +269,7 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
             parentViewController?.registerForPreviewing(with: self, sourceView: textView)
         }
         
-        let metrics=["height": content?.textHeight]
+        let metrics=["height": content?.textHeight] as [String: Any]
         let views=["label":title, "body": textView, "info": info] as [String : Any]
         lsC = []
         lsC.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[label]-4-[info]-4-[body(height)]-8-|",
@@ -301,7 +310,11 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         toReturn.append(likeAction)
         
         let deleteAction = UIPreviewAction(title: "Open in Safari", style: .default) { (action, viewController) -> Void in
-            UIApplication.shared.open((self.currentLink)!, options: [:], completionHandler: nil)
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open((self.currentLink)!, options: [:], completionHandler: nil)
+            } else {
+                UIApplication.shared.openURL(self.currentLink!)
+            }
         }
         toReturn.append(deleteAction)
         
@@ -321,7 +334,7 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
     
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
-        if(viewControllerToCommit is GalleryViewController){
+        if(viewControllerToCommit is GalleryViewController || viewControllerToCommit is YouTubeViewController){
             parentViewController?.presentImageGallery(viewControllerToCommit as! GalleryViewController)
         } else {
         parentViewController?.show(viewControllerToCommit, sender: parentViewController )
@@ -342,8 +355,24 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
     
     
     func openComment(sender: UITapGestureRecognizer? = nil){
-        let comment = CommentViewController.init(submission: (self.comment?.linkid.substring(3, length: (self.comment?.linkid.length)! - 3))! , comment: self.comment!.id, context: 3, subreddit: (self.comment?.subreddit)!)
-            (self.navViewController as? UINavigationController)?.pushViewController(comment, animated: true)
+        let commentB = CommentViewController.init(submission: (self.comment?.linkid.substring(3, length: (self.comment?.linkid.length)! - 3))! , comment: self.comment!.id, context: 3, subreddit: (self.comment?.subreddit)!)
+
+        let comment = PagingCommentViewController.init(comments: [commentB])
+        
+        if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.contentView.bounds.width / CGFloat(320))) > 1 && SettingValues.multiColumn){
+            let navigationController = UINavigationController(rootViewController: comment)
+            navigationController.modalPresentationStyle = .formSheet
+            navigationController.modalTransitionStyle = .crossDissolve
+            self.parentViewController!.present(navigationController, animated: true, completion: nil)
+        } else if(UIScreen.main.traitCollection.userInterfaceIdiom != .pad){
+            let navigationController = UINavigationController(rootViewController: comment)
+            navigationController.modalPresentationStyle = .overCurrentContext
+            navigationController.modalTransitionStyle = .crossDissolve
+            self.parentViewController!.present(navigationController, animated: true, completion: nil)
+        } else {
+            let nav = UINavigationController.init(rootViewController: comment)
+            self.parentViewController!.splitViewController?.showDetailViewController(nav, sender: self)
+            
         }
-    
+    }
 }

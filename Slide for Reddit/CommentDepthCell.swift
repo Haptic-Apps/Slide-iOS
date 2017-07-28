@@ -12,89 +12,223 @@ import UZTextView
 import ImageViewer
 import TTTAttributedLabel
 import RealmSwift
+import AudioToolbox
 
 protocol UZTextViewCellDelegate: class {
     func pushedMoreButton(_ cell: CommentDepthCell)
     func pushedSingleTap(_ cell: CommentDepthCell)
+    func showCommentMenu(_ cell: CommentDepthCell)
+    func hideCommentMenu(_ cell: CommentDepthCell)
+    var menuShown : Bool {get set}
+    var menuId : String {get set}
 }
 
-class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPreviewingDelegate {
-    var textView: UZTextView = UZTextView()
+class CommentMenuCell: UITableViewCell {
+    var upvote = UIButton()
+    var downvote = UIButton()
+    var reply = UIButton()
+    var more = UIButton()
+    var edit = UIButton()
+    var delete = UIButton()
+    
+    var editShown = false
+    var archived = false
+
+    var comment : RComment?
+    var commentView: CommentDepthCell?
+    var parent : CommentViewController?
+    
+    func setComment(comment: RComment, cell: CommentDepthCell, parent: CommentViewController){
+        self.comment = comment
+        self.parent = parent
+        self.commentView = cell
+        editShown = AccountController.isLoggedIn && comment.author == AccountController.currentName
+        archived = comment.archived
+        self.contentView.backgroundColor = ColorUtil.getColorForSub(sub: comment.subreddit)
+        updateConstraints()
+    }
+    
+    func edit(_ s: AnyObject){
+        self.parent!.editComment()
+    }
+    
+    func doDelete(_ s: AnyObject){
+        self.parent!.deleteComment(cell: commentView!)
+    }
+    
+    func upvote(_ s: AnyObject){
+        parent!.vote(comment: comment!, dir: .up)
+        commentView!.refresh(comment: comment!, submissionAuthor: (parent!.submission?.author)!, text: commentView!.cellContent!)
+        parent!.hideCommentMenu(commentView!)
+    }
+    func downvote(_ s: AnyObject){
+        parent!.vote(comment: comment!, dir: .down)
+        commentView!.refresh(comment: comment!, submissionAuthor: (parent!.submission?.author)!, text: commentView!.cellContent!)
+        parent!.hideCommentMenu(commentView!)
+    }
+    func more(_ s: AnyObject) {
+        parent!.moreComment(commentView!)
+    }
+    func reply(_ s: AnyObject){
+        self.parent!.doReply()
+    }
+    
+    var sideConstraint: [NSLayoutConstraint] = []
+    override func updateConstraints() {
+        super.updateConstraints()
+        var width = 375
+        width = width/(archived ? 1 : (editShown ? 6 : 4))
+        
+        
+        if(editShown){
+            edit.isHidden = false
+            delete.isHidden = false
+        } else {
+            edit.isHidden = true
+            delete.isHidden = true
+        }
+        
+        if(archived){
+            edit.isHidden = true
+            delete.isHidden = true
+            upvote.isHidden  = true
+            downvote.isHidden = true
+            reply.isHidden = true
+        }
+
+        let metrics:[String:Int]=["width":Int(width), "full": Int(self.contentView.frame.size.width)]
+        let views=["upvote": upvote, "downvote":downvote, "edit":edit, "delete":delete, "view":contentView, "more":more, "reply":reply] as [String : Any]
+        
+        let replyStuff = !archived && AccountController.isLoggedIn ? "[reply(width)]-0-[downvote(width)]-0-[upvote(width)]-0-" : ""
+        let editStuff = (!archived && editShown) ? "[edit(width)]-0-[delete(width)]-0-" : ""
+        self.contentView.removeConstraints(sideConstraint)
+        sideConstraint = NSLayoutConstraint.constraints(withVisualFormat: "H:[more(width)]-0-\(editStuff)\(replyStuff)|",
+                                                        options: NSLayoutFormatOptions(rawValue: 0),
+                                                        metrics: metrics,
+                                                        views: views)
+        sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[more(60)]", options: NSLayoutFormatOptions(rawValue:0), metrics: metrics, views: views))
+        sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[edit(60)]", options: NSLayoutFormatOptions(rawValue:0), metrics: metrics, views: views))
+
+        sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[delete(60)]", options: NSLayoutFormatOptions(rawValue:0), metrics: metrics, views: views))
+        sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[reply(60)]", options: NSLayoutFormatOptions(rawValue:0), metrics: metrics, views: views))
+        sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[downvote(60)]", options: NSLayoutFormatOptions(rawValue:0), metrics: metrics, views: views))
+        sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[upvote(60)]", options: NSLayoutFormatOptions(rawValue:0), metrics: metrics, views: views))
+        sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[view(60)]", options: NSLayoutFormatOptions(rawValue:0), metrics: metrics, views: views))
+
+        self.contentView.addConstraints(sideConstraint)
+    }
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        
+        self.upvote = UIButton.init(type: .custom)
+        self.downvote = UIButton.init(type: .custom)
+        self.reply = UIButton.init(type: .custom)
+        self.more = UIButton.init(type: .custom)
+        self.edit = UIButton.init(type: .custom)
+        self.delete = UIButton.init(type: .custom)
+
+        upvote.setImage(UIImage.init(named: "upvote")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
+        downvote.setImage(UIImage.init(named: "downvote")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
+        reply.setImage(UIImage.init(named: "reply")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
+        more.setImage(UIImage.init(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
+        edit.setImage(UIImage.init(named: "edit")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
+        delete.setImage(UIImage.init(named: "delete")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
+
+        upvote.translatesAutoresizingMaskIntoConstraints = false
+        downvote.translatesAutoresizingMaskIntoConstraints = false
+        more.translatesAutoresizingMaskIntoConstraints = false
+        reply.translatesAutoresizingMaskIntoConstraints = false
+        edit.translatesAutoresizingMaskIntoConstraints = false
+        delete.translatesAutoresizingMaskIntoConstraints = false
+
+        self.contentView.addSubview(upvote)
+        self.contentView.addSubview(more)
+        self.contentView.addSubview(downvote)
+        self.contentView.addSubview(reply)
+        self.contentView.addSubview(edit)
+        self.contentView.addSubview(delete)
+
+        upvote.addTarget(self, action: #selector(CommentMenuCell.upvote(_:)), for: UIControlEvents.touchUpInside)
+        downvote.addTarget(self, action: #selector(CommentMenuCell.downvote(_:)), for: UIControlEvents.touchUpInside)
+        more.addTarget(self, action: #selector(CommentMenuCell.more(_:)), for: UIControlEvents.touchUpInside)
+        reply.addTarget(self, action: #selector(CommentMenuCell.reply(_:)), for: UIControlEvents.touchUpInside)
+        edit.addTarget(self, action: #selector(CommentMenuCell.edit(_:)), for: UIControlEvents.touchUpInside)
+        delete.addTarget(self, action: #selector(CommentMenuCell.doDelete(_:)), for: UIControlEvents.touchUpInside)
+
+        updateConstraints()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIViewControllerPreviewingDelegate {
     var moreButton: UIButton = UIButton()
     var sideView: UIView = UIView()
     var sideViewSpace: UIView = UIView()
-    var rightSideViewSpace: UIView = UIView()
     var topViewSpace: UIView = UIView()
     var title: TTTAttributedLabel = TTTAttributedLabel.init(frame: CGRect.zero)
     var c: UIView = UIView()
     var children: UILabel = UILabel()
-    var menu: UIView = UIView()
     var comment:RComment?
     var depth:Int = 0
     
-    func textView(_ textView: UZTextView, didLongTapLinkAttribute value: Any?) {
-        if let attr = value as? [String: Any]{
-            if let url = attr[NSLinkAttributeName] as? URL {
-                if parent != nil{
-                    let sheet = UIAlertController(title: url.absoluteString, message: nil, preferredStyle: .actionSheet)
-                    sheet.addAction(
-                        UIAlertAction(title: "Close", style: .cancel) { (action) in
-                            sheet.dismiss(animated: true, completion: nil)
-                        }
-                    )
-                    let open = OpenInChromeController.init()
-                    if(open.isChromeInstalled()){
-                        sheet.addAction(
-                            UIAlertAction(title: "Open in Chrome", style: .default) { (action) in
-                                _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
-                            }
-                        )
+    func attributedLabel(_ label: TTTAttributedLabel!, didLongPressLinkWith url: URL!, at point: CGPoint) {
+        if parent != nil{
+            let sheet = UIAlertController(title: url.absoluteString, message: nil, preferredStyle: .actionSheet)
+            sheet.addAction(
+                UIAlertAction(title: "Close", style: .cancel) { (action) in
+                    sheet.dismiss(animated: true, completion: nil)
+                }
+            )
+            let open = OpenInChromeController.init()
+            if(open.isChromeInstalled()){
+                sheet.addAction(
+                    UIAlertAction(title: "Open in Chrome", style: .default) { (action) in
+                        _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
                     }
-                    sheet.addAction(
-                        UIAlertAction(title: "Open in Safari", style: .default) { (action) in
-                            UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                            sheet.dismiss(animated: true, completion: nil)
-                        }
-                    )
-                    sheet.addAction(
-                        UIAlertAction(title: "Open", style: .default) { (action) in
-                            /* let controller = WebViewController(nibName: nil, bundle: nil)
-                             controller.url = url
-                             let nav = UINavigationController(rootViewController: controller)
-                             self.present(nav, animated: true, completion: nil)*/
-                        }
-                    )
-                    sheet.addAction(
-                        UIAlertAction(title: "Copy URL", style: .default) { (action) in
-                            UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
-                            sheet.dismiss(animated: true, completion: nil)
-                        }
-                    )
-                    parent?.present(sheet, animated: true, completion: nil)
-                }
+                )
             }
+            sheet.addAction(
+                UIAlertAction(title: "Open in Safari", style: .default) { (action) in
+                    if #available(iOS 10.0, *) {
+                        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    } else {
+                        UIApplication.shared.openURL(url)
+                    }
+                    sheet.dismiss(animated: true, completion: nil)
+                }
+            )
+            sheet.addAction(
+                UIAlertAction(title: "Open", style: .default) { (action) in
+                    /* let controller = WebViewController(nibName: nil, bundle: nil)
+                     controller.url = url
+                     let nav = UINavigationController(rootViewController: controller)
+                     self.present(nav, animated: true, completion: nil)*/
+                }
+            )
+            sheet.addAction(
+                UIAlertAction(title: "Copy URL", style: .default) { (action) in
+                    UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
+                    sheet.dismiss(animated: true, completion: nil)
+                }
+            )
+            sheet.modalPresentationStyle = .popover
+            if let presenter = sheet.popoverPresentationController {
+                presenter.sourceView = label
+                presenter.sourceRect = label.bounds
+            }
+
+            parent?.present(sheet, animated: true, completion: nil)
         }
     }
     
-    var parent: MediaViewController?
+    var parent: CommentViewController?
     
-    func textView(_ textView: UZTextView, didClickLinkAttribute value: Any?) {
-        if((parent) != nil){
-            if let attr = value as? [String: Any] {
-                if let url = attr[NSLinkAttributeName] as? URL {
-                    parent?.doShow(url: url)
-                }
-            }
-        }
-    }
-    
-    func selectionDidEnd(_ textView: UZTextView) {
-    }
-    
-    func selectionDidBegin(_ textView: UZTextView) {
-    }
-    
-    func didTapTextDoesNotIncludeLinkTextView(_ textView: UZTextView) {
+    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
+        parent?.doShow(url: url)
     }
     
     func upvote(){
@@ -107,14 +241,12 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        self.textView = UZTextView(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
-        self.textView.delegate = self
-        self.textView.isUserInteractionEnabled = true
-        self.textView.backgroundColor = .clear
         
         self.title = TTTAttributedLabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
         title.numberOfLines = 0
         title.font = FontGenerator.fontOfSize(size: 12, submission: false)
+        title.isUserInteractionEnabled = true
+        title.delegate = self
         title.textColor = ColorUtil.fontColor
         
         self.children = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 15))
@@ -129,12 +261,10 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         
         
         self.moreButton = UIButton(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
-        self.menu = UIView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 0))
         
         self.sideView = UIView(frame: CGRect(x: 0, y: 0, width: 4, height: CGFloat.greatestFiniteMagnitude))
         self.sideViewSpace = UIView(frame: CGRect(x: 0, y: 0, width: 4, height: CGFloat.greatestFiniteMagnitude))
         self.topViewSpace = UIView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 4))
-        self.rightSideViewSpace = UIView(frame: CGRect(x: 0, y: 0, width: 4, height: CGFloat.greatestFiniteMagnitude))
         
         self.c = children.withPadding(padding: padding)
         c.alpha = 0
@@ -143,40 +273,174 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         c.clipsToBounds = true
         
         moreButton.translatesAutoresizingMaskIntoConstraints = false
-        textView.translatesAutoresizingMaskIntoConstraints = false
         sideView.translatesAutoresizingMaskIntoConstraints = false
         sideViewSpace.translatesAutoresizingMaskIntoConstraints = false
         topViewSpace.translatesAutoresizingMaskIntoConstraints = false
         title.translatesAutoresizingMaskIntoConstraints = false
-        menu.translatesAutoresizingMaskIntoConstraints = false
         children.translatesAutoresizingMaskIntoConstraints = false
         c.translatesAutoresizingMaskIntoConstraints = false
-        rightSideViewSpace.translatesAutoresizingMaskIntoConstraints = false
         
-        self.contentView.addSubview(textView)
         self.contentView.addSubview(moreButton)
         self.contentView.addSubview(sideView)
         self.contentView.addSubview(sideViewSpace)
         self.contentView.addSubview(topViewSpace)
         self.contentView.addSubview(title)
-        self.contentView.addSubview(menu)
         self.contentView.addSubview(c)
-        self.contentView.addSubview(rightSideViewSpace)
         
         moreButton.addTarget(self, action: #selector(CommentDepthCell.pushedMoreButton(_:)), for: UIControlEvents.touchUpInside)
+
+        let tapGestureRecognizer = UITapGestureRecognizer.init(target: self, action: #selector(self.handleShortPress(_:)))
+        tapGestureRecognizer.cancelsTouchesInView = false
+        tapGestureRecognizer.delegate = self
+        self.title.addGestureRecognizer(tapGestureRecognizer)
         
-        let tap = UITapGestureRecognizer(target: self, action: #selector(self.pushedSingleTap(_:)))
-        tap.cancelsTouchesInView = false
-        self.contentView.addGestureRecognizer(tap)
-        
-        self.contentView.isUserInteractionEnabled = true
+        long = UILongPressGestureRecognizer.init(target: self, action: #selector(self.handleLongPress(_:)))
+        long.minimumPressDuration = 0.25
+        long.delegate = self
+        self.addGestureRecognizer(long)
+
         self.contentView.backgroundColor = ColorUtil.foregroundColor
         sideViewSpace.backgroundColor = ColorUtil.backgroundColor
         topViewSpace.backgroundColor = ColorUtil.backgroundColor
         
         self.clipsToBounds = true
     }
+    func doLongClick(){
+        timer!.invalidate()
+        AudioServicesPlaySystemSound(1519)
+        if(!self.cancelled){
+            if(false){
+                if(self.delegate!.menuShown ){ //todo check if comment id is the same as this comment id
+                    self.showMenu(nil)
+                } else {
+                    self.pushedSingleTap(nil)
+                }
+            } else {
+                self.showMenu(nil)
+            }
+        }
+    }
+    var timer : Timer?
+    var cancelled = false
+    func handleLongPress(_ sender: UILongPressGestureRecognizer){
+        if(sender.state == UIGestureRecognizerState.began){
+            cancelled = false
+            timer = Timer.scheduledTimer(timeInterval: 0.25,
+                                         target: self,
+                                         selector: #selector(self.doLongClick),
+                                         userInfo: nil,
+                                         repeats: false)
+        }
+        if (sender.state == UIGestureRecognizerState.ended) {
+        timer!.invalidate()
+            cancelled = true
+        }
+    }
     
+    func handleShortPress(_ sender: UIGestureRecognizer){
+        if(false || (self.delegate!.menuShown && delegate!.menuId == (content as! RComment).getId())) {
+            self.showMenu(sender)
+        } else {
+            self.pushedSingleTap(sender)
+        }
+    }
+    
+    override func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        if(gestureRecognizer.view == self.title){
+            return self.title.link(at: touch.location(in: self.title)) == nil
+        }
+        return true
+    }
+    var long = UILongPressGestureRecognizer.init(target: self, action: nil)
+    func showMenu(_ sender: AnyObject?){
+        if let del = self.delegate {
+            if(del.menuShown && del.menuId == (content as! RComment).getId()){
+                del.hideCommentMenu(self)
+            } else {
+                del.showCommentMenu(self)
+            }
+        }
+    }
+    
+    func vote(){
+        if(content is RComment){
+        let current = ActionStates.getVoteDirection(s: comment!)
+        let dir = (current == VoteDirection.none) ? VoteDirection.up : VoteDirection.none
+        var direction = dir
+        switch(ActionStates.getVoteDirection(s: comment!)){
+        case .up:
+            if(dir == .up){
+                direction = .none
+            }
+            break
+        case .down:
+            if(dir == .down){
+                direction = .none
+            }
+            break
+        default:
+            break
+        }
+        do {
+            try parent?.session?.setVote(direction, name: (comment!.name), completion: { (result) -> Void in
+                switch result {
+                case .failure(let error):
+                    print(error.description)
+                case .success( _): break
+                }
+            })
+        } catch { print(error) }
+        ActionStates.setVoteDirection(s: comment!, direction: direction)
+        refresh(comment: content as! RComment, submissionAuthor: savedAuthor, text: cellContent!)
+        }
+    }
+    
+    func more(_ par: CommentViewController){
+        let alertController = UIAlertController(title: "Comment by /u/\(comment!.author)", message: "", preferredStyle: .actionSheet)
+        
+        
+        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
+            print("Cancel")
+        }
+        
+        alertController.addAction(cancelActionButton)
+        
+        let profile: UIAlertAction = UIAlertAction(title: "/u/\(comment!.author)'s profile", style: .default) { action -> Void in
+            par.show(ProfileViewController.init(name: self.comment!.author), sender: self)
+        }
+        
+        alertController.addAction(profile)
+        
+        let share: UIAlertAction = UIAlertAction(title: "Share comment permalink", style: .default) { action -> Void in
+            let activityViewController = UIActivityViewController(activityItems: [self.comment!.permalink], applicationActivities: nil)
+            par.present(activityViewController, animated: true, completion: {})
+        }
+        
+        alertController.addAction(share)
+
+        if(AccountController.isLoggedIn){
+            
+            let save: UIAlertAction = UIAlertAction(title: "Save", style: .default) { action -> Void in
+                par.saveComment(self.comment!)
+            }
+            
+            alertController.addAction(save)
+        }
+        
+        let report: UIAlertAction = UIAlertAction(title: "Report", style: .default) { action -> Void in
+            par.report(self.comment!)
+        }
+        
+        alertController.addAction(report)
+        
+        alertController.modalPresentationStyle = .popover
+        if let presenter = alertController.popoverPresentationController {
+            presenter.sourceView = moreButton
+            presenter.sourceRect = moreButton.bounds
+        }
+
+        par.parent?.present(alertController, animated: true, completion: nil)
+    }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -203,42 +467,56 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         
     }
     
+    var oldDepth = 0
+    
     func updateDepthConstraints(){
         if(sideConstraint != nil){
             self.contentView.removeConstraints(sideConstraint!)
         }
-        let metrics=["topMargin": topMargin, "ntopMargin": -topMargin, "horizontalMargin":75,"top":0,"bottom":0,"separationBetweenLabels":0,"labelMinHeight":75, "sidewidth":4*(depth ), "width":sideWidth]
-        let views=["text":textView, "title": title, "right": rightSideViewSpace, "menu":menu, "topviewspace":topViewSpace, "more": moreButton, "side":sideView, "cell":self.contentView, "sideviewspace":sideViewSpace] as [String : Any]
+        let metrics=["marginTop": marginTop, "nmarginTop": -marginTop, "horizontalMargin":75,"top":0,"bottom":0,"separationBetweenLabels":0,"labelMinHeight":75, "sidewidth":4*(depth ), "width":sideWidth]
+        let views=["title": title, "topviewspace":topViewSpace, "more": moreButton, "side":sideView, "cell":self.contentView, "sideviewspace":sideViewSpace] as [String : Any]
         
         
         sideConstraint = NSLayoutConstraint.constraints(withVisualFormat: "H:|-(-8)-[sideviewspace(sidewidth)]-0-[side(width)]",
                                                         options: NSLayoutFormatOptions(rawValue: 0),
                                                         metrics: metrics,
                                                         views: views)
-        sideConstraint!.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(-8)-[sideviewspace(sidewidth)]-0-[side(width)]-8-[title]-2-[right(4)]-0-|",
+        sideConstraint!.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(-8)-[sideviewspace(sidewidth)]-0-[side(width)]-8-[title]-2-|",
                                                                           options: NSLayoutFormatOptions(rawValue: 0),
                                                                           metrics: metrics,
                                                                           views: views))
         self.contentView.addConstraints(sideConstraint!)
+    
+    }
+    
+    var menuC : [NSLayoutConstraint] = []
+    
+    func doHighlight(){
+        oldDepth = depth
+        depth = 1
+        updateDepthConstraints()
+        self.contentView.backgroundColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.getColorForSub(sub: ((comment)!.subreddit)).withAlphaComponent(0.5))
+    }
+    
+    func doUnHighlight(){
+        depth = oldDepth
+        updateDepthConstraints()
+        self.contentView.backgroundColor = ColorUtil.foregroundColor
     }
     
     override func updateConstraints() {
         super.updateConstraints()
         
-        let metrics=["topMargin": topMargin, "ntopMargin": -topMargin, "horizontalMargin":75,"top":0,"bottom":0,"separationBetweenLabels":0,"labelMinHeight":75, "sidewidth":4*(depth ), "width":sideWidth]
-        let views=["text":textView, "title": title, "children":c, "right": rightSideViewSpace, "menu":menu, "topviewspace":topViewSpace, "more": moreButton, "side":sideView, "cell":self.contentView, "sideviewspace":sideViewSpace] as [String : Any]
+        let metrics=["marginTop": marginTop, "nmarginTop": -marginTop, "horizontalMargin":75,"top":0,"bottom":0,"separationBetweenLabels":0,"labelMinHeight":75,  "sidewidth":4*(depth ), "width":sideWidth]
+        let views=["title": title, "topviewspace":topViewSpace, "children":c, "more": moreButton, "side":sideView, "cell":self.contentView, "sideviewspace":sideViewSpace] as [String : Any]
         
         
         
-        contentView.bounds = CGRect.init(x: 0,y: 0, width: contentView.frame.size.width , height: contentView.frame.size.height + CGFloat(topMargin))
+        contentView.bounds = CGRect.init(x: 0,y: 0, width: contentView.frame.size.width , height: contentView.frame.size.height + CGFloat(marginTop))
         
         var constraint:[NSLayoutConstraint] = []
-        constraint = NSLayoutConstraint.constraints(withVisualFormat: "H:|-(-8)-[sideviewspace]-0-[side]-10-[text]-2-[right(4)]-0-|",
-                                                    options: NSLayoutFormatOptions(rawValue: 0),
-                                                    metrics: metrics,
-                                                    views: views)
         
-        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(-8)-[sideviewspace]-0-[side]-8-[title]-2-[right(4)]-0-|",
+        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(-8)-[sideviewspace]-0-[side]-8-[title]-2-|",
                                                                      options: NSLayoutFormatOptions(rawValue: 0),
                                                                      metrics: metrics,
                                                                      views: views))
@@ -246,15 +524,15 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
                                                                      options: NSLayoutFormatOptions(rawValue: 0),
                                                                      metrics: metrics,
                                                                      views: views))
-        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[menu]-0-|",
-                                                                     options: NSLayoutFormatOptions(rawValue: 0),
-                                                                     metrics: metrics,
-                                                                     views: views))
         
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[topviewspace(topMargin)]-2-[title]-4-[text]-2-|",
-                                                                    options: NSLayoutFormatOptions(rawValue: 0),
-                                                                    metrics: metrics,
-                                                                    views: views))
+        if(!menuC.isEmpty){
+            self.contentView.removeConstraints(menuC)
+        }
+        menuC = NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[topviewspace(marginTop)]-4-[title]-|",
+                                              options: NSLayoutFormatOptions(rawValue: 0),
+                                              metrics: metrics,
+                                              views: views)
+        constraint.append(contentsOf:menuC)
         
         
         constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-2-[more]-2-|",
@@ -262,6 +540,7 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
                                                                     metrics: metrics,
                                                                     views: views))
         
+
         constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-4-[children]",
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                                     metrics: metrics,
@@ -271,54 +550,64 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
                                                                     metrics: metrics,
                                                                     views: views))
         
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[topviewspace(topMargin)]-(ntopMargin)-[side]-(-1)-|",
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[topviewspace(marginTop)]-(nmarginTop)-[side]-(-1)-|",
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                                     metrics: metrics,
                                                                     views: views))
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[topviewspace(topMargin)]-(ntopMargin)-[sideviewspace]-0-|",
-                                                                    options: NSLayoutFormatOptions(rawValue: 0),
-                                                                    metrics: metrics,
-                                                                    views: views))
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[right]-0-|",
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[topviewspace(marginTop)]-(nmarginTop)-[sideviewspace]-0-|",
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                                     metrics: metrics,
                                                                     views: views))
         
         
         self.contentView.addConstraints(constraint)
+        
         updateDepthConstraints()
         
         
     }
     var sideWidth: Int = 0
-    var topMargin: Int = 0
+    var marginTop: Int = 0
     
     func setMore(more: RMore, depth: Int){
         self.depth = depth
         loading = false
         c.alpha = 0
-        rightSideViewSpace.backgroundColor = ColorUtil.foregroundColor
+        self.contentView.backgroundColor = ColorUtil.foregroundColor
         if (depth - 1 > 0) {
             sideWidth = 4
-            topMargin = 1
+            marginTop = 1
             let i22 = depth - 2;
-            if (i22 % 5 == 0) {
-                sideView.backgroundColor = UIColor.flatBlue()
-            } else if (i22 % 4 == 0) {
-                sideView.backgroundColor = UIColor.flatGreen()
-            } else if (i22 % 3 == 0) {
-                sideView.backgroundColor = UIColor.flatYellow()
-            } else if (i22 % 2 == 0) {
-                sideView.backgroundColor = UIColor.flatOrange()
+            if(SettingValues.disableColor){
+                if (i22 % 5 == 0) {
+                    sideView.backgroundColor = GMColor.grey100Color()
+                } else if (i22 % 4 == 0) {
+                    sideView.backgroundColor = GMColor.grey200Color()
+                } else if (i22 % 3 == 0) {
+                    sideView.backgroundColor = GMColor.grey300Color()
+                } else if (i22 % 2 == 0) {
+                    sideView.backgroundColor = GMColor.grey400Color()
+                } else {
+                    sideView.backgroundColor = GMColor.grey500Color()
+                }
             } else {
-                sideView.backgroundColor = UIColor.flatRed()
+                if (i22 % 5 == 0) {
+                    sideView.backgroundColor = GMColor.blue500Color()
+                } else if (i22 % 4 == 0) {
+                    sideView.backgroundColor = GMColor.green500Color()
+                } else if (i22 % 3 == 0) {
+                    sideView.backgroundColor = GMColor.yellow500Color()
+                } else if (i22 % 2 == 0) {
+                    sideView.backgroundColor = GMColor.orange500Color()
+                } else {
+                    sideView.backgroundColor = GMColor.red500Color()
+                }
             }
         } else {
-            topMargin = 8
+            marginTop = 8
             sideWidth = 0
         }
         
-        title.text = ""
         var attr = NSMutableAttributedString()
         if(more.children.isEmpty){
             attr = NSMutableAttributedString(string: "Continue this thread")
@@ -327,7 +616,7 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         }
         let font = FontGenerator.fontOfSize(size: 16, submission: false)
         let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: .white)
-        textView.attributedString = attr2
+        title.setText(attr2)
         updateDepthConstraints()
     }
     
@@ -340,7 +629,7 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         let attr2 = NSMutableAttributedString(attributedString: attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: UIColor.blue))
         
         
-        textView.attributedString = attr2
+        title.setText(attr2)
         
         /* possibly todo var timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { (timer) in
          print("Firing")
@@ -357,17 +646,19 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
          }
          }*/
     }
-    func setComment(comment: RComment, depth: Int, parent: MediaViewController, hiddenCount: Int, date: Double, author: String?){
+    
+    
+    func setComment(comment: RComment, depth: Int, parent: CommentViewController, hiddenCount: Int, date: Double, author: String?, text: NSAttributedString){
         self.comment = comment
+        self.cellContent = text
+        self.contentView.backgroundColor = ColorUtil.foregroundColor
         loading = false
         if(self.parent == nil){
             self.parent = parent
         }
         
         if(date != 0 && date < Double(comment.created.timeIntervalSince1970 )){
-            self.backgroundColor = ColorUtil.getColorForSub(sub: comment.subreddit).withAlphaComponent(0.3)
-        } else {
-            self.backgroundColor = ColorUtil.foregroundColor
+            setIsNew(sub: comment.subreddit)
         }
         
         if(hiddenCount > 0){
@@ -380,44 +671,63 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         self.depth = depth
         if (depth - 1 > 0) {
             sideWidth = 4
-            topMargin = 1
+            marginTop = 1
             let i22 = depth - 2;
-            if (i22 % 5 == 0) {
-                sideView.backgroundColor = UIColor.flatBlue()
-            } else if (i22 % 4 == 0) {
-                sideView.backgroundColor = UIColor.flatGreen()
-            } else if (i22 % 3 == 0) {
-                sideView.backgroundColor = UIColor.flatYellow()
-            } else if (i22 % 2 == 0) {
-                sideView.backgroundColor = UIColor.flatOrange()
+            if(SettingValues.disableColor){
+                if (i22 % 5 == 0) {
+                    sideView.backgroundColor = GMColor.grey100Color()
+                } else if (i22 % 4 == 0) {
+                    sideView.backgroundColor = GMColor.grey200Color()
+                } else if (i22 % 3 == 0) {
+                    sideView.backgroundColor = GMColor.grey300Color()
+                } else if (i22 % 2 == 0) {
+                    sideView.backgroundColor = GMColor.grey400Color()
+                } else {
+                    sideView.backgroundColor = GMColor.grey500Color()
+                }
             } else {
-                sideView.backgroundColor = UIColor.flatRed()
+                if (i22 % 5 == 0) {
+                    sideView.backgroundColor = GMColor.blue500Color()
+                } else if (i22 % 4 == 0) {
+                    sideView.backgroundColor = GMColor.green500Color()
+                } else if (i22 % 3 == 0) {
+                    sideView.backgroundColor = GMColor.yellow500Color()
+                } else if (i22 % 2 == 0) {
+                    sideView.backgroundColor = GMColor.orange500Color()
+                } else {
+                    sideView.backgroundColor = GMColor.red500Color()
+                }
             }
         } else {
-            //topMargin = 8
-            topMargin = 1
+            //marginTop = 8
+            marginTop = 1
             sideWidth = 0
         }
         
-        refresh(comment: comment, submissionAuthor: author)
+        
+        refresh(comment: comment, submissionAuthor: author, text: text)
         
         if(!registered){
-            parent.registerForPreviewing(with: self, sourceView: textView)
+            parent.registerForPreviewing(with: self, sourceView: title)
             registered = true
         }
         updateDepthConstraints()
-        
     }
     
-    func refresh(comment: RComment, submissionAuthor: String?){
+    var cellContent: NSAttributedString?
+    
+    var savedAuthor: String = ""
+    func refresh(comment: RComment, submissionAuthor: String?, text: NSAttributedString){
         var color: UIColor
+        
+        savedAuthor = submissionAuthor!
         
         switch(ActionStates.getVoteDirection(s: comment)){
         case .down:
-            color = ColorUtil.downvoteColor!
+            color = ColorUtil.downvoteColor
             break
         case .up:
-            color = ColorUtil.upvoteColor!
+            color = ColorUtil.upvoteColor
             break
         default:
             color = ColorUtil.fontColor
@@ -436,7 +746,7 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
         let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(comment.gilded) ", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false)])
         
         let spacer = NSMutableAttributedString.init(string: "  ")
-        var userColor = ColorUtil.getColorForUser(name: comment.author)
+        let userColor = ColorUtil.getColorForUser(name: comment.author)
         if (comment.distinguished == "admin") {
             
             authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#E57373"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
@@ -485,14 +795,30 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
             }
         }
         
-        
-        
-        title.attributedText = infoString
+        infoString.append(NSAttributedString.init(string: "\n"))
+        infoString.append(text)
+
+        if(!setLinkAttrs){
+        let activeLinkAttributes = NSMutableDictionary(dictionary: title.activeLinkAttributes)
+        activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.accentColorForSub(sub: comment.subreddit)
+        title.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+        title.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+            setLinkAttrs = true
+        }
+        title.setText(infoString)
+
     }
     
+    var setLinkAttrs = false
+    
     func setIsContext(){
-        rightSideViewSpace.backgroundColor = GMColor.yellow500Color()
+        self.contentView.backgroundColor = GMColor.yellow500Color().withAlphaComponent(0.5)
     }
+    
+    func setIsNew(sub: String){
+        self.contentView.backgroundColor = ColorUtil.getColorForSub(sub: sub).withAlphaComponent(0.5)
+    }
+
     
     func getScoreText(comment: RComment) -> Int {
         var submissionScore = comment.score
@@ -526,10 +852,10 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
     func previewingContext(_ previewingContext: UIViewControllerPreviewing,
                            viewControllerForLocation location: CGPoint) -> UIViewController? {
         
-        let locationInTextView = textView.convert(location, to: textView)
+        let locationInTextView = title.convert(location, to: title)
         
         if let (url, rect) = getInfo(locationInTextView: locationInTextView) {
-            previewingContext.sourceRect = textView.convert(rect, from: textView)
+            previewingContext.sourceRect = title.convert(rect, from: title)
             if let controller = parent?.getControllerForUrl(baseUrl: url){
                 return controller
             }
@@ -539,38 +865,21 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
     }
     
     func getInfo(locationInTextView: CGPoint) -> (URL, CGRect)? {
-        if let attr = textView.attributes(at: locationInTextView) {
-            if let url = attr[NSLinkAttributeName] as? URL,
-                let value = attr[UZTextViewClickedRect] as? CGRect {
-                return (url, value)
+        if let attr = title.link(at: locationInTextView) {
+            if let url = attr.result.url {
+                return (url, title.bounds)
             }
+            
         }
         return nil
     }
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
-        if(viewControllerToCommit is GalleryViewController){
+        if(viewControllerToCommit is GalleryViewController || viewControllerToCommit is YouTubeViewController){
             parent?.presentImageGallery(viewControllerToCommit as! GalleryViewController)
         } else {
             parent?.show(viewControllerToCommit, sender: parent )
         }
-    }
-    
-    var menuShowing: Bool = false
-    
-    func showMenu(){
-        menuShowing = true
-        let color = ColorUtil.getColorForSub(sub: (comment?.subreddit)!)
-        let colorNew = color.withAlphaComponent(0.5)
-        self.contentView.backgroundColor = colorNew
-        self.contentView.layoutIfNeeded() // force any pending operations to finish
-        
-        UIView.animate(withDuration: 0.2, animations: { () -> Void in
-            self.menu.frame.size.height = 50
-            self.menu.layoutIfNeeded()
-        })
-        menu.backgroundColor = color
-        contentView.addSubview(menu)
     }
     
     func pushedMoreButton(_ sender: AnyObject?) {
@@ -591,10 +900,33 @@ class CommentDepthCell: UITableViewCell, UZTextViewDelegate, UIViewControllerPre
     }
     
     class func margin() -> UIEdgeInsets {
-        return UIEdgeInsetsMake(5, 0, 25, 0)
+        return UIEdgeInsetsMake(4, 0, 2, 0)
     }
-    
 }
+
+extension UIColor {
+    func add(overlay: UIColor) -> UIColor {
+        var bgR: CGFloat = 0
+        var bgG: CGFloat = 0
+        var bgB: CGFloat = 0
+        var bgA: CGFloat = 0
+        
+        var fgR: CGFloat = 0
+        var fgG: CGFloat = 0
+        var fgB: CGFloat = 0
+        var fgA: CGFloat = 0
+        
+        self.getRed(&bgR, green: &bgG, blue: &bgB, alpha: &bgA)
+        overlay.getRed(&fgR, green: &fgG, blue: &fgB, alpha: &fgA)
+        
+        let r = fgA * fgR + (1 - fgA) * bgR
+        let g = fgA * fgG + (1 - fgA) * bgG
+        let b = fgA * fgB + (1 - fgA) * bgB
+        
+        return UIColor(red: r, green: g, blue: b, alpha: 1.0)
+    }
+}
+
 extension UIView {
     func withPadding(padding: UIEdgeInsets) -> UIView {
         let container = UIView()

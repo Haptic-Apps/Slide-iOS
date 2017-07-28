@@ -57,22 +57,22 @@ static NSString * _Nonnull const UZTextViewClickedRect	= @"_UZTextViewClickedRec
 
 /** Type of cursor view's direction. */
 typedef NS_ENUM(NSUInteger, UZTextViewGlyphEdgeType) {
-	/** The cursor is at the left edge of a selected range.  */
-	UZTextViewLeftEdge				= 0,
-	/** The cursor is at the right edge of a selected range.  */
-	UZTextViewRightEdge				= 1
+    /** The cursor is at the left edge of a selected range.  */
+    UZTextViewLeftEdge				= 0,
+    /** The cursor is at the right edge of a selected range.  */
+    UZTextViewRightEdge				= 1
 };
 
 /** Status of the current selection range of UZTextView class. */
 typedef NS_ENUM(NSUInteger, UZTextViewStatus) {
-	/** User does not select any text. */
-	UZTextViewNoSelection			= 0,
-	/** User selects some text. */
-	UZTextViewSelected				= 1,
-	/** User is moving the left cursor of a selected range. */
-	UZTextViewEditingFromSelection	= 2,
-	/** User is moving the right cursor of a selected range. */
-	UZTextViewEditingToSelection	= 3,
+    /** User does not select any text. */
+    UZTextViewNoSelection			= 0,
+    /** User selects some text. */
+    UZTextViewSelected				= 1,
+    /** User is moving the left cursor of a selected range. */
+    UZTextViewEditingFromSelection	= 2,
+    /** User is moving the right cursor of a selected range. */
+    UZTextViewEditingToSelection	= 3,
 };
 
 @class UZTextView;
@@ -130,54 +130,54 @@ typedef NS_ENUM(NSUInteger, UZTextViewStatus) {
  Create subclass of the class and use UZTextView internal category methods if you want to expand the UZTextView class.
  */
 @interface UZTextView : UIView {
-	// Data
-	NSAttributedString				*_attributedString;
-	
-	// Layout
-	UIEdgeInsets					_margin;
-	CGFloat							_lastLayoutWidth;					// save the width when view is laytouted previously.
+    // Data
+    NSAttributedString				*_attributedString;
+    
+    // Layout
+    UIEdgeInsets					_margin;
+    CGFloat							_lastLayoutWidth;					// save the width when view is laytouted previously.
     
     // Scaling
     CGFloat                         _scale;
-	
-	// CoreText
-	CTFramesetterRef				_framesetter;
-	CTFrameRef						_frame;
-	CGRect							_contentRect;
-	CFStringTokenizerRef			_tokenizer;
-	
-	// Tap link attribute
-	NSRange							_tappedLinkRange;
-	id								_tappedLinkAttribute;
-	
-	// Highlighted text
-	NSArray							*_highlightRanges;
-	
-	// Tap
-	UILongPressGestureRecognizer	*_longPressGestureRecognizer;
-	CFTimeInterval					_minimumPressDuration;
-	
-	// parameter
-	NSUInteger						_head;
-	NSUInteger						_tail;
-	NSUInteger						_headWhenBegan;
-	NSUInteger						_tailWhenBegan;
-	
-	UZTextViewStatus				_status;
-	BOOL							_isLocked;
-	
-	// child view
-	UZLoupeView						*_loupeView;
-	UZCursorView					*_leftCursor;
-	UZCursorView					*_rightCursor;
-	
-	// tap event control
-	CGPoint							_locationWhenTapBegan;
-	
-	// invaliables
-	CGFloat							_cursorMargin;
-	CGFloat							_tintAlpha;
-	CGFloat							_durationToCancelSuperViewScrolling;
+    
+    // CoreText
+    CTFramesetterRef				_framesetter;
+    CTFrameRef						_frame;
+    CGRect							_contentRect;
+    CFStringTokenizerRef			_tokenizer;
+    
+    // Tap link attribute
+    NSRange							_tappedLinkRange;
+    id								_tappedLinkAttribute;
+    
+    // Highlighted text
+    NSArray							*_highlightRanges;
+    
+    // Tap
+    UILongPressGestureRecognizer	*_longPressGestureRecognizer;
+    CFTimeInterval					_minimumPressDuration;
+    
+    // parameter
+    NSUInteger						_head;
+    NSUInteger						_tail;
+    NSUInteger						_headWhenBegan;
+    NSUInteger						_tailWhenBegan;
+    
+    UZTextViewStatus				_status;
+    BOOL							_isLocked;
+    
+    // child view
+    UZLoupeView						*_loupeView;
+    UZCursorView					*_leftCursor;
+    UZCursorView					*_rightCursor;
+    
+    // tap event control
+    CGPoint							_locationWhenTapBegan;
+    
+    // invaliables
+    CGFloat							_cursorMargin;
+    CGFloat							_tintAlpha;
+    CGFloat							_durationToCancelSuperViewScrolling;
 }
 
 /**
@@ -288,6 +288,7 @@ typedef NS_ENUM(NSUInteger, UZTextViewStatus) {
 #if !defined(TARGET_OS_TV)
 - (void)showUIMenu;
 #endif
+- (BOOL) isTouching;
 
 /**
  * Deselects selected text of the receiver.

@@ -63,7 +63,7 @@ class ActionStates {
         } else if(unSavedFullnames.contains(s.getId())){
             return false
         } else {
-            return !s.new
+            return !s.isNew
         }
     }
     

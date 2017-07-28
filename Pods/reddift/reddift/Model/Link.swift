@@ -316,7 +316,10 @@ public struct Link: Thing {
         } else {
             likes = .none
         }
-        linkFlairText = data["link_flair_text"] as? String ?? ""
+        
+        let tempFlair = data["link_flair_text"] as? String ?? ""
+        linkFlairText = tempFlair.gtm_stringByUnescapingFromHTML()
+        
         gilded = data["gilded"] as? Int ?? 0
         archived = data["archived"] as? Bool ?? false
         locked = data["locked"] as? Bool ?? false
@@ -341,12 +344,14 @@ public struct Link: Thing {
         stickied = data["stickied"] as? Bool ?? false
         created = data["created"] as? Int ?? 0
         
-        let tempUrl = data["url"] as? String ?? ""
-        url = URL.init(string:tempUrl.gtm_stringByUnescapingFromHTML())
+        var tempUrl = data["url"] as? String ?? ""
+        tempUrl = tempUrl.gtm_stringByEscapingForHTML()
+        url = URL.init(string: tempUrl.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)
         
         authorFlairText = data["author_flair_text"] as? String ?? ""
         let tempTitle = data["title"] as? String ?? ""
         title = tempTitle.gtm_stringByUnescapingFromHTML()
+
         createdUtc = data["created_utc"] as? Int ?? 0
         ups = data["ups"] as? Int ?? 0
         upvoteRatio = data["upvote_ratio"] as? Double ?? 0

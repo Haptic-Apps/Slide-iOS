@@ -24,14 +24,14 @@ import Realm
  */
 public final class RLMIterator<T: Object>: IteratorProtocol {
     private var i: UInt = 0
-    private let generatorBase: NSFastEnumerationIterator
+    private var generatorBase: NSFastEnumerationIterator
 
     init(collection: RLMCollection) {
         generatorBase = NSFastEnumerationIterator(collection)
     }
 
     /// Advance to the next element and return it, or `nil` if no next element exists.
-    public func next() -> T? { // swiftlint:disable:this valid_docs
+    public func next() -> T? {
         let accessor = unsafeBitCast(generatorBase.next() as! Object?, to: Optional<T>.self)
         if let accessor = accessor {
             RLMInitializeSwiftAccessorGenerics(accessor)
@@ -49,7 +49,7 @@ public final class RLMIterator<T: Object>: IteratorProtocol {
  in a requested section suitable for passing directly to `UITableView`'s batch
  update methods.
 
- The arrays of indices in the `.Update` case follow `UITableView`'s batching
+ The arrays of indices in the `.update` case follow `UITableView`'s batching
  conventions, and can be passed as-is to a table view's batch update functions after being converted to index paths.
  For example, for a simple one-section table view, you can do the following:
 
@@ -115,23 +115,35 @@ public enum RealmCollectionChange<T> {
         }
         if let change = change {
             return .update(value,
-                deletions: change.deletions as [Int],
-                insertions: change.insertions as [Int],
-                modifications: change.modifications as [Int])
+                deletions: forceCast(change.deletions, to: [Int].self),
+                insertions: forceCast(change.insertions, to: [Int].self),
+                modifications: forceCast(change.modifications, to: [Int].self))
         }
         return .initial(value)
     }
 }
 
+private func forceCast<A, U>(_ from: A, to type: U.Type) -> U {
+    return from as! U
+}
+
+#if swift(>=3.2)
+/// :nodoc:
+public protocol RealmCollectionBase: RandomAccessCollection, LazyCollectionProtocol, CustomStringConvertible, ThreadConfined where Element: Object {
+}
+#else
+/// :nodoc:
+public protocol RealmCollectionBase: RandomAccessCollection, LazyCollectionProtocol, CustomStringConvertible, ThreadConfined {
+    /// The type of the objects contained in the collection.
+    associatedtype Element: Object
+}
+#endif
+
 /**
  A homogenous collection of `Object`s which can be retrieved, filtered, sorted, and operated upon.
 */
-public protocol RealmCollection: RandomAccessCollection, LazyCollectionProtocol, CustomStringConvertible, ThreadConfined {
+public protocol RealmCollection: RealmCollectionBase {
     // Must also conform to `AssistedObjectiveCBridgeable`
-
-    /// The type of the objects contained in the collection.
-    associatedtype Element: Object
-
 
     // MARK: Properties
 
@@ -469,8 +481,11 @@ private final class _AnyRealmCollection<C: RealmCollection>: _AnyRealmCollection
     // MARK: Sequence Support
 
     override subscript(position: Int) -> C.Element {
-        // FIXME: it should be possible to avoid this force-casting
-        return unsafeBitCast(base[position as! C.Index], to: C.Element.self)
+        #if swift(>=3.2)
+            return base[position as! C.Index]
+        #else
+            return base[position as! C.Index] as! C.Element
+        #endif
     }
 
     override func makeIterator() -> RLMIterator<Element> {

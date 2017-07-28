@@ -18,7 +18,7 @@ class FontGenerator {
         return (submission ? postFont.bold() : commentFont.bold()).withSize( size + CGFloat(submission ? SettingValues.postFontOffset : SettingValues.commentFontOffset))
     }
     
-    public static var postFont = Font.ROBOTOCONDENSED_REGULAR
+    public static var postFont = Font.ROBOTO_MEDIUM
     public static var commentFont = Font.ROBOTOCONDENSED_REGULAR
 
     public static func initialize(){

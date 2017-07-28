@@ -9,11 +9,10 @@
 import UIKit
 import reddift
 import SDWebImage
-import ChameleonFramework
 import SideMenu
+import AudioToolbox
 
-
-class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
+class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, UIGestureRecognizerDelegate{
     weak var tableView : UITableView!
     var filteredContent: [String] = []
     var parentController: SubredditsViewController?
@@ -41,7 +40,7 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
         filteredContent = []
         isSearching = false
         tableView.reloadData()
-        
+        tableView.deselectRow(at: indexPath, animated: true)
     }
     
     var searchBar:UISearchBar?
@@ -106,6 +105,7 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
         searchBar?.isTranslucent = true
         searchBar?.barStyle = .blackTranslucent
         searchBar?.delegate = self
+        self.navigationController?.setNavigationBarHidden(true, animated: false)
     }
     
     func setSubreddit(subreddit: String){
@@ -113,7 +113,9 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
         header.frame.size.height = header.getEstHeight()
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForUser(name: subreddit)
     }
-    
+    func setmail(mailcount: Int){
+        header.setMail(mailcount)
+    }
     override func viewWillAppear(_ animated: Bool) {
         self.tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "sub")
         super.viewWillAppear(animated)
@@ -136,6 +138,34 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
         }
     }
     
+    var cancelled = false
+    
+    func openFull(_ selectedName: String){
+        timer!.invalidate()
+        AudioServicesPlaySystemSound(1519)
+        if(!self.cancelled){
+            parentController!.show(SubredditLinkViewController.init(subName: selectedName, single: true), sender: self)
+        }
+    }
+    func handleLongPress(_ sender: UILongPressGestureRecognizer, name: String){
+        if(sender.state == UIGestureRecognizerState.began){
+            cancelled = false
+            timer = Timer.scheduledTimer(timeInterval: 0.25,
+                                         target: self,
+                                         selector: #selector(self.openFull(_:)),
+                                         userInfo: nil,
+                                         repeats: false)
+            
+            
+        }
+        if (sender.state == UIGestureRecognizerState.ended) {
+            timer!.invalidate()
+            cancelled = true
+        }
+    }
+    
+    var timer : Timer?
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var thing = ""
         if(isSearching){
@@ -147,6 +177,12 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
         let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
         c.setSubreddit(subreddit: thing)
         cell = c
+    
+        let   longPress = UILongPressGestureRecognizer(target: self, action: #selector(self.handleLongPress(_:name:)))
+            longPress.minimumPressDuration = 0.25
+            longPress.delegate = self
+            cell!.addGestureRecognizer(longPress)
+
         return cell!
     }
     
