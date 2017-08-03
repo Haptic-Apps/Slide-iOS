@@ -126,6 +126,119 @@ class RealmDataWrapper {
         return rSubmission
     }
     
+    //Takes a Link from reddift and turns it into a Realm model
+    static func updateSubmission(_ rSubmission: RSubmission, _ submission: Link) {
+        let flair = submission.linkFlairText.isEmpty ? submission.linkFlairCssClass : submission.linkFlairText;
+        let bodyHtml = submission.selftextHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
+        
+        var json: JSONDictionary? = nil
+        json = submission.baseJson
+        
+        var w: Int = 0
+        var h: Int = 0
+        var thumb = false //is thumbnail present
+        var big = false //is big image present
+        var lowq = false //is lq image present
+        var burl: String = "" //banner url
+        var turl: String = "" //thumbnail url
+        var lqUrl: String = "" //lq banner url
+        
+        let previews = ((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["resolutions"] as? [Any])
+        let preview  = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["url"] as? String)
+        
+        if (preview != nil && !(preview?.isEmpty())!) {
+            burl = (preview!.replacingOccurrences(of: "&amp;", with: "&"))
+            w = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["width"] as? Int)!
+            h = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["height"] as? Int)!
+            big = true
+        }
+        
+        let thumbnailType = ContentType.getThumbnailType(submission: submission)
+        switch(thumbnailType){
+        case .NSFW:
+            thumb = true
+            turl = "nsfw"
+            break
+        case .DEFAULT:
+            thumb = true
+            turl = "web"
+            break
+        case .SELF,  .NONE:
+            thumb = false
+            break
+        case .URL:
+            thumb = true
+            turl = submission.thumbnail
+            break
+        }
+        
+        if(big){ //check for low quality image
+            if(previews != nil && !(previews?.isEmpty)!){
+                if (submission.url != nil && ContentType.isImgurImage(uri: submission.url!)) {
+                    lqUrl = (submission.url?.absoluteString)!
+                    lqUrl = lqUrl.substring(0, length: lqUrl.lastIndexOf(".")!) + (SettingValues.lqLow ? "m" : "l") + lqUrl.substring(lqUrl.lastIndexOf(".")!, length: lqUrl.length - lqUrl.lastIndexOf(".")!)
+                } else {
+                    let length = previews?.count
+                    if (SettingValues.lqLow && length! >= 3)
+                    {
+                        lqUrl = ((previews?[1] as? [String: Any])?["url"] as? String)!
+                    }
+                    else if (length! >= 4)
+                    {
+                        lqUrl = ((previews?[2] as? [String: Any])?["url"] as? String)!
+                    }
+                    else if (length! >= 5)
+                    {
+                        lqUrl = ((previews?[length! - 1] as? [String: Any])?["url"] as? String)!
+                    }
+                    else
+                    {
+                        lqUrl = preview!
+                    }
+                    lowq = true
+                }
+            }
+            
+        }
+        rSubmission.id = submission.getId()
+        rSubmission.author = submission.author
+        rSubmission.created = NSDate(timeIntervalSince1970: TimeInterval(submission.createdUtc))
+        rSubmission.isEdited = submission.edited > 0
+        rSubmission.edited = NSDate(timeIntervalSince1970: TimeInterval(submission.edited))
+        rSubmission.gilded = submission.gilded
+        rSubmission.htmlBody = bodyHtml
+        rSubmission.subreddit = submission.subreddit
+        rSubmission.archived = submission.archived
+        rSubmission.locked = submission.locked
+        rSubmission.urlString =  try! ((submission.url?.absoluteString) ?? "").convertHtmlSymbols() ?? ""
+        rSubmission.title = submission.title
+        rSubmission.commentCount = submission.numComments
+        rSubmission.saved = submission.saved
+        rSubmission.stickied = submission.stickied
+        rSubmission.visited = submission.visited
+        rSubmission.bannerUrl = burl
+        rSubmission.thumbnailUrl = turl
+        rSubmission.thumbnail = thumb
+        rSubmission.nsfw = submission.over18
+        rSubmission.banner = big
+        rSubmission.lqUrl = String.init(htmlEncodedString: lqUrl)
+        rSubmission.domain = submission.domain
+        rSubmission.lQ = lowq
+        rSubmission.score = submission.score
+        rSubmission.flair = flair
+        rSubmission.voted = submission.likes != .none
+        rSubmission.upvoteRatio = submission.upvoteRatio
+        rSubmission.vote = submission.likes == .up
+        rSubmission.name = submission.id
+        rSubmission.height = h
+        rSubmission.width = w
+        rSubmission.distinguished = submission.distinguished
+        rSubmission.isSelf = submission.isSelf
+        rSubmission.body = submission.selftext
+        rSubmission.permalink = submission.permalink
+    }
+
+    
     static func commentToRealm(comment: Thing, depth: Int) -> Object {
         if(comment is Comment) {
             return commentToRComment(comment: comment as! Comment, depth: depth)

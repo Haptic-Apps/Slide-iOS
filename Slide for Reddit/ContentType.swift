@@ -214,7 +214,7 @@ class ContentType {
         case CType.ALBUM, CType.DEVIANTART, CType.GIF, CType.IMAGE, CType.IMGUR, CType.STREAMABLE, CType.TUMBLR, CType.XKCD, CType.VIDEO, CType.SELF, CType.VID_ME:
             return true
             
-        case CType.EMBEDDED, CType.EXTERNAL, CType.LINK, CType.NONE, CType.REDDIT, CType.SPOILER:
+        case CType.EMBEDDED, CType.EXTERNAL, CType.LINK, CType.NONE, CType.REDDIT, CType.SPOILER, CType.UNKNOWN:
             return false
         }
     }
@@ -254,6 +254,7 @@ class ContentType {
         case XKCD
         case TUMBLR
         case VID_ME
+        case UNKNOWN
     }
     
     static func getThumbnailType(submission: Link) -> ThumbnailType{

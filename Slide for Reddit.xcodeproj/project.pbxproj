@@ -107,6 +107,8 @@
 		BE8FCA121E0C46090063B8EF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BE8FCA101E0C46090063B8EF /* LaunchScreen.storyboard */; };
 		BE8FCA1D1E0C46090063B8EF /* Slide_for_RedditTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8FCA1C1E0C46090063B8EF /* Slide_for_RedditTests.swift */; };
 		BE8FCA281E0C46090063B8EF /* Slide_for_RedditUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8FCA271E0C46090063B8EF /* Slide_for_RedditUITests.swift */; };
+		BE9455FC1F32A4C70097EEF0 /* MediaDisplayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9455FB1F32A4C70097EEF0 /* MediaDisplayViewController.swift */; };
+		BE9455FE1F32B5220097EEF0 /* SingleContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9455FD1F32B5220097EEF0 /* SingleContentViewController.swift */; };
 		BE97422C1F00116D00BF48E0 /* BannerLinkCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE97422B1F00116D00BF48E0 /* BannerLinkCellView.swift */; };
 		BE97422E1F0011BE00BF48E0 /* ThumbnailLinkCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE97422D1F0011BE00BF48E0 /* ThumbnailLinkCellView.swift */; };
 		BE9742301F0011E500BF48E0 /* TextLinkCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE97422F1F0011E500BF48E0 /* TextLinkCellView.swift */; };
@@ -281,6 +283,8 @@
 		BE8FCA231E0C46090063B8EF /* Slide for RedditUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Slide for RedditUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE8FCA271E0C46090063B8EF /* Slide_for_RedditUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Slide_for_RedditUITests.swift; sourceTree = "<group>"; };
 		BE8FCA291E0C46090063B8EF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BE9455FB1F32A4C70097EEF0 /* MediaDisplayViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaDisplayViewController.swift; sourceTree = "<group>"; };
+		BE9455FD1F32B5220097EEF0 /* SingleContentViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SingleContentViewController.swift; sourceTree = "<group>"; };
 		BE97422B1F00116D00BF48E0 /* BannerLinkCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BannerLinkCellView.swift; sourceTree = "<group>"; };
 		BE97422D1F0011BE00BF48E0 /* ThumbnailLinkCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThumbnailLinkCellView.swift; sourceTree = "<group>"; };
 		BE97422F1F0011E500BF48E0 /* TextLinkCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextLinkCellView.swift; sourceTree = "<group>"; };
@@ -374,6 +378,8 @@
 				BE7BFB431F1333DD009CA2E1 /* AlbumTableViewController.swift */,
 				BE7BFB451F1335C1009CA2E1 /* AlbumCellView.swift */,
 				BE0B413A1F28BAEC00CD8C10 /* ImageVideoViewController.swift */,
+				BE9455FB1F32A4C70097EEF0 /* MediaDisplayViewController.swift */,
+				BE9455FD1F32B5220097EEF0 /* SingleContentViewController.swift */,
 			);
 			name = ContentViewControllers;
 			sourceTree = "<group>";
@@ -979,6 +985,7 @@
 				BE6EA6C41E1C1DCE00E9E709 /* GfycatJSONBase.swift in Sources */,
 				BE6EA6D91E1C1FC700E9E709 /* Video.swift in Sources */,
 				BEF6F53A1E1AF10E002B03B6 /* AlbumMWPhotoBrowser.swift in Sources */,
+				BE9455FC1F32A4C70097EEF0 /* MediaDisplayViewController.swift in Sources */,
 				BE6EA6E61E1DA5CE00E9E709 /* ProfileContributionLoader.swift in Sources */,
 				BE2B89F61E246CA60053D493 /* GMColor.swift in Sources */,
 				BE780B621E32CB9600DAA1EB /* RelatedViewController.swift in Sources */,
@@ -1068,6 +1075,7 @@
 				BE5E53751E1DAEB7004FE226 /* RedditLink.swift in Sources */,
 				BEC4942A1E307DDA006618F3 /* GalleryCellView.swift in Sources */,
 				BE97422E1F0011BE00BF48E0 /* ThumbnailLinkCellView.swift in Sources */,
+				BE9455FE1F32B5220097EEF0 /* SingleContentViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

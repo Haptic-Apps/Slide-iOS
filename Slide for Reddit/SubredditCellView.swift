@@ -29,7 +29,7 @@ class SubredditCellView: UITableViewCell {
         self.contentView.addSubview(sideView)
         self.contentView.addSubview(title)
         
-        let   longPress = UILongPressGestureRecognizer(target: self, action: #selector(self.handleLongPress(_:name:)))
+        let   longPress = UILongPressGestureRecognizer(target: self, action: #selector(self.handleLongPress(_:)))
         longPress.minimumPressDuration = 0.25
         longPress.delegate = self
         self.contentView.addGestureRecognizer(longPress)
@@ -38,7 +38,7 @@ class SubredditCellView: UITableViewCell {
         self.clipsToBounds = true
     }
     
-    func handleLongPress(_ sender: UILongPressGestureRecognizer, name: String){
+    func handleLongPress(_ sender: UILongPressGestureRecognizer){
         if(sender.state == UIGestureRecognizerState.began){
             cancelled = false
             timer = Timer.scheduledTimer(timeInterval: 0.25,
@@ -57,21 +57,22 @@ class SubredditCellView: UITableViewCell {
     
     var cancelled = false
     
-    func openFull(_ selectedName: String){
+    func openFull(_ sender: AnyObject){
         timer!.invalidate()
         if(navController != nil){
         AudioServicesPlaySystemSound(1519)
         if(!self.cancelled){
-            navController!.show(SubredditLinkViewController.init(subName: selectedName, single: true), sender: self)
+            navController!.show(SubredditLinkViewController.init(subName: subname, single: true), sender: self)
         }
         }
     }
 
     var timer : Timer?
+    var subname = ""
     func setSubreddit(subreddit: String, nav: UIViewController?){
         title.textColor = ColorUtil.fontColor
         self.contentView.backgroundColor = ColorUtil.foregroundColor
-
+        self.subname = subreddit
         self.navController = nav
         self.subreddit = subreddit
         title.text = subreddit

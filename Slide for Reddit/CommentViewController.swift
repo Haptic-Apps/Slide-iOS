@@ -14,6 +14,7 @@ import TTTAttributedLabel
 import RealmSwift
 import MaterialComponents.MaterialSnackbar
 import MaterialComponents.MDCActivityIndicator
+import SloppySwiper
 
 class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, UZTextViewCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate, TTTAttributedLabelDelegate, ReplyDelegate {
     
@@ -332,7 +333,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     var submission: RSubmission? = nil
     var session: Session? = nil
-    var cDepth: NSMutableDictionary = NSMutableDictionary()
+    var cDepth: Dictionary = Dictionary<String, Int>()
     var comments: [String] = []
     var hiddenPersons = Set<String>()
     var hidden: Set<String> = Set<String>()
@@ -346,7 +347,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     var dataArray: [String] = []
     var filteredData: [String] = []
-    var content: [String: Object] = [:]
+    var content: Dictionary = Dictionary<String, Object>()
     
     func doArrays(){
         dataArray = comments.filter({ (s) -> Bool in
@@ -377,6 +378,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         return self;
     }
     
+    var reset = false
+    
     func refresh(_ sender:AnyObject) {
         session = (UIApplication.shared.delegate as! AppDelegate).session
         if let link = self.submission {
@@ -385,67 +388,117 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             if(Subscriptions.isSubscriber(link.subreddit)){
                 doSubbed()
             }
+            print(NSDate.init().timeIntervalSince1970 - History.getSeenTime(s: self.submission!))
+            
+            if(NSDate.init().timeIntervalSince1970 - History.getSeenTime(s: self.submission!) < 300 && !reset){
+                self.loaded = true
+                do {
+                    let realm = try Realm()
+                    if let listing =  realm.objects(RSubmission.self).filter({ (item) -> Bool in
+                        return item.id == self.submission!.id
+                    }).first{
+                        self.comments = []
+                        self.hiddenPersons = []
+                        var temp : [Object] = []
+                        self.hidden = []
+                        self.text = [:]
+                        
+                        for child in listing.comments {
+                            temp.append(child)
+                            self.content[child.getIdentifier()] = child
+                            self.comments.append(child.getIdentifier())
+                            self.cDepth[child.getIdentifier()] = child.depth
+                        }
+                        if(!self.comments.isEmpty){
+                        self.updateStringsSingle(temp)
+                        }
+                        DispatchQueue.main.async(execute: { () -> Void in
+                        if(!self.comments.isEmpty){
+                            var time = timeval(tv_sec: 0, tv_usec: 0)
+                            gettimeofday(&time, nil)
+                            
+                            self.doArrays()
+                            self.lastSeen = (self.context.isEmpty ? History.getSeenTime(s: link) :  Double(0))
+                            
+                            self.tableView.reloadData(with: .fade)
+                            }
+                            if(self.comments.isEmpty){
+                                self.reset = true
+                                self.refresh(sender)
+                            } else {
+                                self.refreshControl.endRefreshing()
+                                self.indicator?.stopAnimating()
+                            }
 
+                        })
+                    }
+                } catch {
+                    self.reset = true
+                    refresh(sender)
+                }
+                
+            
+        } else {
+
+            reset = false
             do {
                 try session?.getArticles(link.name, sort:sort, comments:(context.isEmpty ? nil : [context]), context: 3, completion: { (result) -> Void in
                     switch result {
                     case .failure(let error):
-                        print(error)
-                        print("Getting realm data")
-                        DispatchQueue.main.async {
-
-                            self.loaded = true
+                        self.loaded = true
                         do {
                             let realm = try Realm()
                             if let listing =  realm.objects(RSubmission.self).filter({ (item) -> Bool in
                                 return item.id == self.submission!.id
                             }).first{
-                                
                                 self.comments = []
                                 self.hiddenPersons = []
                                 var temp : [Object] = []
                                 self.hidden = []
                                 self.text = [:]
-                                self.refreshControl.endRefreshing()
-                                self.indicator?.stopAnimating()
-
-                                    for child in listing.comments {
-                                        temp.append(child)
-                                        self.content[child.getIdentifier()] = child
-                                        self.comments.append(child.getIdentifier())
-                                        self.cDepth[child.getIdentifier()] = child.depth
-                                    }
+                                
+                                for child in listing.comments {
+                                    temp.append(child)
+                                    self.content[child.getIdentifier()] = child
+                                    self.comments.append(child.getIdentifier())
+                                    self.cDepth[child.getIdentifier()] = child.depth
+                                }
                                 if(!self.comments.isEmpty){
                                     self.updateStringsSingle(temp)
-                                    var time = timeval(tv_sec: 0, tv_usec: 0)
-                                    gettimeofday(&time, nil)
-                                    
-                                    self.doArrays()
-                                    self.lastSeen = (self.context.isEmpty ? History.getSeenTime(s: link) :  Double(0))
-                                    
-                                        self.tableView.beginUpdates()
-                                        let range = NSMakeRange(0, self.tableView.numberOfRows(inSection: 0))
-                                        let sections = NSIndexSet(indexesIn: range)
-                                        self.tableView.reloadSections(sections as IndexSet, with: .automatic)
-                                        self.tableView.endUpdates()
                                 }
+                                DispatchQueue.main.async(execute: { () -> Void in
+                                    if(!self.comments.isEmpty){
+                                        var time = timeval(tv_sec: 0, tv_usec: 0)
+                                        gettimeofday(&time, nil)
+                                        
+                                        self.doArrays()
+                                        self.lastSeen = (self.context.isEmpty ? History.getSeenTime(s: link) :  Double(0))
+                                        
+                                        self.tableView.reloadData(with: .fade)
+                                    }
+                                    if(self.comments.isEmpty){
+                                        self.reset = true
+                                        self.refresh(sender)
+                                    } else {
+                                        self.refreshControl.endRefreshing()
+                                        self.indicator?.stopAnimating()
+                                    }
+                                    if(self.comments.isEmpty){
+                                        let message = MDCSnackbarMessage()
+                                        message.text = "No cached comments found"
+                                        MDCSnackbarManager.show(message)
+                                    } else {
+                                        let message = MDCSnackbarMessage()
+                                        message.text = "Showing cached comments"
+                                        MDCSnackbarManager.show(message)
+                                    }
+                                    
+                                })
                             }
                         } catch {
-                            
-                        }
-                            
-                            self.refreshControl.endRefreshing()
-                            self.indicator?.stopAnimating()
-                            
-                            if(self.comments.isEmpty){
-                                let message = MDCSnackbarMessage()
-                                message.text = "No cached comments found"
-                                MDCSnackbarManager.show(message)
-                            } else {
-                                let message = MDCSnackbarMessage()
-                                message.text = "Showing cached comments"
-                                MDCSnackbarManager.show(message)
-                            }
+                            let message = MDCSnackbarMessage()
+                            message.text = "No cached comments found"
+                            MDCSnackbarManager.show(message)
                         }
                         break
                     case .success(let tuple):
@@ -457,7 +510,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                         self.text = [:]
                         self.content = [:]
                         self.loaded = true
+                        if(self.submission == nil){
                         self.submission = RealmDataWrapper.linkToRSubmission(submission: tuple.0.children[0] as! Link)
+                        } else {
+                            RealmDataWrapper.updateSubmission(self.submission!, tuple.0.children[0] as! Link)
+                        }
                         
                         DispatchQueue.global().async(execute: { () -> Void in
                             var allIncoming: [(Thing, Int)] = []
@@ -494,7 +551,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                     self.submission!.comments.append(self.content[comment] as! RComment)
                                     }
                                 }
-                                self.submission!.comments.removeAll()
                                 realm.create(type(of: self.submission!), value: self.submission!, update: true)
                                 try realm.commitWrite()
                             } catch {
@@ -562,6 +618,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     }
                 })
             } catch { print(error) }
+        }
         }
     }
     
@@ -638,6 +695,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             let saveActionButton: UIAlertAction = UIAlertAction(title: c.description, style: .default)
             { action -> Void in
                 self.sort = c
+                self.reset = true
                 self.refresh(self)
             }
             actionSheetController.addAction(saveActionButton)
@@ -651,6 +709,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if(parent != nil && !(parent! is PagingCommentViewController)){
+            var swiper = SloppySwiper.init(navigationController: self.navigationController!)
+            self.navigationController!.delegate = swiper!
+        }
         tableView.contentInset = UIEdgeInsetsMake(56, 0, 45, 0)
         self.tableView.register(CommentMenuCell.classForCoder(), forCellReuseIdentifier: "menu")
         self.tableView.register(ReplyCellView.classForCoder(), forCellReuseIdentifier: "dreply")
@@ -881,6 +944,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         actionSheetController.addAction(cancelActionButton)
         
         cancelActionButton = UIAlertAction(title: "Refresh", style: .default) { action -> Void in
+            self.reset = true
             self.refresh(self)
         }
         actionSheetController.addAction(cancelActionButton)
@@ -1116,6 +1180,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     func loadAll(_ sender: AnyObject){
         context = ""
+        reset = true
         refreshControl.beginRefreshing()
         refresh(sender)
         updateToolbar()
@@ -1278,9 +1343,15 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             items.append(UIBarButtonItem(image: UIImage(named: "down")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(CommentViewController.goDown(_:))))
             items.append(space)
         }
-        self.navigationController?.toolbarItems = items
-        navigationController?.toolbar.barTintColor = UIColor.black.withAlphaComponent(0.4)
-        navigationController?.toolbar.tintColor = UIColor.white
+            if(parent != nil && parent is PagingCommentViewController){
+        parent?.toolbarItems = items
+        parent?.navigationController?.toolbar.barTintColor = UIColor.black.withAlphaComponent(0.4)
+        parent?.navigationController?.toolbar.tintColor = UIColor.white
+            } else {
+                toolbarItems = items
+                navigationController?.toolbar.barTintColor = UIColor.black.withAlphaComponent(0.4)
+                navigationController?.toolbar.tintColor = UIColor.white
+            }
         }
     }
     

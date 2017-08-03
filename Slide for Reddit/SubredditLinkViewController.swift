@@ -17,6 +17,7 @@ import PagingMenuController
 import MaterialComponents.MaterialSnackbar
 import MaterialComponents.MDCActivityIndicator
 import TTTAttributedLabel
+import SloppySwiper
 
 class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate,  UICollectionViewDataSource, LinkCellViewDelegate, ColorPickerDelegate, KCFloatingActionButtonDelegate, UIGestureRecognizerDelegate, WrappingFlowLayoutDelegate, UINavigationControllerDelegate {
     
@@ -581,6 +582,10 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
             tableView.contentInset = UIEdgeInsetsMake(40  + (single ? 70 : 40), 0, 0, 0)
         }
 
+        if(single){
+            var swiper = SloppySwiper.init(navigationController: self.navigationController!)
+            self.navigationController!.delegate = swiper!
+        }
         
     }
     

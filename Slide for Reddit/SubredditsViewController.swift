@@ -283,6 +283,11 @@ class SubredditsViewController:  PagingMenuController , UISplitViewControllerDel
     var tintColor: UIColor = UIColor.white
     var menuNav: NavigationSidebarViewController?
     var currentTitle = "Slide"
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        menuLeftNavigationController?.dismiss(animated: true, completion: nil)
+    }
     override func viewDidLoad() {
         (self.navigationController as? SAHistoryNavigationViewController)?.historyBackgroundColor = .black
 

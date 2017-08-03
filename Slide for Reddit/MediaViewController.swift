@@ -133,96 +133,10 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
             ctrl.getAlbum(hash: hash)
             let nav = UINavigationController.init(rootViewController: ctrl)
             return nav
-        } else if (contentUrl != nil && ContentType.displayImage(t: type) && SettingValues.internalImageView) {
+        } else if (contentUrl != nil && ContentType.displayImage(t: type) && SettingValues.internalImageView || (type == .GIF && SettingValues.internalGifView) || type == .STREAMABLE || type == .VID_ME) {
             print("Showing photo")
+            return SingleContentViewController.init(url: contentUrl!)
             
-            if (ContentType.isImgurHash(uri: contentUrl!)) {
-                images.append(URL.init(string: (contentUrl?.absoluteString)! + ".png")!)
-                
-            } else if(ContentType.isImage(uri: contentUrl!) || ContentType.isImgurImage(uri: contentUrl!)){
-                images.append(URL.init(string: (contentUrl?.absoluteString)!)!)
-                
-            }
-            for link in images {
-                if(ContentType.isGif(uri: link)){
-                    var link = link.absoluteString.replacingOccurrences(of: ".gifv", with: ".mp4")
-                    link = link.replacingOccurrences(of: ".gif", with: ".mp4")
-                    _ = GalleryItem.video(fetchPreviewImageBlock: { (completion) in
-                        
-                    }, videoURL: URL.init(string: link)!)
-                } else {
-                    let photo = GalleryItem.image(fetchImageBlock: { (completion) in
-                        if(SDWebImageManager.shared().cachedImageExists(for: link)){
-                            DispatchQueue.main.async {
-                                let image = SDWebImageManager.shared().imageCache.imageFromDiskCache(forKey: link.absoluteString)
-                                self.image = image
-                                self.progressView?.setHidden(true, animated: true)
-                                self.size?.isHidden = true
-                                completion(image)
-                            }
-
-                        } else {
-                        SDWebImageDownloader.shared().downloadImage(with: link, options: .allowInvalidSSLCertificates, progress: { (current:NSInteger, total:NSInteger) in
-                            var average: Float = 0
-                            average = (Float (current) / Float(total))
-                            let countBytes = ByteCountFormatter()
-                            countBytes.allowedUnits = [.useMB]
-                            countBytes.countStyle = .file
-                            let fileSize = countBytes.string(fromByteCount: Int64(total))
-                            self.size!.text = fileSize
-                            self.progressView!.progress = average
-                        }, completed: { (image, _, error, _) in
-                            SDWebImageManager.shared().saveImage(toCache: image, for: link)
-                            DispatchQueue.main.async {
-                                self.image = image
-                                self.progressView?.setHidden(true, animated: true)
-                                self.size?.isHidden = true
-                                completion(image)
-                            }
-                        })
-                        }
-                    })
-                    photos.append(photo)
-                }
-            }
-            
-            let browser = GalleryViewController.init(startIndex: 0, itemsDataSource: self, itemsDelegate: nil, displacedViewsDataSource: nil, configuration: galleryConfiguration())
-            let toolbar = UIToolbar()
-            let space = UIBarButtonItem(barButtonSystemItem:.flexibleSpace, target: nil, action: nil)
-            var items: [UIBarButtonItem] = []
-            
-                items.append(space)
-                items.append(UIBarButtonItem(image: UIImage(named: "download")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(MediaViewController.download(_:))))
-            menuB = UIBarButtonItem(image: UIImage(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(MediaViewController.showImageMenu(_:)))
-                items.append(menuB!)
-                        toolbar.items = items
-            toolbar.setBackgroundImage(UIImage(),
-                                            forToolbarPosition: .any,
-                                            barMetrics: .default)
-            toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
-            toolbar.tintColor = UIColor.white
-            
-            size = UILabel(frame: CGRect(x:5,y: toolbar.bounds.height,width: 250,height: 50))
-            size?.textAlignment = .left
-            size?.textColor = .white
-            size?.text="mb"
-            size?.font = UIFont.boldSystemFont(ofSize: 12)
-            toolbar.addSubview(size!)
-
-            progressView = MDCProgressView()
-            progressView?.progress = 0
-
-            let progressViewHeight = CGFloat(5)
-            progressView?.frame = CGRect(x: 0, y: toolbar.bounds.height, width: toolbar.bounds.width, height: progressViewHeight)
-            toolbar.addSubview(progressView!)
-
-            browser.footerView?.backgroundColor = UIColor.clear
-            browser.footerView = toolbar
-            return browser
-            
-        } else if((type == .GIF && SettingValues.internalGifView) || type == .STREAMABLE || type == .VID_ME){
-            print("Showing video")
-            return GifMWPhotoBrowser().create(url: (contentUrl?.absoluteString)!)
         } else if(type == ContentType.CType.LINK || type == ContentType.CType.NONE){
             let web = WebsiteViewController(url: baseUrl, subreddit: link == nil ? "" : link.subreddit)
             return web
@@ -366,6 +280,9 @@ class MediaViewController: UIViewController, GalleryItemsDataSource {
         } else if( controller is YouTubeViewController){
             present(controller, animated: false, completion: nil)
         } else if( controller is AlbumTableViewController){
+            present(controller, animated: true, completion: nil)
+        } else if(controller is SingleContentViewController){
+            controller.modalPresentationStyle = .overFullScreen
             present(controller, animated: true, completion: nil)
         } else {
             if(controller is CommentViewController){
