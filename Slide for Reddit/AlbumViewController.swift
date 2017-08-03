@@ -1,0 +1,200 @@
+//
+//  AlbumViewController.swift
+//  Slide for Reddit
+//
+//  Created by Carlos Crane on 8/2/17.
+//  Copyright © 2017 Haptic Apps. All rights reserved.
+//
+
+import UIKit
+
+class AlbumViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate  {
+    
+    var vCs: [UIViewController] = [ClearVC()]
+    var baseURL: URL?
+    public init(urlB: URL){
+        super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+
+        self.baseURL = urlB
+        var url = urlB.absoluteString
+        if(url.contains("/layout/")){
+            url = url.substring(0, length: (url.indexOf("/layout")!));
+        }
+        var rawDat = cutEnds(s: url)
+        
+        if (rawDat.endsWith("/")) {
+            rawDat = rawDat.substring(0, length: rawDat.length - 1);
+        }
+        if (rawDat.contains("/") && (rawDat.length - (rawDat.lastIndexOf("/")!+1)) < 4) {
+            rawDat = rawDat.replacingOccurrences(of: rawDat.substring(rawDat.lastIndexOf("/")!, length: rawDat.length - (rawDat.lastIndexOf("/")!+1)), with: "");
+        }
+        if (rawDat.contains("?")) {
+            rawDat = rawDat.substring(0, length: rawDat.length - rawDat.indexOf("?")!);
+        }
+        
+        let hash = getHash(sS: rawDat)
+        
+        getAlbum(hash: hash)
+        
+    }
+    func cutEnds(s:String) -> String {
+        if (s.endsWith("/")) {
+            return s.substring(0, length: s.length - 1);
+        } else {
+            return s;
+        }
+    }
+    
+    func getAlbum(hash: String){
+        let urlString = "http://imgur.com/ajaxalbums/getimages/\(hash)/hit.json?all=true"
+        print(urlString)
+        let url = URL(string: urlString)
+        URLSession.shared.dataTask(with:url!) { (data, response, error) in
+            if error != nil {
+                print(error ?? "Error loading album...")
+            } else {
+                do {
+                    if(NSString(data: data!, encoding: String.Encoding.utf8.rawValue)?.contains("[]"))!{
+                        //single album image
+                        self.vCs.append(MediaDisplayViewController.init(url: URL.init(string: "https://imgur.com/\(hash).png")!))
+                        let firstViewController = self.vCs[1]
+                        
+                        self.setViewControllers([firstViewController],
+                                                direction: .forward,
+                                                animated: true,
+                                                completion: nil)
+                    } else {
+                        guard let json = try JSONSerialization.jsonObject(with: data!, options: []) as? NSDictionary else {
+                            return
+                        }
+                        
+                        let album = AlbumJSONBase.init(dictionary: json)
+                        DispatchQueue.main.async{
+                            for image in (album?.data?.images)! {
+                                self.vCs.append(MediaDisplayViewController.init(url: URL.init(string: "https://imgur.com/\(image.hash!)\(image.ext!)")!))
+                            }
+                            let firstViewController = self.vCs[1]
+                            
+                            self.setViewControllers([firstViewController],
+                                               direction: .forward,
+                                               animated: true,
+                                               completion: nil)
+                            
+                        }
+                    }
+                } catch let error as NSError {
+                    print(error)
+                }
+            }
+            
+            }.resume()
+    }
+    func getHash(sS:String) -> String {
+        var s = sS
+        if(s.contains("/comment/")){
+            s = s.substring(0, length: s.indexOf("/comment")!);
+        }
+        var next = s.substring(s.lastIndexOf("/")!, length: s.length - s.lastIndexOf("/")!);
+        if (next.contains(".")) {
+            next = next.substring(0, length: next.indexOf(".")!);
+        }
+        if (next.startsWith("/")) {
+            next = next.substring(1, length: next.length - 1);
+        }
+        if (next.length < 5) {
+            return getHash(sS: s.replacingOccurrences(of: next, with: ""));
+        } else {
+            return next;
+        }
+        
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.automaticallyAdjustsScrollViewInsets = false
+        self.edgesForExtendedLayout = UIRectEdge.all
+        self.extendedLayoutIncludesOpaqueBars = true
+        self.view.backgroundColor = UIColor.clear
+    }
+    
+    var navItem: UINavigationItem?
+    
+    func exit(){
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+    override func viewDidLoad(){
+        super.viewDidLoad()
+        self.dataSource = self
+        self.delegate = self
+        view.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+        self.navigationController?.view.backgroundColor = UIColor.clear
+        
+        let navigationBar = UINavigationBar.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: 56))
+        navigationBar.setBackgroundImage(UIImage(), for: .default)
+        navigationBar.shadowImage = UIImage()
+        navigationBar.isTranslucent = true
+        navItem = UINavigationItem(title: "")
+        let close = UIButton.init(type: .custom)
+        close.setImage(UIImage.init(named: "close")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
+        close.addTarget(self, action: #selector(self.exit), for: UIControlEvents.touchUpInside)
+        close.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        let closeB = UIBarButtonItem.init(customView: close)
+        navItem?.leftBarButtonItem = closeB
+        navigationBar.setItems([navItem!], animated: false)
+        self.view.addSubview(navigationBar)
+        
+    }
+    
+    func pageViewController(_ pageViewController : UIPageViewController, didFinishAnimating: Bool, previousViewControllers: [UIViewController], transitionCompleted: Bool) {
+        if(pageViewController.viewControllers?.first == vCs[0]){
+            self.dismiss(animated: true, completion: nil)
+        }
+    }
+    
+    func pageViewController(_ pageViewController: UIPageViewController,
+                            viewControllerBefore viewController: UIViewController) -> UIViewController? {
+        guard let viewControllerIndex = vCs.index(of: viewController) else {
+            return nil
+        }
+        
+        let previousIndex = viewControllerIndex - 1
+        
+        guard previousIndex >= 0 else {
+            return nil
+        }
+        
+        guard vCs.count > previousIndex else {
+            return nil
+        }
+        navItem?.title = "\(previousIndex)/\(vCs.count - 1)"
+
+        return vCs[previousIndex]
+    }
+    
+    func pageViewController(_ pageViewController: UIPageViewController,
+                            viewControllerAfter viewController: UIViewController) -> UIViewController? {
+        guard let viewControllerIndex = vCs.index(of: viewController) else {
+            return nil
+        }
+        
+        let nextIndex = viewControllerIndex + 1
+        let orderedViewControllersCount = vCs.count
+        
+        guard orderedViewControllersCount != nextIndex else {
+            return nil
+        }
+        
+        guard orderedViewControllersCount > nextIndex else {
+            return nil
+        }
+        navItem?.title = "\(nextIndex)/\(vCs.count - 1)"
+
+        return vCs[nextIndex]
+    }
+    
+}

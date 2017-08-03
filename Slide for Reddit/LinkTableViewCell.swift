@@ -1661,7 +1661,7 @@ class LinkTableViewCell: UITableViewCell, UIViewControllerPreviewingDelegate, TT
     
     
     func openLink(sender: UITapGestureRecognizer? = nil){
-        (parentViewController)?.setLink(lnk: link!, shownURL: loadedImage, lq: lq)
+        (parentViewController)?.setLink(lnk: link!, shownURL: loadedImage, lq: lq, saveHistory: true) //todo check this
     }
     
     func openComment(sender: UITapGestureRecognizer? = nil){

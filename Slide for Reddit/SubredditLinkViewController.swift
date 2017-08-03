@@ -1082,9 +1082,8 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
                 
                 parentController?.navigationItem.rightBarButtonItems = [ moreB, sortB]
             }
-        } else {
-            paging = true
         }
+        
         super.viewWillAppear(animated)
          if(savedIndex != nil){
          tableView.reloadItems(at: [savedIndex!])

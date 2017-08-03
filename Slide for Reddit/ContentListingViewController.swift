@@ -93,7 +93,6 @@ class ContentListingViewController: MediaViewController, UITableViewDelegate, UI
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        paging = baseData.paging
         super.viewWillAppear(animated)
     }
     

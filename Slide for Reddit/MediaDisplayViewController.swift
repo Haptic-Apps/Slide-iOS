@@ -11,8 +11,9 @@ import MaterialComponents.MaterialProgressView
 import SDWebImage
 import AVFoundation
 import Alamofire
+import AVKit
 
-class MediaDisplayViewController: UIViewController, UIScrollViewDelegate {
+class MediaDisplayViewController: UIViewController, UIScrollViewDelegate, UIGestureRecognizerDelegate {
     
     var baseURL: URL?
     var loadedURL: URL?
@@ -23,7 +24,8 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate {
     var scrollView = UIScrollView()
     var imageView = UIImageView()
     var videoPlayer = AVPlayer()
-    var videoView = AVPlayerLayer()
+    var videoView = UIView()
+    var playerVC = AVPlayerViewController()
     var menuB : UIBarButtonItem?
     
     init(url: URL){
@@ -41,7 +43,7 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate {
             
         }
         let image = baseImage!
-        self.scrollView.contentSize = CGSize.init(width: image.size.width, height: image.size.height)
+        self.scrollView.contentSize = CGSize.init(width: self.view.frame.size.width, height: getHeightFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width))
         self.scrollView.delegate = self
         imageView = UIImageView.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height))
         imageView.contentMode = .scaleAspectFit
@@ -84,6 +86,13 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate {
             })
         }
     }
+    
+    func getHeightFromAspectRatio(imageHeight:CGFloat, imageWidth: CGFloat) -> CGFloat {
+        let ratio = Double(imageHeight)/Double(imageWidth)
+        let width = Double(view.frame.size.width);
+        return CGFloat(width * ratio)
+        
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -98,8 +107,8 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate {
         var items: [UIBarButtonItem] = []
         
         items.append(space)
-        items.append(UIBarButtonItem(image: UIImage(named: "download")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(MediaViewController.download(_:))))
-        menuB = UIBarButtonItem(image: UIImage(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(MediaViewController.showImageMenu(_:)))
+        items.append(UIBarButtonItem(image: UIImage(named: "download")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(MediaDisplayViewController.download(_:))))
+        menuB = UIBarButtonItem(image: UIImage(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(MediaDisplayViewController.showImageMenu(_:)))
         items.append(menuB!)
         toolbar.items = items
         toolbar.setBackgroundImage(UIImage(),
@@ -120,11 +129,80 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate {
         let progressViewHeight = CGFloat(5)
         progressView?.frame = CGRect(x: 0, y: toolbar.bounds.height, width: toolbar.bounds.width, height: progressViewHeight)
         toolbar.addSubview(progressView!)
-
+        
         self.view.addSubview(toolbar)
-
+        
         startDisplay()
     }
+    
+    func download(_ sender: AnyObject){
+        UIImageWriteToSavedPhotosAlbum(imageView.image!, nil, nil, nil)
+    }
+    
+    func showImageMenu(_ sender: AnyObject){
+        let alert = UIAlertController.init(title: baseURL?.absoluteString, message: "", preferredStyle: .actionSheet)
+        let open = OpenInChromeController.init()
+        if(open.isChromeInstalled()){
+            alert.addAction(
+                UIAlertAction(title: "Open in Chrome", style: .default) { (action) in
+                    open.openInChrome(self.baseURL!, callbackURL: nil, createNewTab: true)
+                }
+            )
+        }
+        alert.addAction(
+            UIAlertAction(title: "Open in Safari", style: .default) { (action) in
+                if #available(iOS 10.0, *) {
+                    UIApplication.shared.open(self.baseURL!, options: [:], completionHandler: nil)
+                } else {
+                    UIApplication.shared.openURL(self.baseURL!)
+                }
+            }
+        )
+        alert.addAction(
+            UIAlertAction(title: "Share URL", style: .default) { (action) in
+                let shareItems:Array = [self.baseURL!]
+                let activityViewController:UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+                let window = UIApplication.shared.keyWindow!
+                if let modalVC = window.rootViewController?.presentedViewController {
+                    modalVC.present(activityViewController, animated: true, completion: nil)
+                } else {
+                    window.rootViewController!.present(activityViewController, animated: true, completion: nil)
+                }
+            }
+        )
+        alert.addAction(
+            UIAlertAction(title: "Share Image", style: .default) { (action) in
+                let shareItems:Array = [self.imageView.image!]
+                let activityViewController:UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+                let window = UIApplication.shared.keyWindow!
+                if let modalVC = window.rootViewController?.presentedViewController {
+                    modalVC.present(activityViewController, animated: true, completion: nil)
+                } else {
+                    window.rootViewController!.present(activityViewController, animated: true, completion: nil)
+                }
+            }
+        )
+        alert.addAction(
+            UIAlertAction(title: "Cancel", style: .cancel) { (action) in
+            }
+        )
+        let window = UIApplication.shared.keyWindow!
+        alert.modalPresentationStyle = .popover
+        
+        if let presenter = alert.popoverPresentationController {
+            presenter.sourceView = (menuB!.value(forKey: "view") as! UIView)
+            presenter.sourceRect = (menuB!.value(forKey: "view") as! UIView).bounds
+        }
+        
+        
+        if let modalVC = window.rootViewController?.presentedViewController {
+            modalVC.present(alert, animated: true, completion: nil)
+        } else {
+            window.rootViewController!.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    
     
     func startDisplay(){
         if(type == .IMAGE ){
@@ -318,47 +396,47 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate {
     }
     
     func refresh(_ toLoad:String){
-            let disallowedChars = CharacterSet.urlPathAllowed.inverted
-            var key = toLoad.components(separatedBy: disallowedChars).joined(separator: "_")
-            key = key.replacingOccurrences(of: ":", with: "")
-            key = key.replacingOccurrences(of: "/", with: "")
-            key = key.replacingOccurrences(of: ".", with: "")
-            key = key + ".mp4"
-            print(key)
-            if(key.length > 200){
-                key = key.substring(0, length: 200)
-            }
-            if(FileManager.default.fileExists(atPath: SDImageCache.shared().makeDiskCachePath(key)) ){
-                display(URL.init(fileURLWithPath:SDImageCache.shared().makeDiskCachePath(key)))
-            } else {
-                let localUrl =   URL.init(fileURLWithPath:SDImageCache.shared().makeDiskCachePath(key))
-                print(localUrl)
-                request = Alamofire.download(toLoad, method: .get, to: { (url, response) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
-                    return (localUrl, [.createIntermediateDirectories])
-                    
-                }).downloadProgress() { progress in
-                    DispatchQueue.main.async {
-                        self.progressView!.progress = Float(progress.fractionCompleted)
-                        let countBytes = ByteCountFormatter()
-                        countBytes.allowedUnits = [.useMB]
-                        countBytes.countStyle = .file
-                        let fileSize = countBytes.string(fromByteCount: Int64(progress.totalUnitCount))
-                        self.size!.text = fileSize
-                        print("Progress is \(progress.fractionCompleted)")
-                    }
-                    
-                    }
-                    .responseData { response in
-                        if let error = response.error {
-                            print(error)
-                        } else { //no errors
-                            self.display(localUrl)
-                            print("File downloaded successfully: \(localUrl)")
-                        }
+        let disallowedChars = CharacterSet.urlPathAllowed.inverted
+        var key = toLoad.components(separatedBy: disallowedChars).joined(separator: "_")
+        key = key.replacingOccurrences(of: ":", with: "")
+        key = key.replacingOccurrences(of: "/", with: "")
+        key = key.replacingOccurrences(of: ".", with: "")
+        key = key + ".mp4"
+        print(key)
+        if(key.length > 200){
+            key = key.substring(0, length: 200)
+        }
+        if(FileManager.default.fileExists(atPath: SDImageCache.shared().makeDiskCachePath(key)) ){
+            display(URL.init(fileURLWithPath:SDImageCache.shared().makeDiskCachePath(key)))
+        } else {
+            let localUrl =   URL.init(fileURLWithPath:SDImageCache.shared().makeDiskCachePath(key))
+            print(localUrl)
+            request = Alamofire.download(toLoad, method: .get, to: { (url, response) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
+                return (localUrl, [.createIntermediateDirectories])
+                
+            }).downloadProgress() { progress in
+                DispatchQueue.main.async {
+                    self.progressView!.progress = Float(progress.fractionCompleted)
+                    let countBytes = ByteCountFormatter()
+                    countBytes.allowedUnits = [.useMB]
+                    countBytes.countStyle = .file
+                    let fileSize = countBytes.string(fromByteCount: Int64(progress.totalUnitCount))
+                    self.size!.text = fileSize
+                    print("Progress is \(progress.fractionCompleted)")
                 }
                 
+                }
+                .responseData { response in
+                    if let error = response.error {
+                        print(error)
+                    } else { //no errors
+                        self.display(localUrl)
+                        print("File downloaded successfully: \(localUrl)")
+                    }
             }
+            
         }
+    }
     
     
     var request: DownloadRequest?
@@ -373,24 +451,37 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate {
             playerItem.seek(to: kCMTimeZero)
         }
     }
-
+    
     func display(_ file: URL){
-            print("Displaying \(file)")
+        print("Displaying \(file)")
         self.scrollView.contentSize = CGSize.init(width: self.view.frame.width, height: self.view.frame.height)
         self.scrollView.delegate = self
         self.videoPlayer = AVPlayer.init(playerItem: AVPlayerItem.init(url: file))
-        videoView = AVPlayerLayer(player: videoPlayer)
-        videoView.videoGravity = AVLayerVideoGravityResizeAspect
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(MediaDisplayViewController.playerItemDidReachEnd),
                                                name: NSNotification.Name.AVPlayerItemDidPlayToEndTime,
                                                object: videoPlayer.currentItem)
         videoPlayer.actionAtItemEnd = AVPlayerActionAtItemEnd.none
+        
+        playerVC = AVPlayerViewController()
+        playerVC.player = videoPlayer
+        playerVC.videoGravity = AVLayerVideoGravityResizeAspect
+        playerVC.showsPlaybackControls = false
+        
+        videoView = playerVC.view
+        addChildViewController(playerVC)
+        scrollView.addSubview(videoView)
         videoView.frame = CGRect.init(x: 0, y: 0, width: self.view.frame.width, height: self.view.frame.height)
-        self.scrollView.layer.insertSublayer(videoView, at: 0)
+        playerVC.didMove(toParentViewController: self)
+        
+        self.scrollView.isUserInteractionEnabled = true
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(MediaDisplayViewController.handleTap))
+        tapGesture.delegate = self
+        scrollView.addGestureRecognizer(tapGesture)
+        
         videoPlayer.play()
     }
-  
+    
     func formatUrl(sS: String) -> String {
         var s = sS
         if (s.hasSuffix("v") && !s.contains("streamable.com")) {
@@ -431,6 +522,42 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate {
         case GFYCAT
         case DIRECT
         case OTHER
+    }
+    
+    public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if !playerVC.showsPlaybackControls {
+            playerVC.showsPlaybackControls = true
+        }
+        super.touchesBegan(touches, with: event)
+    }
+    
+    @IBAction func handleTap(sender: UIGestureRecognizer) {
+        print("Tapping")
+        if !playerVC.showsPlaybackControls {
+            playerVC.showsPlaybackControls = true
+        }
+    }
+    
+    /// Prevents delivery of touch gestures to AVPlayerViewController's gesture recognizer,
+    /// which would cause controls to hide immediately after being shown.
+    ///
+    /// `-[AVPlayerViewController _handleSingleTapGesture] goes like this:
+    ///
+    ///     if self._showsPlaybackControlsView() {
+    ///         _hidePlaybackControlsViewIfPossibleUntilFurtherUserInteraction()
+    ///     } else {
+    ///         _showPlaybackControlsViewIfNeededAndHideIfPossibleAfterDelayIfPlaying()
+    ///     }
+    public func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailByGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        if !playerVC.showsPlaybackControls {
+            // print("\nshouldBeRequiredToFailByGestureRecognizer? \(otherGestureRecognizer)")
+            if let tapGesture = otherGestureRecognizer as? UITapGestureRecognizer {
+                if tapGesture.numberOfTouchesRequired == 1 {
+                    return true
+                }
+            }
+        }
+        return false
     }
     
 }
