@@ -12,9 +12,11 @@ class SingleContentViewController: UIPageViewController, UIPageViewControllerDat
 
     var vCs: [UIViewController] = [ClearVC()]
     var baseURL: URL?
-    public init(url: URL){
+    var lqURL: URL?
+    public init(url: URL, lq: URL?){
         self.baseURL = url
-        self.vCs.append(MediaDisplayViewController.init(url: baseURL!))
+        self.lqURL = lq
+        self.vCs.append(MediaDisplayViewController.init(url: baseURL!, text: nil, lqURL: lq))//todo change this
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
     }
     
@@ -27,14 +29,15 @@ class SingleContentViewController: UIPageViewController, UIPageViewControllerDat
         self.automaticallyAdjustsScrollViewInsets = false
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
-        self.view.backgroundColor = UIColor.clear
     }
     
     override func viewDidLoad(){
         super.viewDidLoad()
         self.dataSource = self
         self.delegate = self
-        view.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+        
+
+        view.backgroundColor = UIColor.black.withAlphaComponent(0.84)
         self.navigationController?.view.backgroundColor = UIColor.clear
         let firstViewController = vCs[1]
         
@@ -69,7 +72,7 @@ class SingleContentViewController: UIPageViewController, UIPageViewControllerDat
         
         return vCs[previousIndex]
     }
-    
+        
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerAfter viewController: UIViewController) -> UIViewController? {
         guard let viewControllerIndex = vCs.index(of: viewController) else {

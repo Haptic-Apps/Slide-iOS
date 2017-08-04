@@ -206,7 +206,8 @@ class ReplyCellView: UITableViewCell, UITextViewDelegate {
                                                         views: views)
         sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[body(>=80)]-[send(40)]-|", options: NSLayoutFormatOptions(rawValue:0), metrics: metrics, views: views))
         sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[body(>=80)]-[discard(40)]-|", options: NSLayoutFormatOptions(rawValue:0), metrics: metrics, views: views))
-        sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[send]-8-[discard]-|", options: NSLayoutFormatOptions(rawValue:0), metrics: metrics, views: views))
+        sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[send]-16-|", options: NSLayoutFormatOptions(rawValue:0), metrics: metrics, views: views))
+        sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-16-[discard]", options: NSLayoutFormatOptions(rawValue:0), metrics: metrics, views: views))
 
         self.contentView.addConstraints(sideConstraint)
     }

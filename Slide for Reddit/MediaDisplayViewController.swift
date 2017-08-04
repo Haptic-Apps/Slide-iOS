@@ -18,6 +18,8 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate, UIGest
     var baseURL: URL?
     var loadedURL: URL?
     var type: ContentType.CType = ContentType.CType.UNKNOWN
+    var lqURL: URL?
+    var text: String?
     
     var size: UILabel?
     var progressView: MDCProgressView?
@@ -27,13 +29,18 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate, UIGest
     var videoView = UIView()
     var playerVC = AVPlayerViewController()
     var menuB : UIBarButtonItem?
+    var inAlbum = false
     
-    init(url: URL){
+    init(url: URL, text: String?, lqURL: URL?, inAlbum : Bool = false){
         super.init(nibName: nil, bundle: nil)
         self.baseURL = url
+        self.lqURL = lqURL
+        self.text = text
+        self.inAlbum = inAlbum
         type = ContentType.getContentType(baseUrl: url)
     }
     
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -45,11 +52,81 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate, UIGest
         let image = baseImage!
         self.scrollView.contentSize = CGSize.init(width: self.view.frame.size.width, height: getHeightFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width))
         self.scrollView.delegate = self
+        
+        let dtap = UITapGestureRecognizer.init(target: self, action: #selector (handleDoubleTapScrollView(recognizer:)))
+        dtap.numberOfTapsRequired = 2
+        self.scrollView.addGestureRecognizer(dtap)
+        
+        if(!inAlbum){
+        let tap = UITapGestureRecognizer.init(target: self, action: #selector (close(recognizer:)))
+        self.scrollView.addGestureRecognizer(tap)
+        }
+
         imageView = UIImageView.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height))
         imageView.contentMode = .scaleAspectFit
         self.scrollView.addSubview(imageView)
         imageView.image = image
+        
+        if(showHQ){
+            var items: [UIBarButtonItem] = []
+            if(text != nil && !(text!.isEmpty)){
+                let textB = UIBarButtonItem(image: UIImage(named: "size")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(MediaDisplayViewController.showTitle(_:)))
+                items.append(textB)
+            }
+            let space = UIBarButtonItem(barButtonSystemItem:.flexibleSpace, target: nil, action: nil)
+            let hdB = UIBarButtonItem(image: UIImage(named: "hd")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(MediaDisplayViewController.hd(_:)))
+            items.append(hdB)
+            items.append(space)
+            items.append(UIBarButtonItem(image: UIImage(named: "download")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(MediaDisplayViewController.download(_:))))
+            menuB = UIBarButtonItem(image: UIImage(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(MediaDisplayViewController.showImageMenu(_:)))
+            items.append(menuB!)
+            toolbar.items = items
+
+        }
     }
+    
+    func close(recognizer: UITapGestureRecognizer){
+        self.parent?.dismiss(animated: true, completion: nil)
+    }
+    
+    func hd(_ sender: AnyObject){
+        size?.isHidden = false
+        var items: [UIBarButtonItem] = []
+        if(text != nil && !(text!.isEmpty)){
+            let textB = UIBarButtonItem(image: UIImage(named: "size")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(MediaDisplayViewController.showTitle(_:)))
+            items.append(textB)
+        }
+        let space = UIBarButtonItem(barButtonSystemItem:.flexibleSpace, target: nil, action: nil)
+        items.append(space)
+        items.append(UIBarButtonItem(image: UIImage(named: "download")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(MediaDisplayViewController.download(_:))))
+        menuB = UIBarButtonItem(image: UIImage(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(MediaDisplayViewController.showImageMenu(_:)))
+        items.append(menuB!)
+        toolbar.items = items
+
+        progressView?.setHidden(false, animated: true, completion: nil)
+        showHQ = false
+        loadImage(imageURL: baseURL!)
+    }
+    
+    @IBAction func handleDoubleTapScrollView(recognizer: UITapGestureRecognizer) {
+        if scrollView.zoomScale == 1 {
+            scrollView.zoom(to: zoomRectForScale(scale: scrollView.maximumZoomScale, center: recognizer.location(in: recognizer.view)), animated: true)
+        } else {
+            scrollView.setZoomScale(1, animated: true)
+        }
+    }
+    
+    func zoomRectForScale(scale: CGFloat, center: CGPoint) -> CGRect {
+        var zoomRect = CGRect.zero
+        zoomRect.size.height = imageView.frame.size.height / scale
+        zoomRect.size.width  = imageView.frame.size.width  / scale
+        let newCenter = imageView.convert(center, from: scrollView)
+        zoomRect.origin.x = newCenter.x - (zoomRect.size.width / 2.0)
+        zoomRect.origin.y = newCenter.y - (zoomRect.size.height / 2.0)
+        return zoomRect
+    }
+    
+
     
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return imageView
@@ -93,6 +170,8 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate, UIGest
         return CGFloat(width * ratio)
         
     }
+    
+    var toolbar = UIToolbar()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -102,10 +181,14 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate, UIGest
         self.scrollView.backgroundColor = .clear
         self.view.addSubview(scrollView)
         view.backgroundColor = UIColor.black.withAlphaComponent(0.7)
-        let toolbar = UIToolbar.init(frame: CGRect.init(x: 0, y: self.view.frame.size.height - 30, width: self.view.frame.size.width, height:  30))
+        toolbar = UIToolbar.init(frame: CGRect.init(x: 0, y: self.view.frame.size.height - 35, width: self.view.frame.size.width, height:  30))
         let space = UIBarButtonItem(barButtonSystemItem:.flexibleSpace, target: nil, action: nil)
         var items: [UIBarButtonItem] = []
-        
+        if(text != nil && !(text!.isEmpty)){
+            var textB = UIBarButtonItem(image: UIImage(named: "size")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(MediaDisplayViewController.showTitle(_:)))
+            items.append(textB)
+        }
+
         items.append(space)
         items.append(UIBarButtonItem(image: UIImage(named: "download")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(MediaDisplayViewController.download(_:))))
         menuB = UIBarButtonItem(image: UIImage(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(MediaDisplayViewController.showImageMenu(_:)))
@@ -117,7 +200,7 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate, UIGest
         toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
         toolbar.tintColor = UIColor.white
         
-        size = UILabel(frame: CGRect(x:5,y: toolbar.bounds.height,width: 250,height: 50))
+        size = UILabel(frame: CGRect(x:5,y: toolbar.bounds.height - 40,width: 250,height: 50))
         size?.textAlignment = .left
         size?.textColor = .white
         size?.text="mb"
@@ -133,6 +216,13 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate, UIGest
         self.view.addSubview(toolbar)
         
         startDisplay()
+    }
+    
+    func showTitle(_ sender: AnyObject){
+        let alertController = MDCAlertController(title: nil, message: text!)
+        let action = MDCAlertAction(title:"DONE") { (action) in print("OK") }
+        alertController.addAction(action)
+        present(alertController, animated: true, completion: nil)
     }
     
     func download(_ sender: AnyObject){
@@ -202,15 +292,27 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate, UIGest
         }
     }
     
+    var showHQ = false
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.view.backgroundColor = .clear
+    }
     
     func startDisplay(){
         if(type == .IMAGE ){
-            loadImage(imageURL: baseURL!)
+            let shouldShowLq = SettingValues.dataSavingEnabled && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi())
+            if(lqURL != nil && !SettingValues.loadContentHQ && shouldShowLq){
+                loadImage(imageURL: lqURL!)
+                showHQ = true
+            } else {
+                loadImage(imageURL: baseURL!)
+            }
         } else if(type == .GIF || type == .VIDEO || type == .STREAMABLE || type == .VID_ME){
             getGif(urlS: baseURL!.absoluteString)
         }
     }
+    
     func loadGfycat(urlString: String){
         let url = URL(string: urlString)
         URLSession.shared.dataTask(with:url!) { (data, response, error) in
@@ -453,7 +555,8 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate, UIGest
     }
     
     func display(_ file: URL){
-        print("Displaying \(file)")
+        self.progressView?.setHidden(true, animated: true)
+        self.size?.isHidden = true
         self.scrollView.contentSize = CGSize.init(width: self.view.frame.width, height: self.view.frame.height)
         self.scrollView.delegate = self
         self.videoPlayer = AVPlayer.init(playerItem: AVPlayerItem.init(url: file))
@@ -463,7 +566,7 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate, UIGest
                                                object: videoPlayer.currentItem)
         videoPlayer.actionAtItemEnd = AVPlayerActionAtItemEnd.none
         
-        playerVC = AVPlayerViewController()
+        playerVC = AVControlsPlayer()
         playerVC.player = videoPlayer
         playerVC.videoGravity = AVLayerVideoGravityResizeAspect
         playerVC.showsPlaybackControls = false
@@ -471,14 +574,10 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate, UIGest
         videoView = playerVC.view
         addChildViewController(playerVC)
         scrollView.addSubview(videoView)
-        videoView.frame = CGRect.init(x: 0, y: 0, width: self.view.frame.width, height: self.view.frame.height)
+        videoView.frame = CGRect.init(x: 0, y: 50, width: self.view.frame.width, height: self.view.frame.height - 80)
         playerVC.didMove(toParentViewController: self)
         
         self.scrollView.isUserInteractionEnabled = true
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(MediaDisplayViewController.handleTap))
-        tapGesture.delegate = self
-        scrollView.addGestureRecognizer(tapGesture)
-        
         videoPlayer.play()
     }
     
@@ -522,20 +621,6 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate, UIGest
         case GFYCAT
         case DIRECT
         case OTHER
-    }
-    
-    public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if !playerVC.showsPlaybackControls {
-            playerVC.showsPlaybackControls = true
-        }
-        super.touchesBegan(touches, with: event)
-    }
-    
-    @IBAction func handleTap(sender: UIGestureRecognizer) {
-        print("Tapping")
-        if !playerVC.showsPlaybackControls {
-            playerVC.showsPlaybackControls = true
-        }
     }
     
     /// Prevents delivery of touch gestures to AVPlayerViewController's gesture recognizer,

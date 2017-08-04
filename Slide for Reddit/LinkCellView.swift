@@ -143,10 +143,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     }
     
     func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
+        print("Clicked \(url.absoluteString)")
         if((parentViewController) != nil){
             parentViewController?.doShow(url: url)
         }
-        
     }
     
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
@@ -206,8 +206,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 
                 textView.setText( content?.attributedString )
                 textView.frame.size.height = (content?.textHeight)!
-                textView.delegate = self
-                textView.isUserInteractionEnabled = true
                 hasText = true
             } catch {
             }
@@ -1412,11 +1410,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         return nil
     }
     
-    
-    
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
-        if(viewControllerToCommit is GalleryViewController || viewControllerToCommit is YouTubeViewController){
-            parentViewController?.presentImageGallery(viewControllerToCommit as! GalleryViewController)
+        if(viewControllerToCommit is SingleContentViewController || viewControllerToCommit is AlbumViewController || viewControllerToCommit is YouTubeViewController){
+            parentViewController?.present(viewControllerToCommit, animated: false)
         } else {
             parentViewController?.show(viewControllerToCommit, sender: parentViewController )
         }

@@ -25,7 +25,7 @@ extension Session {
         var path = "/search"
         var restrict = false
         if let subreddit = subreddit {
-            path = subreddit.path + "/search"
+            path = subreddit.path + "/search.json"
             restrict = true
         }
         if(subreddit != nil && subreddit!.displayName == "all"){
@@ -34,7 +34,7 @@ extension Session {
         
         let parameter = paginator.dictionaryByAdding(parameters: ["q":query, "sort":sort.path, "restrict_sr": restrict ? "yes" : "no"])
         
-        guard let request = URLRequest.requestForOAuth(with: baseURL, path:path, parameter:parameter, method:"GET", token:token)
+        guard let request = URLRequest.requestForOAuth(with: "https://reddit.com", path:path, parameter:parameter, method:"GET", token:token)
             else { throw ReddiftError.canNotCreateURLRequest as NSError }
         let closure = {(data: Data?, response: URLResponse?, error: NSError?) -> Result<Listing> in
             return Result(from: Response(data: data, urlResponse: response), optional:error)

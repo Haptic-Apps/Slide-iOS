@@ -106,6 +106,8 @@
 		BE9455FC1F32A4C70097EEF0 /* MediaDisplayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9455FB1F32A4C70097EEF0 /* MediaDisplayViewController.swift */; };
 		BE9455FE1F32B5220097EEF0 /* SingleContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9455FD1F32B5220097EEF0 /* SingleContentViewController.swift */; };
 		BE9456001F32DD310097EEF0 /* AlbumViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9455FF1F32DD310097EEF0 /* AlbumViewController.swift */; };
+		BE9456021F3375460097EEF0 /* LeftTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9456011F3375460097EEF0 /* LeftTransition.swift */; };
+		BE9456041F34B4B40097EEF0 /* AVControlsPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9456031F34B4B40097EEF0 /* AVControlsPlayer.swift */; };
 		BE97422C1F00116D00BF48E0 /* BannerLinkCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE97422B1F00116D00BF48E0 /* BannerLinkCellView.swift */; };
 		BE97422E1F0011BE00BF48E0 /* ThumbnailLinkCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE97422D1F0011BE00BF48E0 /* ThumbnailLinkCellView.swift */; };
 		BE9742301F0011E500BF48E0 /* TextLinkCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE97422F1F0011E500BF48E0 /* TextLinkCellView.swift */; };
@@ -278,6 +280,8 @@
 		BE9455FB1F32A4C70097EEF0 /* MediaDisplayViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaDisplayViewController.swift; sourceTree = "<group>"; };
 		BE9455FD1F32B5220097EEF0 /* SingleContentViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SingleContentViewController.swift; sourceTree = "<group>"; };
 		BE9455FF1F32DD310097EEF0 /* AlbumViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlbumViewController.swift; sourceTree = "<group>"; };
+		BE9456011F3375460097EEF0 /* LeftTransition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LeftTransition.swift; sourceTree = "<group>"; };
+		BE9456031F34B4B40097EEF0 /* AVControlsPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVControlsPlayer.swift; sourceTree = "<group>"; };
 		BE97422B1F00116D00BF48E0 /* BannerLinkCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BannerLinkCellView.swift; sourceTree = "<group>"; };
 		BE97422D1F0011BE00BF48E0 /* ThumbnailLinkCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThumbnailLinkCellView.swift; sourceTree = "<group>"; };
 		BE97422F1F0011E500BF48E0 /* TextLinkCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextLinkCellView.swift; sourceTree = "<group>"; };
@@ -368,6 +372,7 @@
 				BE9455FB1F32A4C70097EEF0 /* MediaDisplayViewController.swift */,
 				BE9455FD1F32B5220097EEF0 /* SingleContentViewController.swift */,
 				BE9455FF1F32DD310097EEF0 /* AlbumViewController.swift */,
+				BE9456031F34B4B40097EEF0 /* AVControlsPlayer.swift */,
 			);
 			name = ContentViewControllers;
 			sourceTree = "<group>";
@@ -597,6 +602,7 @@
 				BE2F3F571EF886D9003C1B28 /* Reachability.swift */,
 				BE7BFB411F128F9B009CA2E1 /* Sidebar.swift */,
 				BEE206F31F1B0D53008BB5F1 /* ReplyCellView.swift */,
+				BE9456011F3375460097EEF0 /* LeftTransition.swift */,
 			);
 			path = "Slide for Reddit";
 			sourceTree = "<group>";
@@ -1000,6 +1006,7 @@
 				BE1DA39E1E26E89800EC0A04 /* OverlayPresentationController.swift in Sources */,
 				BE7439ED1E201C22008BB63B /* SubredditCellView.swift in Sources */,
 				BE3E5C211E18227500749C0C /* CommentDepthCell.swift in Sources */,
+				BE9456041F34B4B40097EEF0 /* AVControlsPlayer.swift in Sources */,
 				BE1DA3961E26AD5700EC0A04 /* SearchViewController.swift in Sources */,
 				BE6EA6E81E1DA86100E9E709 /* ProfileViewController.swift in Sources */,
 				BE35217E1E3D325A00C30B8D /* SettingsFont.swift in Sources */,
@@ -1034,6 +1041,7 @@
 				BEB2B2391E35D64F00BF761C /* MessageCellView.swift in Sources */,
 				BEB2B2371E35D48000BF761C /* InboxViewController.swift in Sources */,
 				BEE206F81F1CFC96008BB5F1 /* SettingsHistory.swift in Sources */,
+				BE9456021F3375460097EEF0 /* LeftTransition.swift in Sources */,
 				BE2F3F5A1EF8DD3D003C1B28 /* SettingsData.swift in Sources */,
 				BEBF45C81E230CC900764BB8 /* History.swift in Sources */,
 				BE6EA6E01E1C228100E9E709 /* GfycatTranscoded.swift in Sources */,

@@ -56,7 +56,7 @@ class AlbumViewController: UIPageViewController, UIPageViewControllerDataSource,
                 do {
                     if(NSString(data: data!, encoding: String.Encoding.utf8.rawValue)?.contains("[]"))!{
                         //single album image
-                        self.vCs.append(MediaDisplayViewController.init(url: URL.init(string: "https://imgur.com/\(hash).png")!))
+                        self.vCs.append(MediaDisplayViewController.init(url: URL.init(string: "https://imgur.com/\(hash).png")!, text: nil, lqURL: URL.init(string: "https://imgur.com/\(hash)m.png")))
                         let firstViewController = self.vCs[1]
                         
                         self.setViewControllers([firstViewController],
@@ -71,7 +71,10 @@ class AlbumViewController: UIPageViewController, UIPageViewControllerDataSource,
                         let album = AlbumJSONBase.init(dictionary: json)
                         DispatchQueue.main.async{
                             for image in (album?.data?.images)! {
-                                self.vCs.append(MediaDisplayViewController.init(url: URL.init(string: "https://imgur.com/\(image.hash!)\(image.ext!)")!))
+                                self.vCs.append(MediaDisplayViewController.init(url: URL.init(string: "https://imgur.com/\(image.hash!)\(image.ext!)")!,
+                                                                                text: image.description,
+                                                                                lqURL: URL.init(string: "https://imgur.com/\(image.hash!)\(image.ext! != ".gif" ? "m":"")\(image.ext!)"),
+                                                                                inAlbum : true))
                             }
                             let firstViewController = self.vCs[1]
                             
@@ -79,6 +82,8 @@ class AlbumViewController: UIPageViewController, UIPageViewControllerDataSource,
                                                direction: .forward,
                                                animated: true,
                                                completion: nil)
+                            self.navItem?.title = "\(self.vCs.index(of: self.viewControllers!.first!)!)/\(self.vCs.count - 1)"
+
                             
                         }
                     }
@@ -133,7 +138,7 @@ class AlbumViewController: UIPageViewController, UIPageViewControllerDataSource,
         self.delegate = self
         view.backgroundColor = UIColor.black.withAlphaComponent(0.7)
         self.navigationController?.view.backgroundColor = UIColor.clear
-        
+
         let navigationBar = UINavigationBar.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: 56))
         navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationBar.shadowImage = UIImage()
@@ -145,8 +150,17 @@ class AlbumViewController: UIPageViewController, UIPageViewControllerDataSource,
         close.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let closeB = UIBarButtonItem.init(customView: close)
         navItem?.leftBarButtonItem = closeB
+        
+        var gridB = UIBarButtonItem(image: UIImage(named: "grid")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysOriginal), style:.plain, target: self, action: #selector(overview(_:)))
+
+       // navItem?.rightBarButtonItem = gridB
+
         navigationBar.setItems([navItem!], animated: false)
         self.view.addSubview(navigationBar)
+        
+    }
+    
+    func overview(_ sender: AnyObject){
         
     }
     
@@ -154,6 +168,7 @@ class AlbumViewController: UIPageViewController, UIPageViewControllerDataSource,
         if(pageViewController.viewControllers?.first == vCs[0]){
             self.dismiss(animated: true, completion: nil)
         }
+        navItem?.title = "\(vCs.index(of: viewControllers!.first!)!)/\(vCs.count - 1)"
     }
     
     func pageViewController(_ pageViewController: UIPageViewController,
@@ -171,7 +186,6 @@ class AlbumViewController: UIPageViewController, UIPageViewControllerDataSource,
         guard vCs.count > previousIndex else {
             return nil
         }
-        navItem?.title = "\(previousIndex)/\(vCs.count - 1)"
 
         return vCs[previousIndex]
     }
@@ -192,7 +206,6 @@ class AlbumViewController: UIPageViewController, UIPageViewControllerDataSource,
         guard orderedViewControllersCount > nextIndex else {
             return nil
         }
-        navItem?.title = "\(nextIndex)/\(vCs.count - 1)"
 
         return vCs[nextIndex]
     }

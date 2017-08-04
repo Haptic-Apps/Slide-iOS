@@ -19,7 +19,7 @@ import SloppySwiper
 class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, UZTextViewCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate, TTTAttributedLabelDelegate, ReplyDelegate {
     
     func replySent(comment: Comment?) {
-        if(comment != nil){
+        if(comment != nil && menuId != "sub"){
             let cell = tableView.cellForRow(at: IndexPath.init(row: menuIndex - 1, section: 0)) as! CommentDepthCell
         DispatchQueue.main.async(execute: { () -> Void in
             let startDepth = self.cDepth[cell.comment!.getIdentifier()] as! Int + 1
@@ -52,9 +52,38 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             self.tableView.reloadData()
             self.tableView.endEditing(true)
         })
+        } else if(comment != nil && menuId == "sub"){
+            DispatchQueue.main.async(execute: { () -> Void in
+                let startDepth = 0
+                
+                let queue: [Object] = [RealmDataWrapper.commentToRComment(comment: comment!, depth: startDepth)]
+                self.cDepth[comment!.getId()] = startDepth
+                
+                
+                var realPosition = 0
+                self.menuShown = false
+                self.menuId = ""
+                self.tableView.beginUpdates()
+                self.tableView.deleteRows(at: [IndexPath.init(row: 0, section: 0)], with: .fade)
+                self.tableView.endUpdates()
+                
+                var ids : [String] = []
+                for item in queue {
+                    let id = item.getIdentifier()
+                    ids.append(id)
+                    self.content[id] = item
+                }
+                self.dataArray.insert(contentsOf: ids, at: self.menuIndex)
+                self.comments.insert(contentsOf: ids, at: realPosition + 1)
+                self.updateStringsSingle(queue)
+                self.doArrays()
+                self.isReply = false
+                self.tableView.reloadData()
+                self.tableView.endEditing(true)
+            })
         }
     }
-    
+        
     func openComments(id: String) {
         //don't do anything
     }
@@ -153,39 +182,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
     func reply(_ cell: LinkCellView) {
         print("Replying")
-        
-        let c = LinkCellView()
-        c.del = self
-        c.aspectWidth = self.tableView.bounds.size.width
-        c.setLink(submission: self.submission!, parent: self, nav: self.navigationController, baseSub: self.submission!.subreddit)
-        c.showBody(width: self.view.frame.size.width)
-        c.frame = (tableView.tableHeaderView?.frame)!
-        c.layoutIfNeeded()
-        
-        let reply  = ReplyViewController.init(thing: self.submission!, sub: (self.submission?.subreddit)!, view: c.contentView) { (comment) in
-            DispatchQueue.main.async(execute: { () -> Void in
-                let startDepth = 0
-                
-                let queue: [Object] = [RealmDataWrapper.commentToRComment(comment: comment!, depth: 0)]
-                self.cDepth[comment!.getId()] = startDepth
-                
-                var ids : [String] = []
-                for item in queue {
-                    let id = (item is RComment) ? (item as! RComment).getIdentifier() : (item as! RMore).getIdentifier()
-                    ids.append(id)
-                    self.content[id] = item
-                }
-
-                self.dataArray.insert(contentsOf: ids, at: 0)
-                self.comments.insert(contentsOf: ids, at: 0)
-                self.doArrays()
-                self.tableView.reloadData()
-            })
-        }
-        
-        let navEditorViewController: UINavigationController = UINavigationController(rootViewController: reply)
-        self.prepareOverlayVC(overlayVC: navEditorViewController)
-        self.present(navEditorViewController, animated: true, completion: nil)
+        doReplySubmission()
     }
     
     func upvote(_ cell: LinkCellView) {
@@ -1686,6 +1683,17 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         self.doDelete(comment: cell.content as! RComment, index: (menuIndex - 1))
     }
     
+    func doReplySubmission(){
+        menuShown = true
+        menuId = "sub"
+        menuIndex = 0
+        replyShown = true
+        reply!.setContent(thing: submission!, sub: submission!.subreddit, editing: false, delegate: self, parent: self)
+        tableView.beginUpdates()
+        tableView.insertRows(at: [IndexPath.init(row: 0, section: 0)], with: .middle)
+        tableView.endUpdates()
+    }
+    
     func doReply(){
         menuShown = false
         tableView.beginUpdates()
@@ -1808,7 +1816,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell: UITableViewCell! = nil
-        if(menuShown && indexPath.row > 0 && dataArray[indexPath.row - 1]  == menuId){
+        if(menuShown && indexPath.row >= 0 && ((indexPath.row == 0 && menuId == "sub") || (dataArray[indexPath.row - 1]  == menuId))){
             if(replyShown){
                 return reply!
             }

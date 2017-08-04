@@ -12,27 +12,25 @@ import SDWebImage
 import ImageViewer
 import MaterialComponents.MaterialProgressView
 
-class MediaViewController: UIViewController {
+class MediaViewController: UIViewController, UIViewControllerTransitioningDelegate {
     
     var subChanged = false
     
     var link:RSubmission!
     
-    public func setLink(lnk: RSubmission, shownURL: URL?, lq : Bool, saveHistory: Bool){ //lq is should load lq and did load lq
+    public func setLink(lnk: RSubmission, shownURL: URL?, lq: Bool, saveHistory: Bool){ //lq is should load lq and did load lq
         if(saveHistory){
             History.addSeen(s: lnk)
         }
         self.link = lnk
-        if(ContentType.imageType(t: lnk.type) && !lq && shownURL != nil){
-            doShow(url: shownURL!)
-        } else if(ContentType.imageType(t: lnk.type) && lq && !SettingValues.loadContentHQ){
-            doShow(url: shownURL!)
+        if(lq){
+            doShow(url: link.url!, lq: shownURL)
         } else {
             doShow(url: link.url!)
         }
     }
         
-    func getControllerForUrl(baseUrl: URL) -> UIViewController? {
+    func getControllerForUrl(baseUrl: URL, lq: URL? = nil) -> UIViewController? {
         print(baseUrl )
         contentUrl = baseUrl
         var url = contentUrl?.absoluteString
@@ -47,7 +45,7 @@ class MediaViewController: UIViewController {
             return AlbumViewController.init(urlB: contentUrl!)
         } else if (contentUrl != nil && ContentType.displayImage(t: type) && SettingValues.internalImageView || (type == .GIF && SettingValues.internalGifView) || type == .STREAMABLE || type == .VID_ME) {
             print("Showing photo")
-            return SingleContentViewController.init(url: contentUrl!)
+            return SingleContentViewController.init(url: contentUrl!, lq: lq)
         } else if(type == ContentType.CType.LINK || type == ContentType.CType.NONE){
             let web = WebsiteViewController(url: baseUrl, subreddit: link == nil ? "" : link.subreddit)
             return web
@@ -66,10 +64,10 @@ class MediaViewController: UIViewController {
         return !ContentType.isGif(uri: url) && !ContentType.isImage(uri: url) && path.contains(".");
     }
     
-    func doShow(url: URL){
+    func doShow(url: URL, lq: URL? = nil){
         print(url)
         contentUrl = url
-        let controller = getControllerForUrl(baseUrl: url)!
+        let controller = getControllerForUrl(baseUrl: url, lq: lq)!
         if( controller is YouTubeViewController){
             controller.modalPresentationStyle = .overFullScreen
             present(controller, animated: false, completion: nil)
@@ -130,6 +128,18 @@ class MediaViewController: UIViewController {
         setNavColors()
         navigationController?.isToolbarHidden = true
     }
+    
+    func animationControllerForPresentedController(presented: UIViewController, presentingController presenting: UIViewController, sourceController source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        return LeftTransition()
+    }
+    
+    func animationControllerForDismissedController(dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        let leftTransiton = LeftTransition()
+        leftTransiton.dismiss = true
+        return leftTransiton
+    }
+    
+
 }
 
 extension URL {

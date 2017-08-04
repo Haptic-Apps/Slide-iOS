@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import MaterialComponents
+
 extension UIColor {
     convenience init(hexString: String) {
         let hex = hexString.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
@@ -29,6 +31,7 @@ extension UIColor {
 
 class ColorUtil{
     static var theme = Theme.DARK
+    static var colorScheme: MDCBasicColorScheme?
     static func doInit(){
         if let name = UserDefaults.standard.string(forKey: "theme"){
             if let t = Theme(rawValue: name){
@@ -46,6 +49,10 @@ class ColorUtil{
         if(accent != nil){
             baseAccent = accent!
         }
+        colorScheme = MDCBasicColorScheme(primaryColor: foregroundColor,
+                                          primaryLightColor: fontColor,
+                                          primaryDarkColor: backgroundColor)
+        MDCAlertColorThemer.apply(colorScheme!)
 
     }
     static var foregroundColor = UIColor.white

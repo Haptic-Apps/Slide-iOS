@@ -1392,7 +1392,6 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
     
     func refresh(){
         self.links = []
-        reloadDataReset()
         load(reset: true)
     }
     
@@ -1598,8 +1597,6 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         tableView.frame = self.view.bounds
-        flowLayout.reset()
-        
         flowLayout.invalidateLayout()
     }
 }
