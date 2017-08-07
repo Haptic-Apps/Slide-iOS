@@ -38,7 +38,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         
         if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.view.bounds.width / CGFloat(320))) > 1 && SettingValues.multiColumn){
             let navigationController = UINavigationController(rootViewController: comment)
-            navigationController.modalPresentationStyle = .formSheet
+            navigationController.modalPresentationStyle = .pageSheet
             navigationController.modalTransitionStyle = .crossDissolve
             self.present(navigationController, animated: true, completion: nil)
         } else if(UIScreen.main.traitCollection.userInterfaceIdiom != .pad){
@@ -608,13 +608,22 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         label.adjustsFontSizeToFitWidth = true
         label.font = UIFont.boldSystemFont(ofSize: 35)
         
+        
+        let shadowbox = UIButton.init(type: .custom)
+        shadowbox.setImage(UIImage.init(named: "shadowbox")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
+        shadowbox.addTarget(self, action: #selector(self.shadowboxMode), for: UIControlEvents.touchUpInside)
+        shadowbox.frame = CGRect.init(x: 0, y: 20, width: 30, height: 30)
+        shadowbox.translatesAutoresizingMaskIntoConstraints = false
+        label.addSubview(shadowbox)
+
+        
         let sort = UIButton.init(type: .custom)
         sort.setImage(UIImage.init(named: "ic_sort_white")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
         sort.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
         sort.frame = CGRect.init(x: 0, y: 20, width: 30, height: 30)
         sort.translatesAutoresizingMaskIntoConstraints = false
         label.addSubview(sort)
-        
+
         let more = UIButton.init(type: .custom)
         more.setImage(UIImage.init(named: "ic_more_vert_white")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
         more.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControlEvents.touchUpInside)
@@ -663,7 +672,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         label.addSubview(sideView)
         
         let metrics=["topMargin": !SettingValues.viewType || single ? 20 : 5,"topMarginS":!SettingValues.viewType || single ? 22.5 : 7.5,"topMarginSS":!SettingValues.viewType || single ? 25 : 10]
-        let views=["more": more, "add": add, "hide": hide, "superview": view, "sort":sort, "sub": subb, "side":sideView, "label" : label] as [String : Any]
+        let views=["more": more, "add": add, "hide": hide, "superview": view, "shadowbox":shadowbox, "sort":sort, "sub": subb, "side":sideView, "label" : label] as [String : Any]
         var constraint:[NSLayoutConstraint] = []
         constraint = NSLayoutConstraint.constraints(withVisualFormat:  "V:[superview]-(<=1)-[add]",
                                                     options: NSLayoutFormatOptions.alignAllCenterX,
@@ -689,7 +698,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                     metrics: metrics,
                                                     views: views)
-        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[sub(25)]-8-[sort]-4-[more]-8-|",
+        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[sub(25)]-8-[shadowbox(30)]-4-[sort]-4-[more]-8-|",
                                                                      options: NSLayoutFormatOptions(rawValue: 0),
                                                                      metrics: metrics,
                                                                      views: views))
@@ -698,6 +707,11 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                                     metrics: metrics,
                                                                     views: views))
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-(topMargin)-[shadowbox]-(topMargin)-|",
+                                                                    options: NSLayoutFormatOptions(rawValue: 0),
+                                                                    metrics: metrics,
+                                                                    views: views))
+
         constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-(topMarginS)-[sub(25)]-(topMarginS)-|",
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                                     metrics: metrics,
@@ -1167,6 +1181,12 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         }
         actionSheetController.addAction(cancelActionButton)
         
+        cancelActionButton = UIAlertAction(title: "Shadowbox mode", style: .default) { action -> Void in
+            self.shadowboxMode()
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+
         cancelActionButton = UIAlertAction(title: "Subreddit Theme", style: .default) { action -> Void in
             if(parentVC != nil){
                 let p = (parentVC!)
@@ -1220,6 +1240,18 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         show(controller, sender: self)
     }
     
+    func shadowboxMode(){
+        var gLinks:[RSubmission] = []
+        for l in links{
+            if l.banner {
+                gLinks.append(l)
+            }
+        }
+        let controller = ShadowboxViewController.init(submissions: gLinks)
+        controller.modalPresentationStyle = .overCurrentContext
+        present(controller, animated: true, completion: nil)
+    }
+
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.

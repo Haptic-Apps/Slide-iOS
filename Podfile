@@ -18,7 +18,8 @@ pod 'MaterialComponents/Ink'
 pod 'MaterialComponents/ProgressView'
 pod 'MaterialComponents/ShadowElevations'
 pod "GMStepper"
-pod 'MaterialComponents/Snackbar'
+pod 'MaterialComponents/Snackbar’
+pod "SWSegmentedControl"
 pod 'MaterialComponents/ActivityIndicator'
 pod "SAHistoryNavigationViewController"
   pod “SloppySwiper”, :git => ‘https://github.com/fastred/SloppySwiper'

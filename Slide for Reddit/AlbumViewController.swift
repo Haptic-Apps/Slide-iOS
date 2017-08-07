@@ -8,7 +8,7 @@
 
 import UIKit
 
-class AlbumViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate  {
+class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIPageViewControllerDelegate  {
     
     var vCs: [UIViewController] = [ClearVC()]
     var baseURL: URL?

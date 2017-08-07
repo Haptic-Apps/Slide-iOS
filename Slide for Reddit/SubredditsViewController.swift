@@ -331,13 +331,20 @@ class SubredditsViewController:  PagingMenuController , UISplitViewControllerDel
         sort.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let sortB = UIBarButtonItem.init(customView: sort)
         
+        let shadowbox = UIButton.init(type: .custom)
+        shadowbox.setImage(UIImage.init(named: "shadowbox")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
+        shadowbox.addTarget(self, action: #selector(self.shadowbox), for: UIControlEvents.touchUpInside)
+        shadowbox.frame = CGRect.init(x: 0, y: 20, width: 30, height: 30)
+        shadowbox.translatesAutoresizingMaskIntoConstraints = false
+        let sB = UIBarButtonItem.init(customView: shadowbox)
+
         let more = UIButton.init(type: .custom)
         more.setImage(UIImage.init(named: "ic_more_vert_white"), for: UIControlState.normal)
         more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
         more.frame = CGRect.init(x: -30, y: 0, width: 30, height: 30)
         let moreB = UIBarButtonItem.init(customView: more)
         
-        navigationItem.rightBarButtonItems = [ moreB, sortB]
+        navigationItem.rightBarButtonItems = [ moreB, sortB, sB]
         
         view.backgroundColor = ColorUtil.backgroundColor
         // set up style before super view did load is executed
@@ -443,6 +450,11 @@ class SubredditsViewController:  PagingMenuController , UISplitViewControllerDel
         present(SideMenuManager.menuLeftNavigationController!, animated: true)
     }
     
+    func shadowbox(){
+        (SubredditsViewController.viewControllers[currentPage] as? SubredditLinkViewController)?.shadowboxMode()
+    }
+    
+
     func showMenu(_ sender: AnyObject){
         (SubredditsViewController.viewControllers[currentPage] as? SubredditLinkViewController)?.showMore(self, parentVC: self)
     }

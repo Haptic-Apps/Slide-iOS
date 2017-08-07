@@ -33,10 +33,22 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
             let sortB = UIBarButtonItem.init(customView: sort)
             
             navigationItem.rightBarButtonItems = [ sortB]
+            
+            let close = UIButton.init(type: .custom)
+            close.setImage(UIImage.init(named: "close")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
+            close.addTarget(self, action: #selector(self.exit), for: UIControlEvents.touchUpInside)
+            close.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+            let closeB = UIBarButtonItem.init(customView: close)
+            navigationItem.leftBarButtonItem = closeB
+
         }
         
         webView.addObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), options: .new, context: nil)
 
+    }
+    
+    func exit(){
+        self.dismiss(animated: true, completion: nil)
     }
     
     func readerMode(_ sender: AnyObject){
@@ -57,16 +69,16 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         navigationController?.setNavigationBarHidden(false, animated: false)
 
         self.navigationController?.navigationBar.backItem?.title = ""
-        webView = WKWebView(frame: CGRect(x:0, y:0, width: UIScreen.main.bounds.width, height:UIScreen.main.bounds.height))
-       // self.shyNavBarManager.scrollView = self.webView.scrollView
+        webView = WKWebView(frame: self.view.frame)
         webView.navigationDelegate = self
         webView.allowsBackForwardNavigationGestures = true
 
         self.view.addSubview(webView)
-        myProgressView = UIProgressView(frame: CGRect(x:0, y:webView.frame.origin.y, width: UIScreen.main.bounds.width, height:10))
+        myProgressView = UIProgressView(frame: CGRect(x:0, y:webView.frame.origin.y, width: self.view.frame.size.width, height:10))
         myProgressView.progressTintColor = ColorUtil.accentColorForSub(sub: sub)
         self.view.addSubview(myProgressView)
 
+        self.webView.scrollView.frame = self.view.frame
         loadUrl()
 
     }

@@ -1,0 +1,6 @@
+framework module SWSegmentedControl {
+  umbrella header "SWSegmentedControl-umbrella.h"
+
+  export *
+  module * { export * }
+}

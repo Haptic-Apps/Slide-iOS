@@ -11,6 +11,8 @@ import UIKit
 class SubredditReorderViewController: UITableViewController {
     
     var subs: [String] = []
+    var editItems: [UIBarButtonItem] = []
+    var normalItems: [UIBarButtonItem] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,9 +41,10 @@ class SubredditReorderViewController: UITableViewController {
         delete.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let deleteB = UIBarButtonItem.init(customView: delete)
         
-        let save = UIBarButtonItem.init(title: "Save", style: .done, target: self, action: #selector(self.save(_:)))
+        editItems = [deleteB, topB]
+        normalItems = [syncB]
         
-        self.navigationItem.rightBarButtonItems = [save, syncB, deleteB, topB]
+        self.navigationItem.rightBarButtonItems = normalItems
     }
     
     var delete = UIButton()
@@ -52,12 +55,17 @@ class SubredditReorderViewController: UITableViewController {
         return UITableViewAutomaticDimension
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        save(nil)
+    }
+    
     override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableViewAutomaticDimension
     }
     
     
-    func save(_ selector: AnyObject){
+    func save(_ selector: AnyObject?){
         SubredditReorderViewController.changed = true
         Subscriptions.set(name: AccountController.currentName, subs: subs, completion: {
             self.dismiss(animated: true, completion: nil)
@@ -133,11 +141,13 @@ class SubredditReorderViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
-        return false
+        return true
     }
     
+    var stuck = ["all", "frontpage", "slide_ios"]
+    
     override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        return true
+        return !stuck.contains(subs[indexPath.row])
     }
     
     override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
@@ -203,8 +213,22 @@ class SubredditReorderViewController: UITableViewController {
 
     }
 
+    override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        if(tableView.indexPathsForSelectedRows != nil && !tableView.indexPathsForSelectedRows!.isEmpty){
+            print(tableView.indexPathsForSelectedRows!.count)
+            self.navigationItem.setRightBarButtonItems(editItems, animated: true)
+        } else {
+            self.navigationItem.setRightBarButtonItems(normalItems, animated: true)
+        }
+    }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if(!tableView.indexPathsForSelectedRows!.isEmpty){
+            print(tableView.indexPathsForSelectedRows!.count)
+            self.navigationItem.setRightBarButtonItems(editItems, animated: true)
+        } else {
+            self.navigationItem.setRightBarButtonItems(normalItems, animated: true)
+        }
        /* deprecated tableView.deselectRow(at: indexPath, animated: true)
         let item = subs[indexPath.row]
         let actionSheetController: UIAlertController = UIAlertController(title: item, message: "", preferredStyle: .actionSheet)

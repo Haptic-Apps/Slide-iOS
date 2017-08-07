@@ -83,7 +83,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             })
         }
     }
-        
+    
     func openComments(id: String) {
         //don't do anything
     }
@@ -124,7 +124,12 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         self.tableView.endEditing(true)
         tableView.beginUpdates()
         replyShown = false
+        if(menuId == "sub"){
+            menuShown = false
+            tableView.deleteRows(at: [IndexPath.init(row: 0, section: 0)], with: .fade)
+        } else {
         tableView.reloadRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .automatic)
+        }
         tableView.endUpdates()
     }
     
@@ -894,8 +899,28 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.view.bounds.width / CGFloat(320))) > 1 && false){
             self.navigationController!.view.backgroundColor = .clear
         }
+        let recognizer = UITapGestureRecognizer(target: self, action: #selector(self.handleTapBehind(sender:)))
+        recognizer.numberOfTapsRequired = 1
+        recognizer.cancelsTouchesInView = false
+        self.tableView.window?.addGestureRecognizer(recognizer)
     }
     
+    func gestureRecognizer(_ sender: UIGestureRecognizer,
+                           shouldRecognizeSimultaneouslyWith shouldRecognizeSimultaneouslyWithGestureRecognizer:UIGestureRecognizer) -> Bool {
+        return true
+    }
+    
+    func handleTapBehind(sender:UIGestureRecognizer) {
+        print("tapped")
+        if(sender.state == UIGestureRecognizerState.ended){
+            let location:CGPoint = sender.location(in: nil)
+            if(!self.view.point(inside: self.view.convert(location, from: self.view.window), with: nil)){
+                self.parent!.view.window!.removeGestureRecognizer(sender)
+                self.dismiss(animated: true, completion: nil)
+            }
+        }
+    }
+
 
     var duringAnimation = false
     var interactionController : UIPercentDrivenInteractiveTransition?
@@ -1761,7 +1786,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             }
             toHide.append(name)
 
-            if(!hiddenPersons.contains(n)) {
+            if(!hiddenPersons.contains(name)) {
                 i += unhideNumber(n: name, iB: 0)
             }
         }

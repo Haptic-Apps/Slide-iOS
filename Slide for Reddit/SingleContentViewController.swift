@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SingleContentViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
+class SingleContentViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
 
     var vCs: [UIViewController] = [ClearVC()]
     var baseURL: URL?

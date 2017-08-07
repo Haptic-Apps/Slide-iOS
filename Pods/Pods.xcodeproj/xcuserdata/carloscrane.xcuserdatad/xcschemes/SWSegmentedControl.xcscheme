@@ -14,10 +14,10 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '920749ACB45AF4B13532BCC1784C430B'
-               BlueprintName = 'RealmSwift'
+               BlueprintIdentifier = 'EFC6771798982A1ED225939B567F996B'
+               BlueprintName = 'SWSegmentedControl'
                ReferencedContainer = 'container:Pods.xcodeproj'
-               BuildableName = 'RealmSwift.framework'>
+               BuildableName = 'SWSegmentedControl.framework'>
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

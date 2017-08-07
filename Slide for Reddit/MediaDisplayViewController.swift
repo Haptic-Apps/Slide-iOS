@@ -13,7 +13,7 @@ import AVFoundation
 import Alamofire
 import AVKit
 
-class MediaDisplayViewController: UIViewController, UIScrollViewDelegate, UIGestureRecognizerDelegate {
+class MediaDisplayViewController: UIViewController, UIScrollViewDelegate, UIGestureRecognizerDelegate, YTPlayerViewDelegate {
     
     var baseURL: URL?
     var loadedURL: URL?
@@ -27,6 +27,7 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate, UIGest
     var imageView = UIImageView()
     var videoPlayer = AVPlayer()
     var videoView = UIView()
+    var ytPlayer = YTPlayerView()
     var playerVC = AVPlayerViewController()
     var menuB : UIBarButtonItem?
     var inAlbum = false
@@ -296,7 +297,6 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate, UIGest
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.view.backgroundColor = .clear
     }
     
     func startDisplay(){
@@ -308,11 +308,100 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate, UIGest
             } else {
                 loadImage(imageURL: baseURL!)
             }
-        } else if(type == .GIF || type == .VIDEO || type == .STREAMABLE || type == .VID_ME){
+        } else if(type == .GIF || type == .STREAMABLE || type == .VID_ME){
             getGif(urlS: baseURL!.absoluteString)
+        } else if(type == .IMGUR){
+            loadImage(imageURL: URL.init(string: baseURL!.absoluteString + ".png")!)
+        } else if(type == .VIDEO){
+            toolbar.isHidden = true
+            let he = getYTHeight()
+            ytPlayer = YTPlayerView.init(frame: CGRect.init(x: 0, y: (self.view.frame.size.height - he)/2, width: self.view.frame.size.width, height: he))
+            ytPlayer.isHidden = true
+            self.view.addSubview(ytPlayer)
+            getYouTube(urlS: baseURL!.absoluteString)
         }
     }
     
+    func getYTHeight() -> CGFloat {
+        var height = ((self.view.frame.size.width / 16)*9)
+        return height
+    }
+    
+    func getYouTube(urlS: String){
+        var url = urlS
+        if(url.contains("#t=")){
+            url = url.replacingOccurrences(of: "#t=", with: url.contains("?") ? "&t=" : "?t=")
+        }
+        
+        let i = URL.init(string: url)
+        if let dictionary = i?.queryDictionary {
+            if let t = dictionary["t"]{
+                millis = getTimeFromString(t);
+            } else if let start = dictionary["start"] {
+                millis = getTimeFromString(start);
+            }
+            
+            if let list = dictionary["list"]{
+                playlist = list
+            }
+            
+            if let v = dictionary["v"]{
+                video = v
+            } else if let w = dictionary["w"]{
+                video = w
+            } else if url.lowercased().contains("youtu.be"){
+                video = getLastPathSegment(url)
+            }
+            
+            if let u = dictionary["u"]{
+                let param =  u
+                video = param.substring(param.indexOf("=")! + 1, length: param.contains("&") ? param.indexOf("&")! : param.length);
+            }
+        }
+        self.ytPlayer.delegate = self
+        if(!playlist.isEmpty){
+            ytPlayer.load(withPlaylistId: playlist)
+        } else {
+            ytPlayer.load(withVideoId: video, playerVars: ["controls":1,"playsinline":1,"start":millis,"fs":0])
+        }
+
+    }
+    
+    func getLastPathSegment(_ path: String) -> String {
+        var inv = path
+        if(inv.endsWith("/")){
+            inv = inv.substring(0, length: inv.length - 1)
+        }
+        let slashindex = inv.lastIndexOf("/")!
+        print("Index is \(slashindex)")
+        inv = inv.substring(slashindex + 1, length: inv.length - slashindex - 1)
+        return inv
+    }
+    var millis = 0
+    var video = ""
+    var playlist = ""
+    
+    func getTimeFromString(_ time: String) -> Int {
+        var timeAdd = 0;
+        for s in time.components(separatedBy: CharacterSet.init(charactersIn: "hms")){
+            print(s)
+            if(!s.isEmpty){
+            if(time.contains(s + "s")){
+                timeAdd += Int(s)!;
+            } else if(time.contains(s + "m")){
+                timeAdd += 60 * Int(s)!;
+            } else if(time.contains(s + "h")){
+                timeAdd += 3600 * Int(s)!;
+            }
+            }
+        }
+        if(timeAdd == 0 && Int(time) != nil){
+            timeAdd+=Int(time)!;
+        }
+        
+        return timeAdd * 1000;
+        
+    }
     func loadGfycat(urlString: String){
         let url = URL(string: urlString)
         URLSession.shared.dataTask(with:url!) { (data, response, error) in
@@ -622,6 +711,12 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate, UIGest
         case DIRECT
         case OTHER
     }
+    
+    func playerViewDidBecomeReady(_ playerView: YTPlayerView) {
+        playerView.isHidden = false
+        self.ytPlayer.playVideo()
+    }
+
     
     /// Prevents delivery of touch gestures to AVPlayerViewController's gesture recognizer,
     /// which would cause controls to hide immediately after being shown.

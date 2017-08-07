@@ -90,6 +90,9 @@
 		BE780B621E32CB9600DAA1EB /* RelatedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE780B611E32CB9600DAA1EB /* RelatedViewController.swift */; };
 		BE780B641E3405F300DAA1EB /* SettingsTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE780B631E3405F300DAA1EB /* SettingsTheme.swift */; };
 		BE780B691E3527DA00DAA1EB /* Drafts.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE780B681E3527D900DAA1EB /* Drafts.swift */; };
+		BE7AF5761F3529E00003B24B /* ShadowboxLinkViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7AF5751F3529E00003B24B /* ShadowboxLinkViewController.swift */; };
+		BE7AF5781F363A7C0003B24B /* ShadowboxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7AF5771F363A7C0003B24B /* ShadowboxViewController.swift */; };
+		BE7AF57A1F3655F50003B24B /* SwipeDownModalVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7AF5791F3655F50003B24B /* SwipeDownModalVC.swift */; };
 		BE7BFB421F128F9B009CA2E1 /* Sidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7BFB411F128F9B009CA2E1 /* Sidebar.swift */; };
 		BE7BFB481F1997BA009CA2E1 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE7BFB471F1997BA009CA2E1 /* MapKit.framework */; };
 		BE8592C21E0EE72800836C1D /* reddift_config.json in Resources */ = {isa = PBXBuildFile; fileRef = BE8592C11E0EE72800836C1D /* reddift_config.json */; };
@@ -258,6 +261,9 @@
 		BE780B611E32CB9600DAA1EB /* RelatedViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RelatedViewController.swift; sourceTree = "<group>"; };
 		BE780B631E3405F300DAA1EB /* SettingsTheme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsTheme.swift; sourceTree = "<group>"; };
 		BE780B681E3527D900DAA1EB /* Drafts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Drafts.swift; sourceTree = "<group>"; };
+		BE7AF5751F3529E00003B24B /* ShadowboxLinkViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShadowboxLinkViewController.swift; sourceTree = "<group>"; };
+		BE7AF5771F363A7C0003B24B /* ShadowboxViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShadowboxViewController.swift; sourceTree = "<group>"; };
+		BE7AF5791F3655F50003B24B /* SwipeDownModalVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwipeDownModalVC.swift; sourceTree = "<group>"; };
 		BE7BFB411F128F9B009CA2E1 /* Sidebar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sidebar.swift; sourceTree = "<group>"; };
 		BE7BFB471F1997BA009CA2E1 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		BE8592C11E0EE72800836C1D /* reddift_config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = reddift_config.json; sourceTree = "<group>"; };
@@ -373,6 +379,7 @@
 				BE9455FD1F32B5220097EEF0 /* SingleContentViewController.swift */,
 				BE9455FF1F32DD310097EEF0 /* AlbumViewController.swift */,
 				BE9456031F34B4B40097EEF0 /* AVControlsPlayer.swift */,
+				BE7AF5791F3655F50003B24B /* SwipeDownModalVC.swift */,
 			);
 			name = ContentViewControllers;
 			sourceTree = "<group>";
@@ -635,6 +642,8 @@
 				BEE206F91F1DE286008BB5F1 /* WrappingFlowLayout.swift */,
 				BE3D6B851F1F20C300E64682 /* LinkTableViewCell.swift */,
 				BED7B6B91F2258E700E31A82 /* CachedTitle.swift */,
+				BE7AF5751F3529E00003B24B /* ShadowboxLinkViewController.swift */,
+				BE7AF5771F363A7C0003B24B /* ShadowboxViewController.swift */,
 			);
 			name = LinkCellViews;
 			sourceTree = "<group>";
@@ -1024,6 +1033,7 @@
 				BE3E5C191E16BC3900749C0C /* StringHTML+util.swift in Sources */,
 				BE7439E91E201AEE008BB63B /* Subscriptions.swift in Sources */,
 				BE97422C1F00116D00BF48E0 /* BannerLinkCellView.swift in Sources */,
+				BE7AF5781F363A7C0003B24B /* ShadowboxViewController.swift in Sources */,
 				BE3521701E3D238400C30B8D /* FontGenerator.swift in Sources */,
 				BE2B89F71E246CA60053D493 /* GMPalette.swift in Sources */,
 				BE3E5C1F1E18223600749C0C /* CellContent.swift in Sources */,
@@ -1043,6 +1053,7 @@
 				BEE206F81F1CFC96008BB5F1 /* SettingsHistory.swift in Sources */,
 				BE9456021F3375460097EEF0 /* LeftTransition.swift in Sources */,
 				BE2F3F5A1EF8DD3D003C1B28 /* SettingsData.swift in Sources */,
+				BE7AF5761F3529E00003B24B /* ShadowboxLinkViewController.swift in Sources */,
 				BEBF45C81E230CC900764BB8 /* History.swift in Sources */,
 				BE6EA6E01E1C228100E9E709 /* GfycatTranscoded.swift in Sources */,
 				BEE5BF641E11A15500E3C9AE /* LinkCellView.swift in Sources */,
@@ -1064,6 +1075,7 @@
 				BEB2B2351E35D25100BF761C /* InboxContributionLoader.swift in Sources */,
 				BE06109B1E510A1C0073DB2F /* CaptionView.swift in Sources */,
 				BEE10FC61F25078F00A72CE5 /* PagingCommentViewController.swift in Sources */,
+				BE7AF57A1F3655F50003B24B /* SwipeDownModalVC.swift in Sources */,
 				BE5E53751E1DAEB7004FE226 /* RedditLink.swift in Sources */,
 				BEC4942A1E307DDA006618F3 /* GalleryCellView.swift in Sources */,
 				BE97422E1F0011BE00BF48E0 /* ThumbnailLinkCellView.swift in Sources */,

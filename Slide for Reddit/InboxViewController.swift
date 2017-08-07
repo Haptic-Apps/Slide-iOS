@@ -8,94 +8,23 @@
 
 import UIKit
 import reddift
-import PagingMenuController
 import MaterialComponents.MaterialSnackbar
 
-class InboxViewController:  PagingMenuController {
+class InboxViewController:  UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIToolbarDelegate {
     var content : [MessageWhere] = []
     var isReload = false
     var session: Session? = nil
     
-    static var viewControllers : [UIViewController] = []
+    var vCs : [UIViewController] = [ClearVC()]
 
-    struct PagingMenuOptionsBar: PagingMenuControllerCustomizable {
-        var componentType: ComponentType {
-            return .all(menuOptions: MenuOptions(), pagingControllers:viewControllers)
-        }
-    }
-    struct MenuItem: MenuItemViewCustomizable {
-        var horizontalMargin = 10
-        var displayMode: MenuItemDisplayMode
-    }
-
-    struct MenuOptions: MenuViewCustomizable {
-        var marginTop: CGFloat {
-            return 0
-        }
-
-        static var color = UIColor.blue
-        
-        var itemsOptions: [MenuItemViewCustomizable] {
-            var menuitems: [MenuItemViewCustomizable] = []
-            for controller in viewControllers {
-                menuitems.append(MenuItem(horizontalMargin: 10, displayMode:( (controller as! ContentListingViewController).baseData.displayMode)))
-            }
-            return menuitems
-        }
-        
-        static func setColor(c: UIColor){
-            color = c
-        }
-        
-        
-        var displayMode: MenuDisplayMode {
-            return MenuDisplayMode.segmentedControl
-        }
-        
-        var backgroundColor: UIColor {
-            return ColorUtil.getColorForUser(name: AccountController.currentName)
-        }
-        var selectedBackgroundColor: UIColor {
-            return ColorUtil.getColorForUser(name: AccountController.currentName)
-        }
-        
-        var height: CGFloat {
-            return 40
-        }
-        var animationDuration: TimeInterval {
-            return 0.3
-        }
-        var deceleratingRate: CGFloat {
-            return UIScrollViewDecelerationRateFast
-        }
-        var selectedItemCenter: Bool {
-            return true
-        }
-        var focusMode: MenuFocusMode {
-            return .roundRect(radius: 5, horizontalPadding: 5, verticalPadding: 5, selectedColor: .white)
-        }
-        var dummyItemViewsSet: Int {
-            return 3
-        }
-        var menuPosition: MenuPosition {
-            return .top
-        }
-        var dividerImage: UIImage? {
-            return nil
-        }
-        
-    }
-    
-    init(){
+    public init(){
         self.session = (UIApplication.shared.delegate as! AppDelegate).session
         self.content = InboxViewController.doDefault()
-        InboxViewController.viewControllers.removeAll()
-
+        
         for place in content {
-            InboxViewController.viewControllers.append(ContentListingViewController.init(dataSource: InboxContributionLoader(whereContent: place)))
+            vCs.append(ContentListingViewController.init(dataSource: InboxContributionLoader(whereContent: place)))
         }
-
-        super.init(options: PagingMenuOptionsBar())
+        super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -103,7 +32,7 @@ class InboxViewController:  PagingMenuController {
     }
     
     static func doDefault() -> [MessageWhere]{
-        return [MessageWhere.inbox, MessageWhere.unread, MessageWhere.messages, MessageWhere.sent, MessageWhere.mentions]
+        return [MessageWhere.inbox, MessageWhere.messages, MessageWhere.unread]
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -137,10 +66,12 @@ class InboxViewController:  PagingMenuController {
         let readB = UIBarButtonItem.init(customView: read)
         
         if(navigationController != nil){
-            navigationItem.rightBarButtonItems = [ readB, editB]
+            navigationItem.rightBarButtonItems = [ readB]
         }
     }
-    
+    func position(for bar: UIBarPositioning) -> UIBarPosition {
+        return UIBarPosition.topAttached
+    }
     func new(_ sender: AnyObject){
         let reply  = ReplyViewController.init(message: nil) { (message) in
             DispatchQueue.main.async(execute: { () -> Void in
@@ -185,8 +116,32 @@ class InboxViewController:  PagingMenuController {
     
     var time: Double = 0
     
+    func close(){
+        self.navigationController?.popViewController(animated: true)
+    }
+    
     override func viewDidLoad() {
-        
+        var items: [String] = []
+        for i in content {
+            items.append(i.description)
+        }
+        let segment: UISegmentedControl = UISegmentedControl(items: items)
+        segment.sizeToFit()
+        segment.tintColor = .white
+        let close = UIButton.init(type: .custom)
+        close.setImage(UIImage.init(named: "close")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
+        close.addTarget(self, action: #selector(self.close), for: UIControlEvents.touchUpInside)
+        close.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        let closeB = UIBarButtonItem.init(customView: close)
+        navigationItem.leftBarButtonItem = closeB
+        segment.selectedSegmentIndex = 0;
+        var toolbar = UIToolbar.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: 40))
+        toolbar.addSubview(segment)
+        toolbar.isTranslucent = false
+        segment.frame = CGRect.init(x: 15, y: 5, width: toolbar.frame.size.width - 30, height: 30)
+        toolbar.barTintColor = ColorUtil.getColorForSub(sub: "NONE")
+        toolbar.delegate = self
+        self.view.addSubview(toolbar)
         time = History.getInboxSeen()
         History.inboxSeen()
                 view.backgroundColor = ColorUtil.backgroundColor
@@ -194,9 +149,57 @@ class InboxViewController:  PagingMenuController {
         // -
         
         super.viewDidLoad()
-        self.edgesForExtendedLayout = []
+        self.dataSource = self
+        self.delegate = self
+
+        self.navigationController?.view.backgroundColor = UIColor.clear
+        let firstViewController = vCs[1]
         
+        setViewControllers([firstViewController],
+                           direction: .forward,
+                           animated: true,
+                           completion: nil)
         
-        self.menuView?.backgroundColor = ColorUtil.getColorForSub(sub: "")
     }
+    
+    func pageViewController(_ pageViewController: UIPageViewController,
+                            viewControllerBefore viewController: UIViewController) -> UIViewController? {
+        guard let viewControllerIndex = vCs.index(of: viewController) else {
+            return nil
+        }
+        
+        let previousIndex = viewControllerIndex - 1
+        
+        guard previousIndex >= 0 else {
+            return nil
+        }
+        
+        guard vCs.count > previousIndex else {
+            return nil
+        }
+        
+        return vCs[previousIndex]
+    }
+    
+    func pageViewController(_ pageViewController: UIPageViewController,
+                            viewControllerAfter viewController: UIViewController) -> UIViewController? {
+        guard let viewControllerIndex = vCs.index(of: viewController) else {
+            return nil
+        }
+        
+        
+        let nextIndex = viewControllerIndex + 1
+        let orderedViewControllersCount = vCs.count
+        
+        guard orderedViewControllersCount != nextIndex else {
+            return nil
+        }
+        
+        guard orderedViewControllersCount > nextIndex else {
+            return nil
+        }
+        
+        return vCs[nextIndex]
+    }
+
 }

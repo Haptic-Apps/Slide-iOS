@@ -358,7 +358,7 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         let comment = CommentViewController.init(submission: (self.comment?.linkid.substring(3, length: (self.comment?.linkid.length)! - 3))! , comment: self.comment!.id, context: 3, subreddit: (self.comment?.subreddit)!)
         if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.parentViewController!.view.bounds.width / CGFloat(320))) > 1){
             let navigationController = UINavigationController(rootViewController: comment)
-            navigationController.modalPresentationStyle = .formSheet
+            navigationController.modalPresentationStyle = .pageSheet
             navigationController.modalTransitionStyle = .crossDissolve
             parentViewController?.present(navigationController, animated: true, completion: nil)
         } else {

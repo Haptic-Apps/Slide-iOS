@@ -126,7 +126,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         if let session = session {
-            self.postLocalNotification("Checking notifs.")
             do {
                 let request = try session.requestForGettingProfile()
                 let fetcher = BackgroundFetch(current: session,
@@ -369,10 +368,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             })
         } catch { print(error) }
     }
+    
     func reloadSession() {
         // reddit username is save NSUserDefaults using "currentName" key.
         // create an authenticated or anonymous session object
-        if let currentName = UserDefaults.standard.object(forKey: "currentName") as? String {
+        if let currentName = UserDefaults.standard.object(forKey: "name") as? String {
             do {
                 let token = try OAuth2TokenRepository.token(of: currentName)
                 self.session = Session(token: token)
