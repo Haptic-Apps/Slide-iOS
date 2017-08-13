@@ -58,6 +58,26 @@ class ColorUtil{
     static var foregroundColor = UIColor.white
     static var backgroundColor = UIColor.white
     static var fontColor = UIColor.black
+    
+    public static func setBackgroundToolbar(toolbar: UINavigationBar?) {
+        if(toolbar != nil){
+            toolbar?.isTranslucent = true
+        toolbar?.barTintColor = backgroundColor.withAlphaComponent(0.7)
+        }
+    }
+    
+    private static func image(fromLayer layer: CALayer) -> UIImage {
+        UIGraphicsBeginImageContext(layer.frame.size)
+        
+        layer.render(in: UIGraphicsGetCurrentContext()!)
+        
+        let outputImage = UIGraphicsGetImageFromCurrentImageContext()
+        
+        UIGraphicsEndImageContext()
+        
+        return outputImage!
+    }
+
     static var baseColor = GMColor.blue500Color()
     static var baseAccent = GMColor.cyanA200Color()
     public static var upvoteColor = UIColor.init(hexString: "#FF9800")

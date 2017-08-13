@@ -22,6 +22,7 @@ pod 'MaterialComponents/Snackbar’
 pod "SWSegmentedControl"
 pod 'MaterialComponents/ActivityIndicator'
 pod "SAHistoryNavigationViewController"
+pod "GSKStretchyHeaderView"
   pod “SloppySwiper”, :git => ‘https://github.com/fastred/SloppySwiper'
   pod 'UZTextView', :git => 'https://github.com/ccrama/UZTextView'
   pod 'ImageViewer', :git => 'https://github.com/ccrama/ImageViewer'

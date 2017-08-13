@@ -36,8 +36,6 @@ class SingleContentViewController: SwipeDownModalVC, UIPageViewControllerDataSou
         self.dataSource = self
         self.delegate = self
         
-
-        view.backgroundColor = UIColor.black.withAlphaComponent(0.84)
         self.navigationController?.view.backgroundColor = UIColor.clear
         let firstViewController = vCs[1]
         

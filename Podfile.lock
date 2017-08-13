@@ -3,6 +3,7 @@ PODS:
   - Alamofire (4.5.0)
   - BGTableViewRowActionWithImage (0.4.1)
   - GMStepper (2.0.0)
+  - GSKStretchyHeaderView (1.0.1)
   - ImagePickerSheetController (0.9.3)
   - ImageViewer (4.0)
   - KCFloatingActionButton (2.1.2)
@@ -131,6 +132,7 @@ DEPENDENCIES:
   - Alamofire (~> 4.3)
   - BGTableViewRowActionWithImage
   - GMStepper
+  - GSKStretchyHeaderView
   - ImagePickerSheetController (from `https://github.com/lbrndnr/ImagePickerSheetController`, branch `swift3`)
   - ImageViewer (from `https://github.com/ccrama/ImageViewer`)
   - KCFloatingActionButton (~> 2.1.0)
@@ -199,6 +201,7 @@ SPEC CHECKSUMS:
   Alamofire: f28cdffd29de33a7bfa022cbd63ae95a27fae140
   BGTableViewRowActionWithImage: 6a0731a84662735f5ec28dc253e3fba6a73ebc5b
   GMStepper: 6aff0c881afac2f432e5c9b0df71e44e14110a06
+  GSKStretchyHeaderView: c7e7fddd73396764c9bd7aea81cf934af7f8afd2
   ImagePickerSheetController: 4789b06940e299431455c61be77fda440883c36c
   ImageViewer: 364abc0309c33dda86d08ca25b0243e5c67d8cd3
   KCFloatingActionButton: 1b22ce95d44b51915280df8a8b277eae4a06c3f1
@@ -218,6 +221,6 @@ SPEC CHECKSUMS:
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   UZTextView: d8d45a8459b0de6f2c393458a05c65352f89e00a
 
-PODFILE CHECKSUM: 9f55a9fec630e30f939585379bc369acccac77b2
+PODFILE CHECKSUM: 3a1055f6d9939443f1d2de8736c245061bb20ee4
 
 COCOAPODS: 1.1.1

@@ -14,10 +14,10 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '3732E73428DFD26042ACB556EA9A10EB'
-               BlueprintName = 'RealmSwift'
+               BlueprintIdentifier = 'CD71ED72EACA0156F0B96DDE230F2138'
+               BlueprintName = 'GSKStretchyHeaderView'
                ReferencedContainer = 'container:Pods.xcodeproj'
-               BuildableName = 'RealmSwift.framework'>
+               BuildableName = 'GSKStretchyHeaderView.framework'>
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

@@ -18,8 +18,13 @@ import MaterialComponents.MaterialSnackbar
 import MaterialComponents.MDCActivityIndicator
 import TTTAttributedLabel
 import SloppySwiper
+import GSKStretchyHeaderView
 
 class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate,  UICollectionViewDataSource, LinkCellViewDelegate, ColorPickerDelegate, KCFloatingActionButtonDelegate, UIGestureRecognizerDelegate, WrappingFlowLayoutDelegate, UINavigationControllerDelegate {
+    
+    let maxHeaderHeight: CGFloat = 120;
+    let minHeaderHeight: CGFloat = 56;
+
     
     func openComments(id: String) {
         var index = 0
@@ -254,33 +259,23 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
             
         }
     }
-
+    
+    var isCollapsed = false
+    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         
         let currentY = scrollView.contentOffset.y;
-        let headerHeight = CGFloat(70);
         var didHide = false
         
-        if(currentY > lastYUsed ) {
-            hideUI(inHeader: (currentY > headerHeight) )
+        if(currentY > lastYUsed && currentY > 60) {
+            if(navigationController != nil && !(navigationController!.isNavigationBarHidden)){
+            hideUI(inHeader: true)
             didHide = true
-        } else if(currentY < lastYUsed + 20 && ((currentY > headerHeight))){
+            }
+        } else if((currentY < lastYUsed + 20 ) && navigationController != nil && (navigationController!.isNavigationBarHidden)){
             showUI()
         }
         lastYUsed = currentY
-        if ((lastY <= headerHeight) && (currentY > headerHeight) && (navigationController?.isNavigationBarHidden)! && !didHide) {
-            (navigationController)?.setNavigationBarHidden(false, animated: true)
-            if(ColorUtil.theme == .LIGHT || ColorUtil.theme == .SEPIA){
-                UIApplication.shared.statusBarStyle = .lightContent
-            }
-        }
-        
-        if ((lastY > headerHeight) && (currentY <= headerHeight) && !(navigationController?.isNavigationBarHidden)!) {
-            (navigationController)?.setNavigationBarHidden(true, animated: true)
-            if(ColorUtil.theme == .LIGHT || ColorUtil.theme == .SEPIA){
-                UIApplication.shared.statusBarStyle = .default
-            }
-        }
         lastY = currentY
     }
 
@@ -485,7 +480,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
 
         displayMode = MenuItemDisplayMode.text(title: MenuItemText.init(text: sub, color: ColorUtil.fontColor, selectedColor: ColorUtil.fontColor, font: UIFont.boldSystemFont(ofSize: 16), selectedFont: UIFont.boldSystemFont(ofSize: 25)))
         super.init(nibName:nil, bundle:nil)
-        setBarColors(color: ColorUtil.getColorForSub(sub: subName))
+      //  setBarColors(color: ColorUtil.getColorForSub(sub: subName))
     }
     
     init(subName: String, single: Bool){
@@ -493,7 +488,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         self.single = true
         displayMode = MenuItemDisplayMode.text(title: MenuItemText.init(text: sub, color: ColorUtil.fontColor, selectedColor: ColorUtil.fontColor, font: UIFont.boldSystemFont(ofSize: 16), selectedFont: UIFont.boldSystemFont(ofSize: 25)))
         super.init(nibName:nil, bundle:nil)
-        setBarColors(color: ColorUtil.getColorForSub(sub: subName))
+       // setBarColors(color: ColorUtil.getColorForSub(sub: subName))
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -552,8 +547,6 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         return true
     }
     
-    var sideMenu: UISideMenuNavigationController?
-    // var menuNav: SubSidebarViewController?
     var subInfo: Subreddit?
     var flowLayout: WrappingFlowLayout = WrappingFlowLayout.init()
     override func viewDidLoad() {
@@ -578,9 +571,6 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         indicator.startAnimating()
 
         reloadNeedingColor()
-        if(!SettingValues.viewType || single){
-            tableView.contentInset = UIEdgeInsetsMake(40  + (single ? 70 : 40), 0, 0, 0)
-        }
 
         if(single){
             var swiper = SloppySwiper.init(navigationController: self.navigationController!)
@@ -591,64 +581,11 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
     
     static var firstPresented = true
     
+    var headerView = UIView()
+    
 
     func reloadNeedingColor(){
         tableView.backgroundColor = ColorUtil.backgroundColor
-        
-        refreshControl.tintColor = ColorUtil.fontColor
-        refreshControl.attributedTitle = NSAttributedString(string: "")
-        refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControlEvents.valueChanged)
-        tableView.addSubview(refreshControl) // not required when using UITableViewController
-        
-        let label = UILabel.init(frame: CGRect.init(x: 5, y: -1 * (single ? 90 : 60), width: 375, height: !SettingValues.viewType || single ? 70 : 40))
-        if(!SettingValues.viewType || single){
-            label.text =  "     \(sub)"
-        }
-        label.textColor = ColorUtil.fontColor
-        label.adjustsFontSizeToFitWidth = true
-        label.font = UIFont.boldSystemFont(ofSize: 35)
-        
-        
-        let shadowbox = UIButton.init(type: .custom)
-        shadowbox.setImage(UIImage.init(named: "shadowbox")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
-        shadowbox.addTarget(self, action: #selector(self.shadowboxMode), for: UIControlEvents.touchUpInside)
-        shadowbox.frame = CGRect.init(x: 0, y: 20, width: 30, height: 30)
-        shadowbox.translatesAutoresizingMaskIntoConstraints = false
-        label.addSubview(shadowbox)
-
-        
-        let sort = UIButton.init(type: .custom)
-        sort.setImage(UIImage.init(named: "ic_sort_white")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
-        sort.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
-        sort.frame = CGRect.init(x: 0, y: 20, width: 30, height: 30)
-        sort.translatesAutoresizingMaskIntoConstraints = false
-        label.addSubview(sort)
-
-        let more = UIButton.init(type: .custom)
-        more.setImage(UIImage.init(named: "ic_more_vert_white")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
-        more.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControlEvents.touchUpInside)
-        more.frame = CGRect.init(x: 0, y: 20, width: 30, height: 30)
-        more.translatesAutoresizingMaskIntoConstraints = false
-        label.addSubview(more)
-        label.isUserInteractionEnabled = true
-        
-        sort.isUserInteractionEnabled = true
-        more.isUserInteractionEnabled = true
-        
-        
-        subb = UIButton.init(type: .custom)
-        subb.setImage(UIImage.init(named: "addcircle")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
-        subb.addTarget(self, action: #selector(self.subscribeSingle(_:)), for: UIControlEvents.touchUpInside)
-        subb.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-        subb.translatesAutoresizingMaskIntoConstraints = false
-        if(sub == "all" || sub == "frontpage" || sub == "friends" || sub == "popular" || sub.startsWith("/m/")){
-            subb.isHidden = true
-        }
-        label.addSubview(subb)
-        if(Subscriptions.isSubscriber(sub)){
-            subb.setImage(UIImage.init(named: "subbed")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
-        }
-        
         add = MDCFloatingButton.init(shape: .default)
         add.backgroundColor = ColorUtil.getColorForSub(sub: sub)
         add.setImage(UIImage.init(named: "plus"), for: .normal)
@@ -663,17 +600,17 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         hide.addTarget(self, action:#selector(self.hideAll(_:)), for: .touchUpInside)
         hide.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(hide)
+
+        refreshControl.tintColor = ColorUtil.fontColor
+        refreshControl.attributedTitle = NSAttributedString(string: "")
+        refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControlEvents.valueChanged)
+        tableView.addSubview(refreshControl) // not required when using UITableViewController
         
-        sideView = UIView()
-        sideView = UIView(frame: CGRect(x: 0, y: 0, width: 8, height: CGFloat.greatestFiniteMagnitude))
-        sideView.backgroundColor = ColorUtil.getColorForSub(sub: sub)
-        sideView.translatesAutoresizingMaskIntoConstraints = false
-        
-        label.addSubview(sideView)
-        
-        let metrics=["topMargin": !SettingValues.viewType || single ? 20 : 5,"topMarginS":!SettingValues.viewType || single ? 22.5 : 7.5,"topMarginSS":!SettingValues.viewType || single ? 25 : 10]
-        let views=["more": more, "add": add, "hide": hide, "superview": view, "shadowbox":shadowbox, "sort":sort, "sub": subb, "side":sideView, "label" : label] as [String : Any]
+        self.automaticallyAdjustsScrollViewInsets = false
+        let metrics=["none":0]
+        let views=["more": more, "add": add, "hide": hide, "superview": view] as [String : Any]
         var constraint:[NSLayoutConstraint] = []
+
         constraint = NSLayoutConstraint.constraints(withVisualFormat:  "V:[superview]-(<=1)-[add]",
                                                     options: NSLayoutFormatOptions.alignAllCenterX,
                                                     metrics: metrics,
@@ -692,51 +629,13 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
                                                                      metrics: metrics,
                                                                      views: views))
         self.view.addConstraints(constraint)
-        
-        
-        constraint = NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[side(20)]-8-[label]",
-                                                    options: NSLayoutFormatOptions(rawValue: 0),
-                                                    metrics: metrics,
-                                                    views: views)
-        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[sub(25)]-8-[shadowbox(30)]-4-[sort]-4-[more]-8-|",
-                                                                     options: NSLayoutFormatOptions(rawValue: 0),
-                                                                     metrics: metrics,
-                                                                     views: views))
-        
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-(topMargin)-[more]-(topMargin)-|",
-                                                                    options: NSLayoutFormatOptions(rawValue: 0),
-                                                                    metrics: metrics,
-                                                                    views: views))
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-(topMargin)-[shadowbox]-(topMargin)-|",
-                                                                    options: NSLayoutFormatOptions(rawValue: 0),
-                                                                    metrics: metrics,
-                                                                    views: views))
 
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-(topMarginS)-[sub(25)]-(topMarginS)-|",
-                                                                    options: NSLayoutFormatOptions(rawValue: 0),
-                                                                    metrics: metrics,
-                                                                    views: views))
-        
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-(topMargin)-[sort]-(topMargin)-|",
-                                                                    options: NSLayoutFormatOptions(rawValue: 0),
-                                                                    metrics: metrics,
-                                                                    views: views))
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-(topMarginSS)-[side(20)]-(topMarginSS)-|",
-                                                                    options: NSLayoutFormatOptions(rawValue: 0),
-                                                                    metrics: metrics,
-                                                                    views: views))
-        
-        label.addConstraints(constraint)
-        sideView.layer.cornerRadius = 10
-        sideView.clipsToBounds = true
-        
-        tableView.addSubview(label)
-        self.automaticallyAdjustsScrollViewInsets = false
-        
         
         self.tableView.register(BannerLinkCellView.classForCoder(), forCellWithReuseIdentifier: "banner")
         self.tableView.register(ThumbnailLinkCellView.classForCoder(), forCellWithReuseIdentifier: "thumb")
         self.tableView.register(TextLinkCellView.classForCoder(), forCellWithReuseIdentifier: "text")
+        
+        self.tableView.contentInset = UIEdgeInsets.init(top: 64, left: 0, bottom: 0, right: 0)
 
         session = (UIApplication.shared.delegate as! AppDelegate).session
         
@@ -746,7 +645,27 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         }
         
         if(single){
-            sideMenu = UISideMenuNavigationController()
+            
+            let sort = UIButton.init(type: .custom)
+            sort.setImage(UIImage.init(named: "ic_sort_white"), for: UIControlState.normal)
+            sort.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
+            sort.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+            let sortB = UIBarButtonItem.init(customView: sort)
+            
+            let shadowbox = UIButton.init(type: .custom)
+            shadowbox.setImage(UIImage.init(named: "shadowbox"), for: UIControlState.normal)
+            shadowbox.addTarget(self, action: #selector(self.shadowboxMode), for: UIControlEvents.touchUpInside)
+            shadowbox.frame = CGRect.init(x: 0, y: 20, width: 30, height: 30)
+            let sB = UIBarButtonItem.init(customView: shadowbox)
+            
+            let more = UIButton.init(type: .custom)
+            more.setImage(UIImage.init(named: "ic_more_vert_white"), for: UIControlState.normal)
+            more.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControlEvents.touchUpInside)
+            more.frame = CGRect.init(x: -30, y: 0, width: 30, height: 30)
+            let moreB = UIBarButtonItem.init(customView: more)
+            
+            navigationItem.rightBarButtonItems = [ moreB, sortB, sB]
+
             do {
                 try (UIApplication.shared.delegate as! AppDelegate).session?.about(sub, completion: { (result) in
                     switch result {
@@ -809,6 +728,10 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
             fab!.sticky = true
             self.view.addSubview(fab!)
         }
+    }
+    
+    func exit(){
+        self.navigationController?.popViewController(animated: true)
     }
     
     var lastY: CGFloat = CGFloat(0)
@@ -959,9 +882,6 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         UIApplication.shared.statusBarStyle = .lightContent
-        if(navigationController?.isNavigationBarHidden ?? false && single){
-        navigationController?.setNavigationBarHidden(false, animated: true)
-        }
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -1058,57 +978,52 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         self.automaticallyAdjustsScrollViewInsets = false
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
-        self.navigationController?.interactivePopGestureRecognizer?.delegate = self
         
         first = false
         tableView.delegate = self
 
-        if(single){
-            self.navigationController?.navigationBar.barTintColor = UIColor.white
-            if(navigationController != nil){
-                self.title = sub
-                let sort = UIButton.init(type: .custom)
-                sort.setImage(UIImage.init(named: "ic_sort_white"), for: UIControlState.normal)
-                sort.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
-                sort.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
-                let sortB = UIBarButtonItem.init(customView: sort)
-                
-                let more = UIButton.init(type: .custom)
-                more.setImage(UIImage.init(named: "ic_more_vert_white"), for: UIControlState.normal)
-                more.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControlEvents.touchUpInside)
-                more.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
-                let moreB = UIBarButtonItem.init(customView: more)
-                
-                navigationItem.rightBarButtonItems = [ moreB, sortB]
-            } else if parentController != nil && parentController?.navigationController != nil{
-                parentController?.navigationController?.title = sub
-                let sort = UIButton.init(type: .custom)
-                sort.setImage(UIImage.init(named: "ic_sort_white"), for: UIControlState.normal)
-                sort.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
-                sort.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
-                let sortB = UIBarButtonItem.init(customView: sort)
-                
-                let more = UIButton.init(type: .custom)
-                more.setImage(UIImage.init(named: "ic_more_vert_white"), for: UIControlState.normal)
-                more.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControlEvents.touchUpInside)
-                more.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
-                let moreB = UIBarButtonItem.init(customView: more)
-                
-                parentController?.navigationItem.rightBarButtonItems = [ moreB, sortB]
-            }
-        }
-        
         super.viewWillAppear(animated)
          if(savedIndex != nil){
          tableView.reloadItems(at: [savedIndex!])
          } else {
          tableView.reloadData()
          }
-        (navigationController)?.setNavigationBarHidden(true, animated: true)
         if(ColorUtil.theme == .LIGHT || ColorUtil.theme == .SEPIA){
             UIApplication.shared.statusBarStyle = .default
         }
+        self.navigationController?.setNavigationBarHidden(false, animated: true)
+        ColorUtil.setBackgroundToolbar(toolbar: self.navigationController?.navigationBar)
+        createDotHeader()
 
+    }
+    
+    func createDotHeader(){
+        let label = UILabel()
+        if(!SettingValues.viewType || single){
+            label.text =  "        \(sub)"
+        }
+        label.textColor = ColorUtil.fontColor
+        label.adjustsFontSizeToFitWidth = true
+        label.font = UIFont.boldSystemFont(ofSize: 20)
+        
+        sideView = UIView()
+        sideView = UIView(frame: CGRect(x: 0, y: 0, width: 25, height: 25))
+        sideView.backgroundColor = ColorUtil.getColorForSub(sub: sub)
+        sideView.translatesAutoresizingMaskIntoConstraints = false
+        
+        label.addSubview(sideView)
+        
+        sideView.layer.cornerRadius = 12.5
+        sideView.clipsToBounds = true
+        let close = UIButton.init(type: .custom)
+        close.setImage(UIImage.init(named: "close"), for: UIControlState.normal)
+        close.addTarget(self, action: #selector(self.exit), for: UIControlEvents.touchUpInside)
+        close.frame = CGRect.init(x: -30, y: 0, width: 30, height: 30)
+        let closeB = UIBarButtonItem.init(customView: close)
+
+        label.sizeToFit()
+        let leftItem = UIBarButtonItem(customView: label)
+        self.navigationItem.leftBarButtonItems = [closeB, leftItem]
     }
     
     func reloadDataReset(){

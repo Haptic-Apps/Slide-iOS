@@ -106,13 +106,11 @@ class SubredditsViewController:  PagingMenuController , UISplitViewControllerDel
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
-        self.title = currentTitle
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
         
         self.navigationController?.navigationBar.shadowImage = UIImage()
-        self.navigationController?.navigationBar.barTintColor = self.tintColor
+        ColorUtil.setBackgroundToolbar(toolbar: self.navigationController?.navigationBar)
         
         if(AccountController.isLoggedIn){
             checkForMail()
@@ -196,7 +194,6 @@ class SubredditsViewController:  PagingMenuController , UISplitViewControllerDel
     func goToSubreddit(subreddit: String){
         if(Subscriptions.subreddits.contains(subreddit)){
             let index = Subscriptions.subreddits.index(of: subreddit)
-            navigationController?.navigationBar.barTintColor = ColorUtil.getColorForUser(name: subreddit)
             move(toPage: index!)
         } else {
             show(RedditLink.getViewControllerForURL(urlS: URL.init(string: "/r/" + subreddit)!), sender: self)
@@ -250,11 +247,10 @@ class SubredditsViewController:  PagingMenuController , UISplitViewControllerDel
         
         SubredditsViewController.current = (SubredditsViewController.viewControllers[0] as! SubredditLinkViewController).sub
             self.tintColor = ColorUtil.getColorForSub(sub: SubredditsViewController.current)
-            self.navigationController?.navigationBar.barTintColor = self.tintColor
+            ColorUtil.setBackgroundToolbar(toolbar: self.navigationController?.navigationBar)
             self.menuNav?.setSubreddit(subreddit: SubredditsViewController.current)
             if(!SettingValues.viewType){
-                self.title = SubredditsViewController.current
-                self.currentTitle = self.title!
+                self.currentTitle = SubredditsViewController.current
             }
             
             MenuOptions.setColor(c: ColorUtil.accentColorForSub(sub: SubredditsViewController.current))
@@ -313,17 +309,14 @@ class SubredditsViewController:  PagingMenuController , UISplitViewControllerDel
         }
         SubredditsViewController.current = (SubredditsViewController.viewControllers[0] as! SubredditLinkViewController).sub
             self.tintColor = ColorUtil.getColorForSub(sub: SubredditsViewController.current)
-            self.navigationController?.navigationBar.barTintColor = self.tintColor
+            ColorUtil.setBackgroundToolbar(toolbar: self.navigationController?.navigationBar)
             self.menuNav?.setSubreddit(subreddit: SubredditsViewController.current)
             if(!SettingValues.viewType){
-                self.title = SubredditsViewController.current
-                self.currentTitle = self.title!
+                self.currentTitle = SubredditsViewController.current
             }
             
             MenuOptions.setColor(c: ColorUtil.accentColorForSub(sub: SubredditsViewController.current))
             self.colorChanged()
-
-        self.title = "Slide"
         
         let sort = UIButton.init(type: .custom)
         sort.setImage(UIImage.init(named: "ic_sort_white"), for: UIControlState.normal)
@@ -332,10 +325,9 @@ class SubredditsViewController:  PagingMenuController , UISplitViewControllerDel
         let sortB = UIBarButtonItem.init(customView: sort)
         
         let shadowbox = UIButton.init(type: .custom)
-        shadowbox.setImage(UIImage.init(named: "shadowbox")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
+        shadowbox.setImage(UIImage.init(named: "shadowbox"), for: UIControlState.normal)
         shadowbox.addTarget(self, action: #selector(self.shadowbox), for: UIControlEvents.touchUpInside)
         shadowbox.frame = CGRect.init(x: 0, y: 20, width: 30, height: 30)
-        shadowbox.translatesAutoresizingMaskIntoConstraints = false
         let sB = UIBarButtonItem.init(customView: shadowbox)
 
         let more = UIButton.init(type: .custom)
@@ -347,7 +339,34 @@ class SubredditsViewController:  PagingMenuController , UISplitViewControllerDel
         navigationItem.rightBarButtonItems = [ moreB, sortB, sB]
         
         view.backgroundColor = ColorUtil.backgroundColor
-        // set up style before super view did load is executed
+        
+        let menu = UIButton.init(type: .custom)
+        menu.setImage(UIImage.init(named: "menu"), for: UIControlState.normal)
+        menu.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControlEvents.touchUpInside)
+        menu.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+        let menuB = UIBarButtonItem.init(customView: menu)
+        
+        let label = UILabel()
+        label.text =  "        \(self.currentTitle)"
+        label.textColor = ColorUtil.fontColor
+        label.adjustsFontSizeToFitWidth = true
+        label.font = UIFont.boldSystemFont(ofSize: 20)
+        
+        var sideView = UIView()
+        sideView = UIView(frame: CGRect(x: 0, y: 0, width: 25, height: 25))
+        sideView.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
+        sideView.translatesAutoresizingMaskIntoConstraints = false
+        
+        label.addSubview(sideView)
+        
+        sideView.layer.cornerRadius = 12.5
+        sideView.clipsToBounds = true
+        label.sizeToFit()
+        let leftItem = UIBarButtonItem(customView: label)
+        
+        self.navigationItem.leftBarButtonItems = [menuB, leftItem]
+        
+// set up style before super view did load is executed
         // -
         onMove = { state in
             switch state {
@@ -355,19 +374,45 @@ class SubredditsViewController:  PagingMenuController , UISplitViewControllerDel
                 self.navigationController?.navigationBar.barStyle = .black;
                 SubredditsViewController.current = (menuController as! SubredditLinkViewController).sub
                     self.tintColor = ColorUtil.getColorForSub(sub: SubredditsViewController.current)
-                    self.navigationController?.navigationBar.barTintColor = self.tintColor
+                    ColorUtil.setBackgroundToolbar(toolbar: self.navigationController?.navigationBar)
                     self.menuNav?.setSubreddit(subreddit: SubredditsViewController.current)
                 if(SettingValues.viewType){
-                    self.title = SubredditsViewController.current
+
                 }
                     if (menuController as! SubredditLinkViewController).links.count == 0  {
                         (menuController as! SubredditLinkViewController).load(reset: true)
                     }
                     
                     if(!SettingValues.viewType){
-                        self.title = SubredditsViewController.current
-                        self.currentTitle = self.title!
+                        self.currentTitle = SubredditsViewController.current
                     }
+                let menu = UIButton.init(type: .custom)
+                menu.setImage(UIImage.init(named: "menu"), for: UIControlState.normal)
+                menu.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControlEvents.touchUpInside)
+                menu.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+                let menuB = UIBarButtonItem.init(customView: menu)
+                
+                let label = UILabel()
+                label.text =  "        \(self.currentTitle)"
+                label.textColor = ColorUtil.fontColor
+                label.adjustsFontSizeToFitWidth = true
+                label.font = UIFont.boldSystemFont(ofSize: 20)
+                
+                var sideView = UIView()
+                sideView = UIView(frame: CGRect(x: 0, y: 0, width: 25, height: 25))
+                sideView.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
+                sideView.translatesAutoresizingMaskIntoConstraints = false
+                
+                label.addSubview(sideView)
+                
+                sideView.layer.cornerRadius = 12.5
+                sideView.clipsToBounds = true
+                label.sizeToFit()
+                let leftItem = UIBarButtonItem(customView: label)
+                
+                self.navigationItem.leftBarButtonItems = [menuB, leftItem]
+                
+
                     
                     MenuOptions.setColor(c: ColorUtil.accentColorForSub(sub: SubredditsViewController.current))
                     self.colorChanged()
@@ -379,13 +424,6 @@ class SubredditsViewController:  PagingMenuController , UISplitViewControllerDel
 
         navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        
-        let menu = UIButton.init(type: .custom)
-        menu.setImage(UIImage.init(named: "menu"), for: UIControlState.normal)
-        menu.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControlEvents.touchUpInside)
-        menu.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
-        let menuB = UIBarButtonItem.init(customView: menu)
-        navigationItem.leftBarButtonItem = menuB
         
         super.viewDidLoad()
         self.edgesForExtendedLayout = []
@@ -413,7 +451,7 @@ class SubredditsViewController:  PagingMenuController , UISplitViewControllerDel
     }
     
     func resetColors(){
-        self.navigationController?.navigationBar.barTintColor = self.tintColor
+       // self.navigationController?.navigationBar.barTintColor = self.tintColor
        //todo self.buttonBarView.backgroundColor = self.tintColor
     }
     
