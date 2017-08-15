@@ -283,7 +283,7 @@ class SettingsLayout: UITableViewController {
         domainInfo = UISwitch()
         domainInfo.isOn = SettingValues.domainInInfo
         domainInfo.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        domainInfoCell.textLabel?.text = "Domain in info line"
+        domainInfoCell.textLabel?.text = "Show domain in info line"
         domainInfoCell.accessoryView = domainInfo
         domainInfoCell.backgroundColor = ColorUtil.foregroundColor
         domainInfoCell.textLabel?.textColor = ColorUtil.fontColor
@@ -301,7 +301,7 @@ class SettingsLayout: UITableViewController {
         hide = UISwitch()
         hide.isOn = SettingValues.hideButton
         hide.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        hideCell.textLabel?.text = "Hide post button"
+        hideCell.textLabel?.text = "Show hide post button"
         hideCell.accessoryView = hide
         hideCell.backgroundColor = ColorUtil.foregroundColor
         hideCell.textLabel?.textColor = ColorUtil.fontColor
@@ -310,7 +310,7 @@ class SettingsLayout: UITableViewController {
         save = UISwitch()
         save.isOn = SettingValues.saveButton
         save.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        saveCell.textLabel?.text = "Save button"
+        saveCell.textLabel?.text = "Show save button"
         saveCell.accessoryView = save
         saveCell.backgroundColor = ColorUtil.foregroundColor
         saveCell.textLabel?.textColor = ColorUtil.fontColor

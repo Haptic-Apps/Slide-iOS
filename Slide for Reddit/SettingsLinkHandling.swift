@@ -88,7 +88,7 @@ class SettingsLinkHandling: UITableViewController {
         internalGif = UISwitch()
         internalGif.isOn = SettingValues.internalGifView
         internalGif.addTarget(self, action: #selector(SettingsLinkHandling.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        internalGifCell.textLabel?.text = "Load gifs internally"
+        internalGifCell.textLabel?.text = "Load gifs in app"
         internalGifCell.accessoryView = internalGif
         internalGifCell.backgroundColor = ColorUtil.foregroundColor
         internalGifCell.textLabel?.textColor = ColorUtil.fontColor
@@ -97,7 +97,7 @@ class SettingsLinkHandling: UITableViewController {
         internalAlbum = UISwitch()
         internalAlbum.isOn = SettingValues.internalAlbumView
         internalAlbum.addTarget(self, action: #selector(SettingsLinkHandling.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        internalAlbumCell.textLabel?.text = "Load albumns internally"
+        internalAlbumCell.textLabel?.text = "Load albums in app"
         internalAlbumCell.accessoryView = internalAlbum
         internalAlbumCell.backgroundColor = ColorUtil.foregroundColor
         internalAlbumCell.textLabel?.textColor = ColorUtil.fontColor
@@ -106,7 +106,7 @@ class SettingsLinkHandling: UITableViewController {
         internalImage = UISwitch()
         internalImage.isOn = SettingValues.internalImageView
         internalImage.addTarget(self, action: #selector(SettingsLinkHandling.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        internalImageCell.textLabel?.text = "Load images internally"
+        internalImageCell.textLabel?.text = "Load images in app"
         internalImageCell.accessoryView = internalImage
         internalImageCell.backgroundColor = ColorUtil.foregroundColor
         internalImageCell.textLabel?.textColor = ColorUtil.fontColor
@@ -115,7 +115,7 @@ class SettingsLinkHandling: UITableViewController {
         internalYouTube = UISwitch()
         internalYouTube.isOn = SettingValues.internalYouTube
         internalYouTube.addTarget(self, action: #selector(SettingsLinkHandling.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        internalYouTubeCell.textLabel?.text = "Load YouTube videos internally"
+        internalYouTubeCell.textLabel?.text = "Load YouTube videos in app"
         internalYouTubeCell.accessoryView = internalYouTube
         internalYouTubeCell.backgroundColor = ColorUtil.foregroundColor
         internalYouTubeCell.textLabel?.textColor = ColorUtil.fontColor

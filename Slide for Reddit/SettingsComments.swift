@@ -19,8 +19,8 @@ class SettingsComments: UITableViewController {
     var collapseDefaultCell: UITableViewCell = UITableViewCell()
     var collapseDefault = UISwitch()
     
-    var volumeButtonNavigationCell: UITableViewCell = UITableViewCell()
-    var volumeButtonNavigation = UISwitch()
+    var swapLongPressCell: UITableViewCell = UITableViewCell()
+    var swapLongPress = UISwitch()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,9 +49,9 @@ class SettingsComments: UITableViewController {
         } else if(changed == collapseDefault){
             SettingValues.collapseDefault = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_collapseDefault)
-        } else if(changed == volumeButtonNavigation){
-            SettingValues.volumeButtonNavigation = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_volumeButtonNavigation)
+        } else if(changed == swapLongPress){
+            SettingValues.swapLongPress = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_swapLongPress)
         }
         UserDefaults.standard.synchronize()
     }
@@ -114,14 +114,14 @@ class SettingsComments: UITableViewController {
         collapseDefaultCell.textLabel?.textColor = ColorUtil.fontColor
         collapseDefaultCell.selectionStyle = UITableViewCellSelectionStyle.none
         
-        volumeButtonNavigation = UISwitch()
-        volumeButtonNavigation.isOn = SettingValues.volumeButtonNavigation
-        volumeButtonNavigation.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        volumeButtonNavigationCell.textLabel?.text = "Volume button comment navigation"
-        volumeButtonNavigationCell.accessoryView = volumeButtonNavigation
-        volumeButtonNavigationCell.backgroundColor = ColorUtil.foregroundColor
-        volumeButtonNavigationCell.textLabel?.textColor = ColorUtil.fontColor
-        volumeButtonNavigationCell.selectionStyle = UITableViewCellSelectionStyle.none
+        swapLongPress = UISwitch()
+        swapLongPress.isOn = SettingValues.swapLongPress
+        swapLongPress.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+        swapLongPressCell.textLabel?.text = "Swap tap and long press actions"
+        swapLongPressCell.accessoryView = swapLongPress
+        swapLongPressCell.backgroundColor = ColorUtil.foregroundColor
+        swapLongPressCell.textLabel?.textColor = ColorUtil.fontColor
+        swapLongPressCell.selectionStyle = UITableViewCellSelectionStyle.none
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -149,7 +149,7 @@ class SettingsComments: UITableViewController {
             case 0: return self.collapseDefaultCell
             case 1: return self.disableColorCell
             case 2: return self.disableNavigationBarCell
-            case 3: return self.volumeButtonNavigationCell
+            case 3: return self.swapLongPressCell
             default: fatalError("Unknown row in section 0")
             }
         default: fatalError("Unknown section")

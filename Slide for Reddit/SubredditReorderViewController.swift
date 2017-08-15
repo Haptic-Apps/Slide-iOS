@@ -212,6 +212,13 @@ class SubredditReorderViewController: UITableViewController {
         }
 
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: "")
+        navigationController?.navigationBar.tintColor = UIColor.white
+        self.title = "Manage your subreddits"
+    }
 
     override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         if(tableView.indexPathsForSelectedRows != nil && !tableView.indexPathsForSelectedRows!.isEmpty){

@@ -65,6 +65,7 @@ class SettingValues{
     public static let pref_internalYouTube = "INTERNAL_YOUTUBE"
     public static let pref_multiColumn = "MULTI_COLUMN"
     public static let pref_showFirstParagraph = "FIRST_P"
+    public static let pref_swapLongPress = "SWAP_LONG_PRESS"
 
 
     public static var viewType = true
@@ -122,6 +123,7 @@ class SettingValues{
     public static var internalYouTube = true
     public static var multiColumn = false
     public static var showFirstParagraph = true
+    public static var swapLongPress = false
 
     enum PostViewType: String {
         case LIST = "list"
@@ -143,6 +145,7 @@ class SettingValues{
         SettingValues.markReadOnScroll = settings.bool(forKey: SettingValues.pref_markReadOnScroll)
         SettingValues.nsfwEnabled = settings.bool(forKey: SettingValues.pref_nsfwEnabled)
         SettingValues.nsfwPreviews = settings.bool(forKey: SettingValues.pref_nsfwPreviews)
+        SettingValues.swapLongPress = settings.bool(forKey: SettingValues.pref_swapLongPress)
         SettingValues.hideNSFWCollection = settings.bool(forKey: SettingValues.pref_hideNSFWCollection)
         SettingValues.domainInInfo = settings.bool(forKey: SettingValues.pref_domainInInfo)
         SettingValues.showFirstParagraph = settings.object(forKey: SettingValues.pref_showFirstParagraph) == nil ? true : settings.bool(forKey: SettingValues.pref_showFirstParagraph)

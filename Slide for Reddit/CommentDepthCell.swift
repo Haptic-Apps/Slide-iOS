@@ -76,7 +76,7 @@ class CommentMenuCell: UITableViewCell {
     var sideConstraint: [NSLayoutConstraint] = []
     override func updateConstraints() {
         super.updateConstraints()
-        var width = 375
+        var width = min(375, self.contentView.frame.size.width)
         width = width/(archived ? 1 : (editShown ? 6 : 4))
         
         
@@ -309,7 +309,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         timer!.invalidate()
         AudioServicesPlaySystemSound(1519)
         if(!self.cancelled){
-            if(false){
+            if(SettingValues.swapLongPress){
                 if(self.delegate!.menuShown ){ //todo check if comment id is the same as this comment id
                     self.showMenu(nil)
                 } else {
@@ -338,7 +338,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
     }
     
     func handleShortPress(_ sender: UIGestureRecognizer){
-        if(false || (self.delegate!.menuShown && delegate!.menuId == (content as! RComment).getId())) {
+        if(SettingValues.swapLongPress || (self.delegate!.menuShown && delegate!.menuId == (content as! RComment).getId())) {
             self.showMenu(sender)
         } else {
             self.pushedSingleTap(sender)
