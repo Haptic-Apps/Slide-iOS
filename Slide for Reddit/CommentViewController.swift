@@ -392,7 +392,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             }
             print(NSDate.init().timeIntervalSince1970 - History.getSeenTime(s: self.submission!))
             
-            if(NSDate.init().timeIntervalSince1970 - History.getSeenTime(s: self.submission!) < 300 && !reset){
+            if(NSDate.init().timeIntervalSince1970 - History.getSeenTime(s: self.submission!) < 0 && !reset){ //todo this
                 self.loaded = true
                 do {
                     let realm = try Realm()
@@ -899,10 +899,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.view.bounds.width / CGFloat(320))) > 1 && false){
             self.navigationController!.view.backgroundColor = .clear
         }
-        let recognizer = UITapGestureRecognizer(target: self, action: #selector(self.handleTapBehind(sender:)))
-        recognizer.numberOfTapsRequired = 1
-        recognizer.cancelsTouchesInView = false
-        self.tableView.window?.addGestureRecognizer(recognizer)
     }
     
     func gestureRecognizer(_ sender: UIGestureRecognizer,
@@ -910,17 +906,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         return true
     }
     
-    func handleTapBehind(sender:UIGestureRecognizer) {
-        print("tapped")
-        if(sender.state == UIGestureRecognizerState.ended){
-            let location:CGPoint = sender.location(in: nil)
-            if(!self.view.point(inside: self.view.convert(location, from: self.view.window), with: nil)){
-                self.parent!.view.window!.removeGestureRecognizer(sender)
-                self.dismiss(animated: true, completion: nil)
-            }
-        }
-    }
-
 
     var duringAnimation = false
     var interactionController : UIPercentDrivenInteractiveTransition?
@@ -1841,11 +1826,13 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell: UITableViewCell! = nil
-        if(menuShown && indexPath.row >= 0 && ((indexPath.row == 0 && menuId == "sub") || (dataArray[indexPath.row - 1]  == menuId))){
+        if(menuShown){
+        if(indexPath.row >= 0 && ((indexPath.row == 0 && menuId == "sub") || (indexPath.row > 0 && dataArray[indexPath.row - 1]  == menuId))){
             if(replyShown){
                 return reply!
             }
             return menu!
+        }
         }
         
             var datasetPosition = (indexPath as NSIndexPath).row;
@@ -1855,6 +1842,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 datasetPosition -= 1
             }
         }
+        print("DB Pos is \(datasetPosition)")
             cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as UITableViewCell
             if let cell = cell as? CommentDepthCell {
                 cell.delegate = self
@@ -1868,12 +1856,12 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     if(isSearching){
                         t = highlight(t)
                     }
-                    cell.setComment(comment: content[thing] as! RComment, depth: cDepth[thing] as! Int, parent: self, hiddenCount: count, date: lastSeen, author: submission?.author, text: t)
+                    cell.setComment(comment: content[thing] as! RComment, depth: cDepth[thing]!, parent: self, hiddenCount: count, date: lastSeen, author: submission?.author, text: t)
                     if(thing == menuId && menuShown){
                         cell.doHighlight()
                     }
                 } else {
-                    cell.setMore(more: (content[thing] as! RMore), depth: cDepth[thing] as! Int)
+                    cell.setMore(more: (content[thing] as! RMore), depth: cDepth[thing]!)
                 }
                 cell.content = content[thing]
             }

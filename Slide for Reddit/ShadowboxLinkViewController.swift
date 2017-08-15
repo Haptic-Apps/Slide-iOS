@@ -107,7 +107,6 @@ class ShadowboxLinkViewController: UIViewController, UIScrollViewDelegate, UIGes
         self.scrollView.maximumZoomScale=6.0
         self.scrollView.backgroundColor = .clear
         self.view.addSubview(scrollView)
-        view.backgroundColor = UIColor.black
         toolbar = UIToolbar.init(frame: CGRect.init(x: 0, y: self.view.frame.size.height - 35, width: self.view.frame.size.width, height:  30))
         
         let tap = UITapGestureRecognizer.init(target: self, action: #selector(self.content))
@@ -153,7 +152,7 @@ class ShadowboxLinkViewController: UIViewController, UIScrollViewDelegate, UIGes
             break
         }
         
-        let voteView = UIView(frame: CGRect.init(x: 00, y: 0, width: 70, height: 30))
+        let voteView = UIView(frame: CGRect.init(x: -70, y: 0, width: 70, height: 30))
         let subScore = NSMutableAttributedString(string: (submission!.score>=10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(submission!.score)/Double(1000))) : " \(submission!.score)", attributes: attrs)
         
         var attrsNew: [String: Any] = [:]
@@ -179,6 +178,8 @@ class ShadowboxLinkViewController: UIViewController, UIScrollViewDelegate, UIGes
         
         let cb = UIBarButtonItem.init(customView: commentView)
         let sb = UIBarButtonItem.init(customView: voteView)
+        
+        sb.imageInsets = UIEdgeInsets.init(top: 0, left: -30, bottom: 0, right: 0)
         cb.addTargetForAction(target: self, action: #selector(self.comments))
         sb.addTargetForAction(target: self, action: #selector(self.vote))
         
@@ -240,10 +241,7 @@ class ShadowboxLinkViewController: UIViewController, UIScrollViewDelegate, UIGes
     func content(){
         var url = baseURL!
         let controller = getControllerForUrl(baseUrl: url)!
-        if( controller is YouTubeViewController){
-            controller.modalPresentationStyle = .overFullScreen
-            present(controller, animated: false, completion: nil)
-        } else if( controller is AlbumViewController){
+        if( controller is AlbumViewController){
             controller.modalPresentationStyle = .overFullScreen
             present(controller, animated: true, completion: nil)
         } else if(controller is SingleContentViewController){

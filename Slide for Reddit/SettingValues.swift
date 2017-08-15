@@ -64,6 +64,7 @@ class SettingValues{
     public static let pref_internalAlbum = "INTERNAL_ALBUM"
     public static let pref_internalYouTube = "INTERNAL_YOUTUBE"
     public static let pref_multiColumn = "MULTI_COLUMN"
+    public static let pref_showFirstParagraph = "FIRST_P"
 
 
     public static var viewType = true
@@ -120,7 +121,7 @@ class SettingValues{
     public static var internalGif = true
     public static var internalYouTube = true
     public static var multiColumn = false
-    public static var showFirstParagraph = false
+    public static var showFirstParagraph = true
 
     enum PostViewType: String {
         case LIST = "list"
@@ -144,6 +145,7 @@ class SettingValues{
         SettingValues.nsfwPreviews = settings.bool(forKey: SettingValues.pref_nsfwPreviews)
         SettingValues.hideNSFWCollection = settings.bool(forKey: SettingValues.pref_hideNSFWCollection)
         SettingValues.domainInInfo = settings.bool(forKey: SettingValues.pref_domainInInfo)
+        SettingValues.showFirstParagraph = settings.object(forKey: SettingValues.pref_showFirstParagraph) == nil ? true : settings.bool(forKey: SettingValues.pref_showFirstParagraph)
         SettingValues.disableNavigationBar = settings.bool(forKey: SettingValues.pref_disableNavigationBar)
         SettingValues.disableColor = settings.bool(forKey: SettingValues.pref_disableColor)
         SettingValues.collapseDefault = settings.bool(forKey: SettingValues.pref_collapseDefault)

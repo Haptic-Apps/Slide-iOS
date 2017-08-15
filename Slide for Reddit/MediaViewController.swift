@@ -65,10 +65,7 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
         print(url)
         contentUrl = url
         let controller = getControllerForUrl(baseUrl: url, lq: lq)!
-        if( controller is YouTubeViewController){
-            controller.modalPresentationStyle = .overFullScreen
-            present(controller, animated: false, completion: nil)
-        } else if( controller is AlbumViewController){
+        if( controller is AlbumViewController){
             controller.modalPresentationStyle = .overFullScreen
             present(controller, animated: true, completion: nil)
         } else if(controller is SingleContentViewController){
@@ -78,7 +75,7 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
             if(controller is CommentViewController){
                 if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(view.bounds.width / CGFloat(320))) > 1){
                     let navigationController = UINavigationController(rootViewController: controller)
-                    navigationController.modalPresentationStyle = .formSheet
+                    navigationController.modalPresentationStyle = .pageSheet
                     navigationController.modalTransitionStyle = .crossDissolve
                     present(navigationController, animated: true, completion: nil)
                 } else {

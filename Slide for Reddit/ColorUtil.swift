@@ -61,8 +61,7 @@ class ColorUtil{
     
     public static func setBackgroundToolbar(toolbar: UINavigationBar?) {
         if(toolbar != nil){
-            toolbar?.isTranslucent = true
-        toolbar?.barTintColor = backgroundColor.withAlphaComponent(0.7)
+        toolbar?.barTintColor = backgroundColor
         }
     }
     

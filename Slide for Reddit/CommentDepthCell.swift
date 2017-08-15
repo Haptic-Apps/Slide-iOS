@@ -99,10 +99,10 @@ class CommentMenuCell: UITableViewCell {
         let metrics:[String:Int]=["width":Int(width), "full": Int(self.contentView.frame.size.width)]
         let views=["upvote": upvote, "downvote":downvote, "edit":edit, "delete":delete, "view":contentView, "more":more, "reply":reply] as [String : Any]
         
-        let replyStuff = !archived && AccountController.isLoggedIn ? "[reply(width)]-0-[downvote(width)]-0-[upvote(width)]-0-" : ""
+        let replyStuff = !archived && AccountController.isLoggedIn ? "[upvote(width)]-0-[downvote(width)]-0-[reply(width)]-0-" : ""
         let editStuff = (!archived && editShown) ? "[edit(width)]-0-[delete(width)]-0-" : ""
         self.contentView.removeConstraints(sideConstraint)
-        sideConstraint = NSLayoutConstraint.constraints(withVisualFormat: "H:[more(width)]-0-\(editStuff)\(replyStuff)|",
+        sideConstraint = NSLayoutConstraint.constraints(withVisualFormat: "H:\(editStuff)\(replyStuff)[more(width)]-0-|",
                                                         options: NSLayoutFormatOptions(rawValue: 0),
                                                         metrics: metrics,
                                                         views: views)
@@ -875,11 +875,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
     }
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
-        if(viewControllerToCommit is GalleryViewController || viewControllerToCommit is YouTubeViewController){
-            parent?.presentImageGallery(viewControllerToCommit as! GalleryViewController)
-        } else {
             parent?.show(viewControllerToCommit, sender: parent )
-        }
     }
     
     func pushedMoreButton(_ sender: AnyObject?) {

@@ -10,7 +10,7 @@ import Foundation
 import PagingMenuController
 import SloppySwiper
 
-class PagingCommentViewController : UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
+class PagingCommentViewController : SwipeDownModalVC, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     var submissions: [RSubmission] = []
     var vCs: [UIViewController] = [ClearVC()]
     var swiper: SloppySwiper?

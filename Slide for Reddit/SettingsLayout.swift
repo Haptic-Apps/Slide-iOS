@@ -47,6 +47,9 @@ class SettingsLayout: UITableViewController {
     var saveCell: UITableViewCell = UITableViewCell()
     var save = UISwitch()
 
+    var selftextCell: UITableViewCell = UITableViewCell()
+    var selftext = UISwitch()
+
     var link = LinkTableViewCell()
 
     override func viewDidLoad() {
@@ -86,6 +89,9 @@ class SettingsLayout: UITableViewController {
         } else if(changed == hideActionbar){
             SettingValues.hideButtonActionbar = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_hideButtonActionbar)
+        } else if(changed == selftext){
+            SettingValues.showFirstParagraph = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_showFirstParagraph)
         } else if(changed == largerThumbnail){
             SettingValues.largerThumbnail = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_largerThumbnail)
@@ -211,6 +217,15 @@ class SettingsLayout: UITableViewController {
         hideBannerImageCell.textLabel?.textColor = ColorUtil.fontColor
         hideBannerImageCell.selectionStyle = UITableViewCellSelectionStyle.none
 
+        selftext = UISwitch()
+        selftext.isOn = SettingValues.showFirstParagraph
+        selftext.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+        selftextCell.textLabel?.text = "Show first paragraph of selftext"
+        selftextCell.accessoryView = selftext
+        selftextCell.backgroundColor = ColorUtil.foregroundColor
+        selftextCell.textLabel?.textColor = ColorUtil.fontColor
+        selftextCell.selectionStyle = UITableViewCellSelectionStyle.none
+        
         cardMode = UISwitch()
         cardMode.isOn = SettingValues.postViewMode == .CARD
         cardMode.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
@@ -355,6 +370,7 @@ class SettingsLayout: UITableViewController {
             case 3: return self.centerLeadImageCell
             case 4: return self.largerThumbnailCell
             case 5: return self.leftThumbCell
+            case 6: return self.selftextCell
 
             default: fatalError("Unknown row in section 0")
             }
@@ -375,8 +391,8 @@ class SettingsLayout: UITableViewController {
     }
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch(section) {
-        case 0: return 1    // section 0 has 2 rows
-        case 1: return 6    // section 1 has 1 row
+        case 0: return 1
+        case 1: return 7
         case 2: return 6
         default: fatalError("Unknown number of sections")
         }

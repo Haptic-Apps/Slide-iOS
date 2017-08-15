@@ -72,6 +72,7 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         
         navigationBar.setItems([navItem!], animated: false)
         self.view.addSubview(navigationBar)
+        self.view.backgroundColor = UIColor.black
     }
     
     func overview(_ sender: AnyObject){

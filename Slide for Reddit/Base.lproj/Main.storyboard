@@ -34,7 +34,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </toolbar>
                     <connections>
-                        <segue destination="Rj6-oy-24s" kind="relationship" relationship="rootViewController" id="InL-3Z-LYr"/>
+                        <segue destination="gsG-yI-gWC" kind="relationship" relationship="rootViewController" id="4wi-qU-zrj"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bzJ-dD-M52" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -42,15 +42,14 @@
             <point key="canvasLocation" x="-1817" y="-200"/>
         </scene>
         <!--Subreddits View Controller-->
-        <scene sceneID="Dug-Bu-cBA">
+        <scene sceneID="dSQ-Dp-GkY">
             <objects>
-                <viewController id="Rj6-oy-24s" customClass="SubredditsViewController" customModule="Slide_for_Reddit" customModuleProvider="target" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationItem key="navigationItem" id="35h-Gc-8e5"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="mfV-ht-0y2" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <pageViewController autoresizesArchivedViewToFullSize="NO" transitionStyle="scroll" navigationOrientation="horizontal" spineLocation="none" id="gsG-yI-gWC" customClass="SubredditsViewController" customModule="Slide_for_Reddit" customModuleProvider="target" sceneMemberID="viewController">
+                    <navigationItem key="navigationItem" id="xi8-ls-rgP"/>
+                </pageViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="jfs-L1-7ov" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-660" y="-200"/>
+            <point key="canvasLocation" x="-980" y="-192"/>
         </scene>
     </scenes>
 </document>

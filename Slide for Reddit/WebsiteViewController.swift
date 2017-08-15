@@ -48,7 +48,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     }
     
     func exit(){
-        self.dismiss(animated: true, completion: nil)
+        self.navigationController?.popViewController(animated: true)
     }
     
     func readerMode(_ sender: AnyObject){

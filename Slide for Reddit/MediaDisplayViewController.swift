@@ -60,6 +60,7 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate, UIGest
         
         if(!inAlbum){
         let tap = UITapGestureRecognizer.init(target: self, action: #selector (close(recognizer:)))
+            tap.require(toFail: dtap)
         self.scrollView.addGestureRecognizer(tap)
         }
 
@@ -635,6 +636,7 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate, UIGest
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         request?.cancel()
+        videoPlayer.pause()
     }
     
     func playerItemDidReachEnd(notification: NSNotification) {

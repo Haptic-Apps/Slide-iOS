@@ -20,7 +20,7 @@ import TTTAttributedLabel
 import SloppySwiper
 import GSKStretchyHeaderView
 
-class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate,  UICollectionViewDataSource, LinkCellViewDelegate, ColorPickerDelegate, KCFloatingActionButtonDelegate, UIGestureRecognizerDelegate, WrappingFlowLayoutDelegate, UINavigationControllerDelegate {
+class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate,  UICollectionViewDataSource, LinkCellViewDelegate, ColorPickerDelegate, KCFloatingActionButtonDelegate, UIGestureRecognizerDelegate, WrappingFlowLayoutDelegate {
     
     let maxHeaderHeight: CGFloat = 120;
     let minHeaderHeight: CGFloat = 56;
@@ -142,9 +142,9 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         }
         
         
-        let he = CachedTitle.getTitle(submission: submission, full: false, false).boundingRect(with: CGSize.init(width: itemWidth - 24 - (thumb ? (SettingValues.largerThumbnail ? 75 : 50) + 28 : 0), height:10000), options: [.usesLineFragmentOrigin , .usesFontLeading], context: nil).height
+        let he = CachedTitle.getTitle(submission: submission, full: false, false).boundingRect(with: CGSize.init(width: itemWidth - 24 - (SettingValues.postViewMode == .CARD ? 10:0) - (thumb ? (SettingValues.largerThumbnail ? 75 : 50) + 28 : 0), height:10000), options: [.usesLineFragmentOrigin , .usesFontLeading], context: nil).height
         let thumbheight = CGFloat(SettingValues.largerThumbnail ? 83 : 58)
-        let estimatedHeight = CGFloat((he < thumbheight && thumb || he < thumbheight && !big) ? thumbheight : he) + CGFloat(48)  + (SettingValues.hideButtonActionbar ? -28 : 0) +  CGFloat(big && !thumb ? (submissionHeight + 20) : 0)
+        let estimatedHeight = CGFloat((he < thumbheight && thumb || he < thumbheight && !big) ? thumbheight : he) + CGFloat(48) + (SettingValues.postViewMode == .CARD ? 10:0) + (SettingValues.hideButtonActionbar ? -28 : 0) +  CGFloat(big && !thumb ? (submissionHeight + 20) : 0)
         return CGSize(width: itemWidth, height: estimatedHeight)
     }
 
@@ -522,6 +522,8 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         }
     }
     
+    
+    var loaded = false
     var sideView: UIView = UIView()
     var subb: UIButton = UIButton()
     
@@ -552,7 +554,11 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
     override func viewDidLoad() {
         super.viewDidLoad()
         flowLayout.delegate = self
-        self.tableView = UICollectionView(frame: self.view.bounds, collectionViewLayout: flowLayout)
+        var frame = self.view.bounds
+        if(SettingValues.viewType){
+            frame = CGRect.init(x: 0, y: 0, width: frame.size.width, height: frame.size.height - 40)
+        }
+        self.tableView = UICollectionView(frame: frame, collectionViewLayout: flowLayout)
         self.view = UIView.init(frame: CGRect.zero)
 
         self.view.addSubview(tableView)
@@ -572,11 +578,6 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
 
         reloadNeedingColor()
 
-        if(single){
-            var swiper = SloppySwiper.init(navigationController: self.navigationController!)
-            self.navigationController!.delegate = swiper!
-        }
-        
     }
     
     static var firstPresented = true
@@ -586,16 +587,10 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
 
     func reloadNeedingColor(){
         tableView.backgroundColor = ColorUtil.backgroundColor
-        add = MDCFloatingButton.init(shape: .default)
-        add.backgroundColor = ColorUtil.getColorForSub(sub: sub)
-        add.setImage(UIImage.init(named: "plus"), for: .normal)
-        add.sizeToFit()
-        add.translatesAutoresizingMaskIntoConstraints = false
-        self.view.addSubview(add)
         
-        hide = MDCFloatingButton.init(shape: .mini)
+        hide = MDCFloatingButton.init(shape: .default)
         hide.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
-        hide.setImage(UIImage.init(named: "hide")?.imageResize(sizeChange: CGSize.init(width: 20, height: 20)), for: .normal)
+        hide.setImage(UIImage.init(named: "hide")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
         hide.sizeToFit()
         hide.addTarget(self, action:#selector(self.hideAll(_:)), for: .touchUpInside)
         hide.translatesAutoresizingMaskIntoConstraints = false
@@ -608,17 +603,9 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         
         self.automaticallyAdjustsScrollViewInsets = false
         let metrics=["none":0]
-        let views=["more": more, "add": add, "hide": hide, "superview": view] as [String : Any]
+        let views=["more": more,  "hide": hide, "superview": view] as [String : Any]
         var constraint:[NSLayoutConstraint] = []
 
-        constraint = NSLayoutConstraint.constraints(withVisualFormat:  "V:[superview]-(<=1)-[add]",
-                                                    options: NSLayoutFormatOptions.alignAllCenterX,
-                                                    metrics: metrics,
-                                                    views: views)
-        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[add]-5-|",
-                                                                     options: NSLayoutFormatOptions(rawValue: 0),
-                                                                     metrics: metrics,
-                                                                     views: views))
         constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[hide]-10-|",
                                                                      options: NSLayoutFormatOptions(rawValue: 0),
                                                                      metrics: metrics,
@@ -655,15 +642,17 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
             let shadowbox = UIButton.init(type: .custom)
             shadowbox.setImage(UIImage.init(named: "shadowbox"), for: UIControlState.normal)
             shadowbox.addTarget(self, action: #selector(self.shadowboxMode), for: UIControlEvents.touchUpInside)
-            shadowbox.frame = CGRect.init(x: 0, y: 20, width: 30, height: 30)
+            shadowbox.frame = CGRect.init(x: 0, y: 00, width: 30, height: 30)
             let sB = UIBarButtonItem.init(customView: shadowbox)
-            
+
             let more = UIButton.init(type: .custom)
-            more.setImage(UIImage.init(named: "ic_more_vert_white"), for: UIControlState.normal)
+            var img = UIImage.init(named: "ic_more_vert_white")
+                img = img?.cropToBounds(image: img!, width: 10, height: 30)
+            more.setImage(img, for: UIControlState.normal)
             more.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControlEvents.touchUpInside)
-            more.frame = CGRect.init(x: -30, y: 0, width: 30, height: 30)
+            more.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
             let moreB = UIBarButtonItem.init(customView: more)
-            
+
             navigationItem.rightBarButtonItems = [ moreB, sortB, sB]
 
             do {
@@ -970,11 +959,9 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         if(SubredditReorderViewController.changed){
             self.reloadNeedingColor()
             self.tableView.reloadData()
-            SubredditReorderViewController.changed = false
         }
                 
         navigationController?.navigationBar.isTranslucent = false
-        self.navigationController?.delegate = self
         self.automaticallyAdjustsScrollViewInsets = false
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
@@ -994,6 +981,11 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         self.navigationController?.setNavigationBarHidden(false, animated: true)
         ColorUtil.setBackgroundToolbar(toolbar: self.navigationController?.navigationBar)
         createDotHeader()
+        if(single){
+            let swiper = SloppySwiper.init(navigationController: self.navigationController!)
+            self.navigationController!.delegate = swiper!
+        }
+        
 
     }
     
@@ -1347,6 +1339,8 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
     
     func load(reset: Bool){
         if(!loading){
+            loaded = true
+
             do {
                 loading = true
                 if(reset){
@@ -1358,7 +1352,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
                     subreddit = Multireddit.init(name: sub.substring(3, length: sub.length - 3), user: AccountController.currentName)
                 }
                     print("Sort is \(self.sort) and time is \(self.time)")
-                    
+
                     try session?.getList(paginator, subreddit: subreddit, sort: sort, timeFilterWithin: time, completion: { (result) in
                         switch result {
                         case .failure:
@@ -1398,7 +1392,6 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
                             }
                             print(result.error!)
                         case .success(let listing):
-                            
                             
                             if(reset){
                                 self.links = []
@@ -1541,10 +1534,15 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         SDWebImagePrefetcher.init().prefetchURLs(urls)
     }
     
+    var oldsize = CGFloat(0)
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         tableView.frame = self.view.bounds
-        flowLayout.invalidateLayout()
+        if(self.view.bounds.width != oldsize){
+            oldsize = self.view.bounds.width
+            flowLayout.reset()
+            tableView.reloadData()
+        }
     }
 }
 extension UIViewController {
@@ -1605,4 +1603,42 @@ extension UILabel {
         layoutIfNeeded()
     }
     
+}
+
+extension UIImage {
+    func cropToBounds(image: UIImage, width: Double, height: Double) -> UIImage {
+        
+        let contextImage: UIImage = UIImage(cgImage: image.cgImage!)
+        
+        let contextSize: CGSize = contextImage.size
+        
+        var posX: CGFloat = 0.0
+        var posY: CGFloat = 0.0
+        var cgwidth: CGFloat = CGFloat(width)
+        var cgheight: CGFloat = CGFloat(height)
+        
+        // See what size is longer and create the center off of that
+        if contextSize.width > contextSize.height {
+            posX = ((contextSize.width - contextSize.height) / 2)
+            posY = 0
+            cgwidth = contextSize.height
+            cgheight = contextSize.height
+        } else {
+            posX = 0
+            posY = ((contextSize.height - contextSize.width) / 2)
+            cgwidth = contextSize.width
+            cgheight = contextSize.width
+        }
+        
+        let rect: CGRect = CGRect.init(x: posX, y: posY, width: cgwidth, height: cgheight)
+        
+        // Create bitmap image from context using the rect
+        let imageRef: CGImage = (contextImage.cgImage?.cropping(to: rect)!)!
+        
+        // Create a new image based on the imageRef and rotate back to the original orientation
+        let image: UIImage = UIImage.init(cgImage: imageRef, scale: image.scale, orientation: image.imageOrientation)
+        
+        return image
+    }
+
 }

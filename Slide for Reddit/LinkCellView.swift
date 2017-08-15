@@ -204,6 +204,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 textView.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
                 textView.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
                 
+                textView.delegate = self
                 textView.setText( content?.attributedString )
                 textView.frame.size.height = (content?.textHeight)!
                 hasText = true
@@ -493,9 +494,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
         title.setText(CachedTitle.getTitle(submission: submission, full: full, true))
         
+        if(!full){
         let comment = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openComment(sender:)))
         comment.delegate = self
         self.addGestureRecognizer(comment)
+        }
         
         refresh()
         
@@ -538,6 +541,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
         
         title.setText(CachedTitle.getTitle(submission: submission, full: full, false))
+        
+        let activeLinkAttributes = NSMutableDictionary(dictionary: title.activeLinkAttributes)
+        activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.accentColorForSub(sub: submission.subreddit)
+        title.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+        title.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
         
         reply.isHidden = true
         
@@ -697,6 +705,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             let tap = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openLink(sender:)))
             tap.delegate = self
             bannerImage.addGestureRecognizer(tap)
+            b.addGestureRecognizer(tap)
             if(shouldShowLq){
                 lq = true
                 loadedImage = URL.init(string: submission.lqUrl)
@@ -727,10 +736,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             bannerImage.sd_setImage(with: URL.init(string: ""))
         }
         
+        if(!full){
         let comment = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openComment(sender:)))
         comment.delegate = self
         self.addGestureRecognizer(comment)
-        
+        }
         
         //title.sizeToFit()
         
@@ -1411,11 +1421,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     }
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
-        if(viewControllerToCommit is SingleContentViewController || viewControllerToCommit is AlbumViewController || viewControllerToCommit is YouTubeViewController){
-            parentViewController?.present(viewControllerToCommit, animated: false)
-        } else {
             parentViewController?.show(viewControllerToCommit, sender: parentViewController )
-        }
     }
     
     required init?(coder aDecoder: NSCoder) {

@@ -19,7 +19,7 @@ class CachedTitle {
     
     static func getTitle(submission: RSubmission, full: Bool,  _ refresh: Bool) -> NSAttributedString {
         let title = titles[submission.getId()]
-        if(title == nil || refresh){
+        if(title == nil || refresh || full){
             titles[submission.getId()] = titleForSubmission(submission: submission, full: full)
             return titles[submission.getId()]!
         } else {
@@ -120,10 +120,16 @@ class CachedTitle {
         
         if(SettingValues.showFirstParagraph && submission.isSelf && !full && !submission.htmlBody.trimmed().isEmpty){
             infoString.append(NSAttributedString.init(string: "\n\n"))
-            var text = submission.body.substring(0, length: submission.htmlBody.indexOf("\n") ?? submission.htmlBody.length - 2)
-            let attrs2 = [NSFontAttributeName : FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.fontColor] as [String: Any]
-            let bodyString = NSMutableAttributedString(string: text, attributes: attrs2)
+            var length = submission.htmlBody.indexOf("\n")  ?? submission.htmlBody.length
+            var text = submission.htmlBody.substring(0, length: length)
+            do {
+            let attr = try NSMutableAttributedString(data: (text.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
+            let font = FontGenerator.fontOfSize(size: 14, submission: false)
+            let bodyString = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: ColorUtil.accentColorForSub(sub: submission.subreddit))
                 infoString.append(bodyString)
+            } catch {
+                
+            }
         }
         
         if(SettingValues.scoreInTitle){
@@ -138,10 +144,6 @@ class CachedTitle {
             infoString.append(scoreString)
         }
 
-        
-        if(SettingValues.postViewMode == .CARD && !full){
-            infoString.append(NSAttributedString.init(string: "\n"))
-        }
         return  infoString
     }
 }

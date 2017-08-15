@@ -59,6 +59,8 @@ class ContentListingViewController: MediaViewController, UITableViewDelegate, UI
         refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControlEvents.valueChanged)
         tableView.addSubview(refreshControl) // not required when using UITableViewController
         
+        self.tableView.contentInset = UIEdgeInsets.init(top: 68, left: 0, bottom: 0, right: 0)
+        
     }
     
     func failed(error: Error){

@@ -334,11 +334,7 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
     
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
-        if(viewControllerToCommit is GalleryViewController || viewControllerToCommit is YouTubeViewController){
-            parentViewController?.presentImageGallery(viewControllerToCommit as! GalleryViewController)
-        } else {
         parentViewController?.show(viewControllerToCommit, sender: parentViewController )
-        }
     }
     
     required init?(coder aDecoder: NSCoder) {
