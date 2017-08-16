@@ -38,6 +38,22 @@ class ContentType {
         return false;
     }
     
+    public static func isSpoiler(uri: URL) -> Bool {
+        var urlString = uri.absoluteString
+        if (!urlString.hasPrefix("//") && ((urlString.hasPrefix("/") && urlString.characters.count < 4)
+            || urlString.hasPrefix("#spoil")
+            || urlString.hasPrefix("/spoil")
+            || urlString.hasPrefix("#s-")
+            || urlString == ("#s")
+            || urlString == ("#ln")
+            || urlString == ("#b")
+            || urlString == ("#sp"))) {
+            return true
+        }
+        return false
+
+    }
+    
     public static func isGif(uri: URL) -> Bool {
         let host = uri.host?.lowercased()
         let path = uri.path.lowercased()

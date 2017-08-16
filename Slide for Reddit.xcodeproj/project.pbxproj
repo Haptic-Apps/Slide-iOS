@@ -10,6 +10,7 @@
 		2097F94228BB31C58ECC96F9 /* Pods_Slide_for_RedditUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C29CF7355B69CCB84BE2FD6B /* Pods_Slide_for_RedditUITests.framework */; };
 		22FE497D2AAA9FDCC43D8B39 /* Pods_Slide_for_RedditTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE1DDF77D2F040B83CE26E0F /* Pods_Slide_for_RedditTests.framework */; };
 		BE0E8BC01E26E91E004B56B1 /* BouncyViewControllerAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0E8BBF1E26E91E004B56B1 /* BouncyViewControllerAnimator.swift */; };
+		BE0EF7C41F43C9520058D572 /* Spoilers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0EF7C31F43C9510058D572 /* Spoilers.swift */; };
 		BE1DA3961E26AD5700EC0A04 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1DA3951E26AD5700EC0A04 /* SearchViewController.swift */; };
 		BE1DA3981E26ADEA00EC0A04 /* SearchContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1DA3971E26ADEA00EC0A04 /* SearchContributionLoader.swift */; };
 		BE1DA39C1E26E86800EC0A04 /* OverlayTransitioningDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1DA39B1E26E86800EC0A04 /* OverlayTransitioningDelegate.swift */; };
@@ -177,6 +178,7 @@
 		B596ABEF970425FC2114FFB2 /* Pods-Slide for RedditTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for RedditTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Slide for RedditTests/Pods-Slide for RedditTests.release.xcconfig"; sourceTree = "<group>"; };
 		BA9177B1039FF29FE7BFC503 /* Pods-Slide for RedditUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for RedditUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Slide for RedditUITests/Pods-Slide for RedditUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		BE0E8BBF1E26E91E004B56B1 /* BouncyViewControllerAnimator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BouncyViewControllerAnimator.swift; sourceTree = "<group>"; };
+		BE0EF7C31F43C9510058D572 /* Spoilers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Spoilers.swift; sourceTree = "<group>"; };
 		BE1DA3951E26AD5700EC0A04 /* SearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		BE1DA3971E26ADEA00EC0A04 /* SearchContributionLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchContributionLoader.swift; sourceTree = "<group>"; };
 		BE1DA39B1E26E86800EC0A04 /* OverlayTransitioningDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OverlayTransitioningDelegate.swift; sourceTree = "<group>"; };
@@ -635,6 +637,7 @@
 				BED7B6B91F2258E700E31A82 /* CachedTitle.swift */,
 				BE7AF5751F3529E00003B24B /* ShadowboxLinkViewController.swift */,
 				BE7AF5771F363A7C0003B24B /* ShadowboxViewController.swift */,
+				BE0EF7C31F43C9510058D572 /* Spoilers.swift */,
 			);
 			name = LinkCellViews;
 			sourceTree = "<group>";
@@ -1033,6 +1036,7 @@
 				BEE5BF841E14836E00E3C9AE /* MediaViewController.swift in Sources */,
 				BE2B89FB1E253D610053D493 /* ReplyViewController.swift in Sources */,
 				BE6EA6D71E1C1FC700E9E709 /* VidMeJSONBase.swift in Sources */,
+				BE0EF7C41F43C9520058D572 /* Spoilers.swift in Sources */,
 				BE3E5C171E16BC1A00749C0C /* String+util.swift in Sources */,
 				BE9742381F0409BA00BF48E0 /* SettingsComments.swift in Sources */,
 				BE2F3F581EF886D9003C1B28 /* Reachability.swift in Sources */,

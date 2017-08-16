@@ -1082,12 +1082,13 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         let color = ColorUtil.accentColorForSub(sub: ((newComments[0].0 as! Comment).subreddit))
         for thing in newComments {
             if let comment = thing.0 as? Comment {
-                let html = comment.bodyHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
+                var html = comment.bodyHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
                 do {
+                    html = WrapSpoilers.addSpoilers(html)
                     let attr = try NSMutableAttributedString(data: html.data(using: .unicode)!, options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
                     let font = FontGenerator.fontOfSize(size: 16, submission: false)
                     let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
-                    self.text[comment.getId()] = LinkParser.parse(attr2)
+                    self.text[comment.getId()] = LinkParser.parse(attr2, color)
                 } catch {
                     self.text[comment.getId()] = NSAttributedString(string: "")
                 }
@@ -1095,7 +1096,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 let attr = NSMutableAttributedString(string: "more")
                 let font = FontGenerator.fontOfSize(size: 16, submission: false)
                 let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
-                self.text[(thing.0 as! More).getId()] = LinkParser.parse(attr2)
+                self.text[(thing.0 as! More).getId()] = LinkParser.parse(attr2, color)
             }
         }
     }
@@ -1111,7 +1112,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     let attr = try NSMutableAttributedString(data: html.data(using: .unicode)!, options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
                     let font = FontGenerator.fontOfSize(size: 16, submission: false)
                     let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
-                    self.text[comment.getIdentifier()] = LinkParser.parse(attr2)
+                    self.text[comment.getIdentifier()] = LinkParser.parse(attr2, color)
                 } catch {
                     self.text[comment.getIdentifier()] = NSAttributedString(string: "")
                 }
@@ -1119,7 +1120,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 let attr = NSMutableAttributedString(string: "more")
                 let font = FontGenerator.fontOfSize(size: 16, submission: false)
                 let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
-                self.text[(thing as! RMore).getIdentifier()] = LinkParser.parse(attr2)
+                self.text[(thing as! RMore).getIdentifier()] = LinkParser.parse(attr2, color)
             }
 
         }
@@ -1146,7 +1147,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 let font = FontGenerator.fontOfSize(size: 16, submission: false)
                 let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
                 
-                return CellContent.init(string:LinkParser.parse(attr2), width:(width - 25), hasRelies:false, id: comment.getId())
+                return CellContent.init(string:LinkParser.parse(attr2, color), width:(width - 25), hasRelies:false, id: comment.getId())
             } catch {
                 return CellContent(string:NSAttributedString(string: ""), width:width - 25, hasRelies:false, id: thing.getId())
             }
@@ -1154,7 +1155,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             let attr = NSMutableAttributedString(string: "more")
             let font = FontGenerator.fontOfSize(size: 16, submission: false)
             let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
-            return CellContent.init(string:LinkParser.parse(attr2), width:(width - 25), hasRelies:false, id: thing.getId())
+            return CellContent.init(string:LinkParser.parse(attr2, color), width:(width - 25), hasRelies:false, id: thing.getId())
         }
     }
     

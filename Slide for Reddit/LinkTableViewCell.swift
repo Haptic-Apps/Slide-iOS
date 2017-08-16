@@ -186,7 +186,7 @@ class LinkTableViewCell: UITableViewCell, UIViewControllerPreviewingDelegate, TT
                 let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
                 let font = FontGenerator.fontOfSize(size: 16, submission: false)
                 let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
-                content = CellContent.init(string:LinkParser.parse(attr2), width:(width - 24 - (thumb ? 75 : 0)))
+                content = CellContent.init(string:LinkParser.parse(attr2, color), width:(width - 24 - (thumb ? 75 : 0)))
                 let activeLinkAttributes = NSMutableDictionary(dictionary: title.activeLinkAttributes)
                 activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.accentColorForSub(sub: link.subreddit)
                 textView.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]

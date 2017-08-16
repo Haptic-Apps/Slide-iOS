@@ -602,11 +602,11 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         tableView.addSubview(refreshControl) // not required when using UITableViewController
         
         self.automaticallyAdjustsScrollViewInsets = false
-        let metrics=["none":0]
+        let metrics=["bottommargin" : SettingValues.viewType ? 50 : 10]
         let views=["more": more,  "hide": hide, "superview": view] as [String : Any]
         var constraint:[NSLayoutConstraint] = []
 
-        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[hide]-10-|",
+        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[hide]-bottommargin-|",
                                                                      options: NSLayoutFormatOptions(rawValue: 0),
                                                                      metrics: metrics,
                                                                      views: views))
@@ -622,7 +622,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         self.tableView.register(ThumbnailLinkCellView.classForCoder(), forCellWithReuseIdentifier: "thumb")
         self.tableView.register(TextLinkCellView.classForCoder(), forCellWithReuseIdentifier: "text")
         
-        self.tableView.contentInset = UIEdgeInsets.init(top: 64, left: 0, bottom: 0, right: 0)
+        self.tableView.contentInset = UIEdgeInsets.init(top: 64, left: 0, bottom: SettingValues.viewType ? 40 : 0, right: 0)
 
         session = (UIApplication.shared.delegate as! AppDelegate).session
         

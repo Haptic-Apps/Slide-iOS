@@ -157,7 +157,7 @@ class SettingsViewController: UITableViewController {
 
         
         self.tableView.reloadData()
-        if(self.view.frame.size.width > 500 && UIScreen.main.traitCollection.userInterfaceIdiom == .pad){
+        if(self.view.frame.size.width > 1000 && UIScreen.main.traitCollection.userInterfaceIdiom == .pad){
         self.tableView(tableView, didSelectRowAt: IndexPath.init(row: 0, section: 0))
         }
     }

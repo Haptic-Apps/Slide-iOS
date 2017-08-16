@@ -61,9 +61,21 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
         return !ContentType.isGif(uri: url) && !ContentType.isImage(uri: url) && path.contains(".");
     }
     
+    func showSpoiler(_ string: String){
+        let m = string.capturedGroups(withRegex: "\\[\\[s\\[(.*?)\\]s\\]\\]")
+        let controller = UIAlertController.init(title: "Spoiler", message: m[0][1], preferredStyle: .alert)
+        controller.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: nil))
+        present(controller, animated: true, completion: nil)
+    }
+    
     func doShow(url: URL, lq: URL? = nil){
         print(url)
         contentUrl = url
+        var spoiler = ContentType.isSpoiler(uri: url)
+        if(spoiler){
+            let controller = UIAlertController.init(title: "Spoiler", message: url.absoluteString, preferredStyle: .alert)
+            present(controller, animated: true, completion: nil)
+        } else {
         let controller = getControllerForUrl(baseUrl: url, lq: lq)!
         if( controller is AlbumViewController){
             controller.modalPresentationStyle = .overFullScreen
@@ -87,6 +99,7 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
             }
         }
         navigationController?.setNavigationBarHidden(false, animated: true)
+        }
     }
     
     var color: UIColor?

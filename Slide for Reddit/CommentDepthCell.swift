@@ -227,10 +227,16 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
     
     var parent: CommentViewController?
     
-    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
-        parent?.doShow(url: url)
+    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith result: NSTextCheckingResult!) {
+        var textClicked = label.attributedText.attributedSubstring(from: result.range).string
+        if(textClicked.contains("[[s[")){
+            parent?.showSpoiler(textClicked)
+        } else {
+            var urlClicked = result.url!
+            parent?.doShow(url: urlClicked)
+        }
     }
-    
+
     func upvote(){
         
     }
@@ -801,8 +807,8 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         if(!setLinkAttrs){
         let activeLinkAttributes = NSMutableDictionary(dictionary: title.activeLinkAttributes)
         activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.accentColorForSub(sub: comment.subreddit)
+            title.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
         title.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
-        title.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
             setLinkAttrs = true
         }
         title.setText(infoString)

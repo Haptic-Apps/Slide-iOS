@@ -260,7 +260,7 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
                 let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
                 let font = FontGenerator.fontOfSize(size: 16, submission: false)
                 let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: accent)
-                content = CellContent.init(string:LinkParser.parse(attr2), width:(width - 16))
+                content = CellContent.init(string:LinkParser.parse(attr2, accent), width:(width - 16))
                 textView.attributedString = content?.attributedString
                 textView.frame.size.height = (content?.textHeight)!
                 hasText = true

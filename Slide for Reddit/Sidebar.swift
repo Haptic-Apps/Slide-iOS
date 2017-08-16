@@ -152,7 +152,7 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate  {
                 let font = FontGenerator.fontOfSize(size: 16, submission: false)
                 let attr2 = NSMutableAttributedString.init(string: "\n\n\n")
                 attr2.append(attr.reconstruct(with: font, color: UIColor.darkGray, linkColor: ColorUtil.accentColorForSub(sub: sub.displayName)))
-                let contentInfo = CellContent.init(string:LinkParser.parse(attr2), width: rect.size.width)
+                let contentInfo = CellContent.init(string:LinkParser.parse(attr2, ColorUtil.accentColorForSub(sub: sub.displayName)), width: rect.size.width)
                 info.setText(contentInfo.attributedString)
                 info.frame.size.height = (contentInfo.textHeight)
                 let activeLinkAttributes = NSMutableDictionary()
