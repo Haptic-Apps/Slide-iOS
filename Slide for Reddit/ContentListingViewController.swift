@@ -9,7 +9,6 @@
 import UIKit
 import reddift
 import SDWebImage
-import PagingMenuController
 import MaterialComponents.MaterialSnackbar
 
 class ContentListingViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource {

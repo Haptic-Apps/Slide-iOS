@@ -11,7 +11,6 @@
 
 import UIKit
 import UZTextView
-import ImageViewer
 import TTTAttributedLabel
 import MaterialComponents
 import AudioToolbox
@@ -1412,7 +1411,6 @@ class LinkTableViewCell: UITableViewCell, UIViewControllerPreviewingDelegate, TT
         }
         
         let navEditorViewController: UINavigationController = UINavigationController(rootViewController: reply)
-        parentViewController?.prepareOverlayVC(overlayVC: navEditorViewController)
         parentViewController?.present(navEditorViewController, animated: true, completion: nil)
     }
     

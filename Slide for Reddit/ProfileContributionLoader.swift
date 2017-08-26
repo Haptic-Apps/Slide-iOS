@@ -9,10 +9,8 @@
 import Foundation
 import reddift
 import RealmSwift
-import PagingMenuController
 
 class ProfileContributionLoader: ContributionLoader {
-    var displayMode: MenuItemDisplayMode
     var name: String
     var userContent: UserContent
     var color: UIColor
@@ -24,7 +22,6 @@ class ProfileContributionLoader: ContributionLoader {
         paginator = Paginator()
         content = []
         userContent = whereContent
-        displayMode = MenuItemDisplayMode.text(title: MenuItemText.init(text: userContent.title, color: UIColor.white, selectedColor: ColorUtil.getColorForUser(name: name), font: UIFont.systemFont(ofSize: 12), selectedFont: UIFont.boldSystemFont(ofSize: 12)))
     }
     
     

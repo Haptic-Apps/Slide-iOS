@@ -25,7 +25,7 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate, UIGest
     var progressView: MDCProgressView?
     var scrollView = UIScrollView()
     var imageView = UIImageView()
-    var videoPlayer = AVPlayer()
+    static var videoPlayer : AVPlayer? = nil
     var videoView = UIView()
     var ytPlayer = YTPlayerView()
     var playerVC = AVPlayerViewController()
@@ -136,7 +136,6 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate, UIGest
     
     func loadImage(imageURL: URL){
         loadedURL = imageURL
-        print("Found \(size!.text)")
         if(SDWebImageManager.shared().cachedImageExists(for: imageURL)){
             DispatchQueue.main.async {
                 let image = SDWebImageManager.shared().imageCache.imageFromDiskCache(forKey: imageURL.absoluteString)
@@ -324,7 +323,7 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate, UIGest
     }
     
     func getYTHeight() -> CGFloat {
-        var height = ((self.view.frame.size.width / 16)*9)
+        let height = ((self.view.frame.size.width / 16)*9)
         return height
     }
     
@@ -636,7 +635,7 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate, UIGest
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         request?.cancel()
-        videoPlayer.pause()
+        MediaDisplayViewController.videoPlayer!.pause()
     }
     
     func playerItemDidReachEnd(notification: NSNotification) {
@@ -650,15 +649,19 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate, UIGest
         self.size?.isHidden = true
         self.scrollView.contentSize = CGSize.init(width: self.view.frame.width, height: self.view.frame.height)
         self.scrollView.delegate = self
-        self.videoPlayer = AVPlayer.init(playerItem: AVPlayerItem.init(url: file))
+        if(MediaDisplayViewController.videoPlayer == nil){
+        MediaDisplayViewController.videoPlayer = AVPlayer.init(playerItem: AVPlayerItem.init(url: file))
+        } else {
+            MediaDisplayViewController.videoPlayer!.replaceCurrentItem(with: AVPlayerItem.init(url: file))
+        }
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(MediaDisplayViewController.playerItemDidReachEnd),
                                                name: NSNotification.Name.AVPlayerItemDidPlayToEndTime,
-                                               object: videoPlayer.currentItem)
-        videoPlayer.actionAtItemEnd = AVPlayerActionAtItemEnd.none
+                                               object: MediaDisplayViewController.videoPlayer!.currentItem)
+        MediaDisplayViewController.videoPlayer!.actionAtItemEnd = AVPlayerActionAtItemEnd.none
         
         playerVC = AVControlsPlayer()
-        playerVC.player = videoPlayer
+        playerVC.player = MediaDisplayViewController.videoPlayer!
         playerVC.videoGravity = AVLayerVideoGravityResizeAspect
         playerVC.showsPlaybackControls = false
         
@@ -669,7 +672,7 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate, UIGest
         playerVC.didMove(toParentViewController: self)
         
         self.scrollView.isUserInteractionEnabled = true
-        videoPlayer.play()
+        MediaDisplayViewController.videoPlayer!.play()
     }
     
     func formatUrl(sS: String) -> String {

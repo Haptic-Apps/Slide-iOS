@@ -9,10 +9,8 @@
 import Foundation
 import reddift
 import RealmSwift
-import PagingMenuController
 
 class SearchContributionLoader: ContributionLoader {
-    var displayMode: MenuItemDisplayMode
 
     var query: String
     var sub: String
@@ -25,7 +23,6 @@ class SearchContributionLoader: ContributionLoader {
         color = ColorUtil.getColorForUser(name: sub)
         paginator = Paginator()
         content = []
-        displayMode = MenuItemDisplayMode.text(title: MenuItemText.init(text: "Searching", color: UIColor.white, selectedColor: UIColor.white, font: UIFont.systemFont(ofSize: 12), selectedFont: UIFont.systemFont(ofSize: 12)))
     }
     
     

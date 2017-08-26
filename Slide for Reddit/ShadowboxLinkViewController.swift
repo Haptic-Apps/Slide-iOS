@@ -62,7 +62,7 @@ class ShadowboxLinkViewController: UIViewController, UIScrollViewDelegate, UIGes
          gradient = CAGradientLayer()
         gradient.frame = imageView.frame
         gradient.colors = [UIColor.clear.cgColor, UIColor.black.withAlphaComponent(0.7).cgColor]
-        var percent = ((textB.frame.size.height + 30)/self.view.frame.size.height)
+        let percent = ((textB.frame.size.height + 30)/self.view.frame.size.height)
         print("Percent is \(percent)")
         gradient.locations = [NSNumber.init(value: Double(percent)), 1]
         imageView.layer.insertSublayer(gradient, at: 0)

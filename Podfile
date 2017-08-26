@@ -8,8 +8,6 @@ target 'Slide for Reddit' do
 
   pod 'reddift', :git =>  'https://github.com/ccrama/reddift'
   pod 'SDWebImage', '~>3.8'
-  pod "PagingMenuController”, :git => ‘https://github.com/ccrama/PagingMenuController'
-  pod 'BGTableViewRowActionWithImage'
   pod 'SideMenu'
 pod 'MaterialComponents/AnimationTiming'
 pod 'MaterialComponents/Buttons'
@@ -17,15 +15,10 @@ pod 'MaterialComponents/Dialogs'
 pod 'MaterialComponents/Ink'
 pod 'MaterialComponents/ProgressView'
 pod 'MaterialComponents/ShadowElevations'
-pod "GMStepper"
 pod 'MaterialComponents/Snackbar’
-pod "SWSegmentedControl"
 pod 'MaterialComponents/ActivityIndicator'
-pod "SAHistoryNavigationViewController"
-pod "GSKStretchyHeaderView"
   pod “SloppySwiper”, :git => ‘https://github.com/fastred/SloppySwiper'
   pod 'UZTextView', :git => 'https://github.com/ccrama/UZTextView'
-  pod 'ImageViewer', :git => 'https://github.com/ccrama/ImageViewer'
   pod 'TTTAttributedLabel'
   pod "KCFloatingActionButton", "~> 2.1.0"
   pod 'ImagePickerSheetController', :git => 'https://github.com/lbrndnr/ImagePickerSheetController’, :branch => ‘swift3’

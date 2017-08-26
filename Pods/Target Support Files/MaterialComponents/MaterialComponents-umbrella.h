@@ -12,6 +12,7 @@
 #import "MaterialButtons.h"
 #import "MDCButton.h"
 #import "MDCFlatButton.h"
+#import "MDCFloatingButton+Animation.h"
 #import "MDCFloatingButton.h"
 #import "MDCRaisedButton.h"
 #import "MDCButtonTitleColorAccessibilityMutator.h"

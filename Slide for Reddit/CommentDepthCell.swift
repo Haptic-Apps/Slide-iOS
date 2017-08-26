@@ -9,7 +9,6 @@
 import UIKit
 import reddift
 import UZTextView
-import ImageViewer
 import TTTAttributedLabel
 import RealmSwift
 import AudioToolbox
@@ -76,7 +75,7 @@ class CommentMenuCell: UITableViewCell {
     var sideConstraint: [NSLayoutConstraint] = []
     override func updateConstraints() {
         super.updateConstraints()
-        var width = min(375, self.contentView.frame.size.width)
+        var width = min(375, UIScreen.main.bounds.size.width)
         width = width/(archived ? 1 : (editShown ? 6 : 4))
         
         

@@ -8,7 +8,6 @@
 
 import Foundation
 import reddift
-import PagingMenuController
 import RealmSwift
 
 protocol ContributionLoader {
@@ -17,7 +16,6 @@ protocol ContributionLoader {
     var delegate: ContentListingViewController? {get set}
     func getData(reload: Bool)
     var content: [Object] {get}
-    var displayMode: MenuItemDisplayMode {get set}
     var color: UIColor {get set}
     var paging: Bool {get}
     var canGetMore: Bool {get}

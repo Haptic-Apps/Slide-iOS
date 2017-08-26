@@ -95,6 +95,8 @@ static NSAttributedString *uppercaseAttributedString(NSAttributedString *string)
   NSMutableDictionary<NSNumber *, NSNumber *> *_userElevations;   // For each UIControlState.
   NSMutableDictionary<NSNumber *, UIColor *> *_backgroundColors;  // For each UIControlState.
 
+  BOOL _hasCustomDisabledTitleColor;
+
   // Cached accessibility settings.
   NSMutableDictionary<NSNumber *, NSString *> *_accessibilityLabelForState;
   NSString *_accessibilityLabelExplicitValue;
@@ -121,6 +123,7 @@ static NSAttributedString *uppercaseAttributedString(NSAttributedString *string)
   self = [super initWithFrame:frame];
   if (self) {
     [self commonMDCButtonInit];
+    [self updateBackgroundColor];
   }
   return self;
 }
@@ -155,11 +158,11 @@ static NSAttributedString *uppercaseAttributedString(NSAttributedString *string)
     }
 
     if ([aDecoder containsValueForKey:MDCButtonUnderlyingColorHintKey]) {
-      self.underlyingColorHint = [aDecoder decodeObjectForKey:MDCButtonUnderlyingColorHintKey];
+      _underlyingColorHint = [aDecoder decodeObjectForKey:MDCButtonUnderlyingColorHintKey];
     }
 
     if ([aDecoder containsValueForKey:MDCButtonDisableAlphaKey]) {
-      self.disabledAlpha = (CGFloat)[aDecoder decodeDoubleForKey:MDCButtonDisableAlphaKey];
+      _disabledAlpha = (CGFloat)[aDecoder decodeDoubleForKey:MDCButtonDisableAlphaKey];
     }
 
     if ([aDecoder containsValueForKey:MDCButtonAreaInsetKey]) {
@@ -172,7 +175,12 @@ static NSAttributedString *uppercaseAttributedString(NSAttributedString *string)
 
     if ([aDecoder containsValueForKey:MDCButtonBackgroundColorsKey]) {
       _backgroundColors = [aDecoder decodeObjectForKey:MDCButtonBackgroundColorsKey];
+    } else {
+      // Storyboards will set the backgroundColor via the UIView backgroundColor setter, so we have
+      // to write that in to our _backgroundColors dictionary.
+      _backgroundColors[@(UIControlStateNormal)] = super.backgroundColor;
     }
+    [self updateBackgroundColor];
 
     if ([aDecoder containsValueForKey:MDCButtonAccessibilityLabelsKey]) {
       _accessibilityLabelForState = [aDecoder decodeObjectForKey:MDCButtonAccessibilityLabelsKey];
@@ -207,10 +215,13 @@ static NSAttributedString *uppercaseAttributedString(NSAttributedString *string)
   _shouldRaiseOnTouch = YES;
   _uppercaseTitle = YES;
   _userElevations = [NSMutableDictionary dictionary];
-  _backgroundColors = [NSMutableDictionary dictionary];
   _accessibilityLabelForState = [NSMutableDictionary dictionary];
 
-  _backgroundColors[@(UIControlStateNormal)] = MDCColorFromRGB(MDCButtonDefaultBackgroundColor);
+  if (!_backgroundColors) {
+    // _backgroundColors may have already been initialized by setting the backgroundColor setter.
+    _backgroundColors = [NSMutableDictionary dictionary];
+    _backgroundColors[@(UIControlStateNormal)] = MDCColorFromRGB(MDCButtonDefaultBackgroundColor);
+  }
 
   // Disable default highlight state.
   self.adjustsImageWhenHighlighted = NO;
@@ -218,7 +229,6 @@ static NSAttributedString *uppercaseAttributedString(NSAttributedString *string)
 
   // Set up title label attributes.
   self.titleLabel.font = [MDCTypography buttonFont];
-  [self updateAlphaAndBackgroundColorAnimated:NO];
 
   // Default content insets
   self.contentEdgeInsets = [self defaultContentEdgeInsets];
@@ -277,10 +287,30 @@ static NSAttributedString *uppercaseAttributedString(NSAttributedString *string)
   [super layoutSubviews];
   self.layer.shadowPath = [self boundingPath].CGPath;
   self.layer.cornerRadius = [self cornerRadius];
+
+  // Center unbounded ink view frame taking into account possible insets using contentRectForBounds.
+  if (_inkView.inkStyle == MDCInkStyleUnbounded) {
+    CGRect contentRect = [self contentRectForBounds:self.bounds];
+    CGPoint contentCenterPoint = CGPointMake(CGRectGetMidX(contentRect),
+                                             CGRectGetMidY(contentRect));
+    CGPoint boundsCenterPoint = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds));
+
+    CGFloat offsetX = contentCenterPoint.x - boundsCenterPoint.x;
+    CGFloat offsetY = contentCenterPoint.y - boundsCenterPoint.y;
+    _inkView.frame = CGRectMake(offsetX, offsetY, self.bounds.size.width, self.bounds.size.height);
+  } else {
+    _inkView.frame = self.bounds;
+  }
+  self.titleLabel.frame = MDCRectAlignToScale(self.titleLabel.frame, [UIScreen mainScreen].scale);
 }
 
 - (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event {
   return CGRectContainsPoint(UIEdgeInsetsInsetRect(self.bounds, _hitAreaInsets), point);
+}
+
+- (void)willMoveToSuperview:(UIView *)newSuperview {
+  [super willMoveToSuperview:newSuperview];
+  [self.inkView cancelAllAnimationsAnimated:NO];
 }
 
 #pragma mark - UIResponder
@@ -478,7 +508,12 @@ static NSAttributedString *uppercaseAttributedString(NSAttributedString *string)
 #pragma mark - BackgroundColor
 
 - (void)setBackgroundColor:(nullable UIColor *)backgroundColor {
-  [self setBackgroundColor:backgroundColor forState:UIControlStateNormal];
+  // Since setBackgroundColor can be called in the initializer we need to optionally build the dict.
+  if (!_backgroundColors) {
+    _backgroundColors = [NSMutableDictionary dictionary];
+  }
+  _backgroundColors[@(UIControlStateNormal)] = backgroundColor;
+  [self updateBackgroundColor];
 }
 
 - (UIColor *)backgroundColorForState:(UIControlState)state {
@@ -603,17 +638,33 @@ static NSAttributedString *uppercaseAttributedString(NSAttributedString *string)
 }
 
 - (void)updateBackgroundColor {
-  [self updateDisabledTitleColor];
   super.backgroundColor = self.currentBackgroundColor;
+  [self updateDisabledTitleColor];
 }
 
 - (void)updateDisabledTitleColor {
+  // We only want to automatically set a disabled title color if the user hasn't already provided a
+  // value.
+  if (_hasCustomDisabledTitleColor) {
+    return;
+  }
   // Disabled buttons have very low opacity, so we full-opacity text color here to make the text
   // readable. Also, even for non-flat buttons with opaque backgrounds, the correct background color
   // to examine is the underlying color, since disabled buttons are so transparent.
   BOOL darkBackground = [self isDarkColor:[self underlyingColorHint]];
-  [self setTitleColor:darkBackground ? [UIColor whiteColor] : [UIColor blackColor]
-             forState:UIControlStateDisabled];
+  // We call super here to distinguish between automatic title color assignments and that of users.
+  [super setTitleColor:darkBackground ? [UIColor whiteColor] : [UIColor blackColor]
+              forState:UIControlStateDisabled];
+}
+
+- (void)setTitleColor:(UIColor *)color forState:(UIControlState)state {
+  [super setTitleColor:color forState:state];
+  if (state == UIControlStateDisabled) {
+    _hasCustomDisabledTitleColor = color != nil;
+    if (!_hasCustomDisabledTitleColor) {
+      [self updateDisabledTitleColor];
+    }
+  }
 }
 
 - (BOOL)mdc_adjustsFontForContentSizeCategory {

@@ -7,19 +7,25 @@
 //
 
 import Foundation
-import PagingMenuController
 import SloppySwiper
 
 class PagingCommentViewController : SwipeDownModalVC, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     var submissions: [RSubmission] = []
+    static weak var savedComment : CommentViewController?
     var vCs: [UIViewController] = [ClearVC()]
     var swiper: SloppySwiper?
 
     public init(submissions: [RSubmission]){
         self.submissions = submissions
+        var first = true
         for sub in submissions {
-            let comment = CommentViewController.init(submission: sub, single: false)
-            self.vCs.append(comment)
+            if(first && PagingCommentViewController.savedComment != nil && PagingCommentViewController.savedComment!.submission!.getId() == sub.getId()){
+                self.vCs.append(PagingCommentViewController.savedComment!)
+            } else {
+                let comment = CommentViewController.init(submission: sub, single: false)
+                self.vCs.append(comment)
+            }
+            first = false
         }
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
     }
@@ -65,21 +71,29 @@ class PagingCommentViewController : SwipeDownModalVC, UIPageViewControllerDataSo
                 scrollView.panGestureRecognizer.require(toFail: swiper!.panRecognizer)
             }
         }
+        
+        
+        if(!(firstViewController as! CommentViewController).loaded){
+        PagingCommentViewController.savedComment = firstViewController as! CommentViewController
 
         (firstViewController as! CommentViewController).refresh(firstViewController)
             setViewControllers([firstViewController],
                                direction: .forward,
                                animated: true,
                                completion: nil)
-
+        }
     }
-    
+        
     func pageViewController(_ pageViewController : UIPageViewController, didFinishAnimating: Bool, previousViewControllers: [UIViewController], transitionCompleted: Bool) {
+        guard transitionCompleted else { return }
+        if(!(self.viewControllers!.first! is ClearVC)){
+            PagingCommentViewController.savedComment = self.viewControllers!.first as! CommentViewController
+        }
         if(pageViewController.viewControllers?.first == vCs[0]){
             if(self.navigationController!.modalPresentationStyle == .formSheet){
-               // self.navigationController?.dismiss(animated: true, completion: nil)
+               self.navigationController?.dismiss(animated: true, completion: nil)
             } else {
-               // self.navigationController?.dismiss(animated: true, completion: nil)
+               self.navigationController?.dismiss(animated: true, completion: nil)
             }
         }
     }
@@ -126,7 +140,8 @@ class PagingCommentViewController : SwipeDownModalVC, UIPageViewControllerDataSo
         
         return vCs[nextIndex]
     }
-
+    
+    
 }
 
 class ClearVC : UIViewController {

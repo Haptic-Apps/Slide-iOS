@@ -226,6 +226,8 @@ struct MarkDirtyMixin  {
 
     bool set_int_unique(size_t, size_t, size_t, int_fast64_t) { return true; }
     bool set_string_unique(size_t, size_t, size_t, StringData) { return true; }
+
+    bool add_row_with_key(size_t, size_t, size_t, int64_t) { return true; }
 };
 
 class TransactLogValidationMixin {
@@ -277,7 +279,7 @@ public:
     bool insert_empty_rows(size_t, size_t, size_t, bool) { return true; }
     bool erase_rows(size_t, size_t, size_t, bool) { return true; }
     bool swap_rows(size_t, size_t) { return true; }
-    bool clear_table() noexcept { return true; }
+    bool clear_table(size_t=0) noexcept { return true; }
     bool link_list_set(size_t, size_t, size_t) { return true; }
     bool link_list_insert(size_t, size_t, size_t) { return true; }
     bool link_list_erase(size_t, size_t) { return true; }
@@ -497,6 +499,12 @@ public:
         return true;
     }
 
+    bool add_row_with_key(size_t row_ndx, size_t prior_num_rows, size_t, int64_t)
+    {
+        insert_empty_rows(row_ndx, 1, prior_num_rows, false);
+        return true;
+    }
+
     bool erase_rows(size_t row_ndx, size_t, size_t prior_num_rows, bool unordered)
     {
         if (!unordered) {
@@ -559,7 +567,7 @@ public:
         return true;
     }
 
-    bool clear_table()
+    bool clear_table(size_t=0)
     {
         auto tbl_ndx = current_table();
         if (m_active_table)
@@ -574,6 +582,8 @@ public:
 
     bool insert_column(size_t ndx, DataType, StringData, bool)
     {
+        m_info.schema_changed = true;
+
         if (m_active_descriptor)
             m_active_descriptor->insert_column(ndx);
         if (m_active_descriptor != m_active_table || !m_is_top_level_table)
@@ -601,6 +611,8 @@ public:
 
     bool insert_group_level_table(size_t ndx, size_t, StringData)
     {
+        m_info.schema_changed = true;
+
         for (auto& list : m_info.lists) {
             if (list.table_ndx >= ndx)
                 ++list.table_ndx;
@@ -615,6 +627,8 @@ public:
 
     bool move_column(size_t from, size_t to)
     {
+        m_info.schema_changed = true;
+
         if (m_active_descriptor)
             m_active_descriptor->move_column(from, to);
         if (m_active_descriptor != m_active_table || !m_is_top_level_table)
@@ -632,6 +646,8 @@ public:
 
     bool move_group_level_table(size_t from, size_t to)
     {
+        m_info.schema_changed = true;
+
         for (auto& list : m_info.lists)
             adjust_for_move(list.table_ndx, from, to);
 

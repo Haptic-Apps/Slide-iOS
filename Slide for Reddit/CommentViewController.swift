@@ -9,7 +9,6 @@
 import UIKit
 import reddift
 import AudioToolbox.AudioServices
-import BGTableViewRowActionWithImage
 import TTTAttributedLabel
 import RealmSwift
 import MaterialComponents.MaterialSnackbar
@@ -22,7 +21,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         if(comment != nil && menuId != "sub"){
             let cell = tableView.cellForRow(at: IndexPath.init(row: menuIndex - 1, section: 0)) as! CommentDepthCell
         DispatchQueue.main.async(execute: { () -> Void in
-            let startDepth = self.cDepth[cell.comment!.getIdentifier()] as! Int + 1
+            let startDepth = self.cDepth[cell.comment!.getIdentifier()]! + 1
             
             let queue: [Object] = [RealmDataWrapper.commentToRComment(comment: comment!, depth: startDepth)]
             self.cDepth[comment!.getId()] = startDepth
@@ -50,7 +49,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             self.doArrays()
             self.isReply = false
             self.tableView.reloadData()
-            self.tableView.endEditing(true)
         })
         } else if(comment != nil && menuId == "sub"){
             DispatchQueue.main.async(execute: { () -> Void in
@@ -60,7 +58,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 self.cDepth[comment!.getId()] = startDepth
                 
                 
-                var realPosition = 0
+                let realPosition = 0
                 self.menuShown = false
                 self.menuId = ""
                 self.tableView.beginUpdates()
@@ -79,7 +77,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 self.doArrays()
                 self.isReply = false
                 self.tableView.reloadData()
-                self.tableView.endEditing(true)
             })
         }
     }
@@ -446,7 +443,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             do {
                 try session?.getArticles(link.name, sort:sort, comments:(context.isEmpty ? nil : [context]), context: 3, completion: { (result) -> Void in
                     switch result {
-                    case .failure(let error):
+                    case .failure(let _):
                         self.loaded = true
                         do {
                             let realm = try Realm()
@@ -710,13 +707,14 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     var indicator: MDCActivityIndicator? = nil
     
     override func viewDidLoad() {
+        
         super.viewDidLoad()
         
         if(parent != nil && !(parent! is PagingCommentViewController)){
             var swiper = SloppySwiper.init(navigationController: self.navigationController!)
             self.navigationController!.delegate = swiper!
         }
-        tableView.contentInset = UIEdgeInsetsMake(56, 0, 45, 0)
+        tableView.contentInset = UIEdgeInsetsMake(0, 0, 45, 0)
         self.tableView.register(CommentMenuCell.classForCoder(), forCellReuseIdentifier: "menu")
         self.tableView.register(ReplyCellView.classForCoder(), forCellReuseIdentifier: "dreply")
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: UIBarButtonItemStyle.plain, target: nil, action: nil)
@@ -1298,7 +1296,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     func matches(comment: RComment, sort: CommentNavType) ->Bool{
         switch sort {
         case .PARENTS:
-            if( cDepth[comment.getIdentifier()] as! Int == 1) {
+            if( cDepth[comment.getIdentifier()]! == 1) {
                 return true
             } else {
                 return false
@@ -1565,111 +1563,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
         
         let navEditorViewController: UINavigationController = UINavigationController(rootViewController: reply)
-        self.prepareOverlayVC(overlayVC: navEditorViewController)
         self.present(navEditorViewController, animated: true, completion: nil)
     }
     
-    
-    func tableView(_ tableView: UITableView, editActionsForRowAtDeprecated indexPath: IndexPath) -> [UITableViewRowAction]?
-    {
-        var toReturn: [BGTableViewRowActionWithImage] = []
-        let cell = tableView.cellForRow(at: indexPath) as! CommentDepthCell
-        let color = ColorUtil.getColorForSub(sub: (submission?.subreddit)!)
-        if(cell.content! is RComment){
-            let author = (cell.content as! RComment).author
-            let upimg = UIImage.init(named: "upvote")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25))
-            if(!(submission?.archived)! && AccountController.isLoggedIn && author != "[deleted]" && author != "[removed]"){
-                let upvote = BGTableViewRowActionWithImage.rowAction(with: .normal, title: "    ", backgroundColor: UIColor.init(hexString: "#FF9800"), image: upimg, forCellHeight: UInt(cell.contentView.frame.size.height)) { (action, indexPath) in
-                    tableView.setEditing(false, animated: true)
-                    self.vote(comment: cell.content! as! RComment, dir: .up)
-                    cell.refresh(comment: cell.content! as! RComment, submissionAuthor: (self.submission?.author)!, text: cell.cellContent!)
-                }
-                toReturn.append(upvote!)
-                
-                let downimg = UIImage.init(named: "downvote")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25))
-                let downvote = BGTableViewRowActionWithImage.rowAction(with: .normal, title: "    ", backgroundColor: UIColor.init(hexString: "#2196F3"), image: downimg, forCellHeight: UInt(cell.contentView.frame.size.height)) { (action, indexPath) in
-                    tableView.setEditing(false, animated: true)
-                    self.vote(comment: cell.content as! RComment, dir: .down)
-                    cell.refresh(comment: cell.content as! RComment, submissionAuthor: (self.submission?.author)!, text: cell.cellContent!)
-                }
-                toReturn.append(downvote!)
-                
-                if(author == AccountController.currentName){
-                    let editimg = UIImage.init(named: "edit")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25))
-                    let edit = BGTableViewRowActionWithImage.rowAction(with: .normal, title: "    ", backgroundColor: color, image: editimg, forCellHeight: UInt(cell.contentView.frame.size.height)) { (action, indexPath) in
-                        tableView.setEditing(false, animated: true)
-                        self.edit(comment: cell.content as! RComment, index: (indexPath?.row)!)
-                    }
-                    toReturn.append(edit!)
-                    let deleteimg = UIImage.init(named: "delete")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25))
-                    let delete = BGTableViewRowActionWithImage.rowAction(with: .normal, title: "    ", backgroundColor: GMColor.red500Color(), image: deleteimg, forCellHeight: UInt(cell.contentView.frame.size.height)) { (action, indexPath) in
-                        tableView.setEditing(false, animated: true)
-                        self.doDelete(comment: cell.content as! RComment, index: (indexPath?.row)!)
-                    }
-                    toReturn.append(delete!)
-                }
-                if(!(submission?.locked)!){
-                    let rep = UIImage.init(named: "reply")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25))
-                    let reply = BGTableViewRowActionWithImage.rowAction(with: .normal, title: "    ", backgroundColor: color, image: rep, forCellHeight: UInt(cell.contentView.frame.size.height)) { (action, indexPath) in
-                        tableView.setEditing(false, animated: true)
-                        
-                        let c = tableView.dequeueReusableCell(withIdentifier: "Reply", for: indexPath!) as! CommentDepthCell
-                        self.isReply = true
-                        c.title.attributedText = cell.title.attributedText
-                        let id = self.dataArray[indexPath!.row]
-                        c.setComment(comment: self.content[self.dataArray[indexPath!.row]] as! RComment, depth: self.cDepth[id] as! Int, parent: self, hiddenCount: 0, date: self.lastSeen, author: self.submission?.author, text: cell.cellContent!)
-                        
-                        let reply  = ReplyViewController.init(thing: cell.content!, sub: (self.submission?.subreddit)!, view: c.contentView) { (comment) in
-                            DispatchQueue.main.async(execute: { () -> Void in
-                                let startDepth = self.cDepth[cell.comment!.getIdentifier()] as! Int + 1
-                                
-                                let queue: [Object] = [RealmDataWrapper.commentToRComment(comment: comment!, depth: startDepth)]
-                                self.cDepth[comment!.getId()] = startDepth
-                                
-                                
-                                var realPosition = 0
-                                
-                                var ids : [String] = []
-                                for item in queue {
-                                    let id = item.getIdentifier()
-                                    ids.append(id)
-                                    self.content[id] = item
-                                }
-
-                                for c in self.comments{
-                                    if(c == cell.comment!.getIdentifier()){
-                                        break
-                                    }
-                                    realPosition += 1
-                                }
-                                
-                                self.dataArray.insert(contentsOf: ids, at: (indexPath?.row)! + 1)
-                                self.comments.insert(contentsOf: ids, at: realPosition + 1)
-                                self.updateStringsSingle(queue)
-                                self.doArrays()
-                                self.isReply = false
-                                self.tableView.reloadData()
-                            })
-                        }
-                        
-                        let navEditorViewController: UINavigationController = UINavigationController(rootViewController: reply)
-                        self.prepareOverlayVC(overlayVC: navEditorViewController)
-                        self.present(navEditorViewController, animated: true, completion: nil)
-                        
-                    }
-                    toReturn.append(reply!)
-                    
-                }
-            }
-            let mor = UIImage.init(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25))
-            let more = BGTableViewRowActionWithImage.rowAction(with: .normal, title: "    ", backgroundColor: color, image: mor, forCellHeight: UInt(cell.contentView.frame.size.height)) { (action, indexPath) in
-                tableView.setEditing(false, animated: true)
-                self.moreComment(cell)
-            }
-            toReturn.append(more!)
-        }
-        return toReturn
-    }
     
     func moreComment(_ cell: CommentDepthCell){
         cell.more(self)

@@ -9,7 +9,6 @@
 import UIKit
 import reddift
 import SDWebImage
-import ImageViewer
 import MaterialComponents.MaterialProgressView
 
 class MediaViewController: UIViewController, UIViewControllerTransitioningDelegate {
@@ -107,17 +106,6 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
     func setBarColors(color: UIColor){
         self.color = color
         setNavColors()
-    }
-    
-    
-    let overlayTransitioningDelegate = OverlayTransitioningDelegate()
-    
-    public func prepareOverlayVC(overlayVC: UIViewController) {
-        overlayVC.transitioningDelegate = overlayTransitioningDelegate
-        overlayVC.modalPresentationStyle = .custom
-        overlayVC.view.layer.cornerRadius = 5
-        overlayVC.view.layer.masksToBounds = true
-        
     }
     
     func setNavColors(){

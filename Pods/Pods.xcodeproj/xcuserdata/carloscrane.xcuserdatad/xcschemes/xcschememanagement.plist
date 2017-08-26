@@ -14,27 +14,7 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>BGTableViewRowActionWithImage.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>GMStepper.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>GSKStretchyHeaderView.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
 		<key>ImagePickerSheetController.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>ImageViewer.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -50,16 +30,6 @@
 			<false/>
 		</dict>
 		<key>MaterialComponents.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>MisterFusion.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>PagingMenuController.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -89,17 +59,7 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>SAHistoryNavigationViewController.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
 		<key>SDWebImage.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>SWSegmentedControl.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -136,137 +96,6 @@
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
-	<dict>
-		<key>0B5DEDEC635DC431936854337CE1BDF8</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>18470281470199FCA5FF5EE1512A04E4</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>18F1283A66854AA17659DA6BB6797802</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>198870D49C97620729ABE3900ABC8340</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>22D7E549C357F0FCA405E1D5FBC9D6B0</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>2C160626E50E961C93ECE987CB0EB35E</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>2F379F1C8C45C3D5C9A0C24788E5C3A1</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>3732E73428DFD26042ACB556EA9A10EB</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>40BCA090D5C17E6D6D0266CFA0DB1645</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>4BC55AA3FA58EC3BB64DF90A4F072409</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>58A60308483114F2C07CF9192D7D28DD</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>66940C94E17875CEED28D3479A525BEE</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>6ADB3656BDFD85FB77E0CAB44BFF61E6</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>6DB34ADEAC543008FDA771D13AE6F534</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>6F983DF4CA4AE96FC7D664DC5BB622A8</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>82FE00633924093D644512EBF81D08D2</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>88E9EC28B8B46C3631E6B242B50F4442</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>895BC95186423E56E0573C42509A8614</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>96006FEBF5EE82AA497FB4119BDE9B9C</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>965699190112DDBD9B7864D091660DBC</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>A0973466942E44837DDE381BEF94D8D4</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>A6E9CEC9E5ACFE69D21456CCB70BEEA0</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>A74F416352999BA921AF0A9E028EE416</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>B1332F0085BCA14BA5A2949B0B399447</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>CD71ED72EACA0156F0B96DDE230F2138</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>E04F64C27B632E1CAA1D9120ED78FB86</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-	</dict>
+	<dict/>
 </dict>
 </plist>

@@ -10,7 +10,6 @@
 import UIKit
 import reddift
 import UZTextView
-import ImageViewer
 
 class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextViewDelegate {
     

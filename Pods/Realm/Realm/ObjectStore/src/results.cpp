@@ -33,12 +33,11 @@ using namespace realm;
 Results::Results() = default;
 Results::~Results() = default;
 
-Results::Results(SharedRealm r, Query q, SortDescriptor s, SortDescriptor d)
+Results::Results(SharedRealm r, Query q, DescriptorOrdering o)
 : m_realm(std::move(r))
 , m_query(std::move(q))
 , m_table(m_query.get_table())
-, m_sort(std::move(s))
-, m_distinct(std::move(d))
+, m_descriptor_ordering(std::move(o))
 , m_mode(Mode::Query)
 {
 }
@@ -53,7 +52,6 @@ Results::Results(SharedRealm r, Table& table)
 Results::Results(SharedRealm r, LinkViewRef lv, util::Optional<Query> q, SortDescriptor s)
 : m_realm(std::move(r))
 , m_link_view(lv)
-, m_sort(std::move(s))
 , m_mode(Mode::LinkView)
 {
     m_table.reset(&lv->get_target_table());
@@ -61,13 +59,13 @@ Results::Results(SharedRealm r, LinkViewRef lv, util::Optional<Query> q, SortDes
         m_query = std::move(*q);
         m_mode = Mode::Query;
     }
+    m_descriptor_ordering.append_sort(std::move(s));
 }
 
-Results::Results(SharedRealm r, TableView tv, SortDescriptor s, SortDescriptor d)
+Results::Results(SharedRealm r, TableView tv, DescriptorOrdering o)
 : m_realm(std::move(r))
 , m_table_view(std::move(tv))
-, m_sort(std::move(s))
-, m_distinct(std::move(d))
+, m_descriptor_ordering(std::move(o))
 , m_mode(Mode::TableView)
 {
     m_table.reset(&m_table_view.get_parent());
@@ -83,8 +81,7 @@ Results::Results(Results&& other)
 , m_table_view(std::move(other.m_table_view))
 , m_link_view(std::move(other.m_link_view))
 , m_table(std::move(other.m_table))
-, m_sort(std::move(other.m_sort))
-, m_distinct(std::move(other.m_distinct))
+, m_descriptor_ordering(std::move(other.m_descriptor_ordering))
 , m_notifier(std::move(other.m_notifier))
 , m_mode(other.m_mode)
 , m_update_policy(other.m_update_policy)
@@ -137,7 +134,7 @@ size_t Results::size()
         case Mode::LinkView: return m_link_view->size();
         case Mode::Query:
             m_query.sync_view_if_needed();
-            if (!m_distinct)
+            if (!m_descriptor_ordering.will_apply_distinct())
                 return m_query.count();
             REALM_FALLTHROUGH;
         case Mode::TableView:
@@ -253,7 +250,7 @@ bool Results::update_linkview()
 {
     REALM_ASSERT(m_update_policy == UpdatePolicy::Auto);
 
-    if (m_sort || m_distinct) {
+    if (!m_descriptor_ordering.is_empty()) {
         m_query = get_query();
         m_mode = Mode::Query;
         update_tableview();
@@ -277,11 +274,16 @@ void Results::update_tableview(bool wants_notifications)
         case Mode::Query:
             m_query.sync_view_if_needed();
             m_table_view = m_query.find_all();
-            if (m_sort) {
-                m_table_view.sort(m_sort);
-            }
-            if (m_distinct) {
-                m_table_view.distinct(m_distinct);
+            if (!m_descriptor_ordering.is_empty()) {
+#if REALM_HAVE_COMPOSABLE_DISTINCT
+                m_table_view.apply_descriptor_ordering(m_descriptor_ordering);
+#else
+                if (m_descriptor_ordering.sort)
+                    m_table_view.sort(m_descriptor_ordering.sort);
+
+                if (m_descriptor_ordering.distinct)
+                    m_table_view.distinct(m_descriptor_ordering.distinct);
+#endif
             }
             m_mode = Mode::TableView;
             REALM_FALLTHROUGH;
@@ -335,7 +337,7 @@ size_t Results::index_of(size_t row_ndx)
 size_t Results::index_of(Query&& q)
 {
     size_t row;
-    if (!m_sort) {
+    if (!m_descriptor_ordering.will_apply_sort()) {
         auto query = get_query().and_query(std::move(q));
         query.sync_view_if_needed();
         row = query.find();
@@ -518,26 +520,81 @@ TableView Results::get_tableview()
     REALM_UNREACHABLE();
 }
 
+static std::vector<size_t> parse_keypath(StringData keypath, Schema const& schema, const ObjectSchema *object_schema)
+{
+    auto check = [&](bool condition, const char* fmt, auto... args) {
+        if (!condition) {
+            throw std::invalid_argument(util::format("Cannot sort on key path '%1': %2.",
+                                                     keypath, util::format(fmt, args...)));
+        }
+    };
+    auto is_sortable_type = [](PropertyType type) {
+        return !is_array(type) && type != PropertyType::LinkingObjects && type != PropertyType::Data;
+    };
+
+    const char* begin = keypath.data();
+    const char* end = keypath.data() + keypath.size();
+    check(begin != end, "missing property name");
+
+    std::vector<size_t> indices;
+    while (begin != end) {
+        auto sep = std::find(begin, end, '.');
+        check(sep != begin && sep + 1 != end, "missing property name");
+        StringData key(begin, sep - begin);
+        begin = sep + (sep != end);
+
+        auto prop = object_schema->property_for_name(key);
+        check(prop, "property '%1.%2' does not exist", object_schema->name, key);
+        check(is_sortable_type(prop->type), "property '%1.%2' is of unsupported type '%3'",
+              object_schema->name, key, string_for_property_type(prop->type));
+        if (prop->type == PropertyType::Object)
+            check(begin != end, "property '%1.%2' of type 'object' cannot be the final property in the key path",
+                  object_schema->name, key);
+        else
+            check(begin == end, "property '%1.%2' of type '%3' may only be the final property in the key path",
+                  object_schema->name, key, prop->type_string());
+
+        indices.push_back(prop->table_column);
+        if (prop->type == PropertyType::Object)
+            object_schema = &*schema.find(prop->object_type);
+    }
+    return indices;
+}
+
+Results Results::sort(std::vector<std::pair<std::string, bool>> const& keypaths) const
+{
+    if (keypaths.empty())
+        return *this;
+
+    std::vector<std::vector<size_t>> column_indices;
+    std::vector<bool> ascending;
+    column_indices.reserve(keypaths.size());
+    ascending.reserve(keypaths.size());
+
+    for (auto& keypath : keypaths) {
+        column_indices.push_back(parse_keypath(keypath.first, m_realm->schema(), &get_object_schema()));
+        ascending.push_back(keypath.second);
+    }
+    return sort({*m_table, std::move(column_indices), std::move(ascending)});
+}
+
 Results Results::sort(realm::SortDescriptor&& sort) const
 {
-    return Results(m_realm, get_query(), std::move(sort), m_distinct);
+    DescriptorOrdering new_order = m_descriptor_ordering;
+    new_order.append_sort(std::move(sort));
+    return Results(m_realm, get_query(), std::move(new_order));
 }
 
 Results Results::filter(Query&& q) const
 {
-    return Results(m_realm, get_query().and_query(std::move(q)), m_sort, m_distinct);
+    return Results(m_realm, get_query().and_query(std::move(q)), m_descriptor_ordering);
 }
 
-
-// FIXME: The current implementation of distinct() breaks the Results API.
-// This is tracked by the following issues:
-// - https://github.com/realm/realm-object-store/issues/266
-// - https://github.com/realm/realm-core/issues/2332
-Results Results::distinct(realm::SortDescriptor&& uniqueness)
+Results Results::distinct(realm::DistinctDescriptor&& uniqueness)
 {
-    auto tv = get_tableview();
-    tv.distinct(uniqueness);
-    return Results(m_realm, std::move(tv), m_sort, std::move(uniqueness));
+    DescriptorOrdering new_order = m_descriptor_ordering;
+    new_order.append_distinct(std::move(uniqueness));
+    return Results(m_realm, get_query(), std::move(new_order));
 }
 
 Results Results::snapshot() const &
@@ -576,8 +633,8 @@ void Results::prepare_async()
     if (m_notifier) {
         return;
     }
-    if (m_realm->config().read_only()) {
-        throw InvalidTransactionException("Cannot create asynchronous query for read-only Realms");
+    if (m_realm->config().immutable()) {
+        throw InvalidTransactionException("Cannot create asynchronous query for immutable Realms");
     }
     if (m_realm->is_in_transaction()) {
         throw InvalidTransactionException("Cannot create asynchronous query while in a write transaction");
@@ -613,7 +670,7 @@ bool Results::is_in_table_order() const
         case Mode::LinkView:
             return false;
         case Mode::Query:
-            return m_query.produces_results_in_table_order() && !m_sort;
+            return m_query.produces_results_in_table_order() && !m_descriptor_ordering.will_apply_sort();
         case Mode::TableView:
             return m_table_view.is_in_table_order();
     }
@@ -642,8 +699,8 @@ Results::OutOfBoundsIndexException::OutOfBoundsIndexException(size_t r, size_t c
 
 Results::UnsupportedColumnTypeException::UnsupportedColumnTypeException(size_t column, const Table* table, const char* operation)
 : std::logic_error(util::format("Cannot %1 property '%2': operation not supported for '%3' properties",
-                                  operation, table->get_column_name(column),
-                                  string_for_property_type(static_cast<PropertyType>(table->get_column_type(column)))))
+                                operation, table->get_column_name(column),
+                                string_for_property_type(ObjectSchema::from_core_type(*table->get_descriptor(), column))))
 , column_index(column)
 , column_name(table->get_column_name(column))
 , column_type(table->get_column_type(column))

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import UIKit.UIGestureRecognizerSubclass
 
 class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIPageViewControllerDelegate  {
     
@@ -116,6 +117,7 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         guard orderedViewControllersCount != nextIndex else {
             return nil
         }
+   
         
         guard orderedViewControllersCount > nextIndex else {
             return nil

@@ -134,6 +134,8 @@ class ReplyCellView: UITableViewCell, UITextViewDelegate {
 
 
     func send(_ sender: AnyObject){
+        self.body.endEditing(true)
+
         if(edit){
             edit(sender)
             return

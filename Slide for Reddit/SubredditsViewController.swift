@@ -10,7 +10,6 @@
 import UIKit
 import reddift
 import MaterialComponents.MaterialSnackbar
-import SAHistoryNavigationViewController
 import SideMenu
 
 class SubredditsViewController:  UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate , UISplitViewControllerDelegate {
@@ -294,15 +293,14 @@ class SubredditsViewController:  UIPageViewController, UIPageViewControllerDataS
     
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
         guard completed else { return }
-        var page = SubredditsViewController.vCs.index(of: self.viewControllers!.first!)
+        let page = SubredditsViewController.vCs.index(of: self.viewControllers!.first!)
         doCurrentPage(page!)
-
     }
     
     
     func doCurrentPage(_ page: Int){
         self.currentPage = page
-        var vc = SubredditsViewController.vCs[page] as! SubredditLinkViewController
+        let vc = SubredditsViewController.vCs[page] as! SubredditLinkViewController
         self.navigationController?.navigationBar.barStyle = .black;
         SubredditsViewController.current = vc.sub
         self.tintColor = ColorUtil.getColorForSub(sub: SubredditsViewController.current)
@@ -316,7 +314,7 @@ class SubredditsViewController:  UIPageViewController, UIPageViewControllerDataS
         }
         
         let menu = UIButton.init(type: .custom)
-        menu.setImage(UIImage.init(named: "menu"), for: UIControlState.normal)
+        menu.setImage(UIImage.init(named:"menu")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
         menu.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControlEvents.touchUpInside)
         menu.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let menuB = UIBarButtonItem.init(customView: menu)
@@ -383,7 +381,6 @@ class SubredditsViewController:  UIPageViewController, UIPageViewControllerDataS
 
     
     override func viewDidLoad() {
-        (self.navigationController as? SAHistoryNavigationViewController)?.historyBackgroundColor = .black
 
         self.splitViewController?.preferredDisplayMode = UISplitViewControllerDisplayMode.allVisible
         if(SettingValues.multiColumn){
@@ -407,15 +404,15 @@ class SubredditsViewController:  UIPageViewController, UIPageViewControllerDataS
         let sortB = UIBarButtonItem.init(customView: sort)
         
         let shadowbox = UIButton.init(type: .custom)
-        shadowbox.setImage(UIImage.init(named: "shadowbox"), for: UIControlState.normal)
+        shadowbox.setImage(UIImage.init(named: "shadowbox")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
         shadowbox.addTarget(self, action: #selector(self.shadowbox), for: UIControlEvents.touchUpInside)
-        shadowbox.frame = CGRect.init(x: 0, y: 20, width: 30, height: 30)
+        shadowbox.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let sB = UIBarButtonItem.init(customView: shadowbox)
 
         let more = UIButton.init(type: .custom)
         more.setImage(UIImage.init(named: "ic_more_vert_white"), for: UIControlState.normal)
         more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
-        more.frame = CGRect.init(x: -30, y: 0, width: 30, height: 30)
+        more.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let moreB = UIBarButtonItem.init(customView: more)
         
         navigationItem.rightBarButtonItems = [ moreB, sortB, sB]

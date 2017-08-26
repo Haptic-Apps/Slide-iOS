@@ -13,12 +13,10 @@ import SideMenu
 import KCFloatingActionButton
 import UZTextView
 import RealmSwift
-import PagingMenuController
 import MaterialComponents.MaterialSnackbar
 import MaterialComponents.MDCActivityIndicator
 import TTTAttributedLabel
 import SloppySwiper
-import GSKStretchyHeaderView
 
 class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate,  UICollectionViewDataSource, LinkCellViewDelegate, ColorPickerDelegate, KCFloatingActionButtonDelegate, UIGestureRecognizerDelegate, WrappingFlowLayoutDelegate {
     
@@ -458,7 +456,6 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
     var sub : String
     var session: Session? = nil
     var tableView : UICollectionView = UICollectionView.init(frame: CGRect.zero, collectionViewLayout: UICollectionViewLayout.init())
-    var displayMode: MenuItemDisplayMode
     var single: Bool = false
     
     /* override func previewActionItems() -> [UIPreviewActionItem] {
@@ -478,7 +475,6 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         sub = subName;
         self.parentController = parent
 
-        displayMode = MenuItemDisplayMode.text(title: MenuItemText.init(text: sub, color: ColorUtil.fontColor, selectedColor: ColorUtil.fontColor, font: UIFont.boldSystemFont(ofSize: 16), selectedFont: UIFont.boldSystemFont(ofSize: 25)))
         super.init(nibName:nil, bundle:nil)
       //  setBarColors(color: ColorUtil.getColorForSub(sub: subName))
     }
@@ -486,7 +482,6 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
     init(subName: String, single: Bool){
         sub = subName
         self.single = true
-        displayMode = MenuItemDisplayMode.text(title: MenuItemText.init(text: sub, color: ColorUtil.fontColor, selectedColor: ColorUtil.fontColor, font: UIFont.boldSystemFont(ofSize: 16), selectedFont: UIFont.boldSystemFont(ofSize: 25)))
         super.init(nibName:nil, bundle:nil)
        // setBarColors(color: ColorUtil.getColorForSub(sub: subName))
     }
@@ -1037,20 +1032,20 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         alert.addAction(UIAlertAction(title: "Search All", style: .default, handler: { [weak alert] (_) in
             let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
             let search = SearchViewController.init(subreddit: "all", searchFor: (textField?.text!)!)
-            self.parentController?.show(search, sender: self.parentController)
+            self.navigationController?.show(search, sender: self)
         }))
         
         if(sub != "all" && sub != "frontpage" && sub != "friends" && !sub.startsWith("/m/")){
             alert.addAction(UIAlertAction(title: "Search \(sub)", style: .default, handler: { [weak alert] (_) in
                 let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
                 let search = SearchViewController.init(subreddit: self.sub, searchFor: (textField?.text!)!)
-                self.parentController?.show(search, sender: self.parentController)
+                self.navigationController?.show(search, sender: self)
             }))
         }
         
         alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
         
-        parentController?.present(alert, animated: true, completion: nil)
+        present(alert, animated: true, completion: nil)
         
     }
     

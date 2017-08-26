@@ -31,6 +31,9 @@ std::function<bool (size_t)>
 CollectionNotifier::get_modification_checker(TransactionChangeInfo const& info,
                                              Table const& root_table)
 {
+    if (info.schema_changed)
+        set_table(root_table);
+
     // First check if any of the tables accessible from the root table were
     // actually modified. This can be false if there were only insertions, or
     // deletions which were not linked to by any row in the linking table
@@ -131,7 +134,7 @@ bool DeepChangeChecker::check_row(Table const& table, size_t idx, size_t depth)
     if (depth >= m_current_path.size()) {
         // Don't mark any of the intermediate rows checked along the path as
         // not modified, as a search starting from them might hit a modification
-        for (size_t i = 1; i < m_current_path.size(); ++i)
+        for (size_t i = 0; i < m_current_path.size(); ++i)
             m_current_path[i].depth_exceeded = true;
         return false;
     }

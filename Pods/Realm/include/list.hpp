@@ -82,8 +82,12 @@ public:
 
     void delete_all();
 
-    Results sort(SortDescriptor order);
-    Results filter(Query q);
+    Results sort(SortDescriptor order) const;
+    Results sort(std::vector<std::pair<std::string, bool>> const& keypaths) const;
+    Results filter(Query q) const;
+
+    // Return a Results representing a live view of this List.
+    Results as_results() const;
 
     // Return a Results representing a snapshot of this List.
     Results snapshot() const;
