@@ -11,72 +11,87 @@ import reddift
 
 class NavigationHeaderView: UIView {
     var title = UILabel()
-    var switchp: UIButton = UIButton()
-    var more: UIButton = UIButton()
-    var settings: UIButton = UIButton()
-    var inbox: UILabel = UILabel()
+    var inbox = UILabel()
+    
+    var profile: UITableViewCell = UITableViewCell()
+    var you = UITableViewCell()
+    var settings = UITableViewCell()
+    var inboxBody = UITableViewCell()
+    
     var search: UISearchBar = UISearchBar()
     
     func doColors(){
-        switchp.setImage(UIImage(named: "down")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
-        more.setImage(UIImage(named: "ic_more_vert_white")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 30)), for: .normal)
-        settings.setImage(UIImage(named: "settings")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
-
         title.textColor = ColorUtil.fontColor
         backgroundColor = ColorUtil.foregroundColor
     }
-    
 
     override init(frame: CGRect) {
         super.init(frame:frame)
         self.search = UISearchBar(frame: CGRect(x: 0, y: 0, width: 3, height: 50))
-        self.switchp = UIButton(frame: CGRect(x: 0, y: 0, width: 3, height: 50))
-        self.more = UIButton(frame: CGRect(x: 0, y: 0, width: 3, height: 50))
-        self.settings = UIButton(frame: CGRect(x: 0, y: 0, width: 3, height: 50))
-        self.inbox = UILabel(frame: CGRect(x: 0, y: 0, width: 3, height: 50))
-        self.title = UILabel(frame: CGRect(x: 0, y: 0, width: 3, height: 50))
+        self.inbox = UILabel(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
+        self.title = UILabel(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
+        self.inbox.clipsToBounds = true
+        
+        self.profile.textLabel?.text = "Go to a profile"
+        self.profile.accessoryType = .none
+        self.profile.backgroundColor = ColorUtil.foregroundColor
+        self.profile.textLabel?.textColor = ColorUtil.fontColor
+        self.profile.imageView?.image = UIImage.init(named: "user")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
+        self.profile.imageView?.tintColor = ColorUtil.fontColor
 
-        
-        
+        self.you.textLabel?.text = "Account"
+        self.you.accessoryType = .none
+        self.you.backgroundColor = ColorUtil.foregroundColor
+        self.you.textLabel?.textColor = ColorUtil.fontColor
+        self.you.imageView?.image = UIImage.init(named: "profile")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
+        self.you.imageView?.tintColor = ColorUtil.fontColor
+
+        self.settings.textLabel?.text = "Settings"
+        self.settings.accessoryType = .none
+        self.settings.backgroundColor = ColorUtil.foregroundColor
+        self.settings.textLabel?.textColor = ColorUtil.fontColor
+        self.settings.imageView?.image = UIImage.init(named: "settings")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
+        self.settings.imageView?.tintColor = ColorUtil.fontColor
+
+        self.inboxBody.textLabel?.text = "Inbox"
+        self.inboxBody.accessoryView = inbox
+        self.inboxBody.backgroundColor = ColorUtil.foregroundColor
+        self.inboxBody.textLabel?.textColor = ColorUtil.fontColor
+        self.inboxBody.imageView?.image = UIImage.init(named: "inbox")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
+        self.inboxBody.imageView?.tintColor = ColorUtil.fontColor
+
         search.translatesAutoresizingMaskIntoConstraints = false
         title.translatesAutoresizingMaskIntoConstraints = false
-        switchp.translatesAutoresizingMaskIntoConstraints = false
-        search.translatesAutoresizingMaskIntoConstraints = false
-        more.translatesAutoresizingMaskIntoConstraints = false
-        inbox.translatesAutoresizingMaskIntoConstraints = false
+        profile.translatesAutoresizingMaskIntoConstraints = false
+        you.translatesAutoresizingMaskIntoConstraints = false
         settings.translatesAutoresizingMaskIntoConstraints = false
+        inboxBody.translatesAutoresizingMaskIntoConstraints = false
 
-        switchp.contentHorizontalAlignment = .left
-        switchp.titleEdgeInsets = UIEdgeInsetsMake(0, 8, 0, 0)
-        switchp.tintColor = ColorUtil.fontColor
-        
-        more.contentHorizontalAlignment = .left
-        more.titleEdgeInsets = UIEdgeInsetsMake(0, 8, 0, 0)
-        more.tintColor = ColorUtil.fontColor
-        
-        settings.contentHorizontalAlignment = .left
         settings.tintColor = ColorUtil.fontColor
-
+        you.tintColor = ColorUtil.fontColor
+        profile.tintColor = ColorUtil.fontColor
+        inboxBody.tintColor = ColorUtil.fontColor
         
         inbox.textColor = .white
         inbox.font = UIFont.boldSystemFont(ofSize: 16)
         inbox.backgroundColor = GMColor.red300Color()
         inbox.layer.cornerRadius = 10
         inbox.layer.masksToBounds = true
-        
+        inbox.textAlignment = .center
+
         title.font = UIFont.boldSystemFont(ofSize: 26)
         
         let aTap = UITapGestureRecognizer(target: self, action: #selector(self.switchAccounts(_:)))
-        switchp.addGestureRecognizer(aTap)
-        switchp.isUserInteractionEnabled = true
+        you.addGestureRecognizer(aTap)
+        you.isUserInteractionEnabled = true
         
-        let sTap = UITapGestureRecognizer(target: self, action: #selector(self.showMore(_:)))
-        more.addGestureRecognizer(sTap)
-        more.isUserInteractionEnabled = true
-
         let setTap = UITapGestureRecognizer(target: self, action: #selector(self.settings(_:)))
         settings.addGestureRecognizer(setTap)
         settings.isUserInteractionEnabled = true
+
+        let pTap = UITapGestureRecognizer(target: self, action: #selector(self.showProfileDialog(_:)))
+        profile.addGestureRecognizer(pTap)
+        profile.isUserInteractionEnabled = true
 
         if(AccountController.isLoggedIn){
             let yTap = UITapGestureRecognizer(target: self, action: #selector(self.you(_:)))
@@ -88,16 +103,17 @@ class NavigationHeaderView: UIView {
         title.isUserInteractionEnabled = true
 
         let iTap = UITapGestureRecognizer(target: self, action: #selector(self.inbox(_:)))
-        inbox.addGestureRecognizer(iTap)
-        inbox.isUserInteractionEnabled = true
+        inboxBody.addGestureRecognizer(iTap)
+        inboxBody.isUserInteractionEnabled = true
 
-        addSubview(switchp)
-        addSubview(more)
+        addSubview(inboxBody)
         addSubview(settings)
         addSubview(search)
         addSubview(title)
         addSubview(inbox)
-        
+        addSubview(you)
+        addSubview(profile)
+
         self.clipsToBounds = true
         updateConstraints()
         doColors()
@@ -122,7 +138,7 @@ class NavigationHeaderView: UIView {
         
         let prof = UIAlertAction(title: "Go to a profile", style: .default, handler: {
             (alert: UIAlertAction!) -> Void in
-            self.showProfileDialog(self.switchp)
+            self.showProfileDialog(self.inbox)
         })
         optionMenu.addAction(prof)
         
@@ -137,20 +153,20 @@ class NavigationHeaderView: UIView {
 
         let inbox = UIAlertAction(title: "Inbox", style: .default, handler: {
             (alert: UIAlertAction!) -> Void in
-            self.inbox(self.switchp)
+            self.inbox(self.inbox)
         })
         optionMenu.addAction(inbox)
         
         let settings = UIAlertAction(title: "Settings", style: .default, handler: {
             (alert: UIAlertAction!) -> Void in
-            self.settings(self.switchp)
+            self.settings(self.inbox)
         })
         optionMenu.addAction(settings)
         
         optionMenu.modalPresentationStyle = .popover
         if let presenter = optionMenu.popoverPresentationController {
-            presenter.sourceView = more
-            presenter.sourceRect = more.bounds
+            presenter.sourceView = you
+            presenter.sourceRect = you.bounds
         }
 
         parentController?.present(optionMenu, animated: true, completion: nil)
@@ -188,6 +204,7 @@ class NavigationHeaderView: UIView {
         let optionMenu = UIAlertController(title: nil, message: "Choose Option", preferredStyle: .actionSheet)
         
         for s in AccountController.names {
+            if(s != AccountController.currentName){
             let add = UIAlertAction(title: s, style: .default, handler: {
                 (alert: UIAlertAction!) -> Void in
                 AccountController.switchAccount(name: s)
@@ -204,7 +221,7 @@ class NavigationHeaderView: UIView {
                 }
             })
             optionMenu.addAction(add)
-            
+            }
         }
         
         if(AccountController.isLoggedIn){
@@ -262,12 +279,12 @@ class NavigationHeaderView: UIView {
         super.updateConstraints()
         
         let metrics=["topMargin": 0]
-        let views=["title": title, "switchp":switchp, "inbox": inbox, "settings":settings, "more":more, "search":search] as [String : Any]
+        let views=["title": title, "you":you, "inbox": inboxBody, "inboxc": inbox, "settings":settings, "profile":profile, "search":search] as [String : Any]
         
         var constraint:[NSLayoutConstraint] = []
         
         
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[title]-2-[switchp(30)]-(>=8)-[inbox]-4-[settings(30)]-4-[more(20)]-4-|",
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[title]-8-|",
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                                     metrics: metrics,
                                                                     views: views))
@@ -275,25 +292,28 @@ class NavigationHeaderView: UIView {
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                                     metrics: metrics,
                                                                     views: views))
-        
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-36-[inbox(30)]-4-|",
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[search]-0-|",
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                                     metrics: metrics,
                                                                     views: views))
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-36-[settings(30)]-4-|",
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[inbox]-0-|",
+                                                                    options: NSLayoutFormatOptions(rawValue: 0),
+                                                                    metrics: metrics,
+                                                                    views: views))
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[settings]-0-|",
+                                                                    options: NSLayoutFormatOptions(rawValue: 0),
+                                                                    metrics: metrics,
+                                                                    views: views))
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[you]-0-|",
+                                                                    options: NSLayoutFormatOptions(rawValue: 0),
+                                                                    metrics: metrics,
+                                                                    views: views))
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[profile]-0-|",
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                                     metrics: metrics,
                                                                     views: views))
 
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-36-[more(30)]-4-|",
-                                                                    options: NSLayoutFormatOptions(rawValue: 0),
-                                                                    metrics: metrics,
-                                                                    views: views))
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-36-[title]-8-[search]-4-|",
-                                                                    options: NSLayoutFormatOptions(rawValue: 0),
-                                                                    metrics: metrics,
-                                                                    views: views))
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-36-[switchp(30)]-4-|",
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[title]-[settings(40)]-4-[profile(40)]-4-[you(40)]-4-[inbox(40)]-4-[search]-4-|",
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                                     metrics: metrics,
                                                                     views: views))
@@ -304,7 +324,6 @@ class NavigationHeaderView: UIView {
             inbox.isHidden = false
         } else {
             inbox.isHidden = true
-            switchp.isHidden = true
             title.text = "guest"
         }
         
@@ -312,10 +331,10 @@ class NavigationHeaderView: UIView {
     }
     
     func getEstHeight()-> CGFloat{
-        return CGFloat((120))
+        return CGFloat(title.frame.size.height + (5 * settings.frame.size.height) + 50)
     }
     
     func setMail(_ mailcount: Int){
-        inbox.text = " \(mailcount) "
+        inbox.text = "\(mailcount)"
     }
 }

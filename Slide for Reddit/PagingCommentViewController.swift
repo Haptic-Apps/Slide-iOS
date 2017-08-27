@@ -77,11 +77,11 @@ class PagingCommentViewController : SwipeDownModalVC, UIPageViewControllerDataSo
         PagingCommentViewController.savedComment = firstViewController as! CommentViewController
 
         (firstViewController as! CommentViewController).refresh(firstViewController)
-            setViewControllers([firstViewController],
-                               direction: .forward,
-                               animated: true,
-                               completion: nil)
         }
+        setViewControllers([firstViewController],
+                           direction: .forward,
+                           animated: true,
+                           completion: nil)
     }
         
     func pageViewController(_ pageViewController : UIPageViewController, didFinishAnimating: Bool, previousViewControllers: [UIViewController], transitionCompleted: Bool) {

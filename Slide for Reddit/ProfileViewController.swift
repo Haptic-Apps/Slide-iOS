@@ -147,7 +147,7 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
          sortB = UIBarButtonItem.init(customView: sort)
         
         let more = UIButton.init(type: .custom)
-        more.setImage(UIImage.init(named: "info"), for: UIControlState.normal)
+        more.setImage(UIImage.init(named: "info")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
         more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
         more.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
          moreB = UIBarButtonItem.init(customView: more)
@@ -274,7 +274,7 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
     }
     
     func close(){
-        self.dismiss(animated: true, completion: nil)
+        navigationController?.popViewController(animated: true)
     }
     
     override func viewDidLoad() {

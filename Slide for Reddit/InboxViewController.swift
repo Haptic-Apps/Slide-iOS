@@ -60,7 +60,7 @@ class InboxViewController:  UIPageViewController, UIPageViewControllerDataSource
         let editB = UIBarButtonItem.init(customView: edit)
         
         let read = UIButton.init(type: .custom)
-        read.setImage(UIImage.init(named: "seen"), for: UIControlState.normal)
+        read.setImage(UIImage.init(named: "seen")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
         read.addTarget(self, action: #selector(self.read(_:)), for: UIControlEvents.touchUpInside)
         read.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let readB = UIBarButtonItem.init(customView: read)

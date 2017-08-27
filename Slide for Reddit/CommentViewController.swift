@@ -1628,7 +1628,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             tableView.endUpdates()
  
         }
-        tableView.contentInset = UIEdgeInsetsMake(56, 0, self.tableView.frame.size.height * (2/3), 0)
+        tableView.contentInset = UIEdgeInsetsMake(0, 0, self.tableView.frame.size.height * (2/3), 0)
         menuShown = true
         replyShown = false
         menu!.setComment(comment: cell.content as! RComment, cell: cell, parent: self)
@@ -1654,7 +1654,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         tableView.beginUpdates()
         tableView.deleteRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .middle)
         tableView.endUpdates()
-        tableView.contentInset = UIEdgeInsetsMake(56, 0, 45, 0)
+        tableView.contentInset = UIEdgeInsetsMake(0
+            , 0, 45, 0)
     }
 
     func unhideNumber(n: String, iB: Int) -> Int{

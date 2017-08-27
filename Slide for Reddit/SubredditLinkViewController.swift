@@ -617,7 +617,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         self.tableView.register(ThumbnailLinkCellView.classForCoder(), forCellWithReuseIdentifier: "thumb")
         self.tableView.register(TextLinkCellView.classForCoder(), forCellWithReuseIdentifier: "text")
         
-        self.tableView.contentInset = UIEdgeInsets.init(top: 64, left: 0, bottom: SettingValues.viewType ? 40 : 0, right: 0)
+        self.tableView.contentInset = UIEdgeInsets.init(top: 0, left: 0, bottom: SettingValues.viewType ? 40 : 0, right: 0)
 
         session = (UIApplication.shared.delegate as! AppDelegate).session
         
@@ -1414,6 +1414,12 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
                             self.nomore = !listing.paginator.hasMore() || values.isEmpty
                             
                             DispatchQueue.main.async{
+                                self.tableView.reloadData()
+                                self.flowLayout.reset()
+                                self.refreshControl.endRefreshing()
+                                self.indicator.stopAnimating()
+                                self.loading = false
+
                                 do {
                                     let realm = try! Realm()
                                     //todo insert
@@ -1428,21 +1434,6 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
                                     
                                 }
                                 
-                                //todo if(reset){
-                                self.tableView.reloadData()
-                                self.flowLayout.reset()
-                                //} else {
-                                //    var paths : [IndexPath] = []
-                                //    self.tableView.performBatchUpdates({
-                                //    for i in (before)...(self.links.count - 1) {
-                                //        self.tableView.insertItems(at: [IndexPath.init(row: i, section: 0)])
-                                //    }
-                                //    }, completion: nil)
-                                //}
-                                
-                                self.refreshControl.endRefreshing()
-                                self.indicator.stopAnimating()
-                                self.loading = false
                             }
                         }
                     })
