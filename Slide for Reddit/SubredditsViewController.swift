@@ -22,8 +22,6 @@ class SubredditsViewController:  UIPageViewController, UIPageViewControllerDataS
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
         
-        self.navigationController?.navigationBar.shadowImage = UIImage()
-        ColorUtil.setBackgroundToolbar(toolbar: self.navigationController?.navigationBar)
         
         if(AccountController.isLoggedIn){
             checkForMail()
@@ -32,6 +30,10 @@ class SubredditsViewController:  UIPageViewController, UIPageViewControllerDataS
             restartVC()
         }
         print("WILL APPEAR")
+        
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: self.currentTitle)
+        navigationController?.navigationBar.isTranslucent = false
 
         menuNav?.header.doColors()
         if(menuNav?.tableView != nil){
@@ -184,6 +186,7 @@ class SubredditsViewController:  UIPageViewController, UIPageViewControllerDataS
         
         CachedTitle.titles.removeAll()
         view.backgroundColor = ColorUtil.backgroundColor
+        splitViewController?.view.backgroundColor = ColorUtil.foregroundColor
         SubredditReorderViewController.changed = false
         
         SubredditsViewController.vCs = []
@@ -301,7 +304,6 @@ class SubredditsViewController:  UIPageViewController, UIPageViewControllerDataS
     func doCurrentPage(_ page: Int){
         self.currentPage = page
         let vc = SubredditsViewController.vCs[page] as! SubredditLinkViewController
-        self.navigationController?.navigationBar.barStyle = .black;
         SubredditsViewController.current = vc.sub
         self.tintColor = ColorUtil.getColorForSub(sub: SubredditsViewController.current)
         self.menuNav?.setSubreddit(subreddit: SubredditsViewController.current)
@@ -320,24 +322,17 @@ class SubredditsViewController:  UIPageViewController, UIPageViewControllerDataS
         let menuB = UIBarButtonItem.init(customView: menu)
         
         let label = UILabel()
-        label.text =  "      \(self.currentTitle)"
-        label.textColor = ColorUtil.fontColor
+        label.text =  "   \(self.currentTitle)"
+        label.textColor = .white
         label.adjustsFontSizeToFitWidth = true
         label.font = UIFont.boldSystemFont(ofSize: 20)
         
-        var sideView = UIView()
-        sideView = UIView(frame: CGRect(x: 0, y: 2.5, width: 20, height: 20))
-        sideView.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
-        sideView.translatesAutoresizingMaskIntoConstraints = false
-        
-        label.addSubview(sideView)
-        
-        sideView.layer.cornerRadius = 10
-        sideView.clipsToBounds = true
         label.sizeToFit()
         let leftItem = UIBarButtonItem(customView: label)
         
         self.navigationItem.leftBarButtonItems = [menuB, leftItem]
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: vc.sub)
 
     }
     func pageViewController(_ pageViewController: UIPageViewController,
@@ -438,6 +433,7 @@ class SubredditsViewController:  UIPageViewController, UIPageViewControllerDataS
         SideMenuManager.menuPresentMode = .menuSlideIn
         SideMenuManager.menuAnimationFadeStrength = 0.2
         SideMenuManager.menuParallaxStrength = 2
+        SideMenuManager.menuWidth = 300
         SideMenuManager.menuFadeStatusBar = false
         
         // Enable gestures. The left and/or right menus must be set up above for these to work.

@@ -111,8 +111,8 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
     func setSubreddit(subreddit: String){
         header.setSubreddit(subreddit: subreddit, parent: self)
         header.frame.size.height = header.getEstHeight()
-        navigationController?.navigationBar.barTintColor = ColorUtil.backgroundColor
     }
+    
     func setmail(mailcount: Int){
         header.setMail(mailcount)
     }

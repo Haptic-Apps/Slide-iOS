@@ -43,12 +43,14 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
 
         }
         
-        webView.addObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), options: .new, context: nil)
 
     }
     
     func exit(){
         self.navigationController?.popViewController(animated: true)
+        if(navigationController!.modalPresentationStyle == .pageSheet){
+            self.navigationController?.dismiss(animated: true, completion: nil)
+        }
     }
     
     func readerMode(_ sender: AnyObject){
@@ -69,17 +71,25 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         navigationController?.setNavigationBarHidden(false, animated: false)
 
         self.navigationController?.navigationBar.backItem?.title = ""
+
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
         webView = WKWebView(frame: self.view.frame)
         webView.navigationDelegate = self
         webView.allowsBackForwardNavigationGestures = true
-
+        
         self.view.addSubview(webView)
         myProgressView = UIProgressView(frame: CGRect(x:0, y:webView.frame.origin.y, width: self.view.frame.size.width, height:10))
         myProgressView.progressTintColor = ColorUtil.accentColorForSub(sub: sub)
         self.view.addSubview(myProgressView)
-
+        
         self.webView.scrollView.frame = self.view.frame
+        self.webView.scrollView.setZoomScale(1, animated: false)
         loadUrl()
+        webView.addObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), options: .new, context: nil)
 
     }
     

@@ -369,6 +369,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         refreshControl.tintColor = ColorUtil.fontColor
         refreshControl.attributedTitle = NSAttributedString(string: "")
         refreshControl.addTarget(self, action: #selector(CommentViewController.refresh(_:)), for: UIControlEvents.valueChanged)
+        tableView.contentInset = UIEdgeInsetsMake(56
+            , 0, 45, 0)
         tableView.addSubview(refreshControl) // not required when using UITableViewController
         
     }
@@ -710,10 +712,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         
         super.viewDidLoad()
         
-        if(parent != nil && !(parent! is PagingCommentViewController)){
+        if(self.navigationController != nil && (parent == nil || (parent != nil &&  !(parent! is PagingCommentViewController)))){
             var swiper = SloppySwiper.init(navigationController: self.navigationController!)
             self.navigationController!.delegate = swiper!
         }
+        
         tableView.contentInset = UIEdgeInsetsMake(0, 0, 45, 0)
         self.tableView.register(CommentMenuCell.classForCoder(), forCellReuseIdentifier: "menu")
         self.tableView.register(ReplyCellView.classForCoder(), forCellReuseIdentifier: "dreply")

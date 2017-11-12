@@ -196,8 +196,18 @@ class NavigationHeaderView: UIView {
     }
     
     func settings(_ sender: AnyObject){
-        (self.parentController as! NavigationSidebarViewController).parentController?.navigationController?.pushViewController(SettingsViewController.init(), animated: true)
-        self.parentController!.dismiss(animated: true, completion: nil)
+        //self.parentController!.dismiss(animated: true, completion: nil)
+
+        let settings = SettingsViewController()
+        if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad){
+            let navigationController = UINavigationController(rootViewController: settings)
+            navigationController.modalPresentationStyle = .formSheet
+            navigationController.modalTransitionStyle = .crossDissolve
+            self.parentController?.present(navigationController, animated: true, completion: nil)
+        } else {
+            (self.parentController as! NavigationSidebarViewController).parentController?.navigationController?.pushViewController(settings, animated: true)
+        }
+
 
     }
     func switchAccounts(_ sender: AnyObject){

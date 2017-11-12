@@ -6,7 +6,7 @@
 //  Copyright © 2016 Haptic Apps. All rights reserved.
 //
 import UIKit
-import UZTextView
+import TTTAttributedLabel
 
 struct CellContent {
     var attributedString: NSAttributedString
@@ -20,8 +20,9 @@ struct CellContent {
         self.id = id
         let horizontalMargin = CommentDepthCell.margin().left + CommentDepthCell.margin().right
         let verticalMargin = CommentDepthCell.margin().top + CommentDepthCell.margin().bottom
-        let size = UZTextView.size(for: attributedString, withBoundWidth:width - horizontalMargin, margin: UIEdgeInsetsMake(0, 0, 0, 0))
-        textHeight = size.height + verticalMargin
+        let size = (string).boundingRect(with: CGSize.init(width: width-horizontalMargin, height:10000), options: [.usesLineFragmentOrigin , .usesFontLeading], context: nil).height
+
+        textHeight = size + verticalMargin
     }
     
     init(string: String, width: CGFloat, fontSize: CGFloat = 14, id: String) {
@@ -31,8 +32,8 @@ struct CellContent {
         attributedString = NSAttributedString(string: string, attributes: [NSFontAttributeName : font])
         let horizontalMargin = CommentDepthCell.margin().left + CommentDepthCell.margin().right
         let verticalMargin = CommentDepthCell.margin().top + CommentDepthCell.margin().bottom
-        let size = UZTextView.size(for: attributedString, withBoundWidth:width - horizontalMargin, margin: UIEdgeInsetsMake(0, 0, 0, 0))
-        textHeight = size.height + verticalMargin
+        let size = (string).boundingRect(with: CGSize.init(width: width-horizontalMargin, height:10000), options: [.usesLineFragmentOrigin , .usesFontLeading], context: nil).height
+        textHeight = size + verticalMargin
     }
     
     //Used in comments
@@ -42,11 +43,11 @@ struct CellContent {
         self.width = width
         let horizontalMargin = CommentDepthCell.margin().left + CommentDepthCell.margin().right
         let verticalMargin = CommentDepthCell.margin().top + CommentDepthCell.margin().bottom
-        let size = UZTextView.size(for: attributedString, withBoundWidth:width - horizontalMargin, margin: UIEdgeInsetsMake(0, 0, 0, 0))
+        let size = (string).boundingRect(with: CGSize.init(width: width-horizontalMargin, height:10000), options: [.usesLineFragmentOrigin , .usesFontLeading], context: nil).height
         if hasRelies {
-            textHeight = size.height + verticalMargin
+            textHeight = size + verticalMargin
         } else {
-            textHeight = size.height + verticalMargin
+            textHeight = size + verticalMargin
         }
     }
     
@@ -54,8 +55,8 @@ struct CellContent {
         attributedString = string
         self.id = ""
         self.width = width
-        let size = UZTextView.size(for: attributedString, withBoundWidth:width, margin: UIEdgeInsetsMake(0, 0, 0, 0))
-        textHeight = size.height
+        let size = (string).boundingRect(with: CGSize.init(width: width, height:10000), options: [.usesLineFragmentOrigin , .usesFontLeading], context: nil).height
+        textHeight = size
     }
 
     
@@ -66,11 +67,11 @@ struct CellContent {
         attributedString = NSAttributedString(string: string, attributes: [NSFontAttributeName : font])
         let horizontalMargin = CommentDepthCell.margin().left + CommentDepthCell.margin().right
         let verticalMargin = CommentDepthCell.margin().top + CommentDepthCell.margin().bottom
-        let size = UZTextView.size(for: attributedString, withBoundWidth:width - horizontalMargin, margin: UIEdgeInsetsMake(0, 0, 0, 0))
+        let size = (string).boundingRect(with: CGSize.init(width: width-horizontalMargin, height:10000), options: [.usesLineFragmentOrigin , .usesFontLeading], context: nil).height
         if hasRelies {
-            textHeight = size.height + verticalMargin
+            textHeight = size + verticalMargin
         } else {
-            textHeight = size.height + verticalMargin
+            textHeight = size + verticalMargin
         }
     }
 }

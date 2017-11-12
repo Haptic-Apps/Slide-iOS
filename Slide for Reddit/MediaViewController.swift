@@ -83,19 +83,14 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
             controller.modalPresentationStyle = .overFullScreen
             present(controller, animated: true, completion: nil)
         } else {
-            if(controller is CommentViewController){
-                if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(view.bounds.width / CGFloat(320))) > 1){
-                    let navigationController = UINavigationController(rootViewController: controller)
+                if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad ){
+                    let navigationController = TapBehindModalViewController(rootViewController: controller)
                     navigationController.modalPresentationStyle = .pageSheet
                     navigationController.modalTransitionStyle = .crossDissolve
                     present(navigationController, animated: true, completion: nil)
                 } else {
                     show(controller, sender: self)
                 }
-
-            } else {
-                show(controller, sender: self)
-            }
         }
         navigationController?.setNavigationBarHidden(false, animated: true)
         }
@@ -113,7 +108,6 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
             navigationController?.setNavigationBarHidden(false, animated: true)
             self.navigationController?.navigationBar.shadowImage = UIImage()
             navigationController?.navigationBar.barTintColor = color
-            navigationController?.navigationBar.tintColor = .white
         }
     }
     

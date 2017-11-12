@@ -635,7 +635,9 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate, UIGest
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         request?.cancel()
-        MediaDisplayViewController.videoPlayer!.pause()
+        if(MediaDisplayViewController.videoPlayer != nil){
+            MediaDisplayViewController.videoPlayer!.pause()
+        }
     }
     
     func playerItemDidReachEnd(notification: NSNotification) {

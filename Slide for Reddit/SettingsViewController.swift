@@ -28,8 +28,21 @@ class SettingsViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if(navigationController != nil){
+            let close = UIButton.init(type: .custom)
+            close.setImage(UIImage.init(named: "close")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
+            close.addTarget(self, action: #selector(self.close(_:)), for: UIControlEvents.touchUpInside)
+            close.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+            let closeB = UIBarButtonItem.init(customView: close)
+            self.navigationItem.rightBarButtonItem = closeB
+        }
 
         // Do any additional setup after loading the view.
+    }
+    
+    func close(_ sender: AnyObject){
+        self.dismiss(animated: true, completion: nil)
     }
 
     override func didReceiveMemoryWarning() {
@@ -156,7 +169,7 @@ class SettingsViewController: UITableViewController {
         self.multiColumnCell.imageView?.image = UIImage.init(named: "multi")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
 
         
-        self.tableView.reloadData(with: .fade)
+        self.tableView.reloadData(with: .none)
         if(self.view.frame.size.width > 1000 && UIScreen.main.traitCollection.userInterfaceIdiom == .pad){
         self.tableView(tableView, didSelectRowAt: IndexPath.init(row: 0, section: 0))
         }
@@ -245,9 +258,8 @@ ch = SettingsContent()
             ch = SettingsHistory()
         }
         if let n = ch {
-            if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad ){
-            let nav = UINavigationController(rootViewController:n)
-            splitViewController?.showDetailViewController(nav, sender: self)
+            if(self.navigationController != nil){
+             self.navigationController?.pushViewController(n, animated: true)
             } else {
                 splitViewController?.showDetailViewController(n, sender: self)
             }

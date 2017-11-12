@@ -18,7 +18,7 @@ import MaterialComponents.MDCActivityIndicator
 import TTTAttributedLabel
 import SloppySwiper
 
-class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate,  UICollectionViewDataSource, LinkCellViewDelegate, ColorPickerDelegate, KCFloatingActionButtonDelegate, UIGestureRecognizerDelegate, WrappingFlowLayoutDelegate {
+class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate,  UICollectionViewDataSource, LinkCellViewDelegate, ColorPickerDelegate, KCFloatingActionButtonDelegate,  WrappingFlowLayoutDelegate {
     
     let maxHeaderHeight: CGFloat = 120;
     let minHeaderHeight: CGFloat = 56;
@@ -37,20 +37,36 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
             newLinks.append(links[i])
         }
         
-        let comment = PagingCommentViewController.init(submissions: newLinks)
         
-        if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.view.bounds.width / CGFloat(320))) > 1 && SettingValues.multiColumn){
-            let navigationController = UINavigationController(rootViewController: comment)
+        if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.view.bounds.width / CGFloat(320))) > 1 && SettingValues.multiColumn && navigationController!.modalPresentationStyle != .pageSheet){
+            let comment = PagingCommentViewController.init(submissions: newLinks)
+            let navigationController = TapBehindModalViewController(rootViewController: comment)
             navigationController.modalPresentationStyle = .pageSheet
             navigationController.modalTransitionStyle = .crossDissolve
             self.present(navigationController, animated: true, completion: nil)
-        } else if(UIScreen.main.traitCollection.userInterfaceIdiom != .pad){
+        } else if(UIScreen.main.traitCollection.userInterfaceIdiom != .pad || navigationController!.modalPresentationStyle == .pageSheet){
+            let comment = PagingCommentViewController.init(submissions: newLinks)
             self.navigationController?.pushViewController(comment, animated: true)
         } else {
+            let comment = CommentViewController.init(submission: newLinks[0])
             let nav = UINavigationController.init(rootViewController: comment)
             self.splitViewController?.showDetailViewController(nav, sender: self)
             
         }
+    }
+
+    override func becomeFirstResponder() -> Bool {
+        return true
+    }
+    
+    override var keyCommands: [UIKeyCommand]? {
+        return [ UIKeyCommand(input: " ", modifierFlags: [], action: #selector(spacePressed)) ]
+    }
+    
+    @objc func spacePressed() {
+        UIView.animate(withDuration: 0.2, delay: 0, options: UIViewAnimationOptions.curveEaseOut, animations: {
+            self.tableView.contentOffset.y = self.tableView.contentOffset.y + 350
+        }, completion: nil)
     }
 
     
@@ -458,19 +474,6 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
     var tableView : UICollectionView = UICollectionView.init(frame: CGRect.zero, collectionViewLayout: UICollectionViewLayout.init())
     var single: Bool = false
     
-    /* override func previewActionItems() -> [UIPreviewActionItem] {
-     let regularAction = UIPreviewAction(title: "Regular", style: .Default) { (action: UIPreviewAction, vc: UIViewController) -> Void in
-     
-     }
-     
-     let destructiveAction = UIPreviewAction(title: "Destructive", style: .Destructive) { (action: UIPreviewAction, vc: UIViewController) -> Void in
-     
-     }
-     
-     let actionGroup = UIPreviewActionGroup(title: "Group...", style: .Default, actions: [regularAction, destructiveAction])
-     
-     return [regularAction, destructiveAction, actionGroup]
-     }*/
     init(subName: String, parent: SubredditsViewController){
         sub = subName;
         self.parentController = parent
@@ -553,6 +556,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         if(SettingValues.viewType){
             frame = CGRect.init(x: 0, y: 0, width: frame.size.width, height: frame.size.height - 40)
         }
+        
         self.tableView = UICollectionView(frame: frame, collectionViewLayout: flowLayout)
         self.view = UIView.init(frame: CGRect.zero)
 
@@ -561,7 +565,6 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         self.tableView.delegate = self
         self.tableView.dataSource = self
         refreshControl = UIRefreshControl()
-        self.tableView.contentOffset = CGPoint.init(x: 0, y: -self.refreshControl.frame.size.height)
         indicator = MDCActivityIndicator.init(frame: CGRect.init(x: CGFloat(0), y: CGFloat(0), width: CGFloat(80), height: CGFloat(80)))
         indicator.strokeWidth = 5
         indicator.radius = 20
@@ -617,7 +620,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         self.tableView.register(ThumbnailLinkCellView.classForCoder(), forCellWithReuseIdentifier: "thumb")
         self.tableView.register(TextLinkCellView.classForCoder(), forCellWithReuseIdentifier: "text")
         
-        self.tableView.contentInset = UIEdgeInsets.init(top: 0, left: 0, bottom: SettingValues.viewType ? 40 : 0, right: 0)
+        self.tableView.contentInset = UIEdgeInsets.init(top: 0, left: 0, bottom: 40, right: 0)
 
         session = (UIApplication.shared.delegate as! AppDelegate).session
         
@@ -627,15 +630,15 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         }
         
         if(single){
-            
+
             let sort = UIButton.init(type: .custom)
-            sort.setImage(UIImage.init(named: "ic_sort_white"), for: UIControlState.normal)
+            sort.setImage(UIImage.init(named: "ic_sort_white")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
             sort.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
             sort.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
             let sortB = UIBarButtonItem.init(customView: sort)
             
             let shadowbox = UIButton.init(type: .custom)
-            shadowbox.setImage(UIImage.init(named: "shadowbox"), for: UIControlState.normal)
+            shadowbox.setImage(UIImage.init(named: "shadowbox")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
             shadowbox.addTarget(self, action: #selector(self.shadowboxMode), for: UIControlEvents.touchUpInside)
             shadowbox.frame = CGRect.init(x: 0, y: 00, width: 30, height: 30)
             let sB = UIBarButtonItem.init(customView: shadowbox)
@@ -716,6 +719,9 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
     
     func exit(){
         self.navigationController?.popViewController(animated: true)
+        if(self.navigationController!.modalPresentationStyle  == .pageSheet){
+            self.navigationController!.dismiss(animated: true, completion: nil)
+        }
     }
     
     var lastY: CGFloat = CGFloat(0)
@@ -956,11 +962,10 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
             self.tableView.reloadData()
         }
                 
-        navigationController?.navigationBar.isTranslucent = false
         self.automaticallyAdjustsScrollViewInsets = false
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
-        
+
         first = false
         tableView.delegate = self
 
@@ -970,18 +975,13 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
          } else {
          tableView.reloadData()
          }
-        if(ColorUtil.theme == .LIGHT || ColorUtil.theme == .SEPIA){
-            UIApplication.shared.statusBarStyle = .default
-        }
         self.navigationController?.setNavigationBarHidden(false, animated: true)
-        ColorUtil.setBackgroundToolbar(toolbar: self.navigationController?.navigationBar)
+     //   ColorUtil.setBackgroundToolbar(toolbar: self.navigationController?.navigationBar)
         createDotHeader()
-        if(single){
+        if(single && navigationController!.modalPresentationStyle != .pageSheet){
             let swiper = SloppySwiper.init(navigationController: self.navigationController!)
             self.navigationController!.delegate = swiper!
         }
-        
-
     }
     
     func createDotHeader(){
@@ -989,11 +989,11 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         if(!SettingValues.viewType || single){
             label.text =  "        \(sub)"
         }
-        label.textColor = ColorUtil.fontColor
+        label.textColor = .white
         label.adjustsFontSizeToFitWidth = true
         label.font = UIFont.boldSystemFont(ofSize: 20)
         
-        sideView = UIView()
+        /*sideView = UIView()
         sideView = UIView(frame: CGRect(x: 0, y: 0, width: 25, height: 25))
         sideView.backgroundColor = ColorUtil.getColorForSub(sub: sub)
         sideView.translatesAutoresizingMaskIntoConstraints = false
@@ -1001,9 +1001,9 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         label.addSubview(sideView)
         
         sideView.layer.cornerRadius = 12.5
-        sideView.clipsToBounds = true
+        sideView.clipsToBounds = true*/
         let close = UIButton.init(type: .custom)
-        close.setImage(UIImage.init(named: "close"), for: UIControlState.normal)
+        close.setImage(UIImage.init(named: "close")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
         close.addTarget(self, action: #selector(self.exit), for: UIControlEvents.touchUpInside)
         close.frame = CGRect.init(x: -30, y: 0, width: 30, height: 30)
         let closeB = UIBarButtonItem.init(customView: close)
@@ -1011,11 +1011,15 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         label.sizeToFit()
         let leftItem = UIBarButtonItem(customView: label)
         self.navigationItem.leftBarButtonItems = [closeB, leftItem]
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub)
     }
     
     func reloadDataReset(){
         heightAtIndexPath.removeAllObjects()
         tableView.reloadData()
+        tableView.layoutIfNeeded()
+        tableView.contentOffset = CGPoint.init(x: 0, y: 56)
     }
     
     func showMoreNone(_ sender: AnyObject){
@@ -1150,7 +1154,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
             }
         }
         let controller = ShadowboxViewController.init(submissions: gLinks)
-        controller.modalPresentationStyle = .overCurrentContext
+        controller.modalPresentationStyle = .overFullScreen
         present(controller, animated: true, completion: nil)
     }
 
@@ -1346,7 +1350,6 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
                 if(sub.hasPrefix("/m/")){
                     subreddit = Multireddit.init(name: sub.substring(3, length: sub.length - 3), user: AccountController.currentName)
                 }
-                    print("Sort is \(self.sort) and time is \(self.time)")
 
                     try session?.getList(paginator, subreddit: subreddit, sort: sort, timeFilterWithin: time, completion: { (result) in
                         switch result {
@@ -1371,6 +1374,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
                                     self.refreshControl.endRefreshing()
                                     self.indicator.stopAnimating()
                                     self.loading = false
+                                    self.nomore = true
                                     
                                     if(self.links.isEmpty){
                                         let message = MDCSnackbarMessage()
@@ -1401,39 +1405,51 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
                                 self.realmListing!.links.removeAll()
                             }
                             
-                            let links = listing.children.flatMap({$0 as? Link})
+                            let newLinks = listing.children.flatMap({$0 as? Link})
                             var converted : [RSubmission] = []
-                            for link in links {
+                            for link in newLinks {
                                 let newRS = RealmDataWrapper.linkToRSubmission(submission: link)
                                 converted.append(newRS)
                                 CachedTitle.addTitle(s: newRS)
                             }
                             let values = PostFilter.filter(converted, previous: self.links)
+                            print("Link size is \(self.links.count) and values is \(values.count)")
                             self.links += values
                             self.paginator = listing.paginator
                             self.nomore = !listing.paginator.hasMore() || values.isEmpty
-                            
+                            do {
+                                let realm = try! Realm()
+                                //todo insert
+                                realm.beginWrite()
+                                for submission in self.links {
+                                    realm.create(type(of: submission), value: submission, update: true)
+                                    self.realmListing!.links.append(submission)
+                                }
+                                realm.create(type(of: self.realmListing!), value: self.realmListing!, update: true)
+                                try realm.commitWrite()
+                            } catch {
+                                
+                            }
                             DispatchQueue.main.async{
-                                self.tableView.reloadData()
+                                var paths = [IndexPath]()
+                                for i in before...(self.links.count - 1) {
+                                    print("Inserting to \(i)")
+                                    paths.append(IndexPath.init(item: i, section: 0))
+                                }
+                                print("Size is \(self.links.count)")
+                                if(before == 0){
+                                    self.tableView.reloadData()
+                                    self.loadViewIfNeeded()
+                                    self.tableView.contentOffset = CGPoint.init(x: 0, y: -60)
+                                } else {
+                                    self.tableView.insertItems(at: paths)
+                                }
+                                
                                 self.flowLayout.reset()
+
                                 self.refreshControl.endRefreshing()
                                 self.indicator.stopAnimating()
                                 self.loading = false
-
-                                do {
-                                    let realm = try! Realm()
-                                    //todo insert
-                                    realm.beginWrite()
-                                    for submission in self.links {
-                                        realm.create(type(of: submission), value: submission, update: true)
-                                        self.realmListing!.links.append(submission)
-                                    }
-                                    realm.create(type(of: self.realmListing!), value: self.realmListing!, update: true)
-                                    try realm.commitWrite()
-                                } catch {
-                                    
-                                }
-                                
                             }
                         }
                     })

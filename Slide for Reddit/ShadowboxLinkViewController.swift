@@ -115,7 +115,7 @@ class ShadowboxLinkViewController: UIViewController, UIScrollViewDelegate, UIGes
         doButtons()
         self.view.addSubview(toolbar)
         
-        var text = CachedTitle.getTitle(submission: submission!, full: true, false)
+        var text = CachedTitle.getTitle(submission: submission!, full: true, false, true)
         var estHeight = text.boundingRect(with: CGSize.init(width: self.view.frame.size.width - 20, height:10000), options: [.usesLineFragmentOrigin , .usesFontLeading], context: nil).height
         textB = TTTAttributedLabel.init(frame: CGRect.init(x: 10, y: self.view.frame.size.height - estHeight - 60, width: self.view.frame.size.width - 20, height: estHeight + 20))
         textB.numberOfLines = 0
@@ -132,7 +132,7 @@ class ShadowboxLinkViewController: UIViewController, UIScrollViewDelegate, UIGes
     func doButtons(){
         let space = UIBarButtonItem(barButtonSystemItem:.flexibleSpace, target: nil, action: nil)
         var items: [UIBarButtonItem] = []
-        var attrs: [String: Any] = [:]
+        var attrs: [String: Any] = [NSForegroundColorAttributeName : UIColor.white]
         let imageview = UIImageView(frame: CGRect.init(x: 0, y: 5, width: 20, height: 20))
         imageView.contentMode = .center
 
@@ -148,7 +148,7 @@ class ShadowboxLinkViewController: UIViewController, UIScrollViewDelegate, UIGes
             break
         default:
             imageview.image = UIImage.init(named: "upvote")?.withColor(tintColor: .white).imageResize(sizeChange: CGSize.init(width: 20, height: 20))
-            attrs = ([NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 14, submission: true)])
+            attrs = ([NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 14, submission: true)])
             break
         }
         
@@ -167,7 +167,7 @@ class ShadowboxLinkViewController: UIViewController, UIScrollViewDelegate, UIGes
         commentimg.contentMode = .center
         
         let commentView = UIView(frame: CGRect.init(x: 00, y: 0, width: 70, height: 30))
-        attrs = ([NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 14, submission: true)])
+        attrs = ([NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 14, submission: true)])
         
         let labelC = UILabel(frame: CGRect.init(x: 20, y: 0, width: 40, height: 30))
         var commentNumber = NSAttributedString.init(string: "\(submission!.commentCount)", attributes: attrs)
@@ -248,19 +248,14 @@ class ShadowboxLinkViewController: UIViewController, UIScrollViewDelegate, UIGes
             controller.modalPresentationStyle = .overFullScreen
             present(controller, animated: true, completion: nil)
         } else {
-            if(controller is CommentViewController){
                 if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(view.bounds.width / CGFloat(320))) > 1){
-                    let navigationController = UINavigationController(rootViewController: controller)
+                    let navigationController = TapBehindModalViewController(rootViewController: controller)
                     navigationController.modalPresentationStyle = .pageSheet
                     navigationController.modalTransitionStyle = .crossDissolve
                     present(navigationController, animated: true, completion: nil)
                 } else {
                     show(controller, sender: self)
                 }
-                
-            } else {
-                show(controller, sender: self)
-            }
         }
     }
     

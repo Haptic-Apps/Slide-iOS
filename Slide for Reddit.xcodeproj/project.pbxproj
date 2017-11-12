@@ -11,9 +11,6 @@
 		22FE497D2AAA9FDCC43D8B39 /* Pods_Slide_for_RedditTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE1DDF77D2F040B83CE26E0F /* Pods_Slide_for_RedditTests.framework */; };
 		BE0E8BC01E26E91E004B56B1 /* BouncyViewControllerAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0E8BBF1E26E91E004B56B1 /* BouncyViewControllerAnimator.swift */; };
 		BE0EF7C41F43C9520058D572 /* Spoilers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0EF7C31F43C9510058D572 /* Spoilers.swift */; };
-		BE0EF7CC1F43F9C30058D572 /* ActionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0EF7CB1F43F9C30058D572 /* ActionViewController.swift */; };
-		BE0EF7CF1F43F9C30058D572 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BE0EF7CD1F43F9C30058D572 /* MainInterface.storyboard */; };
-		BE0EF7D31F43F9C40058D572 /* Share to Slide.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE0EF7C91F43F9C20058D572 /* Share to Slide.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		BE1DA3961E26AD5700EC0A04 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1DA3951E26AD5700EC0A04 /* SearchViewController.swift */; };
 		BE1DA3981E26ADEA00EC0A04 /* SearchContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1DA3971E26ADEA00EC0A04 /* SearchContributionLoader.swift */; };
 		BE1DA39C1E26E86800EC0A04 /* OverlayTransitioningDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1DA39B1E26E86800EC0A04 /* OverlayTransitioningDelegate.swift */; };
@@ -79,6 +76,7 @@
 		BE6EA6E41E1DA24700E9E709 /* ContentListingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE6EA6E31E1DA24700E9E709 /* ContentListingViewController.swift */; };
 		BE6EA6E61E1DA5CE00E9E709 /* ProfileContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE6EA6E51E1DA5CE00E9E709 /* ProfileContributionLoader.swift */; };
 		BE6EA6E81E1DA86100E9E709 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE6EA6E71E1DA86100E9E709 /* ProfileViewController.swift */; };
+		BE7360A11FB9089B00CA32AD /* TapBehindModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7360A01FB9089B00CA32AD /* TapBehindModalViewController.swift */; };
 		BE7439E91E201AEE008BB63B /* Subscriptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7439E81E201AEE008BB63B /* Subscriptions.swift */; };
 		BE7439EB1E201BB0008BB63B /* NavigationSidebarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7439EA1E201BB0008BB63B /* NavigationSidebarViewController.swift */; };
 		BE7439ED1E201C22008BB63B /* SubredditCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7439EC1E201C22008BB63B /* SubredditCellView.swift */; };
@@ -145,13 +143,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		BE0EF7D11F43F9C40058D572 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BE8FC9FC1E0C46090063B8EF /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = BE0EF7C81F43F9C20058D572;
-			remoteInfo = "Share to Slide";
-		};
 		BE8FCA191E0C46090063B8EF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BE8FC9FC1E0C46090063B8EF /* Project object */;
@@ -175,7 +166,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				BE0EF7D31F43F9C40058D572 /* Share to Slide.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -200,7 +190,6 @@
 		BA9177B1039FF29FE7BFC503 /* Pods-Slide for RedditUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for RedditUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Slide for RedditUITests/Pods-Slide for RedditUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		BE0E8BBF1E26E91E004B56B1 /* BouncyViewControllerAnimator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BouncyViewControllerAnimator.swift; sourceTree = "<group>"; };
 		BE0EF7C31F43C9510058D572 /* Spoilers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Spoilers.swift; sourceTree = "<group>"; };
-		BE0EF7C91F43F9C20058D572 /* Share to Slide.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Share to Slide.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE0EF7CB1F43F9C30058D572 /* ActionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionViewController.swift; sourceTree = "<group>"; };
 		BE0EF7CE1F43F9C30058D572 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		BE0EF7D01F43F9C30058D572 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -270,6 +259,7 @@
 		BE6EA6E31E1DA24700E9E709 /* ContentListingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentListingViewController.swift; sourceTree = "<group>"; };
 		BE6EA6E51E1DA5CE00E9E709 /* ProfileContributionLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileContributionLoader.swift; sourceTree = "<group>"; };
 		BE6EA6E71E1DA86100E9E709 /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		BE7360A01FB9089B00CA32AD /* TapBehindModalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapBehindModalViewController.swift; sourceTree = "<group>"; };
 		BE7439E81E201AEE008BB63B /* Subscriptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Subscriptions.swift; sourceTree = "<group>"; };
 		BE7439EA1E201BB0008BB63B /* NavigationSidebarViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationSidebarViewController.swift; sourceTree = "<group>"; };
 		BE7439EC1E201C22008BB63B /* SubredditCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubredditCellView.swift; sourceTree = "<group>"; };
@@ -347,13 +337,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		BE0EF7C61F43F9C20058D572 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		BE8FCA011E0C46090063B8EF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -571,7 +554,6 @@
 				BE8FCA041E0C46090063B8EF /* Slide for Reddit.app */,
 				BE8FCA181E0C46090063B8EF /* Slide for RedditTests.xctest */,
 				BE8FCA231E0C46090063B8EF /* Slide for RedditUITests.xctest */,
-				BE0EF7C91F43F9C20058D572 /* Share to Slide.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -647,6 +629,7 @@
 				BE7BFB411F128F9B009CA2E1 /* Sidebar.swift */,
 				BEE206F31F1B0D53008BB5F1 /* ReplyCellView.swift */,
 				BE9456011F3375460097EEF0 /* LeftTransition.swift */,
+				BE7360A01FB9089B00CA32AD /* TapBehindModalViewController.swift */,
 			);
 			path = "Slide for Reddit";
 			sourceTree = "<group>";
@@ -702,23 +685,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		BE0EF7C81F43F9C20058D572 /* Share to Slide */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = BE0EF7D41F43F9C40058D572 /* Build configuration list for PBXNativeTarget "Share to Slide" */;
-			buildPhases = (
-				BE0EF7C51F43F9C20058D572 /* Sources */,
-				BE0EF7C61F43F9C20058D572 /* Frameworks */,
-				BE0EF7C71F43F9C20058D572 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "Share to Slide";
-			productName = "Share to Slide";
-			productReference = BE0EF7C91F43F9C20058D572 /* Share to Slide.appex */;
-			productType = "com.apple.product-type.app-extension";
-		};
 		BE8FCA031E0C46090063B8EF /* Slide for Reddit */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = BE8FCA2C1E0C46090063B8EF /* Build configuration list for PBXNativeTarget "Slide for Reddit" */;
@@ -735,7 +701,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				BE0EF7D21F43F9C40058D572 /* PBXTargetDependency */,
 			);
 			name = "Slide for Reddit";
 			productName = "Slide for Reddit";
@@ -794,11 +759,6 @@
 				LastUpgradeCheck = 0820;
 				ORGANIZATIONNAME = "Haptic Apps";
 				TargetAttributes = {
-					BE0EF7C81F43F9C20058D572 = {
-						CreatedOnToolsVersion = 8.3.2;
-						DevelopmentTeam = FTT89576VQ;
-						ProvisioningStyle = Automatic;
-					};
 					BE8FCA031E0C46090063B8EF = {
 						CreatedOnToolsVersion = 8.2;
 						DevelopmentTeam = FTT89576VQ;
@@ -843,20 +803,11 @@
 				BE8FCA031E0C46090063B8EF /* Slide for Reddit */,
 				BE8FCA171E0C46090063B8EF /* Slide for RedditTests */,
 				BE8FCA221E0C46090063B8EF /* Slide for RedditUITests */,
-				BE0EF7C81F43F9C20058D572 /* Share to Slide */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		BE0EF7C71F43F9C20058D572 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				BE0EF7CF1F43F9C30058D572 /* MainInterface.storyboard in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		BE8FCA021E0C46090063B8EF /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1039,14 +990,6 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		BE0EF7C51F43F9C20058D572 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				BE0EF7CC1F43F9C30058D572 /* ActionViewController.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		BE8FCA001E0C46090063B8EF /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1077,6 +1020,7 @@
 				BE6EA6CB1E1C1E9400E9E709 /* StreamableJSONBase.swift in Sources */,
 				BE6EA6E21E1DA1A300E9E709 /* ContributionLoader.swift in Sources */,
 				BE6EA6DA1E1C1FC700E9E709 /* Watchers.swift in Sources */,
+				BE7360A11FB9089B00CA32AD /* TapBehindModalViewController.swift in Sources */,
 				BE3521801E3D3BDD00C30B8D /* LinkParser.swift in Sources */,
 				BEE5BF621E119A9000E3C9AE /* SubredditsViewController.swift in Sources */,
 				BE6EA6D61E1C1FC700E9E709 /* Formats.swift in Sources */,
@@ -1179,11 +1123,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		BE0EF7D21F43F9C40058D572 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = BE0EF7C81F43F9C20058D572 /* Share to Slide */;
-			targetProxy = BE0EF7D11F43F9C40058D572 /* PBXContainerItemProxy */;
-		};
 		BE8FCA1A1E0C46090063B8EF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = BE8FCA031E0C46090063B8EF /* Slide for Reddit */;
@@ -1224,40 +1163,6 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		BE0EF7D51F43F9C40058D572 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = FTT89576VQ;
-				INFOPLIST_FILE = "Share to Slide/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "ccrama.me.redditslide.Share-to-Slide";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 3.0;
-			};
-			name = Debug;
-		};
-		BE0EF7D61F43F9C40058D572 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = FTT89576VQ;
-				INFOPLIST_FILE = "Share to Slide/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "ccrama.me.redditslide.Share-to-Slide";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 3.0;
-			};
-			name = Release;
-		};
 		BE8FCA2A1E0C46090063B8EF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1484,15 +1389,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		BE0EF7D41F43F9C40058D572 /* Build configuration list for PBXNativeTarget "Share to Slide" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				BE0EF7D51F43F9C40058D572 /* Debug */,
-				BE0EF7D61F43F9C40058D572 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		BE8FC9FF1E0C46090063B8EF /* Build configuration list for PBXProject "Slide for Reddit" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

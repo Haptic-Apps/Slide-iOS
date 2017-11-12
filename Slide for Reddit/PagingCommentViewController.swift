@@ -12,12 +12,13 @@ import SloppySwiper
 class PagingCommentViewController : SwipeDownModalVC, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     var submissions: [RSubmission] = []
     static weak var savedComment : CommentViewController?
-    var vCs: [UIViewController] = [ClearVC()]
+    var vCs: [UIViewController] = []
     var swiper: SloppySwiper?
 
     public init(submissions: [RSubmission]){
         self.submissions = submissions
         var first = true
+        
         for sub in submissions {
             if(first && PagingCommentViewController.savedComment != nil && PagingCommentViewController.savedComment!.submission!.getId() == sub.getId()){
                 self.vCs.append(PagingCommentViewController.savedComment!)
@@ -59,7 +60,7 @@ class PagingCommentViewController : SwipeDownModalVC, UIPageViewControllerDataSo
         self.dataSource = self
         self.delegate = self
         self.navigationController?.view.backgroundColor = UIColor.clear
-         let firstViewController = vCs[1]
+         let firstViewController = vCs[0]
         
 
         swiper = SloppySwiper.init(navigationController: self.navigationController!)

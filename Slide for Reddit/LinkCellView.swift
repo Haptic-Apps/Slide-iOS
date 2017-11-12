@@ -491,7 +491,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     func refreshLink(_ submission: RSubmission){
         self.link = submission
 
-        title.setText(CachedTitle.getTitle(submission: submission, full: full, true))
+        title.setText(CachedTitle.getTitle(submission: submission, full: full, true, false))
         
         if(!full){
         let comment = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openComment(sender:)))
@@ -539,7 +539,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             navViewController = nav
         }
         
-        title.setText(CachedTitle.getTitle(submission: submission, full: full, false))
+        title.setText(CachedTitle.getTitle(submission: submission, full: full, false
+        , false))
         
         let activeLinkAttributes = NSMutableDictionary(dictionary: title.activeLinkAttributes)
         activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.accentColorForSub(sub: submission.subreddit)
@@ -739,6 +740,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             bannerImage.sd_setImage(with: URL.init(string: ""))
         }
         
+        aspectWidth = self.contentView.frame.size.width
         if(!full){
         let comment = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openComment(sender:)))
         comment.delegate = self
@@ -1423,7 +1425,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     }
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
-            parentViewController?.show(viewControllerToCommit, sender: parentViewController )
+        if(viewControllerToCommit is WebsiteViewController || viewControllerToCommit is SubredditLinkViewController || viewControllerToCommit is UINavigationController || viewControllerToCommit is CommentViewController){
+            parentViewController?.show(viewControllerToCommit, sender: nil)
+        } else {
+            parentViewController?.present(viewControllerToCommit, animated: true )
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {
