@@ -26,6 +26,14 @@
 #import "private/MDCOverlayObserverOverlay.h"
 #import "private/MDCOverlayObserverTransition.h"
 
+// If this is ever required elsewhere in the code, just disable unused parameter warnings entirely
+// with -Wno-unused-params.
+#ifdef NS_BLOCK_ASSERTIONS
+#define MDC_UNUSED_IN_RELEASE __unused
+#else
+#define MDC_UNUSED_IN_RELEASE
+#endif
+
 @interface MDCOverlayObserver () <MDCOverlayAnimationObserverDelegate>
 
 /** The list of overlays currently known to this observer. */
@@ -54,7 +62,7 @@ static MDCOverlayObserver *_sOverlayObserver;
   }
 }
 
-+ (instancetype)observerForScreen:(UIScreen *)screen {
++ (instancetype)observerForScreen:(MDC_UNUSED_IN_RELEASE UIScreen *)screen {
   NSParameterAssert(screen == nil || screen == [UIScreen mainScreen]);
   return _sOverlayObserver;
 }
@@ -208,10 +216,10 @@ static MDCOverlayObserver *_sOverlayObserver;
     return NSNotFound;
   }
 
-  return [invocations
-      indexOfObjectPassingTest:^BOOL(NSInvocation *invocation, NSUInteger idx, BOOL *stop) {
-        return invocation.selector == action;
-      }];
+  return [invocations indexOfObjectPassingTest:
+          ^BOOL(NSInvocation *invocation, __unused NSUInteger idx, __unused BOOL *stop) {
+            return invocation.selector == action;
+          }];
 }
 
 - (void)addTarget:(id)target action:(SEL)action {
@@ -297,7 +305,7 @@ static MDCOverlayObserver *_sOverlayObserver;
   self.pendingTransition = nil;
 }
 
-- (void)animationObserverDidEndRunloop:(MDCOverlayAnimationObserver *)observer {
+- (void)animationObserverDidEndRunloop:(__unused MDCOverlayAnimationObserver *)observer {
   [self fireTransition];
 }
 

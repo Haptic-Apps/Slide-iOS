@@ -61,6 +61,7 @@ static NSString *const MDCFloatingButtonShapeKey = @"MDCFloatingButtonShapeKey";
     // The superclass sets contentEdgeInsets from defaultContentEdgeInsets before the _shape is set.
     // Set contentEdgeInsets again to ensure the defaults are for the correct shape.
     self.contentEdgeInsets = [self defaultContentEdgeInsets];
+    self.hitAreaInsets = [self defaultHitAreaInsets];
   }
   return self;
 }
@@ -82,7 +83,7 @@ static NSString *const MDCFloatingButtonShapeKey = @"MDCFloatingButtonShapeKey";
 
 #pragma mark - UIView
 
-- (CGSize)sizeThatFits:(CGSize)size {
+- (CGSize)sizeThatFits:(__unused CGSize)size {
   switch (_shape) {
     case MDCFloatingButtonShapeDefault:
       return CGSizeMake([[self class] defaultDimension], [[self class] defaultDimension]);
@@ -104,15 +105,13 @@ static NSString *const MDCFloatingButtonShapeKey = @"MDCFloatingButtonShapeKey";
   }
 }
 
+- (void)layoutSubviews {
+  // We have to set cornerRadius before laying out subviews so that the boundingPath is correct.
+  self.layer.cornerRadius = CGRectGetHeight(self.bounds) / 2;
+  [super layoutSubviews];
+}
+
 #pragma mark - Subclassing
-
-- (UIBezierPath *)boundingPath {
-  return [UIBezierPath bezierPathWithOvalInRect:self.bounds];
-}
-
-- (CGFloat)cornerRadius {
-  return CGRectGetWidth(self.bounds) / 2;
-}
 
 - (UIEdgeInsets)defaultContentEdgeInsets {
   switch (_shape) {
@@ -122,6 +121,18 @@ static NSString *const MDCFloatingButtonShapeKey = @"MDCFloatingButtonShapeKey";
       return UIEdgeInsetsMake(8, 8, 8, 8);
     case MDCFloatingButtonShapeLargeIcon:
       return UIEdgeInsetsMake(10, 10, 10, 10);
+  }
+}
+
+- (UIEdgeInsets)defaultHitAreaInsets {
+  switch (_shape) {
+    case MDCFloatingButtonShapeDefault:
+      return UIEdgeInsetsZero;
+    case MDCFloatingButtonShapeMini:
+      // Increase the touch target from (40, 40) to the minimum (48, 48)
+      return UIEdgeInsetsMake(-4, -4, -4, -4);
+    case MDCFloatingButtonShapeLargeIcon:
+      return UIEdgeInsetsZero;
   }
 }
 

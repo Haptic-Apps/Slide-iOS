@@ -17,6 +17,7 @@ pod 'MaterialComponents/ProgressView'
 pod 'MaterialComponents/ShadowElevations'
 pod 'MaterialComponents/Snackbar’
 pod 'MaterialComponents/ActivityIndicator'
+pod 'MaterialComponents/Tabs'
   pod “SloppySwiper”, :git => ‘https://github.com/fastred/SloppySwiper'
   pod 'UZTextView', :git => 'https://github.com/ccrama/UZTextView'
   pod 'TTTAttributedLabel'

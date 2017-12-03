@@ -495,65 +495,10 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate, UIGest
         return gfyUrl;
     }
     
-    func transcodeGfycat(toTranscode: String){
-        let url = URL(string: "https://upload.gfycat.com/transcode?fetchUrl=" + toTranscode)
-        URLSession.shared.dataTask(with:url!) { (data, response, error) in
-            if error != nil {
-                print(error ?? "Error loading gif...")
-            } else {
-                do {
-                    guard let json = try JSONSerialization.jsonObject(with: data!, options: []) as? NSDictionary else {
-                        return
-                    }
-                    
-                    let gif = GfycatTranscoded.init(dictionary: json)
-                    
-                    if let url = (gif?.mobileUrl != nil ? gif?.mobileUrl : gif?.mp4Url) {
-                        DispatchQueue.main.async{
-                            self.loadVideo(urlString: self.getSmallerGfy(gfy: url))
-                        }
-                    } else{
-                        self.loadGfycat(urlString: "https://gfycat.com/cajax/get/" + (gif?.gfyName)!)
-                    }
-                } catch let error as NSError {
-                    print(error)
-                }
-            }
-            
-            }.resume()
-    }
-    
-    func checkLoadGfycat(urlString: String){
-        let url = URL(string: "https://gfycat.com/cajax/checkUrl/" + urlString)
-        URLSession.shared.dataTask(with:url!) { (data, response, error) in
-            if error != nil {
-                print(error ?? "Error loading gif...")
-            } else {
-                do {
-                    guard let json = try JSONSerialization.jsonObject(with: data!, options: []) as? NSDictionary else {
-                        return
-                    }
-                    
-                    let gif = GfycatCheck.init(dictionary: json)
-                    
-                    if(gif?.urlKnown == "true"){
-                        DispatchQueue.main.async{
-                            self.loadVideo(urlString: self.getSmallerGfy(gfy: (gif?.mp4Url)!))
-                        }
-                    } else {
-                        self.transcodeGfycat(toTranscode: urlString)
-                    }
-                } catch let error as NSError {
-                    print(error)
-                }
-            }
-            
-            }.resume()
-    }
-    
     func loadVideo(urlString: String){
         refresh(urlString)
     }
+    
     func getGif(urlS: String){
         
         let url = formatUrl(sS: urlS)
@@ -565,6 +510,8 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate, UIGest
             let gfycatUrl = "https://gfycat.com/cajax/get" + name;
             loadGfycat(urlString: gfycatUrl)
             break
+        case .REDDIT:
+            fallthrough
         case .DIRECT:
             fallthrough
         case .IMGUR:
@@ -579,9 +526,8 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate, UIGest
             let vidmeUrl = "https://api.vid.me/videoByUrl?url=" + url;
             getVidMeObject(urlString: vidmeUrl)
             break
-            
         case .OTHER:
-            checkLoadGfycat(urlString: url)
+            //we should never get here
             break
         }
     }
@@ -690,16 +636,23 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate, UIGest
             s = s.replacingOccurrences(of: ".webm", with: ".mp4");
         }
         if (s.endsWith("/")) {s = s.substring(0, length: s.length - 1)}
-        
+        if(s.contains("v.redd.it") && !s.contains("DASH")){
+            if(s.endsWith("/")){
+                s = s.substring(0, length: s.length - 2)
+            }
+            s = s + "/DASH_4_8_M";
+        }
         return s;
     }
     
     func getVideoType(url: String) -> VideoType {
-        if (url.contains(".mp4") || url.contains("webm")) {
+        if (url.contains(".mp4") || url.contains("webm") || url.contains("redditmedia.com")) {
             return VideoType.DIRECT
         }
         if (url.contains("gfycat") && !url.contains("mp4")) {
             return VideoType.GFYCAT}
+        if (url.contains("v.redd.it") ) {
+            return VideoType.REDDIT}
         if (url.contains("imgur.com")) {return VideoType.IMGUR
         }
         if (url.contains("vid.me")) {
@@ -716,6 +669,7 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate, UIGest
         case STREAMABLE
         case GFYCAT
         case DIRECT
+        case REDDIT
         case OTHER
     }
     

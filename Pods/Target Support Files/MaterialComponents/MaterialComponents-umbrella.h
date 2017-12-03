@@ -1,5 +1,13 @@
 #ifdef __OBJC__
 #import <UIKit/UIKit.h>
+#else
+#ifndef FOUNDATION_EXPORT
+#if defined(__cplusplus)
+#define FOUNDATION_EXPORT extern "C"
+#else
+#define FOUNDATION_EXPORT extern
+#endif
+#endif
 #endif
 
 #import "MDCActivityIndicatorColorThemer.h"
@@ -29,6 +37,8 @@
 #import "MDCInkView.h"
 #import "MaterialOverlayWindow.h"
 #import "MDCOverlayWindow.h"
+#import "MaterialPalettes.h"
+#import "MDCPalettes.h"
 #import "MDCProgressViewColorThemer.h"
 #import "MaterialProgressView.h"
 #import "MDCProgressView.h"
@@ -40,6 +50,12 @@
 #import "MDCSnackbarManager.h"
 #import "MDCSnackbarMessage.h"
 #import "MDCSnackbarMessageView.h"
+#import "MDCTabBarColorThemer.h"
+#import "MaterialTabs.h"
+#import "MDCTabBar.h"
+#import "MDCTabBarAlignment.h"
+#import "MDCTabBarItemAppearance.h"
+#import "MDCTabBarViewController.h"
 #import "MaterialThemes.h"
 #import "MDCColorScheme.h"
 #import "MDCTonalColorScheme.h"
@@ -59,10 +75,6 @@
 #import "MDCOverlayImplementor.h"
 #import "MDCOverlayObserver.h"
 #import "MDCOverlayTransitioning.h"
-#import "MaterialRTL.h"
-#import "MDCRTL.h"
-#import "UIImage+MaterialRTL.h"
-#import "UIView+MaterialRTL.h"
 
 FOUNDATION_EXPORT double MaterialComponentsVersionNumber;
 FOUNDATION_EXPORT const unsigned char MaterialComponentsVersionString[];

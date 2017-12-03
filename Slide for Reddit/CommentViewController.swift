@@ -936,10 +936,12 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
     
     func close(_ sender: AnyObject){
-        if(self.navigationController?.viewControllers.count == 1){
+        if(self.navigationController?.viewControllers.count == 1 && self.navigationController?.navigationController == nil){
             self.navigationController?.dismiss(animated: true, completion: nil)
-        } else {
+        } else if(self.navigationController is TapBehindModalViewController){
             self.navigationController?.popViewController(animated: true)
+        } else {
+            self.navigationController?.navigationController?.popToRootViewController(animated: true)
         }
     }
     func showMenu(_ sender: AnyObject){
@@ -1428,7 +1430,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 for row in i...counter {
                     indexPaths.append(IndexPath(row: row, section: 0))
                 }
-                self.tableView.deleteRows(at: indexPaths, with: .middle)
+                self.tableView.deleteRows(at: indexPaths, with: .fade)
                 self.tableView.endUpdates()
                 self.isCurrentlyChanging = false
             }
@@ -1674,6 +1676,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
             if(!hiddenPersons.contains(name)) {
                 i += unhideNumber(n: name, iB: 0)
+            } else {
+                print("Hidden persons contains \(name)")
             }
         }
         for s in hidden {
@@ -1839,6 +1843,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     let row = tableView.indexPath(for: cell)?.row
                     let id = comment.getIdentifier()
                     let childNumber = getChildNumber(n: comment.getIdentifier());
+                    if(childNumber == 0){
+                        cell.showMenu(nil)
+                    } else {
                     if(hiddenPersons.contains((id)) && childNumber > 0) {
                         hiddenPersons.remove(at: hiddenPersons.index(of: id)!)
                         unhideAll(comment: comment.getId(), i: row!)
@@ -1848,11 +1855,13 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                         if (childNumber > 0) {
                             hideAll(comment: comment.getIdentifier(), i: row! + 1);
                             if (!hiddenPersons.contains(id)) {
+                                print("ID is \(id)")
                                 hiddenPersons.insert(id);
                             }
                             if (childNumber > 0) {
                                 cell.collapse(childNumber: childNumber)
                             }
+                        }
                         }
                     }
                 } else {

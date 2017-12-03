@@ -54,11 +54,19 @@ class ContentType {
 
     }
     
+    public static func isGifLoadInstantly(uri: URL) -> Bool {
+        let host = uri.host?.lowercased()
+        let path = uri.path.lowercased()
+        
+        return hostContains(host: host, bases: ["gfycat.com", "v.redd.it"]) || (hostContains(host: host, bases: ["imgur.com"]) && path.endsWith(".gif") || path.endsWith(".gifv") || path.endsWith(".webm")) || path.endsWith(".mp4")
+
+    }
+    
     public static func isGif(uri: URL) -> Bool {
         let host = uri.host?.lowercased()
         let path = uri.path.lowercased()
         
-        return hostContains(host: host, bases: ["gfycat.com"]) || path.hasSuffix(".gif") || path.hasSuffix(
+        return hostContains(host: host, bases: ["gfycat.com", "v.redd.it"]) || path.hasSuffix(".gif") || path.hasSuffix(
             ".gifv") || path.hasSuffix(".webm") || path.hasSuffix(".mp4");
     }
     

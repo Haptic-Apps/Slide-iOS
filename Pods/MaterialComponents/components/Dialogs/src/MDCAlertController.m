@@ -17,8 +17,8 @@
 #import "MDCAlertController.h"
 
 #import "MDCDialogTransitionController.h"
+#import "MDFInternationalization.h"
 #import "MaterialButtons.h"
-#import "MaterialRTL.h"
 #import "MaterialTypography.h"
 #import "private/MaterialDialogsStrings.h"
 #import "private/MaterialDialogsStrings_table.h"
@@ -49,7 +49,7 @@ static NSString *const kMaterialDialogsBundle = @"MaterialDialogs.bundle";
   return self;
 }
 
-- (id)copyWithZone:(NSZone *)zone {
+- (id)copyWithZone:(__unused NSZone *)zone {
   MDCAlertAction *action = [[self class] actionWithTitle:self.title handler:self.completionHandler];
 
   return action;
@@ -128,13 +128,14 @@ static const CGFloat MDCDialogMessageOpacity = 0.54f;
 }
 
 /* Disable setter. Always use internal transition controller */
-- (void)setTransitioningDelegate:(id<UIViewControllerTransitioningDelegate>)transitioningDelegate {
+- (void)setTransitioningDelegate:
+    (__unused id<UIViewControllerTransitioningDelegate>)transitioningDelegate {
   NSAssert(NO, @"MDCAlertController.transitioningDelegate cannot be changed.");
   return;
 }
 
 /* Disable setter. Always use custom presentation style */
-- (void)setModalPresentationStyle:(UIModalPresentationStyle)modalPresentationStyle {
+- (void)setModalPresentationStyle:(__unused UIModalPresentationStyle)modalPresentationStyle {
   NSAssert(NO, @"MDCAlertController.modalPresentationStyle cannot be changed.");
   return;
 }
@@ -176,7 +177,6 @@ static const CGFloat MDCDialogMessageOpacity = 0.54f;
   actionButton.mdc_adjustsFontForContentSizeCategory = self.mdc_adjustsFontForContentSizeCategory;
   [actionButton setTitle:action.title forState:UIControlStateNormal];
   // TODO(#1726): Determine default text color values for Normal and Disabled
-  [actionButton sizeToFit];
   CGRect buttonRect = actionButton.bounds;
   buttonRect.size.height = MAX(buttonRect.size.height, MDCDialogActionButtonHeight);
   buttonRect.size.width = MAX(buttonRect.size.width, MDCDialogActionButtonMinimumWidth);
@@ -219,7 +219,7 @@ static const CGFloat MDCDialogMessageOpacity = 0.54f;
 }
 
 // Handles UIContentSizeCategoryDidChangeNotifications
-- (void)contentSizeCategoryDidChange:(NSNotification *)notification {
+- (void)contentSizeCategoryDidChange:(__unused NSNotification *)notification {
   [self updateFontsForDynamicType];
 }
 
@@ -319,13 +319,17 @@ static const CGFloat MDCDialogMessageOpacity = 0.54f;
   // In iOS 8+, we could be included by way of a dynamic framework, and our resource bundles may
   // not be in the main .app bundle, but rather in a nested framework, so figure out where we live
   // and use that as the search location.
-  NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+  NSBundle *bundle = [NSBundle bundleForClass:[MDCAlertController class]];
   NSString *resourcePath = [(nil == bundle ? [NSBundle mainBundle] : bundle) resourcePath];
   return [resourcePath stringByAppendingPathComponent:bundleName];
 }
 
 - (void)viewWillLayoutSubviews {
   [super viewWillLayoutSubviews];
+
+  for (UIButton *button in self.actionButtons) {
+    [button sizeToFit];
+  }
 
   // Recalculate preferredSize, which is based on width available, if the viewSize has changed.
   if (CGRectGetWidth(self.view.bounds) != _previousLayoutSize.width ||
@@ -428,12 +432,11 @@ static const CGFloat MDCDialogMessageOpacity = 0.54f;
       }
     }
     // Handle RTL
-    if (self.view.mdc_effectiveUserInterfaceLayoutDirection ==
+    if (self.view.mdf_effectiveUserInterfaceLayoutDirection ==
         UIUserInterfaceLayoutDirectionRightToLeft) {
       for (UIButton *button in self.actionButtons) {
-        CGRect buttonRect = button.frame;
-        CGRect flippedRect = MDCRectFlippedForRTL(buttonRect, CGRectGetWidth(self.view.bounds),
-                                                  UIUserInterfaceLayoutDirectionRightToLeft);
+        CGRect flippedRect =
+          MDFRectFlippedHorizontally(button.frame, CGRectGetWidth(self.view.bounds));
         button.frame = flippedRect;
       }
     }
@@ -457,8 +460,13 @@ static const CGFloat MDCDialogMessageOpacity = 0.54f;
     self.actionsScrollView.frame = actionsScrollViewRect;
   } else {
     // Complex layout case : Split the space between the two scrollviews
-    CGFloat maxActionsHeight = CGRectGetHeight(self.view.bounds) * 0.5f;
-    actionsScrollViewRect.size.height = MIN(maxActionsHeight, actionsScrollViewRect.size.height);
+    if (CGRectGetHeight(contentScrollViewRect) < CGRectGetHeight(self.view.bounds) * 0.5f) {
+      actionsScrollViewRect.size.height =
+          CGRectGetHeight(self.view.bounds) - contentScrollViewRect.size.height;
+    } else {
+      CGFloat maxActionsHeight = CGRectGetHeight(self.view.bounds) * 0.5f;
+      actionsScrollViewRect.size.height = MIN(maxActionsHeight, actionsScrollViewRect.size.height);
+    }
     actionsScrollViewRect.origin.y =
         CGRectGetHeight(self.view.bounds) - actionsScrollViewRect.size.height;
     self.actionsScrollView.frame = actionsScrollViewRect;
@@ -473,11 +481,12 @@ static const CGFloat MDCDialogMessageOpacity = 0.54f;
        withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
   [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
 
-  [coordinator animateAlongsideTransition:^(
-                   id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
-    // Reset preferredContentSize on viewWIllTransition to take advantage of additional width
-    self.preferredContentSize = [self calculatePreferredContentSizeForBounds:CGRectInfinite.size];
-  }
+  [coordinator animateAlongsideTransition:
+      ^(__unused id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+        // Reset preferredContentSize on viewWIllTransition to take advantage of additional width
+        self.preferredContentSize =
+            [self calculatePreferredContentSizeForBounds:CGRectInfinite.size];
+      }
                                completion:nil];
 }
 

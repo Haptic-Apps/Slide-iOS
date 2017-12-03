@@ -81,7 +81,10 @@
 }
 
 - (void)setMaxRippleRadius:(CGFloat)radius {
-  self.inkLayer.maxRippleRadius = radius;
+  if (self.inkLayer.maxRippleRadius != radius) {
+    self.inkLayer.maxRippleRadius = radius;
+    [self setNeedsLayout];
+  }
 }
 
 - (BOOL)usesCustomInkCenter {
@@ -109,7 +112,7 @@
   [self.inkLayer spreadFromPoint:point completion:completionBlock];
 }
 
-- (void)startTouchEndedAnimationAtPoint:(CGPoint)point
+- (void)startTouchEndedAnimationAtPoint:(__unused CGPoint)point
                              completion:(MDCInkCompletionBlock)completionBlock {
   [self.inkLayer evaporateWithCompletion:completionBlock];
 }
@@ -120,6 +123,25 @@
 
 - (UIColor *)defaultInkColor {
   return [[UIColor alloc] initWithWhite:0 alpha:0.06f];
+}
+
+#pragma mark
+
++ (MDCInkView *)injectedInkViewForView:(UIView *)view {
+  MDCInkView *foundInkView = nil;
+  for (MDCInkView *subview in view.subviews) {
+    if ([subview isKindOfClass:[MDCInkView class]]) {
+      foundInkView = subview;
+      break;
+    }
+  }
+  if (!foundInkView) {
+    foundInkView = [[MDCInkView alloc] initWithFrame:view.bounds];
+    foundInkView.autoresizingMask =
+        UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    [view addSubview:foundInkView];
+  }
+  return foundInkView;
 }
 
 @end

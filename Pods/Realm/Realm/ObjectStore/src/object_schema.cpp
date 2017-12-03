@@ -89,30 +89,9 @@ ObjectSchema::ObjectSchema(Group const& group, StringData name, size_t index) : 
     size_t count = table->get_column_count();
     persisted_properties.reserve(count);
     for (size_t col = 0; col < count; col++) {
-        if (table->get_column_type(col) == type_Table)
-            continue;
-
-        StringData column_name = table->get_column_name(col);
-
-#if REALM_HAVE_SYNC_STABLE_IDS
-        // The object ID column is an implementation detail, and is omitted from the schema.
-        // FIXME: Consider filtering out all column names starting with `__`.
-        if (column_name == sync::object_id_column_name)
-            continue;
-#endif
-
-        Property property;
-        property.name = column_name;
-        property.type = from_core_type(*table->get_descriptor(), col);
-        property.is_indexed = table->has_search_index(col);
-        property.table_column = col;
-
-        if (property.type == PropertyType::Object) {
-            // set link type for objects and arrays
-            ConstTableRef linkTable = table->get_link_target(col);
-            property.object_type = ObjectStore::object_type_for_table_name(linkTable->get_name().data());
+        if (auto property = ObjectStore::property_for_column_index(table, col)) {
+            persisted_properties.push_back(std::move(property.value()));
         }
-        persisted_properties.push_back(std::move(property));
     }
 
     primary_key = realm::ObjectStore::get_primary_key_for_object(group, name);
@@ -157,14 +136,7 @@ static void validate_property(Schema const& schema,
                               Property const** primary,
                               std::vector<ObjectSchemaValidationException>& exceptions)
 {
-    // currently only arrays of objects are allowed
-    if (is_array(prop.type)) {
-        if (prop.type != PropertyType::Object && prop.type != PropertyType::LinkingObjects) {
-            exceptions.emplace_back("Property '%1.%2' has unsupported type '%3'.",
-                                    object_name, prop.name, prop.type_string());
-        }
-    }
-    else if (prop.type == PropertyType::LinkingObjects) {
+    if (prop.type == PropertyType::LinkingObjects && !is_array(prop.type)) {
         exceptions.emplace_back("Linking Objects property '%1.%2' must be an array.",
                                 object_name, prop.name);
     }

@@ -42,7 +42,10 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
         if(type == ContentType.CType.ALBUM && SettingValues.internalAlbumView){
             print("Showing album")
             return AlbumViewController.init(urlB: contentUrl!)
-        } else if (contentUrl != nil && ContentType.displayImage(t: type) && SettingValues.internalImageView || (type == .GIF && SettingValues.internalGifView) || type == .STREAMABLE || type == .VID_ME || (type == ContentType.CType.VIDEO && SettingValues.internalYouTube)) {
+        } else if (contentUrl != nil && ContentType.displayImage(t: type) && SettingValues.internalImageView || (type == .GIF && SettingValues.internalGifView && (ContentType.isGifLoadInstantly(uri: link.url!) || !link.videoPreview.isEmpty())) || type == .STREAMABLE || type == .VID_ME || (type == ContentType.CType.VIDEO && SettingValues.internalYouTube)) {
+            if(!ContentType.isGifLoadInstantly(uri: link.url!)){
+                contentUrl = URL.init(string: link.videoPreview)
+            }
             return SingleContentViewController.init(url: contentUrl!, lq: lq)
         } else if(type == ContentType.CType.LINK || type == ContentType.CType.NONE){
             let web = WebsiteViewController(url: baseUrl, subreddit: link == nil ? "" : link.subreddit)

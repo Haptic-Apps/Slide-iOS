@@ -99,34 +99,44 @@ class ShadowboxLinkViewController: UIViewController, UIScrollViewDelegate, UIGes
     }
     
     var toolbar = UIToolbar()
+    var baseView = UIView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.scrollView = UIScrollView.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height))
+        let inner = UIView.init(frame: self.view.frame)
+
+        self.scrollView = UIScrollView.init(frame: CGRect.init(x: 0, y: 72, width: self.view.frame.size.width - 48, height: self.view.frame.size.height - 106))
+        self.scrollView.layer.cornerRadius = 10
         self.scrollView.minimumZoomScale=1
         self.scrollView.maximumZoomScale=6.0
         self.scrollView.backgroundColor = .clear
-        self.view.addSubview(scrollView)
-        toolbar = UIToolbar.init(frame: CGRect.init(x: 0, y: self.view.frame.size.height - 35, width: self.view.frame.size.width, height:  30))
-        
-        let tap = UITapGestureRecognizer.init(target: self, action: #selector(self.content))
+        toolbar = UIToolbar.init(frame: CGRect.init(x: 0, y: self.view.frame.size.height - 89, width: self.view.frame.size.width - 48, height:  40))
+        let tap = UITapGestureRecognizer.init(target: self, action: #selector(self.content(_:)))
         scrollView.addGestureRecognizer(tap)
+        scrollView.isUserInteractionEnabled = true
+        let tap2 = UITapGestureRecognizer.init(target: self, action: #selector(self.comments(_:)))
+        toolbar.addGestureRecognizer(tap2)
+        toolbar.isUserInteractionEnabled = true
 
         doButtons()
-        self.view.addSubview(toolbar)
-        
+        inner.addSubview(toolbar)
+        inner.addSubview(scrollView)
+
         var text = CachedTitle.getTitle(submission: submission!, full: true, false, true)
         var estHeight = text.boundingRect(with: CGSize.init(width: self.view.frame.size.width - 20, height:10000), options: [.usesLineFragmentOrigin , .usesFontLeading], context: nil).height
-        textB = TTTAttributedLabel.init(frame: CGRect.init(x: 10, y: self.view.frame.size.height - estHeight - 60, width: self.view.frame.size.width - 20, height: estHeight + 20))
+        textB = TTTAttributedLabel.init(frame: CGRect.init(x: 10, y: self.view.frame.size.height - estHeight - 60, width: self.view.frame.size.width - 68, height: estHeight + 20))
         textB.numberOfLines = 0
         textB.setText(text)
         
-        let tapT = UITapGestureRecognizer.init(target: self, action: #selector(self.comments))
-        textB.addGestureRecognizer(tapT)
-        
         textB.isUserInteractionEnabled = true
-        self.view.addSubview(textB)
+        inner.addSubview(textB)
         startDisplay()
+        baseView = inner.withPadding(padding: UIEdgeInsetsMake(48, 24, 0, 24))
+        
+        view.addSubview(baseView)
+        
+        view.layoutIfNeeded()
+
     }
     
     func doButtons(){
@@ -202,7 +212,7 @@ class ShadowboxLinkViewController: UIViewController, UIScrollViewDelegate, UIGes
         
     }
     
-    func comments(){
+    func comments(_ sender: AnyObject){
         
     }
     
@@ -238,7 +248,8 @@ class ShadowboxLinkViewController: UIViewController, UIScrollViewDelegate, UIGes
     }
     
 
-    func content(){
+    func content(_ sender: AnyObject){
+        print("Doing content")
         var url = baseURL!
         let controller = getControllerForUrl(baseUrl: url)!
         if( controller is AlbumViewController){
@@ -265,10 +276,11 @@ class ShadowboxLinkViewController: UIViewController, UIScrollViewDelegate, UIGes
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.view.backgroundColor = .clear
+        self.baseView.backgroundColor = .clear
     }
     
     func startDisplay(){
+        self.view.layoutMargins = UIEdgeInsetsMake(16, 16, 16, 16)
         loadImage(imageURLB: URL.init(string: submission!.bannerUrl))
     }
     

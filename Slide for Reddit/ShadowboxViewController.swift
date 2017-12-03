@@ -39,7 +39,7 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         self.automaticallyAdjustsScrollViewInsets = false
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
-        self.view.backgroundColor = UIColor.clear
+        
     }
     
     var navItem: UINavigationItem?
@@ -55,7 +55,7 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         view.backgroundColor = UIColor.black.withAlphaComponent(0.7)
         self.navigationController?.view.backgroundColor = UIColor.clear
         
-        let navigationBar = UINavigationBar.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: 56))
+        let navigationBar = UINavigationBar.init(frame: CGRect.init(x: 0, y: 16, width: self.view.frame.size.width, height: 56))
         navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationBar.shadowImage = UIImage()
         navigationBar.isTranslucent = true
@@ -73,7 +73,12 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         
         navigationBar.setItems([navItem!], animated: false)
         self.view.addSubview(navigationBar)
-        self.view.backgroundColor = UIColor.black
+        let blurEffect = UIBlurEffect(style: .dark)
+        let blurEffectView = UIVisualEffectView(effect: blurEffect)
+        blurEffectView.frame = self.view.frame
+        
+        self.view.insertSubview(blurEffectView, at: 0)
+    
     }
     
     func overview(_ sender: AnyObject){

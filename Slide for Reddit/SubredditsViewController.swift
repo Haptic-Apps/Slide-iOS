@@ -381,9 +381,12 @@ class SubredditsViewController:  UIPageViewController, UIPageViewControllerDataS
         if(SettingValues.multiColumn){
             self.splitViewController?.maximumPrimaryColumnWidth = 10000
             self.splitViewController?.preferredPrimaryColumnWidthFraction = 1
-            
         }
-
+        
+        if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad){
+        self.splitViewController?.showDetailViewController(PlaceholderViewController(), sender: nil)
+        }
+        
         if(SubredditsViewController.vCs.count == 0){
             for subname in Subscriptions.subreddits {
                 SubredditsViewController.vCs.append( SubredditLinkViewController(subName: subname, parent: self))

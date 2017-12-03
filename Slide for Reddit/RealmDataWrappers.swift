@@ -32,6 +32,8 @@ class RealmDataWrapper {
         let previews = ((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["resolutions"] as? [Any])
         let preview  = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["url"] as? String)
         
+        let videoPreview = ((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["variants"] as? [String: Any])?["mp4"] as? String
+
         if (preview != nil && !(preview?.isEmpty())!) {
             burl = (preview!.replacingOccurrences(of: "&amp;", with: "&"))
             w = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["width"] as? Int)!
@@ -117,6 +119,7 @@ class RealmDataWrapper {
         rSubmission.upvoteRatio = submission.upvoteRatio
         rSubmission.vote = submission.likes == .up
         rSubmission.name = submission.id
+        rSubmission.videoPreview = videoPreview ?? ""
         rSubmission.height = h
         rSubmission.width = w
         rSubmission.distinguished = submission.distinguished
@@ -344,6 +347,7 @@ class RSubmission: Object {
     dynamic var locked = false
     dynamic var urlString = ""
     dynamic var distinguished = ""
+    dynamic var videoPreview = ""
     
     var type: ContentType.CType {
         if(isSelf){
