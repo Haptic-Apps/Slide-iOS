@@ -119,7 +119,7 @@ class RealmDataWrapper {
         rSubmission.upvoteRatio = submission.upvoteRatio
         rSubmission.vote = submission.likes == .up
         rSubmission.name = submission.id
-        rSubmission.videoPreview = videoPreview ?? ""
+        rSubmission.videoPreview = try! (videoPreview ?? "" ).convertHtmlSymbols() ?? ""
         rSubmission.height = h
         rSubmission.width = w
         rSubmission.distinguished = submission.distinguished

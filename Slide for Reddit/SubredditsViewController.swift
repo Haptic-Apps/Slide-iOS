@@ -374,6 +374,21 @@ class SubredditsViewController:  UIPageViewController, UIPageViewControllerDataS
         return SubredditsViewController.vCs[nextIndex]
     }
 
+    override func becomeFirstResponder() -> Bool {
+        return true
+    }
+    
+    override var keyCommands: [UIKeyCommand]? {
+        return [ UIKeyCommand(input: " ", modifierFlags: [], action: #selector(spacePressed)) ]
+    }
+    
+    @objc func spacePressed() {
+        UIView.animate(withDuration: 0.2, delay: 0, options: UIViewAnimationOptions.curveEaseOut, animations: {
+            let vc = (SubredditsViewController.vCs[self.currentPage] as! SubredditLinkViewController)
+            vc.tableView.contentOffset.y = vc.tableView.contentOffset.y + 350
+        }, completion: nil)
+    }
+
     
     override func viewDidLoad() {
 

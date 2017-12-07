@@ -66,6 +66,7 @@ class SettingValues{
     public static let pref_multiColumn = "MULTI_COLUMN"
     public static let pref_showFirstParagraph = "FIRST_P"
     public static let pref_swapLongPress = "SWAP_LONG_PRESS"
+    public static let pref_collapseFully = "COLLAPSE_FULLY"
 
 
     public static var viewType = true
@@ -124,6 +125,7 @@ class SettingValues{
     public static var multiColumn = false
     public static var showFirstParagraph = true
     public static var swapLongPress = false
+    public static var collapseFully = true
 
     enum PostViewType: String {
         case LIST = "list"
@@ -153,6 +155,7 @@ class SettingValues{
         SettingValues.disableColor = settings.bool(forKey: SettingValues.pref_disableColor)
         SettingValues.collapseDefault = settings.bool(forKey: SettingValues.pref_collapseDefault)
         SettingValues.volumeButtonNavigation = settings.bool(forKey: SettingValues.pref_volumeButtonNavigation)
+        SettingValues.collapseFully = settings.bool(forKey: SettingValues.pref_collapseFully)
         SettingValues.leftThumbnail = settings.bool(forKey: SettingValues.pref_leftThumbnail)
 
         SettingValues.dataSavingEnabled = settings.bool(forKey: SettingValues.pref_dataSavingEnabled)

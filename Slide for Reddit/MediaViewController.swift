@@ -46,6 +46,7 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
             if(!ContentType.isGifLoadInstantly(uri: link.url!)){
                 contentUrl = URL.init(string: link.videoPreview)
             }
+            print(link.videoPreview)
             return SingleContentViewController.init(url: contentUrl!, lq: lq)
         } else if(type == ContentType.CType.LINK || type == ContentType.CType.NONE){
             let web = WebsiteViewController(url: baseUrl, subreddit: link == nil ? "" : link.subreddit)

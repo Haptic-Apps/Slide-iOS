@@ -22,6 +22,9 @@ class SettingsComments: UITableViewController {
     var swapLongPressCell: UITableViewCell = UITableViewCell()
     var swapLongPress = UISwitch()
     
+    var collapseFullyCell: UITableViewCell = UITableViewCell()
+    var collapseFully = UISwitch()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -52,6 +55,9 @@ class SettingsComments: UITableViewController {
         } else if(changed == swapLongPress){
             SettingValues.swapLongPress = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_swapLongPress)
+        } else if(changed == collapseFully){
+            SettingValues.collapseFully = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_collapseFully)
         }
         UserDefaults.standard.synchronize()
     }
@@ -122,6 +128,16 @@ class SettingsComments: UITableViewController {
         swapLongPressCell.backgroundColor = ColorUtil.foregroundColor
         swapLongPressCell.textLabel?.textColor = ColorUtil.fontColor
         swapLongPressCell.selectionStyle = UITableViewCellSelectionStyle.none
+        
+        collapseFully = UISwitch()
+        collapseFully.isOn = SettingValues.collapseFully
+        collapseFully.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+        collapseFullyCell.textLabel?.text = "Collapse comments fully"
+        collapseFullyCell.accessoryView = collapseFully
+        collapseFullyCell.backgroundColor = ColorUtil.foregroundColor
+        collapseFullyCell.textLabel?.textColor = ColorUtil.fontColor
+        collapseFullyCell.selectionStyle = UITableViewCellSelectionStyle.none
+
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -147,9 +163,10 @@ class SettingsComments: UITableViewController {
         case 0:
             switch(indexPath.row) {
             case 0: return self.collapseDefaultCell
-            case 1: return self.disableColorCell
-            case 2: return self.disableNavigationBarCell
-            case 3: return self.swapLongPressCell
+            case 1: return self.collapseFullyCell
+            case 2: return self.disableColorCell
+            case 3: return self.disableNavigationBarCell
+            case 4: return self.swapLongPressCell
             default: fatalError("Unknown row in section 0")
             }
         default: fatalError("Unknown section")
@@ -160,7 +177,7 @@ class SettingsComments: UITableViewController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch(section) {
-        case 0: return 4    // section 1 has 1 row
+        case 0: return 5    // section 1 has 1 row
         default: fatalError("Unknown number of sections")
         }
     }

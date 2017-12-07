@@ -1465,6 +1465,22 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         return toReturn
     }
     
+    func walkTreeFlat(n: String) -> [String] {
+        var toReturn: [String] = []
+        if content[n] is RComment {
+            let bounds = comments.index(where: { ($0 == n )})! + 1
+            let parentDepth = (cDepth[n] as! Int)
+            for obj in stride(from: bounds, to: comments.count, by: 1) {
+                if((cDepth[comments[obj]] as! Int)  == 1 + parentDepth){
+                    toReturn.append(comments[obj])
+                } else {
+                    return toReturn
+                }
+            }
+        }
+        return toReturn
+    }
+    
     func walkTreeFully(n: String) -> [String] {
         var toReturn: [String] = []
         toReturn.append(n)
@@ -1663,12 +1679,25 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             , 0, 45, 0)
     }
 
+    override func becomeFirstResponder() -> Bool {
+        return true
+    }
+    
+    override var keyCommands: [UIKeyCommand]? {
+        return [ UIKeyCommand(input: " ", modifierFlags: [], action: #selector(spacePressed)) ]
+    }
+    
+    @objc func spacePressed() {
+        UIView.animate(withDuration: 0.2, delay: 0, options: UIViewAnimationOptions.curveEaseOut, animations: {
+            self.tableView.contentOffset.y = self.tableView.contentOffset.y + 350
+        }, completion: nil)
+    }
+
     func unhideNumber(n: String, iB: Int) -> Int{
         var i = iB
-        let children = walkTree(n: n);
+        let children = walkTreeFlat(n: n);
         var toHide : [String] = []
         for name in children {
-            
             if(hidden.contains(name)){
                 i += 1
             }
@@ -1754,14 +1783,15 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 let thing = isSearching ? filteredData[datasetPosition] : dataArray[datasetPosition]
                 if(content[thing] is RComment){
                     var count = 0
-                    if(hiddenPersons.contains(thing)){
+                    let hiddenP = hiddenPersons.contains(thing)
+                    if(hiddenP){
                         count = getChildNumber(n: content[thing]!.getIdentifier())
                     }
                     var t = text[thing]!
                     if(isSearching){
                         t = highlight(t)
                     }
-                    cell.setComment(comment: content[thing] as! RComment, depth: cDepth[thing]!, parent: self, hiddenCount: count, date: lastSeen, author: submission?.author, text: t)
+                    cell.setComment(comment: content[thing] as! RComment, depth: cDepth[thing]!, parent: self, hiddenCount: count, date: lastSeen, author: submission?.author, text: t, isCollapsed: hiddenP)
                     if(thing == menuId && menuShown){
                         cell.doHighlight()
                     }
@@ -1844,7 +1874,13 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     let id = comment.getIdentifier()
                     let childNumber = getChildNumber(n: comment.getIdentifier());
                     if(childNumber == 0){
+                        if(!SettingValues.collapseFully){
                         cell.showMenu(nil)
+                        } else if(cell.isCollapsed) {
+                            cell.expandSingle()
+                        } else {
+                            cell.collapse(childNumber: 0)
+                        }
                     } else {
                     if(hiddenPersons.contains((id)) && childNumber > 0) {
                         hiddenPersons.remove(at: hiddenPersons.index(of: id)!)
@@ -1919,7 +1955,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                                 self.comments.insert(contentsOf: ids, at: realPosition)
                                                 self.doArrays()
                                                 var paths: [IndexPath] = []
-                                                for i in stride(from: datasetPosition, to: datasetPosition + queue.count, by: 1){
+                                                for i in stride(from: datasetPosition + 1, to: datasetPosition + queue.count, by: 1){
                                                     paths.append(IndexPath.init(row: i, section: 0))
                                                 }
                                                 self.tableView.insertRows(at: paths, with: .left)

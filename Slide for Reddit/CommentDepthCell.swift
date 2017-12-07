@@ -460,7 +460,15 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
                 self.c.alpha = 1
         }, completion: { finished in
         })
-        
+        isCollapsed = true
+        if(SettingValues.collapseFully){
+            refresh(comment: comment!, submissionAuthor: parent!.submission!.author, text: cellContent!)
+        }
+    }
+    
+    func expandSingle(){
+        isCollapsed = false
+        refresh(comment: comment!, submissionAuthor: parent!.submission!.author, text: cellContent!)
     }
     
     func expand(){
@@ -469,7 +477,10 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
                 self.c.alpha = 0
         }, completion: { finished in
         })
-        
+        isCollapsed = false
+        if(SettingValues.collapseFully){
+            refresh(comment: comment!, submissionAuthor: parent!.submission!.author, text: cellContent!)
+        }
     }
     
     var oldDepth = 0
@@ -652,8 +663,9 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
          }*/
     }
     
+    public var isCollapsed = false
     
-    func setComment(comment: RComment, depth: Int, parent: CommentViewController, hiddenCount: Int, date: Double, author: String?, text: NSAttributedString){
+    func setComment(comment: RComment, depth: Int, parent: CommentViewController, hiddenCount: Int, date: Double, author: String?, text: NSAttributedString, isCollapsed: Bool){
         self.comment = comment
         self.cellContent = text
         self.contentView.backgroundColor = ColorUtil.foregroundColor
@@ -661,6 +673,8 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         if(self.parent == nil){
             self.parent = parent
         }
+        
+        self.isCollapsed = isCollapsed
         
         if(date != 0 && date < Double(comment.created.timeIntervalSince1970 )){
             setIsNew(sub: comment.subreddit)
@@ -801,7 +815,9 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         }
         
         infoString.append(NSAttributedString.init(string: "\n"))
-        infoString.append(text)
+        if(!isCollapsed || !SettingValues.collapseFully){
+             infoString.append(text)
+        }
 
         if(!setLinkAttrs){
         let activeLinkAttributes = NSMutableDictionary(dictionary: title.activeLinkAttributes)
