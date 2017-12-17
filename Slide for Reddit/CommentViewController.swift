@@ -1471,7 +1471,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             let bounds = comments.index(where: { ($0 == n )})! + 1
             let parentDepth = (cDepth[n] as! Int)
             for obj in stride(from: bounds, to: comments.count, by: 1) {
-                if((cDepth[comments[obj]] as! Int)  == 1 + parentDepth){
+                if((cDepth[comments[obj]] as! Int)  >= 1 + parentDepth){
                     toReturn.append(comments[obj])
                 } else {
                     return toReturn
@@ -1720,7 +1720,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     func hideNumber(n: String, iB : Int) -> Int{
         var i = iB
         
-        let children = walkTree(n: n);
+        let children = walkTreeFlat(n: n);
         
         for name in children {
             
