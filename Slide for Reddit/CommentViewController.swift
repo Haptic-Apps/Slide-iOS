@@ -1471,11 +1471,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             let bounds = comments.index(where: { ($0 == n )})! + 1
             let parentDepth = (cDepth[n] as! Int)
             for obj in stride(from: bounds, to: comments.count, by: 1) {
-                if((cDepth[comments[obj]] as! Int)  >= 1 + parentDepth){
+                if((cDepth[comments[obj]] as! Int)  == 1 + parentDepth){
                     toReturn.append(comments[obj])
-                } else {
-                    return toReturn
-                }
+                } 
             }
         }
         return toReturn
@@ -1705,8 +1703,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
             if(!hiddenPersons.contains(name)) {
                 i += unhideNumber(n: name, iB: 0)
-            } else {
-                print("Hidden persons contains \(name)")
             }
         }
         for s in hidden {
