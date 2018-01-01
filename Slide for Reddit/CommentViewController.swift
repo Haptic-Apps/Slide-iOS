@@ -72,7 +72,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     self.content[id] = item
                 }
                 self.dataArray.insert(contentsOf: ids, at: self.menuIndex)
-                self.comments.insert(contentsOf: ids, at: realPosition + 1)
+                self.comments.insert(contentsOf: ids, at: realPosition == 0 ? 0 : realPosition + 1)
                 self.updateStringsSingle(queue)
                 self.doArrays()
                 self.isReply = false
@@ -1471,9 +1471,12 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             let bounds = comments.index(where: { ($0 == n )})! + 1
             let parentDepth = (cDepth[n] as! Int)
             for obj in stride(from: bounds, to: comments.count, by: 1) {
-                if((cDepth[comments[obj]] as! Int)  == 1 + parentDepth){
+                let depth = (cDepth[comments[obj]] as! Int)
+                if(depth  == 1 + parentDepth){
                     toReturn.append(comments[obj])
-                } 
+                } else if(depth == parentDepth){
+                    return toReturn
+                }
             }
         }
         return toReturn
@@ -1680,11 +1683,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     override func becomeFirstResponder() -> Bool {
         return true
     }
-    
-    override var keyCommands: [UIKeyCommand]? {
-        return [ UIKeyCommand(input: " ", modifierFlags: [], action: #selector(spacePressed)) ]
-    }
-    
+        
     @objc func spacePressed() {
         UIView.animate(withDuration: 0.2, delay: 0, options: UIViewAnimationOptions.curveEaseOut, animations: {
             self.tableView.contentOffset.y = self.tableView.contentOffset.y + 350

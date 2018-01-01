@@ -49,6 +49,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>MotionTransitioning.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>Pods-Slide for Reddit.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -100,6 +105,11 @@
 			<false/>
 		</dict>
 		<key>UZTextView.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>XLActionController.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>

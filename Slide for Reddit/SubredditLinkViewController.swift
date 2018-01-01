@@ -264,7 +264,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
                 action.handler = actionHandler
                 action.title = "UNDO"
                 
-                message!.action = action
+                message.action = action
                 MDCSnackbarManager.show(message)
 
             }, completion: nil)

@@ -21,7 +21,6 @@
 #import <UIKit/UIKit.h>
 
 #import "MDCOverlayImplementor.h"
-#import "MaterialOverlay.h"
 #import "private/MDCOverlayAnimationObserver.h"
 #import "private/MDCOverlayObserverOverlay.h"
 #import "private/MDCOverlayObserverTransition.h"
@@ -90,6 +89,10 @@ static MDCOverlayObserver *_sOverlayObserver;
                                                object:nil];
   }
   return self;
+}
+
+- (void)dealloc {
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 #pragma mark - Overlays

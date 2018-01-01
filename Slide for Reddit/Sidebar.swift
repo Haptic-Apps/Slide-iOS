@@ -101,11 +101,17 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate  {
     var alrController = UIAlertController()
 
     func doDisplaySidebar(_ sub: Subreddit){
-         alrController = UIAlertController(title:"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", message: "\(sub.accountsActive) here now\n\(sub.subscribers) subscribers", preferredStyle: UIAlertControllerStyle.actionSheet)
+        /* For a future update
+        baseController = SubSidebarViewController(sub: sub, parent: parent!)
+        baseController.modalPresentationStyle = .formSheet
+
+        parent?.present(baseController, animated: true, completion:{})*/
+        
+        alrController = UIAlertController(title:"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", message: "\(sub.accountsActive) here now\n\(sub.subscribers) subscribers", preferredStyle: UIAlertControllerStyle.actionSheet)
         
         
         let label = UILabel.init(frame: CGRect.init(x: 00, y: 0, width: 500, height: 40))
-            label.text =  "        \(sub.displayName)"
+        label.text =  "        \(sub.displayName)"
         label.adjustsFontSizeToFitWidth = true
         label.font = UIFont.boldSystemFont(ofSize: 25)
         
@@ -129,11 +135,11 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate  {
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                                     metrics: metrics,
                                                                     views: views))
-
+        
         label.addConstraints(constraint)
         sideView.layer.cornerRadius = 12.5
         sideView.clipsToBounds = true
-
+        
         let margin:CGFloat = 8.0
         let rect = CGRect.init(x: margin, y: margin + 5, width: alrController.view.bounds.size.width - margin * 4.0, height: 300)
         let scrollView = UIScrollView(frame: rect)
@@ -184,7 +190,7 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate  {
         alrController.addAction(cancelAction)
         
         alrController.modalPresentationStyle = .fullScreen
-
+        
         parent?.present(alrController, animated: true, completion:{})
     }
     

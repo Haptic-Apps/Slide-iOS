@@ -219,7 +219,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     
     func estimateHeight(_ full: Bool) ->CGFloat {
         if(estimatedHeight == 0){
-            let he = (title.attributedText).boundingRect(with: CGSize.init(width: aspectWidth - 24 - (thumb ? (SettingValues.largerThumbnail ? 75 : 50) + 28 : 0), height:10000), options: [.usesLineFragmentOrigin , .usesFontLeading], context: nil).height
+            let he = (title.attributedText).boundingRect(with: CGSize.init(width: aspectWidth - 24 - (thumb ? (SettingValues.largerThumbnail ? 75 : 50) + 28 : 0), height:10000), options: [.usesLineFragmentOrigin , .usesFontLeading], context: nil).height + 15
             let thumbheight = CGFloat(SettingValues.largerThumbnail ? 75 : 50)
             estimatedHeight = CGFloat((he < thumbheight && thumb || he < thumbheight && !big) ? thumbheight : he) + CGFloat(54) + CGFloat(!hasText || !full ? 0 : (content?.textHeight)!) +  CGFloat(big && !thumb ? (submissionHeight + 20) : 0)
         }

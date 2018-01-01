@@ -65,7 +65,7 @@ class SubredditsViewController:  UIPageViewController, UIPageViewControllerDataS
                         action.handler = actionHandler
                         action.title = "VIEW"
                         let mes = MDCSnackbarMessage.init(text: "\(diff) new message\(diff > 1 ? "s" : "")!")
-                        mes?.action = action
+                        mes.action = action
                         MDCSnackbarManager.show(mes)
                         UserDefaults.standard.set(unread, forKey: "mail")
                         UserDefaults.standard.synchronize()

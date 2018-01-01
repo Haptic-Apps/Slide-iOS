@@ -15,30 +15,17 @@ class SubSidebarViewController: UIViewController, UITableViewDelegate, UITableVi
     weak var tableView : UITableView!
     var subreddit: Subreddit?
     var filteredContent: [String] = []
-    var parentController: SubredditLinkViewController?
+    var parentController: MediaViewController?
     
-    init(parentController: SubredditLinkViewController, sub: String, completion: @escaping (Bool, Subreddit?) -> Void){
-        self.parentController = parentController
+    init(sub: Subreddit, parent: MediaViewController){
         super.init(nibName: nil, bundle:  nil)
-        do {
-        try (UIApplication.shared.delegate as! AppDelegate).session?.about(sub, completion: { (result) in
-            switch result {
-            case .failure:
-                completion(false, nil)
-            case .success(let r):
-                DispatchQueue.main.async{
-                    self.doSubreddit(sub: r)
-                }
-                completion(true, r)
-            }
-        })
-        } catch {
-            completion(false, nil)
-        }
+        self.subreddit = sub
+        self.parentController = parent
     }
     
     func doSubreddit(sub: Subreddit){
         header.setSubreddit(subreddit: sub, parent: parentController!)
+        print("Height is \(header.getEstHeight())")
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -70,8 +57,10 @@ class SubSidebarViewController: UIViewController, UITableViewDelegate, UITableVi
         super.viewDidLoad()
         tableView.estimatedRowHeight = 400.0
         tableView.rowHeight = UITableViewAutomaticDimension
+        self.doSubreddit(sub: subreddit!)
         header.frame.size.height = header.getEstHeight()
         tableView.tableHeaderView = header
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {

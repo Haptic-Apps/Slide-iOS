@@ -14,6 +14,7 @@ pod 'MaterialComponents/Buttons'
 pod 'MaterialComponents/Dialogs'
 pod 'MaterialComponents/Ink'
 pod 'MaterialComponents/ProgressView'
+  pod 'XLActionController'
 pod 'MaterialComponents/ShadowElevations'
 pod 'MaterialComponents/Snackbar’
 pod 'MaterialComponents/ActivityIndicator'

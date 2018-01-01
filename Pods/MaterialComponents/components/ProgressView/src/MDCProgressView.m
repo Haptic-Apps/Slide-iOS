@@ -18,11 +18,11 @@
 
 #include <tgmath.h>
 
-#import "MDFInternationalization.h"
+#import <MDFInternationalization/MDFInternationalization.h>
 #import "MaterialMath.h"
 #import "MaterialPalettes.h"
-#import "MotionAnimator.h"
-#import "private/MDCProgressView+MotionSpec.h"
+#import <MotionAnimator/MotionAnimator.h>
+#import "private/MDCProgressViewMotionSpec.h"
 
 static inline UIColor *MDCProgressViewDefaultTintColor(void) {
   return MDCPalette.bluePalette.tint500;
@@ -131,7 +131,7 @@ static const CGFloat MDCProgressViewTrackColorDesaturation = 0.3f;
 
 - (void)setProgress:(float)progress
            animated:(BOOL)animated
-         completion:(void (^__nullable)(BOOL finished))completion {
+         completion:(void (^__nullable)(BOOL finished))userCompletion {
   if (progress < self.progress &&
       self.backwardProgressAnimationMode == MDCProgressViewBackwardAnimationModeReset) {
     self.progress = 0;
@@ -140,18 +140,21 @@ static const CGFloat MDCProgressViewTrackColorDesaturation = 0.3f;
 
   self.progress = progress;
 
-  if (!animated) {
+  void (^animations)(void) = ^{
     [self updateProgressView];
+  };
+  void (^completion)(void) = ^{
+    if (userCompletion) {
+      userCompletion(YES);
+    }
+  };
 
+  if (animated) {
+    MDMMotionTiming timing = MDCProgressViewMotionSpec.willChangeProgress;
+    [_animator animateWithTiming:timing animations:animations completion:completion];
   } else {
-    MDMMotionTiming timing = kMDCProgressViewMotionSpec.setProgress;
-    [_animator animateWithTiming:timing animations:^{
-      [self updateProgressView];
-    } completion:^{
-      if (completion) {
-        completion(YES);
-      }
-    }];
+    animations();
+    completion();
   }
 }
 
@@ -162,10 +165,10 @@ static const CGFloat MDCProgressViewTrackColorDesaturation = 0.3f;
 
 - (void)setHidden:(BOOL)hidden
          animated:(BOOL)animated
-       completion:(void (^__nullable)(BOOL finished))completion {
+       completion:(void (^__nullable)(BOOL finished))userCompletion {
   if (hidden == self.hidden) {
-    if (completion) {
-      completion(YES);
+    if (userCompletion) {
+      userCompletion(YES);
     }
     return;
   }
@@ -199,23 +202,22 @@ static const CGFloat MDCProgressViewTrackColorDesaturation = 0.3f;
     };
   }
 
-  if (animated) {
-    MDMMotionTiming timing = kMDCProgressViewMotionSpec.setHidden;
-    [_animator animateWithTiming:timing animations:animations completion:^{
-      if (hidden) {
-        self.animatingHide = NO;
-        self.hidden = YES;
-      }
-      if (completion) {
-        completion(YES);
-      }
-    }];
+  void (^completion)(void) = ^{
+    if (hidden) {
+      self.animatingHide = NO;
+      self.hidden = YES;
+    }
+    if (userCompletion) {
+      userCompletion(YES);
+    }
+  };
 
+  if (animated) {
+    MDMMotionTiming timing = MDCProgressViewMotionSpec.willChangeHidden;
+    [_animator animateWithTiming:timing animations:animations completion:completion];
   } else {
     animations();
-    if (completion) {
-      completion(YES);
-    }
+    completion();
   }
 }
 

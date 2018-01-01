@@ -18,23 +18,41 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
     var here: UILabel = UILabel()
     var desc: UZTextView = UZTextView()
     var info: UZTextView = UZTextView()
-    var subscribe: UIButton = UIButton()
-    var theme: UIButton = UIButton()
-    var submit: UIButton = UIButton()
-    
+
+    var subscribe: UITableViewCell = UITableViewCell()
+    var theme = UITableViewCell()
+    var submit = UITableViewCell()
+
     override init(frame: CGRect) {
         super.init(frame:frame)
         
-        self.theme = UIButton(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 50))
-        self.submit = UIButton(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 50))
-        self.subscribe = UIButton(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 50))
+        self.subscribe.textLabel?.text = "Subscribed"
+        self.subscribe.accessoryType = .none
+        self.subscribe.backgroundColor = ColorUtil.foregroundColor
+        self.subscribe.textLabel?.textColor = ColorUtil.fontColor
+        self.subscribe.imageView?.image = UIImage.init(named: "subscribe")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
+        self.subscribe.imageView?.tintColor = ColorUtil.fontColor
         
-        self.desc = UZTextView(frame: CGRect(x: 75, y: 8, width: self.frame.width, height: CGFloat.greatestFiniteMagnitude))
+        self.theme.textLabel?.text = "Subreddit theme"
+        self.theme.accessoryType = .none
+        self.theme.backgroundColor = ColorUtil.foregroundColor
+        self.theme.textLabel?.textColor = ColorUtil.fontColor
+        self.theme.imageView?.image = UIImage.init(named: "theme")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
+        self.theme.imageView?.tintColor = ColorUtil.fontColor
+        
+        self.submit.textLabel?.text = "New post"
+        self.submit.accessoryType = .none
+        self.submit.backgroundColor = ColorUtil.foregroundColor
+        self.submit.textLabel?.textColor = ColorUtil.fontColor
+        self.submit.imageView?.image = UIImage.init(named: "submit")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
+        self.submit.imageView?.tintColor = ColorUtil.fontColor
+
+        self.desc = UZTextView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
         self.desc.delegate = self
         self.desc.isUserInteractionEnabled = true
         self.desc.backgroundColor = .clear
         
-        self.info = UZTextView(frame: CGRect(x: 75, y: 8, width: self.frame.width, height: CGFloat.greatestFiniteMagnitude))
+        self.info = UZTextView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
         self.info.delegate = self
         self.info.isUserInteractionEnabled = true
         self.info.backgroundColor = .clear
@@ -92,7 +110,26 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
 
         self.clipsToBounds = true
         updateConstraints()
+        let navigationBar = UINavigationBar.init(frame: CGRect.init(x: 0, y: 0, width: self.parentController!.view.frame.size.width, height: 56))
+        navigationBar.setBackgroundImage(UIImage(), for: .default)
+        navigationBar.shadowImage = UIImage()
+        navigationBar.isTranslucent = true
+        let navItem = UINavigationItem(title: "")
+        let close = UIButton.init(type: .custom)
+        close.setImage(UIImage.init(named: "close")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
+        close.addTarget(self, action: #selector(self.exit), for: UIControlEvents.touchUpInside)
+        close.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        let closeB = UIBarButtonItem.init(customView: close)
+        navItem.leftBarButtonItem = closeB
         
+        
+        navigationBar.setItems([navItem], animated: false)
+        addSubview(navigationBar)
+
+    }
+    
+    func exit(){
+        parentController?.dismiss(animated: true, completion: nil)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -110,6 +147,8 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
     }
     
     var content: CellContent?
+    var textHeight : CGFloat = 0
+    var descHeight: CGFloat = 0
     var contentInfo: CellContent?
     var parentController: MediaViewController?
     
@@ -120,46 +159,54 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
         title.text = subreddit.displayName
         subscribers.text = "\(subreddit.subscribers) subscribers"
         here.text = "\(subreddit.accountsActive) here"
-        
+        print("Frame width is \(self.parentController!.view.frame.size.width)")
+
         if(!subreddit.publicDescription.isEmpty()){
             let html = subreddit.publicDescriptionHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
             do {
                 let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
                 let font = UIFont(name: ".SFUIText-Light", size: 16) ?? UIFont.systemFont(ofSize: 16)
                 let attr2 = attr.reconstruct(with: font, color: .white, linkColor: ColorUtil.accentColorForSub(sub: subreddit.displayName))
-                content = CellContent.init(string:LinkParser.parse(attr2, ColorUtil.accentColorForSub(sub: subreddit.displayName)), width: self.frame.size.width)
+                content = CellContent.init(string:LinkParser.parse(attr2, ColorUtil.accentColorForSub(sub: subreddit.displayName)), width: self.parentController!.view.frame.size.width - 24)
                 desc.attributedString = content?.attributedString
-                desc.frame.size.height = (content?.textHeight)!
+                textHeight = (content?.textHeight)!
             } catch {
             }
         }
         
-        if(!subreddit.description.isEmpty()){
+        if(!subreddit.descriptionHtml.isEmpty()){
             let html = subreddit.descriptionHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
             do {
                 let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
                 let font = UIFont(name: ".SFUIText-Light", size: 16) ?? UIFont.systemFont(ofSize: 16)
                 let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: ColorUtil.accentColorForSub(sub: subreddit.displayName))
-                contentInfo = CellContent.init(string:LinkParser.parse(attr2, ColorUtil.accentColorForSub(sub: subreddit.displayName)), width: 250)
+                contentInfo = CellContent.init(string:LinkParser.parse(attr2, ColorUtil.accentColorForSub(sub: subreddit.displayName)), width: self.parentController!.view.frame.size.width - 24)
                 info.attributedString = contentInfo?.attributedString
-                info.frame.size.height = (contentInfo?.textHeight)!
+                descHeight = (contentInfo?.textHeight)!
+                info.backgroundColor = UIColor.green
+                
+                print("Height sidebar is \(descHeight)")
             } catch {
+                
             }
             parentController?.registerForPreviewing(with: self, sourceView: info)
         }
+        updateConstraints()
     }
   
     var subreddit: Subreddit?
-    
+    var constraint:[NSLayoutConstraint] = []
+
     override func updateConstraints() {
         super.updateConstraints()
 
-        let metrics=["topMargin": 0]
+        let metrics=["topMargin": 0, "bh" : CGFloat(130 + textHeight), "dh":descHeight, "b": textHeight + 30]
         let views=["theme": theme, "submit":submit, "subscribe": subscribe, "back":back, "desc":desc, "info":info, "title":title, "subscribers":subscribers, "here":here] as [String : Any]
         
         
 
-        var constraint:[NSLayoutConstraint] = []
+        back.removeConstraints(constraint)
+        constraint = []
         
         
         constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "H:|-(0)-[back]-(0)-|",
@@ -175,6 +222,11 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                                     metrics: metrics,
                                                                     views: views))
+        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "H:|-(12)-[theme]-(12)-|",
+                                                                    options: NSLayoutFormatOptions(rawValue: 0),
+                                                                    metrics: metrics,
+                                                                    views: views))
+
         constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "H:|-(12)-[desc]-(12)-|",
                                                                     options: NSLayoutFormatOptions(rawValue: 0),
                                                                     metrics: metrics,
@@ -199,12 +251,12 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
 
         addConstraints(constraint)
         
-        back.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-(20)-[title]-(8)-[subscribers]-2-[here]-2-[desc]-20-|",
+        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-(16)-[title]-(8)-[subscribers]-2-[here]-2-[desc(b)]-4-|",
                                                            options: NSLayoutFormatOptions(rawValue: 0),
                                                            metrics: metrics,
                                                            views: views))
         
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-(68)-[subscribe]-(2)-[theme]-(2)-[submit]-(8)-[info]-(8)-|",
+        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-(0)-[back(bh)]-(2)-[subscribe(50)]-(2)-[theme(50)]-(2)-[submit(50)]-(8)-[info(dh)]-(4)-|",
                                                       options: NSLayoutFormatOptions(rawValue: 0),
                                                       metrics: metrics,
                                                       views: views))
@@ -212,7 +264,7 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
     }
     
     func getEstHeight()-> CGFloat{
-        return CGFloat(60) + ((contentInfo == nil) ? 0 : (contentInfo!.textHeight)) + (20*9)
+        return CGFloat(60 + textHeight) + ((contentInfo == nil) ? 0 : descHeight) + (50*9)
     }
     
     func textView(_ textView: UZTextView, didLongTapLinkAttribute value: Any?) {
