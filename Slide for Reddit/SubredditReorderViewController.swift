@@ -178,7 +178,7 @@ class SubredditReorderViewController: UITableViewController {
     func remove(_ selector: AnyObject){
         if let rows = tableView.indexPathsForSelectedRows{
 
-        let actionSheetController: UIAlertController = UIAlertController(title: "Remove subscriptions", message: "", preferredStyle: .actionSheet)
+        let actionSheetController: UIAlertController = UIAlertController(title: "Remove subscriptions", message: "", preferredStyle: .alert)
         
         var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
             print("Cancel")
@@ -202,12 +202,6 @@ class SubredditReorderViewController: UITableViewController {
             
         }
         actionSheetController.addAction(cancelActionButton)
-            actionSheetController.modalPresentationStyle = .popover
-            if let presenter = actionSheetController.popoverPresentationController {
-                presenter.sourceView = delete
-                presenter.sourceRect = delete.bounds
-            }
-
         self.present(actionSheetController, animated: true, completion: nil)
         }
 

@@ -31,6 +31,8 @@ Check out the example project to see it in action!
 | ![](etc/SlideOut.gif) | ![](etc/SlideIn.gif) | ![](etc/Dissolve.gif) | ![](etc/InOut.gif) |
 
 ## Requirements
+- [x] Xcode 9.
+- [x] Swift 4.
 - [x] iOS 8 or higher.
 
 ## Installation
@@ -126,7 +128,7 @@ dismiss(animated: true, completion: nil)
 That's it.
 ### Customization
 #### SideMenuManager
-Just type ` SideMenuManager.default.menu...` and code completion will show you everything you can customize (defaults are shown below for reference):
+Just type ` SideMenuManager.default.menu...` and code completion will show you everything you can customize (for Objective-C, use `SideMenuManager.defaultManager.menu...`). Defaults values are shown below for reference:
 ``` swift
 /**
 The push style of the menu.

@@ -69,9 +69,7 @@ class InboxViewController:  UIPageViewController, UIPageViewControllerDataSource
             navigationItem.rightBarButtonItems = [ readB]
         }
     }
-    func position(for bar: UIBarPositioning) -> UIBarPosition {
-        return UIBarPosition.topAttached
-    }
+
     func new(_ sender: AnyObject){
         let reply  = ReplyViewController.init(message: nil) { (message) in
             DispatchQueue.main.async(execute: { () -> Void in
@@ -119,29 +117,40 @@ class InboxViewController:  UIPageViewController, UIPageViewControllerDataSource
     func close(){
         self.navigationController?.popViewController(animated: true)
     }
-    
+    var tabBar = MDCTabBar()
+
     override func viewDidLoad() {
         var items: [String] = []
         for i in content {
             items.append(i.description)
         }
-        let segment: UISegmentedControl = UISegmentedControl(items: items)
-        segment.sizeToFit()
-        segment.tintColor = .white
         let close = UIButton.init(type: .custom)
         close.setImage(UIImage.init(named: "close")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
         close.addTarget(self, action: #selector(self.close), for: UIControlEvents.touchUpInside)
         close.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let closeB = UIBarButtonItem.init(customView: close)
         navigationItem.leftBarButtonItem = closeB
-        segment.selectedSegmentIndex = 0;
-        var toolbar = UIToolbar.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: 40))
-        toolbar.addSubview(segment)
-        toolbar.isTranslucent = false
-        segment.frame = CGRect.init(x: 15, y: 5, width: toolbar.frame.size.width - 30, height: 30)
-        toolbar.barTintColor = ColorUtil.getColorForSub(sub: "NONE")
-        toolbar.delegate = self
-        self.view.addSubview(toolbar)
+
+        tabBar = MDCTabBar.init(frame: CGRect.init(x: 0, y: -8, width: self.view.frame.size.width, height: 45))
+        tabBar.backgroundColor = ColorUtil.getColorForSub(sub: "")
+        tabBar.itemAppearance = .titles
+        // 2
+        tabBar.items = content.enumerated().map { index, source in
+            return UITabBarItem(title: source.description, image: nil, tag: index)
+        }
+        tabBar.autoresizingMask = [.flexibleWidth, .flexibleBottomMargin]
+        
+        // 3
+        tabBar.selectedItem = tabBar.items[0]
+        // 4
+        tabBar.delegate = self
+        tabBar.tintColor = ColorUtil.accentColorForSub(sub: "NONE")
+        // 5
+        tabBar.sizeToFit()
+
+        self.view.addSubview(tabBar)
+        
+
         time = History.getInboxSeen()
         History.inboxSeen()
                 view.backgroundColor = ColorUtil.backgroundColor
@@ -160,6 +169,18 @@ class InboxViewController:  UIPageViewController, UIPageViewControllerDataSource
                            animated: true,
                            completion: nil)
         
+    }
+    
+    var selected = false
+   
+    func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
+        guard completed else { return }
+        if(!selected){
+        let page = vCs.index(of: self.viewControllers!.first!)
+        tabBar.setSelectedItem(tabBar.items[page! - 1], animated: true)
+        } else {
+            selected = false
+        }
     }
     
     func pageViewController(_ pageViewController: UIPageViewController,
@@ -202,4 +223,18 @@ class InboxViewController:  UIPageViewController, UIPageViewControllerDataSource
         return vCs[nextIndex]
     }
 
+}
+extension InboxViewController: MDCTabBarDelegate {
+    
+    func tabBar(_ tabBar: MDCTabBar, didSelect item: UITabBarItem) {
+        selected = true
+        let firstViewController = vCs[tabBar.items.index(of: item)! + 1]
+        
+        setViewControllers([firstViewController],
+                           direction: .forward,
+                           animated: false,
+                           completion: nil)
+
+    }
+    
 }

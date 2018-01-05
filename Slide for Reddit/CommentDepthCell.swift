@@ -408,7 +408,17 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
 
         
         alertController.addAction(Action(ActionData(title: "/u/\(comment!.author)'s profile", image: UIImage(named: "profile")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
-            par.show(ProfileViewController.init(name: self.comment!.author), sender: self)
+            
+            let prof = ProfileViewController.init(name: self.comment!.author)
+            
+            if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad){
+                let navigationController = TapBehindModalViewController(rootViewController: prof)
+                navigationController.modalPresentationStyle = .pageSheet
+                navigationController.modalTransitionStyle = .crossDissolve
+                par.present(navigationController, animated: true, completion: nil)
+            } else {
+                par.show(prof, sender: self)
+            }
         }))
         alertController.addAction(Action(ActionData(title: "Share comment permalink", image: UIImage(named: "link")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
             let activityViewController = UIActivityViewController(activityItems: [self.comment!.permalink], applicationActivities: nil)

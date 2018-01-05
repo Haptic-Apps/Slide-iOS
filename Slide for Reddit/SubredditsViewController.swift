@@ -129,10 +129,9 @@ class SubredditsViewController:  UIPageViewController, UIPageViewControllerDataS
     func goToSubreddit(index: Int){
             let firstViewController = SubredditsViewController.vCs[index]
             
-            
             setViewControllers([firstViewController],
                                direction: .forward,
-                               animated: true,
+                               animated: false,
                                completion: nil)
             self.doCurrentPage(index)
     }
@@ -183,7 +182,10 @@ class SubredditsViewController:  UIPageViewController, UIPageViewControllerDataS
             subs!.removeFromSuperview()
             subs = nil
         }
-        
+        if(SettingValues.viewType){
+            setupTabBar()
+        }
+
         CachedTitle.titles.removeAll()
         view.backgroundColor = ColorUtil.backgroundColor
         splitViewController?.view.backgroundColor = ColorUtil.foregroundColor
@@ -209,29 +211,34 @@ class SubredditsViewController:  UIPageViewController, UIPageViewControllerDataS
             }
         }
          menuLeftNavigationController?.dismiss(animated: true, completion: {})
-        if(SettingValues.viewType){
-            setupTabBar()
-        }
 
     }
     
+    var tabBar = MDCTabBar()
     var subs: UIView?
     func setupTabBar(){
-        let scrollView = TouchUIScrollView.init(frame: CGRect.init(x: 0, y: self.view.frame.size.height - 40, width: self.view.frame.size.width, height: 40))
-        scrollView.autoresizingMask = .flexibleWidth
-        scrollView.backgroundColor = ColorUtil.backgroundColor
-        var i = 0
-        let gen = generateSubs()
-        for button in (gen.1) {
-                button.isUserInteractionEnabled = true
-                scrollView.addSubview(button)
-                i += 1
+        tabBar = MDCTabBar.init(frame: CGRect.init(x: 0, y: self.view.frame.size.height - 45, width: self.view.frame.size.width, height: 45))
+        tabBar.backgroundColor = ColorUtil.foregroundColor
+        tabBar.itemAppearance = .titles
+        
+        tabBar.selectedItemTintColor = ColorUtil.fontColor
+        tabBar.unselectedItemTintColor = ColorUtil.fontColor.withAlphaComponent(0.45)
+        // 2
+        tabBar.items = Subscriptions.subreddits.enumerated().map { index, source in
+            return UITabBarItem(title: source, image: nil, tag: index)
         }
-        scrollView.contentSize = CGSize.init(width: gen.0, height: 40)
-        scrollView.showsHorizontalScrollIndicator = false
-        subs = scrollView
-        self.view.addSubview(subs!)
-        self.view.frame = CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height - 40)
+        tabBar.autoresizingMask = [.flexibleWidth, .flexibleBottomMargin]
+        tabBar.selectionIndicatorTemplate = IndicatorTemplate()
+        tabBar.delegate = self
+        // 3
+        tabBar.selectedItem = tabBar.items[0]
+        // 4
+        //tabBar.delegate = self
+        tabBar.tintColor = ColorUtil.accentColorForSub(sub: "NONE")
+        // 5
+        tabBar.sizeToFit()
+        
+        self.view.addSubview(tabBar)
     }
     
     func didChooseSub(_ gesture: UITapGestureRecognizer){
@@ -310,7 +317,7 @@ class SubredditsViewController:  UIPageViewController, UIPageViewControllerDataS
         self.currentTitle = SubredditsViewController.current
         
         self.colorChanged()
-        SideMenuManager.menuAddScreenEdgePanGesturesToPresent(toView: vc.view)
+        SideMenuManager.default.menuAddScreenEdgePanGesturesToPresent(toView: vc.view)
         if(!(vc ).loaded){
             (vc ).load(reset:true)
         }
@@ -332,7 +339,21 @@ class SubredditsViewController:  UIPageViewController, UIPageViewControllerDataS
         
         self.navigationItem.leftBarButtonItems = [menuB, leftItem]
         self.navigationController?.navigationBar.shadowImage = UIImage()
-        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: vc.sub)
+        self.navigationController?.navigationBar.layoutIfNeeded()
+
+        tabBar.tintColor = ColorUtil.accentColorForSub(sub: SubredditsViewController.current)
+        if(!selected){
+            let page = SubredditsViewController.vCs.index(of: self.viewControllers!.first!)
+            tabBar.setSelectedItem(tabBar.items[page!], animated: true)
+        } else {
+            selected = false
+        }
+        
+        UIView.animate(withDuration: 0.25) {
+            self.navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: vc.sub)
+            self.navigationController?.navigationBar.layoutIfNeeded()
+        }
+
 
     }
     func pageViewController(_ pageViewController: UIPageViewController,
@@ -529,4 +550,34 @@ class SubredditsViewController:  UIPageViewController, UIPageViewControllerDataS
         
         self.present(actionSheetController, animated: true, completion: nil)
     }
+    var selected = false
 }
+class IndicatorTemplate: NSObject, MDCTabBarIndicatorTemplate {
+    func indicatorAttributes(
+        for context: MDCTabBarIndicatorContext
+        ) -> MDCTabBarIndicatorAttributes {
+        let bounds = context.bounds;
+        let attributes = MDCTabBarIndicatorAttributes()
+        let underlineFrame = CGRect.init(x: bounds.minX,
+                                         y:  -0,
+                                         width: bounds.width,
+                                         height: 2.0);
+        attributes.path = UIBezierPath.init(rect: underlineFrame)
+        return attributes;
+    }
+}
+extension SubredditsViewController: MDCTabBarDelegate {
+    
+    func tabBar(_ tabBar: MDCTabBar, didSelect item: UITabBarItem) {
+        selected = true
+        let firstViewController = SubredditsViewController.vCs[tabBar.items.index(of: item)! ]
+        
+        setViewControllers([firstViewController],
+                           direction: .forward,
+                           animated: false,
+                           completion: nil)
+        self.doCurrentPage(tabBar.items.index(of: item)!)
+    }
+    
+}
+

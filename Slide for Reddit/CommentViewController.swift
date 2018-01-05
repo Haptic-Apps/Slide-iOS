@@ -651,6 +651,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         })
     }
     
+    var moreB = UIBarButtonItem()
     func hideSearchBar() {
         navigationController?.setNavigationBarHidden(true, animated: true)
         isSearching = false
@@ -659,7 +660,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         more.setImage(UIImage.init(named: "ic_more_vert_white"), for: UIControlState.normal)
         more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
         more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-        let moreB = UIBarButtonItem.init(customView: more)
+        moreB = UIBarButtonItem.init(customView: more)
         
         let sort = UIButton.init(type: .custom)
         sort.setImage(UIImage.init(named: "ic_sort_white"), for: UIControlState.normal)
@@ -849,6 +850,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     override func viewWillAppear(_ animated: Bool) {
 
         super.viewWillAppear(animated)
+        self.navigationController?.navigationBar.shadowImage = UIImage()
         (navigationController)?.setNavigationBarHidden(false, animated: false)
         self.automaticallyAdjustsScrollViewInsets = false
         self.edgesForExtendedLayout = UIRectEdge.all
@@ -869,7 +871,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             more.setImage(UIImage.init(named: "ic_more_vert_white"), for: UIControlState.normal)
             more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
             more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-            let moreB = UIBarButtonItem.init(customView: more)
+            moreB = UIBarButtonItem.init(customView: more)
             
             let sort = UIButton.init(type: .custom)
             sort.setImage(UIImage.init(named: "ic_sort_white"), for: UIControlState.normal)
@@ -975,6 +977,14 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
         actionSheetController.addAction(cancelActionButton)
         
+        
+        actionSheetController.modalPresentationStyle = .popover
+        if let presenter = actionSheetController.popoverPresentationController {
+            presenter.sourceView = moreB.customView
+            presenter.sourceRect = moreB.customView!.bounds
+        }
+        
+
         self.present(actionSheetController, animated: true, completion: nil)
         
         
@@ -1357,6 +1367,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             if(parent != nil && parent is PagingCommentViewController){
         parent?.toolbarItems = items
         parent?.navigationController?.toolbar.barTintColor = UIColor.black.withAlphaComponent(0.4)
+        
         parent?.navigationController?.toolbar.tintColor = UIColor.white
             } else {
                 toolbarItems = items

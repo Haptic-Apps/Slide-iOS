@@ -19,6 +19,7 @@ import UZTextView
 import TTTAttributedLabel
 import MaterialComponents
 import AudioToolbox
+import XLActionController
 
 protocol LinkCellViewDelegate: class {
     func upvote(_ cell: LinkCellView)
@@ -98,45 +99,33 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     func attributedLabel(_ label: TTTAttributedLabel!, didLongPressLinkWith url: URL!, at point: CGPoint) {
         if (url) != nil{
             if parentViewController != nil{
-                let sheet = UIAlertController(title: url.absoluteString, message: nil, preferredStyle: .actionSheet)
-                sheet.addAction(
-                    UIAlertAction(title: "Close", style: .cancel) { (action) in
-                        sheet.dismiss(animated: true, completion: nil)
-                    }
-                )
+                
+                let alertController: BottomSheetActionController = BottomSheetActionController()
+                alertController.headerData = url.absoluteString
+                
+                
+
                 let open = OpenInChromeController.init()
                 if(open.isChromeInstalled()){
-                    sheet.addAction(
-                        UIAlertAction(title: "Open in Chrome", style: .default) { (action) in
-                            open.openInChrome(url, callbackURL: nil, createNewTab: true)
-                        }
-                    )
+                    alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "web")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+                        open.openInChrome(url, callbackURL: nil, createNewTab: true)
+                    }))
                 }
-                sheet.addAction(
-                    UIAlertAction(title: "Open in Safari", style: .default) { (action) in
-                        if #available(iOS 10.0, *) {
-                            UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                        } else {
-                            UIApplication.shared.openURL(url)
-                        }
-                        sheet.dismiss(animated: true, completion: nil)
+                
+                alertController.addAction(Action(ActionData(title: "Open in Safari", image: UIImage(named: "nav")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+                    if #available(iOS 10.0, *) {
+                        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    } else {
+                        UIApplication.shared.openURL(url)
                     }
-                )
-                sheet.addAction(
-                    UIAlertAction(title: "Open", style: .default) { (action) in
-                        /* let controller = WebViewController(nibName: nil, bundle: nil)
-                         controller.url = url
-                         let nav = UINavigationController(rootViewController: controller)
-                         self.present(nav, animated: true, completion: nil)*/
-                    }
-                )
-                sheet.addAction(
-                    UIAlertAction(title: "Copy URL", style: .default) { (action) in
-                        UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
-                        sheet.dismiss(animated: true, completion: nil)
-                    }
-                )
-                parentViewController?.present(sheet, animated: true, completion: nil)
+                }))
+                alertController.addAction(Action(ActionData(title: "Copy URL", image: UIImage(named: "save-1")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+                    UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
+                }))
+                alertController.addAction(Action(ActionData(title: "Close", image: UIImage(named: "close")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+                }))
+
+                parentViewController?.present(alertController, animated: true, completion: nil)
             }
         }
     }
@@ -1236,39 +1225,31 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     
     func edit(sender: AnyObject){
         let link = self.link!
-        let actionSheetController: UIAlertController = UIAlertController(title: link.title, message: "Edit your submission", preferredStyle: .actionSheet)
         
-        var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
-            print("Cancel")
-        }
-        actionSheetController.addAction(cancelActionButton)
+        let alertController: BottomSheetActionController = BottomSheetActionController()
+        alertController.headerData = "Edit your submission"
         
+    
         if(link.isSelf){
-            cancelActionButton = UIAlertAction(title: "Edit selftext", style: .default) { action -> Void in
+            alertController.addAction(Action(ActionData(title: "Edit selftext", image: UIImage(named: "edit")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
                 self.editSelftext()
-            }
-            actionSheetController.addAction(cancelActionButton)
+            }))
         }
         
-        cancelActionButton = UIAlertAction(title: "Flair", style: .default) { action -> Void in
-            //todo delete
-        }
-        actionSheetController.addAction(cancelActionButton)
+        alertController.addAction(Action(ActionData(title: "Flair submission", image: UIImage(named: "edit")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+            //todo this
+            
+        }))
+
         
-        
-        cancelActionButton = UIAlertAction(title: "Delete", style: .destructive) { action -> Void in
+        alertController.addAction(Action(ActionData(title: "Delete submission", image: UIImage(named: "delete")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
             self.deleteSelf()
-        }
-        actionSheetController.addAction(cancelActionButton)
+        }))
+
+        alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+        }))
         
-        actionSheetController.modalPresentationStyle = .popover
-        if let presenter = actionSheetController.popoverPresentationController {
-            presenter.sourceView = edit
-            presenter.sourceRect = edit.bounds
-        }
-        
-        
-        parentViewController?.present(actionSheetController, animated: true, completion: nil)
+        parentViewController?.present(alertController, animated: true, completion: nil)
     }
     
     func editSelftext(){
@@ -1284,25 +1265,17 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     }
     
     func deleteSelf(){
-        let alert = UIAlertController(title: "Really delete your submission?", message: nil, preferredStyle: .alert)
-        alert.addAction(
-            UIAlertAction(title: "Cancel", style: .cancel) { (action) in
-                alert.dismiss(animated: true, completion: nil)
-            }
-        )
-        alert.addAction(
-            UIAlertAction(title: "Yes", style: .destructive) { (action) in
-                //todo delete
-            }
-        )
+        let alertController: BottomSheetActionController = BottomSheetActionController()
+        alertController.headerData = "Really delete your submission?"
         
-        alert.modalPresentationStyle = .fullScreen
-        if let presenter = alert.popoverPresentationController {
-            presenter.sourceView = edit
-            presenter.sourceRect = edit.bounds
-        }
+        alertController.addAction(Action(ActionData(title: "Yes", image: UIImage(named: "delete")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+        }))
+
+        alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+        }))
+
         
-        parentViewController?.present(alert, animated: true, completion: nil)
+        parentViewController?.present(alertController, animated: true, completion: nil)
         
     }
     

@@ -12,7 +12,7 @@ import MaterialComponents.MaterialSnackbar
 
 class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIToolbarDelegate, ColorPickerDelegate {
     var content : [UserContent] = []
-    static var name: String = ""
+    var name: String = ""
     var isReload = false
     var session: Session? = nil
     var vCs : [UIViewController] = [ClearVC()]
@@ -37,11 +37,11 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
         alertController.view.addSubview(customView)
         
         let somethingAction = UIAlertAction(title: "Save", style: .default, handler: {(alert: UIAlertAction!) in
-            ColorUtil.setColorForUser(name: ProfileViewController.name, color: (self.navigationController?.navigationBar.barTintColor)!)
+            ColorUtil.setColorForUser(name: self.name, color: (self.navigationController?.navigationBar.barTintColor)!)
         })
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: {(alert: UIAlertAction!) in
-            self.navigationController?.navigationBar.barTintColor = ColorUtil.getColorForUser(name: ProfileViewController.name)
+            self.navigationController?.navigationBar.barTintColor = ColorUtil.getColorForUser(name: self.name)
         })
         
         alertController.addAction(somethingAction)
@@ -57,19 +57,19 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
     }
     
     func tagUser(){
-        let alertController = UIAlertController(title: "Tag /u/\(ProfileViewController.name)", message: nil, preferredStyle: UIAlertControllerStyle.alert)
+        let alertController = UIAlertController(title: "Tag /u/\(name)", message: nil, preferredStyle: UIAlertControllerStyle.alert)
         let confirmAction = UIAlertAction(title: "Set", style: .default) { (_) in
             if let field = alertController.textFields?[0] {
                 print("Setting tag \(field.text!)")
-                ColorUtil.setTagForUser(name: ProfileViewController.name, tag: field.text!)
+                ColorUtil.setTagForUser(name: self.name, tag: field.text!)
             } else {
                 // user did not fill field
             }
         }
         
-        if(!ColorUtil.getTagForUser(name: ProfileViewController.name).isEmpty){
+        if(!ColorUtil.getTagForUser(name: name).isEmpty){
         let removeAction = UIAlertAction(title: "Remove tag", style: .default) { (_) in
-            ColorUtil.removeTagForUser(name: ProfileViewController.name)
+            ColorUtil.removeTagForUser(name: self.name)
         }
             alertController.addAction(removeAction)
         }
@@ -78,7 +78,7 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
         
         alertController.addTextField { (textField) in
             textField.placeholder = "Tag"
-            textField.text = ColorUtil.getTagForUser(name: ProfileViewController.name)
+            textField.text = ColorUtil.getTagForUser(name: self.name)
         }
         
         alertController.addAction(confirmAction)
@@ -95,7 +95,7 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
     }
 
     init(name: String){
-        ProfileViewController.name = name
+        self.name = name
         self.session = (UIApplication.shared.delegate as! AppDelegate).session
         if let n = (session?.token.flatMap { (token) -> String? in
             return token.name
@@ -112,6 +112,7 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
         for place in content {
             self.vCs.append(ContentListingViewController.init(dataSource: ProfileContributionLoader.init(name: name, whereContent: place)))
         }
+        tabBar = MDCTabBar()
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
     }
     
@@ -133,12 +134,12 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.splitViewController?.preferredDisplayMode = UISplitViewControllerDisplayMode.allVisible
-        self.title = ProfileViewController.name
+        self.title = name
         navigationController?.navigationBar.tintColor = .white
         self.navigationController?.setNavigationBarHidden(false, animated: true)
         
         if(navigationController != nil){
-            navigationController?.navigationBar.barTintColor = ColorUtil.getColorForUser(name: ProfileViewController.name)
+            navigationController?.navigationBar.barTintColor = ColorUtil.getColorForUser(name: name)
         }
         let sort = UIButton.init(type: .custom)
         sort.setImage(UIImage.init(named: "ic_sort_white"), for: UIControlState.normal)
@@ -232,7 +233,7 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
         alrController.addAction(UIAlertAction.init(title: "Change color", style: .default, handler: { (action) in
             self.pickColor()
         }))
-        let tag = ColorUtil.getTagForUser(name: ProfileViewController.name)
+        let tag = ColorUtil.getTagForUser(name: name)
         alrController.addAction(UIAlertAction.init(title: "Tag user\((!(tag.isEmpty)) ? " (currently \(tag))" : "")", style: .default, handler: { (action) in
             self.tagUser()
         }))
@@ -277,6 +278,8 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
         navigationController?.popViewController(animated: true)
     }
     
+    var tabBar: MDCTabBar
+    
     override func viewDidLoad() {
        
         view.backgroundColor = ColorUtil.backgroundColor
@@ -284,23 +287,24 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
         for i in content {
             items.append(i.title)
         }
-        let segment: UISegmentedControl = UISegmentedControl(items: items)
-        segment.sizeToFit()
-        segment.tintColor = .white
-        let close = UIButton.init(type: .custom)
-        close.setImage(UIImage.init(named: "close")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
-        close.addTarget(self, action: #selector(self.close), for: UIControlEvents.touchUpInside)
-        close.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-        let closeB = UIBarButtonItem.init(customView: close)
-        navigationItem.leftBarButtonItem = closeB
-        segment.selectedSegmentIndex = 0;
-        var toolbar = UIToolbar.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: 40))
-        toolbar.addSubview(segment)
-        toolbar.isTranslucent = false
-        segment.frame = CGRect.init(x: 15, y: 5, width: toolbar.frame.size.width - 30, height: 30)
-        toolbar.barTintColor = ColorUtil.getColorForSub(sub: "NONE")
-        toolbar.delegate = self
-        self.view.addSubview(toolbar)
+        tabBar = MDCTabBar.init(frame: CGRect.init(x: 0, y: -8, width: self.view.frame.size.width, height: 45))
+        tabBar.backgroundColor = ColorUtil.getColorForUser(name: name)
+        tabBar.itemAppearance = .titles
+        // 2
+        tabBar.items = content.enumerated().map { index, source in
+            return UITabBarItem(title: source.title, image: nil, tag: index)
+        }
+        tabBar.autoresizingMask = [.flexibleWidth, .flexibleBottomMargin]
+        
+        // 3
+        tabBar.selectedItem = tabBar.items[0]
+        // 4
+        tabBar.delegate = self
+        tabBar.tintColor = ColorUtil.accentColorForSub(sub: "NONE")
+        // 5
+        tabBar.sizeToFit()
+        
+        self.view.addSubview(tabBar)
         self.edgesForExtendedLayout = []
         
         super.viewDidLoad()
@@ -340,11 +344,6 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
         return vCs[previousIndex]
     }
     
-    func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
-        guard completed else { return }
-        currentVc =  self.viewControllers!.first!
-        
-    }
 
     
     func pageViewController(_ pageViewController: UIPageViewController,
@@ -370,7 +369,7 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
 
     func showMenu(_ sender: AnyObject){
         do {
-            try session?.getUserProfile(ProfileViewController.name, completion: { (result) in
+            try session?.getUserProfile(self.name, completion: { (result) in
                 switch result {
                 case .failure(let error):
                     print(error)
@@ -381,6 +380,32 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
         } catch {
             
         }
+    }
+    var selected = false
+    
+    func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
+        guard completed else { return }
+        if(!selected){
+            let page = vCs.index(of: self.viewControllers!.first!)
+            tabBar.setSelectedItem(tabBar.items[page! - 1], animated: true)
+        } else {
+            selected = false
+        }
+        currentVc =  self.viewControllers!.first!
+    }
+
+}
+extension ProfileViewController: MDCTabBarDelegate {
+    
+    func tabBar(_ tabBar: MDCTabBar, didSelect item: UITabBarItem) {
+        selected = true
+        let firstViewController = vCs[tabBar.items.index(of: item)! + 1]
+        
+        setViewControllers([firstViewController],
+                           direction: .forward,
+                           animated: false,
+                           completion: nil)
+        
     }
     
 }

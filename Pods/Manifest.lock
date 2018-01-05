@@ -1,6 +1,6 @@
 PODS:
   - ActionSheetPicker-3.0 (2.2.0)
-  - Alamofire (4.5.1)
+  - Alamofire (4.6.0)
   - ImagePickerSheetController (0.9.3)
   - KCFloatingActionButton (2.1.2)
   - MaterialComponents/ActivityIndicator (43.1.1):
@@ -122,7 +122,7 @@ PODS:
   - SDWebImage (3.8.2):
     - SDWebImage/Core (= 3.8.2)
   - SDWebImage/Core (3.8.2)
-  - SideMenu (3.1.4)
+  - SideMenu (3.1.5)
   - SloppySwiper (0.6)
   - SwiftyJSON (4.0.0)
   - TTTAttributedLabel (2.0.0)
@@ -187,7 +187,7 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   ActionSheetPicker-3.0: d11a4c12c6aaf704b8a3f56d179198c99f3e41e6
-  Alamofire: 2d95912bf4c34f164fdfc335872e8c312acaea4a
+  Alamofire: f41a599bd63041760b26d393ec1069d9d7b917f4
   ImagePickerSheetController: 4789b06940e299431455c61be77fda440883c36c
   KCFloatingActionButton: 1b22ce95d44b51915280df8a8b277eae4a06c3f1
   MaterialComponents: 98a62516fedb2aa2a6efc18d74a744229f2408d3
@@ -200,7 +200,7 @@ SPEC CHECKSUMS:
   RealmSwift: 695393add1b8f9d5fa75dd16e6355cf3935f71e2
   reddift: 3066e687c2a934b0f9aca6ee6e2161abc4c93a56
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
-  SideMenu: 99021e70b3f2eee65b5dd88e4274d09031b1221e
+  SideMenu: 47dbf9e4d878062d8994aed43f6e4bf6c1fea30b
   SloppySwiper: 37e38f6da8df5c805914c6f32ec6ec8da63abe7c
   SwiftyJSON: 070dabdcb1beb81b247c65ffa3a79dbbfb3b48aa
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656

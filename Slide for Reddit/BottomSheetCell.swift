@@ -87,7 +87,7 @@ open class ActionControllerHeader: UICollectionReusableView {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .left
-        label.backgroundColor = ColorUtil.backgroundColor
+        label.backgroundColor = ColorUtil.foregroundColor
         label.font = UIFont.boldSystemFont(ofSize: 17)
         label.textColor = ColorUtil.fontColor
         return label
@@ -96,13 +96,12 @@ open class ActionControllerHeader: UICollectionReusableView {
     lazy var bottomLine: UIView = {
         let bottomLine = UIView()
         bottomLine.translatesAutoresizingMaskIntoConstraints = false
-        bottomLine.backgroundColor = ColorUtil.foregroundColor
+        bottomLine.backgroundColor = ColorUtil.backgroundColor
         return bottomLine
     }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = .white
         addSubview(label)
         let pad = UIScreen.main.traitCollection.userInterfaceIdiom == .pad
         addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[label]|", options: NSLayoutFormatOptions(), metrics: nil, views: ["label": label]))
@@ -141,14 +140,14 @@ open class BottomSheetActionController: ActionController<BottomSheetCell, Action
         headerSpec = .cellClass(height: { _ -> CGFloat in return 45 })
         
         onConfigureHeader = { header, title in
-            header.label.text = title
+            header.label.text = "  " + title
         }
 
         onConfigureCellForAction = { cell, action, indexPath in
             cell.setup(action.data?.title, detail: action.data?.subtitle, image: action.data?.image)
             cell.alpha = action.enabled ? 1.0 : 0.5
         cell.actionTitleLabel?.textColor = ColorUtil.fontColor
-            cell.backgroundColor = ColorUtil.backgroundColor
+            cell.backgroundColor = ColorUtil.foregroundColor
             UIView.animate(withDuration: 0.30) {
             }
         }

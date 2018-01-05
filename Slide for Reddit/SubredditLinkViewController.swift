@@ -570,14 +570,11 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         indicator.radius = 20
         indicator.indicatorMode = .indeterminate
         indicator.cycleColors = [ColorUtil.getColorForSub(sub: sub), ColorUtil.accentColorForSub(sub: sub)]
-        indicator.center = self.tableView.center
-        self.tableView.addSubview(indicator)
-        indicator.startAnimating()
 
         reloadNeedingColor()
 
     }
-    
+   
     static var firstPresented = true
     
     var headerView = UIView()
@@ -969,7 +966,6 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         first = false
         tableView.delegate = self
 
-        super.viewWillAppear(animated)
          if(savedIndex != nil){
          tableView.reloadItems(at: [savedIndex!])
          } else {
@@ -977,10 +973,19 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
          }
         self.navigationController?.setNavigationBarHidden(false, animated: true)
      //   ColorUtil.setBackgroundToolbar(toolbar: self.navigationController?.navigationBar)
+        
+        if(parentController == nil){
         createDotHeader()
+        }
         if(single && navigationController!.modalPresentationStyle != .pageSheet){
             let swiper = SloppySwiper.init(navigationController: self.navigationController!)
             self.navigationController!.delegate = swiper!
+        }
+        
+        if(!loaded){
+            indicator.center = CGPoint.init(x: self.view.frame.size.width / 2, y: self.view.frame.size.height / 2)
+            self.tableView.addSubview(indicator)
+            indicator.startAnimating()
         }
     }
     

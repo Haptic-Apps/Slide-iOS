@@ -142,7 +142,7 @@ class SettingsGeneral: UITableViewController {
             UserDefaults.standard.synchronize()
             return
         } else {
-            let actionSheetController: UIAlertController = UIAlertController(title: "Time Period", message: "", preferredStyle: .actionSheet)
+            let actionSheetController: UIAlertController = UIAlertController(title: "Time Period", message: "", preferredStyle: .alert)
             
             let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
                 print("Cancel")
@@ -161,12 +161,6 @@ class SettingsGeneral: UITableViewController {
                 actionSheetController.addAction(saveActionButton)
             }
             
-            actionSheetController.modalPresentationStyle = .popover
-            if let presenter = actionSheetController.popoverPresentationController {
-                presenter.sourceView = timeMenuView
-                presenter.sourceRect = timeMenuView.bounds
-            }
-
             self.present(actionSheetController, animated: true, completion: nil)
         }
     }
@@ -179,7 +173,7 @@ class SettingsGeneral: UITableViewController {
         self.timeMenuView = self.tableView.cellForRow(at: indexPath)!.contentView
 
         if(indexPath.section == 1 && indexPath.row == 0){
-            let actionSheetController: UIAlertController = UIAlertController(title: "Default post sorting", message: "", preferredStyle: .actionSheet)
+            let actionSheetController: UIAlertController = UIAlertController(title: "Default post sorting", message: "", preferredStyle: .alert)
             
             let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
                 print("Cancel")
@@ -192,15 +186,10 @@ class SettingsGeneral: UITableViewController {
                 }
                 actionSheetController.addAction(saveActionButton)
             }
-            actionSheetController.modalPresentationStyle = .popover
-            if let presenter = actionSheetController.popoverPresentationController {
-                presenter.sourceView = timeMenuView
-                presenter.sourceRect = timeMenuView.bounds
-            }
 
             self.present(actionSheetController, animated: true, completion: nil)
         } else if(indexPath.section == 1 && indexPath.row == 1){
-            let actionSheetController: UIAlertController = UIAlertController(title: "Default comment sorting", message: "", preferredStyle: .actionSheet)
+            let actionSheetController: UIAlertController = UIAlertController(title: "Default comment sorting", message: "", preferredStyle: .alert)
             
             let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
                 print("Cancel")
@@ -215,11 +204,6 @@ class SettingsGeneral: UITableViewController {
                     UserDefaults.standard.synchronize()
                 }
                 actionSheetController.addAction(saveActionButton)
-            }
-            actionSheetController.modalPresentationStyle = .popover
-            if let presenter = actionSheetController.popoverPresentationController {
-                presenter.sourceView = timeMenuView
-                presenter.sourceRect = timeMenuView.bounds
             }
 
             self.present(actionSheetController, animated: true, completion: nil)
