@@ -106,14 +106,14 @@ class CommentMenuCell: UITableViewCell {
             options: NSLayoutFormatOptions(rawValue: 0),
             metrics: metrics,
             views: views)
-        sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[more(60)]", options: NSLayoutFormatOptions(rawValue:0), metrics: metrics, views: views))
-        sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[edit(60)]", options: NSLayoutFormatOptions(rawValue:0), metrics: metrics, views: views))
+        sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[more(45)]", options: NSLayoutFormatOptions(rawValue:0), metrics: metrics, views: views))
+        sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[edit(45)]", options: NSLayoutFormatOptions(rawValue:0), metrics: metrics, views: views))
         
-        sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[delete(60)]", options: NSLayoutFormatOptions(rawValue:0), metrics: metrics, views: views))
-        sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[reply(60)]", options: NSLayoutFormatOptions(rawValue:0), metrics: metrics, views: views))
-        sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[downvote(60)]", options: NSLayoutFormatOptions(rawValue:0), metrics: metrics, views: views))
-        sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[upvote(60)]", options: NSLayoutFormatOptions(rawValue:0), metrics: metrics, views: views))
-        sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[view(60)]", options: NSLayoutFormatOptions(rawValue:0), metrics: metrics, views: views))
+        sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[delete(45)]", options: NSLayoutFormatOptions(rawValue:0), metrics: metrics, views: views))
+        sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[reply(45)]", options: NSLayoutFormatOptions(rawValue:0), metrics: metrics, views: views))
+        sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[downvote(45)]", options: NSLayoutFormatOptions(rawValue:0), metrics: metrics, views: views))
+        sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[upvote(45)]", options: NSLayoutFormatOptions(rawValue:0), metrics: metrics, views: views))
+        sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[view(45)]", options: NSLayoutFormatOptions(rawValue:0), metrics: metrics, views: views))
         
         self.contentView.addConstraints(sideConstraint)
     }
@@ -128,12 +128,12 @@ class CommentMenuCell: UITableViewCell {
         self.edit = UIButton.init(type: .custom)
         self.delete = UIButton.init(type: .custom)
         
-        upvote.setImage(UIImage.init(named: "upvote")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
-        downvote.setImage(UIImage.init(named: "downvote")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
-        reply.setImage(UIImage.init(named: "reply")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
-        more.setImage(UIImage.init(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
-        edit.setImage(UIImage.init(named: "edit")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
-        delete.setImage(UIImage.init(named: "delete")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
+        upvote.setImage(UIImage.init(named: "upvote")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: .normal)
+        downvote.setImage(UIImage.init(named: "downvote")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: .normal)
+        reply.setImage(UIImage.init(named: "reply")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: .normal)
+        more.setImage(UIImage.init(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: .normal)
+        edit.setImage(UIImage.init(named: "edit")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: .normal)
+        delete.setImage(UIImage.init(named: "delete")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: .normal)
         
         upvote.translatesAutoresizingMaskIntoConstraints = false
         downvote.translatesAutoresizingMaskIntoConstraints = false

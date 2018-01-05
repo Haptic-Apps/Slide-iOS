@@ -17,6 +17,7 @@ import MaterialComponents.MaterialSnackbar
 import MaterialComponents.MDCActivityIndicator
 import TTTAttributedLabel
 import SloppySwiper
+import XLActionController
 
 class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate,  UICollectionViewDataSource, LinkCellViewDelegate, ColorPickerDelegate, KCFloatingActionButtonDelegate,  WrappingFlowLayoutDelegate {
     
@@ -310,85 +311,87 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
     
     func more(_ cell: LinkCellView){
         let link = cell.link!
-        let actionSheetController: UIAlertController = UIAlertController(title: link.title, message: "", preferredStyle: .actionSheet)
         
-        var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
-            print("Cancel")
-        }
-        actionSheetController.addAction(cancelActionButton)
+        let alertController: BottomSheetActionController = BottomSheetActionController()
+        alertController.headerData = "Post by /u/\(link.author)"
         
-        cancelActionButton = UIAlertAction(title: "/u/\(link.author)", style: .default) { action -> Void in
-            self.show(ProfileViewController.init(name: link.author), sender: self)
-        }
-        actionSheetController.addAction(cancelActionButton)
         
-        cancelActionButton = UIAlertAction(title: "/r/\(link.subreddit)", style: .default) { action -> Void in
-            self.show(SubredditLinkViewController.init(subName: link.subreddit, single: true), sender: self)
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        if(AccountController.isLoggedIn){
+        alertController.addAction(Action(ActionData(title: "/u/\(link.author)'s profile", image: UIImage(named: "profile")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
             
-            cancelActionButton = UIAlertAction(title: "Save", style: .default) { action -> Void in
-                self.save(cell)
+            let prof = ProfileViewController.init(name: self.link.author)
+            
+            if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad){
+                let navigationController = TapBehindModalViewController(rootViewController: prof)
+                navigationController.modalPresentationStyle = .pageSheet
+                navigationController.modalTransitionStyle = .crossDissolve
+                self.present(navigationController, animated: true, completion: nil)
+            } else {
+                self.show(prof, sender: self)
             }
-            actionSheetController.addAction(cancelActionButton)
+        }))
+        alertController.addAction(Action(ActionData(title: "/r/\(link.subreddit)", image: UIImage(named: "subs")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+            
+            let prof = SubredditLinkViewController.init(subName: link.subreddit, single: true)
+            
+            if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad){
+                let navigationController = TapBehindModalViewController(rootViewController: prof)
+                navigationController.modalPresentationStyle = .pageSheet
+                navigationController.modalTransitionStyle = .crossDissolve
+                self.present(navigationController, animated: true, completion: nil)
+            } else {
+                self.show(prof, sender: self)
+            }
+        }))
+
+        alertController.addAction(Action(ActionData(title: "Share comment permalink", image: UIImage(named: "link")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+            let activityViewController = UIActivityViewController(activityItems: [link.permalink], applicationActivities: nil)
+            self.present(activityViewController, animated: true, completion: {})
+        }))
+        if(AccountController.isLoggedIn){
+            alertController.addAction(Action(ActionData(title: "Save", image: UIImage(named: "save")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+                self.save(cell)
+            }))
         }
-        
-        cancelActionButton = UIAlertAction(title: "Report", style: .default) { action -> Void in
+        alertController.addAction(Action(ActionData(title: "Report", image: UIImage(named: "hide")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
             self.report(cell.link!)
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        cancelActionButton = UIAlertAction(title: "Hide", style: .default) { action -> Void in
+        }))
+        alertController.addAction(Action(ActionData(title: "Hide", image: UIImage(named: "hide")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
             //todo hide
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
+        }))
         let open = OpenInChromeController.init()
         if(open.isChromeInstalled()){
-            cancelActionButton = UIAlertAction(title: "Open in Chrome", style: .default) { action -> Void in
-                open.openInChrome(link.url!, callbackURL: nil, createNewTab: true)
-            }
-            actionSheetController.addAction(cancelActionButton)
+
+        alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "link")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+            open.openInChrome(link.url!, callbackURL: nil, createNewTab: true)
+        }))
         }
-        
-        cancelActionButton = UIAlertAction(title: "Open in Safari", style: .default) { action -> Void in
+        alertController.addAction(Action(ActionData(title: "Open in Safari", image: UIImage(named: "world")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(link.url!, options: [:], completionHandler: nil)
             } else {
                 UIApplication.shared.openURL(link.url!)
             }
-        }
-        actionSheetController.addAction(cancelActionButton)
+        }))
         
-        cancelActionButton = UIAlertAction(title: "Share content", style: .default) { action -> Void in
+        alertController.addAction(Action(ActionData(title: "Share content", image: UIImage(named: "link")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [link.url!], applicationActivities: nil);
             let currentViewController:UIViewController = UIApplication.shared.keyWindow!.rootViewController!
             currentViewController.present(activityViewController, animated: true, completion: nil);
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        cancelActionButton = UIAlertAction(title: "Share comments", style: .default) { action -> Void in
+        }))
+        alertController.addAction(Action(ActionData(title: "Share comments", image: UIImage(named: "comments")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [URL.init(string: "https://reddit.com" + link.permalink)!], applicationActivities: nil);
             let currentViewController:UIViewController = UIApplication.shared.keyWindow!.rootViewController!
             currentViewController.present(activityViewController, animated: true, completion: nil);
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        cancelActionButton = UIAlertAction(title: "Fiter this content", style: .default) { action -> Void in
-            self.showFilterMenu(link)
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        actionSheetController.modalPresentationStyle = .popover
-        if let presenter = actionSheetController.popoverPresentationController {
-            presenter.sourceView = cell.contentView
-            presenter.sourceRect = cell.contentView.bounds
-        }
+        }))
 
-        self.present(actionSheetController, animated: true, completion: nil)
+        alertController.addAction(Action(ActionData(title: "Filter this content", image: UIImage(named: "filter")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+            self.showFilterMenu(link)
+        }))
         
+
+        alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: nil))
+        
+        self.present(alertController, animated: true, completion: nil)
     }
     
     func report(_ thing: Object){
@@ -425,7 +428,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
 
     
     func showFilterMenu(_ link: RSubmission){
-        let actionSheetController: UIAlertController = UIAlertController(title: "What would you like to filter?", message: "", preferredStyle: .actionSheet)
+        let actionSheetController: UIAlertController = UIAlertController(title: "What would you like to filter?", message: "", preferredStyle: .alert)
         
         var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
             print("Cancel")
