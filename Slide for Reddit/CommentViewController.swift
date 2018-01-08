@@ -18,6 +18,8 @@ import XLActionController
 
 class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, UZTextViewCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate, TTTAttributedLabelDelegate, ReplyDelegate {
     
+    var parents: [Int:String] = [:]
+    
     func replySent(comment: Comment?) {
         if(comment != nil && menuId != "sub"){
             let cell = tableView.cellForRow(at: IndexPath.init(row: menuIndex - 1, section: 0)) as! CommentDepthCell
@@ -404,7 +406,16 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                         self.hidden = []
                         self.text = [:]
                         
+                        var currentIndex = 0
+                        parents = [:]
+                        var currentOP = ""
                         for child in listing.comments {
+                            if(child.depth == 1){
+                                currentOP = child.author
+                            }
+                            parents[currentIndex] = currentOP
+                            currentIndex += 1
+
                             temp.append(child)
                             self.content[child.getIdentifier()] = child
                             self.comments.append(child.getIdentifier())
@@ -457,8 +468,16 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                 var temp : [Object] = []
                                 self.hidden = []
                                 self.text = [:]
-                                
+                                var currentIndex = 0
+                                self.parents = [:]
+                                var currentOP = ""
                                 for child in listing.comments {
+                                    if(child.depth == 1){
+                                        currentOP = child.author
+                                    }
+                                    self.parents[currentIndex] = currentOP
+                                    currentIndex += 1
+
                                     temp.append(child)
                                     self.content[child.getIdentifier()] = child
                                     self.comments.append(child.getIdentifier())
@@ -523,6 +542,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                             for child in listing.children {
                                 let incoming = self.extendKeepMore(in: child, current: startDepth)
                                 allIncoming.append(contentsOf: incoming)
+                                var currentIndex = 0
+                                self.parents = [:]
+                                var currentOP = ""
+
                                 for i in incoming{
                                     let item = RealmDataWrapper.commentToRealm(comment: i.0, depth: i.1)
                                     self.content[item.getIdentifier()] = item
@@ -530,6 +553,12 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                     if(item is RComment){
                                         self.submission!.comments.append(item as! RComment)
                                     }
+                                    if(i.1 == 1 && item is RComment){
+                                        currentOP = (item as! RComment).author
+                                    }
+                                    self.parents[currentIndex] = currentOP
+                                    currentIndex += 1
+
                                     self.cDepth[i.0.getId()] = i.1
                                 }
                             }
@@ -1791,6 +1820,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             }
         }
         print("DB Pos is \(datasetPosition)")
+        let parentOP = parents[datasetPosition]
             cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as UITableViewCell
             if let cell = cell as? CommentDepthCell {
                 cell.delegate = self
@@ -1805,7 +1835,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     if(isSearching){
                         t = highlight(t)
                     }
-                    cell.setComment(comment: content[thing] as! RComment, depth: cDepth[thing]!, parent: self, hiddenCount: count, date: lastSeen, author: submission?.author, text: t, isCollapsed: hiddenP)
+                    cell.setComment(comment: content[thing] as! RComment, depth: cDepth[thing]!, parent: self, hiddenCount: count, date: lastSeen, author: submission?.author, text: t, isCollapsed: hiddenP, parentOP: parentOP ?? "")
                     if(thing == menuId && menuShown){
                         cell.doHighlight()
                     }

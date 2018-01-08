@@ -101,12 +101,12 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate  {
     var alrController = UIAlertController()
 
     func doDisplaySidebar(_ sub: Subreddit){
-        /* For a future update
-        baseController = SubSidebarViewController(sub: sub, parent: parent!)
+        let baseController = SubSidebarViewController(sub: sub, parent: parent!)
         baseController.modalPresentationStyle = .formSheet
 
-        parent?.present(baseController, animated: true, completion:{})*/
+        parent?.present(baseController, animated: true, completion:{})
         
+        /*
         alrController = UIAlertController(title:"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", message: "\(sub.accountsActive) here now\n\(sub.subscribers) subscribers", preferredStyle: UIAlertControllerStyle.actionSheet)
         
         
@@ -192,6 +192,7 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate  {
         alrController.modalPresentationStyle = .fullScreen
         
         parent?.present(alrController, animated: true, completion:{})
+ */
     }
     
     func subscribe(_ sub: Subreddit){

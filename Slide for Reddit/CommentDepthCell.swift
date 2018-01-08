@@ -655,7 +655,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
     
     public var isCollapsed = false
     
-    func setComment(comment: RComment, depth: Int, parent: CommentViewController, hiddenCount: Int, date: Double, author: String?, text: NSAttributedString, isCollapsed: Bool){
+    func setComment(comment: RComment, depth: Int, parent: CommentViewController, hiddenCount: Int, date: Double, author: String?, text: NSAttributedString, isCollapsed: Bool, parentOP: String){
         self.comment = comment
         self.cellContent = text
         self.contentView.backgroundColor = ColorUtil.foregroundColor
@@ -706,6 +706,9 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
                 } else {
                     sideView.backgroundColor = GMColor.red500Color()
                 }
+            }
+            if(parentOP == comment.author){
+                sideView.backgroundColor = GMColor.purple500Color()
             }
         } else {
             //marginTop = 8

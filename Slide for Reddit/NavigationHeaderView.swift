@@ -121,16 +121,27 @@ class NavigationHeaderView: UIView {
     
     func you(_ sender: AnyObject){
         let profile = ProfileViewController.init(name: AccountController.currentName)
-        (self.parentController as! NavigationSidebarViewController).parentController?.navigationController?.pushViewController(profile, animated: true)
-        self.parentController!.dismiss(animated: true, completion: nil)
+        if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad){
+            let navigationController = TapBehindModalViewController(rootViewController: profile)
+            navigationController.modalPresentationStyle = .pageSheet
+            navigationController.modalTransitionStyle = .crossDissolve
+            self.parentController?.present(navigationController, animated: true, completion: nil)
+        } else {
+            (self.parentController as! NavigationSidebarViewController).parentController?.navigationController?.pushViewController(profile, animated: true)
+        }
 
     }
     
     func inbox(_ sender: AnyObject){
         let inbox = InboxViewController.init()
-        (self.parentController as! NavigationSidebarViewController).parentController?.navigationController?.pushViewController(inbox, animated: true)
-        self.parentController!.dismiss(animated: true, completion: nil)
-
+        if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad){
+            let navigationController = TapBehindModalViewController(rootViewController: inbox)
+            navigationController.modalPresentationStyle = .pageSheet
+            navigationController.modalTransitionStyle = .crossDissolve
+            self.parentController?.present(navigationController, animated: true, completion: nil)
+        } else {
+            (self.parentController as! NavigationSidebarViewController).parentController?.navigationController?.pushViewController(inbox, animated: true)
+        }
     }
     
     func showMore(_ sender: AnyObject){
@@ -201,7 +212,7 @@ class NavigationHeaderView: UIView {
         let settings = SettingsViewController()
         if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad){
             let navigationController = UINavigationController(rootViewController: settings)
-            navigationController.modalPresentationStyle = .formSheet
+            navigationController.modalPresentationStyle = .pageSheet
             navigationController.modalTransitionStyle = .crossDissolve
             self.parentController?.present(navigationController, animated: true, completion: nil)
         } else {

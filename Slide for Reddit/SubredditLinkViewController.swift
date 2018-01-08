@@ -985,11 +985,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
             self.navigationController!.delegate = swiper!
         }
         
-        if(!loaded){
-            indicator.center = CGPoint.init(x: self.view.frame.size.width / 2, y: self.view.frame.size.height / 2)
-            self.tableView.addSubview(indicator)
-            indicator.startAnimating()
-        }
+        
     }
     
     func createDotHeader(){
@@ -1346,6 +1342,11 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
     
     func load(reset: Bool){
         if(!loading){
+            if(!loaded){
+                indicator.center = CGPoint.init(x: self.view.frame.size.width / 2, y: self.view.frame.size.height / 2)
+                self.tableView.addSubview(indicator)
+                indicator.startAnimating()
+            }
             loaded = true
 
             do {
@@ -1553,6 +1554,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
             flowLayout.reset()
             tableView.reloadData()
         }
+        
     }
 }
 extension UIViewController {

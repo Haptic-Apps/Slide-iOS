@@ -110,21 +110,6 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
 
         self.clipsToBounds = true
         updateConstraints()
-        let navigationBar = UINavigationBar.init(frame: CGRect.init(x: 0, y: 0, width: self.parentController!.view.frame.size.width, height: 56))
-        navigationBar.setBackgroundImage(UIImage(), for: .default)
-        navigationBar.shadowImage = UIImage()
-        navigationBar.isTranslucent = true
-        let navItem = UINavigationItem(title: "")
-        let close = UIButton.init(type: .custom)
-        close.setImage(UIImage.init(named: "close")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
-        close.addTarget(self, action: #selector(self.exit), for: UIControlEvents.touchUpInside)
-        close.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-        let closeB = UIBarButtonItem.init(customView: close)
-        navItem.leftBarButtonItem = closeB
-        
-        
-        navigationBar.setItems([navItem], animated: false)
-        addSubview(navigationBar)
 
     }
     
@@ -191,6 +176,22 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
             }
             parentController?.registerForPreviewing(with: self, sourceView: info)
         }
+        let navigationBar = UINavigationBar.init(frame: CGRect.init(x: 0, y: 0, width: self.parentController!.view.frame.size.width, height: 56))
+        navigationBar.setBackgroundImage(UIImage(), for: .default)
+        navigationBar.shadowImage = UIImage()
+        navigationBar.isTranslucent = true
+        let navItem = UINavigationItem(title: "")
+        let close = UIButton.init(type: .custom)
+        close.setImage(UIImage.init(named: "close")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
+        close.addTarget(self, action: #selector(self.exit), for: UIControlEvents.touchUpInside)
+        close.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        let closeB = UIBarButtonItem.init(customView: close)
+        navItem.leftBarButtonItem = closeB
+        
+        
+        navigationBar.setItems([navItem], animated: false)
+        addSubview(navigationBar)
+
         updateConstraints()
     }
   
