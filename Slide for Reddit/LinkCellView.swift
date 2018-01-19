@@ -124,8 +124,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 }))
                 alertController.addAction(Action(ActionData(title: "Close", image: UIImage(named: "close")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
                 }))
-
-                parentViewController?.present(alertController, animated: true, completion: nil)
+                
+                VCPresenter.presentAlert(alertController, parentVC: parentViewController!)
             }
         }
     }

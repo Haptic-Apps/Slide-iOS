@@ -23,8 +23,8 @@ class SubSidebarViewController: UIViewController, UITableViewDelegate, UITableVi
         self.parentController = parent
     }
     
-    func doSubreddit(sub: Subreddit){
-        header.setSubreddit(subreddit: sub, parent: parentController!)
+    func doSubreddit(sub: Subreddit, _ width:CGFloat){
+        header.setSubreddit(subreddit: sub, parent: parentController!, width)
         print("Height is \(header.getEstHeight())")
     }
     
@@ -52,15 +52,25 @@ class SubSidebarViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     var header: SubredditHeaderView = SubredditHeaderView()
-    
+
+   
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.estimatedRowHeight = 400.0
         tableView.rowHeight = UITableViewAutomaticDimension
-        self.doSubreddit(sub: subreddit!)
+
+        self.doSubreddit(sub: subreddit!, tableView.frame.size.width)
         header.frame.size.height = header.getEstHeight()
-        tableView.tableHeaderView = header
+
+        print(header.frame.size.height)
         
+        print("Estimated height is \(header.getEstHeight())")
+        
+        tableView.tableHeaderView = header
+        tableView.tableHeaderView!.frame.size = CGSize.init(width: self.tableView.frame.size.width, height: header.getEstHeight())
+
+        print("Height 2 is \(header.frame.size.height)")
+
     }
     
     override func viewWillAppear(_ animated: Bool) {

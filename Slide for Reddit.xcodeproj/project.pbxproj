@@ -28,7 +28,6 @@
 		BE2DEAB21E26916700FBF0B5 /* SubSidebarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2DEAB11E26916700FBF0B5 /* SubSidebarViewController.swift */; };
 		BE2DEAB41E2693C100FBF0B5 /* SubredditHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2DEAB31E2693C100FBF0B5 /* SubredditHeaderView.swift */; };
 		BE2F3F4C1EF62021003C1B28 /* SettingsLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2F3F4B1EF62020003C1B28 /* SettingsLayout.swift */; };
-		BE2F3F561EF70FC2003C1B28 /* YTPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = BE2F3F551EF70FC2003C1B28 /* YTPlayerView.m */; };
 		BE2F3F581EF886D9003C1B28 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2F3F571EF886D9003C1B28 /* Reachability.swift */; };
 		BE2F3F5A1EF8DD3D003C1B28 /* SettingsData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2F3F591EF8DD3D003C1B28 /* SettingsData.swift */; };
 		BE2F3F5D1EF96877003C1B28 /* SettingsContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2F3F5C1EF96877003C1B28 /* SettingsContent.swift */; };
@@ -128,6 +127,8 @@
 		BEBF45E11E23EED800764BB8 /* SettingValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEBF45E01E23EED800764BB8 /* SettingValues.swift */; };
 		BEC494281E307D57006618F3 /* GalleryTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC494271E307D57006618F3 /* GalleryTableViewController.swift */; };
 		BEC4942A1E307DDA006618F3 /* GalleryCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC494291E307DDA006618F3 /* GalleryCellView.swift */; };
+		BECF52442012AF7A00A310F9 /* VCPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BECF52432012AF7A00A310F9 /* VCPresenter.swift */; };
+		BECF52472012B8E700A310F9 /* YTPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = BECF52462012B8E700A310F9 /* YTPlayerView.m */; };
 		BED76E651E3A9576008E7717 /* RealmDataWrappers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED76E641E3A9576008E7717 /* RealmDataWrappers.swift */; };
 		BED7B6BA1F2258E700E31A82 /* CachedTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED7B6B91F2258E700E31A82 /* CachedTitle.swift */; };
 		BED814201FD488400067DF46 /* GifUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED8141F1FD488400067DF46 /* GifUtils.swift */; };
@@ -214,8 +215,6 @@
 		BE2DEAB31E2693C100FBF0B5 /* SubredditHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubredditHeaderView.swift; sourceTree = "<group>"; };
 		BE2F3F4B1EF62020003C1B28 /* SettingsLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsLayout.swift; sourceTree = "<group>"; };
 		BE2F3F531EF70FC1003C1B28 /* Slide for Reddit-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Slide for Reddit-Bridging-Header.h"; sourceTree = "<group>"; };
-		BE2F3F541EF70FC2003C1B28 /* YTPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YTPlayerView.h; path = "../../../Downloads/youtube-ios-player-helper-master/Classes/YTPlayerView.h"; sourceTree = "<group>"; };
-		BE2F3F551EF70FC2003C1B28 /* YTPlayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = YTPlayerView.m; path = "../../../Downloads/youtube-ios-player-helper-master/Classes/YTPlayerView.m"; sourceTree = "<group>"; };
 		BE2F3F571EF886D9003C1B28 /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		BE2F3F591EF8DD3D003C1B28 /* SettingsData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsData.swift; sourceTree = "<group>"; };
 		BE2F3F5C1EF96877003C1B28 /* SettingsContent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsContent.swift; sourceTree = "<group>"; };
@@ -321,6 +320,9 @@
 		BEBF45E01E23EED800764BB8 /* SettingValues.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingValues.swift; sourceTree = "<group>"; };
 		BEC494271E307D57006618F3 /* GalleryTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GalleryTableViewController.swift; sourceTree = "<group>"; };
 		BEC494291E307DDA006618F3 /* GalleryCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GalleryCellView.swift; sourceTree = "<group>"; };
+		BECF52432012AF7A00A310F9 /* VCPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCPresenter.swift; sourceTree = "<group>"; };
+		BECF52452012B8E700A310F9 /* YTPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YTPlayerView.h; sourceTree = "<group>"; };
+		BECF52462012B8E700A310F9 /* YTPlayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YTPlayerView.m; sourceTree = "<group>"; };
 		BED76E641E3A9576008E7717 /* RealmDataWrappers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmDataWrappers.swift; sourceTree = "<group>"; };
 		BED7B6B91F2258E700E31A82 /* CachedTitle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CachedTitle.swift; sourceTree = "<group>"; };
 		BED8141F1FD488400067DF46 /* GifUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifUtils.swift; sourceTree = "<group>"; };
@@ -444,8 +446,8 @@
 		BE2F3F501EF70EB2003C1B28 /* YTPlayerHelper */ = {
 			isa = PBXGroup;
 			children = (
-				BE2F3F541EF70FC2003C1B28 /* YTPlayerView.h */,
-				BE2F3F551EF70FC2003C1B28 /* YTPlayerView.m */,
+				BECF52452012B8E700A310F9 /* YTPlayerView.h */,
+				BECF52462012B8E700A310F9 /* YTPlayerView.m */,
 				BE2F3F531EF70FC1003C1B28 /* Slide for Reddit-Bridging-Header.h */,
 			);
 			name = YTPlayerHelper;
@@ -642,6 +644,7 @@
 				BE2DEAB31E2693C100FBF0B5 /* SubredditHeaderView.swift */,
 				BE44B5831FFAC5FE00D3F6D5 /* BottomSheetCell.swift */,
 				BE44B5861FFAC66100D3F6D5 /* BSCell.xib */,
+				BECF52432012AF7A00A310F9 /* VCPresenter.swift */,
 			);
 			path = "Slide for Reddit";
 			sourceTree = "<group>";
@@ -1062,6 +1065,7 @@
 				BE0E8BC01E26E91E004B56B1 /* BouncyViewControllerAnimator.swift in Sources */,
 				BE8C29211EDE8001004D7514 /* MarginedTableViewCell.swift in Sources */,
 				BE3E5C0C1E160D7000749C0C /* ColorUtil.swift in Sources */,
+				BECF52472012B8E700A310F9 /* YTPlayerView.m in Sources */,
 				BE2F3F5D1EF96877003C1B28 /* SettingsContent.swift in Sources */,
 				BE9456001F32DD310097EEF0 /* AlbumViewController.swift in Sources */,
 				BE6EA6CC1E1C1E9400E9E709 /* StremableMp4Mobile.swift in Sources */,
@@ -1077,7 +1081,6 @@
 				BE780B621E32CB9600DAA1EB /* RelatedViewController.swift in Sources */,
 				BE2B8A091E25EEDF0053D493 /* SettingsViewController.swift in Sources */,
 				BEE206FA1F1DE286008BB5F1 /* WrappingFlowLayout.swift in Sources */,
-				BE2F3F561EF70FC2003C1B28 /* YTPlayerView.m in Sources */,
 				BE7439F51E2162A8008BB63B /* AccountController.swift in Sources */,
 				BE780B641E3405F300DAA1EB /* SettingsTheme.swift in Sources */,
 				BE6EA6CB1E1C1E9400E9E709 /* StreamableJSONBase.swift in Sources */,
@@ -1161,6 +1164,7 @@
 				BE7439F31E20C9BE008BB63B /* CommentCellView.swift in Sources */,
 				BE8630111E2EDFB2004F0E1F /* FiltersViewController.swift in Sources */,
 				BEB2B2351E35D25100BF761C /* InboxContributionLoader.swift in Sources */,
+				BECF52442012AF7A00A310F9 /* VCPresenter.swift in Sources */,
 				BEE10FC61F25078F00A72CE5 /* PagingCommentViewController.swift in Sources */,
 				BE7AF57A1F3655F50003B24B /* SwipeDownModalVC.swift in Sources */,
 				BE5E53751E1DAEB7004FE226 /* RedditLink.swift in Sources */,
