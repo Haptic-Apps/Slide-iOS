@@ -226,28 +226,12 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         alertController.addAction(Action(ActionData(title: "/u/\(link.author)'s profile", image: UIImage(named: "profile")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
             
             let prof = ProfileViewController.init(name: self.link.author)
-            
-            if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad){
-                let navigationController = TapBehindModalViewController(rootViewController: prof)
-                navigationController.modalPresentationStyle = .pageSheet
-                navigationController.modalTransitionStyle = .crossDissolve
-                self.present(navigationController, animated: true, completion: nil)
-            } else {
-                self.show(prof, sender: self)
-            }
+            VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
         }))
         alertController.addAction(Action(ActionData(title: "/r/\(link.subreddit)", image: UIImage(named: "subs")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
             
             let prof = SubredditLinkViewController.init(subName: link.subreddit, single: true)
-            
-            if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad){
-                let navigationController = TapBehindModalViewController(rootViewController: prof)
-                navigationController.modalPresentationStyle = .pageSheet
-                navigationController.modalTransitionStyle = .crossDissolve
-                self.present(navigationController, animated: true, completion: nil)
-            } else {
-                self.show(prof, sender: self)
-            }
+            VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
         }))
         
         alertController.addAction(Action(ActionData(title: "Share comment permalink", image: UIImage(named: "link")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
@@ -289,9 +273,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }))
         
         alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: nil))
-        
-        self.present(alertController, animated: true, completion: nil)
-        
+
+        VCPresenter.presentAlert(alertController, parentVC: self)
+
     }
     
     func report(_ thing: Object){
@@ -329,7 +313,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             presenter.sourceRect = self.headerCell!.contentView.bounds
         }
 
-        self.present(alert, animated: true, completion: nil)
+        VCPresenter.presentAlert(alert, parentVC: self)
     }
     
     var submission: RSubmission? = nil
@@ -733,6 +717,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
         
         actionSheetController.modalPresentationStyle = .formSheet
+        //todo is a crash here
         self.present(actionSheetController, animated: true, completion: nil)
     }
     
@@ -945,12 +930,14 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     
     func doSubbed(){
+        //todo do we want this anymore?
+        /*
         let close = UIButton.init(type: .custom)
         close.setImage(UIImage.init(named: "close")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
         close.addTarget(self, action: #selector(self.close(_:)), for: UIControlEvents.touchUpInside)
         close.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let closeB = UIBarButtonItem.init(customView: close)
-        
+
 
         if(!Subscriptions.isSubscriber((submission?.subreddit)!)){
 
@@ -963,7 +950,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
         } else {
             navigationItem.leftBarButtonItems = [closeB]
-        }
+        }*/
     }
     
     func close(_ sender: AnyObject){
@@ -1012,11 +999,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             presenter.sourceView = moreB.customView
             presenter.sourceRect = moreB.customView!.bounds
         }
-        
 
         self.present(actionSheetController, animated: true, completion: nil)
-        
-        
     }
     
        
@@ -1058,8 +1042,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: {(alert: UIAlertAction!) in print("cancel")})
             
             alrController.addAction(cancelAction)
-            
-            self.present(alrController, animated: true, completion:{})
+
+            VCPresenter.presentAlert(alrController, parentVC: self)
             
         }
         
@@ -1604,7 +1588,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             }
         }))
         alert.addAction(UIAlertAction.init(title: "No", style: .cancel, handler: nil))
-        self.present(alert, animated: true, completion: nil)
+        VCPresenter.presentAlert(alert, parentVC: self)
     }
     
     
@@ -1631,7 +1615,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 self.tableView.reloadData()
             })
         }
-        
+
+        //todo redo all of this
         let navEditorViewController: UINavigationController = UINavigationController(rootViewController: reply)
         self.present(navEditorViewController, animated: true, completion: nil)
     }

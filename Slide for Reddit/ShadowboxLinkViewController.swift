@@ -259,14 +259,7 @@ class ShadowboxLinkViewController: UIViewController, UIScrollViewDelegate, UIGes
             controller.modalPresentationStyle = .overFullScreen
             present(controller, animated: true, completion: nil)
         } else {
-                if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(view.bounds.width / CGFloat(320))) > 1){
-                    let navigationController = TapBehindModalViewController(rootViewController: controller)
-                    navigationController.modalPresentationStyle = .pageSheet
-                    navigationController.modalTransitionStyle = .crossDissolve
-                    present(navigationController, animated: true, completion: nil)
-                } else {
-                    show(controller, sender: self)
-                }
+                VCPresenter.showVC(viewController: controller, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
         }
     }
     

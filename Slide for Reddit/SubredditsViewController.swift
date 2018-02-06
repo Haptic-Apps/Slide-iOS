@@ -171,7 +171,7 @@ class SubredditsViewController:  UIPageViewController, UIPageViewControllerDataS
     func restartVC(){
         
         print("Restarting VC")
-        
+
         if(SettingValues.viewType){
              self.dataSource = self
         } else {
@@ -344,7 +344,9 @@ class SubredditsViewController:  UIPageViewController, UIPageViewControllerDataS
         tabBar.tintColor = ColorUtil.accentColorForSub(sub: SubredditsViewController.current)
         if(!selected){
             let page = SubredditsViewController.vCs.index(of: self.viewControllers!.first!)
-            tabBar.setSelectedItem(tabBar.items[page!], animated: true)
+            if(!tabBar.items.isEmpty ) {
+                tabBar.setSelectedItem(tabBar.items[page!], animated: true)
+            }
         } else {
             selected = false
         }
@@ -547,7 +549,8 @@ class SubredditsViewController:  UIPageViewController, UIPageViewControllerDataS
             }
             actionSheetController.addAction(saveActionButton)
         }
-        
+
+        //todo make this work on ipad, also maybe merge with current code in SettingsTheme?
         self.present(actionSheetController, animated: true, completion: nil)
     }
     var selected = false

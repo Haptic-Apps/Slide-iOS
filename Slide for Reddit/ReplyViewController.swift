@@ -508,15 +508,6 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
             }
         }
         
-        let close = UIButton.init(type: .custom)
-        close.setImage(UIImage.init(named: "close"), for: UIControlState.normal)
-        close.addTarget(self, action: #selector(self.close(_:)), for: UIControlEvents.touchUpInside)
-        close.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
-        let closeB = UIBarButtonItem.init(customView: close)
-        
-        navigationItem.leftBarButtonItems = [closeB]
-        
-        
         let send = UIButton.init(type: .custom)
         send.setImage(UIImage.init(named: "send"), for: UIControlState.normal)
         send.addTarget(self, action: #selector(self.send(_:)), for: UIControlEvents.touchUpInside)

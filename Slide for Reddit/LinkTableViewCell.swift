@@ -124,6 +124,7 @@ class LinkTableViewCell: UITableViewCell, UIViewControllerPreviewingDelegate, TT
                         sheet.dismiss(animated: true, completion: nil)
                     }
                 )
+                //todo Make this work on ipads
                 parentViewController?.present(sheet, animated: true, completion: nil)
             }
         }
@@ -1399,6 +1400,7 @@ class LinkTableViewCell: UITableViewCell, UIViewControllerPreviewingDelegate, TT
             presenter.sourceView = edit
             presenter.sourceRect = edit.bounds
         }
+
         parentViewController?.present(actionSheetController, animated: true, completion: nil)
     }
     
@@ -1409,6 +1411,8 @@ class LinkTableViewCell: UITableViewCell, UIViewControllerPreviewingDelegate, TT
                 self.showBody(width: self.contentView.frame.size.width)
             })
         }
+
+        //todo new implementation here
         
         let navEditorViewController: UINavigationController = UINavigationController(rootViewController: reply)
         parentViewController?.present(navEditorViewController, animated: true, completion: nil)
@@ -1577,19 +1581,12 @@ class LinkTableViewCell: UITableViewCell, UIViewControllerPreviewingDelegate, TT
     func openComment(sender: UITapGestureRecognizer? = nil){
         if(!full){
             let comment = CommentViewController(submission: link!)
-            if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.parentViewController!.view.bounds.width / CGFloat(320))) > 1){
-                let navigationController = UINavigationController(rootViewController: comment)
-                navigationController.modalPresentationStyle = .formSheet
-                navigationController.modalTransitionStyle = .crossDissolve
-                self.parentViewController?.present(navigationController, animated: true, completion: nil)
-            } else {
-                if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad){
-                    let nav = UINavigationController(rootViewController:comment)
-                    (self.navViewController as? UINavigationController)?.splitViewController?.showDetailViewController(nav, sender: nil)
-                } else {
-                    (self.navViewController as? UINavigationController)?.pushViewController(comment, animated: true)
-                }
 
+            if( (self.navViewController as? UINavigationController)?.splitViewController != nil && !SettingValues.multiColumn){
+                let nav = UINavigationController(rootViewController:comment)
+                (self.navViewController as? UINavigationController)?.splitViewController?.showDetailViewController(nav, sender: nil)
+            } else {
+                VCPresenter.showVC(viewController: comment, popupIfPossible: true, parentNavigationController: parentViewController?.navigationController, parentViewController: parentViewController)
             }
         }
     }

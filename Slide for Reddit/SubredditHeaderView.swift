@@ -113,14 +113,7 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
         navigationBar.shadowImage = UIImage()
         navigationBar.isTranslucent = true
         let navItem = UINavigationItem(title: "")
-        let close = UIButton.init(type: .custom)
-        close.setImage(UIImage.init(named: "close")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
-        close.addTarget(self, action: #selector(self.exit), for: UIControlEvents.touchUpInside)
-        close.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-        let closeB = UIBarButtonItem.init(customView: close)
-        navItem.leftBarButtonItem = closeB
-        
-        
+
         navigationBar.setItems([navItem], animated: false)
         addSubview(navigationBar)
 
@@ -313,6 +306,7 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
                             sheet.dismiss(animated: true, completion: nil)
                         }
                     )
+                    //todo make this work on ipad
                     parentController?.present(sheet, animated: true, completion: nil)
                 }
             }

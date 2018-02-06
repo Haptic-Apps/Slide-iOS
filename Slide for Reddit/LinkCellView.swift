@@ -183,7 +183,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if(!link.htmlBody.isEmpty){
             let html = link.htmlBody
             do {
-                let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
+                let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType, NSCharacterEncodingDocumentAttribute: String.Encoding.utf8.rawValue], documentAttributes: nil)
                 let font = FontGenerator.fontOfSize(size: 16, submission: false)
                 let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
                 content = CellContent.init(string:LinkParser.parse(attr2, color), width:(width - 24 - (thumb ? 75 : 0)))
@@ -1249,7 +1249,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
         }))
         
-        parentViewController?.present(alertController, animated: true, completion: nil)
+        VCPresenter.presentAlert(alertController, parentVC: parentViewController!)
     }
     
     func editSelftext(){
@@ -1262,6 +1262,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         let navEditorViewController: UINavigationController = UINavigationController(rootViewController: reply)
         parentViewController?.present(navEditorViewController, animated: true, completion: nil)
+        //todo new implementation
     }
     
     func deleteSelf(){
@@ -1275,8 +1276,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }))
 
         
-        parentViewController?.present(alertController, animated: true, completion: nil)
-        
+        VCPresenter.presentAlert(alertController, parentVC: parentViewController!)
+
     }
     
     func refresh(){

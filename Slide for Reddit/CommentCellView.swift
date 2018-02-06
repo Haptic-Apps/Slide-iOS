@@ -351,18 +351,11 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
     
     func openComment(sender: UITapGestureRecognizer? = nil){
         let comment = CommentViewController.init(submission: (self.comment?.linkid.substring(3, length: (self.comment?.linkid.length)! - 3))! , comment: self.comment!.id, context: 3, subreddit: (self.comment?.subreddit)!)
-        if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.parentViewController!.view.bounds.width / CGFloat(320))) > 1){
-            let navigationController = TapBehindModalViewController(rootViewController: comment)
-            navigationController.modalPresentationStyle = .pageSheet
-            navigationController.modalTransitionStyle = .crossDissolve
-            parentViewController?.present(navigationController, animated: true, completion: nil)
+        if((self.navViewController as? UINavigationController)?.splitViewController != nil && !SettingValues.multiColumn){
+            let nav = UINavigationController(rootViewController:comment)
+            (self.navViewController as? UINavigationController)?.splitViewController?.showDetailViewController(nav, sender: nil)
         } else {
-            if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad){
-                let nav = UINavigationController(rootViewController:comment)
-                (self.navViewController as? UINavigationController)?.splitViewController?.showDetailViewController(nav, sender: nil)
-            } else {
-                (self.navViewController as? UINavigationController)?.pushViewController(comment, animated: true)
-            }
+            VCPresenter.showVC(viewController: comment, popupIfPossible: true, parentNavigationController: navViewController?.navigationController, parentViewController: parentViewController)
         }
     }
 }

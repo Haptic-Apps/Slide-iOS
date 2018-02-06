@@ -12,26 +12,26 @@ import reddift
 class NavigationHeaderView: UIView {
     var title = UILabel()
     var inbox = UILabel()
-    
+
     var profile: UITableViewCell = UITableViewCell()
     var you = UITableViewCell()
     var settings = UITableViewCell()
     var inboxBody = UITableViewCell()
-    
+
     var search: UISearchBar = UISearchBar()
-    
-    func doColors(){
+
+    func doColors() {
         title.textColor = ColorUtil.fontColor
         backgroundColor = ColorUtil.foregroundColor
     }
 
     override init(frame: CGRect) {
-        super.init(frame:frame)
+        super.init(frame: frame)
         self.search = UISearchBar(frame: CGRect(x: 0, y: 0, width: 3, height: 50))
         self.inbox = UILabel(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
         self.title = UILabel(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
         self.inbox.clipsToBounds = true
-        
+
         self.profile.textLabel?.text = "Go to a profile"
         self.profile.accessoryType = .none
         self.profile.backgroundColor = ColorUtil.foregroundColor
@@ -71,7 +71,7 @@ class NavigationHeaderView: UIView {
         you.tintColor = ColorUtil.fontColor
         profile.tintColor = ColorUtil.fontColor
         inboxBody.tintColor = ColorUtil.fontColor
-        
+
         inbox.textColor = .white
         inbox.font = UIFont.boldSystemFont(ofSize: 16)
         inbox.backgroundColor = GMColor.red300Color()
@@ -80,11 +80,11 @@ class NavigationHeaderView: UIView {
         inbox.textAlignment = .center
 
         title.font = UIFont.boldSystemFont(ofSize: 26)
-        
+
         let aTap = UITapGestureRecognizer(target: self, action: #selector(self.switchAccounts(_:)))
         you.addGestureRecognizer(aTap)
         you.isUserInteractionEnabled = true
-        
+
         let setTap = UITapGestureRecognizer(target: self, action: #selector(self.settings(_:)))
         settings.addGestureRecognizer(setTap)
         settings.isUserInteractionEnabled = true
@@ -93,7 +93,7 @@ class NavigationHeaderView: UIView {
         profile.addGestureRecognizer(pTap)
         profile.isUserInteractionEnabled = true
 
-        if(AccountController.isLoggedIn){
+        if (AccountController.isLoggedIn) {
             let yTap = UITapGestureRecognizer(target: self, action: #selector(self.you(_:)))
             title.addGestureRecognizer(yTap)
         } else {
@@ -118,41 +118,26 @@ class NavigationHeaderView: UIView {
         updateConstraints()
         doColors()
     }
-    
-    func you(_ sender: AnyObject){
-        let profile = ProfileViewController.init(name: AccountController.currentName)
-        if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad){
-            let navigationController = TapBehindModalViewController(rootViewController: profile)
-            navigationController.modalPresentationStyle = .pageSheet
-            navigationController.modalTransitionStyle = .crossDissolve
-            self.parentController?.present(navigationController, animated: true, completion: nil)
-        } else {
-            (self.parentController as! NavigationSidebarViewController).parentController?.navigationController?.pushViewController(profile, animated: true)
-        }
 
+    func you(_ sender: AnyObject) {
+        let profile = ProfileViewController.init(name: AccountController.currentName)
+        VCPresenter.showVC(viewController: profile, popupIfPossible: true, parentNavigationController: parentController?.navigationController, parentViewController: parentController)
     }
-    
-    func inbox(_ sender: AnyObject){
+
+    func inbox(_ sender: AnyObject) {
         let inbox = InboxViewController.init()
-        if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad){
-            let navigationController = TapBehindModalViewController(rootViewController: inbox)
-            navigationController.modalPresentationStyle = .pageSheet
-            navigationController.modalTransitionStyle = .crossDissolve
-            self.parentController?.present(navigationController, animated: true, completion: nil)
-        } else {
-            (self.parentController as! NavigationSidebarViewController).parentController?.navigationController?.pushViewController(inbox, animated: true)
-        }
+        VCPresenter.showVC(viewController: inbox, popupIfPossible: true, parentNavigationController: parentController?.navigationController, parentViewController: parentController)
     }
-    
-    func showMore(_ sender: AnyObject){
+
+    func showMore(_ sender: AnyObject) {
         let optionMenu = UIAlertController(title: nil, message: "Navigate", preferredStyle: .actionSheet)
-        
+
         let prof = UIAlertAction(title: "Go to a profile", style: .default, handler: {
             (alert: UIAlertAction!) -> Void in
             self.showProfileDialog(self.inbox)
         })
         optionMenu.addAction(prof)
-        
+
         let saved = UIAlertAction(title: "Your saved content", style: .default, handler: {
             (alert: UIAlertAction!) -> Void in
             let profile = ProfileViewController.init(name: AccountController.currentName)
@@ -167,13 +152,13 @@ class NavigationHeaderView: UIView {
             self.inbox(self.inbox)
         })
         optionMenu.addAction(inbox)
-        
+
         let settings = UIAlertAction(title: "Settings", style: .default, handler: {
             (alert: UIAlertAction!) -> Void in
             self.settings(self.inbox)
         })
         optionMenu.addAction(settings)
-        
+
         optionMenu.modalPresentationStyle = .popover
         if let presenter = optionMenu.popoverPresentationController {
             presenter.sourceView = you
@@ -183,16 +168,15 @@ class NavigationHeaderView: UIView {
         parentController?.present(optionMenu, animated: true, completion: nil)
 
     }
-    
 
-    
-    func showProfileDialog(_ sender: AnyObject){
+
+    func showProfileDialog(_ sender: AnyObject) {
         let alert = UIAlertController(title: "Enter a username", message: "", preferredStyle: .alert)
-        
+
         alert.addTextField { (textField) in
             textField.text = ""
         }
-        
+
         alert.addAction(UIAlertAction(title: "Go to user", style: .default, handler: { [weak alert] (_) in
             let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
             let profile = ProfileViewController.init(name: (textField?.text!)!)
@@ -200,162 +184,156 @@ class NavigationHeaderView: UIView {
             self.parentController!.dismiss(animated: true, completion: nil)
 
         }))
-        
+
         alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
-        
+
         parentController?.present(alert, animated: true, completion: nil)
     }
-    
-    func settings(_ sender: AnyObject){
+
+    func settings(_ sender: AnyObject) {
         //self.parentController!.dismiss(animated: true, completion: nil)
 
         let settings = SettingsViewController()
-        if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad){
-            let navigationController = UINavigationController(rootViewController: settings)
-            navigationController.modalPresentationStyle = .pageSheet
-            navigationController.modalTransitionStyle = .crossDissolve
-            self.parentController?.present(navigationController, animated: true, completion: nil)
-        } else {
-            (self.parentController as! NavigationSidebarViewController).parentController?.navigationController?.pushViewController(settings, animated: true)
-        }
-
-
+        VCPresenter.showVC(viewController: settings, popupIfPossible: true, parentNavigationController: parentController?.navigationController, parentViewController: parentController)
     }
-    func switchAccounts(_ sender: AnyObject){
+
+    func switchAccounts(_ sender: AnyObject) {
         let optionMenu = UIAlertController(title: nil, message: "Choose Option", preferredStyle: .actionSheet)
-        
+
         for s in AccountController.names {
-            if(s != AccountController.currentName){
-            let add = UIAlertAction(title: s, style: .default, handler: {
-                (alert: UIAlertAction!) -> Void in
-                AccountController.switchAccount(name: s)
-                if !UserDefaults.standard.bool(forKey: "done" + s){
-                    do{
-                        try (self.parentController as! NavigationSidebarViewController).parentController?.addAccount(token: OAuth2TokenRepository.token(of: s))
-                    } catch {
-                        (self.parentController as! NavigationSidebarViewController).parentController?.addAccount()
+            if (s != AccountController.currentName) {
+                let add = UIAlertAction(title: s, style: .default, handler: {
+                    (alert: UIAlertAction!) -> Void in
+                    AccountController.switchAccount(name: s)
+                    if !UserDefaults.standard.bool(forKey: "done" + s) {
+                        do {
+                            try (self.parentController as! NavigationSidebarViewController).parentController?.addAccount(token: OAuth2TokenRepository.token(of: s))
+                        } catch {
+                            (self.parentController as! NavigationSidebarViewController).parentController?.addAccount()
+                        }
+                    } else {
+                        Subscriptions.sync(name: s, completion: {
+                            (self.parentController as! NavigationSidebarViewController).parentController?.restartVC()
+                        })
                     }
-                } else {
-                    Subscriptions.sync(name: s, completion:{
-                        (self.parentController as! NavigationSidebarViewController).parentController?.restartVC()
-                    })
-                }
-            })
-            optionMenu.addAction(add)
+                })
+                optionMenu.addAction(add)
             }
         }
-        
-        if(AccountController.isLoggedIn){
+
+        if (AccountController.isLoggedIn) {
             let guest = UIAlertAction(title: "Guest", style: .default, handler: {
                 (alert: UIAlertAction!) -> Void in
                 AccountController.switchAccount(name: "GUEST")
-                Subscriptions.sync(name: "GUEST", completion: { 
+                Subscriptions.sync(name: "GUEST", completion: {
                     (self.parentController as! NavigationSidebarViewController).parentController?.restartVC()
                 })
             })
             optionMenu.addAction(guest)
-            
+
             let deleteAction = UIAlertAction(title: "Log out", style: .destructive, handler: {
                 (alert: UIAlertAction!) -> Void in
                 AccountController.delete(name: AccountController.currentName)
             })
             optionMenu.addAction(deleteAction)
-            
+
         }
-        
+
         let add = UIAlertAction(title: "Add account", style: .default, handler: {
             (alert: UIAlertAction!) -> Void in
             (self.parentController as! NavigationSidebarViewController).parentController?.addAccount()
         })
         optionMenu.addAction(add)
-        
+
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: {
             (alert: UIAlertAction!) -> Void in
         })
         optionMenu.addAction(cancelAction)
-        
+
         optionMenu.modalPresentationStyle = .overFullScreen
         if let presenter = optionMenu.popoverPresentationController {
             presenter.sourceView = self
             presenter.sourceRect = self.bounds
         }
-        
 
+        //todo better location checking
         parentController?.present(optionMenu, animated: true, completion: nil)
     }
-    
+
     var parentController: UIViewController?
-    func setSubreddit(subreddit: String, parent: UIViewController){
+
+    func setSubreddit(subreddit: String, parent: UIViewController) {
         self.subreddit = subreddit
         self.parentController = parent
         updateConstraints()
     }
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     var subreddit = ""
-    
+
     override func updateConstraints() {
         super.updateConstraints()
-        
-        let metrics=["topMargin": 0]
-        let views=["title": title, "you":you, "inbox": inboxBody, "inboxc": inbox, "settings":settings, "profile":profile, "search":search] as [String : Any]
-        
-        var constraint:[NSLayoutConstraint] = []
-        
-        
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[title]-8-|",
-                                                                    options: NSLayoutFormatOptions(rawValue: 0),
-                                                                    metrics: metrics,
-                                                                    views: views))
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[search]-0-|",
-                                                                    options: NSLayoutFormatOptions(rawValue: 0),
-                                                                    metrics: metrics,
-                                                                    views: views))
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[search]-0-|",
-                                                                    options: NSLayoutFormatOptions(rawValue: 0),
-                                                                    metrics: metrics,
-                                                                    views: views))
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[inbox]-0-|",
-                                                                    options: NSLayoutFormatOptions(rawValue: 0),
-                                                                    metrics: metrics,
-                                                                    views: views))
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[settings]-0-|",
-                                                                    options: NSLayoutFormatOptions(rawValue: 0),
-                                                                    metrics: metrics,
-                                                                    views: views))
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[you]-0-|",
-                                                                    options: NSLayoutFormatOptions(rawValue: 0),
-                                                                    metrics: metrics,
-                                                                    views: views))
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[profile]-0-|",
-                                                                    options: NSLayoutFormatOptions(rawValue: 0),
-                                                                    metrics: metrics,
-                                                                    views: views))
 
-        constraint.append(contentsOf:NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[title]-[settings(40)]-4-[profile(40)]-4-[you(40)]-4-[inbox(40)]-4-[search]-4-|",
-                                                                    options: NSLayoutFormatOptions(rawValue: 0),
-                                                                    metrics: metrics,
-                                                                    views: views))
+        let metrics = ["topMargin": 0]
+        let views = ["title": title, "you": you, "inbox": inboxBody, "inboxc": inbox, "settings": settings, "profile": profile, "search": search] as [String: Any]
 
-        
-        if(AccountController.isLoggedIn){
+        var constraint: [NSLayoutConstraint] = []
+
+
+        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[title]-8-|",
+                options: NSLayoutFormatOptions(rawValue: 0),
+                metrics: metrics,
+                views: views))
+        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[search]-0-|",
+                options: NSLayoutFormatOptions(rawValue: 0),
+                metrics: metrics,
+                views: views))
+        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[search]-0-|",
+                options: NSLayoutFormatOptions(rawValue: 0),
+                metrics: metrics,
+                views: views))
+        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[inbox]-0-|",
+                options: NSLayoutFormatOptions(rawValue: 0),
+                metrics: metrics,
+                views: views))
+        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[settings]-0-|",
+                options: NSLayoutFormatOptions(rawValue: 0),
+                metrics: metrics,
+                views: views))
+        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[you]-0-|",
+                options: NSLayoutFormatOptions(rawValue: 0),
+                metrics: metrics,
+                views: views))
+        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[profile]-0-|",
+                options: NSLayoutFormatOptions(rawValue: 0),
+                metrics: metrics,
+                views: views))
+
+        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[title]-[settings(40)]-4-[profile(40)]-4-[you(40)]-4-[inbox(40)]-4-[search]-4-|",
+                options: NSLayoutFormatOptions(rawValue: 0),
+                metrics: metrics,
+                views: views))
+
+
+        if (AccountController.isLoggedIn) {
             title.text = AccountController.currentName
             inbox.isHidden = false
         } else {
             inbox.isHidden = true
             title.text = "guest"
         }
-        
+
         addConstraints(constraint)
     }
-    
-    func getEstHeight()-> CGFloat{
+
+    func getEstHeight() -> CGFloat {
         return CGFloat(title.frame.size.height + (5 * settings.frame.size.height) + 50)
     }
-    
-    func setMail(_ mailcount: Int){
+
+    func setMail(_ mailcount: Int) {
         inbox.text = "\(mailcount)"
     }
 }

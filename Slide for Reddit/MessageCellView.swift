@@ -62,6 +62,7 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
                             sheet.dismiss(animated: true, completion: nil)
                         }
                     )
+                    //todo make this work on ipad
                     parentViewController?.present(sheet, animated: true, completion: nil)
                 }
             }
@@ -354,7 +355,8 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
                 presenter.sourceView = self.contentView
                 presenter.sourceRect = self.contentView.bounds
             }
-            
+
+            //todo convert to new popup
             self.parentViewController?.present(alertController, animated: true, completion: nil)
             
         }
@@ -462,19 +464,9 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
             if(message?.wasComment)!{
                 let url = "https://www.reddit.com\(message!.context)"
                 let vc = RedditLink.getViewControllerForURL(urlS: URL.init(string: url)!)
-                if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.parentViewController!.view.bounds.width / CGFloat(320))) > 1){
-                    let navigationController = UINavigationController(rootViewController: vc)
-                    navigationController.modalPresentationStyle = .formSheet
-                    navigationController.modalTransitionStyle = .crossDissolve
-                    parentViewController?.present(navigationController, animated: true, completion: nil)
-                } else {
-                    if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad){
-                        let nav = UINavigationController(rootViewController:vc)
-                        self.parentViewController?.splitViewController?.showDetailViewController(nav, sender: nil)
-                    } else {
-                        self.parentViewController?.splitViewController?.showDetailViewController(vc, sender: nil)
-                    }
-                }            } else {
+
+                VCPresenter.showVC(viewController: vc, popupIfPossible: true, parentNavigationController: parentViewController?.navigationController, parentViewController: parentViewController)
+            } else {
                 let reply  = ReplyViewController.init(message: message!) { (message) in
                     DispatchQueue.main.async(execute: { () -> Void in
                         let message = MDCSnackbarMessage()
@@ -485,6 +477,7 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
                 
                 let navEditorViewController: UINavigationController = UINavigationController(rootViewController: reply)
                 prepareOverlayVC(overlayVC: navEditorViewController)
+                //todo new implementation
                 parentViewController?.present(navEditorViewController, animated: true, completion: nil)
             }
         }

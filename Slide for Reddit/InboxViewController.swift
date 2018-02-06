@@ -82,7 +82,7 @@ class InboxViewController:  UIPageViewController, UIPageViewControllerDataSource
         let navEditorViewController: UINavigationController = UINavigationController(rootViewController: reply)
         prepareOverlayVC(overlayVC: navEditorViewController)
         present(navEditorViewController, animated: true, completion: nil)
-        
+        //todo make this actually work
         
     }
     private func prepareOverlayVC(overlayVC: UIViewController) {
@@ -124,12 +124,6 @@ class InboxViewController:  UIPageViewController, UIPageViewControllerDataSource
         for i in content {
             items.append(i.description)
         }
-        let close = UIButton.init(type: .custom)
-        close.setImage(UIImage.init(named: "close")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
-        close.addTarget(self, action: #selector(self.close), for: UIControlEvents.touchUpInside)
-        close.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-        let closeB = UIBarButtonItem.init(customView: close)
-        navigationItem.leftBarButtonItem = closeB
 
         tabBar = MDCTabBar.init(frame: CGRect.init(x: 0, y: -8, width: self.view.frame.size.width, height: 45))
         tabBar.backgroundColor = ColorUtil.getColorForSub(sub: "")

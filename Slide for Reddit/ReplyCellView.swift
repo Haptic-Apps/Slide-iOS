@@ -78,7 +78,8 @@ class ReplyCellView: UITableViewCell, UITextViewDelegate {
         parent!.present(alertController!,animated: true, completion: nil)
         
         session = (UIApplication.shared.delegate as! AppDelegate).session
-        
+
+        //todo better system for this
         do {
             let name = toReplyTo is RMessage ? (toReplyTo as! RMessage).getId() : toReplyTo is RComment ? (toReplyTo as! RComment).getId() : (toReplyTo as! RSubmission).getId()
             try self.session?.editCommentOrLink(name, newBody: body.text!, completion: { (result) in

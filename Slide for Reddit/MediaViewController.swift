@@ -12,144 +12,141 @@ import SDWebImage
 import MaterialComponents.MaterialProgressView
 
 class MediaViewController: UIViewController, UIViewControllerTransitioningDelegate {
-    
+
     var subChanged = false
-    
-    var link:RSubmission!
-    
-    public func setLink(lnk: RSubmission, shownURL: URL?, lq: Bool, saveHistory: Bool){ //lq is should load lq and did load lq
-        if(saveHistory){
+
+    var link: RSubmission!
+
+    public func setLink(lnk: RSubmission, shownURL: URL?, lq: Bool, saveHistory: Bool) { //lq is should load lq and did load lq
+        if (saveHistory) {
             History.addSeen(s: lnk)
         }
         self.link = lnk
         let url = link.url!
-        if(ContentType.isGif(uri: url)){
-            if(!ContentType.isGifLoadInstantly(uri: url) && !link!.videoPreview.isEmpty()){
+        if (ContentType.isGif(uri: url)) {
+            if (!ContentType.isGifLoadInstantly(uri: url) && !link!.videoPreview.isEmpty()) {
                 doShow(url: URL.init(string: link!.videoPreview)!)
             } else {
                 doShow(url: url)
             }
         } else {
-        if(lq){
-            doShow(url: url, lq: shownURL)
-        } else {
-            doShow(url: url)
-        }
+            if (lq) {
+                doShow(url: url, lq: shownURL)
+            } else {
+                doShow(url: url)
+            }
         }
     }
-        
+
     func getControllerForUrl(baseUrl: URL, lq: URL? = nil) -> UIViewController? {
-        print(baseUrl )
+        print(baseUrl)
         contentUrl = baseUrl
         var url = contentUrl?.absoluteString
-        if(shouldTruncate(url: contentUrl!)){
+        if (shouldTruncate(url: contentUrl!)) {
             let content = contentUrl?.absoluteString
             contentUrl = URL.init(string: (content?.substring(to: (content?.characters.index(of: "."))!))!)
         }
         let type = ContentType.getContentType(baseUrl: contentUrl!)
-        
-        if(type == ContentType.CType.ALBUM && SettingValues.internalAlbumView){
+
+        if (type == ContentType.CType.ALBUM && SettingValues.internalAlbumView) {
             print("Showing album")
             return AlbumViewController.init(urlB: contentUrl!)
         } else if (contentUrl != nil && ContentType.displayImage(t: type) && SettingValues.internalImageView || (type == .GIF && SettingValues.internalGifView) || type == .STREAMABLE || type == .VID_ME || (type == ContentType.CType.VIDEO && SettingValues.internalYouTube)) {
-            if(!ContentType.isGifLoadInstantly(uri: baseUrl) && type == .GIF){
+            if (!ContentType.isGifLoadInstantly(uri: baseUrl) && type == .GIF) {
                 return WebsiteViewController(url: baseUrl, subreddit: link == nil ? "" : link.subreddit)
             }
             return SingleContentViewController.init(url: contentUrl!, lq: lq)
-        } else if(type == ContentType.CType.LINK || type == ContentType.CType.NONE){
+        } else if (type == ContentType.CType.LINK || type == ContentType.CType.NONE) {
             let web = WebsiteViewController(url: baseUrl, subreddit: link == nil ? "" : link.subreddit)
             return web
-        } else if(type == ContentType.CType.REDDIT){
+        } else if (type == ContentType.CType.REDDIT) {
             return RedditLink.getViewControllerForURL(urlS: contentUrl!)
         }
         return WebsiteViewController(url: baseUrl, subreddit: link == nil ? "" : link.subreddit)
     }
-    
-    var contentUrl:URL?
+
+    var contentUrl: URL?
 
     public func shouldTruncate(url: URL) -> Bool {
         let path = url.path
         return !ContentType.isGif(uri: url) && !ContentType.isImage(uri: url) && path.contains(".");
     }
-    
-    func showSpoiler(_ string: String){
+
+    func showSpoiler(_ string: String) {
         let m = string.capturedGroups(withRegex: "\\[\\[s\\[(.*?)\\]s\\]\\]")
         let controller = UIAlertController.init(title: "Spoiler", message: m[0][1], preferredStyle: .alert)
         controller.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: nil))
         present(controller, animated: true, completion: nil)
     }
-    
-    func doShow(url: URL, lq: URL? = nil){
+
+    func doShow(url: URL, lq: URL? = nil) {
         print(url)
         contentUrl = url
         var spoiler = ContentType.isSpoiler(uri: url)
-        if(spoiler){
+        if (spoiler) {
             let controller = UIAlertController.init(title: "Spoiler", message: url.absoluteString, preferredStyle: .alert)
             present(controller, animated: true, completion: nil)
         } else {
-        let controller = getControllerForUrl(baseUrl: url, lq: lq)!
-        if( controller is AlbumViewController){
-            controller.modalPresentationStyle = .overFullScreen
-            present(controller, animated: true, completion: nil)
-        } else if(controller is SingleContentViewController){
-            controller.modalPresentationStyle = .overFullScreen
-            present(controller, animated: true, completion: nil)
-        } else {
-                if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad ){
-                    let navigationController = TapBehindModalViewController(rootViewController: controller)
-                    navigationController.modalPresentationStyle = .pageSheet
-                    navigationController.modalTransitionStyle = .crossDissolve
-                    present(navigationController, animated: true, completion: nil)
-                } else {
-                    show(controller, sender: self)
-                }
-        }
-        navigationController?.setNavigationBarHidden(false, animated: true)
+            let controller = getControllerForUrl(baseUrl: url, lq: lq)!
+            if (controller is AlbumViewController) {
+                controller.modalPresentationStyle = .overFullScreen
+                present(controller, animated: true, completion: nil)
+            } else if (controller is SingleContentViewController) {
+                controller.modalPresentationStyle = .overFullScreen
+                present(controller, animated: true, completion: nil)
+            } else {
+                VCPresenter.showVC(viewController: controller, popupIfPossible: true, parentNavigationController: navigationController, parentViewController: self)
+            }
+            navigationController?.setNavigationBarHidden(false, animated: true)
         }
     }
-    
+
     var color: UIColor?
-    
-    func setBarColors(color: UIColor){
+
+    func setBarColors(color: UIColor) {
         self.color = color
         setNavColors()
     }
-    
-    func setNavColors(){
-        if(navigationController != nil){
+
+    func setNavColors() {
+        if (navigationController != nil) {
             navigationController?.setNavigationBarHidden(false, animated: true)
             self.navigationController?.navigationBar.shadowImage = UIImage()
             navigationController?.navigationBar.barTintColor = color
         }
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.shadowImage = UIImage()
         setNavColors()
         navigationController?.isToolbarHidden = true
     }
-    
+
     func animationControllerForPresentedController(presented: UIViewController, presentingController presenting: UIViewController, sourceController source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         return LeftTransition()
     }
-    
+
     func animationControllerForDismissedController(dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         let leftTransiton = LeftTransition()
         leftTransiton.dismiss = true
         return leftTransiton
     }
-    
+
 
 }
 
 extension URL {
-    
+
     var queryDictionary: [String: String] {
         var queryDictionary = [String: String]()
-        guard let components = URLComponents(url: self, resolvingAgainstBaseURL: false), let queryItems = components.queryItems else { return queryDictionary }
-        queryItems.forEach { queryDictionary[$0.name] = $0.value }
+        guard let components = URLComponents(url: self, resolvingAgainstBaseURL: false), let queryItems = components.queryItems else {
+            return queryDictionary
+        }
+        queryItems.forEach {
+            queryDictionary[$0.name] = $0.value
+        }
         return queryDictionary
     }
-    
+
 }
