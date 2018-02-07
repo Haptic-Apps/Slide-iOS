@@ -71,11 +71,13 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         super.viewDidAppear(animated)
         
         webView = WKWebView(frame: self.view.frame)
+        self.view.backgroundColor = .white
+
         webView.navigationDelegate = self
         webView.allowsBackForwardNavigationGestures = true
         
         self.view.addSubview(webView)
-        myProgressView = UIProgressView(frame: CGRect(x:0, y:webView.frame.origin.y, width: self.view.frame.size.width, height:10))
+        myProgressView = UIProgressView(frame: CGRect(x:0, y:0, width: self.view.frame.size.width, height:10))
         myProgressView.progressTintColor = ColorUtil.accentColorForSub(sub: sub)
         self.view.addSubview(myProgressView)
         

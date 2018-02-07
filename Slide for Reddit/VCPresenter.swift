@@ -13,12 +13,12 @@ public class VCPresenter {
     public static func showVC(viewController: UIViewController, popupIfPossible: Bool, parentNavigationController: UINavigationController?, parentViewController: UIViewController?) {
         print("Showing VC")
 
-        if ((parentNavigationController != nil && parentNavigationController!.modalPresentationStyle != .pageSheet) && popupIfPossible || parentNavigationController == nil) {
+        if ((parentNavigationController != nil && parentNavigationController!.modalPresentationStyle != .pageSheet) && popupIfPossible && UIApplication.shared.statusBarOrientation != .portrait || parentNavigationController == nil) {
             var newParent = TapBehindModalViewController.init(rootViewController: viewController);
             let button = UIButtonWithContext.init(type: .custom)
             button.parentController = newParent
             button.imageView?.contentMode = UIViewContentMode.scaleAspectFit
-            button.setImage(UIImage.init(named: "close")!.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
+            button.setImage(UIImage.init(named: "close")!.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
             button.frame = CGRect.init(x: 0, y: 0, width: 50, height: 50)
             button.addTarget(self, action: #selector(VCPresenter.handleCloseNav(controller:)), for: .touchUpInside)
 
@@ -42,7 +42,7 @@ public class VCPresenter {
             let button = UIButtonWithContext.init(type: .custom)
             button.parentController = parentNavigationController!
             button.imageView?.contentMode = UIViewContentMode.scaleAspectFit
-            button.setImage(UIImage.init(named: "back")!.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
+            button.setImage(UIImage.init(named: "back")!.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
             button.frame = CGRect.init(x: 0, y: 0, width: 50, height: 50)
             button.addTarget(self, action: #selector(VCPresenter.handleBackButton(controller:)), for: .touchUpInside)
 

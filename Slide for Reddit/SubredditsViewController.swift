@@ -29,8 +29,7 @@ class SubredditsViewController:  UIPageViewController, UIPageViewControllerDataS
         if(SubredditReorderViewController.changed){
             restartVC()
         }
-        print("WILL APPEAR")
-        
+
         self.navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: self.currentTitle)
         navigationController?.navigationBar.isTranslucent = false
@@ -338,6 +337,7 @@ class SubredditsViewController:  UIPageViewController, UIPageViewControllerDataS
         let leftItem = UIBarButtonItem(customView: label)
         
         self.navigationItem.leftBarButtonItems = [menuB, leftItem]
+
         self.navigationController?.navigationBar.shadowImage = UIImage()
         self.navigationController?.navigationBar.layoutIfNeeded()
 

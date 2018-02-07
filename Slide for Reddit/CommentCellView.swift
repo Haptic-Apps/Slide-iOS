@@ -355,7 +355,7 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
             let nav = UINavigationController(rootViewController:comment)
             (self.navViewController as? UINavigationController)?.splitViewController?.showDetailViewController(nav, sender: nil)
         } else {
-            VCPresenter.showVC(viewController: comment, popupIfPossible: true, parentNavigationController: navViewController?.navigationController, parentViewController: parentViewController)
+            VCPresenter.showVC(viewController: comment, popupIfPossible: false, parentNavigationController: parentViewController?.navigationController, parentViewController: parentViewController)
         }
     }
 }

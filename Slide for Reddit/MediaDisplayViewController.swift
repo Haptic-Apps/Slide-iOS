@@ -51,7 +51,11 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate, UIGest
             
         }
         let image = baseImage!
-        self.scrollView.contentSize = CGSize.init(width: self.view.frame.size.width, height: getHeightFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width))
+        if(image.size.height > image.size.width){
+            self.scrollView.contentSize = CGSize.init(width: getWidthFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width), height: self.view.frame.size.height)
+        } else {
+            self.scrollView.contentSize = CGSize.init(width: self.view.frame.size.width, height: getHeightFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width))
+        }
         self.scrollView.delegate = self
         
         let dtap = UITapGestureRecognizer.init(target: self, action: #selector (handleDoubleTapScrollView(recognizer:)))
@@ -169,7 +173,11 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate, UIGest
         let ratio = Double(imageHeight)/Double(imageWidth)
         let width = Double(view.frame.size.width);
         return CGFloat(width * ratio)
-        
+    }
+    func getWidthFromAspectRatio(imageHeight:CGFloat, imageWidth: CGFloat) -> CGFloat {
+        let ratio = Double(imageWidth)/Double(imageHeight)
+        let height = Double(view.frame.size.height);
+        return CGFloat(height * ratio)
     }
     
     var toolbar = UIToolbar()

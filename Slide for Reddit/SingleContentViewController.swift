@@ -33,7 +33,6 @@ class SingleContentViewController: SwipeDownModalVC, UIPageViewControllerDataSou
     
     override func viewDidLoad(){
         super.viewDidLoad()
-        self.dataSource = self
         self.delegate = self
         
         self.navigationController?.view.backgroundColor = UIColor.clear
@@ -41,7 +40,7 @@ class SingleContentViewController: SwipeDownModalVC, UIPageViewControllerDataSou
         
         setViewControllers([firstViewController],
                            direction: .forward,
-                           animated: true,
+                           animated: false,
                            completion: nil)
         
     }
