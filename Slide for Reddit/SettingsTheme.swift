@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import MKColorPicker
 
-class SettingsTheme: UITableViewController, ColorPickerDelegate {
+class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
     
     var primary: UITableViewCell = UITableViewCell()
     var accent: UITableViewCell = UITableViewCell()
@@ -17,27 +18,40 @@ class SettingsTheme: UITableViewController, ColorPickerDelegate {
     var tintingMode: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "tintingMode")
     var tintOutside: UITableViewCell = UITableViewCell()
     var tintOutsideSwitch: UISwitch = UISwitch()
+    var isAccent = false
     
     var accentChosen: UIColor?
-    
-    func valueChanged(_ value: CGFloat, accent: Bool) {
-        if(accent){
-            accentChosen = UIColor.init(cgColor: GMPalette.allAccentCGColor()[Int(value * CGFloat(GMPalette.allAccentCGColor().count))])
+
+    public func colorPickerView(_ colorPickerView: ColorPickerView, didSelectItemAt indexPath: IndexPath) {
+        if(isAccent){
+            accentChosen = colorPickerView.colors[indexPath.row]
         } else {
-            self.navigationController?.navigationBar.barTintColor = UIColor.init(cgColor: GMPalette.allCGColor()[Int(value * CGFloat(GMPalette.allCGColor().count))])
+            self.navigationController?.navigationBar.barTintColor = colorPickerView.colors[indexPath.row]
         }
     }
 
     func pickTheme(){
-        let alertController = UIAlertController(title: "\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
-        
+        let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
+        isAccent = false
         let margin:CGFloat = 10.0
-        let rect = CGRect(x: margin, y: margin, width: alertController.view.bounds.size.width - margin * 4.0, height: 120)
-        let customView = ColorPicker(frame: rect)
-        customView.delegate = self
-        
-        customView.backgroundColor = ColorUtil.backgroundColor
-        alertController.view.addSubview(customView)
+        let rect = CGRect(x: margin, y: margin, width: alertController.view.bounds.size.width - margin * 4.0, height: 150)
+        let MKColorPicker = ColorPickerView.init(frame: rect)
+        MKColorPicker.delegate = self
+        MKColorPicker.colors = GMPalette.allColor()
+        MKColorPicker.selectionStyle = .check
+        MKColorPicker.scrollDirection = .vertical
+        var index = 0
+        let firstColor = ColorUtil.baseColor
+        for i in 0...MKColorPicker.colors.count - 1 {
+            if(MKColorPicker.colors[i].cgColor.__equalTo(firstColor.cgColor)){
+                MKColorPicker.preselectedIndex = i
+                break
+            }
+        }
+
+        MKColorPicker.style = .circle
+
+        alertController.view.addSubview(MKColorPicker)
         
         let somethingAction = UIAlertAction(title: "Save", style: .default, handler: {(alert: UIAlertAction!) in
             UserDefaults.standard.setColor(color: (self.navigationController?.navigationBar.barTintColor)!, forKey: "basecolor")
@@ -62,16 +76,29 @@ class SettingsTheme: UITableViewController, ColorPickerDelegate {
     }
     
     func pickAccent(){
-        let alertController = UIAlertController(title: "\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
+        let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
         
         let margin:CGFloat = 10.0
-        let rect = CGRect(x: margin, y: margin, width: alertController.view.bounds.size.width - margin * 4.0, height: 120)
-        let customView = ColorPicker(frame: rect)
-        customView.setAccent(accent: true)
-        customView.delegate = self
-        
-        customView.backgroundColor = ColorUtil.backgroundColor
-        alertController.view.addSubview(customView)
+        let rect = CGRect(x: margin, y: margin, width: alertController.view.bounds.size.width - margin * 4.0, height: 150)
+        let MKColorPicker = ColorPickerView.init(frame: rect)
+        MKColorPicker.delegate = self
+        MKColorPicker.colors = GMPalette.allColorAccent()
+        MKColorPicker.selectionStyle = .check
+
+        self.isAccent = true
+        MKColorPicker.scrollDirection = .vertical
+        var index = 0
+        let firstColor = ColorUtil.baseColor
+        for i in 0...MKColorPicker.colors.count - 1 {
+            if(MKColorPicker.colors[i].cgColor.__equalTo(firstColor.cgColor)){
+                MKColorPicker.preselectedIndex = i
+                break
+            }
+        }
+
+        MKColorPicker.style = .circle
+
+        alertController.view.addSubview(MKColorPicker)
         
         let somethingAction = UIAlertAction(title: "Save", style: .default, handler: {(alert: UIAlertAction!) in
             if(self.accentChosen != nil){

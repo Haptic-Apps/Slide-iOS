@@ -3,28 +3,13 @@ PODS:
   - Alamofire (4.6.0)
   - ImagePickerSheetController (0.9.3)
   - KCFloatingActionButton (2.1.2)
-  - MaterialComponents/ActivityIndicator (43.1.1):
-    - MaterialComponents/ActivityIndicator/ColorThemer (= 43.1.1)
-    - MaterialComponents/ActivityIndicator/Component (= 43.1.1)
-  - MaterialComponents/ActivityIndicator/ColorThemer (43.1.1):
-    - MaterialComponents/ActivityIndicator/Component
-    - MaterialComponents/Themes
-  - MaterialComponents/ActivityIndicator/Component (43.1.1):
+  - MaterialComponents/ActivityIndicator (44.6.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Application
     - MDFInternationalization
     - MotionAnimator (~> 2.0)
-  - MaterialComponents/AnimationTiming (43.1.1)
-  - MaterialComponents/Buttons (43.1.1):
-    - MaterialComponents/Buttons/ColorThemer (= 43.1.1)
-    - MaterialComponents/Buttons/Component (= 43.1.1)
-    - MaterialComponents/Buttons/TitleColorAccessibilityMutator (= 43.1.1)
-    - MaterialComponents/private/Math
-  - MaterialComponents/Buttons/ColorThemer (43.1.1):
-    - MaterialComponents/Buttons/Component
-    - MaterialComponents/private/Math
-    - MaterialComponents/Themes
-  - MaterialComponents/Buttons/Component (43.1.1):
+  - MaterialComponents/AnimationTiming (44.6.0)
+  - MaterialComponents/Buttons (44.6.0):
     - MaterialComponents/Ink
     - MaterialComponents/private/Math
     - MaterialComponents/ShadowElevations
@@ -32,17 +17,7 @@ PODS:
     - MaterialComponents/Typography
     - MDFInternationalization
     - MDFTextAccessibility
-  - MaterialComponents/Buttons/TitleColorAccessibilityMutator (43.1.1):
-    - MaterialComponents/Buttons/Component
-    - MaterialComponents/private/Math
-    - MDFTextAccessibility
-  - MaterialComponents/Dialogs (43.1.1):
-    - MaterialComponents/Dialogs/ColorThemer (= 43.1.1)
-    - MaterialComponents/Dialogs/Component (= 43.1.1)
-  - MaterialComponents/Dialogs/ColorThemer (43.1.1):
-    - MaterialComponents/Dialogs/Component
-    - MaterialComponents/Themes
-  - MaterialComponents/Dialogs/Component (43.1.1):
+  - MaterialComponents/Dialogs (44.6.0):
     - MaterialComponents/Buttons
     - MaterialComponents/private/KeyboardWatcher
     - MaterialComponents/ShadowElevations
@@ -50,37 +25,25 @@ PODS:
     - MDFInternationalization
     - MotionAnimator (~> 2.5)
     - MotionTransitioning (~> 5.0)
-  - MaterialComponents/Ink (43.1.1):
-    - MaterialComponents/Ink/ColorThemer (= 43.1.1)
-    - MaterialComponents/Ink/Component (= 43.1.1)
-  - MaterialComponents/Ink/ColorThemer (43.1.1):
-    - MaterialComponents/Ink/Component
-    - MaterialComponents/Themes
-  - MaterialComponents/Ink/Component (43.1.1):
+  - MaterialComponents/Ink (44.6.0):
     - MaterialComponents/private/Math
-  - MaterialComponents/OverlayWindow (43.1.1):
+  - MaterialComponents/OverlayWindow (44.6.0):
     - MaterialComponents/private/Application
-  - MaterialComponents/Palettes (43.1.1)
-  - MaterialComponents/private/Application (43.1.1)
-  - MaterialComponents/private/KeyboardWatcher (43.1.1):
+  - MaterialComponents/Palettes (44.6.0)
+  - MaterialComponents/private/Application (44.6.0)
+  - MaterialComponents/private/KeyboardWatcher (44.6.0):
     - MaterialComponents/private/Application
-  - MaterialComponents/private/Math (43.1.1)
-  - MaterialComponents/private/Overlay (43.1.1)
-  - MaterialComponents/ProgressView (43.1.1):
-    - MaterialComponents/ProgressView/ColorThemer (= 43.1.1)
-    - MaterialComponents/ProgressView/Component (= 43.1.1)
-  - MaterialComponents/ProgressView/ColorThemer (43.1.1):
-    - MaterialComponents/ProgressView/Component
-    - MaterialComponents/Themes
-  - MaterialComponents/ProgressView/Component (43.1.1):
+  - MaterialComponents/private/Math (44.6.0)
+  - MaterialComponents/private/Overlay (44.6.0)
+  - MaterialComponents/ProgressView (44.6.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
     - MDFInternationalization
     - MotionAnimator (~> 2.1)
-  - MaterialComponents/ShadowElevations (43.1.1)
-  - MaterialComponents/ShadowLayer (43.1.1):
+  - MaterialComponents/ShadowElevations (44.6.0)
+  - MaterialComponents/ShadowLayer (44.6.0):
     - MaterialComponents/ShadowElevations
-  - MaterialComponents/Snackbar (43.1.1):
+  - MaterialComponents/Snackbar (44.6.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Buttons
     - MaterialComponents/OverlayWindow
@@ -88,13 +51,7 @@ PODS:
     - MaterialComponents/private/KeyboardWatcher
     - MaterialComponents/private/Overlay
     - MaterialComponents/Typography
-  - MaterialComponents/Tabs (43.1.1):
-    - MaterialComponents/Tabs/ColorThemer (= 43.1.1)
-    - MaterialComponents/Tabs/Component (= 43.1.1)
-  - MaterialComponents/Tabs/ColorThemer (43.1.1):
-    - MaterialComponents/Tabs/Component
-    - MaterialComponents/Themes
-  - MaterialComponents/Tabs/Component (43.1.1):
+  - MaterialComponents/Tabs (44.6.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Ink
     - MaterialComponents/private/Math
@@ -102,20 +59,20 @@ PODS:
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/Themes (43.1.1)
-  - MaterialComponents/Typography (43.1.1):
+  - MaterialComponents/Typography (44.6.0):
     - MaterialComponents/private/Application
   - MDFInternationalization (1.0.4)
   - MDFTextAccessibility (1.2.0)
+  - MKColorPicker (1.1)
   - MotionAnimator (2.8.0):
     - MotionInterchange (~> 1.6)
   - MotionInterchange (1.6.0)
   - MotionTransitioning (5.0.0)
-  - Realm (3.0.2):
-    - Realm/Headers (= 3.0.2)
-  - Realm/Headers (3.0.2)
-  - RealmSwift (3.0.2):
-    - Realm (= 3.0.2)
+  - Realm (3.1.1):
+    - Realm/Headers (= 3.1.1)
+  - Realm/Headers (3.1.1)
+  - RealmSwift (3.1.1):
+    - Realm (= 3.1.1)
   - reddift (2.0.0):
     - reddift/MiniKeychain (= 2.0.0)
   - reddift/MiniKeychain (2.0.0)
@@ -141,10 +98,12 @@ DEPENDENCIES:
   - MaterialComponents/Buttons
   - MaterialComponents/Dialogs
   - MaterialComponents/Ink
+  - MaterialComponents/Palettes
   - MaterialComponents/ProgressView
   - MaterialComponents/ShadowElevations
   - MaterialComponents/Snackbar
   - MaterialComponents/Tabs
+  - MKColorPicker
   - RealmSwift
   - reddift (from `https://github.com/ccrama/reddift`)
   - SDWebImage (~> 3.8)
@@ -190,14 +149,15 @@ SPEC CHECKSUMS:
   Alamofire: f41a599bd63041760b26d393ec1069d9d7b917f4
   ImagePickerSheetController: 4789b06940e299431455c61be77fda440883c36c
   KCFloatingActionButton: 1b22ce95d44b51915280df8a8b277eae4a06c3f1
-  MaterialComponents: 98a62516fedb2aa2a6efc18d74a744229f2408d3
+  MaterialComponents: 974b52899fb90f28da0284790be46b2ca82358f5
   MDFInternationalization: e355b0cebecf53d60233bd267084e49366c82513
   MDFTextAccessibility: 94098925e0853551c5a311ce7c1ecefbe297cdb6
+  MKColorPicker: c75af5993af472935cbfff18bc46d5ed8ff6f638
   MotionAnimator: 8af077dac084b7880a4d2ddae31a26171087bd87
   MotionInterchange: ead0e3ae1f3a5fb539e289debbc7ae036160a10d
   MotionTransitioning: 23d25edc2f4606efb922403cbac6d81af37aa33a
-  Realm: 6f23fd1f178a09342eac21bfa7c2bf4312a7a180
-  RealmSwift: 695393add1b8f9d5fa75dd16e6355cf3935f71e2
+  Realm: 42d1c38a5b1bbcc828b48a7ce702cb86fc68adf4
+  RealmSwift: d31937ca6a6ee54acde64ec839523c0a3c04924b
   reddift: 3066e687c2a934b0f9aca6ee6e2161abc4c93a56
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
   SideMenu: 47dbf9e4d878062d8994aed43f6e4bf6c1fea30b
@@ -207,6 +167,6 @@ SPEC CHECKSUMS:
   UZTextView: d8d45a8459b0de6f2c393458a05c65352f89e00a
   XLActionController: 7e88fece1799e61357cb00b1cc67104d66ec4d2c
 
-PODFILE CHECKSUM: 8554654a0125bacfbc1a652a4d5f1634cfdf7f51
+PODFILE CHECKSUM: 3532b28b5030f5f0aa7e888c321ea30036696b96
 
-COCOAPODS: 1.3.1
+COCOAPODS: 1.4.0

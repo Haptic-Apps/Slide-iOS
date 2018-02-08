@@ -31,7 +31,6 @@ extension UIColor {
 
 class ColorUtil{
     static var theme = Theme.DARK
-    static var colorScheme: MDCBasicColorScheme?
     static func doInit(){
         if let name = UserDefaults.standard.string(forKey: "theme"){
             if let t = Theme(rawValue: name){
@@ -49,11 +48,6 @@ class ColorUtil{
         if(accent != nil){
             baseAccent = accent!
         }
-        colorScheme = MDCBasicColorScheme(primaryColor: foregroundColor,
-                                          primaryLightColor: fontColor,
-                                          primaryDarkColor: backgroundColor)
-        MDCAlertColorThemer.apply(colorScheme!)
-
     }
     static var foregroundColor = UIColor.white
     static var backgroundColor = UIColor.white
@@ -85,7 +79,7 @@ class ColorUtil{
 
     public static func getColorForSub(sub: String) -> UIColor {
         let color = UserDefaults.standard.colorForKey(key: "color+" + sub)
-        if(color == nil){
+        if(color == nil || color == .black){
             return baseColor
         } else {
             return color!

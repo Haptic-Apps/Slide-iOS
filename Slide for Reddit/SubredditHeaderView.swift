@@ -248,7 +248,7 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
 
         addConstraints(constraint)
         
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[nav]-8-[title]-8-[subscribers]-2-[here]-2-[desc(d)]-4-|",
+        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[nav]-8-[title]-8-[subscribers]-2-[here]-2-[desc(b)]-4-|",
                                                            options: NSLayoutFormatOptions(rawValue: 0),
                                                            metrics: metrics,
                                                            views: views))

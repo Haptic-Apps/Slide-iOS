@@ -169,10 +169,7 @@ class SettingsViewController: UITableViewController {
         self.multiColumnCell.imageView?.image = UIImage.init(named: "multi")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
 
         
-        self.tableView.reloadData(with: .none)
-        if(self.view.frame.size.width > 1000 && UIScreen.main.traitCollection.userInterfaceIdiom == .pad){
-        self.tableView(tableView, didSelectRowAt: IndexPath.init(row: 0, section: 0))
-        }
+        self.tableView.reloadData(with: .fade)
     }
     
     func switchIsChanged(_ changed: UISwitch) {

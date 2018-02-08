@@ -317,6 +317,17 @@ class SubredditsViewController:  UIPageViewController, UIPageViewControllerDataS
         
         self.colorChanged()
         SideMenuManager.default.menuAddScreenEdgePanGesturesToPresent(toView: vc.view)
+        for rec in (vc.view.gestureRecognizers)! {
+            if(rec is UIScreenEdgePanGestureRecognizer){
+                for view in view.subviews
+                {
+                    if let scrollView = view as? UIScrollView
+                    {
+                        scrollView.panGestureRecognizer.require(toFail: rec);
+                    }
+                }
+            }
+        }
         if(!(vc ).loaded){
             (vc ).load(reset:true)
         }
@@ -528,7 +539,7 @@ class SubredditsViewController:  UIPageViewController, UIPageViewControllerDataS
     
 
     func showMenu(_ sender: AnyObject){
-        (SubredditsViewController.vCs[currentPage] as? SubredditLinkViewController)?.showMore(self, parentVC: self)
+        (SubredditsViewController.vCs[currentPage] as? SubredditLinkViewController)?.showMore(sender, parentVC: self)
     }
     
     func showThemeMenu(){

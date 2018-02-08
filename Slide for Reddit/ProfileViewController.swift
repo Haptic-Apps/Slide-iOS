@@ -9,32 +9,33 @@
 import UIKit
 import reddift
 import MaterialComponents.MaterialSnackbar
+import MKColorPicker
 
-class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIToolbarDelegate, ColorPickerDelegate, UIScrollViewDelegate {
+class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, ColorPickerViewDelegate, UIToolbarDelegate, UIScrollViewDelegate {
     var content : [UserContent] = []
     var name: String = ""
     var isReload = false
     var session: Session? = nil
     var vCs : [UIViewController] = []
 
-    
-
-
-    func valueChanged(_ value: CGFloat, accent: Bool) {
-            self.navigationController?.navigationBar.barTintColor = UIColor.init(cgColor: GMPalette.allCGColor()[Int(value * CGFloat(GMPalette.allCGColor().count))])
-        
+    public func colorPickerView(_ colorPickerView: ColorPickerView, didSelectItemAt indexPath: IndexPath) {
+        self.navigationController?.navigationBar.barTintColor = colorPickerView.colors[indexPath.row]
     }
 
     func pickColor(){
-        let alertController = UIAlertController(title: "\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
-        
+        let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
         let margin:CGFloat = 10.0
-        let rect = CGRect(x: margin, y: margin, width: alertController.view.bounds.size.width - margin * 4.0, height: 120)
-        let customView = ColorPicker(frame: rect)
-        customView.delegate = self
-        
-        customView.backgroundColor = ColorUtil.backgroundColor
-        alertController.view.addSubview(customView)
+        let rect = CGRect(x: margin, y: margin, width: alertController.view.bounds.size.width - margin * 4.0, height: 150)
+        let MKColorPicker = ColorPickerView.init(frame: rect)
+        MKColorPicker.delegate = self
+        MKColorPicker.colors = GMPalette.allColor()
+        MKColorPicker.selectionStyle = .check
+        MKColorPicker.scrollDirection = .vertical
+        var index = 0
+
+        MKColorPicker.style = .circle
+
+        alertController.view.addSubview(MKColorPicker)
         
         let somethingAction = UIAlertAction(title: "Save", style: .default, handler: {(alert: UIAlertAction!) in
             ColorUtil.setColorForUser(name: self.name, color: (self.navigationController?.navigationBar.barTintColor)!)

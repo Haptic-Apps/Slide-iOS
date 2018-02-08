@@ -13,7 +13,10 @@ pod 'MaterialComponents/AnimationTiming'
 pod 'MaterialComponents/Buttons'
 pod 'MaterialComponents/Dialogs'
 pod 'MaterialComponents/Ink'
+pod 'MaterialComponents/Palettes'
+
 pod 'MaterialComponents/ProgressView'
+pod "MKColorPicker"
   pod 'XLActionController'
 pod 'MaterialComponents/ShadowElevations'
 pod 'MaterialComponents/Snackbar’

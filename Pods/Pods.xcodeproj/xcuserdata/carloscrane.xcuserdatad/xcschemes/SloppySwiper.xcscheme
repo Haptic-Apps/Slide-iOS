@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0700"
+   LastUpgradeVersion = "0930"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -13,11 +13,11 @@
             buildForProfiling = "YES"
             buildForArchiving = "YES">
             <BuildableReference
-               BuildableIdentifier = 'primary'
-               BlueprintIdentifier = 'C7D4FC70F62C1F8A365C492A9FB0C01A'
-               BlueprintName = 'SloppySwiper'
-               ReferencedContainer = 'container:Pods.xcodeproj'
-               BuildableName = 'SloppySwiper.framework'>
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "BEFF311DC4C4BF5FDFE5A081A9D389BD"
+               BlueprintName = "SloppySwiper"
+               ReferencedContainer = "container:Pods.xcodeproj"
+               BuildableName = "SloppySwiper.framework">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

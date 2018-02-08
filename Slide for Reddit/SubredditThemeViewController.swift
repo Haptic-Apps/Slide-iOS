@@ -9,21 +9,13 @@
 import UIKit
 import reddift
 import MaterialComponents.MaterialSnackbar
+import MKColorPicker
 
-class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
-    
+class SubredditThemeViewController: UITableViewController, ColorPickerViewDelegate {
+
     var subs: [String] = []
     var accentChosen: UIColor?
     var colorChosen: UIColor?
-    
-    func valueChanged(_ value: CGFloat, accent: Bool) {
-        if(accent){
-            accentChosen = UIColor.init(cgColor: GMPalette.allAccentCGColor()[Int(value * CGFloat(GMPalette.allAccentCGColor().count))])
-        } else {
-            colorChosen = UIColor.init(cgColor: GMPalette.allCGColor()[Int(value * CGFloat(GMPalette.allCGColor().count))])
-        }
-    }
-    
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,124 +24,126 @@ class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
         self.tableView.allowsSelectionDuringEditing = true
         self.tableView.allowsMultipleSelectionDuringEditing = true
         for sub in Subscriptions.subreddits {
-                subs.append(sub)
+            subs.append(sub)
         }
         tableView.reloadData()
-        
+
         let sync = UIButton.init(type: .custom)
-        sync.setImage(UIImage.init(named: "sync"), for: UIControlState.normal)
+        sync.setImage(UIImage.init(named: "sync")!.imageResize(sizeChange: CGSize.init(width: 17, height: 17)), for: UIControlState.normal)
         sync.addTarget(self, action: #selector(self.sync(_:)), for: UIControlEvents.touchUpInside)
         sync.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let syncB = UIBarButtonItem.init(customView: sync)
-        
+
         let add = UIButton.init(type: .custom)
-        add.setImage(UIImage.init(named: "add"), for: UIControlState.normal)
+        add.setImage(UIImage.init(named: "add")!.imageResize(sizeChange: CGSize.init(width: 17, height: 17)), for: UIControlState.normal)
         add.addTarget(self, action: #selector(self.add(_:)), for: UIControlEvents.touchUpInside)
         add.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let addB = UIBarButtonItem.init(customView: add)
-        
+
         let delete = UIButton.init(type: .custom)
-        delete.setImage(UIImage.init(named: "delete"), for: UIControlState.normal)
+        delete.setImage(UIImage.init(named: "delete")!.imageResize(sizeChange: CGSize.init(width: 17, height: 17)), for: UIControlState.normal)
         delete.addTarget(self, action: #selector(self.remove(_:)), for: UIControlEvents.touchUpInside)
         delete.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let deleteB = UIBarButtonItem.init(customView: delete)
 
         self.navigationItem.rightBarButtonItems = [addB, deleteB, syncB]
     }
-    
-    public func add(_ selector: AnyObject){
-        var selected : [String] = []
+
+    public func add(_ selector: AnyObject) {
+        var selected: [String] = []
         for i in tableView.indexPathsForSelectedRows! {
             selected.append(subs[i.row])
         }
-        self.edit(selected)
+        self.edit(selected, sender: selector as! UIButton)
     }
-    
-    public func remove(_ selector: AnyObject){
+
+    public func remove(_ selector: AnyObject) {
         for i in tableView.indexPathsForSelectedRows! {
             doDelete(subs[i.row])
             tableView.deselectRow(at: i, animated: true)
         }
         self.tableView.reloadData()
     }
-    
+
     public static var changed = false
-    
+
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableViewAutomaticDimension
     }
-    
+
     override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableViewAutomaticDimension
     }
-    
-    var alertController : UIAlertController?
+
+    var alertController: UIAlertController?
     var count = 0
-    
-    func sync(_ selector: AnyObject){
+
+    func sync(_ selector: AnyObject) {
         let defaults = UserDefaults.standard
         alertController = UIAlertController(title: nil, message: "Syncing colors...\n\n", preferredStyle: .alert)
-        
+
         let spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
         spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
         spinnerIndicator.color = UIColor.black
         spinnerIndicator.startAnimating()
-        
+
         alertController?.view.addSubview(spinnerIndicator)
-        self.present(alertController!,animated: true, completion: nil)
+        self.present(alertController!, animated: true, completion: nil)
 
         var toReturn: [String] = []
         defaults.set(true, forKey: "sc" + AccountController.currentName)
         defaults.synchronize()
         do {
-            if(!AccountController.isLoggedIn){
+            if (!AccountController.isLoggedIn) {
                 try (UIApplication.shared.delegate as! AppDelegate).session!.getSubreddit(.default, paginator: Paginator(), completion: { (result) -> Void in
                     switch result {
                     case .failure:
                         print(result.error!)
                     case .success(let listing):
-                        let subs = listing.children.flatMap({$0 as? Subreddit})
-                        for sub in subs{
+                        let subs = listing.children.flatMap({ $0 as? Subreddit })
+                        for sub in subs {
                             toReturn.append(sub.displayName)
                             let color = (UIColor.init(hexString: sub.keyColor))
-                            if(UserDefaults.standard.colorForKey(key: "color+" + sub.displayName) == nil){
-                                defaults.setColor(color: color , forKey: "color+" + sub.displayName)
+                            if (UserDefaults.standard.colorForKey(key: "color+" + sub.displayName) == nil) {
+                                defaults.setColor(color: color, forKey: "color+" + sub.displayName)
                                 self.count += 1
                             }
                         }
-                        
+
                     }
-                        DispatchQueue.main.async (execute: { () -> Void in
-                            self.complete()
-                        })
+                    DispatchQueue.main.async(execute: { () -> Void in
+                        self.complete()
+                    })
                 })
-                
+
             } else {
                 Subscriptions.getSubscriptionsFully(session: (UIApplication.shared.delegate as! AppDelegate).session!, completion: { (subs, multis) in
                     for sub in subs {
                         toReturn.append(sub.displayName)
                         let color = (UIColor.init(hexString: sub.keyColor))
-                        if(UserDefaults.standard.colorForKey(key: "color+" + sub.displayName) == nil){
-                            defaults.setColor(color: color , forKey: "color+" + sub.displayName)
+                        if (UserDefaults.standard.colorForKey(key: "color+" + sub.displayName) == nil) {
+                            defaults.setColor(color: color, forKey: "color+" + sub.displayName)
                             self.count += 1
                         }
                     }
                     for m in multis {
                         toReturn.append("/m/" + m.displayName)
                         let color = (UIColor.init(hexString: m.keyColor))
-                        if(UserDefaults.standard.colorForKey(key: "color+" + m.displayName) == nil){
-                            defaults.setColor(color: color , forKey: "color+" + m.displayName)
+                        if (UserDefaults.standard.colorForKey(key: "color+" + m.displayName) == nil) {
+                            defaults.setColor(color: color, forKey: "color+" + m.displayName)
                             self.count += 1
                         }
                     }
-                    
-                    
-                    toReturn = toReturn.sorted{ $0.localizedCaseInsensitiveCompare($1) == ComparisonResult.orderedAscending }
+
+
+                    toReturn = toReturn.sorted {
+                        $0.localizedCaseInsensitiveCompare($1) == ComparisonResult.orderedAscending
+                    }
                     toReturn.insert("all", at: 0)
                     toReturn.insert("frontpage", at: 0)
-                        DispatchQueue.main.async (execute: { () -> Void in
-                            self.complete()
-                        })
+                    DispatchQueue.main.async(execute: { () -> Void in
+                        self.complete()
+                    })
                 })
             }
         } catch {
@@ -158,8 +152,8 @@ class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
         }
 
     }
-    
-    func complete(){
+
+    func complete() {
         alertController!.dismiss(animated: true, completion: nil)
         let message = MDCSnackbarMessage()
         message.text = "\(count) subs colored"
@@ -167,21 +161,22 @@ class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
         count = 0
         tableView.reloadData()
     }
-    
+
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
+
     // MARK: – Table view data source
-    
+
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
-    
+
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return subs.count
     }
+
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let thing = subs[indexPath.row]
         var cell: SubredditCellView?
@@ -191,37 +186,37 @@ class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
         cell?.backgroundColor = ColorUtil.foregroundColor
         return cell!
     }
-    
-    
+
+
     override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
         return .delete
     }
-    
+
     override func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
-        return false
+        return true
     }
-    
+
     override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
         return false
     }
-    
+
     var savedView = UIView()
-    
+
     func tableView(_ tableView: UITableView, didSelectRowAtDeprecated indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let item = subs[indexPath.row]
         let actionSheetController: UIAlertController = UIAlertController(title: item, message: "", preferredStyle: .actionSheet)
-        
+
         var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
             print("Cancel")
         }
         actionSheetController.addAction(cancelActionButton)
-        
+
         cancelActionButton = UIAlertAction(title: "Edit", style: .default) { action -> Void in
-           // self.edit(item)
+            // self.edit(item)
         }
         actionSheetController.addAction(cancelActionButton)
-        
+
         cancelActionButton = UIAlertAction(title: "Delete", style: .default) { action -> Void in
             self.doDelete(item)
         }
@@ -236,107 +231,126 @@ class SubredditThemeViewController: UITableViewController, ColorPickerDelegate {
 
         self.present(actionSheetController, animated: true, completion: nil)
     }
-    
+
     var editSubs: [String] = []
-    
-    func edit(_ sub: [String]){
+
+    public func colorPickerView(_ colorPickerView: ColorPickerView, didSelectItemAt indexPath: IndexPath) {
+        if(isAccent){
+            accentChosen = colorPickerView.colors[indexPath.row]
+        } else {
+            colorChosen = colorPickerView.colors[indexPath.row]
+        }
+    }
+
+    func edit(_ sub: [String], sender: UIButton) {
         editSubs = sub
-            let alertController = UIAlertController(title: "\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
-            
-            let margin:CGFloat = 10.0
-            let rect = CGRect(x: margin, y: margin, width: alertController.view.bounds.size.width - margin * 4.0, height: 120)
-            let customView = ColorPicker(frame: rect)
-            customView.delegate = self
-            
-            customView.backgroundColor = ColorUtil.backgroundColor
-            alertController.view.addSubview(customView)
-            
-            let somethingAction = UIAlertAction(title: "Save", style: .default, handler: {(alert: UIAlertAction!) in
-                if(self.colorChosen != nil){
-                    for sub in self.editSubs {
-                ColorUtil.setColorForSub(sub: sub, color: self.colorChosen!)
-                    }
-                }
-                self.tableView.reloadData()
-            })
-            
-            let accentAction = UIAlertAction(title: "Accent color", style: .default, handler: {(alert: UIAlertAction!) in
-                if(self.colorChosen != nil){
-                    for sub in self.editSubs {
+
+        let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
+
+        isAccent = false
+        let margin: CGFloat = 10.0
+        let rect = CGRect(x: margin, y: margin, width: alertController.view.bounds.size.width - margin * 4.0, height: 150)
+        let MKColorPicker = ColorPickerView.init(frame: rect)
+        MKColorPicker.delegate = self
+        MKColorPicker.colors = GMPalette.allColor()
+        MKColorPicker.selectionStyle = .check
+        MKColorPicker.scrollDirection = .vertical
+
+        MKColorPicker.style = .circle
+
+        alertController.view.addSubview(MKColorPicker)
+
+        let somethingAction = UIAlertAction(title: "Save", style: .default, handler: { (alert: UIAlertAction!) in
+            if (self.colorChosen != nil) {
+                for sub in self.editSubs {
                     ColorUtil.setColorForSub(sub: sub, color: self.colorChosen!)
-                    }
                 }
-                self.pickAccent(sub)
-                self.tableView.reloadData()
-            })
-            
-            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: {(alert: UIAlertAction!) in
-            })
-            
-            alertController.addAction(accentAction)
-            alertController.addAction(somethingAction)
-            alertController.addAction(cancelAction)
+            }
+            self.tableView.reloadData()
+        })
+
+        let accentAction = UIAlertAction(title: "Accent color", style: .default, handler: { (alert: UIAlertAction!) in
+            if (self.colorChosen != nil) {
+                for sub in self.editSubs {
+                    ColorUtil.setColorForSub(sub: sub, color: self.colorChosen!)
+                }
+            }
+            self.pickAccent(sub)
+            self.tableView.reloadData()
+        })
+
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { (alert: UIAlertAction!) in
+        })
+
+        alertController.addAction(accentAction)
+        alertController.addAction(somethingAction)
+        alertController.addAction(cancelAction)
         alertController.modalPresentationStyle = .popover
         if let presenter = alertController.popoverPresentationController {
             presenter.sourceView = savedView
             presenter.sourceRect = savedView.bounds
         }
 
-            present(alertController, animated: true, completion: nil)
+        present(alertController, animated: true, completion: nil)
     }
-    
-    func pickAccent(_ sub: [String]){
-        let alertController = UIAlertController(title: "\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
-        
+
+    var isAccent = false
+    func pickAccent(_ sub: [String]) {
+        isAccent = true
+        let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
+
         let margin:CGFloat = 10.0
-        let rect = CGRect(x: margin, y: margin, width: alertController.view.bounds.size.width - margin * 4.0, height: 120)
-        let customView = ColorPicker(frame: rect)
-        customView.setAccent(accent: true)
-        customView.delegate = self
-        
-        customView.backgroundColor = ColorUtil.backgroundColor
-        alertController.view.addSubview(customView)
-        
-        let somethingAction = UIAlertAction(title: "Save", style: .default, handler: {(alert: UIAlertAction!) in
+        let rect = CGRect(x: margin, y: margin, width: alertController.view.bounds.size.width - margin * 4.0, height: 150)
+        let MKColorPicker = ColorPickerView.init(frame: rect)
+        MKColorPicker.delegate = self
+        MKColorPicker.colors = GMPalette.allColorAccent()
+        MKColorPicker.selectionStyle = .check
+        self.isAccent = true
+        MKColorPicker.scrollDirection = .vertical
+        var index = 0
+
+        MKColorPicker.style = .circle
+
+        alertController.view.addSubview(MKColorPicker)
+
+        let somethingAction = UIAlertAction(title: "Save", style: .default, handler: { (alert: UIAlertAction!) in
             if self.accentChosen != nil {
                 for sub in self.editSubs {
-                ColorUtil.setAccentColorForSub(sub: sub, color: self.accentChosen!)
+                    ColorUtil.setAccentColorForSub(sub: sub, color: self.accentChosen!)
                 }
             }
             self.tableView.reloadData()
         })
-        
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: {(alert: UIAlertAction!) in
+
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { (alert: UIAlertAction!) in
         })
-        
+
         alertController.addAction(somethingAction)
         alertController.addAction(cancelAction)
-        
+
         present(alertController, animated: true, completion: nil)
     }
-    
+
     override func tableView(_ tableView: UITableView, willBeginEditingRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath)
         cell?.backgroundColor = ColorUtil.foregroundColor
     }
 
-    func doDelete(_ sub: String){
+    func doDelete(_ sub: String) {
         UserDefaults.standard.removeObject(forKey: "color+" + sub)
         UserDefaults.standard.removeObject(forKey: "accent+" + sub)
         UserDefaults.standard.synchronize()
     }
-    
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath)
-    {
-        if editingStyle == .delete
-        {
+
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
             doDelete(subs[indexPath.row])
         }
     }
-    
- 
-    
+
+
 }
+
 public enum ToastPosition {
     case top
     case center
@@ -379,20 +393,20 @@ public enum ToastPosition {
  
  */
 public extension UIView {
-    
+
     /**
      Keys used for associated objects.
      */
     private struct ToastKeys {
-        static var Timer        = "CSToastTimerKey"
-        static var Duration     = "CSToastDurationKey"
-        static var Position     = "CSToastPositionKey"
-        static var Completion   = "CSToastCompletionKey"
-        static var ActiveToast  = "CSToastActiveToastKey"
+        static var Timer = "CSToastTimerKey"
+        static var Duration = "CSToastDurationKey"
+        static var Position = "CSToastPositionKey"
+        static var Completion = "CSToastCompletionKey"
+        static var ActiveToast = "CSToastActiveToastKey"
         static var ActivityView = "CSToastActivityViewKey"
-        static var Queue        = "CSToastQueueKey"
+        static var Queue = "CSToastQueueKey"
     }
-    
+
     /**
      Swift closures can't be directly associated with objects via the
      Objective-C runtime, so the (ugly) solution is to wrap them in a
@@ -400,16 +414,16 @@ public extension UIView {
      */
     private class ToastCompletionWrapper {
         var completion: ((Bool) -> Void)?
-        
+
         init(_ completion: ((Bool) -> Void)?) {
             self.completion = completion
         }
     }
-    
+
     private enum ToastError: Error {
         case insufficientData
     }
-    
+
     private var queue: NSMutableArray {
         get {
             if let queue = objc_getAssociatedObject(self, &ToastKeys.Queue) as? NSMutableArray {
@@ -421,9 +435,9 @@ public extension UIView {
             }
         }
     }
-    
+
     // MARK: - Make Toast Methods
-    
+
     /**
      Creates and presents a new toast view with a message and displays it with the
      default duration and position. Styled using the shared style.
@@ -433,7 +447,7 @@ public extension UIView {
     public func makeToast(_ message: String) {
         self.makeToast(message, duration: ToastManager.shared.duration, position: ToastManager.shared.position)
     }
-    
+
     /**
      Creates and presents a new toast view with a message. Duration and position
      can be set explicitly. Styled using the shared style.
@@ -445,7 +459,7 @@ public extension UIView {
     public func makeToast(_ message: String, duration: TimeInterval, position: ToastPosition) {
         self.makeToast(message, duration: duration, position: position, style: nil)
     }
-    
+
     /**
      Creates and presents a new toast view with a message. Duration and position
      can be set explicitly. Styled using the shared style.
@@ -457,7 +471,7 @@ public extension UIView {
     public func makeToast(_ message: String, duration: TimeInterval, position: CGPoint) {
         self.makeToast(message, duration: duration, position: position, style: nil)
     }
-    
+
     /**
      Creates and presents a new toast view with a message. Duration, position, and
      style can be set explicitly.
@@ -470,7 +484,7 @@ public extension UIView {
     public func makeToast(_ message: String, duration: TimeInterval, position: ToastPosition, style: ToastStyle?) {
         self.makeToast(message, duration: duration, position: position, title: nil, image: nil, style: style, completion: nil)
     }
-    
+
     /**
      Creates and presents a new toast view with a message. Duration, position, and
      style can be set explicitly.
@@ -483,7 +497,7 @@ public extension UIView {
     public func makeToast(_ message: String, duration: TimeInterval, position: CGPoint, style: ToastStyle?) {
         self.makeToast(message, duration: duration, position: position, title: nil, image: nil, style: style, completion: nil)
     }
-    
+
     /**
      Creates and presents a new toast view with a message, title, and image. Duration,
      position, and style can be set explicitly. The completion closure executes when the
@@ -504,15 +518,16 @@ public extension UIView {
         if let style = style {
             toastStyle = style
         }
-        
+
         do {
             let toast = try self.toastViewForMessage(message, title: title, image: image, style: toastStyle)
             self.showToast(toast, duration: duration, position: position, completion: completion)
         } catch ToastError.insufficientData {
             print("Error: message, title, and image are all nil")
-        } catch {}
+        } catch {
+        }
     }
-    
+
     /**
      Creates and presents a new toast view with a message, title, and image. Duration,
      position, and style can be set explicitly. The completion closure executes when the
@@ -533,17 +548,18 @@ public extension UIView {
         if let style = style {
             toastStyle = style
         }
-        
+
         do {
             let toast = try self.toastViewForMessage(message, title: title, image: image, style: toastStyle)
             self.showToast(toast, duration: duration, position: position, completion: completion)
         } catch ToastError.insufficientData {
             print("Error: message, title, and image cannot all be nil")
-        } catch {}
+        } catch {
+        }
     }
-    
+
     // MARK: - Show Toast Methods
-    
+
     /**
      Displays any view as toast using the default duration and position.
      
@@ -552,7 +568,7 @@ public extension UIView {
     public func showToast(_ toast: UIView) {
         self.showToast(toast, duration: ToastManager.shared.duration, position: ToastManager.shared.position, completion: nil)
     }
-    
+
     /**
      Displays any view as toast at a provided position and duration. The completion closure
      executes when the toast view completes. `didTap` will be `true` if the toast view was
@@ -568,7 +584,7 @@ public extension UIView {
         let point = self.centerPointForPosition(position, toast: toast)
         self.showToast(toast, duration: duration, position: point, completion: completion)
     }
-    
+
     /**
      Displays any view as toast at a provided position and duration. The completion closure
      executes when the toast view completes. `didTap` will be `true` if the toast view was
@@ -582,19 +598,19 @@ public extension UIView {
      */
     public func showToast(_ toast: UIView, duration: TimeInterval, position: CGPoint, completion: ((_ didTap: Bool) -> Void)?) {
         objc_setAssociatedObject(toast, &ToastKeys.Completion, ToastCompletionWrapper(completion), .OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-        
+
         if let _ = objc_getAssociatedObject(self, &ToastKeys.ActiveToast) as? UIView, ToastManager.shared.queueEnabled {
             objc_setAssociatedObject(toast, &ToastKeys.Duration, NSNumber(value: duration), .OBJC_ASSOCIATION_RETAIN_NONATOMIC);
             objc_setAssociatedObject(toast, &ToastKeys.Position, NSValue(cgPoint: position), .OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-            
+
             self.queue.add(toast)
         } else {
             self.showToast(toast, duration: duration, position: position)
         }
     }
-    
+
     // MARK: - Activity Methods
-    
+
     /**
      Creates and displays a new toast activity indicator view at a specified position.
      
@@ -612,12 +628,12 @@ public extension UIView {
         if let _ = objc_getAssociatedObject(self, &ToastKeys.ActivityView) as? UIView {
             return
         }
-        
+
         let toast = self.createToastActivityView()
         let point = self.centerPointForPosition(position, toast: toast)
         self.makeToastActivity(toast, position: point)
     }
-    
+
     /**
      Creates and displays a new toast activity indicator view at a specified position.
      
@@ -635,11 +651,11 @@ public extension UIView {
         if let _ = objc_getAssociatedObject(self, &ToastKeys.ActivityView) as? UIView {
             return
         }
-        
+
         let toast = self.createToastActivityView()
         self.makeToastActivity(toast, position: position)
     }
-    
+
     /**
      Dismisses the active toast activity indicator view.
      */
@@ -653,62 +669,62 @@ public extension UIView {
             })
         }
     }
-    
+
     // MARK: - Private Activity Methods
-    
+
     private func makeToastActivity(_ toast: UIView, position: CGPoint) {
         toast.alpha = 0.0
         toast.center = position
-        
+
         objc_setAssociatedObject(self, &ToastKeys.ActivityView, toast, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        
+
         self.addSubview(toast)
-        
+
         UIView.animate(withDuration: ToastManager.shared.style.fadeDuration, delay: 0.0, options: .curveEaseOut, animations: { () -> Void in
             toast.alpha = 1.0
         }, completion: nil)
     }
-    
+
     private func createToastActivityView() -> UIView {
         let style = ToastManager.shared.style
-        
+
         let activityView = UIView(frame: CGRect(x: 0.0, y: 0.0, width: style.activitySize.width, height: style.activitySize.height))
         activityView.backgroundColor = style.backgroundColor
         activityView.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin, .flexibleTopMargin, .flexibleBottomMargin]
         activityView.layer.cornerRadius = style.cornerRadius
-        
+
         if style.displayShadow {
             activityView.layer.shadowColor = style.shadowColor.cgColor
             activityView.layer.shadowOpacity = style.shadowOpacity
             activityView.layer.shadowRadius = style.shadowRadius
             activityView.layer.shadowOffset = style.shadowOffset
         }
-        
+
         let activityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
         activityIndicatorView.center = CGPoint(x: activityView.bounds.size.width / 2.0, y: activityView.bounds.size.height / 2.0)
         activityView.addSubview(activityIndicatorView)
         activityIndicatorView.startAnimating()
-        
+
         return activityView
     }
-    
+
     // MARK: - Private Show/Hide Methods
-    
+
     private func showToast(_ toast: UIView, duration: TimeInterval, position: CGPoint) {
         toast.center = position
         toast.alpha = 0.0
-        
+
         if ToastManager.shared.tapToDismissEnabled {
             let recognizer = UITapGestureRecognizer(target: self, action: #selector(UIView.handleToastTapped(_:)))
             toast.addGestureRecognizer(recognizer)
             toast.isUserInteractionEnabled = true
             toast.isExclusiveTouch = true
         }
-        
+
         objc_setAssociatedObject(self, &ToastKeys.ActiveToast, toast, .OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-        
+
         self.addSubview(toast)
-        
+
         UIView.animate(withDuration: ToastManager.shared.style.fadeDuration, delay: 0.0, options: [.curveEaseOut, .allowUserInteraction], animations: { () -> Void in
             toast.alpha = 1.0
         }) { (finished) -> Void in
@@ -717,48 +733,48 @@ public extension UIView {
             objc_setAssociatedObject(toast, &ToastKeys.Timer, timer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
-    
+
     private func hideToast(_ toast: UIView) {
         self.hideToast(toast, fromTap: false)
     }
-    
+
     private func hideToast(_ toast: UIView, fromTap: Bool) {
-        
+
         UIView.animate(withDuration: ToastManager.shared.style.fadeDuration, delay: 0.0, options: [.curveEaseIn, .beginFromCurrentState], animations: { () -> Void in
             toast.alpha = 0.0
         }) { (didFinish: Bool) -> Void in
             toast.removeFromSuperview()
-            
+
             objc_setAssociatedObject(self, &ToastKeys.ActiveToast, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-            
+
             if let wrapper = objc_getAssociatedObject(toast, &ToastKeys.Completion) as? ToastCompletionWrapper, let completion = wrapper.completion {
                 completion(fromTap)
             }
-            
+
             if let nextToast = self.queue.firstObject as? UIView, let duration = objc_getAssociatedObject(nextToast, &ToastKeys.Duration) as? NSNumber, let position = objc_getAssociatedObject(nextToast, &ToastKeys.Position) as? NSValue {
                 self.queue.removeObject(at: 0)
                 self.showToast(nextToast, duration: duration.doubleValue, position: position.cgPointValue)
             }
         }
     }
-    
+
     // MARK: - Events
-    
+
     func handleToastTapped(_ recognizer: UITapGestureRecognizer) {
         if let toast = recognizer.view, let timer = objc_getAssociatedObject(toast, &ToastKeys.Timer) as? Timer {
             timer.invalidate()
             self.hideToast(toast, fromTap: true)
         }
     }
-    
+
     func toastTimerDidFinish(_ timer: Timer) {
         if let toast = timer.userInfo as? UIView {
             self.hideToast(toast)
         }
     }
-    
+
     // MARK: - Toast Construction
-    
+
     /**
      Creates a new toast view with any combination of message, title, and image.
      The look and feel is configured via the style. Unlike the `makeToast` methods,
@@ -780,38 +796,38 @@ public extension UIView {
         if message == nil && title == nil && image == nil {
             throw ToastError.insufficientData
         }
-        
+
         var messageLabel: UILabel?
         var titleLabel: UILabel?
         var imageView: UIImageView?
-        
+
         let wrapperView = UIView()
         wrapperView.backgroundColor = style.backgroundColor
         wrapperView.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin, .flexibleTopMargin, .flexibleBottomMargin]
         wrapperView.layer.cornerRadius = style.cornerRadius
-        
+
         if style.displayShadow {
             wrapperView.layer.shadowColor = UIColor.black.cgColor
             wrapperView.layer.shadowOpacity = style.shadowOpacity
             wrapperView.layer.shadowRadius = style.shadowRadius
             wrapperView.layer.shadowOffset = style.shadowOffset
         }
-        
+
         if let image = image {
             imageView = UIImageView(image: image)
             imageView?.contentMode = .scaleAspectFit
             imageView?.frame = CGRect(x: style.horizontalPadding, y: style.verticalPadding, width: style.imageSize.width, height: style.imageSize.height)
         }
-        
+
         var imageRect = CGRect.zero
-        
+
         if let imageView = imageView {
             imageRect.origin.x = style.horizontalPadding
             imageRect.origin.y = style.verticalPadding
             imageRect.size.width = imageView.bounds.size.width
             imageRect.size.height = imageView.bounds.size.height
         }
-        
+
         if let title = title {
             titleLabel = UILabel()
             titleLabel?.numberOfLines = style.titleNumberOfLines
@@ -821,14 +837,14 @@ public extension UIView {
             titleLabel?.textColor = style.titleColor
             titleLabel?.backgroundColor = UIColor.clear
             titleLabel?.text = title;
-            
-       //     let maxTitleSize = CGSize(width: (self.bounds.size.width * style.maxWidthPercentage) - imageRect.size.width, height: self.bounds.size.height * style.maxHeightPercentage)
-          //  let titleSize = titleLabel?.sizeThatFits(maxTitleSize)
-          //  if let titleSize = titleSize {
-         //       titleLabel?.frame = CGRect(x: 0.0, y: 0.0, width: titleSize.width, height: titleSize.height)
-         //   }
+
+            //     let maxTitleSize = CGSize(width: (self.bounds.size.width * style.maxWidthPercentage) - imageRect.size.width, height: self.bounds.size.height * style.maxHeightPercentage)
+            //  let titleSize = titleLabel?.sizeThatFits(maxTitleSize)
+            //  if let titleSize = titleSize {
+            //       titleLabel?.frame = CGRect(x: 0.0, y: 0.0, width: titleSize.width, height: titleSize.height)
+            //   }
         }
-        
+
         if let message = message {
             messageLabel = UILabel()
             messageLabel?.text = message
@@ -838,63 +854,63 @@ public extension UIView {
             messageLabel?.lineBreakMode = .byTruncatingTail;
             messageLabel?.textColor = style.messageColor
             messageLabel?.backgroundColor = UIColor.clear
-            
-          //  let maxMessageSize = CGSize(width: (self.bounds.size.width * style.maxWidthPercentage) - imageRect.size.width, height: self.bounds.size.height * style.maxHeightPercentage)
-          //  let messageSize = messageLabel?.sizeThatFits(maxMessageSize)
-          //  if let messageSize = messageSize {
-          ////      let actualWidth = min(messageSize.width, maxMessageSize.width)
-           //     let actualHeight = min(messageSize.height, maxMessageSize.height)
-           //     messageLabel?.frame = CGRect(x: 0.0, y: 0.0, width: actualWidth, height: actualHeight)
-           // }
+
+            //  let maxMessageSize = CGSize(width: (self.bounds.size.width * style.maxWidthPercentage) - imageRect.size.width, height: self.bounds.size.height * style.maxHeightPercentage)
+            //  let messageSize = messageLabel?.sizeThatFits(maxMessageSize)
+            //  if let messageSize = messageSize {
+            ////      let actualWidth = min(messageSize.width, maxMessageSize.width)
+            //     let actualHeight = min(messageSize.height, maxMessageSize.height)
+            //     messageLabel?.frame = CGRect(x: 0.0, y: 0.0, width: actualWidth, height: actualHeight)
+            // }
         }
-        
+
         var titleRect = CGRect.zero
-        
+
         if let titleLabel = titleLabel {
             titleRect.origin.x = imageRect.origin.x + imageRect.size.width + style.horizontalPadding
             titleRect.origin.y = style.verticalPadding
             titleRect.size.width = titleLabel.bounds.size.width
             titleRect.size.height = titleLabel.bounds.size.height
         }
-        
+
         var messageRect = CGRect.zero
-        
+
         if let messageLabel = messageLabel {
             messageRect.origin.x = imageRect.origin.x + imageRect.size.width + style.horizontalPadding
             messageRect.origin.y = titleRect.origin.y + titleRect.size.height + style.verticalPadding
             messageRect.size.width = messageLabel.bounds.size.width
             messageRect.size.height = messageLabel.bounds.size.height
         }
-        
+
         let longerWidth = max(titleRect.size.width, messageRect.size.width)
         let longerX = max(titleRect.origin.x, messageRect.origin.x)
         let wrapperWidth = max((imageRect.size.width + (style.horizontalPadding * 2.0)), (longerX + longerWidth + style.horizontalPadding))
         let wrapperHeight = max((messageRect.origin.y + messageRect.size.height + style.verticalPadding), (imageRect.size.height + (style.verticalPadding * 2.0)))
-        
+
         wrapperView.frame = CGRect(x: 0.0, y: 0.0, width: wrapperWidth, height: wrapperHeight)
-        
+
         if let titleLabel = titleLabel {
             titleLabel.frame = titleRect
             wrapperView.addSubview(titleLabel)
         }
-        
+
         if let messageLabel = messageLabel {
             messageLabel.frame = messageRect
             wrapperView.addSubview(messageLabel)
         }
-        
+
         if let imageView = imageView {
             wrapperView.addSubview(imageView)
         }
-        
+
         return wrapperView
     }
-    
+
     // MARK: - Helpers
     private func centerPointForPosition(_ position: ToastPosition, toast: UIView) -> CGPoint {
         let padding: CGFloat = ToastManager.shared.style.verticalPadding
-        
-        switch(position) {
+
+        switch (position) {
         case .top:
             return CGPoint(x: self.bounds.size.width / 2.0, y: (toast.frame.size.height / 2.0) + padding)
         case .center:
@@ -916,24 +932,25 @@ public extension UIView {
  methods.
  */
 public struct ToastStyle {
-    
-    public init() {}
-    
+
+    public init() {
+    }
+
     /**
      The background color. Default is `UIColor.blackColor()` at 80% opacity.
      */
     public var backgroundColor = UIColor.black.withAlphaComponent(0.8)
-    
+
     /**
      The title color. Default is `UIColor.whiteColor()`.
      */
     public var titleColor = UIColor.white
-    
+
     /**
      The message color. Default is `UIColor.whiteColor()`.
      */
     public var messageColor = UIColor.white
-    
+
     /**
      A percentage value from 0.0 to 1.0, representing the maximum width of the toast
      view relative to it's superview. Default is 0.8 (80% of the superview's width).
@@ -943,7 +960,7 @@ public struct ToastStyle {
             maxWidthPercentage = max(min(maxWidthPercentage, 1.0), 0.0)
         }
     }
-    
+
     /**
      A percentage value from 0.0 to 1.0, representing the maximum height of the toast
      view relative to it's superview. Default is 0.8 (80% of the superview's height).
@@ -953,66 +970,66 @@ public struct ToastStyle {
             maxHeightPercentage = max(min(maxHeightPercentage, 1.0), 0.0)
         }
     }
-    
+
     /**
      The spacing from the horizontal edge of the toast view to the content. When an image
      is present, this is also used as the padding between the image and the text.
      Default is 10.0.
      */
     public var horizontalPadding: CGFloat = 10.0
-    
+
     /**
      The spacing from the vertical edge of the toast view to the content. When a title
      is present, this is also used as the padding between the title and the message.
      Default is 10.0.
      */
     public var verticalPadding: CGFloat = 10.0
-    
+
     /**
      The corner radius. Default is 10.0.
      */
     public var cornerRadius: CGFloat = 10.0;
-    
+
     /**
      The title font. Default is `UIFont.boldSystemFontOfSize(16.0)`.
      */
     public var titleFont = UIFont.boldSystemFont(ofSize: 16.0)
-    
+
     /**
      The message font. Default is `UIFont.systemFontOfSize(16.0)`.
      */
     public var messageFont = UIFont.systemFont(ofSize: 16.0)
-    
+
     /**
      The title text alignment. Default is `NSTextAlignment.Left`.
      */
     public var titleAlignment = NSTextAlignment.left
-    
+
     /**
      The message text alignment. Default is `NSTextAlignment.Left`.
      */
     public var messageAlignment = NSTextAlignment.left
-    
+
     /**
      The maximum number of lines for the title. The default is 0 (no limit).
      */
     public var titleNumberOfLines = 0
-    
+
     /**
      The maximum number of lines for the message. The default is 0 (no limit).
      */
     public var messageNumberOfLines = 0
-    
+
     /**
      Enable or disable a shadow on the toast view. Default is `false`.
      */
     public var displayShadow = false
-    
+
     /**
      The shadow color. Default is `UIColor.blackColor()`.
      */
     public var shadowColor = UIColor.black
-    
+
     /**
      A value from 0.0 to 1.0, representing the opacity of the shadow.
      Default is 0.8 (80% opacity).
@@ -1022,33 +1039,33 @@ public struct ToastStyle {
             shadowOpacity = max(min(shadowOpacity, 1.0), 0.0)
         }
     }
-    
+
     /**
      The shadow radius. Default is 6.0.
      */
     public var shadowRadius: CGFloat = 6.0
-    
+
     /**
      The shadow offset. The default is 4 x 4.
      */
     public var shadowOffset = CGSize(width: 4.0, height: 4.0)
-    
+
     /**
      The image size. The default is 80 x 80.
      */
     public var imageSize = CGSize(width: 80.0, height: 80.0)
-    
+
     /**
      The size of the toast activity view when `makeToastActivity(position:)` is called.
      Default is 100 x 100.
      */
     public var activitySize = CGSize(width: 100.0, height: 100.0)
-    
+
     /**
      The fade in/out animation duration. Default is 0.2.
      */
     public var fadeDuration: TimeInterval = 0.2
-    
+
 }
 
 // MARK: - Toast Manager
@@ -1057,23 +1074,23 @@ public struct ToastStyle {
  notifications. Backed by a singleton instance.
  */
 public class ToastManager {
-    
+
     /**
      The `ToastManager` singleton instance.
      */
     public static let shared = ToastManager()
-    
+
     /**
      The shared style. Used whenever toastViewForMessage(message:title:image:style:) is called
      with with a nil style.
      */
     public var style = ToastStyle()
-    
+
     /**
      Enables or disables tap to dismiss on toast views. Default is `true`.
      */
     public var tapToDismissEnabled = true
-    
+
     /**
      Enables or disables queueing behavior for toast views. When `true`,
      toast views will appear one after the other. When `false`, multiple toast
@@ -1082,20 +1099,20 @@ public class ToastManager {
      which operates independently of normal toast views. Default is `true`.
      */
     public var queueEnabled = true
-    
+
     /**
      The default duration. Used for the `makeToast` and
      `showToast` methods that don't require an explicit duration.
      Default is 3.0.
      */
     public var duration: TimeInterval = 3.0
-    
+
     /**
      Sets the default position. Used for the `makeToast` and
      `showToast` methods that don't require an explicit position.
      Default is `ToastPosition.Bottom`.
      */
     public var position = ToastPosition.bottom
-    
+
 }
 

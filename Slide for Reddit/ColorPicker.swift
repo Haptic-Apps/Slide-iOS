@@ -1,12 +1,7 @@
 import UIKit
 
-protocol ColorPickerDelegate: class {
-    func valueChanged(_ value: CGFloat, accent: Bool)
-}
-
 class ColorPicker: UIView {
-    weak var delegate: ColorPickerDelegate?
-    
+
     var hueValueForPreview: CGFloat = 1.0 {
         didSet {
             setNeedsDisplay()
@@ -52,7 +47,7 @@ class ColorPicker: UIView {
                 else {
                     setNeedsDisplay()
                 }
-            delegate?.valueChanged(self.value, accent: accent)
+           // delegate?.valueChanged(self.value, accent: accent)
         }
     }
     

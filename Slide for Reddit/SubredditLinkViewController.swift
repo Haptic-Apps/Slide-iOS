@@ -18,8 +18,9 @@ import MaterialComponents.MDCActivityIndicator
 import TTTAttributedLabel
 import SloppySwiper
 import XLActionController
+import MKColorPicker
 
-class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate, UICollectionViewDataSource, LinkCellViewDelegate, ColorPickerDelegate, KCFloatingActionButtonDelegate, WrappingFlowLayoutDelegate {
+class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate, UICollectionViewDataSource, LinkCellViewDelegate, ColorPickerViewDelegate, KCFloatingActionButtonDelegate, WrappingFlowLayoutDelegate {
 
     let maxHeaderHeight: CGFloat = 120;
     let minHeaderHeight: CGFloat = 56;
@@ -161,13 +162,15 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
     var parentController: SubredditsViewController?
     var accentChosen: UIColor?
 
-    func valueChanged(_ value: CGFloat, accent: Bool) {
-        if (accent) {
-            let c = UIColor.init(cgColor: GMPalette.allAccentCGColor()[Int(value * CGFloat(GMPalette.allAccentCGColor().count))])
-            accentChosen = c
-            hide.backgroundColor = c
+    var isAccent = false
+
+    public func colorPickerView(_ colorPickerView: ColorPickerView, didSelectItemAt indexPath: IndexPath) {
+
+        if(isAccent){
+            accentChosen = colorPickerView.colors[indexPath.row]
+            hide.backgroundColor = accentChosen
         } else {
-            let c = UIColor.init(cgColor: GMPalette.allCGColor()[Int(value * CGFloat(GMPalette.allCGColor().count))])
+            let c = colorPickerView.colors[indexPath.row]
             self.navigationController?.navigationBar.barTintColor = c
             sideView.backgroundColor = c
             add.backgroundColor = c
@@ -175,7 +178,12 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
             if (parentController != nil) {
                 parentController?.colorChanged()
             }
+
         }
+    }
+
+    func valueChanged(_ value: CGFloat, accent: Bool) {
+
     }
 
     func reply(_ cell: LinkCellView) {
@@ -864,17 +872,22 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         heightAtIndexPath.setObject(height, forKey: indexPath as NSCopying)
     }
 
-    func pickTheme(parent: SubredditsViewController?) {
+    func pickTheme(sender: AnyObject?, parent: SubredditsViewController?) {
         parentController = parent
-        let alertController = UIAlertController(title: "\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
+        let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
 
+        isAccent = false
         let margin: CGFloat = 10.0
-        let rect = CGRect(x: margin, y: margin, width: alertController.view.bounds.size.width - margin * 4.0, height: 120)
-        let customView = ColorPicker(frame: rect)
-        customView.delegate = self
+        let rect = CGRect(x: margin, y: margin, width: alertController.view.bounds.size.width - margin * 4.0, height: 150)
+        let MKColorPicker = ColorPickerView.init(frame: rect)
+        MKColorPicker.delegate = self
+        MKColorPicker.colors = GMPalette.allColor()
+        MKColorPicker.selectionStyle = .check
+        MKColorPicker.scrollDirection = .vertical
 
-        customView.backgroundColor = ColorUtil.backgroundColor
-        alertController.view.addSubview(customView)
+        MKColorPicker.style = .circle
+
+        alertController.view.addSubview(MKColorPicker)
 
         let somethingAction = UIAlertAction(title: "Save", style: .default, handler: { (alert: UIAlertAction!) in
             ColorUtil.setColorForSub(sub: self.sub, color: (self.navigationController?.navigationBar.barTintColor)!)
@@ -883,7 +896,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
 
         let accentAction = UIAlertAction(title: "Accent color", style: .default, handler: { (alert: UIAlertAction!) in
             ColorUtil.setColorForSub(sub: self.sub, color: (self.navigationController?.navigationBar.barTintColor)!)
-            self.pickAccent(parent: parent)
+            self.pickAccent(sender: sender, parent: parent)
             self.reloadDataReset()
         })
 
@@ -897,22 +910,32 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         alertController.addAction(somethingAction)
         alertController.addAction(cancelAction)
 
+        alertController.modalPresentationStyle = .popover
+        if let presenter = alertController.popoverPresentationController {
+            presenter.sourceView = sender as! UIButton
+            presenter.sourceRect = (sender as! UIButton).bounds
+        }
+
         //todo make this work on ipad
         present(alertController, animated: true, completion: nil)
     }
 
-    func pickAccent(parent: SubredditsViewController?) {
+    func pickAccent(sender: AnyObject?, parent: SubredditsViewController?) {
         parentController = parent
-        let alertController = UIAlertController(title: "\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
+        let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
 
+        isAccent = true
         let margin: CGFloat = 10.0
-        let rect = CGRect(x: margin, y: margin, width: alertController.view.bounds.size.width - margin * 4.0, height: 120)
-        let customView = ColorPicker(frame: rect)
-        customView.setAccent(accent: true)
-        customView.delegate = self
+        let rect = CGRect(x: margin, y: margin, width: alertController.view.bounds.size.width - margin * 4.0, height: 150)
+        let MKColorPicker = ColorPickerView.init(frame: rect)
+        MKColorPicker.delegate = self
+        MKColorPicker.colors = GMPalette.allColorAccent()
+        MKColorPicker.selectionStyle = .check
+        MKColorPicker.scrollDirection = .vertical
 
-        customView.backgroundColor = ColorUtil.backgroundColor
-        alertController.view.addSubview(customView)
+        MKColorPicker.style = .circle
+
+        alertController.view.addSubview(MKColorPicker)
 
         let somethingAction = UIAlertAction(title: "Save", style: .default, handler: { (alert: UIAlertAction!) in
             if self.accentChosen != nil {
@@ -932,6 +955,12 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
 
         alertController.addAction(somethingAction)
         alertController.addAction(cancelAction)
+
+        alertController.modalPresentationStyle = .popover
+        if let presenter = alertController.popoverPresentationController {
+            presenter.sourceView = sender as! UIButton
+            presenter.sourceRect = (sender as! UIButton).bounds
+        }
 
         //todo make this work on ipad
         present(alertController, animated: true, completion: nil)
@@ -1084,9 +1113,9 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         cancelActionButton = UIAlertAction(title: "Subreddit Theme", style: .default) { action -> Void in
             if (parentVC != nil) {
                 let p = (parentVC!)
-                self.pickTheme(parent: p)
+                self.pickTheme(sender: sender, parent: p)
             } else {
-                self.pickTheme(parent: nil)
+                self.pickTheme(sender: sender, parent: nil)
             }
 
         }
@@ -1108,8 +1137,8 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
 
         actionSheetController.modalPresentationStyle = .popover
         if let presenter = actionSheetController.popoverPresentationController {
-            presenter.sourceView = subb
-            presenter.sourceRect = subb.bounds
+            presenter.sourceView = sender as! UIButton
+            presenter.sourceRect = (sender as! UIButton).bounds
         }
 
 

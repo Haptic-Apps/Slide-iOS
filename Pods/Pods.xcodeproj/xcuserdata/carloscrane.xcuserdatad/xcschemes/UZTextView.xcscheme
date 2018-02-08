@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0700"
+   LastUpgradeVersion = "0930"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -13,11 +13,11 @@
             buildForProfiling = "YES"
             buildForArchiving = "YES">
             <BuildableReference
-               BuildableIdentifier = 'primary'
-               BlueprintIdentifier = 'D6D97E2C6459B85654CAD6FFCDE4FF13'
-               BlueprintName = 'UZTextView'
-               ReferencedContainer = 'container:Pods.xcodeproj'
-               BuildableName = 'UZTextView.framework'>
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B8F2B4B495704FB5F2E32887A88F8983"
+               BlueprintName = "UZTextView"
+               ReferencedContainer = "container:Pods.xcodeproj"
+               BuildableName = "UZTextView.framework">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
