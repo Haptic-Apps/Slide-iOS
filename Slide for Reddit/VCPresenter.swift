@@ -47,9 +47,13 @@ public class VCPresenter {
 
             let barButton = UIBarButtonItem.init(customView: button)
 
-            parentNavigationController!.show(viewController, sender: nil)
+            parentNavigationController!.pushViewController(viewController, animated:true)
 
             viewController.navigationItem.leftBarButtonItem = barButton
+
+            viewController.navigationController?.interactivePopGestureRecognizer?.delegate = DefaultGestureDelegate()
+            viewController.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+
         }
 
     }
@@ -71,6 +75,13 @@ public class VCPresenter {
             print("Error presenting alert controller \(alertController)")
         }
     }
+}
+
+public class DefaultGestureDelegate: NSObject, UIGestureRecognizerDelegate {
+    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
+
 }
 
 

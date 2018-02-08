@@ -120,13 +120,17 @@ class NavigationHeaderView: UIView {
     }
 
     func you(_ sender: AnyObject) {
-        let profile = ProfileViewController.init(name: AccountController.currentName)
-        VCPresenter.showVC(viewController: profile, popupIfPossible: true, parentNavigationController: parentController?.navigationController, parentViewController: parentController)
+        self.parentController?.dismiss(animated: true) {
+            let profile = ProfileViewController.init(name: AccountController.currentName)
+            VCPresenter.showVC(viewController: profile, popupIfPossible: true, parentNavigationController: (self.parentController as! NavigationSidebarViewController).parentController?.navigationController, parentViewController: (self.parentController as! NavigationSidebarViewController).parentController)
+        }
     }
 
     func inbox(_ sender: AnyObject) {
-        let inbox = InboxViewController.init()
-        VCPresenter.showVC(viewController: inbox, popupIfPossible: true, parentNavigationController: parentController?.navigationController, parentViewController: parentController)
+        self.parentController?.dismiss(animated: true) {
+            let inbox = InboxViewController.init()
+            VCPresenter.showVC(viewController: inbox, popupIfPossible: true, parentNavigationController: (self.parentController as! NavigationSidebarViewController).parentController?.navigationController, parentViewController: (self.parentController as! NavigationSidebarViewController).parentController)
+        }
     }
 
     func showMore(_ sender: AnyObject) {

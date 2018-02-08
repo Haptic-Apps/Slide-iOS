@@ -25,8 +25,10 @@ class CachedTitle {
             }
             if(!full) {
                 titles[submission.getId()] = titleForSubmission(submission: submission, full: full, white: white)
+                return titles[submission.getId()]!
+            } else {
+                return titleForSubmission(submission: submission, full: full, white: white)
             }
-            return titles[submission.getId()]!
         } else {
             return title!
         }

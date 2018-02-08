@@ -169,8 +169,6 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
             }
         }
 
-        self.navigationController?.interactivePopGestureRecognizer?.delegate = self
-        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
 
         if (self.navigationController?.interactivePopGestureRecognizer != nil)
         {
@@ -208,11 +206,6 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
         currentIndex = page!
 
     }
-
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true
-    }
-
 
     var currentIndex = 0
     var lastPosition: CGFloat = 0

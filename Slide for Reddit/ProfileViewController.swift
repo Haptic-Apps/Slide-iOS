@@ -10,7 +10,7 @@ import UIKit
 import reddift
 import MaterialComponents.MaterialSnackbar
 
-class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIToolbarDelegate, ColorPickerDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate {
+class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIToolbarDelegate, ColorPickerDelegate, UIScrollViewDelegate {
     var content : [UserContent] = []
     var name: String = ""
     var isReload = false
@@ -322,9 +322,6 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
             }
         }
 
-        self.navigationController?.interactivePopGestureRecognizer?.delegate = self
-        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
-
         if (self.navigationController?.interactivePopGestureRecognizer != nil)
         {
             for view in view.subviews
@@ -342,11 +339,6 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
                            animated: true,
                            completion: nil)
     }
-
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true
-    }
-
 
     var currentVc = UIViewController()
     
