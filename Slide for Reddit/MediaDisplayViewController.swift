@@ -189,7 +189,9 @@ class MediaDisplayViewController: UIViewController, UIScrollViewDelegate, UIGest
         self.scrollView.maximumZoomScale=6.0
         self.scrollView.backgroundColor = .clear
         self.view.addSubview(scrollView)
-        view.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+
+
+        (parent as? SwipeDownModalVC)?.background?.backgroundColor = UIColor.black.withAlphaComponent(0.7)
         toolbar = UIToolbar.init(frame: CGRect.init(x: 0, y: self.view.frame.size.height - 35, width: self.view.frame.size.width, height:  30))
         let space = UIBarButtonItem(barButtonSystemItem:.flexibleSpace, target: nil, action: nil)
         var items: [UIBarButtonItem] = []

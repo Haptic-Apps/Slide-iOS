@@ -22,8 +22,10 @@ class CachedTitle {
         if(title == nil || refresh || full || white){
             if(white){
                 return titleForSubmission(submission: submission, full: full, white: white)
-            } 
-            titles[submission.getId()] = titleForSubmission(submission: submission, full: full, white: white)
+            }
+            if(!full) {
+                titles[submission.getId()] = titleForSubmission(submission: submission, full: full, white: white)
+            }
             return titles[submission.getId()]!
         } else {
             return title!

@@ -25,17 +25,16 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.view.backgroundColor = .white
+
         if(navigationController != nil){
             let sort = UIButton.init(type: .custom)
             sort.setImage(UIImage.init(named: "size")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
             sort.addTarget(self, action: #selector(self.readerMode(_:)), for: UIControlEvents.touchUpInside)
             sort.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
             let sortB = UIBarButtonItem.init(customView: sort)
-            
             navigationItem.rightBarButtonItems = [ sortB]
-
         }
-        
 
     }
     
@@ -64,26 +63,26 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         navigationController?.setNavigationBarHidden(false, animated: false)
 
         self.navigationController?.navigationBar.backItem?.title = ""
+        webView = WKWebView(frame: self.view.frame)
+
+        webView.navigationDelegate = self
+        webView.allowsBackForwardNavigationGestures = true
+
+        self.view.addSubview(webView)
+        myProgressView = UIProgressView(frame: CGRect(x:0, y:0, width: self.view.frame.size.width, height:10))
+        myProgressView.progressTintColor = ColorUtil.accentColorForSub(sub: sub)
+        self.view.addSubview(myProgressView)
+
+        self.webView.scrollView.frame = self.view.frame
+        self.webView.scrollView.setZoomScale(1, animated: false)
+        loadUrl()
+
 
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        webView = WKWebView(frame: self.view.frame)
-        self.view.backgroundColor = .white
-
-        webView.navigationDelegate = self
-        webView.allowsBackForwardNavigationGestures = true
-        
-        self.view.addSubview(webView)
-        myProgressView = UIProgressView(frame: CGRect(x:0, y:0, width: self.view.frame.size.width, height:10))
-        myProgressView.progressTintColor = ColorUtil.accentColorForSub(sub: sub)
-        self.view.addSubview(myProgressView)
-        
-        self.webView.scrollView.frame = self.view.frame
-        self.webView.scrollView.setZoomScale(1, animated: false)
-        loadUrl()
         webView.addObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), options: .new, context: nil)
 
     }

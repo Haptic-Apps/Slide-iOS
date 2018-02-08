@@ -11,7 +11,6 @@ import Foundation
 public class VCPresenter {
 
     public static func showVC(viewController: UIViewController, popupIfPossible: Bool, parentNavigationController: UINavigationController?, parentViewController: UIViewController?) {
-        print("Showing VC")
 
         if ((parentNavigationController != nil && parentNavigationController!.modalPresentationStyle != .pageSheet) && popupIfPossible && UIApplication.shared.statusBarOrientation != .portrait || parentNavigationController == nil) {
             var newParent = TapBehindModalViewController.init(rootViewController: viewController);
@@ -19,7 +18,7 @@ public class VCPresenter {
             button.parentController = newParent
             button.imageView?.contentMode = UIViewContentMode.scaleAspectFit
             button.setImage(UIImage.init(named: "close")!.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
-            button.frame = CGRect.init(x: 0, y: 0, width: 50, height: 50)
+            button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             button.addTarget(self, action: #selector(VCPresenter.handleCloseNav(controller:)), for: .touchUpInside)
 
             let barButton = UIBarButtonItem.init(customView: button)
@@ -43,11 +42,13 @@ public class VCPresenter {
             button.parentController = parentNavigationController!
             button.imageView?.contentMode = UIViewContentMode.scaleAspectFit
             button.setImage(UIImage.init(named: "back")!.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
-            button.frame = CGRect.init(x: 0, y: 0, width: 50, height: 50)
+            button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             button.addTarget(self, action: #selector(VCPresenter.handleBackButton(controller:)), for: .touchUpInside)
 
             let barButton = UIBarButtonItem.init(customView: button)
+
             parentNavigationController!.show(viewController, sender: nil)
+
             viewController.navigationItem.leftBarButtonItem = barButton
         }
 
@@ -71,6 +72,7 @@ public class VCPresenter {
         }
     }
 }
+
 
 public class UIButtonWithContext:UIButton{
     public var parentController : UINavigationController?;

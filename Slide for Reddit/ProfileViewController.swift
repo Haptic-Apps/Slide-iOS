@@ -10,12 +10,12 @@ import UIKit
 import reddift
 import MaterialComponents.MaterialSnackbar
 
-class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIToolbarDelegate, ColorPickerDelegate {
+class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIToolbarDelegate, ColorPickerDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate {
     var content : [UserContent] = []
     var name: String = ""
     var isReload = false
     var session: Session? = nil
-    var vCs : [UIViewController] = [ClearVC()]
+    var vCs : [UIViewController] = []
 
     
 
@@ -279,7 +279,7 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
     }
     
     var tabBar: MDCTabBar
-    
+
     override func viewDidLoad() {
        
         view.backgroundColor = ColorUtil.backgroundColor
@@ -287,6 +287,7 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
         for i in content {
             items.append(i.title)
         }
+
         tabBar = MDCTabBar.init(frame: CGRect.init(x: 0, y: -8, width: self.view.frame.size.width, height: 45))
         tabBar.backgroundColor = ColorUtil.getColorForUser(name: name)
         tabBar.itemAppearance = .titles
@@ -312,14 +313,41 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
         self.delegate = self
         
         self.navigationController?.view.backgroundColor = UIColor.clear
-        let firstViewController = vCs[1]
-        
+        let firstViewController = vCs[0]
+        for view in view.subviews {
+            if view is UIScrollView {
+                (view as! UIScrollView).delegate =  self
+
+                break
+            }
+        }
+
+        self.navigationController?.interactivePopGestureRecognizer?.delegate = self
+        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+
+        if (self.navigationController?.interactivePopGestureRecognizer != nil)
+        {
+            for view in view.subviews
+            {
+                if let scrollView = view as? UIScrollView
+                {
+                    scrollView.panGestureRecognizer.require(toFail: self.navigationController!.interactivePopGestureRecognizer!);
+                }
+            }
+        }
+
+
         setViewControllers([firstViewController],
                            direction: .forward,
                            animated: true,
                            completion: nil)
     }
-    
+
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
+
+
     var currentVc = UIViewController()
     
     func showSortMenu(_ sender: AnyObject){
@@ -385,13 +413,32 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
     
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
         guard completed else { return }
+        let page = vCs.index(of: self.viewControllers!.first!)
+
         if(!selected){
-            let page = vCs.index(of: self.viewControllers!.first!)
-            tabBar.setSelectedItem(tabBar.items[page! - 1], animated: true)
+            tabBar.setSelectedItem(tabBar.items[page! ], animated: true)
         } else {
             selected = false
         }
         currentVc =  self.viewControllers!.first!
+        currentIndex = page!
+
+    }
+
+    var currentIndex = 0
+    var lastPosition : CGFloat = 0
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        self.lastPosition = scrollView.contentOffset.x
+
+        if (currentIndex == vCs.count - 1) && (lastPosition > scrollView.frame.width) {
+            scrollView.contentOffset.x = scrollView.frame.width
+            return
+
+        } else if currentIndex == 0 && lastPosition < scrollView.frame.width {
+            scrollView.contentOffset.x = scrollView.frame.width
+            return
+        }
     }
 
 }
@@ -399,7 +446,7 @@ extension ProfileViewController: MDCTabBarDelegate {
     
     func tabBar(_ tabBar: MDCTabBar, didSelect item: UITabBarItem) {
         selected = true
-        let firstViewController = vCs[tabBar.items.index(of: item)! + 1]
+        let firstViewController = vCs[tabBar.items.index(of: item)!]
         
         setViewControllers([firstViewController],
                            direction: .forward,

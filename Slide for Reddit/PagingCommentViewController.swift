@@ -9,7 +9,7 @@
 import Foundation
 import SloppySwiper
 
-class PagingCommentViewController : SwipeDownModalVC, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
+class PagingCommentViewController : SwipeDownModalVC, UIPageViewControllerDataSource, UIPageViewControllerDelegate , UIScrollViewDelegate{
     var submissions: [RSubmission] = []
     static weak var savedComment : CommentViewController?
     var vCs: [UIViewController] = []
@@ -44,7 +44,8 @@ class PagingCommentViewController : SwipeDownModalVC, UIPageViewControllerDataSo
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
+
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -79,23 +80,42 @@ class PagingCommentViewController : SwipeDownModalVC, UIPageViewControllerDataSo
 
         (firstViewController as! CommentViewController).refresh(firstViewController)
         }
+
+        for view in view.subviews {
+            if view is UIScrollView {
+                (view as! UIScrollView).delegate =  self
+                break
+            }
+        }
         setViewControllers([firstViewController],
                            direction: .forward,
                            animated: true,
                            completion: nil)
+
     }
+
+    var currentIndex = 0
+    var lastPosition : CGFloat = 0
         
     func pageViewController(_ pageViewController : UIPageViewController, didFinishAnimating: Bool, previousViewControllers: [UIViewController], transitionCompleted: Bool) {
         guard transitionCompleted else { return }
         if(!(self.viewControllers!.first! is ClearVC)){
             PagingCommentViewController.savedComment = self.viewControllers!.first as! CommentViewController
         }
-        if(pageViewController.viewControllers?.first == vCs[0]){
-            if(self.navigationController!.modalPresentationStyle == .formSheet){
-               self.navigationController?.dismiss(animated: true, completion: nil)
-            } else {
-               self.navigationController?.dismiss(animated: true, completion: nil)
-            }
+            currentIndex = vCs.index(of: PagingCommentViewController.savedComment!)!
+
+    }
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        self.lastPosition = scrollView.contentOffset.x
+
+        if (currentIndex == vCs.count - 1) && (lastPosition > scrollView.frame.width) {
+            scrollView.contentOffset.x = scrollView.frame.width
+            return
+
+        } else if currentIndex == 0 && lastPosition < scrollView.frame.width {
+            scrollView.contentOffset.x = scrollView.frame.width
+            return
         }
     }
 

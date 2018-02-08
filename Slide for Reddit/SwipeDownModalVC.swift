@@ -11,6 +11,7 @@ import Foundation
 class SwipeDownModalVC: UIPageViewController {
     var panGestureRecognizer: UIPanGestureRecognizer?
     var panGestureRecognizer2: UIPanGestureRecognizer?
+    public var background: UIView?;
 
     var originalPosition: CGPoint?
     var currentPositionTouched: CGPoint?
@@ -22,9 +23,14 @@ class SwipeDownModalVC: UIPageViewController {
         panGestureRecognizer!.direction = .vertical
         panGestureRecognizer2!.direction = .horizontal
         view.addGestureRecognizer(panGestureRecognizer!)
-        
+
         view.addGestureRecognizer(panGestureRecognizer2!)
 
+        background = UIView()
+        background!.frame = self.view.frame
+        background!.backgroundColor = .black
+
+        self.view.insertSubview(background!, at: 0)
     }
 
     func panGestureAction(_ panGesture: UIPanGestureRecognizer) {
@@ -38,11 +44,14 @@ class SwipeDownModalVC: UIPageViewController {
                     x: 0,
                     y: translation.y
             )
+            var progress = translation.y / (self.view.frame.size.height / 2)
+            background!.alpha = 1 - (abs(progress) * 0.9)
+
         } else if panGesture.state == .ended {
             let velocity = panGesture.velocity(in: view)
 
             let down = panGesture.velocity(in: view).y > 0
-            if abs(velocity.y) >= 750 || abs(self.view.frame.origin.y) > self.view.frame.size.height / 2{
+            if abs(velocity.y) >= 1000 || abs(self.view.frame.origin.y) > self.view.frame.size.height / 2{
 
                 UIView.animate(withDuration: 0.2
                         , animations: {
@@ -50,7 +59,7 @@ class SwipeDownModalVC: UIPageViewController {
                             x: self.view.frame.origin.x,
                             y: self.view.frame.size.height * (down ? 1 : -1) )
 
-                    self.view.alpha = 0.2
+                    self.background!.alpha = 0.1
 
                 }, completion: { (isCompleted) in
                     if isCompleted {
@@ -60,6 +69,8 @@ class SwipeDownModalVC: UIPageViewController {
             } else {
                 UIView.animate(withDuration: 0.2, animations: {
                     self.view.center = self.originalPosition!
+                    self.background!.alpha = 1
+
                 })
             }
         }

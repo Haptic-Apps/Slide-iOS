@@ -10,42 +10,42 @@ import UIKit
 import reddift
 import MaterialComponents.MaterialSnackbar
 
-class InboxViewController:  UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIToolbarDelegate {
-    var content : [MessageWhere] = []
+class InboxViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIToolbarDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate {
+    var content: [MessageWhere] = []
     var isReload = false
     var session: Session? = nil
-    
-    var vCs : [UIViewController] = [ClearVC()]
 
-    public init(){
+    var vCs: [UIViewController] = []
+
+    public init() {
         self.session = (UIApplication.shared.delegate as! AppDelegate).session
         self.content = InboxViewController.doDefault()
-        
+
         for place in content {
             vCs.append(ContentListingViewController.init(dataSource: InboxContributionLoader(whereContent: place)))
         }
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    static func doDefault() -> [MessageWhere]{
+
+    static func doDefault() -> [MessageWhere] {
         return [MessageWhere.inbox, MessageWhere.messages, MessageWhere.unread]
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
+
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.splitViewController?.maximumPrimaryColumnWidth = 375
         self.splitViewController?.preferredPrimaryColumnWidthFraction = 0.5
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.splitViewController?.preferredDisplayMode = UISplitViewControllerDisplayMode.allVisible
@@ -58,44 +58,45 @@ class InboxViewController:  UIPageViewController, UIPageViewControllerDataSource
         edit.addTarget(self, action: #selector(self.new(_:)), for: UIControlEvents.touchUpInside)
         edit.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let editB = UIBarButtonItem.init(customView: edit)
-        
+
         let read = UIButton.init(type: .custom)
         read.setImage(UIImage.init(named: "seen")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
         read.addTarget(self, action: #selector(self.read(_:)), for: UIControlEvents.touchUpInside)
         read.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let readB = UIBarButtonItem.init(customView: read)
-        
-        if(navigationController != nil){
-            navigationItem.rightBarButtonItems = [ readB]
+
+        if (navigationController != nil) {
+            navigationItem.rightBarButtonItems = [readB]
         }
     }
 
-    func new(_ sender: AnyObject){
-        let reply  = ReplyViewController.init(message: nil) { (message) in
+    func new(_ sender: AnyObject) {
+        let reply = ReplyViewController.init(message: nil) { (message) in
             DispatchQueue.main.async(execute: { () -> Void in
                 let message = MDCSnackbarMessage()
                 message.text = "Message sent!"
                 MDCSnackbarManager.show(message)
             })
         }
-        
+
         let navEditorViewController: UINavigationController = UINavigationController(rootViewController: reply)
         prepareOverlayVC(overlayVC: navEditorViewController)
         present(navEditorViewController, animated: true, completion: nil)
         //todo make this actually work
-        
+
     }
+
     private func prepareOverlayVC(overlayVC: UIViewController) {
         overlayVC.transitioningDelegate = overlayTransitioningDelegate
         overlayVC.modalPresentationStyle = .custom
     }
-    
+
     let overlayTransitioningDelegate = OverlayTransitioningDelegate()
-    
-    func read(_ sender: AnyObject){
+
+    func read(_ sender: AnyObject) {
         do {
             try session?.markAllMessagesAsRead(completion: { (result) in
-                switch(result){
+                switch (result) {
                 case .success(_):
                     DispatchQueue.main.async {
                         let message = MDCSnackbarMessage()
@@ -104,19 +105,22 @@ class InboxViewController:  UIPageViewController, UIPageViewControllerDataSource
                     }
                     break
                 default: break
-                    
+
                 }
             })
         } catch {
-            
+
         }
     }
-    
+
     var time: Double = 0
-    
-    func close(){
+
+    func close() {
         self.navigationController?.popViewController(animated: true)
     }
+
+
+
     var tabBar = MDCTabBar()
 
     override func viewDidLoad() {
@@ -133,7 +137,7 @@ class InboxViewController:  UIPageViewController, UIPageViewControllerDataSource
             return UITabBarItem(title: source.description, image: nil, tag: index)
         }
         tabBar.autoresizingMask = [.flexibleWidth, .flexibleBottomMargin]
-        
+
         // 3
         tabBar.selectedItem = tabBar.items[0]
         // 4
@@ -143,92 +147,142 @@ class InboxViewController:  UIPageViewController, UIPageViewControllerDataSource
         tabBar.sizeToFit()
 
         self.view.addSubview(tabBar)
-        
+
 
         time = History.getInboxSeen()
         History.inboxSeen()
-                view.backgroundColor = ColorUtil.backgroundColor
+        view.backgroundColor = ColorUtil.backgroundColor
         // set up style before super view did load is executed
         // -
-        
+
         super.viewDidLoad()
         self.dataSource = self
         self.delegate = self
 
         self.navigationController?.view.backgroundColor = UIColor.clear
-        let firstViewController = vCs[1]
-        
+        let firstViewController = vCs[0]
+
+        for view in view.subviews {
+            if view is UIScrollView {
+                (view as! UIScrollView).delegate = self
+                break
+            }
+        }
+
+        self.navigationController?.interactivePopGestureRecognizer?.delegate = self
+        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+
+        if (self.navigationController?.interactivePopGestureRecognizer != nil)
+        {
+            print("Not nil")
+            for view in view.subviews
+            {
+                if let scrollView = view as? UIScrollView
+                {
+                    scrollView.panGestureRecognizer.require(toFail: self.navigationController!.interactivePopGestureRecognizer!);
+                }
+            }
+        }
+
+
         setViewControllers([firstViewController],
-                           direction: .forward,
-                           animated: true,
-                           completion: nil)
-        
+                direction: .forward,
+                animated: true,
+                completion: nil)
+
     }
-    
+
     var selected = false
-   
+
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
-        guard completed else { return }
-        if(!selected){
+        guard completed else {
+            return
+        }
         let page = vCs.index(of: self.viewControllers!.first!)
-        tabBar.setSelectedItem(tabBar.items[page! - 1], animated: true)
+
+        if (!selected) {
+            tabBar.setSelectedItem(tabBar.items[page! ], animated: true)
         } else {
             selected = false
         }
+        currentIndex = page!
+
     }
-    
+
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
+
+
+    var currentIndex = 0
+    var lastPosition: CGFloat = 0
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        self.lastPosition = scrollView.contentOffset.x
+
+        if (currentIndex == vCs.count - 1) && (lastPosition > scrollView.frame.width) {
+            scrollView.contentOffset.x = scrollView.frame.width
+            return
+
+        } else if currentIndex == 0 && lastPosition < scrollView.frame.width {
+            scrollView.contentOffset.x = scrollView.frame.width
+            return
+        }
+    }
+
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerBefore viewController: UIViewController) -> UIViewController? {
         guard let viewControllerIndex = vCs.index(of: viewController) else {
             return nil
         }
-        
+
         let previousIndex = viewControllerIndex - 1
-        
+
         guard previousIndex >= 0 else {
             return nil
         }
-        
+
         guard vCs.count > previousIndex else {
             return nil
         }
-        
+
         return vCs[previousIndex]
     }
-    
+
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerAfter viewController: UIViewController) -> UIViewController? {
         guard let viewControllerIndex = vCs.index(of: viewController) else {
             return nil
         }
-        
-        
+
+
         let nextIndex = viewControllerIndex + 1
         let orderedViewControllersCount = vCs.count
-        
+
         guard orderedViewControllersCount != nextIndex else {
             return nil
         }
-        
+
         guard orderedViewControllersCount > nextIndex else {
             return nil
         }
-        
+
         return vCs[nextIndex]
     }
 
 }
+
 extension InboxViewController: MDCTabBarDelegate {
-    
+
     func tabBar(_ tabBar: MDCTabBar, didSelect item: UITabBarItem) {
         selected = true
-        let firstViewController = vCs[tabBar.items.index(of: item)! + 1]
-        
+        let firstViewController = vCs[tabBar.items.index(of: item)!]
+
         setViewControllers([firstViewController],
-                           direction: .forward,
-                           animated: false,
-                           completion: nil)
+                direction: .forward,
+                animated: false,
+                completion: nil)
 
     }
-    
+
 }

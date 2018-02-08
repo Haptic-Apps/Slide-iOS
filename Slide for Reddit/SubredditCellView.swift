@@ -62,17 +62,10 @@ class SubredditCellView: UITableViewCell {
         if (navController != nil) {
             AudioServicesPlaySystemSound(1519)
             if (!self.cancelled) {
-                if (UIScreen.main.traitCollection.userInterfaceIdiom == .pad && UIApplication.shared.statusBarOrientation != .portrait) {
-                    navController!.dismiss(animated: true, completion: {
-                        let vc = SubredditLinkViewController.init(subName: self.subname, single: true)
-                        let nav = TapBehindModalViewController.init(rootViewController: vc)
-                        nav.modalPresentationStyle = .pageSheet
-                        nav.modalTransitionStyle = .crossDissolve
-                        self.navController!.present(nav, animated: true, completion: nil)
-                    })
-                } else {
-                    navController!.navigationController?.pushViewController(SubredditLinkViewController.init(subName: subname, single: true), animated: true)
+                let vc = SubredditLinkViewController.init(subName: self.subname, single: true)
 
+                navController!.dismiss(animated: true) {
+                    VCPresenter.showVC(viewController: vc, popupIfPossible: true, parentNavigationController: self.navController!.navigationController, parentViewController: self.navController!)
                 }
             }
         }
