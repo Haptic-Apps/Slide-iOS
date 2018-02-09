@@ -97,24 +97,40 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate  {
         } catch {
         }
     }
-    
+
+    public func doClose(controller: UIButtonWithContext) {
+        print("Dismissing")
+        (controller.parentController as! TapBehindModalViewController).close(sender: controller)
+    }
+
     var alrController = UIAlertController()
 
     func doDisplaySidebar(_ sub: Subreddit){
         let baseController = SubSidebarViewController(sub: sub, parent: parent!)
-        baseController.modalPresentationStyle = .formSheet
+        let nav = TapBehindModalViewController.init(rootViewController: baseController)
+        nav.modalPresentationStyle = .formSheet
+        parent?.present(nav, animated: true, completion:{})
+        let button = UIButtonWithContext.init(type: .custom)
+        button.parentController = nav
+        button.imageView?.contentMode = UIViewContentMode.scaleAspectFit
+        button.setImage(UIImage.init(named: "close")!.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
+        button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        button.addTarget(self, action: #selector(doClose(controller:)), for: .touchUpInside)
+        let barButton = UIBarButtonItem.init(customView: button)
 
-        parent?.present(baseController, animated: true, completion:{})
-        
+        baseController.navigationItem.leftBarButtonItems = [barButton]
+        baseController.title = sub.displayName
+        baseController.navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub.displayName)
+
         /*
         alrController = UIAlertController(title:"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", message: "\(sub.accountsActive) here now\n\(sub.subscribers) subscribers", preferredStyle: UIAlertControllerStyle.actionSheet)
-        
-        
+
+
         let label = UILabel.init(frame: CGRect.init(x: 00, y: 0, width: 500, height: 40))
         label.text =  "        \(sub.displayName)"
         label.adjustsFontSizeToFitWidth = true
         label.font = UIFont.boldSystemFont(ofSize: 25)
-        
+
         var sideView = UIView()
         sideView = UIView(frame: CGRect(x: 0, y: 0, width: 8, height: CGFloat.greatestFiniteMagnitude))
         sideView.backgroundColor = ColorUtil.getColorForSub(sub: sub.displayName)

@@ -1457,17 +1457,15 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
                                 print("Inserting to \(i)")
                                 paths.append(IndexPath.init(item: i, section: 0))
                             }
-                            print("Size is \(self.links.count)")
+                            print("Size is \(self.links.count) and before is \(before)")
                             if (before == 0) {
-                                self.tableView.reloadData()
-                                self.loadViewIfNeeded()
                                 self.tableView.contentOffset = CGPoint.init(x: 0, y: -60)
+                                self.tableView.reloadData()
                             } else {
                                 self.tableView.insertItems(at: paths)
                             }
 
                             self.flowLayout.reset()
-
                             self.refreshControl.endRefreshing()
                             self.indicator.stopAnimating()
                             self.loading = false

@@ -67,6 +67,7 @@ class SettingValues{
     public static let pref_showFirstParagraph = "FIRST_P"
     public static let pref_swapLongPress = "SWAP_LONG_PRESS"
     public static let pref_collapseFully = "COLLAPSE_FULLY"
+    public static let pref_highlightOp = "HIGHLIGHT_OP"
 
 
     public static var viewType = true
@@ -126,6 +127,7 @@ class SettingValues{
     public static var showFirstParagraph = true
     public static var swapLongPress = false
     public static var collapseFully = true
+    public static var highlightOp = true
 
     enum PostViewType: String {
         case LIST = "list"
@@ -139,7 +141,8 @@ class SettingValues{
         SettingValues.saveNSFWHistory = settings.bool(forKey: SettingValues.pref_saveNSFWHistory)
         SettingValues.saveHistory = settings.object(forKey: SettingValues.pref_saveHistory) == nil ? true : settings.bool(forKey: SettingValues.pref_saveHistory)
         SettingValues.multiColumn = settings.object(forKey: SettingValues.pref_multiColumn) == nil ? true : settings.bool(forKey: SettingValues.pref_multiColumn)
-        
+        SettingValues.highlightOp = settings.object(forKey: SettingValues.pref_highlightOp) == nil ? true : settings.bool(forKey: SettingValues.pref_highlightOp)
+
         SettingValues.postFontOffset = settings.object(forKey: SettingValues.pref_postFontSize) == nil ? 0 : settings.integer(forKey: SettingValues.pref_postFontSize)
         SettingValues.commentFontOffset = settings.object(forKey: SettingValues.pref_commentFontSize) == nil ? 0 : settings.integer(forKey: SettingValues.pref_commentFontSize)
 

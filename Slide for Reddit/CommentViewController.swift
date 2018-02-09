@@ -18,7 +18,7 @@ import XLActionController
 
 class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, UZTextViewCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate, TTTAttributedLabelDelegate, ReplyDelegate {
 
-    var parents: [Int: String] = [:]
+    var parents: [String: String] = [:]
 
     func replySent(comment: Comment?) {
         if (comment != nil && menuId != "sub") {
@@ -400,7 +400,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                             if (child.depth == 1) {
                                 currentOP = child.author
                             }
-                            parents[currentIndex] = currentOP
+                            parents[child.getId()] = currentOP
                             currentIndex += 1
 
                             temp.append(child)
@@ -462,7 +462,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                         if (child.depth == 1) {
                                             currentOP = child.author
                                         }
-                                        self.parents[currentIndex] = currentOP
+                                        self.parents[(child is RComment) ? (child as! RComment).getId() : (child as! RMore).getId()] = currentOP
                                         currentIndex += 1
 
                                         temp.append(child)
@@ -543,7 +543,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                         if (i.1 == 1 && item is RComment) {
                                             currentOP = (item as! RComment).author
                                         }
-                                        self.parents[currentIndex] = currentOP
+                                        self.parents[ (item is RComment) ? (item as! RComment).getId() : (item as! RMore).getId()] = currentOP
                                         currentIndex += 1
 
                                         self.cDepth[i.0.getId()] = i.1
@@ -1817,12 +1817,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 datasetPosition -= 1
             }
         }
-        print("DB Pos is \(datasetPosition)")
-        let parentOP = parents[datasetPosition]
+        let thing = isSearching ? filteredData[datasetPosition] : dataArray[datasetPosition]
+        let parentOP = parents[(content[thing] is RComment) ? (content[thing] as! RComment).getId() : (content[thing] as! RMore).getId()]
         cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as UITableViewCell
         if let cell = cell as? CommentDepthCell {
             cell.delegate = self
-            let thing = isSearching ? filteredData[datasetPosition] : dataArray[datasetPosition]
             if (content[thing] is RComment) {
                 var count = 0
                 let hiddenP = hiddenPersons.contains(thing)

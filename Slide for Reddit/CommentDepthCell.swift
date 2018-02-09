@@ -491,9 +491,9 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
     
     func doHighlight(){
         oldDepth = depth
-        depth = 1
+        depth = 2
         updateDepthConstraints()
-        self.contentView.backgroundColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.getColorForSub(sub: ((comment)!.subreddit)).withAlphaComponent(0.5))
+        self.contentView.backgroundColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.getColorForSub(sub: ((comment)!.subreddit)).withAlphaComponent(0.25))
     }
     
     func doUnHighlight(){
@@ -699,7 +699,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
                     sideView.backgroundColor = GMColor.red500Color()
                 }
             }
-            if(parentOP == comment.author){
+            if(SettingValues.highlightOp && parentOP == comment.author){
                 sideView.backgroundColor = GMColor.purple500Color()
             }
         } else {

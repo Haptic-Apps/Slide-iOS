@@ -62,6 +62,14 @@ class WrappingFlowLayout: UICollectionViewLayout{
                 let height1 = delegate.collectionView(collectionView!, width: width,
                                                           indexPath:indexPath).height
                 let height = cellPadding +  height1 + cellPadding
+
+
+                if((yOffset[(column >= (numberOfColumns - 1)) ? 0 : column + 1] + (0.75 * height)) < yOffset[column]){
+                    column = (column >= (numberOfColumns - 1)) ? 0 : column + 1
+                }
+
+
+
                 let frame = CGRect(x: xOffset[column], y: yOffset[column], width: columnWidth, height: height)
                 let insetFrame = frame.insetBy(dx: cellPadding, dy: cellPadding)
                 
@@ -72,6 +80,7 @@ class WrappingFlowLayout: UICollectionViewLayout{
                 
                 // 6
                 contentHeight = max(contentHeight, frame.maxY)
+
                 yOffset[column] = yOffset[column] + height
                 let col = column >= (numberOfColumns - 1)
                 if(col){

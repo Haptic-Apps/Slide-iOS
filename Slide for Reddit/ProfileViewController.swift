@@ -22,7 +22,7 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
         self.navigationController?.navigationBar.barTintColor = colorPickerView.colors[indexPath.row]
     }
 
-    func pickColor(){
+    func pickColor(sender: AnyObject){
         let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
         let margin:CGFloat = 10.0
         let rect = CGRect(x: margin, y: margin, width: alertController.view.bounds.size.width - margin * 4.0, height: 150)
@@ -52,6 +52,12 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
         if let presenter = alertController.popoverPresentationController {
             presenter.sourceView = (moreB!.value(forKey: "view") as! UIView)
             presenter.sourceRect = (moreB!.value(forKey: "view") as! UIView).bounds
+        }
+
+        alertController.modalPresentationStyle = .popover
+        if let presenter = alertController.popoverPresentationController {
+            presenter.sourceView = sender as! UIButton
+            presenter.sourceRect = (sender as! UIButton).bounds
         }
 
         present(alertController, animated: true, completion: nil)
@@ -160,7 +166,7 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
         
     }
     
-    func showMenu(user: Account){
+    func showMenu(sender: AnyObject, user: Account){
         let alrController = UIAlertController(title: user.name + "\n\n\n\n", message: "\(user.linkKarma) post karma\n\(user.commentKarma) comment karma\nRedditor for \("todo")", preferredStyle: UIAlertControllerStyle.actionSheet)
         
         let margin:CGFloat = 8.0
@@ -232,7 +238,7 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
             }
         }
         alrController.addAction(UIAlertAction.init(title: "Change color", style: .default, handler: { (action) in
-            self.pickColor()
+            self.pickColor(sender: sender)
         }))
         let tag = ColorUtil.getTagForUser(name: name)
         alrController.addAction(UIAlertAction.init(title: "Tag user\((!(tag.isEmpty)) ? " (currently \(tag))" : "")", style: .default, handler: { (action) in
@@ -248,6 +254,11 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
             presenter.sourceRect = (moreB!.value(forKey: "view") as! UIView).bounds
         }
 
+        alrController.modalPresentationStyle = .popover
+        if let presenter = alrController.popoverPresentationController {
+            presenter.sourceView = sender as! UIButton
+            presenter.sourceRect = (sender as! UIButton).bounds
+        }
         
         self.present(alrController, animated: true, completion:{})
         
@@ -395,7 +406,7 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
                 case .failure(let error):
                     print(error)
                 case .success(let account):
-                    self.showMenu(user: account)
+                    self.showMenu(sender: sender, user: account)
                 }
             })
         } catch {
