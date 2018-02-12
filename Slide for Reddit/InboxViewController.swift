@@ -42,13 +42,10 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        self.splitViewController?.maximumPrimaryColumnWidth = 375
-        self.splitViewController?.preferredPrimaryColumnWidthFraction = 0.5
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.splitViewController?.preferredDisplayMode = UISplitViewControllerDisplayMode.allVisible
         self.title = "Inbox"
         navigationController?.setNavigationBarHidden(false, animated: true)
         navigationController?.navigationBar.tintColor = .white

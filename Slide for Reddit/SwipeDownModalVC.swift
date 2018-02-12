@@ -8,7 +8,7 @@
 
 import Foundation
 
-class SwipeDownModalVC: UIPageViewController {
+class SwipeDownModalVC: ColorMuxPagingViewController {
     var panGestureRecognizer: UIPanGestureRecognizer?
     var panGestureRecognizer2: UIPanGestureRecognizer?
     public var background: UIView?;

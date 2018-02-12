@@ -491,7 +491,11 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
     
     func doHighlight(){
         oldDepth = depth
-        depth = 2
+        if(depth == 1) {
+            depth = 1
+        } else {
+            depth = 2
+        }
         updateDepthConstraints()
         self.contentView.backgroundColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.getColorForSub(sub: ((comment)!.subreddit)).withAlphaComponent(0.25))
     }

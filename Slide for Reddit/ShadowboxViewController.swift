@@ -14,6 +14,12 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
     var vCs: [UIViewController] = []
     var baseSubmissions: [RSubmission] = []
 
+    func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
+        print("Setting colors")
+        color2 = (pendingViewControllers[0] as! ShadowboxLinkViewController).color
+        color1 = (currentVc as! ShadowboxLinkViewController).color
+    }
+
     public init(submissions: [RSubmission]) {
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
 
@@ -22,6 +28,7 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         for s in baseSubmissions {
             self.vCs.append(ShadowboxLinkViewController.init(submission: s))
         }
+
         let firstViewController = self.vCs[0]
         currentVc = firstViewController
 
@@ -56,6 +63,7 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         self.delegate = self
         view.backgroundColor = UIColor.black.withAlphaComponent(0.7)
         self.navigationController?.view.backgroundColor = UIColor.clear
+        viewToMux = self.background
 
         let navigationBar = UINavigationBar.init(frame: CGRect.init(x: 0, y: 16, width: self.view.frame.size.width, height: 56))
         navigationBar.setBackgroundImage(UIImage(), for: .default)
@@ -88,7 +96,6 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         }
 
         currentVc = self.viewControllers!.first!
-        (currentVc as! ShadowboxLinkViewController).animateBackground()
     }
 
     func pageViewController(_ pageViewController: UIPageViewController,

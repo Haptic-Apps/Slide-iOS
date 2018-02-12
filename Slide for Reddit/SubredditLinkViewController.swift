@@ -1028,7 +1028,9 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         //self.navigationItem.leftBarButtonItems!.append(leftItem)
         self.navigationItem.title = sub
         self.navigationController?.navigationBar.shadowImage = UIImage()
-        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub)
+        if(single) {
+            navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub)
+        }
     }
 
     func reloadDataReset() {

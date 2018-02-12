@@ -9,7 +9,7 @@
 import Foundation
 import SloppySwiper
 
-class PagingCommentViewController : SwipeDownModalVC, UIPageViewControllerDataSource, UIPageViewControllerDelegate , UIScrollViewDelegate{
+class PagingCommentViewController : SwipeDownModalVC, UIPageViewControllerDataSource, UIPageViewControllerDelegate{
     var submissions: [RSubmission] = []
     static weak var savedComment : CommentViewController?
     var vCs: [UIViewController] = []
@@ -106,7 +106,8 @@ class PagingCommentViewController : SwipeDownModalVC, UIPageViewControllerDataSo
 
     }
 
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        super.scrollViewDidScroll(scrollView)
         self.lastPosition = scrollView.contentOffset.x
 
         if (currentIndex == vCs.count - 1) && (lastPosition > scrollView.frame.width) {

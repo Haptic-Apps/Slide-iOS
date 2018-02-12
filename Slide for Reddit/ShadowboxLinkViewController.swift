@@ -27,7 +27,8 @@ class ShadowboxLinkViewController: UIViewController, UIScrollViewDelegate, UIGes
     var menuB = UIBarButtonItem()
     var upvoteB = UIBarButtonItem()
     var commentsB = UIBarButtonItem()
-    
+
+
     init(submission: RSubmission){
         self.submission = submission
         self.baseURL = submission.url
@@ -40,15 +41,7 @@ class ShadowboxLinkViewController: UIViewController, UIScrollViewDelegate, UIGes
         fatalError("init(coder:) has not been implemented")
     }
 
-    public func animateBackground(){
-        UIView.animate(withDuration: 0.10) {
-            (self.parent as! ShadowboxViewController).background!.backgroundColor = self.color!
-            (self.parent as! ShadowboxViewController).background!.layoutIfNeeded()
-        }
-
-    }
-
-    var color: UIColor?;
+    var color: UIColor = UIColor.black;
     
     func displayImage(baseImage: UIImage?){
         if(baseImage == nil){
@@ -57,7 +50,10 @@ class ShadowboxLinkViewController: UIViewController, UIScrollViewDelegate, UIGes
         let image = baseImage!
         color = image.areaAverage()
         if(((parent as! ShadowboxViewController).currentVc as! ShadowboxLinkViewController).submission!.id == self.submission!.id){
-            animateBackground()
+            UIView.animate(withDuration: 0.10) {
+                (self.parent as! ShadowboxViewController).background!.backgroundColor = self.color
+                (self.parent as! ShadowboxViewController).background!.layoutIfNeeded()
+            }
         }
         self.scrollView.contentSize = CGSize.init(width: self.view.frame.size.width, height: getHeightFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width))
         self.scrollView.delegate = self
@@ -77,7 +73,6 @@ class ShadowboxLinkViewController: UIViewController, UIScrollViewDelegate, UIGes
         gradient.frame = imageView.frame
         gradient.colors = [UIColor.clear.cgColor, UIColor.black.withAlphaComponent(0.7).cgColor]
         let percent = ((textB.frame.size.height + 30)/self.view.frame.size.height)
-        print("Percent is \(percent)")
         gradient.locations = [NSNumber.init(value: Double(percent)), 1]
         imageView.layer.insertSublayer(gradient, at: 0)
 

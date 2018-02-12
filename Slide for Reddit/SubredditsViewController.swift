@@ -12,7 +12,7 @@ import reddift
 import MaterialComponents.MaterialSnackbar
 import SideMenu
 
-class SubredditsViewController:  UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate , UISplitViewControllerDelegate {
+class SubredditsViewController:  ColorMuxPagingViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate , UISplitViewControllerDelegate {
     var isReload = false
     public static var vCs : [UIViewController] = []
     public static var current: String = ""
@@ -315,7 +315,7 @@ class SubredditsViewController:  UIPageViewController, UIPageViewControllerDataS
         self.menuNav?.setSubreddit(subreddit: SubredditsViewController.current)
         self.currentTitle = SubredditsViewController.current
         
-        self.colorChanged()
+        //self.colorChanged()
         SideMenuManager.default.menuAddScreenEdgePanGesturesToPresent(toView: vc.view)
         for rec in (vc.view.gestureRecognizers)! {
             if(rec is UIScreenEdgePanGestureRecognizer){
@@ -361,14 +361,13 @@ class SubredditsViewController:  UIPageViewController, UIPageViewControllerDataS
         } else {
             selected = false
         }
-        
-        UIView.animate(withDuration: 0.25) {
-            self.navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: vc.sub)
-            self.navigationController?.navigationBar.layoutIfNeeded()
-        }
-
-
     }
+
+    func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
+        color2 = ColorUtil.getColorForSub(sub: (pendingViewControllers[0] as! SubredditLinkViewController).sub)
+        color1 = ColorUtil.getColorForSub(sub: (SubredditsViewController.vCs[currentPage] as! SubredditLinkViewController).sub)
+    }
+
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerBefore viewController: UIViewController) -> UIViewController? {
         guard let viewControllerIndex = SubredditsViewController.vCs.index(of: viewController) else {
@@ -384,7 +383,7 @@ class SubredditsViewController:  UIPageViewController, UIPageViewControllerDataS
         guard SubredditsViewController.vCs.count > previousIndex else {
             return nil
         }
-        
+
         return SubredditsViewController.vCs[previousIndex]
     }
     
@@ -404,7 +403,7 @@ class SubredditsViewController:  UIPageViewController, UIPageViewControllerDataS
         guard orderedViewControllersCount > nextIndex else {
             return nil
         }
-        
+
         return SubredditsViewController.vCs[nextIndex]
     }
 
@@ -425,6 +424,10 @@ class SubredditsViewController:  UIPageViewController, UIPageViewControllerDataS
 
     
     override func viewDidLoad() {
+
+        self.navToMux = self.navigationController!.navigationBar
+        self.color1 = ColorUtil.backgroundColor
+        self.color2 = ColorUtil.backgroundColor
 
         self.splitViewController?.preferredDisplayMode = UISplitViewControllerDisplayMode.allVisible
         if(SettingValues.multiColumn){
