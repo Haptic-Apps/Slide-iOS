@@ -21,6 +21,9 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
     var subscribe: UITableViewCell = UITableViewCell()
     var theme = UITableViewCell()
     var submit = UITableViewCell()
+    var wiki = UITableViewCell()
+    var sorting = UITableViewCell()
+    var mods = UITableViewCell()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -29,22 +32,43 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
         self.subscribe.accessoryType = .none
         self.subscribe.backgroundColor = ColorUtil.foregroundColor
         self.subscribe.textLabel?.textColor = ColorUtil.fontColor
-        self.subscribe.imageView?.image = UIImage.init(named: "subscribe")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
+        self.subscribe.imageView?.image = UIImage.init(named: "subbed")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
         self.subscribe.imageView?.tintColor = ColorUtil.fontColor
 
         self.theme.textLabel?.text = "Subreddit theme"
         self.theme.accessoryType = .none
         self.theme.backgroundColor = ColorUtil.foregroundColor
         self.theme.textLabel?.textColor = ColorUtil.fontColor
-        self.theme.imageView?.image = UIImage.init(named: "theme")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
+        self.theme.imageView?.image = UIImage.init(named: "palette")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
         self.theme.imageView?.tintColor = ColorUtil.fontColor
 
         self.submit.textLabel?.text = "New post"
         self.submit.accessoryType = .none
         self.submit.backgroundColor = ColorUtil.foregroundColor
         self.submit.textLabel?.textColor = ColorUtil.fontColor
-        self.submit.imageView?.image = UIImage.init(named: "submit")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
+        self.submit.imageView?.image = UIImage.init(named: "edit")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
         self.submit.imageView?.tintColor = ColorUtil.fontColor
+
+        self.wiki.textLabel?.text = "Subreddit wiki"
+        self.wiki.accessoryType = .none
+        self.wiki.backgroundColor = ColorUtil.foregroundColor
+        self.wiki.textLabel?.textColor = ColorUtil.fontColor
+        self.wiki.imageView?.image = UIImage.init(named: "ic_book_white_48dp")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
+        self.wiki.imageView?.tintColor = ColorUtil.fontColor
+
+        self.sorting.textLabel?.text = "Default subreddit sorting"
+        self.sorting.accessoryType = .none
+        self.sorting.backgroundColor = ColorUtil.foregroundColor
+        self.sorting.textLabel?.textColor = ColorUtil.fontColor
+        self.sorting.imageView?.image = UIImage.init(named: "ic_sort_white")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
+        self.sorting.imageView?.tintColor = ColorUtil.fontColor
+
+        self.mods.textLabel?.text = "Subreddit moderators"
+        self.mods.accessoryType = .none
+        self.mods.backgroundColor = ColorUtil.foregroundColor
+        self.mods.textLabel?.textColor = ColorUtil.fontColor
+        self.mods.imageView?.image = UIImage.init(named: "ic_security_white_48dp")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
+        self.mods.imageView?.tintColor = ColorUtil.fontColor
 
         self.desc = UZTextView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
         self.desc.delegate = self
@@ -90,6 +114,9 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
         info.translatesAutoresizingMaskIntoConstraints = false
         subscribers.translatesAutoresizingMaskIntoConstraints = false
         here.translatesAutoresizingMaskIntoConstraints = false
+        sorting.translatesAutoresizingMaskIntoConstraints = false
+        wiki.translatesAutoresizingMaskIntoConstraints = false
+        mods.translatesAutoresizingMaskIntoConstraints = false
 
         addSubview(theme)
         addSubview(submit)
@@ -99,6 +126,9 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
         back.addSubview(subscribers)
         back.addSubview(here)
         back.addSubview(desc)
+        back.addSubview(sorting)
+        back.addSubview(wiki)
+        back.addSubview(mods)
 
         self.clipsToBounds = true
         updateConstraints()
@@ -176,28 +206,28 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
         super.updateConstraints()
 
         let metrics = ["topMargin": 0, "bh": CGFloat(130 + textHeight), "dh": descHeight, "b": textHeight + 30]
-        let views = ["theme": theme, "submit": submit, "subscribe": subscribe, "back": back, "desc": desc, "info": info, "subscribers": subscribers, "here": here] as [String: Any]
+        let views = ["theme": theme, "submit": submit, "subscribe": subscribe, "mods":mods,"back": back, "sort":sorting, "wiki":wiki, "desc":desc, "info": info, "subscribers": subscribers, "here": here] as [String: Any]
 
 
         back.removeConstraints(constraintBack)
         constraintBack = []
 
 
-        constraintBack.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(12)-[desc]-(12)-|",
+        constraintBack.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(16)-[desc]-(16)-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
 
-        constraintBack.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(12)-[subscribers]-(12)-|",
+        constraintBack.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(16)-[subscribers]-(16)-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
 
-        constraintBack.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(12)-[here]-(12)-|",
+        constraintBack.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(16)-[here]-(16)-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
-        constraintBack.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[subscribers]-2-[here]-2-[desc]-4-|",
+        constraintBack.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-16-[subscribers]-2-[here]-2-[desc]-4-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
@@ -220,6 +250,16 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
+        constraintMain.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(12)-[sort]-(12)-|",
+                options: NSLayoutFormatOptions(rawValue: 0),
+                metrics: metrics,
+                views: views))
+
+        constraintMain.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(12)-[wiki]-(12)-|",
+                options: NSLayoutFormatOptions(rawValue: 0),
+                metrics: metrics,
+                views: views))
+
         constraintMain.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(12)-[theme]-(12)-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
@@ -231,7 +271,13 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
                 metrics: metrics,
                 views: views))
 
-        constraintMain.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(0)-[back]-(8)-[subscribe(50)]-(2)-[theme(50)]-(2)-[submit(50)]-(8)-[info(dh)]-(4)-|",
+        constraintMain.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(12)-[mods]-(12)-|",
+                options: NSLayoutFormatOptions(rawValue: 0),
+                metrics: metrics,
+                views: views))
+
+
+        constraintMain.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(0)-[back]-(8)-[subscribe(50)]-(2)-[theme(50)]-(2)-[wiki(50)]-(2)-[submit(50)]-(2)-[mods(50)]-(2)-[sort(50)]-(8)-[info(dh)]-(4)-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
@@ -241,7 +287,7 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
     }
 
     func getEstHeight() -> CGFloat {
-        return CGFloat(60 + textHeight) + ((contentInfo == nil) ? 0 : descHeight) + (50 * 5)
+        return CGFloat(60 + textHeight) + ((contentInfo == nil) ? 0 : descHeight) + (50 * 7)
     }
 
     func textView(_ textView: UZTextView, didLongTapLinkAttribute value: Any?) {

@@ -25,7 +25,6 @@ class SubSidebarViewController: MediaViewController, UITableViewDelegate, UITabl
 
     func doSubreddit(sub: Subreddit, _ width: CGFloat) {
         header.setSubreddit(subreddit: sub, parent: self, width)
-        print("Height is \(header.getEstHeight())")
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -43,7 +42,9 @@ class SubSidebarViewController: MediaViewController, UITableViewDelegate, UITabl
 
         navigationItem.leftBarButtonItems = [barButton]
         title = subreddit!.displayName
-        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: subreddit!.displayName)
+        color = ColorUtil.getColorForSub(sub: subreddit!.displayName)
+
+        setNavColors()
 
         self.view = UITableView(frame: CGRect.zero, style: .plain)
         self.tableView = self.view as! UITableView

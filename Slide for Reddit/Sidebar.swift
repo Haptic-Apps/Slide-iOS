@@ -68,10 +68,9 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate  {
         }
     }
 
-
     var inner: MediaViewController?
-    
     var subInfo: Subreddit?
+
     func displaySidebar(){
         do {
             try (UIApplication.shared.delegate as! AppDelegate).session?.about(subname, completion: { (result) in
@@ -94,9 +93,6 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate  {
         }
     }
 
-
-
-
     var alrController = UIAlertController()
 
     func doDisplaySidebar(_ sub: Subreddit){
@@ -104,7 +100,6 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate  {
         let nav = TapBehindModalViewController.init(rootViewController: inner!)
         nav.modalPresentationStyle = .formSheet
         parent?.present(nav, animated: true, completion:{})
-
     }
 
     func subscribe(_ sub: Subreddit){
