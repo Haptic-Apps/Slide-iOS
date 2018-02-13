@@ -12,7 +12,7 @@ public class VCPresenter {
 
     public static func showVC(viewController: UIViewController, popupIfPossible: Bool, parentNavigationController: UINavigationController?, parentViewController: UIViewController?) {
 
-        if ((parentNavigationController != nil && parentNavigationController!.modalPresentationStyle != .pageSheet) && popupIfPossible && UIApplication.shared.statusBarOrientation != .portrait || parentNavigationController == nil) {
+        if ((parentNavigationController != nil && parentNavigationController!.modalPresentationStyle != .pageSheet) && !(parentViewController is SubSidebarViewController) && popupIfPossible && UIDevice.current.orientation.isLandscape || parentNavigationController == nil) {
             var newParent = TapBehindModalViewController.init(rootViewController: viewController);
             let button = UIButtonWithContext.init(type: .custom)
             button.parentController = newParent

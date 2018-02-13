@@ -310,6 +310,7 @@ class SubredditsViewController:  ColorMuxPagingViewController, UIPageViewControl
     func doCurrentPage(_ page: Int){
         self.currentPage = page
         let vc = SubredditsViewController.vCs[page] as! SubredditLinkViewController
+        vc.viewWillAppear(true)
         SubredditsViewController.current = vc.sub
         self.tintColor = ColorUtil.getColorForSub(sub: SubredditsViewController.current)
         self.menuNav?.setSubreddit(subreddit: SubredditsViewController.current)

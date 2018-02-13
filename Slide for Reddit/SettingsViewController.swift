@@ -26,25 +26,6 @@ class SettingsViewController: UITableViewController {
     var multiColumnCell: UITableViewCell = UITableViewCell()
     var multiColumn = UISwitch()
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        if(navigationController != nil){
-            let close = UIButton.init(type: .custom)
-            close.setImage(UIImage.init(named: "close")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
-            close.addTarget(self, action: #selector(self.close(_:)), for: UIControlEvents.touchUpInside)
-            close.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-            let closeB = UIBarButtonItem.init(customView: close)
-            self.navigationItem.rightBarButtonItem = closeB
-        }
-
-        // Do any additional setup after loading the view.
-    }
-    
-    func close(_ sender: AnyObject){
-        self.dismiss(animated: true, completion: nil)
-    }
-
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.

@@ -132,17 +132,17 @@ class ShadowboxLinkViewController: UIViewController, UIScrollViewDelegate, UIGes
         inner.addSubview(scrollView)
 
         var text = CachedTitle.getTitle(submission: submission!, full: true, false, true)
-        var estHeight = text.boundingRect(with: CGSize.init(width: self.view.frame.size.width - 20, height:10000), options: [.usesLineFragmentOrigin , .usesFontLeading], context: nil).height
-        textB = TTTAttributedLabel.init(frame: CGRect.init(x: 10, y: self.view.frame.size.height - estHeight - 60, width: self.view.frame.size.width - 68, height: estHeight + 20))
+        var estHeight = text.boundingRect(with: CGSize.init(width: self.view.frame.size.width - 30, height:10000), options: [.usesLineFragmentOrigin , .usesFontLeading], context: nil).height
+        textB = TTTAttributedLabel.init(frame: CGRect.init(x: 20, y: self.view.frame.size.height - estHeight - 30, width: self.view.frame.size.width - 30, height: estHeight + 20))
         textB.numberOfLines = 0
         textB.setText(text)
         
         textB.isUserInteractionEnabled = true
-        inner.addSubview(textB)
         startDisplay()
-        baseView = inner.withPadding(padding: UIEdgeInsetsMake(48, 24, 0, 24))
+        baseView = inner.withPadding(padding: UIEdgeInsetsMake(24, 16, estHeight + 10, 24))
         
         view.addSubview(baseView)
+        view.addSubview(textB)
         
         view.layoutIfNeeded()
 

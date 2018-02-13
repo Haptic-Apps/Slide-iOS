@@ -25,7 +25,6 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
     let maxHeaderHeight: CGFloat = 120;
     let minHeaderHeight: CGFloat = 56;
 
-
     func openComments(id: String) {
         var index = 0
         for s in links {
@@ -1396,6 +1395,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
                                 }
                                 self.refreshControl.endRefreshing()
                                 self.indicator.stopAnimating()
+                                self.tableView.reloadSections(IndexSet(integersIn: 0...0))
                                 self.loading = false
                                 self.nomore = true
 
@@ -1460,14 +1460,16 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
                                 paths.append(IndexPath.init(item: i, section: 0))
                             }
                             print("Size is \(self.links.count) and before is \(before)")
+
                             if (before == 0) {
+                                self.flowLayout.reset()
                                 self.tableView.contentOffset = CGPoint.init(x: 0, y: -60)
                                 self.tableView.reloadData()
                             } else {
                                 self.tableView.insertItems(at: paths)
+                                self.flowLayout.reset()
                             }
 
-                            self.flowLayout.reset()
                             self.refreshControl.endRefreshing()
                             self.indicator.stopAnimating()
                             self.loading = false
@@ -1480,6 +1482,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
 
         }
     }
+
 
     func preloadImages(_ values: [RSubmission]) {
         var urls: [URL] = []
@@ -1569,6 +1572,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         }
 
     }
+
 }
 
 extension UIViewController {

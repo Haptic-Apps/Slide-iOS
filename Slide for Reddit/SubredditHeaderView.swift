@@ -294,7 +294,6 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
     }
 
     func textView(_ textView: UZTextView, didClickLinkAttribute value: Any?) {
-        print("Clicked")
         if ((parentController) != nil) {
             if let attr = value as? [String: Any] {
                 if let url = attr[NSLinkAttributeName] as? URL {
