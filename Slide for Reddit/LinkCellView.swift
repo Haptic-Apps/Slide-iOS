@@ -29,6 +29,7 @@ protocol LinkCellViewDelegate: class {
     func reply(_ cell: LinkCellView)
     func hide(_ cell: LinkCellView)
     func openComments(id: String)
+    func deleteSelf(_ cell: LinkCellView)
 }
 
 enum CurrentType {
@@ -1296,14 +1297,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             }))
         }
 
-        alertController.addAction(Action(ActionData(title: "Flair submission", image: UIImage(named: "edit")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
-            //todo this
+        alertController.addAction(Action(ActionData(title: "Flair submission", image: UIImage(named: "size")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+            self.flairSelf()
 
         }))
 
 
         alertController.addAction(Action(ActionData(title: "Delete submission", image: UIImage(named: "delete")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
-            self.deleteSelf()
+            self.deleteSelf(self)
         }))
 
         alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
@@ -1325,11 +1326,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         //todo new implementation
     }
 
-    func deleteSelf() {
+    func deleteSelf(_ cell: LinkCellView) {
         let alertController: BottomSheetActionController = BottomSheetActionController()
         alertController.headerData = "Really delete your submission?"
 
         alertController.addAction(Action(ActionData(title: "Yes", image: UIImage(named: "delete")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+            if let delegate = self.del {
+                delegate.deleteSelf(self)
+            }
         }))
 
         alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
@@ -1337,6 +1341,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
 
         VCPresenter.presentAlert(alertController, parentVC: parentViewController!)
+
+    }
+
+    func flairSelf(){
+        //todo this
 
     }
 

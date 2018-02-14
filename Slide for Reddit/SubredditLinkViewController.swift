@@ -1386,6 +1386,22 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         load(reset: true)
     }
 
+    func deleteSelf(_ cell: LinkCellView){
+        do {
+            try session?.deleteCommentOrLink(cell.link!.getId(), completion: { (stream) in
+                DispatchQueue.main.async{
+                    if(self.navigationController!.modalPresentationStyle == .formSheet){
+                        self.navigationController!.dismiss(animated: true)
+                    } else {
+                        self.navigationController!.popViewController(animated: true)
+                    }
+                }
+            })
+        } catch {
+
+        }
+    }
+
     var savedIndex: IndexPath?
     var realmListing: RListing?
 

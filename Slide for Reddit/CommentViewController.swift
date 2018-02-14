@@ -206,6 +206,22 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
     }
 
+    func deleteSelf(_ cell: LinkCellView){
+        do {
+            try session?.deleteCommentOrLink(cell.link!.getId(), completion: { (steam) in
+                DispatchQueue.main.async{
+                    if(self.navigationController!.modalPresentationStyle == .formSheet){
+                        self.navigationController!.dismiss(animated: true)
+                    } else {
+                        self.navigationController!.popViewController(animated: true)
+                    }
+                }
+            })
+        } catch {
+
+        }
+    }
+
 
     func downvote(_ cell: LinkCellView) {
         do {

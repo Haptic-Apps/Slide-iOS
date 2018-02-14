@@ -186,6 +186,12 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
                         for trophy in trophies {
                             let b = self.generateButtons(trophy: trophy)
                             b.frame = CGRect.init(x: i * 75, y: 0, width: 70, height: 70)
+                            b.addTapGestureRecognizer(action: {
+                                if(trophy.url != nil){
+                                    self.dismiss(animated: true)
+                                    VCPresenter.showVC(viewController: WebsiteViewController(url: trophy.url!, subreddit: ""), popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
+                                }
+                            })
                             scrollView.addSubview(b)
                             i += 1
                         }
