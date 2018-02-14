@@ -40,10 +40,10 @@ public enum UserModPermission: String {
  User object
  */
 public struct User {
-    let date: TimeInterval
-    let modPermissions: [UserModPermission]
-    let name: String
-    let id: String
+    public let date: TimeInterval
+    public let modPermissions: [UserModPermission]
+    public let name: String
+    public let id: String
     
     public init(date: Double, permissions: [String]?, name: String, id: String) {
         self.date = date

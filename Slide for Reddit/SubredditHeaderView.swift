@@ -9,6 +9,7 @@
 import UIKit
 import reddift
 import UZTextView
+import MaterialComponents.MaterialSnackbar
 
 class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewingDelegate {
 
@@ -24,6 +25,67 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
     var wiki = UITableViewCell()
     var sorting = UITableViewCell()
     var mods = UITableViewCell()
+
+
+    func mods(_ sender: AnyObject){
+        var list: [User] = []
+        do {
+            try (UIApplication.shared.delegate as! AppDelegate).session?.about(subreddit!, aboutWhere: SubredditAbout.moderators, completion: { (result) in
+                switch result {
+                case .failure(let error):
+                    DispatchQueue.main.async{
+                        let message = MDCSnackbarMessage()
+                        message.text = "No subreddit moderators found"
+                        MDCSnackbarManager.show(message)
+                    }
+                    break
+                case .success(let users):
+                    list.append(contentsOf: users)
+                    DispatchQueue.main.async{
+                        let sheet = UIAlertController(title: "/r/\(self.subreddit!.displayName) mods", message: nil, preferredStyle: .actionSheet)
+                        sheet.addAction(
+                                UIAlertAction(title: "Close", style: .cancel) { (action) in
+                                    sheet.dismiss(animated: true, completion: nil)
+                                }
+                        )
+                        sheet.addAction(
+                                UIAlertAction(title: "Message /r/\(self.subreddit!.displayName) moderators", style: .default) { (action) in
+                                    sheet.dismiss(animated: true, completion: nil)
+                                    //todo this
+                                }
+                        )
+
+                        for user in users {
+                            let somethingAction =  UIAlertAction(title: "/u/\(user.name)", style: .default) { (action) in
+                                sheet.dismiss(animated: true, completion: nil)
+                                VCPresenter.showVC(viewController: ProfileViewController.init(name: user.name), popupIfPossible: false, parentNavigationController: self.parentController?.navigationController, parentViewController: self.parentController)
+                            }
+
+                            let color = ColorUtil.getColorForUser(name: user.name)
+                            if (color != ColorUtil.baseColor) {
+                                somethingAction.setValue(color, forKey: "titleTextColor")
+
+                            }
+                            sheet.addAction(somethingAction)
+                        }
+                        self.parentController?.present(sheet, animated: true)
+                    }
+                    break
+                }
+            })
+        } catch {
+        }
+    }
+
+    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+
+        let pointForTargetViewmore: CGPoint = mods.convert(point, from: self)
+        if mods.bounds.contains(pointForTargetViewmore) {
+            return mods
+        }
+
+        return super.hitTest(point, with: event)
+    }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -53,7 +115,7 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
         self.wiki.accessoryType = .none
         self.wiki.backgroundColor = ColorUtil.foregroundColor
         self.wiki.textLabel?.textColor = ColorUtil.fontColor
-        self.wiki.imageView?.image = UIImage.init(named: "ic_book_white_48dp")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
+        self.wiki.imageView?.image = UIImage.init(named: "wiki")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
         self.wiki.imageView?.tintColor = ColorUtil.fontColor
 
         self.sorting.textLabel?.text = "Default subreddit sorting"
@@ -67,7 +129,7 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
         self.mods.accessoryType = .none
         self.mods.backgroundColor = ColorUtil.foregroundColor
         self.mods.textLabel?.textColor = ColorUtil.fontColor
-        self.mods.imageView?.image = UIImage.init(named: "ic_security_white_48dp")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
+        self.mods.imageView?.image = UIImage.init(named: "mod")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
         self.mods.imageView?.tintColor = ColorUtil.fontColor
 
         self.desc = UZTextView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
@@ -91,20 +153,6 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
         here.textColor = UIColor.white
 
         self.back = UIImageView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
-
-
-        let aTap = UITapGestureRecognizer(target: self, action: #selector(self.subscribe(_:)))
-        subscribe.addGestureRecognizer(aTap)
-        subscribe.isUserInteractionEnabled = true
-
-        let pTap = UITapGestureRecognizer(target: self, action: #selector(self.theme(_:)))
-        theme.addGestureRecognizer(pTap)
-        theme.isUserInteractionEnabled = true
-
-        let sTap = UITapGestureRecognizer(target: self, action: #selector(self.submit(_:)))
-        submit.addGestureRecognizer(sTap)
-        submit.isUserInteractionEnabled = true
-
 
         theme.translatesAutoresizingMaskIntoConstraints = false
         submit.translatesAutoresizingMaskIntoConstraints = false
@@ -132,6 +180,9 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
 
         self.clipsToBounds = true
         updateConstraints()
+        let pTap = UITapGestureRecognizer(target: self, action: #selector(self.mods(_:)))
+        mods.addGestureRecognizer(pTap)
+        mods.isUserInteractionEnabled = true
 
     }
 
@@ -154,6 +205,7 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
 
     }
 
+
     var content: CellContent?
     var textHeight: CGFloat = 0
     var descHeight: CGFloat = 0
@@ -162,6 +214,7 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
 
     func setSubreddit(subreddit: Subreddit, parent: MediaViewController, _ width: CGFloat) {
         self.subreddit = subreddit
+        self.width = width
         self.parentController = parent
         back.backgroundColor = ColorUtil.getColorForSub(sub: subreddit.displayName)
         subscribers.text = "\(subreddit.subscribers) subscribers"
@@ -201,11 +254,12 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
     var subreddit: Subreddit?
     var constraintBack: [NSLayoutConstraint] = []
     var constraintMain: [NSLayoutConstraint] = []
+    var width : CGFloat = 0
 
     override func updateConstraints() {
         super.updateConstraints()
 
-        let metrics = ["topMargin": 0, "bh": CGFloat(130 + textHeight), "dh": descHeight, "b": textHeight + 30]
+        let metrics = ["topMargin": 0, "bh": CGFloat(130 + textHeight), "dh": descHeight, "b": textHeight + 30, "w":width]
         let views = ["theme": theme, "submit": submit, "subscribe": subscribe, "mods":mods,"back": back, "sort":sorting, "wiki":wiki, "desc":desc, "info": info, "subscribers": subscribers, "here": here] as [String: Any]
 
 
@@ -237,7 +291,7 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
         removeConstraints(constraintMain)
         constraintMain = []
 
-        constraintMain.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(0)-[back]-(0)-|",
+        constraintMain.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(0)-[back(w)]-(0)-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
@@ -289,6 +343,7 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
     func getEstHeight() -> CGFloat {
         return CGFloat(60 + textHeight) + ((contentInfo == nil) ? 0 : descHeight) + (50 * 7)
     }
+
 
     func textView(_ textView: UZTextView, didLongTapLinkAttribute value: Any?) {
         if let attr = value as? [String: Any] {
@@ -406,3 +461,47 @@ extension UIImage {
     }
 }
 
+
+//https://medium.com/@sdrzn/adding-gesture-recognizers-with-closures-instead-of-selectors-9fb3e09a8f0b
+extension UIView {
+
+    // In order to create computed properties for extensions, we need a key to
+    // store and access the stored property
+    fileprivate struct AssociatedObjectKeys {
+        static var tapGestureRecognizer = "MediaViewerAssociatedObjectKey_mediaViewer"
+    }
+
+    fileprivate typealias Action = (() -> Void)?
+
+    // Set our computed property type to a closure
+    fileprivate var tapGestureRecognizerAction: Action? {
+        set {
+            if let newValue = newValue {
+                // Computed properties get stored as associated objects
+                objc_setAssociatedObject(self, &AssociatedObjectKeys.tapGestureRecognizer, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+            }
+        }
+        get {
+            let tapGestureRecognizerActionInstance = objc_getAssociatedObject(self, &AssociatedObjectKeys.tapGestureRecognizer) as? Action
+            return tapGestureRecognizerActionInstance
+        }
+    }
+
+    // This is the meat of the sauce, here we create the tap gesture recognizer and
+    // store the closure the user passed to us in the associated object we declared above
+    public func addTapGestureRecognizer(action: (() -> Void)?) {
+        self.isUserInteractionEnabled = true
+        self.tapGestureRecognizerAction = action
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture))
+        self.addGestureRecognizer(tapGestureRecognizer)
+    }
+
+    // Every time the user taps on the UIImageView, this function gets called,
+    // which triggers the closure we stored
+    @objc fileprivate func handleTapGesture(sender: UITapGestureRecognizer) {
+        if let action = self.tapGestureRecognizerAction {
+            action?()
+        }
+    }
+
+}

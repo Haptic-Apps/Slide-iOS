@@ -10,9 +10,10 @@ import UIKit
 import reddift
 import SDWebImage
 import SideMenu
+import MaterialComponents.MaterialSnackbar
 
-class SubSidebarViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource {
-    weak var tableView: UITableView!
+class SubSidebarViewController: MediaViewController, UIGestureRecognizerDelegate {
+    weak var scrollView: UIScrollView!
     var subreddit: Subreddit?
     var filteredContent: [String] = []
     var parentController: MediaViewController?
@@ -25,6 +26,13 @@ class SubSidebarViewController: MediaViewController, UITableViewDelegate, UITabl
 
     func doSubreddit(sub: Subreddit, _ width: CGFloat) {
         header.setSubreddit(subreddit: sub, parent: self, width)
+
+        header.frame.size.height = header.getEstHeight()
+        header.frame.size.width = width
+        scrollView.contentSize = header.frame.size
+        scrollView.addSubview(header)
+
+        header.isUserInteractionEnabled  = true
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -41,75 +49,37 @@ class SubSidebarViewController: MediaViewController, UITableViewDelegate, UITabl
         let barButton = UIBarButtonItem.init(customView: button)
 
         navigationItem.leftBarButtonItems = [barButton]
+        navigationController?.navigationBar.isTranslucent = false
         title = subreddit!.displayName
         color = ColorUtil.getColorForSub(sub: subreddit!.displayName)
 
         setNavColors()
 
-        self.view = UITableView(frame: CGRect.zero, style: .plain)
-        self.tableView = self.view as! UITableView
-        self.tableView.delegate = self
-        self.tableView.dataSource = self
+        self.view = UIScrollView(frame: CGRect.zero)
+        self.scrollView = self.view as! UIScrollView
 
-        tableView.backgroundColor = ColorUtil.backgroundColor
-        tableView.separatorColor = ColorUtil.backgroundColor
-        tableView.separatorInset = .zero
+        scrollView.backgroundColor = ColorUtil.backgroundColor
     }
 
     func close(_ sender: AnyObject){
         self.dismiss(animated: true)
     }
 
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableViewAutomaticDimension
-    }
-
-    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableViewAutomaticDimension
-    }
-
     var header: SubredditHeaderView = SubredditHeaderView()
-
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.estimatedRowHeight = 400.0
-        tableView.rowHeight = UITableViewAutomaticDimension
-
-        self.doSubreddit(sub: subreddit!, tableView.frame.size.width)
-        header.frame.size.height = header.getEstHeight()
-
-        print(header.frame.size.height)
-
-        print("Estimated height is \(header.getEstHeight())")
-
-        tableView.tableHeaderView = header
-        tableView.tableHeaderView!.frame.size = CGSize.init(width: self.tableView.frame.size.width, height: header.getEstHeight())
-
-        print("Height 2 is \(header.frame.size.height)")
 
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        self.tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "sub")
-        super.viewWillAppear(animated)
-    }
+    var loaded = false
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
-    func reloadData() {
-        tableView.reloadData()
-    }
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 0
-    }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return UITableViewCell()
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        if(!loaded) {
+            loaded = true
+            self.doSubreddit(sub: subreddit!, scrollView.frame.size.width)
+        }
     }
 
 }

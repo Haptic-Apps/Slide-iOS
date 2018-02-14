@@ -59,6 +59,12 @@ PODS:
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
     - MDFInternationalization
+  - MaterialComponents/TextFields (44.6.0):
+    - MaterialComponents/AnimationTiming
+    - MaterialComponents/Palettes
+    - MaterialComponents/private/Math
+    - MaterialComponents/Typography
+    - MDFInternationalization
   - MaterialComponents/Typography (44.6.0):
     - MaterialComponents/private/Application
   - MDFInternationalization (1.0.4)
@@ -103,6 +109,7 @@ DEPENDENCIES:
   - MaterialComponents/ShadowElevations
   - MaterialComponents/Snackbar
   - MaterialComponents/Tabs
+  - MaterialComponents/TextFields
   - MKColorPicker
   - RealmSwift
   - reddift (from `https://github.com/ccrama/reddift`)
@@ -135,7 +142,7 @@ CHECKOUT OPTIONS:
     :commit: e9b6c2ca937135335e9b5252a7792c94ce1497d4
     :git: https://github.com/lbrndnr/ImagePickerSheetController
   reddift:
-    :commit: 91da20cfc98f2a28e533ebda37c81bb1aef08991
+    :commit: 44c58a49f0f50e74bea463f1f0585a84bb785d08
     :git: https://github.com/ccrama/reddift
   SloppySwiper:
     :commit: 90e1566555734d08a4c72619595f5a2157c104b3
@@ -167,6 +174,6 @@ SPEC CHECKSUMS:
   UZTextView: d8d45a8459b0de6f2c393458a05c65352f89e00a
   XLActionController: 7e88fece1799e61357cb00b1cc67104d66ec4d2c
 
-PODFILE CHECKSUM: 3532b28b5030f5f0aa7e888c321ea30036696b96
+PODFILE CHECKSUM: 4ba5cbbe1dd68d8d3b7bd0eeb205e938ae122be3
 
 COCOAPODS: 1.4.0

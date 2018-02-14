@@ -14,7 +14,7 @@ pod 'MaterialComponents/Buttons'
 pod 'MaterialComponents/Dialogs'
 pod 'MaterialComponents/Ink'
 pod 'MaterialComponents/Palettes'
-
+pod 'MaterialComponents/TextFields'
 pod 'MaterialComponents/ProgressView'
 pod "MKColorPicker"
   pod 'XLActionController'

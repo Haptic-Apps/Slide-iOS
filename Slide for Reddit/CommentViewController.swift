@@ -1606,36 +1606,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
 
 
-    func edit(comment: RComment, index: Int) {
-        let reply = ReplyViewController.init(thing: comment, sub: (self.submission?.subreddit)!, editing: true) { (cr) in
-            DispatchQueue.main.async(execute: { () -> Void in
-
-                var realPosition = 0
-                let id = comment.getIdentifier()
-                for c in self.comments {
-                    if (id == c) {
-                        break
-                    }
-                    realPosition += 1
-                }
-                let comment = RealmDataWrapper.commentToRComment(comment: cr!, depth: 0)
-                self.dataArray.remove(at: index)
-                self.dataArray.insert(comment.getIdentifier(), at: index)
-                self.comments.remove(at: realPosition)
-                self.comments.insert(comment.getIdentifier(), at: realPosition)
-                self.content[comment.getIdentifier()] = comment
-                self.updateStringsSingle([comment])
-                self.doArrays()
-                self.tableView.reloadData()
-            })
-        }
-
-        //todo redo all of this
-        let navEditorViewController: UINavigationController = UINavigationController(rootViewController: reply)
-        self.present(navEditorViewController, animated: true, completion: nil)
-    }
-
-
     func moreComment(_ cell: CommentDepthCell) {
         cell.more(self)
     }

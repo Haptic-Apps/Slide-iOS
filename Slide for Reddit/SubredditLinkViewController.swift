@@ -383,6 +383,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
     }
 
     func report(_ thing: Object) {
+
         let alert = UIAlertController(title: "Report this content", message: "Enter a reason (not required)", preferredStyle: .alert)
 
         alert.addTextField { (textField) in
@@ -1072,6 +1073,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
     }
 
     func showMore(_ sender: AnyObject, parentVC: SubredditsViewController? = nil) {
+
         let actionSheetController: UIAlertController = UIAlertController(title: "", message: "", preferredStyle: .actionSheet)
 
         var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
@@ -1144,6 +1146,11 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
 
 
         self.present(actionSheetController, animated: true, completion: nil)
+
+      //  let nav = TapBehindModalViewController.init(rootViewController: ReplyViewController.init.init(parent: self))
+       // nav.modalPresentationStyle = .pageSheet
+      //  self.present(nav, animated: true, completion:{})
+
     }
 
     func galleryMode() {
