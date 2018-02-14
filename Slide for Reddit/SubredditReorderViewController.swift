@@ -24,27 +24,40 @@ class SubredditReorderViewController: UITableViewController {
         tableView.reloadData()
         
         let sync = UIButton.init(type: .custom)
-        sync.setImage(UIImage.init(named: "sync"), for: UIControlState.normal)
+        sync.setImage(UIImage.init(named: "sync")!.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
         sync.addTarget(self, action: #selector(self.sync(_:)), for: UIControlEvents.touchUpInside)
         sync.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let syncB = UIBarButtonItem.init(customView: sync)
         
         let top = UIButton.init(type: .custom)
-        top.setImage(UIImage.init(named: "upvote"), for: UIControlState.normal)
+        top.setImage(UIImage.init(named: "upvote")!.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
         top.addTarget(self, action: #selector(self.top(_:)), for: UIControlEvents.touchUpInside)
         top.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let topB = UIBarButtonItem.init(customView: top)
         
         delete = UIButton.init(type: .custom)
-        delete.setImage(UIImage.init(named: "delete"), for: UIControlState.normal)
+        delete.setImage(UIImage.init(named: "delete")!.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
         delete.addTarget(self, action: #selector(self.remove(_:)), for: UIControlEvents.touchUpInside)
         delete.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let deleteB = UIBarButtonItem.init(customView: delete)
         
         editItems = [deleteB, topB]
         normalItems = [syncB]
+
+        let button = UIButtonWithContext.init(type: .custom)
+        button.imageView?.contentMode = UIViewContentMode.scaleAspectFit
+        button.setImage(UIImage.init(named: "back")!.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
+        button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        button.addTarget(self, action: #selector(self.close(_:)), for: .touchUpInside)
+
+        let barButton = UIBarButtonItem.init(customView: button)
+        navigationItem.leftBarButtonItem = barButton
         
         self.navigationItem.rightBarButtonItems = normalItems
+    }
+
+    func close(_ sender: AnyObject?){
+        self.dismiss(animated: true)
     }
     
     var delete = UIButton()

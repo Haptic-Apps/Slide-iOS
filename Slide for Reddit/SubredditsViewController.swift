@@ -9,6 +9,7 @@
 
 import UIKit
 import reddift
+import MaterialComponents
 import MaterialComponents.MaterialSnackbar
 import SideMenu
 
@@ -118,7 +119,7 @@ class SubredditsViewController:  ColorMuxPagingViewController, UIPageViewControl
                                completion: nil)
             self.doCurrentPage(index!)
 
-
+            navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: self.currentTitle)
         } else {
             show(RedditLink.getViewControllerForURL(urlS: URL.init(string: "/r/" + subreddit)!), sender: self)
         }
@@ -219,7 +220,7 @@ class SubredditsViewController:  ColorMuxPagingViewController, UIPageViewControl
         tabBar = MDCTabBar.init(frame: CGRect.init(x: 0, y: self.view.frame.size.height - 45, width: self.view.frame.size.width, height: 45))
         tabBar.backgroundColor = ColorUtil.foregroundColor
         tabBar.itemAppearance = .titles
-        
+
         tabBar.selectedItemTintColor = ColorUtil.fontColor
         tabBar.unselectedItemTintColor = ColorUtil.fontColor.withAlphaComponent(0.45)
         // 2
@@ -357,6 +358,7 @@ class SubredditsViewController:  ColorMuxPagingViewController, UIPageViewControl
         if(!selected){
             let page = SubredditsViewController.vCs.index(of: self.viewControllers!.first!)
             if(!tabBar.items.isEmpty ) {
+
                 tabBar.setSelectedItem(tabBar.items[page!], animated: true)
             }
         } else {
@@ -436,8 +438,8 @@ class SubredditsViewController:  ColorMuxPagingViewController, UIPageViewControl
             self.splitViewController?.preferredPrimaryColumnWidthFraction = 1
         }
         
-        if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad){
-        self.splitViewController?.showDetailViewController(PlaceholderViewController(), sender: nil)
+        if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad && UIApplication.shared.statusBarOrientation != .portrait){
+            self.splitViewController?.showDetailViewController(PlaceholderViewController(), sender: nil)
         }
         
         if(SubredditsViewController.vCs.count == 0){
@@ -595,7 +597,8 @@ extension SubredditsViewController: MDCTabBarDelegate {
                            animated: false,
                            completion: nil)
         self.doCurrentPage(tabBar.items.index(of: item)!)
+        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: self.currentTitle)
+
     }
-    
 }
 

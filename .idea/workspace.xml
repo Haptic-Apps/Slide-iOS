@@ -3,11 +3,14 @@
   <component name="ChangeListManager">
     <list default="true" id="4e152e64-2f09-48b9-9864-06428fccec3c" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/Slide for Reddit/InboxViewController.swift" afterPath="$PROJECT_DIR$/Slide for Reddit/InboxViewController.swift" />
-      <change beforePath="$PROJECT_DIR$/Slide for Reddit/MessageCellView.swift" afterPath="$PROJECT_DIR$/Slide for Reddit/MessageCellView.swift" />
-      <change beforePath="$PROJECT_DIR$/Slide for Reddit/ProfileViewController.swift" afterPath="$PROJECT_DIR$/Slide for Reddit/ProfileViewController.swift" />
-      <change beforePath="$PROJECT_DIR$/Slide for Reddit/ReplyViewController.swift" afterPath="$PROJECT_DIR$/Slide for Reddit/ReplyViewController.swift" />
-      <change beforePath="$PROJECT_DIR$/Slide for Reddit/SubredditLinkViewController.swift" afterPath="$PROJECT_DIR$/Slide for Reddit/SubredditLinkViewController.swift" />
+      <change beforePath="$PROJECT_DIR$/Slide for Reddit/BannerLinkCellView.swift" afterPath="$PROJECT_DIR$/Slide for Reddit/BannerLinkCellView.swift" />
+      <change beforePath="$PROJECT_DIR$/Slide for Reddit/ColorUtil.swift" afterPath="$PROJECT_DIR$/Slide for Reddit/ColorUtil.swift" />
+      <change beforePath="$PROJECT_DIR$/Slide for Reddit/CommentDepthCell.swift" afterPath="$PROJECT_DIR$/Slide for Reddit/CommentDepthCell.swift" />
+      <change beforePath="$PROJECT_DIR$/Slide for Reddit/LinkCellView.swift" afterPath="$PROJECT_DIR$/Slide for Reddit/LinkCellView.swift" />
+      <change beforePath="$PROJECT_DIR$/Slide for Reddit/SettingValues.swift" afterPath="$PROJECT_DIR$/Slide for Reddit/SettingValues.swift" />
+      <change beforePath="$PROJECT_DIR$/Slide for Reddit/SettingsLayout.swift" afterPath="$PROJECT_DIR$/Slide for Reddit/SettingsLayout.swift" />
+      <change beforePath="$PROJECT_DIR$/Slide for Reddit/SubredditReorderViewController.swift" afterPath="$PROJECT_DIR$/Slide for Reddit/SubredditReorderViewController.swift" />
+      <change beforePath="$PROJECT_DIR$/Slide for Reddit/SubredditsViewController.swift" afterPath="$PROJECT_DIR$/Slide for Reddit/SubredditsViewController.swift" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -22,83 +25,103 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="iphoneos_b4f2266089219190fedc1e40334b9efd8b9b10f5" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="Sidebar.swift" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Slide for Reddit/Sidebar.swift">
+      <file leaf-file-name="LinkCellView.swift" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Slide for Reddit/LinkCellView.swift">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="63">
-              <caret line="122" column="50" lean-forward="false" selection-start-line="122" selection-start-column="50" selection-end-line="122" selection-end-column="50" />
+            <state relative-caret-position="177">
+              <caret line="208" column="9" lean-forward="false" selection-start-line="208" selection-start-column="9" selection-end-line="208" selection-end-column="9" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SubSidebarViewController.swift" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Slide for Reddit/SubSidebarViewController.swift">
+      <file leaf-file-name="BannerLinkCellView.swift" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Slide for Reddit/BannerLinkCellView.swift">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="387">
-              <caret line="53" column="6" lean-forward="false" selection-start-line="53" selection-start-column="6" selection-end-line="53" selection-end-column="6" />
+            <state relative-caret-position="113">
+              <caret line="128" column="30" lean-forward="true" selection-start-line="128" selection-start-column="30" selection-end-line="128" selection-end-column="30" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="InboxViewController.swift" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Slide for Reddit/InboxViewController.swift">
+      <file leaf-file-name="SettingsLayout.swift" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Slide for Reddit/SettingsLayout.swift">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="158">
-              <caret line="59" column="139" lean-forward="false" selection-start-line="59" selection-start-column="139" selection-end-line="59" selection-end-column="139" />
+            <state relative-caret-position="364">
+              <caret line="411" column="24" lean-forward="false" selection-start-line="411" selection-start-column="24" selection-end-line="411" selection-end-column="24" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MessageCellView.swift" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Slide for Reddit/MessageCellView.swift">
+      <file leaf-file-name="SettingValues.swift" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Slide for Reddit/SettingValues.swift">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="127">
-              <caret line="450" column="34" lean-forward="false" selection-start-line="450" selection-start-column="28" selection-end-line="450" selection-end-column="34" />
+            <state relative-caret-position="222">
+              <caret line="150" column="85" lean-forward="false" selection-start-line="150" selection-start-column="85" selection-end-line="150" selection-end-column="85" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ReplyViewController.swift" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Slide for Reddit/ReplyViewController.swift">
+      <file leaf-file-name="VCPresenter.swift" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Slide for Reddit/VCPresenter.swift">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="481">
-              <caret line="174" column="34" lean-forward="false" selection-start-line="174" selection-start-column="34" selection-end-line="174" selection-end-column="34" />
+            <state relative-caret-position="361">
+              <caret line="47" column="68" lean-forward="false" selection-start-line="40" selection-start-column="12" selection-end-line="47" selection-end-column="68" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SubredditReorderViewController.swift" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Slide for Reddit/SubredditReorderViewController.swift">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="311">
+              <caret line="58" column="17" lean-forward="false" selection-start-line="58" selection-start-column="17" selection-end-line="58" selection-end-column="17" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="CommentDepthCell.swift" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Slide for Reddit/CommentDepthCell.swift">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="290">
+              <caret line="94" column="36" lean-forward="false" selection-start-line="94" selection-start-column="36" selection-end-line="94" selection-end-column="36" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SubredditsViewController.swift" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Slide for Reddit/SubredditsViewController.swift">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="177">
+              <caret line="487" column="102" lean-forward="false" selection-start-line="487" selection-start-column="102" selection-end-line="487" selection-end-column="102" />
               <folding>
-                <element signature="e#156#168#0" expanded="true" />
+                <element signature="e#163#175#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ProfileViewController.swift" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Slide for Reddit/ProfileViewController.swift">
+      <file leaf-file-name="MDCTabBar.h" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Pods/MaterialComponents/components/Tabs/src/MDCTabBar.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="223">
-              <caret line="283" column="5" lean-forward="false" selection-start-line="283" selection-start-column="5" selection-end-line="283" selection-end-column="5" />
+            <state relative-caret-position="355">
+              <caret line="189" column="25" lean-forward="false" selection-start-line="189" selection-start-column="25" selection-end-line="189" selection-end-column="25" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SubredditLinkViewController.swift" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/Slide for Reddit/SubredditLinkViewController.swift">
+      <file leaf-file-name="MDCTabBar.h" pinned="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/Library/Developer/Xcode/DerivedData/Slide_for_Reddit-cqfauslqymukmrccfdfycgynxrzv/Build/Products/Debug-iphoneos/MaterialComponents/MaterialComponents.framework/Headers/MDCTabBar.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="85">
-              <caret line="1125" column="0" lean-forward="true" selection-start-line="1125" selection-start-column="0" selection-end-line="1125" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Session.swift" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Pods/reddift/reddift/Network/Session.swift">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="84">
-              <caret line="94" column="9" lean-forward="false" selection-start-line="94" selection-start-column="9" selection-end-line="94" selection-end-column="9" />
+            <state relative-caret-position="1097">
+              <caret line="207" column="57" lean-forward="false" selection-start-line="207" selection-start-column="57" selection-end-line="207" selection-end-column="57" />
               <folding />
             </state>
           </provider>
@@ -108,21 +131,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>more.</find>
-      <find>hittest</find>
-      <find>mods</find>
-      <find>&quot;search&quot;</find>
-      <find>header</find>
-      <find>header.mod</find>
-      <find>fontgenerator</find>
-      <find>uitableviewdele</find>
-      <find>enum</find>
-      <find>ReplyViewCOntroller</find>
-      <find>header;</find>
-      <find>swiftyjson</find>
-      <find>submissioncallback</find>
-      <find>private message</find>
-      <find>album</find>
       <find>prepare</find>
       <find>&quot;send&quot;</find>
       <find>base theme</find>
@@ -134,10 +142,25 @@
       <find>jsonany</find>
       <find>jsonANY</find>
       <find>JSONAny</find>
-      <find>overlay</find>
       <find>latMap({(json: JS</find>
-      <find>&quot;</find>
       <find>private</find>
+      <find>&quot;sepia</find>
+      <find>&quot;</find>
+      <find>.pad</find>
+      <find>overlay</find>
+      <find>MDCTab</find>
+      <find>label</find>
+      <find>b</find>
+      <find>&quot;Link</find>
+      <find>islogg</find>
+      <find>&quot;link&quot;</find>
+      <find>tag</find>
+      <find>4,</find>
+      <find>b =</find>
+      <find>doing tag</find>
+      <find>constraints</find>
+      <find>constraint</find>
+      <find>doing</find>
     </findStrings>
     <replaceStrings>
       <replace>-12</replace>
@@ -163,24 +186,19 @@
         <option value="$PROJECT_DIR$/Slide for Reddit/CachedTitle.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/NavigationHeaderView.swift" />
         <option value="$PROJECT_DIR$/Pods/SideMenu/Pod/Classes/SideMenuManager.swift" />
-        <option value="$PROJECT_DIR$/Slide for Reddit/ColorUtil.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/SubredditThemeViewController.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/ColorPicker.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/GMPalette.swift" />
-        <option value="$PROJECT_DIR$/Slide for Reddit/LinkCellView.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/SettingsTheme.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/WrappingFlowLayout.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/TapBehindModalViewController.swift" />
-        <option value="$PROJECT_DIR$/Slide for Reddit/SettingValues.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/SettingsComments.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/RealmDataWrappers.swift" />
-        <option value="$PROJECT_DIR$/Slide for Reddit/CommentDepthCell.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/SwipeDownModalVC.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/PagingCommentViewController.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/ShadowboxViewController.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/ColorMuxPagingViewController.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/ShadowboxLinkViewController.swift" />
-        <option value="$PROJECT_DIR$/Slide for Reddit/SubredditsViewController.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/MediaViewController.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/SettingsViewController.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/VCPresenter.swift" />
@@ -196,6 +214,14 @@
         <option value="$PROJECT_DIR$/Pods/reddift/reddift/Network/Session+links.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/ReplyViewController.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/SubredditLinkViewController.swift" />
+        <option value="$PROJECT_DIR$/Slide for Reddit/ColorUtil.swift" />
+        <option value="$PROJECT_DIR$/Slide for Reddit/SubredditReorderViewController.swift" />
+        <option value="$PROJECT_DIR$/Slide for Reddit/CommentDepthCell.swift" />
+        <option value="$PROJECT_DIR$/Slide for Reddit/SubredditsViewController.swift" />
+        <option value="$PROJECT_DIR$/Slide for Reddit/LinkCellView.swift" />
+        <option value="$PROJECT_DIR$/Slide for Reddit/BannerLinkCellView.swift" />
+        <option value="$PROJECT_DIR$/Slide for Reddit/SettingValues.swift" />
+        <option value="$PROJECT_DIR$/Slide for Reddit/SettingsLayout.swift" />
       </list>
     </option>
   </component>
@@ -270,998 +296,7 @@
             <path>
               <item name="" type="efc3779f:XcodeRootNode" />
               <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="accent" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="accent" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="add" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="add" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="addcircle" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="addcircle" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="back" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="back" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="bold" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="bold" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="close" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="close" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="colors" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="colors" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="comments" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="comments" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="d" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="d" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="data" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="data" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="delete" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="delete" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="down" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="down" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="download" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="download" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="downvote" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="downvote" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="draw" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="draw" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="edit" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="edit" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="filter" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="filter" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="folder" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="folder" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="gold" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="gold" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="grid" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="grid" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="hd" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="hd" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="hide" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="hide" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="ic_more_vert_white" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="ic_more_vert_white" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="ic_sort_white" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="ic_sort_white" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="icon" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="icon" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="image" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="image" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="inbox" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="inbox" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="info" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="info" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="italic" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="italic" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="layout" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="layout" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="link" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="link" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="list" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="list" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="list_number" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="list_number" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="menu" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="menu" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="messages" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="messages" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="mod" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="mod" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="multis" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="multis" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="nav" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="nav" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="night" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="night" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="nsfw" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="nsfw" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="palette" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="palette" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="play" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="play" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="plus" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="plus" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="profile" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="profile" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="reply" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="reply" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="roundicon" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="roundicon" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="save" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="save" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="save-1" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="save-1" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="search" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="search" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="seen" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="seen" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="send" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="send" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="settings" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="settings" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="shadowbox" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="shadowbox" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="size" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="size" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="slogo" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="slogo" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="strikethrough" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="strikethrough" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="subbed" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="subbed" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="subs" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="subs" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="sync" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="sync" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="test" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="test" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="up" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="up" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="upvote" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="upvote" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="user" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="user" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="web" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="web" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="wiki" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="wiki" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="world" type="3ee73667:ImageSetNode" />
-            </path>
-            <path>
-              <item name="" type="efc3779f:XcodeRootNode" />
-              <item name="Slide for Reddit" type="1d218c8b:XcodeProjectNode" />
-              <item name="Slide for Reddit" type="fcab9f18:XcodeViewNode" />
-              <item name="Assets.xcassets" type="fcab9f18:XcodeViewNode" />
-              <item name="world" type="3ee73667:ImageSetNode" />
-              <item name="Universal" type="fda6ba7f:ImageVariantNode" />
+              <item name="Slide for RedditTests" type="fcab9f18:XcodeViewNode" />
             </path>
           </expand>
           <select />
@@ -1347,12 +382,12 @@
       <workItem from="1518501052785" duration="2148000" />
       <workItem from="1518503348790" duration="2819000" />
       <workItem from="1518542792775" duration="12098000" />
-      <workItem from="1518559075767" duration="17244000" />
+      <workItem from="1518559075767" duration="25459000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="109688000" />
+    <option name="totallyTimeSpent" value="117903000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1368,10 +403,10 @@
     <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32914287" sideWeight="0.4978903" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.31070197" sideWeight="0.2959614" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.31070197" sideWeight="0.2561784" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.31070197" sideWeight="0.70403856" order="10" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32911393" sideWeight="0.36347198" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.31070197" sideWeight="0.74382156" order="10" side_tool="true" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32911393" sideWeight="0.31283906" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32914287" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32914287" sideWeight="0.4978903" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -1399,41 +434,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Slide for Reddit/ColorPicker.swift">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="228">
-          <caret line="52" column="4" lean-forward="false" selection-start-line="52" selection-start-column="4" selection-end-line="52" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Slide for Reddit/GMPalette.swift">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-967">
-          <caret line="78" column="16" lean-forward="false" selection-start-line="78" selection-start-column="16" selection-end-line="78" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Pods/MKColorPicker/MKColorPicker/Classes/ColorPickerView.swift">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3360">
-          <caret line="224" column="51" lean-forward="false" selection-start-line="224" selection-start-column="51" selection-end-line="224" selection-end-column="51" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Slide for Reddit/AlbumViewController.swift">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="178">
-          <caret line="58" column="53" lean-forward="false" selection-start-line="58" selection-start-column="53" selection-end-line="58" selection-end-column="53" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Slide for Reddit/SubredditThemeViewController.swift">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="268">
-          <caret line="311" column="35" lean-forward="false" selection-start-line="311" selection-start-column="35" selection-end-line="311" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Slide for Reddit/MediaDisplayViewController.swift">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="178">
@@ -1476,24 +476,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Slide for Reddit/SettingValues.swift">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2190">
-          <caret line="147" column="0" lean-forward="false" selection-start-line="147" selection-start-column="0" selection-end-line="147" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Slide for Reddit/SettingsComments.swift">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="381">
           <caret line="195" column="24" lean-forward="false" selection-start-line="195" selection-start-column="24" selection-end-line="195" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Slide for Reddit/CommentDepthCell.swift">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="347">
-          <caret line="495" column="16" lean-forward="false" selection-start-line="495" selection-start-column="16" selection-end-line="495" selection-end-column="16" />
         </state>
       </provider>
     </entry>
@@ -1534,14 +520,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Slide for Reddit/SubredditsViewController.swift">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4635">
-          <caret line="312" column="31" lean-forward="false" selection-start-line="312" selection-start-column="31" selection-end-line="312" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Slide for Reddit/SettingsViewController.swift">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="207">
@@ -1563,14 +541,6 @@
     <entry file="file://$PROJECT_DIR$/Slide for Reddit/Assets.xcassets/accent.imageset/ic_colorize_white_48pt_3x.png">
       <provider selected="true" editor-type-id="images">
         <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Slide for Reddit/ColorUtil.swift">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="629">
-          <caret line="56" column="27" lean-forward="false" selection-start-line="56" selection-start-column="26" selection-end-line="56" selection-end-column="27" />
-          <folding />
-        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Pods/reddift/reddift/Network/Session+subreddits.swift">
@@ -1617,14 +587,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1365">
           <caret line="92" column="16" lean-forward="false" selection-start-line="92" selection-start-column="8" selection-end-line="92" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Slide for Reddit/LinkCellView.swift">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2640">
-          <caret line="176" column="0" lean-forward="false" selection-start-line="140" selection-start-column="4" selection-end-line="176" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -1703,14 +665,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Slide for Reddit/VCPresenter.swift">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="24" column="0" lean-forward="false" selection-start-line="16" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Slide for Reddit/Sidebar.swift">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="63">
@@ -1764,7 +718,7 @@
         <state relative-caret-position="481">
           <caret line="174" column="34" lean-forward="false" selection-start-line="174" selection-start-column="34" selection-end-line="174" selection-end-column="34" />
           <folding>
-            <element signature="e#156#168#0" expanded="true" />
+            <element signature="e#156#168#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1779,8 +733,98 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Slide for Reddit/SubredditLinkViewController.swift">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="1125" column="0" lean-forward="true" selection-start-line="1125" selection-start-column="0" selection-end-line="1125" selection-end-column="0" />
+        <state relative-caret-position="177">
+          <caret line="1047" column="53" lean-forward="false" selection-start-line="1047" selection-start-column="52" selection-end-line="1047" selection-end-column="53" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Slide for Reddit/ColorUtil.swift">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="497">
+          <caret line="62" column="0" lean-forward="false" selection-start-line="62" selection-start-column="0" selection-end-line="62" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Slide for Reddit/VCPresenter.swift">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="361">
+          <caret line="47" column="68" lean-forward="false" selection-start-line="40" selection-start-column="12" selection-end-line="47" selection-end-column="68" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Pods/MaterialComponents/components/Tabs/src/MDCTabBar.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="355">
+          <caret line="189" column="25" lean-forward="false" selection-start-line="189" selection-start-column="25" selection-end-line="189" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Library/Developer/Xcode/DerivedData/Slide_for_Reddit-cqfauslqymukmrccfdfycgynxrzv/Build/Products/Debug-iphoneos/MaterialComponents/MaterialComponents.framework/Headers/MDCTabBar.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1097">
+          <caret line="207" column="57" lean-forward="false" selection-start-line="207" selection-start-column="57" selection-end-line="207" selection-end-column="57" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Slide for Reddit/SubredditsViewController.swift">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="177">
+          <caret line="487" column="102" lean-forward="false" selection-start-line="487" selection-start-column="102" selection-end-line="487" selection-end-column="102" />
+          <folding>
+            <element signature="e#163#175#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Slide for Reddit/CommentDepthCell.swift">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="290">
+          <caret line="94" column="36" lean-forward="false" selection-start-line="94" selection-start-column="36" selection-end-line="94" selection-end-column="36" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Slide for Reddit/SubredditReorderViewController.swift">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="311">
+          <caret line="58" column="17" lean-forward="false" selection-start-line="58" selection-start-column="17" selection-end-line="58" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Slide for Reddit/LinkCellView.swift">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="177">
+          <caret line="208" column="9" lean-forward="false" selection-start-line="208" selection-start-column="9" selection-end-line="208" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Slide for Reddit/SettingValues.swift">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="222">
+          <caret line="150" column="85" lean-forward="false" selection-start-line="150" selection-start-column="85" selection-end-line="150" selection-end-column="85" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Slide for Reddit/BannerLinkCellView.swift">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="113">
+          <caret line="128" column="30" lean-forward="true" selection-start-line="128" selection-start-column="30" selection-end-line="128" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Slide for Reddit/SettingsLayout.swift">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="364">
+          <caret line="411" column="24" lean-forward="false" selection-start-line="411" selection-start-column="24" selection-end-line="411" selection-end-column="24" />
           <folding />
         </state>
       </provider>

@@ -31,7 +31,7 @@ class BannerLinkCellView: LinkCellView {
         }
 
         let metrics=["horizontalMargin":75,"top":0,"bottom":0,"separationBetweenLabels":0,"size": full ? 16 : 8, "labelMinHeight":75,  "thumb": (SettingValues.largerThumbnail ? 75 : 50), "bannerHeight": submissionHeight] as [String: Int]
-        let views=["label":title, "body": textView, "image": thumbImage, "info": b, "upvote": upvote, "downvote" : downvote, "score": score, "comments": comments, "banner": bannerImage, "buttons":buttons, "box": box] as [String : Any]
+        let views=["label":title, "body": textView, "image": thumbImage, "info": b, "tag" : tagbody, "upvote": upvote, "downvote" : downvote, "score": score, "comments": comments, "banner": bannerImage, "buttons":buttons, "box": box] as [String : Any]
         var bt = "[buttons]-8-"
         var bx = "[box]-8-"
         if(SettingValues.hideButtonActionbar && !full){
@@ -77,15 +77,30 @@ class BannerLinkCellView: LinkCellView {
                                                                                   options: NSLayoutFormatOptions.alignAllLastBaseline,
                                                                                   metrics: metrics,
                                                                                   views: views))
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[banner]-[tag]",
+                        options: NSLayoutFormatOptions.alignAllLastBaseline,
+                        metrics: metrics,
+                        views: views))
+
                 thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[info(45)]-8-[buttons]",
                                                                                   options: NSLayoutFormatOptions(rawValue: 0),
                                                                                   metrics: metrics,
                                                                                   views: views))
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[tag]-11-[buttons]",
+                        options: NSLayoutFormatOptions(rawValue: 0),
+                        metrics: metrics,
+                        views: views))
+
                 thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[info]-8-[box]",
                                                                                   options: NSLayoutFormatOptions(rawValue: 0),
                                                                                   metrics: metrics,
                                                                                   views: views))
-                
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[tag]-13-[box]",
+                        options: NSLayoutFormatOptions(rawValue: 0),
+                        metrics: metrics,
+                        views: views))
+
+
             } else {
                 
                 thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[banner]-8@999-[label]-12@999-\(bx)|",
@@ -96,6 +111,12 @@ class BannerLinkCellView: LinkCellView {
                                                                                   options: NSLayoutFormatOptions(rawValue: 0),
                                                                                   metrics: metrics,
                                                                                   views: views))
+
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[tag]-13@999-[label]",
+                        options: NSLayoutFormatOptions(rawValue: 0),
+                        metrics: metrics,
+                        views: views))
+
             }
             
             thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:\(bt)|",
@@ -115,6 +136,11 @@ class BannerLinkCellView: LinkCellView {
                                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                                               metrics: metrics,
                                                                               views: views))
+            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[tag]-5-|",
+                    options: NSLayoutFormatOptions(rawValue: 0),
+                    metrics: metrics,
+                    views: views))
+
         } else if(target == .text){
             thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[image(0)]",
                                                                               options: NSLayoutFormatOptions(rawValue: 0),

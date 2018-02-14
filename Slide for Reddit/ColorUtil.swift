@@ -29,11 +29,12 @@ extension UIColor {
     }
 }
 
-class ColorUtil{
+class ColorUtil {
     static var theme = Theme.DARK
-    static func doInit(){
-        if let name = UserDefaults.standard.string(forKey: "theme"){
-            if let t = Theme(rawValue: name){
+
+    static func doInit() {
+        if let name = UserDefaults.standard.string(forKey: "theme") {
+            if let t = Theme(rawValue: name) {
                 theme = t
             }
         }
@@ -41,33 +42,34 @@ class ColorUtil{
         backgroundColor = theme.backgroundColor
         fontColor = theme.fontColor
         let color = UserDefaults.standard.colorForKey(key: "basecolor")
-        if(color != nil){
+        if (color != nil) {
             baseColor = color!
         }
         let accent = UserDefaults.standard.colorForKey(key: "accentcolor")
-        if(accent != nil){
+        if (accent != nil) {
             baseAccent = accent!
         }
     }
+
     static var foregroundColor = UIColor.white
     static var backgroundColor = UIColor.white
     static var fontColor = UIColor.black
-    
+
     public static func setBackgroundToolbar(toolbar: UINavigationBar?) {
-        if(toolbar != nil){
-        toolbar?.barTintColor = backgroundColor
+        if (toolbar != nil) {
+            toolbar?.barTintColor = backgroundColor
         }
     }
-    
+
     private static func image(fromLayer layer: CALayer) -> UIImage {
         UIGraphicsBeginImageContext(layer.frame.size)
-        
+
         layer.render(in: UIGraphicsGetCurrentContext()!)
-        
+
         let outputImage = UIGraphicsGetImageFromCurrentImageContext()
-        
+
         UIGraphicsEndImageContext()
-        
+
         return outputImage!
     }
 
@@ -75,20 +77,20 @@ class ColorUtil{
     static var baseAccent = GMColor.cyanA200Color()
     public static var upvoteColor = UIColor.init(hexString: "#FF9800")
     public static var downvoteColor = UIColor.init(hexString: "#2196F3")
-    
+
 
     public static func getColorForSub(sub: String) -> UIColor {
         let color = UserDefaults.standard.colorForKey(key: "color+" + sub)
-        if(color == nil || color == .black){
+        if (color == nil || color == .black) {
             return baseColor
         } else {
             return color!
         }
     }
-    
+
     public static func getColorForSubBackground(sub: String) -> UIColor {
         let color = UserDefaults.standard.colorForKey(key: "color+" + sub)
-        if(color == nil){
+        if (color == nil) {
             return foregroundColor
         } else {
             return color!
@@ -97,65 +99,66 @@ class ColorUtil{
 
     public static func getColorForUser(name: String) -> UIColor {
         let color = UserDefaults.standard.colorForKey(key: "user+" + name)
-        if(color == nil){
+        if (color == nil) {
             return baseColor
         } else {
             return color!
         }
     }
-    
-    public static func setColorForSub(sub: String, color: UIColor){
-        UserDefaults.standard.setColor(color: color , forKey: "color+" + sub)
+
+    public static func setColorForSub(sub: String, color: UIColor) {
+        UserDefaults.standard.setColor(color: color, forKey: "color+" + sub)
         UserDefaults.standard.synchronize()
     }
-    
-    public static func setTagForUser(name: String, tag: String){
+
+    public static func setTagForUser(name: String, tag: String) {
         UserDefaults.standard.set(tag, forKey: "tag+" + name)
         UserDefaults.standard.synchronize()
     }
-    
+
     public static func getTagForUser(name: String) -> String {
         return UserDefaults.standard.string(forKey: "tag+" + name) ?? ""
     }
-    
-    public static func removeTagForUser(name: String){
-        UserDefaults.standard.removeObject( forKey: "tag+" + name)
+
+    public static func removeTagForUser(name: String) {
+        UserDefaults.standard.removeObject(forKey: "tag+" + name)
         UserDefaults.standard.synchronize()
     }
 
 
-    public static func setColorForUser(name: String, color: UIColor){
-        UserDefaults.standard.setColor(color: color , forKey: "user+" + name)
+    public static func setColorForUser(name: String, color: UIColor) {
+        UserDefaults.standard.setColor(color: color, forKey: "user+" + name)
         UserDefaults.standard.synchronize()
     }
 
-    
-    public static func setAccentColorForSub(sub: String, color: UIColor){
-        UserDefaults.standard.setColor(color: color , forKey: "accent+" + sub)
+
+    public static func setAccentColorForSub(sub: String, color: UIColor) {
+        UserDefaults.standard.setColor(color: color, forKey: "accent+" + sub)
         UserDefaults.standard.synchronize()
     }
 
-    
+
     public static func accentColorForSub(sub: String) -> UIColor {
         let color = UserDefaults.standard.colorForKey(key: "accent+" + sub)
-        if(color == nil){
+        if (color == nil) {
             return baseAccent
         } else {
             return color!
         }
     }
 
-    
-    enum Theme: String{
+
+    enum Theme: String {
         case LIGHT = "light"
         case DARK = "dark"
         case BLACK = "black"
         case BLUE = "blue"
         case SEPIA = "sepia"
         case RED = "red"
-        
-        public static var cases: [Theme]{
-            return [.LIGHT, .DARK, .BLACK, .BLUE, .SEPIA, .RED]
+        case DEEP = "deep"
+
+        public static var cases: [Theme] {
+            return [.LIGHT, .DARK, .BLACK, .BLUE, .SEPIA, .RED, .DEEP]
         }
         public var foregroundColor: UIColor {
             switch self {
@@ -163,6 +166,8 @@ class ColorUtil{
                 return UIColor.white
             case .DARK:
                 return UIColor(hexString: "#303030")
+            case .DEEP:
+                return UIColor(hexString: "#1f1e26")
             case .BLUE:
                 return UIColor(hexString: "#37474F")
             case .SEPIA:
@@ -173,11 +178,13 @@ class ColorUtil{
                 return UIColor.black
             }
         }
-        
+
         public var backgroundColor: UIColor {
             switch self {
             case .LIGHT:
                 return UIColor(hexString: "#e5e5e5")
+            case .DEEP:
+                return UIColor(hexString: "#16161C")
             case .DARK:
                 return UIColor(hexString: "#212121")
             case .BLUE:
@@ -190,7 +197,7 @@ class ColorUtil{
                 return UIColor.black
             }
         }
-        
+
         public var fontColor: UIColor {
             switch self {
             case .LIGHT:
@@ -198,6 +205,8 @@ class ColorUtil{
             case .DARK:
                 return UIColor(hexString: "#FFFFFF").withAlphaComponent(0.87)
             case .BLUE:
+                return UIColor(hexString: "#FFFFFF").withAlphaComponent(0.87)
+            case .DEEP:
                 return UIColor(hexString: "#FFFFFF").withAlphaComponent(0.87)
             case .SEPIA:
                 return UIColor(hexString: "#3e3d36").withAlphaComponent(0.87)
@@ -211,8 +220,9 @@ class ColorUtil{
 
     }
 }
+
 extension UserDefaults {
-    
+
     func colorForKey(key: String) -> UIColor? {
         var color: UIColor?
         if let colorData = data(forKey: key) {
@@ -220,7 +230,7 @@ extension UserDefaults {
         }
         return color
     }
-    
+
     func setColor(color: UIColor?, forKey key: String) {
         var colorData: NSData?
         if let color = color {
@@ -228,6 +238,6 @@ extension UserDefaults {
         }
         set(colorData, forKey: key)
     }
-    
+
 }
 

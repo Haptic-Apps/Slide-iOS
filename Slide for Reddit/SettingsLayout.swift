@@ -50,6 +50,10 @@ class SettingsLayout: UITableViewController {
     var selftextCell: UITableViewCell = UITableViewCell()
     var selftext = UISwitch()
 
+    var smalltagCell: UITableViewCell = UITableViewCell()
+    var smalltag = UISwitch()
+
+
     var link = LinkTableViewCell()
 
     override func viewDidLoad() {
@@ -76,6 +80,9 @@ class SettingsLayout: UITableViewController {
         } else if(changed == hideBannerImage){
             SettingValues.bannerHidden = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_bannerHidden)
+        } else if(changed == smalltag){
+            SettingValues.smallerTag = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_smallTag)
         } else if(changed == cardMode){
             if(changed.isOn){
                 SettingValues.postViewMode = .CARD
@@ -244,6 +251,15 @@ class SettingsLayout: UITableViewController {
         centerLeadImageCell.textLabel?.textColor = ColorUtil.fontColor
         centerLeadImageCell.selectionStyle = UITableViewCellSelectionStyle.none
 
+        smalltag = UISwitch()
+        smalltag.isOn = SettingValues.smallerTag
+        smalltag.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+        smalltagCell.textLabel?.text = "Smaller content tag"
+        smalltagCell.accessoryView = smalltag
+        smalltagCell.backgroundColor = ColorUtil.foregroundColor
+        smalltagCell.textLabel?.textColor = ColorUtil.fontColor
+        smalltagCell.selectionStyle = UITableViewCellSelectionStyle.none
+
         hideActionbar = UISwitch()
         hideActionbar.isOn = SettingValues.hideButtonActionbar
         hideActionbar.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
@@ -371,6 +387,7 @@ class SettingsLayout: UITableViewController {
             case 4: return self.largerThumbnailCell
             case 5: return self.leftThumbCell
             case 6: return self.selftextCell
+            case 7: return self.smalltagCell
 
             default: fatalError("Unknown row in section 0")
             }
@@ -392,7 +409,7 @@ class SettingsLayout: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch(section) {
         case 0: return 1
-        case 1: return 7
+        case 1: return 8
         case 2: return 6
         default: fatalError("Unknown number of sections")
         }

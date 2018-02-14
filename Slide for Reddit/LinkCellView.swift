@@ -94,6 +94,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var commenticon = UIImageView()
     var submissionicon = UIImageView()
     var del: LinkCellViewDelegate? = nil
+    var taglabel = UILabel()
 
     var loadedImage: URL?
     var lq = false
@@ -207,6 +208,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var full = false
     var b = UIView()
     var estimatedHeight = CGFloat(0)
+    var tagbody = UIView()
 
     func estimateHeight(_ full: Bool) -> CGFloat {
         if (estimatedHeight == 0) {
@@ -281,6 +283,17 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         comments.font = FontGenerator.fontOfSize(size: 12, submission: true)
         comments.textColor = ColorUtil.fontColor
 
+        self.taglabel = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
+        taglabel.numberOfLines = 1
+        taglabel.font = FontGenerator.boldFontOfSize(size: 12, submission: true)
+        taglabel.textColor = UIColor.black
+
+        tagbody = taglabel.withPadding(padding: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1))
+        tagbody.backgroundColor = UIColor.white
+        tagbody.clipsToBounds = true
+        tagbody.layer.cornerRadius = 4
+
+
         self.info = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
         info.numberOfLines = 2
         info.font = FontGenerator.fontOfSize(size: 12, submission: true)
@@ -309,6 +322,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         reply.translatesAutoresizingMaskIntoConstraints = false
         buttons.translatesAutoresizingMaskIntoConstraints = false
         b.translatesAutoresizingMaskIntoConstraints = false
+        tagbody.translatesAutoresizingMaskIntoConstraints = false
 
         commenticon.translatesAutoresizingMaskIntoConstraints = false
         submissionicon.translatesAutoresizingMaskIntoConstraints = false
@@ -329,6 +343,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         self.contentView.addSubview(title)
         self.contentView.addSubview(textView)
         self.contentView.addSubview(b)
+        self.contentView.addSubview(tagbody)
         box.addSubview(score)
         box.addSubview(comments)
         box.addSubview(commenticon)
@@ -796,9 +811,17 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 text = "Link"
                 break
             }
-            let finalText = NSMutableAttributedString.init(string: text, attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 14, submission: true)])
-            finalText.append(NSAttributedString.init(string: "\n\(submission.domain)"))
-            info.attributedText = finalText
+
+            if(SettingValues.smallerTag && !full){
+                b.isHidden = true
+                tagbody.isHidden = false
+                taglabel.text = " \(text.uppercased()) "
+            } else {
+                tagbody.isHidden = true
+                let finalText = NSMutableAttributedString.init(string: text, attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 14, submission: true)])
+                finalText.append(NSAttributedString.init(string: "\n\(submission.domain)"))
+                info.attributedText = finalText
+            }
 
         } else {
             b.isHidden = true
@@ -816,7 +839,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var currentType: CurrentType = .none
 
     //This function will update constraints if they need to be changed to change the display type
-
     func doConstraints() {
         var target = CurrentType.none
 
@@ -838,7 +860,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
 
         let metrics = ["horizontalMargin": 75, "top": 0, "bottom": 0, "separationBetweenLabels": 0, "full": Int(contentView.frame.size.width), "size": full ? 16 : 8, "labelMinHeight": 75, "thumb": (SettingValues.largerThumbnail ? 75 : 50), "bannerHeight": submissionHeight] as [String: Int]
-        let views = ["label": title, "body": textView, "image": thumbImage, "info": b, "upvote": upvote, "downvote": downvote, "score": score, "comments": comments, "banner": bannerImage, "buttons": buttons, "box": box] as [String: Any]
+        let views = ["label": title, "body": textView, "image": thumbImage, "info": b, "tag" : tagbody, "upvote": upvote, "downvote": downvote, "score": score, "comments": comments, "banner": bannerImage, "buttons": buttons, "box": box] as [String: Any]
         var bt = "[buttons]-8-"
         var bx = "[box]-8-"
         if (SettingValues.hideButtonActionbar && !full) {
@@ -869,6 +891,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     options: NSLayoutFormatOptions(rawValue: 0),
                     metrics: metrics,
                     views: views))
+
             thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[image]-(>=5)-\(bt)|",
                     options: NSLayoutFormatOptions(rawValue: 0),
                     metrics: metrics,
@@ -882,6 +905,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     options: NSLayoutFormatOptions(rawValue: 0),
                     metrics: metrics,
                     views: views))
+
             if (SettingValues.centerLeadImage || full) {
                 thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[label]-8@999-[banner]-12@999-\(bx)|",
                         options: NSLayoutFormatOptions(rawValue: 0),
@@ -891,6 +915,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                         options: NSLayoutFormatOptions.alignAllLastBaseline,
                         metrics: metrics,
                         views: views))
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[banner]-[tag]",
+                        options: NSLayoutFormatOptions.alignAllLastBaseline,
+                        metrics: metrics,
+                        views: views))
+
                 thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[info(45)]-8-[buttons]",
                         options: NSLayoutFormatOptions(rawValue: 0),
                         metrics: metrics,
@@ -899,6 +928,16 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                         options: NSLayoutFormatOptions(rawValue: 0),
                         metrics: metrics,
                         views: views))
+
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[tag]-11-[buttons]",
+                        options: NSLayoutFormatOptions(rawValue: 0),
+                        metrics: metrics,
+                        views: views))
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[tag]-11-[box]",
+                        options: NSLayoutFormatOptions(rawValue: 0),
+                        metrics: metrics,
+                        views: views))
+
 
             } else {
 
@@ -910,6 +949,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                         options: NSLayoutFormatOptions(rawValue: 0),
                         metrics: metrics,
                         views: views))
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[tag]-11@999-[label]",
+                        options: NSLayoutFormatOptions(rawValue: 0),
+                        metrics: metrics,
+                        views: views))
+
             }
 
             thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:\(bt)|",
@@ -929,6 +973,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     options: NSLayoutFormatOptions(rawValue: 0),
                     metrics: metrics,
                     views: views))
+            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[tag]-3-|",
+                    options: NSLayoutFormatOptions.alignAllLastBaseline,
+                    metrics: metrics,
+                    views: views))
+
         } else if (target == .text) {
             thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[image(0)]",
                     options: NSLayoutFormatOptions(rawValue: 0),
@@ -1187,9 +1236,16 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 text = "Link"
                 break
             }
-            let finalText = NSMutableAttributedString.init(string: text, attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 14, submission: true)])
-            finalText.append(NSAttributedString.init(string: "\n\(submission.domain)"))
-            info.attributedText = finalText
+            if(SettingValues.smallerTag && !full){
+                b.isHidden = true
+                tagbody.isHidden = false
+                taglabel.text = " \(text.uppercased()) "
+            } else {
+                tagbody.isHidden = true
+                let finalText = NSMutableAttributedString.init(string: text, attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 14, submission: true)])
+                finalText.append(NSAttributedString.init(string: "\n\(submission.domain)"))
+                info.attributedText = finalText
+            }
 
         } else {
             b.isHidden = true

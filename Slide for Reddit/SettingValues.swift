@@ -68,6 +68,7 @@ class SettingValues{
     public static let pref_swapLongPress = "SWAP_LONG_PRESS"
     public static let pref_collapseFully = "COLLAPSE_FULLY"
     public static let pref_highlightOp = "HIGHLIGHT_OP"
+    public static let pref_smallTag = "SMALLER_TAG"
 
 
     public static var viewType = true
@@ -128,6 +129,7 @@ class SettingValues{
     public static var swapLongPress = false
     public static var collapseFully = true
     public static var highlightOp = true
+    public static var smallerTag = true
 
     enum PostViewType: String {
         case LIST = "list"
@@ -146,7 +148,7 @@ class SettingValues{
         SettingValues.postFontOffset = settings.object(forKey: SettingValues.pref_postFontSize) == nil ? 0 : settings.integer(forKey: SettingValues.pref_postFontSize)
         SettingValues.commentFontOffset = settings.object(forKey: SettingValues.pref_commentFontSize) == nil ? 0 : settings.integer(forKey: SettingValues.pref_commentFontSize)
 
-
+        SettingValues.smallerTag = settings.bool(forKey: SettingValues.pref_smallTag)
         SettingValues.markReadOnScroll = settings.bool(forKey: SettingValues.pref_markReadOnScroll)
         SettingValues.nsfwEnabled = settings.bool(forKey: SettingValues.pref_nsfwEnabled)
         SettingValues.nsfwPreviews = settings.bool(forKey: SettingValues.pref_nsfwPreviews)

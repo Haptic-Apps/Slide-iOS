@@ -77,7 +77,7 @@ class CommentMenuCell: UITableViewCell {
     override func updateConstraints() {
         super.updateConstraints()
         var width = min(375, UIScreen.main.bounds.size.width)
-        width = width/(archived ? 1 : (editShown ? 6 : 4))
+        width = width/((archived || !AccountController.isLoggedIn) ? 1 : (editShown ? 6 : 4))
         
         
         if(editShown){
@@ -88,7 +88,7 @@ class CommentMenuCell: UITableViewCell {
             delete.isHidden = true
         }
         
-        if(archived){
+        if(archived || !AccountController.isLoggedIn){
             edit.isHidden = true
             delete.isHidden = true
             upvote.isHidden  = true
