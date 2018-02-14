@@ -40,7 +40,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
 
         var comment: UIViewController = UIViewController()
 
-        if(self.splitViewController != nil && !SettingValues.multiColumn){
+        if (self.splitViewController != nil && !SettingValues.multiColumn) {
             let comment = CommentViewController.init(submission: newLinks[0])
             let nav = UINavigationController.init(rootViewController: comment)
             self.splitViewController?.showDetailViewController(nav, sender: self)
@@ -165,7 +165,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
 
     public func colorPickerView(_ colorPickerView: ColorPickerView, didSelectItemAt indexPath: IndexPath) {
 
-        if(isAccent){
+        if (isAccent) {
             accentChosen = colorPickerView.colors[indexPath.row]
             hide.backgroundColor = accentChosen
         } else {
@@ -1028,7 +1028,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         //self.navigationItem.leftBarButtonItems!.append(leftItem)
         self.navigationItem.title = sub
         self.navigationController?.navigationBar.shadowImage = UIImage()
-        if(single) {
+        if (single) {
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub)
         }
     }
@@ -1124,11 +1124,40 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         }
         actionSheetController.addAction(cancelActionButton)
 
-        if (!single) {
-            cancelActionButton = UIAlertAction(title: "Base Theme", style: .default) { action -> Void in
-                if (parentVC != nil) {
-                    (parentVC)!.showThemeMenu()
+        if (!single && (sub != "all" && sub != "frontpage" && !sub.contains("+") && !sub.contains("/m/"))) {
+            cancelActionButton = UIAlertAction(title: "Submit", style: .default) { action -> Void in
+                let actionSheetController2: UIAlertController = UIAlertController(title: "", message: "", preferredStyle: .actionSheet)
+
+                var cancelActionButton2: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
+                    print("Cancel")
                 }
+                actionSheetController2.addAction(cancelActionButton2)
+
+
+                cancelActionButton2 = UIAlertAction(title: "Image", style: .default) { action -> Void in
+                    VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(subreddit: self.sub, type: ReplyViewController.ReplyType.SUBMIT_IMAGE, completion: { (submission) in
+                       VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+                    })), parentVC: self)
+                }
+                actionSheetController2.addAction(cancelActionButton2)
+
+
+                cancelActionButton2 = UIAlertAction(title: "Link", style: .default) { action -> Void in
+                    VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(subreddit: self.sub, type: ReplyViewController.ReplyType.SUBMIT_LINK, completion: { (submission) in
+                        VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+                    })), parentVC: self)
+                }
+                actionSheetController2.addAction(cancelActionButton2)
+
+
+                cancelActionButton2 = UIAlertAction(title: "Text", style: .default) { action -> Void in
+                    VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(subreddit: self.sub, type: ReplyViewController.ReplyType.SUBMIT_TEXT, completion: { (submission) in
+                        VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+                    })), parentVC: self)
+                }
+                actionSheetController2.addAction(cancelActionButton2)
+
+                self.present(actionSheetController2, animated: true)
             }
             actionSheetController.addAction(cancelActionButton)
         }
@@ -1147,9 +1176,9 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
 
         self.present(actionSheetController, animated: true, completion: nil)
 
-      //  let nav = TapBehindModalViewController.init(rootViewController: ReplyViewController.init.init(parent: self))
-       // nav.modalPresentationStyle = .pageSheet
-      //  self.present(nav, animated: true, completion:{})
+        //  let nav = TapBehindModalViewController.init(rootViewController: ReplyViewController.init.init(parent: self))
+        // nav.modalPresentationStyle = .pageSheet
+        //  self.present(nav, animated: true, completion:{})
 
     }
 

@@ -450,18 +450,13 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
 
                 VCPresenter.showVC(viewController: vc, popupIfPossible: true, parentNavigationController: parentViewController?.navigationController, parentViewController: parentViewController)
             } else {
-                let reply = ReplyViewController.init(message: message!) { (message) in
+                VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(completion: {(message) in
                     DispatchQueue.main.async(execute: { () -> Void in
                         let message = MDCSnackbarMessage()
                         message.text = "Message sent!"
                         MDCSnackbarManager.show(message)
                     })
-                }
-
-                let navEditorViewController: UINavigationController = UINavigationController(rootViewController: reply)
-                prepareOverlayVC(overlayVC: navEditorViewController)
-                //todo new implementation
-                parentViewController?.present(navEditorViewController, animated: true, completion: nil)
+                })), parentVC: parentViewController!)
             }
         }
     }

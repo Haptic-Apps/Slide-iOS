@@ -27,9 +27,10 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
         case SUBMIT_TEXT
         case EDIT_SELFTEXT
 
-        func isEdit() -> Bool{
+        func isEdit() -> Bool {
             return self == ReplyType.EDIT_SELFTEXT
         }
+
         func isSubmission() -> Bool {
             return self == ReplyType.SUBMIT_IMAGE || self == ReplyType.SUBMIT_LINK || self == ReplyType.SUBMIT_TEXT || self == ReplyType.EDIT_SELFTEXT
         }
@@ -57,7 +58,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return type.isMessage() ? 1 : 0
+        return 1
 
     }
 
@@ -113,9 +114,10 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
             DispatchQueue.main.async {
                 //todo on error
                 //todo get message
-                completion("")
                 self.alertController?.dismiss(animated: false, completion: {
-                    self.dismiss(animated: true, completion: nil)
+                    self.dismiss(animated: true, completion: {
+                        completion("")
+                    })
                 })
             }
         }
@@ -138,16 +140,17 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
                     })
                 } else {
                     //todo get sub string
-                    completion(link)
                     self.alertController?.dismiss(animated: false, completion: {
-                        self.dismiss(animated: true, completion: nil)
+                        self.dismiss(animated: true, completion: {
+                            completion(link)
+                        })
                     })
                 }
             }
         }
     }
 
-    init(type: ReplyType, completion: @escaping (String?) -> Void) {
+    init(type: ReplyType, completion: @escaping (Link?) -> Void) {
         self.type = type
         super.init(nibName: nil, bundle: nil)
         self.submissionCallback = { (link) in
@@ -156,9 +159,10 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
                     //todo this
                 } else {
                     //todo get sub string
-                    completion("")
                     self.alertController?.dismiss(animated: false, completion: {
-                        self.dismiss(animated: true, completion: nil)
+                        self.dismiss(animated: true, completion: {
+                            completion(link)
+                        })
                     })
                 }
             }
@@ -166,8 +170,9 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
     }
 
 
-    convenience init(subreddit: String, type: ReplyType, completion: @escaping (String?) -> Void) {
+    convenience init(subreddit: String, type: ReplyType, completion: @escaping (Link?) -> Void) {
         self.init(type: type, completion: completion)
+        self.subreddit = subreddit
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -522,35 +527,50 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
 
         if (type.isMessage()) {
             title = "New message"
+            if (type == ReplyType.REPLY_MESSAGE) {
+                let author = (toReplyTo is RMessage) ? ((toReplyTo as! RMessage).author) : ((toReplyTo as! RSubmission).author)
+                title = "Reply to \(author)"
+            }
         } else {
-            let author = (toReplyTo is RMessage) ? ((toReplyTo as! RMessage).author) : ((toReplyTo as! RSubmission).author)
             if (type == .EDIT_SELFTEXT) {
                 title = "Editing"
             } else {
-                title = "Reply to \(author)"
+                title = "New submission"
             }
         }
 
         let send = UIButton.init(type: .custom)
-        send.setImage(UIImage.init(named: "send"), for: UIControlState.normal)
+        send.imageView?.contentMode = UIViewContentMode.scaleAspectFit
+        send.setImage(UIImage.init(named: "send")!.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
         send.addTarget(self, action: #selector(self.send(_:)), for: UIControlEvents.touchUpInside)
-        send.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+        send.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let sendB = UIBarButtonItem.init(customView: send)
         navigationItem.rightBarButtonItem = sendB
+
+        let button = UIButtonWithContext.init(type: .custom)
+        button.imageView?.contentMode = UIViewContentMode.scaleAspectFit
+        button.setImage(UIImage.init(named: "close")!.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
+        button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        button.addTarget(self, action: #selector(self.close(_:)), for: .touchUpInside)
+
+        let barButton = UIBarButtonItem.init(customView: button)
+        navigationItem.leftBarButtonItem = barButton
+
         registerKeyboardNotifications()
 
     }
 
     func close(_ sender: AnyObject) {
-        presentingViewController?.dismiss(animated: true, completion: nil)
+        //todo cancel message?
+        navigationController?.dismiss(animated: true, completion: nil)
     }
 
     var alertController: UIAlertController?
     var session: Session?
 
-    func getSubmissionEdited(_ name: String){
+    func getSubmissionEdited(_ name: String) {
         do {
-            try self.session?.getInfo([name], completion: { (res) in
+            try self.session?.getInfo([name.contains("t3") ? name : "t3_\(name)"], completion: { (res) in
                 switch res {
                 case .failure:
                     print(res.error ?? "Error?")
@@ -565,6 +585,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
             })
         } catch {
             //todo success but null child
+            self.submissionCallback(nil)
         }
 
     }
@@ -657,7 +678,9 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
                             self.submissionCallback(nil)
                             break
                         case .success(let submission):
-                            self.getSubmissionEdited(JSON(submission)["id"].stringValue)
+                            let string = self.getIDString(submission).value!
+                            print("Got \(string)")
+                            self.getSubmissionEdited(string)
                         }
                     })
 
@@ -669,7 +692,9 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
                             self.submissionCallback(nil)
                             break
                         case .success(let submission):
-                            self.getSubmissionEdited(JSON(submission)["id"].stringValue)
+                            let string = self.getIDString(submission).value!
+                            print("Got \(string)")
+                            self.getSubmissionEdited(string)
                         }
                     })
 
@@ -679,6 +704,19 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
             }
         }
 
+    }
+
+    func getIDString(_ json: JSONAny) -> reddift.Result<String> {
+        if let json = json as? JSONDictionary {
+            if let j = json["json"] as? JSONDictionary {
+                if let data = j["data"] as? JSONDictionary {
+                    if let iden = data["id"] as? String {
+                        return Result(value:iden)
+                    }
+                }
+            }
+        }
+        return Result(error:ReddiftError.identifierOfCAPTCHAIsMalformed as NSError)
     }
 
     override func loadView() {

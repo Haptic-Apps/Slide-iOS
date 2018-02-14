@@ -62,24 +62,19 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
         read.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let readB = UIBarButtonItem.init(customView: read)
 
-        if (navigationController != nil) {
-            navigationItem.rightBarButtonItems = [readB]
-        }
+            navigationItem.rightBarButtonItems = [editB, readB]
+
     }
 
     func new(_ sender: AnyObject) {
-        let reply = ReplyViewController.init(message: nil) { (message) in
+
+        VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(completion: {(message) in
             DispatchQueue.main.async(execute: { () -> Void in
                 let message = MDCSnackbarMessage()
                 message.text = "Message sent!"
                 MDCSnackbarManager.show(message)
             })
-        }
-
-        let navEditorViewController: UINavigationController = UINavigationController(rootViewController: reply)
-        prepareOverlayVC(overlayVC: navEditorViewController)
-        present(navEditorViewController, animated: true, completion: nil)
-        //todo make this actually work
+        })), parentVC: self)
 
     }
 

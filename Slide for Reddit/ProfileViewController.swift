@@ -202,7 +202,7 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
         alrController.view.addSubview(scrollView)
         if(AccountController.isLoggedIn){
             alrController.addAction(UIAlertAction.init(title: "Private message", style: .default, handler: { (action) in
-                //todo send
+                VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(name: user.name, completion: {(message) in })), parentVC: self)
             }))
             if(user.isFriend){
                 alrController.addAction(UIAlertAction.init(title: "Unfriend", style: .default, handler: { (action) in
@@ -282,7 +282,7 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
         
         return more
     }
-    
+
     func trophyTapped(_ sender: AnyObject){
     }
     
