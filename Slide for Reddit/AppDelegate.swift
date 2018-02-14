@@ -31,6 +31,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var login: SubredditsViewController?
     var seenFile: String?
     var commentsFile: String?
+    var totalBackground = false
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         application.setMinimumBackgroundFetchInterval(UIApplicationBackgroundFetchIntervalMinimum)
@@ -115,27 +116,39 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         ColorUtil.doInit()
         let textAttributes = [NSForegroundColorAttributeName:UIColor.white]
         UINavigationBar.appearance().titleTextAttributes = textAttributes
+        doBios()
+        return true
+    }
+    
+    var statusBar = UIView()
+    func doBios(){
         if(SettingValues.biometrics && BioMetricAuthenticator.canAuthenticate()) {
             BioMetricAuthenticator.authenticateWithBioMetrics(reason: "", success: {
-
-
-
+                self.window?.isHidden = false
             }, failure: { [weak self] (error) in
 
                 // do nothing on canceled
                 if error == .canceledByUser || error == .canceledBySystem {
+                    exit(0)
                     return
                 }
 
                 // device does not support biometric (face id or touch id) authentication
                 else if error == .biometryNotAvailable {
-                    //todo self?.showErrorAlert(message: error.message())
+                    BioMetricAuthenticator.authenticateWithPasscode(reason: "Enter your password", cancelTitle: "Exit", success: {
+                        self?.window?.isHidden = false
+                    }, failure: {[weak self] (error) in
+                        exit(0)
+                    })
                 }
 
                 // show alternatives on fallback button clicked
                 else if error == .fallback {
-
-                    //todo a fallback?
+                    BioMetricAuthenticator.authenticateWithPasscode(reason: "Enter your password", cancelTitle: "Exit", success: {
+                        self?.window?.isHidden = false
+                    }, failure: { [weak self] (error) in
+                        exit(0)
+                    })
                 }
 
                 // No biometry enrolled in this device, ask user to register fingerprint or face
@@ -146,19 +159,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 // Biometry is locked out now, because there were too many failed attempts.
                 // Need to enter device passcode to unlock.
                 else if error == .biometryLockedout {
-                    //todo on lockout
+                    BioMetricAuthenticator.authenticateWithPasscode(reason: "Enter your password", cancelTitle: "Exit", success: {
+                        self?.window?.isHidden = false
+                    }, failure: { [weak self] (error) in
+                        exit(0)
+                    })
                 }
 
                 // show error on authentication failed
                 else {
-                    //todo  self?.showErrorAlert(message: error.message())
+                    BioMetricAuthenticator.authenticateWithPasscode(reason: "Enter your password", cancelTitle: "Exit", success: {
+                        self?.window?.isHidden = false
+                    }, failure: { [weak self] (error) in
+                        exit(0)
+                    })
                 }
             })
         }
-        return true
     }
-    
-    var statusBar = UIView()
 
     
     func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
@@ -362,64 +380,33 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func applicationWillResignActive(_ application: UIApplication) {
+        if(SettingValues.biometrics){
+            self.window?.isHidden = true
+        }
+        totalBackground = false
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
     }
     
     func applicationDidEnterBackground(_ application: UIApplication) {
         print("background")
+        totalBackground = true
         History.seenTimes.write(toFile: seenFile!, atomically: true)
         History.commentCounts.write(toFile: commentsFile!, atomically: true)
+
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
     }
     
     func applicationWillEnterForeground(_ application: UIApplication) {
-        if(SettingValues.biometrics && BioMetricAuthenticator.canAuthenticate()) {
-            BioMetricAuthenticator.authenticateWithBioMetrics(reason: "", success: {
-
-
-
-            }, failure: { [weak self] (error) in
-
-                // do nothing on canceled
-                if error == .canceledByUser || error == .canceledBySystem {
-                    return
-                }
-
-                // device does not support biometric (face id or touch id) authentication
-                else if error == .biometryNotAvailable {
-                    //todo self?.showErrorAlert(message: error.message())
-                }
-
-                // show alternatives on fallback button clicked
-                else if error == .fallback {
-
-                    //todo a fallback?
-                }
-
-                // No biometry enrolled in this device, ask user to register fingerprint or face
-                else if error == .biometryNotEnrolled {
-                    //ignore
-                }
-
-                // Biometry is locked out now, because there were too many failed attempts.
-                // Need to enter device passcode to unlock.
-                else if error == .biometryLockedout {
-                    //todo on lockout
-                }
-
-                // show error on authentication failed
-                else {
-                    //todo  self?.showErrorAlert(message: error.message())
-                }
-            })
-        }
+        doBios()
         self.refreshSession()
     }
     
     func applicationDidBecomeActive(_ application: UIApplication) {
-
+        if(!totalBackground){
+            self.window?.isHidden = false
+        }
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     }
     
