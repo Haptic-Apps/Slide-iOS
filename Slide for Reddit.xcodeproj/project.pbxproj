@@ -140,7 +140,6 @@
 		BECF52472012B8E700A310F9 /* YTPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = BECF52462012B8E700A310F9 /* YTPlayerView.m */; };
 		BED76E651E3A9576008E7717 /* RealmDataWrappers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED76E641E3A9576008E7717 /* RealmDataWrappers.swift */; };
 		BED7B6BA1F2258E700E31A82 /* CachedTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED7B6B91F2258E700E31A82 /* CachedTitle.swift */; };
-		BED814201FD488400067DF46 /* GifUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED8141F1FD488400067DF46 /* GifUtils.swift */; };
 		BEDDA9911E19AB5D003CD6C3 /* WebsiteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEDDA9901E19AB5D003CD6C3 /* WebsiteViewController.swift */; };
 		BEDDA9931E19AEF2003CD6C3 /* AdDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEDDA9921E19AEF2003CD6C3 /* AdDictionary.swift */; };
 		BEE10FC61F25078F00A72CE5 /* PagingCommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE10FC51F25078F00A72CE5 /* PagingCommentViewController.swift */; };
@@ -343,7 +342,6 @@
 		BECF52462012B8E700A310F9 /* YTPlayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YTPlayerView.m; sourceTree = "<group>"; };
 		BED76E641E3A9576008E7717 /* RealmDataWrappers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmDataWrappers.swift; sourceTree = "<group>"; };
 		BED7B6B91F2258E700E31A82 /* CachedTitle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CachedTitle.swift; sourceTree = "<group>"; };
-		BED8141F1FD488400067DF46 /* GifUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifUtils.swift; sourceTree = "<group>"; };
 		BEDDA9901E19AB5D003CD6C3 /* WebsiteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebsiteViewController.swift; sourceTree = "<group>"; };
 		BEDDA9921E19AEF2003CD6C3 /* AdDictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdDictionary.swift; sourceTree = "<group>"; };
 		BEE10FC51F25078F00A72CE5 /* PagingCommentViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PagingCommentViewController.swift; sourceTree = "<group>"; };
@@ -580,7 +578,6 @@
 				BE7439F81E21A59C008BB63B /* ActionStates.swift */,
 				BE86300E1E2E6A54004F0E1F /* PostFilter.swift */,
 				BE780B681E3527D900DAA1EB /* Drafts.swift */,
-				BED8141F1FD488400067DF46 /* GifUtils.swift */,
 			);
 			name = ContentUtilities;
 			sourceTree = "<group>";
@@ -1009,6 +1006,7 @@
 				"${SRCROOT}/Pods/Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/ActionSheetPicker-3.0/ActionSheetPicker_3_0.framework",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
+				"${BUILT_PRODUCTS_DIR}/BiometricAuthentication/BiometricAuthentication.framework",
 				"${BUILT_PRODUCTS_DIR}/ImagePickerSheetController/ImagePickerSheetController.framework",
 				"${BUILT_PRODUCTS_DIR}/KCFloatingActionButton/KCFloatingActionButton.framework",
 				"${BUILT_PRODUCTS_DIR}/MDFInternationalization/MDFInternationalization.framework",
@@ -1017,7 +1015,6 @@
 				"${BUILT_PRODUCTS_DIR}/MaterialComponents/MaterialComponents.framework",
 				"${BUILT_PRODUCTS_DIR}/MotionAnimator/MotionAnimator.framework",
 				"${BUILT_PRODUCTS_DIR}/MotionInterchange/MotionInterchange.framework",
-				"${BUILT_PRODUCTS_DIR}/MotionTransitioning/MotionTransitioning.framework",
 				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
 				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework",
@@ -1033,6 +1030,7 @@
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ActionSheetPicker_3_0.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BiometricAuthentication.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ImagePickerSheetController.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/KCFloatingActionButton.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MDFInternationalization.framework",
@@ -1041,7 +1039,6 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MaterialComponents.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MotionAnimator.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MotionInterchange.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MotionTransitioning.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
@@ -1211,7 +1208,6 @@
 				BEE5BF6C1E12C92F00E3C9AE /* DateFormatter+util.swift in Sources */,
 				BE981D351E31855500BD3846 /* OpenInChrome.swift in Sources */,
 				BE50892A1E3D65610026EAE1 /* InboxListingViewController.swift in Sources */,
-				BED814201FD488400067DF46 /* GifUtils.swift in Sources */,
 				BE2B89F31E2450D70053D493 /* ColorPicker.swift in Sources */,
 				BE2DEAB21E26916700FBF0B5 /* SubSidebarViewController.swift in Sources */,
 				BE7439F31E20C9BE008BB63B /* CommentCellView.swift in Sources */,

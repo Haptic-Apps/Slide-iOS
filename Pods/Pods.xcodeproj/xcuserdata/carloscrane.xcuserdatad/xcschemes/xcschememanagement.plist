@@ -18,63 +18,63 @@
 			<key>orderHint</key>
 			<integer>3</integer>
 		</dict>
-		<key>ImagePickerSheetController.xcscheme</key>
+		<key>BiometricAuthentication.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false />
 			<key>orderHint</key>
 			<integer>4</integer>
 		</dict>
-		<key>KCFloatingActionButton.xcscheme</key>
+		<key>ImagePickerSheetController.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false />
 			<key>orderHint</key>
 			<integer>5</integer>
 		</dict>
-		<key>MDFInternationalization.xcscheme</key>
+		<key>KCFloatingActionButton.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false />
 			<key>orderHint</key>
 			<integer>6</integer>
 		</dict>
-		<key>MDFTextAccessibility.xcscheme</key>
+		<key>MDFInternationalization.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false />
 			<key>orderHint</key>
 			<integer>7</integer>
 		</dict>
-		<key>MKColorPicker.xcscheme</key>
+		<key>MDFTextAccessibility.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false />
 			<key>orderHint</key>
 			<integer>8</integer>
 		</dict>
-		<key>MaterialComponents.xcscheme</key>
+		<key>MKColorPicker.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false />
 			<key>orderHint</key>
 			<integer>9</integer>
 		</dict>
-		<key>MotionAnimator.xcscheme</key>
+		<key>MaterialComponents.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false />
 			<key>orderHint</key>
 			<integer>10</integer>
 		</dict>
-		<key>MotionInterchange.xcscheme</key>
+		<key>MotionAnimator.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false />
 			<key>orderHint</key>
 			<integer>11</integer>
 		</dict>
-		<key>MotionTransitioning.xcscheme</key>
+		<key>MotionInterchange.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false />

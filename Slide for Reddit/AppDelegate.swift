@@ -11,6 +11,7 @@ import reddift
 import UserNotifications
 import RealmSwift
 import SDWebImage
+import BiometricAuthentication
 
 /// Posted when the OAuth2TokenRepository object succeed in saving a token successfully into Keychain.
 public let OAuth2TokenRepositoryDidSaveTokenName = Notification.Name(rawValue: "OAuth2TokenRepositoryDidSaveToken")
@@ -114,7 +115,46 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         ColorUtil.doInit()
         let textAttributes = [NSForegroundColorAttributeName:UIColor.white]
         UINavigationBar.appearance().titleTextAttributes = textAttributes
+        if(SettingValues.biometrics && BioMetricAuthenticator.canAuthenticate()) {
+            BioMetricAuthenticator.authenticateWithBioMetrics(reason: "", success: {
 
+
+
+            }, failure: { [weak self] (error) in
+
+                // do nothing on canceled
+                if error == .canceledByUser || error == .canceledBySystem {
+                    return
+                }
+
+                // device does not support biometric (face id or touch id) authentication
+                else if error == .biometryNotAvailable {
+                    //todo self?.showErrorAlert(message: error.message())
+                }
+
+                // show alternatives on fallback button clicked
+                else if error == .fallback {
+
+                    //todo a fallback?
+                }
+
+                // No biometry enrolled in this device, ask user to register fingerprint or face
+                else if error == .biometryNotEnrolled {
+                    //ignore
+                }
+
+                // Biometry is locked out now, because there were too many failed attempts.
+                // Need to enter device passcode to unlock.
+                else if error == .biometryLockedout {
+                    //todo on lockout
+                }
+
+                // show error on authentication failed
+                else {
+                    //todo  self?.showErrorAlert(message: error.message())
+                }
+            })
+        }
         return true
     }
     
@@ -335,10 +375,51 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func applicationWillEnterForeground(_ application: UIApplication) {
+        if(SettingValues.biometrics && BioMetricAuthenticator.canAuthenticate()) {
+            BioMetricAuthenticator.authenticateWithBioMetrics(reason: "", success: {
+
+
+
+            }, failure: { [weak self] (error) in
+
+                // do nothing on canceled
+                if error == .canceledByUser || error == .canceledBySystem {
+                    return
+                }
+
+                // device does not support biometric (face id or touch id) authentication
+                else if error == .biometryNotAvailable {
+                    //todo self?.showErrorAlert(message: error.message())
+                }
+
+                // show alternatives on fallback button clicked
+                else if error == .fallback {
+
+                    //todo a fallback?
+                }
+
+                // No biometry enrolled in this device, ask user to register fingerprint or face
+                else if error == .biometryNotEnrolled {
+                    //ignore
+                }
+
+                // Biometry is locked out now, because there were too many failed attempts.
+                // Need to enter device passcode to unlock.
+                else if error == .biometryLockedout {
+                    //todo on lockout
+                }
+
+                // show error on authentication failed
+                else {
+                    //todo  self?.showErrorAlert(message: error.message())
+                }
+            })
+        }
         self.refreshSession()
     }
     
     func applicationDidBecomeActive(_ application: UIApplication) {
+
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     }
     

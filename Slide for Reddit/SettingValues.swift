@@ -69,6 +69,7 @@ class SettingValues{
     public static let pref_collapseFully = "COLLAPSE_FULLY"
     public static let pref_highlightOp = "HIGHLIGHT_OP"
     public static let pref_smallTag = "SMALLER_TAG"
+    public static let pref_biometrics = "BIOMETRICS"
 
 
     public static var viewType = true
@@ -130,6 +131,7 @@ class SettingValues{
     public static var collapseFully = true
     public static var highlightOp = true
     public static var smallerTag = true
+    public static var biometrics = true
 
     enum PostViewType: String {
         case LIST = "list"
@@ -162,6 +164,7 @@ class SettingValues{
         SettingValues.volumeButtonNavigation = settings.bool(forKey: SettingValues.pref_volumeButtonNavigation)
         SettingValues.collapseFully = settings.bool(forKey: SettingValues.pref_collapseFully)
         SettingValues.leftThumbnail = settings.bool(forKey: SettingValues.pref_leftThumbnail)
+        SettingValues.biometrics = settings.bool(forKey: SettingValues.pref_biometrics)
 
         SettingValues.dataSavingEnabled = settings.bool(forKey: SettingValues.pref_dataSavingEnabled)
         SettingValues.dataSavingDisableWiFi = settings.bool(forKey: SettingValues.pref_dataSavingDisableWifi)

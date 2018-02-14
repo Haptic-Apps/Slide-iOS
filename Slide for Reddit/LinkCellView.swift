@@ -825,6 +825,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
         } else {
             b.isHidden = true
+            tagbody.isHidden = true
         }
 
         if (longPress == nil) {

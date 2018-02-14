@@ -10,7 +10,8 @@ import UIKit
 import MKColorPicker
 
 class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
-    
+
+    var tochange: SettingsViewController?
     var primary: UITableViewCell = UITableViewCell()
     var accent: UITableViewCell = UITableViewCell()
     var base: UITableViewCell = UITableViewCell()
@@ -271,8 +272,9 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
                 UserDefaults.standard.synchronize()
                 ColorUtil.doInit()
                 self.loadView()
-                self.tableView.beginUpdates()
-                self.tableView.endUpdates()
+                self.tableView.reloadData(with: .automatic)
+                self.tochange!.doCells()
+                self.tochange!.tableView.reloadData()
             }
             actionSheetController.addAction(saveActionButton)
         }

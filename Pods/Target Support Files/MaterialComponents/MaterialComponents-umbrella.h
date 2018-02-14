@@ -24,7 +24,6 @@
 #import "MaterialDialogs.h"
 #import "MDCAlertController.h"
 #import "MDCDialogPresentationController.h"
-#import "MDCDialogTransition.h"
 #import "MDCDialogTransitionController.h"
 #import "UIViewController+MaterialDialogs.h"
 #import "MaterialInk.h"
