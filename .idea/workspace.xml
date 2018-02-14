@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4e152e64-2f09-48b9-9864-06428fccec3c" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/Slide for Reddit/CommentViewController.swift" afterPath="$PROJECT_DIR$/Slide for Reddit/CommentViewController.swift" />
-      <change beforePath="$PROJECT_DIR$/Slide for Reddit/LinkCellView.swift" afterPath="$PROJECT_DIR$/Slide for Reddit/LinkCellView.swift" />
-      <change beforePath="$PROJECT_DIR$/Slide for Reddit/ProfileViewController.swift" afterPath="$PROJECT_DIR$/Slide for Reddit/ProfileViewController.swift" />
-      <change beforePath="$PROJECT_DIR$/Slide for Reddit/SubredditLinkViewController.swift" afterPath="$PROJECT_DIR$/Slide for Reddit/SubredditLinkViewController.swift" />
+      <change beforePath="$PROJECT_DIR$/Slide for Reddit/SubredditsViewController.swift" afterPath="$PROJECT_DIR$/Slide for Reddit/SubredditsViewController.swift" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -18,7 +14,7 @@
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="iphoneos_b4f2266089219190fedc1e40334b9efd8b9b10f5" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="iphoneos_16e6cfad195be2e01eb5b88ad218cf5cbee25b29" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file leaf-file-name="LinkCellView.swift" pinned="false" current-in-tab="false">
@@ -31,11 +27,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ProfileViewController.swift" pinned="false" current-in-tab="true">
+      <file leaf-file-name="ProfileViewController.swift" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Slide for Reddit/ProfileViewController.swift">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="296">
-              <caret line="188" column="63" lean-forward="true" selection-start-line="188" selection-start-column="63" selection-end-line="188" selection-end-column="63" />
+              <caret line="188" column="63" lean-forward="false" selection-start-line="188" selection-start-column="63" selection-end-line="188" selection-end-column="63" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SubredditsViewController.swift" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Slide for Reddit/SubredditsViewController.swift">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="444">
+              <caret line="519" column="13" lean-forward="false" selection-start-line="519" selection-start-column="13" selection-end-line="519" selection-end-column="13" />
               <folding />
             </state>
           </provider>
@@ -113,21 +119,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ProfileContributionLoader.swift" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Slide for Reddit/ProfileContributionLoader.swift">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-192">
-              <caret line="24" column="5" lean-forward="false" selection-start-line="24" selection-start-column="5" selection-end-line="24" selection-end-column="5" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
     </leaf>
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>title</find>
       <find>maintheme</find>
       <find>b.is</find>
       <find>.GFYCAT</find>
@@ -157,6 +152,7 @@
       <find>func upvote</find>
       <find>flair</find>
       <find>trophy</find>
+      <find>.pad</find>
     </findStrings>
     <replaceStrings>
       <replace>-12</replace>
@@ -206,7 +202,6 @@
         <option value="$PROJECT_DIR$/Slide for Reddit/ColorUtil.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/SubredditReorderViewController.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/CommentDepthCell.swift" />
-        <option value="$PROJECT_DIR$/Slide for Reddit/SubredditsViewController.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/BannerLinkCellView.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/SettingsLayout.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/SettingsTheme.swift" />
@@ -219,6 +214,7 @@
         <option value="$PROJECT_DIR$/Slide for Reddit/SubredditHeaderView.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/LinkCellView.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/ProfileViewController.swift" />
+        <option value="$PROJECT_DIR$/Slide for Reddit/SubredditsViewController.swift" />
       </list>
     </option>
   </component>
@@ -386,12 +382,12 @@
       <workItem from="1518503348790" duration="2819000" />
       <workItem from="1518542792775" duration="12098000" />
       <workItem from="1518559075767" duration="30192000" />
-      <workItem from="1518647419733" duration="4478000" />
+      <workItem from="1518647419733" duration="5088000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="127114000" />
+    <option name="totallyTimeSpent" value="127724000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -407,10 +403,10 @@
     <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32914287" sideWeight="0.4978903" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31070197" sideWeight="0.19107896" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31070197" sideWeight="0.18866788" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32911393" sideWeight="0.7371911" order="10" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32911393" sideWeight="0.26280892" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32911393" sideWeight="0.73960215" order="10" side_tool="true" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32911393" sideWeight="0.26039782" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32914287" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32914287" sideWeight="0.4978903" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -559,6 +555,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="361">
           <caret line="47" column="68" lean-forward="false" selection-start-line="40" selection-start-column="12" selection-end-line="47" selection-end-column="68" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -566,6 +563,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="355">
           <caret line="189" column="25" lean-forward="false" selection-start-line="189" selection-start-column="25" selection-end-line="189" selection-end-column="25" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -573,16 +571,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1097">
           <caret line="207" column="57" lean-forward="false" selection-start-line="207" selection-start-column="57" selection-end-line="207" selection-end-column="57" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Slide for Reddit/SubredditsViewController.swift">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="177">
-          <caret line="487" column="102" lean-forward="false" selection-start-line="487" selection-start-column="102" selection-end-line="487" selection-end-column="102" />
-          <folding>
-            <element signature="e#163#175#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -805,7 +793,15 @@
     <entry file="file://$PROJECT_DIR$/Slide for Reddit/ProfileViewController.swift">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="296">
-          <caret line="188" column="63" lean-forward="true" selection-start-line="188" selection-start-column="63" selection-end-line="188" selection-end-column="63" />
+          <caret line="188" column="63" lean-forward="false" selection-start-line="188" selection-start-column="63" selection-end-line="188" selection-end-column="63" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Slide for Reddit/SubredditsViewController.swift">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="444">
+          <caret line="519" column="13" lean-forward="false" selection-start-line="519" selection-start-column="13" selection-end-line="519" selection-end-column="13" />
           <folding />
         </state>
       </provider>

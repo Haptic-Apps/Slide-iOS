@@ -497,6 +497,28 @@ class SubredditsViewController:  ColorMuxPagingViewController, UIPageViewControl
         // Enable gestures. The left and/or right menus must be set up above for these to work.
         // Note that these continue to work on the Navigation Controller independent of the view controller it displays!
         SideMenuManager.menuAddScreenEdgePanGesturesToPresent(toView: self.view)
+
+        if(UIScreen.main.traitCollection.userInterfaceIdiom == .pad){
+            self.edgesForExtendedLayout = UIRectEdge.all
+            self.extendedLayoutIncludesOpaqueBars = true
+
+
+            if(AccountController.isLoggedIn){
+                checkForMail()
+            }
+            if(SubredditReorderViewController.changed){
+                restartVC()
+            }
+
+            self.navigationController?.navigationBar.shadowImage = UIImage()
+            navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: self.currentTitle)
+            navigationController?.navigationBar.isTranslucent = false
+
+            menuNav?.header.doColors()
+            if(menuNav?.tableView != nil){
+                menuNav?.tableView.reloadData()
+            }
+        }
     }
     
     func resetColors(){
