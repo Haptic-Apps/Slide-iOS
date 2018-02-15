@@ -195,10 +195,10 @@ class NavigationHeaderView: UIView {
     }
 
     func settings(_ sender: AnyObject) {
-        //self.parentController!.dismiss(animated: true, completion: nil)
-
-        let settings = SettingsViewController()
-        VCPresenter.showVC(viewController: settings, popupIfPossible: true, parentNavigationController: (self.parentController as! NavigationSidebarViewController).parentController?.navigationController, parentViewController: (self.parentController as! NavigationSidebarViewController).parentController)
+        self.parentController!.dismiss(animated: true){
+            let settings = SettingsViewController()
+            VCPresenter.showVC(viewController: settings, popupIfPossible: true, parentNavigationController: (self.parentController as! NavigationSidebarViewController).parentController?.navigationController, parentViewController: (self.parentController as! NavigationSidebarViewController).parentController)
+        }
     }
 
     func switchAccounts(_ sender: AnyObject) {

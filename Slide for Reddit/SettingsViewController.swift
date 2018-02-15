@@ -8,6 +8,7 @@
 
 import UIKit
 import BiometricAuthentication
+import LicensesViewController
 
 class SettingsViewController: UITableViewController {
 
@@ -25,6 +26,9 @@ class SettingsViewController: UITableViewController {
     var content: UITableViewCell = UITableViewCell()
     var lockCell: UITableViewCell = UITableViewCell()
     var subCell: UITableViewCell = UITableViewCell()
+    var licenseCell: UITableViewCell = UITableViewCell()
+    var aboutCell: UITableViewCell = UITableViewCell()
+    var githubCell: UITableViewCell = UITableViewCell()
 
     var multiColumnCell: UITableViewCell = UITableViewCell()
     var multiColumn = UISwitch()
@@ -148,6 +152,27 @@ class SettingsViewController: UITableViewController {
         self.filters.imageView?.image = UIImage.init(named: "filter")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
         self.filters.imageView?.tintColor = ColorUtil.fontColor
 
+        self.aboutCell.textLabel?.text = "Slide \(getVersion())"
+        self.aboutCell.accessoryType = .disclosureIndicator
+        self.aboutCell.backgroundColor = ColorUtil.foregroundColor
+        self.aboutCell.textLabel?.textColor = ColorUtil.fontColor
+        self.aboutCell.imageView?.image = UIImage.init(named: "info")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
+        self.aboutCell.imageView?.tintColor = ColorUtil.fontColor
+
+        self.githubCell.textLabel?.text = "Github"
+        self.githubCell.accessoryType = .disclosureIndicator
+        self.githubCell.backgroundColor = ColorUtil.foregroundColor
+        self.githubCell.textLabel?.textColor = ColorUtil.fontColor
+        self.githubCell.imageView?.image = UIImage.init(named: "github")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
+        self.githubCell.imageView?.tintColor = ColorUtil.fontColor
+
+        self.licenseCell.textLabel?.text = "Open source licenses"
+        self.licenseCell.accessoryType = .disclosureIndicator
+        self.licenseCell.backgroundColor = ColorUtil.foregroundColor
+        self.licenseCell.textLabel?.textColor = ColorUtil.fontColor
+        self.licenseCell.imageView?.image = UIImage.init(named: "code")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
+        self.licenseCell.imageView?.tintColor = ColorUtil.fontColor
+
         multiColumn = UISwitch()
         multiColumn.isOn = SettingValues.multiColumn
         multiColumn.addTarget(self, action: #selector(SettingsViewController.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
@@ -180,7 +205,7 @@ class SettingsViewController: UITableViewController {
         if (changed == multiColumn) {
             SettingValues.multiColumn = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_multiColumn)
-        } else if(changed == lock){
+        } else if (changed == lock) {
             SettingValues.biometrics = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_biometrics)
         }
@@ -188,7 +213,7 @@ class SettingsViewController: UITableViewController {
 
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 3
+        return 4
     }
 
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -230,8 +255,15 @@ class SettingsViewController: UITableViewController {
             case 2: return self.dataSaving
             case 3: return self.content
             case 4: return self.filters
-            case 5: return self.subCell
             default: fatalError("Unknown row in section 2")
+            }
+        case 3:
+            switch (indexPath.row) {
+            case 0: return self.aboutCell
+            case 1: return self.subCell
+            case 2: return self.githubCell
+            case 3: return self.licenseCell
+            default: fatalError("Unknown row in section 3")
             }
         default: fatalError("Unknown section")
         }
@@ -268,6 +300,20 @@ class SettingsViewController: UITableViewController {
             ch = SettingsHistory()
         } else if (indexPath.section == 2 && indexPath.row == 5) {
             ch = SingleSubredditViewController.init(subName: "slide_ios", single: true)
+        } else if (indexPath.section == 3 && indexPath.row == 0) {
+            //todo Show changlog?
+        } else if (indexPath.section == 3 && indexPath.row == 1) {
+            ch = SingleSubredditViewController.init(subName: "slide_ios", single: true)
+        } else if (indexPath.section == 3 && indexPath.row == 2) {
+            let url = URL.init(string: "https://github.com/ccrama/Slide-ios")!
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            } else {
+                UIApplication.shared.openURL(url)
+            }
+        } else if (indexPath.section == 3 && indexPath.row == 3) {
+            ch = LicensesViewController()
+            (ch as! LicensesViewController).loadPlist(Bundle.main, resourceName: "Credits")
         }
         if let n = ch {
             VCPresenter.showVC(viewController: n, popupIfPossible: false, parentNavigationController: navigationController, parentViewController: self)
@@ -288,6 +334,7 @@ class SettingsViewController: UITableViewController {
             break
         case 2: label.text = "Content"
             break
+        case 3: label.text = "About"
         default: label.text = ""
             break
         }
@@ -299,8 +346,17 @@ class SettingsViewController: UITableViewController {
         switch (section) {
         case 0: return 4    // section 0 has 2 rows
         case 1: return 5    // section 1 has 1 row
-        case 2: return 6
+        case 2: return 5
+        case 3: return 4
         default: fatalError("Unknown number of sections")
         }
     }
+
+    func getVersion() -> String {
+        let dictionary = Bundle.main.infoDictionary!
+        let version = dictionary["CFBundleShortVersionString"] as! String
+        let build = dictionary["CFBundleVersion"] as! String
+        return "v\(version).\(build)"
+    }
+
 }

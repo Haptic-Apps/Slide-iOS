@@ -3,6 +3,7 @@ PODS:
   - Alamofire (4.6.0)
   - BiometricAuthentication (1.0.5)
   - KCFloatingActionButton (2.1.2)
+  - LicensesViewController (0.6.5)
   - MaterialComponents/ActivityIndicator (45.0.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Application
@@ -99,6 +100,7 @@ DEPENDENCIES:
   - Alamofire (~> 4.3)
   - BiometricAuthentication
   - KCFloatingActionButton (~> 2.1.0)
+  - LicensesViewController (~> 0.6.5)
   - MaterialComponents/ActivityIndicator
   - MaterialComponents/AnimationTiming
   - MaterialComponents/Buttons
@@ -151,6 +153,7 @@ SPEC CHECKSUMS:
   Alamofire: f41a599bd63041760b26d393ec1069d9d7b917f4
   BiometricAuthentication: e80e99bf1fe871ab624172eb91f1ddbbc47499b5
   KCFloatingActionButton: 1b22ce95d44b51915280df8a8b277eae4a06c3f1
+  LicensesViewController: 1f2982b1bab8402d3f88e23197957038e8abb907
   MaterialComponents: 22793fbf99b6ae7e5067fbd794a6d3b7d6ee7d62
   MDFInternationalization: e355b0cebecf53d60233bd267084e49366c82513
   MDFTextAccessibility: 94098925e0853551c5a311ce7c1ecefbe297cdb6
@@ -169,6 +172,6 @@ SPEC CHECKSUMS:
   XLActionController: 7e88fece1799e61357cb00b1cc67104d66ec4d2c
   YangMingShan: 561cfbb769e8cf679d3f23d8ae7030402ddb6495
 
-PODFILE CHECKSUM: cf0a9fa567d780e0e448ad6d88b572fe590745f4
+PODFILE CHECKSUM: af323e7317bcbdf1679d456a2ae6b47b421e0c9d
 
 COCOAPODS: 1.4.0

@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "0876FA66E7F982B953B6BB29F259B372"
+               BlueprintIdentifier = "DBED46E5BDF9FCCBEE7EDEC66207EF0F"
                BlueprintName = "SloppySwiper"
                ReferencedContainer = "container:Pods.xcodeproj"
                BuildableName = "SloppySwiper.framework">

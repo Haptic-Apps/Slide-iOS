@@ -17,8 +17,8 @@ pod 'MaterialComponents/Palettes'
 pod 'MaterialComponents/TextFields'
 pod 'MaterialComponents/ProgressView'
 pod "MKColorPicker"
+pod 'LicensesViewController', '~> 0.6.5'
 pod 'BiometricAuthentication'
-
   pod 'XLActionController'
 pod 'MaterialComponents/ShadowElevations'
 pod 'MaterialComponents/Snackbar’

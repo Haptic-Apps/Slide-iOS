@@ -597,10 +597,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 addTouch(view: edit, action: #selector(LinkCellView.edit(sender:)))
             }
             edit.isHidden = true
-            addTouch(view: more, action: #selector(LinkCellView.more(sender:)))
-
         }
-
+        addTouch(view: more, action: #selector(LinkCellView.more(sender:)))
 
         full = parent is CommentViewController
 

@@ -849,13 +849,11 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         for submission in links {
             if (History.getSeen(s: submission)) {
                 indexPaths.append(IndexPath(row: count, section: 0))
+                links.remove(at: count)
             } else {
-                newLinks.append(submission)
+                count+=1
             }
-            count += 1
         }
-
-        links = newLinks
 
         //todo save realm
         tableView.performBatchUpdates({
