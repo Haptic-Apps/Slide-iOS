@@ -192,6 +192,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         self.tintingMode.textLabel?.textColor = ColorUtil.fontColor
         self.tintingMode.detailTextLabel?.textColor = ColorUtil.fontColor
 
+        self.tableView.tableFooterView = UIView()
     }
     
     func switchIsChanged(_ changed: UISwitch) {

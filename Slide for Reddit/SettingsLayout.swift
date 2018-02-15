@@ -333,6 +333,8 @@ class SettingsLayout: UITableViewController {
         saveCell.selectionStyle = UITableViewCellSelectionStyle.none
 
         doDisables()
+        self.tableView.tableFooterView = UIView()
+
     }
     
     func doDisables(){

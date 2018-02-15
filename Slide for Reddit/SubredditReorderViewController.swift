@@ -54,6 +54,9 @@ class SubredditReorderViewController: UITableViewController {
         navigationItem.leftBarButtonItem = barButton
         
         self.navigationItem.rightBarButtonItems = normalItems
+
+        self.tableView.tableFooterView = UIView()
+
     }
 
     func close(_ sender: AnyObject?){

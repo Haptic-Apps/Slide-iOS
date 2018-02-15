@@ -47,6 +47,8 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
         let deleteB = UIBarButtonItem.init(customView: delete)
 
         self.navigationItem.rightBarButtonItems = [addB, deleteB, syncB]
+
+        self.tableView.tableFooterView = UIView()
     }
 
     public func add(_ selector: AnyObject) {

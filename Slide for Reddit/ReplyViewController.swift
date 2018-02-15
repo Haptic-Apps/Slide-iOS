@@ -185,7 +185,13 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        text?.becomeFirstResponder()
+        if(subjectCell.cellLabel.text.isEmpty){
+            subjectCell.cellLabel.becomeFirstResponder()
+        } else if(recipientCell.cellLabel.text.isEmpty){
+            recipientCell.cellLabel.becomeFirstResponder()
+        } else {
+            text?.becomeFirstResponder()
+        }
         addToolbarToTextView()
         self.view.layer.cornerRadius = 5
         self.view.layer.masksToBounds = true
@@ -562,7 +568,12 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
 
     func close(_ sender: AnyObject) {
         //todo cancel message?
-        navigationController?.dismiss(animated: true, completion: nil)
+        let alert = UIAlertController.init(title: "Discard this \(type.isMessage() ? "message" : "submission")?", message: "", preferredStyle: .alert)
+        alert.addAction(UIAlertAction.init(title: "Yes", style: .destructive, handler: { (action) in
+            self.navigationController?.dismiss(animated: true, completion: nil)
+        }))
+        alert.addAction(UIAlertAction.init(title: "No", style: .cancel))
+        present(alert, animated: true)
     }
 
     var alertController: UIAlertController?
@@ -590,7 +601,23 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
 
     }
 
+    var triedOnce = false
+
     func send(_ sender: AnyObject) {
+        if (subjectCell.cellLabel.text!.isEmpty()) {
+            let message = MDCSnackbarMessage()
+            message.text = type.isMessage() ? "Subject cannot be empty." : "Title cannot be empty."
+            MDCSnackbarManager.show(message)
+            return
+        } else if (recipientCell.cellLabel.text!.isEmpty()) {
+            let message = MDCSnackbarMessage()
+            message.text = type.isMessage() ? "Recipient cannot be empty." : "Subreddit cannot be empty."
+            MDCSnackbarManager.show(message)
+        } else if ((type == .SUBMIT_LINK || type == .SUBMIT_IMAGE) && linkCell.cellLabel.text!.isEmpty()) {
+            let message = MDCSnackbarMessage()
+            message.text = "Link cannot be empty."
+            MDCSnackbarManager.show(message)
+        }
         if (type.isMessage()) {
             alertController = UIAlertController(title: nil, message: "Sending message...\n\n", preferredStyle: .alert)
             let spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
@@ -711,12 +738,12 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
             if let j = json["json"] as? JSONDictionary {
                 if let data = j["data"] as? JSONDictionary {
                     if let iden = data["id"] as? String {
-                        return Result(value:iden)
+                        return Result(value: iden)
                     }
                 }
             }
         }
-        return Result(error:ReddiftError.identifierOfCAPTCHAIsMalformed as NSError)
+        return Result(error: ReddiftError.identifierOfCAPTCHAIsMalformed as NSError)
     }
 
     override func loadView() {
@@ -724,12 +751,15 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
 
         self.tableView.backgroundColor = ColorUtil.backgroundColor
 
+        self.tableView.allowsSelection = false
         text = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 500))
         text?.isEditable = true
+        text?.placeholder = type.isMessage() ? "message..." : "body..."
         text?.backgroundColor = ColorUtil.foregroundColor
         text?.textColor = ColorUtil.fontColor
-        text?.delegate = self
         text?.font = UIFont.systemFont(ofSize: 18)
+        text?.textContainerInset = UIEdgeInsets.init(top: 30, left: 10, bottom: 0, right: 0)
+
         if (type.isEdit()) {
             if (toReplyTo is RComment) {
                 text!.text = (toReplyTo as! RComment).body
@@ -744,14 +774,14 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
 
 
         if (type.isMessage()) {
-            subjectCell = InputCell.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 70), input: "[menu]Subject")
-            recipientCell = InputCell.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 70), input: "[profile]Recipient")
+            subjectCell = InputCell.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 70), input: "subject:", width: self.tableView.frame.size.width)
+            recipientCell = InputCell.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 70), input: "recipient:", width: self.tableView.frame.size.width)
         } else {
-            subjectCell = InputCell.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 70), input: "[size]Title")
-            recipientCell = InputCell.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 70), input: "[subs]Subreddit")
+            subjectCell = InputCell.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 70), input: "title...", width: self.tableView.frame.size.width)
+            recipientCell = InputCell.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 70), input: "subreddit:", width: self.tableView.frame.size.width)
         }
 
-        linkCell = InputCell.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 70), input: "[world]Link")
+        linkCell = InputCell.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 70), input: "link:", width: self.tableView.frame.size.width)
 
         if (type == .REPLY_MESSAGE) {
             subjectCell.cellLabel.text = "re: " + (toReplyTo as! RMessage).subject
@@ -837,16 +867,17 @@ extension ReplyViewController: ImagePickerSheetControllerDelegate {
 class InputCell: UITableViewCell {
     var cellLabel: UITextView!
 
-    init(frame: CGRect, input: String) {
+    init(frame: CGRect, input: String, width: CGFloat) {
         super.init(style: UITableViewCellStyle.default, reuseIdentifier: "cell")
 
-        cellLabel = UITextView(frame: CGRect.init(x: 0, y: 0, width: self.frame.size.width, height: 70))
+        cellLabel = UITextView(frame: CGRect.init(x: 0, y: 0, width: width, height: 70))
         cellLabel.textColor = ColorUtil.fontColor
         cellLabel.font = FontGenerator.boldFontOfSize(size: 16, submission: true)
         cellLabel.placeholder = input
 
         cellLabel.textContainerInset = UIEdgeInsets.init(top: 30, left: 10, bottom: 0, right: 0)
         backgroundColor = ColorUtil.foregroundColor
+        cellLabel.backgroundColor = ColorUtil.foregroundColor
 
         addSubview(cellLabel)
     }
@@ -890,17 +921,22 @@ extension UITextView: UITextViewDelegate {
 
     // Hide the placeholder label if there is no text
     // in the text viewotherwise, show the label
-    public func textViewDidChange(textView: UITextView) {
-
+    public func textViewDidChange(_ textView: UITextView) {
         let placeHolderLabel = self.viewWithTag(100)
 
-        if !self.hasText {
-            // Get the placeholder label
-            placeHolderLabel?.isHidden = false
-        } else {
-            placeHolderLabel?.isHidden = true
-        }
+        UIView.animate(withDuration: 0.15, delay: 0.0, options:
+        UIViewAnimationOptions.curveEaseOut, animations: {
+            if !self.hasText {
+                // Get the placeholder label
+                placeHolderLabel?.alpha = 1
+            } else {
+                placeHolderLabel?.alpha = 0
+            }
+        }, completion: { finished in
+        })
+
     }
+
 
     // Add a placeholder label to the text view
     func addPlaceholderLabel(placeholderText: String) {
@@ -914,8 +950,6 @@ extension UITextView: UITextViewDelegate {
         }
 
         placeholderLabel.text = " " + text
-        placeholderLabel.frame.origin.x = 10
-        placeholderLabel.frame.origin.y = 5
         placeholderLabel.font = UIFont.systemFont(ofSize: 14)
         placeholderLabel.textColor = ColorUtil.fontColor.withAlphaComponent(0.8)
         placeholderLabel.tag = 100
@@ -923,6 +957,21 @@ extension UITextView: UITextViewDelegate {
             placeholderLabel.addImage(imageName: placeholderImage)
         }
         placeholderLabel.sizeToFit()
+        placeholderLabel.frame.origin.x += 10
+        placeholderLabel.frame.origin.y += 4
+
+        let border = CALayer()
+        let width = CGFloat(1.0)
+        border.borderColor = ColorUtil.fontColor.cgColor
+
+        border.frame = CGRect(x: 12, y: frame.size.height - width,
+                width: frame.size.width - 24, height: frame.size.height)
+
+        border.borderWidth = width
+
+        layer.masksToBounds = true
+
+        layer.addSublayer(border)
 
 
         // Hide the label if there is text in the text view

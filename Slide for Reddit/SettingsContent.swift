@@ -117,6 +117,8 @@ class SettingsContent: UITableViewController {
         dontLoadImagePreviewsCell.selectionStyle = UITableViewCellSelectionStyle.none*/
         
         doDisables()
+        self.tableView.tableFooterView = UIView()
+
     }
     
     func doDisables(){

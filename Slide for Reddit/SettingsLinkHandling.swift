@@ -120,6 +120,8 @@ class SettingsLinkHandling: UITableViewController {
         internalYouTubeCell.backgroundColor = ColorUtil.foregroundColor
         internalYouTubeCell.textLabel?.textColor = ColorUtil.fontColor
         internalYouTubeCell.selectionStyle = UITableViewCellSelectionStyle.none
+        self.tableView.tableFooterView = UIView()
+
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {

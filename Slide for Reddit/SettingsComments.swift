@@ -153,6 +153,7 @@ class SettingsComments: UITableViewController {
         highlightOpCell.textLabel?.textColor = ColorUtil.fontColor
         highlightOpCell.selectionStyle = UITableViewCellSelectionStyle.none
 
+        self.tableView.tableFooterView = UIView()
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {

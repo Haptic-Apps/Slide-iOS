@@ -123,6 +123,8 @@ class SettingsHistory: UITableViewController {
         clearSubs.selectionStyle = UITableViewCellSelectionStyle.none
 
         doDisables()
+        self.tableView.tableFooterView = UIView()
+
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

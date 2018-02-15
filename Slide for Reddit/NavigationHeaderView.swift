@@ -122,14 +122,14 @@ class NavigationHeaderView: UIView {
     func you(_ sender: AnyObject) {
         self.parentController?.dismiss(animated: true) {
             let profile = ProfileViewController.init(name: AccountController.currentName)
-            VCPresenter.showVC(viewController: profile, popupIfPossible: true, parentNavigationController: (self.parentController as! NavigationSidebarViewController).parentController?.navigationController, parentViewController: (self.parentController as! NavigationSidebarViewController).parentController)
+            VCPresenter.showVC(viewController: profile, popupIfPossible: true, parentNavigationController: nil, parentViewController: (self.parentController as! NavigationSidebarViewController).parentController)
         }
     }
 
     func inbox(_ sender: AnyObject) {
         self.parentController?.dismiss(animated: true) {
             let inbox = InboxViewController.init()
-            VCPresenter.showVC(viewController: inbox, popupIfPossible: true, parentNavigationController: (self.parentController as! NavigationSidebarViewController).parentController?.navigationController, parentViewController: (self.parentController as! NavigationSidebarViewController).parentController)
+            VCPresenter.showVC(viewController: inbox, popupIfPossible: true, parentNavigationController: nil, parentViewController: (self.parentController as! NavigationSidebarViewController).parentController)
         }
     }
 
@@ -198,7 +198,7 @@ class NavigationHeaderView: UIView {
         //self.parentController!.dismiss(animated: true, completion: nil)
 
         let settings = SettingsViewController()
-        VCPresenter.showVC(viewController: settings, popupIfPossible: true, parentNavigationController: parentController?.navigationController, parentViewController: parentController)
+        VCPresenter.showVC(viewController: settings, popupIfPossible: true, parentNavigationController: nil, parentViewController: parentController)
     }
 
     func switchAccounts(_ sender: AnyObject) {

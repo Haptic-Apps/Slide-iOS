@@ -313,6 +313,8 @@ class SettingsFont: UITableViewController {
         self.submissionSystem.textLabel?.textColor = ColorUtil.fontColor
         
         doChecks()
+        self.tableView.tableFooterView = UIView()
+
     }
     
     func doChecks(){

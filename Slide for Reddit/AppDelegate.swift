@@ -133,47 +133,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     return
                 }
 
-                // device does not support biometric (face id or touch id) authentication
-                else if error == .biometryNotAvailable {
-                    BioMetricAuthenticator.authenticateWithPasscode(reason: "Enter your password", cancelTitle: "Exit", success: {
-                        self?.window?.isHidden = false
-                    }, failure: {[weak self] (error) in
-                        exit(0)
-                    })
-                }
-
-                // show alternatives on fallback button clicked
-                else if error == .fallback {
-                    BioMetricAuthenticator.authenticateWithPasscode(reason: "Enter your password", cancelTitle: "Exit", success: {
-                        self?.window?.isHidden = false
-                    }, failure: { [weak self] (error) in
-                        exit(0)
-                    })
-                }
-
-                // No biometry enrolled in this device, ask user to register fingerprint or face
-                else if error == .biometryNotEnrolled {
-                    //ignore
-                }
-
-                // Biometry is locked out now, because there were too many failed attempts.
-                // Need to enter device passcode to unlock.
-                else if error == .biometryLockedout {
-                    BioMetricAuthenticator.authenticateWithPasscode(reason: "Enter your password", cancelTitle: "Exit", success: {
-                        self?.window?.isHidden = false
-                    }, failure: { [weak self] (error) in
-                        exit(0)
-                    })
-                }
-
-                // show error on authentication failed
-                else {
-                    BioMetricAuthenticator.authenticateWithPasscode(reason: "Enter your password", cancelTitle: "Exit", success: {
-                        self?.window?.isHidden = false
-                    }, failure: { [weak self] (error) in
-                        exit(0)
-                    })
-                }
+                BioMetricAuthenticator.authenticateWithPasscode(reason: "Enter your password", cancelTitle: "Exit", success: {
+                    self?.window?.isHidden = false
+                }, failure: { [weak self] (error) in
+                    exit(0)
+                })
             })
         }
     }

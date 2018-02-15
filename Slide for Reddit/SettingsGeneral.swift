@@ -99,6 +99,7 @@ class SettingsGeneral: UITableViewController {
         self.commentSorting.backgroundColor = ColorUtil.foregroundColor
         self.commentSorting.textLabel?.textColor = ColorUtil.fontColor
 
+        self.tableView.tableFooterView = UIView()
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
