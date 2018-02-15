@@ -116,6 +116,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
 
     func updateHeight(textView: UITextView) {
+        print("Updating height")
         self.tableView.beginUpdates()
         self.tableView.endUpdates()
     }

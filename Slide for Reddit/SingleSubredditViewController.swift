@@ -75,86 +75,90 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             itemWidth -= 10
         }
 
-        let submission = links[indexPath.row]
+        if (indexPath.row < links.count){
+            let submission = links[indexPath.row]
 
-        var thumb = submission.thumbnail
-        var big = submission.banner
+            var thumb = submission.thumbnail
+            var big = submission.banner
 
-        var type = ContentType.getContentType(baseUrl: submission.url!)
-        if (submission.isSelf) {
-            type = .SELF
-        }
-
-        if (SettingValues.bannerHidden) {
-            big = false
-            thumb = true
-        }
-
-        let fullImage = ContentType.fullImage(t: type)
-        var submissionHeight = submission.height
-
-        if (!fullImage && submissionHeight < 50) {
-            big = false
-            thumb = true
-        } else if (big && (SettingValues.bigPicCropped)) {
-            submissionHeight = 200
-        } else if (big) {
-            let ratio = Double(submissionHeight) / Double(submission.width)
-            let width = Double(itemWidth);
-
-            let h = width * ratio
-            if (h == 0) {
-                submissionHeight = 200
-            } else {
-                submissionHeight = Int(h)
+            var type = ContentType.getContentType(baseUrl: submission.url!)
+            if (submission.isSelf) {
+                type = .SELF
             }
+
+            if (SettingValues.bannerHidden) {
+                big = false
+                thumb = true
+            }
+
+            let fullImage = ContentType.fullImage(t: type)
+            var submissionHeight = submission.height
+
+            if (!fullImage && submissionHeight < 50) {
+                big = false
+                thumb = true
+            } else if (big && (SettingValues.bigPicCropped)) {
+                submissionHeight = 200
+            } else if (big) {
+                let ratio = Double(submissionHeight) / Double(submission.width)
+                let width = Double(itemWidth);
+
+                let h = width * ratio
+                if (h == 0) {
+                    submissionHeight = 200
+                } else {
+                    submissionHeight = Int(h)
+                }
+            }
+
+
+            if (type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big) {
+                big = false
+                thumb = false
+            }
+
+            if (submissionHeight < 50) {
+                thumb = true
+                big = false
+            }
+
+
+            if (big || !submission.thumbnail) {
+                thumb = false
+            }
+
+
+            if (!big && !thumb && submission.type != .SELF && submission.type != .NONE) { //If a submission has a link but no images, still show the web thumbnail
+                thumb = true
+            }
+
+            if (submission.nsfw && !SettingValues.nsfwPreviews) {
+                big = false
+                thumb = true
+            }
+
+            if (submission.nsfw && SettingValues.hideNSFWCollection && (sub == "all" || sub == "frontpage" || sub == "popular")) {
+                big = false
+                thumb = true
+            }
+
+
+            if (SettingValues.noImages) {
+                big = false
+                thumb = false
+            }
+            if (thumb && type == .SELF) {
+                thumb = false
+            }
+
+
+            let he = CachedTitle.getTitle(submission: submission, full: false, false).boundingRect(with: CGSize.init(width: itemWidth - 24 - (SettingValues.postViewMode == .CARD ? 10 : 0) - (thumb ? (SettingValues.largerThumbnail ? 75 : 50) + 28 : 0), height: 10000), options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).height
+            let thumbheight = CGFloat(SettingValues.largerThumbnail ? 83 : 58)
+            let estimatedHeight = CGFloat((he < thumbheight && thumb || he < thumbheight && !big) ? thumbheight : he) + CGFloat(48) + (SettingValues.postViewMode == .CARD ? 10 : 0) + (SettingValues.hideButtonActionbar ? -28 : 0) + CGFloat(big && !thumb ? (submissionHeight + 20) : 0)
+            return CGSize(width: itemWidth, height: estimatedHeight)
         }
+        return CGSize(width: itemWidth, height: 0)
 
-
-        if (type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big) {
-            big = false
-            thumb = false
-        }
-
-        if (submissionHeight < 50) {
-            thumb = true
-            big = false
-        }
-
-
-        if (big || !submission.thumbnail) {
-            thumb = false
-        }
-
-
-        if (!big && !thumb && submission.type != .SELF && submission.type != .NONE) { //If a submission has a link but no images, still show the web thumbnail
-            thumb = true
-        }
-
-        if (submission.nsfw && !SettingValues.nsfwPreviews) {
-            big = false
-            thumb = true
-        }
-
-        if (submission.nsfw && SettingValues.hideNSFWCollection && (sub == "all" || sub == "frontpage" || sub == "popular")) {
-            big = false
-            thumb = true
-        }
-
-
-        if (SettingValues.noImages) {
-            big = false
-            thumb = false
-        }
-        if (thumb && type == .SELF) {
-            thumb = false
-        }
-
-
-        let he = CachedTitle.getTitle(submission: submission, full: false, false).boundingRect(with: CGSize.init(width: itemWidth - 24 - (SettingValues.postViewMode == .CARD ? 10 : 0) - (thumb ? (SettingValues.largerThumbnail ? 75 : 50) + 28 : 0), height: 10000), options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).height
-        let thumbheight = CGFloat(SettingValues.largerThumbnail ? 83 : 58)
-        let estimatedHeight = CGFloat((he < thumbheight && thumb || he < thumbheight && !big) ? thumbheight : he) + CGFloat(48) + (SettingValues.postViewMode == .CARD ? 10 : 0) + (SettingValues.hideButtonActionbar ? -28 : 0) + CGFloat(big && !thumb ? (submissionHeight + 20) : 0)
-        return CGSize(width: itemWidth, height: estimatedHeight)
     }
 
 
@@ -243,6 +247,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             for submission in links {
                 if (submission.getId() == id) {
                     item = links[location]
+                    print("Removing link")
                     links.remove(at: location)
                     break
                 }
@@ -251,7 +256,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
             tableView.performBatchUpdates({
                 self.tableView.deleteItems(at: [IndexPath.init(item: location, section: 0)])
-                self.flowLayout.reset()
                 let message = MDCSnackbarMessage.init(text: "Submission hidden forever")
                 let action = MDCSnackbarMessageAction()
                 let actionHandler = { () in
@@ -269,6 +273,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                 message.action = action
                 MDCSnackbarManager.show(message)
 
+                self.flowLayout.reset()
             }, completion: nil)
 
         } catch {
@@ -342,7 +347,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             self.report(cell.link!)
         }))
         alertController.addAction(Action(ActionData(title: "Hide", image: UIImage(named: "hide")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
-            //todo hide
+            self.hide(cell)
         }))
         let open = OpenInChromeController.init()
         if (open.isChromeInstalled()) {
@@ -853,10 +858,10 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         links = newLinks
 
         //todo save realm
-
-        tableView.deleteItems(at: indexPaths)
-
-        print("Empty")
+        tableView.performBatchUpdates({
+            self.tableView.deleteItems(at: indexPaths)
+            self.flowLayout.reset()
+        }, completion: nil)
     }
 
     var fab: KCFloatingActionButton?

@@ -234,10 +234,12 @@ class ReplyCellView: UITableViewCell, UITextViewDelegate, YMSPhotoPickerViewCont
         body.layer.cornerRadius = 10
         body.font = UIFont.systemFont(ofSize: 16)
         body.isScrollEnabled = false
+        body.layoutIfNeeded()
         if (edit) {
             body.text = (thing as! RComment).body
         }
         toolbar = ToolbarTextView.init(textView: body, delegate: self, parent: parent)
+        body.becomeFirstResponder()
     }
 
     func textViewDidChange(_ textView: UITextView) {

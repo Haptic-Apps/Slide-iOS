@@ -559,11 +559,17 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if (!SettingValues.hideButton) {
             hide.isHidden = true
         } else {
+            if (!addTouch) {
+                addTouch(view: hide, action: #selector(LinkCellView.hide(sender:)))
+            }
             hide.isHidden = false
         }
         if (!SettingValues.saveButton) {
             save.isHidden = true
         } else {
+            if (!addTouch) {
+                addTouch(view: save, action: #selector(LinkCellView.save(sender:)))
+            }
             save.isHidden = false
         }
         if (submission.archived || !AccountController.isLoggedIn) {
@@ -575,11 +581,24 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         } else {
             upvote.isHidden = false
             downvote.isHidden = false
+            if (!addTouch) {
+                addTouch(view: upvote, action: #selector(LinkCellView.upvote(sender:)))
+                addTouch(view: downvote, action: #selector(LinkCellView.downvote(sender:)))
+            }
+
             if (full) {
+                if (!addTouch) {
+                    addTouch(view: reply, action: #selector(LinkCellView.reply(sender:)))
+                }
                 reply.isHidden = false
                 hide.isHidden = true
             }
+            if (link!.author == AccountController.currentName) {
+                addTouch(view: edit, action: #selector(LinkCellView.edit(sender:)))
+            }
             edit.isHidden = true
+            addTouch(view: more, action: #selector(LinkCellView.more(sender:)))
+
         }
 
 
@@ -589,16 +608,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             edit.isHidden = false
         }
 
-        if (!addTouch) {
-            addTouch(view: save, action: #selector(LinkCellView.save(sender:)))
-            addTouch(view: upvote, action: #selector(LinkCellView.upvote(sender:)))
-            addTouch(view: downvote, action: #selector(LinkCellView.downvote(sender:)))
-            addTouch(view: hide, action: #selector(LinkCellView.hide(sender:)))
-            addTouch(view: more, action: #selector(LinkCellView.more(sender:)))
-            addTouch(view: reply, action: #selector(LinkCellView.reply(sender:)))
-            addTouch(view: edit, action: #selector(LinkCellView.edit(sender:)))
-            addTouch = true
-        }
         thumb = submission.thumbnail
         big = submission.banner
 
@@ -813,7 +822,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 break
             }
 
-            if(SettingValues.smallerTag && !full){
+            if (SettingValues.smallerTag && !full) {
                 b.isHidden = true
                 tagbody.isHidden = false
                 taglabel.text = " \(text.uppercased()) "
@@ -862,7 +871,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
 
         let metrics = ["horizontalMargin": 75, "top": 0, "bottom": 0, "separationBetweenLabels": 0, "full": Int(contentView.frame.size.width), "size": full ? 16 : 8, "labelMinHeight": 75, "thumb": (SettingValues.largerThumbnail ? 75 : 50), "bannerHeight": submissionHeight] as [String: Int]
-        let views = ["label": title, "body": textView, "image": thumbImage, "info": b, "tag" : tagbody, "upvote": upvote, "downvote": downvote, "score": score, "comments": comments, "banner": bannerImage, "buttons": buttons, "box": box] as [String: Any]
+        let views = ["label": title, "body": textView, "image": thumbImage, "info": b, "tag": tagbody, "upvote": upvote, "downvote": downvote, "score": score, "comments": comments, "banner": bannerImage, "buttons": buttons, "box": box] as [String: Any]
         var bt = "[buttons]-8-"
         var bx = "[box]-8-"
         if (SettingValues.hideButtonActionbar && !full) {
@@ -1238,7 +1247,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 text = "Link"
                 break
             }
-            if(SettingValues.smallerTag && !full){
+            if (SettingValues.smallerTag && !full) {
                 b.isHidden = true
                 tagbody.isHidden = false
                 taglabel.text = " \(text.uppercased()) "
@@ -1344,7 +1353,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
     }
 
-    func flairSelf(){
+    func flairSelf() {
         //todo this
 
     }
