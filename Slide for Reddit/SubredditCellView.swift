@@ -16,7 +16,7 @@ class SubredditCellView: UITableViewCell {
     var navController: UIViewController?
 
     func showPin(_ shouldShow: Bool){
-        pin.isHidden = shouldShow
+        pin.isHidden = !shouldShow
     }
 
 
@@ -30,7 +30,8 @@ class SubredditCellView: UITableViewCell {
         self.sideView = UIView(frame: CGRect(x: 0, y: 0, width: 4, height: CGFloat.greatestFiniteMagnitude))
         self.pin = UIImageView(frame: CGRect(x: 0, y:0, width: 10, height: CGFloat.greatestFiniteMagnitude))
 
-        self.pin.image = UIImage.init(named: "pin")!.withColor(tintColor: ColorUtil.fontColor)
+        self.pin.image = UIImage.init(named: "lock")!.withColor(tintColor: ColorUtil.fontColor)
+        self.pin.isHidden = true
 
         sideView.translatesAutoresizingMaskIntoConstraints = false
         title.translatesAutoresizingMaskIntoConstraints = false

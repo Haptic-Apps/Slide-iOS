@@ -32,7 +32,7 @@ class SubredditReorderViewController: UITableViewController {
         let syncB = UIBarButtonItem.init(customView: sync)
 
         let az = UIButton.init(type: .custom)
-        az.setImage(UIImage.init(named: "sync")!.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
+        az.setImage(UIImage.init(named: "az")!.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
         az.addTarget(self, action: #selector(self.sortAz(_:)), for: UIControlEvents.touchUpInside)
         az.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let azB = UIBarButtonItem.init(customView: az)
@@ -203,6 +203,7 @@ class SubredditReorderViewController: UITableViewController {
             let indexPath = IndexPath.init(row: 0, section: 0)
             self.tableView.scrollToRow(at: indexPath,
                     at: UITableViewScrollPosition.top, animated: true)
+            self.navigationItem.setRightBarButtonItems(normalItems, animated: true)
 
         }
     }
@@ -212,13 +213,13 @@ class SubredditReorderViewController: UITableViewController {
             var pinned2: [String] = []
             var pinned3: [String] = []
             for i in rows {
-                if(!pinned.contains(self.subs[i.row])){
+                if (!pinned.contains(self.subs[i.row])) {
                     pinned2.append(self.subs[i.row])
                 } else {
                     pinned3.append(self.subs[i.row])
                 }
             }
-            if(pinned2.isEmpty){
+            if (pinned2.isEmpty) {
                 //Are all pinned, need to unpin
                 self.pinned = self.subs.filter({ (input) -> Bool in
                     return !pinned3.contains(input)
@@ -242,7 +243,7 @@ class SubredditReorderViewController: UITableViewController {
             SubredditReorderViewController.changed = true
             Subscriptions.setPinned(name: AccountController.currentName, subs: pinned, completion: {
             })
-
+            self.navigationItem.setRightBarButtonItems(normalItems, animated: true)
 
         }
     }
@@ -285,6 +286,7 @@ class SubredditReorderViewController: UITableViewController {
                     return !top.contains(input)
                 })
                 self.tableView.reloadData()
+                self.navigationItem.setRightBarButtonItems(self.normalItems, animated: true)
 
             }
             actionSheetController.addAction(cancelActionButton)
@@ -302,7 +304,6 @@ class SubredditReorderViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         if (tableView.indexPathsForSelectedRows != nil && !tableView.indexPathsForSelectedRows!.isEmpty) {
-            print(tableView.indexPathsForSelectedRows!.count)
             self.navigationItem.setRightBarButtonItems(editItems, animated: true)
         } else {
             self.navigationItem.setRightBarButtonItems(normalItems, animated: true)
@@ -316,32 +317,6 @@ class SubredditReorderViewController: UITableViewController {
         } else {
             self.navigationItem.setRightBarButtonItems(normalItems, animated: true)
         }
-        /* deprecated tableView.deselectRow(at: indexPath, animated: true)
-         let item = subs[indexPath.row]
-         let actionSheetController: UIAlertController = UIAlertController(title: item, message: "", preferredStyle: .actionSheet)
-
-         var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
-             print("Cancel")
-         }
-         actionSheetController.addAction(cancelActionButton)
-
-         cancelActionButton = UIAlertAction(title: "Unsubscribe", style: .default) { action -> Void in
-             //todo unsub
-         }
-         actionSheetController.addAction(cancelActionButton)
-
-         cancelActionButton = UIAlertAction(title: "Move to top", style: .default) { action -> Void in
-             self.subs.remove(at: indexPath.row)
-             self.subs.insert(item, at: 0)
-             tableView.reloadData()
-             let indexPath = IndexPath.init(row: 0, section: 0)
-             self.tableView.scrollToRow(at: indexPath,
-                                        at: UITableViewScrollPosition.top, animated: true)
-
-         }
-         actionSheetController.addAction(cancelActionButton)
-
-         self.present(actionSheetController, animated: true, completion: nil)*/
     }
 
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
@@ -350,61 +325,4 @@ class SubredditReorderViewController: UITableViewController {
             tableView.deleteRows(at: [indexPath], with: .fade)
         }
     }
-
-
-    /*
-     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-     let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
-     
-     // Configure the cell...
-     
-     return cell
-     }
-     */
-
-    /*
-     // Override to support conditional editing of the table view.
-     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-     // Return false if you do not want the specified item to be editable.
-     return true
-     }
-     */
-
-    /*
-     // Override to support editing the table view.
-     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-     if editingStyle == .delete {
-     // Delete the row from the data source
-     tableView.deleteRows(at: [indexPath], with: .fade)
-     } else if editingStyle == .insert {
-     // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-     }
-     }
-     */
-
-    /*
-     // Override to support rearranging the table view.
-     override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-     
-     }
-     */
-
-    /*
-     // Override to support conditional rearranging of the table view.
-     override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-     // Return false if you do not want the item to be re-orderable.
-     return true
-     }
-     */
-
-    /*
-     // MARK: - Navigation
-     
-     // In a storyboard-based application, you will often want to do a little preparation before navigation
-     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-     // Get the new view controller using segue.destinationViewController.
-     // Pass the selected object to the new view controller.
-     }
-     */
-
 }

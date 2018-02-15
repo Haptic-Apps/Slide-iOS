@@ -1522,7 +1522,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                                 self.flowLayout.reset()
                                 self.tableView.contentOffset = CGPoint.init(x: 0, y: -60)
                                 self.tableView.reloadData()
-                                self.flowLayout.reset()
                             } else {
                                 self.tableView.insertItems(at: paths)
                                 self.flowLayout.reset()
