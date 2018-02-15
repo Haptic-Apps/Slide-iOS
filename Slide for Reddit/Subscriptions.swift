@@ -27,6 +27,13 @@ class Subscriptions{
         }
         return accountSubs
     }
+
+    public static var pinned: [String] {
+        if let accounts = UserDefaults.standard.array(forKey: "subsP" + AccountController.currentName){
+            return accounts as! [String]
+        }
+        return []
+    }
     
     public static func isSubscriber(_ sub: String) -> Bool{
         for s in subreddits {
@@ -82,6 +89,13 @@ class Subscriptions{
     public static func set(name: String, subs: [String], completion: @escaping () -> Void){
         print("Setting subs")
         UserDefaults.standard.set(subs, forKey: "subs" + name)
+        UserDefaults.standard.synchronize()
+        Subscriptions.sync(name: name, completion: completion)
+    }
+
+    public static func setPinned(name: String, subs: [String], completion: @escaping () -> Void){
+        print("Setting pinned subs")
+        UserDefaults.standard.set(subs, forKey: "subsP" + name)
         UserDefaults.standard.synchronize()
         Subscriptions.sync(name: name, completion: completion)
     }

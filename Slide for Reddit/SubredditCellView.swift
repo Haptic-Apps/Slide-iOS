@@ -11,8 +11,14 @@ import AudioToolbox
 
 class SubredditCellView: UITableViewCell {
     var sideView: UIView = UIView()
+    var pin = UIImageView()
     var title: UILabel = UILabel()
     var navController: UIViewController?
+
+    func showPin(_ shouldShow: Bool){
+        pin.isHidden = shouldShow
+    }
+
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -22,12 +28,17 @@ class SubredditCellView: UITableViewCell {
         title.font = FontGenerator.fontOfSize(size: 16, submission: true)
 
         self.sideView = UIView(frame: CGRect(x: 0, y: 0, width: 4, height: CGFloat.greatestFiniteMagnitude))
+        self.pin = UIImageView(frame: CGRect(x: 0, y:0, width: 10, height: CGFloat.greatestFiniteMagnitude))
+
+        self.pin.image = UIImage.init(named: "pin")!.withColor(tintColor: ColorUtil.fontColor)
 
         sideView.translatesAutoresizingMaskIntoConstraints = false
         title.translatesAutoresizingMaskIntoConstraints = false
+        pin.translatesAutoresizingMaskIntoConstraints = false
 
         self.contentView.addSubview(sideView)
         self.contentView.addSubview(title)
+        self.contentView.addSubview(pin)
 
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(self.handleLongPress(_:)))
         longPress.minimumPressDuration = 0.25
@@ -99,10 +110,10 @@ class SubredditCellView: UITableViewCell {
         super.updateConstraints()
 
         let metrics = ["topMargin": 0]
-        let views = ["title": title, "side": sideView] as [String: Any]
+        let views = ["title": title, "pin": pin, "side": sideView] as [String: Any]
 
         var constraint: [NSLayoutConstraint] = []
-        constraint = NSLayoutConstraint.constraints(withVisualFormat: "H:|-16-[side(16)]-8-[title]-2-|",
+        constraint = NSLayoutConstraint.constraints(withVisualFormat: "H:|-16-[side(16)]-6-[pin(10)]-2-[title]-2-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views)
@@ -117,6 +128,12 @@ class SubredditCellView: UITableViewCell {
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
+
+        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(25)-[pin(10)]-(25)-|",
+                options: NSLayoutFormatOptions(rawValue: 0),
+                metrics: metrics,
+                views: views))
+
 
         self.contentView.addConstraints(constraint)
         sideView.layer.cornerRadius = 8
