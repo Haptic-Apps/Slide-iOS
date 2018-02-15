@@ -96,7 +96,7 @@ class ReplyCellView: UITableViewCell, UITextViewDelegate, YMSPhotoPickerViewCont
                 switch res {
                 case .failure:
                     DispatchQueue.main.async {
-                        toolbar?.saveDraft(self)
+                        self.toolbar?.saveDraft(self)
                         self.alertController?.dismiss(animated: false, completion: {
                             let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your message has not been edited (but has been saved as a draft), please try again", preferredStyle: .alert)
                             alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
@@ -123,7 +123,7 @@ class ReplyCellView: UITableViewCell, UITextViewDelegate, YMSPhotoPickerViewCont
             })
         } catch {
             DispatchQueue.main.async {
-                toolbar?.saveDraft(self)
+                self.toolbar?.saveDraft(self)
                 self.alertController?.dismiss(animated: false, completion: {
                     let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your message has not been edited (but has been saved as a draft), please try again", preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
@@ -161,7 +161,7 @@ class ReplyCellView: UITableViewCell, UITextViewDelegate, YMSPhotoPickerViewCont
                 case .failure(let error):
                     print(error.description)
                     DispatchQueue.main.async {
-                        toolbar?.saveDraft(self)
+                        self.toolbar?.saveDraft(self)
                         self.alertController?.dismiss(animated: false, completion: {
                             let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your comment has not been sent (but has been saved as a draft), please try again", preferredStyle: .alert)
                             alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
@@ -181,7 +181,7 @@ class ReplyCellView: UITableViewCell, UITextViewDelegate, YMSPhotoPickerViewCont
             })
         } catch {
             DispatchQueue.main.async {
-                toolbar?.saveDraft(self)
+                self.toolbar?.saveDraft(self)
                 self.alertController?.dismiss(animated: false, completion: {
                     let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your comment has not been sent (but has been saved as a draft), please try again", preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
@@ -284,8 +284,8 @@ class ReplyCellView: UITableViewCell, UITextViewDelegate, YMSPhotoPickerViewCont
     }
 
     func photoPickerViewController(picker: YMSPhotoPickerViewController!, didFinishPickingImages photoAssets: [PHAsset]!) {
-        picker.dismissViewControllerAnimated(true) {
-            toolbar?.uploadAsync(photoAssets)
+        picker.dismiss(animated: true) {
+            self.toolbar?.uploadAsync(photoAssets)
         }
     }
 

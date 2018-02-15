@@ -160,8 +160,8 @@ class ReplyViewController: UITableViewController, UITextViewDelegate, YMSPhotoPi
     }
 
     func photoPickerViewController(picker: YMSPhotoPickerViewController!, didFinishPickingImages photoAssets: [PHAsset]!) {
-        picker.dismissViewControllerAnimated(true) {
-            toolbar?.uploadAsync(photoAssets)
+        picker.dismiss(animated: true) {
+            self.toolbar?.uploadAsync(photoAssets)
         }
     }
 
@@ -180,7 +180,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate, YMSPhotoPi
         self.submissionCallback = { (link) in
             DispatchQueue.main.async {
                 if (link == nil) {
-                    toolbar?.saveDraft(self)
+                    self.toolbar?.saveDraft(self)
                     self.alertController?.dismiss(animated: false, completion: {
                         let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your submission has not been edited (but has been saved as a draft), please try again", preferredStyle: .alert)
                         alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))

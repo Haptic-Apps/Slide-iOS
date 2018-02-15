@@ -6,8 +6,13 @@
 import UIKit
 import YangMingShan
 import ActionSheetPicker_3_0
+import MaterialComponents.MaterialSnackbar
+import Alamofire
+import SwiftyJSON
+import Photos
+import MobileCoreServices
 
-public class ToolbarTextView: NSObject, YMSPhotoPickerViewControllerDelegate {
+public class ToolbarTextView: NSObject {
 
     var delegate: YMSPhotoPickerViewControllerDelegate
     var text: UITextView?
@@ -28,17 +33,17 @@ public class ToolbarTextView: NSObject, YMSPhotoPickerViewControllerDelegate {
         scrollView.backgroundColor = ColorUtil.backgroundColor
         var i = 0
         for button in ([
-            generateButtons(image: "save", action: #selector(ReplyViewController.saveDraft(_:))),
-            generateButtons(image: "folder", action: #selector(ReplyViewController.openDrafts(_:))),
-            generateButtons(image: "image", action: #selector(ReplyViewController.uploadImage(_:))),
-            generateButtons(image: "draw", action: #selector(ReplyViewController.draw(_:))),
-            generateButtons(image: "link", action: #selector(ReplyViewController.link(_:))),
-            generateButtons(image: "bold", action: #selector(ReplyViewController.bold(_:))),
-            generateButtons(image: "italic", action: #selector(ReplyViewController.italics(_:))),
-            generateButtons(image: "list", action: #selector(ReplyViewController.list(_:))),
-            generateButtons(image: "list_number", action: #selector(ReplyViewController.numberedList(_:))),
-            generateButtons(image: "size", action: #selector(ReplyViewController.size(_:))),
-            generateButtons(image: "strikethrough", action: #selector(ReplyViewController.strike(_:)))]) {
+            generateButtons(image: "save", action: #selector(ToolbarTextView.saveDraft(_:))),
+            generateButtons(image: "folder", action: #selector(ToolbarTextView.openDrafts(_:))),
+            generateButtons(image: "image", action: #selector(ToolbarTextView.uploadImage(_:))),
+            generateButtons(image: "draw", action: #selector(ToolbarTextView.draw(_:))),
+            generateButtons(image: "link", action: #selector(ToolbarTextView.link(_:))),
+            generateButtons(image: "bold", action: #selector(ToolbarTextView.bold(_:))),
+            generateButtons(image: "italic", action: #selector(ToolbarTextView.italics(_:))),
+            generateButtons(image: "list", action: #selector(ToolbarTextView.list(_:))),
+            generateButtons(image: "list_number", action: #selector(ToolbarTextView.numberedList(_:))),
+            generateButtons(image: "size", action: #selector(ToolbarTextView.size(_:))),
+            generateButtons(image: "strikethrough", action: #selector(ToolbarTextView.strike(_:)))]) {
             button.0.frame = CGRect.init(x: i * 50, y: 0, width: 50, height: 50)
             button.0.isUserInteractionEnabled = true
             button.0.addTarget(self, action: button.1, for: UIControlEvents.touchUpInside)
@@ -80,7 +85,7 @@ public class ToolbarTextView: NSObject, YMSPhotoPickerViewControllerDelegate {
     func openDrafts(_ sender: AnyObject) {
         print("Opening drafts")
         if (Drafts.drafts.isEmpty) {
-            self.view.makeToast("No drafts found", duration: 4, position: .top)
+            parent.view.makeToast("No drafts found", duration: 4, position: .top)
         } else {
             picker = ActionSheetStringPicker(title: "Choose a draft", rows: Drafts.drafts, initialSelection: 0, doneBlock: { (picker, index, value) in
                 self.text!.insertText(Drafts.drafts[index] as String)
@@ -121,13 +126,13 @@ public class ToolbarTextView: NSObject, YMSPhotoPickerViewControllerDelegate {
         alertView = UIAlertController(title: "Uploading...", message: "Your images are uploading to Imgur", preferredStyle: .alert)
         alertView!.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
 
-        present(alertView!, animated: true, completion: {
+        parent.present(alertView!, animated: true, completion: {
             //  Add your progressbar after alert is shown (and measured)
             let margin: CGFloat = 8.0
             let rect = CGRect.init(x: margin, y: 72.0, width: (self.alertView?.view.frame.width)! - margin * 2.0, height: 2.0)
             self.progressBar = UIProgressView(frame: rect)
             self.progressBar.progress = 0
-            self.progressBar.tintColor = ColorUtil.accentColorForSub(sub: self.subreddit)
+            self.progressBar.tintColor = ColorUtil.accentColorForSub(sub: "")
             self.alertView?.view.addSubview(self.progressBar)
         })
 
@@ -153,9 +158,9 @@ public class ToolbarTextView: NSObject, YMSPhotoPickerViewControllerDelegate {
                                 DispatchQueue.main.async {
                                     self.alertView!.dismiss(animated: true, completion: {
                                         if last != "Failure" {
-                                            if (self.type == .SUBMIT_IMAGE) {
-                                                self.linkCell.cellLabel.text = url
-                                                self.linkCell.cellLabel.isEditable = false
+                                            if (self.parent is ReplyViewController && (self.parent as! ReplyViewController).type == .SUBMIT_IMAGE) {
+                                                (self.parent as! ReplyViewController).linkCell.cellLabel.text = url
+                                                (self.parent as! ReplyViewController).linkCell.cellLabel.isEditable = false
                                             } else {
                                                 let alert = UIAlertController(title: "Link text", message: url, preferredStyle: .alert)
 
@@ -169,12 +174,12 @@ public class ToolbarTextView: NSObject, YMSPhotoPickerViewControllerDelegate {
                                                 }))
 
                                                 alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
-                                                self.present(alert, animated: true, completion: nil)
+                                                self.parent.present(alert, animated: true, completion: nil)
                                             }
                                         } else {
                                             let alert = UIAlertController(title: "Uploading failed", message: "Uh oh, something went wrong while uploading to Imgur. Please try again in a few minutes", preferredStyle: .alert)
                                             alert.addAction(UIAlertAction.init(title: "Ok", style: .cancel, handler: nil))
-                                            self.present(alert, animated: true, completion: nil)
+                                            self.parent.present(alert, animated: true, completion: nil)
                                         }
                                     })
                                 }
@@ -188,9 +193,9 @@ public class ToolbarTextView: NSObject, YMSPhotoPickerViewControllerDelegate {
                 DispatchQueue.main.async {
                     self.alertView!.dismiss(animated: true, completion: {
                         if link != "Failure" {
-                            if (type == .SUBMIT_IMAGE) {
-                                self.linkCell.cellLabel.text = url
-                                self.linkCell.cellLabel.isEditable = false
+                            if (self.parent is ReplyViewController && (self.parent as! ReplyViewController).type == .SUBMIT_IMAGE) {
+                                (self.parent as! ReplyViewController).linkCell.cellLabel.text = link
+                                (self.parent as! ReplyViewController).linkCell.cellLabel.isEditable = false
                             } else {
                                 let alert = UIAlertController(title: "Link text", message: link, preferredStyle: .alert)
 
@@ -204,12 +209,12 @@ public class ToolbarTextView: NSObject, YMSPhotoPickerViewControllerDelegate {
                                 }))
 
                                 alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
-                                self.present(alert, animated: true, completion: nil)
+                                self.parent.present(alert, animated: true, completion: nil)
                             }
                         } else {
                             let alert = UIAlertController(title: "Uploading failed", message: "Uh oh, something went wrong while uploading to Imgur. Please try again in a few minutes", preferredStyle: .alert)
                             alert.addAction(UIAlertAction.init(title: "Ok", style: .cancel, handler: nil))
-                            self.present(alert, animated: true, completion: nil)
+                            self.parent.present(alert, animated: true, completion: nil)
                         }
 
                     })

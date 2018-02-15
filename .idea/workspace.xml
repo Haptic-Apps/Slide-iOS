@@ -2,73 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4e152e64-2f09-48b9-9864-06428fccec3c" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/Slide for Reddit/ToolbarTextView.swift" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/Podfile" afterPath="$PROJECT_DIR$/Podfile" />
-      <change beforePath="$PROJECT_DIR$/Podfile.lock" afterPath="$PROJECT_DIR$/Podfile.lock" />
-      <change beforePath="$PROJECT_DIR$/Pods/ImagePickerSheetController/ImagePickerSheetController/ImagePickerSheetController/AnimationController.swift" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Pods/ImagePickerSheetController/ImagePickerSheetController/ImagePickerSheetController/ImagePickerAction.swift" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Pods/ImagePickerSheetController/ImagePickerSheetController/ImagePickerSheetController/ImagePickerSheetController.swift" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Pods/ImagePickerSheetController/ImagePickerSheetController/ImagePickerSheetController/Images.xcassets/Contents.json" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Pods/ImagePickerSheetController/ImagePickerSheetController/ImagePickerSheetController/Images.xcassets/PreviewCollectionViewCell-video.imageset/Contents.json" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Pods/ImagePickerSheetController/ImagePickerSheetController/ImagePickerSheetController/Images.xcassets/PreviewCollectionViewCell-video.imageset/PreviewCollectionViewCell-video.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Pods/ImagePickerSheetController/ImagePickerSheetController/ImagePickerSheetController/Images.xcassets/PreviewCollectionViewCell-video.imageset/PreviewCollectionViewCell-video@2x.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Pods/ImagePickerSheetController/ImagePickerSheetController/ImagePickerSheetController/Images.xcassets/PreviewCollectionViewCell-video.imageset/PreviewCollectionViewCell-video@3x.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Pods/ImagePickerSheetController/ImagePickerSheetController/ImagePickerSheetController/Images.xcassets/PreviewSupplementaryView-Checkmark-Selected.imageset/Contents.json" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Pods/ImagePickerSheetController/ImagePickerSheetController/ImagePickerSheetController/Images.xcassets/PreviewSupplementaryView-Checkmark-Selected.imageset/PreviewSupplementaryView-Checkmark-Selected.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Pods/ImagePickerSheetController/ImagePickerSheetController/ImagePickerSheetController/Images.xcassets/PreviewSupplementaryView-Checkmark-Selected.imageset/PreviewSupplementaryView-Checkmark-Selected@2x.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Pods/ImagePickerSheetController/ImagePickerSheetController/ImagePickerSheetController/Images.xcassets/PreviewSupplementaryView-Checkmark-Selected.imageset/PreviewSupplementaryView-Checkmark-Selected@3x.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Pods/ImagePickerSheetController/ImagePickerSheetController/ImagePickerSheetController/Images.xcassets/PreviewSupplementaryView-Checkmark.imageset/Contents.json" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Pods/ImagePickerSheetController/ImagePickerSheetController/ImagePickerSheetController/Images.xcassets/PreviewSupplementaryView-Checkmark.imageset/PreviewSupplementaryView-Checkmark.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Pods/ImagePickerSheetController/ImagePickerSheetController/ImagePickerSheetController/Images.xcassets/PreviewSupplementaryView-Checkmark.imageset/PreviewSupplementaryView-Checkmark@2x.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Pods/ImagePickerSheetController/ImagePickerSheetController/ImagePickerSheetController/Images.xcassets/PreviewSupplementaryView-Checkmark.imageset/PreviewSupplementaryView-Checkmark@3x.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Pods/ImagePickerSheetController/ImagePickerSheetController/ImagePickerSheetController/Sheet/Preview/PreviewCollectionView.swift" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Pods/ImagePickerSheetController/ImagePickerSheetController/ImagePickerSheetController/Sheet/Preview/PreviewCollectionViewCell.swift" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Pods/ImagePickerSheetController/ImagePickerSheetController/ImagePickerSheetController/Sheet/Preview/PreviewCollectionViewLayout.swift" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Pods/ImagePickerSheetController/ImagePickerSheetController/ImagePickerSheetController/Sheet/Preview/PreviewSupplementaryView.swift" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Pods/ImagePickerSheetController/ImagePickerSheetController/ImagePickerSheetController/Sheet/SheetActionCollectionViewCell.swift" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Pods/ImagePickerSheetController/ImagePickerSheetController/ImagePickerSheetController/Sheet/SheetCollectionViewCell.swift" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Pods/ImagePickerSheetController/ImagePickerSheetController/ImagePickerSheetController/Sheet/SheetCollectionViewLayout.swift" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Pods/ImagePickerSheetController/ImagePickerSheetController/ImagePickerSheetController/Sheet/SheetController.swift" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Pods/ImagePickerSheetController/ImagePickerSheetController/ImagePickerSheetController/Sheet/SheetPreviewCollectionViewCell.swift" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Pods/ImagePickerSheetController/LICENSE" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Pods/ImagePickerSheetController/README.md" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Pods/Local Podspecs/ImagePickerSheetController.podspec.json" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Pods/Manifest.lock" afterPath="$PROJECT_DIR$/Pods/Manifest.lock" />
-      <change beforePath="$PROJECT_DIR$/Pods/Pods.xcodeproj/project.pbxproj" afterPath="$PROJECT_DIR$/Pods/Pods.xcodeproj/project.pbxproj" />
-      <change beforePath="$PROJECT_DIR$/Pods/Pods.xcodeproj/xcuserdata/carloscrane.xcuserdatad/xcschemes/ActionSheetPicker-3.0.xcscheme" afterPath="$PROJECT_DIR$/Pods/Pods.xcodeproj/xcuserdata/carloscrane.xcuserdatad/xcschemes/ActionSheetPicker-3.0.xcscheme" />
-      <change beforePath="$PROJECT_DIR$/Pods/Pods.xcodeproj/xcuserdata/carloscrane.xcuserdatad/xcschemes/ImagePickerSheetController.xcscheme" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Pods/Pods.xcodeproj/xcuserdata/carloscrane.xcuserdatad/xcschemes/Pods-Slide for Reddit.xcscheme" afterPath="$PROJECT_DIR$/Pods/Pods.xcodeproj/xcuserdata/carloscrane.xcuserdatad/xcschemes/Pods-Slide for Reddit.xcscheme" />
-      <change beforePath="$PROJECT_DIR$/Pods/Pods.xcodeproj/xcuserdata/carloscrane.xcuserdatad/xcschemes/Pods-Slide for RedditTests.xcscheme" afterPath="$PROJECT_DIR$/Pods/Pods.xcodeproj/xcuserdata/carloscrane.xcuserdatad/xcschemes/Pods-Slide for RedditTests.xcscheme" />
-      <change beforePath="$PROJECT_DIR$/Pods/Pods.xcodeproj/xcuserdata/carloscrane.xcuserdatad/xcschemes/Pods-Slide for RedditUITests.xcscheme" afterPath="$PROJECT_DIR$/Pods/Pods.xcodeproj/xcuserdata/carloscrane.xcuserdatad/xcschemes/Pods-Slide for RedditUITests.xcscheme" />
-      <change beforePath="$PROJECT_DIR$/Pods/Pods.xcodeproj/xcuserdata/carloscrane.xcuserdatad/xcschemes/Realm.xcscheme" afterPath="$PROJECT_DIR$/Pods/Pods.xcodeproj/xcuserdata/carloscrane.xcuserdatad/xcschemes/Realm.xcscheme" />
-      <change beforePath="$PROJECT_DIR$/Pods/Pods.xcodeproj/xcuserdata/carloscrane.xcuserdatad/xcschemes/RealmSwift.xcscheme" afterPath="$PROJECT_DIR$/Pods/Pods.xcodeproj/xcuserdata/carloscrane.xcuserdatad/xcschemes/RealmSwift.xcscheme" />
-      <change beforePath="$PROJECT_DIR$/Pods/Pods.xcodeproj/xcuserdata/carloscrane.xcuserdatad/xcschemes/SDWebImage.xcscheme" afterPath="$PROJECT_DIR$/Pods/Pods.xcodeproj/xcuserdata/carloscrane.xcuserdatad/xcschemes/SDWebImage.xcscheme" />
-      <change beforePath="$PROJECT_DIR$/Pods/Pods.xcodeproj/xcuserdata/carloscrane.xcuserdatad/xcschemes/SideMenu.xcscheme" afterPath="$PROJECT_DIR$/Pods/Pods.xcodeproj/xcuserdata/carloscrane.xcuserdatad/xcschemes/SideMenu.xcscheme" />
-      <change beforePath="$PROJECT_DIR$/Pods/Pods.xcodeproj/xcuserdata/carloscrane.xcuserdatad/xcschemes/SloppySwiper.xcscheme" afterPath="$PROJECT_DIR$/Pods/Pods.xcodeproj/xcuserdata/carloscrane.xcuserdatad/xcschemes/SloppySwiper.xcscheme" />
-      <change beforePath="$PROJECT_DIR$/Pods/Pods.xcodeproj/xcuserdata/carloscrane.xcuserdatad/xcschemes/SwiftyJSON.xcscheme" afterPath="$PROJECT_DIR$/Pods/Pods.xcodeproj/xcuserdata/carloscrane.xcuserdatad/xcschemes/SwiftyJSON.xcscheme" />
-      <change beforePath="$PROJECT_DIR$/Pods/Pods.xcodeproj/xcuserdata/carloscrane.xcuserdatad/xcschemes/TTTAttributedLabel.xcscheme" afterPath="$PROJECT_DIR$/Pods/Pods.xcodeproj/xcuserdata/carloscrane.xcuserdatad/xcschemes/TTTAttributedLabel.xcscheme" />
-      <change beforePath="$PROJECT_DIR$/Pods/Pods.xcodeproj/xcuserdata/carloscrane.xcuserdatad/xcschemes/UZTextView.xcscheme" afterPath="$PROJECT_DIR$/Pods/Pods.xcodeproj/xcuserdata/carloscrane.xcuserdatad/xcschemes/UZTextView.xcscheme" />
-      <change beforePath="$PROJECT_DIR$/Pods/Pods.xcodeproj/xcuserdata/carloscrane.xcuserdatad/xcschemes/reddift.xcscheme" afterPath="$PROJECT_DIR$/Pods/Pods.xcodeproj/xcuserdata/carloscrane.xcuserdatad/xcschemes/reddift.xcscheme" />
-      <change beforePath="$PROJECT_DIR$/Pods/Target Support Files/ImagePickerSheetController/ImagePickerSheetController-dummy.m" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Pods/Target Support Files/ImagePickerSheetController/ImagePickerSheetController-prefix.pch" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Pods/Target Support Files/ImagePickerSheetController/ImagePickerSheetController-umbrella.h" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Pods/Target Support Files/ImagePickerSheetController/ImagePickerSheetController.modulemap" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Pods/Target Support Files/ImagePickerSheetController/ImagePickerSheetController.xcconfig" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Pods/Target Support Files/ImagePickerSheetController/Info.plist" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Pods/Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit-acknowledgements.markdown" afterPath="$PROJECT_DIR$/Pods/Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit-acknowledgements.markdown" />
-      <change beforePath="$PROJECT_DIR$/Pods/Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit-acknowledgements.plist" afterPath="$PROJECT_DIR$/Pods/Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit-acknowledgements.plist" />
-      <change beforePath="$PROJECT_DIR$/Pods/Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit-frameworks.sh" afterPath="$PROJECT_DIR$/Pods/Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit-frameworks.sh" />
-      <change beforePath="$PROJECT_DIR$/Pods/Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit.debug.xcconfig" afterPath="$PROJECT_DIR$/Pods/Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit.debug.xcconfig" />
-      <change beforePath="$PROJECT_DIR$/Pods/Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit.release.xcconfig" afterPath="$PROJECT_DIR$/Pods/Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit.release.xcconfig" />
-      <change beforePath="$PROJECT_DIR$/Pods/Target Support Files/Pods-Slide for RedditTests/Pods-Slide for RedditTests.debug.xcconfig" afterPath="$PROJECT_DIR$/Pods/Target Support Files/Pods-Slide for RedditTests/Pods-Slide for RedditTests.debug.xcconfig" />
-      <change beforePath="$PROJECT_DIR$/Pods/Target Support Files/Pods-Slide for RedditTests/Pods-Slide for RedditTests.release.xcconfig" afterPath="$PROJECT_DIR$/Pods/Target Support Files/Pods-Slide for RedditTests/Pods-Slide for RedditTests.release.xcconfig" />
-      <change beforePath="$PROJECT_DIR$/Pods/Target Support Files/Pods-Slide for RedditUITests/Pods-Slide for RedditUITests.debug.xcconfig" afterPath="$PROJECT_DIR$/Pods/Target Support Files/Pods-Slide for RedditUITests/Pods-Slide for RedditUITests.debug.xcconfig" />
-      <change beforePath="$PROJECT_DIR$/Pods/Target Support Files/Pods-Slide for RedditUITests/Pods-Slide for RedditUITests.release.xcconfig" afterPath="$PROJECT_DIR$/Pods/Target Support Files/Pods-Slide for RedditUITests/Pods-Slide for RedditUITests.release.xcconfig" />
-      <change beforePath="$PROJECT_DIR$/Slide for Reddit.xcodeproj/project.pbxproj" afterPath="$PROJECT_DIR$/Slide for Reddit.xcodeproj/project.pbxproj" />
-      <change beforePath="$PROJECT_DIR$/Slide for Reddit/ProfileViewController.swift" afterPath="$PROJECT_DIR$/Slide for Reddit/ProfileViewController.swift" />
       <change beforePath="$PROJECT_DIR$/Slide for Reddit/ReplyCellView.swift" afterPath="$PROJECT_DIR$/Slide for Reddit/ReplyCellView.swift" />
-      <change beforePath="$PROJECT_DIR$/Slide for Reddit/ReplyViewController.swift" afterPath="$PROJECT_DIR$/Slide for Reddit/ReplyViewController.swift" />
+      <change beforePath="$PROJECT_DIR$/Slide for Reddit/ToolbarTextView.swift" afterPath="$PROJECT_DIR$/Slide for Reddit/ToolbarTextView.swift" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -103,23 +38,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ReplyViewController.swift" pinned="false" current-in-tab="true">
+      <file leaf-file-name="ReplyViewController.swift" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Slide for Reddit/ReplyViewController.swift">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="182">
-              <caret line="182" column="28" lean-forward="false" selection-start-line="182" selection-start-column="28" selection-end-line="182" selection-end-column="28" />
-              <folding>
-                <element signature="e#156#168#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="195">
+              <caret line="13" column="18" lean-forward="false" selection-start-line="13" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ToolbarTextView.swift" pinned="false" current-in-tab="false">
+      <file leaf-file-name="ToolbarTextView.swift" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Slide for Reddit/ToolbarTextView.swift">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="105">
-              <caret line="7" column="28" lean-forward="false" selection-start-line="7" selection-start-column="28" selection-end-line="7" selection-end-column="28" />
+            <state relative-caret-position="195">
+              <caret line="13" column="0" lean-forward="true" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
               <folding>
                 <element signature="e#102#114#0" expanded="true" />
               </folding>
@@ -141,7 +74,7 @@
         <entry file="file://$PROJECT_DIR$/Slide for Reddit/ReplyCellView.swift">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="182">
-              <caret line="183" column="24" lean-forward="false" selection-start-line="183" selection-start-column="24" selection-end-line="183" selection-end-column="24" />
+              <caret line="241" column="85" lean-forward="false" selection-start-line="241" selection-start-column="85" selection-end-line="241" selection-end-column="85" />
               <folding>
                 <element signature="e#150#167#0" expanded="true" />
               </folding>
@@ -193,7 +126,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>didchange</find>
       <find>text?.dele</find>
       <find>cansele</find>
       <find>cansel</find>
@@ -220,9 +152,10 @@
       <find>func up</find>
       <find>cance</find>
       <find>textviewdele</find>
-      <find>cancel</find>
       <find>delegate</find>
       <find>addtoolbar</find>
+      <find>self.present</find>
+      <find>cancel</find>
     </findStrings>
     <replaceStrings>
       <replace>-12</replace>
@@ -282,9 +215,9 @@
         <option value="$PROJECT_DIR$/Slide for Reddit/SubredditReorderViewController.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/SubredditThemeViewController.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/ProfileViewController.swift" />
-        <option value="$PROJECT_DIR$/Slide for Reddit/ToolbarTextView.swift" />
-        <option value="$PROJECT_DIR$/Slide for Reddit/ReplyCellView.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/ReplyViewController.swift" />
+        <option value="$PROJECT_DIR$/Slide for Reddit/ReplyCellView.swift" />
+        <option value="$PROJECT_DIR$/Slide for Reddit/ToolbarTextView.swift" />
       </list>
     </option>
   </component>
@@ -459,12 +392,12 @@
       <workItem from="1518503348790" duration="2819000" />
       <workItem from="1518542792775" duration="12098000" />
       <workItem from="1518559075767" duration="30192000" />
-      <workItem from="1518647419733" duration="16501000" />
+      <workItem from="1518647419733" duration="17258000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="139137000" />
+    <option name="totallyTimeSpent" value="139894000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -479,13 +412,13 @@
     <frame x="0" y="22" width="1680" height="964" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32914287" sideWeight="0.4978903" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32911393" sideWeight="0.4978903" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.31070197" sideWeight="0.2833032" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31070197" sideWeight="0.7166968" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32911393" sideWeight="0.38155514" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32914287" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32914287" sideWeight="0.4978903" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32911393" sideWeight="0.4978903" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2103677" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32914287" sideWeight="0.4954792" order="1" side_tool="false" content_ui="tabs" />
@@ -889,20 +822,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Slide for Reddit/ToolbarTextView.swift">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" column="28" lean-forward="false" selection-start-line="7" selection-start-column="28" selection-end-line="7" selection-end-column="28" />
-          <folding>
-            <element signature="e#102#114#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Slide for Reddit/ReplyCellView.swift">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="182">
-          <caret line="183" column="24" lean-forward="false" selection-start-line="183" selection-start-column="24" selection-end-line="183" selection-end-column="24" />
+          <caret line="241" column="85" lean-forward="false" selection-start-line="241" selection-start-column="85" selection-end-line="241" selection-end-column="85" />
           <folding>
             <element signature="e#150#167#0" expanded="true" />
           </folding>
@@ -911,10 +834,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Slide for Reddit/ReplyViewController.swift">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="182">
-          <caret line="182" column="28" lean-forward="false" selection-start-line="182" selection-start-column="28" selection-end-line="182" selection-end-column="28" />
+        <state relative-caret-position="195">
+          <caret line="13" column="18" lean-forward="false" selection-start-line="13" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Slide for Reddit/ToolbarTextView.swift">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="13" column="0" lean-forward="true" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
           <folding>
-            <element signature="e#156#168#0" expanded="true" />
+            <element signature="e#102#114#0" expanded="true" />
           </folding>
         </state>
       </provider>
