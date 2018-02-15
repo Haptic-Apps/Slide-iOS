@@ -249,7 +249,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }))
         alertController.addAction(Action(ActionData(title: "/r/\(link.subreddit)", image: UIImage(named: "subs")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
 
-            let prof = SubredditLinkViewController.init(subName: link.subreddit, single: true)
+            let prof = SingleSubredditViewController.init(subName: link.subreddit, single: true)
             VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
         }))
 
@@ -394,9 +394,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             if (Subscriptions.isSubscriber(link.subreddit)) {
                 doSubbed()
             }
-            print(NSDate.init().timeIntervalSince1970 - History.getSeenTime(s: self.submission!))
 
-            if (NSDate.init().timeIntervalSince1970 - History.getSeenTime(s: self.submission!) < 0 && !reset) { //todo this
+            if (NSDate.init().timeIntervalSince1970 - History.getSeenTime(s: self.submission!) < 0 && !reset) {//todo possibly, would only load if more than x ms passed
                 self.loaded = true
                 do {
                     let realm = try Realm()
@@ -721,7 +720,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         hideSearchBar()
     }
 
-    func sort(_ sender: AnyObject) {
+    func sort(_ selector: UIButton?) {
         let actionSheetController: UIAlertController = UIAlertController(title: "Default comment sorting", message: "", preferredStyle: .actionSheet)
 
         let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
@@ -738,8 +737,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             actionSheetController.addAction(saveActionButton)
         }
 
-        actionSheetController.modalPresentationStyle = .formSheet
-        //todo is a crash here
+        if let presenter = actionSheetController.popoverPresentationController {
+            presenter.sourceView = selector!
+            presenter.sourceRect = selector!.bounds
+        }
+
         self.present(actionSheetController, animated: true, completion: nil)
     }
 
@@ -1654,6 +1656,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         tableView.beginUpdates()
         tableView.insertRows(at: [IndexPath.init(row: 0, section: 0)], with: .middle)
         tableView.endUpdates()
+        let insets = UIEdgeInsets(top: 0, left: 0, bottom: self.tableView.frame.size.height, right: 0)
+        self.tableView.contentInset = insets
     }
 
     func doReply() {
@@ -1662,13 +1666,14 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         let cell = tableView.cellForRow(at: IndexPath.init(row: menuIndex - 1, section: 0)) as! CommentDepthCell
         tableView.deleteRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .middle)
         tableView.endUpdates()
-
         menuShown = true
         replyShown = true
         reply!.setContent(thing: cell.content!, sub: (cell.content as! RComment).subreddit, editing: false, delegate: self, parent: self)
         tableView.beginUpdates()
         tableView.insertRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .middle)
         tableView.endUpdates()
+        let insets = UIEdgeInsets(top: 0, left: 0, bottom: self.tableView.frame.size.height, right: 0)
+        self.tableView.contentInset = insets
     }
 
     func showCommentMenu(_ cell: CommentDepthCell) {
@@ -1683,7 +1688,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             tableView.endUpdates()
 
         }
-        tableView.contentInset = UIEdgeInsetsMake(0, 0, self.tableView.frame.size.height * (2 / 3), 0)
         menuShown = true
         replyShown = false
         menu!.setComment(comment: cell.content as! RComment, cell: cell, parent: self)
@@ -1711,7 +1715,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         tableView.deleteRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .middle)
         tableView.endUpdates()
         tableView.contentInset = UIEdgeInsetsMake(0
-                , 0, 45, 0)
+                , 0,100, 0)
     }
 
     override func becomeFirstResponder() -> Bool {

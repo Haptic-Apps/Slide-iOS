@@ -43,7 +43,7 @@
         <!--Subreddits View Controller-->
         <scene sceneID="dSQ-Dp-GkY">
             <objects>
-                <pageViewController autoresizesArchivedViewToFullSize="NO" transitionStyle="scroll" navigationOrientation="horizontal" spineLocation="none" id="gsG-yI-gWC" customClass="SubredditsViewController" customModule="Slide_for_Reddit" customModuleProvider="target" sceneMemberID="viewController">
+                <pageViewController autoresizesArchivedViewToFullSize="NO" transitionStyle="scroll" navigationOrientation="horizontal" spineLocation="none" id="gsG-yI-gWC" customClass="MainViewController" customModule="Slide_for_Reddit" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationItem key="navigationItem" id="xi8-ls-rgP"/>
                 </pageViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jfs-L1-7ov" userLabel="First Responder" sceneMemberID="firstResponder"/>

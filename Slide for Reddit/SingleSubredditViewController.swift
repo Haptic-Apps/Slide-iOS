@@ -1,5 +1,5 @@
 //
-//  SubredditLinkViewController.swift
+//  SingleSubredditViewController.swift
 //  Slide for Reddit
 //
 //  Created by Carlos Crane on 12/22/16.
@@ -20,7 +20,7 @@ import SloppySwiper
 import XLActionController
 import MKColorPicker
 
-class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate, UICollectionViewDataSource, LinkCellViewDelegate, ColorPickerViewDelegate, KCFloatingActionButtonDelegate, WrappingFlowLayoutDelegate {
+class SingleSubredditViewController: MediaViewController, UICollectionViewDelegate, UICollectionViewDataSource, LinkCellViewDelegate, ColorPickerViewDelegate, KCFloatingActionButtonDelegate, WrappingFlowLayoutDelegate {
 
     let maxHeaderHeight: CGFloat = 120;
     let minHeaderHeight: CGFloat = 56;
@@ -158,7 +158,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
     }
 
 
-    var parentController: SubredditsViewController?
+    var parentController: MainViewController?
     var accentChosen: UIColor?
 
     var isAccent = false
@@ -262,7 +262,6 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
                     } catch {
 
                     }
-
                 }
                 action.handler = actionHandler
                 action.title = "UNDO"
@@ -325,7 +324,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         }))
         alertController.addAction(Action(ActionData(title: "/r/\(link.subreddit)", image: UIImage(named: "subs")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
 
-            let sub = SubredditLinkViewController.init(subName: link.subreddit, single: true)
+            let sub = SingleSubredditViewController.init(subName: link.subreddit, single: true)
             VCPresenter.showVC(viewController: sub, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
 
         }))
@@ -468,7 +467,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
     var tableView: UICollectionView = UICollectionView.init(frame: CGRect.zero, collectionViewLayout: UICollectionViewLayout.init())
     var single: Bool = false
 
-    init(subName: String, parent: SubredditsViewController) {
+    init(subName: String, parent: MainViewController) {
         sub = subName;
         self.parentController = parent
 
@@ -616,9 +615,9 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
 
         session = (UIApplication.shared.delegate as! AppDelegate).session
 
-        if (SubredditLinkViewController.firstPresented && !single) || (self.links.count == 0 && !single && !SettingValues.viewType) {
+        if (SingleSubredditViewController.firstPresented && !single) || (self.links.count == 0 && !single && !SettingValues.viewType) {
             load(reset: true)
-            SubredditLinkViewController.firstPresented = false
+            SingleSubredditViewController.firstPresented = false
         }
 
         if (single) {
@@ -737,7 +736,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         let alrController = UIAlertController(title: sub.displayName, message: sub.descriptionMd, preferredStyle: UIAlertControllerStyle.actionSheet)
         for s in sub.subreddits {
             let somethingAction = UIAlertAction(title: "/r/" + s, style: UIAlertActionStyle.default, handler: { (alert: UIAlertAction!) in
-                self.show(SubredditLinkViewController.init(subName: s, single: true), sender: self)
+                self.show(SingleSubredditViewController.init(subName: s, single: true), sender: self)
             })
             let color = ColorUtil.getColorForSub(sub: s)
             if (color != ColorUtil.baseColor) {
@@ -872,7 +871,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         heightAtIndexPath.setObject(height, forKey: indexPath as NSCopying)
     }
 
-    func pickTheme(sender: AnyObject?, parent: SubredditsViewController?) {
+    func pickTheme(sender: AnyObject?, parent: MainViewController?) {
         parentController = parent
         let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
 
@@ -920,7 +919,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         present(alertController, animated: true, completion: nil)
     }
 
-    func pickAccent(sender: AnyObject?, parent: SubredditsViewController?) {
+    func pickAccent(sender: AnyObject?, parent: MainViewController?) {
         parentController = parent
         let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
 
@@ -1054,14 +1053,14 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
         alert.addAction(UIAlertAction(title: "Search All", style: .default, handler: { [weak alert] (_) in
             let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
             let search = SearchViewController.init(subreddit: "all", searchFor: (textField?.text!)!)
-            self.navigationController?.show(search, sender: self)
+            VCPresenter.showVC(viewController: search, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
         }))
 
         if (sub != "all" && sub != "frontpage" && sub != "friends" && !sub.startsWith("/m/")) {
             alert.addAction(UIAlertAction(title: "Search \(sub)", style: .default, handler: { [weak alert] (_) in
                 let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
                 let search = SearchViewController.init(subreddit: self.sub, searchFor: (textField?.text!)!)
-                self.navigationController?.show(search, sender: self)
+                VCPresenter.showVC(viewController: search, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
             }))
         }
 
@@ -1072,7 +1071,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
 
     }
 
-    func showMore(_ sender: AnyObject, parentVC: SubredditsViewController? = nil) {
+    func showMore(_ sender: AnyObject, parentVC: MainViewController? = nil) {
 
         let actionSheetController: UIAlertController = UIAlertController(title: "", message: "", preferredStyle: .actionSheet)
 
@@ -1297,7 +1296,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
 
         cell?.preservesSuperviewLayoutMargins = false
         cell?.del = self
-        if indexPath.row == self.links.count - 1 && !loading && !nomore {
+        if indexPath.row == self.links.count - 3 && !loading && !nomore {
             self.loadMore()
         }
 
@@ -1330,7 +1329,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
     var sort = SettingValues.defaultSorting
     var time = SettingValues.defaultTimePeriod
 
-    func showMenu(_ selector: AnyObject) {
+    func showMenu(_ selector: UIButton?) {
         let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
 
         let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
@@ -1340,18 +1339,21 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
 
         for link in LinkSortType.cases {
             let saveActionButton: UIAlertAction = UIAlertAction(title: link.description, style: .default) { action -> Void in
-                self.showTimeMenu(s: link)
+                self.showTimeMenu(s: link, selector: selector)
             }
             actionSheetController.addAction(saveActionButton)
         }
 
-        //todo make this work on ipad
+        if let presenter = actionSheetController.popoverPresentationController {
+            presenter.sourceView = selector!
+            presenter.sourceRect = selector!.bounds
+        }
 
         self.present(actionSheetController, animated: true, completion: nil)
 
     }
 
-    func showTimeMenu(s: LinkSortType) {
+    func showTimeMenu(s: LinkSortType, selector: UIButton?) {
         if (s == .hot || s == .new) {
             sort = s
             refresh()
@@ -1374,7 +1376,11 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
                 actionSheetController.addAction(saveActionButton)
             }
 
-            //todo make this work on ipad
+            if let presenter = actionSheetController.popoverPresentationController {
+                presenter.sourceView = selector!
+                presenter.sourceRect = selector!.bounds
+            }
+
             self.present(actionSheetController, animated: true, completion: nil)
         }
     }
@@ -1382,7 +1388,6 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
     var refreshControl: UIRefreshControl!
 
     func refresh() {
-        self.links = []
         load(reset: true)
     }
 
@@ -1517,6 +1522,7 @@ class SubredditLinkViewController: MediaViewController, UICollectionViewDelegate
                                 self.flowLayout.reset()
                                 self.tableView.contentOffset = CGPoint.init(x: 0, y: -60)
                                 self.tableView.reloadData()
+                                self.flowLayout.reset()
                             } else {
                                 self.tableView.insertItems(at: paths)
                                 self.flowLayout.reset()

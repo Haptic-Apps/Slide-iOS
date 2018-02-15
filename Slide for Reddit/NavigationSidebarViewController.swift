@@ -15,9 +15,9 @@ import AudioToolbox
 class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, UIGestureRecognizerDelegate{
     weak var tableView : UITableView!
     var filteredContent: [String] = []
-    var parentController: SubredditsViewController?
+    var parentController: MainViewController?
     
-    func setViewController(controller: SubredditsViewController){
+    func setViewController(controller: MainViewController){
         parentController = controller
     }
     

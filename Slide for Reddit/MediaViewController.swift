@@ -80,8 +80,8 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
     }
 
     func doShow(url: URL, lq: URL? = nil) {
-        print(url)
-        contentUrl = url
+        contentUrl = URL.init(string: String.init(htmlEncodedString: url.absoluteString))!
+        print(contentUrl!.absoluteString)
         var spoiler = ContentType.isSpoiler(uri: url)
         if (spoiler) {
             let controller = UIAlertController.init(title: "Spoiler", message: url.absoluteString, preferredStyle: .alert)

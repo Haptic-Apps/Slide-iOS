@@ -62,7 +62,7 @@ class SubredditCellView: UITableViewCell {
         if (navController != nil) {
             AudioServicesPlaySystemSound(1519)
             if (!self.cancelled) {
-                let vc = SubredditLinkViewController.init(subName: self.subname, single: true)
+                let vc = SingleSubredditViewController.init(subName: self.subname, single: true)
 
                 navController!.dismiss(animated: true) {
                     VCPresenter.showVC(viewController: vc, popupIfPossible: true, parentNavigationController: self.navController!.navigationController, parentViewController: self.navController!)

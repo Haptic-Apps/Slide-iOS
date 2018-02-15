@@ -826,7 +826,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
     }
     
     func setIsNew(sub: String){
-        self.contentView.backgroundColor = ColorUtil.getColorForSub(sub: sub).withAlphaComponent(0.5)
+        self.contentView.backgroundColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.getColorForSub(sub: sub).withAlphaComponent(0.25))
     }
     
     

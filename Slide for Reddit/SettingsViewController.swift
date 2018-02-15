@@ -24,6 +24,7 @@ class SettingsViewController: UITableViewController {
     var filters: UITableViewCell = UITableViewCell()
     var content: UITableViewCell = UITableViewCell()
     var lockCell: UITableViewCell = UITableViewCell()
+    var subCell: UITableViewCell = UITableViewCell()
 
     var multiColumnCell: UITableViewCell = UITableViewCell()
     var multiColumn = UISwitch()
@@ -133,6 +134,13 @@ class SettingsViewController: UITableViewController {
         self.content.imageView?.image = UIImage.init(named: "image")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
         self.content.imageView?.tintColor = ColorUtil.fontColor
 
+        self.subCell.textLabel?.text = "Visit the Slide subreddit!"
+        self.subCell.accessoryType = .disclosureIndicator
+        self.subCell.backgroundColor = ColorUtil.foregroundColor
+        self.subCell.textLabel?.textColor = ColorUtil.fontColor
+        self.subCell.imageView?.image = UIImage.init(named: "subs")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
+        self.subCell.imageView?.tintColor = ColorUtil.fontColor
+
         self.filters.textLabel?.text = "Filters"
         self.filters.accessoryType = .disclosureIndicator
         self.filters.backgroundColor = ColorUtil.foregroundColor
@@ -222,6 +230,7 @@ class SettingsViewController: UITableViewController {
             case 2: return self.dataSaving
             case 3: return self.content
             case 4: return self.filters
+            case 5: return self.subCell
             default: fatalError("Unknown row in section 2")
             }
         default: fatalError("Unknown section")
@@ -257,60 +266,13 @@ class SettingsViewController: UITableViewController {
             ch = SettingsLinkHandling()
         } else if (indexPath.section == 2 && indexPath.row == 1) {
             ch = SettingsHistory()
+        } else if (indexPath.section == 2 && indexPath.row == 5) {
+            ch = SingleSubredditViewController.init(subName: "slide_ios", single: true)
         }
         if let n = ch {
-            if (self.navigationController != nil) {
-                self.navigationController?.pushViewController(n, animated: true)
-            } else {
-                splitViewController?.showDetailViewController(n, sender: self)
-            }
+            VCPresenter.showVC(viewController: n, popupIfPossible: false, parentNavigationController: navigationController, parentViewController: self)
         }
     }
-
-    /* maybe future
- override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        let cornerRadius : CGFloat = 12.0
-        cell.backgroundColor = UIColor.clear
-        var layer: CAShapeLayer = CAShapeLayer()
-        var pathRef:CGMutablePath = CGMutablePath()
-        var bounds: CGRect = cell.bounds.insetBy(dx: 25, dy: 0)
-        var addLine: Bool = false
-        
-        if (indexPath.row == 0 && indexPath.row == tableView.numberOfRows(inSection: indexPath.section)-1) {
-            pathRef.__addRoundedRect(transform: nil, rect: bounds, cornerWidth: cornerRadius, cornerHeight: cornerRadius)
-        } else if (indexPath.row == 0) {
-            pathRef.move(to: CGPoint.init(x: bounds.minX, y: bounds.maxY))
-            pathRef.addArc(center: CGPoint.init(x: bounds.minX, y: bounds.maxY), radius: bounds.midX, startAngle: bounds.minY, endAngle: cornerRadius, clockwise: false)
-            pathRef.addArc(center: CGPoint.init(x: bounds.maxX, y: bounds.minY), radius: bounds.maxX, startAngle: bounds.midY, endAngle: cornerRadius, clockwise: false)
-            pathRef.addLine(to: CGPoint.init(x: bounds.maxX, y: bounds.maxY))
-            addLine = true
-        } else if (indexPath.row == tableView.numberOfRows(inSection: indexPath.section)-1) {
-            pathRef.move(to: CGPoint.init(x: bounds.minX, y: bounds.maxY))
-            pathRef.addArc(center: CGPoint.init(x: bounds.minX, y: bounds.maxY), radius: bounds.midX, startAngle: bounds.maxY, endAngle: cornerRadius, clockwise: false)
-            pathRef.addArc(center: CGPoint.init(x: bounds.maxX, y: bounds.maxY), radius: bounds.maxX, startAngle: bounds.midY, endAngle: cornerRadius, clockwise: false)
-            pathRef.addLine(to: CGPoint.init(x: bounds.maxX, y: bounds.minY))
-        } else {
-            pathRef.addRect(bounds)
-            addLine = true
-        }
-        
-        layer.path = pathRef
-        layer.fillColor = UIColor(red: 255/255.0, green: 255/255.0, blue: 255/255.0, alpha: 0.8).cgColor
-        
-        if (addLine == true) {
-            var lineLayer: CALayer = CALayer()
-            var lineHeight: CGFloat = (1.0 / UIScreen.main.scale)
-            lineLayer.frame = CGRect.init(x: bounds.minX+10, y:  bounds.size.height-lineHeight, width: bounds.size.width-10, height: lineHeight)
-            lineLayer.backgroundColor = tableView.separatorColor?.cgColor
-            layer.addSublayer(lineLayer)
-        }
-        var testView: UIView = UIView(frame: bounds)
-        testView.layer.insertSublayer(layer, at: 0)
-        testView.backgroundColor = UIColor.clear
-        cell.backgroundView = testView
-
-    }*/
-
 
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let label: UILabel = UILabel()
@@ -337,19 +299,8 @@ class SettingsViewController: UITableViewController {
         switch (section) {
         case 0: return 4    // section 0 has 2 rows
         case 1: return 5    // section 1 has 1 row
-        case 2: return 5
+        case 2: return 6
         default: fatalError("Unknown number of sections")
         }
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

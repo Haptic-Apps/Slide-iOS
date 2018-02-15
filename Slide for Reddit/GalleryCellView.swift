@@ -22,6 +22,33 @@ class GalleryCellView: UITableViewCell {
     var link: RSubmission?
     
     func setLink(_ link: RSubmission, navigationVC: UINavigationController, parent: MediaViewController){
+        self.bannerImage = UIImageView(frame: CGRect(x: 0, y: 8, width: CGFloat.greatestFiniteMagnitude, height: 0))
+        bannerImage.clipsToBounds = true;
+        bannerImage.contentMode = UIViewContentMode.scaleAspectFit
+
+        self.commentsImage = UIImageView(frame: CGRect(x:0, y:0, width: 40, height: 40))
+        self.commentsImage.image = UIImage.init(named: "comments")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30))
+
+        self.typeImage = UIImageView(frame: CGRect(x:0, y:0, width: 40, height: 40))
+
+        bannerImage.translatesAutoresizingMaskIntoConstraints = false
+        commentsImage.translatesAutoresizingMaskIntoConstraints = false
+        typeImage.translatesAutoresizingMaskIntoConstraints = false
+
+        self.contentView.addSubview(bannerImage)
+        self.contentView.addSubview(commentsImage)
+        self.contentView.addSubview(typeImage)
+
+        commentsImage.addTapGestureRecognizer {
+            VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: self.link!.permalink)!), popupIfPossible: true, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController)
+        }
+        bannerImage.addTapGestureRecognizer {
+            parent.setLink(lnk: self.link!, shownURL: nil, lq: false, saveHistory: true)
+        }
+
+        self.contentView.backgroundColor = UIColor.black
+        self.updateConstraints()
+
         self.navViewController = navigationVC
         self.parentViewController = parent
         self.link = link
@@ -57,30 +84,8 @@ class GalleryCellView: UITableViewCell {
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.bannerImage = UIImageView(frame: CGRect(x: 0, y: 8, width: CGFloat.greatestFiniteMagnitude, height: 0))
-        bannerImage.clipsToBounds = true;
-        bannerImage.contentMode = UIViewContentMode.scaleAspectFit
-        
-        self.commentsImage = UIImageView(frame: CGRect(x:0, y:0, width: 40, height: 40))
-        self.commentsImage.image = UIImage.init(named: "comments")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30))
-        
-        self.typeImage = UIImageView(frame: CGRect(x:0, y:0, width: 40, height: 40))
-
-        bannerImage.translatesAutoresizingMaskIntoConstraints = false
-        commentsImage.translatesAutoresizingMaskIntoConstraints = false
-        typeImage.translatesAutoresizingMaskIntoConstraints = false
-
-        self.contentView.addSubview(bannerImage)
-        self.contentView.addSubview(commentsImage)
-        self.contentView.addSubview(typeImage)
-
-        addTouch(view: commentsImage, action: #selector(GalleryCellView.openComments(sender:)))
-        addTouch(view: bannerImage, action: #selector(GalleryCellView.openLink(sender:)))
-
-        self.contentView.backgroundColor = UIColor.black
-        self.updateConstraints()
     }
-    
+
     func addTouch(view: UIView, action: Selector){
         view.isUserInteractionEnabled = true
         let tap = UITapGestureRecognizer(target: self, action: action)
@@ -90,16 +95,6 @@ class GalleryCellView: UITableViewCell {
     
     var navViewController: UINavigationController?
     var parentViewController: MediaViewController?
-    
-    func openComments(sender: AnyObject){
-            let comment = CommentViewController(submission: link!)
-            (self.navViewController)?.pushViewController(comment, animated: true)
-
-    }
-    
-    func openLink(sender: AnyObject){
-        (parentViewController)?.setLink(lnk: link!, shownURL: nil, lq: false, saveHistory: true) //todo check this
-    }
 
 
     required init?(coder aDecoder: NSCoder) {

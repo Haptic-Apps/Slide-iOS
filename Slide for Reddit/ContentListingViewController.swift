@@ -90,7 +90,6 @@ class ContentListingViewController: MediaViewController, UITableViewDelegate, UI
         session = (UIApplication.shared.delegate as! AppDelegate).session
         
         refresh()
-        //todo self.shyNavBarManager.scrollView = self.tableView;
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -147,7 +146,7 @@ class ContentListingViewController: MediaViewController, UITableViewDelegate, UI
     var sort = LinkSortType.hot
     var time = TimeFilterWithin.day
     
-    func showMenu(){
+    func showMenu(sender: UIButton?){
         let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
         
         let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
@@ -158,18 +157,21 @@ class ContentListingViewController: MediaViewController, UITableViewDelegate, UI
         for link in LinkSortType.cases {
             let saveActionButton: UIAlertAction = UIAlertAction(title: link.description, style: .default)
             { action -> Void in
-                self.showTimeMenu(s: link)
+                self.showTimeMenu(s: link, selector: sender)
             }
             actionSheetController.addAction(saveActionButton)
         }
-        
-        //todo ipad popover controller
+
+        if let presenter = actionSheetController.popoverPresentationController {
+            presenter.sourceView = sender!
+            presenter.sourceRect = sender!.bounds
+        }
         
         self.present(actionSheetController, animated: true, completion: nil)
         
     }
     
-    func showTimeMenu(s: LinkSortType){
+    func showTimeMenu(s: LinkSortType, selector: UIButton?){
         if(s == .hot || s == .new){
             sort = s
             refresh()
@@ -191,8 +193,11 @@ class ContentListingViewController: MediaViewController, UITableViewDelegate, UI
                 }
                 actionSheetController.addAction(saveActionButton)
             }
-            
-            //todo iPad popover controller 
+
+            if let presenter = actionSheetController.popoverPresentationController {
+                presenter.sourceView = selector!
+                presenter.sourceRect = selector!.bounds
+            }
             
             self.present(actionSheetController, animated: true, completion: nil)
         }

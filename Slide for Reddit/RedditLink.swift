@@ -76,7 +76,7 @@ class RedditLink{
             return CommentViewController.init(submission: parts[2], subreddit: nil)
             
         case .SUBREDDIT:
-            return SubredditLinkViewController.init(subName: parts[2], single: true)
+            return SingleSubredditViewController.init(subName: parts[2], single: true)
         case .MESSAGE:
             
             break

@@ -28,7 +28,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var fetcher: BackgroundFetch? = nil
     var subreddits: [Subreddit] = []
     var paginator = Paginator()
-    var login: SubredditsViewController?
+    var login: MainViewController?
     var seenFile: String?
     var commentsFile: String?
     var totalBackground = false
@@ -224,7 +224,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
 
-    func syncColors(subredditController: SubredditsViewController?) {
+    func syncColors(subredditController: MainViewController?) {
         let defaults = UserDefaults.standard
         var toReturn: [String] = []
         defaults.set(true, forKey: "sc" + name)
@@ -339,7 +339,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             var navigationArray = rootViewController.viewControllers
             navigationArray.removeAll()
             rootViewController.viewControllers = navigationArray
-            rootViewController.pushViewController(SubredditsViewController(coder: NSCoder.init())!, animated: false)
+            rootViewController.pushViewController(MainViewController(coder: NSCoder.init())!, animated: false)
         }
     }
     

@@ -185,7 +185,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         let link = self.link!
         let color = ColorUtil.accentColorForSub(sub: ((link).subreddit))
         if (!link.htmlBody.isEmpty) {
-            let html = link.htmlBody
+            let html = link.htmlBody.trimmed()
             do {
                 let attr = html.toAttributedString()!
                 let font = FontGenerator.fontOfSize(size: 16, submission: false)
@@ -1468,7 +1468,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     }
 
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
-        if (viewControllerToCommit is WebsiteViewController || viewControllerToCommit is SubredditLinkViewController || viewControllerToCommit is UINavigationController || viewControllerToCommit is CommentViewController) {
+        if (viewControllerToCommit is WebsiteViewController || viewControllerToCommit is SingleSubredditViewController || viewControllerToCommit is UINavigationController || viewControllerToCommit is CommentViewController) {
             parentViewController?.show(viewControllerToCommit, sender: nil)
         } else {
             parentViewController?.present(viewControllerToCommit, animated: true)

@@ -1,6 +1,6 @@
 
 //
-//  SubredditsViewController.swift
+//  MainViewController.swift
 //  Slide for Reddit
 //
 //  Created by Carlos Crane on 12/25/16.
@@ -13,7 +13,7 @@ import MaterialComponents
 import MaterialComponents.MaterialSnackbar
 import SideMenu
 
-class SubredditsViewController:  ColorMuxPagingViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate , UISplitViewControllerDelegate {
+class MainViewController:  ColorMuxPagingViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate , UISplitViewControllerDelegate {
     var isReload = false
     public static var vCs : [UIViewController] = []
     public static var current: String = ""
@@ -110,7 +110,7 @@ class SubredditsViewController:  ColorMuxPagingViewController, UIPageViewControl
     func goToSubreddit(subreddit: String){
         if(Subscriptions.subreddits.contains(subreddit)){
             let index = Subscriptions.subreddits.index(of: subreddit)
-            let firstViewController = SubredditsViewController.vCs[index!]
+            let firstViewController = MainViewController.vCs[index!]
             
             
             setViewControllers([firstViewController],
@@ -118,8 +118,7 @@ class SubredditsViewController:  ColorMuxPagingViewController, UIPageViewControl
                                animated: true,
                                completion: nil)
             self.doCurrentPage(index!)
-
-            navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: self.currentTitle)
+            navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: subreddit)
         } else {
             show(RedditLink.getViewControllerForURL(urlS: URL.init(string: "/r/" + subreddit)!), sender: self)
         }
@@ -127,7 +126,7 @@ class SubredditsViewController:  ColorMuxPagingViewController, UIPageViewControl
     }
     
     func goToSubreddit(index: Int){
-            let firstViewController = SubredditsViewController.vCs[index]
+            let firstViewController = MainViewController.vCs[index]
             
             setViewControllers([firstViewController],
                                direction: .forward,
@@ -191,12 +190,12 @@ class SubredditsViewController:  ColorMuxPagingViewController, UIPageViewControl
         splitViewController?.view.backgroundColor = ColorUtil.foregroundColor
         SubredditReorderViewController.changed = false
         
-        SubredditsViewController.vCs = []
+        MainViewController.vCs = []
         for subname in Subscriptions.subreddits {
-            SubredditsViewController.vCs.append( SubredditLinkViewController(subName: subname, parent: self))
+            MainViewController.vCs.append( SingleSubredditViewController(subName: subname, parent: self))
         }
 
-        let firstViewController = SubredditsViewController.vCs[0]
+        let firstViewController = MainViewController.vCs[0]
 
         setViewControllers([firstViewController],
                            direction: .forward,
@@ -303,19 +302,19 @@ class SubredditsViewController:  ColorMuxPagingViewController, UIPageViewControl
     
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
         guard completed else { return }
-        let page = SubredditsViewController.vCs.index(of: self.viewControllers!.first!)
+        let page = MainViewController.vCs.index(of: self.viewControllers!.first!)
         doCurrentPage(page!)
     }
     
     
     func doCurrentPage(_ page: Int){
         self.currentPage = page
-        let vc = SubredditsViewController.vCs[page] as! SubredditLinkViewController
+        let vc = MainViewController.vCs[page] as! SingleSubredditViewController
         vc.viewWillAppear(true)
-        SubredditsViewController.current = vc.sub
-        self.tintColor = ColorUtil.getColorForSub(sub: SubredditsViewController.current)
-        self.menuNav?.setSubreddit(subreddit: SubredditsViewController.current)
-        self.currentTitle = SubredditsViewController.current
+        MainViewController.current = vc.sub
+        self.tintColor = ColorUtil.getColorForSub(sub: MainViewController.current)
+        self.menuNav?.setSubreddit(subreddit: MainViewController.current)
+        self.currentTitle = MainViewController.current
         
         //self.colorChanged()
         SideMenuManager.default.menuAddScreenEdgePanGesturesToPresent(toView: vc.view)
@@ -354,9 +353,9 @@ class SubredditsViewController:  ColorMuxPagingViewController, UIPageViewControl
         self.navigationController?.navigationBar.shadowImage = UIImage()
         self.navigationController?.navigationBar.layoutIfNeeded()
 
-        tabBar.tintColor = ColorUtil.accentColorForSub(sub: SubredditsViewController.current)
+        tabBar.tintColor = ColorUtil.accentColorForSub(sub: MainViewController.current)
         if(!selected){
-            let page = SubredditsViewController.vCs.index(of: self.viewControllers!.first!)
+            let page = MainViewController.vCs.index(of: self.viewControllers!.first!)
             if(!tabBar.items.isEmpty ) {
 
                 tabBar.setSelectedItem(tabBar.items[page!], animated: true)
@@ -367,13 +366,13 @@ class SubredditsViewController:  ColorMuxPagingViewController, UIPageViewControl
     }
 
     func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
-        color2 = ColorUtil.getColorForSub(sub: (pendingViewControllers[0] as! SubredditLinkViewController).sub)
-        color1 = ColorUtil.getColorForSub(sub: (SubredditsViewController.vCs[currentPage] as! SubredditLinkViewController).sub)
+        color2 = ColorUtil.getColorForSub(sub: (pendingViewControllers[0] as! SingleSubredditViewController).sub)
+        color1 = ColorUtil.getColorForSub(sub: (MainViewController.vCs[currentPage] as! SingleSubredditViewController).sub)
     }
 
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        guard let viewControllerIndex = SubredditsViewController.vCs.index(of: viewController) else {
+        guard let viewControllerIndex = MainViewController.vCs.index(of: viewController) else {
             return nil
         }
         
@@ -383,21 +382,21 @@ class SubredditsViewController:  ColorMuxPagingViewController, UIPageViewControl
             return nil
         }
         
-        guard SubredditsViewController.vCs.count > previousIndex else {
+        guard MainViewController.vCs.count > previousIndex else {
             return nil
         }
 
-        return SubredditsViewController.vCs[previousIndex]
+        return MainViewController.vCs[previousIndex]
     }
     
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        guard let viewControllerIndex = SubredditsViewController.vCs.index(of: viewController) else {
+        guard let viewControllerIndex = MainViewController.vCs.index(of: viewController) else {
             return nil
         }
         
         let nextIndex = viewControllerIndex + 1
-        let orderedViewControllersCount = SubredditsViewController.vCs.count
+        let orderedViewControllersCount = MainViewController.vCs.count
         
         guard orderedViewControllersCount != nextIndex else {
             return nil
@@ -407,7 +406,7 @@ class SubredditsViewController:  ColorMuxPagingViewController, UIPageViewControl
             return nil
         }
 
-        return SubredditsViewController.vCs[nextIndex]
+        return MainViewController.vCs[nextIndex]
     }
 
     override func becomeFirstResponder() -> Bool {
@@ -420,7 +419,7 @@ class SubredditsViewController:  ColorMuxPagingViewController, UIPageViewControl
     
     @objc func spacePressed() {
         UIView.animate(withDuration: 0.2, delay: 0, options: UIViewAnimationOptions.curveEaseOut, animations: {
-            let vc = (SubredditsViewController.vCs[self.currentPage] as! SubredditLinkViewController)
+            let vc = (MainViewController.vCs[self.currentPage] as! SingleSubredditViewController)
             vc.tableView.contentOffset.y = vc.tableView.contentOffset.y + 350
         }, completion: nil)
     }
@@ -442,9 +441,9 @@ class SubredditsViewController:  ColorMuxPagingViewController, UIPageViewControl
             self.splitViewController?.showDetailViewController(PlaceholderViewController(), sender: nil)
         }
         
-        if(SubredditsViewController.vCs.count == 0){
+        if(MainViewController.vCs.count == 0){
             for subname in Subscriptions.subreddits {
-                SubredditsViewController.vCs.append( SubredditLinkViewController(subName: subname, parent: self))
+                MainViewController.vCs.append( SingleSubredditViewController(subName: subname, parent: self))
             }
         }
         
@@ -478,7 +477,7 @@ class SubredditsViewController:  ColorMuxPagingViewController, UIPageViewControl
         self.automaticallyAdjustsScrollViewInsets = false
         menuNav = NavigationSidebarViewController()
         menuNav?.setViewController(controller: self)
-        self.menuNav?.setSubreddit(subreddit: SubredditsViewController.current)
+        self.menuNav?.setSubreddit(subreddit: MainViewController.current)
 
         menuLeftNavigationController = UISideMenuNavigationController.init(rootViewController: menuNav!)
 
@@ -541,8 +540,8 @@ class SubredditsViewController:  ColorMuxPagingViewController, UIPageViewControl
         }
     }
     
-    func showSortMenu(_ sender: AnyObject){
-        (SubredditsViewController.vCs[currentPage] as? SubredditLinkViewController)?.showMenu(sender)
+    func showSortMenu(_ sender: UIButton?){
+        (MainViewController.vCs[currentPage] as? SingleSubredditViewController)?.showMenu(sender)
     }
     
     var currentPage = 0
@@ -562,12 +561,12 @@ class SubredditsViewController:  ColorMuxPagingViewController, UIPageViewControl
     }
     
     func shadowbox(){
-        (SubredditsViewController.vCs[currentPage] as? SubredditLinkViewController)?.shadowboxMode()
+        (MainViewController.vCs[currentPage] as? SingleSubredditViewController)?.shadowboxMode()
     }
     
 
     func showMenu(_ sender: AnyObject){
-        (SubredditsViewController.vCs[currentPage] as? SubredditLinkViewController)?.showMore(sender, parentVC: self)
+        (MainViewController.vCs[currentPage] as? SingleSubredditViewController)?.showMore(sender, parentVC: self)
     }
     
     func showThemeMenu(){
@@ -608,11 +607,11 @@ class IndicatorTemplate: NSObject, MDCTabBarIndicatorTemplate {
         return attributes;
     }
 }
-extension SubredditsViewController: MDCTabBarDelegate {
+extension MainViewController: MDCTabBarDelegate {
     
     func tabBar(_ tabBar: MDCTabBar, didSelect item: UITabBarItem) {
         selected = true
-        let firstViewController = SubredditsViewController.vCs[tabBar.items.index(of: item)! ]
+        let firstViewController = MainViewController.vCs[tabBar.items.index(of: item)! ]
         
         setViewControllers([firstViewController],
                            direction: .forward,

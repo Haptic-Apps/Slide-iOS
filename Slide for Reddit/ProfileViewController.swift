@@ -1,5 +1,5 @@
 //
-//  SubredditsViewController.swift
+//  MainViewController.swift
 //  Slide for Reddit
 //
 //  Created by Carlos Crane on 1/4/17.
@@ -360,8 +360,8 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
 
     var currentVc = UIViewController()
     
-    func showSortMenu(_ sender: AnyObject){
-        (self.currentVc as? SubredditLinkViewController)?.showMenu(sender)
+    func showSortMenu(_ sender: UIButton?){
+        (self.currentVc as? SingleSubredditViewController)?.showMenu(sender)
     }
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerBefore viewController: UIViewController) -> UIViewController? {
