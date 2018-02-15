@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4e152e64-2f09-48b9-9864-06428fccec3c" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/Slide for Reddit/Info.plist" afterPath="$PROJECT_DIR$/Slide for Reddit/Info.plist" />
       <change beforePath="$PROJECT_DIR$/Slide for Reddit/ReplyCellView.swift" afterPath="$PROJECT_DIR$/Slide for Reddit/ReplyCellView.swift" />
+      <change beforePath="$PROJECT_DIR$/Slide for Reddit/ReplyViewController.swift" afterPath="$PROJECT_DIR$/Slide for Reddit/ReplyViewController.swift" />
       <change beforePath="$PROJECT_DIR$/Slide for Reddit/ToolbarTextView.swift" afterPath="$PROJECT_DIR$/Slide for Reddit/ToolbarTextView.swift" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -18,31 +21,33 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="iphoneos_b4f2266089219190fedc1e40334b9efd8b9b10f5" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="SubredditReorderViewController.swift" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Slide for Reddit/SubredditReorderViewController.swift">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="630">
-              <caret line="58" column="0" lean-forward="false" selection-start-line="58" selection-start-column="0" selection-end-line="58" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SubredditThemeViewController.swift" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Slide for Reddit/SubredditThemeViewController.swift">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="172">
-              <caret line="721" column="49" lean-forward="false" selection-start-line="721" selection-start-column="49" selection-end-line="721" selection-end-column="49" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="ReplyViewController.swift" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Slide for Reddit/ReplyViewController.swift">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="195">
-              <caret line="13" column="18" lean-forward="false" selection-start-line="13" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
+            <state relative-caret-position="332">
+              <caret line="255" column="64" lean-forward="false" selection-start-line="255" selection-start-column="64" selection-end-line="255" selection-end-column="64" />
+              <folding>
+                <element signature="e#156#168#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="README.md" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Pods/YangMingShan/README.md">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="177">
+              <caret line="231" column="5" lean-forward="false" selection-start-line="231" selection-start-column="5" selection-end-line="231" selection-end-column="5" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="UIViewController+YMSPhotoHelper.h" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Pods/YangMingShan/YangMingShan/YMSPhotoPicker/Public/UIViewController+YMSPhotoHelper.h">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="423">
+              <caret line="38" column="8" lean-forward="false" selection-start-line="38" selection-start-column="8" selection-end-line="38" selection-end-column="8" />
               <folding />
             </state>
           </provider>
@@ -51,8 +56,8 @@
       <file leaf-file-name="ToolbarTextView.swift" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Slide for Reddit/ToolbarTextView.swift">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="195">
-              <caret line="13" column="0" lean-forward="true" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
+            <state relative-caret-position="177">
+              <caret line="116" column="72" lean-forward="false" selection-start-line="116" selection-start-column="72" selection-end-line="116" selection-end-column="72" />
               <folding>
                 <element signature="e#102#114#0" expanded="true" />
               </folding>
@@ -73,8 +78,8 @@
       <file leaf-file-name="ReplyCellView.swift" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Slide for Reddit/ReplyCellView.swift">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="182">
-              <caret line="241" column="85" lean-forward="false" selection-start-line="241" selection-start-column="85" selection-end-line="241" selection-end-column="85" />
+            <state relative-caret-position="-132">
+              <caret line="26" column="94" lean-forward="false" selection-start-line="26" selection-start-column="58" selection-end-line="26" selection-end-column="94" />
               <folding>
                 <element signature="e#150#167#0" expanded="true" />
               </folding>
@@ -85,8 +90,8 @@
       <file leaf-file-name="YMSPhotoPickerViewController.h" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Pods/YangMingShan/YangMingShan/YMSPhotoPicker/Public/YMSPhotoPickerViewController.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="352">
-              <caret line="85" column="40" lean-forward="false" selection-start-line="85" selection-start-column="34" selection-end-line="85" selection-end-column="40" />
+            <state relative-caret-position="-368">
+              <caret line="19" column="11" lean-forward="false" selection-start-line="19" selection-start-column="11" selection-end-line="19" selection-end-column="11" />
               <folding />
             </state>
           </provider>
@@ -126,22 +131,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>text?.dele</find>
-      <find>cansele</find>
-      <find>cansel</find>
-      <find>long</find>
-      <find>selec</find>
-      <find>select</find>
-      <find>view.animate</find>
-      <find>inputCell</find>
-      <find>text?</find>
-      <find>shadowview</find>
-      <find>shadowImage</find>
-      <find>alpha</find>
-      <find>tool</find>
-      <find>navigationbar</find>
-      <find>barhidden</find>
-      <find>tabbar</find>
       <find>navigationcontroller?.</find>
       <find>imagepicker</find>
       <find>sourcetype</find>
@@ -153,9 +142,25 @@
       <find>cance</find>
       <find>textviewdele</find>
       <find>delegate</find>
-      <find>addtoolbar</find>
       <find>self.present</find>
+      <find>delegate = del</find>
+      <find>phot</find>
+      <find>photopicker</find>
+      <find>toolbar</find>
+      <find>photo</find>
+      <find>uploadimage</find>
+      <find>== .submit_image</find>
       <find>cancel</find>
+      <find>viewdidload</find>
+      <find>addtoolbar</find>
+      <find>photoPickerViewController</find>
+      <find>pick</find>
+      <find>photoPickerViewController(picker</find>
+      <find>yms</find>
+      <find>toolbar.init</find>
+      <find>present</find>
+      <find>toolbar =</find>
+      <find>picker</find>
     </findStrings>
     <replaceStrings>
       <replace>-12</replace>
@@ -215,8 +220,8 @@
         <option value="$PROJECT_DIR$/Slide for Reddit/SubredditReorderViewController.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/SubredditThemeViewController.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/ProfileViewController.swift" />
-        <option value="$PROJECT_DIR$/Slide for Reddit/ReplyViewController.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/ReplyCellView.swift" />
+        <option value="$PROJECT_DIR$/Slide for Reddit/ReplyViewController.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/ToolbarTextView.swift" />
       </list>
     </option>
@@ -392,12 +397,12 @@
       <workItem from="1518503348790" duration="2819000" />
       <workItem from="1518542792775" duration="12098000" />
       <workItem from="1518559075767" duration="30192000" />
-      <workItem from="1518647419733" duration="17258000" />
+      <workItem from="1518647419733" duration="19757000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="139894000" />
+    <option name="totallyTimeSpent" value="142393000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -413,10 +418,10 @@
     <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32911393" sideWeight="0.4978903" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.31070197" sideWeight="0.2833032" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31070197" sideWeight="0.2833032" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31070197" sideWeight="0.7166968" order="10" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32911393" sideWeight="0.38155514" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32911393" sideWeight="0.38155514" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32914287" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32911393" sideWeight="0.4978903" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -465,22 +470,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Slide for Reddit/MessageCellView.swift">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="127">
-          <caret line="450" column="34" lean-forward="false" selection-start-line="450" selection-start-column="28" selection-end-line="450" selection-end-column="34" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Slide for Reddit/ColorUtil.swift">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="497">
-          <caret line="62" column="0" lean-forward="false" selection-start-line="62" selection-start-column="0" selection-end-line="62" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Slide for Reddit/VCPresenter.swift">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="361">
@@ -806,14 +795,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Pods/YangMingShan/YangMingShan/YMSPhotoPicker/Public/YMSPhotoPickerViewController.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="352">
-          <caret line="85" column="40" lean-forward="false" selection-start-line="85" selection-start-column="34" selection-end-line="85" selection-end-column="40" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Slide for Reddit/LinkCellView.swift">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="420">
@@ -822,28 +803,54 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Pods/YangMingShan/YangMingShan/YMSPhotoPicker/Public/YMSPhotoPickerViewController.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-368">
+          <caret line="19" column="11" lean-forward="false" selection-start-line="19" selection-start-column="11" selection-end-line="19" selection-end-column="11" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Pods/YangMingShan/README.md">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="177">
+          <caret line="231" column="5" lean-forward="false" selection-start-line="231" selection-start-column="5" selection-end-line="231" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Pods/YangMingShan/YangMingShan/YMSPhotoPicker/Public/UIViewController+YMSPhotoHelper.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="423">
+          <caret line="38" column="8" lean-forward="false" selection-start-line="38" selection-start-column="8" selection-end-line="38" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Slide for Reddit/ReplyViewController.swift">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="332">
+          <caret line="255" column="64" lean-forward="false" selection-start-line="255" selection-start-column="64" selection-end-line="255" selection-end-column="64" />
+          <folding>
+            <element signature="e#156#168#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Slide for Reddit/ReplyCellView.swift">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="182">
-          <caret line="241" column="85" lean-forward="false" selection-start-line="241" selection-start-column="85" selection-end-line="241" selection-end-column="85" />
+        <state relative-caret-position="-132">
+          <caret line="26" column="94" lean-forward="false" selection-start-line="26" selection-start-column="58" selection-end-line="26" selection-end-column="94" />
           <folding>
             <element signature="e#150#167#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Slide for Reddit/ReplyViewController.swift">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="13" column="18" lean-forward="false" selection-start-line="13" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Slide for Reddit/ToolbarTextView.swift">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="13" column="0" lean-forward="true" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
+        <state relative-caret-position="177">
+          <caret line="116" column="72" lean-forward="false" selection-start-line="116" selection-start-column="72" selection-end-line="116" selection-end-column="72" />
           <folding>
             <element signature="e#102#114#0" expanded="true" />
           </folding>

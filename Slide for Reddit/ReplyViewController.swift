@@ -159,7 +159,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate, YMSPhotoPi
         self.present(alertController, animated: true, completion: nil)
     }
 
-    func photoPickerViewController(picker: YMSPhotoPickerViewController!, didFinishPickingImages photoAssets: [PHAsset]!) {
+    func photoPickerViewController(_ picker: YMSPhotoPickerViewController!, didFinishPickingImages photoAssets: [PHAsset]!) {
         picker.dismiss(animated: true) {
             self.toolbar?.uploadAsync(photoAssets)
         }
@@ -221,14 +221,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate, YMSPhotoPi
     convenience init(subreddit: String, type: ReplyType, completion: @escaping (Link?) -> Void) {
         self.init(type: type, completion: completion)
         self.subreddit = subreddit
-        if (type == .SUBMIT_IMAGE) {
-            let pickerViewController = YMSPhotoPickerViewController.init()
-            pickerViewController.theme.titleLabelTextColor = ColorUtil.fontColor
-            pickerViewController.theme.navigationBarBackgroundColor = ColorUtil.getColorForSub(sub: "")
-            pickerViewController.theme.tintColor = ColorUtil.accentColorForSub(sub: "")
-            pickerViewController.theme.cameraIconColor = ColorUtil.fontColor
-            self.yms_presentCustomAlbumPhotoView(pickerViewController, delegate: self)
-        }
+
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -254,6 +247,15 @@ class ReplyViewController: UITableViewController, UITextViewDelegate, YMSPhotoPi
         toolbar = ToolbarTextView.init(textView: text!, delegate: self, parent: self)
         self.view.layer.cornerRadius = 5
         self.view.layer.masksToBounds = true
+        if (type == .SUBMIT_IMAGE) {
+            let pickerViewController = YMSPhotoPickerViewController.init()
+            pickerViewController.theme.titleLabelTextColor = ColorUtil.fontColor
+            pickerViewController.theme.navigationBarBackgroundColor = ColorUtil.getColorForSub(sub: "")
+            pickerViewController.theme.tintColor = ColorUtil.accentColorForSub(sub: "")
+            pickerViewController.theme.cameraIconColor = ColorUtil.fontColor
+            pickerViewController.shouldReturnImageForSingleSelection = false
+            self.yms_presentCustomAlbumPhotoView(pickerViewController, delegate: self)
+        }
     }
 
     func registerKeyboardNotifications() {

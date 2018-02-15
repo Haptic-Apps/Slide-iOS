@@ -24,7 +24,7 @@ protocol ReplyDelegate {
     func editSent(cr: Comment?)
 }
 
-class ReplyCellView: UITableViewCell, UITextViewDelegate, YMSPhotoPickerViewControllerDelegate{
+class ReplyCellView: UITableViewCell, UITextViewDelegate, YMSPhotoPickerViewControllerDelegate {
     var delegate: ReplyDelegate?
     var toReplyTo: Object?
     var body: UITextView = UITextView()
@@ -240,7 +240,6 @@ class ReplyCellView: UITableViewCell, UITextViewDelegate, YMSPhotoPickerViewCont
         }
 
         toolbar = ToolbarTextView.init(textView: body, delegate: self, parent: parent)
-
     }
 
     func textViewDidChange(_ textView: UITextView) {
@@ -283,7 +282,7 @@ class ReplyCellView: UITableViewCell, UITextViewDelegate, YMSPhotoPickerViewCont
         parent?.present(alertController, animated: true, completion: nil)
     }
 
-    func photoPickerViewController(picker: YMSPhotoPickerViewController!, didFinishPickingImages photoAssets: [PHAsset]!) {
+    func photoPickerViewController(_ picker: YMSPhotoPickerViewController!, didFinishPickingImages photoAssets: [PHAsset]!) {
         picker.dismiss(animated: true) {
             self.toolbar?.uploadAsync(photoAssets)
         }

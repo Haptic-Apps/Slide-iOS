@@ -112,15 +112,14 @@ public class ToolbarTextView: NSObject {
         let pickerViewController = YMSPhotoPickerViewController.init()
         pickerViewController.theme.titleLabelTextColor = ColorUtil.fontColor
         pickerViewController.theme.navigationBarBackgroundColor = ColorUtil.getColorForSub(sub: "")
-        pickerViewController.theme.tintColor = ColorUtil.accentColorForSub(sub: "")
+        pickerViewController.theme.tintColor = UIColor.white
         pickerViewController.theme.cameraIconColor = ColorUtil.fontColor
+        pickerViewController.shouldReturnImageForSingleSelection = false
         parent.yms_presentCustomAlbumPhotoView(pickerViewController, delegate: delegate)
     }
 
     var progressBar = UIProgressView()
     var alertView: UIAlertController?
-
-
 
     func uploadAsync(_ assets: [PHAsset]) {
         alertView = UIAlertController(title: "Uploading...", message: "Your images are uploading to Imgur", preferredStyle: .alert)
