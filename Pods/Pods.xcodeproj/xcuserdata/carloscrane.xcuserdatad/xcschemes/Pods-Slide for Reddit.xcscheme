@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "6F2489902A7CE2A5556E7325A148E6E8"
+               BlueprintIdentifier = "A14AF7F569D2E0A7A6B983D7E919E3D6"
                BuildableName = "Pods_Slide_for_Reddit.framework"
                BlueprintName = "Pods-Slide for Reddit"
                ReferencedContainer = "container:Pods.xcodeproj">
@@ -26,6 +26,7 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      language = ""
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
       </Testables>
@@ -36,6 +37,7 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      language = ""
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
@@ -45,7 +47,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "6F2489902A7CE2A5556E7325A148E6E8"
+            BlueprintIdentifier = "A14AF7F569D2E0A7A6B983D7E919E3D6"
             BuildableName = "Pods_Slide_for_Reddit.framework"
             BlueprintName = "Pods-Slide for Reddit"
             ReferencedContainer = "container:Pods.xcodeproj">

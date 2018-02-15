@@ -12,6 +12,7 @@
 		B776B496CD1CCCF42B176B00 /* YTPlayer.html in Resources */ = {isa = PBXBuildFile; fileRef = B776BD038659E2DE04B541FA /* YTPlayer.html */; };
 		B776B5077EFC461712FA70AE /* ic_book_white_48pt.png in Resources */ = {isa = PBXBuildFile; fileRef = B776BAA37153E9A6EE09768E /* ic_book_white_48pt.png */; };
 		B776B69D9C122B17E39F830C /* ic_book_white_48pt_2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B776B2EC2ECFC0B4D7E74296 /* ic_book_white_48pt_2x.png */; };
+		B776B919A0E908BFAB060DE7 /* ToolbarTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BA78CCE4C75BD7FC5DA3 /* ToolbarTextView.swift */; };
 		B776B92511B49C98FE6AEA88 /* ic_security_white_48pt_3x.png in Resources */ = {isa = PBXBuildFile; fileRef = B776B6931F2FE1AA23B8472C /* ic_security_white_48pt_3x.png */; };
 		B776B95251F5821702915A85 /* ic_book_white_48pt_3x.png in Resources */ = {isa = PBXBuildFile; fileRef = B776BE8009D738BD76907FB2 /* ic_book_white_48pt_3x.png */; };
 		B776B97113FBBC4534E3E730 /* ic_security_white_48pt_2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B776B3533C86EFEAA5651334 /* ic_security_white_48pt_2x.png */; };
@@ -207,6 +208,7 @@
 		B776B3533C86EFEAA5651334 /* ic_security_white_48pt_2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ic_security_white_48pt_2x.png; sourceTree = "<group>"; };
 		B776B6931F2FE1AA23B8472C /* ic_security_white_48pt_3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ic_security_white_48pt_3x.png; sourceTree = "<group>"; };
 		B776B9DCA4B8414CCF203CFF /* ic_security_white_48pt.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ic_security_white_48pt.png; sourceTree = "<group>"; };
+		B776BA78CCE4C75BD7FC5DA3 /* ToolbarTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToolbarTextView.swift; sourceTree = "<group>"; };
 		B776BAA37153E9A6EE09768E /* ic_book_white_48pt.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ic_book_white_48pt.png; sourceTree = "<group>"; };
 		B776BD038659E2DE04B541FA /* YTPlayer.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = YTPlayer.html; sourceTree = "<group>"; };
 		B776BE8009D738BD76907FB2 /* ic_book_white_48pt_3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ic_book_white_48pt_3x.png; sourceTree = "<group>"; };
@@ -685,6 +687,7 @@
 				B776B21CFB79FA354C296037 /* ColorMuxPagingViewController.swift */,
 				B776BBA7D7EB16AC1ABC1CB2 /* ic_book_white_48pt.imageset */,
 				B776B6A101193D01C6DE3F68 /* ic_security_white_48pt.imageset */,
+				B776BA78CCE4C75BD7FC5DA3 /* ToolbarTextView.swift */,
 			);
 			path = "Slide for Reddit";
 			sourceTree = "<group>";
@@ -1007,7 +1010,6 @@
 				"${BUILT_PRODUCTS_DIR}/ActionSheetPicker-3.0/ActionSheetPicker_3_0.framework",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 				"${BUILT_PRODUCTS_DIR}/BiometricAuthentication/BiometricAuthentication.framework",
-				"${BUILT_PRODUCTS_DIR}/ImagePickerSheetController/ImagePickerSheetController.framework",
 				"${BUILT_PRODUCTS_DIR}/KCFloatingActionButton/KCFloatingActionButton.framework",
 				"${BUILT_PRODUCTS_DIR}/MDFInternationalization/MDFInternationalization.framework",
 				"${BUILT_PRODUCTS_DIR}/MDFTextAccessibility/MDFTextAccessibility.framework",
@@ -1024,6 +1026,7 @@
 				"${BUILT_PRODUCTS_DIR}/TTTAttributedLabel/TTTAttributedLabel.framework",
 				"${BUILT_PRODUCTS_DIR}/UZTextView/UZTextView.framework",
 				"${BUILT_PRODUCTS_DIR}/XLActionController/XLActionController.framework",
+				"${BUILT_PRODUCTS_DIR}/YangMingShan/YangMingShan.framework",
 				"${BUILT_PRODUCTS_DIR}/reddift/reddift.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -1031,7 +1034,6 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ActionSheetPicker_3_0.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BiometricAuthentication.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ImagePickerSheetController.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/KCFloatingActionButton.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MDFInternationalization.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MDFTextAccessibility.framework",
@@ -1048,6 +1050,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TTTAttributedLabel.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/UZTextView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/XLActionController.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/YangMingShan.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/reddift.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1221,6 +1224,7 @@
 				BE97422E1F0011BE00BF48E0 /* ThumbnailLinkCellView.swift in Sources */,
 				BE9455FE1F32B5220097EEF0 /* SingleContentViewController.swift in Sources */,
 				B776BF494A7A822D5DB4B5BC /* ColorMuxPagingViewController.swift in Sources */,
+				B776B919A0E908BFAB060DE7 /* ToolbarTextView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

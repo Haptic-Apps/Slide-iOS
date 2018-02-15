@@ -2,7 +2,6 @@ PODS:
   - ActionSheetPicker-3.0 (2.2.0)
   - Alamofire (4.6.0)
   - BiometricAuthentication (1.0.5)
-  - ImagePickerSheetController (0.9.3)
   - KCFloatingActionButton (2.1.2)
   - MaterialComponents/ActivityIndicator (45.0.0):
     - MaterialComponents/Palettes
@@ -91,12 +90,14 @@ PODS:
   - XLActionController (4.0.0):
     - XLActionController/Core (= 4.0.0)
   - XLActionController/Core (4.0.0)
+  - YangMingShan (2.0.1):
+    - YangMingShan/YMSPhotoPicker (= 2.0.1)
+  - YangMingShan/YMSPhotoPicker (2.0.1)
 
 DEPENDENCIES:
   - ActionSheetPicker-3.0 (from `https://github.com/ccrama/ActionSheetPicker-3.0`)
   - Alamofire (~> 4.3)
   - BiometricAuthentication
-  - ImagePickerSheetController (from `https://github.com/lbrndnr/ImagePickerSheetController`, branch `swift3`)
   - KCFloatingActionButton (~> 2.1.0)
   - MaterialComponents/ActivityIndicator
   - MaterialComponents/AnimationTiming
@@ -119,13 +120,11 @@ DEPENDENCIES:
   - TTTAttributedLabel
   - UZTextView (from `https://github.com/ccrama/UZTextView`)
   - XLActionController
+  - YangMingShan
 
 EXTERNAL SOURCES:
   ActionSheetPicker-3.0:
     :git: https://github.com/ccrama/ActionSheetPicker-3.0
-  ImagePickerSheetController:
-    :branch: swift3
-    :git: https://github.com/lbrndnr/ImagePickerSheetController
   reddift:
     :git: https://github.com/ccrama/reddift
   SloppySwiper:
@@ -137,9 +136,6 @@ CHECKOUT OPTIONS:
   ActionSheetPicker-3.0:
     :commit: 752459578d8162c11f6311987bd3463e6d85712b
     :git: https://github.com/ccrama/ActionSheetPicker-3.0
-  ImagePickerSheetController:
-    :commit: e9b6c2ca937135335e9b5252a7792c94ce1497d4
-    :git: https://github.com/lbrndnr/ImagePickerSheetController
   reddift:
     :commit: 44c58a49f0f50e74bea463f1f0585a84bb785d08
     :git: https://github.com/ccrama/reddift
@@ -154,7 +150,6 @@ SPEC CHECKSUMS:
   ActionSheetPicker-3.0: d11a4c12c6aaf704b8a3f56d179198c99f3e41e6
   Alamofire: f41a599bd63041760b26d393ec1069d9d7b917f4
   BiometricAuthentication: e80e99bf1fe871ab624172eb91f1ddbbc47499b5
-  ImagePickerSheetController: 4789b06940e299431455c61be77fda440883c36c
   KCFloatingActionButton: 1b22ce95d44b51915280df8a8b277eae4a06c3f1
   MaterialComponents: 22793fbf99b6ae7e5067fbd794a6d3b7d6ee7d62
   MDFInternationalization: e355b0cebecf53d60233bd267084e49366c82513
@@ -172,7 +167,8 @@ SPEC CHECKSUMS:
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   UZTextView: d8d45a8459b0de6f2c393458a05c65352f89e00a
   XLActionController: 7e88fece1799e61357cb00b1cc67104d66ec4d2c
+  YangMingShan: 561cfbb769e8cf679d3f23d8ae7030402ddb6495
 
-PODFILE CHECKSUM: f42c7e2a265c45e43b1d8e6701116c3141118e80
+PODFILE CHECKSUM: cf0a9fa567d780e0e448ad6d88b572fe590745f4
 
 COCOAPODS: 1.4.0

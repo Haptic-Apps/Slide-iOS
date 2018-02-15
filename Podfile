@@ -28,7 +28,7 @@ pod 'MaterialComponents/Tabs'
   pod 'UZTextView', :git => 'https://github.com/ccrama/UZTextView'
   pod 'TTTAttributedLabel'
   pod "KCFloatingActionButton", "~> 2.1.0"
-  pod 'ImagePickerSheetController', :git => 'https://github.com/lbrndnr/ImagePickerSheetController’, :branch => ‘swift3’
+pod 'YangMingShan'
   pod 'Alamofire', '~> 4.3'
     pod 'SwiftyJSON'
 pod 'ActionSheetPicker-3.0’, :git => ‘https://github.com/ccrama/ActionSheetPicker-3.0'

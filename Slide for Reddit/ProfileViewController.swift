@@ -143,6 +143,7 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
         self.splitViewController?.preferredDisplayMode = UISplitViewControllerDisplayMode.allVisible
         self.title = name
         navigationController?.navigationBar.tintColor = .white
+        navigationController?.navigationBar.isTranslucent = false
         self.navigationController?.setNavigationBarHidden(false, animated: true)
         
         if(navigationController != nil){
@@ -162,8 +163,9 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
         
         if(navigationController != nil){
             navigationItem.rightBarButtonItems = [ moreB!, sortB!]
+            self.navigationController?.navigationBar.shadowImage = UIImage()
         }
-        
+
     }
     
     func showMenu(sender: AnyObject, user: Account){

@@ -137,7 +137,6 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/ActionSheetPicker-3.0/ActionSheetPicker_3_0.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/BiometricAuthentication/BiometricAuthentication.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/ImagePickerSheetController/ImagePickerSheetController.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/KCFloatingActionButton/KCFloatingActionButton.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/MDFInternationalization/MDFInternationalization.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/MDFTextAccessibility/MDFTextAccessibility.framework"
@@ -154,13 +153,13 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/TTTAttributedLabel/TTTAttributedLabel.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/UZTextView/UZTextView.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/XLActionController/XLActionController.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/YangMingShan/YangMingShan.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/reddift/reddift.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/ActionSheetPicker-3.0/ActionSheetPicker_3_0.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/BiometricAuthentication/BiometricAuthentication.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/ImagePickerSheetController/ImagePickerSheetController.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/KCFloatingActionButton/KCFloatingActionButton.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/MDFInternationalization/MDFInternationalization.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/MDFTextAccessibility/MDFTextAccessibility.framework"
@@ -177,6 +176,7 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/TTTAttributedLabel/TTTAttributedLabel.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/UZTextView/UZTextView.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/XLActionController/XLActionController.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/YangMingShan/YangMingShan.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/reddift/reddift.framework"
 fi
 if [ "${COCOAPODS_PARALLEL_CODE_SIGN}" == "true" ]; then
