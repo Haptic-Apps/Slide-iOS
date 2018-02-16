@@ -97,6 +97,7 @@
 		BE7439F31E20C9BE008BB63B /* CommentCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7439F21E20C9BD008BB63B /* CommentCellView.swift */; };
 		BE7439F51E2162A8008BB63B /* AccountController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7439F41E2162A8008BB63B /* AccountController.swift */; };
 		BE7439F91E21A59C008BB63B /* ActionStates.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7439F81E21A59C008BB63B /* ActionStates.swift */; };
+		BE77470820367D98006C72E8 /* Credits.plist in Resources */ = {isa = PBXBuildFile; fileRef = BE77470720367D98006C72E8 /* Credits.plist */; };
 		BE780B5E1E32B41300DAA1EB /* SubredditThemeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE780B5D1E32B41300DAA1EB /* SubredditThemeViewController.swift */; };
 		BE780B601E32CA8F00DAA1EB /* RelatedContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE780B5F1E32CA8F00DAA1EB /* RelatedContributionLoader.swift */; };
 		BE780B621E32CB9600DAA1EB /* RelatedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE780B611E32CB9600DAA1EB /* RelatedViewController.swift */; };
@@ -293,6 +294,7 @@
 		BE7439F21E20C9BD008BB63B /* CommentCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentCellView.swift; sourceTree = "<group>"; };
 		BE7439F41E2162A8008BB63B /* AccountController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountController.swift; sourceTree = "<group>"; };
 		BE7439F81E21A59C008BB63B /* ActionStates.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActionStates.swift; sourceTree = "<group>"; };
+		BE77470720367D98006C72E8 /* Credits.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Credits.plist; path = "Slide for Reddit/Credits.plist"; sourceTree = "<group>"; };
 		BE780B5D1E32B41300DAA1EB /* SubredditThemeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubredditThemeViewController.swift; sourceTree = "<group>"; };
 		BE780B5F1E32CA8F00DAA1EB /* RelatedContributionLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RelatedContributionLoader.swift; sourceTree = "<group>"; };
 		BE780B611E32CB9600DAA1EB /* RelatedViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RelatedViewController.swift; sourceTree = "<group>"; };
@@ -587,6 +589,7 @@
 		BE8FC9FB1E0C46090063B8EF = {
 			isa = PBXGroup;
 			children = (
+				BE77470720367D98006C72E8 /* Credits.plist */,
 				BE8FCA061E0C46090063B8EF /* Slide for Reddit */,
 				BE8FCA1B1E0C46090063B8EF /* Slide for RedditTests */,
 				BE8FCA261E0C46090063B8EF /* Slide for RedditUITests */,
@@ -755,6 +758,7 @@
 				309E804671C2EAAD2A5C2AA6 /* [CP] Copy Pods Resources */,
 				BE2B8A061E25BD220053D493 /* Embed Frameworks */,
 				BE0EF7D71F43F9C40058D572 /* Embed App Extensions */,
+				BE77470620366576006C72E8 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -870,6 +874,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE77470820367D98006C72E8 /* Credits.plist in Resources */,
 				BE35217A1E3D2E3B00C30B8D /* Roboto-MediumItalic.ttf in Resources */,
 				BE2B89EF1E2444D20053D493 /* Settings.bundle in Resources */,
 				BE35217C1E3D2E4000C30B8D /* RobotoCondensed-Italic.ttf in Resources */,
@@ -1059,6 +1064,19 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		BE77470620366576006C72E8 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./credits.py -s \"$SRCROOT\" -o \"$SRCROOT/Slide for Reddit/Credits.plist\"";
 		};
 		D5DE46DB54A9E1A8D7E1D324 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;

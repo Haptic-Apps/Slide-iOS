@@ -313,7 +313,8 @@ class SettingsViewController: UITableViewController {
             }
         } else if (indexPath.section == 3 && indexPath.row == 3) {
             ch = LicensesViewController()
-            (ch as! LicensesViewController).loadPlist(Bundle.main, resourceName: "Credits")
+            let file = Bundle.main.path(forResource:"Credits", ofType: "plist")!
+            (ch as! LicensesViewController).loadPlist(NSDictionary(contentsOfFile: file)!)
         }
         if let n = ch {
             VCPresenter.showVC(viewController: n, popupIfPossible: false, parentNavigationController: navigationController, parentViewController: self)
