@@ -27,13 +27,13 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
     var mods = UITableViewCell()
 
 
-    func mods(_ sender: UITableViewCell){
+    func mods(_ sender: UITableViewCell) {
         var list: [User] = []
         do {
             try (UIApplication.shared.delegate as! AppDelegate).session?.about(subreddit!, aboutWhere: SubredditAbout.moderators, completion: { (result) in
                 switch result {
                 case .failure(let error):
-                    DispatchQueue.main.async{
+                    DispatchQueue.main.async {
                         let message = MDCSnackbarMessage()
                         message.text = "No subreddit moderators found"
                         MDCSnackbarManager.show(message)
@@ -41,7 +41,7 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
                     break
                 case .success(let users):
                     list.append(contentsOf: users)
-                    DispatchQueue.main.async{
+                    DispatchQueue.main.async {
                         let sheet = UIAlertController(title: "/r/\(self.subreddit!.displayName) mods", message: nil, preferredStyle: .actionSheet)
                         sheet.addAction(
                                 UIAlertAction(title: "Close", style: .cancel) { (action) in
@@ -56,7 +56,7 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
                         )
 
                         for user in users {
-                            let somethingAction =  UIAlertAction(title: "/u/\(user.name)", style: .default) { (action) in
+                            let somethingAction = UIAlertAction(title: "/u/\(user.name)", style: .default) { (action) in
                                 sheet.dismiss(animated: true, completion: nil)
                                 VCPresenter.showVC(viewController: ProfileViewController.init(name: user.name), popupIfPossible: false, parentNavigationController: self.parentController?.navigationController, parentViewController: self.parentController)
                             }
@@ -212,7 +212,7 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
 
     }
 
-    func new(_ selector: UITableViewCell){
+    func new(_ selector: UITableViewCell) {
         let actionSheetController2: UIAlertController = UIAlertController(title: "", message: "", preferredStyle: .actionSheet)
 
         var cancelActionButton2: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
@@ -221,25 +221,25 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
 
 
         cancelActionButton2 = UIAlertAction(title: "Image", style: .default) { action -> Void in
-            VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(subreddit: self.sub, type: ReplyViewController.ReplyType.SUBMIT_IMAGE, completion: { (submission) in
-                VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentController: self.parentController?.navigationController, parentViewController: self.parentController)
-            })), parentVC: self)
+            VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(subreddit: self.subreddit!.displayName, type: ReplyViewController.ReplyType.SUBMIT_IMAGE, completion: { (submission) in
+                VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: self.parentController?.navigationController, parentViewController: self.parentController)
+            })), parentVC: self.parentController!)
         }
         actionSheetController2.addAction(cancelActionButton2)
 
 
         cancelActionButton2 = UIAlertAction(title: "Link", style: .default) { action -> Void in
-            VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(subreddit: self.sub, type: ReplyViewController.ReplyType.SUBMIT_LINK, completion: { (submission) in
-                VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: self.parentController.navigationController, parentViewController: self.parentController)
-            })), parentVC: self)
+            VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(subreddit: self.subreddit!.displayName, type: ReplyViewController.ReplyType.SUBMIT_LINK, completion: { (submission) in
+                VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: self.parentController?.navigationController, parentViewController: self.parentController)
+            })), parentVC: self.parentController!)
         }
         actionSheetController2.addAction(cancelActionButton2)
 
 
         cancelActionButton2 = UIAlertAction(title: "Text", style: .default) { action -> Void in
-            VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(subreddit: self.sub, type: ReplyViewController.ReplyType.SUBMIT_TEXT, completion: { (submission) in
+            VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(subreddit: self.subreddit!.displayName, type: ReplyViewController.ReplyType.SUBMIT_TEXT, completion: { (submission) in
                 VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: self.parentController?.navigationController, parentViewController: self.parentController)
-            })), parentVC: self)
+            })), parentVC: self.parentController!)
         }
         actionSheetController2.addAction(cancelActionButton2)
 
@@ -375,13 +375,13 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
     var subreddit: Subreddit?
     var constraintBack: [NSLayoutConstraint] = []
     var constraintMain: [NSLayoutConstraint] = []
-    var width : CGFloat = 0
+    var width: CGFloat = 0
 
     override func updateConstraints() {
         super.updateConstraints()
 
-        let metrics = ["topMargin": 0, "bh": CGFloat(130 + textHeight), "dh": descHeight, "b": textHeight + 30, "w":width]
-        let views = ["theme": theme, "submit": submit, "subscribe": subscribe, "mods":mods,"back": back, "sort":sorting, "wiki":wiki, "desc":desc, "info": info, "subscribers": subscribers, "here": here] as [String: Any]
+        let metrics = ["topMargin": 0, "bh": CGFloat(130 + textHeight), "dh": descHeight, "b": textHeight + 30, "w": width]
+        let views = ["theme": theme, "submit": submit, "subscribe": subscribe, "mods": mods, "back": back, "sort": sorting, "wiki": wiki, "desc": desc, "info": info, "subscribers": subscribers, "here": here] as [String: Any]
 
 
         back.removeConstraints(constraintBack)

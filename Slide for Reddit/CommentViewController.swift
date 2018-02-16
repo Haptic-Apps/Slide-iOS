@@ -116,9 +116,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
 
     func updateHeight(textView: UITextView) {
-        print("Updating height")
+        UIView.setAnimationsEnabled(false)
         self.tableView.beginUpdates()
         self.tableView.endUpdates()
+        UIView.setAnimationsEnabled(true)
     }
 
     func discard() {
@@ -781,7 +782,21 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         if (single) {
             refresh(self)
         }
+        NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(keyboardWillShow),
+                name: NSNotification.Name.UIKeyboardWillShow,
+                object: nil
+        )
 
+    }
+
+    var keyboardHeight = CGFloat(0)
+    func keyboardWillShow(_ notification: Notification) {
+        if let keyboardFrame: NSValue = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue {
+            let keyboardRectangle = keyboardFrame.cgRectValue
+            let keyboardHeight = keyboardRectangle.height
+        }
     }
 
     var single = true
@@ -1666,15 +1681,23 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         tableView.beginUpdates()
         let cell = tableView.cellForRow(at: IndexPath.init(row: menuIndex - 1, section: 0)) as! CommentDepthCell
         tableView.deleteRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .middle)
-        tableView.endUpdates()
         menuShown = true
         replyShown = true
         reply!.setContent(thing: cell.content!, sub: (cell.content as! RComment).subreddit, editing: false, delegate: self, parent: self)
-        tableView.beginUpdates()
         tableView.insertRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .middle)
         tableView.endUpdates()
-        let insets = UIEdgeInsets(top: 0, left: 0, bottom: self.tableView.frame.size.height, right: 0)
+        let insets = UIEdgeInsets(top: 0, left: 0, bottom: 350, right: 0)
         self.tableView.contentInset = insets
+    }
+
+    var activeField: UITextField?
+
+    func textFieldDidBeginEditing(textField: UITextField) {
+        self.activeField = textField
+    }
+
+    func textFieldDidEndEditing(textField: UITextField) {
+        self.activeField = nil
     }
 
     func showCommentMenu(_ cell: CommentDepthCell) {
@@ -1785,15 +1808,16 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
 
-        let currentY = scrollView.contentOffset.y;
-        let headerHeight = CGFloat(70);
+        /*   let currentY = scrollView.contentOffset.y;
+           let headerHeight = CGFloat(70);
 
-        if (currentY > lastYUsed && currentY > 0) {
-            hideUI(inHeader: (currentY > headerHeight))
-        } else if ((currentY < 70 || currentY < lastYUsed + 20)) {
-            showUI()
-        }
-        lastYUsed = currentY
+           if (currentY > lastYUsed && currentY > 0) {
+               hideUI(inHeader: (currentY > headerHeight))
+           } else if ((currentY < 70 || currentY < lastYUsed + 20)) {
+               showUI()
+           }
+           lastYUsed = currentY*/
+        //todo maybe turn this back on?
     }
 
     func hideUI(inHeader: Bool) {

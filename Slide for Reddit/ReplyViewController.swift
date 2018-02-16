@@ -236,13 +236,20 @@ class ReplyViewController: UITableViewController, UITextViewDelegate, YMSPhotoPi
         super.viewDidLoad()
         if (subjectCell.cellLabel.text.isEmpty) {
             subjectCell.cellLabel.becomeFirstResponder()
-            subjectCell.cellLabel.isEditable = false
         } else if (recipientCell.cellLabel.text.isEmpty) {
             recipientCell.cellLabel.becomeFirstResponder()
-            recipientCell.cellLabel.isEditable = false
         } else {
             text?.becomeFirstResponder()
         }
+
+        if(!subjectCell.cellLabel.text.isEmpty){
+            subjectCell.cellLabel.isEditable = false
+        }
+
+        if(!recipientCell.cellLabel.text.isEmpty){
+            recipientCell.cellLabel.isEditable = false
+        }
+
 
         toolbar = ToolbarTextView.init(textView: text!, delegate: self, parent: self)
         self.view.layer.cornerRadius = 5

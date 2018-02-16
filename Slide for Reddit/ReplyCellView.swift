@@ -79,7 +79,7 @@ class ReplyCellView: UITableViewCell, UITextViewDelegate, YMSPhotoPickerViewCont
 
         session = (UIApplication.shared.delegate as! AppDelegate).session
 
-        //todo better system for this
+        //todo better system for tfhis
         do {
             let name = toReplyTo is RMessage ? (toReplyTo as! RMessage).getId() : toReplyTo is RComment ? (toReplyTo as! RComment).getId() : (toReplyTo as! RSubmission).getId()
             try self.session?.editCommentOrLink(name, newBody: body.text!, completion: { (result) in
@@ -209,8 +209,8 @@ class ReplyCellView: UITableViewCell, UITextViewDelegate, YMSPhotoPickerViewCont
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views)
-        sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[body(>=80)]-[send(40)]-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: metrics, views: views))
-        sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[body(>=80)]-[discard(40)]-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: metrics, views: views))
+        sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[body(>=60)]-[send(40)]-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: metrics, views: views))
+        sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[body(>=60)]-[discard(40)]-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: metrics, views: views))
         sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[send]-16-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: metrics, views: views))
         sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-16-[discard]", options: NSLayoutFormatOptions(rawValue: 0), metrics: metrics, views: views))
 
