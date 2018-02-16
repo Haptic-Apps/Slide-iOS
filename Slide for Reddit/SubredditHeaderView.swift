@@ -213,7 +213,41 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
     }
 
     func new(_ selector: UITableViewCell){
-        //todo this
+        let actionSheetController2: UIAlertController = UIAlertController(title: "", message: "", preferredStyle: .actionSheet)
+
+        var cancelActionButton2: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
+        }
+        actionSheetController2.addAction(cancelActionButton2)
+
+
+        cancelActionButton2 = UIAlertAction(title: "Image", style: .default) { action -> Void in
+            VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(subreddit: self.sub, type: ReplyViewController.ReplyType.SUBMIT_IMAGE, completion: { (submission) in
+                VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentController: self.parentController?.navigationController, parentViewController: self.parentController)
+            })), parentVC: self)
+        }
+        actionSheetController2.addAction(cancelActionButton2)
+
+
+        cancelActionButton2 = UIAlertAction(title: "Link", style: .default) { action -> Void in
+            VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(subreddit: self.sub, type: ReplyViewController.ReplyType.SUBMIT_LINK, completion: { (submission) in
+                VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: self.parentController.navigationController, parentViewController: self.parentController)
+            })), parentVC: self)
+        }
+        actionSheetController2.addAction(cancelActionButton2)
+
+
+        cancelActionButton2 = UIAlertAction(title: "Text", style: .default) { action -> Void in
+            VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(subreddit: self.sub, type: ReplyViewController.ReplyType.SUBMIT_TEXT, completion: { (submission) in
+                VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: self.parentController?.navigationController, parentViewController: self.parentController)
+            })), parentVC: self)
+        }
+        actionSheetController2.addAction(cancelActionButton2)
+
+        if let presenter = actionSheetController2.popoverPresentationController {
+            presenter.sourceView = selector
+            presenter.sourceRect = selector.bounds
+        }
+        parentController?.present(actionSheetController2, animated: true)
     }
 
     func sort(_ selector: UITableViewCell) {

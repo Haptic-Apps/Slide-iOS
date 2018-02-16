@@ -1162,6 +1162,11 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                 }
                 actionSheetController2.addAction(cancelActionButton2)
 
+                if let presenter = actionSheetController2.popoverPresentationController {
+                    presenter.sourceView = (sender as! UIView)
+                    presenter.sourceRect = (sender as! UIView).bounds
+                }
+
                 self.present(actionSheetController2, animated: true)
             }
             actionSheetController.addAction(cancelActionButton)
