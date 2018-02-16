@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SafariServices
 
 public class VCPresenter {
 
@@ -24,9 +25,9 @@ public class VCPresenter {
             let barButton = UIBarButtonItem.init(customView: button)
 
             //Let's figure out how to present it
-            var small:Bool = popupIfPossible && UIScreen.main.traitCollection.userInterfaceIdiom == .pad && UIApplication.shared.statusBarOrientation != .portrait
+            var small: Bool = popupIfPossible && UIScreen.main.traitCollection.userInterfaceIdiom == .pad && UIApplication.shared.statusBarOrientation != .portrait
 
-            if(small){
+            if (small) {
                 newParent.modalPresentationStyle = .pageSheet
                 newParent.modalTransitionStyle = .crossDissolve
             } else {
@@ -36,6 +37,9 @@ public class VCPresenter {
 
             parentViewController!.present(newParent, animated: true, completion: nil)
             viewController.navigationItem.leftBarButtonItems = [barButton]
+            if (viewController is SFSafariViewController) {
+                newParent.setNavigationBarHidden(true, animated: true)
+            }
 
         } else {
             let button = UIButtonWithContext.init(type: .custom)
@@ -47,22 +51,24 @@ public class VCPresenter {
 
             let barButton = UIBarButtonItem.init(customView: button)
 
-            parentNavigationController!.pushViewController(viewController, animated:true)
+            parentNavigationController!.pushViewController(viewController, animated: true)
 
             viewController.navigationItem.leftBarButtonItem = barButton
 
             viewController.navigationController?.interactivePopGestureRecognizer?.delegate = DefaultGestureDelegate()
             viewController.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
-
+            if (viewController is SFSafariViewController) {
+                viewController.navigationController?.setNavigationBarHidden(true, animated: true)
+            }
         }
 
     }
 
-    @objc public static func handleBackButton( controller: UIButtonWithContext) {
+    @objc public static func handleBackButton(controller: UIButtonWithContext) {
         controller.parentController!.popViewController(animated: true);
     }
 
-    @objc public static func handleCloseNav( controller: UIButtonWithContext) {
+    @objc public static func handleCloseNav(controller: UIButtonWithContext) {
         controller.parentController!.dismiss(animated: true)
     }
 
@@ -85,6 +91,6 @@ public class DefaultGestureDelegate: NSObject, UIGestureRecognizerDelegate {
 }
 
 
-public class UIButtonWithContext:UIButton{
-    public var parentController : UINavigationController?;
+public class UIButtonWithContext: UIButton {
+    public var parentController: UINavigationController?;
 }

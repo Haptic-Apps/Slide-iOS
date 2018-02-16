@@ -207,11 +207,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
     }
 
-    func deleteSelf(_ cell: LinkCellView){
+    func deleteSelf(_ cell: LinkCellView) {
         do {
             try session?.deleteCommentOrLink(cell.link!.getId(), completion: { (steam) in
-                DispatchQueue.main.async{
-                    if(self.navigationController!.modalPresentationStyle == .formSheet){
+                DispatchQueue.main.async {
+                    if (self.navigationController!.modalPresentationStyle == .formSheet) {
                         self.navigationController!.dismiss(animated: true)
                     } else {
                         self.navigationController!.popViewController(animated: true)
@@ -245,7 +245,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
         alertController.addAction(Action(ActionData(title: "/u/\(link.author)'s profile", image: UIImage(named: "profile")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
 
-            let prof = ProfileViewController.init(name:link.author)
+            let prof = ProfileViewController.init(name: link.author)
             VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
         }))
         alertController.addAction(Action(ActionData(title: "/r/\(link.subreddit)", image: UIImage(named: "subs")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
@@ -1716,7 +1716,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         tableView.deleteRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .middle)
         tableView.endUpdates()
         tableView.contentInset = UIEdgeInsetsMake(0
-                , 0,100, 0)
+                , 0, 100, 0)
     }
 
     override func becomeFirstResponder() -> Bool {
@@ -1765,6 +1765,20 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             i += hideNumber(n: name, iB: 0)
         }
         return i
+    }
+
+    override func willAnimateRotation(to toInterfaceOrientation: UIInterfaceOrientation, duration: TimeInterval) {
+        super.willAnimateRotation(to: toInterfaceOrientation, duration: duration)
+        self.headerCell?.aspectWidth = self.tableView.bounds.size.width
+        self.headerCell?.setLink(submission: self.submission!, parent: self, nav: self.navigationController, baseSub: self.submission!.subreddit)
+        self.headerCell?.showBody(width: self.view.frame.size.width)
+        var frame = self.tableView.tableHeaderView!.frame
+        frame.size.width = self.view.frame.size.width
+        frame.size.height = self.headerCell!.estimateHeight(true, true)
+        self.tableView.tableHeaderView?.frame = frame
+        self.headerCell!.frame = frame
+        self.headerCell?.updateConstraints()
+        tableView.reloadData(with: .none)
     }
 
     var lastYUsed = CGFloat(0)

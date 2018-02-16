@@ -8,6 +8,7 @@
 
 import UIKit
 import reddift
+import SafariServices
 
 class RedditLink{
     
@@ -16,6 +17,16 @@ class RedditLink{
         
         var url = formatRedditUrl(urlS: urlS)
         if (url.isEmpty()) {
+            if(SettingValues.safariVC){
+                let safariVC = SFSafariViewController(url: oldUrl)
+                if #available(iOS 10.0, *) {
+                    safariVC.preferredBarTintColor = ColorUtil.backgroundColor
+                    safariVC.preferredControlTintColor = ColorUtil.fontColor
+                } else {
+                    // Fallback on earlier versions
+                }
+                return safariVC
+            }
             return WebsiteViewController.init(url: oldUrl, subreddit: "")
         } else if (url.hasPrefix("np")) {
             url = url.substring(2, length: url.length - 2)
@@ -86,6 +97,16 @@ class RedditLink{
         case .OTHER:
             break;
             
+        }
+        if(SettingValues.safariVC){
+            let safariVC = SFSafariViewController(url: oldUrl)
+            if #available(iOS 10.0, *) {
+                safariVC.preferredBarTintColor = ColorUtil.backgroundColor
+                safariVC.preferredControlTintColor = ColorUtil.fontColor
+            } else {
+                // Fallback on earlier versions
+            }
+            return safariVC
         }
         return WebsiteViewController.init(url: oldUrl, subreddit: "");
     }

@@ -20,6 +20,7 @@ import TTTAttributedLabel
 import MaterialComponents
 import AudioToolbox
 import XLActionController
+import SafariServices
 
 protocol LinkCellViewDelegate: class {
     func upvote(_ cell: LinkCellView)
@@ -211,12 +212,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var estimatedHeight = CGFloat(0)
     var tagbody = UIView()
 
-    func estimateHeight(_ full: Bool) -> CGFloat {
-        if (estimatedHeight == 0) {
+    func estimateHeight(_ full: Bool, _ reset: Bool = false) -> CGFloat {
+        if (estimatedHeight == 0 || reset) {
             let he = (title.attributedText).boundingRect(with: CGSize.init(width: aspectWidth - 24 - (thumb ? (SettingValues.largerThumbnail ? 75 : 50) + 28 : 0), height: 10000), options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).height + 15
             let thumbheight = CGFloat(SettingValues.largerThumbnail ? 75 : 50)
-            estimatedHeight = CGFloat((he < thumbheight && thumb || he < thumbheight && !big) ? thumbheight : he) + CGFloat(54 + (full ? 10 : 0)) + CGFloat(!hasText || !full ? 0 : (content?.textHeight)!) + CGFloat(big && !thumb ? (submissionHeight + 20) : 0)
+            estimatedHeight = CGFloat((he < thumbheight && thumb || he < thumbheight && !big) ? thumbheight : he) + CGFloat(54 + (full ? -10 : 0)) + CGFloat(!hasText || !full ? 0 : (content?.textHeight)!) + CGFloat(big && !thumb ? (submissionHeight + 20) : 0)
         }
+        print("Estimate is \(estimatedHeight)")
         return estimatedHeight
     }
 
@@ -1475,7 +1477,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     }
 
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
-        if (viewControllerToCommit is WebsiteViewController || viewControllerToCommit is SingleSubredditViewController || viewControllerToCommit is UINavigationController || viewControllerToCommit is CommentViewController) {
+        if (viewControllerToCommit is WebsiteViewController || viewControllerToCommit is SFSafariViewController || viewControllerToCommit is SingleSubredditViewController || viewControllerToCommit is UINavigationController || viewControllerToCommit is CommentViewController) {
             parentViewController?.show(viewControllerToCommit, sender: nil)
         } else {
             parentViewController?.present(viewControllerToCommit, animated: true)

@@ -10,6 +10,7 @@ import UIKit
 import reddift
 import SDWebImage
 import MaterialComponents.MaterialProgressView
+import SafariServices
 
 class MediaViewController: UIViewController, UIViewControllerTransitioningDelegate {
 
@@ -53,14 +54,44 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
             return AlbumViewController.init(urlB: contentUrl!)
         } else if (contentUrl != nil && ContentType.displayImage(t: type) && SettingValues.internalImageView || (type == .GIF && SettingValues.internalGifView) || type == .STREAMABLE || type == .VID_ME || (type == ContentType.CType.VIDEO && SettingValues.internalYouTube)) {
             if (!ContentType.isGifLoadInstantly(uri: baseUrl) && type == .GIF) {
+                if(SettingValues.safariVC){
+                    let safariVC = SFSafariViewController(url: baseUrl)
+                    if #available(iOS 10.0, *) {
+                        safariVC.preferredBarTintColor = ColorUtil.backgroundColor
+                        safariVC.preferredControlTintColor = ColorUtil.fontColor
+                    } else {
+                        // Fallback on earlier versions
+                    }
+                    return safariVC
+                }
                 return WebsiteViewController(url: baseUrl, subreddit: link == nil ? "" : link.subreddit)
             }
             return SingleContentViewController.init(url: contentUrl!, lq: lq)
         } else if (type == ContentType.CType.LINK || type == ContentType.CType.NONE) {
+            if(SettingValues.safariVC){
+                let safariVC = SFSafariViewController(url: baseUrl)
+                if #available(iOS 10.0, *) {
+                    safariVC.preferredBarTintColor = ColorUtil.backgroundColor
+                    safariVC.preferredControlTintColor = ColorUtil.fontColor
+                } else {
+                    // Fallback on earlier versions
+                }
+                return safariVC
+            }
             let web = WebsiteViewController(url: baseUrl, subreddit: link == nil ? "" : link.subreddit)
             return web
         } else if (type == ContentType.CType.REDDIT) {
             return RedditLink.getViewControllerForURL(urlS: contentUrl!)
+        }
+        if(SettingValues.safariVC){
+            let safariVC = SFSafariViewController(url: baseUrl)
+            if #available(iOS 10.0, *) {
+                safariVC.preferredBarTintColor = ColorUtil.backgroundColor
+                safariVC.preferredControlTintColor = ColorUtil.fontColor
+            } else {
+                // Fallback on earlier versions
+            }
+            return safariVC
         }
         return WebsiteViewController(url: baseUrl, subreddit: link == nil ? "" : link.subreddit)
     }

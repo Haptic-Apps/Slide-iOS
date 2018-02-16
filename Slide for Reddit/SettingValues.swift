@@ -70,6 +70,7 @@ class SettingValues{
     public static let pref_highlightOp = "HIGHLIGHT_OP"
     public static let pref_smallTag = "SMALLER_TAG"
     public static let pref_biometrics = "BIOMETRICS"
+    public static let pref_safariVC = "SAFARIVC"
 
 
     public static var viewType = true
@@ -132,6 +133,7 @@ class SettingValues{
     public static var highlightOp = true
     public static var smallerTag = true
     public static var biometrics = true
+    public static var safariVC = true
 
     enum PostViewType: String {
         case LIST = "list"
