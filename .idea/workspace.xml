@@ -2,8 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4e152e64-2f09-48b9-9864-06428fccec3c" name="Default" comment="">
+      <change beforePath="" afterPath="$PROJECT_DIR$/Slide for Reddit/SFHideSafariViewController.swift" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/Slide for Reddit.xcodeproj/project.pbxproj" afterPath="$PROJECT_DIR$/Slide for Reddit.xcodeproj/project.pbxproj" />
+      <change beforePath="$PROJECT_DIR$/Slide for Reddit/LinkCellView.swift" afterPath="$PROJECT_DIR$/Slide for Reddit/LinkCellView.swift" />
       <change beforePath="$PROJECT_DIR$/Slide for Reddit/MediaViewController.swift" afterPath="$PROJECT_DIR$/Slide for Reddit/MediaViewController.swift" />
+      <change beforePath="$PROJECT_DIR$/Slide for Reddit/RedditLink.swift" afterPath="$PROJECT_DIR$/Slide for Reddit/RedditLink.swift" />
+      <change beforePath="$PROJECT_DIR$/Slide for Reddit/VCPresenter.swift" afterPath="$PROJECT_DIR$/Slide for Reddit/VCPresenter.swift" />
+      <change beforePath="$PROJECT_DIR$/Slide for Reddit/WebsiteViewController.swift" afterPath="$PROJECT_DIR$/Slide for Reddit/WebsiteViewController.swift" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -18,28 +24,6 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="iphoneos_b4f2266089219190fedc1e40334b9efd8b9b10f5" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="LinkCellView.swift" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Slide for Reddit/LinkCellView.swift">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="177">
-              <caret line="1479" column="115" lean-forward="false" selection-start-line="1479" selection-start-column="115" selection-end-line="1479" selection-end-column="115" />
-              <folding>
-                <element signature="e#313#325#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="project.pbxproj" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Slide for Reddit.xcodeproj/project.pbxproj">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="186">
-              <caret line="144" column="36" lean-forward="false" selection-start-line="144" selection-start-column="36" selection-end-line="144" selection-end-column="36" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="RedditLink.swift" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Slide for Reddit/RedditLink.swift">
           <provider selected="true" editor-type-id="text-editor">
@@ -72,11 +56,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MediaViewController.swift" pinned="false" current-in-tab="true">
+      <file leaf-file-name="MediaViewController.swift" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Slide for Reddit/MediaViewController.swift">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="191">
-              <caret line="86" column="62" lean-forward="false" selection-start-line="86" selection-start-column="62" selection-end-line="86" selection-end-column="62" />
+            <state relative-caret-position="476">
+              <caret line="105" column="31" lean-forward="false" selection-start-line="105" selection-start-column="31" selection-end-line="105" selection-end-column="31" />
               <folding>
                 <element signature="e#157#169#0" expanded="true" />
               </folding>
@@ -104,13 +88,35 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="VCPresenter.swift" pinned="false" current-in-tab="false">
+      <file leaf-file-name="VCPresenter.swift" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Slide for Reddit/VCPresenter.swift">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="411">
-              <caret line="60" column="52" lean-forward="false" selection-start-line="60" selection-start-column="52" selection-end-line="60" selection-end-column="52" />
+            <state relative-caret-position="-101">
+              <caret line="17" column="18" lean-forward="false" selection-start-line="17" selection-start-column="18" selection-end-line="17" selection-end-column="18" />
               <folding>
                 <element signature="e#148#165#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SafariServices.SFSafariViewController.swift" pinned="false" current-in-tab="false">
+        <entry file="mock:///SafariServices.SFSafariViewController.swift">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="182">
+              <caret line="61" column="102" lean-forward="false" selection-start-line="61" selection-start-column="102" selection-end-line="61" selection-end-column="102" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SFHideSafariViewController.swift" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Slide for Reddit/SFHideSafariViewController.swift">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="135">
+              <caret line="9" column="0" lean-forward="false" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+              <folding>
+                <element signature="e#102#119#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -130,11 +136,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>numberof</find>
-      <find>settings</find>
-      <find>Credits</find>
-      <find>performba</find>
-      <find>item size is</find>
       <find>cellforrow</find>
       <find>bundle.main</find>
       <find>license</find>
@@ -159,10 +160,16 @@
       <find>let safariVC = SFSafariViewController(url: oldUr</find>
       <find>let safariv</find>
       <find>let safariVC = SFSafariViewController(url: oldUrl)</find>
+      <find>SFSafariViewController</find>
+      <find>willappea</find>
+      <find>willappear</find>
+      <find>controller {</find>
+      <find>handle</find>
       <find>website</find>
     </findStrings>
     <replaceStrings>
       <replace>-12</replace>
+      <replace>SFHideSafariViewController</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -171,7 +178,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/Slide for Reddit/ShadowboxViewController.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/ColorMuxPagingViewController.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/ShadowboxLinkViewController.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/Sidebar.swift" />
@@ -220,8 +226,9 @@
         <option value="$PROJECT_DIR$/Slide for Reddit/SettingsLinkHandling.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/SettingValues.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/RedditLink.swift" />
-        <option value="$PROJECT_DIR$/Slide for Reddit/VCPresenter.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/MediaViewController.swift" />
+        <option value="$PROJECT_DIR$/Slide for Reddit/SFHideSafariViewController.swift" />
+        <option value="$PROJECT_DIR$/Slide for Reddit/VCPresenter.swift" />
       </list>
     </option>
   </component>
@@ -404,12 +411,12 @@
       <workItem from="1518542792775" duration="12098000" />
       <workItem from="1518559075767" duration="30192000" />
       <workItem from="1518647419733" duration="40800000" />
-      <workItem from="1518754681103" duration="2997000" />
+      <workItem from="1518754681103" duration="4448000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="166433000" />
+    <option name="totallyTimeSpent" value="167884000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -456,17 +463,11 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Slide for Reddit/BottomSheetCell.swift">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="191">
-          <caret line="133" column="0" lean-forward="false" selection-start-line="133" selection-start-column="0" selection-end-line="133" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Slide for Reddit/InboxViewController.swift">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="177">
           <caret line="71" column="15" lean-forward="false" selection-start-line="71" selection-start-column="14" selection-end-line="71" selection-end-column="15" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -474,6 +475,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="294">
           <caret line="101" column="49" lean-forward="false" selection-start-line="101" selection-start-column="49" selection-end-line="101" selection-end-column="49" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -481,6 +483,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="331">
           <caret line="155" column="49" lean-forward="false" selection-start-line="155" selection-start-column="49" selection-end-line="155" selection-end-column="49" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -488,6 +491,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="404">
           <caret line="120" column="0" lean-forward="false" selection-start-line="120" selection-start-column="0" selection-end-line="120" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -495,6 +499,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="391">
           <caret line="139" column="49" lean-forward="false" selection-start-line="139" selection-start-column="49" selection-end-line="139" selection-end-column="49" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -502,6 +507,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="471">
           <caret line="316" column="0" lean-forward="false" selection-start-line="316" selection-start-column="0" selection-end-line="316" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -509,6 +515,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="425">
           <caret line="126" column="0" lean-forward="false" selection-start-line="126" selection-start-column="0" selection-end-line="126" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -587,6 +594,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="177">
           <caret line="47" column="101" lean-forward="false" selection-start-line="47" selection-start-column="101" selection-end-line="47" selection-end-column="101" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -672,6 +680,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="157">
           <caret line="290" column="13" lean-forward="false" selection-start-line="290" selection-start-column="13" selection-end-line="290" selection-end-column="13" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -761,9 +770,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="120">
           <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
-          <folding>
-            <element signature="e#157#169#0" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -787,9 +794,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="177">
           <caret line="1479" column="115" lean-forward="false" selection-start-line="1479" selection-start-column="115" selection-end-line="1479" selection-end-column="115" />
-          <folding>
-            <element signature="e#313#325#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -797,14 +802,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="186">
           <caret line="193" column="71" lean-forward="false" selection-start-line="193" selection-start-column="71" selection-end-line="193" selection-end-column="71" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Slide for Reddit/ShadowboxLinkViewController.swift">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="278">
-          <caret line="245" column="84" lean-forward="false" selection-start-line="245" selection-start-column="84" selection-end-line="245" selection-end-column="84" />
           <folding />
         </state>
       </provider>
@@ -843,22 +840,40 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Slide for Reddit/VCPresenter.swift">
+    <entry file="file://$PROJECT_DIR$/Slide for Reddit/MediaViewController.swift">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="411">
-          <caret line="60" column="52" lean-forward="false" selection-start-line="60" selection-start-column="52" selection-end-line="60" selection-end-column="52" />
+        <state relative-caret-position="476">
+          <caret line="105" column="31" lean-forward="false" selection-start-line="105" selection-start-column="31" selection-end-line="105" selection-end-column="31" />
           <folding>
-            <element signature="e#148#165#0" expanded="true" />
+            <element signature="e#157#169#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Slide for Reddit/MediaViewController.swift">
+    <entry file="file://$PROJECT_DIR$/Slide for Reddit/ShadowboxLinkViewController.swift">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="191">
-          <caret line="86" column="62" lean-forward="false" selection-start-line="86" selection-start-column="62" selection-end-line="86" selection-end-column="62" />
+        <state relative-caret-position="278">
+          <caret line="245" column="84" lean-forward="false" selection-start-line="245" selection-start-column="84" selection-end-line="245" selection-end-column="84" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Slide for Reddit/SFHideSafariViewController.swift">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="9" column="0" lean-forward="false" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
           <folding>
-            <element signature="e#157#169#0" expanded="true" />
+            <element signature="e#102#119#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Slide for Reddit/VCPresenter.swift">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-101">
+          <caret line="17" column="18" lean-forward="false" selection-start-line="17" selection-start-column="18" selection-end-line="17" selection-end-column="18" />
+          <folding>
+            <element signature="e#148#165#0" expanded="true" />
           </folding>
         </state>
       </provider>

@@ -18,7 +18,7 @@ class RedditLink{
         var url = formatRedditUrl(urlS: urlS)
         if (url.isEmpty()) {
             if(SettingValues.safariVC){
-                let safariVC = SFSafariViewController(url: oldUrl)
+                let safariVC = SFHideSafariViewController(url: oldUrl)
                 if #available(iOS 10.0, *) {
                     safariVC.preferredBarTintColor = ColorUtil.backgroundColor
                     safariVC.preferredControlTintColor = ColorUtil.fontColor
@@ -99,7 +99,7 @@ class RedditLink{
             
         }
         if(SettingValues.safariVC){
-            let safariVC = SFSafariViewController(url: oldUrl)
+            let safariVC = SFHideSafariViewController(url: oldUrl)
             if #available(iOS 10.0, *) {
                 safariVC.preferredBarTintColor = ColorUtil.backgroundColor
                 safariVC.preferredControlTintColor = ColorUtil.fontColor

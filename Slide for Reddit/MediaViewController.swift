@@ -55,7 +55,7 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
         } else if (contentUrl != nil && ContentType.displayImage(t: type) && SettingValues.internalImageView || (type == .GIF && SettingValues.internalGifView) || type == .STREAMABLE || type == .VID_ME || (type == ContentType.CType.VIDEO && SettingValues.internalYouTube)) {
             if (!ContentType.isGifLoadInstantly(uri: baseUrl) && type == .GIF) {
                 if(SettingValues.safariVC){
-                    let safariVC = SFSafariViewController(url: baseUrl)
+                    let safariVC = SFHideSafariViewController(url: baseUrl)
                     if #available(iOS 10.0, *) {
                         safariVC.preferredBarTintColor = ColorUtil.backgroundColor
                         safariVC.preferredControlTintColor = ColorUtil.fontColor
@@ -69,7 +69,7 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
             return SingleContentViewController.init(url: contentUrl!, lq: lq)
         } else if (type == ContentType.CType.LINK || type == ContentType.CType.NONE) {
             if(SettingValues.safariVC){
-                let safariVC = SFSafariViewController(url: baseUrl)
+                let safariVC = SFHideSafariViewController(url: baseUrl)
                 if #available(iOS 10.0, *) {
                     safariVC.preferredBarTintColor = ColorUtil.backgroundColor
                     safariVC.preferredControlTintColor = ColorUtil.fontColor
@@ -84,7 +84,7 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
             return RedditLink.getViewControllerForURL(urlS: contentUrl!)
         }
         if(SettingValues.safariVC){
-            let safariVC = SFSafariViewController(url: baseUrl)
+            let safariVC = SFHideSafariViewController(url: baseUrl)
             if #available(iOS 10.0, *) {
                 safariVC.preferredBarTintColor = ColorUtil.backgroundColor
                 safariVC.preferredControlTintColor = ColorUtil.fontColor

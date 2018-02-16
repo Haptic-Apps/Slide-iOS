@@ -1477,7 +1477,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     }
 
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
-        if (viewControllerToCommit is WebsiteViewController || viewControllerToCommit is SFSafariViewController || viewControllerToCommit is SingleSubredditViewController || viewControllerToCommit is UINavigationController || viewControllerToCommit is CommentViewController) {
+        if (viewControllerToCommit is WebsiteViewController || viewControllerToCommit is SFHideSafariViewController || viewControllerToCommit is SingleSubredditViewController || viewControllerToCommit is UINavigationController || viewControllerToCommit is CommentViewController) {
             parentViewController?.show(viewControllerToCommit, sender: nil)
         } else {
             parentViewController?.present(viewControllerToCommit, animated: true)

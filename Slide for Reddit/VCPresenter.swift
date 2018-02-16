@@ -13,6 +13,10 @@ public class VCPresenter {
 
     public static func showVC(viewController: UIViewController, popupIfPossible: Bool, parentNavigationController: UINavigationController?, parentViewController: UIViewController?) {
 
+        if(viewController is SFHideSafariViewController){
+            parentViewController?.present(viewController, animated: true)
+            return
+        }
         if ((parentNavigationController != nil && parentNavigationController!.modalPresentationStyle != .pageSheet) && !(parentViewController is SubSidebarViewController) && popupIfPossible && UIDevice.current.orientation.isLandscape || parentNavigationController == nil) {
             var newParent = TapBehindModalViewController.init(rootViewController: viewController);
             let button = UIButtonWithContext.init(type: .custom)
@@ -37,10 +41,9 @@ public class VCPresenter {
 
             parentViewController!.present(newParent, animated: true, completion: nil)
             viewController.navigationItem.leftBarButtonItems = [barButton]
-            if (viewController is SFSafariViewController) {
-                newParent.setNavigationBarHidden(true, animated: true)
+            if (viewController is SFHideSafariViewController) {
+                newParent.setNavigationBarHidden(true, animated: false)
             }
-
         } else {
             let button = UIButtonWithContext.init(type: .custom)
             button.parentController = parentNavigationController!
@@ -57,9 +60,6 @@ public class VCPresenter {
 
             viewController.navigationController?.interactivePopGestureRecognizer?.delegate = DefaultGestureDelegate()
             viewController.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
-            if (viewController is SFSafariViewController) {
-                viewController.navigationController?.setNavigationBarHidden(true, animated: true)
-            }
         }
 
     }
