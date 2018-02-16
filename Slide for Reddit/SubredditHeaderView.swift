@@ -27,7 +27,7 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
     var mods = UITableViewCell()
 
 
-    func mods(_ sender: AnyObject){
+    func mods(_ sender: UITableViewCell){
         var list: [User] = []
         do {
             try (UIApplication.shared.delegate as! AppDelegate).session?.about(subreddit!, aboutWhere: SubredditAbout.moderators, completion: { (result) in
@@ -68,6 +68,11 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
                             }
                             sheet.addAction(somethingAction)
                         }
+                        if let presenter = sheet.popoverPresentationController {
+                            presenter.sourceView = sender
+                            presenter.sourceRect = sender.bounds
+                        }
+
                         self.parentController?.present(sheet, animated: true)
                     }
                     break
@@ -82,6 +87,17 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
         let pointForTargetViewmore: CGPoint = mods.convert(point, from: self)
         if mods.bounds.contains(pointForTargetViewmore) {
             return mods
+        }
+
+        let pointForTargetViewsort: CGPoint = sorting.convert(point, from: self)
+        if sorting.bounds.contains(pointForTargetViewsort) {
+            return sorting
+        }
+
+
+        let pointForTargetViewsubmit: CGPoint = submit.convert(point, from: self)
+        if submit.bounds.contains(pointForTargetViewsubmit) {
+            return submit
         }
 
         return super.hitTest(point, with: event)
@@ -180,10 +196,81 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
 
         self.clipsToBounds = true
         updateConstraints()
+
+
         let pTap = UITapGestureRecognizer(target: self, action: #selector(self.mods(_:)))
         mods.addGestureRecognizer(pTap)
         mods.isUserInteractionEnabled = true
 
+        let sTap = UITapGestureRecognizer(target: self, action: #selector(self.sort(_:)))
+        sorting.addGestureRecognizer(sTap)
+        sorting.isUserInteractionEnabled = true
+
+        let nTap = UITapGestureRecognizer(target: self, action: #selector(self.new(_:)))
+        submit.addGestureRecognizer(nTap)
+        submit.isUserInteractionEnabled = true
+
+    }
+
+    func new(_ selector: UITableViewCell){
+        //todo this
+    }
+
+    func sort(_ selector: UITableViewCell) {
+        let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
+
+        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
+            print("Cancel")
+        }
+        actionSheetController.addAction(cancelActionButton)
+
+        for link in LinkSortType.cases {
+            let saveActionButton: UIAlertAction = UIAlertAction(title: link.description, style: .default) { action -> Void in
+                self.showTimeMenu(s: link, selector: selector)
+            }
+            actionSheetController.addAction(saveActionButton)
+        }
+
+        if let presenter = actionSheetController.popoverPresentationController {
+            presenter.sourceView = selector
+            presenter.sourceRect = selector.bounds
+        }
+
+        self.parentController?.present(actionSheetController, animated: true, completion: nil)
+
+    }
+
+    func showTimeMenu(s: LinkSortType, selector: UITableViewCell) {
+        if (s == .hot || s == .new) {
+            UserDefaults.standard.set(s.path, forKey: self.subreddit!.displayName + "Sorting")
+            UserDefaults.standard.set(TimeFilterWithin.day, forKey: self.subreddit!.displayName + "Time")
+            UserDefaults.standard.synchronize()
+            return
+        } else {
+            let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
+
+            let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
+                print("Cancel")
+            }
+            actionSheetController.addAction(cancelActionButton)
+
+            for t in TimeFilterWithin.cases {
+                let saveActionButton: UIAlertAction = UIAlertAction(title: t.param, style: .default) { action -> Void in
+                    print("Sort is \(s) and time is \(t)")
+                    UserDefaults.standard.set(s.path, forKey: self.subreddit!.displayName + "Sorting")
+                    UserDefaults.standard.set(t.param, forKey: self.subreddit!.displayName + "Time")
+                    UserDefaults.standard.synchronize()
+                }
+                actionSheetController.addAction(saveActionButton)
+            }
+
+            if let presenter = actionSheetController.popoverPresentationController {
+                presenter.sourceView = selector
+                presenter.sourceRect = selector.bounds
+            }
+
+            self.parentController?.present(actionSheetController, animated: true, completion: nil)
+        }
     }
 
     func exit() {

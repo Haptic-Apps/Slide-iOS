@@ -9,8 +9,8 @@
 import Foundation
 import reddift
 
-class SettingValues{
-    
+class SettingValues {
+
     public static let pref_viewType = "VIEW_TYPE"
     public static let pref_hiddenFAB = "HIDDEN_FAB"
     public static let pref_defaultSorting = "DEFAULT_SORT"
@@ -100,7 +100,7 @@ class SettingValues{
     public static var scoreInTitle = false
     public static var internalAlbumView = true
     public static var internalImageView = true
-    public static var forceExternalBrowserLinks : [String] = []
+    public static var forceExternalBrowserLinks: [String] = []
     public static var saveHistory = true
     public static var saveNSFWHistory = false
     public static var markReadOnScroll = false
@@ -140,8 +140,36 @@ class SettingValues{
         case DESKTOP = "desktop"
         case CARD = "card"
     }
-    
-    public static func initialize(){
+
+    public static func getLinkSorting(forSubreddit: String) -> LinkSortType {
+        if let sorting = UserDefaults.standard.string(forKey: forSubreddit + "Sorting") {
+            for s in LinkSortType.cases {
+                if (s.path == sorting) {
+                    return s
+                }
+            }
+        }
+        return defaultSorting
+    }
+
+    public static func getTimePeriod(forSubreddit: String) -> TimeFilterWithin {
+        if let time = UserDefaults.standard.string(forKey: forSubreddit + "Time") {
+            for t in TimeFilterWithin.cases {
+                if (t.param == time) {
+                    return t
+                }
+            }
+        }
+        return defaultTimePeriod
+    }
+
+    public static func setSubSorting(forSubreddit: String, linkSorting: LinkSortType, timePeriod: TimeFilterWithin) {
+        UserDefaults.standard.set(linkSorting.path, forKey: forSubreddit + "Sorting")
+        UserDefaults.standard.set(timePeriod.param, forKey: forSubreddit + "Time")
+        UserDefaults.standard.synchronize()
+    }
+
+    public static func initialize() {
         let settings = UserDefaults.standard
         SettingValues.bigPicCropped = settings.bool(forKey: SettingValues.pref_cropBigPic)
         SettingValues.saveNSFWHistory = settings.bool(forKey: SettingValues.pref_saveNSFWHistory)
@@ -151,6 +179,33 @@ class SettingValues{
 
         SettingValues.postFontOffset = settings.object(forKey: SettingValues.pref_postFontSize) == nil ? 0 : settings.integer(forKey: SettingValues.pref_postFontSize)
         SettingValues.commentFontOffset = settings.object(forKey: SettingValues.pref_commentFontSize) == nil ? 0 : settings.integer(forKey: SettingValues.pref_commentFontSize)
+
+        if let time = UserDefaults.standard.string(forKey: pref_defaultTimePeriod) {
+            for t in TimeFilterWithin.cases {
+                if (t.param == time) {
+                    defaultTimePeriod = t
+                    break
+                }
+            }
+        }
+
+        if let sort = UserDefaults.standard.string(forKey: pref_defaultTimePeriod) {
+            for t in LinkSortType.cases {
+                if (t.path == sort) {
+                    defaultSorting = t
+                    break
+                }
+            }
+        }
+
+        if let sort = UserDefaults.standard.string(forKey: pref_defaultCommentSorting) {
+            for t in CommentSort.cases {
+                if (t.path == sort) {
+                    defaultCommentSorting = t
+                    break
+                }
+            }
+        }
 
         SettingValues.smallerTag = settings.bool(forKey: SettingValues.pref_smallTag)
         SettingValues.markReadOnScroll = settings.bool(forKey: SettingValues.pref_markReadOnScroll)
@@ -184,11 +239,12 @@ class SettingValues{
         SettingValues.scoreInTitle = settings.bool(forKey: SettingValues.pref_scoreInTitle)
         SettingValues.hideButtonActionbar = settings.bool(forKey: SettingValues.pref_hideButtonActionbar)
         SettingValues.postViewMode = PostViewType.init(rawValue: settings.string(forKey: SettingValues.pref_postViewMode) ?? "card")!
-        
+
         SettingValues.internalImage = settings.object(forKey: SettingValues.pref_internalImage) == nil ? true : settings.bool(forKey: SettingValues.pref_internalImage)
         SettingValues.internalGif = settings.object(forKey: SettingValues.pref_internalGif) == nil ? true : settings.bool(forKey: SettingValues.pref_internalGif)
         SettingValues.internalAlbum = settings.object(forKey: SettingValues.pref_internalAlbum) == nil ? true : settings.bool(forKey: SettingValues.pref_internalAlbum)
         SettingValues.internalYouTube = settings.object(forKey: SettingValues.pref_internalYouTube) == nil ? true : settings.bool(forKey: SettingValues.pref_internalYouTube)
 
     }
+
 }

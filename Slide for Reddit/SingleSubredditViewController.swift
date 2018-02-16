@@ -649,6 +649,9 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
             navigationItem.rightBarButtonItems = [moreB, sortB, sB]
 
+            self.sort = SettingValues.getLinkSorting(forSubreddit: self.sub)
+            self.time = SettingValues.getTimePeriod(forSubreddit: self.sub)
+
             do {
                 try (UIApplication.shared.delegate as! AppDelegate).session?.about(sub, completion: { (result) in
                     switch result {
