@@ -18,6 +18,7 @@
 		B776B97113FBBC4534E3E730 /* ic_security_white_48pt_2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B776B3533C86EFEAA5651334 /* ic_security_white_48pt_2x.png */; };
 		B776B9BE089B14ACAEC8B981 /* Contents.json in Resources */ = {isa = PBXBuildFile; fileRef = B776B176E4EA4FAE2D04032A /* Contents.json */; };
 		B776BA396266921B51CDB958 /* Contents.json in Resources */ = {isa = PBXBuildFile; fileRef = B776B03726A2F562BCB99433 /* Contents.json */; };
+		B776BA8D503319846E83C4A4 /* VideoDisplayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B4EE978D7F23FF4C74BE /* VideoDisplayer.swift */; };
 		B776BAD2D3F58C29030A4230 /* SFHideSafariViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B89DC40DC7FB5ECB6C4A /* SFHideSafariViewController.swift */; };
 		B776BF494A7A822D5DB4B5BC /* ColorMuxPagingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B21CFB79FA354C296037 /* ColorMuxPagingViewController.swift */; };
 		B776BFF0137FD4BDBC857C74 /* ic_security_white_48pt.png in Resources */ = {isa = PBXBuildFile; fileRef = B776B9DCA4B8414CCF203CFF /* ic_security_white_48pt.png */; };
@@ -208,6 +209,7 @@
 		B776B21CFB79FA354C296037 /* ColorMuxPagingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorMuxPagingViewController.swift; sourceTree = "<group>"; };
 		B776B2EC2ECFC0B4D7E74296 /* ic_book_white_48pt_2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ic_book_white_48pt_2x.png; sourceTree = "<group>"; };
 		B776B3533C86EFEAA5651334 /* ic_security_white_48pt_2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ic_security_white_48pt_2x.png; sourceTree = "<group>"; };
+		B776B4EE978D7F23FF4C74BE /* VideoDisplayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoDisplayer.swift; sourceTree = "<group>"; };
 		B776B6931F2FE1AA23B8472C /* ic_security_white_48pt_3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ic_security_white_48pt_3x.png; sourceTree = "<group>"; };
 		B776B89DC40DC7FB5ECB6C4A /* SFHideSafariViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SFHideSafariViewController.swift; sourceTree = "<group>"; };
 		B776B9DCA4B8414CCF203CFF /* ic_security_white_48pt.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ic_security_white_48pt.png; sourceTree = "<group>"; };
@@ -694,6 +696,7 @@
 				B776B6A101193D01C6DE3F68 /* ic_security_white_48pt.imageset */,
 				B776BA78CCE4C75BD7FC5DA3 /* ToolbarTextView.swift */,
 				B776B89DC40DC7FB5ECB6C4A /* SFHideSafariViewController.swift */,
+				B776B4EE978D7F23FF4C74BE /* VideoDisplayer.swift */,
 			);
 			path = "Slide for Reddit";
 			sourceTree = "<group>";
@@ -1249,6 +1252,7 @@
 				B776BF494A7A822D5DB4B5BC /* ColorMuxPagingViewController.swift in Sources */,
 				B776B919A0E908BFAB060DE7 /* ToolbarTextView.swift in Sources */,
 				B776BAD2D3F58C29030A4230 /* SFHideSafariViewController.swift in Sources */,
+				B776BA8D503319846E83C4A4 /* VideoDisplayer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

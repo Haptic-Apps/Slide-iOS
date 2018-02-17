@@ -27,7 +27,7 @@ public class ColorMuxPagingViewController : UIPageViewController, UIScrollViewDe
 
         if(viewToMux != nil && color1 != nil  && color2 != nil){
             let color = fadeFromColor(fromColor: color1!, toColor: color2!, withPercentage: percentComplete)
-            if(percentComplete != 0){
+            if(percentComplete > 0.1 && percentComplete != 1){
                 viewToMux!.backgroundColor = color
             }
         }

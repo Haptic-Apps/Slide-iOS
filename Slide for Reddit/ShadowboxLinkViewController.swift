@@ -14,84 +14,82 @@ import Alamofire
 import AVKit
 import TTTAttributedLabel
 
-class ShadowboxLinkViewController: UIViewController, UIScrollViewDelegate, UIGestureRecognizerDelegate {
-    
+class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestureRecognizerDelegate {
+
     var submission: RSubmission?
     var baseURL: URL?
     var type: ContentType.CType = ContentType.CType.UNKNOWN
-    
-    var scrollView = UIScrollView()
+
     var imageView = UIImageView()
     var textB = TTTAttributedLabel.init(frame: CGRect.zero)
-    
+
     var menuB = UIBarButtonItem()
+    var doUpvoteB = UIBarButtonItem()
+    var doDownvoteB = UIBarButtonItem()
+    var doSaveB = UIBarButtonItem()
     var upvoteB = UIBarButtonItem()
     var commentsB = UIBarButtonItem()
 
 
-    init(submission: RSubmission){
+    init(submission: RSubmission) {
         self.submission = submission
         self.baseURL = submission.url
         super.init(nibName: nil, bundle: nil)
         type = ContentType.getContentType(baseUrl: baseURL!)
     }
-    
-    
+
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
     var color: UIColor = UIColor.black;
-    
-    func displayImage(baseImage: UIImage?){
-        if(baseImage == nil){
-            
+
+    func displayImage(baseImage: UIImage?) {
+        if (baseImage == nil) {
+
         }
         let image = baseImage!
         color = image.areaAverage()
-        if(((parent as! ShadowboxViewController).currentVc as! ShadowboxLinkViewController).submission!.id == self.submission!.id){
+        if (((parent as! ShadowboxViewController).currentVc as! ShadowboxLinkViewController).submission!.id == self.submission!.id) {
             UIView.animate(withDuration: 0.10) {
                 (self.parent as! ShadowboxViewController).background!.backgroundColor = self.color
                 (self.parent as! ShadowboxViewController).background!.layoutIfNeeded()
             }
         }
-        self.scrollView.contentSize = CGSize.init(width: self.view.frame.size.width, height: getHeightFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width))
+
+        if (image.size.width > image.size.height) {
+            self.scrollView.contentSize = CGSize.init(width: self.view.frame.size.width, height: getHeightFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width))
+            imageView = UIImageView.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: getHeightFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width)))
+        } else {
+            self.scrollView.contentSize = CGSize.init(width: getWidthFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width), height: self.view.frame.size.height * 0.60)
+            imageView = UIImageView.init(frame: CGRect.init(x: 0, y: 0, width: getWidthFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width), height: self.view.frame.size.height))
+        }
+
+        imageView.center.x = scrollView.frame.width / 2
+        imageView.center.y = scrollView.frame.height / 2
+
         self.scrollView.delegate = self
         self.scrollView.isScrollEnabled = false
-        
-        imageView = UIImageView.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height))
-        imageView.contentMode = .scaleAspectFill
+
+        imageView.contentMode = .scaleAspectFit
         self.scrollView.addSubview(imageView)
         imageView.image = image
-        
-        var gradient: CAGradientLayer = CAGradientLayer()
-        gradient.frame = imageView.frame
-        gradient.colors = [UIColor.black.withAlphaComponent(0.7).cgColor, UIColor.clear.cgColor]
-        gradient.locations = [0.0, 0.1]
-        imageView.layer.insertSublayer(gradient, at: 0)
-         gradient = CAGradientLayer()
-        gradient.frame = imageView.frame
-        gradient.colors = [UIColor.clear.cgColor, UIColor.black.withAlphaComponent(0.7).cgColor]
-        let percent = ((textB.frame.size.height + 30)/self.view.frame.size.height)
-        gradient.locations = [NSNumber.init(value: Double(percent)), 1]
-        imageView.layer.insertSublayer(gradient, at: 0)
-
     }
-    
-    func loadImage(imageURLB: URL?){
-        if(imageURLB == nil){
-            
+
+    func loadImage(imageURLB: URL?) {
+        if (imageURLB == nil) {
             return
         }
         let imageURL = imageURLB!
-                if(SDWebImageManager.shared().cachedImageExists(for: imageURL)){
+        if (SDWebImageManager.shared().cachedImageExists(for: imageURL)) {
             DispatchQueue.main.async {
                 let image = SDWebImageManager.shared().imageCache.imageFromDiskCache(forKey: imageURL.absoluteString)
                 self.displayImage(baseImage: image)
             }
-            
+
         } else {
-            SDWebImageDownloader.shared().downloadImage(with: imageURL, options: .allowInvalidSSLCertificates, progress: { (current:NSInteger, total:NSInteger) in
+            SDWebImageDownloader.shared().downloadImage(with: imageURL, options: .allowInvalidSSLCertificates, progress: { (current: NSInteger, total: NSInteger) in
             }, completed: { (image, _, error, _) in
                 SDWebImageManager.shared().saveImage(toCache: image, for: imageURL)
                 DispatchQueue.main.async {
@@ -100,65 +98,94 @@ class ShadowboxLinkViewController: UIViewController, UIScrollViewDelegate, UIGes
             })
         }
     }
-    
-    func getHeightFromAspectRatio(imageHeight:CGFloat, imageWidth: CGFloat) -> CGFloat {
-        let ratio = Double(imageHeight)/Double(imageWidth)
+
+    func getHeightFromAspectRatio(imageHeight: CGFloat, imageWidth: CGFloat) -> CGFloat {
+        let ratio = Double(imageHeight) / Double(imageWidth)
         let width = Double(view.frame.size.width);
         return CGFloat(width * ratio)
     }
-    
+
+    func getWidthFromAspectRatio(imageHeight: CGFloat, imageWidth: CGFloat) -> CGFloat {
+        let ratio = Double(imageWidth) / Double(imageHeight)
+        let height = Double(view.frame.size.height * 0.60);
+        return CGFloat(height * ratio)
+    }
+
     var toolbar = UIToolbar()
     var baseView = UIView()
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        sharedPlayer = false
         let inner = UIView.init(frame: self.view.frame)
 
-        self.scrollView = UIScrollView.init(frame: CGRect.init(x: 0, y: 72, width: self.view.frame.size.width - 48, height: self.view.frame.size.height - 106))
-        self.scrollView.layer.cornerRadius = 10
-        self.scrollView.minimumZoomScale=1
-        self.scrollView.maximumZoomScale=6.0
+        self.scrollView = UIScrollView.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height))
+        self.scrollView.minimumZoomScale = 1
+        self.scrollView.maximumZoomScale = 6.0
         self.scrollView.backgroundColor = .clear
-        toolbar = UIToolbar.init(frame: CGRect.init(x: 0, y: self.view.frame.size.height - 89, width: self.view.frame.size.width - 48, height:  40))
-        let tap = UITapGestureRecognizer.init(target: self, action: #selector(self.content(_:)))
-        scrollView.addGestureRecognizer(tap)
-        scrollView.isUserInteractionEnabled = true
+        toolbar = UIToolbar.init(frame: CGRect.init(x: 0, y: self.view.frame.size.height - 40, width: self.view.frame.size.width, height: 40))
+        scrollView.addTapGestureRecognizer(action: {
+            self.content(self.scrollView)
+        })
         let tap2 = UITapGestureRecognizer.init(target: self, action: #selector(self.comments(_:)))
         toolbar.addGestureRecognizer(tap2)
         toolbar.isUserInteractionEnabled = true
+
+        progressView = MDCProgressView()
+        progressView?.progress = 0
+        let progressViewHeight = CGFloat(5)
+        progressView?.frame = CGRect(x: 0, y: toolbar.bounds.height, width: toolbar.bounds.width, height: progressViewHeight)
+        toolbar.addSubview(progressView!)
 
         doButtons()
         inner.addSubview(toolbar)
         inner.addSubview(scrollView)
 
         var text = CachedTitle.getTitle(submission: submission!, full: true, false, true)
-        var estHeight = text.boundingRect(with: CGSize.init(width: self.view.frame.size.width - 30, height:10000), options: [.usesLineFragmentOrigin , .usesFontLeading], context: nil).height
-        textB = TTTAttributedLabel.init(frame: CGRect.init(x: 20, y: self.view.frame.size.height - estHeight - 30, width: self.view.frame.size.width - 30, height: estHeight + 20))
+        var estHeight = text.boundingRect(with: CGSize.init(width: self.view.frame.size.width - 20, height: 10000), options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).height
+        textB = TTTAttributedLabel.init(frame: CGRect.init(x: 10, y: self.view.frame.size.height - estHeight - 50, width: self.view.frame.size.width - 20, height: estHeight + 20))
         textB.numberOfLines = 0
         textB.setText(text)
-        
+
         textB.isUserInteractionEnabled = true
         startDisplay()
-        baseView = inner.withPadding(padding: UIEdgeInsetsMake(24, 16, estHeight + 10, 24))
-        
+        baseView = inner.withPadding(padding: UIEdgeInsetsMake(0, 0, 0, 0))
+
         view.addSubview(baseView)
         view.addSubview(textB)
-        
+
         view.layoutIfNeeded()
 
+        let gradient = CAGradientLayer()
+        var frame = view.bounds
+        frame.size.height = view.bounds.size.height * 0.25
+        frame.origin.y = view.bounds.size.height * 0.75
+        gradient.frame = frame
+        gradient.colors = [UIColor.clear.cgColor, UIColor.black.withAlphaComponent(0.65).cgColor]
+
+        view.layer.insertSublayer(gradient, at: 0)
+
+        let gradient2 = CAGradientLayer()
+        frame.size.height = view.bounds.size.height * 0.25
+        frame.origin.y = 0
+        gradient2.frame = frame
+        gradient2.colors = [UIColor.black.withAlphaComponent(0.65).cgColor, UIColor.clear.cgColor]
+
+        view.layer.insertSublayer(gradient2, at: 0)
+
     }
-    
-    func doButtons(){
-        let space = UIBarButtonItem(barButtonSystemItem:.flexibleSpace, target: nil, action: nil)
+
+    func doButtons() {
+        let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         var items: [UIBarButtonItem] = []
-        var attrs: [String: Any] = [NSForegroundColorAttributeName : UIColor.white]
+        var attrs: [String: Any] = [NSForegroundColorAttributeName: UIColor.white]
         let imageview = UIImageView(frame: CGRect.init(x: 0, y: 5, width: 20, height: 20))
         imageView.contentMode = .center
 
-        switch(ActionStates.getVoteDirection(s: submission!)){
-        case .down :
+        switch (ActionStates.getVoteDirection(s: submission!)) {
+        case .down:
             imageview.image = UIImage.init(named: "downvote")?.withColor(tintColor: ColorUtil.downvoteColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))
-            
+
             attrs = ([NSForegroundColorAttributeName: ColorUtil.downvoteColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 14, submission: true)])
             break
         case .up:
@@ -170,137 +197,201 @@ class ShadowboxLinkViewController: UIViewController, UIScrollViewDelegate, UIGes
             attrs = ([NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 14, submission: true)])
             break
         }
-        
+
         let voteView = UIView(frame: CGRect.init(x: -70, y: 0, width: 70, height: 30))
-        let subScore = NSMutableAttributedString(string: (submission!.score>=10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(submission!.score)/Double(1000))) : " \(submission!.score)", attributes: attrs)
-        
+        let subScore = NSMutableAttributedString(string: (submission!.score >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(submission!.score) / Double(1000))) : " \(submission!.score)", attributes: attrs)
+
         var attrsNew: [String: Any] = [:]
         let labelV = UILabel(frame: CGRect.init(x: 20, y: 0, width: 40, height: 30))
         labelV.attributedText = subScore
-        
+
         voteView.addSubview(labelV)
         voteView.addSubview(imageview)
-        
+
         let commentimg = UIImageView(frame: CGRect.init(x: -10, y: 0, width: 30, height: 30))
         commentimg.image = UIImage.init(named: "comments")?.withColor(tintColor: .white).imageResize(sizeChange: CGSize.init(width: 20, height: 20))
         commentimg.contentMode = .center
-        
+
         let commentView = UIView(frame: CGRect.init(x: 00, y: 0, width: 70, height: 30))
         attrs = ([NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 14, submission: true)])
-        
+
         let labelC = UILabel(frame: CGRect.init(x: 20, y: 0, width: 40, height: 30))
         var commentNumber = NSAttributedString.init(string: "\(submission!.commentCount)", attributes: attrs)
         labelC.attributedText = commentNumber
-        
+
         commentView.addSubview(labelC)
         commentView.addSubview(commentimg)
-        
+
         let cb = UIBarButtonItem.init(customView: commentView)
         let sb = UIBarButtonItem.init(customView: voteView)
-        
+
         sb.imageInsets = UIEdgeInsets.init(top: 0, left: -30, bottom: 0, right: 0)
         cb.addTargetForAction(target: self, action: #selector(self.comments))
         sb.addTargetForAction(target: self, action: #selector(self.vote))
-        
+
         toolbar.isUserInteractionEnabled = true
-        
+
         items.append(cb)
         items.append(sb)
         items.append(space)
-        menuB = UIBarButtonItem(image: UIImage(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style:.plain, target: self, action: #selector(ShadowboxLinkViewController.showMenu(_:)))
+        menuB = UIBarButtonItem(image: UIImage(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 20, height: 20)), style: .plain, target: self, action: #selector(ShadowboxLinkViewController.showMenu(_:)))
         items.append(menuB)
+        doUpvoteB = UIBarButtonItem(image: UIImage(named: "upvote")?.imageResize(sizeChange: CGSize.init(width: 20, height: 20)), style: .plain, target: self, action: #selector(ShadowboxLinkViewController.showMenu(_:)))
+        items.append(doUpvoteB)
+        doDownvoteB = UIBarButtonItem(image: UIImage(named: "downvote")?.imageResize(sizeChange: CGSize.init(width: 20, height: 20)), style: .plain, target: self, action: #selector(ShadowboxLinkViewController.showMenu(_:)))
+        items.append(doDownvoteB)
+        doSaveB = UIBarButtonItem(image: UIImage(named: "star")?.imageResize(sizeChange: CGSize.init(width: 20, height: 20)), style: .plain, target: self, action: #selector(ShadowboxLinkViewController.showMenu(_:)))
+        items.append(doSaveB)
+
         toolbar.items = items
         toolbar.setBackgroundImage(UIImage(),
-                                   forToolbarPosition: .any,
-                                   barMetrics: .default)
+                forToolbarPosition: .any,
+                barMetrics: .default)
         toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
         toolbar.tintColor = UIColor.white
     }
-    
-    func vote(){
-        
+
+    func vote() {
+
     }
-    
-    func comments(_ sender: AnyObject){
-        
+
+    func comments(_ sender: AnyObject) {
+
     }
-    
+
     public func shouldTruncate(url: URL) -> Bool {
         let path = url.path
         return !ContentType.isGif(uri: url) && !ContentType.isImage(uri: url) && path.contains(".");
     }
-    
+
     func getControllerForUrl(baseUrl: URL) -> UIViewController? {
         var url = baseUrl.absoluteString
         var bUrl = baseUrl
-        if(shouldTruncate(url: bUrl)){
+        if (shouldTruncate(url: bUrl)) {
             let content = bUrl.absoluteString
             bUrl = URL.init(string: (content.substring(to: (content.characters.index(of: "."))!)))!
         }
         let type = ContentType.getContentType(baseUrl: bUrl)
-        
-        if(type == ContentType.CType.ALBUM && SettingValues.internalAlbumView){
+
+        if (type == ContentType.CType.ALBUM && SettingValues.internalAlbumView) {
             return AlbumViewController.init(urlB: bUrl)
         } else if (bUrl != nil && ContentType.displayImage(t: type) && SettingValues.internalImageView || (type == .GIF && SettingValues.internalGifView) || type == .STREAMABLE || type == .VID_ME || (type == ContentType.CType.VIDEO && SettingValues.internalYouTube)) {
             return SingleContentViewController.init(url: bUrl, lq: nil)
-        } else if(type == ContentType.CType.LINK || type == ContentType.CType.NONE){
+        } else if (type == ContentType.CType.LINK || type == ContentType.CType.NONE) {
             let web = WebsiteViewController(url: bUrl, subreddit: submission!.subreddit)
             let nav = UINavigationController.init(rootViewController: web)
             return nav
-        } else if(type == ContentType.CType.REDDIT){
+        } else if (type == ContentType.CType.REDDIT) {
             return RedditLink.getViewControllerForURL(urlS: bUrl)
         }
-        
+
         let web = WebsiteViewController(url: baseUrl, subreddit: submission!.subreddit)
         let nav = UINavigationController.init(rootViewController: web)
         return nav
     }
-    
 
-    func content(_ sender: AnyObject){
+
+    func content(_ sender: AnyObject) {
         print("Doing content")
         var url = baseURL!
         let controller = getControllerForUrl(baseUrl: url)!
-        if( controller is AlbumViewController){
+        if (controller is AlbumViewController) {
             controller.modalPresentationStyle = .overFullScreen
             present(controller, animated: true, completion: nil)
-        } else if(controller is SingleContentViewController){
+        } else if (controller is SingleContentViewController) {
             controller.modalPresentationStyle = .overFullScreen
             present(controller, animated: true, completion: nil)
         } else {
-                VCPresenter.showVC(viewController: controller, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+            VCPresenter.showVC(viewController: controller, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
         }
     }
-    
-    func showMenu(_ sender: AnyObject){
-        
+
+    func showMenu(_ sender: AnyObject) {
+
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
         self.baseView.backgroundColor = .clear
     }
-    
-    func startDisplay(){
-        self.view.layoutMargins = UIEdgeInsetsMake(16, 16, 16, 16)
-        loadImage(imageURLB: URL.init(string: submission!.bannerUrl))
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.player.play()
+        let type = ContentType.getContentType(submission: submission!)
+        let videoUrl = submission!.videoPreview
+        if (ContentType.mediaType(t: type)) {
+            if (type == .GIF || type == .STREAMABLE || type == .VID_ME) {
+                getGif(urlS: videoUrl)
+            } else if (type == .VIDEO) {
+                toolbar.isHidden = true
+                let he = getYTHeight()
+                ytPlayer = YTPlayerView.init(frame: CGRect.init(x: 0, y: (self.scrollView.frame.size.height - he) / 2, width: self.scrollView.frame.size.width, height: he))
+                ytPlayer.isHidden = true
+                self.scrollView.addSubview(ytPlayer)
+                getYouTube(ytPlayer, urlS: baseURL!.absoluteString)
+            }
+        }
     }
-    
-     enum VideoType {
-        case IMGUR
-        case VID_ME
-        case STREAMABLE
-        case GFYCAT
-        case DIRECT
-        case OTHER
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.player.pause()
     }
+
+    func startDisplay() {
+        self.view.layoutMargins = UIEdgeInsetsMake(8, 8, 8, 8)
+        let type = ContentType.getContentType(submission: submission!)
+        if (ContentType.displayImage(t: type) || type == .LINK || type == .EXTERNAL || type == .EMBEDDED) {
+            loadImage(imageURLB: URL.init(string: submission!.bannerUrl))
+        } else if (ContentType.mediaType(t: type)) {
+            if let url = URL(string: submission!.thumbnailUrl) {
+                if (SDWebImageManager.shared().cachedImageExists(for: url)) {
+                    DispatchQueue.main.async {
+                        if let image = SDWebImageManager.shared().imageCache.imageFromDiskCache(forKey: self.submission!.thumbnailUrl) {
+                            self.color = image.areaAverage()
+                            if (((self.parent as! ShadowboxViewController).currentVc as! ShadowboxLinkViewController).submission!.id == self.submission!.id) {
+                                UIView.animate(withDuration: 0.10) {
+                                    (self.parent as! ShadowboxViewController).background!.backgroundColor = self.color
+                                    (self.parent as! ShadowboxViewController).background!.layoutIfNeeded()
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    SDWebImageDownloader.shared().downloadImage(with: url, options: .allowInvalidSSLCertificates, progress: { (current: NSInteger, total: NSInteger) in
+                    }, completed: { (img, _, error, _) in
+                        SDWebImageManager.shared().saveImage(toCache: img, for: url)
+                        if let image = img {
+                            DispatchQueue.main.async {
+                                self.color = image.areaAverage()
+                                if (((self.parent as! ShadowboxViewController).currentVc as! ShadowboxLinkViewController).submission!.id == self.submission!.id) {
+                                    UIView.animate(withDuration: 0.5) {
+                                        (self.parent as! ShadowboxViewController).background!.backgroundColor = self.color
+                                    }
+                                }
+                            }
+                        }
+                    })
+                }
+            }
+
+        } else {
+            //display text
+
+        }
+    }
+
 }
+
 extension UIBarButtonItem {
     func addTargetForAction(target: AnyObject, action: Selector) {
         self.target = target
         self.action = action
     }
 }
+
 extension UIImage {
     func areaAverage() -> UIColor {
         var bitmap = [UInt8](repeating: 0, count: 4)

@@ -15,7 +15,6 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
     var baseSubmissions: [RSubmission] = []
 
     func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
-        print("Setting colors")
         color2 = (pendingViewControllers[0] as! ShadowboxLinkViewController).color
         color1 = (currentVc as! ShadowboxLinkViewController).color
     }
