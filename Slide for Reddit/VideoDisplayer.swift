@@ -10,7 +10,7 @@ import AVKit
 import SDWebImage
 import MaterialComponents.MaterialProgressView
 
-public class VideoDisplayer: UIViewController, YTPlayerViewDelegate {
+class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
     var videoView = UIView()
     var ytPlayer = YTPlayerView()
     var playerVC = AVPlayerViewController()
@@ -62,6 +62,11 @@ public class VideoDisplayer: UIViewController, YTPlayerViewDelegate {
         } else {
             ytPlayer.load(withVideoId: video, playerVars: ["controls": 1, "playsinline": 1, "start": millis, "fs": 0])
         }
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        request?.cancel()
     }
 
     func getGif(urlS: String) {
@@ -118,6 +123,7 @@ public class VideoDisplayer: UIViewController, YTPlayerViewDelegate {
         } else {
             let localUrl = URL.init(fileURLWithPath: SDImageCache.shared().makeDiskCachePath(key))
             print(localUrl)
+            progressView?.setHidden(false, animated: true, completion: nil)
             request = Alamofire.download(toLoad, method: .get, to: { (url, response) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
                         return (localUrl, [.createIntermediateDirectories])
 

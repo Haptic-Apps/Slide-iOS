@@ -14,11 +14,13 @@ import Alamofire
 import AVKit
 import TTTAttributedLabel
 
-class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestureRecognizerDelegate {
+class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestureRecognizerDelegate, TTTAttributedLabelDelegate {
 
     var submission: RSubmission?
     var baseURL: URL?
     var type: ContentType.CType = ContentType.CType.UNKNOWN
+    var body = TTTAttributedLabel.init(frame: CGRect.zero)
+    var titleString = UILabel()
 
     var imageView = UIImageView()
     var textB = TTTAttributedLabel.init(frame: CGRect.zero)
@@ -30,20 +32,22 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
     var upvoteB = UIBarButtonItem()
     var commentsB = UIBarButtonItem()
 
+    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
+        doShow(url: url)
+    }
 
     init(submission: RSubmission) {
         self.submission = submission
         self.baseURL = submission.url
         super.init(nibName: nil, bundle: nil)
         type = ContentType.getContentType(baseUrl: baseURL!)
+        color = .black
     }
 
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
-    var color: UIColor = UIColor.black;
 
     func displayImage(baseImage: UIImage?) {
         if (baseImage == nil) {
@@ -89,8 +93,11 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
             }
 
         } else {
+            self.progressView?.setHidden(false, animated: true, completion: nil)
             SDWebImageDownloader.shared().downloadImage(with: imageURL, options: .allowInvalidSSLCertificates, progress: { (current: NSInteger, total: NSInteger) in
+                self.progressView?.progress = Float(current / total)
             }, completed: { (image, _, error, _) in
+                self.progressView?.setHidden(true, animated: true, completion: nil)
                 SDWebImageManager.shared().saveImage(toCache: image, for: imageURL)
                 DispatchQueue.main.async {
                     self.displayImage(baseImage: image)
@@ -117,7 +124,6 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
     override func viewDidLoad() {
         super.viewDidLoad()
         sharedPlayer = false
-        let inner = UIView.init(frame: self.view.frame)
 
         self.scrollView = UIScrollView.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height))
         self.scrollView.minimumZoomScale = 1
@@ -125,33 +131,33 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
         self.scrollView.backgroundColor = .clear
         toolbar = UIToolbar.init(frame: CGRect.init(x: 0, y: self.view.frame.size.height - 40, width: self.view.frame.size.width, height: 40))
         scrollView.addTapGestureRecognizer(action: {
-            self.content(self.scrollView)
+            if let u = self.submission!.url {
+                self.doShow(url: u, lq: nil)
+            }
         })
-        let tap2 = UITapGestureRecognizer.init(target: self, action: #selector(self.comments(_:)))
-        toolbar.addGestureRecognizer(tap2)
-        toolbar.isUserInteractionEnabled = true
 
         progressView = MDCProgressView()
         progressView?.progress = 0
         let progressViewHeight = CGFloat(5)
-        progressView?.frame = CGRect(x: 0, y: toolbar.bounds.height, width: toolbar.bounds.width, height: progressViewHeight)
-        toolbar.addSubview(progressView!)
+        progressView?.frame = CGRect(x: 0, y: self.view.frame.size.height - 5, width: toolbar.bounds.width, height: progressViewHeight)
+        view.addSubview(progressView!)
+        progressView?.setHidden(true, animated: false, completion: nil)
 
         doButtons()
-        inner.addSubview(toolbar)
-        inner.addSubview(scrollView)
+        self.view.addSubview(toolbar)
+        self.view.addSubview(scrollView)
 
         var text = CachedTitle.getTitle(submission: submission!, full: true, false, true)
-        var estHeight = text.boundingRect(with: CGSize.init(width: self.view.frame.size.width - 20, height: 10000), options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).height
+        estHeight = text.boundingRect(with: CGSize.init(width: self.view.frame.size.width - 20, height: 10000), options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).height
         textB = TTTAttributedLabel.init(frame: CGRect.init(x: 10, y: self.view.frame.size.height - estHeight - 50, width: self.view.frame.size.width - 20, height: estHeight + 20))
         textB.numberOfLines = 0
         textB.setText(text)
 
         textB.isUserInteractionEnabled = true
+        textB.addTapGestureRecognizer {
+            self.comments(self.textB)
+        }
         startDisplay()
-        baseView = inner.withPadding(padding: UIEdgeInsetsMake(0, 0, 0, 0))
-
-        view.addSubview(baseView)
         view.addSubview(textB)
 
         view.layoutIfNeeded()
@@ -172,8 +178,9 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
         gradient2.colors = [UIColor.black.withAlphaComponent(0.65).cgColor, UIColor.clear.cgColor]
 
         view.layer.insertSublayer(gradient2, at: 0)
-
     }
+
+    var estHeight = CGFloat(0)
 
     func doButtons() {
         let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
@@ -256,54 +263,7 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
     }
 
     func comments(_ sender: AnyObject) {
-
-    }
-
-    public func shouldTruncate(url: URL) -> Bool {
-        let path = url.path
-        return !ContentType.isGif(uri: url) && !ContentType.isImage(uri: url) && path.contains(".");
-    }
-
-    func getControllerForUrl(baseUrl: URL) -> UIViewController? {
-        var url = baseUrl.absoluteString
-        var bUrl = baseUrl
-        if (shouldTruncate(url: bUrl)) {
-            let content = bUrl.absoluteString
-            bUrl = URL.init(string: (content.substring(to: (content.characters.index(of: "."))!)))!
-        }
-        let type = ContentType.getContentType(baseUrl: bUrl)
-
-        if (type == ContentType.CType.ALBUM && SettingValues.internalAlbumView) {
-            return AlbumViewController.init(urlB: bUrl)
-        } else if (bUrl != nil && ContentType.displayImage(t: type) && SettingValues.internalImageView || (type == .GIF && SettingValues.internalGifView) || type == .STREAMABLE || type == .VID_ME || (type == ContentType.CType.VIDEO && SettingValues.internalYouTube)) {
-            return SingleContentViewController.init(url: bUrl, lq: nil)
-        } else if (type == ContentType.CType.LINK || type == ContentType.CType.NONE) {
-            let web = WebsiteViewController(url: bUrl, subreddit: submission!.subreddit)
-            let nav = UINavigationController.init(rootViewController: web)
-            return nav
-        } else if (type == ContentType.CType.REDDIT) {
-            return RedditLink.getViewControllerForURL(urlS: bUrl)
-        }
-
-        let web = WebsiteViewController(url: baseUrl, subreddit: submission!.subreddit)
-        let nav = UINavigationController.init(rootViewController: web)
-        return nav
-    }
-
-
-    func content(_ sender: AnyObject) {
-        print("Doing content")
-        var url = baseURL!
-        let controller = getControllerForUrl(baseUrl: url)!
-        if (controller is AlbumViewController) {
-            controller.modalPresentationStyle = .overFullScreen
-            present(controller, animated: true, completion: nil)
-        } else if (controller is SingleContentViewController) {
-            controller.modalPresentationStyle = .overFullScreen
-            present(controller, animated: true, completion: nil)
-        } else {
-            VCPresenter.showVC(viewController: controller, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
-        }
+        self.doShow(url: URL.init(string: submission!.permalink)!)
     }
 
     func showMenu(_ sender: AnyObject) {
@@ -312,20 +272,23 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
         self.baseView.backgroundColor = .clear
     }
+
+    var first = true
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.player.play()
-        let type = ContentType.getContentType(submission: submission!)
-        let videoUrl = submission!.videoPreview
-        if (ContentType.mediaType(t: type)) {
+        var videoUrl = submission!.videoPreview
+        if (videoUrl.isEmpty) {
+            videoUrl = submission!.url!.absoluteString
+        }
+        if (first && !ContentType.displayImage(t: type) && ContentType.mediaType(t: type) || type == .VIDEO) {
+            first = false
             if (type == .GIF || type == .STREAMABLE || type == .VID_ME) {
                 getGif(urlS: videoUrl)
             } else if (type == .VIDEO) {
-                toolbar.isHidden = true
                 let he = getYTHeight()
                 ytPlayer = YTPlayerView.init(frame: CGRect.init(x: 0, y: (self.scrollView.frame.size.height - he) / 2, width: self.scrollView.frame.size.width, height: he))
                 ytPlayer.isHidden = true
@@ -343,7 +306,7 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
     func startDisplay() {
         self.view.layoutMargins = UIEdgeInsetsMake(8, 8, 8, 8)
         let type = ContentType.getContentType(submission: submission!)
-        if (ContentType.displayImage(t: type) || type == .LINK || type == .EXTERNAL || type == .EMBEDDED) {
+        if ((ContentType.displayImage(t: type) && type != .SELF) || type == .LINK || type == .EXTERNAL || type == .EMBEDDED) {
             loadImage(imageURLB: URL.init(string: submission!.bannerUrl))
         } else if (ContentType.mediaType(t: type)) {
             if let url = URL(string: submission!.thumbnailUrl) {
@@ -378,7 +341,34 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
             }
 
         } else {
-            //display text
+            let color = ColorUtil.accentColorForSub(sub: (submission!.subreddit))
+            if (!submission!.htmlBody.isEmpty) {
+                print("Doing submission")
+                let html = submission!.htmlBody.trimmed()
+                do {
+                    let attr = html.toAttributedString()!
+                    let font = FontGenerator.fontOfSize(size: 16, submission: false)
+                    let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
+                    var content = CellContent.init(string: LinkParser.parse(attr2, color), width: self.scrollView.frame.size.width - 10)
+                    let activeLinkAttributes = NSMutableDictionary(dictionary: body.activeLinkAttributes)
+                    activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.accentColorForSub(sub: submission!.subreddit)
+                    body = TTTAttributedLabel.init(frame: CGRect.init(x: 5, y: 5, width: self.scrollView.frame.size.width - 10, height: content.textHeight))
+                    body.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+                    body.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+                    body.numberOfLines = 0
+                    body.isUserInteractionEnabled = true
+                    body.backgroundColor = .clear
+
+                    body.delegate = self
+                    body.setText(content.attributedString)
+                    scrollView.addSubview(body)
+                    self.scrollView.contentSize = body.frame.size
+                    self.scrollView.frame = CGRect.init(x: 0, y: 56, width: self.view.frame.size.width, height: self.view.frame.size.height - 56 - estHeight - 50)
+                } catch {
+                }
+            } else {
+
+            }
 
         }
     }

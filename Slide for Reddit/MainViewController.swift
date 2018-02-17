@@ -452,19 +452,19 @@ class MainViewController:  ColorMuxPagingViewController, UIPageViewControllerDat
         let sort = UIButton.init(type: .custom)
         sort.setImage(UIImage.init(named: "ic_sort_white"), for: UIControlState.normal)
         sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControlEvents.touchUpInside)
-        sort.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+        sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let sortB = UIBarButtonItem.init(customView: sort)
         
         let shadowbox = UIButton.init(type: .custom)
-        shadowbox.setImage(UIImage.init(named: "shadowbox")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
+        shadowbox.setImage(UIImage.init(named: "shadowbox")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
         shadowbox.addTarget(self, action: #selector(self.shadowbox), for: UIControlEvents.touchUpInside)
-        shadowbox.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+        shadowbox.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let sB = UIBarButtonItem.init(customView: shadowbox)
 
         let more = UIButton.init(type: .custom)
-        more.setImage(UIImage.init(named: "ic_more_vert_white"), for: UIControlState.normal)
+        more.setImage(UIImage.init(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
         more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
-        more.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+        more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let moreB = UIBarButtonItem.init(customView: more)
         
         navigationItem.rightBarButtonItems = [ moreB, sortB, sB]

@@ -106,7 +106,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
 
     @IBAction func handleDoubleTapScrollView(recognizer: UITapGestureRecognizer) {
         if scrollView.zoomScale == 1 {
-            scrollView.zoom(to: zoomRectForScale(scale: scrollView.maximumZoomScale, center: recognizer.location(in: recognizer.view)), animated: true)
+            scrollView.zoom(to: zoomRectForScale(scale: 2.5, center: recognizer.location(in: recognizer.view)), animated: true)
         } else {
             scrollView.setZoomScale(1, animated: true)
         }
@@ -329,7 +329,6 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        request?.cancel()
         if (MediaDisplayViewController.videoPlayer != nil) {
             MediaDisplayViewController.videoPlayer!.pause()
         }

@@ -628,23 +628,21 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         if (single) {
 
             let sort = UIButton.init(type: .custom)
-            sort.setImage(UIImage.init(named: "ic_sort_white")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
+            sort.setImage(UIImage.init(named: "ic_sort_white")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
             sort.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
-            sort.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+            sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let sortB = UIBarButtonItem.init(customView: sort)
 
             let shadowbox = UIButton.init(type: .custom)
-            shadowbox.setImage(UIImage.init(named: "shadowbox")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
+            shadowbox.setImage(UIImage.init(named: "shadowbox")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
             shadowbox.addTarget(self, action: #selector(self.shadowboxMode), for: UIControlEvents.touchUpInside)
-            shadowbox.frame = CGRect.init(x: 0, y: 00, width: 30, height: 30)
+            shadowbox.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let sB = UIBarButtonItem.init(customView: shadowbox)
 
             let more = UIButton.init(type: .custom)
-            var img = UIImage.init(named: "ic_more_vert_white")
-            img = img?.cropToBounds(image: img!, width: 10, height: 30)
-            more.setImage(img, for: UIControlState.normal)
+            more.setImage(UIImage.init(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
             more.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControlEvents.touchUpInside)
-            more.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+            more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let moreB = UIBarButtonItem.init(customView: more)
 
             navigationItem.rightBarButtonItems = [moreB, sortB, sB]
@@ -1205,13 +1203,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     }
 
     func shadowboxMode() {
-        var gLinks: [RSubmission] = []
-        for l in links {
-            if l.banner {
-                gLinks.append(l)
-            }
-        }
-        let controller = ShadowboxViewController.init(submissions: gLinks)
+        let controller = ShadowboxViewController.init(submissions: links)
         controller.modalPresentationStyle = .overFullScreen
         present(controller, animated: true, completion: nil)
     }
