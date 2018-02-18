@@ -1004,6 +1004,8 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             self.navigationController!.delegate = swiper!
         }
 
+        self.view.backgroundColor = ColorUtil.backgroundColor
+
 
     }
 

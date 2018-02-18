@@ -32,11 +32,26 @@ extension UIColor {
 class ColorUtil {
     static var theme = Theme.DARK
 
-    static func doInit() {
-        if let name = UserDefaults.standard.string(forKey: "theme") {
-            if let t = Theme(rawValue: name) {
-                theme = t
+    static func checkNight(_ force: Bool = false) {
+        let hour = Calendar.current.component(.hour, from: Date())
+        var shouldBeNight = SettingValues.nightModeEnabled && /*todo pro*/ (hour >= SettingValues.nightStart + 12 || hour < SettingValues.nightEnd)
+        if(shouldBeNight && theme.rawValue != SettingValues.nightTheme.rawValue){
+            doInit(SettingValues.nightTheme)
+        } else if(force || (hour == SettingValues.nightEnd && theme.rawValue == SettingValues.nightTheme.rawValue)){
+            doInit()
+        }
+    }
+
+    static func doInit(_ t: Theme? = nil) {
+        if(t == nil) {
+            if let name = UserDefaults.standard.string(forKey: "theme") {
+                if let t = Theme(rawValue: name) {
+                    theme = t
+                }
             }
+        } else {
+            CachedTitle.titles.removeAll()
+            self.theme = t!
         }
         foregroundColor = theme.foregroundColor
         backgroundColor = theme.backgroundColor
@@ -63,13 +78,9 @@ class ColorUtil {
 
     private static func image(fromLayer layer: CALayer) -> UIImage {
         UIGraphicsBeginImageContext(layer.frame.size)
-
         layer.render(in: UIGraphicsGetCurrentContext()!)
-
         let outputImage = UIGraphicsGetImageFromCurrentImageContext()
-
         UIGraphicsEndImageContext()
-
         return outputImage!
     }
 

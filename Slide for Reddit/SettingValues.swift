@@ -134,6 +134,10 @@ class SettingValues {
     public static var smallerTag = true
     public static var biometrics = true
     public static var safariVC = true
+    public static var nightStart = 1
+    public static var nightEnd = 5
+    public static var nightModeEnabled = false
+    public static var nightTheme = ColorUtil.Theme.DARK
 
     enum PostViewType: String {
         case LIST = "list"
