@@ -97,6 +97,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var submissionicon = UIImageView()
     var del: LinkCellViewDelegate? = nil
     var taglabel = UILabel()
+    var crosspost = UITableViewCell()
 
     var loadedImage: URL?
     var lq = false
@@ -828,9 +829,49 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 taglabel.text = " \(text.uppercased()) "
             } else {
                 tagbody.isHidden = true
-                let finalText = NSMutableAttributedString.init(string: text, attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 14, submission: true)])
-                finalText.append(NSAttributedString.init(string: "\n\(submission.domain)"))
-                info.attributedText = finalText
+                if(submission.isCrosspost){
+                    var colorF = UIColor.white
+
+                    let finalText = NSMutableAttributedString.init(string: "Crosspost - " + submission.domain, attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 14, submission: true)])
+
+                    let endString = NSMutableAttributedString(string: "\nOriginal submission by ", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: colorF])
+                    let by = NSMutableAttributedString(string: " in ", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: colorF])
+
+                    let authorString = NSMutableAttributedString(string: "\u{00A0}\(submission.author)\u{00A0}", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: colorF])
+
+
+                    let userColor = ColorUtil.getColorForUser(name: submission.crosspostAuthor)
+                    if (AccountController.currentName == submission.author) {
+                        authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#FFB74D"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
+                    } else if (userColor != ColorUtil.baseColor) {
+                        authorString.addAttributes([kTTTBackgroundFillColorAttributeName: userColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
+                    }
+
+                    endString.append(by)
+                    endString.append(authorString)
+
+                    let attrs = [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: colorF] as [String: Any]
+
+                    let boldString = NSMutableAttributedString(string: "/r/\(submission.crosspostSubreddit)", attributes: attrs)
+
+                    let color = ColorUtil.getColorForSub(sub: submission.crosspostSubreddit)
+                    if (color != ColorUtil.baseColor) {
+                        boldString.addAttribute(NSForegroundColorAttributeName, value: color, range: NSRange.init(location: 0, length: boldString.length))
+                    }
+
+                    endString.append(boldString)
+                    finalText.append(endString)
+
+                    b.addTapGestureRecognizer {
+                        VCPresenter.openRedditLink(submission.crosspostPermalink, self.parentViewController?.navigationController, self.parentViewController)
+                    }
+                    info.attributedText = finalText
+
+                } else {
+                    let finalText = NSMutableAttributedString.init(string: text, attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 14, submission: true)])
+                    finalText.append(NSAttributedString.init(string: "\n\(submission.domain)"))
+                    info.attributedText = finalText
+                }
             }
 
         } else {

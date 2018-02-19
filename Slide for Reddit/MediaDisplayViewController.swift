@@ -41,7 +41,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
 
         }
         let image = baseImage!
-        if (image.size.height > image.size.width) {
+        if (image.size.height > image.size.width ||  UIApplication.shared.statusBarOrientation != .portrait) {
             self.scrollView.contentSize = CGSize.init(width: getWidthFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width), height: self.view.frame.size.height)
         } else {
             self.scrollView.contentSize = CGSize.init(width: self.view.frame.size.width, height: getHeightFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width))

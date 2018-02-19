@@ -81,6 +81,12 @@ public class VCPresenter {
             print("Error presenting alert controller \(alertController)")
         }
     }
+
+    public static func openRedditLink(_ link: String, _ parentNav: UINavigationController?, _ parentVC: UIViewController?) {
+        let vc = RedditLink.getViewControllerForURL(urlS: URL.init(string: link)!)
+        showVC(viewController: vc, popupIfPossible: false, parentNavigationController: parentNav, parentViewController: parentVC)
+
+    }
 }
 
 public class DefaultGestureDelegate: NSObject, UIGestureRecognizerDelegate {

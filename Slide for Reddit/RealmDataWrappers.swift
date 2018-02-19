@@ -11,15 +11,15 @@ import RealmSwift
 import reddift
 
 class RealmDataWrapper {
-    
+
     //Takes a Link from reddift and turns it into a Realm model
     static func linkToRSubmission(submission: Link) -> RSubmission {
         let flair = submission.linkFlairText.isEmpty ? submission.linkFlairCssClass : submission.linkFlairText;
         let bodyHtml = submission.selftextHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
-        
+
         var json: JSONDictionary? = nil
         json = submission.baseJson
-        
+
         var w: Int = 0
         var h: Int = 0
         var thumb = false //is thumbnail present
@@ -28,13 +28,13 @@ class RealmDataWrapper {
         var burl: String = "" //banner url
         var turl: String = "" //thumbnail url
         var lqUrl: String = "" //lq banner url
-        
+
         let previews = ((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["resolutions"] as? [Any])
-        let preview  = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["url"] as? String)
-        
-        var videoPreview = (((((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["variants"] as? [String: Any])?["mp4"] as? [String: Any])? ["source"] as? [String: Any])?["url"] as? String)
-        if(videoPreview != nil && videoPreview!.isEmpty){
-            videoPreview = (((json?["preview"] as? [String: Any])? ["reddit_video_preview"] as? [String: Any])?["fallback_url"] as? String)
+        let preview = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["url"] as? String)
+
+        var videoPreview = (((((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["variants"] as? [String: Any])?["mp4"] as? [String: Any])?["source"] as? [String: Any])?["url"] as? String)
+        if (videoPreview != nil && videoPreview!.isEmpty) {
+            videoPreview = (((json?["preview"] as? [String: Any])?["reddit_video_preview"] as? [String: Any])?["fallback_url"] as? String)
         }
         if (preview != nil && !(preview?.isEmpty())!) {
             burl = (preview!.replacingOccurrences(of: "&amp;", with: "&"))
@@ -42,9 +42,9 @@ class RealmDataWrapper {
             h = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["height"] as? Int)!
             big = true
         }
-        
+
         let thumbnailType = ContentType.getThumbnailType(submission: submission)
-        switch(thumbnailType){
+        switch (thumbnailType) {
         case .NSFW:
             thumb = true
             turl = "nsfw"
@@ -53,7 +53,7 @@ class RealmDataWrapper {
             thumb = true
             turl = "web"
             break
-        case .SELF,  .NONE:
+        case .SELF, .NONE:
             thumb = false
             break
         case .URL:
@@ -61,34 +61,27 @@ class RealmDataWrapper {
             turl = submission.thumbnail
             break
         }
-        
-        if(big){ //check for low quality image
-            if(previews != nil && !(previews?.isEmpty)!){
+
+        if (big) { //check for low quality image
+            if (previews != nil && !(previews?.isEmpty)!) {
                 if (submission.url != nil && ContentType.isImgurImage(uri: submission.url!)) {
                     lqUrl = (submission.url?.absoluteString)!
                     lqUrl = lqUrl.substring(0, length: lqUrl.lastIndexOf(".")!) + (SettingValues.lqLow ? "m" : "l") + lqUrl.substring(lqUrl.lastIndexOf(".")!, length: lqUrl.length - lqUrl.lastIndexOf(".")!)
                 } else {
                     let length = previews?.count
-                    if (SettingValues.lqLow && length! >= 3)
-                    {
+                    if (SettingValues.lqLow && length! >= 3) {
                         lqUrl = ((previews?[1] as? [String: Any])?["url"] as? String)!
-                    }
-                    else if (length! >= 4)
-                    {
+                    } else if (length! >= 4) {
                         lqUrl = ((previews?[2] as? [String: Any])?["url"] as? String)!
-                    }
-                    else if (length! >= 5)
-                    {
+                    } else if (length! >= 5) {
                         lqUrl = ((previews?[length! - 1] as? [String: Any])?["url"] as? String)!
-                    }
-                    else
-                    {
+                    } else {
                         lqUrl = preview!
                     }
                     lowq = true
                 }
             }
-            
+
         }
         let rSubmission = RSubmission()
         rSubmission.id = submission.getId()
@@ -101,7 +94,7 @@ class RealmDataWrapper {
         rSubmission.subreddit = submission.subreddit
         rSubmission.archived = submission.archived
         rSubmission.locked = submission.locked
-        rSubmission.urlString =  try! ((submission.url?.absoluteString) ?? "").convertHtmlSymbols() ?? ""
+        rSubmission.urlString = try! ((submission.url?.absoluteString) ?? "").convertHtmlSymbols() ?? ""
         rSubmission.title = submission.title
         rSubmission.commentCount = submission.numComments
         rSubmission.saved = submission.saved
@@ -121,24 +114,34 @@ class RealmDataWrapper {
         rSubmission.upvoteRatio = submission.upvoteRatio
         rSubmission.vote = submission.likes == .up
         rSubmission.name = submission.id
-        rSubmission.videoPreview = try! (videoPreview ?? "" ).convertHtmlSymbols() ?? ""
+        rSubmission.videoPreview = try! (videoPreview ?? "").convertHtmlSymbols() ?? ""
         rSubmission.height = h
         rSubmission.width = w
         rSubmission.distinguished = submission.distinguished
         rSubmission.isSelf = submission.isSelf
         rSubmission.body = submission.selftext
         rSubmission.permalink = submission.permalink
+
+        if (json?["crosspost_parent_list"] != nil) {
+            rSubmission.isCrosspost = true
+            var sub = ((json?["crosspost_parent_list"] as? [Any])?.first as? [String: Any])?["subreddit"] as? String ?? ""
+            var author = ((json?["crosspost_parent_list"] as? [Any])?.first as? [String: Any])?["author"] as? String ?? ""
+            var permalink = ((json?["crosspost_parent_list"] as? [Any])?.first as? [String: Any])?["permalink"] as? String ?? ""
+            rSubmission.crosspostSubreddit = sub
+            rSubmission.crosspostAuthor = author
+            rSubmission.crosspostPermalink = permalink
+        }
         return rSubmission
     }
-    
+
     //Takes a Link from reddift and turns it into a Realm model
     static func updateSubmission(_ rSubmission: RSubmission, _ submission: Link) {
         let flair = submission.linkFlairText.isEmpty ? submission.linkFlairCssClass : submission.linkFlairText;
         let bodyHtml = submission.selftextHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
-        
+
         var json: JSONDictionary? = nil
         json = submission.baseJson
-        
+
         var w: Int = 0
         var h: Int = 0
         var thumb = false //is thumbnail present
@@ -147,19 +150,19 @@ class RealmDataWrapper {
         var burl: String = "" //banner url
         var turl: String = "" //thumbnail url
         var lqUrl: String = "" //lq banner url
-        
+
         let previews = ((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["resolutions"] as? [Any])
-        let preview  = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["url"] as? String)
-        
+        let preview = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["url"] as? String)
+
         if (preview != nil && !(preview?.isEmpty())!) {
             burl = (preview!.replacingOccurrences(of: "&amp;", with: "&"))
             w = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["width"] as? Int)!
             h = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["height"] as? Int)!
             big = true
         }
-        
+
         let thumbnailType = ContentType.getThumbnailType(submission: submission)
-        switch(thumbnailType){
+        switch (thumbnailType) {
         case .NSFW:
             thumb = true
             turl = "nsfw"
@@ -168,7 +171,7 @@ class RealmDataWrapper {
             thumb = true
             turl = "web"
             break
-        case .SELF,  .NONE:
+        case .SELF, .NONE:
             thumb = false
             break
         case .URL:
@@ -176,34 +179,27 @@ class RealmDataWrapper {
             turl = submission.thumbnail
             break
         }
-        
-        if(big){ //check for low quality image
-            if(previews != nil && !(previews?.isEmpty)!){
+
+        if (big) { //check for low quality image
+            if (previews != nil && !(previews?.isEmpty)!) {
                 if (submission.url != nil && ContentType.isImgurImage(uri: submission.url!)) {
                     lqUrl = (submission.url?.absoluteString)!
                     lqUrl = lqUrl.substring(0, length: lqUrl.lastIndexOf(".")!) + (SettingValues.lqLow ? "m" : "l") + lqUrl.substring(lqUrl.lastIndexOf(".")!, length: lqUrl.length - lqUrl.lastIndexOf(".")!)
                 } else {
                     let length = previews?.count
-                    if (SettingValues.lqLow && length! >= 3)
-                    {
+                    if (SettingValues.lqLow && length! >= 3) {
                         lqUrl = ((previews?[1] as? [String: Any])?["url"] as? String)!
-                    }
-                    else if (length! >= 4)
-                    {
+                    } else if (length! >= 4) {
                         lqUrl = ((previews?[2] as? [String: Any])?["url"] as? String)!
-                    }
-                    else if (length! >= 5)
-                    {
+                    } else if (length! >= 5) {
                         lqUrl = ((previews?[length! - 1] as? [String: Any])?["url"] as? String)!
-                    }
-                    else
-                    {
+                    } else {
                         lqUrl = preview!
                     }
                     lowq = true
                 }
             }
-            
+
         }
         rSubmission.id = submission.getId()
         rSubmission.author = submission.author
@@ -215,7 +211,7 @@ class RealmDataWrapper {
         rSubmission.subreddit = submission.subreddit
         rSubmission.archived = submission.archived
         rSubmission.locked = submission.locked
-        rSubmission.urlString =  try! ((submission.url?.absoluteString) ?? "").convertHtmlSymbols() ?? ""
+        rSubmission.urlString = try! ((submission.url?.absoluteString) ?? "").convertHtmlSymbols() ?? ""
         rSubmission.title = submission.title
         rSubmission.commentCount = submission.numComments
         rSubmission.saved = submission.saved
@@ -243,16 +239,16 @@ class RealmDataWrapper {
         rSubmission.permalink = submission.permalink
     }
 
-    
+
     static func commentToRealm(comment: Thing, depth: Int) -> Object {
-        if(comment is Comment) {
+        if (comment is Comment) {
             return commentToRComment(comment: comment as! Comment, depth: depth)
         } else {
             return moreToRMore(more: comment as! More)
         }
     }
-    
-       //Takes a Comment from reddift and turns it into a Realm model
+
+    //Takes a Comment from reddift and turns it into a Realm model
     static func commentToRComment(comment: Comment, depth: Int) -> RComment {
         let flair = comment.authorFlairCssClass.isEmpty ? comment.authorFlairCssClass : comment.authorFlairText;
         let bodyHtml = comment.bodyHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
@@ -284,15 +280,15 @@ class RealmDataWrapper {
         //todo rComment.permalink = comment.permalink
         return rComment
     }
-    
+
     static func messageToRMessage(message: Message) -> RMessage {
-       let title = message.baseJson["link_title"] as? String ?? ""
+        let title = message.baseJson["link_title"] as? String ?? ""
         let bodyHtml = message.bodyHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
         let rMessage = RMessage()
         rMessage.htmlBody = bodyHtml
         rMessage.name = message.name
         rMessage.id = message.getId()
-        
+
         rMessage.author = message.author
         rMessage.subreddit = message.subreddit
         rMessage.created = NSDate(timeIntervalSince1970: TimeInterval(message.createdUtc))
@@ -303,7 +299,7 @@ class RealmDataWrapper {
         rMessage.subject = message.subject
         return rMessage
     }
-    
+
     //Takes a More from reddift and turns it into a Realm model
     static func moreToRMore(more: More) -> RMore {
         let rMore = RMore()
@@ -326,6 +322,7 @@ class RListing: Object {
     override static func primaryKey() -> String? {
         return "subreddit"
     }
+
     dynamic var updated = NSDate(timeIntervalSince1970: 1)
     dynamic var subreddit = ""
     let links = List<RSubmission>()
@@ -335,6 +332,7 @@ class RSubmission: Object {
     override static func primaryKey() -> String? {
         return "id"
     }
+
     dynamic var id = ""
     dynamic var name = ""
     dynamic var author = ""
@@ -350,18 +348,22 @@ class RSubmission: Object {
     dynamic var urlString = ""
     dynamic var distinguished = ""
     dynamic var videoPreview = ""
-    
+    dynamic var isCrosspost = false
+    dynamic var crosspostAuthor = ""
+    dynamic var crosspostSubreddit = ""
+    dynamic var crosspostPermalink = ""
+
     var type: ContentType.CType {
-        if(isSelf){
+        if (isSelf) {
             return .SELF
         }
         if url != nil {
-        return ContentType.getContentType(baseUrl: url!)
+            return ContentType.getContentType(baseUrl: url!)
         } else {
             return .NONE
         }
     }
-    
+
     var url: URL? {
         return URL.init(string: self.urlString)
     }
@@ -389,14 +391,14 @@ class RSubmission: Object {
     dynamic var width = 0
     dynamic var vote = false
     let comments = List<RComment>()
-    
-     func getId() -> String {
+
+    func getId() -> String {
         return id
     }
-    
-    var likes : VoteDirection {
-        if(voted){
-            if(vote){
+
+    var likes: VoteDirection {
+        if (voted) {
+            if (vote) {
                 return .up
             } else {
                 return .down
@@ -410,6 +412,7 @@ class RMessage: Object {
     override static func primaryKey() -> String? {
         return "id"
     }
+
     dynamic var id = ""
     dynamic var name = ""
     dynamic var author = ""
@@ -418,10 +421,10 @@ class RMessage: Object {
     dynamic var isNew = false
     dynamic var linkTitle = ""
     dynamic var context = ""
-    dynamic var wasComment  = false
+    dynamic var wasComment = false
     dynamic var subreddit = ""
     dynamic var subject = ""
-    
+
     func getId() -> String {
         return id
     }
@@ -432,7 +435,7 @@ class RComment: Object {
     override static func primaryKey() -> String? {
         return "id"
     }
-    
+
     func getId() -> String {
         return id
     }
@@ -462,10 +465,10 @@ class RComment: Object {
     dynamic var voted = false
     dynamic var vote = false
     dynamic var saved = false
-    
-    var likes : VoteDirection {
-        if(voted){
-            if(vote){
+
+    var likes: VoteDirection {
+        if (voted) {
+            if (vote) {
                 return .up
             } else {
                 return .down
@@ -483,10 +486,11 @@ class RMore: Object {
     override static func primaryKey() -> String? {
         return "id"
     }
-    
+
     func getId() -> String {
         return id
     }
+
     dynamic var count = 0
     dynamic var id = ""
     dynamic var name = ""
@@ -500,13 +504,17 @@ class RSubmissionListing: Object {
     dynamic var comments = false
     let submissions = List<RSubmission>()
 }
+
 extension String {
     func convertHtmlSymbols() throws -> String? {
-        guard let data = data(using: .utf8) else { return nil }
-        
+        guard let data = data(using: .utf8) else {
+            return nil
+        }
+
         return try NSAttributedString(data: data, options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType, NSCharacterEncodingDocumentAttribute: String.Encoding.utf8.rawValue], documentAttributes: nil).string
     }
 }
+
 extension String {
     init(htmlEncodedString: String) {
         self.init()
@@ -514,12 +522,12 @@ extension String {
             self = htmlEncodedString
             return
         }
-        
-        let attributedOptions: [String : Any] = [
+
+        let attributedOptions: [String: Any] = [
             NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType,
             NSCharacterEncodingDocumentAttribute: String.Encoding.utf8.rawValue
         ]
-        
+
         do {
             let attributedString = try NSAttributedString(data: encodedData, options: attributedOptions, documentAttributes: nil)
             self = attributedString.string
