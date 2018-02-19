@@ -872,6 +872,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         self.submission = RSubmission()
         self.submission!.name = submission
         hasSubmission = false
+        if(subreddit != nil){
+            self.subreddit = subreddit!
+        }
         super.init(nibName: nil, bundle: nil)
         if (subreddit != nil) {
             setBarColors(color: ColorUtil.getColorForSub(sub: subreddit!))
@@ -900,6 +903,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         // Dispose of any resources that can be recreated.
     }
 
+    var subreddit = ""
+
     // MARK: - Table view data source
 
     override func viewWillAppear(_ animated: Bool) {
@@ -914,7 +919,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         if (navigationController != nil) {
             self.updateToolbar()
         }
-        navigationItem.title = submission?.subreddit
+        navigationItem.title = submission == nil ? subreddit : submission?.subreddit
         self.navigationItem.backBarButtonItem?.title = ""
 
         if (submission != nil) {

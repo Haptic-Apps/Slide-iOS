@@ -829,7 +829,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 taglabel.text = " \(text.uppercased()) "
             } else {
                 tagbody.isHidden = true
-                if(submission.isCrosspost){
+                if(submission.isCrosspost && full){
                     var colorF = UIColor.white
 
                     let finalText = NSMutableAttributedString.init(string: "Crosspost - " + submission.domain, attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 14, submission: true)])
