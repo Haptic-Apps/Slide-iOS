@@ -17,7 +17,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.3.5</string>
+	<string>0.4</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -32,7 +32,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>8</string>
+	<string>9</string>
 	<key>LSApplicationCategoryType</key>
 	<string></string>
 	<key>LSApplicationQueriesSchemes</key>
@@ -50,6 +50,8 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Slide uses the camera in order to attach images to comments and submissions</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>FaceID is used for biometric unlock</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Slide uses photos in order to attach images to comments and submissions</string>
 	<key>UIAppFonts</key>
@@ -93,8 +95,6 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>NSFaceIDUsageDescription</key>
-	<string>FaceID is used for biometric unlock</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 </dict>
