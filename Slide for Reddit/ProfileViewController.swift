@@ -140,7 +140,6 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.splitViewController?.preferredDisplayMode = UISplitViewControllerDisplayMode.allVisible
         self.title = name
         navigationController?.navigationBar.tintColor = .white
         navigationController?.navigationBar.isTranslucent = false

@@ -8,6 +8,7 @@
 
 import Foundation
 import reddift
+import MaterialComponents.MaterialSnackbar
 
 class SettingValues {
 
@@ -251,4 +252,27 @@ class SettingValues {
 
     }
 
+    public static func doneVersion() -> Bool {
+        let settings = UserDefaults.standard
+        return settings.object(forKey: Bundle.main.releaseVersionNumber!) != nil
+    }
+
+    public static func showVersionDialog(_ title: String, _ permalink: String, parentVC: UIViewController){
+        let settings = UserDefaults.standard
+        settings.set(true, forKey: Bundle.main.releaseVersionNumber!)
+        settings.set(title, forKey: "vtitle")
+        settings.set(permalink, forKey: "vlink")
+        settings.synchronize()
+        let message = MDCSnackbarMessage.init(text: title)
+        let action = MDCSnackbarMessageAction()
+        let actionHandler = { () in
+            VCPresenter.openRedditLink(permalink, parentVC.navigationController, parentVC)
+        }
+        action.handler = actionHandler
+        action.title = "CHANGELOG"
+
+        message.action = action
+        MDCSnackbarManager.show(message)
+
+    }
 }

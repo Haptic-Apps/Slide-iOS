@@ -41,8 +41,6 @@ class SettingsViewController: UITableViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        self.splitViewController?.maximumPrimaryColumnWidth = 375
-        self.splitViewController?.preferredPrimaryColumnWidthFraction = 0.5
     }
 
     override func viewWillAppear(_ animated: Bool) {

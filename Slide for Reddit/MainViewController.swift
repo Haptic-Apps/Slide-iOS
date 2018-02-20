@@ -8,7 +8,6 @@
 
 import UIKit
 import reddift
-import MaterialComponents
 import MaterialComponents.MaterialSnackbar
 import SideMenu
 
@@ -439,7 +438,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             self.splitViewController?.preferredPrimaryColumnWidthFraction = 1
         }
 
-        if (UIScreen.main.traitCollection.userInterfaceIdiom == .pad && UIApplication.shared.statusBarOrientation != .portrait) {
+        if (UIScreen.main.traitCollection.userInterfaceIdiom == .pad && UIApplication.shared.statusBarOrientation != .portrait && (self.navigationController)?.splitViewController != nil && !SettingValues.multiColumn) {
             self.splitViewController?.showDetailViewController(PlaceholderViewController(), sender: nil)
         }
 
@@ -498,6 +497,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         // Enable gestures. The left and/or right menus must be set up above for these to work.
         // Note that these continue to work on the Navigation Controller independent of the view controller it displays!
         SideMenuManager.menuAddScreenEdgePanGesturesToPresent(toView: self.view)
+        checkForUpdate()
 
         if (UIScreen.main.traitCollection.userInterfaceIdiom == .pad) {
             self.edgesForExtendedLayout = UIRectEdge.all
@@ -527,8 +527,49 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         //todo self.buttonBarView.backgroundColor = self.tintColor
     }
 
+    func checkForUpdate() {
+        if(!SettingValues.doneVersion()) {
+            print("Getting posts for version \(Bundle.main.releaseVersionNumber!)")
+            let session = (UIApplication.shared.delegate as! AppDelegate).session
+            do {
+                try session?.getList(Paginator.init(), subreddit: Subreddit.init(subreddit: "slide_ios"), sort: LinkSortType.hot, timeFilterWithin: TimeFilterWithin.hour, completion: { (result) in
+                    switch result {
+                    case .failure:
+                        //Ignore this
+                        break;
+                    case .success(let listing):
+                        print("Got")
+                        let submissions = listing.children.flatMap({ $0 as? Link })
+                        let first = submissions[1]
+                        let second = submissions[2]
+                        var storedTitle = ""
+                        var storedLink = ""
+
+                        if (first.stickied && first.title.contains(Bundle.main.releaseVersionNumber!)) {
+                            storedTitle = first.title
+                            storedLink = first.permalink
+                        } else if (second.stickied && second.title.contains(Bundle.main.releaseVersionNumber!)) {
+                            storedTitle = second.title
+                            storedLink = second.permalink
+                        }
+
+                        if(!storedTitle.isEmpty && !storedLink.isEmpty){
+                            DispatchQueue.main.async {
+                                print("Showing")
+                                SettingValues.showVersionDialog(storedTitle, storedLink, parentVC: self)
+                            }
+                        }
+
+                        break
+                    }
+                })
+            } catch {
+            }
+        }
+    }
+
     func colorChanged() {
-        //todoself.buttonBarView.backgroundColor = self.navigationController?.navigationBar.barTintColor
+        //todo self.buttonBarView.backgroundColor = self.navigationController?.navigationBar.barTintColor
         menuNav?.header.doColors()
         if (menuNav?.tableView != nil) {
             menuNav?.tableView.reloadData()
@@ -627,3 +668,14 @@ extension MainViewController: MDCTabBarDelegate {
     }
 }
 
+extension Bundle {
+    var releaseVersionNumber: String? {
+        return infoDictionary?["CFBundleShortVersionString"] as? String
+    }
+    var buildVersionNumber: String? {
+        return infoDictionary?["CFBundleVersion"] as? String
+    }
+    var releaseVersionNumberPretty: String {
+        return "v\(releaseVersionNumber ?? "1.0.0")"
+    }
+}

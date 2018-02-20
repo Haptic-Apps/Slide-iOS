@@ -151,7 +151,6 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
         super.viewWillAppear(animated)
         navigationController?.navigationBar.shadowImage = UIImage()
         setNavColors()
-        navigationController?.isToolbarHidden = true
     }
 
     func animationControllerForPresentedController(presented: UIViewController, presentingController presenting: UIViewController, sourceController source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
