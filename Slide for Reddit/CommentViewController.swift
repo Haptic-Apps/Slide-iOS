@@ -1466,7 +1466,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     for row in (i + 1)...counter {
                         indexPaths.append(IndexPath(row: row, section: 0))
                     }
-                    self.tableView.insertRows(at: indexPaths, with: .middle)
+                    self.tableView.insertRows(at: indexPaths, with: .fade)
                     self.tableView.endUpdates()
                     self.isCurrentlyChanging = false
                 }
@@ -1476,8 +1476,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        if (!(navigationController?.isNavigationBarHidden)!) {
-            navigationController?.setNavigationBarHidden(true, animated: false)
+        if (!(navigationController?.isToolbarHidden)!) {
+            navigationController?.setToolbarHidden(true, animated: false)
         }
 
     }
@@ -1653,14 +1653,14 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         menuShown = false
         tableView.beginUpdates()
         let cell = tableView.cellForRow(at: IndexPath.init(row: menuIndex - 1, section: 0)) as! CommentDepthCell
-        tableView.deleteRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .middle)
+        tableView.deleteRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .fade)
         tableView.endUpdates()
 
         menuShown = true
         replyShown = true
         reply!.setContent(thing: cell.content!, sub: (cell.content as! RComment).subreddit, editing: true, delegate: self, parent: self)
         tableView.beginUpdates()
-        tableView.insertRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .middle)
+        tableView.insertRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .fade)
         tableView.endUpdates()
     }
 
@@ -1675,7 +1675,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         replyShown = true
         reply!.setContent(thing: submission!, sub: submission!.subreddit, editing: false, delegate: self, parent: self)
         tableView.beginUpdates()
-        tableView.insertRows(at: [IndexPath.init(row: 0, section: 0)], with: .middle)
+        tableView.insertRows(at: [IndexPath.init(row: 0, section: 0)], with: .fade)
         tableView.endUpdates()
         let insets = UIEdgeInsets(top: 0, left: 0, bottom: self.tableView.frame.size.height, right: 0)
         self.tableView.contentInset = insets
@@ -1685,11 +1685,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         menuShown = false
         tableView.beginUpdates()
         let cell = tableView.cellForRow(at: IndexPath.init(row: menuIndex - 1, section: 0)) as! CommentDepthCell
-        tableView.deleteRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .middle)
+        tableView.deleteRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .fade)
         menuShown = true
         replyShown = true
         reply!.setContent(thing: cell.content!, sub: (cell.content as! RComment).subreddit, editing: false, delegate: self, parent: self)
-        tableView.insertRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .middle)
+        tableView.insertRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .fade)
         tableView.endUpdates()
         let insets = UIEdgeInsets(top: 0, left: 0, bottom: 350, right: 0)
         self.tableView.contentInset = insets
@@ -1707,13 +1707,14 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     func showCommentMenu(_ cell: CommentDepthCell) {
         if (cell.content! is RMore) {
+            pushedSingleTap(cell)
             return
         }
         cell.doHighlight()
         if (menuShown) {
             menuShown = false
             tableView.beginUpdates()
-            tableView.deleteRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .middle)
+            tableView.deleteRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .fade)
             tableView.endUpdates()
 
         }
@@ -1732,7 +1733,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             index += 1
         }
         menuIndex = index + 1
-        tableView.insertRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .middle)
+        tableView.insertRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .fade)
         tableView.endUpdates()
     }
 
@@ -1741,7 +1742,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         replyShown = false
         cell.doUnHighlight()
         tableView.beginUpdates()
-        tableView.deleteRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .middle)
+        tableView.deleteRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .fade)
         tableView.endUpdates()
         tableView.contentInset = UIEdgeInsetsMake(0
                 , 0, 100, 0)

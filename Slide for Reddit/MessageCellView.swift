@@ -447,10 +447,9 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
             if (message?.wasComment)! {
                 let url = "https://www.reddit.com\(message!.context)"
                 let vc = RedditLink.getViewControllerForURL(urlS: URL.init(string: url)!)
-
                 VCPresenter.showVC(viewController: vc, popupIfPossible: true, parentNavigationController: parentViewController?.navigationController, parentViewController: parentViewController)
             } else {
-                VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(completion: {(message) in
+                VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(message: message, completion: {(message) in
                     DispatchQueue.main.async(execute: { () -> Void in
                         let message = MDCSnackbarMessage()
                         message.text = "Message sent!"
