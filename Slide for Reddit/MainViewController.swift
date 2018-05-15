@@ -9,6 +9,7 @@
 import UIKit
 import reddift
 import MaterialComponents.MaterialSnackbar
+import MaterialComponents.MaterialBottomSheet
 import SideMenu
 
 class MainViewController: ColorMuxPagingViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UISplitViewControllerDelegate {
@@ -32,6 +33,10 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         self.navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: self.currentTitle)
         navigationController?.navigationBar.isTranslucent = false
+
+        navigationController?.toolbar.barTintColor = ColorUtil.foregroundColor
+
+        navigationController?.setToolbarHidden(false, animated: false)
 
         menuNav?.header.doColors()
         if (menuNav?.tableView != nil) {
@@ -91,17 +96,18 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             self.splitViewController?.preferredPrimaryColumnWidthFraction = 1
 
         }
+
+
     }
 
-    var menuLeftNavigationController: UISideMenuNavigationController?
 
     func addAccount() {
-        menuLeftNavigationController?.dismiss(animated: true, completion: nil)
+        menuNav?.dismiss(animated: true)
         doLogin(token: nil)
     }
 
     func addAccount(token: OAuth2Token) {
-        menuLeftNavigationController?.dismiss(animated: true, completion: nil)
+        menuNav?.dismiss(animated: true)
         doLogin(token: token)
     }
 
@@ -120,7 +126,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         } else {
             show(RedditLink.getViewControllerForURL(urlS: URL.init(string: "/r/" + subreddit)!), sender: self)
         }
-        menuLeftNavigationController?.dismiss(animated: true, completion: nil)
+        menuNav?.dismiss(animated: true)
     }
 
     func goToSubreddit(index: Int) {
@@ -208,8 +214,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                 nav.tableView.reloadData()
             }
         }
-        menuLeftNavigationController?.dismiss(animated: true, completion: {})
-
+        menuNav?.dismiss(animated: true)
     }
 
     var tabBar = MDCTabBar()
@@ -298,7 +303,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        menuLeftNavigationController?.dismiss(animated: true, completion: nil)
+        menuNav?.dismiss(animated: true)
     }
 
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
@@ -318,27 +323,12 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         self.tintColor = ColorUtil.getColorForSub(sub: MainViewController.current)
         self.menuNav?.setSubreddit(subreddit: MainViewController.current)
         self.currentTitle = MainViewController.current
+        navigationController?.setToolbarHidden(false, animated: false)
 
-        //self.colorChanged()
-        SideMenuManager.default.menuAddScreenEdgePanGesturesToPresent(toView: vc.view)
-        for rec in (vc.view.gestureRecognizers)! {
-            if (rec is UIScreenEdgePanGestureRecognizer) {
-                for view in view.subviews {
-                    if let scrollView = view as? UIScrollView {
-                        scrollView.panGestureRecognizer.require(toFail: rec);
-                    }
-                }
-            }
-        }
         if (!(vc).loaded) {
             (vc).load(reset: true)
         }
 
-        let menu = UIButton.init(type: .custom)
-        menu.setImage(UIImage.init(named: "menu")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
-        menu.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControlEvents.touchUpInside)
-        menu.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
-        let menuB = UIBarButtonItem.init(customView: menu)
 
         let label = UILabel()
         label.text = "   \(self.currentTitle)"
@@ -349,7 +339,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         label.sizeToFit()
         let leftItem = UIBarButtonItem(customView: label)
 
-        self.navigationItem.leftBarButtonItems = [menuB, leftItem]
+        self.navigationItem.leftBarButtonItems = [ leftItem]
 
         self.navigationController?.navigationBar.shadowImage = UIImage()
         self.navigationController?.navigationBar.layoutIfNeeded()
@@ -463,15 +453,22 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         let sB = UIBarButtonItem.init(customView: shadowbox)
 
         let more = UIButton.init(type: .custom)
-        more.setImage(UIImage.init(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
+        more.setImage(UIImage.init(named: "moreh")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
         more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
         more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let moreB = UIBarButtonItem.init(customView: more)
 
-        navigationItem.rightBarButtonItems = [moreB, sortB, sB]
+        let menu = UIButton.init(type: .custom)
+        menu.setImage(UIImage.init(named: "menu")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
+        menu.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControlEvents.touchUpInside)
+        menu.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+        let menuB = UIBarButtonItem.init(customView: menu)
+
+        let flexButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil)
 
         navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        toolbarItems = [menuB, flexButton, moreB]
 
         super.viewDidLoad()
         self.edgesForExtendedLayout = []
@@ -480,23 +477,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         menuNav?.setViewController(controller: self)
         self.menuNav?.setSubreddit(subreddit: MainViewController.current)
 
-        menuLeftNavigationController = UISideMenuNavigationController.init(rootViewController: menuNav!)
 
-        menuLeftNavigationController?.leftSide = true
-        // UISideMenuNavigationController is a subclass of UINavigationController, so do any additional configuration
-        // of it here like setting its viewControllers. If you're using storyboards, you'll want to do something like:
-        // let menuLeftNavigationController = storyboard!.instantiateViewController(withIdentifier: "LeftMenuNavigationController") as! UISideMenuNavigationController
-        SideMenuManager.menuLeftNavigationController = menuLeftNavigationController
-
-        SideMenuManager.menuPresentMode = .menuSlideIn
-        SideMenuManager.menuAnimationFadeStrength = 0.2
-        SideMenuManager.menuParallaxStrength = 2
-        SideMenuManager.menuWidth = 300
-        SideMenuManager.menuFadeStatusBar = false
-
-        // Enable gestures. The left and/or right menus must be set up above for these to work.
-        // Note that these continue to work on the Navigation Controller independent of the view controller it displays!
-        SideMenuManager.menuAddScreenEdgePanGesturesToPresent(toView: self.view)
         checkForUpdate()
 
         if (UIScreen.main.traitCollection.userInterfaceIdiom == .pad) {
@@ -600,12 +581,15 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         // set transition delegate of modal view controller to our object
 
         // if you modal cover all behind view controller, use UIModalPresentationFullScreen
-        present(SideMenuManager.menuLeftNavigationController!, animated: true)
+
+        let bottomSheet: MDCBottomSheetController = MDCBottomSheetController(contentViewController: menuNav!)
+        present(bottomSheet, animated: true, completion: nil)
     }
 
     func shadowbox() {
         (MainViewController.vCs[currentPage] as? SingleSubredditViewController)?.shadowboxMode()
     }
+
 
 
     func showMenu(_ sender: AnyObject) {

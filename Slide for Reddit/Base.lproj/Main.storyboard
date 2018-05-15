@@ -1,30 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13770" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="9pw-ga-Mgb">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="C9p-7X-Uvk">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13770"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Split View Controller-->
-        <scene sceneID="qbI-1X-vf6">
-            <objects>
-                <splitViewController id="9pw-ga-Mgb" sceneMemberID="viewController">
-                    <connections>
-                        <segue destination="C9p-7X-Uvk" kind="relationship" relationship="masterViewController" id="JSj-lh-ffM"/>
-                    </connections>
-                </splitViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="dID-Dj-iTx" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-2895" y="-134"/>
-        </scene>
         <!--Navigation Controller-->
         <scene sceneID="4GI-Uj-nW2">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="bzJ-dD-M52" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <navigationController id="C9p-7X-Uvk" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="WlN-bS-fIE">
                         <rect key="frame" x="0.0" y="20" width="375" height="44"/>
@@ -37,13 +24,14 @@
                         <segue destination="gsG-yI-gWC" kind="relationship" relationship="rootViewController" id="4wi-qU-zrj"/>
                     </connections>
                 </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="bzJ-dD-M52" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-2121" y="-114"/>
         </scene>
-        <!--Subreddits View Controller-->
+        <!--Main View Controller-->
         <scene sceneID="dSQ-Dp-GkY">
             <objects>
-                <pageViewController autoresizesArchivedViewToFullSize="NO" transitionStyle="scroll" navigationOrientation="horizontal" spineLocation="none" id="gsG-yI-gWC" customClass="MainViewController" customModule="Slide_for_Reddit" customModuleProvider="target" sceneMemberID="viewController">
+                <pageViewController autoresizesArchivedViewToFullSize="NO" transitionStyle="scroll" navigationOrientation="horizontal" spineLocation="none" id="gsG-yI-gWC" customClass="MainViewController" customModule="Slim_Apps" sceneMemberID="viewController">
                     <navigationItem key="navigationItem" id="xi8-ls-rgP"/>
                 </pageViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jfs-L1-7ov" userLabel="First Responder" sceneMemberID="firstResponder"/>

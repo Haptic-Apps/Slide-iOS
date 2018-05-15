@@ -132,6 +132,11 @@ struct SyncConfig {
 
     bool validate_sync_history = true;
 
+    util::Optional<std::string> authorization_header_name = none;
+    std::map<std::string, std::string> custom_http_headers;
+
+    util::Optional<std::string> url_prefix = none;
+
     // The URL that will be used when connecting to the object server.
     // This will differ from `reference_realm_url` when partial sync is being used.
     std::string realm_url() const;
@@ -143,6 +148,9 @@ struct SyncConfig {
         if (this->reference_realm_url.find("/__partial/") != npos)
             throw std::invalid_argument("A Realm URL may not contain the reserved string \"/__partial/\".");
     }
+
+    // Construct an identifier for this partially synced Realm by combining client and user identifiers.
+    static std::string partial_sync_identifier(const SyncUser& user);
 };
 
 } // namespace realm

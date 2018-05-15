@@ -22,7 +22,7 @@
 OBJC_EXTERN NSString *const MDCSnackbarOverlayIdentifier;
 
 /** The time it takes to show or hide the snackbar. */
-OBJC_EXTERN NSTimeInterval const MDCSnackbarTransitionDuration;
+OBJC_EXTERN NSTimeInterval const MDCSnackbarLegacyTransitionDuration;
 
 /**
  Custom overlay view for displaying snackbars.
@@ -32,7 +32,7 @@ OBJC_EXTERN NSTimeInterval const MDCSnackbarTransitionDuration;
 /**
  Designated initializer.
 
- Creates an overlay view which utilizes @c watcher to get its keyboard position information.
+ Creates an overlay view which uses @c watcher to get its keyboard position information.
  */
 - (instancetype)initWithFrame:(CGRect)frame;
 

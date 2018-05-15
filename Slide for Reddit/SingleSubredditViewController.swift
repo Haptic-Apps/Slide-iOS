@@ -289,11 +289,11 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         var didHide = false
 
         if (currentY > lastYUsed && currentY > 60) {
-            if (navigationController != nil && !(navigationController!.isNavigationBarHidden)) {
+            if (navigationController != nil && !(navigationController!.isToolbarHidden)) {
                 hideUI(inHeader: true)
                 didHide = true
             }
-        } else if ((currentY < lastYUsed + 20) && navigationController != nil && (navigationController!.isNavigationBarHidden)) {
+        } else if ((currentY < lastYUsed + 20) && navigationController != nil && (navigationController!.isToolbarHidden)) {
             showUI()
         }
         lastYUsed = currentY
@@ -302,16 +302,12 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
     func hideUI(inHeader: Bool) {
         (navigationController)?.setNavigationBarHidden(true, animated: true)
-        if (inHeader) {
-            hide.isHidden = true
-            add.isHidden = true
-        }
+        (navigationController)?.setToolbarHidden(true, animated: true)
     }
 
     func showUI() {
         (navigationController)?.setNavigationBarHidden(false, animated: true)
-        hide.isHidden = false
-        add.isHidden = false
+        (navigationController)?.setToolbarHidden(false, animated: true)
     }
 
 
@@ -571,6 +567,22 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         indicator.cycleColors = [ColorUtil.getColorForSub(sub: sub), ColorUtil.accentColorForSub(sub: sub)]
 
         reloadNeedingColor()
+        //todo check for fab
+        if (true) {
+            fab = UIButton(frame: CGRect.init(x: (tableView.frame.size.width / 2) - 70, y:-20, width: 140, height: 45))
+            fab!.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
+            fab!.layer.cornerRadius = 22.5
+            fab!.clipsToBounds = true
+            fab!.setTitle("  Hide read", for: .normal)
+            fab!.leftImage(image: (UIImage.init(named: "hide")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)))!, renderMode: UIImageRenderingMode.alwaysOriginal)
+            fab!.elevate(elevation: 2)
+            fab!.titleLabel?.textAlignment = .center
+            fab!.titleLabel?.font = UIFont.systemFont(ofSize: 14)
+
+            fab!.titleEdgeInsets = UIEdgeInsets.init(top: 0, left: 20, bottom: 0, right: 20)
+            navigationController?.toolbar.addSubview(fab!)
+
+        }
 
     }
 
@@ -582,14 +594,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     func reloadNeedingColor() {
         tableView.backgroundColor = ColorUtil.backgroundColor
 
-        hide = MDCFloatingButton.init(shape: .default)
-        hide.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
-        hide.setImage(UIImage.init(named: "hide")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: .normal)
-        hide.sizeToFit()
-        hide.addTarget(self, action: #selector(self.hideAll(_:)), for: .touchUpInside)
-        hide.translatesAutoresizingMaskIntoConstraints = false
-        self.view.addSubview(hide)
-
         refreshControl.tintColor = ColorUtil.fontColor
         refreshControl.attributedTitle = NSAttributedString(string: "")
         refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControlEvents.valueChanged)
@@ -597,19 +601,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
         self.automaticallyAdjustsScrollViewInsets = false
         let metrics = ["bottommargin": SettingValues.viewType ? 50 : 10]
-        let views = ["more": more, "hide": hide, "superview": view] as [String: Any]
-        var constraint: [NSLayoutConstraint] = []
-
-        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[hide]-bottommargin-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-
-        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[hide]-20-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-        self.view.addConstraints(constraint)
+    
 
 
         self.tableView.register(BannerLinkCellView.classForCoder(), forCellWithReuseIdentifier: "banner")
@@ -692,7 +684,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                                             Subscriptions.addHistorySub(name: AccountController.currentName, sub: self.subInfo!.displayName)
                                         }
                                     }
-                                }
+                                }    
                                 print("Loading")
                                 self.load(reset: true)
                             }
@@ -703,15 +695,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             } catch {
             }
         }
-
-        if (false && SettingValues.hiddenFAB) {
-            fab = KCFloatingActionButton()
-            fab!.buttonColor = ColorUtil.accentColorForSub(sub: sub)
-            fab!.buttonImage = UIImage.init(named: "hide")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30))
-            fab!.fabDelegate = self
-            fab!.sticky = true
-            self.view.addSubview(fab!)
-        }
+        
     }
 
     func exit() {
@@ -863,7 +847,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         }, completion: nil)
     }
 
-    var fab: KCFloatingActionButton?
+    var fab: UIButton?
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -993,12 +977,8 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         } else {
             tableView.reloadData()
         }
-        self.navigationController?.setNavigationBarHidden(false, animated: true)
         //   ColorUtil.setBackgroundToolbar(toolbar: self.navigationController?.navigationBar)
 
-        if (parentController == nil) {
-            createDotHeader()
-        }
         if (single && navigationController!.modalPresentationStyle != .pageSheet) {
             let swiper = SloppySwiper.init(navigationController: self.navigationController!)
             self.navigationController!.delegate = swiper!
@@ -1011,14 +991,13 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
     func createDotHeader() {
         let label = UILabel()
-        if (!SettingValues.viewType || single) {
             label.text = "        \(sub)"
-        }
-        label.textColor = .white
+        
+        label.textColor = ColorUtil.fontColor
         label.adjustsFontSizeToFitWidth = true
         label.font = UIFont.boldSystemFont(ofSize: 20)
 
-        /*sideView = UIView()
+        sideView = UIView()
         sideView = UIView(frame: CGRect(x: 0, y: 0, width: 25, height: 25))
         sideView.backgroundColor = ColorUtil.getColorForSub(sub: sub)
         sideView.translatesAutoresizingMaskIntoConstraints = false
@@ -1026,16 +1005,12 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         label.addSubview(sideView)
         
         sideView.layer.cornerRadius = 12.5
-        sideView.clipsToBounds = true*/
+        sideView.clipsToBounds = true
 
         label.sizeToFit()
-        let leftItem = UIBarButtonItem(customView: label)
-        //self.navigationItem.leftBarButtonItems!.append(leftItem)
-        self.navigationItem.title = sub
-        self.navigationController?.navigationBar.shadowImage = UIImage()
-        if (single) {
-            navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub)
-        }
+        label.frame = CGRect.init(x: 10, y: -40, width: label.frame.size.width, height: label.frame.size.height)
+        self.tableView.addSubview(label)
+        self.tableView.contentInset = UIEdgeInsets.init(top: 25, left: 0, bottom: 0, right: 0)
     }
 
     func reloadDataReset() {
@@ -1733,4 +1708,21 @@ extension UIImage {
         return image
     }
 
+}
+
+//https://stackoverflow.com/a/50127204/3697225
+extension UIButton {
+    func leftImage(image: UIImage, renderMode: UIImageRenderingMode) {
+        self.setImage(image.withRenderingMode(renderMode), for: .normal)
+        self.imageEdgeInsets = UIEdgeInsets(top: 0, left: image.size.width / 2, bottom: 0, right: image.size.width / 2)
+        self.contentHorizontalAlignment = .left
+        self.imageView?.contentMode = .scaleAspectFit
+    }
+    
+    func rightImage(image: UIImage, renderMode: UIImageRenderingMode){
+        self.setImage(image.withRenderingMode(renderMode), for: .normal)
+        self.imageEdgeInsets = UIEdgeInsets(top: 0, left:image.size.width / 2, bottom: 0, right: 0)
+        self.contentHorizontalAlignment = .right
+        self.imageView?.contentMode = .scaleAspectFit
+    }
 }

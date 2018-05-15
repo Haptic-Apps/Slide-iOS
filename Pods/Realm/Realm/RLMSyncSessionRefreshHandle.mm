@@ -210,6 +210,9 @@ static const NSTimeInterval RLMRefreshBuffer = 10;
     }
     if (!nextTryDate) {
         // This error isn't a network failure error. Just invalidate the refresh handle and stop.
+        if (_strongSession) {
+            _strongSession->log_out();
+        }
         unregisterRefreshHandle(_user, _path);
         [self invalidate];
         return;
@@ -271,6 +274,8 @@ static const NSTimeInterval RLMRefreshBuffer = 10;
     [RLMNetworkClient sendRequestToEndpoint:[RLMSyncAuthEndpoint endpoint]
                                      server:self.authServerURL
                                        JSON:json
+                                    timeout:60
+                                    options:[[RLMSyncManager sharedManager] networkRequestOptions]
                                  completion:handler];
 }
 

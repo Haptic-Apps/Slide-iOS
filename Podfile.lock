@@ -1,48 +1,56 @@
 PODS:
   - ActionSheetPicker-3.0 (2.2.0)
-  - Alamofire (4.6.0)
+  - Alamofire (4.7.2)
   - BiometricAuthentication (1.0.5)
   - KCFloatingActionButton (2.1.2)
   - LicensesViewController (0.6.5)
-  - MaterialComponents/ActivityIndicator (45.0.0):
+  - MaterialComponents/ActivityIndicator (55.0.4):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Application
     - MDFInternationalization
     - MotionAnimator (~> 2.0)
-  - MaterialComponents/AnimationTiming (45.0.0)
-  - MaterialComponents/Buttons (45.0.0):
+  - MaterialComponents/AnimationTiming (55.0.4)
+  - MaterialComponents/BottomSheet (55.0.4):
+    - MaterialComponents/private/KeyboardWatcher
+    - MaterialComponents/private/Math
+  - MaterialComponents/Buttons (55.0.4):
     - MaterialComponents/Ink
     - MaterialComponents/private/Math
+    - MaterialComponents/private/Shapes
     - MaterialComponents/ShadowElevations
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
     - MDFInternationalization
     - MDFTextAccessibility
-  - MaterialComponents/Dialogs (45.0.0):
+  - MaterialComponents/Dialogs (55.0.4):
     - MaterialComponents/Buttons
     - MaterialComponents/private/KeyboardWatcher
     - MaterialComponents/ShadowElevations
     - MaterialComponents/ShadowLayer
+    - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/Ink (45.0.0):
+  - MaterialComponents/Ink (55.0.4):
     - MaterialComponents/private/Math
-  - MaterialComponents/OverlayWindow (45.0.0):
+  - MaterialComponents/OverlayWindow (55.0.4):
     - MaterialComponents/private/Application
-  - MaterialComponents/Palettes (45.0.0)
-  - MaterialComponents/private/Application (45.0.0)
-  - MaterialComponents/private/KeyboardWatcher (45.0.0):
+  - MaterialComponents/Palettes (55.0.4)
+  - MaterialComponents/private/Application (55.0.4)
+  - MaterialComponents/private/KeyboardWatcher (55.0.4):
     - MaterialComponents/private/Application
-  - MaterialComponents/private/Math (45.0.0)
-  - MaterialComponents/private/Overlay (45.0.0)
-  - MaterialComponents/ProgressView (45.0.0):
+  - MaterialComponents/private/Math (55.0.4)
+  - MaterialComponents/private/Overlay (55.0.4)
+  - MaterialComponents/private/Shapes (55.0.4):
+    - MaterialComponents/private/Math
+    - MaterialComponents/ShadowLayer
+  - MaterialComponents/ProgressView (55.0.4):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
     - MDFInternationalization
     - MotionAnimator (~> 2.1)
-  - MaterialComponents/ShadowElevations (45.0.0)
-  - MaterialComponents/ShadowLayer (45.0.0):
+  - MaterialComponents/ShadowElevations (55.0.4)
+  - MaterialComponents/ShadowLayer (55.0.4):
     - MaterialComponents/ShadowElevations
-  - MaterialComponents/Snackbar (45.0.0):
+  - MaterialComponents/Snackbar (55.0.4):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Buttons
     - MaterialComponents/OverlayWindow
@@ -50,7 +58,7 @@ PODS:
     - MaterialComponents/private/KeyboardWatcher
     - MaterialComponents/private/Overlay
     - MaterialComponents/Typography
-  - MaterialComponents/Tabs (45.0.0):
+  - MaterialComponents/Tabs (55.0.4):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Ink
     - MaterialComponents/private/Math
@@ -58,25 +66,25 @@ PODS:
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/TextFields (45.0.0):
+  - MaterialComponents/TextFields (55.0.4):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
     - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/Typography (45.0.0):
+  - MaterialComponents/Typography (55.0.4):
     - MaterialComponents/private/Application
   - MDFInternationalization (1.0.4)
   - MDFTextAccessibility (1.2.0)
-  - MKColorPicker (1.1)
-  - MotionAnimator (2.8.0):
+  - MKColorPicker (1.2)
+  - MotionAnimator (2.8.1):
     - MotionInterchange (~> 1.6)
   - MotionInterchange (1.6.0)
-  - Realm (3.1.1):
-    - Realm/Headers (= 3.1.1)
-  - Realm/Headers (3.1.1)
-  - RealmSwift (3.1.1):
-    - Realm (= 3.1.1)
+  - Realm (3.5.0):
+    - Realm/Headers (= 3.5.0)
+  - Realm/Headers (3.5.0)
+  - RealmSwift (3.5.0):
+    - Realm (= 3.5.0)
   - reddift (2.0.0):
     - reddift/MiniKeychain (= 2.0.0)
   - reddift/MiniKeychain (2.0.0)
@@ -85,12 +93,12 @@ PODS:
   - SDWebImage/Core (3.8.2)
   - SideMenu (3.1.5)
   - SloppySwiper (0.6)
-  - SwiftyJSON (4.0.0)
+  - SwiftyJSON (4.1.0)
   - TTTAttributedLabel (2.0.0)
   - UZTextView (1.0.8)
-  - XLActionController (4.0.0):
-    - XLActionController/Core (= 4.0.0)
-  - XLActionController/Core (4.0.0)
+  - XLActionController (4.0.1):
+    - XLActionController/Core (= 4.0.1)
+  - XLActionController/Core (4.0.1)
   - YangMingShan (2.0.1):
     - YangMingShan/YMSPhotoPicker (= 2.0.1)
   - YangMingShan/YMSPhotoPicker (2.0.1)
@@ -103,6 +111,7 @@ DEPENDENCIES:
   - LicensesViewController (~> 0.6.5)
   - MaterialComponents/ActivityIndicator
   - MaterialComponents/AnimationTiming
+  - MaterialComponents/BottomSheet
   - MaterialComponents/Buttons
   - MaterialComponents/Dialogs
   - MaterialComponents/Ink
@@ -150,28 +159,28 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   ActionSheetPicker-3.0: d11a4c12c6aaf704b8a3f56d179198c99f3e41e6
-  Alamofire: f41a599bd63041760b26d393ec1069d9d7b917f4
+  Alamofire: e4fa87002c137ba2d8d634d2c51fabcda0d5c223
   BiometricAuthentication: e80e99bf1fe871ab624172eb91f1ddbbc47499b5
   KCFloatingActionButton: 1b22ce95d44b51915280df8a8b277eae4a06c3f1
   LicensesViewController: 1f2982b1bab8402d3f88e23197957038e8abb907
-  MaterialComponents: 22793fbf99b6ae7e5067fbd794a6d3b7d6ee7d62
+  MaterialComponents: 059f649876b2e1ed6a623ba689175493422cc7cd
   MDFInternationalization: e355b0cebecf53d60233bd267084e49366c82513
   MDFTextAccessibility: 94098925e0853551c5a311ce7c1ecefbe297cdb6
-  MKColorPicker: c75af5993af472935cbfff18bc46d5ed8ff6f638
-  MotionAnimator: 8af077dac084b7880a4d2ddae31a26171087bd87
+  MKColorPicker: 8998b2ab977e4f240fdf254db27a18b810da3cfc
+  MotionAnimator: ee16aa30567c5bae0fb2750c132915829cfaaf8a
   MotionInterchange: ead0e3ae1f3a5fb539e289debbc7ae036160a10d
-  Realm: 42d1c38a5b1bbcc828b48a7ce702cb86fc68adf4
-  RealmSwift: d31937ca6a6ee54acde64ec839523c0a3c04924b
+  Realm: 0378021c424e4e2bd6a0e63b27881e929d9b9ad1
+  RealmSwift: 3322562622fda2ad596985ead4d8d8be30cf838c
   reddift: 3066e687c2a934b0f9aca6ee6e2161abc4c93a56
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
   SideMenu: 47dbf9e4d878062d8994aed43f6e4bf6c1fea30b
   SloppySwiper: 37e38f6da8df5c805914c6f32ec6ec8da63abe7c
-  SwiftyJSON: 070dabdcb1beb81b247c65ffa3a79dbbfb3b48aa
+  SwiftyJSON: c29297daf073d2aa016295d5809cdd68045c39b3
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   UZTextView: d8d45a8459b0de6f2c393458a05c65352f89e00a
-  XLActionController: 7e88fece1799e61357cb00b1cc67104d66ec4d2c
+  XLActionController: 007868251c0eed70d649d06c1625259b73b3a600
   YangMingShan: 561cfbb769e8cf679d3f23d8ae7030402ddb6495
 
-PODFILE CHECKSUM: af323e7317bcbdf1679d456a2ae6b47b421e0c9d
+PODFILE CHECKSUM: 0634693f2565524d0c702ef1f820ce805cef71d0
 
 COCOAPODS: 1.4.0

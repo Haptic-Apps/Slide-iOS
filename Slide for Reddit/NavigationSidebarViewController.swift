@@ -26,10 +26,16 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
         self.tableView = self.view as! UITableView
         self.tableView.delegate = self
         self.tableView.dataSource = self
+        self.tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "sub")
+
         
         tableView.backgroundColor = ColorUtil.backgroundColor
         tableView.separatorColor = ColorUtil.backgroundColor
         tableView.separatorInset = .zero
+
+        tableView.layer.cornerRadius = 15
+        tableView.clipsToBounds = true
+
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -117,7 +123,6 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
         header.setMail(mailcount)
     }
     override func viewWillAppear(_ animated: Bool) {
-        self.tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "sub")
         super.viewWillAppear(animated)
     }
     

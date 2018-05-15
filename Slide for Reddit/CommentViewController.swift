@@ -1477,7 +1477,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         if (!(navigationController?.isToolbarHidden)!) {
-            navigationController?.setToolbarHidden(true, animated: false)
+        //    navigationController?.setToolbarHidden(true, animated: false)
         }
 
     }
