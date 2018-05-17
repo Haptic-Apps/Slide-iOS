@@ -753,10 +753,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         ColorUtil.checkNight()
         super.viewDidLoad()
 
-        if (self.navigationController != nil && (parent == nil || (parent != nil && !(parent! is PagingCommentViewController)))) {
+        if (self.navigationController != nil && !(self.navigationController!.delegate is SloppySwiper) && (parent == nil || (parent != nil && !(parent! is PagingCommentViewController)))) {
             var swiper = SloppySwiper.init(navigationController: self.navigationController!)
             self.navigationController!.delegate = swiper!
         }
+
 
         tableView.contentInset = UIEdgeInsetsMake(0, 0, 45, 0)
         self.tableView.register(CommentMenuCell.classForCoder(), forCellReuseIdentifier: "menu")
@@ -1418,23 +1419,41 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 items.append(UIBarButtonItem.init(title: "Load full thread", style: .plain, target: self, action: #selector(CommentViewController.loadAll(_:))))
                 items.append(space)
             } else {
+
+                let up = UIButton.init(type: .custom)
+                up.setImage(UIImage.init(named: "up")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)).withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
+                up.addTarget(self, action: #selector(CommentViewController.goUp(_:)), for: UIControlEvents.touchUpInside)
+                up.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+                let upB = UIBarButtonItem.init(customView: up)
+
+                let nav = UIButton.init(type: .custom)
+                nav.setImage(UIImage.init(named: "nav")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)).withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
+                nav.addTarget(self, action: #selector(CommentViewController.showNavTypes(_:)), for: UIControlEvents.touchUpInside)
+                nav.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+                let navB = UIBarButtonItem.init(customView: nav)
+
+                let down = UIButton.init(type: .custom)
+                down.setImage(UIImage.init(named: "down")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)).withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
+                down.addTarget(self, action: #selector(CommentViewController.goDown(_:)), for: UIControlEvents.touchUpInside)
+                down.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+                let downB = UIBarButtonItem.init(customView: down)
+
                 items.append(space)
-                items.append(UIBarButtonItem(image: UIImage(named: "up")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style: .plain, target: self, action: #selector(CommentViewController.goUp(_:))))
+                items.append(upB)
                 items.append(space)
-                items.append(UIBarButtonItem(image: UIImage(named: "nav")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style: .plain, target: self, action: #selector(CommentViewController.showNavTypes(_:))))
+                items.append(navB)
                 items.append(space)
-                items.append(UIBarButtonItem(image: UIImage(named: "down")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style: .plain, target: self, action: #selector(CommentViewController.goDown(_:))))
+                items.append(downB)
                 items.append(space)
             }
             if (parent != nil && parent is PagingCommentViewController) {
                 parent?.toolbarItems = items
                 parent?.navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
-
-                parent?.navigationController?.toolbar.tintColor = UIColor.white
+                parent?.navigationController?.toolbar.tintColor = ColorUtil.fontColor
             } else {
                 toolbarItems = items
                 navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
-                navigationController?.toolbar.tintColor = UIColor.white
+                navigationController?.toolbar.tintColor = ColorUtil.fontColor
             }
         }
     }

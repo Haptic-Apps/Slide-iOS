@@ -343,12 +343,11 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
         } else {
             let color = ColorUtil.accentColorForSub(sub: (submission!.subreddit))
             if (!submission!.htmlBody.isEmpty) {
-                print("Doing submission")
                 let html = submission!.htmlBody.trimmed()
                 do {
                     let attr = html.toAttributedString()!
                     let font = FontGenerator.fontOfSize(size: 16, submission: false)
-                    let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
+                    let attr2 = attr.reconstruct(with: font, color: .white, linkColor: color)
                     var content = CellContent.init(string: LinkParser.parse(attr2, color), width: self.scrollView.frame.size.width - 10)
                     let activeLinkAttributes = NSMutableDictionary(dictionary: body.activeLinkAttributes)
                     activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.accentColorForSub(sub: submission!.subreddit)

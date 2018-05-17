@@ -72,6 +72,7 @@ class SettingValues {
     public static let pref_smallTag = "SMALLER_TAG"
     public static let pref_biometrics = "BIOMETRICS"
     public static let pref_safariVC = "SAFARIVC"
+    public static let pref_fabType = "FABTYPE"
 
 
     public static var viewType = true
@@ -84,6 +85,7 @@ class SettingValues {
     public static var onlyTintOutside = false
     public static var bannerHidden = false
     public static var postViewMode = PostViewType.LIST
+    public static var fabType = FabType.HIDE_READ
     public static var pictureMode = "PICTURE_MODE"
     public static var hideImageSelftext = false
     public static var abbreviateScores = true
@@ -244,6 +246,7 @@ class SettingValues {
         SettingValues.scoreInTitle = settings.bool(forKey: SettingValues.pref_scoreInTitle)
         SettingValues.hideButtonActionbar = settings.bool(forKey: SettingValues.pref_hideButtonActionbar)
         SettingValues.postViewMode = PostViewType.init(rawValue: settings.string(forKey: SettingValues.pref_postViewMode) ?? "card")!
+        SettingValues.fabType = FabType.init(rawValue: settings.string(forKey: SettingValues.pref_fabType) ?? "hide")!
 
         SettingValues.internalImage = settings.object(forKey: SettingValues.pref_internalImage) == nil ? true : settings.bool(forKey: SettingValues.pref_internalImage)
         SettingValues.internalGif = settings.object(forKey: SettingValues.pref_internalGif) == nil ? true : settings.bool(forKey: SettingValues.pref_internalGif)
@@ -275,4 +278,47 @@ class SettingValues {
         MDCSnackbarManager.show(message)
 
     }
+
+    public enum FabType: String {
+
+        public static let cases: [FabType] = [.HIDE_READ, .SHADOWBOX, .NEW_POST, .SIDEBAR, .GALLERY]
+
+        case HIDE_READ = "hide"
+        case SHADOWBOX = "shadowbox"
+        case NEW_POST = "newpost"
+        case SIDEBAR = "sidebar"
+        case GALLERY = "gallery"
+
+        func getPhoto() -> String {
+            switch (self) {
+            case .HIDE_READ:
+                return "hide"
+            case .NEW_POST:
+                return "edit"
+            case .SHADOWBOX:
+                return "shadowbox"
+            case .SIDEBAR:
+                return "info"
+            case .GALLERY:
+                return "image"
+            }
+        }
+
+        func getTitle() -> String {
+            switch (self){
+            case .HIDE_READ:
+                return "Hide read"
+            case .NEW_POST:
+                return "New submission"
+            case .SHADOWBOX:
+                return "Shadowbox"
+            case .SIDEBAR:
+                return "Sidebar"
+            case .GALLERY:
+                 return "Gallery"
+            }
+        }
+
+    }
+
 }

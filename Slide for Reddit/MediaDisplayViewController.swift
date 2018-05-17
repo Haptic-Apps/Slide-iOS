@@ -76,6 +76,8 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
             items.append(UIBarButtonItem(image: UIImage(named: "download")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style: .plain, target: self, action: #selector(MediaDisplayViewController.download(_:))))
             menuB = UIBarButtonItem(image: UIImage(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style: .plain, target: self, action: #selector(MediaDisplayViewController.showImageMenu(_:)))
             items.append(menuB!)
+
+
             toolbar.items = items
 
         }
@@ -172,6 +174,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
 
     var toolbar = UIToolbar()
 
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.scrollView = UIScrollView.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height))
@@ -192,6 +195,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
             var textB = UIBarButtonItem(image: UIImage(named: "size")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style: .plain, target: self, action: #selector(MediaDisplayViewController.showTitle(_:)))
             items.append(textB)
         }
+        items.append(UIBarButtonItem(image: UIImage(named: "fullscreen")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style: .plain, target: self, action: #selector(MediaDisplayViewController.fullscreen(_:))))
 
         items.append(space)
         items.append(UIBarButtonItem(image: UIImage(named: "download")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style: .plain, target: self, action: #selector(MediaDisplayViewController.download(_:))))
@@ -230,6 +234,19 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
         alertController.addAction(action)
         present(alertController, animated: true, completion: nil)
     }
+
+    func fullscreen(_ sender: AnyObject) {
+        UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+            (self.parent as? SwipeDownModalVC)?.background?.backgroundColor = UIColor.black
+            self.toolbar.alpha = 0
+
+        }, completion: {finished in
+            self.toolbar.isHidden = true
+
+        })
+
+    }
+
 
     func download(_ sender: AnyObject) {
         UIImageWriteToSavedPhotosAlbum(imageView.image!, nil, nil, nil)
@@ -301,6 +318,8 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
     var showHQ = false
 
     override func viewWillAppear(_ animated: Bool) {
+        UIApplication.shared.statusBarView?.backgroundColor = .clear
+
         super.viewWillAppear(animated)
     }
 
@@ -332,6 +351,11 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
         if (MediaDisplayViewController.videoPlayer != nil) {
             MediaDisplayViewController.videoPlayer!.pause()
         }
+
+    }
+
+    override var prefersStatusBarHidden: Bool {
+        return true
     }
 
 

@@ -32,12 +32,11 @@ class SearchContributionLoader: ContributionLoader {
     var paging = false
     
     func getData(reload: Bool) {
-        if(delegate != nil){
+        if(delegate != nil && canGetMore){
             do {
                 if(reload){
                     paginator = Paginator()
                 }
-                print("Subreddit is \(sub)")
                 try delegate?.session?.getSearch(Subreddit.init(subreddit: sub), query: query, paginator: paginator, sort: .relevance, completion: { (result) in
                     switch result {
                     case .failure:
@@ -48,15 +47,14 @@ class SearchContributionLoader: ContributionLoader {
                             self.content = []
                         }
                         for item in listing.children.flatMap({$0}) {
-                            print("Item")
                             if(item is Comment){
                                 self.content.append(RealmDataWrapper.commentToRComment(comment: item as! Comment, depth: 0))
                             } else {
                                 self.content.append(RealmDataWrapper.linkToRSubmission(submission: item as! Link))
                             }
                         }
-                        print("Done")
                         self.paginator = listing.paginator
+                        self.canGetMore = listing.paginator.hasMore()
                         DispatchQueue.main.async{
                             self.delegate?.doneLoading()
                         }

@@ -9,6 +9,9 @@
 import UIKit
 import BiometricAuthentication
 import LicensesViewController
+import SDWebImage
+import MaterialComponents.MaterialSnackbar
+import RealmSwift
 
 class SettingsViewController: UITableViewController {
 
@@ -29,6 +32,7 @@ class SettingsViewController: UITableViewController {
     var licenseCell: UITableViewCell = UITableViewCell()
     var aboutCell: UITableViewCell = UITableViewCell()
     var githubCell: UITableViewCell = UITableViewCell()
+    var clearCell: UITableViewCell = UITableViewCell()
 
     var multiColumnCell: UITableViewCell = UITableViewCell()
     var multiColumn = UISwitch()
@@ -47,6 +51,7 @@ class SettingsViewController: UITableViewController {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: "")
         navigationController?.navigationBar.tintColor = UIColor.white
+        navigationController?.setToolbarHidden(true, animated: false)
     }
 
     override func loadView() {
@@ -79,6 +84,13 @@ class SettingsViewController: UITableViewController {
         self.mainTheme.textLabel?.textColor = ColorUtil.fontColor
         self.mainTheme.imageView?.image = UIImage.init(named: "colors")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
         self.mainTheme.imageView?.tintColor = ColorUtil.fontColor
+
+        self.clearCell.textLabel?.text = "Clear cache"
+        self.clearCell.accessoryType = .disclosureIndicator
+        self.clearCell.backgroundColor = ColorUtil.foregroundColor
+        self.clearCell.textLabel?.textColor = ColorUtil.fontColor
+        self.clearCell.imageView?.image = UIImage.init(named: "multis")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
+        self.clearCell.imageView?.tintColor = ColorUtil.fontColor
 
         self.postLayout.textLabel?.text = "Post layout"
         self.postLayout.accessoryType = .disclosureIndicator
@@ -253,6 +265,7 @@ class SettingsViewController: UITableViewController {
             case 2: return self.dataSaving
             case 3: return self.content
             case 4: return self.filters
+            case 5: return self.clearCell
             default: fatalError("Unknown row in section 2")
             }
         case 3:
@@ -297,7 +310,18 @@ class SettingsViewController: UITableViewController {
         } else if (indexPath.section == 2 && indexPath.row == 1) {
             ch = SettingsHistory()
         } else if (indexPath.section == 2 && indexPath.row == 5) {
-            ch = SingleSubredditViewController.init(subName: "slide_ios", single: true)
+            let realm = try! Realm()
+            try! realm.write {
+                realm.deleteAll()
+            }
+
+            SDImageCache.shared().clearMemory()
+            SDImageCache.shared().clearDisk()
+
+            let message = MDCSnackbarMessage()
+            message.text = "All caches cleared!"
+            MDCSnackbarManager.show(message)
+
         } else if (indexPath.section == 3 && indexPath.row == 0) {
             //todo Show changlog?
         } else if (indexPath.section == 3 && indexPath.row == 1) {
@@ -345,7 +369,7 @@ class SettingsViewController: UITableViewController {
         switch (section) {
         case 0: return 4    // section 0 has 2 rows
         case 1: return 5    // section 1 has 1 row
-        case 2: return 5
+        case 2: return 6
         case 3: return 4
         default: fatalError("Unknown number of sections")
         }

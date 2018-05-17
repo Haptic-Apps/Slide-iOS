@@ -25,7 +25,7 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
         self.link = lnk
         let url = link.url!
         if (ContentType.isGif(uri: url)) {
-            if (!ContentType.isGifLoadInstantly(uri: url) && !link!.videoPreview.isEmpty()) {
+            if (!link!.videoPreview.isEmpty()) {
                 doShow(url: URL.init(string: link!.videoPreview)!)
             } else {
                 doShow(url: url)

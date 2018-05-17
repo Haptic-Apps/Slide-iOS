@@ -199,7 +199,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             let framesetter = CTFramesetterCreateWithAttributedString(CachedTitle.getTitle(submission: submission, full: false, false))
             let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude), nil)
 
-            let totalHeight = paddingTop + paddingBottom + (thumb ? max(ceil(textSize.height), imageHeight): ceil(textSize.height) + imageHeight) + innerPadding + actionbar + textHeight 
+            let totalHeight = paddingTop + paddingBottom + (thumb ? max(ceil(textSize.height), imageHeight): ceil(textSize.height) + imageHeight) + innerPadding + actionbar + textHeight
             var estimatedHeight = totalHeight
 
             return CGSize(width: itemWidth, height: estimatedHeight)
@@ -349,11 +349,14 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         if(single || !SettingValues.viewType) {
             (navigationController)?.setNavigationBarHidden(true, animated: true)
         }
+        UIApplication.shared.statusBarView?.backgroundColor = ColorUtil.getColorForSub(sub: self.sub)
+
         UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
             self.fab!.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
         }, completion: {finished in
             self.fab!.isHidden = true
             self.isHiding = false
+
         })
         (navigationController)?.setToolbarHidden(true, animated: true)
     }
@@ -366,7 +369,9 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
         UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
             self.fab!.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
-        }, completion: nil)
+        }, completion: { finished in
+
+        })
 
         (navigationController)?.setToolbarHidden(false, animated: true)
     }
@@ -626,23 +631,78 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
         reloadNeedingColor()
         //todo check for fab
-        if (true) {
-            fab = UIButton(frame: CGRect.init(x: (tableView.frame.size.width / 2) - 70, y:-20, width: 140, height: 45))
-            fab!.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
-            fab!.layer.cornerRadius = 22.5
-            fab!.clipsToBounds = true
-            fab!.setTitle("  Hide read", for: .normal)
-            fab!.leftImage(image: (UIImage.init(named: "hide")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)))!, renderMode: UIImageRenderingMode.alwaysOriginal)
-            fab!.elevate(elevation: 2)
-            fab!.titleLabel?.textAlignment = .center
-            fab!.titleLabel?.font = UIFont.systemFont(ofSize: 14)
+        setupFab()
 
-            fab!.titleEdgeInsets = UIEdgeInsets.init(top: 0, left: 20, bottom: 0, right: 20)
-            navigationController?.toolbar.addSubview(fab!)
+    }
 
+    func setupFab(){
+        if(fab != nil){
+            fab!.removeFromSuperview()
+            fab = nil
+        }
+        fab = UIButton(frame: CGRect.init(x: (tableView.frame.size.width / 2) - 70, y:-20, width: 140, height: 45))
+        fab!.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
+        fab!.layer.cornerRadius = 22.5
+        fab!.clipsToBounds = true
+        var title = "  " + SettingValues.fabType.getTitle();
+        fab!.setTitle(title, for: .normal)
+        fab!.leftImage(image: (UIImage.init(named: SettingValues.fabType.getPhoto())?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)))!, renderMode: UIImageRenderingMode.alwaysOriginal)
+        fab!.elevate(elevation: 2)
+        fab!.titleLabel?.textAlignment = .center
+        fab!.titleLabel?.font = UIFont.systemFont(ofSize: 14)
+
+        var width = title.size(with: fab!.titleLabel!.font).width + CGFloat(65)
+        fab!.frame = CGRect.init(x:  (tableView.frame.size.width / 2) - (width / 2), y: -20, width: width, height:  CGFloat(45))
+
+        fab!.titleEdgeInsets = UIEdgeInsets.init(top: 0, left: 20, bottom: 0, right: 20)
+        navigationController?.toolbar.addSubview(fab!)
+
+        fab!.addTapGestureRecognizer {
+            switch(SettingValues.fabType){
+            case .SIDEBAR:
+                self.doDisplaySidebar()
+            break
+            case .NEW_POST:
+                self.newPost(self.fab!)
+            break
+            case .SHADOWBOX:
+                self.shadowboxMode()
+            break
+            case .HIDE_READ:
+                self.hideReadPosts()
+            break
+            case .GALLERY:
+                self.galleryMode()
+            break
+            }
+        }
+
+        fab!.addLongTapGestureRecognizer {
+            self.changeFab()
         }
 
     }
+
+    func changeFab(){
+        let actionSheetController: UIAlertController = UIAlertController(title: "Change button type", message: "", preferredStyle: .alert)
+
+        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
+            print("Cancel")
+        }
+        actionSheetController.addAction(cancelActionButton)
+
+        for t in SettingValues.FabType.cases {
+            let saveActionButton: UIAlertAction = UIAlertAction(title: t.getTitle(), style: .default) { action -> Void in
+                UserDefaults.standard.set(t.rawValue, forKey: SettingValues.pref_fabType)
+                SettingValues.fabType = t
+                self.setupFab()
+            }
+            actionSheetController.addAction(saveActionButton)
+        }
+
+        self.present(actionSheetController, animated: true, completion: nil)
+    }
+
 
     static var firstPresented = true
 
@@ -695,7 +755,8 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let moreB = UIBarButtonItem.init(customView: more)
 
-            navigationItem.rightBarButtonItems = [moreB, sortB, sB]
+            navigationItem.rightBarButtonItems = [sortB]
+            title = sub
 
             self.sort = SettingValues.getLinkSorting(forSubreddit: self.sub)
             self.time = SettingValues.getTimePeriod(forSubreddit: self.sub)
@@ -884,7 +945,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
     var listingId: String = "" //a random id for use in Realm
 
-    func emptyKCFABSelected(_ fab: KCFloatingActionButton) {
+    func hideReadPosts() {
         var indexPaths: [IndexPath] = []
         var newLinks: [RSubmission] = []
 
@@ -913,6 +974,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             self.navigationController?.setNavigationBarHidden(false, animated: true)
         }
         UIApplication.shared.statusBarStyle = .lightContent
+        UIApplication.shared.statusBarView?.backgroundColor = .clear
 
 
         UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
@@ -1121,6 +1183,10 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
     }
 
+    func doDisplaySidebar(){
+        Sidebar.init(parent: self, subname: self.sub).displaySidebar()
+    }
+
     func showMore(_ sender: AnyObject, parentVC: MainViewController? = nil) {
 
         let actionSheetController: UIAlertController = UIAlertController(title: "", message: "", preferredStyle: .actionSheet)
@@ -1141,7 +1207,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             }
         } else {
             cancelActionButton = UIAlertAction(title: "Sidebar", style: .default) { action -> Void in
-                Sidebar.init(parent: self, subname: self.sub).displaySidebar()
+                self.doDisplaySidebar()
             }
         }
         actionSheetController.addAction(cancelActionButton)
@@ -1175,43 +1241,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
         if (!single && (sub != "all" && sub != "frontpage" && !sub.contains("+") && !sub.contains("/m/"))) {
             cancelActionButton = UIAlertAction(title: "Submit", style: .default) { action -> Void in
-                let actionSheetController2: UIAlertController = UIAlertController(title: "", message: "", preferredStyle: .actionSheet)
-
-                var cancelActionButton2: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
-                    print("Cancel")
-                }
-                actionSheetController2.addAction(cancelActionButton2)
-
-
-                cancelActionButton2 = UIAlertAction(title: "Image", style: .default) { action -> Void in
-                    VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(subreddit: self.sub, type: ReplyViewController.ReplyType.SUBMIT_IMAGE, completion: { (submission) in
-                       VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
-                    })), parentVC: self)
-                }
-                actionSheetController2.addAction(cancelActionButton2)
-
-
-                cancelActionButton2 = UIAlertAction(title: "Link", style: .default) { action -> Void in
-                    VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(subreddit: self.sub, type: ReplyViewController.ReplyType.SUBMIT_LINK, completion: { (submission) in
-                        VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
-                    })), parentVC: self)
-                }
-                actionSheetController2.addAction(cancelActionButton2)
-
-
-                cancelActionButton2 = UIAlertAction(title: "Text", style: .default) { action -> Void in
-                    VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(subreddit: self.sub, type: ReplyViewController.ReplyType.SUBMIT_TEXT, completion: { (submission) in
-                        VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
-                    })), parentVC: self)
-                }
-                actionSheetController2.addAction(cancelActionButton2)
-
-                if let presenter = actionSheetController2.popoverPresentationController {
-                    presenter.sourceView = (sender as! UIView)
-                    presenter.sourceRect = (sender as! UIView).bounds
-                }
-
-                self.present(actionSheetController2, animated: true)
+                self.newPost(sender)
             }
             actionSheetController.addAction(cancelActionButton)
         }
@@ -1236,6 +1266,47 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
     }
 
+    func newPost(_ sender : AnyObject){
+        let actionSheetController2: UIAlertController = UIAlertController(title: "", message: "", preferredStyle: .actionSheet)
+
+        var cancelActionButton2: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
+            print("Cancel")
+        }
+        actionSheetController2.addAction(cancelActionButton2)
+
+
+        cancelActionButton2 = UIAlertAction(title: "Image", style: .default) { action -> Void in
+            VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(subreddit: self.sub, type: ReplyViewController.ReplyType.SUBMIT_IMAGE, completion: { (submission) in
+                VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+            })), parentVC: self)
+        }
+        actionSheetController2.addAction(cancelActionButton2)
+
+
+        cancelActionButton2 = UIAlertAction(title: "Link", style: .default) { action -> Void in
+            VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(subreddit: self.sub, type: ReplyViewController.ReplyType.SUBMIT_LINK, completion: { (submission) in
+                VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+            })), parentVC: self)
+        }
+        actionSheetController2.addAction(cancelActionButton2)
+
+
+        cancelActionButton2 = UIAlertAction(title: "Text", style: .default) { action -> Void in
+            VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(subreddit: self.sub, type: ReplyViewController.ReplyType.SUBMIT_TEXT, completion: { (submission) in
+                VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+            })), parentVC: self)
+        }
+        actionSheetController2.addAction(cancelActionButton2)
+
+        if let presenter = actionSheetController2.popoverPresentationController {
+            presenter.sourceView = (sender as! UIView)
+            presenter.sourceRect = (sender as! UIView).bounds
+        }
+
+        self.present(actionSheetController2, animated: true)
+
+    }
+
     func galleryMode() {
         let controller = GalleryTableViewController()
         var gLinks: [RSubmission] = []
@@ -1250,6 +1321,8 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        UIApplication.shared.statusBarView?.backgroundColor = ColorUtil.getColorForSub(sub: self.sub)
+
         if(fab != nil){
             self.fab!.isHidden = false
 
@@ -1807,3 +1880,20 @@ extension UIButton {
         self.imageView?.contentMode = .scaleAspectFit
     }
 }
+
+
+extension String {
+    func size(with: UIFont) -> CGSize {
+        let fontAttribute = [NSFontAttributeName: with]
+        let size = self.size(attributes: fontAttribute)  // for Single Line
+        return size;
+    }
+}
+extension UIApplication {
+
+    var statusBarView: UIView? {
+        return value(forKey: "statusBar") as? UIView
+    }
+
+}
+

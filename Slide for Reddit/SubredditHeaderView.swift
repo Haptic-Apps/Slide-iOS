@@ -589,7 +589,9 @@ extension UIView {
     // In order to create computed properties for extensions, we need a key to
     // store and access the stored property
     fileprivate struct AssociatedObjectKeys {
-        static var tapGestureRecognizer = "MediaViewerAssociatedObjectKey_mediaViewer"
+        static var tapGestureRecognizer = "tapGR"
+        static var longTapGestureRecognizer = "longTapGR"
+
     }
 
     fileprivate typealias Action = (() -> Void)?
@@ -608,6 +610,20 @@ extension UIView {
         }
     }
 
+    fileprivate var longTapGestureRecognizerAction: Action? {
+        set {
+            if let newValue = newValue {
+                // Computed properties get stored as associated objects
+                objc_setAssociatedObject(self, &AssociatedObjectKeys.longTapGestureRecognizer, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+            }
+        }
+        get {
+            let tapGestureRecognizerActionInstance = objc_getAssociatedObject(self, &AssociatedObjectKeys.longTapGestureRecognizer) as? Action
+            return tapGestureRecognizerActionInstance
+        }
+    }
+
+
     // This is the meat of the sauce, here we create the tap gesture recognizer and
     // store the closure the user passed to us in the associated object we declared above
     public func addTapGestureRecognizer(action: (() -> Void)?) {
@@ -617,6 +633,14 @@ extension UIView {
         self.addGestureRecognizer(tapGestureRecognizer)
     }
 
+    public func addLongTapGestureRecognizer(action: (() -> Void)?) {
+        self.isUserInteractionEnabled = true
+        self.longTapGestureRecognizerAction = action
+        let tapGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongTapGesture))
+        self.addGestureRecognizer(tapGestureRecognizer)
+    }
+
+
     // Every time the user taps on the UIImageView, this function gets called,
     // which triggers the closure we stored
     @objc fileprivate func handleTapGesture(sender: UITapGestureRecognizer) {
@@ -624,5 +648,12 @@ extension UIView {
             action?()
         }
     }
+
+    @objc fileprivate func handleLongTapGesture(sender: UITapGestureRecognizer) {
+        if let action = self.longTapGestureRecognizerAction {
+            action?()
+        }
+    }
+
 
 }

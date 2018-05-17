@@ -462,13 +462,13 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         let sB = UIBarButtonItem.init(customView: shadowbox)
 
         let more = UIButton.init(type: .custom)
-        more.setImage(UIImage.init(named: "moreh")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
+        more.setImage(UIImage.init(named: "moreh")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
         more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
         more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let moreB = UIBarButtonItem.init(customView: more)
 
         let menu = UIButton.init(type: .custom)
-        menu.setImage(UIImage.init(named: "menu")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
+        menu.setImage(UIImage.init(named: "menu")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)).withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
         menu.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControlEvents.touchUpInside)
         menu.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let menuB = UIBarButtonItem.init(customView: menu)
@@ -478,6 +478,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         toolbarItems = [menuB, flexButton, moreB]
+        navigationItem.rightBarButtonItem = sortB
 
         super.viewDidLoad()
         self.edgesForExtendedLayout = []

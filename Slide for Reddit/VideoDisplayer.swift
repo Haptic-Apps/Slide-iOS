@@ -148,10 +148,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
                                         return (localUrlAudio, [.createIntermediateDirectories])
                                     }).downloadProgress() { progress in
                                         DispatchQueue.main.async {
-                                            self.progressView?.progress = Float(progress.fractionCompleted)
-                                            let countBytes = ByteCountFormatter()
-                                            countBytes.allowedUnits = [.useMB]
-                                            countBytes.countStyle = .file
+                                            //todo indeterminate here?
                                         }
 
                                     }
@@ -418,7 +415,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
             if (s.endsWith("/")) {
                 s = s.substring(0, length: s.length - 2)
             }
-            s = s + "/DASH_4_8_M";
+            s = s + "/DASH_9_6_M";
         }
         return s;
     }

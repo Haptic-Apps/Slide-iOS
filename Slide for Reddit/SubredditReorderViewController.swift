@@ -132,7 +132,7 @@ class SubredditReorderViewController: UITableViewController {
             }
             DispatchQueue.main.async {
                 self.tableView.reloadData()
-                let indexPath = IndexPath.init(row: end, section: 0)
+                let indexPath = IndexPath.init(row: end - 1, section: 0)
                 self.tableView.scrollToRow(at: indexPath,
                         at: UITableViewScrollPosition.top, animated: true)
                 alertController.dismiss(animated: true, completion: nil)
