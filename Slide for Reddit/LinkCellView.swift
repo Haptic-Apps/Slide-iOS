@@ -264,12 +264,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 estimatedUsableWidth -= 24 //12 padding on either side
             }
 
-            let estimatedTitleHeight = (title.attributedText).boundingRect(with: CGSize.init(width: estimatedUsableWidth, height: 10000), options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil)
+            let framesetter = CTFramesetterCreateWithAttributedString(title.attributedText)
+            let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude), nil)
 
-            let totalHeight = paddingTop + paddingBottom + estimatedTitleHeight.height + innerPadding + imageHeight + actionbar + textHeight
+            let totalHeight = paddingTop + paddingBottom + (thumb ? max(ceil(textSize.height), imageHeight): ceil(textSize.height) + imageHeight) + innerPadding + actionbar + textHeight + (full ? CGFloat(10) : CGFloat(0))
             estimatedHeight = totalHeight
         }
-        print("Estimate is \(estimatedHeight)")
         return estimatedHeight
     }
 
@@ -464,6 +464,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             innerpadding = 5
             radius = 15
         }
+
         self.contentView.layoutMargins = UIEdgeInsets.init(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin))
 
         let metrics = ["horizontalMargin": 75, "top": topmargin, "bottom": bottommargin, "separationBetweenLabels": 0, "labelMinHeight": 75, "bannerHeight": submissionHeight, "left": leftmargin, "padding": innerpadding, "ishidden": !full && SettingValues.hideButtonActionbar ? 0 : 24, "ishiddeni": !full && SettingValues.hideButtonActionbar ? 0 : 18] as [String: Int]

@@ -70,13 +70,8 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     let cellsPerRow = 3
 
     func collectionView(_ collectionView: UICollectionView, width: CGFloat, indexPath: IndexPath) -> CGSize {
-
         var itemWidth = width
-        if (SettingValues.postViewMode == .CARD) {
-            itemWidth -= 10
-        }
-
-        if (indexPath.row < links.count){
+        if (indexPath.row < links.count) {
             let submission = links[indexPath.row]
 
             var thumb = submission.thumbnail
@@ -152,14 +147,64 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                 thumb = false
             }
 
+            var paddingTop = CGFloat(0)
+            var paddingBottom = CGFloat(2)
+            var paddingLeft = CGFloat(0)
+            var paddingRight = CGFloat(0)
+            var innerPadding = CGFloat(0)
+            if (SettingValues.postViewMode == .CARD) {
+                paddingTop = 5
+                paddingBottom = 5
+                paddingLeft = 5
+                paddingRight = 5
+            }
 
-            let he = CachedTitle.getTitle(submission: submission, full: false, false).boundingRect(with: CGSize.init(width: itemWidth - 24 - (SettingValues.postViewMode == .CARD ? 10 : 0) - (thumb ? (SettingValues.largerThumbnail ? 75 : 50) + 28 : 0), height: 10000), options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).height
-            let thumbheight = CGFloat(SettingValues.largerThumbnail ? 83 : 58)
-            let estimatedHeight = CGFloat((he < thumbheight && thumb || he < thumbheight && !big) ? thumbheight : he) + CGFloat(48) + (SettingValues.postViewMode == .CARD ? 10 : 0) + (SettingValues.hideButtonActionbar ? -28 : 0) + CGFloat(big && !thumb ? (submissionHeight + 20) : 0)
+            let actionbar = CGFloat(SettingValues.hideButtonActionbar ? 0 : 24)
+
+            var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
+            let thumbheight = SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50)
+            let textHeight = CGFloat(0)
+
+            if (thumb) {
+                imageHeight = thumbheight
+                innerPadding += 8 //between top and thumbnail
+                innerPadding += 18 //between label and bottom box
+                innerPadding += 8 //between box and end
+            } else if (big) {
+                if (SettingValues.centerLeadImage) {
+                    innerPadding += 16 //between label
+                    innerPadding += 12 //between banner and box
+                } else {
+                    innerPadding += 8 //between banner and label
+                    innerPadding += 12 //between label and box
+                }
+
+                innerPadding += 8 //between box and end
+            } else {
+                innerPadding += 8
+                innerPadding += 5 //between label and body
+                innerPadding += 12 //between body and box
+                innerPadding += 8 //between box and end
+            }
+
+            var estimatedUsableWidth = itemWidth - paddingLeft - paddingRight
+            if (thumb) {
+                estimatedUsableWidth -= thumbheight //is the same as the width
+                estimatedUsableWidth -= 12 //between edge and thumb
+                estimatedUsableWidth -= 8 //between thumb and label
+            } else {
+                estimatedUsableWidth -= 24 //12 padding on either side
+            }
+
+            let framesetter = CTFramesetterCreateWithAttributedString(CachedTitle.getTitle(submission: submission, full: false, false))
+            let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude), nil)
+
+            let totalHeight = paddingTop + paddingBottom + (thumb ? max(ceil(textSize.height), imageHeight): ceil(textSize.height) + imageHeight) + innerPadding + actionbar + textHeight 
+            var estimatedHeight = totalHeight
+
             return CGSize(width: itemWidth, height: estimatedHeight)
         }
         return CGSize(width: itemWidth, height: 0)
-
     }
 
 
