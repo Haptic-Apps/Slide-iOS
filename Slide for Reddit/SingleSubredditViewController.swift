@@ -750,12 +750,15 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             let sB = UIBarButtonItem.init(customView: shadowbox)
 
             let more = UIButton.init(type: .custom)
-            more.setImage(UIImage.init(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
+            more.setImage(UIImage.init(named: "moreh")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
             more.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControlEvents.touchUpInside)
             more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let moreB = UIBarButtonItem.init(customView: more)
 
             navigationItem.rightBarButtonItems = [sortB]
+            let flexButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil)
+
+            toolbarItems = [flexButton, moreB]
             title = sub
 
             self.sort = SettingValues.getLinkSorting(forSubreddit: self.sub)
@@ -1096,6 +1099,10 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             self.tableView.reloadData()
         }
 
+        navigationController?.setNavigationBarHidden(false, animated: true)
+        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub)
+
+
         self.automaticallyAdjustsScrollViewInsets = false
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
@@ -1108,7 +1115,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         } else {
             tableView.reloadData()
         }
-        //   ColorUtil.setBackgroundToolbar(toolbar: self.navigationController?.navigationBar)
 
         if (single && navigationController!.modalPresentationStyle != .pageSheet) {
            // let swiper = SloppySwiper.init(navigationController: self.navigationController!)
@@ -1322,6 +1328,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         UIApplication.shared.statusBarView?.backgroundColor = ColorUtil.getColorForSub(sub: self.sub)
+        (navigationController)?.setToolbarHidden(false, animated: true)
 
         if(fab != nil){
             self.fab!.isHidden = false

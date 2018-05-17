@@ -22,6 +22,7 @@ class SubSidebarViewController: MediaViewController, UIGestureRecognizerDelegate
         super.init(nibName: nil, bundle: nil)
         self.subreddit = sub
         self.parentController = parent
+
     }
 
     func doSubreddit(sub: Subreddit, _ width: CGFloat) {
@@ -31,8 +32,10 @@ class SubSidebarViewController: MediaViewController, UIGestureRecognizerDelegate
         header.frame.size.width = width
         scrollView.contentSize = header.frame.size
         scrollView.addSubview(header)
+        scrollView.layer.cornerRadius = 15
+        scrollView.clipsToBounds = true
 
-        header.isUserInteractionEnabled  = true
+        header.isUserInteractionEnabled = true
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -40,7 +43,6 @@ class SubSidebarViewController: MediaViewController, UIGestureRecognizerDelegate
     }
 
     override func loadView() {
-        navigationController?.navigationBar.isTranslucent = false
         title = subreddit!.displayName
         color = ColorUtil.getColorForSub(sub: subreddit!.displayName)
 
@@ -50,9 +52,12 @@ class SubSidebarViewController: MediaViewController, UIGestureRecognizerDelegate
         self.scrollView = self.view as! UIScrollView
 
         scrollView.backgroundColor = ColorUtil.backgroundColor
+
+        self.doSubreddit(sub: subreddit!, UIScreen.main.bounds.width)
+
     }
 
-    func close(_ sender: AnyObject){
+    func close(_ sender: AnyObject) {
         self.dismiss(animated: true)
     }
 
@@ -65,12 +70,5 @@ class SubSidebarViewController: MediaViewController, UIGestureRecognizerDelegate
 
     var loaded = false
 
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-        if(!loaded) {
-            loaded = true
-            self.doSubreddit(sub: subreddit!, scrollView.frame.size.width)
-        }
-    }
 
 }

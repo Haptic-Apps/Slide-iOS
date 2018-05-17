@@ -308,6 +308,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
     var tintColor: UIColor = UIColor.white
     var menuNav: NavigationSidebarViewController?
+    var bottomSheet: MDCBottomSheetController?
     var currentTitle = "Slide"
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -483,9 +484,14 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         super.viewDidLoad()
         self.edgesForExtendedLayout = []
         self.automaticallyAdjustsScrollViewInsets = false
-        menuNav = NavigationSidebarViewController()
-        menuNav?.setViewController(controller: self)
-        self.menuNav?.setSubreddit(subreddit: MainViewController.current)
+
+        if(menuNav == nil){
+            menuNav = NavigationSidebarViewController()
+            menuNav?.setViewController(controller: self)
+            self.menuNav?.setSubreddit(subreddit: MainViewController.current)
+            bottomSheet = MDCBottomSheetController(contentViewController: menuNav!)
+
+        }
 
 
         checkForUpdate()
@@ -585,19 +591,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     var currentPage = 0
 
     func showDrawer(_ sender: AnyObject) {
-        // let navEditorViewController: UINavigationController = UINavigationController(rootViewController: menuNav)
-        //  self.prepareOverlayVC(overlayVC: navEditorViewController)
-        //  self.present(navEditorViewController, animated: true, completion: nil)
-
-        // create animator object with instance of modal view controller
-        // we need to keep it in property with strong reference so it will not get release
-
-        // set transition delegate of modal view controller to our object
-
-        // if you modal cover all behind view controller, use UIModalPresentationFullScreen
-
-        let bottomSheet: MDCBottomSheetController = MDCBottomSheetController(contentViewController: menuNav!)
-        present(bottomSheet, animated: true, completion: nil)
+        menuNav!.setColors(MainViewController.current)
+        present(bottomSheet!, animated: true, completion: nil)
     }
 
     func shadowbox() {

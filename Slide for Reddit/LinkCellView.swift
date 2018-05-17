@@ -288,8 +288,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         bannerImage.clipsToBounds = true
         bannerImage.backgroundColor = UIColor.white
 
-        bannerImage.elevate(elevation: 2.0)
-
         self.title = TTTAttributedLabel(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude));
         title.numberOfLines = 0
         title.lineBreakMode = NSLineBreakMode.byWordWrapping
@@ -964,7 +962,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             return
         }
 
-        let metrics = ["horizontalMargin": 75, "top": 0, "bottom": 0, "separationBetweenLabels": 0, "full": Int(contentView.frame.size.width), "size": full ? 16 : 8, "labelMinHeight": 75, "thumb": (SettingValues.largerThumbnail ? 75 : 50), "bannerHeight": submissionHeight] as [String: Int]
+        let metrics = ["horizontalMargin": 75, "top": 0, "bottom": 0, "separationBetweenLabels": 0, "full": Int(contentView.frame.size.width), "bannerPadding": (full || SettingValues.postViewMode != .CARD) ? 5 : 0, "size": full ? 16 : 8, "labelMinHeight": 75, "thumb": (SettingValues.largerThumbnail ? 75 : 50), "bannerHeight": submissionHeight] as [String: Int]
         let views = ["label": title, "body": textView, "image": thumbImage, "info": b, "tag": tagbody, "upvote": upvote, "downvote": downvote, "score": score, "comments": comments, "banner": bannerImage, "buttons": buttons, "box": box] as [String: Any]
         var bt = "[buttons]-8-"
         var bx = "[box]-8-"
@@ -1016,11 +1014,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                         options: NSLayoutFormatOptions(rawValue: 0),
                         metrics: metrics,
                         views: views))
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[info]-[banner]",
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[info]-0-[banner]",
                         options: NSLayoutFormatOptions.alignAllLastBaseline,
                         metrics: metrics,
                         views: views))
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[banner]-[tag]",
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[banner]-0-[tag]",
                         options: NSLayoutFormatOptions.alignAllLastBaseline,
                         metrics: metrics,
                         views: views))
@@ -1046,7 +1044,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
             } else {
 
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[banner]-8@999-[label]-12@999-\(bx)|",
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(bannerPadding)-[banner]-8@999-[label]-12@999-\(bx)|",
                         options: NSLayoutFormatOptions(rawValue: 0),
                         metrics: metrics,
                         views: views))
@@ -1070,7 +1068,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     metrics: metrics,
                     views: views))
 
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[banner]-0-|",
+            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(bannerPadding)-[banner]-(bannerPadding)-|",
                     options: NSLayoutFormatOptions(rawValue: 0),
                     metrics: metrics,
                     views: views))
@@ -1078,7 +1076,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     options: NSLayoutFormatOptions(rawValue: 0),
                     metrics: metrics,
                     views: views))
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[tag]-3-|",
+            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[tag]-12-|",
                     options: NSLayoutFormatOptions.alignAllLastBaseline,
                     metrics: metrics,
                     views: views))
@@ -1523,7 +1521,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     override func layoutSubviews() {
         super.layoutSubviews()
         var topmargin = 0
-        var bottommargin = 0
+        var bottommargin = 2
         var leftmargin = 0
         var rightmargin = 0
 

@@ -37,6 +37,13 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
         tableView.clipsToBounds = true
 
     }
+
+    func setColors(_ sub: String){
+        DispatchQueue.main.async {
+            self.header.doColors(sub)
+            self.tableView.setContentOffset( CGPoint(x: 0, y: 0) , animated: false)
+        }
+    }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath) as! SubredditCellView

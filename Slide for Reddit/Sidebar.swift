@@ -97,8 +97,6 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate  {
 
     func doDisplaySidebar(_ sub: Subreddit){
         inner = SubSidebarViewController(sub: sub, parent: parent!)
-        inner!.view.clipsToBounds = false
-        inner!.view.layer.cornerRadius = 15
         let bottomSheet: MDCBottomSheetController = MDCBottomSheetController(contentViewController: inner!)
         parent?.present(bottomSheet, animated: true, completion: nil)
     }

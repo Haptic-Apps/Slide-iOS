@@ -14,6 +14,7 @@
 		B776B919A0E908BFAB060DE7 /* ToolbarTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BA78CCE4C75BD7FC5DA3 /* ToolbarTextView.swift */; };
 		B776BA8D503319846E83C4A4 /* VideoDisplayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B4EE978D7F23FF4C74BE /* VideoDisplayer.swift */; };
 		B776BAD2D3F58C29030A4230 /* SFHideSafariViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B89DC40DC7FB5ECB6C4A /* SFHideSafariViewController.swift */; };
+		B776BD2C5BBC647BF29E06F8 /* CustomAnimateUITableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B5502C1178D6A0F51B6A /* CustomAnimateUITableView.swift */; };
 		B776BF494A7A822D5DB4B5BC /* ColorMuxPagingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B21CFB79FA354C296037 /* ColorMuxPagingViewController.swift */; };
 		BE0E8BC01E26E91E004B56B1 /* BouncyViewControllerAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0E8BBF1E26E91E004B56B1 /* BouncyViewControllerAnimator.swift */; };
 		BE0EF7C41F43C9520058D572 /* Spoilers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0EF7C31F43C9510058D572 /* Spoilers.swift */; };
@@ -198,6 +199,7 @@
 		B596ABEF970425FC2114FFB2 /* Pods-Slide for RedditTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for RedditTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Slide for RedditTests/Pods-Slide for RedditTests.release.xcconfig"; sourceTree = "<group>"; };
 		B776B21CFB79FA354C296037 /* ColorMuxPagingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorMuxPagingViewController.swift; sourceTree = "<group>"; };
 		B776B4EE978D7F23FF4C74BE /* VideoDisplayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoDisplayer.swift; sourceTree = "<group>"; };
+		B776B5502C1178D6A0F51B6A /* CustomAnimateUITableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAnimateUITableView.swift; sourceTree = "<group>"; };
 		B776B793D6901741B17CAD65 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		B776B89DC40DC7FB5ECB6C4A /* SFHideSafariViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SFHideSafariViewController.swift; sourceTree = "<group>"; };
 		B776BA78CCE4C75BD7FC5DA3 /* ToolbarTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToolbarTextView.swift; sourceTree = "<group>"; };
@@ -657,6 +659,7 @@
 				B776B89DC40DC7FB5ECB6C4A /* SFHideSafariViewController.swift */,
 				B776B4EE978D7F23FF4C74BE /* VideoDisplayer.swift */,
 				B776B793D6901741B17CAD65 /* Main.storyboard */,
+				B776B5502C1178D6A0F51B6A /* CustomAnimateUITableView.swift */,
 			);
 			path = "Slide for Reddit";
 			sourceTree = "<group>";
@@ -1205,6 +1208,7 @@
 				B776B919A0E908BFAB060DE7 /* ToolbarTextView.swift in Sources */,
 				B776BAD2D3F58C29030A4230 /* SFHideSafariViewController.swift in Sources */,
 				B776BA8D503319846E83C4A4 /* VideoDisplayer.swift in Sources */,
+				B776BD2C5BBC647BF29E06F8 /* CustomAnimateUITableView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

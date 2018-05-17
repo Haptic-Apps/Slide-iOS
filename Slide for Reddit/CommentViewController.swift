@@ -244,37 +244,37 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         alertController.headerData = "Post by /u/\(link.author)"
 
 
-        alertController.addAction(Action(ActionData(title: "/u/\(link.author)'s profile", image: UIImage(named: "profile")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "/u/\(link.author)'s profile", image:UIImage(named: "profile")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
 
             let prof = ProfileViewController.init(name: link.author)
             VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
         }))
-        alertController.addAction(Action(ActionData(title: "/r/\(link.subreddit)", image: UIImage(named: "subs")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "/r/\(link.subreddit)", image:UIImage(named: "subs")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
 
             let prof = SingleSubredditViewController.init(subName: link.subreddit, single: true)
             VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
         }))
 
-        alertController.addAction(Action(ActionData(title: "Share comment permalink", image: UIImage(named: "link")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Share comment permalink", image:UIImage(named: "link")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
             let activityViewController = UIActivityViewController(activityItems: [link.permalink], applicationActivities: nil)
             self.present(activityViewController, animated: true, completion: {})
         }))
         if (AccountController.isLoggedIn) {
-            alertController.addAction(Action(ActionData(title: "Save", image: UIImage(named: "save")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+            alertController.addAction(Action(ActionData(title: "Save", image:UIImage(named: "save")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
                 self.save(cell)
             }))
         }
-        alertController.addAction(Action(ActionData(title: "Report", image: UIImage(named: "hide")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Report", image:UIImage(named: "hide")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
             self.report(cell.link!)
         }))
         let open = OpenInChromeController.init()
         if (open.isChromeInstalled()) {
 
-            alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "link")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+            alertController.addAction(Action(ActionData(title: "Open in Chrome", image:UIImage(named: "link")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
                 open.openInChrome(link.url!, callbackURL: nil, createNewTab: true)
             }))
         }
-        alertController.addAction(Action(ActionData(title: "Open in Safari", image: UIImage(named: "world")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Open in Safari", image:UIImage(named: "world")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(link.url!, options: [:], completionHandler: nil)
             } else {
@@ -282,18 +282,18 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             }
         }))
 
-        alertController.addAction(Action(ActionData(title: "Share content", image: UIImage(named: "link")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Share content", image:UIImage(named: "link")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [link.url!], applicationActivities: nil);
             let currentViewController: UIViewController = UIApplication.shared.keyWindow!.rootViewController!
             currentViewController.present(activityViewController, animated: true, completion: nil);
         }))
-        alertController.addAction(Action(ActionData(title: "Share comments", image: UIImage(named: "comments")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Share comments", image:UIImage(named: "comments")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [URL.init(string: "https://reddit.com" + link.permalink)!], applicationActivities: nil);
             let currentViewController: UIViewController = UIApplication.shared.keyWindow!.rootViewController!
             currentViewController.present(activityViewController, animated: true, completion: nil);
         }))
 
-        alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: nil))
+        alertController.addAction(Action(ActionData(title: "Cancel", image:UIImage(named: "close")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: nil))
 
         VCPresenter.presentAlert(alertController, parentVC: self)
 
@@ -793,6 +793,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
 
     var keyboardHeight = CGFloat(0)
+
     func keyboardWillShow(_ notification: Notification) {
         if let keyboardFrame: NSValue = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRectangle = keyboardFrame.cgRectValue
@@ -873,7 +874,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         self.submission = RSubmission()
         self.submission!.name = submission
         hasSubmission = false
-        if(subreddit != nil){
+        if (subreddit != nil) {
             self.subreddit = subreddit!
         }
         super.init(nibName: nil, bundle: nil)
@@ -963,6 +964,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         if (UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.view.bounds.width / CGFloat(320))) > 1 && false) {
             self.navigationController!.view.backgroundColor = .clear
         }
+        if (!SettingValues.disableNavigationBar) {
+            navigationController?.setToolbarHidden(false, animated: true)
+        }
+
     }
 
     func gestureRecognizer(_ sender: UIGestureRecognizer,
@@ -1409,9 +1414,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     func updateToolbar() {
         if (!SettingValues.disableNavigationBar) {
-            if (navigationController?.isToolbarHidden)! {
-                navigationController?.setToolbarHidden(false, animated: false)
-            }
+            navigationController?.setToolbarHidden(false, animated: false)
             let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
             var items: [UIBarButtonItem] = []
             if (!context.isEmpty()) {
@@ -1472,33 +1475,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     var isCurrentlyChanging = false
 
-    func unhideAll(comment: String, i: Int) {
-        if (!isCurrentlyChanging) {
-            isCurrentlyChanging = true
-            DispatchQueue.global(qos: .background).async {
-                let counter = self.unhideNumber(n: comment, iB: i)
-                self.doArrays()
-                DispatchQueue.main.async {
-                    self.tableView.beginUpdates()
-
-                    var indexPaths: [IndexPath] = []
-                    for row in (i + 1)...counter {
-                        indexPaths.append(IndexPath(row: row, section: 0))
-                    }
-                    self.tableView.insertRows(at: indexPaths, with: .fade)
-                    self.tableView.endUpdates()
-                    self.isCurrentlyChanging = false
-                }
-            }
-        }
-    }
-
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        if (!(navigationController?.isToolbarHidden)!) {
-        //    navigationController?.setToolbarHidden(true, animated: false)
-        }
-
     }
 
     func collapseAll() {
@@ -1532,13 +1510,33 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     for row in i...counter {
                         indexPaths.append(IndexPath(row: row, section: 0))
                     }
-                    self.tableView.deleteRows(at: indexPaths, with: .fade)
+                    self.tableView.deleteRows(at: indexPaths, with: .automatic)
                     self.tableView.endUpdates()
                     self.isCurrentlyChanging = false
                 }
             }
         }
+    }
 
+    func unhideAll(comment: String, i: Int) {
+        if (!isCurrentlyChanging) {
+            isCurrentlyChanging = true
+            DispatchQueue.global(qos: .background).async {
+                let counter = self.unhideNumber(n: comment, iB: i)
+                self.doArrays()
+                DispatchQueue.main.async {
+                    self.tableView.beginUpdates()
+
+                    var indexPaths: [IndexPath] = []
+                    for row in (i + 1)...counter {
+                        indexPaths.append(IndexPath(row: row, section: 0))
+                    }
+                    self.tableView.insertRows(at: indexPaths, with: .automatic)
+                    self.tableView.endUpdates()
+                    self.isCurrentlyChanging = false
+                }
+            }
+        }
     }
 
     func parentHidden(comment: Object) -> Bool {
