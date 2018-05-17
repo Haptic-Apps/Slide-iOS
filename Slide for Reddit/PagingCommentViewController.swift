@@ -69,8 +69,9 @@ class PagingCommentViewController : SwipeDownModalVC, UIPageViewControllerDataSo
         for view in view.subviews {
             if (view is UIScrollView){
                 var scrollView = view as! UIScrollView
-               // swiper!.panRecognizer.require(toFail:scrollView.panGestureRecognizer)
+                //swiper!.panRecognizer.require(toFail:scrollView.panGestureRecognizer)
                 scrollView.panGestureRecognizer.require(toFail: swiper!.panRecognizer)
+                break;
             }
         }
         

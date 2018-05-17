@@ -128,7 +128,6 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
             } else {
                 VCPresenter.showVC(viewController: controller, popupIfPossible: true, parentNavigationController: navigationController, parentViewController: self)
             }
-            navigationController?.setNavigationBarHidden(false, animated: true)
         }
     }
 
@@ -141,7 +140,6 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
 
     func setNavColors() {
         if (navigationController != nil) {
-            navigationController?.setNavigationBarHidden(false, animated: true)
             self.navigationController?.navigationBar.shadowImage = UIImage()
             navigationController?.navigationBar.barTintColor = color
         }

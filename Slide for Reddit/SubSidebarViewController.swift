@@ -40,15 +40,6 @@ class SubSidebarViewController: MediaViewController, UIGestureRecognizerDelegate
     }
 
     override func loadView() {
-        let button = UIButtonWithContext.init(type: .custom)
-        button.parentController = navigationController!
-        button.imageView?.contentMode = UIViewContentMode.scaleAspectFit
-        button.setImage(UIImage.init(named: "close")!.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
-        button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-        button.addTarget(self, action: #selector(SubSidebarViewController.close(_:)), for: .touchUpInside)
-        let barButton = UIBarButtonItem.init(customView: button)
-
-        navigationItem.leftBarButtonItems = [barButton]
         navigationController?.navigationBar.isTranslucent = false
         title = subreddit!.displayName
         color = ColorUtil.getColorForSub(sub: subreddit!.displayName)

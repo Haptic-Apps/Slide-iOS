@@ -97,9 +97,10 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate  {
 
     func doDisplaySidebar(_ sub: Subreddit){
         inner = SubSidebarViewController(sub: sub, parent: parent!)
-        let nav = TapBehindModalViewController.init(rootViewController: inner!)
-        nav.modalPresentationStyle = .formSheet
-        parent?.present(nav, animated: true, completion:{})
+        inner!.view.clipsToBounds = false
+        inner!.view.layer.cornerRadius = 15
+        let bottomSheet: MDCBottomSheetController = MDCBottomSheetController(contentViewController: inner!)
+        parent?.present(bottomSheet, animated: true, completion: nil)
     }
 
     func subscribe(_ sub: Subreddit){

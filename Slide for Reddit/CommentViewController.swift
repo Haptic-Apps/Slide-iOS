@@ -1428,12 +1428,12 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             }
             if (parent != nil && parent is PagingCommentViewController) {
                 parent?.toolbarItems = items
-                parent?.navigationController?.toolbar.barTintColor = UIColor.black.withAlphaComponent(0.4)
+                parent?.navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
 
                 parent?.navigationController?.toolbar.tintColor = UIColor.white
             } else {
                 toolbarItems = items
-                navigationController?.toolbar.barTintColor = UIColor.black.withAlphaComponent(0.4)
+                navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
                 navigationController?.toolbar.tintColor = UIColor.white
             }
         }

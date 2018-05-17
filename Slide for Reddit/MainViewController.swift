@@ -32,11 +32,17 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
         self.navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: self.currentTitle)
+        if(tabBar != nil){
+            tabBar.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
+        }
         navigationController?.navigationBar.isTranslucent = false
 
-        navigationController?.toolbar.barTintColor = ColorUtil.foregroundColor
-
+        navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
         navigationController?.setToolbarHidden(false, animated: false)
+
+        if(SettingValues.viewType){
+            navigationController?.setNavigationBarHidden(true, animated: true)
+        }
 
         menuNav?.header.doColors()
         if (menuNav?.tableView != nil) {
@@ -123,6 +129,9 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                     completion: nil)
             self.doCurrentPage(index!)
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: subreddit)
+            if(tabBar != nil){
+                tabBar.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
+            }
         } else {
             show(RedditLink.getViewControllerForURL(urlS: URL.init(string: "/r/" + subreddit)!), sender: self)
         }
@@ -221,8 +230,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     var subs: UIView?
 
     func setupTabBar() {
-        tabBar = MDCTabBar.init(frame: CGRect.init(x: 0, y: self.view.frame.size.height - 45, width: self.view.frame.size.width, height: 45))
-        tabBar.backgroundColor = ColorUtil.foregroundColor
+        tabBar = MDCTabBar.init(frame: CGRect.init(x: 0, y: 20, width: self.view.frame.size.width, height: 84))
+        tabBar.backgroundColor = ColorUtil.getColorForSub(sub: MainViewController.current)
         tabBar.itemAppearance = .titles
 
         tabBar.selectedItemTintColor = ColorUtil.fontColor
@@ -494,6 +503,10 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
             self.navigationController?.navigationBar.shadowImage = UIImage()
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: self.currentTitle)
+            if(tabBar != nil){
+                tabBar.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
+            }
+
             navigationController?.navigationBar.isTranslucent = false
 
             menuNav?.header.doColors()
@@ -628,10 +641,10 @@ class IndicatorTemplate: NSObject, MDCTabBarIndicatorTemplate {
         let bounds = context.bounds;
         let attributes = MDCTabBarIndicatorAttributes()
         let underlineFrame = CGRect.init(x: bounds.minX,
-                y: -0,
+                y: bounds.height - 3,
                 width: bounds.width,
-                height: 2.0);
-        attributes.path = UIBezierPath.init(rect: underlineFrame)
+                height: 3.0);
+        attributes.path = UIBezierPath.init(roundedRect: underlineFrame, byRoundingCorners: UIRectCorner.init(arrayLiteral: UIRectCorner.topLeft, UIRectCorner.topRight), cornerRadii: CGSize.init(width: 8, height: 8))
         return attributes;
     }
 }
@@ -648,6 +661,7 @@ extension MainViewController: MDCTabBarDelegate {
                 completion: nil)
         self.doCurrentPage(tabBar.items.index(of: item)!)
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: self.currentTitle)
+        tabBar.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
 
     }
 }

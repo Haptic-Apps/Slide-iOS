@@ -15,6 +15,7 @@ import UZTextView
 import RealmSwift
 import MaterialComponents.MaterialSnackbar
 import MaterialComponents.MDCActivityIndicator
+import MaterialComponents.MaterialBottomSheet
 import TTTAttributedLabel
 import SloppySwiper
 import XLActionController
@@ -282,18 +283,16 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     }
 
     var isCollapsed = false
+    var isHiding = false
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
 
         let currentY = scrollView.contentOffset.y;
-        var didHide = false
-
         if (currentY > lastYUsed && currentY > 60) {
-            if (navigationController != nil && !(navigationController!.isToolbarHidden)) {
+            if (navigationController != nil && !isHiding && !(navigationController!.isToolbarHidden)) {
                 hideUI(inHeader: true)
-                didHide = true
             }
-        } else if ((currentY < lastYUsed + 20) && navigationController != nil && (navigationController!.isToolbarHidden)) {
+        } else if ((currentY < lastYUsed + 20) && !isHiding && navigationController != nil && (navigationController!.isToolbarHidden)) {
             showUI()
         }
         lastYUsed = currentY
@@ -301,12 +300,29 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     }
 
     func hideUI(inHeader: Bool) {
-        (navigationController)?.setNavigationBarHidden(true, animated: true)
+        isHiding = true
+        if(single || !SettingValues.viewType) {
+            (navigationController)?.setNavigationBarHidden(true, animated: true)
+        }
+        UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+            self.fab!.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
+        }, completion: {finished in
+            self.fab!.isHidden = true
+            self.isHiding = false
+        })
         (navigationController)?.setToolbarHidden(true, animated: true)
     }
 
     func showUI() {
-        (navigationController)?.setNavigationBarHidden(false, animated: true)
+        if(single || !SettingValues.viewType){
+            (navigationController)?.setNavigationBarHidden(false, animated: true)
+        }
+        self.fab!.isHidden = false
+
+        UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+            self.fab!.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
+        }, completion: nil)
+
         (navigationController)?.setToolbarHidden(false, animated: true)
     }
 
@@ -548,9 +564,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         super.viewDidLoad()
         flowLayout.delegate = self
         var frame = self.view.bounds
-        if (SettingValues.viewType) {
-            frame = CGRect.init(x: 0, y: 0, width: frame.size.width, height: frame.size.height - 40)
-        }
 
         self.tableView = UICollectionView(frame: frame, collectionViewLayout: flowLayout)
         self.view = UIView.init(frame: CGRect.zero)
@@ -851,7 +864,18 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        if(single || !SettingValues.viewType){
+            self.navigationController?.setNavigationBarHidden(false, animated: true)
+        }
         UIApplication.shared.statusBarStyle = .lightContent
+
+
+        UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+            self.fab!.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
+        }, completion: {finished in
+            self.fab!.isHidden = true
+        })
+
     }
 
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -980,8 +1004,8 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         //   ColorUtil.setBackgroundToolbar(toolbar: self.navigationController?.navigationBar)
 
         if (single && navigationController!.modalPresentationStyle != .pageSheet) {
-            let swiper = SloppySwiper.init(navigationController: self.navigationController!)
-            self.navigationController!.delegate = swiper!
+           // let swiper = SloppySwiper.init(navigationController: self.navigationController!)
+           // self.navigationController!.delegate = swiper!
         }
 
         self.view.backgroundColor = ColorUtil.backgroundColor
@@ -1177,6 +1201,18 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         }
         controller.setLinks(links: gLinks)
         show(controller, sender: self)
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if(fab != nil){
+            self.fab!.isHidden = false
+
+            UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+                self.fab!.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
+            }, completion: nil)
+
+        }
     }
 
     func shadowboxMode() {

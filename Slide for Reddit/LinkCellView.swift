@@ -92,7 +92,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var edit = UIImageView()
     var reply = UIImageView()
     var downvote = UIImageView()
-    var more = UIImageView()
+    //var more = UIImageView()
     var commenticon = UIImageView()
     var submissionicon = UIImageView()
     var del: LinkCellViewDelegate? = nil
@@ -144,10 +144,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
 
-        let pointForTargetViewmore: CGPoint = more.convert(point, from: self)
+      /*  let pointForTargetViewmore: CGPoint = more.convert(point, from: self)
         if more.bounds.contains(pointForTargetViewmore) {
             return more
-        }
+        }*/
         let pointForTargetViewdownvote: CGPoint = downvote.convert(point, from: self)
         if downvote.bounds.contains(pointForTargetViewdownvote) {
             return downvote
@@ -215,9 +215,59 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
     func estimateHeight(_ full: Bool, _ reset: Bool = false) -> CGFloat {
         if (estimatedHeight == 0 || reset) {
-            let he = (title.attributedText).boundingRect(with: CGSize.init(width: aspectWidth - 24 - (thumb ? (SettingValues.largerThumbnail ? 75 : 50) + 28 : 0), height: 10000), options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).height + 15
-            let thumbheight = CGFloat(SettingValues.largerThumbnail ? 75 : 50)
-            estimatedHeight = CGFloat((he < thumbheight && thumb || he < thumbheight && !big) ? thumbheight : he) + CGFloat(54 + (full ? -10 : 0)) + CGFloat(!hasText || !full ? 0 : (content?.textHeight)!) + CGFloat(big && !thumb ? (submissionHeight + 20) : 0)
+            var paddingTop = CGFloat(0)
+            var paddingBottom = CGFloat(2)
+            var paddingLeft = CGFloat(0)
+            var paddingRight = CGFloat(0)
+            var innerPadding = CGFloat(0)
+            if(SettingValues.postViewMode == .CARD && !full){
+                paddingTop = 5
+                paddingBottom = 5
+                paddingLeft = 5
+                paddingRight = 5
+            }
+
+            let actionbar = CGFloat(!full && SettingValues.hideButtonActionbar ? 0 : 24)
+
+            var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
+            let thumbheight = SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50)
+            let textHeight = (!hasText || !full) ? CGFloat(0) : CGFloat((content?.textHeight)!)
+
+            if(thumb){
+                imageHeight = thumbheight
+                innerPadding += 8 //between top and thumbnail
+                innerPadding += 18 //between label and bottom box
+                innerPadding += 8 //between box and end
+            } else if(big){
+                if (SettingValues.centerLeadImage || full) {
+                    innerPadding += 16 //between label
+                    innerPadding += 12 //between banner and box
+                } else {
+                    innerPadding += 8 //between banner and label
+                    innerPadding += 12 //between label and box
+                }
+
+                innerPadding += 8 //between box and end
+            } else {
+                innerPadding += 8
+                innerPadding += 5 //between label and body
+                innerPadding += 12 //between body and box
+                innerPadding += 8 //between box and end
+            }
+
+            var estimatedUsableWidth = aspectWidth - paddingLeft - paddingRight
+            if(thumb){
+                estimatedUsableWidth -= thumbheight //is the same as the width
+                estimatedUsableWidth -= 12 //between edge and thumb
+                estimatedUsableWidth -= 8 //between thumb and label
+            } else {
+                estimatedUsableWidth -= 24 //12 padding on either side
+            }
+
+            let estimatedTitleHeight = (title.attributedText).boundingRect(with: CGSize.init(width: estimatedUsableWidth, height: 10000), options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil)
+
+            let totalHeight = paddingTop + paddingBottom + estimatedTitleHeight.height + innerPadding + imageHeight + actionbar + textHeight
+            estimatedHeight = totalHeight
         }
         print("Estimate is \(estimatedHeight)")
         return estimatedHeight
@@ -245,30 +295,41 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         title.lineBreakMode = NSLineBreakMode.byWordWrapping
         title.font = FontGenerator.fontOfSize(size: 18, submission: true)
 
-        self.upvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 30, height: 20))
+        self.upvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20))
 
-        self.hide = UIImageView(frame: CGRect(x: 0, y: 0, width: 30, height: 20))
-        hide.image = UIImage.init(named: "hide")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 17, height: 17))
+        self.hide = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20))
+        hide.image = UIImage.init(named: "hide")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))
 
 
-        self.reply = UIImageView(frame: CGRect(x: 0, y: 0, width: 30, height: 20))
-        reply.image = UIImage.init(named: "reply")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 17, height: 17))
+        self.reply = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20))
+        reply.image = UIImage.init(named: "reply")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))
 
-        self.edit = UIImageView(frame: CGRect(x: 0, y: 0, width: 30, height: 20))
-        edit.image = UIImage.init(named: "edit")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 17, height: 17))
+        self.edit = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20))
+        edit.image = UIImage.init(named: "edit")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))
 
-        self.save = UIImageView(frame: CGRect(x: 0, y: 0, width: 30, height: 20))
+        self.save = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20))
 
-        self.downvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 30, height: 20))
+        self.downvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20))
 
-        self.more = UIImageView(frame: CGRect(x: 0, y: 0, width: 30, height: 20))
-        more.image = UIImage.init(named: "ic_more_vert_white")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 17, height: 17))
+        //self.more = UIImageView(frame: CGRect(x: 0, y: 0, width: 30, height: 20))
+        //more.image = UIImage.init(named: "ic_more_vert_white")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 17, height: 17))
 
-        self.commenticon = UIImageView(frame: CGRect(x: 0, y: 0, width: 12, height: 12))
-        commenticon.image = UIImage.init(named: "comments")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 17, height: 17))
+        self.commenticon = UIImageView(frame: CGRect(x: 0, y: 0, width: 10, height: 10))
+        commenticon.image = UIImage.init(named: "comments")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))
 
-        self.submissionicon = UIImageView(frame: CGRect(x: 0, y: 0, width: 12, height: 12))
-        submissionicon.image = UIImage.init(named: "upvote")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 17, height: 17))
+        self.submissionicon = UIImageView(frame: CGRect(x: 0, y: 0, width: 10, height: 10))
+        submissionicon.image = UIImage.init(named: "upvote")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))
+
+        submissionicon.contentMode = .scaleAspectFit
+        commenticon.contentMode = .scaleAspectFit
+
+
+        upvote.contentMode = .center
+        downvote.contentMode = .center
+        hide.contentMode = .center
+        reply.contentMode = .center
+        edit.contentMode = .center
+        save.contentMode = .center
 
         self.textView = TTTAttributedLabel(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
         self.textView.delegate = self
@@ -305,7 +366,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         b = info.withPadding(padding: UIEdgeInsets.init(top: 4, left: 10, bottom: 4, right: 10))
         b.backgroundColor = UIColor.black.withAlphaComponent(0.6)
         b.clipsToBounds = true
-        b.layer.cornerRadius = 4
+        b.layer.cornerRadius = 10
 
         self.box = UIStackView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
         self.buttons = UIStackView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
@@ -320,7 +381,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         upvote.translatesAutoresizingMaskIntoConstraints = false
         hide.translatesAutoresizingMaskIntoConstraints = false
         downvote.translatesAutoresizingMaskIntoConstraints = false
-        more.translatesAutoresizingMaskIntoConstraints = false
+        //more.translatesAutoresizingMaskIntoConstraints = false
         edit.translatesAutoresizingMaskIntoConstraints = false
         save.translatesAutoresizingMaskIntoConstraints = false
         reply.translatesAutoresizingMaskIntoConstraints = false
@@ -336,7 +397,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             addTouch(view: upvote, action: #selector(LinkCellView.upvote(sender:)))
             addTouch(view: reply, action: #selector(LinkCellView.reply(sender:)))
             addTouch(view: downvote, action: #selector(LinkCellView.downvote(sender:)))
-            addTouch(view: more, action: #selector(LinkCellView.more(sender:)))
+           // addTouch(view: more, action: #selector(LinkCellView.more(sender:)))
             addTouch(view: edit, action: #selector(LinkCellView.edit(sender:)))
             addTouch(view: hide, action: #selector(LinkCellView.hide(sender:)))
             addTouch = true
@@ -359,16 +420,16 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         buttons.addSubview(hide)
         buttons.addSubview(upvote)
         buttons.addSubview(downvote)
-        buttons.addSubview(more)
+        //buttons.addSubview(more)
         self.contentView.addSubview(box)
         self.contentView.addSubview(buttons)
 
         buttons.isUserInteractionEnabled = true
         bannerImage.contentMode = UIViewContentMode.scaleAspectFill
-        bannerImage.layer.cornerRadius = 5;
+        bannerImage.layer.cornerRadius = 15;
         bannerImage.clipsToBounds = true
         bannerImage.backgroundColor = UIColor.white
-        thumbImage.layer.cornerRadius = 5;
+        thumbImage.layer.cornerRadius = 10;
         thumbImage.backgroundColor = UIColor.white
         thumbImage.clipsToBounds = true;
         thumbImage.contentMode = .scaleAspectFill
@@ -389,7 +450,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     override func updateConstraints() {
         super.updateConstraints()
         var topmargin = 0
-        var bottommargin = 0
+        var bottommargin = 2
         var leftmargin = 0
         var rightmargin = 0
         var innerpadding = 0
@@ -401,15 +462,15 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             leftmargin = 5
             rightmargin = 5
             innerpadding = 5
-            radius = 10
-            self.contentView.layoutMargins = UIEdgeInsets.init(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin))
+            radius = 15
         }
+        self.contentView.layoutMargins = UIEdgeInsets.init(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin))
 
-        let metrics = ["horizontalMargin": 75, "top": topmargin, "bottom": bottommargin, "separationBetweenLabels": 0, "labelMinHeight": 75, "bannerHeight": submissionHeight, "left": leftmargin, "padding": innerpadding, "ishidden": !full && SettingValues.hideButtonActionbar ? 0 : 20, "ishiddeni": !full && SettingValues.hideButtonActionbar ? 0 : 12] as [String: Int]
+        let metrics = ["horizontalMargin": 75, "top": topmargin, "bottom": bottommargin, "separationBetweenLabels": 0, "labelMinHeight": 75, "bannerHeight": submissionHeight, "left": leftmargin, "padding": innerpadding, "ishidden": !full && SettingValues.hideButtonActionbar ? 0 : 24, "ishiddeni": !full && SettingValues.hideButtonActionbar ? 0 : 18] as [String: Int]
         let views = ["label": title, "body": textView, "image": thumbImage, "score": score, "comments": comments, "banner": bannerImage, "scorei": submissionicon, "commenti": commenticon, "box": box] as [String: Any]
-        let views2 = ["buttons": buttons, "upvote": upvote, "downvote": downvote, "hide": hide, "reply": reply, "edit": edit, "more": more, "save": save] as [String: Any]
+        let views2 = ["buttons": buttons, "upvote": upvote, "downvote": downvote, "hide": hide, "reply": reply, "edit": edit, "save": save] as [String: Any]
 
-        box.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[scorei(12)]-2-[score(>=20)]-8-[commenti(12)]-2-[comments(>=20)]",
+        box.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-16-[scorei(12)]-2-[score(>=20)]-8-[commenti(12)]-2-[comments(>=20)]",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
@@ -441,14 +502,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         self.contentView.layer.masksToBounds = true
 
         if (full) {
-            buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:\(AccountController.isLoggedIn && AccountController.currentName == link?.author ? "[edit(20)]-12-" : "")[reply(20)]-12-[save(20)]-12-[upvote(20)]-12-[downvote(20)]-12-[more(20)]-0-|",
+            buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:\(AccountController.isLoggedIn && AccountController.currentName == link?.author ? "[edit(24)]-16-" : "")[reply(24)]-16-[save(24)]-16-[upvote(24)]-16-[downvote(24)]-8-|",
                     options: NSLayoutFormatOptions(rawValue: 0),
                     metrics: metrics,
                     views: views2))
         } else {
-            let hideString = SettingValues.hideButton ? "[hide(20)]-12-" : ""
-            let saveString = SettingValues.saveButton ? "[save(20)]-12-" : ""
-            buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:\(hideString)\(saveString)[upvote(20)]-12-[downvote(20)]-12-[more(20)]-0-|",
+            let hideString = SettingValues.hideButton ? "[hide(24)]-12-" : ""
+            let saveString = SettingValues.saveButton ? "[save(24)]-12-" : ""
+            buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:\(hideString)\(saveString)[upvote(24)]-16-[downvote(24)]-8-|",
                     options: NSLayoutFormatOptions(rawValue: 0),
                     metrics: metrics,
                     views: views2))
@@ -472,10 +533,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 metrics: metrics,
                 views: views2))
 
-        buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[more(ishidden)]-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views2))
         buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[reply(ishidden)]-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
@@ -515,16 +572,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         let more = History.commentsSince(s: submission)
 
         comments.text = " \(submission.commentCount)" + (more > 0 ? " (+\(more))" : "")
-        if (!commentImage) {
-            comments.addImage(imageName: "comments", afterLabel: false)
-            commentImage = true
-        }
 
     }
-
-    var commentImage = true
-    var submissionImage = true
-
 
     var link: RSubmission?
     var aspectWidth = CGFloat(0)
@@ -601,7 +650,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             }
             edit.isHidden = true
         }
-        addTouch(view: more, action: #selector(LinkCellView.more(sender:)))
+        //addTouch(view: more, action: #selector(LinkCellView.more(sender:)))
 
         full = parent is CommentViewController
 
@@ -757,7 +806,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             bannerImage.sd_setImage(with: URL.init(string: ""))
         }
 
-        aspectWidth = self.contentView.frame.size.width
+        if(!full){
+            aspectWidth = self.contentView.frame.size.width
+        }
+
         if (!full) {
             let comment = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openComment(sender:)))
             comment.delegate = self
@@ -1380,13 +1432,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         let alertController: BottomSheetActionController = BottomSheetActionController()
         alertController.headerData = "Really delete your submission?"
 
-        alertController.addAction(Action(ActionData(title: "Yes", image: UIImage(named: "delete")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Yes", image: UIImage(named: "delete")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 17, height: 17))), style: .default, handler: { action in
             if let delegate = self.del {
                 delegate.deleteSelf(self)
             }
         }))
 
-        alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 17, height: 17))), style: .default, handler: { action in
         }))
 
 
@@ -1401,18 +1453,17 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
     func refresh() {
         let link = self.link!
-        upvote.image = UIImage.init(named: "upvote")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 17, height: 17))
-        save.image = UIImage.init(named: "save")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 17, height: 17))
-        downvote.image = UIImage.init(named: "downvote")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 17, height: 17))
+        upvote.image = UIImage.init(named: "upvote")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))
+        save.image = UIImage.init(named: "save")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))
+        downvote.image = UIImage.init(named: "downvote")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))
         var attrs: [String: Any] = [:]
         switch (ActionStates.getVoteDirection(s: link)) {
         case .down:
-            downvote.image = UIImage.init(named: "downvote")?.withColor(tintColor: ColorUtil.downvoteColor)
-
+            downvote.image = UIImage.init(named: "downvote")?.withColor(tintColor: ColorUtil.downvoteColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))
             attrs = ([NSForegroundColorAttributeName: ColorUtil.downvoteColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
             break
         case .up:
-            upvote.image = UIImage.init(named: "upvote")?.withColor(tintColor: ColorUtil.upvoteColor)
+            upvote.image = UIImage.init(named: "upvote")?.withColor(tintColor: ColorUtil.upvoteColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))
             attrs = ([NSForegroundColorAttributeName: ColorUtil.upvoteColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
             break
         default:
@@ -1459,7 +1510,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
 
         if (ActionStates.isSaved(s: link)) {
-            save.image = UIImage.init(named: "save")?.withColor(tintColor: GMColor.yellow500Color())
+            save.image = UIImage.init(named: "save")?.withColor(tintColor: GMColor.yellow500Color()).imageResize(sizeChange: CGSize.init(width: 20, height: 20))
         }
         if (History.getSeen(s: link) && !full) {
             self.title.alpha = 0.7
