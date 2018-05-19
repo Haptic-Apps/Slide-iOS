@@ -290,16 +290,16 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
             alertController.headerData = "Message from /u/\(self.message!.author)"
 
 
-            alertController.addAction(Action(ActionData(title: "/u/\(self.message!.author)'s profile", image: UIImage(named: "profile")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+            alertController.addAction(Action(ActionData(title: "/u/\(self.message!.author)'s profile", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { action in
 
                 let prof = ProfileViewController.init(name: self.message!.author)
                 VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController);
             }))
 
-            alertController.addAction(Action(ActionData(title: "Reply", image: UIImage(named: "reply")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+            alertController.addAction(Action(ActionData(title: "Reply", image: UIImage(named: "reply")!.menuIcon()), style: .default, handler: { action in
                 self.doReply()
             }))
-            alertController.addAction(Action(ActionData(title: ActionStates.isRead(s: self.message!) ? "Mark unread" : "Mark read", image: UIImage(named: "seen")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+            alertController.addAction(Action(ActionData(title: ActionStates.isRead(s: self.message!) ? "Mark unread" : "Mark read", image: UIImage(named: "seen")!.menuIcon()), style: .default, handler: { action in
                 if (ActionStates.isRead(s: self.message!)) {
                     let session = (UIApplication.shared.delegate as! AppDelegate).session
                     do {
@@ -332,12 +332,12 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
             }))
             if (self.message!.wasComment) {
 
-                alertController.addAction(Action(ActionData(title: "Full thead", image: UIImage(named: "comments")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+                alertController.addAction(Action(ActionData(title: "Full thead", image: UIImage(named: "comments")!.menuIcon()), style: .default, handler: { action in
                     let url = "https://www.reddit.com\(self.message!.context)"
                     VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: url)!), popupIfPossible: true, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController)
                 }))
             }
-            alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: nil))
+            alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: nil))
 
             VCPresenter.presentAlert(alertController, parentVC: parentViewController!)
 

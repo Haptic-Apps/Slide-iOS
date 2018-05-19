@@ -241,13 +241,13 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
         items.append(cb)
         items.append(sb)
         items.append(space)
-        menuB = UIBarButtonItem(image: UIImage(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 20, height: 20)), style: .plain, target: self, action: #selector(ShadowboxLinkViewController.showMenu(_:)))
+        menuB = UIBarButtonItem(image: UIImage(named: "ic_more_vert_white")?.toolbarIcon(), style: .plain, target: self, action: #selector(ShadowboxLinkViewController.showMenu(_:)))
         items.append(menuB)
-        doUpvoteB = UIBarButtonItem(image: UIImage(named: "upvote")?.imageResize(sizeChange: CGSize.init(width: 20, height: 20)), style: .plain, target: self, action: #selector(ShadowboxLinkViewController.showMenu(_:)))
+        doUpvoteB = UIBarButtonItem(image: UIImage(named: "upvote")?.toolbarIcon(), style: .plain, target: self, action: #selector(ShadowboxLinkViewController.showMenu(_:)))
         items.append(doUpvoteB)
-        doDownvoteB = UIBarButtonItem(image: UIImage(named: "downvote")?.imageResize(sizeChange: CGSize.init(width: 20, height: 20)), style: .plain, target: self, action: #selector(ShadowboxLinkViewController.showMenu(_:)))
+        doDownvoteB = UIBarButtonItem(image: UIImage(named: "downvote")?.toolbarIcon(), style: .plain, target: self, action: #selector(ShadowboxLinkViewController.showMenu(_:)))
         items.append(doDownvoteB)
-        doSaveB = UIBarButtonItem(image: UIImage(named: "star")?.imageResize(sizeChange: CGSize.init(width: 20, height: 20)), style: .plain, target: self, action: #selector(ShadowboxLinkViewController.showMenu(_:)))
+        doSaveB = UIBarButtonItem(image: UIImage(named: "star")?.toolbarIcon(), style: .plain, target: self, action: #selector(ShadowboxLinkViewController.showMenu(_:)))
         items.append(doSaveB)
 
         toolbar.items = items

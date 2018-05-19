@@ -110,43 +110,37 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
         self.subscribe.accessoryType = .none
         self.subscribe.backgroundColor = ColorUtil.foregroundColor
         self.subscribe.textLabel?.textColor = ColorUtil.fontColor
-        self.subscribe.imageView?.image = UIImage.init(named: "subbed")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
-        self.subscribe.imageView?.tintColor = ColorUtil.fontColor
+        self.subscribe.imageView?.image = UIImage.init(named: "subbed")?.menuIcon().withRenderingMode(.alwaysTemplate)
 
         self.theme.textLabel?.text = "Subreddit theme"
         self.theme.accessoryType = .none
         self.theme.backgroundColor = ColorUtil.foregroundColor
         self.theme.textLabel?.textColor = ColorUtil.fontColor
-        self.theme.imageView?.image = UIImage.init(named: "palette")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
-        self.theme.imageView?.tintColor = ColorUtil.fontColor
+        self.theme.imageView?.image = UIImage.init(named: "palette")?.menuIcon().withRenderingMode(.alwaysTemplate)
 
         self.submit.textLabel?.text = "New post"
         self.submit.accessoryType = .none
         self.submit.backgroundColor = ColorUtil.foregroundColor
         self.submit.textLabel?.textColor = ColorUtil.fontColor
-        self.submit.imageView?.image = UIImage.init(named: "edit")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
-        self.submit.imageView?.tintColor = ColorUtil.fontColor
+        self.submit.imageView?.image = UIImage.init(named: "edit")?.menuIcon().withRenderingMode(.alwaysTemplate)
 
         self.wiki.textLabel?.text = "Subreddit wiki"
         self.wiki.accessoryType = .none
         self.wiki.backgroundColor = ColorUtil.foregroundColor
         self.wiki.textLabel?.textColor = ColorUtil.fontColor
-        self.wiki.imageView?.image = UIImage.init(named: "wiki")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
-        self.wiki.imageView?.tintColor = ColorUtil.fontColor
+        self.wiki.imageView?.image = UIImage.init(named: "wiki")?.menuIcon().withRenderingMode(.alwaysTemplate)
 
         self.sorting.textLabel?.text = "Default subreddit sorting"
         self.sorting.accessoryType = .none
         self.sorting.backgroundColor = ColorUtil.foregroundColor
         self.sorting.textLabel?.textColor = ColorUtil.fontColor
-        self.sorting.imageView?.image = UIImage.init(named: "ic_sort_white")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
-        self.sorting.imageView?.tintColor = ColorUtil.fontColor
+        self.sorting.imageView?.image = UIImage.init(named: "ic_sort_white")?.menuIcon().withRenderingMode(.alwaysTemplate)
 
         self.mods.textLabel?.text = "Subreddit moderators"
         self.mods.accessoryType = .none
         self.mods.backgroundColor = ColorUtil.foregroundColor
         self.mods.textLabel?.textColor = ColorUtil.fontColor
-        self.mods.imageView?.image = UIImage.init(named: "mod")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
-        self.mods.imageView?.tintColor = ColorUtil.fontColor
+        self.mods.imageView?.image = UIImage.init(named: "mod")?.menuIcon().withRenderingMode(.alwaysTemplate)
 
         self.desc = UZTextView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
         self.desc.delegate = self

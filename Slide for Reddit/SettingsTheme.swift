@@ -152,28 +152,28 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         self.primary.accessoryType = .none
         self.primary.backgroundColor = ColorUtil.foregroundColor
         self.primary.textLabel?.textColor = ColorUtil.fontColor
-        self.primary.imageView?.image = UIImage.init(named: "palette")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
+        self.primary.imageView?.image = UIImage.init(named: "palette")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
         self.primary.imageView?.tintColor = ColorUtil.fontColor
 
         self.accent.textLabel?.text = "Accent color"
         self.accent.accessoryType = .none
         self.accent.backgroundColor = ColorUtil.foregroundColor
         self.accent.textLabel?.textColor = ColorUtil.fontColor
-        self.accent.imageView?.image = UIImage.init(named: "accent")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
+        self.accent.imageView?.image = UIImage.init(named: "accent")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
         self.accent.imageView?.tintColor = ColorUtil.fontColor
 
         self.base.textLabel?.text = "Base theme"
         self.base.accessoryType = .none
         self.base.backgroundColor = ColorUtil.foregroundColor
         self.base.textLabel?.textColor = ColorUtil.fontColor
-        self.base.imageView?.image = UIImage.init(named: "colors")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
+        self.base.imageView?.image = UIImage.init(named: "colors")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
         self.base.imageView?.tintColor = ColorUtil.fontColor
 
         self.night.textLabel?.text = "Night theme"
         self.night.accessoryType = .none
         self.night.backgroundColor = ColorUtil.foregroundColor
         self.night.textLabel?.textColor = ColorUtil.fontColor
-        self.night.imageView?.image = UIImage.init(named: "night")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
+        self.night.imageView?.image = UIImage.init(named: "night")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
         self.night.imageView?.tintColor = ColorUtil.fontColor
 
 

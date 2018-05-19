@@ -323,7 +323,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate, YMSPhotoPi
 
         let send = UIButton.init(type: .custom)
         send.imageView?.contentMode = UIViewContentMode.scaleAspectFit
-        send.setImage(UIImage.init(named: "send")!.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
+        send.setImage(UIImage.init(named: "send")!.navIcon(), for: UIControlState.normal)
         send.addTarget(self, action: #selector(self.send(_:)), for: UIControlEvents.touchUpInside)
         send.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let sendB = UIBarButtonItem.init(customView: send)
@@ -331,7 +331,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate, YMSPhotoPi
 
         let button = UIButtonWithContext.init(type: .custom)
         button.imageView?.contentMode = UIViewContentMode.scaleAspectFit
-        button.setImage(UIImage.init(named: "close")!.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
+        button.setImage(UIImage.init(named: "close")!.navIcon(), for: UIControlState.normal)
         button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         button.addTarget(self, action: #selector(self.close(_:)), for: .touchUpInside)
 

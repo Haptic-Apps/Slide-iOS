@@ -10,7 +10,6 @@ import UIKit
 import reddift
 import SDWebImage
 import SideMenu
-import KCFloatingActionButton
 import UZTextView
 import RealmSwift
 import MaterialComponents.MaterialSnackbar
@@ -21,7 +20,7 @@ import SloppySwiper
 import XLActionController
 import MKColorPicker
 
-class SingleSubredditViewController: MediaViewController, UICollectionViewDelegate, UICollectionViewDataSource, LinkCellViewDelegate, ColorPickerViewDelegate, KCFloatingActionButtonDelegate, WrappingFlowLayoutDelegate {
+class SingleSubredditViewController: MediaViewController, UICollectionViewDelegate, UICollectionViewDataSource, LinkCellViewDelegate, ColorPickerViewDelegate, WrappingFlowLayoutDelegate {
 
     let maxHeaderHeight: CGFloat = 120;
     let minHeaderHeight: CGFloat = 56;
@@ -199,7 +198,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             let framesetter = CTFramesetterCreateWithAttributedString(CachedTitle.getTitle(submission: submission, full: false, false))
             let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude), nil)
 
-            let totalHeight = paddingTop + paddingBottom + (thumb ? max(ceil(textSize.height), imageHeight): ceil(textSize.height) + imageHeight) + innerPadding + actionbar + textHeight
+            let totalHeight = paddingTop + paddingBottom + (thumb ? max(ceil(textSize.height), imageHeight) : ceil(textSize.height) + imageHeight) + innerPadding + actionbar + textHeight
             var estimatedHeight = totalHeight
 
             return CGSize(width: itemWidth, height: estimatedHeight)
@@ -346,15 +345,15 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
     func hideUI(inHeader: Bool) {
         isHiding = true
-        if(single || !SettingValues.viewType) {
+        if (single || !SettingValues.viewType) {
             (navigationController)?.setNavigationBarHidden(true, animated: true)
         }
         UIApplication.shared.statusBarView?.backgroundColor = ColorUtil.getColorForSub(sub: self.sub)
 
         UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
-            self.fab!.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
-        }, completion: {finished in
-            self.fab!.isHidden = true
+            SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
+        }, completion: { finished in
+            SingleSubredditViewController.fab?.isHidden = true
             self.isHiding = false
 
         })
@@ -362,13 +361,13 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     }
 
     func showUI() {
-        if(single || !SettingValues.viewType){
+        if (single || !SettingValues.viewType) {
             (navigationController)?.setNavigationBarHidden(false, animated: true)
         }
-        self.fab!.isHidden = false
+        SingleSubredditViewController.fab?.isHidden = false
 
         UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
-            self.fab!.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
+            SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
         }, completion: { finished in
 
         })
@@ -384,41 +383,48 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         alertController.headerData = "Post by /u/\(link.author)"
 
 
-        alertController.addAction(Action(ActionData(title: "/u/\(link.author)'s profile", image: UIImage(named: "profile")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "/u/\(link.author)'s profile", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { action in
 
             let prof = ProfileViewController.init(name: link.author)
             VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
         }))
-        alertController.addAction(Action(ActionData(title: "/r/\(link.subreddit)", image: UIImage(named: "subs")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "/r/\(link.subreddit)", image: UIImage(named: "subs")!.menuIcon()), style: .default, handler: { action in
 
             let sub = SingleSubredditViewController.init(subName: link.subreddit, single: true)
             VCPresenter.showVC(viewController: sub, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
 
         }))
 
-        alertController.addAction(Action(ActionData(title: "Share comment permalink", image: UIImage(named: "link")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Share comment permalink", image: UIImage(named: "link")!.menuIcon()), style: .default, handler: { action in
             let activityViewController = UIActivityViewController(activityItems: [link.permalink], applicationActivities: nil)
             self.present(activityViewController, animated: true, completion: {})
         }))
         if (AccountController.isLoggedIn) {
-            alertController.addAction(Action(ActionData(title: "Save", image: UIImage(named: "save")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+            alertController.addAction(Action(ActionData(title: "Save", image: UIImage(named: "save")!.menuIcon()), style: .default, handler: { action in
                 self.save(cell)
             }))
+
+            alertController.addAction(Action(ActionData(title: "Crosspost", image: UIImage(named: "crosspost")!.menuIcon()), style: .default, handler: { action in
+                self.crosspost(cell.link!)
+            }))
+
+            alertController.addAction(Action(ActionData(title: "Report", image: UIImage(named: "hide")!.menuIcon()), style: .default, handler: { action in
+                self.report(cell.link!)
+            }))
         }
-        alertController.addAction(Action(ActionData(title: "Report", image: UIImage(named: "hide")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
-            self.report(cell.link!)
-        }))
-        alertController.addAction(Action(ActionData(title: "Hide", image: UIImage(named: "hide")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+
+
+        alertController.addAction(Action(ActionData(title: "Hide", image: UIImage(named: "hide")!.menuIcon()), style: .default, handler: { action in
             self.hide(cell)
         }))
         let open = OpenInChromeController.init()
         if (open.isChromeInstalled()) {
 
-            alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "link")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+            alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "link")!.menuIcon()), style: .default, handler: { action in
                 open.openInChrome(link.url!, callbackURL: nil, createNewTab: true)
             }))
         }
-        alertController.addAction(Action(ActionData(title: "Open in Safari", image: UIImage(named: "world")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Open in Safari", image: UIImage(named: "world")!.menuIcon()), style: .default, handler: { action in
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(link.url!, options: [:], completionHandler: nil)
             } else {
@@ -426,23 +432,23 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             }
         }))
 
-        alertController.addAction(Action(ActionData(title: "Share content", image: UIImage(named: "link")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Share content", image: UIImage(named: "link")!.menuIcon()), style: .default, handler: { action in
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [link.url!], applicationActivities: nil);
             let currentViewController: UIViewController = UIApplication.shared.keyWindow!.rootViewController!
             currentViewController.present(activityViewController, animated: true, completion: nil);
         }))
-        alertController.addAction(Action(ActionData(title: "Share comments", image: UIImage(named: "comments")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Share comments", image: UIImage(named: "comments")!.menuIcon()), style: .default, handler: { action in
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [URL.init(string: "https://reddit.com" + link.permalink)!], applicationActivities: nil);
             let currentViewController: UIViewController = UIApplication.shared.keyWindow!.rootViewController!
             currentViewController.present(activityViewController, animated: true, completion: nil);
         }))
 
-        alertController.addAction(Action(ActionData(title: "Filter this content", image: UIImage(named: "filter")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Filter this content", image: UIImage(named: "filter")!.menuIcon()), style: .default, handler: { action in
             self.showFilterMenu(link)
         }))
 
 
-        alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: nil))
+        alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: nil))
 
         //todo make this work on ipad
         self.present(alertController, animated: true, completion: nil)
@@ -482,7 +488,96 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         self.present(alert, animated: true, completion: nil)
     }
 
+    func crosspost(_ thing: RSubmission, _ title: String? = nil, _ subreddit: String? = nil, _ error: String? = "") {
 
+        let alert = UIAlertController(title: "Crosspost", message: error, preferredStyle: .alert)
+
+        alert.addTextField { (textField) in
+            textField.placeholder = "Subreddit name"
+            if (subreddit != nil) {
+                textField.text = subreddit!
+            }
+        }
+        alert.addTextField { (textField) in
+            textField.text = thing.title
+            if (title != nil) {
+                textField.text = title!
+            }
+        }
+        alert.addAction(UIAlertAction(title: "Post", style: .default, handler: { [weak alert] (_) in
+            let subField = alert?.textFields![0] // Force unwrapping because we know it exists.
+            let titleField = alert?.textFields![1]
+
+            if (subField!.text!.isEmpty || titleField!.text!.isEmpty) {
+                if (subField!.text!.isEmpty) {
+                    self.crosspost(thing, titleField!.text, subField!.text, "Subreddit must not be empty!")
+                } else {
+                    self.crosspost(thing, titleField!.text, subField!.text, "Title must not be empty!")
+                }
+            } else {
+                do {
+                    try self.session?.crosspost(Link.init(id: thing.id), subreddit: subField!.text!, newTitle: titleField!.text!) { result in
+                        switch result {
+                        case .failure(let error):
+                            print(error)
+                            DispatchQueue.main.async {
+                                self.crosspost(thing, titleField!.text, subField!.text, error.localizedDescription)
+                            }
+                            break
+                        case .success(let submission):
+                            if let error = self.getError(submission) {
+                                DispatchQueue.main.async {
+                                    self.crosspost(thing, titleField!.text, subField!.text, error)
+                                }
+                            } else {
+                                let string = self.getIDString(submission).value!
+                                print("Got \(string)")
+                                DispatchQueue.main.async {
+                                    alert?.dismiss(animated: true)
+                                    VCPresenter.openRedditLink("https://redd.it/\(string)", self.navigationController, self)
+                                }
+                            }
+
+                        }
+                    }
+
+                } catch {
+
+                }
+            }
+        }))
+
+        alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
+
+        //todo make this work on ipad
+        self.present(alert, animated: true, completion: nil)
+    }
+
+    func getIDString(_ json: JSONAny) -> reddift.Result<String> {
+        if let json = json as? JSONDictionary {
+            if let j = json["json"] as? JSONDictionary {
+                if let data = j["data"] as? JSONDictionary {
+                    if let iden = data["id"] as? String {
+                        return Result(value: iden)
+                    }
+                }
+            }
+        }
+        return Result(error: ReddiftError.identifierOfCAPTCHAIsMalformed as NSError)
+    }
+
+    func getError(_ json: JSONAny) -> String? {
+        if let json = json as? JSONDictionary, let j = json["json"] as? JSONDictionary, let errors = j["errors"] as? JSONArray {
+            // Error happened.
+            for obj in errors {
+                if let errorStrings = obj as? [String] {
+                    print(errorStrings)
+                    return errorStrings[1]
+                }
+            }
+        }
+        return nil
+    }
     func showFilterMenu(_ link: RSubmission) {
         let actionSheetController: UIAlertController = UIAlertController(title: "What would you like to filter?", message: "", preferredStyle: .alert)
 
@@ -554,28 +649,28 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     }
 
     func show(_ animated: Bool = true) {
-        if (fab != nil) {
+        if (SingleSubredditViewController.fab != nil) {
             if animated == true {
-                fab!.isHidden = false
+                SingleSubredditViewController.fab!.isHidden = false
                 UIView.animate(withDuration: 0.3, animations: { () -> Void in
-                    self.fab!.alpha = 1
+                    SingleSubredditViewController.fab!.alpha = 1
                 })
             } else {
-                fab!.isHidden = false
+                SingleSubredditViewController.fab!.isHidden = false
             }
         }
     }
 
     func hideFab(_ animated: Bool = true) {
-        if (fab != nil) {
+        if (SingleSubredditViewController.fab != nil) {
             if animated == true {
                 UIView.animate(withDuration: 0.3, animations: { () -> Void in
-                    self.fab!.alpha = 0
+                    SingleSubredditViewController.fab!.alpha = 0
                 }, completion: { finished in
-                    self.fab!.isHidden = true
+                    SingleSubredditViewController.fab!.isHidden = true
                 })
             } else {
-                fab!.isHidden = true
+                SingleSubredditViewController.fab!.isHidden = true
             }
         }
     }
@@ -614,7 +709,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         super.viewDidLoad()
         flowLayout.delegate = self
         var frame = self.view.bounds
-
         self.tableView = UICollectionView(frame: frame, collectionViewLayout: flowLayout)
         self.view = UIView.init(frame: CGRect.zero)
 
@@ -623,67 +717,65 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         self.tableView.delegate = self
         self.tableView.dataSource = self
         refreshControl = UIRefreshControl()
-        indicator = MDCActivityIndicator.init(frame: CGRect.init(x: CGFloat(0), y: CGFloat(0), width: CGFloat(80), height: CGFloat(80)))
-        indicator.strokeWidth = 5
-        indicator.radius = 20
-        indicator.indicatorMode = .indeterminate
-        indicator.cycleColors = [ColorUtil.getColorForSub(sub: sub), ColorUtil.accentColorForSub(sub: sub)]
 
         reloadNeedingColor()
-        //todo check for fab
-        setupFab()
-
     }
 
-    func setupFab(){
-        if(fab != nil){
-            fab!.removeFromSuperview()
-            fab = nil
+    func setupFab() {
+        if (SingleSubredditViewController.fab != nil) {
+            SingleSubredditViewController.fab!.removeFromSuperview()
+            SingleSubredditViewController.fab = nil
         }
-        fab = UIButton(frame: CGRect.init(x: (tableView.frame.size.width / 2) - 70, y:-20, width: 140, height: 45))
-        fab!.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
-        fab!.layer.cornerRadius = 22.5
-        fab!.clipsToBounds = true
+        SingleSubredditViewController.fab = UIButton(frame: CGRect.init(x: (tableView.frame.size.width / 2) - 70, y: -20, width: 140, height: 45))
+        SingleSubredditViewController.fab!.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
+        SingleSubredditViewController.fab!.layer.cornerRadius = 22.5
+        SingleSubredditViewController.fab!.clipsToBounds = true
         var title = "  " + SettingValues.fabType.getTitle();
-        fab!.setTitle(title, for: .normal)
-        fab!.leftImage(image: (UIImage.init(named: SettingValues.fabType.getPhoto())?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)))!, renderMode: UIImageRenderingMode.alwaysOriginal)
-        fab!.elevate(elevation: 2)
-        fab!.titleLabel?.textAlignment = .center
-        fab!.titleLabel?.font = UIFont.systemFont(ofSize: 14)
+        SingleSubredditViewController.fab!.setTitle(title, for: .normal)
+        SingleSubredditViewController.fab!.leftImage(image: (UIImage.init(named: SettingValues.fabType.getPhoto())?.navIcon())!, renderMode: UIImageRenderingMode.alwaysOriginal)
+        SingleSubredditViewController.fab!.elevate(elevation: 2)
+        SingleSubredditViewController.fab!.titleLabel?.textAlignment = .center
+        SingleSubredditViewController.fab!.titleLabel?.font = UIFont.systemFont(ofSize: 14)
 
-        var width = title.size(with: fab!.titleLabel!.font).width + CGFloat(65)
-        fab!.frame = CGRect.init(x:  (tableView.frame.size.width / 2) - (width / 2), y: -20, width: width, height:  CGFloat(45))
+        var width = title.size(with: SingleSubredditViewController.fab!.titleLabel!.font).width + CGFloat(65)
+        SingleSubredditViewController.fab!.frame = CGRect.init(x: (tableView.frame.size.width / 2) - (width / 2), y: -20, width: width, height: CGFloat(45))
 
-        fab!.titleEdgeInsets = UIEdgeInsets.init(top: 0, left: 20, bottom: 0, right: 20)
-        navigationController?.toolbar.addSubview(fab!)
+        SingleSubredditViewController.fab!.titleEdgeInsets = UIEdgeInsets.init(top: 0, left: 20, bottom: 0, right: 20)
+        navigationController?.toolbar.addSubview(SingleSubredditViewController.fab!)
 
-        fab!.addTapGestureRecognizer {
-            switch(SettingValues.fabType){
+        SingleSubredditViewController.fab!.addTapGestureRecognizer {
+            switch (SettingValues.fabType) {
             case .SIDEBAR:
                 self.doDisplaySidebar()
-            break
+                break
             case .NEW_POST:
-                self.newPost(self.fab!)
-            break
+                self.newPost(SingleSubredditViewController.fab!)
+                break
             case .SHADOWBOX:
                 self.shadowboxMode()
-            break
+                break
             case .HIDE_READ:
                 self.hideReadPosts()
-            break
+                break
             case .GALLERY:
                 self.galleryMode()
-            break
+                break
             }
         }
 
-        fab!.addLongTapGestureRecognizer {
+        SingleSubredditViewController.fab!.addLongTapGestureRecognizer {
             self.changeFab()
         }
 
+        SingleSubredditViewController.fab!.transform = CGAffineTransform.init(scaleX: 0.001, y: 0.001)
+        UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+            SingleSubredditViewController.fab!.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
+        }, completion: nil)
+
+
     }
 
-    func changeFab(){
+    func changeFab() {
         let actionSheetController: UIAlertController = UIAlertController(title: "Change button type", message: "", preferredStyle: .alert)
 
         let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
@@ -718,15 +810,13 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         tableView.addSubview(refreshControl) // not required when using UITableViewController
 
         self.automaticallyAdjustsScrollViewInsets = false
-        let metrics = ["bottommargin": SettingValues.viewType ? 50 : 10]
-    
 
 
         self.tableView.register(BannerLinkCellView.classForCoder(), forCellWithReuseIdentifier: "banner")
         self.tableView.register(ThumbnailLinkCellView.classForCoder(), forCellWithReuseIdentifier: "thumb")
         self.tableView.register(TextLinkCellView.classForCoder(), forCellWithReuseIdentifier: "text")
 
-        self.tableView.contentInset = UIEdgeInsets.init(top: 0, left: 0, bottom: 40, right: 0)
+        self.tableView.contentInset = UIEdgeInsets.init(top: (SettingValues.viewType && !single) ? 52 : 0, left: 0, bottom: 0, right: 0)
 
         session = (UIApplication.shared.delegate as! AppDelegate).session
 
@@ -738,19 +828,13 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         if (single) {
 
             let sort = UIButton.init(type: .custom)
-            sort.setImage(UIImage.init(named: "ic_sort_white")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
+            sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControlState.normal)
             sort.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
             sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let sortB = UIBarButtonItem.init(customView: sort)
 
-            let shadowbox = UIButton.init(type: .custom)
-            shadowbox.setImage(UIImage.init(named: "shadowbox")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
-            shadowbox.addTarget(self, action: #selector(self.shadowboxMode), for: UIControlEvents.touchUpInside)
-            shadowbox.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-            let sB = UIBarButtonItem.init(customView: shadowbox)
-
             let more = UIButton.init(type: .custom)
-            more.setImage(UIImage.init(named: "moreh")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
+            more.setImage(UIImage.init(named: "moreh")?.menuIcon(), for: UIControlState.normal)
             more.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControlEvents.touchUpInside)
             more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let moreB = UIBarButtonItem.init(customView: more)
@@ -806,7 +890,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                                             Subscriptions.addHistorySub(name: AccountController.currentName, sub: self.subInfo!.displayName)
                                         }
                                     }
-                                }    
+                                }
                                 print("Loading")
                                 self.load(reset: true)
                             }
@@ -817,7 +901,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             } catch {
             }
         }
-        
+
     }
 
     func exit() {
@@ -958,7 +1042,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                 indexPaths.append(IndexPath(row: count, section: 0))
                 links.remove(at: count)
             } else {
-                count+=1
+                count += 1
             }
         }
 
@@ -969,21 +1053,24 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         }, completion: nil)
     }
 
-    var fab: UIButton?
+    static var fab: UIButton?
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        if(single || !SettingValues.viewType){
+        if (single || !SettingValues.viewType) {
             self.navigationController?.setNavigationBarHidden(false, animated: true)
         }
         UIApplication.shared.statusBarStyle = .lightContent
-        UIApplication.shared.statusBarView?.backgroundColor = .clear
+
+        if (single) {
+            UIApplication.shared.statusBarView?.backgroundColor = .clear
+        }
 
 
         UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
-            self.fab!.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
-        }, completion: {finished in
-            self.fab!.isHidden = true
+            SingleSubredditViewController.fab!.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
+        }, completion: { finished in
+            SingleSubredditViewController.fab!.isHidden = true
         })
 
     }
@@ -1089,7 +1176,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
 
     var first = true
-    var indicator: MDCActivityIndicator = MDCActivityIndicator()
+    var indicator: MDCActivityIndicator?
 
 
     override func viewWillAppear(_ animated: Bool) {
@@ -1099,8 +1186,11 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             self.tableView.reloadData()
         }
 
-        navigationController?.setNavigationBarHidden(false, animated: true)
-        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub)
+
+        if (single || !SettingValues.viewType) {
+            navigationController?.setNavigationBarHidden(false, animated: true)
+            navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub)
+        }
 
 
         self.automaticallyAdjustsScrollViewInsets = false
@@ -1117,8 +1207,8 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         }
 
         if (single && navigationController!.modalPresentationStyle != .pageSheet) {
-           // let swiper = SloppySwiper.init(navigationController: self.navigationController!)
-           // self.navigationController!.delegate = swiper!
+            // let swiper = SloppySwiper.init(navigationController: self.navigationController!)
+            // self.navigationController!.delegate = swiper!
         }
 
         self.view.backgroundColor = ColorUtil.backgroundColor
@@ -1126,35 +1216,10 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
     }
 
-    func createDotHeader() {
-        let label = UILabel()
-            label.text = "        \(sub)"
-        
-        label.textColor = ColorUtil.fontColor
-        label.adjustsFontSizeToFitWidth = true
-        label.font = UIFont.boldSystemFont(ofSize: 20)
-
-        sideView = UIView()
-        sideView = UIView(frame: CGRect(x: 0, y: 0, width: 25, height: 25))
-        sideView.backgroundColor = ColorUtil.getColorForSub(sub: sub)
-        sideView.translatesAutoresizingMaskIntoConstraints = false
-        
-        label.addSubview(sideView)
-        
-        sideView.layer.cornerRadius = 12.5
-        sideView.clipsToBounds = true
-
-        label.sizeToFit()
-        label.frame = CGRect.init(x: 10, y: -40, width: label.frame.size.width, height: label.frame.size.height)
-        self.tableView.addSubview(label)
-        self.tableView.contentInset = UIEdgeInsets.init(top: 25, left: 0, bottom: 0, right: 0)
-    }
-
     func reloadDataReset() {
         heightAtIndexPath.removeAllObjects()
         tableView.reloadData()
         tableView.layoutIfNeeded()
-        tableView.contentOffset = CGPoint.init(x: 0, y: 56)
     }
 
     func showMoreNone(_ sender: AnyObject) {
@@ -1189,7 +1254,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
     }
 
-    func doDisplaySidebar(){
+    func doDisplaySidebar() {
         Sidebar.init(parent: self, subname: self.sub).displaySidebar()
     }
 
@@ -1272,7 +1337,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
     }
 
-    func newPost(_ sender : AnyObject){
+    func newPost(_ sender: AnyObject) {
         let actionSheetController2: UIAlertController = UIAlertController(title: "", message: "", preferredStyle: .actionSheet)
 
         var cancelActionButton2: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
@@ -1330,14 +1395,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         UIApplication.shared.statusBarView?.backgroundColor = ColorUtil.getColorForSub(sub: self.sub)
         (navigationController)?.setToolbarHidden(false, animated: true)
 
-        if(fab != nil){
-            self.fab!.isHidden = false
-
-            UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
-                self.fab!.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
-            }, completion: nil)
-
-        }
+        setupFab()
     }
 
     func shadowboxMode() {
@@ -1532,11 +1590,11 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         load(reset: true)
     }
 
-    func deleteSelf(_ cell: LinkCellView){
+    func deleteSelf(_ cell: LinkCellView) {
         do {
             try session?.deleteCommentOrLink(cell.link!.getId(), completion: { (stream) in
-                DispatchQueue.main.async{
-                    if(self.navigationController!.modalPresentationStyle == .formSheet){
+                DispatchQueue.main.async {
+                    if (self.navigationController!.modalPresentationStyle == .formSheet) {
                         self.navigationController!.dismiss(animated: true)
                     } else {
                         self.navigationController!.popViewController(animated: true)
@@ -1554,9 +1612,17 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     func load(reset: Bool) {
         if (!loading) {
             if (!loaded) {
-                indicator.center = CGPoint.init(x: self.view.frame.size.width / 2, y: self.view.frame.size.height / 2)
-                self.tableView.addSubview(indicator)
-                indicator.startAnimating()
+                if (indicator == nil) {
+                    indicator = MDCActivityIndicator.init(frame: CGRect.init(x: CGFloat(0), y: CGFloat(0), width: CGFloat(80), height: CGFloat(80)))
+                    indicator?.strokeWidth = 5
+                    indicator?.radius = 20
+                    indicator?.indicatorMode = .indeterminate
+                    indicator?.cycleColors = [ColorUtil.getColorForSub(sub: sub), ColorUtil.accentColorForSub(sub: sub)]
+                    let center = CGPoint.init(x: self.tableView.center.x, y: CGFloat(tableView.bounds.height / 2))
+                    indicator?.center = center
+                    self.tableView.addSubview(indicator!)
+                    indicator?.startAnimating()
+                }
             }
             loaded = true
 
@@ -1592,7 +1658,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                                     self.reloadDataReset()
                                 }
                                 self.refreshControl.endRefreshing()
-                                self.indicator.stopAnimating()
+                                self.indicator?.stopAnimating()
                                 self.tableView.reloadSections(IndexSet(integersIn: 0...0))
                                 self.loading = false
                                 self.nomore = true
@@ -1634,7 +1700,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                             CachedTitle.addTitle(s: newRS)
                         }
                         let values = PostFilter.filter(converted, previous: self.links)
-                        print("Link size is \(self.links.count) and values is \(values.count)")
                         self.links += values
                         self.paginator = listing.paginator
                         self.nomore = !listing.paginator.hasMore() || values.isEmpty
@@ -1654,22 +1719,20 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                         DispatchQueue.main.async {
                             var paths = [IndexPath]()
                             for i in before...(self.links.count - 1) {
-                                print("Inserting to \(i)")
                                 paths.append(IndexPath.init(item: i, section: 0))
                             }
-                            print("Size is \(self.links.count) and before is \(before)")
 
                             if (before == 0) {
                                 self.flowLayout.reset()
-                                self.tableView.contentOffset = CGPoint.init(x: 0, y: -60)
                                 self.tableView.reloadData()
+                                self.tableView.contentOffset = CGPoint.init(x: 0, y: -64 + ((SettingValues.viewType && !self.single) ? -20 : 0))
                             } else {
                                 self.tableView.insertItems(at: paths)
                                 self.flowLayout.reset()
                             }
 
                             self.refreshControl.endRefreshing()
-                            self.indicator.stopAnimating()
+                            self.indicator?.stopAnimating()
                             self.loading = false
                         }
                     }
@@ -1879,10 +1942,10 @@ extension UIButton {
         self.contentHorizontalAlignment = .left
         self.imageView?.contentMode = .scaleAspectFit
     }
-    
-    func rightImage(image: UIImage, renderMode: UIImageRenderingMode){
+
+    func rightImage(image: UIImage, renderMode: UIImageRenderingMode) {
         self.setImage(image.withRenderingMode(renderMode), for: .normal)
-        self.imageEdgeInsets = UIEdgeInsets(top: 0, left:image.size.width / 2, bottom: 0, right: 0)
+        self.imageEdgeInsets = UIEdgeInsets(top: 0, left: image.size.width / 2, bottom: 0, right: 0)
         self.contentHorizontalAlignment = .right
         self.imageView?.contentMode = .scaleAspectFit
     }
@@ -1896,6 +1959,7 @@ extension String {
         return size;
     }
 }
+
 extension UIApplication {
 
     var statusBarView: UIView? {

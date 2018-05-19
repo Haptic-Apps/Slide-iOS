@@ -28,7 +28,6 @@ pod 'MaterialComponents/Tabs'
   pod “SloppySwiper”, :git => ‘https://github.com/fastred/SloppySwiper'
   pod 'UZTextView', :git => 'https://github.com/ccrama/UZTextView'
   pod 'TTTAttributedLabel'
-  pod "KCFloatingActionButton", "~> 2.1.0"
 pod 'YangMingShan'
   pod 'Alamofire', '~> 4.3'
     pod 'SwiftyJSON'

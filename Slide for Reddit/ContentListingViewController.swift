@@ -85,6 +85,9 @@ class ContentListingViewController: MediaViewController, UITableViewDelegate, UI
         self.tableView.register(CommentCellView.classForCoder(), forCellReuseIdentifier: "comment")
         self.tableView.register(MessageCellView.classForCoder(), forCellReuseIdentifier: "message")
         
+        if(baseData is ProfileContributionLoader || baseData is InboxContributionLoader){
+            self.tableView.contentInset = UIEdgeInsets.init(top: 45, left: 0, bottom: 0, right: 0)
+        }
         session = (UIApplication.shared.delegate as! AppDelegate).session
         
         refresh()

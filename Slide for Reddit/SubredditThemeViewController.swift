@@ -29,19 +29,19 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
         tableView.reloadData()
 
         let sync = UIButton.init(type: .custom)
-        sync.setImage(UIImage.init(named: "sync")!.imageResize(sizeChange: CGSize.init(width: 17, height: 17)), for: UIControlState.normal)
+        sync.setImage(UIImage.init(named: "sync")!.navIcon(), for: UIControlState.normal)
         sync.addTarget(self, action: #selector(self.sync(_:)), for: UIControlEvents.touchUpInside)
         sync.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let syncB = UIBarButtonItem.init(customView: sync)
 
         let add = UIButton.init(type: .custom)
-        add.setImage(UIImage.init(named: "add")!.imageResize(sizeChange: CGSize.init(width: 17, height: 17)), for: UIControlState.normal)
+        add.setImage(UIImage.init(named: "add")!.navIcon(), for: UIControlState.normal)
         add.addTarget(self, action: #selector(self.add(_:)), for: UIControlEvents.touchUpInside)
         add.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let addB = UIBarButtonItem.init(customView: add)
 
         let delete = UIButton.init(type: .custom)
-        delete.setImage(UIImage.init(named: "delete")!.imageResize(sizeChange: CGSize.init(width: 17, height: 17)), for: UIControlState.normal)
+        delete.setImage(UIImage.init(named: "delete")!.navIcon(), for: UIControlState.normal)
         delete.addTarget(self, action: #selector(self.remove(_:)), for: UIControlEvents.touchUpInside)
         delete.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let deleteB = UIBarButtonItem.init(customView: delete)

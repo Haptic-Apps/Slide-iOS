@@ -145,13 +145,13 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         navigationBar.isTranslucent = true
         navItem = UINavigationItem(title: "")
         let close = UIButton.init(type: .custom)
-        close.setImage(UIImage.init(named: "close")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
+        close.setImage(UIImage.init(named: "close")?.navIcon(), for: UIControlState.normal)
         close.addTarget(self, action: #selector(self.exit), for: UIControlEvents.touchUpInside)
         close.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let closeB = UIBarButtonItem.init(customView: close)
         navItem?.leftBarButtonItem = closeB
         
-        var gridB = UIBarButtonItem(image: UIImage(named: "grid")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysOriginal), style:.plain, target: self, action: #selector(overview(_:)))
+        var gridB = UIBarButtonItem(image: UIImage(named: "grid")?.navIcon().withRenderingMode(.alwaysOriginal), style:.plain, target: self, action: #selector(overview(_:)))
 
        // navItem?.rightBarButtonItem = gridB
 

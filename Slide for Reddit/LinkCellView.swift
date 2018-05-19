@@ -112,22 +112,22 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
                 let open = OpenInChromeController.init()
                 if (open.isChromeInstalled()) {
-                    alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "web")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+                    alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "web")!.menuIcon()), style: .default, handler: { action in
                         open.openInChrome(url, callbackURL: nil, createNewTab: true)
                     }))
                 }
 
-                alertController.addAction(Action(ActionData(title: "Open in Safari", image: UIImage(named: "nav")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+                alertController.addAction(Action(ActionData(title: "Open in Safari", image: UIImage(named: "nav")!.menuIcon()), style: .default, handler: { action in
                     if #available(iOS 10.0, *) {
                         UIApplication.shared.open(url, options: [:], completionHandler: nil)
                     } else {
                         UIApplication.shared.openURL(url)
                     }
                 }))
-                alertController.addAction(Action(ActionData(title: "Copy URL", image: UIImage(named: "save-1")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+                alertController.addAction(Action(ActionData(title: "Copy URL", image: UIImage(named: "save-1")!.menuIcon()), style: .default, handler: { action in
                     UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
                 }))
-                alertController.addAction(Action(ActionData(title: "Close", image: UIImage(named: "close")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+                alertController.addAction(Action(ActionData(title: "Close", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { action in
                 }))
 
                 VCPresenter.presentAlert(alertController, parentVC: parentViewController!)
@@ -296,14 +296,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         self.upvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20))
 
         self.hide = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20))
-        hide.image = UIImage.init(named: "hide")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))
+        hide.image = UIImage.init(named: "hide")?.menuIcon()
 
 
         self.reply = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20))
-        reply.image = UIImage.init(named: "reply")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))
+        reply.image = UIImage.init(named: "reply")?.menuIcon()
 
         self.edit = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20))
-        edit.image = UIImage.init(named: "edit")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))
+        edit.image = UIImage.init(named: "edit")?.menuIcon()
 
         self.save = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20))
 
@@ -313,10 +313,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         //more.image = UIImage.init(named: "ic_more_vert_white")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 17, height: 17))
 
         self.commenticon = UIImageView(frame: CGRect(x: 0, y: 0, width: 10, height: 10))
-        commenticon.image = UIImage.init(named: "comments")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))
+        commenticon.image = UIImage.init(named: "comments")?.menuIcon()
 
         self.submissionicon = UIImageView(frame: CGRect(x: 0, y: 0, width: 10, height: 10))
-        submissionicon.image = UIImage.init(named: "upvote")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))
+        submissionicon.image = UIImage.init(named: "upvote")?.menuIcon()
 
         submissionicon.contentMode = .scaleAspectFit
         commenticon.contentMode = .scaleAspectFit
@@ -1072,7 +1072,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     options: NSLayoutFormatOptions(rawValue: 0),
                     metrics: metrics,
                     views: views))
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[info]-0-|",
+            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(bannerPadding)-[info]-(bannerPadding)-|",
                     options: NSLayoutFormatOptions(rawValue: 0),
                     metrics: metrics,
                     views: views))
@@ -1393,22 +1393,22 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
 
         if (link.isSelf) {
-            alertController.addAction(Action(ActionData(title: "Edit selftext", image: UIImage(named: "edit")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+            alertController.addAction(Action(ActionData(title: "Edit selftext", image: UIImage(named: "edit")!.menuIcon()), style: .default, handler: { action in
                 self.editSelftext()
             }))
         }
 
-        alertController.addAction(Action(ActionData(title: "Flair submission", image: UIImage(named: "size")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Flair submission", image: UIImage(named: "size")!.menuIcon()), style: .default, handler: { action in
             self.flairSelf()
 
         }))
 
 
-        alertController.addAction(Action(ActionData(title: "Delete submission", image: UIImage(named: "delete")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Delete submission", image: UIImage(named: "delete")!.menuIcon()), style: .default, handler: { action in
             self.deleteSelf(self)
         }))
 
-        alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { action in
         }))
 
         VCPresenter.presentAlert(alertController, parentVC: parentViewController!)
@@ -1431,13 +1431,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         let alertController: BottomSheetActionController = BottomSheetActionController()
         alertController.headerData = "Really delete your submission?"
 
-        alertController.addAction(Action(ActionData(title: "Yes", image: UIImage(named: "delete")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 17, height: 17))), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Yes", image: UIImage(named: "delete")!.menuIcon()), style: .default, handler: { action in
             if let delegate = self.del {
                 delegate.deleteSelf(self)
             }
         }))
 
-        alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 17, height: 17))), style: .default, handler: { action in
+        
+        alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { action in
         }))
 
 
@@ -1452,9 +1453,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
     func refresh() {
         let link = self.link!
-        upvote.image = UIImage.init(named: "upvote")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))
-        save.image = UIImage.init(named: "save")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))
-        downvote.image = UIImage.init(named: "downvote")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))
+        upvote.image = UIImage.init(named: "upvote")?.menuIcon()
+        save.image = UIImage.init(named: "save")?.menuIcon()
+        downvote.image = UIImage.init(named: "downvote")?.menuIcon()
         var attrs: [String: Any] = [:]
         switch (ActionStates.getVoteDirection(s: link)) {
         case .down:

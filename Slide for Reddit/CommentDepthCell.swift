@@ -132,10 +132,10 @@ class CommentMenuCell: UITableViewCell {
         self.edit = UIButton.init(type: .custom)
         self.delete = UIButton.init(type: .custom)
 
-        upvote.setImage(UIImage.init(named: "upvote")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: .normal)
-        downvote.setImage(UIImage.init(named: "downvote")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: .normal)
-        reply.setImage(UIImage.init(named: "reply")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: .normal)
-        more.setImage(UIImage.init(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: .normal)
+        upvote.setImage(UIImage.init(named: "upvote")?.navIcon(), for: .normal)
+        downvote.setImage(UIImage.init(named: "downvote")?.navIcon(), for: .normal)
+        reply.setImage(UIImage.init(named: "reply")?.navIcon(), for: .normal)
+        more.setImage(UIImage.init(named: "ic_more_vert_white")?.navIcon(), for: .normal)
         edit.setImage(UIImage.init(named: "edit")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: .normal)
         delete.setImage(UIImage.init(named: "delete")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: .normal)
 
@@ -417,24 +417,24 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         alertController.headerData = "Comment by /u/\(comment!.author)"
 
 
-        alertController.addAction(Action(ActionData(title: "/u/\(comment!.author)'s profile", image: UIImage(named: "profile")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "/u/\(comment!.author)'s profile", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { action in
 
             let prof = ProfileViewController.init(name: self.comment!.author)
             VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: nil, parentViewController: par);
         }))
-        alertController.addAction(Action(ActionData(title: "Share comment permalink", image: UIImage(named: "link")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Share comment permalink", image: UIImage(named: "link")!.menuIcon()), style: .default, handler: { action in
             let activityViewController = UIActivityViewController(activityItems: [self.comment!.permalink], applicationActivities: nil)
             par.present(activityViewController, animated: true, completion: {})
         }))
         if (AccountController.isLoggedIn) {
-            alertController.addAction(Action(ActionData(title: "Save", image: UIImage(named: "save")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+            alertController.addAction(Action(ActionData(title: "Save", image: UIImage(named: "save")!.menuIcon()), style: .default, handler: { action in
                 par.saveComment(self.comment!)
             }))
         }
-        alertController.addAction(Action(ActionData(title: "Report", image: UIImage(named: "hide")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Report", image: UIImage(named: "hide")!.menuIcon()), style: .default, handler: { action in
             par.report(self.comment!)
         }))
-        alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: nil))
+        alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: nil))
 
         VCPresenter.presentAlert(alertController, parentVC: par.parent!)
     }

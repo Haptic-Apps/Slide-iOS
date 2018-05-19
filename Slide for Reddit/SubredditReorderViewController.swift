@@ -26,31 +26,31 @@ class SubredditReorderViewController: UITableViewController {
         tableView.reloadData()
 
         let sync = UIButton.init(type: .custom)
-        sync.setImage(UIImage.init(named: "sync")!.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
+        sync.setImage(UIImage.init(named: "sync")!.navIcon(), for: UIControlState.normal)
         sync.addTarget(self, action: #selector(self.sync(_:)), for: UIControlEvents.touchUpInside)
         sync.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let syncB = UIBarButtonItem.init(customView: sync)
 
         let az = UIButton.init(type: .custom)
-        az.setImage(UIImage.init(named: "az")!.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
+        az.setImage(UIImage.init(named: "az")!.navIcon(), for: UIControlState.normal)
         az.addTarget(self, action: #selector(self.sortAz(_:)), for: UIControlEvents.touchUpInside)
         az.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let azB = UIBarButtonItem.init(customView: az)
 
         let top = UIButton.init(type: .custom)
-        top.setImage(UIImage.init(named: "upvote")!.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
+        top.setImage(UIImage.init(named: "upvote")!.navIcon(), for: UIControlState.normal)
         top.addTarget(self, action: #selector(self.top(_:)), for: UIControlEvents.touchUpInside)
         top.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let topB = UIBarButtonItem.init(customView: top)
 
         let delete = UIButton.init(type: .custom)
-        delete.setImage(UIImage.init(named: "delete")!.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
+        delete.setImage(UIImage.init(named: "delete")!.navIcon(), for: UIControlState.normal)
         delete.addTarget(self, action: #selector(self.remove(_:)), for: UIControlEvents.touchUpInside)
         delete.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let deleteB = UIBarButtonItem.init(customView: delete)
 
         let pin = UIButton.init(type: .custom)
-        pin.setImage(UIImage.init(named: "lock")!.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
+        pin.setImage(UIImage.init(named: "lock")!.navIcon(), for: UIControlState.normal)
         pin.addTarget(self, action: #selector(self.pin(_:)), for: UIControlEvents.touchUpInside)
         pin.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let pinB = UIBarButtonItem.init(customView: pin)
@@ -60,7 +60,7 @@ class SubredditReorderViewController: UITableViewController {
 
         let button = UIButtonWithContext.init(type: .custom)
         button.imageView?.contentMode = UIViewContentMode.scaleAspectFit
-        button.setImage(UIImage.init(named: "back")!.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
+        button.setImage(UIImage.init(named: "back")!.navIcon(), for: UIControlState.normal)
         button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         button.addTarget(self, action: #selector(self.close(_:)), for: .touchUpInside)
 

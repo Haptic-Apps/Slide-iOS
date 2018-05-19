@@ -60,8 +60,7 @@ class NavigationHeaderView: UIView {
         self.profile.accessoryType = .none
         self.profile.backgroundColor = ColorUtil.foregroundColor
         self.profile.textLabel?.textColor = ColorUtil.fontColor
-        self.profile.imageView?.image = UIImage.init(named: "user")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
-        self.profile.imageView?.tintColor = ColorUtil.fontColor
+        self.profile.imageView?.image = UIImage.init(named: "user")?.menuIcon().withRenderingMode(.alwaysTemplate)
 
         self.account = UIButton.init(type: .custom)
         account.imageView?.contentMode = UIViewContentMode.scaleAspectFit
@@ -79,8 +78,7 @@ class NavigationHeaderView: UIView {
         self.inboxBody.accessoryView = inbox
         self.inboxBody.backgroundColor = ColorUtil.foregroundColor
         self.inboxBody.textLabel?.textColor = ColorUtil.fontColor
-        self.inboxBody.imageView?.image = UIImage.init(named: "inbox")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate)
-        self.inboxBody.imageView?.tintColor = ColorUtil.fontColor
+        self.inboxBody.imageView?.image = UIImage.init(named: "inbox")?.menuIcon().withRenderingMode(.alwaysTemplate)
 
         search.translatesAutoresizingMaskIntoConstraints = false
         title.translatesAutoresizingMaskIntoConstraints = false

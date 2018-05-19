@@ -51,13 +51,13 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
         navigationController?.navigationBar.tintColor = .white
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: "")
         let edit = UIButton.init(type: .custom)
-        edit.setImage(UIImage.init(named: "edit")?.imageResize(sizeChange: CGSize.init(width: 23, height: 23)), for: UIControlState.normal)
+        edit.setImage(UIImage.init(named: "edit")?.navIcon(), for: UIControlState.normal)
         edit.addTarget(self, action: #selector(self.new(_:)), for: UIControlEvents.touchUpInside)
         edit.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let editB = UIBarButtonItem.init(customView: edit)
 
         let read = UIButton.init(type: .custom)
-        read.setImage(UIImage.init(named: "seen")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
+        read.setImage(UIImage.init(named: "seen")?.navIcon(), for: UIControlState.normal)
         read.addTarget(self, action: #selector(self.read(_:)), for: UIControlEvents.touchUpInside)
         read.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let readB = UIBarButtonItem.init(customView: read)

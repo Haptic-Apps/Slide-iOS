@@ -244,37 +244,37 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         alertController.headerData = "Post by /u/\(link.author)"
 
 
-        alertController.addAction(Action(ActionData(title: "/u/\(link.author)'s profile", image:UIImage(named: "profile")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "/u/\(link.author)'s profile", image:UIImage(named: "profile")!.menuIcon()), style: .default, handler: { action in
 
             let prof = ProfileViewController.init(name: link.author)
             VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
         }))
-        alertController.addAction(Action(ActionData(title: "/r/\(link.subreddit)", image:UIImage(named: "subs")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "/r/\(link.subreddit)", image:UIImage(named: "subs")!.menuIcon()), style: .default, handler: { action in
 
             let prof = SingleSubredditViewController.init(subName: link.subreddit, single: true)
             VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
         }))
 
-        alertController.addAction(Action(ActionData(title: "Share comment permalink", image:UIImage(named: "link")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Share comment permalink", image:UIImage(named: "link")!.menuIcon()), style: .default, handler: { action in
             let activityViewController = UIActivityViewController(activityItems: [link.permalink], applicationActivities: nil)
             self.present(activityViewController, animated: true, completion: {})
         }))
         if (AccountController.isLoggedIn) {
-            alertController.addAction(Action(ActionData(title: "Save", image:UIImage(named: "save")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+            alertController.addAction(Action(ActionData(title: "Save", image:UIImage(named: "save")!.menuIcon()), style: .default, handler: { action in
                 self.save(cell)
             }))
         }
-        alertController.addAction(Action(ActionData(title: "Report", image:UIImage(named: "hide")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Report", image:UIImage(named: "hide")!.menuIcon()), style: .default, handler: { action in
             self.report(cell.link!)
         }))
         let open = OpenInChromeController.init()
         if (open.isChromeInstalled()) {
 
-            alertController.addAction(Action(ActionData(title: "Open in Chrome", image:UIImage(named: "link")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+            alertController.addAction(Action(ActionData(title: "Open in Chrome", image:UIImage(named: "link")!.menuIcon()), style: .default, handler: { action in
                 open.openInChrome(link.url!, callbackURL: nil, createNewTab: true)
             }))
         }
-        alertController.addAction(Action(ActionData(title: "Open in Safari", image:UIImage(named: "world")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Open in Safari", image:UIImage(named: "world")!.menuIcon()), style: .default, handler: { action in
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(link.url!, options: [:], completionHandler: nil)
             } else {
@@ -282,18 +282,18 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             }
         }))
 
-        alertController.addAction(Action(ActionData(title: "Share content", image:UIImage(named: "link")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Share content", image:UIImage(named: "link")!.menuIcon()), style: .default, handler: { action in
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [link.url!], applicationActivities: nil);
             let currentViewController: UIViewController = UIApplication.shared.keyWindow!.rootViewController!
             currentViewController.present(activityViewController, animated: true, completion: nil);
         }))
-        alertController.addAction(Action(ActionData(title: "Share comments", image:UIImage(named: "comments")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Share comments", image:UIImage(named: "comments")!.menuIcon()), style: .default, handler: { action in
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [URL.init(string: "https://reddit.com" + link.permalink)!], applicationActivities: nil);
             let currentViewController: UIViewController = UIApplication.shared.keyWindow!.rootViewController!
             currentViewController.present(activityViewController, animated: true, completion: nil);
         }))
 
-        alertController.addAction(Action(ActionData(title: "Cancel", image:UIImage(named: "close")!.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))), style: .default, handler: nil))
+        alertController.addAction(Action(ActionData(title: "Cancel", image:UIImage(named: "close")!.menuIcon()), style: .default, handler: nil))
 
         VCPresenter.presentAlert(alertController, parentVC: self)
 
@@ -369,6 +369,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         self.tableView.delegate = self
         self.tableView.dataSource = self
         self.tableView.allowsSelection = false
+        self.tableView.layer.speed = 1.5
 
         tableView.backgroundColor = ColorUtil.backgroundColor
         refreshControl = UIRefreshControl()
@@ -693,20 +694,15 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         navigationController?.setNavigationBarHidden(true, animated: true)
         isSearching = false
         tableView.tableHeaderView = savedHeaderView!
-        let more = UIButton.init(type: .custom)
-        more.setImage(UIImage.init(named: "ic_more_vert_white"), for: UIControlState.normal)
-        more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
-        more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-        moreB = UIBarButtonItem.init(customView: more)
 
         let sort = UIButton.init(type: .custom)
-        sort.setImage(UIImage.init(named: "ic_sort_white"), for: UIControlState.normal)
+        sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControlState.normal)
         sort.addTarget(self, action: #selector(self.sort(_:)), for: UIControlEvents.touchUpInside)
         sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let sortB = UIBarButtonItem.init(customView: sort)
 
         let search = UIButton.init(type: .custom)
-        search.setImage(UIImage.init(named: "search")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
+        search.setImage(UIImage.init(named: "search")?.navIcon(), for: UIControlState.normal)
         search.addTarget(self, action: #selector(self.search(_:)), for: UIControlEvents.touchUpInside)
         search.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let searchB = UIBarButtonItem.init(customView: search)
@@ -853,6 +849,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 indicator?.startAnimating()
 
             }
+            indicator?.layer.speed = 0.6667 //normal speed = 1 / tableview speed (1.5)
+
         }
 
     }
@@ -929,25 +927,21 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
 
         if (navigationController != nil) {
-            let more = UIButton.init(type: .custom)
-            more.setImage(UIImage.init(named: "ic_more_vert_white"), for: UIControlState.normal)
-            more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
-            more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-            moreB = UIBarButtonItem.init(customView: more)
+          
 
             let sort = UIButton.init(type: .custom)
-            sort.setImage(UIImage.init(named: "ic_sort_white"), for: UIControlState.normal)
+            sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControlState.normal)
             sort.addTarget(self, action: #selector(self.sort(_:)), for: UIControlEvents.touchUpInside)
             sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let sortB = UIBarButtonItem.init(customView: sort)
 
             let search = UIButton.init(type: .custom)
-            search.setImage(UIImage.init(named: "search")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
+            search.setImage(UIImage.init(named: "search")?.navIcon(), for: UIControlState.normal)
             search.addTarget(self, action: #selector(self.search(_:)), for: UIControlEvents.touchUpInside)
             search.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let searchB = UIBarButtonItem.init(customView: search)
 
-            navigationItem.rightBarButtonItems = [moreB, sortB, searchB]
+            navigationItem.rightBarButtonItems = [sortB, searchB]
             navigationItem.rightBarButtonItem?.imageInsets = UIEdgeInsetsMake(0, 0, 0, -20)
             doSubbed()
 
@@ -1424,23 +1418,29 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             } else {
 
                 let up = UIButton.init(type: .custom)
-                up.setImage(UIImage.init(named: "up")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)).withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
+                up.setImage(UIImage.init(named: "up")?.toolbarIcon(), for: UIControlState.normal)
                 up.addTarget(self, action: #selector(CommentViewController.goUp(_:)), for: UIControlEvents.touchUpInside)
                 up.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
                 let upB = UIBarButtonItem.init(customView: up)
 
                 let nav = UIButton.init(type: .custom)
-                nav.setImage(UIImage.init(named: "nav")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)).withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
+                nav.setImage(UIImage.init(named: "nav")?.toolbarIcon(), for: UIControlState.normal)
                 nav.addTarget(self, action: #selector(CommentViewController.showNavTypes(_:)), for: UIControlEvents.touchUpInside)
                 nav.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
                 let navB = UIBarButtonItem.init(customView: nav)
 
                 let down = UIButton.init(type: .custom)
-                down.setImage(UIImage.init(named: "down")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)).withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
+                down.setImage(UIImage.init(named: "down")?.toolbarIcon(), for: UIControlState.normal)
                 down.addTarget(self, action: #selector(CommentViewController.goDown(_:)), for: UIControlEvents.touchUpInside)
                 down.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
                 let downB = UIBarButtonItem.init(customView: down)
 
+                let more = UIButton.init(type: .custom)
+                more.setImage(UIImage.init(named: "moreh")?.toolbarIcon(), for: UIControlState.normal)
+                more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
+                more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+                moreB = UIBarButtonItem.init(customView: more)
+                
                 items.append(space)
                 items.append(upB)
                 items.append(space)
@@ -1448,6 +1448,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 items.append(space)
                 items.append(downB)
                 items.append(space)
+                items.append(moreB)
             }
             if (parent != nil && parent is PagingCommentViewController) {
                 parent?.toolbarItems = items
@@ -1510,7 +1511,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     for row in i...counter {
                         indexPaths.append(IndexPath(row: row, section: 0))
                     }
-                    self.tableView.deleteRows(at: indexPaths, with: .automatic)
+                    self.tableView.deleteRows(at: indexPaths, with: .fade)
                     self.tableView.endUpdates()
                     self.isCurrentlyChanging = false
                 }
@@ -1531,7 +1532,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     for row in (i + 1)...counter {
                         indexPaths.append(IndexPath(row: row, section: 0))
                     }
-                    self.tableView.insertRows(at: indexPaths, with: .automatic)
+                    self.tableView.insertRows(at: indexPaths, with: .fade)
                     self.tableView.endUpdates()
                     self.isCurrentlyChanging = false
                 }
@@ -2093,7 +2094,18 @@ extension UIImage {
         let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
         return scaledImage!
     }
-
+    
+    func navIcon() -> UIImage {
+        return self.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withColor(tintColor: .white)
+    }
+    
+    func toolbarIcon() -> UIImage {
+        return self.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withColor(tintColor: ColorUtil.fontColor)
+    }
+    
+    func menuIcon() -> UIImage {
+        return self.imageResize(sizeChange: CGSize.init(width: 20, height: 20)).withColor(tintColor: ColorUtil.fontColor)
+    }
 }
 
 

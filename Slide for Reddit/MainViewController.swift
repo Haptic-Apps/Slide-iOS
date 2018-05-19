@@ -236,19 +236,14 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
         tabBar.selectedItemTintColor = ColorUtil.fontColor
         tabBar.unselectedItemTintColor = ColorUtil.fontColor.withAlphaComponent(0.45)
-        // 2
         tabBar.items = Subscriptions.subreddits.enumerated().map { index, source in
             return UITabBarItem(title: source, image: nil, tag: index)
         }
         tabBar.autoresizingMask = [.flexibleWidth, .flexibleBottomMargin]
         tabBar.selectionIndicatorTemplate = IndicatorTemplate()
         tabBar.delegate = self
-        // 3
         tabBar.selectedItem = tabBar.items[0]
-        // 4
-        //tabBar.delegate = self
         tabBar.tintColor = ColorUtil.accentColorForSub(sub: "NONE")
-        // 5
         tabBar.sizeToFit()
 
         self.view.addSubview(tabBar)
@@ -333,7 +328,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         self.tintColor = ColorUtil.getColorForSub(sub: MainViewController.current)
         self.menuNav?.setSubreddit(subreddit: MainViewController.current)
         self.currentTitle = MainViewController.current
-        navigationController?.setToolbarHidden(false, animated: false)
 
         if (!(vc).loaded) {
             (vc).load(reset: true)
@@ -354,11 +348,11 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         self.navigationController?.navigationBar.shadowImage = UIImage()
         self.navigationController?.navigationBar.layoutIfNeeded()
 
+        tabBar.backgroundColor = ColorUtil.getColorForSub(sub: MainViewController.current)
         tabBar.tintColor = ColorUtil.accentColorForSub(sub: MainViewController.current)
         if (!selected) {
             let page = MainViewController.vCs.index(of: self.viewControllers!.first!)
             if (!tabBar.items.isEmpty) {
-
                 tabBar.setSelectedItem(tabBar.items[page!], animated: true)
             }
         } else {
@@ -451,25 +445,25 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         self.restartVC()
 
         let sort = UIButton.init(type: .custom)
-        sort.setImage(UIImage.init(named: "ic_sort_white"), for: UIControlState.normal)
+        sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControlState.normal)
         sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControlEvents.touchUpInside)
         sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let sortB = UIBarButtonItem.init(customView: sort)
 
         let shadowbox = UIButton.init(type: .custom)
-        shadowbox.setImage(UIImage.init(named: "shadowbox")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
+        shadowbox.setImage(UIImage.init(named: "shadowbox")?.navIcon(), for: UIControlState.normal)
         shadowbox.addTarget(self, action: #selector(self.shadowbox), for: UIControlEvents.touchUpInside)
         shadowbox.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let sB = UIBarButtonItem.init(customView: shadowbox)
 
         let more = UIButton.init(type: .custom)
-        more.setImage(UIImage.init(named: "moreh")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
+        more.setImage(UIImage.init(named: "moreh")?.toolbarIcon(), for: UIControlState.normal)
         more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
         more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let moreB = UIBarButtonItem.init(customView: more)
 
         let menu = UIButton.init(type: .custom)
-        menu.setImage(UIImage.init(named: "menu")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)).withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
+        menu.setImage(UIImage.init(named: "menu")?.toolbarIcon(), for: UIControlState.normal)
         menu.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControlEvents.touchUpInside)
         menu.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let menuB = UIBarButtonItem.init(customView: menu)
@@ -570,8 +564,12 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     }
 
     func colorChanged() {
-        //todo self.buttonBarView.backgroundColor = self.navigationController?.navigationBar.barTintColor
         menuNav?.header.doColors()
+
+        if(tabBar != nil){
+            tabBar.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
+        }
+
         if (menuNav?.tableView != nil) {
             menuNav?.tableView.reloadData()
         }
@@ -579,6 +577,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        UIApplication.shared.statusBarView?.backgroundColor = .clear
+
         if (navigationController?.isNavigationBarHidden ?? false) {
             navigationController?.setNavigationBarHidden(false, animated: true)
         }
@@ -655,6 +655,7 @@ extension MainViewController: MDCTabBarDelegate {
                 direction: .forward,
                 animated: false,
                 completion: nil)
+
         self.doCurrentPage(tabBar.items.index(of: item)!)
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: self.currentTitle)
         tabBar.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)

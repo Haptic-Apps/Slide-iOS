@@ -56,7 +56,7 @@ public class ToolbarTextView: NSObject {
 
     func generateButtons(image: String, action: Selector) -> (UIButton, Selector) {
         let more = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 50, height: 50))
-        more.setImage(UIImage.init(named: image)?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
+        more.setImage(UIImage.init(named: image)?.menuIcon(), for: UIControlState.normal)
         return (more, action)
     }
 

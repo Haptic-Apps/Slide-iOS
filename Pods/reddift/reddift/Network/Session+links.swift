@@ -38,6 +38,22 @@ extension Session {
         return executeTask(request, handleResponse: closure, completion: completion)
     }
     
+    
+    @discardableResult
+    public func crosspost(_ submission: Link, subreddit: String, newTitle: String, completion: @escaping (Result<JSONAny>) -> Void) throws -> URLSessionDataTask {
+        let parameter = [
+            "api_type" : "json",
+            "kind" : "crosspost",
+            "extension": "json",
+            "sr": subreddit,
+            "crosspost_fullname": submission.id,
+            "title": newTitle
+        ]
+        guard let request = URLRequest.requestForOAuth(with: baseURL, path:"/api/submit", parameter:parameter, method:"POST", token:token)
+            else { throw ReddiftError.canNotCreateURLRequest as NSError }
+        return executeTask(request, handleResponse: handleResponse2JSON, completion: completion)
+    }
+
      /**
      Submit a reply to a message, whose parent is the fullname of the thing being replied to.
      Its value changes the kind of object created by this request:

@@ -2,18 +2,17 @@ PODS:
   - ActionSheetPicker-3.0 (2.2.0)
   - Alamofire (4.7.2)
   - BiometricAuthentication (1.0.5)
-  - KCFloatingActionButton (2.1.2)
   - LicensesViewController (0.6.5)
-  - MaterialComponents/ActivityIndicator (55.0.4):
+  - MaterialComponents/ActivityIndicator (55.1.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Application
     - MDFInternationalization
     - MotionAnimator (~> 2.0)
-  - MaterialComponents/AnimationTiming (55.0.4)
-  - MaterialComponents/BottomSheet (55.0.4):
+  - MaterialComponents/AnimationTiming (55.1.0)
+  - MaterialComponents/BottomSheet (55.1.0):
     - MaterialComponents/private/KeyboardWatcher
     - MaterialComponents/private/Math
-  - MaterialComponents/Buttons (55.0.4):
+  - MaterialComponents/Buttons (55.1.0):
     - MaterialComponents/Ink
     - MaterialComponents/private/Math
     - MaterialComponents/private/Shapes
@@ -22,35 +21,35 @@ PODS:
     - MaterialComponents/Typography
     - MDFInternationalization
     - MDFTextAccessibility
-  - MaterialComponents/Dialogs (55.0.4):
+  - MaterialComponents/Dialogs (55.1.0):
     - MaterialComponents/Buttons
     - MaterialComponents/private/KeyboardWatcher
     - MaterialComponents/ShadowElevations
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/Ink (55.0.4):
+  - MaterialComponents/Ink (55.1.0):
     - MaterialComponents/private/Math
-  - MaterialComponents/OverlayWindow (55.0.4):
+  - MaterialComponents/OverlayWindow (55.1.0):
     - MaterialComponents/private/Application
-  - MaterialComponents/Palettes (55.0.4)
-  - MaterialComponents/private/Application (55.0.4)
-  - MaterialComponents/private/KeyboardWatcher (55.0.4):
+  - MaterialComponents/Palettes (55.1.0)
+  - MaterialComponents/private/Application (55.1.0)
+  - MaterialComponents/private/KeyboardWatcher (55.1.0):
     - MaterialComponents/private/Application
-  - MaterialComponents/private/Math (55.0.4)
-  - MaterialComponents/private/Overlay (55.0.4)
-  - MaterialComponents/private/Shapes (55.0.4):
+  - MaterialComponents/private/Math (55.1.0)
+  - MaterialComponents/private/Overlay (55.1.0)
+  - MaterialComponents/private/Shapes (55.1.0):
     - MaterialComponents/private/Math
     - MaterialComponents/ShadowLayer
-  - MaterialComponents/ProgressView (55.0.4):
+  - MaterialComponents/ProgressView (55.1.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
     - MDFInternationalization
     - MotionAnimator (~> 2.1)
-  - MaterialComponents/ShadowElevations (55.0.4)
-  - MaterialComponents/ShadowLayer (55.0.4):
+  - MaterialComponents/ShadowElevations (55.1.0)
+  - MaterialComponents/ShadowLayer (55.1.0):
     - MaterialComponents/ShadowElevations
-  - MaterialComponents/Snackbar (55.0.4):
+  - MaterialComponents/Snackbar (55.1.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Buttons
     - MaterialComponents/OverlayWindow
@@ -58,7 +57,7 @@ PODS:
     - MaterialComponents/private/KeyboardWatcher
     - MaterialComponents/private/Overlay
     - MaterialComponents/Typography
-  - MaterialComponents/Tabs (55.0.4):
+  - MaterialComponents/Tabs (55.1.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Ink
     - MaterialComponents/private/Math
@@ -66,13 +65,13 @@ PODS:
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/TextFields (55.0.4):
+  - MaterialComponents/TextFields (55.1.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
     - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/Typography (55.0.4):
+  - MaterialComponents/Typography (55.1.0):
     - MaterialComponents/private/Application
   - MDFInternationalization (1.0.4)
   - MDFTextAccessibility (1.2.0)
@@ -107,7 +106,6 @@ DEPENDENCIES:
   - ActionSheetPicker-3.0 (from `https://github.com/ccrama/ActionSheetPicker-3.0`)
   - Alamofire (~> 4.3)
   - BiometricAuthentication
-  - KCFloatingActionButton (~> 2.1.0)
   - LicensesViewController (~> 0.6.5)
   - MaterialComponents/ActivityIndicator
   - MaterialComponents/AnimationTiming
@@ -148,7 +146,7 @@ CHECKOUT OPTIONS:
     :commit: 752459578d8162c11f6311987bd3463e6d85712b
     :git: https://github.com/ccrama/ActionSheetPicker-3.0
   reddift:
-    :commit: 44c58a49f0f50e74bea463f1f0585a84bb785d08
+    :commit: 55e0a3a535f0b78144e222f95e8bdd69ed3a8fef
     :git: https://github.com/ccrama/reddift
   SloppySwiper:
     :commit: 90e1566555734d08a4c72619595f5a2157c104b3
@@ -161,9 +159,8 @@ SPEC CHECKSUMS:
   ActionSheetPicker-3.0: d11a4c12c6aaf704b8a3f56d179198c99f3e41e6
   Alamofire: e4fa87002c137ba2d8d634d2c51fabcda0d5c223
   BiometricAuthentication: e80e99bf1fe871ab624172eb91f1ddbbc47499b5
-  KCFloatingActionButton: 1b22ce95d44b51915280df8a8b277eae4a06c3f1
   LicensesViewController: 1f2982b1bab8402d3f88e23197957038e8abb907
-  MaterialComponents: 059f649876b2e1ed6a623ba689175493422cc7cd
+  MaterialComponents: f4cd3085a673837e7ba4c6cf40d9da2f64566af1
   MDFInternationalization: e355b0cebecf53d60233bd267084e49366c82513
   MDFTextAccessibility: 94098925e0853551c5a311ce7c1ecefbe297cdb6
   MKColorPicker: 8998b2ab977e4f240fdf254db27a18b810da3cfc
@@ -181,6 +178,6 @@ SPEC CHECKSUMS:
   XLActionController: 007868251c0eed70d649d06c1625259b73b3a600
   YangMingShan: 561cfbb769e8cf679d3f23d8ae7030402ddb6495
 
-PODFILE CHECKSUM: 0634693f2565524d0c702ef1f820ce805cef71d0
+PODFILE CHECKSUM: 2a551e05d57e30902ae3fbeed79c620503cbb8c2
 
 COCOAPODS: 1.4.0

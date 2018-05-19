@@ -149,13 +149,13 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForUser(name: name)
         }
         let sort = UIButton.init(type: .custom)
-        sort.setImage(UIImage.init(named: "ic_sort_white"), for: UIControlState.normal)
+        sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControlState.normal)
         sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControlEvents.touchUpInside)
         sort.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
          sortB = UIBarButtonItem.init(customView: sort)
         
         let more = UIButton.init(type: .custom)
-        more.setImage(UIImage.init(named: "info")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
+        more.setImage(UIImage.init(named: "info")?.navIcon(), for: UIControlState.normal)
         more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
         more.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
          moreB = UIBarButtonItem.init(customView: more)
@@ -326,6 +326,7 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
         self.edgesForExtendedLayout = []
         
         super.viewDidLoad()
+        
         self.dataSource = self
         self.delegate = self
         

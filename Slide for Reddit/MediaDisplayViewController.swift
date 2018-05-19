@@ -66,15 +66,15 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
         if (showHQ) {
             var items: [UIBarButtonItem] = []
             if (text != nil && !(text!.isEmpty)) {
-                let textB = UIBarButtonItem(image: UIImage(named: "size")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style: .plain, target: self, action: #selector(MediaDisplayViewController.showTitle(_:)))
+                let textB = UIBarButtonItem(image: UIImage(named: "size")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.showTitle(_:)))
                 items.append(textB)
             }
             let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-            let hdB = UIBarButtonItem(image: UIImage(named: "hd")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style: .plain, target: self, action: #selector(MediaDisplayViewController.hd(_:)))
+            let hdB = UIBarButtonItem(image: UIImage(named: "hd")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.hd(_:)))
             items.append(hdB)
             items.append(space)
-            items.append(UIBarButtonItem(image: UIImage(named: "download")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style: .plain, target: self, action: #selector(MediaDisplayViewController.download(_:))))
-            menuB = UIBarButtonItem(image: UIImage(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style: .plain, target: self, action: #selector(MediaDisplayViewController.showImageMenu(_:)))
+            items.append(UIBarButtonItem(image: UIImage(named: "download")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.download(_:))))
+            menuB = UIBarButtonItem(image: UIImage(named: "moreh")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.showImageMenu(_:)))
             items.append(menuB!)
 
 
@@ -91,13 +91,13 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
         size?.isHidden = false
         var items: [UIBarButtonItem] = []
         if (text != nil && !(text!.isEmpty)) {
-            let textB = UIBarButtonItem(image: UIImage(named: "size")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style: .plain, target: self, action: #selector(MediaDisplayViewController.showTitle(_:)))
+            let textB = UIBarButtonItem(image: UIImage(named: "size")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.showTitle(_:)))
             items.append(textB)
         }
         let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         items.append(space)
-        items.append(UIBarButtonItem(image: UIImage(named: "download")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style: .plain, target: self, action: #selector(MediaDisplayViewController.download(_:))))
-        menuB = UIBarButtonItem(image: UIImage(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style: .plain, target: self, action: #selector(MediaDisplayViewController.showImageMenu(_:)))
+        items.append(UIBarButtonItem(image: UIImage(named: "download")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.download(_:))))
+        menuB = UIBarButtonItem(image: UIImage(named: "moreh")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.showImageMenu(_:)))
         items.append(menuB!)
         toolbar.items = items
 
@@ -192,14 +192,14 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
         let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         var items: [UIBarButtonItem] = []
         if (text != nil && !(text!.isEmpty)) {
-            var textB = UIBarButtonItem(image: UIImage(named: "size")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style: .plain, target: self, action: #selector(MediaDisplayViewController.showTitle(_:)))
+            var textB = UIBarButtonItem(image: UIImage(named: "size")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.showTitle(_:)))
             items.append(textB)
         }
-        items.append(UIBarButtonItem(image: UIImage(named: "fullscreen")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style: .plain, target: self, action: #selector(MediaDisplayViewController.fullscreen(_:))))
+        items.append(UIBarButtonItem(image: UIImage(named: "fullscreen")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.fullscreen(_:))))
 
         items.append(space)
-        items.append(UIBarButtonItem(image: UIImage(named: "download")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style: .plain, target: self, action: #selector(MediaDisplayViewController.download(_:))))
-        menuB = UIBarButtonItem(image: UIImage(named: "ic_more_vert_white")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), style: .plain, target: self, action: #selector(MediaDisplayViewController.showImageMenu(_:)))
+        items.append(UIBarButtonItem(image: UIImage(named: "download")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.download(_:))))
+        menuB = UIBarButtonItem(image: UIImage(named: "moreh")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.showImageMenu(_:)))
         items.append(menuB!)
         toolbar.items = items
         toolbar.setBackgroundImage(UIImage(),
@@ -208,7 +208,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
         toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
         toolbar.tintColor = UIColor.white
 
-        size = UILabel(frame: CGRect(x: 5, y: toolbar.bounds.height - 40, width: 250, height: 50))
+        size = UILabel(frame: CGRect(x: 55, y: toolbar.bounds.height - 40, width: 250, height: 50))
         size?.textAlignment = .left
         size?.textColor = .white
         size?.text = "mb"
