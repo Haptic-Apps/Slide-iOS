@@ -221,36 +221,37 @@ extension Session {
             return Result(from: Response(data: data, urlResponse: response), optional:error)
                 .flatMap(response2Data)
                 .flatMap(data2Json)
-                .flatMap(json2RedditAny)
+                .flatMap(flair2Choices)
+                .flatMap(json2Flair)
                 .flatMap(redditAny2Object)
         }
         return executeTask(request, handleResponse: closure, completion: completion)
     }
-
+    
     @discardableResult
     public func flairSubmission(_ subreddit: String, flairId: String, submissionFullname: String, text: String = "", completion: @escaping (Result<String>) -> Void) throws -> URLSessionDataTask {
-
+        
         var parameter = [
             "api_type": "json",
             "flair_template_id"    : flairId,
             "link"    : submissionFullname,
-        ]
-
+            ]
+        
         if(!text.isEmpty){
             parameter["text"] = text
         }
-
+        
         let path = "/r/\(subreddit)/api/selectflair"
         guard let request = URLRequest.requestForOAuth(with: baseURL, path:path, parameter:parameter, method:"POST", token:token)
-                else { throw ReddiftError.canNotCreateURLRequest as NSError }
+            else { throw ReddiftError.canNotCreateURLRequest as NSError }
         let closure = {(data: Data?, response: URLResponse?, error: NSError?) -> Result<String> in
             return Result(from: Response(data: data, urlResponse: response), optional:error)
-                    .flatMap(response2Data)
-                    .flatMap(data2String)
+                .flatMap(response2Data)
+                .flatMap(data2String)
         }
         return executeTask(request, handleResponse: closure, completion: completion)
     }
-
+    
     /**
      Subscribe to or unsubscribe from a subreddit. The user must have access to the subreddit to be able to subscribe to it.
      - parameter subreddit: Subreddit obect to be subscribed/unsubscribed

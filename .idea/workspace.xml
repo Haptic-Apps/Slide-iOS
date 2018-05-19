@@ -5,14 +5,9 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Podfile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Podfile.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Pods/Manifest.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Pods/Manifest.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Pods/Pods.xcodeproj/project.pbxproj" beforeDir="false" afterPath="$PROJECT_DIR$/Pods/Pods.xcodeproj/project.pbxproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Pods/Pods.xcodeproj/xcuserdata/carloscrane.xcuserdatad/xcschemes/xcschememanagement.plist" beforeDir="false" afterPath="$PROJECT_DIR$/Pods/Pods.xcodeproj/xcuserdata/carloscrane.xcuserdatad/xcschemes/xcschememanagement.plist" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Pods/reddift/reddift/Network/Session+helper.swift" beforeDir="false" afterPath="$PROJECT_DIR$/Pods/reddift/reddift/Network/Session+helper.swift" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Pods/reddift/reddift/Network/Session+search.swift" beforeDir="false" afterPath="$PROJECT_DIR$/Pods/reddift/reddift/Network/Session+search.swift" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Pods/reddift/reddift/Network/Session+subreddits.swift" beforeDir="false" afterPath="$PROJECT_DIR$/Pods/reddift/reddift/Network/Session+subreddits.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Pods/reddift/reddift/Utility/Parser.swift" beforeDir="false" afterPath="$PROJECT_DIR$/Pods/reddift/reddift/Utility/Parser.swift" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Slide for Reddit/LinkCellView.swift" beforeDir="false" afterPath="$PROJECT_DIR$/Slide for Reddit/LinkCellView.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Slide for Reddit/LinkTableViewCell.swift" beforeDir="false" afterPath="$PROJECT_DIR$/Slide for Reddit/LinkTableViewCell.swift" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -30,8 +25,8 @@
       <file leaf-file-name="LinkTableViewCell.swift" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Slide for Reddit/LinkTableViewCell.swift">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="286">
-              <caret line="1388" column="17" selection-start-line="1388" selection-start-column="17" selection-end-line="1388" selection-end-column="17" />
+            <state relative-caret-position="-20">
+              <caret line="139" column="25" selection-start-line="139" selection-start-column="18" selection-end-line="139" selection-end-column="25" />
             </state>
           </provider>
         </entry>
@@ -66,11 +61,29 @@
       <file leaf-file-name="LinkCellView.swift" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Slide for Reddit/LinkCellView.swift">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="118">
-              <caret line="1531" column="63" lean-forward="true" selection-start-line="1531" selection-start-column="63" selection-end-line="1531" selection-end-column="63" />
+            <state relative-caret-position="431">
+              <caret line="1517" column="82" lean-forward="true" selection-start-line="1517" selection-start-column="82" selection-end-line="1517" selection-end-column="82" />
               <folding>
                 <element signature="e#313#325#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Session+subreddits.swift" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Pods/reddift/reddift/Network/Session+subreddits.swift">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="398">
+              <caret line="243" column="52" lean-forward="true" selection-start-line="243" selection-start-column="52" selection-end-line="243" selection-end-column="52" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Session+helper.swift" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Pods/reddift/reddift/Network/Session+helper.swift">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="246">
+              <caret line="70" column="54" selection-start-line="70" selection-start-column="21" selection-end-line="70" selection-end-column="54" />
             </state>
           </provider>
         </entry>
@@ -79,10 +92,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>UILabel</find>
-      <find>report</find>
-      <find>size =</find>
-      <find>tabbar =</find>
       <find>submit</find>
       <find>getsubmissionedited</find>
       <find>&quot;crosspost&quot;</find>
@@ -101,7 +110,6 @@
       <find>&quot;flair</find>
       <find>&quot;flair&quot;</find>
       <find>flairSelf</find>
-      <find>flair</find>
       <find>crosspost</find>
       <find>searchSubredditsByTopic</find>
       <find>reply</find>
@@ -109,6 +117,11 @@
       <find>reload</find>
       <find>edit.</find>
       <find>edit</find>
+      <find>setFlair</find>
+      <find>flair</find>
+      <find>hittest</find>
+      <find>name:</find>
+      <find>name:</find>
     </findStrings>
     <replaceStrings>
       <replace>-12</replace>
@@ -184,10 +197,9 @@
   <component name="NodePackageJsonFileManager">
     <packageJsonPaths />
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="840" />
+  <component name="ProjectFrameBounds">
     <option name="y" value="22" />
-    <option name="width" value="840" />
+    <option name="width" value="1680" />
     <option name="height" value="966" />
   </component>
   <component name="ProjectView">
@@ -365,12 +377,12 @@
       <workItem from="1526689653904" duration="1356000" />
       <workItem from="1526691179089" duration="548000" />
       <workItem from="1526706433361" duration="16437000" />
-      <workItem from="1526763727748" duration="3327000" />
+      <workItem from="1526763727748" duration="5480000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="312200000" />
+    <option name="totallyTimeSpent" value="314353000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -382,14 +394,14 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="22" width="1680" height="966" extended-state="6" />
+    <frame x="0" y="22" width="1680" height="966" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.4972875" weight="0.32911393" />
-      <window_info anchor="bottom" id="Messages" order="7" sideWeight="0.29355034" weight="0.3095512" />
+      <window_info anchor="bottom" id="Messages" order="7" sideWeight="0.2875226" weight="0.3095512" />
       <window_info anchor="right" id="Palette&#9;" order="3" />
-      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.596745" side_tool="true" visible="true" weight="0.32681242" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.403255" visible="true" weight="0.32681242" />
+      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.60217" side_tool="true" visible="true" weight="0.32681242" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.39783" visible="true" weight="0.32681242" />
       <window_info anchor="bottom" id="Version Control" order="8" weight="0.32911393" />
       <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.4978903" weight="0.32911393" />
       <window_info id="Designer" order="2" />
@@ -677,13 +689,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Slide for Reddit/RedditLink.swift">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="14" column="23" selection-start-line="14" selection-start-column="23" selection-end-line="14" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Pods/reddift/reddift/Model/Thing.swift">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="240">
@@ -743,27 +748,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Slide for Reddit/LinkTableViewCell.swift">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="286">
-          <caret line="1388" column="17" selection-start-line="1388" selection-start-column="17" selection-end-line="1388" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Pods/reddift/reddift/Network/Session+subreddits.swift">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="232">
-          <caret line="242" column="52" lean-forward="true" selection-start-line="242" selection-start-column="52" selection-end-line="242" selection-end-column="52" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Pods/reddift/reddift/Network/Session+helper.swift">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="18" column="13" lean-forward="true" selection-end-line="201" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Slide for Reddit/AppDelegate.swift">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="173">
@@ -771,10 +755,38 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Slide for Reddit/RedditLink.swift">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="14" column="23" selection-start-line="14" selection-start-column="23" selection-end-line="14" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Slide for Reddit/LinkTableViewCell.swift">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-20">
+          <caret line="139" column="25" selection-start-line="139" selection-start-column="18" selection-end-line="139" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Pods/reddift/reddift/Network/Session+helper.swift">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="246">
+          <caret line="70" column="54" selection-start-line="70" selection-start-column="21" selection-end-line="70" selection-end-column="54" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Pods/reddift/reddift/Network/Session+subreddits.swift">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="398">
+          <caret line="243" column="52" lean-forward="true" selection-start-line="243" selection-start-column="52" selection-end-line="243" selection-end-column="52" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Slide for Reddit/LinkCellView.swift">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="118">
-          <caret line="1531" column="63" lean-forward="true" selection-start-line="1531" selection-start-column="63" selection-end-line="1531" selection-end-column="63" />
+        <state relative-caret-position="431">
+          <caret line="1517" column="82" lean-forward="true" selection-start-line="1517" selection-start-column="82" selection-end-line="1517" selection-end-column="82" />
           <folding>
             <element signature="e#313#325#0" expanded="true" />
           </folding>

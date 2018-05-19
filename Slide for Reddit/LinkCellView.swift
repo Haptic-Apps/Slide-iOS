@@ -1451,7 +1451,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         //todo this
         var list: [FlairTemplate] = []
         do {
-            try (UIApplication.shared.delegate as! AppDelegate).session?.flairList(link!.subreddit, link: link!.id, name: AccountController.currentName, completion: { (result) in
+            try (UIApplication.shared.delegate as! AppDelegate).session?.flairList(link!.subreddit, link: link!.id, completion: { (result) in
                 switch result {
                 case .failure(let error):
                     print(error)
@@ -1472,7 +1472,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                         )
 
                         for flair in flairs {
-                            let somethingAction = UIAlertAction(title: flair.name, style: .default) { (action) in
+                            let somethingAction = UIAlertAction(title: (flair.text.isEmpty) ?flair.name : flair.text, style: .default) { (action) in
                                 sheet.dismiss(animated: true, completion: nil)
                                 self.setFlair(flair)
                             }
@@ -1515,7 +1515,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
     func submitFlairChange(_ flair: FlairTemplate, text: String? = ""){
         do {
-            try (UIApplication.shared.delegate as! AppDelegate).session?.flairSubmission(link!.subreddit, flairId: flair.id, submissionFullname: link!.name, text: text ?? "") { result in
+            try (UIApplication.shared.delegate as! AppDelegate).session?.flairSubmission(link!.subreddit, flairId: flair.id, submissionFullname: link!.id, text: text ?? "") { result in
                 switch result {
                 case .failure(let error):
                     print(error)
