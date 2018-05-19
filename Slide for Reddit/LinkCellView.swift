@@ -20,6 +20,7 @@ import TTTAttributedLabel
 import MaterialComponents
 import AudioToolbox
 import XLActionController
+import reddift
 import SafariServices
 
 protocol LinkCellViewDelegate: class {
@@ -1448,7 +1449,98 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
     func flairSelf() {
         //todo this
+        var list: [FlairTemplate] = []
+        do {
+            try (UIApplication.shared.delegate as! AppDelegate).session?.flairList(link!.subreddit, link: link!.id, name: AccountController.currentName, completion: { (result) in
+                switch result {
+                case .failure(let error):
+                    print(error)
+                    DispatchQueue.main.async {
+                        let message = MDCSnackbarMessage()
+                        message.text = "No subreddit flairs found"
+                        MDCSnackbarManager.show(message)
+                    }
+                    break
+                case .success(let flairs):
+                    list.append(contentsOf: flairs)
+                    DispatchQueue.main.async {
+                        let sheet = UIAlertController(title: "/r/\(self.link!.subreddit) flairs", message: nil, preferredStyle: .actionSheet)
+                        sheet.addAction(
+                                UIAlertAction(title: "Close", style: .cancel) { (action) in
+                                    sheet.dismiss(animated: true, completion: nil)
+                                }
+                        )
 
+                        for flair in flairs {
+                            let somethingAction = UIAlertAction(title: flair.name, style: .default) { (action) in
+                                sheet.dismiss(animated: true, completion: nil)
+                                self.setFlair(flair)
+                            }
+
+                            sheet.addAction(somethingAction)
+                        }
+
+                        self.parentViewController?.present(sheet, animated: true)
+                    }
+                    break
+                }
+            })
+        } catch {
+        }
+    }
+
+    func setFlair(_ flair: FlairTemplate){
+        if(flair.editable){
+            let alert = UIAlertController(title: "Edit flair text", message: "", preferredStyle: .alert)
+
+            alert.addTextField { (textField) in
+                textField.text = flair.text
+
+            }
+            alert.addAction(UIAlertAction(title: "Set flair", style: .default, handler: { [weak alert] (_) in
+                let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
+                self.submitFlairChange(flair, text: textField!.text)
+            }))
+
+            alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
+
+            //todo make this work on ipad
+            parentViewController?.present(alert, animated: true, completion: nil)
+
+        } else {
+            submitFlairChange(flair)
+        }
+    }
+
+
+    func submitFlairChange(_ flair: FlairTemplate, text: String? = ""){
+        do {
+            try (UIApplication.shared.delegate as! AppDelegate).session?.flairSubmission(link!.subreddit, flairId: flair.id, submissionFullname: link!.name, text: text ?? "") { result in
+                switch result {
+                case .failure(let error):
+                    print(error)
+                    DispatchQueue.main.async {
+                        let message = MDCSnackbarMessage()
+                        message.text = "Could not change flair"
+                        MDCSnackbarManager.show(message)
+                    }
+                    break
+                case .success(let success):
+                    print(success)
+                    DispatchQueue.main.async {
+                        let message = MDCSnackbarMessage()
+                        message.text = "Flair set successfully"
+                        MDCSnackbarManager.show(message)
+                        self.link!.flair = (text != nil && !text!.isEmpty) ? text! : flair.text
+                        CachedTitle.getTitle(submission: self.link!, full: true, true, false)
+                        self.setLink(submission: self.link!, parent: self.parentViewController!, nav: self.navViewController!, baseSub: (self.link?.subreddit)!)
+                        self.showBody(width: self.contentView.frame.size.width)
+
+                    }
+                break
+            }}
+        } catch {
+        }
     }
 
     func refresh() {

@@ -9,15 +9,18 @@
 import Foundation
 
 /**
-Uitility class.
-Parser class parses JSON and generates objects from it.
-*/
+ Uitility class.
+ Parser class parses JSON and generates objects from it.
+ */
 class Parser: NSObject {
     /**
-    */
+     */
     class func parse(dictionary data: JSONDictionary, of kind: String) -> Any? {
         if(data["was_comment"] != nil){ //Override messages that appear to be comments
             return Message(json: data)
+        }
+        if(kind == "Flair"){
+            return FlairTemplate(json: data)
         }
         switch kind {
         case "t1":
@@ -58,10 +61,10 @@ class Parser: NSObject {
         }
     }
     
-	/**
-	Parse thing object in JSON.
-	This method dispatches element of JSON to eithr methods to extract classes derived from Thing class.
-	*/
+    /**
+     Parse thing object in JSON.
+     This method dispatches element of JSON to eithr methods to extract classes derived from Thing class.
+     */
     class func parse(_ json: JSONDictionary) -> Any? {
         guard let kind = json["kind"] as? String else { return nil }
         if kind == "Listing" {
@@ -77,7 +80,7 @@ class Parser: NSObject {
     /**
      Parse more list
      Parse json object to extract a list which is composed of Comment and More.
-    */
+     */
     class func commentAndMore(from json: JSONAny) -> ([Thing], NSError?) {
         if let json = json as? JSONDictionary {
             if let root = json["json"] as? JSONDictionary {
@@ -100,8 +103,8 @@ class Parser: NSObject {
     }
     
     /**
-    Parse User list
-    */
+     Parse User list
+     */
     class func userList(from json: JSONDictionary) -> [User] {
         var result: [User] = []
         if let children = json["children"] as? [JSONDictionary] {
@@ -126,7 +129,7 @@ class Parser: NSObject {
                 if let sr = $0["sr"] as? String,
                     let comment_karma = $0["comment_karma"] as? Int,
                     let link_karma = $0["link_karma"] as? Int {
-                        result.append(SubredditKarma(subreddit: sr, commentKarma: comment_karma, linkKarma: link_karma))
+                    result.append(SubredditKarma(subreddit: sr, commentKarma: comment_karma, linkKarma: link_karma))
                 }
             })
         }
@@ -143,10 +146,10 @@ class Parser: NSObject {
         }
         return result
     }
-	
-	/**
-	Parse list object in JSON
-	*/
+    
+    /**
+     Parse list object in JSON
+     */
     class func listing(from json: JSONDictionary) -> Listing {
         var list: [Thing] = []
         var paginator: Paginator? = Paginator()
@@ -175,9 +178,32 @@ class Parser: NSObject {
         return Listing(children:list, paginator: paginator ?? Paginator())
     }
     
-	/**
-	Parse JSON of the style which is Thing.
-	*/
+    /**
+     Parse JSON of the style which is Thing.
+     */
+    class func flairAny(from json: JSONAny) -> RedditAny? {
+        // array
+        // json->[AnyObject]
+        if let array = json as? JSONArray {
+            var output: [Any] = []
+            for element in array {
+                if let element = element as? JSONDictionary, let obj = flairAny(from: element) {
+                    output.append(obj)
+                }
+            }
+            return output
+        }
+            // dictionary
+            // json->JSONDictionary
+        else if let json = json as? JSONDictionary {
+            return parse(dictionary: json, of: "Flair")
+        }
+        return nil
+    }
+    
+    /**
+     Parse JSON of the style which is Thing.
+     */
     class func redditAny(from json: JSONAny) -> RedditAny? {
         // array
         // json->[AnyObject]
@@ -190,8 +216,8 @@ class Parser: NSObject {
             }
             return output
         }
-		// dictionary
-		// json->JSONDictionary
+            // dictionary
+            // json->JSONDictionary
         else if let json = json as? JSONDictionary {
             return parse(json)
         }

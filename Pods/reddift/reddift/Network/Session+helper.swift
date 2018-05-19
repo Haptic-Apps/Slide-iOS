@@ -11,14 +11,14 @@ import Foundation
 // MARK: Response -> Data
 
 /**
-Function to eliminate codes to parse http response object.
-This function filters response object to handle errors.
-Returns Result<Error> object when any error happned.
-*/
+ Function to eliminate codes to parse http response object.
+ This function filters response object to handle errors.
+ Returns Result<Error> object when any error happned.
+ */
 func response2Data(from response: Response) -> Result<Data> {
-#if _TEST
+    #if _TEST
     if let str = String(data: response.data, encoding: .utf8) { print("response body:\n\(str)") }
-#endif
+    #endif
     if !(200..<300 ~= response.statusCode) {
         do {
             let json = try JSONSerialization.jsonObject(with: response.data as Data, options: [])
@@ -37,11 +37,11 @@ func response2Data(from response: Response) -> Result<Data> {
 // MARK: Data -> JSON, String
 
 /**
-Parse binary data to JSON object.
-Returns Result<Error> object when any error happned.
-- parameter data: Binary data is returned from reddit.
-- returns: Result object. Result object has JSON as JSONDictionary or [AnyObject], otherwise error object.
-*/
+ Parse binary data to JSON object.
+ Returns Result<Error> object when any error happned.
+ - parameter data: Binary data is returned from reddit.
+ - returns: Result object. Result object has JSON as JSONDictionary or [AnyObject], otherwise error object.
+ */
 func data2Json(from data: Data) -> Result<JSONAny> {
     do {
         if data.count == 0 { return Result(value:[:]) } else {
@@ -51,6 +51,10 @@ func data2Json(from data: Data) -> Result<JSONAny> {
     } catch {
         return Result(error: error as NSError)
     }
+}
+
+func flair2Choices(from json: JSONAny) -> Result<JSONAny> {
+    return Result(value: (json as! JSONDictionary)["choices"])
 }
 
 /**
@@ -73,11 +77,11 @@ func data2String(from data: Data) -> Result<String> {
 // MARK: JSON -> RedditAny
 
 /**
-Parse "more" response.
-Returns Result<Error> object when any error happned.
-- parameter json: JSON object is returned from reddit.
-- returns: Result object. Result object has a list of Thing object, otherwise error object.
-*/
+ Parse "more" response.
+ Returns Result<Error> object when any error happned.
+ - parameter json: JSON object is returned from reddit.
+ - returns: Result object. Result object has a list of Thing object, otherwise error object.
+ */
 func json2CommentAndMore(from json: JSONAny) -> Result<[Thing]> {
     let (list, error) = Parser.commentAndMore(from: json)
     if let error = error {
@@ -87,11 +91,11 @@ func json2CommentAndMore(from json: JSONAny) -> Result<[Thing]> {
 }
 
 /**
-Function to extract Account object from JSON object.
-Returns Result<Error> object when any error happned.
-- parameter json: JSON object is returned from reddit.
-- returns: Result object. Result object has Account object, otherwise error object.
-*/
+ Function to extract Account object from JSON object.
+ Returns Result<Error> object when any error happned.
+ - parameter json: JSON object is returned from reddit.
+ - returns: Result object. Result object has Account object, otherwise error object.
+ */
 func json2Account(from json: JSONAny) -> Result<Account> {
     if let object = json as? JSONDictionary {
         return Result(fromOptional: Account(json:object), error: ReddiftError.accountJsonObjectIsMalformed as NSError)
@@ -122,6 +126,12 @@ func json2RedditAny(from json: JSONAny) -> Result<RedditAny> {
     let object: Any? = Parser.redditAny(from: json)
     return Result(fromOptional: object, error: ReddiftError.failedToParseThingFromJsonObject as NSError)
 }
+
+func json2Flair(from json: JSONAny) -> Result<RedditAny> {
+    let object: Any? = Parser.flairAny(from: json)
+    return Result(fromOptional: object, error: ReddiftError.failedToParseThingFromJsonObject as NSError)
+}
+
 
 /**
  Parse JSON for response to /api/comment.

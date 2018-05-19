@@ -146,7 +146,7 @@ CHECKOUT OPTIONS:
     :commit: 752459578d8162c11f6311987bd3463e6d85712b
     :git: https://github.com/ccrama/ActionSheetPicker-3.0
   reddift:
-    :commit: 55e0a3a535f0b78144e222f95e8bdd69ed3a8fef
+    :commit: 6383aa52f70a5d09edeee0c5bc6b9ab81d0fb9fe
     :git: https://github.com/ccrama/reddift
   SloppySwiper:
     :commit: 90e1566555734d08a4c72619595f5a2157c104b3

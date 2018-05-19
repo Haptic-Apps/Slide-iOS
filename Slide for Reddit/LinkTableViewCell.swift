@@ -1386,7 +1386,7 @@ class LinkTableViewCell: UITableViewCell, UIViewControllerPreviewingDelegate, TT
         }
         
         cancelActionButton = UIAlertAction(title: "Flair", style: .default) { action -> Void in
-            //todo delete
+            self.flair()
         }
         actionSheetController.addAction(cancelActionButton)
         
@@ -1416,6 +1416,10 @@ class LinkTableViewCell: UITableViewCell, UIViewControllerPreviewingDelegate, TT
         
         let navEditorViewController: UINavigationController = UINavigationController(rootViewController: reply)
         parentViewController?.present(navEditorViewController, animated: true, completion: nil)
+    }
+
+    func flair(){
+        print("Clicked flair")
     }
     
     func deleteSelf(){
