@@ -145,6 +145,8 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         domainEnter.returnKeyType = .done
         domainEnter.textColor = ColorUtil.fontColor
         domainEnter.setImage(UIImage(), for: .search, state: .normal)
+        domainEnter.autocapitalizationType = .none
+        domainEnter.isTranslucent = false
 
     }
 

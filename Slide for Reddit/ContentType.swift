@@ -37,7 +37,11 @@ class ContentType {
         
         return false;
     }
-    
+
+    public static func isExternal(_ uri: URL) -> Bool {
+        return PostFilter.openExternally(uri)
+    }
+
     public static func isSpoiler(uri: URL) -> Bool {
         var urlString = uri.absoluteString
         if (!urlString.hasPrefix("//") && ((urlString.hasPrefix("/") && urlString.characters.count < 4)
@@ -204,6 +208,10 @@ class ContentType {
         let url = submission?.url
         if(url == nil){
             return .NONE
+        }
+
+        if(ContentType.isExternal(url!)){
+            return .EXTERNAL
         }
         let basicType = getContentType(baseUrl: url!);
         

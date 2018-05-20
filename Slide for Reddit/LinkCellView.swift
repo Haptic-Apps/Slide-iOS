@@ -840,7 +840,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             case .ALBUM:
                 text = ("Album")
                 break
-            case .EXTERNAL, .LINK, .EMBEDDED, .NONE:
+            case .EXTERNAL:
+                text = "External Link"
+                break
+            case .LINK, .EMBEDDED, .NONE:
                 text = "Link"
                 break
             case .DEVIANTART:
@@ -1320,7 +1323,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             case .ALBUM:
                 text = ("Album")
                 break
-            case .EXTERNAL, .LINK, .EMBEDDED, .NONE:
+            case .EXTERNAL:
+                text = "External Link"
+                break
+            case .LINK, .EMBEDDED, .NONE:
                 text = "Link"
                 break
             case .DEVIANTART:

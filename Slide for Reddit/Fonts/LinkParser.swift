@@ -11,28 +11,31 @@ import UIKit
 class LinkParser {
     public static func parse(_ attributedString: NSAttributedString, _ color: UIColor) -> NSMutableAttributedString {
         let string = NSMutableAttributedString.init(attributedString: attributedString)
-        if(string.length > 0){
+        if (string.length > 0) {
             string.enumerateAttributes(in: NSRange.init(location: 0, length: string.length), options: .longestEffectiveRangeNotRequired, using: { (attrs, range, pointer) in
                 for attr in attrs {
                     if let url = attr.value as? URL {
-                        if(SettingValues.enlargeLinks){
+                        if (SettingValues.enlargeLinks) {
                             string.addAttribute(NSFontAttributeName, value: FontGenerator.boldFontOfSize(size: 18, submission: false), range: range)
                         }
                         let type = ContentType.getContentType(baseUrl: url)
-                        
-                        if(type == .SPOILER){
+
+                        if (type == .SPOILER) {
                             string.highlightTarget(color: color)
                         }
 
-                        if(SettingValues.showLinkContentType){
-                            
+                        if (SettingValues.showLinkContentType) {
+
                             let typeString = NSMutableAttributedString.init(string: "", attributes: [:])
-                            switch(type) {
+                            switch (type) {
                             case .ALBUM:
                                 typeString.mutableString.setString("(Album)")
                                 break
-                            case .EXTERNAL, .LINK, .EMBEDDED, .NONE:
-                                if(url.absoluteString != string.mutableString.substring(with: range)){
+                            case .EXTERNAL:
+                                typeString.mutableString.setString("(External link)")
+                                break
+                            case .LINK, .EMBEDDED, .NONE:
+                                if (url.absoluteString != string.mutableString.substring(with: range)) {
                                     typeString.mutableString.setString("(\(url.host ?? url.absoluteString))")
                                 }
                                 break
@@ -55,7 +58,7 @@ class LinkParser {
                                 typeString.mutableString.setString("(Spoiler)")
                                 break
                             default:
-                                if(url.absoluteString != string.mutableString.substring(with: range)){
+                                if (url.absoluteString != string.mutableString.substring(with: range)) {
                                     typeString.mutableString.setString("(\(url.host!))")
                                 }
                                 break
@@ -74,7 +77,7 @@ class LinkParser {
 
 // Used from https://gist.github.com/aquajach/4d9398b95a748fd37e88
 extension NSMutableAttributedString {
-    
+
     func highlightTarget(color: UIColor) {
         let regPattern = "\\[\\[s\\[(.*?)\\]s\\]\\]"
         if let regex = try? NSRegularExpression(pattern: regPattern, options: []) {

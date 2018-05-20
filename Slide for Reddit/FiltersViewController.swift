@@ -83,13 +83,17 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
         domainEnter.returnKeyType = .done
         domainEnter.textColor = ColorUtil.fontColor
         domainEnter.setImage(UIImage(), for: .search, state: .normal)
-        
+        domainEnter.autocapitalizationType = .none
+        domainEnter.isTranslucent = false
+
         selftextEnter.searchBarStyle = UISearchBarStyle.minimal
         selftextEnter.placeholder = "Add a new subreddit to filter"
         selftextEnter.delegate = self
         selftextEnter.returnKeyType = .done
         selftextEnter.textColor = ColorUtil.fontColor
         selftextEnter.setImage(UIImage(), for: .search, state: .normal)
+        selftextEnter.autocapitalizationType = .none
+        selftextEnter.isTranslucent = false
 
         titleEnter.searchBarStyle = UISearchBarStyle.minimal
         titleEnter.placeholder = "Add a new title keyword to filter"
@@ -97,6 +101,8 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
         titleEnter.returnKeyType = .done
         titleEnter.textColor = ColorUtil.fontColor
         titleEnter.setImage(UIImage(), for: .search, state: .normal)
+        titleEnter.autocapitalizationType = .none
+        titleEnter.isTranslucent = false
 
         profileEnter.searchBarStyle = UISearchBarStyle.minimal
         profileEnter.placeholder = "Add a new user to filter"
@@ -104,6 +110,8 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
         profileEnter.returnKeyType = .done
         profileEnter.textColor = ColorUtil.fontColor
         profileEnter.setImage(UIImage(), for: .search, state: .normal)
+        profileEnter.autocapitalizationType = .none
+        profileEnter.isTranslucent = false
 
         subredditEnter.searchBarStyle = UISearchBarStyle.minimal
         subredditEnter.placeholder = "Add a new subreddit to filter"
@@ -111,6 +119,8 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
         subredditEnter.returnKeyType = .done
         subredditEnter.textColor = ColorUtil.fontColor
         subredditEnter.setImage(UIImage(), for: .search, state: .normal)
+        subredditEnter.setImage(UIImage(), for: .search, state: .normal)
+        subredditEnter.isTranslucent = false
 
         flairEnter.searchBarStyle = UISearchBarStyle.minimal
         flairEnter.placeholder = "Add a new flair keyword to filter"
@@ -118,7 +128,8 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
         flairEnter.returnKeyType = .done
         flairEnter.textColor = ColorUtil.fontColor
         flairEnter.setImage(UIImage(), for: .search, state: .normal)
-
+        flairEnter.setImage(UIImage(), for: .search, state: .normal)
+        flairEnter.isTranslucent = false
         
         tableView.isEditing = true
     }

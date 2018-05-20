@@ -26,7 +26,7 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
         let url = link.url!
 
 
-        if(PostFilter.openExternally(lnk)){
+        if(ContentType.isExternal(url)){
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(lnk.url!, options: [:], completionHandler: nil)
             } else {
@@ -123,7 +123,7 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
     }
 
     func doShow(url: URL, lq: URL? = nil) {
-        if(PostFilter.openExternally(url)){
+        if(ContentType.isExternal(url)){
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
             } else {
@@ -131,7 +131,6 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
             }
         } else {
             contentUrl = URL.init(string: String.init(htmlEncodedString: url.absoluteString))!
-            print(contentUrl!.absoluteString)
             var spoiler = ContentType.isSpoiler(uri: url)
             if (spoiler) {
                 let controller = UIAlertController.init(title: "Spoiler", message: url.absoluteString, preferredStyle: .alert)
