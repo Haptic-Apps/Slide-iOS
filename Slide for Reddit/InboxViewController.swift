@@ -62,7 +62,7 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
         read.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let readB = UIBarButtonItem.init(customView: read)
 
-            navigationItem.rightBarButtonItems = [editB, readB]
+        navigationItem.rightBarButtonItems = [editB, readB]
 
     }
 

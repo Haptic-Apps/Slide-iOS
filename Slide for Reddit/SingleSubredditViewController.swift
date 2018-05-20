@@ -1249,7 +1249,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
         alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
 
-        //todo make this work on ipad
         present(alert, animated: true, completion: nil)
 
     }
