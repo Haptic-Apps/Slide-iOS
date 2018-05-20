@@ -1458,7 +1458,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             }
         }))
 
-        
+
         alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { action in
         }))
 
@@ -1753,8 +1753,6 @@ extension UILabel {
         self.attributedText = nil
         self.text = text
     }
-
-
 }
 
 extension UIImage {

@@ -10,6 +10,7 @@ import UIKit
 import reddift
 import SDWebImage
 import MaterialComponents.MaterialSnackbar
+import XLActionController
 
 class ContentListingViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource {
     var baseData: ContributionLoader
@@ -234,6 +235,119 @@ class ContentListingViewController: MediaViewController, UITableViewDelegate, UI
             MDCSnackbarManager.show(message)
         }
     }
-    
-    
+}
+
+extension ContentListingViewController : LinkTableViewCellDelegate {
+    func more(_ cell: LinkTableViewCell) {
+        let link = cell.link!
+
+        let alertController: BottomSheetActionController = BottomSheetActionController()
+        alertController.headerData = "Post by /u/\(link.author)"
+
+
+        alertController.addAction(Action(ActionData(title: "/u/\(link.author)'s profile", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { action in
+
+            let prof = ProfileViewController.init(name: link.author)
+            VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+        }))
+        alertController.addAction(Action(ActionData(title: "/r/\(link.subreddit)", image: UIImage(named: "subs")!.menuIcon()), style: .default, handler: { action in
+
+            let sub = SingleSubredditViewController.init(subName: link.subreddit, single: true)
+            VCPresenter.showVC(viewController: sub, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+
+        }))
+
+        alertController.addAction(Action(ActionData(title: "Share comment permalink", image: UIImage(named: "link")!.menuIcon()), style: .default, handler: { action in
+            let activityViewController = UIActivityViewController(activityItems: [link.permalink], applicationActivities: nil)
+            self.present(activityViewController, animated: true, completion: {})
+        }))
+        if (AccountController.isLoggedIn) {
+            alertController.addAction(Action(ActionData(title: "Save", image: UIImage(named: "save")!.menuIcon()), style: .default, handler: { action in
+                self.save(cell)
+            }))
+
+        }
+
+
+
+        let open = OpenInChromeController.init()
+        if (open.isChromeInstalled()) {
+
+            alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "link")!.menuIcon()), style: .default, handler: { action in
+                open.openInChrome(link.url!, callbackURL: nil, createNewTab: true)
+            }))
+        }
+        alertController.addAction(Action(ActionData(title: "Open in Safari", image: UIImage(named: "world")!.menuIcon()), style: .default, handler: { action in
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open(link.url!, options: [:], completionHandler: nil)
+            } else {
+                UIApplication.shared.openURL(link.url!)
+            }
+        }))
+
+        alertController.addAction(Action(ActionData(title: "Share content", image: UIImage(named: "link")!.menuIcon()), style: .default, handler: { action in
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [link.url!], applicationActivities: nil);
+            let currentViewController: UIViewController = UIApplication.shared.keyWindow!.rootViewController!
+            currentViewController.present(activityViewController, animated: true, completion: nil);
+        }))
+        alertController.addAction(Action(ActionData(title: "Share comments", image: UIImage(named: "comments")!.menuIcon()), style: .default, handler: { action in
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [URL.init(string: "https://reddit.com" + link.permalink)!], applicationActivities: nil);
+            let currentViewController: UIViewController = UIApplication.shared.keyWindow!.rootViewController!
+            currentViewController.present(activityViewController, animated: true, completion: nil);
+        }))
+
+
+        alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: nil))
+
+        //todo make this work on ipad
+        self.present(alertController, animated: true, completion: nil)
+    }
+
+
+    func upvote(_ cell: LinkTableViewCell) {
+        do {
+            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up, name: (cell.link?.getId())!, completion: { (result) in
+
+            })
+            ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up)
+            History.addSeen(s: cell.link!)
+            cell.refresh()
+        } catch {
+
+        }
+    }
+
+    func downvote(_ cell: LinkTableViewCell) {
+        do {
+            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down, name: (cell.link?.getId())!, completion: { (result) in
+
+            })
+            ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down)
+            History.addSeen(s: cell.link!)
+            cell.refresh()
+        } catch {
+
+        }
+    }
+
+    func save(_ cell: LinkTableViewCell) {
+        do {
+            try session?.setSave(!ActionStates.isSaved(s: cell.link!), name: (cell.link?.getId())!, completion: { (result) in
+
+            })
+            ActionStates.setSaved(s: cell.link!, saved: !ActionStates.isSaved(s: cell.link!))
+            History.addSeen(s: cell.link!)
+            cell.refresh()
+        } catch {
+
+        }
+    }
+    func reply(_ cell: LinkTableViewCell) {
+
+    }
+
+    func hide(_ cell: LinkTableViewCell) {
+
+    }
+
 }
