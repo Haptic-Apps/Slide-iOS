@@ -16,6 +16,7 @@ class PostFilter {
     static var profiles: [NSString] = []
     static var subreddits: [NSString] = []
     static var flairs: [NSString] = []
+    static var openExternally: [NSString] = []
 
     public static func initialize(){
         PostFilter.domains = UserDefaults.standard.array(forKey: "domainfilters") as! [NSString]? ?? []
@@ -24,6 +25,7 @@ class PostFilter {
         PostFilter.profiles = UserDefaults.standard.array(forKey: "profilefilters") as! [NSString]? ?? []
         PostFilter.subreddits = UserDefaults.standard.array(forKey: "subredditfilters") as! [NSString]? ?? []
         PostFilter.flairs = UserDefaults.standard.array(forKey: "flairfilters") as! [NSString]? ?? []
+        PostFilter.openExternally = UserDefaults.standard.array(forKey: "openexternally") as! [NSString]? ?? []
     }
     
     public static func saveAndUpdate(){
@@ -32,7 +34,8 @@ class PostFilter {
         UserDefaults.standard.set(PostFilter.titles, forKey: "titlefilters")
         UserDefaults.standard.set(PostFilter.profiles, forKey: "profilefilters")
         UserDefaults.standard.set(PostFilter.subreddits, forKey: "subredditfilters")
-        UserDefaults.standard.set(PostFilter.flairs, forKey: "flairfilters")        
+        UserDefaults.standard.set(PostFilter.flairs, forKey: "flairfilters")
+        UserDefaults.standard.set(PostFilter.openExternally, forKey: "openexternally")
         UserDefaults.standard.synchronize()
         initialize()
     }
@@ -48,9 +51,22 @@ class PostFilter {
     }
     
     public static func matches(_ link: RSubmission) -> Bool {
-        return (PostFilter.domains.contains(where: {$0.caseInsensitiveCompare(link.domain) == .orderedSame})) || PostFilter.profiles.contains(where: {$0.caseInsensitiveCompare(link.author) == .orderedSame}) || PostFilter.subreddits.contains(where: {$0.caseInsensitiveCompare(link.subreddit) == .orderedSame}) || contains(PostFilter.flairs, value: link.flair) || contains(PostFilter.selftext, value: link.htmlBody) || contains(PostFilter.titles, value: link.title ) || (link.nsfw && !SettingValues.nsfwEnabled)
+        return (PostFilter.domains.contains(where: {$0.range(of: link.domain, options: .caseInsensitive) != nil})) || PostFilter.profiles.contains(where: {$0.caseInsensitiveCompare(link.author) == .orderedSame}) || PostFilter.subreddits.contains(where: {$0.caseInsensitiveCompare(link.subreddit) == .orderedSame}) || contains(PostFilter.flairs, value: link.flair) || contains(PostFilter.selftext, value: link.htmlBody) || contains(PostFilter.titles, value: link.title ) || (link.nsfw && !SettingValues.nsfwEnabled)
     }
-    
+
+    public static func openExternally(_ link: RSubmission) -> Bool {
+        return (PostFilter.openExternally.contains(where: {
+            $0.range(of: link.domain, options: .caseInsensitive) != nil
+        }))
+    }
+
+    public static func openExternally(_ link: URL) -> Bool {
+        return (PostFilter.openExternally.contains(where: {
+            $0.range(of: link.host ?? " ", options: .caseInsensitive) != nil
+        }))
+    }
+
+
     public static func filter(_ input: [RSubmission], previous: [RSubmission]?) -> [RSubmission] {
         var ids: [String] = []
         var toReturn: [RSubmission] = []

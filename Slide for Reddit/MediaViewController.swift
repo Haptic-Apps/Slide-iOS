@@ -24,19 +24,29 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
         }
         self.link = lnk
         let url = link.url!
-        if (ContentType.isGif(uri: url)) {
-            if (!link!.videoPreview.isEmpty()) {
-                doShow(url: URL.init(string: link!.videoPreview)!)
+
+
+        if(PostFilter.openExternally(lnk)){
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open(lnk.url!, options: [:], completionHandler: nil)
             } else {
-                doShow(url: url)
+                UIApplication.shared.openURL(lnk.url!)
             }
         } else {
-            if (lq && shownURL != nil) {
-                doShow(url: url, lq: shownURL)
-            } else if(shownURL != nil) {
-                doShow(url: shownURL!)
+            if (ContentType.isGif(uri: url)) {
+                if (!link!.videoPreview.isEmpty()) {
+                    doShow(url: URL.init(string: link!.videoPreview)!)
+                } else {
+                    doShow(url: url)
+                }
             } else {
-                doShow(url: url)
+                if (lq && shownURL != nil) {
+                    doShow(url: url, lq: shownURL)
+                } else if(shownURL != nil) {
+                    doShow(url: shownURL!)
+                } else {
+                    doShow(url: url)
+                }
             }
         }
     }
@@ -113,22 +123,30 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
     }
 
     func doShow(url: URL, lq: URL? = nil) {
-        contentUrl = URL.init(string: String.init(htmlEncodedString: url.absoluteString))!
-        print(contentUrl!.absoluteString)
-        var spoiler = ContentType.isSpoiler(uri: url)
-        if (spoiler) {
-            let controller = UIAlertController.init(title: "Spoiler", message: url.absoluteString, preferredStyle: .alert)
-            present(controller, animated: true, completion: nil)
+        if(PostFilter.openExternally(url)){
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            } else {
+                UIApplication.shared.openURL(url)
+            }
         } else {
-            let controller = getControllerForUrl(baseUrl: url, lq: lq)!
-            if (controller is AlbumViewController) {
-                controller.modalPresentationStyle = .overFullScreen
-                present(controller, animated: true, completion: nil)
-            } else if (controller is SingleContentViewController) {
-                controller.modalPresentationStyle = .overFullScreen
+            contentUrl = URL.init(string: String.init(htmlEncodedString: url.absoluteString))!
+            print(contentUrl!.absoluteString)
+            var spoiler = ContentType.isSpoiler(uri: url)
+            if (spoiler) {
+                let controller = UIAlertController.init(title: "Spoiler", message: url.absoluteString, preferredStyle: .alert)
                 present(controller, animated: true, completion: nil)
             } else {
-                VCPresenter.showVC(viewController: controller, popupIfPossible: true, parentNavigationController: navigationController, parentViewController: self)
+                let controller = getControllerForUrl(baseUrl: url, lq: lq)!
+                if (controller is AlbumViewController) {
+                    controller.modalPresentationStyle = .overFullScreen
+                    present(controller, animated: true, completion: nil)
+                } else if (controller is SingleContentViewController) {
+                    controller.modalPresentationStyle = .overFullScreen
+                    present(controller, animated: true, completion: nil)
+                } else {
+                    VCPresenter.showVC(viewController: controller, popupIfPossible: true, parentNavigationController: navigationController, parentViewController: self)
+                }
             }
         }
     }

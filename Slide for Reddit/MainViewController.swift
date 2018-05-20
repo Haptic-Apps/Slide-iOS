@@ -39,6 +39,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
         navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
         navigationController?.setToolbarHidden(false, animated: false)
+        UIApplication.shared.statusBarView?.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
 
         if(SettingValues.viewType){
             navigationController?.setNavigationBarHidden(true, animated: true)

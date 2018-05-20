@@ -42,9 +42,9 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
         }
         if let image = baseImage {
             if (image.size.height > image.size.width ||  UIApplication.shared.statusBarOrientation != .portrait) {
-                self.scrollView.contentSize = CGSize.init(width: getWidthFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width), height: self.view.frame.size.height)
+                self.scrollView.contentSize = CGSize.init(width: min(self.view.frame.size.width, getWidthFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width)), height: self.view.frame.size.height)
             } else {
-                self.scrollView.contentSize = CGSize.init(width: self.view.frame.size.width, height: getHeightFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width))
+                self.scrollView.contentSize = CGSize.init(width: self.view.frame.size.width, height: min(self.view.frame.size.height, getHeightFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width)))
             }
             self.scrollView.delegate = self
 
@@ -318,7 +318,10 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
 
     var showHQ = false
 
+    var savedColor : UIColor?
+
     override func viewWillAppear(_ animated: Bool) {
+        savedColor = UIApplication.shared.statusBarView?.backgroundColor
         UIApplication.shared.statusBarView?.backgroundColor = .clear
 
         super.viewWillAppear(animated)
@@ -349,6 +352,12 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+
+        if(savedColor != nil){
+            UIApplication.shared.statusBarView?.backgroundColor = savedColor
+        }
+
+
         if (MediaDisplayViewController.videoPlayer != nil) {
             MediaDisplayViewController.videoPlayer!.pause()
         }
