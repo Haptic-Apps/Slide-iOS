@@ -31,7 +31,7 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
                 doShow(url: url)
             }
         } else {
-            if (lq) {
+            if (lq && shownURL != nil) {
                 doShow(url: url, lq: shownURL)
             } else if(shownURL != nil) {
                 doShow(url: shownURL!)
