@@ -1260,80 +1260,59 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
     func showMore(_ sender: AnyObject, parentVC: MainViewController? = nil) {
 
-        let actionSheetController: UIAlertController = UIAlertController(title: "", message: "", preferredStyle: .actionSheet)
+        let alertController: BottomSheetActionController = BottomSheetActionController()
+        alertController.headerData = "/r/\(sub)"
 
-        var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
-            print("Cancel")
-        }
-        actionSheetController.addAction(cancelActionButton)
 
-        cancelActionButton = UIAlertAction(title: "Search", style: .default) { action -> Void in
+        alertController.addAction(Action(ActionData(title: "Search", image: UIImage(named: "search")!.menuIcon()), style: .default, handler: { action in
             self.search()
-        }
-        actionSheetController.addAction(cancelActionButton)
+        }))
 
         if (sub.contains("/m/")) {
-            cancelActionButton = UIAlertAction(title: "Manage multireddit", style: .default) { action -> Void in
+            alertController.addAction(Action(ActionData(title: "Manage multireddit", image: UIImage(named: "info")!.menuIcon()), style: .default, handler: { action in
                 self.displayMultiredditSidebar()
-            }
+            }))
         } else {
-            cancelActionButton = UIAlertAction(title: "Sidebar", style: .default) { action -> Void in
+            alertController.addAction(Action(ActionData(title: "Sidebar", image: UIImage(named: "info")!.menuIcon()), style: .default, handler: { action in
                 self.doDisplaySidebar()
-            }
+            }))
         }
-        actionSheetController.addAction(cancelActionButton)
 
-        cancelActionButton = UIAlertAction(title: "Refresh", style: .default) { action -> Void in
+        alertController.addAction(Action(ActionData(title: "Refresh", image: UIImage(named: "sync")!.menuIcon()), style: .default, handler: { action in
             self.refresh()
-        }
-        actionSheetController.addAction(cancelActionButton)
+        }))
 
-        cancelActionButton = UIAlertAction(title: "Gallery mode", style: .default) { action -> Void in
+        alertController.addAction(Action(ActionData(title: "Gallery", image: UIImage(named: "image")!.menuIcon()), style: .default, handler: { action in
             self.galleryMode()
-        }
-        actionSheetController.addAction(cancelActionButton)
+        }))
 
-        cancelActionButton = UIAlertAction(title: "Shadowbox mode", style: .default) { action -> Void in
+        alertController.addAction(Action(ActionData(title: "Shadowbox", image: UIImage(named: "shadowbox")!.menuIcon()), style: .default, handler: { action in
             self.shadowboxMode()
-        }
-        actionSheetController.addAction(cancelActionButton)
+        }))
 
-
-        cancelActionButton = UIAlertAction(title: "Subreddit Theme", style: .default) { action -> Void in
+        alertController.addAction(Action(ActionData(title: "Subreddit theme", image: UIImage(named: "colors")!.menuIcon()), style: .default, handler: { action in
             if (parentVC != nil) {
                 let p = (parentVC!)
                 self.pickTheme(sender: sender, parent: p)
             } else {
                 self.pickTheme(sender: sender, parent: nil)
             }
-
-        }
-        actionSheetController.addAction(cancelActionButton)
+        }))
 
         if (!single && (sub != "all" && sub != "frontpage" && !sub.contains("+") && !sub.contains("/m/"))) {
-            cancelActionButton = UIAlertAction(title: "Submit", style: .default) { action -> Void in
+            alertController.addAction(Action(ActionData(title: "Submit", image: UIImage(named: "edit")!.menuIcon()), style: .default, handler: { action in
                 self.newPost(sender)
-            }
-            actionSheetController.addAction(cancelActionButton)
+            }))
         }
 
-        cancelActionButton = UIAlertAction(title: "Filter", style: .default) { action -> Void in
-            print("Filter")
-        }
-        actionSheetController.addAction(cancelActionButton)
+        alertController.addAction(Action(ActionData(title: "Filter content", image: UIImage(named: "filter")!.menuIcon()), style: .default, handler: { action in
+            //todo implement filtering
+        }))
 
-        actionSheetController.modalPresentationStyle = .popover
-        if let presenter = actionSheetController.popoverPresentationController {
-            presenter.sourceView = sender as! UIButton
-            presenter.sourceRect = (sender as! UIButton).bounds
-        }
+        alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { action in
+        }))
 
-
-        self.present(actionSheetController, animated: true, completion: nil)
-
-        //  let nav = TapBehindModalViewController.init(rootViewController: ReplyViewController.init.init(parent: self))
-        // nav.modalPresentationStyle = .pageSheet
-        //  self.present(nav, animated: true, completion:{})
+        VCPresenter.presentAlert(alertController, parentVC: self)
 
     }
 
@@ -1387,7 +1366,8 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             }
         }
         controller.setLinks(links: gLinks)
-        show(controller, sender: self)
+        controller.modalPresentationStyle = .overFullScreen
+        present(controller, animated: true, completion: nil)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -1654,12 +1634,19 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                                         self.links.append(i)
                                     }
                                     updated = listing.updated
-                                    self.flowLayout.reset()
-                                    self.reloadDataReset()
                                 }
+                                var paths = [IndexPath]()
+                                for i in 0...(self.links.count - 1) {
+                                    paths.append(IndexPath.init(item: i, section: 0))
+                                }
+
+                                    self.flowLayout.reset()
+                                    self.tableView.reloadData()
+                                    self.tableView.contentOffset = CGPoint.init(x: 0, y: -64 + ((SettingValues.viewType && !self.single) ? -20 : 0))
+
                                 self.refreshControl.endRefreshing()
                                 self.indicator?.stopAnimating()
-                                self.tableView.reloadSections(IndexSet(integersIn: 0...0))
+                                self.loading = false
                                 self.loading = false
                                 self.nomore = true
 
@@ -1716,6 +1703,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                         } catch {
 
                         }
+                        self.preloadImages(values)
                         DispatchQueue.main.async {
                             var paths = [IndexPath]()
                             for i in before...(self.links.count - 1) {

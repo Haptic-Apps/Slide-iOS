@@ -244,37 +244,37 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         alertController.headerData = "Post by /u/\(link.author)"
 
 
-        alertController.addAction(Action(ActionData(title: "/u/\(link.author)'s profile", image:UIImage(named: "profile")!.menuIcon()), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "/u/\(link.author)'s profile", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { action in
 
             let prof = ProfileViewController.init(name: link.author)
             VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
         }))
-        alertController.addAction(Action(ActionData(title: "/r/\(link.subreddit)", image:UIImage(named: "subs")!.menuIcon()), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "/r/\(link.subreddit)", image: UIImage(named: "subs")!.menuIcon()), style: .default, handler: { action in
 
             let prof = SingleSubredditViewController.init(subName: link.subreddit, single: true)
             VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
         }))
 
-        alertController.addAction(Action(ActionData(title: "Share comment permalink", image:UIImage(named: "link")!.menuIcon()), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Share comment permalink", image: UIImage(named: "link")!.menuIcon()), style: .default, handler: { action in
             let activityViewController = UIActivityViewController(activityItems: [link.permalink], applicationActivities: nil)
             self.present(activityViewController, animated: true, completion: {})
         }))
         if (AccountController.isLoggedIn) {
-            alertController.addAction(Action(ActionData(title: "Save", image:UIImage(named: "save")!.menuIcon()), style: .default, handler: { action in
+            alertController.addAction(Action(ActionData(title: "Save", image: UIImage(named: "save")!.menuIcon()), style: .default, handler: { action in
                 self.save(cell)
             }))
         }
-        alertController.addAction(Action(ActionData(title: "Report", image:UIImage(named: "hide")!.menuIcon()), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Report", image: UIImage(named: "hide")!.menuIcon()), style: .default, handler: { action in
             self.report(cell.link!)
         }))
         let open = OpenInChromeController.init()
         if (open.isChromeInstalled()) {
 
-            alertController.addAction(Action(ActionData(title: "Open in Chrome", image:UIImage(named: "link")!.menuIcon()), style: .default, handler: { action in
+            alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "link")!.menuIcon()), style: .default, handler: { action in
                 open.openInChrome(link.url!, callbackURL: nil, createNewTab: true)
             }))
         }
-        alertController.addAction(Action(ActionData(title: "Open in Safari", image:UIImage(named: "world")!.menuIcon()), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Open in Safari", image: UIImage(named: "world")!.menuIcon()), style: .default, handler: { action in
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(link.url!, options: [:], completionHandler: nil)
             } else {
@@ -282,18 +282,18 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             }
         }))
 
-        alertController.addAction(Action(ActionData(title: "Share content", image:UIImage(named: "link")!.menuIcon()), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Share content", image: UIImage(named: "link")!.menuIcon()), style: .default, handler: { action in
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [link.url!], applicationActivities: nil);
             let currentViewController: UIViewController = UIApplication.shared.keyWindow!.rootViewController!
             currentViewController.present(activityViewController, animated: true, completion: nil);
         }))
-        alertController.addAction(Action(ActionData(title: "Share comments", image:UIImage(named: "comments")!.menuIcon()), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Share comments", image: UIImage(named: "comments")!.menuIcon()), style: .default, handler: { action in
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [URL.init(string: "https://reddit.com" + link.permalink)!], applicationActivities: nil);
             let currentViewController: UIViewController = UIApplication.shared.keyWindow!.rootViewController!
             currentViewController.present(activityViewController, animated: true, completion: nil);
         }))
 
-        alertController.addAction(Action(ActionData(title: "Cancel", image:UIImage(named: "close")!.menuIcon()), style: .default, handler: nil))
+        alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: nil))
 
         VCPresenter.presentAlert(alertController, parentVC: self)
 
@@ -397,73 +397,15 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             if (Subscriptions.isSubscriber(link.subreddit)) {
                 doSubbed()
             }
-
-            if (NSDate.init().timeIntervalSince1970 - History.getSeenTime(s: self.submission!) < 0 && !reset) {//todo possibly, would only load if more than x ms passed
-                self.loaded = true
-                do {
-                    let realm = try Realm()
-                    if let listing = realm.objects(RSubmission.self).filter({ (item) -> Bool in
-                        return item.id == self.submission!.id
-                    }).first {
-                        self.comments = []
-                        self.hiddenPersons = []
-                        var temp: [Object] = []
-                        self.hidden = []
-                        self.text = [:]
-
-                        var currentIndex = 0
-                        parents = [:]
-                        var currentOP = ""
-                        for child in listing.comments {
-                            if (child.depth == 1) {
-                                currentOP = child.author
-                            }
-                            parents[child.getId()] = currentOP
-                            currentIndex += 1
-
-                            temp.append(child)
-                            self.content[child.getIdentifier()] = child
-                            self.comments.append(child.getIdentifier())
-                            self.cDepth[child.getIdentifier()] = child.depth
-                        }
-                        if (!self.comments.isEmpty) {
-                            self.updateStringsSingle(temp)
-                        }
-                        DispatchQueue.main.async(execute: { () -> Void in
-                            if (!self.comments.isEmpty) {
-                                var time = timeval(tv_sec: 0, tv_usec: 0)
-                                gettimeofday(&time, nil)
-
-                                self.doArrays()
-                                self.lastSeen = (self.context.isEmpty ? History.getSeenTime(s: link) : Double(0))
-
-                                self.tableView.reloadData(with: .fade)
-                            }
-                            if (self.comments.isEmpty) {
-                                self.reset = true
-                                self.refresh(sender)
-                            } else {
-                                self.refreshControl.endRefreshing()
-                                self.indicator?.stopAnimating()
-                            }
-
-                        })
-                    }
-                } catch {
-                    self.reset = true
-                    refresh(sender)
-                }
-
-
-            } else {
-
-                reset = false
-                do {
-                    try session?.getArticles(link.name, sort: sort, comments: (context.isEmpty ? nil : [context]), context: 3, completion: { (result) -> Void in
-                        switch result {
-                        case .failure(let _):
-                            self.loaded = true
+            reset = false
+            do {
+                try session?.getArticles(link.name, sort: sort, comments: (context.isEmpty ? nil : [context]), context: 3, completion: { (result) -> Void in
+                    switch result {
+                    case .failure(let _):
+                        self.loaded = true
+                        DispatchQueue.main.async {
                             do {
+
                                 let realm = try Realm()
                                 if let listing = realm.objects(RSubmission.self).filter({ (item) -> Bool in
                                     return item.id == self.submission!.id
@@ -501,13 +443,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
                                             self.tableView.reloadData(with: .fade)
                                         }
-                                        if (self.comments.isEmpty) {
-                                            self.reset = true
-                                            self.refresh(sender)
-                                        } else {
                                             self.refreshControl.endRefreshing()
                                             self.indicator?.stopAnimating()
-                                        }
                                         if (self.comments.isEmpty) {
                                             let message = MDCSnackbarMessage()
                                             message.text = "No cached comments found"
@@ -525,137 +462,138 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                 message.text = "No cached comments found"
                                 MDCSnackbarManager.show(message)
                             }
-                            break
-                        case .success(let tuple):
-                            let startDepth = 1
-                            let listing = tuple.1
-                            self.comments = []
-                            self.hiddenPersons = []
-                            self.hidden = []
-                            self.text = [:]
-                            self.content = [:]
-                            self.loaded = true
-                            if (self.submission == nil) {
-                                self.submission = RealmDataWrapper.linkToRSubmission(submission: tuple.0.children[0] as! Link)
-                            } else {
-                                RealmDataWrapper.updateSubmission(self.submission!, tuple.0.children[0] as! Link)
+                        }
+
+                        break
+                    case .success(let tuple):
+                        let startDepth = 1
+                        let listing = tuple.1
+                        self.comments = []
+                        self.hiddenPersons = []
+                        self.hidden = []
+                        self.text = [:]
+                        self.content = [:]
+                        self.loaded = true
+                        if (self.submission == nil) {
+                            self.submission = RealmDataWrapper.linkToRSubmission(submission: tuple.0.children[0] as! Link)
+                        } else {
+                            RealmDataWrapper.updateSubmission(self.submission!, tuple.0.children[0] as! Link)
+                        }
+
+                        DispatchQueue.global().async(execute: { () -> Void in
+                            var allIncoming: [(Thing, Int)] = []
+                            self.submission!.comments.removeAll()
+                            self.parents = [:]
+
+                            for child in listing.children {
+                                let incoming = self.extendKeepMore(in: child, current: startDepth)
+                                allIncoming.append(contentsOf: incoming)
+                                var currentIndex = 0
+                                var currentOP = ""
+
+                                for i in incoming {
+                                    let item = RealmDataWrapper.commentToRealm(comment: i.0, depth: i.1)
+                                    self.content[item.getIdentifier()] = item
+                                    self.comments.append(item.getIdentifier())
+                                    if (item is RComment) {
+                                        self.submission!.comments.append(item as! RComment)
+                                    }
+                                    if (i.1 == 1 && item is RComment) {
+                                        currentOP = (item as! RComment).author
+                                    }
+                                    self.parents[i.0.getId()] = currentOP
+                                    currentIndex += 1
+
+                                    self.cDepth[i.0.getId()] = i.1
+                                }
                             }
 
-                            DispatchQueue.global().async(execute: { () -> Void in
-                                var allIncoming: [(Thing, Int)] = []
-                                self.submission!.comments.removeAll()
-                                self.parents = [:]
+                            var time = timeval(tv_sec: 0, tv_usec: 0)
+                            gettimeofday(&time, nil)
+                            if (!allIncoming.isEmpty) {
+                                self.updateStrings(allIncoming)
+                            }
+                            self.paginator = listing.paginator
 
-                                for child in listing.children {
-                                    let incoming = self.extendKeepMore(in: child, current: startDepth)
-                                    allIncoming.append(contentsOf: incoming)
-                                    var currentIndex = 0
-                                    var currentOP = ""
-
-                                    for i in incoming {
-                                        let item = RealmDataWrapper.commentToRealm(comment: i.0, depth: i.1)
-                                        self.content[item.getIdentifier()] = item
-                                        self.comments.append(item.getIdentifier())
-                                        if (item is RComment) {
-                                            self.submission!.comments.append(item as! RComment)
+                            if (!self.comments.isEmpty) {
+                                do {
+                                    let realm = try! Realm()
+                                    //todo insert
+                                    realm.beginWrite()
+                                    for comment in self.comments {
+                                        realm.create(type(of: self.content[comment]!), value: self.content[comment]!, update: true)
+                                        if (self.content[comment]! is RComment) {
+                                            self.submission!.comments.append(self.content[comment] as! RComment)
                                         }
-                                        if (i.1 == 1 && item is RComment) {
-                                            currentOP = (item as! RComment).author
-                                        }
-                                        self.parents[i.0.getId()] = currentOP
-                                        currentIndex += 1
-
-                                        self.cDepth[i.0.getId()] = i.1
                                     }
+                                    realm.create(type(of: self.submission!), value: self.submission!, update: true)
+                                    try realm.commitWrite()
+                                } catch {
+
+                                }
+                            }
+                            self.doArrays()
+                            self.lastSeen = (self.context.isEmpty ? History.getSeenTime(s: self.submission!) : Double(0))
+                            DispatchQueue.main.async(execute: { () -> Void in
+                                History.setComments(s: link)
+                                History.addSeen(s: link)
+                                if (!self.hasSubmission) {
+                                    self.headerCell = LinkCellView()
+                                    self.headerCell?.del = self
+                                    self.headerCell?.parentViewController = self
+                                    self.hasDone = true
+                                    self.headerCell?.aspectWidth = self.tableView.bounds.size.width
+                                    self.headerCell?.setLink(submission: self.submission!, parent: self, nav: self.navigationController, baseSub: self.submission!.subreddit)
+                                    self.headerCell?.showBody(width: self.view.frame.size.width)
+                                    self.tableView.tableHeaderView = UIView(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.width, height: 0.01))
+                                    if let tableHeaderView = self.headerCell {
+                                        var frame = CGRect.zero
+                                        frame.size.width = self.tableView.bounds.size.width
+                                        frame.size.height = tableHeaderView.estimateHeight(true)
+                                        if self.tableView.tableHeaderView == nil || !frame.equalTo(tableHeaderView.frame) {
+                                            tableHeaderView.frame = frame
+                                            tableHeaderView.layoutIfNeeded()
+                                            let view = UIView(frame: tableHeaderView.frame)
+                                            view.addSubview(tableHeaderView)
+                                            self.tableView.tableHeaderView = view
+                                        }
+                                    }
+                                    self.navigationItem.title = self.submission!.subreddit
+                                    self.navigationItem.backBarButtonItem?.title = ""
+                                    self.setBarColors(color: ColorUtil.getColorForSub(sub: self.navigationItem.title!))
+                                } else {
+                                    self.headerCell?.refreshLink(self.submission!)
+                                    self.headerCell?.showBody(width: self.view.frame.size.width)
+                                }
+                                self.refreshControl.endRefreshing()
+                                self.indicator?.stopAnimating()
+                                self.tableView.reloadData(with: .fade)
+                                if (SettingValues.collapseDefault && self.context.isEmpty()) {
+                                    self.collapseAll()
                                 }
 
-                                var time = timeval(tv_sec: 0, tv_usec: 0)
-                                gettimeofday(&time, nil)
-                                if (!allIncoming.isEmpty) {
-                                    self.updateStrings(allIncoming)
-                                }
-                                self.paginator = listing.paginator
-
-                                if (!self.comments.isEmpty) {
-                                    do {
-                                        let realm = try! Realm()
-                                        //todo insert
-                                        realm.beginWrite()
-                                        for comment in self.comments {
-                                            realm.create(type(of: self.content[comment]!), value: self.content[comment]!, update: true)
-                                            if (self.content[comment]! is RComment) {
-                                                self.submission!.comments.append(self.content[comment] as! RComment)
+                                var index = 0
+                                if (!self.context.isEmpty()) {
+                                    for comment in self.comments {
+                                        if (comment.contains(self.context)) {
+                                            self.goToCell(i: index)
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                                                self.showCommentMenu(self.tableView.cellForRow(at: IndexPath.init(row: index, section: 0)) as! CommentDepthCell)
                                             }
+                                            break
+                                        } else {
+                                            index += 1
                                         }
-                                        realm.create(type(of: self.submission!), value: self.submission!, update: true)
-                                        try realm.commitWrite()
-                                    } catch {
-
                                     }
                                 }
-                                self.doArrays()
-                                self.lastSeen = (self.context.isEmpty ? History.getSeenTime(s: self.submission!) : Double(0))
-                                DispatchQueue.main.async(execute: { () -> Void in
-                                    History.setComments(s: link)
-                                    History.addSeen(s: link)
-                                    if (!self.hasSubmission) {
-                                        self.headerCell = LinkCellView()
-                                        self.headerCell?.del = self
-                                        self.headerCell?.parentViewController = self
-                                        self.hasDone = true
-                                        self.headerCell?.aspectWidth = self.tableView.bounds.size.width
-                                        self.headerCell?.setLink(submission: self.submission!, parent: self, nav: self.navigationController, baseSub: self.submission!.subreddit)
-                                        self.headerCell?.showBody(width: self.view.frame.size.width)
-                                        self.tableView.tableHeaderView = UIView(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.width, height: 0.01))
-                                        if let tableHeaderView = self.headerCell {
-                                            var frame = CGRect.zero
-                                            frame.size.width = self.tableView.bounds.size.width
-                                            frame.size.height = tableHeaderView.estimateHeight(true)
-                                            if self.tableView.tableHeaderView == nil || !frame.equalTo(tableHeaderView.frame) {
-                                                tableHeaderView.frame = frame
-                                                tableHeaderView.layoutIfNeeded()
-                                                let view = UIView(frame: tableHeaderView.frame)
-                                                view.addSubview(tableHeaderView)
-                                                self.tableView.tableHeaderView = view
-                                            }
-                                        }
-                                        self.navigationItem.title = self.submission!.subreddit
-                                        self.navigationItem.backBarButtonItem?.title = ""
-                                        self.setBarColors(color: ColorUtil.getColorForSub(sub: self.navigationItem.title!))
-                                    } else {
-                                        self.headerCell?.refreshLink(self.submission!)
-                                        self.headerCell?.showBody(width: self.view.frame.size.width)
-                                    }
-                                    self.refreshControl.endRefreshing()
-                                    self.indicator?.stopAnimating()
-                                    self.tableView.reloadData(with: .fade)
-                                    if (SettingValues.collapseDefault && self.context.isEmpty()) {
-                                        self.collapseAll()
-                                    }
-
-                                    var index = 0
-                                    if (!self.context.isEmpty()) {
-                                        for comment in self.comments {
-                                            if (comment.contains(self.context)) {
-                                                self.goToCell(i: index)
-                                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
-                                                    self.showCommentMenu(self.tableView.cellForRow(at: IndexPath.init(row: index, section: 0)) as! CommentDepthCell)
-                                                }
-                                                break
-                                            } else {
-                                                index += 1
-                                            }
-                                        }
-                                    }
-                                })
-
-
                             })
-                        }
-                    })
-                } catch {
-                    print(error)
-                }
+
+
+                        })
+                    }
+                })
+            } catch {
+                print(error)
             }
         }
     }
@@ -927,7 +865,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
 
         if (navigationController != nil) {
-          
+
 
             let sort = UIButton.init(type: .custom)
             sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControlState.normal)
@@ -1010,43 +948,40 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     func showMenu(_ sender: AnyObject) {
         let link = submission!
-        let actionSheetController: UIAlertController = UIAlertController(title: link.title, message: "", preferredStyle: .actionSheet)
 
-        var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
-            print("Cancel")
-        }
-        actionSheetController.addAction(cancelActionButton)
 
-        cancelActionButton = UIAlertAction(title: "Refresh", style: .default) { action -> Void in
+        let alertController: BottomSheetActionController = BottomSheetActionController()
+        alertController.headerData = "Comment actions"
+
+
+        alertController.addAction(Action(ActionData(title: "Refresh", image: UIImage(named: "sync")!.menuIcon()), style: .default, handler: { action in
             self.reset = true
             self.refresh(self)
-        }
-        actionSheetController.addAction(cancelActionButton)
+        }))
 
-        cancelActionButton = UIAlertAction(title: "Related submissions", style: .default) { action -> Void in
+        alertController.addAction(Action(ActionData(title: "/r/\(link.subreddit)", image: UIImage(named: "subs")!.menuIcon()), style: .default, handler: { action in
+            VCPresenter.openRedditLink("www.reddit.com/r/\(link.subreddit)", self.navigationController, self)
+        }))
+
+        alertController.addAction(Action(ActionData(title: "Related submissions", image: UIImage(named: "size")!.menuIcon()), style: .default, handler: { action in
             let related = RelatedViewController.init(thing: self.submission!)
-            self.show(related, sender: self)
-        }
-        actionSheetController.addAction(cancelActionButton)
+            VCPresenter.showVC(viewController: related, popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
+        }))
 
-        cancelActionButton = UIAlertAction(title: "View sub sidebar", style: .default) { action -> Void in
+
+        alertController.addAction(Action(ActionData(title: "View /r/\(link.subreddit) sidebar", image: UIImage(named: "info")!.menuIcon()), style: .default, handler: { action in
             Sidebar.init(parent: self, subname: self.submission!.subreddit).displaySidebar()
-        }
-        actionSheetController.addAction(cancelActionButton)
+        }))
 
-        cancelActionButton = UIAlertAction(title: "Collapse child comments", style: .default) { action -> Void in
+        alertController.addAction(Action(ActionData(title: "Collapse child comments", image: UIImage(named: "comments")!.menuIcon()), style: .default, handler: { action in
             self.collapseAll()
-        }
-        actionSheetController.addAction(cancelActionButton)
+        }))
 
 
-        actionSheetController.modalPresentationStyle = .popover
-        if let presenter = actionSheetController.popoverPresentationController {
-            presenter.sourceView = moreB.customView
-            presenter.sourceRect = moreB.customView!.bounds
-        }
+        alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { action in
+        }))
 
-        self.present(actionSheetController, animated: true, completion: nil)
+        VCPresenter.presentAlert(alertController, parentVC: self)
     }
 
 
@@ -1440,7 +1375,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
                 more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
                 moreB = UIBarButtonItem.init(customView: more)
-                
+
                 items.append(space)
                 items.append(upB)
                 items.append(space)
@@ -2094,15 +2029,15 @@ extension UIImage {
         let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
         return scaledImage!
     }
-    
+
     func navIcon() -> UIImage {
         return self.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withColor(tintColor: .white)
     }
-    
+
     func toolbarIcon() -> UIImage {
         return self.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withColor(tintColor: ColorUtil.fontColor)
     }
-    
+
     func menuIcon() -> UIImage {
         return self.imageResize(sizeChange: CGSize.init(width: 20, height: 20)).withColor(tintColor: ColorUtil.fontColor)
     }

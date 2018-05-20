@@ -20,6 +20,8 @@ class GalleryTableViewController: MediaViewController, UITableViewDelegate, UITa
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        UIApplication.shared.statusBarView?.backgroundColor = .black
+
         navigationController?.navigationBar.isHidden = true
     }
     
@@ -36,23 +38,43 @@ class GalleryTableViewController: MediaViewController, UITableViewDelegate, UITa
     var tableView: UITableView = UITableView()
     
     override func loadView() {
-        self.view = UITableView(frame: CGRect.zero, style: .plain)
-        self.tableView = self.view as! UITableView
+        super.loadView()
+        self.tableView = UITableView(frame: self.view.frame, style: .plain)
+        self.view.addSubview(tableView)
         self.tableView.delegate = self
         self.tableView.dataSource = self
+        self.tableView.contentInset = UIEdgeInsets.init(top: 56, left: 0, bottom: 0, right: 0)
     }
+
+    var navItem: UINavigationItem?
 
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.register(GalleryCellView.classForCoder(), forCellReuseIdentifier: "cell")
         self.tableView.backgroundColor = UIColor.black
         self.tableView.separatorStyle = .none
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
+        let navigationBar = UINavigationBar.init(frame: CGRect.init(x: 0, y: 20, width: self.view.frame.size.width, height: 56))
+        navigationBar.isTranslucent = false
+        navigationBar.barTintColor = .black
 
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+        navItem = UINavigationItem(title: "")
+        let close = UIButton.init(type: .custom)
+        close.setImage(UIImage.init(named: "close")?.navIcon(), for: UIControlState.normal)
+        close.addTarget(self, action: #selector(self.exit), for: UIControlEvents.touchUpInside)
+        close.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        let closeB = UIBarButtonItem.init(customView: close)
+        navItem?.leftBarButtonItem = closeB
+
+        // navItem?.rightBarButtonItem = gridB
+
+        navigationBar.setItems([navItem!], animated: false)
+        self.view.addSubview(navigationBar)
     }
+
+    func exit() {
+        self.dismiss(animated: true, completion: nil)
+    }
+
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -88,7 +110,7 @@ class GalleryTableViewController: MediaViewController, UITableViewDelegate, UITa
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! GalleryCellView
-        cell.setLink(self.items[indexPath.row], navigationVC: self.navigationController!, parent: self)
+        cell.setLink(self.items[indexPath.row],  parent: self)
         // Configure the cell...
 
         return cell

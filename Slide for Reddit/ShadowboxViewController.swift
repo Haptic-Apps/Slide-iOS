@@ -64,7 +64,7 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         self.navigationController?.view.backgroundColor = UIColor.clear
         viewToMux = self.background
 
-        let navigationBar = UINavigationBar.init(frame: CGRect.init(x: 0, y: 16, width: self.view.frame.size.width, height: 56))
+        let navigationBar = UINavigationBar.init(frame: CGRect.init(x: 0, y: 20, width: self.view.frame.size.width, height: 56))
         navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationBar.shadowImage = UIImage()
         navigationBar.isTranslucent = true

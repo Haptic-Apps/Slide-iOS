@@ -1129,6 +1129,20 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
     }
 
+    public static func checkInternet() -> Bool {
+
+        let networkStatus = Reachability().connectionStatus()
+        switch networkStatus {
+        case .Unknown, .Offline:
+            return false
+        case .Online(.WWAN):
+            return true
+        case .Online(.WiFi):
+            return true
+        }
+    }
+
+
     func setLinkForPreview(submission: RSubmission) {
         full = false
         lq = false

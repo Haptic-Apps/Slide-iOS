@@ -40,46 +40,47 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
         if (baseImage == nil) {
 
         }
-        let image = baseImage!
-        if (image.size.height > image.size.width ||  UIApplication.shared.statusBarOrientation != .portrait) {
-            self.scrollView.contentSize = CGSize.init(width: getWidthFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width), height: self.view.frame.size.height)
-        } else {
-            self.scrollView.contentSize = CGSize.init(width: self.view.frame.size.width, height: getHeightFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width))
-        }
-        self.scrollView.delegate = self
-
-        let dtap = UITapGestureRecognizer.init(target: self, action: #selector(handleDoubleTapScrollView(recognizer:)))
-        dtap.numberOfTapsRequired = 2
-        self.scrollView.addGestureRecognizer(dtap)
-
-        if (!inAlbum) {
-            let tap = UITapGestureRecognizer.init(target: self, action: #selector(close(recognizer:)))
-            tap.require(toFail: dtap)
-            self.scrollView.addGestureRecognizer(tap)
-        }
-
-        imageView = UIImageView.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height))
-        imageView.contentMode = .scaleAspectFit
-        self.scrollView.addSubview(imageView)
-        imageView.image = image
-
-        if (showHQ) {
-            var items: [UIBarButtonItem] = []
-            if (text != nil && !(text!.isEmpty)) {
-                let textB = UIBarButtonItem(image: UIImage(named: "size")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.showTitle(_:)))
-                items.append(textB)
+        if let image = baseImage {
+            if (image.size.height > image.size.width ||  UIApplication.shared.statusBarOrientation != .portrait) {
+                self.scrollView.contentSize = CGSize.init(width: getWidthFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width), height: self.view.frame.size.height)
+            } else {
+                self.scrollView.contentSize = CGSize.init(width: self.view.frame.size.width, height: getHeightFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width))
             }
-            let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-            let hdB = UIBarButtonItem(image: UIImage(named: "hd")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.hd(_:)))
-            items.append(hdB)
-            items.append(space)
-            items.append(UIBarButtonItem(image: UIImage(named: "download")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.download(_:))))
-            menuB = UIBarButtonItem(image: UIImage(named: "moreh")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.showImageMenu(_:)))
-            items.append(menuB!)
+            self.scrollView.delegate = self
+
+            let dtap = UITapGestureRecognizer.init(target: self, action: #selector(handleDoubleTapScrollView(recognizer:)))
+            dtap.numberOfTapsRequired = 2
+            self.scrollView.addGestureRecognizer(dtap)
+
+            if (!inAlbum) {
+                let tap = UITapGestureRecognizer.init(target: self, action: #selector(close(recognizer:)))
+                tap.require(toFail: dtap)
+                self.scrollView.addGestureRecognizer(tap)
+            }
+
+            imageView = UIImageView.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height))
+            imageView.contentMode = .scaleAspectFit
+            self.scrollView.addSubview(imageView)
+            imageView.image = image
+
+            if (showHQ) {
+                var items: [UIBarButtonItem] = []
+                if (text != nil && !(text!.isEmpty)) {
+                    let textB = UIBarButtonItem(image: UIImage(named: "size")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.showTitle(_:)))
+                    items.append(textB)
+                }
+                let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+                let hdB = UIBarButtonItem(image: UIImage(named: "hd")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.hd(_:)))
+                items.append(hdB)
+                items.append(space)
+                items.append(UIBarButtonItem(image: UIImage(named: "download")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.download(_:))))
+                menuB = UIBarButtonItem(image: UIImage(named: "moreh")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.showImageMenu(_:)))
+                items.append(menuB!)
 
 
-            toolbar.items = items
+                toolbar.items = items
 
+            }
         }
     }
 

@@ -21,7 +21,7 @@ class GalleryCellView: UITableViewCell {
     var estimatedHeight = CGFloat(0)
     var link: RSubmission?
     
-    func setLink(_ link: RSubmission, navigationVC: UINavigationController, parent: MediaViewController){
+    func setLink(_ link: RSubmission, parent: MediaViewController){
         self.bannerImage = UIImageView(frame: CGRect(x: 0, y: 8, width: CGFloat.greatestFiniteMagnitude, height: 0))
         bannerImage.clipsToBounds = true;
         bannerImage.contentMode = UIViewContentMode.scaleAspectFit
@@ -49,7 +49,6 @@ class GalleryCellView: UITableViewCell {
         self.contentView.backgroundColor = UIColor.black
         self.updateConstraints()
 
-        self.navViewController = navigationVC
         self.parentViewController = parent
         self.link = link
         let preview = link.bannerUrl
@@ -93,9 +92,7 @@ class GalleryCellView: UITableViewCell {
         view.addGestureRecognizer(tap)
     }
     
-    var navViewController: UINavigationController?
     var parentViewController: MediaViewController?
-
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -140,22 +137,4 @@ class GalleryCellView: UITableViewCell {
         return Int(width * ratio)
         
     }
-    
-    
-    /* todo
-    func openLink(sender: UITapGestureRecognizer? = nil){
-        (parentViewController)?.setLink(lnk: link!)
-    }
-    
-    func openComment(sender: UITapGestureRecognizer? = nil){
-        if(!full){
-            if(parentViewController is SubredditLinkViewController){
-                (parentViewController as! SubredditLinkViewController).savedIndex = (self.superview?.superview as! UITableView).indexPath(for: self)!
-            }
-            let comment = CommentViewController(submission: link!)
-            (self.navViewController as? UINavigationController)?.pushViewController(comment, animated: true)
-        }
-    }
-    */
-    
 }
