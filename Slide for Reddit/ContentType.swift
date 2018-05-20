@@ -153,7 +153,11 @@ class ContentType {
         let url = URL.init(string: urlString)
         let host = url?.host?.lowercased()
         let scheme = url?.scheme?.lowercased()
-        
+
+        if(ContentType.isExternal(url!)){
+            return .EXTERNAL
+        }
+
         if (host == nil || scheme == nil || !(scheme == ("http") || scheme == ("https"))) {
             return CType.EXTERNAL;
         }
@@ -210,9 +214,6 @@ class ContentType {
             return .NONE
         }
 
-        if(ContentType.isExternal(url!)){
-            return .EXTERNAL
-        }
         let basicType = getContentType(baseUrl: url!);
         
         if (submission?.isSelf)! {

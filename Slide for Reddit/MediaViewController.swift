@@ -25,8 +25,9 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
         self.link = lnk
         let url = link.url!
 
+        let type = ContentType.getContentType(submission: lnk)
 
-        if(ContentType.isExternal(url)){
+        if(type == .EXTERNAL){
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(lnk.url!, options: [:], completionHandler: nil)
             } else {
@@ -42,7 +43,7 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
             } else {
                 if (lq && shownURL != nil) {
                     doShow(url: url, lq: shownURL)
-                } else if(shownURL != nil) {
+                } else if(shownURL != nil && ContentType.imageType(t: type)) {
                     doShow(url: shownURL!)
                 } else {
                     doShow(url: url)

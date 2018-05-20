@@ -51,18 +51,18 @@ class PostFilter {
     }
     
     public static func matches(_ link: RSubmission) -> Bool {
-        return (PostFilter.domains.contains(where: {$0.range(of: link.domain, options: .caseInsensitive) != nil})) || PostFilter.profiles.contains(where: {$0.caseInsensitiveCompare(link.author) == .orderedSame}) || PostFilter.subreddits.contains(where: {$0.caseInsensitiveCompare(link.subreddit) == .orderedSame}) || contains(PostFilter.flairs, value: link.flair) || contains(PostFilter.selftext, value: link.htmlBody) || contains(PostFilter.titles, value: link.title ) || (link.nsfw && !SettingValues.nsfwEnabled)
+        return (PostFilter.domains.contains(where: { $0.containedIn(base: link.domain)})) || PostFilter.profiles.contains(where: {$0.caseInsensitiveCompare(link.author) == .orderedSame}) || PostFilter.subreddits.contains(where: {$0.caseInsensitiveCompare(link.subreddit) == .orderedSame}) || contains(PostFilter.flairs, value: link.flair) || contains(PostFilter.selftext, value: link.htmlBody) || contains(PostFilter.titles, value: link.title ) || (link.nsfw && !SettingValues.nsfwEnabled)
     }
 
     public static func openExternally(_ link: RSubmission) -> Bool {
         return (PostFilter.openExternally.contains(where: {
-            $0.range(of: link.domain, options: .caseInsensitive) != nil
+            $0.containedIn(base: link.domain)
         }))
     }
 
     public static func openExternally(_ link: URL) -> Bool {
         return (PostFilter.openExternally.contains(where: {
-            $0.range(of: link.host ?? " ", options: .caseInsensitive) != nil
+            $0.containedIn(base: link.host)
         }))
     }
 
@@ -82,5 +82,14 @@ class PostFilter {
             }
         }
         return toReturn
+    }
+}
+
+public extension NSString {
+    func containedIn(base: String?) -> Bool {
+        if(base == nil){
+            return false
+        }
+        return base!.range(of: String(self), options: .caseInsensitive) != nil
     }
 }
