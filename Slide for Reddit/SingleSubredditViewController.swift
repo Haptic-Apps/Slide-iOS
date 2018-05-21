@@ -589,7 +589,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         cancelActionButton = UIAlertAction(title: "Posts by /u/\(link.author)", style: .default) { action -> Void in
             PostFilter.profiles.append(link.author as NSString)
             PostFilter.saveAndUpdate()
-            self.links = PostFilter.filter(self.links, previous: nil, baseSubreddit: sub)
+            self.links = PostFilter.filter(self.links, previous: nil, baseSubreddit: self.sub)
             self.reloadDataReset()
         }
         actionSheetController.addAction(cancelActionButton)
@@ -597,7 +597,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         cancelActionButton = UIAlertAction(title: "Posts from /r/\(link.subreddit)", style: .default) { action -> Void in
             PostFilter.subreddits.append(link.subreddit as NSString)
             PostFilter.saveAndUpdate()
-            self.links = PostFilter.filter(self.links, previous: nil, baseSubreddit: sub)
+            self.links = PostFilter.filter(self.links, previous: nil, baseSubreddit: self.sub)
             self.reloadDataReset()
         }
         actionSheetController.addAction(cancelActionButton)
@@ -605,7 +605,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         cancelActionButton = UIAlertAction(title: "Posts linking to \(link.domain)", style: .default) { action -> Void in
             PostFilter.domains.append(link.domain as NSString)
             PostFilter.saveAndUpdate()
-            self.links = PostFilter.filter(self.links, previous: nil, baseSubreddit: sub)
+            self.links = PostFilter.filter(self.links, previous: nil, baseSubreddit: self.sub)
             self.reloadDataReset()
         }
         actionSheetController.addAction(cancelActionButton)
@@ -1710,7 +1710,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                             converted.append(newRS)
                             CachedTitle.addTitle(s: newRS)
                         }
-                        let values = PostFilter.filter(converted, previous: self.links, baseSubreddit: sub)
+                        let values = PostFilter.filter(converted, previous: self.links, baseSubreddit: self.sub)
                         self.links += values
                         self.paginator = listing.paginator
                         self.nomore = !listing.paginator.hasMore() || values.isEmpty

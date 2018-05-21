@@ -110,7 +110,7 @@ class PostFilter {
             break
         }
 
-        return mainMatch && contentMatch
+        return mainMatch || contentMatch
     }
 
     public static func openExternally(_ link: RSubmission) -> Bool {
