@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4e152e64-2f09-48b9-9864-06428fccec3c" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Slide for Reddit/SettingsGeneral.swift" beforeDir="false" afterPath="$PROJECT_DIR$/Slide for Reddit/SettingsGeneral.swift" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -45,8 +44,26 @@
       <file leaf-file-name="SettingsGeneral.swift" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Slide for Reddit/SettingsGeneral.swift">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="474">
-              <caret line="187" column="28" selection-start-line="187" selection-start-column="28" selection-end-line="187" selection-end-column="28" />
+            <state relative-caret-position="-192">
+              <caret line="165" column="85" selection-start-line="165" selection-start-column="85" selection-end-line="165" selection-end-column="85" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Enum.swift" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Pods/reddift/reddift/Model/Enum.swift">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="195">
+              <caret line="13" column="12" selection-start-line="13" selection-start-column="12" selection-end-line="13" selection-end-column="12" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SettingsLinkHandling.swift" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Slide for Reddit/SettingsLinkHandling.swift">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-239">
+              <caret line="146" column="16" selection-start-line="146" selection-start-column="16" selection-end-line="146" selection-end-column="16" />
             </state>
           </provider>
         </entry>
@@ -87,32 +104,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="LinkTableViewCell.swift" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Slide for Reddit/LinkTableViewCell.swift">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="22" column="9" selection-start-line="22" selection-start-column="9" selection-end-line="22" selection-end-column="9" />
-              <folding>
-                <element signature="e#258#270#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ContentListingViewController.swift" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Slide for Reddit/ContentListingViewController.swift">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
-              <caret line="14" column="34" selection-start-line="14" selection-start-column="6" selection-end-line="14" selection-end-column="34" />
-              <folding>
-                <element signature="e#152#164#0" expanded="true" />
-                <element signature="e#17881#18340#0" />
-                <element signature="e#18346#18815#0" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="SettingValues.swift" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Slide for Reddit/SettingValues.swift">
           <provider selected="true" editor-type-id="text-editor">
@@ -126,7 +117,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>domain is</find>
       <find>didSelectLinkWith</find>
       <find>doshow</find>
       <find>&quot;LINK&quot;</find>
@@ -156,13 +146,14 @@
       <find>func refresh</find>
       <find>gif</find>
       <find>showtimemenu</find>
+      <find>enlarge</find>
     </findStrings>
     <replaceStrings>
       <replace>-12</replace>
       <replace>SFHideSafariViewController</replace>
       <replace>Image</replace>
-      <replace>Album</replace>
       <replace>LinkTableViewCell</replace>
+      <replace>Album</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -404,12 +395,12 @@
       <workItem from="1526691179089" duration="548000" />
       <workItem from="1526706433361" duration="16437000" />
       <workItem from="1526763727748" duration="11275000" />
-      <workItem from="1526840465332" duration="16065000" />
+      <workItem from="1526840465332" duration="16327000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="336213000" />
+    <option name="totallyTimeSpent" value="336475000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -425,14 +416,14 @@
     <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.4972875" weight="0.32911393" />
-      <window_info anchor="bottom" id="Messages" order="7" sideWeight="0.43923748" weight="0.3089172" />
+      <window_info anchor="bottom" id="Messages" order="7" sideWeight="0.43606037" weight="0.3089172" />
       <window_info anchor="right" id="Palette&#9;" order="3" />
-      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.6346307" side_tool="true" visible="true" weight="0.24124204" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.36536935" visible="true" weight="0.24124204" />
+      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.6362192" side_tool="true" visible="true" weight="0.24124204" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.36378077" visible="true" weight="0.24124204" />
       <window_info anchor="bottom" id="Version Control" order="8" weight="0.32911393" />
       <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.4978903" weight="0.32911393" />
       <window_info id="Designer" order="2" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.30500397" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.30500397" />
       <window_info anchor="bottom" id="Find" order="1" sideWeight="0.4954792" weight="0.32911393" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.24954791" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.4994279" weight="0.398568" />
@@ -457,13 +448,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Slide for Reddit/NavigationSidebarViewController.swift">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="570">
-          <caret line="42" column="18" selection-start-line="42" selection-start-column="18" selection-end-line="42" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Slide for Reddit/NavigationHeaderView.swift">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="375">
@@ -687,13 +671,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Slide for Reddit/SettingsLinkHandling.swift">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="155">
-          <caret line="137" column="75" lean-forward="true" selection-start-line="137" selection-start-column="75" selection-end-line="137" selection-end-column="75" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Slide for Reddit/MediaViewController.swift">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="114">
@@ -815,10 +792,24 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Slide for Reddit/SettingsLinkHandling.swift">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-239">
+          <caret line="146" column="16" selection-start-line="146" selection-start-column="16" selection-end-line="146" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Pods/reddift/reddift/Model/Enum.swift">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="13" column="12" selection-start-line="13" selection-start-column="12" selection-end-line="13" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Slide for Reddit/SettingsGeneral.swift">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="474">
-          <caret line="187" column="28" selection-start-line="187" selection-start-column="28" selection-end-line="187" selection-end-column="28" />
+        <state relative-caret-position="-192">
+          <caret line="165" column="85" selection-start-line="165" selection-start-column="85" selection-end-line="165" selection-end-column="85" />
         </state>
       </provider>
     </entry>

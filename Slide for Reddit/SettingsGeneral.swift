@@ -155,6 +155,37 @@ class SettingsGeneral: UITableViewController {
 
     }
 
+    func showMenuComments(_ selector: UIView?) {
+        let actionSheetController: UIAlertController = UIAlertController(title: "Comment sorting", message: "", preferredStyle: .actionSheet)
+
+        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
+            print("Cancel")
+        }
+        actionSheetController.addAction(cancelActionButton)
+
+        let selected = UIImage.init(named: "selected")!.imageResize(sizeChange: CGSize.init(width: 20, height: 20)).withColor(tintColor: .blue)
+
+        for link in CommentSort.cases {
+            let saveActionButton: UIAlertAction = UIAlertAction(title: link.description, style: .default) { action -> Void in
+                SettingValues.defaultCommentSorting = link
+                UserDefaults.standard.set(link.path, forKey: SettingValues.pref_defaultCommentSorting)
+                UserDefaults.standard.synchronize()
+            }
+            if(SettingValues.defaultCommentSorting == link){
+                saveActionButton.setValue(selected, forKey: "image")
+            }
+            actionSheetController.addAction(saveActionButton)
+        }
+
+        if let presenter = actionSheetController.popoverPresentationController {
+            presenter.sourceView = selector!
+            presenter.sourceRect = selector!.bounds
+        }
+
+        self.present(actionSheetController, animated: true, completion: nil)
+
+    }
+
     func showMenu(_ selector: UIView?) {
         let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
 
@@ -233,10 +264,10 @@ class SettingsGeneral: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
         self.timeMenuView = self.tableView.cellForRow(at: indexPath)!.contentView
 
-        if (indexPath.section == 1 && indexPath.row == 0) {
+        if (indexPath.section == 2 && indexPath.row == 0) {
             showMenu(tableView.cellForRow(at: indexPath))
-        } else if (indexPath.section == 1 && indexPath.row == 1) {
-            showTimeMenu(s: SettingValues.defaultSorting, selector: tableView.cellForRow(at: indexPath))
+        } else if (indexPath.section == 2 && indexPath.row == 1) {
+            showMenuComments(tableView.cellForRow(at: indexPath))
         }
 
     }
