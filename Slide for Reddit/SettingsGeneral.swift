@@ -79,7 +79,7 @@ class SettingsGeneral: UITableViewController {
         viewTypeSwitch = UISwitch()
         viewTypeSwitch.isOn = SettingValues.viewType
         viewTypeSwitch.addTarget(self, action: #selector(SettingsGeneral.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        self.viewType.textLabel?.text = "Subreddit tabs"
+        self.viewType.textLabel?.text = "Subreddit tabs mode"
         self.viewType.accessoryView = viewTypeSwitch
         self.viewType.backgroundColor = ColorUtil.foregroundColor
         self.viewType.textLabel?.textColor = ColorUtil.fontColor
@@ -88,7 +88,7 @@ class SettingsGeneral: UITableViewController {
         hideFABSwitch = UISwitch()
         hideFABSwitch.isOn = SettingValues.hiddenFAB
         hideFABSwitch.addTarget(self, action: #selector(SettingsGeneral.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        self.hideFAB.textLabel?.text = "Hide posts floating button"
+        self.hideFAB.textLabel?.text = "Subreddit floating button"
         self.hideFAB.accessoryView = hideFABSwitch
         self.hideFAB.backgroundColor = ColorUtil.foregroundColor
         self.hideFAB.textLabel?.textColor = ColorUtil.fontColor
@@ -116,7 +116,7 @@ class SettingsGeneral: UITableViewController {
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        return 3
     }
 
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -155,7 +155,36 @@ class SettingsGeneral: UITableViewController {
 
     }
 
-    func showTimeMenu(s: LinkSortType) {
+    func showMenu(_ selector: UIView?) {
+        let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
+
+        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
+            print("Cancel")
+        }
+        actionSheetController.addAction(cancelActionButton)
+
+        let selected = UIImage.init(named: "selected")!.imageResize(sizeChange: CGSize.init(width: 20, height: 20)).withColor(tintColor: .blue)
+
+        for link in LinkSortType.cases {
+            let saveActionButton: UIAlertAction = UIAlertAction(title: link.description, style: .default) { action -> Void in
+                self.showTimeMenu(s: link, selector: selector)
+            }
+            if(SettingValues.defaultSorting == link){
+                saveActionButton.setValue(selected, forKey: "image")
+            }
+            actionSheetController.addAction(saveActionButton)
+        }
+
+        if let presenter = actionSheetController.popoverPresentationController {
+            presenter.sourceView = selector!
+            presenter.sourceRect = selector!.bounds
+        }
+
+        self.present(actionSheetController, animated: true, completion: nil)
+
+    }
+
+    func showTimeMenu(s: LinkSortType, selector: UIView?) {
         if (s == .hot || s == .new) {
             SettingValues.defaultSorting = s
             UserDefaults.standard.set(s.path, forKey: SettingValues.pref_defaultSorting)
@@ -163,15 +192,17 @@ class SettingsGeneral: UITableViewController {
             self.postSorting.detailTextLabel?.text = SettingValues.defaultSorting.description
             return
         } else {
-            let actionSheetController: UIAlertController = UIAlertController(title: "Time Period", message: "", preferredStyle: .alert)
+            let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
 
-            let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
-                print("Cancel")
+            let cancelActionButton: UIAlertAction = UIAlertAction(title: "Close", style: .cancel) { action -> Void in
             }
             actionSheetController.addAction(cancelActionButton)
 
+            let selected = UIImage.init(named: "selected")!.imageResize(sizeChange: CGSize.init(width: 20, height: 20)).withColor(tintColor: .blue)
+
             for t in TimeFilterWithin.cases {
                 let saveActionButton: UIAlertAction = UIAlertAction(title: t.param, style: .default) { action -> Void in
+                    print("Sort is \(s) and time is \(t)")
                     SettingValues.defaultSorting = s
                     UserDefaults.standard.set(s.path, forKey: SettingValues.pref_defaultSorting)
                     SettingValues.defaultTimePeriod = t
@@ -179,7 +210,16 @@ class SettingsGeneral: UITableViewController {
                     UserDefaults.standard.synchronize()
                     self.postSorting.detailTextLabel?.text = SettingValues.defaultSorting.description
                 }
+                if(SettingValues.defaultTimePeriod == t){
+                    saveActionButton.setValue(selected, forKey: "image")
+                }
+
                 actionSheetController.addAction(saveActionButton)
+            }
+
+            if let presenter = actionSheetController.popoverPresentationController {
+                presenter.sourceView = selector!
+                presenter.sourceRect = selector!.bounds
             }
 
             self.present(actionSheetController, animated: true, completion: nil)
@@ -194,38 +234,9 @@ class SettingsGeneral: UITableViewController {
         self.timeMenuView = self.tableView.cellForRow(at: indexPath)!.contentView
 
         if (indexPath.section == 1 && indexPath.row == 0) {
-            let actionSheetController: UIAlertController = UIAlertController(title: "Default post sorting", message: "", preferredStyle: .alert)
-
-            let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
-                print("Cancel")
-            }
-            actionSheetController.addAction(cancelActionButton)
-            for link in LinkSortType.cases {
-                let saveActionButton: UIAlertAction = UIAlertAction(title: link.description, style: .default) { action -> Void in
-                    self.showTimeMenu(s: link)
-                }
-                actionSheetController.addAction(saveActionButton)
-            }
-
-            self.present(actionSheetController, animated: true, completion: nil)
+            showMenu(tableView.cellForRow(at: indexPath))
         } else if (indexPath.section == 1 && indexPath.row == 1) {
-            let actionSheetController: UIAlertController = UIAlertController(title: "Default comment sorting", message: "", preferredStyle: .alert)
-
-            let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
-                print("Cancel")
-            }
-            actionSheetController.addAction(cancelActionButton)
-
-            for c in CommentSort.cases {
-                let saveActionButton: UIAlertAction = UIAlertAction(title: c.description, style: .default) { action -> Void in
-                    SettingValues.defaultCommentSorting = c
-                    UserDefaults.standard.set(c.type, forKey: SettingValues.pref_defaultCommentSorting)
-                    UserDefaults.standard.synchronize()
-                }
-                actionSheetController.addAction(saveActionButton)
-            }
-
-            self.present(actionSheetController, animated: true, completion: nil)
+            showTimeMenu(s: SettingValues.defaultSorting, selector: tableView.cellForRow(at: indexPath))
         }
 
     }
