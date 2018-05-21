@@ -17,8 +17,9 @@ class PostFilter {
     static var subreddits: [NSString] = []
     static var flairs: [NSString] = []
     static var openExternally: [NSString] = []
+    static var filters : UserDefaults? = nil
 
-    public static func initialize(){
+    public static func initialize() {
         PostFilter.domains = UserDefaults.standard.array(forKey: "domainfilters") as! [NSString]? ?? []
         PostFilter.selftext = UserDefaults.standard.array(forKey: "selftextfilters") as! [NSString]? ?? []
         PostFilter.titles = UserDefaults.standard.array(forKey: "titlefilters") as! [NSString]? ?? []
@@ -26,9 +27,10 @@ class PostFilter {
         PostFilter.subreddits = UserDefaults.standard.array(forKey: "subredditfilters") as! [NSString]? ?? []
         PostFilter.flairs = UserDefaults.standard.array(forKey: "flairfilters") as! [NSString]? ?? []
         PostFilter.openExternally = UserDefaults.standard.array(forKey: "openexternally") as! [NSString]? ?? []
+        filters = UserDefaults.init(suiteName: "filters")
     }
-    
-    public static func saveAndUpdate(){
+
+    public static func saveAndUpdate() {
         UserDefaults.standard.set(PostFilter.domains, forKey: "domainFilters")
         UserDefaults.standard.set(PostFilter.selftext, forKey: "selftextfilters")
         UserDefaults.standard.set(PostFilter.titles, forKey: "titlefilters")
@@ -40,18 +42,75 @@ class PostFilter {
         initialize()
     }
 
-    
-    public static func contains(_ array: [NSString], value: String) -> Bool{
+
+    public static func contains(_ array: [NSString], value: String) -> Bool {
         for text in array {
-            if(text.localizedCaseInsensitiveContains(value)){
+            if (text.localizedCaseInsensitiveContains(value)) {
                 return true
             }
         }
         return false
     }
-    
-    public static func matches(_ link: RSubmission) -> Bool {
-        return (PostFilter.domains.contains(where: { $0.containedIn(base: link.domain)})) || PostFilter.profiles.contains(where: {$0.caseInsensitiveCompare(link.author) == .orderedSame}) || PostFilter.subreddits.contains(where: {$0.caseInsensitiveCompare(link.subreddit) == .orderedSame}) || contains(PostFilter.flairs, value: link.flair) || contains(PostFilter.selftext, value: link.htmlBody) || contains(PostFilter.titles, value: link.title ) || (link.nsfw && !SettingValues.nsfwEnabled)
+
+    public static func matches(_ link: RSubmission, baseSubreddit: String) -> Bool {
+        let mainMatch = (PostFilter.domains.contains(where: { $0.containedIn(base: link.domain) })) || PostFilter.profiles.contains(where: { $0.caseInsensitiveCompare(link.author) == .orderedSame }) || PostFilter.subreddits.contains(where: { $0.caseInsensitiveCompare(link.subreddit) == .orderedSame }) || contains(PostFilter.flairs, value: link.flair) || contains(PostFilter.selftext, value: link.htmlBody) || contains(PostFilter.titles, value: link.title) || (link.nsfw && !SettingValues.nsfwEnabled)
+
+
+        let gifs = isGif(baseSubreddit);
+        let images = isImage(baseSubreddit);
+        let nsfw = isNsfw(baseSubreddit);
+        let albums = isAlbum(baseSubreddit);
+        let urls = isUrl(baseSubreddit);
+        let selftext = isSelftext(baseSubreddit);
+        let videos = isVideo(baseSubreddit);
+
+        var contentMatch = false
+
+        if (link.nsfw) {
+            if (!SettingValues.nsfwEnabled) {
+                contentMatch = true
+            }
+            if (nsfw) {
+                contentMatch = true
+            }
+        }
+
+        switch (ContentType.getContentType(submission: link)) {
+        case .REDDIT, .EMBEDDED, .LINK:
+            if (urls) {
+                contentMatch = true
+            }
+            break
+        case .SELF, .NONE:
+            if (selftext) {
+                contentMatch = true
+            }
+            break
+        case .ALBUM:
+            if (albums) {
+                contentMatch = true
+            }
+            break
+        case .IMAGE, .DEVIANTART, .IMGUR, .XKCD:
+            if (images) {
+                contentMatch = true
+            }
+            break
+        case .GIF:
+            if (gifs) {
+                contentMatch = true
+            }
+            break
+        case .VID_ME, .VIDEO, .STREAMABLE:
+            if (videos) {
+                contentMatch = true
+            }
+            break
+        default:
+            break
+        }
+
+        return mainMatch && contentMatch
     }
 
     public static func openExternally(_ link: RSubmission) -> Bool {
@@ -66,28 +125,73 @@ class PostFilter {
         }))
     }
 
+    public static func enabledArray(_ sub: String) -> [Bool] {
+        return [isImage(sub), isAlbum(sub), isGif(sub), isVideo(sub), isUrl(sub), isSelftext(sub), isNsfw(sub)]
+    }
 
-    public static func filter(_ input: [RSubmission], previous: [RSubmission]?) -> [RSubmission] {
+
+    public static func filter(_ input: [RSubmission], previous: [RSubmission]?, baseSubreddit: String) -> [RSubmission] {
         var ids: [String] = []
         var toReturn: [RSubmission] = []
-        if(previous != nil){
+        if (previous != nil) {
             for p in previous! {
                 ids.append(p.getId())
             }
         }
-        
+
         for link in input {
-            if !matches(link) && !ids.contains(link.getId()){
+            if !matches(link, baseSubreddit: baseSubreddit) && !ids.contains(link.getId()) {
                 toReturn.append(link)
             }
         }
         return toReturn
     }
+
+
+    public static func setEnabledArray(_ sub: String, _ enabled: [Bool]) {
+        filters!.set(enabled[0], forKey: "\(sub)_imageFilter")
+        filters!.set(enabled[1], forKey: "\(sub)_albumFilter")
+        filters!.set(enabled[2], forKey: "\(sub)_gifFilter")
+        filters!.set(enabled[3], forKey: "\(sub)_videoFilter")
+        filters!.set(enabled[4], forKey: "\(sub)_urlFilter")
+        filters!.set(enabled[5], forKey: "\(sub)_selfFilter")
+        filters!.set(enabled[6], forKey: "\(sub)_nsfwFilter")
+        filters!.synchronize()
+    }
+
+    public static func isGif(_ baseSubreddit: String) -> Bool {
+        return filters!.object(forKey: "\(baseSubreddit)_gifFilter") == nil ? false : filters!.bool(forKey: "\(baseSubreddit)_gifFilter")
+    }
+
+    public static func isImage(_ baseSubreddit: String) -> Bool {
+        return filters!.object(forKey: "\(baseSubreddit)_imageFilter") == nil ? false : filters!.bool(forKey: "\(baseSubreddit)_imageFilter")
+    }
+
+    public static func isAlbum(_ baseSubreddit: String) -> Bool {
+        return filters!.object(forKey: "\(baseSubreddit)_albumFilter") == nil ? false : filters!.bool(forKey: "\(baseSubreddit)_albumFilter")
+    }
+
+    public static func isNsfw(_ baseSubreddit: String) -> Bool {
+        return filters!.object(forKey: "\(baseSubreddit)_nsfwFilter") == nil ? false : filters!.bool(forKey: "\(baseSubreddit)_nsfwFilter")
+    }
+
+    public static func isSelftext(_ baseSubreddit: String) -> Bool {
+        return filters!.object(forKey: "\(baseSubreddit)_selfFilter") == nil ? false : filters!.bool(forKey: "\(baseSubreddit)_selfFilter")
+    }
+
+    public static func isUrl(_ baseSubreddit: String) -> Bool {
+        return filters!.object(forKey: "\(baseSubreddit)_urlFilter") == nil ? false : filters!.bool(forKey: "\(baseSubreddit)_urlFilter")
+    }
+
+    public static func isVideo(_ baseSubreddit: String) -> Bool {
+        return filters!.object(forKey: "\(baseSubreddit)_videoFilter") == nil ? false : filters!.bool(forKey: "\(baseSubreddit)_videoFilter")
+    }
+
 }
 
 public extension NSString {
     func containedIn(base: String?) -> Bool {
-        if(base == nil){
+        if (base == nil) {
             return false
         }
         return base!.range(of: String(self), options: .caseInsensitive) != nil

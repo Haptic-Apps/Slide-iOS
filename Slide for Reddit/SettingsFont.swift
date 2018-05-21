@@ -104,35 +104,60 @@ class SettingsFont: UITableViewController {
             print("Cancel")
         }
         actionSheetController.addAction(cancelActionButton)
+
+        let currentCommentSize = SettingValues.commentFontOffset
+        let selected = UIImage.init(named: "selected")!.imageResize(sizeChange: CGSize.init(width: 20, height: 20)).withColor(tintColor: .blue)
         
         cancelActionButton = UIAlertAction(title: "Extra Large", style: .default) { action -> Void in
             self.setSizeComment(size: 8)
+        }
+        if(currentCommentSize == 8){
+            cancelActionButton.setValue(selected, forKey: "image")
         }
         actionSheetController.addAction(cancelActionButton)
         
         cancelActionButton = UIAlertAction(title: "Large", style: .default) { action -> Void in
             self.setSizeComment(size: 4)
         }
+        if(currentCommentSize == 4){
+            cancelActionButton.setValue(selected, forKey: "image")
+        }
+
         actionSheetController.addAction(cancelActionButton)
 
         cancelActionButton = UIAlertAction(title: "Very Large", style: .default) { action -> Void in
             self.setSizeComment(size: 2)
+        }
+        if(currentCommentSize == 2){
+            cancelActionButton.setValue(selected, forKey: "image")
         }
         actionSheetController.addAction(cancelActionButton)
 
         cancelActionButton = UIAlertAction(title: "Normal", style: .default) { action -> Void in
             self.setSizeComment(size: 0)
         }
+        if(currentCommentSize == 0){
+            cancelActionButton.setValue(selected, forKey: "image")
+        }
+
         actionSheetController.addAction(cancelActionButton)
 
         cancelActionButton = UIAlertAction(title: "Small", style: .default) { action -> Void in
             self.setSizeComment(size: -2)
         }
+        if(currentCommentSize == -2){
+            cancelActionButton.setValue(selected, forKey: "image")
+        }
+
         actionSheetController.addAction(cancelActionButton)
 
         cancelActionButton = UIAlertAction(title: "Very Small", style: .default) { action -> Void in
             self.setSizeComment(size: -4)
         }
+        if(currentCommentSize == -4){
+            cancelActionButton.setValue(selected, forKey: "image")
+        }
+
         actionSheetController.addAction(cancelActionButton)
 
         cancelActionButton = UIAlertAction(title: "Smallest", style: .default) { action -> Void in
@@ -156,39 +181,63 @@ class SettingsFont: UITableViewController {
             print("Cancel")
         }
         actionSheetController.addAction(cancelActionButton)
-        
+
+        let currentLinkSize = SettingValues.commentFontOffset
+        let selected = UIImage.init(named: "selected")!.imageResize(sizeChange: CGSize.init(width: 20, height: 20)).withColor(tintColor: .blue)
+
         cancelActionButton = UIAlertAction(title: "Extra Large", style: .default) { action -> Void in
             self.setSizeSubmission(size: 8)
+        }
+        if(currentLinkSize == 8){
+            cancelActionButton.setValue(selected, forKey: "image")
         }
         actionSheetController.addAction(cancelActionButton)
         
         cancelActionButton = UIAlertAction(title: "Large", style: .default) { action -> Void in
             self.setSizeSubmission(size: 4)
         }
+        if(currentLinkSize == 4){
+            cancelActionButton.setValue(selected, forKey: "image")
+        }
         actionSheetController.addAction(cancelActionButton)
         
         cancelActionButton = UIAlertAction(title: "Very Large", style: .default) { action -> Void in
             self.setSizeSubmission(size: 2)
+        }
+        if(currentLinkSize == 2){
+            cancelActionButton.setValue(selected, forKey: "image")
         }
         actionSheetController.addAction(cancelActionButton)
         
         cancelActionButton = UIAlertAction(title: "Normal", style: .default) { action -> Void in
             self.setSizeSubmission(size: 0)
         }
+        if(currentLinkSize == 0){
+            cancelActionButton.setValue(selected, forKey: "image")
+        }
         actionSheetController.addAction(cancelActionButton)
         
         cancelActionButton = UIAlertAction(title: "Small", style: .default) { action -> Void in
             self.setSizeSubmission(size: -2)
+        }
+        if(currentLinkSize == -2){
+            cancelActionButton.setValue(selected, forKey: "image")
         }
         actionSheetController.addAction(cancelActionButton)
         
         cancelActionButton = UIAlertAction(title: "Very Small", style: .default) { action -> Void in
             self.setSizeSubmission(size: -4)
         }
+        if(currentLinkSize == -4){
+            cancelActionButton.setValue(selected, forKey: "image")
+        }
         actionSheetController.addAction(cancelActionButton)
         
         cancelActionButton = UIAlertAction(title: "Smallest", style: .default) { action -> Void in
             self.setSizeSubmission(size: -6)
+        }
+        if(currentLinkSize == -6){
+            cancelActionButton.setValue(selected, forKey: "image")
         }
         actionSheetController.addAction(cancelActionButton)
         

@@ -235,8 +235,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         tabBar.backgroundColor = ColorUtil.getColorForSub(sub: MainViewController.current)
         tabBar.itemAppearance = .titles
 
-        tabBar.selectedItemTintColor = ColorUtil.fontColor
-        tabBar.unselectedItemTintColor = ColorUtil.fontColor.withAlphaComponent(0.45)
+        tabBar.selectedItemTintColor = UIColor.white
+        tabBar.unselectedItemTintColor = UIColor.white.withAlphaComponent(0.45)
         tabBar.items = Subscriptions.subreddits.enumerated().map { index, source in
             return UITabBarItem(title: source, image: nil, tag: index)
         }

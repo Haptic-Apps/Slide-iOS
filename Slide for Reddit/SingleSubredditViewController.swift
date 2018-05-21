@@ -589,7 +589,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         cancelActionButton = UIAlertAction(title: "Posts by /u/\(link.author)", style: .default) { action -> Void in
             PostFilter.profiles.append(link.author as NSString)
             PostFilter.saveAndUpdate()
-            self.links = PostFilter.filter(self.links, previous: nil)
+            self.links = PostFilter.filter(self.links, previous: nil, baseSubreddit: sub)
             self.reloadDataReset()
         }
         actionSheetController.addAction(cancelActionButton)
@@ -597,7 +597,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         cancelActionButton = UIAlertAction(title: "Posts from /r/\(link.subreddit)", style: .default) { action -> Void in
             PostFilter.subreddits.append(link.subreddit as NSString)
             PostFilter.saveAndUpdate()
-            self.links = PostFilter.filter(self.links, previous: nil)
+            self.links = PostFilter.filter(self.links, previous: nil, baseSubreddit: sub)
             self.reloadDataReset()
         }
         actionSheetController.addAction(cancelActionButton)
@@ -605,7 +605,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         cancelActionButton = UIAlertAction(title: "Posts linking to \(link.domain)", style: .default) { action -> Void in
             PostFilter.domains.append(link.domain as NSString)
             PostFilter.saveAndUpdate()
-            self.links = PostFilter.filter(self.links, previous: nil)
+            self.links = PostFilter.filter(self.links, previous: nil, baseSubreddit: sub)
             self.reloadDataReset()
         }
         actionSheetController.addAction(cancelActionButton)
@@ -1218,6 +1218,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
     func reloadDataReset() {
         heightAtIndexPath.removeAllObjects()
+        self.flowLayout.reset()
         tableView.reloadData()
         tableView.layoutIfNeeded()
     }
@@ -1305,7 +1306,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         }
 
         alertController.addAction(Action(ActionData(title: "Filter content", image: UIImage(named: "filter")!.menuIcon()), style: .default, handler: { action in
-            //todo implement filtering
+            self.filterContent()
         }))
 
         alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { action in
@@ -1313,6 +1314,16 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
         VCPresenter.presentAlert(alertController, parentVC: self)
 
+    }
+    
+    func filterContent(){
+        let alert = UIAlertController(title: "Content to hide on", message: "/r/\(sub)", preferredStyle: .alert)
+        
+        let settings = Filter(subreddit: sub, parent: self)
+        
+        alert.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: nil))
+        alert.setValue(settings, forKey: "contentViewController")
+        present(alert, animated: true, completion: nil)
     }
 
     func newPost(_ sender: AnyObject) {
@@ -1515,9 +1526,14 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         }
         actionSheetController.addAction(cancelActionButton)
 
+        let selected = UIImage.init(named: "selected")!.imageResize(sizeChange: CGSize.init(width: 20, height: 20)).withColor(tintColor: .blue)
+
         for link in LinkSortType.cases {
             let saveActionButton: UIAlertAction = UIAlertAction(title: link.description, style: .default) { action -> Void in
                 self.showTimeMenu(s: link, selector: selector)
+            }
+            if(sort == link){
+                saveActionButton.setValue(selected, forKey: "image")
             }
             actionSheetController.addAction(saveActionButton)
         }
@@ -1539,10 +1555,11 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         } else {
             let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
 
-            let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
-                print("Cancel")
+            let cancelActionButton: UIAlertAction = UIAlertAction(title: "Close", style: .cancel) { action -> Void in
             }
             actionSheetController.addAction(cancelActionButton)
+
+            let selected = UIImage.init(named: "selected")!.imageResize(sizeChange: CGSize.init(width: 20, height: 20)).withColor(tintColor: .blue)
 
             for t in TimeFilterWithin.cases {
                 let saveActionButton: UIAlertAction = UIAlertAction(title: t.param, style: .default) { action -> Void in
@@ -1551,6 +1568,10 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                     self.time = t
                     self.refresh()
                 }
+                if(time == t){
+                    saveActionButton.setValue(selected, forKey: "image")
+                }
+
                 actionSheetController.addAction(saveActionButton)
             }
 
@@ -1566,6 +1587,10 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     var refreshControl: UIRefreshControl!
 
     func refresh() {
+        links = []
+        tableView.reloadData()
+        flowLayout.reset()
+        flowLayout.invalidateLayout()
         load(reset: true)
     }
 
@@ -1685,7 +1710,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                             converted.append(newRS)
                             CachedTitle.addTitle(s: newRS)
                         }
-                        let values = PostFilter.filter(converted, previous: self.links)
+                        let values = PostFilter.filter(converted, previous: self.links, baseSubreddit: sub)
                         self.links += values
                         self.paginator = listing.paginator
                         self.nomore = !listing.paginator.hasMore() || values.isEmpty

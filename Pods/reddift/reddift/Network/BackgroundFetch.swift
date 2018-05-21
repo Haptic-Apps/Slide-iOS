@@ -12,7 +12,7 @@ import UIKit
 import Foundation
 
 /// Session class to communicate with reddit.com using OAuth.
-public class BackgroundFetch: NSObject, URLSessionDelegate {
+public class BackgroundFetch: NSObject, URLSessionDownloadDelegate {
     let session: Session
     var taskURLSession: URLSession? = nil
     var tokenURLSession: URLSession? = nil
@@ -25,8 +25,13 @@ public class BackgroundFetch: NSObject, URLSessionDelegate {
         taskHandler = aTaskHandler
         request = aRequest
         super.init()
-        taskURLSession = URLSession(configuration: URLSessionConfiguration.background(withIdentifier: "com.sonson.reddift.profile"), delegate: self, delegateQueue: nil)
-        tokenURLSession = URLSession(configuration: URLSessionConfiguration.background(withIdentifier: "com.sonson.reddift.token"), delegate: self, delegateQueue: nil)
+        taskURLSession = URLSession(configuration: URLSessionConfiguration.background(withIdentifier: "profileMSG"), delegate: self, delegateQueue: nil)
+        tokenURLSession = URLSession(configuration: URLSessionConfiguration.background(withIdentifier: "tokenMSG"), delegate: self, delegateQueue: nil)
+    }
+    
+    deinit {
+        taskURLSession?.finishTasksAndInvalidate()
+        tokenURLSession?.finishTasksAndInvalidate()
     }
     
     public func resume() {

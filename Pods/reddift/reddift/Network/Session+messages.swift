@@ -174,6 +174,11 @@ extension Session {
         return executeTask(request, handleResponse: closure, completion: completion)
     }
     
+    public func getMessageRequest(_ messageWhere: MessageWhere, limit: Int = 100) throws -> URLRequest {
+        guard let request = URLRequest.requestForOAuth(with: baseURL, path:"/message" + messageWhere.path, method:"GET", token:token)
+            else { throw ReddiftError.canNotCreateURLRequest as NSError }
+        return request
+    }
     // MARK: Compose a message
     
     /**

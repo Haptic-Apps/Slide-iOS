@@ -115,6 +115,7 @@ class ContentListingViewController: MediaViewController, UITableViewDelegate, UI
         if(thing is RSubmission){
            let c = tableView.dequeueReusableCell(withIdentifier: "submission", for: indexPath) as! LinkTableViewCell
             c.setLink(submission: (thing as! RSubmission), parent: self, nav: self.navigationController, baseSub: "all")
+            c.del = self
             cell = c
         } else if thing is RComment {
             let c = tableView.dequeueReusableCell(withIdentifier: "comment", for: indexPath) as! CommentCellView
@@ -129,6 +130,7 @@ class ContentListingViewController: MediaViewController, UITableViewDelegate, UI
         if indexPath.row == baseData.content.count - 1 && !loading && baseData.canGetMore {
             self.loadMore()
         }
+
         return cell!
     }
     

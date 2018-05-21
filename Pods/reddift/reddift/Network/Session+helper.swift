@@ -192,6 +192,14 @@ func redditAny2ListingTuple(from redditAny: RedditAny) -> Result<(Listing, Listi
     return Result(error: ReddiftError.failedToParseListingPairFromRedditAny as NSError)
 }
 
+public func messagesInResult(from data: Data?, response: URLResponse?, error: NSError? = nil) -> Result<Listing> {
+    return Result(from: Response(data: data, urlResponse: response), optional:error)
+        .flatMap(response2Data)
+        .flatMap(data2Json)
+        .flatMap(json2RedditAny)
+        .flatMap(redditAny2Object)
+}
+
 // MARK: Convert from data and response
 public func accountInResult(from data: Data?, response: URLResponse?, error: NSError? = nil) -> Result<Account> {
     return Result(from: Response(data: data, urlResponse: response), optional:nil)

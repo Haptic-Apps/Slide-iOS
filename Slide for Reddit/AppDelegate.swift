@@ -37,8 +37,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let settings = UIUserNotificationSettings(types: UIUserNotificationType.alert, categories: nil)
         UIApplication.shared.registerUserNotificationSettings(settings)
 
-        application.setMinimumBackgroundFetchInterval(UIApplicationBackgroundFetchIntervalMinimum)
-
         let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true) as NSArray
         let documentDirectory = paths[0] as! String
         seenFile = documentDirectory.appending("/seen.plist")
@@ -120,12 +118,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UINavigationBar.appearance().titleTextAttributes = textAttributes
         doBios()
 
-        SDWebImageManager.shared().imageCache.maxCacheAge = 1209600
+        SDWebImageManager.shared().imageCache.maxCacheAge = 1209600 //2 weeks
         SDWebImageManager.shared().imageCache.maxCacheSize = 250 * 1024 * 1024
+        
         return true
+    }
+    
+    
+    public func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) {
+        print("Recived: \(userInfo)")
+
     }
 
     var statusBar = UIView()
+    
 
     func doBios() {
         if (SettingValues.biometrics && BioMetricAuthenticator.canAuthenticate()) {
@@ -152,68 +158,81 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func getData(_ completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        
+
         if let session = session {
             do {
-                let request = try session.requestForGettingProfile()
+                let request = try session.getMessageRequest(.unread)
                 let fetcher = BackgroundFetch(current: session,
                         request: request,
                         taskHandler: { (response, dataURL, error) -> Void in
-                            print("Doing")
                             if let response = response, let dataURL = dataURL {
                                 if response.statusCode == HttpStatus.ok.rawValue {
-
                                     do {
                                         let data = try Data(contentsOf: dataURL)
-                                        let result = accountInResult(from: data, response: response)
+                                        
+                                        let result = messagesInResult(from: data, response: response)
                                         switch result {
-                                        case .success(let account):
-                                            print(account)
-                                            UIApplication.shared.applicationIconBadgeNumber = account.inboxCount
-                                            self.postLocalNotification("You have \(account.inboxCount) new messages.")
-                                            completionHandler(.newData)
+                                        case .success(let listing):
+                                            var new : [Message] = []
+                                            var children = listing.children
+                                            children.reverse()
+                                            for m in children.flatMap({$0}){
+                                                let message = (m as! Message)
+                                                if(Double(message.createdUtc) > (UserDefaults.standard.object(forKey: "lastMessageUpdate") == nil ? NSDate().timeIntervalSince1970 : UserDefaults.standard.double(forKey: "lastMessageUpdate"))){
+                                                    new.append(message)
+                                                    self.postLocalNotification(message.body, message.author, message.id)
+                                                }
+                                            }
+                                            
+                                            UserDefaults.standard.set(NSDate().timeIntervalSince1970, forKey: "lastMessageUpdate")
+                                            UserDefaults.standard.synchronize()
+
+                                            DispatchQueue.main.async {
+                                                UIApplication.shared.applicationIconBadgeNumber = new.count
+                                                completionHandler(.newData)
+                                            }
                                             return
                                         case .failure(let error):
                                             print(error)
-                                            self.postLocalNotification("\(error)")
                                             completionHandler(.failed)
                                         }
                                     } catch {
 
                                     }
                                 } else {
-                                    self.postLocalNotification("response code \(response.statusCode)")
                                     completionHandler(.failed)
                                 }
                             } else {
-                                self.postLocalNotification("Error can not parse response and data.")
                                 completionHandler(.failed)
                             }
                         })
-                fetcher.resume()
                 self.fetcher = fetcher
+                fetcher.resume()
             } catch {
                 print(error.localizedDescription)
-                postLocalNotification("\(error)")
                 completionHandler(.failed)
             }
         } else {
-            print("Fail")
-            postLocalNotification("session is not available.")
             completionHandler(.failed)
         }
     }
 
-    func postLocalNotification(_ message: String) {
+    func postLocalNotification(_ message: String, _ author: String = "",  _ id: String = "") {
         if #available(iOS 10.0, *) {
             let center = UNUserNotificationCenter.current()
 
             let content = UNMutableNotificationContent()
-            content.title = "New messages!"
+            content.categoryIdentifier = "SlideMail"
+            if(author.isEmpty()){
+                content.title = "New messages!"
+            } else {
+                content.title = "New message from \(author)"
+            }
             content.body = message
-            content.sound = UNNotificationSound.default()
-            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 300,
+            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 2,
                     repeats: false)
-            let identifier = "SlideMSGNotif"
+            let identifier = "SlideNewMessage" + id
             let request = UNNotificationRequest(identifier: identifier,
                     content: content, trigger: trigger)
             center.add(request, withCompletionHandler: { (error) in
@@ -362,6 +381,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         totalBackground = true
         History.seenTimes.write(toFile: seenFile!, atomically: true)
         History.commentCounts.write(toFile: commentsFile!, atomically: true)
+        application.setMinimumBackgroundFetchInterval(300)
 
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
