@@ -13,6 +13,7 @@ import TTTAttributedLabel
 import RealmSwift
 import AudioToolbox
 import XLActionController
+import MaterialComponents.MaterialSnackbar
 
 protocol UZTextViewCellDelegate: class {
     func pushedMoreButton(_ cell: CommentDepthCell)
@@ -30,9 +31,11 @@ class CommentMenuCell: UITableViewCell {
     var more = UIButton()
     var edit = UIButton()
     var delete = UIButton()
+    var mod = UIButton()
 
     var editShown = false
     var archived = false
+    var modShown = false
 
     var comment: RComment?
     var commentView: CommentDepthCell?
@@ -43,6 +46,7 @@ class CommentMenuCell: UITableViewCell {
         self.parent = parent
         self.commentView = cell
         editShown = AccountController.isLoggedIn && comment.author == AccountController.currentName
+        modShown = comment.canMod
         archived = comment.archived
         self.contentView.backgroundColor = ColorUtil.getColorForSub(sub: comment.subreddit)
         updateConstraints()
@@ -55,6 +59,12 @@ class CommentMenuCell: UITableViewCell {
     func doDelete(_ s: AnyObject) {
         self.parent!.deleteComment(cell: commentView!)
     }
+
+    func showModMenu(_ s: AnyObject) {
+        parent!.modMenu(commentView!)
+
+    }
+
 
     func upvote(_ s: AnyObject) {
         parent!.vote(comment: comment!, dir: .up)
@@ -81,8 +91,9 @@ class CommentMenuCell: UITableViewCell {
     override func updateConstraints() {
         super.updateConstraints()
         var width = min(375, UIScreen.main.bounds.size.width)
-        width = width / ((archived || !AccountController.isLoggedIn) ? 1 : (editShown ? 6 : 4))
+        width = width / ((archived || !AccountController.isLoggedIn) ? 1 : (editShown ? (modShown ? 7 : 6) : (modShown ? 5 : 4)))
 
+        
 
         if (editShown) {
             edit.isHidden = false
@@ -99,19 +110,50 @@ class CommentMenuCell: UITableViewCell {
             downvote.isHidden = true
             reply.isHidden = true
         }
+        
+        if (comment != nil){
+        if(modShown){
+            mod.isHidden = false
+            if(!comment!.reports.isEmpty){
+                mod.setImage(UIImage.init(named: "mod")?.withColor(tintColor: GMColor.red500Color()).imageResize(sizeChange: CGSize.init(width: 20, height: 20)), for: .normal)
+            } else {
+                mod.setImage(UIImage.init(named: "mod")?.withColor(tintColor: .white).imageResize(sizeChange: CGSize.init(width: 20, height: 20)), for: .normal)
+            }
+        } else {
+            mod.isHidden = true
+        }
+        
+        switch(ActionStates.getVoteDirection(s: comment!)){
+        case .down:
+            downvote.setImage(UIImage.init(named: "downvote")?.withColor(tintColor: ColorUtil.downvoteColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20)), for: .normal)
+            upvote.setImage(UIImage.init(named: "upvote")?.withColor(tintColor: .white).imageResize(sizeChange: CGSize.init(width: 20, height: 20)), for: .normal)
+            break
+        case .up:
+            upvote.setImage(UIImage.init(named: "upvote")?.withColor(tintColor: ColorUtil.upvoteColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20)), for: .normal)
+            downvote.setImage(UIImage.init(named: "downvote")?.withColor(tintColor: .white).imageResize(sizeChange: CGSize.init(width: 20, height: 20)), for: .normal)
+            break
+        case .none:
+            upvote.setImage(UIImage.init(named: "upvote")?.withColor(tintColor: .white).imageResize(sizeChange: CGSize.init(width: 20, height: 20)), for: .normal)
+            downvote.setImage(UIImage.init(named: "downvote")?.withColor(tintColor: .white).imageResize(sizeChange: CGSize.init(width: 20, height: 20)), for: .normal)
+            break
+        }
+        }
 
         let metrics: [String: Int] = ["width": Int(width), "full": Int(self.contentView.frame.size.width)]
-        let views = ["upvote": upvote, "downvote": downvote, "edit": edit, "delete": delete, "view": contentView, "more": more, "reply": reply] as [String: Any]
+        let views = ["upvote": upvote, "downvote": downvote, "edit": edit, "delete": delete, "mod": mod, "view": contentView, "more": more, "reply": reply] as [String: Any]
 
         let replyStuff = !archived && AccountController.isLoggedIn ? "[upvote(width)]-0-[downvote(width)]-0-[reply(width)]-0-" : ""
         let editStuff = (!archived && editShown) ? "[edit(width)]-0-[delete(width)]-0-" : ""
+        let modStuff = (modShown) ? "[mod(width)]-0-" : ""
+
         self.contentView.removeConstraints(sideConstraint)
-        sideConstraint = NSLayoutConstraint.constraints(withVisualFormat: "H:\(editStuff)\(replyStuff)[more(width)]-0-|",
+        sideConstraint = NSLayoutConstraint.constraints(withVisualFormat: "H:\(editStuff)\(replyStuff)[more(width)]-0-\(modStuff)|",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views)
         sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[more(45)]", options: NSLayoutFormatOptions(rawValue: 0), metrics: metrics, views: views))
         sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[edit(45)]", options: NSLayoutFormatOptions(rawValue: 0), metrics: metrics, views: views))
+        sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[mod(45)]", options: NSLayoutFormatOptions(rawValue: 0), metrics: metrics, views: views))
 
         sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[delete(45)]", options: NSLayoutFormatOptions(rawValue: 0), metrics: metrics, views: views))
         sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[reply(45)]", options: NSLayoutFormatOptions(rawValue: 0), metrics: metrics, views: views))
@@ -131,13 +173,15 @@ class CommentMenuCell: UITableViewCell {
         self.more = UIButton.init(type: .custom)
         self.edit = UIButton.init(type: .custom)
         self.delete = UIButton.init(type: .custom)
+        self.mod = UIButton.init(type: .custom)
 
         upvote.setImage(UIImage.init(named: "upvote")?.navIcon(), for: .normal)
         downvote.setImage(UIImage.init(named: "downvote")?.navIcon(), for: .normal)
         reply.setImage(UIImage.init(named: "reply")?.navIcon(), for: .normal)
         more.setImage(UIImage.init(named: "ic_more_vert_white")?.navIcon(), for: .normal)
-        edit.setImage(UIImage.init(named: "edit")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: .normal)
-        delete.setImage(UIImage.init(named: "delete")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: .normal)
+        edit.setImage(UIImage.init(named: "edit")?.navIcon(), for: .normal)
+        delete.setImage(UIImage.init(named: "delete")?.navIcon(), for: .normal)
+        mod.setImage(UIImage.init(named: "mod")?.navIcon(), for: .normal)
 
         upvote.translatesAutoresizingMaskIntoConstraints = false
         downvote.translatesAutoresizingMaskIntoConstraints = false
@@ -145,6 +189,7 @@ class CommentMenuCell: UITableViewCell {
         reply.translatesAutoresizingMaskIntoConstraints = false
         edit.translatesAutoresizingMaskIntoConstraints = false
         delete.translatesAutoresizingMaskIntoConstraints = false
+        mod.translatesAutoresizingMaskIntoConstraints = false
 
         self.contentView.addSubview(upvote)
         self.contentView.addSubview(more)
@@ -152,6 +197,7 @@ class CommentMenuCell: UITableViewCell {
         self.contentView.addSubview(reply)
         self.contentView.addSubview(edit)
         self.contentView.addSubview(delete)
+        self.contentView.addSubview(mod)
 
         upvote.addTarget(self, action: #selector(CommentMenuCell.upvote(_:)), for: UIControlEvents.touchUpInside)
         downvote.addTarget(self, action: #selector(CommentMenuCell.downvote(_:)), for: UIControlEvents.touchUpInside)
@@ -159,6 +205,7 @@ class CommentMenuCell: UITableViewCell {
         reply.addTarget(self, action: #selector(CommentMenuCell.reply(_:)), for: UIControlEvents.touchUpInside)
         edit.addTarget(self, action: #selector(CommentMenuCell.edit(_:)), for: UIControlEvents.touchUpInside)
         delete.addTarget(self, action: #selector(CommentMenuCell.doDelete(_:)), for: UIControlEvents.touchUpInside)
+        mod.addTarget(self, action: #selector(CommentMenuCell.showModMenu(_:)), for: UIControlEvents.touchUpInside)
 
         updateConstraints()
     }
@@ -411,6 +458,165 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         }
     }
 
+    func modApprove() {
+        if (content is RComment) {
+            do {
+                try parent?.session?.approve(comment!.id, completion: { (result) -> Void in
+                    switch result {
+                    case .failure(let error):
+                        print(error.description)
+                        DispatchQueue.main.async {
+                            let message = MDCSnackbarMessage()
+                            message.text = "Approving comment failed!"
+                            MDCSnackbarManager.show(message)
+                        }
+                        break
+                    case .success(_):
+                        self.parent!.approved.append(self.comment!.id)
+                        if(self.parent!.removed.contains(self.comment!.id)){
+                            self.parent!.removed.remove(at: self.parent!.removed.index(of: self.comment!.id)!)
+                        }
+                        DispatchQueue.main.async {
+                            self.parent!.tableView.reloadData()
+                            let message = MDCSnackbarMessage()
+                            message.text = "Comment approved!"
+                            MDCSnackbarManager.show(message)
+                        }
+                        break
+                    }
+                })
+            } catch {
+                print(error)
+            }
+            refresh(comment: content as! RComment, submissionAuthor: savedAuthor, text: cellContent!)
+        }
+    }
+    
+    func modDistinguish() {
+        if (content is RComment) {
+            do {
+                try parent?.session?.distinguish(comment!.id, how: "yes", completion: { (result) -> Void in
+                    switch result {
+                    case .failure(let error):
+                        print(error.description)
+                        DispatchQueue.main.async {
+                            let message = MDCSnackbarMessage()
+                            message.text = "Distinguishing comment failed!"
+                            MDCSnackbarManager.show(message)
+                        }
+                        break
+                    case .success(_):
+                        DispatchQueue.main.async {
+                            let message = MDCSnackbarMessage()
+                            message.text = "Comment distinguished!"
+                            MDCSnackbarManager.show(message)
+                        }
+                        break
+                    }
+                })
+            } catch {
+                print(error)
+            }
+            refresh(comment: content as! RComment, submissionAuthor: savedAuthor, text: cellContent!)
+        }
+    }
+
+    func modSticky(sticky: Bool) {
+        if (content is RComment) {
+            do {
+                try parent?.session?.distinguish(comment!.id, how: "yes", sticky: sticky, completion: { (result) -> Void in
+                    switch result {
+                    case .failure(let error):
+                        print(error.description)
+                        DispatchQueue.main.async {
+                            let message = MDCSnackbarMessage()
+                            message.text = "Couldn't \(sticky ? "" : "un-")pin comment!"
+                            MDCSnackbarManager.show(message)
+                        }
+                        break
+                    case .success(_):
+                        DispatchQueue.main.async {
+                            let message = MDCSnackbarMessage()
+                            message.text = "Comment \(sticky ? "" : "un-")pinned!"
+                            MDCSnackbarManager.show(message)
+                        }
+                        break
+                    }
+                })
+            } catch {
+                print(error)
+            }
+            refresh(comment: content as! RComment, submissionAuthor: savedAuthor, text: cellContent!)
+        }
+    }
+    
+    func modRemove(_ spam: Bool = false) {
+        if (content is RComment) {
+            do {
+                try parent?.session?.remove(comment!.id, spam: spam, completion: { (result) -> Void in
+                    switch result {
+                    case .failure(let error):
+                    print(error.description)
+                    DispatchQueue.main.async {
+                        let message = MDCSnackbarMessage()
+                        message.text = "Removing comment failed!"
+                        MDCSnackbarManager.show(message)
+                        }
+                        break
+                    case .success(_):
+                        self.parent!.removed.append(self.comment!.id)
+                        if(self.parent!.approved.contains(self.comment!.id)){
+                            self.parent!.approved.remove(at: self.parent!.approved.index(of: self.comment!.id)!)
+                        }
+                        DispatchQueue.main.async {
+                            self.parent!.tableView.reloadData()
+                            let message = MDCSnackbarMessage()
+                            message.text = "Comment removed!"
+                            MDCSnackbarManager.show(message)
+                        }
+                        break
+                }
+            })
+            
+            } catch {
+                print(error)
+            }
+            refresh(comment: content as! RComment, submissionAuthor: savedAuthor, text: cellContent!)
+        }
+    }
+
+    
+    func modBan(why: String, duration: Int?) {
+        if (content is RComment) {
+            do {
+                try parent?.session?.ban(comment!.author, banReason: why, duration: duration == nil ? 999 /*forever*/ : duration!, completion: { (result) -> Void in
+                    switch result {
+                    case .failure(let error):
+                        print(error.description)
+                        DispatchQueue.main.async {
+                            let message = MDCSnackbarMessage()
+                            message.text = "Banning user failed!"
+                            MDCSnackbarManager.show(message)
+                        }
+                        break
+                    case .success(_):
+                        DispatchQueue.main.async {
+                            let message = MDCSnackbarMessage()
+                            message.text = "/u/\(self.comment!.author) banned!"
+                            MDCSnackbarManager.show(message)
+                        }
+                        break
+                    }
+
+                })
+            } catch {
+                print(error)
+            }
+            refresh(comment: content as! RComment, submissionAuthor: savedAuthor, text: cellContent!)
+        }
+    }
+
+
     func more(_ par: CommentViewController) {
 
         let alertController: BottomSheetActionController = BottomSheetActionController()
@@ -434,6 +640,71 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         alertController.addAction(Action(ActionData(title: "Report", image: UIImage(named: "hide")!.menuIcon()), style: .default, handler: { action in
             par.report(self.comment!)
         }))
+        alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: nil))
+
+        VCPresenter.presentAlert(alertController, parentVC: par.parent!)
+    }
+
+    func mod(_ par: CommentViewController) {
+        let alertController: BottomSheetActionController = BottomSheetActionController()
+        alertController.headerData = "Comment by /u/\(comment!.author)"
+
+
+        alertController.addAction(Action(ActionData(title: "\(comment!.reports.count) reports", image: UIImage(named: "reports")!.menuIcon()), style: .default, handler: { action in
+            var reports = ""
+            for report in self.comment!.reports {
+                reports = reports + report + "\n"
+            }
+            let alert = UIAlertController(title: "Reports",
+                                          message: reports,
+                                          preferredStyle: UIAlertControllerStyle.alert)
+            
+            let cancelAction = UIAlertAction(title: "OK",
+                                             style: .cancel, handler: nil)
+            
+            alert.addAction(cancelAction)
+            self.parent?.present(alert, animated: true, completion: nil)
+
+        }))
+        alertController.addAction(Action(ActionData(title: "Approve", image: UIImage(named: "approve")!.menuIcon()), style: .default, handler: { action in
+            self.modApprove()
+        }))
+
+        alertController.addAction(Action(ActionData(title: "Ban user", image: UIImage(named: "ban")!.menuIcon()), style: .default, handler: { action in
+            //todo show dialog for this
+        }))
+        
+        if(comment!.author == AccountController.currentName){
+            alertController.addAction(Action(ActionData(title: "Distinguish", image: UIImage(named: "save")!.menuIcon()), style: .default, handler: { action in
+                self.modDistinguish()
+            }))
+        }
+
+        if(comment!.author == AccountController.currentName && comment!.depth == 1){
+            if(comment!.sticky){
+                alertController.addAction(Action(ActionData(title: "Un-pin", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { action in
+                    self.modSticky(sticky: false)
+                }))
+            } else {
+                alertController.addAction(Action(ActionData(title: "Pin and distinguish", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { action in
+                    self.modSticky(sticky: true)
+                }))
+            }
+        }
+
+        alertController.addAction(Action(ActionData(title: "Remove", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { action in
+            self.modRemove()
+        }))
+
+        alertController.addAction(Action(ActionData(title: "Mark as spam", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { action in
+            self.modRemove(true)
+        }))
+
+        alertController.addAction(Action(ActionData(title: "User profile", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { action in
+            let prof = ProfileViewController.init(name: self.comment!.author)
+            VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: nil, parentViewController: par);
+        }))
+
         alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: nil))
 
         VCPresenter.presentAlert(alertController, parentVC: par.parent!)
@@ -755,7 +1026,6 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
             break
         }
 
-
         let scoreString = NSMutableAttributedString(string: ((comment.scoreHidden ? "[score hidden]" : "\(getScoreText(comment: comment))") + (comment.controversiality > 0 ? "†" : "")), attributes: [NSForegroundColorAttributeName: color])
 
         let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: comment.created, numericDates: true))" + (comment.isEdited ? ("(edit \(DateFormatter().timeSince(from: comment.edited, numericDates: true)))") : ""), attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor])
@@ -769,8 +1039,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         let spacer = NSMutableAttributedString.init(string: "  ")
         let userColor = ColorUtil.getColorForUser(name: comment.author)
         if (comment.distinguished == "admin") {
-
-            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#E57373"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
+          authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#E57373"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
         } else if (comment.distinguished == "special") {
             authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#F44336"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
         } else if (comment.distinguished == "moderator") {
@@ -803,7 +1072,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
             infoString.append(flairTitle)
         }
 
-        if (comment.pinned) {
+        if (comment.sticky) {
             infoString.append(spacer)
             infoString.append(pinned)
         }
@@ -815,6 +1084,21 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
                 infoString.append(gilded)
             }
         }
+        
+        if(parent!.removed.contains(comment.id) || (!comment.removedBy.isEmpty() && !parent!.approved.contains(comment.id))){
+            let attrs = [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: GMColor.red500Color()] as [String: Any]
+            infoString.append(spacer)
+            if(comment.removedBy == "true"){
+                infoString.append(NSMutableAttributedString.init(string: "Removed by Reddit\(!comment.removalReason.isEmpty() ? ":\(comment.removalReason)" : "")", attributes: attrs))
+            } else {
+                infoString.append(NSMutableAttributedString.init(string: "Removed\(!comment.removedBy.isEmpty() ? " by \(comment.removedBy)":"")\(!comment.removalReason.isEmpty() ? " for \(comment.removalReason)" : "")\(!comment.removalNote.isEmpty() ? " \(comment.removalNote)" : "")", attributes: attrs))
+            }
+        } else if(parent!.approved.contains(comment.id) || (!comment.approvedBy.isEmpty() && !parent!.removed.contains(comment.id))){
+            let attrs = [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: GMColor.green500Color()] as [String: Any]
+            infoString.append(spacer)
+            infoString.append(NSMutableAttributedString.init(string: "Approved\(!comment.approvedBy.isEmpty() ? " by \(comment.approvedBy)":"")", attributes: attrs))
+        }
+
 
         infoString.append(NSAttributedString.init(string: "\n"))
         if (!isCollapsed || !SettingValues.collapseFully) {

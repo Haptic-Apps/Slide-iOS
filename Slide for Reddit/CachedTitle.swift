@@ -11,6 +11,8 @@ import TTTAttributedLabel
 
 class CachedTitle {
     static var titles: [String: NSAttributedString] = [:]
+    static var removed: [String] = []
+    static var approved: [String] = []
 
     static func addTitle(s: RSubmission) {
 
@@ -142,7 +144,20 @@ class CachedTitle {
             }
             infoString.append(scoreString)
         }
-
+        
+        if(removed.contains(submission.id) || (!submission.removedBy.isEmpty() && !approved.contains(submission.id))){
+            let attrs = [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: GMColor.red500Color()] as [String: Any]
+            infoString.append(spacer)
+            if(submission.removedBy == "true"){
+                infoString.append(NSMutableAttributedString.init(string: "Removed by Reddit\(!submission.removalReason.isEmpty() ? ":\(submission.removalReason)" : "")", attributes: attrs))
+            } else {
+                infoString.append(NSMutableAttributedString.init(string: "Removed\(!submission.removedBy.isEmpty() ? "by \(submission.removedBy)" : "")\(!submission.removalReason.isEmpty() ? " for \(submission.removalReason)" : "")\(!submission.removalNote.isEmpty() ? " \(submission.removalNote)" : "")", attributes: attrs))
+            }
+        } else if(approved.contains(submission.id) || (!submission.approvedBy.isEmpty() && !removed.contains(submission.id))){
+            let attrs = [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: GMColor.green500Color()] as [String: Any]
+            infoString.append(spacer)
+            infoString.append(NSMutableAttributedString.init(string: "Approved\(!submission.approvedBy.isEmpty() ? " by \(submission.approvedBy)":"")", attributes: attrs))
+        }
 
         if (submission.isCrosspost && !full) {
             infoString.append(NSAttributedString.init(string: "\n\n"))

@@ -119,6 +119,7 @@ class RealmDataWrapper {
         rSubmission.height = h
         rSubmission.width = w
         rSubmission.distinguished = submission.distinguished
+        rSubmission.canMod = submission.canMod
         rSubmission.isSelf = submission.isSelf
         rSubmission.body = submission.selftext
         rSubmission.permalink = submission.permalink
@@ -212,6 +213,7 @@ class RealmDataWrapper {
         rSubmission.subreddit = submission.subreddit
         rSubmission.archived = submission.archived
         rSubmission.locked = submission.locked
+        rSubmission.canMod = submission.canMod
         rSubmission.urlString = try! ((submission.url?.absoluteString) ?? "").convertHtmlSymbols() ?? ""
         rSubmission.title = submission.title
         rSubmission.commentCount = submission.numComments
@@ -221,6 +223,10 @@ class RealmDataWrapper {
         rSubmission.bannerUrl = burl
         rSubmission.thumbnailUrl = turl
         rSubmission.thumbnail = thumb
+        rSubmission.removedBy = submission.baseJson["banned_by"] as? String ?? ""
+        rSubmission.removalReason = submission.baseJson["ban_note"] as? String ?? ""
+        rSubmission.removalNote = submission.baseJson["mod_note"] as? String ?? ""
+        rSubmission.removed = !rSubmission.removedBy.isEmpty()
         rSubmission.nsfw = submission.over18
         rSubmission.banner = big
         rSubmission.lqUrl = String.init(htmlEncodedString: lqUrl)
@@ -238,7 +244,20 @@ class RealmDataWrapper {
         rSubmission.isSelf = submission.isSelf
         rSubmission.body = submission.selftext
         rSubmission.permalink = submission.permalink
+        
+        for item in submission.baseJson["mod_reports"] as? [AnyObject] ?? [] {
+            let array = item as! Array<Any>
+            rSubmission.reports.append("\(array[0]): \(array[1])")
+        }
+        for item in submission.baseJson["user_reports"] as? [AnyObject] ?? [] {
+            let array = item as! Array<Any>
+            rSubmission.reports.append("\(array[0]): \(array[1])")
+        }
+        rSubmission.approvedBy = submission.baseJson["approved_by"] as? String ?? ""
+        rSubmission.approved = !rSubmission.approvedBy.isEmpty()
+
     }
+    
 
 
     static func commentToRealm(comment: Thing, depth: Int) -> Object {
@@ -265,10 +284,27 @@ class RealmDataWrapper {
         rComment.submissionTitle = comment.submissionTitle
         rComment.saved = comment.saved
         rComment.body = comment.body
+        rComment.removalReason = comment.baseJson["ban_note"] as? String ?? ""
+        rComment.removalNote = comment.baseJson["mod_note"] as? String ?? ""
+        rComment.removedBy = comment.baseJson["banned_by"] as? String ?? ""
+        rComment.removed = !rComment.removedBy.isEmpty()
+        rComment.approvedBy = comment.baseJson["approved_by"] as? String ?? ""
+        rComment.approved = !rComment.approvedBy.isEmpty()
+        rComment.sticky = comment.baseJson["stickied"] as? Bool ?? false
+
+        for item in comment.modReports {
+            let array = item as! Array<Any>
+            rComment.reports.append("\(array[0]): \(array[1])")
+        }
+        for item in comment.userReports {
+            let array = item as! Array<Any>
+            rComment.reports.append("\(array[0]): \(array[1])")
+        }
         //todo rComment.pinned = comment.pinned
         rComment.score = comment.score
         rComment.depth = depth
         rComment.flair = flair
+        rComment.canMod = comment.canMod
         rComment.linkid = comment.linkId
         rComment.archived = comment.archived
         rComment.distinguished = comment.distinguished
@@ -350,6 +386,7 @@ class RSubmission: Object {
     dynamic var distinguished = ""
     dynamic var videoPreview = ""
     dynamic var isCrosspost = false
+    dynamic var canMod = false
     dynamic var crosspostAuthor = ""
     dynamic var crosspostSubreddit = ""
     dynamic var crosspostPermalink = ""
@@ -368,6 +405,14 @@ class RSubmission: Object {
     var url: URL? {
         return URL.init(string: self.urlString)
     }
+
+    var reports = List<String>()
+    dynamic var removedBy = ""
+    dynamic var removed = false
+    dynamic var approvedBy = ""
+    dynamic var approved = false
+    dynamic var removalReason = ""
+    dynamic var removalNote = ""
 
     dynamic var isEdited = false
     dynamic var commentCount = 0
@@ -446,6 +491,13 @@ class RComment: Object {
     dynamic var body = ""
     dynamic var author = ""
     dynamic var permalink = ""
+    var reports = List<String>()
+    dynamic var removedBy = ""
+    dynamic var removalReason = ""
+    dynamic var removalNote = ""
+    dynamic var approvedBy = ""
+    dynamic var approved = false
+    dynamic var removed = false
     dynamic var created = NSDate(timeIntervalSince1970: 1)
     dynamic var edited = NSDate(timeIntervalSince1970: 1)
     dynamic var depth = 0
@@ -453,6 +505,8 @@ class RComment: Object {
     dynamic var htmlText = ""
     dynamic var distinguished = ""
     dynamic var linkid = ""
+    dynamic var canMod = false
+    dynamic var sticky = false
     dynamic var submissionTitle = ""
     dynamic var pinned = false
     dynamic var controversiality = 0

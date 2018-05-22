@@ -93,6 +93,8 @@ public struct Link: Thing {
      example: 0
      */
     public let gilded: Int
+
+    public let canMod: Bool
     /**
      example: false
      */
@@ -256,6 +258,7 @@ public struct Link: Thing {
         gilded = 0
         archived = false
         locked = false
+        canMod = false
         clicked = false
         author = ""
         numComments = 0
@@ -322,6 +325,7 @@ public struct Link: Thing {
         
         gilded = data["gilded"] as? Int ?? 0
         archived = data["archived"] as? Bool ?? false
+        canMod = data["can_mod_post"] as? Bool ?? false
         locked = data["locked"] as? Bool ?? false
         clicked = data["clicked"] as? Bool ?? false
         author = data["author"] as? String ?? ""

@@ -19,6 +19,8 @@ import XLActionController
 class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, UZTextViewCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate, TTTAttributedLabelDelegate, ReplyDelegate {
 
     var parents: [String: String] = [:]
+    var approved: [String] = []
+    var removed: [String] = []
 
     func replySent(comment: Comment?) {
         if (comment != nil && menuId != "sub") {
@@ -391,6 +393,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     func refresh(_ sender: AnyObject) {
         session = (UIApplication.shared.delegate as! AppDelegate).session
+        approved.removeAll()
+        removed.removeAll()
         if let link = self.submission {
             sub = link.subreddit
             self.navigationItem.title = link.subreddit
@@ -1600,6 +1604,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     func moreComment(_ cell: CommentDepthCell) {
         cell.more(self)
+    }
+
+    func modMenu(_ cell: CommentDepthCell) {
+        cell.mod(self)
     }
 
     func editComment() {

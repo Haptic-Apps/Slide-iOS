@@ -170,6 +170,7 @@ class SettingsGeneral: UITableViewController {
                 SettingValues.defaultCommentSorting = link
                 UserDefaults.standard.set(link.path, forKey: SettingValues.pref_defaultCommentSorting)
                 UserDefaults.standard.synchronize()
+                self.commentSorting.detailTextLabel?.text = SettingValues.defaultCommentSorting.description
             }
             if(SettingValues.defaultCommentSorting == link){
                 saveActionButton.setValue(selected, forKey: "image")
