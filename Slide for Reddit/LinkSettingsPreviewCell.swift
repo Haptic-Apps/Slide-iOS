@@ -1,5 +1,5 @@
 //
-//  LinkTableViewCell.swift
+//  LinkSettingsPreviewCell.swift
 //  Slide for Reddit
 //
 //  Created by Carlos Crane on 7/19/17.
@@ -7,7 +7,7 @@
 //
 
 
-//This is just a temporary solution until I convert the rest of the UITableViews to UICollectionViews
+//This is just a recreation of the LinkCellView for use in the Settings > Layout page
 
 import UIKit
 import UZTextView
