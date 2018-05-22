@@ -11,6 +11,10 @@ import reddift
 import RealmSwift
 
 class InboxContributionLoader: ContributionLoader {
+    func reset() {
+        content = []
+    }
+    
 
     var color: UIColor
     

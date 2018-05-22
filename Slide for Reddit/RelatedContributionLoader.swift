@@ -11,6 +11,10 @@ import reddift
 import RealmSwift
 
 class RelatedContributionLoader: ContributionLoader {
+    func reset() {
+        content = []
+    }
+    
     var thing: RSubmission
     var sub: String
     var color: UIColor

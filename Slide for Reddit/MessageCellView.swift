@@ -14,7 +14,7 @@ import MaterialComponents.MaterialSnackbar
 import AudioToolbox
 import XLActionController
 
-class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextViewDelegate {
+class MessageCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UIGestureRecognizerDelegate, UZTextViewDelegate {
 
     var title = UILabel()
     var textView = UZTextView()
@@ -87,6 +87,18 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
             }
         }
     }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        var topmargin = 0
+        var bottommargin = 2
+        var leftmargin = 0
+        var rightmargin = 0
+        
+        let f = self.contentView.frame
+        let fr = UIEdgeInsetsInsetRect(f, UIEdgeInsetsMake(CGFloat(topmargin), CGFloat(leftmargin), CGFloat(bottommargin), CGFloat(rightmargin)))
+        self.contentView.frame = fr
+    }
 
     var content: CellContent?
     var hasText = false
@@ -101,16 +113,17 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         return estimatedHeight
     }
 
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
 
-        self.title = UILabel(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude));
+        self.contentView.layoutMargins = UIEdgeInsets.init(top: 2, left: 0, bottom: 0, right: 0)
+        self.title = UILabel(frame: CGRect(x: 0, y: 0, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude));
         title.numberOfLines = 0
         title.lineBreakMode = NSLineBreakMode.byWordWrapping
         title.font = FontGenerator.fontOfSize(size: 18, submission: true)
         title.textColor = ColorUtil.fontColor
 
-        self.textView = UZTextView(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
+        self.textView = UZTextView(frame: CGRect(x: 0, y: 0, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
         self.textView.delegate = self
         self.textView.isUserInteractionEnabled = true
         self.textView.backgroundColor = .clear
@@ -134,41 +147,7 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         self.updateConstraints()
 
     }
-
-    init(message: RMessage, parent: MediaViewController, width: CGFloat) {
-        super.init(style: .default, reuseIdentifier: "none")
-        self.single = true
-        self.title = UILabel(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude));
-        title.numberOfLines = 0
-        title.lineBreakMode = NSLineBreakMode.byWordWrapping
-        title.font = FontGenerator.fontOfSize(size: 18, submission: true)
-        title.textColor = ColorUtil.fontColor
-
-        self.textView = UZTextView(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
-        self.textView.delegate = self
-        self.textView.isUserInteractionEnabled = true
-        self.textView.backgroundColor = .clear
-
-        self.info = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
-        info.numberOfLines = 0
-        info.font = FontGenerator.fontOfSize(size: 12, submission: true)
-        info.textColor = ColorUtil.fontColor
-        info.alpha = 0.87
-
-        title.translatesAutoresizingMaskIntoConstraints = false
-        info.translatesAutoresizingMaskIntoConstraints = false
-        textView.translatesAutoresizingMaskIntoConstraints = false
-
-        self.contentView.addSubview(title)
-        self.contentView.addSubview(textView)
-        self.contentView.addSubview(info)
-
-        self.contentView.backgroundColor = ColorUtil.foregroundColor
-
-        self.updateConstraints()
-        self.setMessage(message: message, parent: parent, nav: parent.navigationController, width: width)
-    }
-
+    
     var lsC: [NSLayoutConstraint] = []
 
     func setMessage(message: RMessage, parent: MediaViewController, nav: UIViewController?, width: CGFloat) {
@@ -235,6 +214,9 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
 
         let metrics = ["height": content?.textHeight] as [String: Any]
         let views = ["label": title, "body": textView, "info": info] as [String: Any]
+        if(!lsC.isEmpty){
+            self.contentView.removeConstraints(lsC)
+        }
         lsC = []
         if (message.subject.hasPrefix("re:")) {
             lsC.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-38-[label]-8-|",
@@ -268,7 +250,7 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
                     metrics: metrics,
                     views: views))
         }
-        lsC.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[label]-4-[info]-4-[body(height)]-8-|",
+        lsC.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[label]-4-[info]-4-[body]-8-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
@@ -423,11 +405,6 @@ class MessageCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
     var message: RMessage?
     public var parentViewController: MediaViewController?
     public var navViewController: UIViewController?
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-    }
-
 
     func doReply(sender: UITapGestureRecognizer? = nil) {
         if (!ActionStates.isRead(s: message!)) {

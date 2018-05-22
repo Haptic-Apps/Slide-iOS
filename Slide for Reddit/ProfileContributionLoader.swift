@@ -11,6 +11,10 @@ import reddift
 import RealmSwift
 
 class ProfileContributionLoader: ContributionLoader {
+    func reset() {
+        content = []
+    }
+    
     var name: String
     var userContent: UserContent
     var color: UIColor

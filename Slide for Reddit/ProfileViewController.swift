@@ -298,7 +298,8 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
     var tabBar: MDCTabBar
 
     override func viewDidLoad() {
-       
+        super.viewDidLoad()
+
         view.backgroundColor = ColorUtil.backgroundColor
         var items: [String] = []
         for i in content {
@@ -325,7 +326,6 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
         self.view.addSubview(tabBar)
         self.edgesForExtendedLayout = []
         
-        super.viewDidLoad()
         
         self.dataSource = self
         self.delegate = self

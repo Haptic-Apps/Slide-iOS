@@ -11,6 +11,10 @@ import reddift
 import RealmSwift
 
 class SearchContributionLoader: ContributionLoader {
+    func reset() {
+        content = []
+    }
+    
 
     var query: String
     var sub: String

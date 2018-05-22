@@ -11,7 +11,7 @@ import UIKit
 import reddift
 import UZTextView
 
-class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTextViewDelegate {
+class CommentCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UIGestureRecognizerDelegate, UZTextViewDelegate {
     
     var title = UILabel()
     var textView = UZTextView()
@@ -90,6 +90,18 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         }
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        var topmargin = 0
+        var bottommargin = 2
+        var leftmargin = 0
+        var rightmargin = 0
+        
+        let f = self.contentView.frame
+        let fr = UIEdgeInsetsInsetRect(f, UIEdgeInsetsMake(CGFloat(topmargin), CGFloat(leftmargin), CGFloat(bottommargin), CGFloat(rightmargin)))
+        self.contentView.frame = fr
+    }
+
     var content: CellContent?
     var hasText = false
     
@@ -103,17 +115,18 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         return estimatedHeight
     }
     
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
-        self.title = UILabel(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude));
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        self.contentView.layoutMargins = UIEdgeInsets.init(top: 2, left: 0, bottom: 0, right: 0)
+
+        self.title = UILabel(frame: CGRect(x: 0, y: 0, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude));
         title.numberOfLines = 0
         title.lineBreakMode = NSLineBreakMode.byWordWrapping
         title.font = FontGenerator.fontOfSize(size: 18, submission: false)
 
         title.textColor = ColorUtil.fontColor
         
-        self.textView = UZTextView(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
+        self.textView = UZTextView(frame: CGRect(x: 0, y: 0, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
         self.textView.delegate = self
         self.textView.isUserInteractionEnabled = true
         self.textView.backgroundColor = .clear
@@ -137,41 +150,6 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         self.updateConstraints()
         
     }
-    
-    init(comment: RComment, parent: MediaViewController, width: CGFloat) {
-        super.init(style: .default, reuseIdentifier: "none")
-        self.single = true
-        self.title = UILabel(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude));
-        title.numberOfLines = 0
-        title.lineBreakMode = NSLineBreakMode.byWordWrapping
-        title.font = FontGenerator.fontOfSize(size: 18, submission: false)
-        title.textColor = ColorUtil.fontColor
-        
-        self.textView = UZTextView(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
-        self.textView.delegate = self
-        self.textView.isUserInteractionEnabled = true
-        self.textView.backgroundColor = .clear
-        
-        self.info = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
-        info.numberOfLines = 0
-        info.font = FontGenerator.fontOfSize(size: 12, submission: false)
-        info.textColor = ColorUtil.fontColor
-        info.alpha = 0.87
-        
-        title.translatesAutoresizingMaskIntoConstraints = false
-        info.translatesAutoresizingMaskIntoConstraints = false
-        textView.translatesAutoresizingMaskIntoConstraints = false
-        
-        self.contentView.addSubview(title)
-        self.contentView.addSubview(textView)
-        self.contentView.addSubview(info)
-        
-        self.contentView.backgroundColor = ColorUtil.foregroundColor
-        
-        self.updateConstraints()
-        self.setComment(comment: comment, parent: parent, nav: parent.navigationController, width: width)
-    }
-
     
     override func updateConstraints() {
         super.updateConstraints()
@@ -196,7 +174,17 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
                                                                        metrics: metrics,
                                                                        views: views))
         
-        
+        if(!lsC.isEmpty){
+            self.contentView.removeConstraints(lsC)
+        }
+
+        lsC = []
+        lsC.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[label]-4-[info]-4-[body]-8-|",
+                                                              options: NSLayoutFormatOptions(rawValue: 0),
+                                                              metrics: metrics,
+                                                              views: views))
+        self.contentView.addConstraints(lsC)
+
         
     }
     
@@ -211,9 +199,6 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
         self.comment = comment
         title.sizeToFit()
        
-        if(!lsC.isEmpty){
-            self.contentView.removeConstraints(lsC)
-        }
         
         let commentClick = UITapGestureRecognizer(target: self, action: #selector(CommentCellView.openComment(sender:)))
         commentClick.delegate = self
@@ -268,14 +253,6 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
             parentViewController?.registerForPreviewing(with: self, sourceView: textView)
         }
         
-        let metrics=["height": content?.textHeight] as [String: Any]
-        let views=["label":title, "body": textView, "info": info] as [String : Any]
-        lsC = []
-        lsC.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[label]-4-[info]-4-[body(height)]-8-|",
-                                                                                     options: NSLayoutFormatOptions(rawValue: 0),
-                                                                                     metrics: metrics,
-                                                                                     views: views))
-        self.contentView.addConstraints(lsC)
 
     }
     
@@ -344,9 +321,6 @@ class CommentCellView: UITableViewCell, UIViewControllerPreviewingDelegate, UZTe
     public var parentViewController: MediaViewController?
     public var navViewController: UIViewController?
     
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-    }
     
     
     func openComment(sender: UITapGestureRecognizer? = nil){

@@ -116,6 +116,8 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
     var tabBar = MDCTabBar()
 
     override func viewDidLoad() {
+        super.viewDidLoad()
+
         var items: [String] = []
         for i in content {
             items.append(i.description)
@@ -147,7 +149,6 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
         // set up style before super view did load is executed
         // -
 
-        super.viewDidLoad()
         self.dataSource = self
         self.delegate = self
 

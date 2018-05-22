@@ -20,7 +20,7 @@ class WrappingFlowLayout: UICollectionViewLayout{
         return Int(round(self.collectionView!.bounds.width / CGFloat(320)))
     }
     var cellPadding: CGFloat {
-        return numberOfColumns > 1 ? CGFloat(6) : CGFloat(0)
+        return (numberOfColumns > 1 && SettingValues.postViewMode != .LIST) ? CGFloat(6) : CGFloat(0)
     }
     
     // 3

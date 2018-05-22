@@ -20,4 +20,6 @@ protocol ContributionLoader {
     var paging: Bool {get}
     var canGetMore: Bool {get}
     
+    func reset()
+    
 }
