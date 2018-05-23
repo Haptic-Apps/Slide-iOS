@@ -2,17 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4e152e64-2f09-48b9-9864-06428fccec3c" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Slide for Reddit.xcodeproj/project.pbxproj" beforeDir="false" afterPath="$PROJECT_DIR$/Slide for Reddit.xcodeproj/project.pbxproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Slide for Reddit/AppDelegate.swift" beforeDir="false" afterPath="$PROJECT_DIR$/Slide for Reddit/AppDelegate.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Slide for Reddit/CommentViewController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/Slide for Reddit/CommentViewController.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Slide for Reddit/ContentListingViewController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/Slide for Reddit/ContentListingViewController.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Slide for Reddit/MainViewController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/Slide for Reddit/MainViewController.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Slide for Reddit/SettingsComments.swift" beforeDir="false" afterPath="$PROJECT_DIR$/Slide for Reddit/SettingsComments.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Slide for Reddit/SettingsGeneral.swift" beforeDir="false" afterPath="$PROJECT_DIR$/Slide for Reddit/SettingsGeneral.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Slide for Reddit/SettingsViewController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/Slide for Reddit/SettingsViewController.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Slide for Reddit/SingleSubredditViewController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/Slide for Reddit/SingleSubredditViewController.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Slide for Reddit/SubredditReorderViewController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/Slide for Reddit/SubredditReorderViewController.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Slide for Reddit/Info.plist" beforeDir="false" afterPath="$PROJECT_DIR$/Slide for Reddit/Info.plist" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -27,20 +17,20 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="iphoneos_b4f2266089219190fedc1e40334b9efd8b9b10f5" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="SettingsViewController.swift" pinned="false" current-in-tab="false">
+      <file leaf-file-name="SettingsViewController.swift" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Slide for Reddit/SettingsViewController.swift">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="643">
-              <caret line="384" column="24" lean-forward="true" selection-start-line="384" selection-start-column="24" selection-end-line="384" selection-end-column="24" />
+            <state relative-caret-position="178">
+              <caret line="353" column="151" selection-start-line="353" selection-start-column="151" selection-end-line="353" selection-end-column="151" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="CommentViewController.swift" pinned="false" current-in-tab="true">
+      <file leaf-file-name="CommentViewController.swift" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Slide for Reddit/CommentViewController.swift">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="465">
-              <caret line="740" lean-forward="true" selection-start-line="740" selection-end-line="740" />
+            <state relative-caret-position="525">
+              <caret line="744" selection-start-line="744" selection-end-line="744" />
               <folding>
                 <element signature="e#159#171#0" expanded="true" />
               </folding>
@@ -61,7 +51,7 @@
         <entry file="file://$PROJECT_DIR$/Slide for Reddit/ContentListingViewController.swift">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="495">
-              <caret line="565" column="68" lean-forward="true" selection-start-line="565" selection-start-column="68" selection-end-line="565" selection-end-column="68" />
+              <caret line="565" column="68" selection-start-line="565" selection-start-column="68" selection-end-line="565" selection-end-column="68" />
             </state>
           </provider>
         </entry>
@@ -88,7 +78,7 @@
         <entry file="file://$PROJECT_DIR$/Slide for Reddit/MainViewController.swift">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="437">
-              <caret line="240" column="70" lean-forward="true" selection-start-line="240" selection-start-column="70" selection-end-line="240" selection-end-column="70" />
+              <caret line="240" column="70" selection-start-line="240" selection-start-column="70" selection-end-line="240" selection-end-column="70" />
             </state>
           </provider>
         </entry>
@@ -96,8 +86,7 @@
       <file leaf-file-name="SingleSubredditViewController.swift" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Slide for Reddit/SingleSubredditViewController.swift">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="557">
-              <caret line="844" column="110" lean-forward="true" selection-start-line="844" selection-start-column="110" selection-end-line="844" selection-end-column="110" />
+            <state>
               <folding>
                 <element signature="e#167#179#0" expanded="true" />
                 <element signature="e#13443#18131#0" />
@@ -154,12 +143,12 @@
       <find>available</find>
       <find>contentOffset</find>
       <find>contentinset</find>
-      <find>contentInset</find>
       <find>bottom</find>
       <find>willhide</find>
       <find>.count</find>
       <find>appear</find>
       <find>keyboard</find>
+      <find>contentInset</find>
     </findStrings>
     <replaceStrings>
       <replace>-12</replace>
@@ -415,12 +404,12 @@
       <workItem from="1526763727748" duration="11275000" />
       <workItem from="1526840465332" duration="22034000" />
       <workItem from="1527051021781" duration="2436000" />
-      <workItem from="1527088277727" duration="2939000" />
+      <workItem from="1527088277727" duration="3250000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="347557000" />
+    <option name="totallyTimeSpent" value="347868000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -436,14 +425,14 @@
     <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.4972875" weight="0.32911393" />
-      <window_info anchor="bottom" id="Messages" order="7" sideWeight="0.42260733" weight="0.3089172" />
+      <window_info active="true" anchor="bottom" id="Messages" order="7" sideWeight="0.4210319" visible="true" weight="0.3089172" />
       <window_info anchor="right" id="Palette&#9;" order="3" />
-      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.60181177" side_tool="true" visible="true" weight="0.24124204" />
+      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.5789681" side_tool="true" visible="true" weight="0.3089172" />
       <window_info anchor="bottom" id="Version Control" order="8" weight="0.32911393" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.39818826" visible="true" weight="0.24124204" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.3970067" weight="0.24124204" />
       <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.4978903" weight="0.32911393" />
       <window_info id="Designer" order="2" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.15045294" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.15045294" />
       <window_info anchor="bottom" id="Find" order="1" sideWeight="0.4948949" weight="0.32882166" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.24954791" />
       <window_info id="Favorites" order="3" side_tool="true" />
@@ -738,7 +727,7 @@
     <entry file="file://$PROJECT_DIR$/Slide for Reddit/MainViewController.swift">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="437">
-          <caret line="240" column="70" lean-forward="true" selection-start-line="240" selection-start-column="70" selection-end-line="240" selection-end-column="70" />
+          <caret line="240" column="70" selection-start-line="240" selection-start-column="70" selection-end-line="240" selection-end-column="70" />
         </state>
       </provider>
     </entry>
@@ -773,27 +762,7 @@
     <entry file="file://$PROJECT_DIR$/Slide for Reddit/ContentListingViewController.swift">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="495">
-          <caret line="565" column="68" lean-forward="true" selection-start-line="565" selection-start-column="68" selection-end-line="565" selection-end-column="68" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Slide for Reddit/SingleSubredditViewController.swift">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="557">
-          <caret line="844" column="110" lean-forward="true" selection-start-line="844" selection-start-column="110" selection-end-line="844" selection-end-column="110" />
-          <folding>
-            <element signature="e#167#179#0" expanded="true" />
-            <element signature="e#13443#18131#0" />
-            <element signature="e#18137#19566#0" />
-            <element signature="e#19572#22465#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Slide for Reddit/SettingsViewController.swift">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="643">
-          <caret line="384" column="24" lean-forward="true" selection-start-line="384" selection-start-column="24" selection-end-line="384" selection-end-column="24" />
+          <caret line="565" column="68" selection-start-line="565" selection-start-column="68" selection-end-line="565" selection-end-column="68" />
         </state>
       </provider>
     </entry>
@@ -806,11 +775,30 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Slide for Reddit/CommentViewController.swift">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="465">
-          <caret line="740" lean-forward="true" selection-start-line="740" selection-end-line="740" />
+        <state relative-caret-position="525">
+          <caret line="744" selection-start-line="744" selection-end-line="744" />
           <folding>
             <element signature="e#159#171#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Slide for Reddit/SingleSubredditViewController.swift">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#167#179#0" expanded="true" />
+            <element signature="e#13443#18131#0" />
+            <element signature="e#18137#19566#0" />
+            <element signature="e#19572#22465#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Slide for Reddit/SettingsViewController.swift">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="178">
+          <caret line="353" column="151" selection-start-line="353" selection-start-column="151" selection-end-line="353" selection-end-column="151" />
         </state>
       </provider>
     </entry>
