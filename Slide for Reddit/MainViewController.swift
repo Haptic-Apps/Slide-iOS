@@ -182,8 +182,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     }
 
     func restartVC() {
-
-        print("Restarting VC")
         var saved = currentPage
 
         if (SettingValues.viewType) {
