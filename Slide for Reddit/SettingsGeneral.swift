@@ -16,7 +16,6 @@ class SettingsGeneral: UITableViewController {
     var postSorting: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "post")
     var commentSorting: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "comment")
     var notifications: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "notif")
-    //todo maybe? var expandedMenu: UITableViewCell = UITableViewCell()
     var viewTypeSwitch = UISwitch()
     var hideFABSwitch = UISwitch()
 

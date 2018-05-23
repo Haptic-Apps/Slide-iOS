@@ -181,9 +181,8 @@ class SettingsComments: UITableViewController {
             case 0: return self.collapseDefaultCell
             case 1: return self.collapseFullyCell
             case 2: return self.disableColorCell
-            case 3: return self.disableNavigationBarCell
-            case 4: return self.swapLongPressCell
-            case 5: return self.highlightOpCell
+            case 3: return self.swapLongPressCell
+            case 4: return self.highlightOpCell
             default: fatalError("Unknown row in section 0")
             }
         default: fatalError("Unknown section")
@@ -194,7 +193,7 @@ class SettingsComments: UITableViewController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch(section) {
-        case 0: return 6    // section 1 has 1 row
+        case 0: return 5    // section 1 has 1 row
         default: fatalError("Unknown number of sections")
         }
     }

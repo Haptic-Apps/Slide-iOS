@@ -367,6 +367,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     override func loadView() {
         self.view = UITableView(frame: CGRect.zero, style: .plain)
+        self.automaticallyAdjustsScrollViewInsets = false
         self.tableView = self.view as! UITableView
         self.tableView.delegate = self
         self.tableView.dataSource = self
@@ -379,8 +380,13 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         refreshControl.tintColor = ColorUtil.fontColor
         refreshControl.attributedTitle = NSAttributedString(string: "")
         refreshControl.addTarget(self, action: #selector(CommentViewController.refresh(_:)), for: UIControlEvents.valueChanged)
-        tableView.contentInset = UIEdgeInsetsMake(56
-                , 0, 45, 0)
+        var top = CGFloat(56)
+        var bottom = CGFloat(45)
+        if #available(iOS 11.0, *) {
+            top = 0
+            bottom = 0
+        }
+        tableView.contentInset = UIEdgeInsetsMake( top, 0, bottom, 0)
         tableView.addSubview(refreshControl) // not required when using UITableViewController
 
     }
@@ -447,8 +453,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
                                             self.tableView.reloadData(with: .fade)
                                         }
-                                            self.refreshControl.endRefreshing()
-                                            self.indicator?.stopAnimating()
+                                        self.refreshControl.endRefreshing()
+                                        self.indicator?.stopAnimating()
                                         if (self.comments.isEmpty) {
                                             let message = MDCSnackbarMessage()
                                             message.text = "No cached comments found"
@@ -696,8 +702,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             self.navigationController!.delegate = swiper!
         }
 
-
-        tableView.contentInset = UIEdgeInsetsMake(0, 0, 45, 0)
         self.tableView.register(CommentMenuCell.classForCoder(), forCellReuseIdentifier: "menu")
         self.tableView.register(ReplyCellView.classForCoder(), forCellReuseIdentifier: "dreply")
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: UIBarButtonItemStyle.plain, target: nil, action: nil)
@@ -723,20 +727,38 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
         NotificationCenter.default.addObserver(
                 self,
-                selector: #selector(keyboardWillShow),
+                selector: #selector(keyboardWillShow(_:)),
                 name: NSNotification.Name.UIKeyboardWillShow,
                 object: nil
         )
+        NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(keyboardWillHide(_:)),
+                name: NSNotification.Name.UIKeyboardWillHide,
+                object: nil)
 
     }
 
     var keyboardHeight = CGFloat(0)
 
     func keyboardWillShow(_ notification: Notification) {
+        var currentOffset = tableView.contentOffset
         if let keyboardFrame: NSValue = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRectangle = keyboardFrame.cgRectValue
             let keyboardHeight = keyboardRectangle.height
+            tableView.contentInset = UIEdgeInsetsMake(tableView.contentInset.top, 0, tableView.contentInset.bottom + keyboardHeight + 50, 0)
+            tableView.contentOffset = currentOffset
         }
+    }
+
+    func keyboardWillHide(_ notification: Notification){
+
+        var bottom = CGFloat(45)
+        if #available(iOS 11.0, *) {
+            bottom = 0
+        }
+
+        tableView.contentInset = UIEdgeInsetsMake(tableView.contentInset.top, 0, bottom, 0)
     }
 
     var single = true
@@ -854,7 +876,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         super.viewWillAppear(animated)
         self.navigationController?.navigationBar.shadowImage = UIImage()
         (navigationController)?.setNavigationBarHidden(false, animated: false)
-        self.automaticallyAdjustsScrollViewInsets = false
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
 
@@ -1346,58 +1367,56 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
 
     func updateToolbar() {
-        if (!SettingValues.disableNavigationBar) {
-            navigationController?.setToolbarHidden(false, animated: false)
-            let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-            var items: [UIBarButtonItem] = []
-            if (!context.isEmpty()) {
-                items.append(space)
-                items.append(UIBarButtonItem.init(title: "Load full thread", style: .plain, target: self, action: #selector(CommentViewController.loadAll(_:))))
-                items.append(space)
-            } else {
+        navigationController?.setToolbarHidden(false, animated: false)
+        let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        var items: [UIBarButtonItem] = []
+        if (!context.isEmpty()) {
+            items.append(space)
+            items.append(UIBarButtonItem.init(title: "Load full thread", style: .plain, target: self, action: #selector(CommentViewController.loadAll(_:))))
+            items.append(space)
+        } else {
 
-                let up = UIButton.init(type: .custom)
-                up.setImage(UIImage.init(named: "up")?.toolbarIcon(), for: UIControlState.normal)
-                up.addTarget(self, action: #selector(CommentViewController.goUp(_:)), for: UIControlEvents.touchUpInside)
-                up.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-                let upB = UIBarButtonItem.init(customView: up)
+            let up = UIButton.init(type: .custom)
+            up.setImage(UIImage.init(named: "up")?.toolbarIcon(), for: UIControlState.normal)
+            up.addTarget(self, action: #selector(CommentViewController.goUp(_:)), for: UIControlEvents.touchUpInside)
+            up.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+            let upB = UIBarButtonItem.init(customView: up)
 
-                let nav = UIButton.init(type: .custom)
-                nav.setImage(UIImage.init(named: "nav")?.toolbarIcon(), for: UIControlState.normal)
-                nav.addTarget(self, action: #selector(CommentViewController.showNavTypes(_:)), for: UIControlEvents.touchUpInside)
-                nav.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-                let navB = UIBarButtonItem.init(customView: nav)
+            let nav = UIButton.init(type: .custom)
+            nav.setImage(UIImage.init(named: "nav")?.toolbarIcon(), for: UIControlState.normal)
+            nav.addTarget(self, action: #selector(CommentViewController.showNavTypes(_:)), for: UIControlEvents.touchUpInside)
+            nav.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+            let navB = UIBarButtonItem.init(customView: nav)
 
-                let down = UIButton.init(type: .custom)
-                down.setImage(UIImage.init(named: "down")?.toolbarIcon(), for: UIControlState.normal)
-                down.addTarget(self, action: #selector(CommentViewController.goDown(_:)), for: UIControlEvents.touchUpInside)
-                down.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-                let downB = UIBarButtonItem.init(customView: down)
+            let down = UIButton.init(type: .custom)
+            down.setImage(UIImage.init(named: "down")?.toolbarIcon(), for: UIControlState.normal)
+            down.addTarget(self, action: #selector(CommentViewController.goDown(_:)), for: UIControlEvents.touchUpInside)
+            down.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+            let downB = UIBarButtonItem.init(customView: down)
 
-                let more = UIButton.init(type: .custom)
-                more.setImage(UIImage.init(named: "moreh")?.toolbarIcon(), for: UIControlState.normal)
-                more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
-                more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-                moreB = UIBarButtonItem.init(customView: more)
+            let more = UIButton.init(type: .custom)
+            more.setImage(UIImage.init(named: "moreh")?.toolbarIcon(), for: UIControlState.normal)
+            more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
+            more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+            moreB = UIBarButtonItem.init(customView: more)
 
-                items.append(space)
-                items.append(upB)
-                items.append(space)
-                items.append(navB)
-                items.append(space)
-                items.append(downB)
-                items.append(space)
-                items.append(moreB)
-            }
-            if (parent != nil && parent is PagingCommentViewController) {
-                parent?.toolbarItems = items
-                parent?.navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
-                parent?.navigationController?.toolbar.tintColor = ColorUtil.fontColor
-            } else {
-                toolbarItems = items
-                navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
-                navigationController?.toolbar.tintColor = ColorUtil.fontColor
-            }
+            items.append(space)
+            items.append(upB)
+            items.append(space)
+            items.append(navB)
+            items.append(space)
+            items.append(downB)
+            items.append(space)
+            items.append(moreB)
+        }
+        if (parent != nil && parent is PagingCommentViewController) {
+            parent?.toolbarItems = items
+            parent?.navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
+            parent?.navigationController?.toolbar.tintColor = ColorUtil.fontColor
+        } else {
+            toolbarItems = items
+            navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
+            navigationController?.toolbar.tintColor = ColorUtil.fontColor
         }
     }
 
@@ -1631,6 +1650,15 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     func doReplySubmission() {
         menuShown = true
+        var top = CGFloat(56)
+        var bottom = CGFloat(45)
+        if #available(iOS 11.0, *) {
+            top = 0
+            bottom = 0
+        }
+
+        let insets = UIEdgeInsets(top: top, left: 0, bottom: 50, right: 0)
+        self.tableView.contentInset = insets
         menuId = "sub"
         menuIndex = 0
         replyShown = true
@@ -1638,12 +1666,21 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         tableView.beginUpdates()
         tableView.insertRows(at: [IndexPath.init(row: 0, section: 0)], with: .fade)
         tableView.endUpdates()
-        let insets = UIEdgeInsets(top: 0, left: 0, bottom: self.tableView.frame.size.height, right: 0)
-        self.tableView.contentInset = insets
+
     }
 
     func doReply() {
         menuShown = false
+        var top = CGFloat(56)
+        var bottom = CGFloat(45)
+        if #available(iOS 11.0, *) {
+            top = 0
+            bottom = 0
+        }
+
+        let insets = UIEdgeInsets(top: top, left: 0, bottom: 50, right: 0)
+        self.tableView.contentInset = insets
+
         tableView.beginUpdates()
         let cell = tableView.cellForRow(at: IndexPath.init(row: menuIndex - 1, section: 0)) as! CommentDepthCell
         tableView.deleteRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .fade)
@@ -1652,8 +1689,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         reply!.setContent(thing: cell.content!, sub: (cell.content as! RComment).subreddit, editing: false, delegate: self, parent: self)
         tableView.insertRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .fade)
         tableView.endUpdates()
-        let insets = UIEdgeInsets(top: 0, left: 0, bottom: 350, right: 0)
-        self.tableView.contentInset = insets
+
+
     }
 
     var activeField: UITextField?
@@ -1705,8 +1742,13 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         tableView.beginUpdates()
         tableView.deleteRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .fade)
         tableView.endUpdates()
-        tableView.contentInset = UIEdgeInsetsMake(0
-                , 0, 100, 0)
+        var top = CGFloat(56)
+        var bottom = CGFloat(45)
+        if #available(iOS 11.0, *) {
+            top = 0
+            bottom = 0
+        }
+        tableView.contentInset = UIEdgeInsetsMake(top, 0, bottom, 0)
     }
 
     override func becomeFirstResponder() -> Bool {

@@ -15,6 +15,7 @@
 		B776B919A0E908BFAB060DE7 /* ToolbarTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BA78CCE4C75BD7FC5DA3 /* ToolbarTextView.swift */; };
 		B776BA8D503319846E83C4A4 /* VideoDisplayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B4EE978D7F23FF4C74BE /* VideoDisplayer.swift */; };
 		B776BAD2D3F58C29030A4230 /* SFHideSafariViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B89DC40DC7FB5ECB6C4A /* SFHideSafariViewController.swift */; };
+		B776BB46CB68FCCCA9E843A9 /* CacheSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B64AFABC174BF4DEE478 /* CacheSettings.swift */; };
 		B776BD2C5BBC647BF29E06F8 /* CustomAnimateUITableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B5502C1178D6A0F51B6A /* CustomAnimateUITableView.swift */; };
 		B776BF494A7A822D5DB4B5BC /* ColorMuxPagingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B21CFB79FA354C296037 /* ColorMuxPagingViewController.swift */; };
 		BE0E8BC01E26E91E004B56B1 /* BouncyViewControllerAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0E8BBF1E26E91E004B56B1 /* BouncyViewControllerAnimator.swift */; };
@@ -201,6 +202,7 @@
 		B776B21CFB79FA354C296037 /* ColorMuxPagingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorMuxPagingViewController.swift; sourceTree = "<group>"; };
 		B776B4EE978D7F23FF4C74BE /* VideoDisplayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoDisplayer.swift; sourceTree = "<group>"; };
 		B776B5502C1178D6A0F51B6A /* CustomAnimateUITableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAnimateUITableView.swift; sourceTree = "<group>"; };
+		B776B64AFABC174BF4DEE478 /* CacheSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheSettings.swift; sourceTree = "<group>"; };
 		B776B793D6901741B17CAD65 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		B776B89DC40DC7FB5ECB6C4A /* SFHideSafariViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SFHideSafariViewController.swift; sourceTree = "<group>"; };
 		B776BA78CCE4C75BD7FC5DA3 /* ToolbarTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToolbarTextView.swift; sourceTree = "<group>"; };
@@ -452,6 +454,7 @@
 				BEE206F51F1CF7D3008BB5F1 /* SettingsLinkHandling.swift */,
 				BEE206F71F1CFC96008BB5F1 /* SettingsHistory.swift */,
 				B776BF86D3E6B5AC2EEEDE63 /* Filter.swift */,
+				B776B64AFABC174BF4DEE478 /* CacheSettings.swift */,
 			);
 			name = Settings;
 			sourceTree = "<group>";
@@ -1211,6 +1214,7 @@
 				B776BA8D503319846E83C4A4 /* VideoDisplayer.swift in Sources */,
 				B776BD2C5BBC647BF29E06F8 /* CustomAnimateUITableView.swift in Sources */,
 				B776B41AF52E177BCE0241F3 /* Filter.swift in Sources */,
+				B776BB46CB68FCCCA9E843A9 /* CacheSettings.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -58,15 +58,6 @@ class SubredditReorderViewController: UITableViewController {
         editItems = [deleteB, topB, pinB]
         normalItems = [syncB, azB]
 
-        let button = UIButtonWithContext.init(type: .custom)
-        button.imageView?.contentMode = UIViewContentMode.scaleAspectFit
-        button.setImage(UIImage.init(named: "back")!.navIcon(), for: UIControlState.normal)
-        button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-        button.addTarget(self, action: #selector(self.close(_:)), for: .touchUpInside)
-
-        let barButton = UIBarButtonItem.init(customView: button)
-        navigationItem.leftBarButtonItem = barButton
-
         self.navigationItem.rightBarButtonItems = normalItems
 
         self.tableView.tableFooterView = UIView()

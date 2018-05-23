@@ -33,6 +33,7 @@ class SettingsViewController: UITableViewController {
     var aboutCell: UITableViewCell = UITableViewCell()
     var githubCell: UITableViewCell = UITableViewCell()
     var clearCell: UITableViewCell = UITableViewCell()
+    var cacheCell: UITableViewCell = UITableViewCell()
 
     var multiColumnCell: UITableViewCell = UITableViewCell()
     var multiColumn = UISwitch()
@@ -91,6 +92,13 @@ class SettingsViewController: UITableViewController {
         self.clearCell.textLabel?.textColor = ColorUtil.fontColor
         self.clearCell.imageView?.image = UIImage.init(named: "multis")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
         self.clearCell.imageView?.tintColor = ColorUtil.fontColor
+
+        self.cacheCell.textLabel?.text = "Offline caching"
+        self.cacheCell.accessoryType = .disclosureIndicator
+        self.cacheCell.backgroundColor = ColorUtil.foregroundColor
+        self.cacheCell.textLabel?.textColor = ColorUtil.fontColor
+        self.cacheCell.imageView?.image = UIImage.init(named: "save-1")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
+        self.cacheCell.imageView?.tintColor = ColorUtil.fontColor
 
         self.postLayout.textLabel?.text = "Post layout"
         self.postLayout.accessoryType = .disclosureIndicator
@@ -266,7 +274,8 @@ class SettingsViewController: UITableViewController {
             case 2: return self.dataSaving
             case 3: return self.content
             case 4: return self.filters
-            case 5: return self.clearCell
+            case 5: return self.cacheCell
+            case 6: return self.clearCell
             default: fatalError("Unknown row in section 2")
             }
         case 3:
@@ -310,7 +319,7 @@ class SettingsViewController: UITableViewController {
             ch = SettingsLinkHandling()
         } else if (indexPath.section == 2 && indexPath.row == 1) {
             ch = SettingsHistory()
-        } else if (indexPath.section == 2 && indexPath.row == 5) {
+        } else if (indexPath.section == 2 && indexPath.row == 6) {
             let realm = try! Realm()
             try! realm.write {
                 realm.deleteAll()
@@ -327,6 +336,8 @@ class SettingsViewController: UITableViewController {
             //todo Show changlog?
         } else if (indexPath.section == 3 && indexPath.row == 1) {
             ch = SingleSubredditViewController.init(subName: "slide_ios", single: true)
+        } else if (indexPath.section == 2 && indexPath.row == 5) {
+            ch = CacheSettings()
         } else if (indexPath.section == 3 && indexPath.row == 2) {
             let url = URL.init(string: "https://github.com/ccrama/Slide-ios")!
             if #available(iOS 10.0, *) {
@@ -370,7 +381,7 @@ class SettingsViewController: UITableViewController {
         switch (section) {
         case 0: return 4    // section 0 has 2 rows
         case 1: return 5    // section 1 has 1 row
-        case 2: return 6
+        case 2: return 7
         case 3: return 4
         default: fatalError("Unknown number of sections")
         }

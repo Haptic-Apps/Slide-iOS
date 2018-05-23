@@ -120,7 +120,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         SDWebImageManager.shared().imageCache.maxCacheAge = 1209600 //2 weeks
         SDWebImageManager.shared().imageCache.maxCacheSize = 250 * 1024 * 1024
-        
+
+        UIApplication.shared.applicationIconBadgeNumber = 0
+
         return true
     }
     
