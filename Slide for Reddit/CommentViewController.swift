@@ -742,12 +742,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     var keyboardHeight = CGFloat(0)
 
     func keyboardWillShow(_ notification: Notification) {
-        var currentOffset = tableView.contentOffset
         if let keyboardFrame: NSValue = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRectangle = keyboardFrame.cgRectValue
             let keyboardHeight = keyboardRectangle.height
-            tableView.contentInset = UIEdgeInsetsMake(tableView.contentInset.top, 0, tableView.contentInset.bottom + keyboardHeight + 50, 0)
-            tableView.contentOffset = currentOffset
+            tableView.contentInset = UIEdgeInsetsMake(tableView.contentInset.top, 0, tableView.contentInset.bottom +  self.reply!.frame.size.height, 0)
         }
     }
 
