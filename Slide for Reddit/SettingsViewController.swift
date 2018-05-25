@@ -327,6 +327,8 @@ class SettingsViewController: UITableViewController {
 
             SDImageCache.shared().clearMemory()
             SDImageCache.shared().clearDisk()
+            SDWebImageManager.shared().imageCache.clearMemory()
+            SDWebImageManager.shared().imageCache.clearDisk()
 
             let message = MDCSnackbarMessage()
             message.text = "All caches cleared!"

@@ -12,6 +12,7 @@
 		B776B41AF52E177BCE0241F3 /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BF86D3E6B5AC2EEEDE63 /* Filter.swift */; };
 		B776B496CD1CCCF42B176B00 /* YTPlayer.html in Resources */ = {isa = PBXBuildFile; fileRef = B776BD038659E2DE04B541FA /* YTPlayer.html */; };
 		B776B6AC686D43299A5C8384 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B776B793D6901741B17CAD65 /* Main.storyboard */; };
+		B776B87EDB6E25D8D1B2D4B5 /* CustomAlbum.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BF3F4BCDE57E4274764F /* CustomAlbum.swift */; };
 		B776B919A0E908BFAB060DE7 /* ToolbarTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BA78CCE4C75BD7FC5DA3 /* ToolbarTextView.swift */; };
 		B776BA8D503319846E83C4A4 /* VideoDisplayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B4EE978D7F23FF4C74BE /* VideoDisplayer.swift */; };
 		B776BAD2D3F58C29030A4230 /* SFHideSafariViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B89DC40DC7FB5ECB6C4A /* SFHideSafariViewController.swift */; };
@@ -207,6 +208,7 @@
 		B776B89DC40DC7FB5ECB6C4A /* SFHideSafariViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SFHideSafariViewController.swift; sourceTree = "<group>"; };
 		B776BA78CCE4C75BD7FC5DA3 /* ToolbarTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToolbarTextView.swift; sourceTree = "<group>"; };
 		B776BD038659E2DE04B541FA /* YTPlayer.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = YTPlayer.html; sourceTree = "<group>"; };
+		B776BF3F4BCDE57E4274764F /* CustomAlbum.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAlbum.swift; sourceTree = "<group>"; };
 		B776BF86D3E6B5AC2EEEDE63 /* Filter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
 		BA9177B1039FF29FE7BFC503 /* Pods-Slide for RedditUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for RedditUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Slide for RedditUITests/Pods-Slide for RedditUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		BE0E8BBF1E26E91E004B56B1 /* BouncyViewControllerAnimator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BouncyViewControllerAnimator.swift; sourceTree = "<group>"; };
@@ -666,6 +668,7 @@
 				B776B4EE978D7F23FF4C74BE /* VideoDisplayer.swift */,
 				B776B793D6901741B17CAD65 /* Main.storyboard */,
 				B776B5502C1178D6A0F51B6A /* CustomAnimateUITableView.swift */,
+				B776BF3F4BCDE57E4274764F /* CustomAlbum.swift */,
 			);
 			path = "Slide for Reddit";
 			sourceTree = "<group>";
@@ -1215,6 +1218,7 @@
 				B776BD2C5BBC647BF29E06F8 /* CustomAnimateUITableView.swift in Sources */,
 				B776B41AF52E177BCE0241F3 /* Filter.swift in Sources */,
 				B776BB46CB68FCCCA9E843A9 /* CacheSettings.swift in Sources */,
+				B776B87EDB6E25D8D1B2D4B5 /* CustomAlbum.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

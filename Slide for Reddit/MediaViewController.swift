@@ -25,6 +25,7 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
         self.link = lnk
         let url = link.url!
 
+
         let type = ContentType.getContentType(submission: lnk)
 
         if(type == .EXTERNAL){

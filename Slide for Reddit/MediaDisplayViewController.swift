@@ -41,6 +41,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
 
         }
         if let image = baseImage {
+            self.imageLoaded = true
             if (image.size.height > image.size.width ||  UIApplication.shared.statusBarOrientation != .portrait) {
                 self.scrollView.contentSize = CGSize.init(width: min(self.view.frame.size.width, getWidthFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width)), height: self.view.frame.size.height)
             } else {
@@ -249,8 +250,17 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
     }
 
 
+
     func download(_ sender: AnyObject) {
-        UIImageWriteToSavedPhotosAlbum(imageView.image!, nil, nil, nil)
+        if(imageLoaded){
+            if(imageView.image != nil){
+                CustomAlbum.shared.save(image: imageView.image!)
+            }
+        } else {
+            if(displayedVideo != nil){
+                CustomAlbum.shared.saveMovieToLibrary(movieURL: displayedVideo!)
+            }
+        }
     }
 
     func showImageMenu(_ sender: AnyObject) {
@@ -317,7 +327,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
     }
 
     var showHQ = false
-
+    var imageLoaded = false
     var savedColor : UIColor?
 
     override func viewWillAppear(_ animated: Bool) {

@@ -36,6 +36,9 @@ class RealmDataWrapper {
         if (videoPreview != nil && videoPreview!.isEmpty || videoPreview == nil) {
             videoPreview = (((json?["media"] as? [String: Any])?["reddit_video"] as? [String: Any])?["fallback_url"] as? String)
         }
+        if ((videoPreview != nil && videoPreview!.isEmpty || videoPreview == nil) && json?["crosspost_parent_list"] != nil) {
+            videoPreview = (((((json?["crosspost_parent_list"] as? [Any])?.first as? [String: Any])?["media"] as? [String: Any])?["reddit_video"] as? [String: Any])?["fallback_url"] as? String)
+        }
 
         if (preview != nil && !(preview?.isEmpty())!) {
             burl = (preview!.replacingOccurrences(of: "&amp;", with: "&"))

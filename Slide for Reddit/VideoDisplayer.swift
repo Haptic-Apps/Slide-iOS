@@ -83,7 +83,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
             break
         case .REDDIT:
             self.loadVReddit(toLoad: url)
-            fallthrough
+            break
         case .DIRECT:
             fallthrough
         case .IMGUR:
@@ -118,17 +118,16 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
         toLoadAudio = toLoad.substring(0, length: toLoad.lastIndexOf("DASH_")!)
         toLoadAudio = toLoadAudio + "audio"
 
-        if (FileManager.default.fileExists(atPath: SDImageCache.shared().makeDiskCachePath(key))) {
-            print("File exists")
-            display(URL.init(fileURLWithPath: SDImageCache.shared().makeDiskCachePath(key)))
+        if (FileManager.default.fileExists(atPath:SDImageCache.shared().makeDiskCachePath(key) + ".mp4")) {
+            display(URL.init(fileURLWithPath:SDImageCache.shared().makeDiskCachePath(key) + ".mp4"))
         } else {
-            let finalUrl = URL.init(fileURLWithPath: SDImageCache.shared().makeDiskCachePath(key))
-            let localUrlV = URL.init(fileURLWithPath: SDImageCache.shared().makeDiskCachePath(key + "video.mp4"))
-            let localUrlAudio = URL.init(fileURLWithPath: SDImageCache.shared().makeDiskCachePath(key + "audio.mp4"))
+            let finalUrl = URL.init(fileURLWithPath:SDImageCache.shared().makeDiskCachePath(key) + ".mp4")
+            let localUrlV = URL.init(fileURLWithPath:SDImageCache.shared().makeDiskCachePath(key + "video.mp4"))
+            let localUrlAudio = URL.init(fileURLWithPath:SDImageCache.shared().makeDiskCachePath(key + "audio.mp4"))
             progressView?.setHidden(false, animated: true, completion: nil)
 
             request = Alamofire.download(toLoad, method: .get, to: { (url, response) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
-                        return (localUrlV, [.createIntermediateDirectories])
+                        return (localUrlV, [.removePreviousFile, .createIntermediateDirectories])
                     }).downloadProgress() { progress in
                         DispatchQueue.main.async {
                             self.progressView?.progress = Float(progress.fractionCompleted)
@@ -144,18 +143,23 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
                         if let error = response.error {
                             print(error)
                         } else { //no errors
+                            print("Downloaded")
                             self.request = Alamofire.download(toLoadAudio, method: .get, to: { (url, response) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
-                                        return (localUrlAudio, [.createIntermediateDirectories])
+                                        return (localUrlAudio, [.removePreviousFile, .createIntermediateDirectories])
                                     }).downloadProgress() { progress in
                                         DispatchQueue.main.async {
-                                            //todo indeterminate here?
+                                            self.progressView?.progress = Float(progress.fractionCompleted)
                                         }
-
                                     }
                                     .responseData { response2 in
+                                        print(response2.response!.statusCode)
                                         if (response2.response!.statusCode != 200) {
-                                            self.display(localUrlV)
-                                            //todo save local file
+                                            do {
+                                                try FileManager.init().copyItem(at: localUrlV, to: finalUrl)
+                                                self.display(finalUrl)
+                                            } catch {
+                                                self.display(localUrlV)
+                                            }
                                         } else { //no errors
                                             print(response2.request!.url!.absoluteString)
                                             self.mergeFilesWithUrl(videoUrl: localUrlV, audioUrl: localUrlAudio, savePathUrl: finalUrl) {
@@ -183,10 +187,10 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
         if (key.length > 200) {
             key = key.substring(0, length: 200)
         }
-        if (FileManager.default.fileExists(atPath: SDImageCache.shared().makeDiskCachePath(key))) {
-            display(URL.init(fileURLWithPath: SDImageCache.shared().makeDiskCachePath(key)))
+        if (FileManager.default.fileExists(atPath:SDImageCache.shared().makeDiskCachePath(key))) {
+            display(URL.init(fileURLWithPath:SDImageCache.shared().makeDiskCachePath(key)))
         } else {
-            let localUrl = URL.init(fileURLWithPath: SDImageCache.shared().makeDiskCachePath(key))
+            let localUrl = URL.init(fileURLWithPath:SDImageCache.shared().makeDiskCachePath(key))
             print(localUrl)
             progressView?.setHidden(false, animated: true, completion: nil)
             request = Alamofire.download(toLoad, method: .get, to: { (url, response) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
@@ -355,43 +359,47 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
     }
 
     var player = AVPlayer()
+    var displayedVideo: URL? = nil
 
     func display(_ file: URL) {
-        self.progressView?.setHidden(true, animated: true)
-        self.size?.isHidden = true
-        if (sharedPlayer && MediaDisplayViewController.videoPlayer == nil) {
-            MediaDisplayViewController.videoPlayer = AVPlayer.init(playerItem: AVPlayerItem.init(url: file))
-            player = MediaDisplayViewController.videoPlayer!
-        } else {
-            if (sharedPlayer) {
-                MediaDisplayViewController.videoPlayer!.replaceCurrentItem(with: AVPlayerItem.init(url: file))
-                player = MediaDisplayViewController.videoPlayer!
+        DispatchQueue.main.async {
+            self.displayedVideo = file
+            print("Displayed \(file.absoluteString)")
+            self.progressView?.setHidden(true, animated: true)
+            self.size?.isHidden = true
+            if (self.sharedPlayer && MediaDisplayViewController.videoPlayer == nil) {
+                MediaDisplayViewController.videoPlayer = AVPlayer.init(playerItem: AVPlayerItem.init(url: file))
+                self.player = MediaDisplayViewController.videoPlayer!
             } else {
-                player = AVPlayer.init(playerItem: AVPlayerItem.init(url: file))
+                if (self.sharedPlayer) {
+                    MediaDisplayViewController.videoPlayer!.replaceCurrentItem(with: AVPlayerItem.init(url: file))
+                    self.player = MediaDisplayViewController.videoPlayer!
+                } else {
+                    self.player = AVPlayer.init(playerItem: AVPlayerItem.init(url: file))
+                }
             }
+
+            NotificationCenter.default.addObserver(self,
+                    selector: #selector(MediaDisplayViewController.playerItemDidReachEnd),
+                    name: NSNotification.Name.AVPlayerItemDidPlayToEndTime,
+                    object: self.player.currentItem)
+
+            self.player.actionAtItemEnd = AVPlayerActionAtItemEnd.none
+
+            self.playerVC = AVControlsPlayer()
+            self.playerVC.player = self.player
+            self.playerVC.videoGravity = AVLayerVideoGravityResizeAspect
+            self.playerVC.showsPlaybackControls = false
+
+            self.videoView = (self.playerVC.view)
+            self.addChildViewController(self.playerVC)
+            self.scrollView.addSubview(self.videoView)
+            self.videoView.frame = CGRect.init(x: 0, y: 50, width: self.view.frame.width, height: self.view.frame.height - 80)
+            self.playerVC.didMove(toParentViewController: self)
+
+            self.scrollView.isUserInteractionEnabled = true
+            self.player.play()
         }
-
-        NotificationCenter.default.addObserver(self,
-                selector: #selector(MediaDisplayViewController.playerItemDidReachEnd),
-                name: NSNotification.Name.AVPlayerItemDidPlayToEndTime,
-                object: player.currentItem)
-
-        player.actionAtItemEnd = AVPlayerActionAtItemEnd.none
-
-
-        playerVC = AVControlsPlayer()
-        playerVC.player = player
-        playerVC.videoGravity = AVLayerVideoGravityResizeAspect
-        playerVC.showsPlaybackControls = false
-
-        videoView = (playerVC.view)
-        addChildViewController(playerVC)
-        scrollView.addSubview(videoView)
-        videoView.frame = CGRect.init(x: 0, y: 50, width: self.view.frame.width, height: self.view.frame.height - 80)
-        playerVC.didMove(toParentViewController: self)
-
-        self.scrollView.isUserInteractionEnabled = true
-        player.play()
     }
 
     func formatUrl(sS: String) -> String {
@@ -492,7 +500,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
             //            try mutableCompositionAudioTrack[0].insertTimeRange(CMTimeRangeMake(kCMTimeZero, aVideoAssetTrack.timeRange.duration), ofTrack: aAudioAssetTrack, atTime: kCMTimeZero)
 
         } catch {
-
+            print(error.localizedDescription)
         }
 
         totalVideoCompositionInstruction.timeRange = CMTimeRangeMake(kCMTimeZero, aVideoAssetTrack.timeRange.duration)
@@ -500,7 +508,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
         let mutableVideoComposition: AVMutableVideoComposition = AVMutableVideoComposition()
         mutableVideoComposition.frameDuration = CMTimeMake(1, 30)
 
-        mutableVideoComposition.renderSize = CGSize.init(width:1280, height:720)
+        mutableVideoComposition.renderSize = aVideoAssetTrack.naturalSize
 
         //        playerItem = AVPlayerItem(asset: mixComposition)
         //        player = AVPlayer(playerItem: playerItem!)
@@ -508,24 +516,21 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
         //
         //        AVPlayerVC.player = player
 
+        do {
+            try  FileManager.default.removeItem(at: savePathUrl)
+        } catch {
+            print(error.localizedDescription)
+        }
 
         //find your video on this URl
         let assetExport: AVAssetExportSession = AVAssetExportSession(asset: mixComposition, presetName: AVAssetExportPresetHighestQuality)!
         assetExport.outputFileType = AVFileTypeMPEG4
         assetExport.outputURL = savePathUrl
-        assetExport.shouldOptimizeForNetworkUse = true
-
         assetExport.exportAsynchronously { () -> Void in
-            completion()
             switch assetExport.status {
 
             case AVAssetExportSessionStatus.completed:
-
-                //Uncomment this if u want to store your video in asset
-
-                //let assetsLib = ALAssetsLibrary()
-                //assetsLib.writeVideoAtPathToSavedPhotosAlbum(savePathUrl, completionBlock: nil)
-
+                completion()
                 print("success")
             case AVAssetExportSessionStatus.failed:
                 print("failed \(assetExport.error)")
@@ -535,8 +540,6 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
                 print("complete")
             }
         }
-
-
     }
 
 }

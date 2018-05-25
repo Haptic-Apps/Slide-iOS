@@ -134,7 +134,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                 tabBar.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
             }
         } else {
-            show(RedditLink.getViewControllerForURL(urlS: URL.init(string: "/r/" + subreddit)!), sender: self)
+            //todo better sanitation
+            VCPresenter.openRedditLink("/r/" + subreddit.replacingOccurrences(of: " ", with: ""), self.navigationController, self)
         }
         menuNav?.dismiss(animated: true)
     }
