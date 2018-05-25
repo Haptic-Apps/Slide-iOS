@@ -1253,7 +1253,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         return count
     }
 
-    func showNavTypes(_ sender: AnyObject) {
+    func showNavTypes(_ sender: UIView) {
         let actionSheetController: UIAlertController = UIAlertController(title: "Navigation type", message: "", preferredStyle: .actionSheet)
 
         let link = getCount(sort: .LINK)
@@ -1292,6 +1292,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
         actionSheetController.addAction(cancelActionButton)
 
+        if let presenter = actionSheetController.popoverPresentationController {
+            presenter.sourceView = sender
+            presenter.sourceRect = sender.bounds
+        }
 
         self.present(actionSheetController, animated: true, completion: nil)
     }
