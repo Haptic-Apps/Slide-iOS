@@ -1240,19 +1240,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
 
 
-    func goDown(_ sender: AnyObject) {
-        var topCell = (tableView.indexPathsForVisibleRows?[0].row)!
-        let contents = content[dataArray[topCell]]
-        while ((contents is RMore || (contents as! RComment).depth > 1) && dataArray.count > topCell) {
-            topCell += 1
-        }
-        for i in (topCell + 1)...dataArray.count - 1 {
-            if (contents is RComment && matches(comment: contents as! RComment, sort: currentSort)) {
-                goToCell(i: i)
-                break
-            }
-        }
-    }
+
 
     func getCount(sort: CommentNavType) -> Int {
         var count = 0
@@ -1317,13 +1305,31 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     func goUp(_ sender: AnyObject) {
         var topCell = (tableView.indexPathsForVisibleRows?[0].row)!
-        while ((content[dataArray[topCell]] is RMore || (content[dataArray[topCell]] as! RComment).depth > 1) && dataArray.count > topCell) {
+        var contents = content[dataArray[topCell]]
+
+        while ((contents is RMore || (contents as! RComment).depth > 1) && dataArray.count > topCell) {
             topCell -= 1
+            contents = content[dataArray[topCell]]
         }
-        for i in stride(from: (topCell - 1), to: 0, by: -1) {
-            if (content[dataArray[i]] is RComment && matches(comment: content[dataArray[i]] as! RComment, sort: currentSort)) {
-                goToCell(i: i)
-                break
+        goToCell(i: topCell)
+    }
+
+    func goDown(_ sender: AnyObject) {
+        var topCell = (tableView.indexPathsForVisibleRows?[0].row)!
+        if(topCell <= 0){
+            goToCell(i:0)
+        } else {
+            var contents = content[dataArray[topCell]]
+            while ((contents is RMore || (contents as! RComment).depth > 1) && dataArray.count > topCell) {
+                topCell += 1
+                contents = content[dataArray[topCell]]
+            }
+            for i in (topCell + 1)...(dataArray.count - 1) {
+                contents = content[dataArray[i]]
+                if (contents is RComment && matches(comment: contents as! RComment, sort: currentSort)) {
+                    goToCell(i: i)
+                    break
+                }
             }
         }
     }
