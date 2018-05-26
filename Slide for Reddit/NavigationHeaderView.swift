@@ -47,6 +47,15 @@ class NavigationHeaderView: UIView {
         title.textAlignment = .center
         title.backgroundColor = ColorUtil.getColorForSub(sub: "")
         backgroundColor = ColorUtil.foregroundColor
+
+        self.profile.backgroundColor = ColorUtil.foregroundColor
+        self.profile.textLabel?.textColor = ColorUtil.fontColor
+        self.profile.imageView?.image = UIImage.init(named: "user")?.menuIcon().withRenderingMode(.alwaysTemplate)
+
+        self.inboxBody.backgroundColor = ColorUtil.foregroundColor
+        self.inboxBody.textLabel?.textColor = ColorUtil.fontColor
+        self.inboxBody.imageView?.image = UIImage.init(named: "inbox")?.menuIcon().withRenderingMode(.alwaysTemplate)
+
     }
 
     override init(frame: CGRect) {

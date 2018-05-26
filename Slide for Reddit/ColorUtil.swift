@@ -35,10 +35,10 @@ class ColorUtil {
     static func shouldBeNight() -> Bool {
         let hour = Calendar.current.component(.hour, from: Date())
         let minute = Calendar.current.component(.minute, from: Date())
-        return SettingValues.nightModeEnabled && /*todo pro*/ (hour >= SettingValues.nightStart + 12 || hour < SettingValues.nightEnd) &&  (minute >= SettingValues.nightStartMin || minute < SettingValues.nightEndMin)
+        return SettingValues.nightModeEnabled && /*todo pro*/ (hour >= SettingValues.nightStart + 12 || hour < SettingValues.nightEnd) &&  (hour == SettingValues.nightStart + 12 ? (minute >= SettingValues.nightStartMin) : true) && (hour == SettingValues.nightEnd  ? (minute < SettingValues.nightEndMin) : true)
     }
 
-    static func doInit(_ t: Theme? = nil) {
+    static func doInit() {
         var defaultTheme = Theme.DARK
         if let name = UserDefaults.standard.string(forKey: "theme") {
             if let t = Theme(rawValue: name) {
@@ -46,16 +46,17 @@ class ColorUtil {
             }
         }
 
-        if(t == nil || (shouldBeNight() && theme != SettingValues.nightTheme) || (!shouldBeNight() && theme == SettingValues.nightTheme && SettingValues.nightTheme != defaultTheme)) {
-            if(shouldBeNight()){
+        print("Theme is \(theme) and default is \(defaultTheme) and night theme is \(SettingValues.nightTheme) and should be night is \(shouldBeNight())")
+        if(theme != defaultTheme || (shouldBeNight() || (!shouldBeNight() && theme == SettingValues.nightTheme))) {
+            if(shouldBeNight() && theme != SettingValues.nightTheme && SettingValues.nightTheme != defaultTheme){
                 theme = SettingValues.nightTheme
+                print("Setting night!")
                 CachedTitle.titles.removeAll()
-            } else {
+            } else if(!shouldBeNight() && theme != defaultTheme){
                 theme = defaultTheme
+                print("Setting default!")
                 CachedTitle.titles.removeAll()
             }
-        } else {
-            return
         }
         foregroundColor = theme.foregroundColor
         backgroundColor = theme.backgroundColor

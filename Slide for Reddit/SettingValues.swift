@@ -251,7 +251,7 @@ class SettingValues {
         SettingValues.nightEnd = settings.object(forKey: SettingValues.pref_nightStartH) == nil ? 5 : settings.integer(forKey: SettingValues.pref_nightEndH)
         SettingValues.nightEndMin = settings.object(forKey: SettingValues.pref_nightStartH) == nil ? 0 : settings.integer(forKey: SettingValues.pref_nightEndM)
         if let name = UserDefaults.standard.string(forKey: SettingValues.pref_nightTheme) {
-            if let t = Theme(rawValue: name) {
+            if let t = ColorUtil.Theme(rawValue: name) {
                 SettingValues.nightTheme = t
             }
         }

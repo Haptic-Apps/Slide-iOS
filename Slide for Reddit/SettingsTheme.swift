@@ -362,6 +362,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         for theme in ColorUtil.Theme.cases {
             if (theme != .LIGHT) {
                 let saveActionButton: UIAlertAction = UIAlertAction(title: theme.rawValue, style: .default) { action -> Void in
+                    SettingValues.nightTheme = theme
                     UserDefaults.standard.set(theme.rawValue, forKey: SettingValues.pref_nightTheme)
                     UserDefaults.standard.synchronize()
                     ColorUtil.doInit()

@@ -113,6 +113,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             syncColors(subredditController: nil)
         }
 
+        ColorUtil.doInit()
+
         let textAttributes = [NSForegroundColorAttributeName: UIColor.white]
         UINavigationBar.appearance().titleTextAttributes = textAttributes
         doBios()

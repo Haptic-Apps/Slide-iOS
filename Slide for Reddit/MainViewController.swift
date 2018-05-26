@@ -227,6 +227,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             }
         }
         menuNav?.dismiss(animated: true)
+
+        doButtons()
     }
 
     var tabBar = MDCTabBar()
@@ -447,36 +449,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
         self.restartVC()
 
-        let sort = UIButton.init(type: .custom)
-        sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControlState.normal)
-        sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControlEvents.touchUpInside)
-        sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-        let sortB = UIBarButtonItem.init(customView: sort)
 
-        let shadowbox = UIButton.init(type: .custom)
-        shadowbox.setImage(UIImage.init(named: "shadowbox")?.navIcon(), for: UIControlState.normal)
-        shadowbox.addTarget(self, action: #selector(self.shadowbox), for: UIControlEvents.touchUpInside)
-        shadowbox.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-        let sB = UIBarButtonItem.init(customView: shadowbox)
-
-        let more = UIButton.init(type: .custom)
-        more.setImage(UIImage.init(named: "moreh")?.toolbarIcon(), for: UIControlState.normal)
-        more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
-        more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-        let moreB = UIBarButtonItem.init(customView: more)
-
-        let menu = UIButton.init(type: .custom)
-        menu.setImage(UIImage.init(named: "menu")?.toolbarIcon(), for: UIControlState.normal)
-        menu.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControlEvents.touchUpInside)
-        menu.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
-        let menuB = UIBarButtonItem.init(customView: menu)
-
-        let flexButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil)
-
-        navigationController?.navigationBar.shadowImage = UIImage()
-        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        toolbarItems = [menuB, flexButton, moreB]
-        navigationItem.rightBarButtonItem = sortB
+        doButtons()
 
         super.viewDidLoad()
         self.edgesForExtendedLayout = []
@@ -523,6 +497,40 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     func resetColors() {
         // self.navigationController?.navigationBar.barTintColor = self.tintColor
         //todo self.buttonBarView.backgroundColor = self.tintColor
+    }
+
+
+    func doButtons(){
+        let sort = UIButton.init(type: .custom)
+        sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControlState.normal)
+        sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControlEvents.touchUpInside)
+        sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        let sortB = UIBarButtonItem.init(customView: sort)
+
+        let shadowbox = UIButton.init(type: .custom)
+        shadowbox.setImage(UIImage.init(named: "shadowbox")?.navIcon(), for: UIControlState.normal)
+        shadowbox.addTarget(self, action: #selector(self.shadowbox), for: UIControlEvents.touchUpInside)
+        shadowbox.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        let sB = UIBarButtonItem.init(customView: shadowbox)
+
+        let more = UIButton.init(type: .custom)
+        more.setImage(UIImage.init(named: "moreh")?.toolbarIcon(), for: UIControlState.normal)
+        more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
+        more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        let moreB = UIBarButtonItem.init(customView: more)
+
+        let menu = UIButton.init(type: .custom)
+        menu.setImage(UIImage.init(named: "menu")?.toolbarIcon(), for: UIControlState.normal)
+        menu.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControlEvents.touchUpInside)
+        menu.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+        let menuB = UIBarButtonItem.init(customView: menu)
+
+        let flexButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil)
+
+        navigationController?.navigationBar.shadowImage = UIImage()
+        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        toolbarItems = [menuB, flexButton, moreB]
+        navigationItem.rightBarButtonItem = sortB
     }
 
     func checkForUpdate() {
