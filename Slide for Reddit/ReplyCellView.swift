@@ -15,7 +15,6 @@ import SwiftyJSON
 import ActionSheetPicker_3_0
 import RealmSwift
 import MaterialComponents.MaterialSnackbar
-import YangMingShan
 
 protocol ReplyDelegate {
     func replySent(comment: Comment?)
@@ -24,7 +23,7 @@ protocol ReplyDelegate {
     func editSent(cr: Comment?)
 }
 
-class ReplyCellView: UITableViewCell, UITextViewDelegate, YMSPhotoPickerViewControllerDelegate {
+class ReplyCellView: UITableViewCell, UITextViewDelegate {
     var delegate: ReplyDelegate?
     var toReplyTo: Object?
     var body: UITextView = UITextView()
@@ -247,45 +246,5 @@ class ReplyCellView: UITableViewCell, UITextViewDelegate, YMSPhotoPickerViewCont
     }
 
     var toolbar: ToolbarTextView?
-
-
-    func photoPickerViewControllerDidReceivePhotoAlbumAccessDenied(_ picker: YMSPhotoPickerViewController!) {
-        let alertController = UIAlertController(title: "Allow photo album access?", message: "Slide needs your permission to access photo albums", preferredStyle: .alert)
-        let dismissAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        let settingsAction = UIAlertAction(title: "Settings", style: .default) { (action) in
-            if #available(iOS 10.0, *) {
-                UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!)
-            } else {
-                // Fallback on earlier versions
-            }
-        }
-        alertController.addAction(dismissAction)
-        alertController.addAction(settingsAction)
-
-        parent?.present(alertController, animated: true, completion: nil)
-    }
-
-    func photoPickerViewControllerDidReceiveCameraAccessDenied(_ picker: YMSPhotoPickerViewController!) {
-        let alertController = UIAlertController(title: "Allow camera album access?", message: "Slide needs your permission to take a photo", preferredStyle: .alert)
-        let dismissAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        let settingsAction = UIAlertAction(title: "Settings", style: .default) { (action) in
-            if #available(iOS 10.0, *) {
-                UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!)
-            } else {
-                // Fallback on earlier versions
-            }
-        }
-        alertController.addAction(dismissAction)
-        alertController.addAction(settingsAction)
-
-        // The access denied of camera is always happened on picker, present alert on it to follow the view hierarchy
-        parent?.present(alertController, animated: true, completion: nil)
-    }
-
-    func photoPickerViewController(_ picker: YMSPhotoPickerViewController!, didFinishPickingImages photoAssets: [PHAsset]!) {
-        picker.dismiss(animated: true) {
-            self.toolbar?.uploadAsync(photoAssets)
-        }
-    }
 
 }
