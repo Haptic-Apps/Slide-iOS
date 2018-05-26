@@ -67,6 +67,8 @@ public struct Comment: Thing {
     example:
     */
     public let bannedBy: String
+
+    public let permalink: String
     /**
     example: t3_32wnhw
     */
@@ -238,6 +240,7 @@ public struct Comment: Thing {
         createdUtc = 0
         distinguished = ""
         modReports = []
+        permalink = ""
         numReports = 0
         ups = 0
         baseJson = JSONDictionary()
@@ -276,6 +279,7 @@ public struct Comment: Thing {
         authorFlairText = link.authorFlairText
         createdUtc = link.createdUtc
         distinguished = ""
+        permalink = ""
         modReports = link.modReports
         numReports = link.numReports
         ups = link.ups
@@ -318,6 +322,7 @@ public struct Comment: Thing {
         let tempBodyHtml = data["body_html"] as? String ?? ""
         bodyHtml = tempBodyHtml.gtm_stringByUnescapingFromHTML()
         subreddit = data["subreddit"] as? String ?? ""
+        permalink = data["permalink"] as? String ?? ""
         scoreHidden = data["score_hidden"] as? Bool ?? false
         name = data["name"] as? String ?? ""
         created = data["created"] as? Int ?? 0

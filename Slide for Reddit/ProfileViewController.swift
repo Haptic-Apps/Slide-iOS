@@ -10,6 +10,7 @@ import UIKit
 import reddift
 import MaterialComponents.MaterialSnackbar
 import MKColorPicker
+import RLBAlertsPickers
 
 class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, ColorPickerViewDelegate, UIToolbarDelegate, UIScrollViewDelegate {
     var content : [UserContent] = []
@@ -62,13 +63,14 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
 
         present(alertController, animated: true, completion: nil)
     }
-    
+
+    var tagText : String?
+
     func tagUser(){
         let alertController = UIAlertController(title: "Tag /u/\(name)", message: nil, preferredStyle: UIAlertControllerStyle.alert)
         let confirmAction = UIAlertAction(title: "Set", style: .default) { (_) in
-            if let field = alertController.textFields?[0] {
-                print("Setting tag \(field.text!)")
-                ColorUtil.setTagForUser(name: self.name, tag: field.text!)
+            if let text = self.tagText {
+                ColorUtil.setTagForUser(name: self.name, tag: text)
             } else {
                 // user did not fill field
             }
@@ -82,12 +84,28 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
         }
 
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) in }
-        
-        alertController.addTextField { (textField) in
+
+        let config: TextField.Config = { textField in
+            textField.becomeFirstResponder()
+            textField.textColor = .black
             textField.placeholder = "Tag"
+            textField.left(image: UIImage.init(named: "flag"), color: .black)
+            textField.leftViewPadding = 12
+            textField.borderWidth = 1
+            textField.cornerRadius = 8
+            textField.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
+            textField.backgroundColor = .white
+            textField.keyboardAppearance = .default
+            textField.keyboardType = .default
+            textField.returnKeyType = .done
             textField.text = ColorUtil.getTagForUser(name: self.name)
+            textField.action { textField in
+                self.tagText = textField.text
+            }
         }
-        
+
+        alertController.addOneTextField(configuration: config)
+
         alertController.addAction(confirmAction)
         alertController.addAction(cancelAction)
         

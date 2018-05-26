@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import RLBAlertsPickers
 
 class SearchViewController: ContentListingViewController {
 
@@ -33,17 +34,35 @@ class SearchViewController: ContentListingViewController {
 
     }
 
+    var searchText : String?
 
     func edit(_ sender: AnyObject) {
-        let alert = UIAlertController(title: "Edit search", message: "", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Edit search", message: "", preferredStyle: .actionSheet)
 
-        alert.addTextField { (textField) in
+        let config: TextField.Config = { textField in
+            textField.becomeFirstResponder()
+            textField.textColor = .black
+            textField.placeholder = "Search for a post..."
             textField.text = self.search
+            textField.left(image: UIImage.init(named: "search"), color: .black)
+            textField.leftViewPadding = 12
+            textField.borderWidth = 1
+            textField.cornerRadius = 8
+            textField.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
+            textField.backgroundColor = .white
+            textField.keyboardAppearance = .default
+            textField.keyboardType = .default
+            textField.returnKeyType = .done
+            textField.action { textField in
+                self.searchText = textField.text
+            }
         }
 
+        alert.addOneTextField(configuration: config)
+
         alert.addAction(UIAlertAction(title: "Search again", style: .default, handler: { [weak alert] (_) in
-            let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
-            let search = SearchViewController.init(subreddit: self.sub, searchFor: (textField?.text!)!)
+            let text = self.searchText ?? ""
+            let search = SearchViewController.init(subreddit: "all", searchFor: text)
             self.navigationController?.popViewController(animated: true)
             VCPresenter.showVC(viewController: search, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
         }))

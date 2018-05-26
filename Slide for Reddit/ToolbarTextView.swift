@@ -11,16 +11,15 @@ import Alamofire
 import SwiftyJSON
 import Photos
 import MobileCoreServices
+import RLBAlertsPickers
 
 public class ToolbarTextView: NSObject {
 
-    var delegate: YMSPhotoPickerViewControllerDelegate
     var text: UITextView?
     var parent: UIViewController
 
-    init(textView: UITextView, delegate: YMSPhotoPickerViewControllerDelegate, parent: UIViewController){
+    init(textView: UITextView, parent: UIViewController){
         self.text = textView
-        self.delegate = delegate
         self.parent = parent
         super.init()
         addToolbarToTextView()
@@ -106,20 +105,30 @@ public class ToolbarTextView: NSObject {
         self.openDrafts(sender)
     }
 
-
-
     func uploadImage(_ sender: UIButton!) {
-        let pickerViewController = YMSPhotoPickerViewController.init()
-        pickerViewController.theme.titleLabelTextColor = ColorUtil.fontColor
-        pickerViewController.theme.navigationBarBackgroundColor = ColorUtil.getColorForSub(sub: "")
-        pickerViewController.theme.tintColor = UIColor.white
-        pickerViewController.theme.cameraIconColor = ColorUtil.fontColor
-        pickerViewController.shouldReturnImageForSingleSelection = false
-        parent.yms_presentCustomAlbumPhotoView(pickerViewController, delegate: delegate)
+        let alert = UIAlertController.init(style: .actionSheet)
+        alert.addPhotoLibraryPicker(
+                flow: .vertical,
+                paging: true,
+                selection: .multiple(action: { images in
+                    if(!images.isEmpty){
+                        let alert = UIAlertController.init(title: "Confirm upload", message: "Would you like to upload \(images.count) image\(images.count > 1 ? "s" : "") anonymously to Imgur.com? This cannot be undone", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction.init(title: "No", style: .destructive, handler: nil))
+                        alert.addAction(UIAlertAction.init(title: "Yes", style: .default) { action in
+                            self.uploadAsync(images)
+                        })
+                        alert.show()
+                    }
+                }))
+        alert.addAction(title: "Cancel", style: .cancel)
+        alert.show()
     }
 
     var progressBar = UIProgressView()
     var alertView: UIAlertController?
+
+
+    var insertText : String?
 
     func uploadAsync(_ assets: [PHAsset]) {
         alertView = UIAlertController(title: "Uploading...", message: "Your images are uploading to Imgur", preferredStyle: .alert)
@@ -163,12 +172,29 @@ public class ToolbarTextView: NSObject {
                                             } else {
                                                 let alert = UIAlertController(title: "Link text", message: url, preferredStyle: .alert)
 
-                                                alert.addTextField { (textField) in
-                                                    textField.text = ""
+                                                let config: TextField.Config = { textField in
+                                                    textField.becomeFirstResponder()
+                                                    textField.textColor = .black
+                                                    textField.placeholder = "Caption"
+                                                    textField.left(image: UIImage.init(named: "link"), color: .black)
+                                                    textField.leftViewPadding = 12
+                                                    textField.borderWidth = 1
+                                                    textField.cornerRadius = 8
+                                                    textField.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
+                                                    textField.backgroundColor = .white
+                                                    textField.keyboardAppearance = .default
+                                                    textField.keyboardType = .default
+                                                    textField.returnKeyType = .done
+                                                    textField.action { textField in
+                                                        self.insertText = textField.text
+                                                    }
                                                 }
+
+                                                alert.addOneTextField(configuration: config)
+
                                                 alert.addAction(UIAlertAction(title: "Insert", style: .default, handler: { (action) in
-                                                    let textField = alert.textFields![0] // Force unwrapping because we know it exists.
-                                                    self.text!.insertText("[\(textField.text!)](\(url))")
+                                                    let text = self.insertText ?? ""
+                                                    self.text!.insertText("[\(text)](\(url))")
 
                                                 }))
 
@@ -198,12 +224,29 @@ public class ToolbarTextView: NSObject {
                             } else {
                                 let alert = UIAlertController(title: "Link text", message: link, preferredStyle: .alert)
 
-                                alert.addTextField { (textField) in
-                                    textField.text = ""
+                                let config: TextField.Config = { textField in
+                                    textField.becomeFirstResponder()
+                                    textField.textColor = .black
+                                    textField.placeholder = "Caption"
+                                    textField.left(image: UIImage.init(named: "link"), color: .black)
+                                    textField.leftViewPadding = 12
+                                    textField.borderWidth = 1
+                                    textField.cornerRadius = 8
+                                    textField.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
+                                    textField.backgroundColor = .white
+                                    textField.keyboardAppearance = .default
+                                    textField.keyboardType = .default
+                                    textField.returnKeyType = .done
+                                    textField.action { textField in
+                                        self.insertText = textField.text
+                                    }
                                 }
+
+                                alert.addOneTextField(configuration: config)
+
                                 alert.addAction(UIAlertAction(title: "Insert", style: .default, handler: { (action) in
-                                    let textField = alert.textFields![0] // Force unwrapping because we know it exists.
-                                    self.text!.insertText("[\(textField.text!)](\(link))")
+                                    let text = self.insertText ?? ""
+                                    self.text!.insertText("[\(text)](\(link))")
 
                                 }))
 
@@ -275,7 +318,59 @@ public class ToolbarTextView: NSObject {
 
     }
 
+    var insertLink: String?
+
     func link(_ sender: UIButton!) {
+        let alert = UIAlertController(title: "Insert Link", message: "", preferredStyle: .alert)
+
+        let configU: TextField.Config = { textField in
+            textField.becomeFirstResponder()
+            textField.textColor = .black
+            textField.placeholder = "URL"
+            textField.left(image: UIImage.init(named: "link"), color: .black)
+            textField.leftViewPadding = 12
+            textField.borderWidth = 1
+            textField.cornerRadius = 8
+            textField.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
+            textField.backgroundColor = .white
+            textField.keyboardAppearance = .default
+            textField.keyboardType = .default
+            textField.returnKeyType = .done
+            textField.action { textField in
+                self.insertLink = textField.text
+            }
+        }
+
+        let configT: TextField.Config = { textField in
+            textField.becomeFirstResponder()
+            textField.textColor = .black
+            textField.placeholder = "Caption"
+            textField.left(image: UIImage.init(named: "size"), color: .black)
+            textField.leftViewPadding = 12
+            textField.borderWidth = 1
+            textField.cornerRadius = 8
+            textField.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
+            textField.backgroundColor = .white
+            textField.keyboardAppearance = .default
+            textField.keyboardType = .default
+            textField.returnKeyType = .done
+            textField.action { textField in
+                self.insertText = textField.text
+            }
+        }
+
+
+        alert.addTwoTextFields(height: CGFloat(58), hInset: CGFloat(10), vInset: CGFloat(0), textFieldOne: configU, textFieldTwo: configT)
+
+        alert.addAction(UIAlertAction(title: "Insert", style: .default, handler: { (action) in
+            let text = self.insertText ?? ""
+            let link = self.insertLink ?? ""
+            self.text!.insertText("[\(text)](\(link))")
+
+        }))
+
+        alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
+        self.parent.present(alert, animated: true, completion: nil)
 
     }
 

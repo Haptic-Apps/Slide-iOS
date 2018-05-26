@@ -238,7 +238,7 @@ class ReplyCellView: UITableViewCell, UITextViewDelegate, YMSPhotoPickerViewCont
         if (edit) {
             body.text = (thing as! RComment).body
         }
-        toolbar = ToolbarTextView.init(textView: body, delegate: self, parent: parent)
+        toolbar = ToolbarTextView.init(textView: body, parent: parent)
         body.becomeFirstResponder()
     }
 

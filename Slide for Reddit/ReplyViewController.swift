@@ -9,7 +9,6 @@
 import UIKit
 import reddift
 import Photos
-import YangMingShan
 import Alamofire
 import MobileCoreServices
 import SwiftyJSON
@@ -17,7 +16,7 @@ import ActionSheetPicker_3_0
 import RealmSwift
 import MaterialComponents.MaterialSnackbar
 
-class ReplyViewController: UITableViewController, UITextViewDelegate, YMSPhotoPickerViewControllerDelegate {
+class ReplyViewController: UITableViewController, UITextViewDelegate {
 
     public enum ReplyType {
         case NEW_MESSAGE
@@ -126,52 +125,6 @@ class ReplyViewController: UITableViewController, UITextViewDelegate, YMSPhotoPi
 
     var toolbar: ToolbarTextView?
 
-    func photoPickerViewControllerDidReceivePhotoAlbumAccessDenied(_ picker: YMSPhotoPickerViewController!) {
-        let alertController = UIAlertController(title: "Allow photo album access?", message: "Slide needs your permission to access photo albums", preferredStyle: .alert)
-        let dismissAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        let settingsAction = UIAlertAction(title: "Settings", style: .default) { (action) in
-            if #available(iOS 10.0, *) {
-                UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!)
-            } else {
-                // Fallback on earlier versions
-            }
-        }
-        alertController.addAction(dismissAction)
-        alertController.addAction(settingsAction)
-
-        self.present(alertController, animated: true, completion: nil)
-    }
-
-    func photoPickerViewControllerDidReceiveCameraAccessDenied(_ picker: YMSPhotoPickerViewController!) {
-        let alertController = UIAlertController(title: "Allow camera album access?", message: "Slide needs your permission to take a photo", preferredStyle: .alert)
-        let dismissAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        let settingsAction = UIAlertAction(title: "Settings", style: .default) { (action) in
-            if #available(iOS 10.0, *) {
-                UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!)
-            } else {
-                // Fallback on earlier versions
-            }
-        }
-        alertController.addAction(dismissAction)
-        alertController.addAction(settingsAction)
-
-        // The access denied of camera is always happened on picker, present alert on it to follow the view hierarchy
-        self.present(alertController, animated: true, completion: nil)
-    }
-
-    func photoPickerViewController(_ picker: YMSPhotoPickerViewController!, didFinishPickingImages photoAssets: [PHAsset]!) {
-        picker.dismiss(animated: true) {
-            self.toolbar?.uploadAsync(photoAssets)
-        }
-    }
-
-    func photoPickerViewControllerDidCancel(_ picker: YMSPhotoPickerViewController!) {
-        if (type == .SUBMIT_IMAGE) {
-            navigationController?.dismiss(animated: true)
-        }
-    }
-
-
     init(submission: RSubmission, sub: String, editing: Bool, completion: @escaping (Link?) -> Void) {
         type = .EDIT_SELFTEXT
         self.toReplyTo = submission
@@ -251,17 +204,26 @@ class ReplyViewController: UITableViewController, UITextViewDelegate, YMSPhotoPi
         }
 
 
-        toolbar = ToolbarTextView.init(textView: text!, delegate: self, parent: self)
+        toolbar = ToolbarTextView.init(textView: text!, parent: self)
         self.view.layer.cornerRadius = 5
         self.view.layer.masksToBounds = true
         if (type == .SUBMIT_IMAGE) {
-            let pickerViewController = YMSPhotoPickerViewController.init()
-            pickerViewController.theme.titleLabelTextColor = ColorUtil.fontColor
-            pickerViewController.theme.navigationBarBackgroundColor = ColorUtil.getColorForSub(sub: "")
-            pickerViewController.theme.tintColor = ColorUtil.accentColorForSub(sub: "")
-            pickerViewController.theme.cameraIconColor = ColorUtil.fontColor
-            pickerViewController.shouldReturnImageForSingleSelection = false
-            self.yms_presentCustomAlbumPhotoView(pickerViewController, delegate: self)
+            let alert = UIAlertController.init(style: .alert)
+            alert.addPhotoLibraryPicker(
+                    flow: .horizontal,
+                    paging: true,
+                    selection: .multiple(action: { images in
+                        if(!images.isEmpty){
+                            let alert = UIAlertController.init(title: "Confirm upload", message: "Would you like to upload \(images.count) image\(images.count > 1 ? "s" : "") anonymously to Imgur.com? This cannot be undone", preferredStyle: .alert)
+                            alert.addAction(UIAlertAction.init(title: "No", style: .destructive, handler: nil))
+                            alert.addAction(UIAlertAction.init(title: "Yes", style: .default) { action in
+                                self.toolbar!.uploadAsync(images)
+                            })
+                            alert.show()
+                        }
+                    }))
+            alert.addAction(title: "Cancel", style: .cancel)
+            alert.show()
         }
     }
 

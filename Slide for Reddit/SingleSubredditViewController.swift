@@ -19,6 +19,7 @@ import TTTAttributedLabel
 import SloppySwiper
 import XLActionController
 import MKColorPicker
+import RLBAlertsPickers
 
 class SingleSubredditViewController: MediaViewController, UICollectionViewDelegate, UICollectionViewDataSource, LinkCellViewDelegate, ColorPickerViewDelegate, WrappingFlowLayoutDelegate {
 
@@ -454,19 +455,38 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         self.present(alertController, animated: true, completion: nil)
     }
 
+
+    var reportText: String?
+
     func report(_ thing: Object) {
 
-        let alert = UIAlertController(title: "Report this content", message: "Enter a reason (not required)", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Report this content", message: "", preferredStyle: .alert)
 
-        alert.addTextField { (textField) in
-            textField.text = ""
+        let config: TextField.Config = { textField in
+            textField.becomeFirstResponder()
+            textField.textColor = .black
+            textField.placeholder = "Reason (optional)"
+            textField.left(image: UIImage.init(named: "flag"), color: .black)
+            textField.leftViewPadding = 12
+            textField.borderWidth = 1
+            textField.cornerRadius = 8
+            textField.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
+            textField.backgroundColor = .white
+            textField.keyboardAppearance = .default
+            textField.keyboardType = .default
+            textField.returnKeyType = .done
+            textField.action { textField in
+                self.reportText = textField.text
+            }
         }
 
+        alert.addOneTextField(configuration: config)
+
         alert.addAction(UIAlertAction(title: "Report", style: .destructive, handler: { [weak alert] (_) in
-            let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
+            let text = self.reportText ?? ""
             do {
                 let name = (thing is RComment) ? (thing as! RComment).name : (thing as! RSubmission).name
-                try self.session?.report(name, reason: (textField?.text!)!, otherReason: "", completion: { (result) in
+                try self.session?.report(name, reason: text, otherReason: "", completion: { (result) in
                     DispatchQueue.main.async {
                         let message = MDCSnackbarMessage()
                         message.text = "Report sent"
@@ -488,46 +508,83 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         self.present(alert, animated: true, completion: nil)
     }
 
+    var subText : String?
+    var titleText : String?
+
     func crosspost(_ thing: RSubmission, _ title: String? = nil, _ subreddit: String? = nil, _ error: String? = "") {
 
-        let alert = UIAlertController(title: "Crosspost", message: error, preferredStyle: .alert)
+        let alert = UIAlertController.init(style: .actionSheet)
 
-        alert.addTextField { (textField) in
-            textField.placeholder = "Subreddit name"
-            if (subreddit != nil) {
-                textField.text = subreddit!
+        let configS: TextField.Config = { textField in
+            textField.becomeFirstResponder()
+            textField.textColor = .black
+            textField.placeholder = "Subreddit"
+            textField.left(image: UIImage.init(named: "subs"), color: .black)
+            textField.leftViewPadding = 12
+            textField.borderWidth = 1
+            textField.cornerRadius = 8
+            textField.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
+            textField.backgroundColor = .white
+            textField.keyboardAppearance = .default
+            textField.keyboardType = .default
+            textField.leftViewPadding = 16
+            textField.returnKeyType = .done
+            if(subreddit != nil){
+                textField.text = subreddit
+            }
+            textField.action { textField in
+                self.subText = textField.text
             }
         }
-        alert.addTextField { (textField) in
+
+        let configT: TextField.Config = { textField in
+            textField.textColor = .black
+            textField.placeholder = "Enter a new title"
+            textField.left(image: UIImage.init(named: "size"), color: .black)
+            textField.leftViewPadding = 16
+            textField.borderWidth = 0
+            textField.cornerRadius = 0
+            textField.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
+            textField.backgroundColor = .white
+            textField.keyboardAppearance = .default
+            textField.keyboardType = .default
+            textField.returnKeyType = .done
             textField.text = thing.title
-            if (title != nil) {
-                textField.text = title!
+            textField.clearButtonMode = .whileEditing
+            if(title != nil){
+                textField.text = title
+            }
+            textField.action { textField in
+                self.titleText = textField.text
             }
         }
-        alert.addAction(UIAlertAction(title: "Post", style: .default, handler: { [weak alert] (_) in
-            let subField = alert?.textFields![0] // Force unwrapping because we know it exists.
-            let titleField = alert?.textFields![1]
 
-            if (subField!.text!.isEmpty || titleField!.text!.isEmpty) {
-                if (subField!.text!.isEmpty) {
-                    self.crosspost(thing, titleField!.text, subField!.text, "Subreddit must not be empty!")
+        alert.addTwoTextFields(textFieldOne: configS, textFieldTwo: configT)
+
+        alert.addAction(UIAlertAction(title: "Crosspost", style: .default, handler: { [weak alert] (_) in
+            let subField = self.subText ?? ""
+            let titleField = self.titleText ?? ""
+
+            if (subField.isEmpty || titleField.isEmpty) {
+                if (subField.isEmpty) {
+                    self.crosspost(thing, titleField, subField, "Subreddit must not be empty!")
                 } else {
-                    self.crosspost(thing, titleField!.text, subField!.text, "Title must not be empty!")
+                    self.crosspost(thing, titleField, subField, "Title must not be empty!")
                 }
             } else {
                 do {
-                    try self.session?.crosspost(Link.init(id: thing.id), subreddit: subField!.text!, newTitle: titleField!.text!) { result in
+                    try self.session?.crosspost(Link.init(id: thing.id), subreddit: subField, newTitle: titleField) { result in
                         switch result {
                         case .failure(let error):
                             print(error)
                             DispatchQueue.main.async {
-                                self.crosspost(thing, titleField!.text, subField!.text, error.localizedDescription)
+                                self.crosspost(thing, titleField, subField, error.localizedDescription)
                             }
                             break
                         case .success(let submission):
                             if let error = self.getError(submission) {
                                 DispatchQueue.main.async {
-                                    self.crosspost(thing, titleField!.text, subField!.text, error)
+                                    self.crosspost(thing, titleField, subField, error)
                                 }
                             } else {
                                 let string = self.getIDString(submission).value!
@@ -547,7 +604,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             }
         }))
 
-        alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
 
         //todo make this work on ipad
         self.present(alert, animated: true, completion: nil)
@@ -1234,16 +1291,34 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         showMore(sender, parentVC: nil)
     }
 
+    var searchText: String?
+
     func search() {
         let alert = UIAlertController(title: "Search", message: "", preferredStyle: .alert)
 
-        alert.addTextField { (textField) in
-            textField.text = ""
+        let config: TextField.Config = { textField in
+            textField.becomeFirstResponder()
+            textField.textColor = .black
+            textField.placeholder = "Search for a post..."
+            textField.left(image: UIImage.init(named: "search"), color: .black)
+            textField.leftViewPadding = 12
+            textField.borderWidth = 1
+            textField.cornerRadius = 8
+            textField.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
+            textField.backgroundColor = .white
+            textField.keyboardAppearance = .default
+            textField.keyboardType = .default
+            textField.returnKeyType = .done
+            textField.action { textField in
+                self.searchText = textField.text
+            }
         }
 
+        alert.addOneTextField(configuration: config)
+
         alert.addAction(UIAlertAction(title: "Search All", style: .default, handler: { [weak alert] (_) in
-            let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
-            let search = SearchViewController.init(subreddit: "all", searchFor: (textField?.text!)!)
+            let text = self.searchText ?? ""
+            let search = SearchViewController.init(subreddit: "all", searchFor: text)
             VCPresenter.showVC(viewController: search, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
         }))
 

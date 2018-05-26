@@ -8,6 +8,7 @@
 
 import UIKit
 import reddift
+import RLBAlertsPickers
 
 class NavigationHeaderView: UIView {
     var title = UILabel()
@@ -56,6 +57,8 @@ class NavigationHeaderView: UIView {
         self.inboxBody.textLabel?.textColor = ColorUtil.fontColor
         self.inboxBody.imageView?.image = UIImage.init(named: "inbox")?.menuIcon().withRenderingMode(.alwaysTemplate)
 
+        profile.tintColor = ColorUtil.fontColor
+        inboxBody.tintColor = ColorUtil.fontColor
     }
 
     override init(frame: CGRect) {
@@ -190,17 +193,33 @@ class NavigationHeaderView: UIView {
 
     }
 
+    var profileString : String?
 
     func showProfileDialog(_ sender: AnyObject) {
         let alert = UIAlertController(title: "Enter a username", message: "", preferredStyle: .alert)
 
-        alert.addTextField { (textField) in
-            textField.text = ""
+        let config: TextField.Config = { textField in
+            textField.becomeFirstResponder()
+            textField.textColor = .black
+            textField.placeholder = "Username"
+            textField.left(image: UIImage.init(named: "user"), color: .black)
+            textField.leftViewPadding = 12
+            textField.borderWidth = 1
+            textField.cornerRadius = 8
+            textField.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
+            textField.backgroundColor = .white
+            textField.keyboardAppearance = .default
+            textField.keyboardType = .default
+            textField.returnKeyType = .done
+            textField.action { textField in
+                self.profileString = textField.text
+            }
         }
 
+        alert.addOneTextField(configuration: config)
+
         alert.addAction(UIAlertAction(title: "Go to user", style: .default, handler: { [weak alert] (_) in
-            let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
-            let profile = ProfileViewController.init(name: (textField?.text!)!)
+            let profile = ProfileViewController.init(name: self.profileString ?? "")
             (self.parentController as! NavigationSidebarViewController).parentController?.navigationController?.pushViewController(profile, animated: true)
             self.parentController!.dismiss(animated: true, completion: nil)
 

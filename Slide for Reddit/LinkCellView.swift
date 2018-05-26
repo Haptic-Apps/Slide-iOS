@@ -1509,17 +1509,36 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
     }
 
+    var flairText: String?
+
     func setFlair(_ flair: FlairTemplate){
         if(flair.editable){
             let alert = UIAlertController(title: "Edit flair text", message: "", preferredStyle: .alert)
 
-            alert.addTextField { (textField) in
-                textField.text = flair.text
 
+            let config: TextField.Config = { textField in
+                textField.becomeFirstResponder()
+                textField.textColor = .black
+                textField.placeholder = "Flair text"
+                textField.left(image: UIImage.init(named: "flag"), color: .black)
+                textField.leftViewPadding = 12
+                textField.borderWidth = 1
+                textField.cornerRadius = 8
+                textField.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
+                textField.backgroundColor = .white
+                textField.keyboardAppearance = .default
+                textField.keyboardType = .default
+                textField.returnKeyType = .done
+                textField.text = flair.text
+                textField.action { textField in
+                    self.flairText = textField.text
+                }
             }
+
+            alertController.addOneTextField(configuration: config)
+
             alert.addAction(UIAlertAction(title: "Set flair", style: .default, handler: { [weak alert] (_) in
-                let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
-                self.submitFlairChange(flair, text: textField!.text)
+                self.submitFlairChange(flair, text: flairText ?? "")
             }))
 
             alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))

@@ -317,7 +317,7 @@ class RealmDataWrapper {
         rComment.name = comment.name
         rComment.parentId = comment.parentId
         rComment.scoreHidden = comment.scoreHidden
-        //todo rComment.permalink = comment.permalink
+        rComment.permalink = "https://www.reddit.com" + comment.permalink
         return rComment
     }
 

@@ -15,6 +15,7 @@ import MaterialComponents.MaterialSnackbar
 import MaterialComponents.MDCActivityIndicator
 import SloppySwiper
 import XLActionController
+import RLBAlertsPickers
 
 class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, UZTextViewCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate, TTTAttributedLabelDelegate, ReplyDelegate {
 
@@ -257,7 +258,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
         }))
 
-        alertController.addAction(Action(ActionData(title: "Share comment permalink", image: UIImage(named: "link")!.menuIcon()), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Share comments permalink", image: UIImage(named: "link")!.menuIcon()), style: .default, handler: { action in
             let activityViewController = UIActivityViewController(activityItems: [link.permalink], applicationActivities: nil)
             self.present(activityViewController, animated: true, completion: {})
         }))
@@ -301,18 +302,36 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     }
 
-    func report(_ thing: Object) {
-        let alert = UIAlertController(title: "Report this content", message: "Enter a reason (not required)", preferredStyle: .alert)
+    var reportText : String?
 
-        alert.addTextField { (textField) in
-            textField.text = ""
+    func report(_ thing: Object) {
+        let alert = UIAlertController(title: "Report this content", message: "", preferredStyle: .alert)
+
+        let config: TextField.Config = { textField in
+            textField.becomeFirstResponder()
+            textField.textColor = .black
+            textField.placeholder = "Reason (optional)"
+            textField.left(image: UIImage.init(named: "flag"), color: .black)
+            textField.leftViewPadding = 12
+            textField.borderWidth = 1
+            textField.cornerRadius = 8
+            textField.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
+            textField.backgroundColor = .white
+            textField.keyboardAppearance = .default
+            textField.keyboardType = .default
+            textField.returnKeyType = .done
+            textField.action { textField in
+                self.reportText = textField.text
+            }
         }
 
+        alert.addOneTextField(configuration: config)
+
         alert.addAction(UIAlertAction(title: "Report", style: .destructive, handler: { [weak alert] (_) in
-            let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
+            let text = self.reportText ?? ""
             do {
                 let name = (thing is RComment) ? (thing as! RComment).id : (thing as! RSubmission).id
-                try self.session?.report(name, reason: (textField?.text!)!, otherReason: "", completion: { (result) in
+                try self.session?.report(name, reason: text, otherReason: "", completion: { (result) in
                     DispatchQueue.main.async {
                         let message = MDCSnackbarMessage()
                         message.text = "Report sent"
