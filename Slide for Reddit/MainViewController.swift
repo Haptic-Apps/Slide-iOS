@@ -253,7 +253,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
         self.view.addSubview(tabBar)
     }
-
+    
     func didChooseSub(_ gesture: UITapGestureRecognizer) {
         print("Chose")
 
@@ -365,6 +365,18 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         }
     }
 
+    override func willRotate(to toInterfaceOrientation: UIInterfaceOrientation, duration: TimeInterval) {
+        super.willRotate(to: toInterfaceOrientation, duration: duration)
+        var isPhone = UIScreen.main.traitCollection.userInterfaceIdiom != .pad
+        if(toInterfaceOrientation.isLandscape && isPhone){
+            tabBar.frame = CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: 84)
+            tabBar.sizeToFit()
+        } else if(isPhone){
+            tabBar.frame = CGRect.init(x: 0, y: UIApplication.shared.statusBarView?.frame.size.height ?? 20, width: self.view.frame.size.width, height: 84)
+            tabBar.sizeToFit()
+        }
+    }
+    
     func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
         color2 = ColorUtil.getColorForSub(sub: (pendingViewControllers[0] as! SingleSubredditViewController).sub)
         color1 = ColorUtil.getColorForSub(sub: (MainViewController.vCs[currentPage] as! SingleSubredditViewController).sub)

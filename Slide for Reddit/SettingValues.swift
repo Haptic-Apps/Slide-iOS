@@ -193,7 +193,10 @@ class SettingValues {
         SettingValues.saveHistory = settings.object(forKey: SettingValues.pref_saveHistory) == nil ? true : settings.bool(forKey: SettingValues.pref_saveHistory)
         SettingValues.multiColumn = settings.object(forKey: SettingValues.pref_multiColumn) == nil ? false : settings.bool(forKey: SettingValues.pref_multiColumn)
         
-        let columns = Int(round(UIApplication.shared.statusBarView!.frame.size.width / CGFloat(320)))
+        var columns = Int(round(UIApplication.shared.statusBarView!.frame.size.width / CGFloat(320)))
+        if(columns == 0){
+            columns = 1
+        }
         SettingValues.multiColumnCount = settings.object(forKey: SettingValues.pref_multiColumnCount) == nil ? columns : settings.integer(forKey: SettingValues.pref_multiColumnCount)
         SettingValues.highlightOp = settings.object(forKey: SettingValues.pref_highlightOp) == nil ? true : settings.bool(forKey: SettingValues.pref_highlightOp)
 

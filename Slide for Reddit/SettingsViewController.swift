@@ -310,7 +310,6 @@ class SettingsViewController: UITableViewController {
         
         actionSheetController.modalPresentationStyle = .popover
         
-        actionSheetController.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: nil))
         if let presenter = actionSheetController.popoverPresentationController {
             presenter.sourceView = multiColumnCell
             presenter.sourceRect = multiColumnCell.bounds
