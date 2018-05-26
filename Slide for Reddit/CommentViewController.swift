@@ -694,7 +694,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     var indicator: MDCActivityIndicator? = nil
 
     override func viewDidLoad() {
-        ColorUtil.checkNight()
         super.viewDidLoad()
 
         if (self.navigationController != nil && !(self.navigationController!.delegate is SloppySwiper) && (parent == nil || (parent != nil && !(parent! is PagingCommentViewController)))) {

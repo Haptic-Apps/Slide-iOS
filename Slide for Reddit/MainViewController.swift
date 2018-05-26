@@ -26,7 +26,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         if (AccountController.isLoggedIn) {
             checkForMail()
         }
-        if (SubredditReorderViewController.changed) {
+        if (SubredditReorderViewController.changed || ColorUtil.shouldBeNight()) {
+            ColorUtil.doInit()
             restartVC()
         }
 

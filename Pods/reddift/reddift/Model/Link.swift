@@ -93,7 +93,7 @@ public struct Link: Thing {
      example: 0
      */
     public let gilded: Int
-
+    
     public let canMod: Bool
     /**
      example: false

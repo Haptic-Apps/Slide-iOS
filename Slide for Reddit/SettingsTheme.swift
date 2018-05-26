@@ -8,6 +8,7 @@
 
 import UIKit
 import MKColorPicker
+import RLBAlertsPickers
 
 class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
 
@@ -199,6 +200,14 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         if (changed == tintOutsideSwitch) {
             SettingValues.onlyTintOutside = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_onlyTintOutside)
+        } else {
+            SettingValues.nightModeEnabled = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_nightMode)
+            ColorUtil.doInit()
+            self.loadView()
+            self.tableView.reloadData(with: .automatic)
+            self.tochange!.doCells()
+            self.tochange!.tableView.reloadData()
         }
         UserDefaults.standard.synchronize()
     }
@@ -262,7 +271,87 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         }
     }
 
-    func showNightTheme(){
+    func getHourOffset(base: Int) -> Int {
+        if (base == 0) {
+            return 12
+        }
+        return base
+    }
+
+    func getMinuteString(base: Int) -> String {
+        return String.init(format: "%02d", arguments: [base])
+    }
+
+
+    func selectTime() {
+        let alert = UIAlertController(style: .actionSheet, title: "Select night hours", message: "Select a PM time and an AM time")
+
+        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Close", style: .cancel) { action -> Void in
+            ColorUtil.doInit()
+            self.loadView()
+            self.tableView.reloadData(with: .automatic)
+            self.tochange!.doCells()
+            self.tochange!.tableView.reloadData()
+        }
+        alert.addAction(cancelActionButton)
+
+        var values: [[String]] = [[], [], [], [], [], []]
+        for i in 0...11 {
+            values[0].append("\(getHourOffset(base: i))")
+            values[3].append("\(getHourOffset(base: i))")
+        }
+        for i in 0...59 {
+            if (i % 5 == 0) {
+                values[1].append(getMinuteString(base: i))
+                values[4].append(getMinuteString(base: i))
+            }
+        }
+        values[2].append("PM")
+        values[5].append("AM")
+
+        var initialSelection: [PickerViewViewController.Index] = []
+        initialSelection.append((0, SettingValues.nightStart))
+        initialSelection.append((1, SettingValues.nightStartMin / 5))
+        initialSelection.append((3, SettingValues.nightEnd))
+        initialSelection.append((4, SettingValues.nightEndMin / 5))
+
+        alert.addPickerView(values: values, initialSelection: initialSelection) { controller, view, index, values in
+            switch (index.column) {
+            case 0:
+                SettingValues.nightStart = index.row
+                UserDefaults.standard.set(SettingValues.nightStart, forKey: SettingValues.pref_nightStartH)
+                UserDefaults.standard.synchronize()
+                break
+            case 1:
+                SettingValues.nightStartMin = index.row * 5
+                UserDefaults.standard.set(SettingValues.nightStartMin, forKey: SettingValues.pref_nightStartM)
+                UserDefaults.standard.synchronize()
+                break
+            case 3:
+                SettingValues.nightEnd = index.row
+                UserDefaults.standard.set(SettingValues.nightEnd, forKey: SettingValues.pref_nightEndH)
+                UserDefaults.standard.synchronize()
+                break
+            case 4:
+                SettingValues.nightEndMin = index.row * 5
+                UserDefaults.standard.set(SettingValues.nightEndMin, forKey: SettingValues.pref_nightEndM)
+                UserDefaults.standard.synchronize()
+                break
+            default: break
+            }
+        }
+
+        alert.modalPresentationStyle = .popover
+        if let presenter = alert.popoverPresentationController {
+            presenter.sourceView = selectedTableView
+            presenter.sourceRect = selectedTableView.bounds
+        }
+
+        self.present(alert, animated: true, completion: nil)
+
+    }
+
+    func selectTheme() {
         let actionSheetController: UIAlertController = UIAlertController(title: "Select a night theme", message: "", preferredStyle: .actionSheet)
 
         let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
@@ -271,9 +360,9 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         actionSheetController.addAction(cancelActionButton)
 
         for theme in ColorUtil.Theme.cases {
-            if(theme != .LIGHT) {
+            if (theme != .LIGHT) {
                 let saveActionButton: UIAlertAction = UIAlertAction(title: theme.rawValue, style: .default) { action -> Void in
-                    UserDefaults.standard.set(theme.rawValue, forKey: "nightTheme")
+                    UserDefaults.standard.set(theme.rawValue, forKey: SettingValues.pref_nightTheme)
                     UserDefaults.standard.synchronize()
                     ColorUtil.doInit()
                     self.loadView()
@@ -291,6 +380,42 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         }
 
         self.present(actionSheetController, animated: true, completion: nil)
+
+    }
+
+
+    func showNightTheme() {
+        let actionSheetController: UIAlertController = UIAlertController(title: "Night Mode", message: "", preferredStyle: .actionSheet)
+
+        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Close", style: .cancel) { action -> Void in
+        }
+        actionSheetController.addAction(cancelActionButton)
+
+        var enabled = UISwitch.init(frame: CGRect.init(x: 20, y: 20, width: 75, height: 50))
+        enabled.isOn = SettingValues.nightModeEnabled
+        enabled.addTarget(self, action: #selector(SettingsTheme.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+        actionSheetController.view.addSubview(enabled)
+
+
+        var button: UIAlertAction = UIAlertAction(title: "Select night hours", style: .default) { action -> Void in
+            self.selectTime()
+        }
+        actionSheetController.addAction(button)
+
+
+        button = UIAlertAction(title: "Select night theme", style: .default) { action -> Void in
+            self.selectTheme()
+        }
+        actionSheetController.addAction(button)
+
+        actionSheetController.modalPresentationStyle = .popover
+        if let presenter = actionSheetController.popoverPresentationController {
+            presenter.sourceView = selectedTableView
+            presenter.sourceRect = selectedTableView.bounds
+        }
+
+        self.present(actionSheetController, animated: true, completion: nil)
+
     }
 
     func showBaseTheme() {

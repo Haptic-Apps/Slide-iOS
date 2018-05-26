@@ -32,26 +32,30 @@ extension UIColor {
 class ColorUtil {
     static var theme = Theme.DARK
 
-    static func checkNight(_ force: Bool = false) {
+    static func shouldBeNight() -> Bool {
         let hour = Calendar.current.component(.hour, from: Date())
-        var shouldBeNight = SettingValues.nightModeEnabled && /*todo pro*/ (hour >= SettingValues.nightStart + 12 || hour < SettingValues.nightEnd)
-        if(shouldBeNight && theme.rawValue != SettingValues.nightTheme.rawValue){
-            doInit(SettingValues.nightTheme)
-        } else if(force || (hour == SettingValues.nightEnd && theme.rawValue == SettingValues.nightTheme.rawValue)){
-            doInit()
-        }
+        let minute = Calendar.current.component(.minute, from: Date())
+        return SettingValues.nightModeEnabled && /*todo pro*/ (hour >= SettingValues.nightStart + 12 || hour < SettingValues.nightEnd) &&  (minute >= SettingValues.nightStartMin || minute < SettingValues.nightEndMin)
     }
 
     static func doInit(_ t: Theme? = nil) {
-        if(t == nil) {
-            if let name = UserDefaults.standard.string(forKey: "theme") {
-                if let t = Theme(rawValue: name) {
-                    theme = t
-                }
+        var defaultTheme = Theme.DARK
+        if let name = UserDefaults.standard.string(forKey: "theme") {
+            if let t = Theme(rawValue: name) {
+                defaultTheme = t
+            }
+        }
+
+        if(t == nil || (shouldBeNight() && theme != SettingValues.nightTheme) || (!shouldBeNight() && theme == SettingValues.nightTheme && SettingValues.nightTheme != defaultTheme)) {
+            if(shouldBeNight()){
+                theme = SettingValues.nightTheme
+                CachedTitle.titles.removeAll()
+            } else {
+                theme = defaultTheme
+                CachedTitle.titles.removeAll()
             }
         } else {
-            CachedTitle.titles.removeAll()
-            self.theme = t!
+            return
         }
         foregroundColor = theme.foregroundColor
         backgroundColor = theme.backgroundColor

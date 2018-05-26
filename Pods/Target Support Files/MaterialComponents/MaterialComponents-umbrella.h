@@ -47,6 +47,7 @@
 #import "MaterialShadowLayer.h"
 #import "MDCShadowLayer.h"
 #import "MaterialSnackbar.h"
+#import "MDCSnackbarAlignment.h"
 #import "MDCSnackbarManager.h"
 #import "MDCSnackbarMessage.h"
 #import "MDCSnackbarMessageView.h"

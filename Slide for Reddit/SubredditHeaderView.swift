@@ -329,7 +329,7 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
 
     func setSubreddit(subreddit: Subreddit, parent: MediaViewController, _ width: CGFloat) {
         self.subreddit = subreddit
-        self.width = width
+        self.setWidth = width
         self.parentController = parent
         back.backgroundColor = ColorUtil.getColorForSub(sub: subreddit.displayName)
         subscribers.text = "\(subreddit.subscribers) subscribers"
@@ -341,7 +341,7 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
                 let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
                 let font = UIFont(name: ".SFUIText-Light", size: 16) ?? UIFont.systemFont(ofSize: 16)
                 let attr2 = attr.reconstruct(with: font, color: .white, linkColor: ColorUtil.accentColorForSub(sub: subreddit.displayName))
-                content = CellContent.init(string: LinkParser.parse(attr2, ColorUtil.accentColorForSub(sub: subreddit.displayName)), width: width - 24)
+                content = CellContent.init(string: LinkParser.parse(attr2, ColorUtil.accentColorForSub(sub: subreddit.displayName)), width: setWidth - 24)
                 desc.attributedString = content?.attributedString
                 textHeight = (content?.textHeight)!
             } catch {
@@ -354,7 +354,7 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
                 let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
                 let font = UIFont(name: ".SFUIText-Light", size: 16) ?? UIFont.systemFont(ofSize: 16)
                 let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: ColorUtil.accentColorForSub(sub: subreddit.displayName))
-                contentInfo = CellContent.init(string: LinkParser.parse(attr2, ColorUtil.accentColorForSub(sub: subreddit.displayName)), width: width - 24)
+                contentInfo = CellContent.init(string: LinkParser.parse(attr2, ColorUtil.accentColorForSub(sub: subreddit.displayName)), width: setWidth - 24)
                 info.attributedString = contentInfo?.attributedString
                 descHeight = (contentInfo?.textHeight)!
             } catch {
@@ -369,12 +369,12 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
     var subreddit: Subreddit?
     var constraintBack: [NSLayoutConstraint] = []
     var constraintMain: [NSLayoutConstraint] = []
-    var width: CGFloat = 0
+    var setWidth: CGFloat = 0
 
     override func updateConstraints() {
         super.updateConstraints()
 
-        let metrics = ["topMargin": 0, "bh": CGFloat(130 + textHeight), "dh": descHeight, "b": textHeight + 30, "w": width]
+        let metrics = ["topMargin": 0, "bh": CGFloat(130 + textHeight), "dh": descHeight, "b": textHeight + 30, "w": setWidth]
         let views = ["theme": theme, "submit": submit, "subscribe": subscribe, "mods": mods, "back": back, "sort": sorting, "wiki": wiki, "desc": desc, "info": info, "subscribers": subscribers, "here": here] as [String: Any]
 
 

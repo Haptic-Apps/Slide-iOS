@@ -73,6 +73,12 @@ class SettingValues {
     public static let pref_biometrics = "BIOMETRICS"
     public static let pref_safariVC = "SAFARIVC"
     public static let pref_fabType = "FABTYPE"
+    public static let pref_nightStartH = "NIGHTSH"
+    public static let pref_nightStartM = "NIGHTSM"
+    public static let pref_nightEndH = "NIGHTEH"
+    public static let pref_nightEndM = "NIGHTEM"
+    public static let pref_nightTheme = "NIGHTTHEME"
+    public static let pref_nightMode = "NIGHT_ENABLED"
 
 
     public static var viewType = true
@@ -138,7 +144,9 @@ class SettingValues {
     public static var biometrics = true
     public static var safariVC = true
     public static var nightStart = 1
+    public static var nightStartMin = 0
     public static var nightEnd = 5
+    public static var nightEndMin = 0
     public static var nightModeEnabled = false
     public static var nightTheme = ColorUtil.Theme.DARK
 
@@ -237,6 +245,16 @@ class SettingValues {
         SettingValues.lqLow = settings.bool(forKey: SettingValues.pref_lqLow)
         SettingValues.saveButton = settings.object(forKey: SettingValues.pref_saveButton) == nil ? true : settings.bool(forKey: SettingValues.pref_saveButton)
         SettingValues.hideButton = settings.bool(forKey: SettingValues.pref_hideButton)
+        SettingValues.nightModeEnabled = settings.bool(forKey: SettingValues.pref_nightMode)
+        SettingValues.nightStart = settings.object(forKey: SettingValues.pref_nightStartH) == nil ? 9 : settings.integer(forKey: SettingValues.pref_nightStartH)
+        SettingValues.nightStartMin = settings.object(forKey: SettingValues.pref_nightStartH) == nil ? 0 : settings.integer(forKey: SettingValues.pref_nightStartM)
+        SettingValues.nightEnd = settings.object(forKey: SettingValues.pref_nightStartH) == nil ? 5 : settings.integer(forKey: SettingValues.pref_nightEndH)
+        SettingValues.nightEndMin = settings.object(forKey: SettingValues.pref_nightStartH) == nil ? 0 : settings.integer(forKey: SettingValues.pref_nightEndM)
+        if let name = UserDefaults.standard.string(forKey: SettingValues.pref_nightTheme) {
+            if let t = Theme(rawValue: name) {
+                SettingValues.nightTheme = t
+            }
+        }
 
         SettingValues.largerThumbnail = settings.object(forKey: SettingValues.pref_largerThumbnail) == nil ? true : settings.bool(forKey: SettingValues.pref_largerThumbnail)
         SettingValues.bannerHidden = settings.bool(forKey: SettingValues.pref_bannerHidden)
