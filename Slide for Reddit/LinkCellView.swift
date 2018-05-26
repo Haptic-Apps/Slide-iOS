@@ -1536,10 +1536,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 }
             }
 
-            alertController.addOneTextField(configuration: config)
+            alert.addOneTextField(configuration: config)
 
             alert.addAction(UIAlertAction(title: "Set flair", style: .default, handler: { [weak alert] (_) in
-                self.submitFlairChange(flair, text: flairText ?? "")
+                self.submitFlairChange(flair, text: self.flairText ?? "")
             }))
 
             alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))

@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4e152e64-2f09-48b9-9864-06428fccec3c" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Slide for Reddit/ReplyCellView.swift" beforeDir="false" afterPath="$PROJECT_DIR$/Slide for Reddit/ReplyCellView.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Slide for Reddit/Credits.plist" beforeDir="false" afterPath="$PROJECT_DIR$/Slide for Reddit/Credits.plist" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Slide for Reddit/LinkCellView.swift" beforeDir="false" afterPath="$PROJECT_DIR$/Slide for Reddit/LinkCellView.swift" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Slide for Reddit/ToolbarTextView.swift" beforeDir="false" afterPath="$PROJECT_DIR$/Slide for Reddit/ToolbarTextView.swift" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -16,7 +16,7 @@
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="iphoneos_b4f2266089219190fedc1e40334b9efd8b9b10f5" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="iphoneos_" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file leaf-file-name="CommentViewController.swift" pinned="false" current-in-tab="false">
@@ -67,11 +67,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="LinkCellView.swift" pinned="false" current-in-tab="false">
+      <file leaf-file-name="LinkCellView.swift" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Slide for Reddit/LinkCellView.swift">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="780">
-              <caret line="52" column="9" selection-start-line="52" selection-start-column="9" selection-end-line="52" selection-end-column="9" />
+            <state relative-caret-position="141">
+              <caret line="1532" column="43" lean-forward="true" selection-start-line="1532" selection-start-column="43" selection-end-line="1532" selection-end-column="43" />
               <folding>
                 <element signature="e#313#325#0" expanded="true" />
               </folding>
@@ -79,11 +79,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ToolbarTextView.swift" pinned="false" current-in-tab="true">
+      <file leaf-file-name="ToolbarTextView.swift" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Slide for Reddit/ToolbarTextView.swift">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="173">
-              <caret line="363" column="95" selection-start-line="363" selection-start-column="95" selection-end-line="363" selection-end-column="95" />
+            <state relative-caret-position="713">
+              <caret line="399" column="1" lean-forward="true" selection-start-line="399" selection-start-column="1" selection-end-line="399" selection-end-column="1" />
               <folding>
                 <element signature="e#102#114#0" expanded="true" />
               </folding>
@@ -160,13 +160,13 @@
       <find>type == /</find>
       <find>upload</find>
       <find>addTExtField</find>
-      <find>delegate =</find>
       <find>search for a post</find>
       <find>report</find>
       <find>addtextfield</find>
       <find>y</find>
       <find>yangmin</find>
       <find>yang</find>
+      <find>delegate =</find>
     </findStrings>
     <replaceStrings>
       <replace>-12</replace>
@@ -230,9 +230,9 @@
         <option value="$PROJECT_DIR$/Slide for Reddit/CommentViewController.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/ProfileViewController.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/NavigationHeaderView.swift" />
-        <option value="$PROJECT_DIR$/Slide for Reddit/LinkCellView.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/ReplyCellView.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/ToolbarTextView.swift" />
+        <option value="$PROJECT_DIR$/Slide for Reddit/LinkCellView.swift" />
       </list>
     </option>
   </component>
@@ -405,12 +405,12 @@
       <workItem from="1527051021781" duration="2436000" />
       <workItem from="1527088277727" duration="3250000" />
       <workItem from="1527301673608" duration="7498000" />
-      <workItem from="1527363470260" duration="5861000" />
+      <workItem from="1527363470260" duration="6514000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="374179000" />
+    <option name="totallyTimeSpent" value="374832000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -426,11 +426,11 @@
     <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.4965035" weight="0.32856005" />
-      <window_info active="true" anchor="bottom" id="Messages" order="7" sideWeight="0.38046476" visible="true" weight="0.30867144" />
+      <window_info anchor="bottom" id="Messages" order="7" sideWeight="0.37967703" weight="0.30867144" />
       <window_info anchor="right" id="Palette&#9;" order="3" />
-      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.61953527" side_tool="true" visible="true" weight="0.30867144" />
+      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.6325325" side_tool="true" visible="true" weight="0.30867144" />
       <window_info anchor="bottom" id="Version Control" order="8" weight="0.32911393" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.36786136" weight="0.24741448" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.3674675" weight="0.24741448" />
       <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.4978903" weight="0.32911393" />
       <window_info id="Designer" order="2" />
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.08467901" />
@@ -817,16 +817,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Slide for Reddit/LinkCellView.swift">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="780">
-          <caret line="52" column="9" selection-start-line="52" selection-start-column="9" selection-end-line="52" selection-end-column="9" />
-          <folding>
-            <element signature="e#313#325#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Slide for Reddit/ReplyCellView.swift">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="300">
@@ -839,10 +829,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Slide for Reddit/ToolbarTextView.swift">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="173">
-          <caret line="363" column="95" selection-start-line="363" selection-start-column="95" selection-end-line="363" selection-end-column="95" />
+        <state relative-caret-position="713">
+          <caret line="399" column="1" lean-forward="true" selection-start-line="399" selection-start-column="1" selection-end-line="399" selection-end-column="1" />
           <folding>
             <element signature="e#102#114#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Slide for Reddit/LinkCellView.swift">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="141">
+          <caret line="1532" column="43" lean-forward="true" selection-start-line="1532" selection-start-column="43" selection-end-line="1532" selection-end-column="43" />
+          <folding>
+            <element signature="e#313#325#0" expanded="true" />
           </folding>
         </state>
       </provider>

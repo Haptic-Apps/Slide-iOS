@@ -361,7 +361,7 @@ public class ToolbarTextView: NSObject {
 
         alert.addTwoTextFields(height: CGFloat(58), hInset: CGFloat(10), vInset: CGFloat(0), textFieldOne: configU, textFieldTwo: configT)
 
-        alert.addAction(UIAlertAction(title: "Insert", style: .default, handler: { (action) in 
+        alert.addAction(UIAlertAction(title: "Insert", style: .default, handler: { (action) in
             let text = self.insertText ?? ""
             let link = self.insertLink ?? ""
             self.text!.insertText("[\(text)](\(link))")

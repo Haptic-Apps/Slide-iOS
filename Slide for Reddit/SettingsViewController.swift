@@ -12,6 +12,7 @@ import LicensesViewController
 import SDWebImage
 import MaterialComponents.MaterialSnackbar
 import RealmSwift
+import RLBAlertsPickers
 
 class SettingsViewController: UITableViewController {
 
@@ -192,11 +193,7 @@ class SettingsViewController: UITableViewController {
         self.licenseCell.imageView?.image = UIImage.init(named: "code")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
         self.licenseCell.imageView?.tintColor = ColorUtil.fontColor
 
-        multiColumn = UISwitch()
-        multiColumn.isOn = SettingValues.multiColumn
-        multiColumn.addTarget(self, action: #selector(SettingsViewController.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
         multiColumnCell.textLabel?.text = "Multi Column mode"
-        multiColumnCell.accessoryView = multiColumn
         multiColumnCell.backgroundColor = ColorUtil.foregroundColor
         multiColumnCell.textLabel?.textColor = ColorUtil.fontColor
         multiColumnCell.selectionStyle = UITableViewCellSelectionStyle.none
@@ -290,12 +287,45 @@ class SettingsViewController: UITableViewController {
         }
 
     }
+    
+    func showMultiColumn(){
+        let actionSheetController: UIAlertController = UIAlertController(title: "Multi Column Mode", message: "", preferredStyle: .actionSheet)
+        
+        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Close", style: .cancel) { action -> Void in
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        multiColumn = UISwitch.init(frame: CGRect.init(x: 20, y: 20, width: 75, height: 50))
+        multiColumn.isOn = SettingValues.multiColumn
+        multiColumn.addTarget(self, action: #selector(SettingsViewController.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+        actionSheetController.view.addSubview(multiColumn)
+        
+        let values = [["1","2","3","4","5"]]
+        actionSheetController.addPickerView(values: values, initialSelection: [(0, SettingValues.multiColumnCount - 1)]) { (_, _, chosen, _) in
+            SettingValues.multiColumnCount = chosen.row + 1
+            UserDefaults.standard.set(chosen.row + 1, forKey: SettingValues.pref_multiColumnCount)
+            UserDefaults.standard.synchronize()
+            SubredditReorderViewController.changed = true
+        }
+        
+        actionSheetController.modalPresentationStyle = .popover
+        
+        actionSheetController.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: nil))
+        if let presenter = actionSheetController.popoverPresentationController {
+            presenter.sourceView = multiColumnCell
+            presenter.sourceRect = multiColumnCell.bounds
+        }
+        
+        self.present(actionSheetController, animated: true, completion: nil)
+    }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         var ch: UIViewController?
         if (indexPath.section == 0 && indexPath.row == 1) {
             ch = SubredditReorderViewController()
+        } else if(indexPath.section == 0 && indexPath.row == 2){
+            showMultiColumn()
         } else if (indexPath.section == 0 && indexPath.row == 0) {
             ch = SettingsGeneral()
         } else if (indexPath.section == 2 && indexPath.row == 4) {

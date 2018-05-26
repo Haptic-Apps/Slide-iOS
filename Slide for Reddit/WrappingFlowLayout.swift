@@ -17,7 +17,7 @@ class WrappingFlowLayout: UICollectionViewLayout{
     
     // 2
     var numberOfColumns: Int {
-        return Int(round(self.collectionView!.bounds.width / CGFloat(320)))
+        return SettingValues.multiColumn ? (UIDevice.current.orientation.isPortrait ? SettingValues.multiColumnCount/2 : SettingValues.multiColumnCount) : 1
     }
     var cellPadding: CGFloat {
         return (numberOfColumns > 1 && SettingValues.postViewMode != .LIST) ? CGFloat(6) : CGFloat(0)

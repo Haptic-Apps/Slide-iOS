@@ -79,6 +79,7 @@ class SettingValues {
     public static let pref_nightEndM = "NIGHTEM"
     public static let pref_nightTheme = "NIGHTTHEME"
     public static let pref_nightMode = "NIGHT_ENABLED"
+    public static let pref_multiColumnCount = "MULTICOLUMN_COUNT"
 
 
     public static var viewType = true
@@ -98,6 +99,7 @@ class SettingValues {
     public static var commentCountLastVisit = true
     public static var rightThumbnail = true
     public static var centerLeadImage = true
+    public static var multiColumnCount = 2
 
     public static var hideButtonActionbar = false
     public static var saveButtonActionbar = true
@@ -189,7 +191,10 @@ class SettingValues {
         SettingValues.bigPicCropped = settings.bool(forKey: SettingValues.pref_cropBigPic)
         SettingValues.saveNSFWHistory = settings.bool(forKey: SettingValues.pref_saveNSFWHistory)
         SettingValues.saveHistory = settings.object(forKey: SettingValues.pref_saveHistory) == nil ? true : settings.bool(forKey: SettingValues.pref_saveHistory)
-        SettingValues.multiColumn = settings.object(forKey: SettingValues.pref_multiColumn) == nil ? true : settings.bool(forKey: SettingValues.pref_multiColumn)
+        SettingValues.multiColumn = settings.object(forKey: SettingValues.pref_multiColumn) == nil ? false : settings.bool(forKey: SettingValues.pref_multiColumn)
+        
+        let columns = Int(round(UIApplication.shared.statusBarView!.frame.size.width / CGFloat(320)))
+        SettingValues.multiColumnCount = settings.object(forKey: SettingValues.pref_multiColumnCount) == nil ? columns : settings.integer(forKey: SettingValues.pref_multiColumnCount)
         SettingValues.highlightOp = settings.object(forKey: SettingValues.pref_highlightOp) == nil ? true : settings.bool(forKey: SettingValues.pref_highlightOp)
 
         SettingValues.postFontOffset = settings.object(forKey: SettingValues.pref_postFontSize) == nil ? 0 : settings.integer(forKey: SettingValues.pref_postFontSize)
