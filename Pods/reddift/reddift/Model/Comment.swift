@@ -67,7 +67,7 @@ public struct Comment: Thing {
     example:
     */
     public let bannedBy: String
-
+    
     public let permalink: String
     /**
     example: t3_32wnhw

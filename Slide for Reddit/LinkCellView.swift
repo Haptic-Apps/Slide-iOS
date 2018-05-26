@@ -22,6 +22,7 @@ import AudioToolbox
 import XLActionController
 import reddift
 import SafariServices
+import RLBAlertsPickers
 
 protocol LinkCellViewDelegate: class {
     func upvote(_ cell: LinkCellView)

@@ -99,9 +99,6 @@ PODS:
   - XLActionController (4.0.1):
     - XLActionController/Core (= 4.0.1)
   - XLActionController/Core (4.0.1)
-  - YangMingShan (2.0.1):
-    - YangMingShan/YMSPhotoPicker (= 2.0.1)
-  - YangMingShan/YMSPhotoPicker (2.0.1)
 
 DEPENDENCIES:
   - ActionSheetPicker-3.0 (from `https://github.com/ccrama/ActionSheetPicker-3.0`)
@@ -131,7 +128,6 @@ DEPENDENCIES:
   - TTTAttributedLabel
   - UZTextView (from `https://github.com/ccrama/UZTextView`)
   - XLActionController
-  - YangMingShan
 
 EXTERNAL SOURCES:
   ActionSheetPicker-3.0:
@@ -150,10 +146,10 @@ CHECKOUT OPTIONS:
     :commit: 752459578d8162c11f6311987bd3463e6d85712b
     :git: https://github.com/ccrama/ActionSheetPicker-3.0
   reddift:
-    :commit: 6078bdd02286cd21e760cffa7317003fb4442f97
+    :commit: 9b82520308a90f7311f9c28bd3a88cb3a4ecb0d2
     :git: https://github.com/ccrama/reddift
   RLBAlertsPickers:
-    :commit: 394749d1b41bd5473a36fb103e951e44e8466aa5
+    :commit: 516a802c88e8123d8c5c54ee520f776da5d12076
     :git: https://github.com/ccrama/Alerts-Pickers
   SloppySwiper:
     :commit: 90e1566555734d08a4c72619595f5a2157c104b3
@@ -184,8 +180,7 @@ SPEC CHECKSUMS:
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   UZTextView: d8d45a8459b0de6f2c393458a05c65352f89e00a
   XLActionController: 007868251c0eed70d649d06c1625259b73b3a600
-  YangMingShan: 561cfbb769e8cf679d3f23d8ae7030402ddb6495
 
-PODFILE CHECKSUM: 3e9f1ccfd772ed7d55343eac7fb1efb51b2e955e
+PODFILE CHECKSUM: d7b32d85a393b340161bcb7fb1560e09f66b8689
 
 COCOAPODS: 1.4.0

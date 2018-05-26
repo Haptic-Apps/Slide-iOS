@@ -1002,7 +1002,6 @@
 				"${BUILT_PRODUCTS_DIR}/TTTAttributedLabel/TTTAttributedLabel.framework",
 				"${BUILT_PRODUCTS_DIR}/UZTextView/UZTextView.framework",
 				"${BUILT_PRODUCTS_DIR}/XLActionController/XLActionController.framework",
-				"${BUILT_PRODUCTS_DIR}/YangMingShan/YangMingShan.framework",
 				"${BUILT_PRODUCTS_DIR}/reddift/reddift.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -1027,7 +1026,6 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TTTAttributedLabel.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/UZTextView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/XLActionController.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/YangMingShan.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/reddift.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;

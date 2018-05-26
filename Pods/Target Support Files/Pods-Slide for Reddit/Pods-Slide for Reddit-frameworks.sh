@@ -154,7 +154,6 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/TTTAttributedLabel/TTTAttributedLabel.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/UZTextView/UZTextView.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/XLActionController/XLActionController.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/YangMingShan/YangMingShan.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/reddift/reddift.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
@@ -178,7 +177,6 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/TTTAttributedLabel/TTTAttributedLabel.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/UZTextView/UZTextView.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/XLActionController/XLActionController.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/YangMingShan/YangMingShan.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/reddift/reddift.framework"
 fi
 if [ "${COCOAPODS_PARALLEL_CODE_SIGN}" == "true" ]; then
