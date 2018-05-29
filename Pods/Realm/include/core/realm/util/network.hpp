@@ -470,6 +470,7 @@ public:
     /// set.
     void assign(native_handle_type fd, bool in_blocking_mode) noexcept;
     void close() noexcept;
+    native_handle_type release() noexcept;
 
     bool is_open() const noexcept;
 
@@ -517,6 +518,7 @@ private:
     void add_initiated_oper(LendersIoOperPtr, Want);
 
     void do_close() noexcept;
+    native_handle_type do_release() noexcept;
 
     friend class IoReactor;
 };
@@ -697,6 +699,16 @@ public:
 
     Endpoint local_endpoint() const;
     Endpoint local_endpoint(std::error_code&) const;
+
+    /// Release the ownership of this socket object over the native handle and
+    /// return the native handle to the caller. The caller assumes ownership
+    /// over the returned handle. The socket is left in a closed
+    /// state. Incomplete asynchronous operations will be canceled as if close()
+    /// had been called.
+    ///
+    /// If called on a closed socket, this function is a no-op, and returns the
+    /// same value as would be returned by native_handle()
+    native_handle_type release_native_handle() noexcept;
 
 private:
     enum opt_enum {
@@ -1779,6 +1791,17 @@ inline void Service::Descriptor::close() noexcept
     m_is_registered = false;
 #endif
     do_close();
+}
+
+inline auto Service::Descriptor::release() noexcept -> native_handle_type
+{
+    REALM_ASSERT(is_open());
+#if REALM_HAVE_EPOLL || REALM_HAVE_KQUEUE
+    if (m_is_registered)
+        deregister_for_async();
+    m_is_registered = false;
+#endif
+    return do_release();
 }
 
 inline bool Service::Descriptor::is_open() const noexcept
@@ -2999,6 +3022,15 @@ inline Endpoint SocketBase::local_endpoint() const
     if (ec)
         throw std::system_error(ec);
     return ep;
+}
+
+inline auto SocketBase::release_native_handle() noexcept -> native_handle_type
+{
+    if (is_open()) {
+        cancel();
+        return m_desc.release();
+    }
+    return m_desc.native_handle();
 }
 
 inline const StreamProtocol& SocketBase::get_protocol() const noexcept

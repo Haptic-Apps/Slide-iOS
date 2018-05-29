@@ -133,7 +133,7 @@ using salt_type          = std::int_fast64_t;
 using timestamp_type     = std::uint_fast64_t;
 using session_ident_type = std::uint_fast64_t;
 using request_ident_type = std::uint_fast64_t;
-
+using milliseconds_type  = std::int_fast64_t;
 
 constexpr file_ident_type get_max_file_ident()
 {

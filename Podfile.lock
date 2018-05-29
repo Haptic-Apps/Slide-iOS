@@ -79,11 +79,11 @@ PODS:
   - MotionAnimator (2.8.1):
     - MotionInterchange (~> 1.6)
   - MotionInterchange (1.6.0)
-  - Realm (3.5.0):
-    - Realm/Headers (= 3.5.0)
-  - Realm/Headers (3.5.0)
-  - RealmSwift (3.5.0):
-    - Realm (= 3.5.0)
+  - Realm (3.6.0):
+    - Realm/Headers (= 3.6.0)
+  - Realm/Headers (3.6.0)
+  - RealmSwift (3.6.0):
+    - Realm (= 3.6.0)
   - reddift (2.0.0):
     - reddift/MiniKeychain (= 2.0.0)
   - reddift/MiniKeychain (2.0.0)
@@ -146,7 +146,7 @@ CHECKOUT OPTIONS:
     :commit: 752459578d8162c11f6311987bd3463e6d85712b
     :git: https://github.com/ccrama/ActionSheetPicker-3.0
   reddift:
-    :commit: 9b82520308a90f7311f9c28bd3a88cb3a4ecb0d2
+    :commit: 1667c41f0de1fdc9a5c39bc565afd12f5c70aee6
     :git: https://github.com/ccrama/reddift
   RLBAlertsPickers:
     :commit: 516a802c88e8123d8c5c54ee520f776da5d12076
@@ -169,8 +169,8 @@ SPEC CHECKSUMS:
   MKColorPicker: 8998b2ab977e4f240fdf254db27a18b810da3cfc
   MotionAnimator: ee16aa30567c5bae0fb2750c132915829cfaaf8a
   MotionInterchange: ead0e3ae1f3a5fb539e289debbc7ae036160a10d
-  Realm: 0378021c424e4e2bd6a0e63b27881e929d9b9ad1
-  RealmSwift: 3322562622fda2ad596985ead4d8d8be30cf838c
+  Realm: 08b464b462d4f31bbd4ba5f5a1c8722ef0a700b7
+  RealmSwift: 973e1499c44ab571f894c2c908e2db450be280c3
   reddift: 3066e687c2a934b0f9aca6ee6e2161abc4c93a56
   RLBAlertsPickers: 60b4bd5afcd92065774ed1b21d836bc89cc79d98
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c

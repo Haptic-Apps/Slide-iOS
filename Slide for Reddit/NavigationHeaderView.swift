@@ -19,8 +19,18 @@ class NavigationHeaderView: UIView {
 
     var account = UIButton()
     var settings = UIButton()
+    var mod = UIButton()
 
     var search: UISearchBar = UISearchBar()
+
+    func setIsMod(_ hasMail: Bool){
+        mod.isHidden = false
+        if(hasMail){
+            mod.setImage(UIImage.init(named: "mod")!.withColor(tintColor: GMColor.red500Color()).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
+        } else {
+            mod.setImage(UIImage.init (named: "mod")!.withColor(tintColor: .white).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
+        }
+    }
 
     func doColors(_ sub: String){
         title.backgroundColor = ColorUtil.getColorForSub(sub: sub)
@@ -86,6 +96,14 @@ class NavigationHeaderView: UIView {
         settings.addTarget(self, action: #selector(self.settings(_:)), for: UIControlEvents.touchUpInside)
         settings.frame = CGRect.init(x: 0, y: 0, width: 40, height: 40)
 
+        self.mod = UIButton.init(type: .custom)
+        mod.imageView?.contentMode = UIViewContentMode.scaleAspectFit
+        mod.setImage(UIImage.init(named: "mod")!.withColor(tintColor: .white).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
+        mod.addTarget(self, action: #selector(self.mod(_:)), for: UIControlEvents.touchUpInside)
+        mod.frame = CGRect.init(x: 0, y: 0, width: 40, height: 40)
+
+        mod.isHidden = true
+
         self.inboxBody.textLabel?.text = "Inbox"
         self.inboxBody.accessoryView = inbox
         self.inboxBody.backgroundColor = ColorUtil.foregroundColor
@@ -97,6 +115,7 @@ class NavigationHeaderView: UIView {
         profile.translatesAutoresizingMaskIntoConstraints = false
         account.translatesAutoresizingMaskIntoConstraints = false
         settings.translatesAutoresizingMaskIntoConstraints = false
+        mod.translatesAutoresizingMaskIntoConstraints = false
         inboxBody.translatesAutoresizingMaskIntoConstraints = false
 
         profile.tintColor = ColorUtil.fontColor
@@ -132,6 +151,7 @@ class NavigationHeaderView: UIView {
         addSubview(inbox)
         addSubview(profile)
         self.title.addSubview(settings)
+        self.title.addSubview(mod)
         self.title.addSubview(account)
 
         self.clipsToBounds = true
@@ -237,6 +257,13 @@ class NavigationHeaderView: UIView {
         }
     }
 
+    func mod(_ sender: AnyObject) {
+        self.parentController!.dismiss(animated: true){
+            let settings = ModerationViewController()
+            VCPresenter.showVC(viewController: settings, popupIfPossible: true, parentNavigationController: (self.parentController as! NavigationSidebarViewController).parentController?.navigationController, parentViewController: (self.parentController as! NavigationSidebarViewController).parentController)
+        }
+    }
+
     func switchAccounts(_ sender: AnyObject) {
         let optionMenu = UIAlertController(title: nil, message: "Choose Option", preferredStyle: .actionSheet)
 
@@ -318,7 +345,7 @@ class NavigationHeaderView: UIView {
         super.updateConstraints()
 
         let metrics = ["topMargin": 0]
-        let views = ["title": title, "account": account, "inbox": inboxBody, "inboxc": inbox, "settings": settings, "profile": profile, "search": search] as [String: Any]
+        let views = ["title": title, "account": account, "mod": mod, "inbox": inboxBody, "inboxc": inbox, "settings": settings, "profile": profile, "search": search] as [String: Any]
 
         var constraint: [NSLayoutConstraint] = []
 
@@ -353,7 +380,7 @@ class NavigationHeaderView: UIView {
 
         var titleConstraints: [NSLayoutConstraint] = []
 
-        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[account]",
+        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[account]-4-[mod]",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
@@ -363,6 +390,10 @@ class NavigationHeaderView: UIView {
                 views: views))
 
         titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-30-[account]",
+                options: NSLayoutFormatOptions(rawValue: 0),
+                metrics: metrics,
+                views: views))
+        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-30-[mod]",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))

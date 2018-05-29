@@ -28,6 +28,7 @@ class AccountController{
     
     static var isLoggedIn = false
     static var changed = false
+    static var modSubs : [String] = []
     
     static func delete(name: String){
         do{
@@ -76,6 +77,46 @@ class AccountController{
     
     static func addAccount(){
         try! OAuth2Authorizer.sharedInstance.challengeWithAllScopes()
+    }
+
+    static func doModOf(){
+        getSubscriptionsFully(session: (UIApplication.shared.delegate as! AppDelegate).session!) { (subs: [Subreddit]) in
+            for sub in subs {
+                modSubs.append(sub.displayName)
+            }
+         }
+    }
+
+    public static func getSubscriptionsUntilCompletion(session: Session, p: Paginator, tR: [Subreddit], completion: @escaping (_ result: [Subreddit]) -> Void){
+        var toReturn = tR
+        var paginator = p
+        do{
+                try session.getUserRelatedSubreddit(.subscriber, paginator:paginator, completion: { (result) -> Void in
+                    switch result {
+                    case .failure:
+                        print(result.error!)
+                        completion(toReturn)
+                        break
+                    case .success(let listing):
+                        toReturn += listing.children.flatMap({$0 as? Subreddit})
+                        paginator = listing.paginator
+                        if(paginator.hasMore()){
+                            getSubscriptionsUntilCompletion(session: session, p: paginator, tR: toReturn, completion: completion)
+                        } else {
+                            getSubscriptionsUntilCompletion(session: session, p: paginator, tR: toReturn, completion: completion)
+                        }
+                    }
+                })
+        } catch {
+            completion(toReturn)
+        }
+
+    }
+
+    public static func getSubscriptionsFully(session: Session, completion: @escaping (_ result: [Subreddit]) -> Void) {
+        let toReturn: [Subreddit] = []
+        let paginator = Paginator()
+        getSubscriptionsUntilCompletion(session: session, p: paginator, tR: toReturn, completion: completion)
     }
     
 }

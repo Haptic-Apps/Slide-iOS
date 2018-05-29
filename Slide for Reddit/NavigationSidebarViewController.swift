@@ -20,6 +20,10 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
     func setViewController(controller: MainViewController){
         parentController = controller
     }
+
+    func setMod(_ hasMail: Bool){
+        header.setIsMod(hasMail)
+    }
     
     override func loadView(){
         self.view = UITableView(frame: CGRect.zero, style: .plain)

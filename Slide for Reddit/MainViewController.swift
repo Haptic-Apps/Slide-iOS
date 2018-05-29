@@ -66,6 +66,10 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                 case .success(let profile):
                     let unread = profile.inboxCount
                     let diff = unread - lastMail
+                    if(profile.isMod && AccountController.modSubs.isEmpty){
+                        self.menuNav?.setMod(profile.hasModMail)
+                        AccountController.doModOf()
+                    }
                     DispatchQueue.main.async {
                         self.menuNav?.setmail(mailcount: unread)
 

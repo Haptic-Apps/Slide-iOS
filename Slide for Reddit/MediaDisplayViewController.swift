@@ -220,8 +220,8 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
         progressView = MDCProgressView()
         progressView?.progress = 0
         let progressViewHeight = CGFloat(5)
-        progressView?.frame = CGRect(x: 0, y: toolbar.bounds.height, width: toolbar.bounds.width, height: progressViewHeight)
-        toolbar.addSubview(progressView!)
+        progressView?.frame = CGRect(x: 0, y: 5 + (UIApplication.shared.statusBarView?.frame.size.height ?? 20), width: toolbar.bounds.width, height: progressViewHeight)
+        self.view.addSubview(progressView!)
 
         self.view.addSubview(toolbar)
 

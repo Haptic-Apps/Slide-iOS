@@ -138,6 +138,33 @@ extension Session {
         return executeTask(request, handleResponse: closure, completion: completion)
     }
     
+    
+    @discardableResult
+    public func getModQueue(_ paginator: Paginator, subreddit: SubredditURLPath?, limit: Int = 25, completion: @escaping (Result<Listing>) -> Void) throws -> URLSessionDataTask {
+        let parameter = paginator.dictionaryByAdding(parameters: [
+            "limit"    : "\(limit)",
+            "show"     : "all",
+            "always_show_media" : "1",
+            "feature" : "link_preview",
+            "from_detail" : "true",
+            "expand_srs" : "true",
+            "sr_detail": "true",
+            ])
+        var path = "/r/mod/about/modqueue.json"
+        if let subreddit = subreddit { path = "\(subreddit.path)/about/modqueue.json" }
+        guard let request = URLRequest.requestForOAuth(with: baseURL, path:path, parameter:parameter, method:"GET", token:token)
+            else { throw ReddiftError.canNotCreateURLRequest as NSError }
+        print(request.url!.absoluteString)
+        let closure = {(data: Data?, response: URLResponse?, error: NSError?) -> Result<Listing> in
+            return Result(from: Response(data: data, urlResponse: response), optional:error)
+                .flatMap(response2Data)
+                .flatMap(data2Json)
+                .flatMap(json2RedditAny)
+                .flatMap(redditAny2Object)
+        }
+        return executeTask(request, handleResponse: closure, completion: completion)
+    }
+    
     /**
     Get hot Links from all subreddits or user specified subreddit.
     
