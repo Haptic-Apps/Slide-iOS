@@ -11,6 +11,7 @@ import reddift
 import MaterialComponents.MaterialSnackbar
 import MaterialComponents.MaterialBottomSheet
 import SideMenu
+import RealmSwift
 
 class MainViewController: ColorMuxPagingViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UISplitViewControllerDelegate {
     var isReload = false
@@ -27,8 +28,9 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             checkForMail()
         }
         if (SubredditReorderViewController.changed || ColorUtil.shouldBeNight()) {
-            ColorUtil.doInit()
-            restartVC()
+            if (ColorUtil.doInit()){
+                restartVC()
+            }
         }
 
         self.navigationController?.navigationBar.shadowImage = UIImage()
@@ -198,9 +200,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             subs!.removeFromSuperview()
             subs = nil
         }
-        if (SettingValues.viewType) {
-            setupTabBar()
-        }
 
         CachedTitle.titles.removeAll()
         view.backgroundColor = ColorUtil.backgroundColor
@@ -208,8 +207,41 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         SubredditReorderViewController.changed = false
 
         MainViewController.vCs = []
-        for subname in Subscriptions.subreddits {
-            MainViewController.vCs.append(SingleSubredditViewController(subName: subname, parent: self))
+        var finalSubs : [String] = []
+        LinkCellView.cachedInternet = nil
+        if(Reachability().connectionStatus().description == ReachabilityStatus.Offline.description){
+            MainViewController.isOffline = true
+            let baseSubs = Subscriptions.subreddits
+            do {
+            let realm = try Realm()
+            for subname in baseSubs {
+                var hasLinks = false
+                if let listing = realm.objects(RListing.self).filter({ (item) -> Bool in
+                    return item.subreddit == subname
+                }).first {
+                    hasLinks = !listing.links.isEmpty
+                }
+                if(hasLinks){
+                    finalSubs.append(subname)
+                }
+            }
+            } catch {
+                
+            }
+            for subname in finalSubs {
+                MainViewController.vCs.append(SingleSubredditViewController(subName: subname, parent: self))
+            }
+
+        } else {
+            finalSubs = Subscriptions.subreddits
+            MainViewController.isOffline = false
+            for subname in finalSubs {
+                MainViewController.vCs.append(SingleSubredditViewController(subName: subname, parent: self))
+            }
+        }
+
+        if (SettingValues.viewType) {
+            setupTabBar(finalSubs)
         }
 
         let firstViewController = MainViewController.vCs[0]
@@ -234,14 +266,14 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     var tabBar = MDCTabBar()
     var subs: UIView?
 
-    func setupTabBar() {
+    func setupTabBar(_ subs : [String]) {
         tabBar = MDCTabBar.init(frame: CGRect.init(x: 0, y: UIApplication.shared.statusBarView?.frame.size.height ?? 20, width: self.view.frame.size.width, height: 84))
         tabBar.backgroundColor = ColorUtil.getColorForSub(sub: MainViewController.current)
         tabBar.itemAppearance = .titles
 
         tabBar.selectedItemTintColor = UIColor.white
         tabBar.unselectedItemTintColor = UIColor.white.withAlphaComponent(0.45)
-        tabBar.items = Subscriptions.subreddits.enumerated().map { index, source in
+        tabBar.items = subs.enumerated().map { index, source in
             return UITabBarItem(title: source, image: nil, tag: index)
         }
         tabBar.autoresizingMask = [.flexibleWidth, .flexibleBottomMargin]
@@ -452,15 +484,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         if (UIScreen.main.traitCollection.userInterfaceIdiom == .pad && UIApplication.shared.statusBarOrientation != .portrait && (self.navigationController)?.splitViewController != nil && !SettingValues.multiColumn) {
             self.splitViewController?.showDetailViewController(PlaceholderViewController(), sender: nil)
         }
-
-        if (MainViewController.vCs.count == 0) {
-            for subname in Subscriptions.subreddits {
-                MainViewController.vCs.append(SingleSubredditViewController(subName: subname, parent: self))
-            }
-        }
-
+        
         self.restartVC()
-
 
         doButtons()
 
@@ -511,6 +536,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         //todo self.buttonBarView.backgroundColor = self.tintColor
     }
 
+    public static var isOffline = false
 
     func doButtons(){
         let sort = UIButton.init(type: .custom)
@@ -518,12 +544,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControlEvents.touchUpInside)
         sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let sortB = UIBarButtonItem.init(customView: sort)
-
-        let shadowbox = UIButton.init(type: .custom)
-        shadowbox.setImage(UIImage.init(named: "shadowbox")?.navIcon(), for: UIControlState.normal)
-        shadowbox.addTarget(self, action: #selector(self.shadowbox), for: UIControlEvents.touchUpInside)
-        shadowbox.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-        let sB = UIBarButtonItem.init(customView: shadowbox)
 
         let more = UIButton.init(type: .custom)
         more.setImage(UIImage.init(named: "moreh")?.toolbarIcon(), for: UIControlState.normal)
@@ -537,11 +557,27 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         menu.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let menuB = UIBarButtonItem.init(customView: menu)
 
+        let settings = UIButton.init(type: .custom)
+        settings.setImage(UIImage.init(named: "settings")?.toolbarIcon(), for: UIControlState.normal)
+        //todo this settings.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControlEvents.touchUpInside)
+        settings.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+        let settingsB = UIBarButtonItem.init(customView: settings)
+
+        let offline = UIButton.init(type: .custom)
+        offline.setImage(UIImage.init(named: "offline")?.toolbarIcon(), for: UIControlState.normal)
+        offline.addTarget(self, action: #selector(self.restartVC), for: UIControlEvents.touchUpInside)
+        offline.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+        let offlineB = UIBarButtonItem.init(customView: offline)
+
         let flexButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil)
 
         navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        toolbarItems = [menuB, flexButton, moreB]
+        if(!MainViewController.isOffline){
+            toolbarItems = [menuB, flexButton, moreB]
+        } else {
+            toolbarItems = [settingsB, flexButton, offlineB]
+        }
         navigationItem.rightBarButtonItem = sortB
     }
 

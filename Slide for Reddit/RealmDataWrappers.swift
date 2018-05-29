@@ -222,6 +222,7 @@ class RealmDataWrapper {
         rSubmission.commentCount = submission.numComments
         rSubmission.saved = submission.saved
         rSubmission.stickied = submission.stickied
+        rSubmission.spoiler = submission.baseJson["spoiler"] as? Bool ?? false
         rSubmission.visited = submission.visited
         rSubmission.bannerUrl = burl
         rSubmission.thumbnailUrl = turl
@@ -389,6 +390,7 @@ class RSubmission: Object {
     dynamic var distinguished = ""
     dynamic var videoPreview = ""
     dynamic var isCrosspost = false
+    dynamic var spoiler = false
     dynamic var canMod = false
     dynamic var crosspostAuthor = ""
     dynamic var crosspostSubreddit = ""

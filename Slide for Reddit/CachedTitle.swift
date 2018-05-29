@@ -55,6 +55,8 @@ class CachedTitle {
 
         let nsfw = NSMutableAttributedString.init(string: "\u{00A0}NSFW\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.red500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
 
+        let spoiler = NSMutableAttributedString.init(string: "\u{00A0}SPOILER\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.grey50Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.black, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
+
         let spacer = NSMutableAttributedString.init(string: "  ")
         if (!submission.flair.isEmpty) {
             attributedTitle.append(spacer)
@@ -63,6 +65,11 @@ class CachedTitle {
         if (submission.nsfw) {
             attributedTitle.append(spacer)
             attributedTitle.append(nsfw)
+        }
+
+        if (submission.spoiler) {
+            attributedTitle.append(spacer)
+            attributedTitle.append(spoiler)
         }
 
         if (submission.gilded > 0) {

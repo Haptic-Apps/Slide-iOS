@@ -2084,6 +2084,361 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             }
         }
     }
+
+    func mod(_ cell: LinkCellView) {
+
+        //go here
+        //todo remove with reason, new icons
+        let alertController: BottomSheetActionController = BottomSheetActionController()
+        alertController.headerData = "Submission by /u/\(cell.link!.author)"
+
+        alertController.addAction(Action(ActionData(title: "\(cell.link!.reports.count) reports", image: UIImage(named: "reports")!.menuIcon()), style: .default, handler: { action in
+            var reports = ""
+            for report in cell.link!.reports {
+                reports = reports + report + "\n"
+            }
+            let alert = UIAlertController(title: "Reports",
+                    message: reports,
+                    preferredStyle: UIAlertControllerStyle.alert)
+
+            let cancelAction = UIAlertAction(title: "OK",
+                    style: .cancel, handler: nil)
+
+            alert.addAction(cancelAction)
+            self.present(alert, animated: true, completion: nil)
+
+        }))
+        alertController.addAction(Action(ActionData(title: "Approve", image: UIImage(named: "approve")!.menuIcon()), style: .default, handler: { action in
+            self.modApprove(cell)
+        }))
+
+        alertController.addAction(Action(ActionData(title: "Ban user", image: UIImage(named: "ban")!.menuIcon()), style: .default, handler: { action in
+            //todo show dialog for this
+        }))
+
+        alertController.addAction(Action(ActionData(title: "Set flair", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { action in
+            cell.flairSelf()
+        }))
+
+        if(!cell.link!.nsfw){
+            alertController.addAction(Action(ActionData(title: "Mark as NSFW", image: UIImage(named: "hide")!.menuIcon()), style: .default, handler: { action in
+                self.modNSFW(cell, true)
+            }))
+        } else {
+            alertController.addAction(Action(ActionData(title: "Unmark as NSFW", image: UIImage(named: "hide")!.menuIcon()), style: .default, handler: { action in
+                self.modNSFW(cell, false)
+            }))
+        }
+
+        if(!cell.link!.spoiler){
+            alertController.addAction(Action(ActionData(title: "Mark as spoiler", image: UIImage(named: "reports")!.menuIcon()), style: .default, handler: { action in
+                self.modSpoiler(cell, true)
+            }))
+        } else {
+            alertController.addAction(Action(ActionData(title: "Unmark as spoiler", image: UIImage(named: "reports")!.menuIcon()), style: .default, handler: { action in
+                self.modSpoiler(cell, false)
+            }))
+        }
+
+        if(cell.link!.locked){
+            alertController.addAction(Action(ActionData(title: "Unlock thread", image: UIImage(named: "lock")!.menuIcon()), style: .default, handler: { action in
+                self.modLock(cell, false)
+            }))
+        } else {
+            alertController.addAction(Action(ActionData(title: "Lock thread", image: UIImage(named: "lock")!.menuIcon()), style: .default, handler: { action in
+                self.modLock(cell, true)
+            }))
+        }
+
+        if (cell.link!.author == AccountController.currentName) {
+            alertController.addAction(Action(ActionData(title: "Distinguish", image: UIImage(named: "save")!.menuIcon()), style: .default, handler: { action in
+                self.modDistinguish(cell)
+            }))
+        }
+
+        if (cell.link!.author == AccountController.currentName) {
+            if (cell.link!.stickied) {
+                alertController.addAction(Action(ActionData(title: "Un-sticky", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { action in
+                    self.modSticky(cell, sticky: false)
+                }))
+            } else {
+                alertController.addAction(Action(ActionData(title: "Sticky and distinguish", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { action in
+                    self.modSticky(cell, sticky: true)
+                }))
+            }
+        }
+
+        alertController.addAction(Action(ActionData(title: "Remove", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { action in
+            self.modRemove(cell)
+        }))
+
+        alertController.addAction(Action(ActionData(title: "Remove with reason", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { action in
+            self.modRemove(cell)
+            //todo this
+        }))
+
+        alertController.addAction(Action(ActionData(title: "Mark as spam", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { action in
+            self.modRemove(cell, spam: true)
+        }))
+
+        alertController.addAction(Action(ActionData(title: "User profile", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { action in
+            let prof = ProfileViewController.init(name: cell.link!.author)
+            VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self);
+        }))
+
+        alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: nil))
+
+        VCPresenter.presentAlert(alertController, parentVC: self)
+    }
+
+    func modLock(_ cell: LinkCellView, _ set: Bool) {
+        let id = cell.link!.id
+        do {
+            try self.session?.setLocked(id, locked: set, completion: { (result) -> Void in
+                switch result {
+                case .failure(let error):
+                    print(error.description)
+                    DispatchQueue.main.async {
+                        let message = MDCSnackbarMessage()
+                        message.text = "Locking submission failed!"
+                        MDCSnackbarManager.show(message)
+                    }
+                    break
+                case .success(_):
+                    CachedTitle.approved.append(id)
+                    if (CachedTitle.removed.contains(id)) {
+                        CachedTitle.removed.remove(at: CachedTitle.removed.index(of: id)!)
+                    }
+                    DispatchQueue.main.async {
+                        let message = MDCSnackbarMessage()
+                        message.text = "Submission locked!"
+                        MDCSnackbarManager.show(message)
+                        cell.link!.locked = set
+                        cell.refreshLink(cell.link!)
+                    }
+                    break
+                }
+            })
+        } catch {
+            print(error)
+        }
+    }
+
+    func modSpoiler(_ cell: LinkCellView, _ set: Bool) {
+        let id = cell.link!.id
+        do {
+            try self.session?.setSpoiler(id, spoiler: set, completion: { (result) -> Void in
+                switch result {
+                case .failure(let error):
+                    print(error.description)
+                    DispatchQueue.main.async {
+                        let message = MDCSnackbarMessage()
+                        message.text = "Request failed!"
+                        MDCSnackbarManager.show(message)
+                    }
+                    break
+                case .success(_):
+                    CachedTitle.approved.append(id)
+                    if (CachedTitle.removed.contains(id)) {
+                        CachedTitle.removed.remove(at: CachedTitle.removed.index(of: id)!)
+                    }
+                    DispatchQueue.main.async {
+                        let message = MDCSnackbarMessage()
+                        message.text = "Spoiler tag set!"
+                        cell.link!.spoiler = set
+                        cell.refreshLink(cell.link!)
+                        MDCSnackbarManager.show(message)
+                    }
+                    break
+                }
+            })
+        } catch {
+            print(error)
+        }
+    }
+
+    func modNSFW(_ cell: LinkCellView, _ set: Bool) {
+        let id = cell.link!.id
+        do {
+            try self.session?.setNSFW(id, nsfw: set, completion: { (result) -> Void in
+                switch result {
+                case .failure(let error):
+                    print(error.description)
+                    DispatchQueue.main.async {
+                        let message = MDCSnackbarMessage()
+                        message.text = "Request failed!"
+                        MDCSnackbarManager.show(message)
+                    }
+                    break
+                case .success(_):
+                    CachedTitle.approved.append(id)
+                    if (CachedTitle.removed.contains(id)) {
+                        CachedTitle.removed.remove(at: CachedTitle.removed.index(of: id)!)
+                    }
+                    DispatchQueue.main.async {
+                        let message = MDCSnackbarMessage()
+                        message.text = "NSFW tag set!"
+                        cell.link!.nsfw = set
+                        cell.refreshLink(cell.link!)
+                        MDCSnackbarManager.show(message)
+                    }
+                    break
+                }
+            })
+        } catch {
+            print(error)
+        }
+    }
+
+    func modApprove(_ cell: LinkCellView) {
+        let id = cell.link!.id
+        do {
+            try self.session?.approve(id, completion: { (result) -> Void in
+                switch result {
+                case .failure(let error):
+                    print(error.description)
+                    DispatchQueue.main.async {
+                        let message = MDCSnackbarMessage()
+                        message.text = "Approving submission failed!"
+                        MDCSnackbarManager.show(message)
+                    }
+                    break
+                case .success(_):
+                    CachedTitle.approved.append(id)
+                    if (CachedTitle.removed.contains(id)) {
+                        CachedTitle.removed.remove(at: CachedTitle.removed.index(of: id)!)
+                    }
+                    DispatchQueue.main.async {
+                        let message = MDCSnackbarMessage()
+                        message.text = "Submission approved!"
+                        cell.refreshLink(cell.link!)
+                        MDCSnackbarManager.show(message)
+                    }
+                    break
+                }
+            })
+        } catch {
+            print(error)
+        }
+    }
+
+    func modDistinguish(_ cell: LinkCellView) {
+        let id = cell.link!.id
+        do {
+            try self.session?.distinguish(id, how: "yes", completion: { (result) -> Void in
+                switch result {
+                case .failure(let error):
+                    print(error.description)
+                    DispatchQueue.main.async {
+                        let message = MDCSnackbarMessage()
+                        message.text = "Distinguishing submission failed!"
+                        MDCSnackbarManager.show(message)
+                    }
+                    break
+                case .success(_):
+                    DispatchQueue.main.async {
+                        let message = MDCSnackbarMessage()
+                        message.text = "Submission distinguished!"
+                        cell.link!.distinguished = "mod"
+                        cell.refreshLink(cell.link!)
+                        MDCSnackbarManager.show(message)
+                    }
+                    break
+                }
+            })
+        } catch {
+            print(error)
+        }
+    }
+
+    func modSticky(_ cell: LinkCellView, sticky: Bool) {
+        let id = cell.link!.id
+        do {
+            try self.session?.sticky(id, sticky: sticky, completion: { (result) -> Void in
+                switch result {
+                case .failure(let error):
+                    print(error.description)
+                    DispatchQueue.main.async {
+                        let message = MDCSnackbarMessage()
+                        message.text = "Couldn't \(sticky ? "" : "un-")sticky submission!"
+                        MDCSnackbarManager.show(message)
+                    }
+                    break
+                case .success(_):
+                    DispatchQueue.main.async {
+                        let message = MDCSnackbarMessage()
+                        message.text = "Submission \(sticky ? "" : "un-")stickied!"
+                        cell.link!.stickied = sticky
+                        cell.refreshLink(cell.link!)
+                        MDCSnackbarManager.show(message)
+                    }
+                    break
+                }
+            })
+        } catch {
+            print(error)
+        }
+    }
+
+    func modRemove(_ cell: LinkCellView, spam: Bool = false) {
+        let id = cell.link!.id
+        do {
+            try self.session?.remove(id, spam: spam, completion: { (result) -> Void in
+                switch result {
+                case .failure(let error):
+                    print(error.description)
+                    DispatchQueue.main.async {
+                        let message = MDCSnackbarMessage()
+                        message.text = "Removing submission failed!"
+                        MDCSnackbarManager.show(message)
+                    }
+                    break
+                case .success(_):
+                    CachedTitle.removed.append(id)
+                    if (CachedTitle.approved.contains(id)) {
+                        CachedTitle.approved.remove(at: CachedTitle.approved.index(of: id)!)
+                    }
+                    DispatchQueue.main.async {
+                        let message = MDCSnackbarMessage()
+                        message.text = "Submission removed!"
+                        MDCSnackbarManager.show(message)
+                    }
+                    break
+                }
+            })
+
+        } catch {
+            print(error)
+        }
+    }
+
+    func modBan(_ cell: LinkCellView, why: String, duration: Int?) {
+        let id = cell.link!.id
+        do {
+            try self.session?.ban(cell.link!.author, banReason: why, duration: duration == nil ? 999 /*forever*/ : duration!, completion: { (result) -> Void in
+                switch result {
+                case .failure(let error):
+                    print(error.description)
+                    DispatchQueue.main.async {
+                        let message = MDCSnackbarMessage()
+                        message.text = "Banning user failed!"
+                        MDCSnackbarManager.show(message)
+                    }
+                    break
+                case .success(_):
+                    DispatchQueue.main.async {
+                        let message = MDCSnackbarMessage()
+                        message.text = "/u/\(cell.link!.author) banned!"
+                        MDCSnackbarManager.show(message)
+                    }
+                    break
+                }
+
+            })
+        } catch {
+            print(error)
+        }
+    }
 }
 
 extension Thing {

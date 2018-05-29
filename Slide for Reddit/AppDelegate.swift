@@ -43,9 +43,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         commentsFile = documentDirectory.appending("/comments.plist")
 
         let config = Realm.Configuration(
-                schemaVersion: 10,
+                schemaVersion: 11,
                 migrationBlock: { migration, oldSchemaVersion in
-                    if (oldSchemaVersion < 10) {
+                    if (oldSchemaVersion < 11) {
                     }
                 })
 

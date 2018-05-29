@@ -21,7 +21,19 @@ class WrappingFlowLayout: UICollectionViewLayout{
         if(portraitCount == 0){
             portraitCount = 1
         }
-        return SettingValues.multiColumn ? (UIDevice.current.orientation.isPortrait ? portraitCount : SettingValues.multiColumnCount) : 1
+        if(SettingValues.multiColumn){
+            if(UIApplication.shared.statusBarOrientation.isPortrait){
+                if(UIScreen.main.traitCollection.userInterfaceIdiom != .pad){
+                    return 1
+                } else {
+                    return portraitCount
+                }
+            } else {
+                return SettingValues.multiColumnCount
+            }
+        } else {
+            return 1
+        }
     }
     var cellPadding: CGFloat {
         return (numberOfColumns > 1 && SettingValues.postViewMode != .LIST) ? CGFloat(6) : CGFloat(0)

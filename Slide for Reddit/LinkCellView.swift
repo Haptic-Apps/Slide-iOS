@@ -33,6 +33,7 @@ protocol LinkCellViewDelegate: class {
     func hide(_ cell: LinkCellView)
     func openComments(id: String)
     func deleteSelf(_ cell: LinkCellView)
+    func mod(_ cell: LinkCellView)
 }
 
 enum CurrentType {
@@ -72,6 +73,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
     }
 
+    func mod(sender: UITapGestureRecognizer? = nil) {
+        if let delegate = self.del {
+            delegate.mod(self)
+        }
+    }
+
+
     func save(sender: UITapGestureRecognizer? = nil) {
         if let delegate = self.del {
             delegate.save(self)
@@ -94,7 +102,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var edit = UIImageView()
     var reply = UIImageView()
     var downvote = UIImageView()
-    //var more = UIImageView()
+    var mod = UIImageView()
     var commenticon = UIImageView()
     var submissionicon = UIImageView()
     var del: LinkCellViewDelegate? = nil
@@ -146,10 +154,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
 
-      /*  let pointForTargetViewmore: CGPoint = more.convert(point, from: self)
-        if more.bounds.contains(pointForTargetViewmore) {
-            return more
-        }*/
+       let pointForTargetViewmod: CGPoint = mod.convert(point, from: self)
+        if mod.bounds.contains(pointForTargetViewmod) {
+            return mod
+        }
         let pointForTargetViewdownvote: CGPoint = downvote.convert(point, from: self)
         if downvote.bounds.contains(pointForTargetViewdownvote) {
             return downvote
@@ -311,8 +319,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
         self.downvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20))
 
-        //self.more = UIImageView(frame: CGRect(x: 0, y: 0, width: 30, height: 20))
-        //more.image = UIImage.init(named: "ic_more_vert_white")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 17, height: 17))
+        self.mod = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20))
+        mod.image = UIImage.init(named: "mod")?.menuIcon().imageResize(sizeChange: CGSize.init(width: 20, height: 20))
 
         self.commenticon = UIImageView(frame: CGRect(x: 0, y: 0, width: 10, height: 10))
         commenticon.image = UIImage.init(named: "comments")?.menuIcon()
@@ -330,6 +338,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         reply.contentMode = .center
         edit.contentMode = .center
         save.contentMode = .center
+        mod.contentMode = .center
 
         self.textView = TTTAttributedLabel(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
         self.textView.delegate = self
@@ -381,7 +390,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         upvote.translatesAutoresizingMaskIntoConstraints = false
         hide.translatesAutoresizingMaskIntoConstraints = false
         downvote.translatesAutoresizingMaskIntoConstraints = false
-        //more.translatesAutoresizingMaskIntoConstraints = false
+        mod.translatesAutoresizingMaskIntoConstraints = false
         edit.translatesAutoresizingMaskIntoConstraints = false
         save.translatesAutoresizingMaskIntoConstraints = false
         reply.translatesAutoresizingMaskIntoConstraints = false
@@ -397,7 +406,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             addTouch(view: upvote, action: #selector(LinkCellView.upvote(sender:)))
             addTouch(view: reply, action: #selector(LinkCellView.reply(sender:)))
             addTouch(view: downvote, action: #selector(LinkCellView.downvote(sender:)))
-           // addTouch(view: more, action: #selector(LinkCellView.more(sender:)))
+            addTouch(view: mod, action: #selector(LinkCellView.mod(sender:)))
             addTouch(view: edit, action: #selector(LinkCellView.edit(sender:)))
             addTouch(view: hide, action: #selector(LinkCellView.hide(sender:)))
             addTouch = true
@@ -420,7 +429,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         buttons.addSubview(hide)
         buttons.addSubview(upvote)
         buttons.addSubview(downvote)
-        //buttons.addSubview(more)
+        buttons.addSubview(mod)
         self.contentView.addSubview(box)
         self.contentView.addSubview(buttons)
 
@@ -469,7 +478,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
         let metrics = ["horizontalMargin": 75, "top": topmargin, "bottom": bottommargin, "separationBetweenLabels": 0, "labelMinHeight": 75, "bannerHeight": submissionHeight, "left": leftmargin, "padding": innerpadding, "ishidden": !full && SettingValues.hideButtonActionbar ? 0 : 24, "ishiddeni": !full && SettingValues.hideButtonActionbar ? 0 : 18] as [String: Int]
         let views = ["label": title, "body": textView, "image": thumbImage, "score": score, "comments": comments, "banner": bannerImage, "scorei": submissionicon, "commenti": commenticon, "box": box] as [String: Any]
-        let views2 = ["buttons": buttons, "upvote": upvote, "downvote": downvote, "hide": hide, "reply": reply, "edit": edit, "save": save] as [String: Any]
+        let views2 = ["buttons": buttons, "upvote": upvote, "downvote": downvote, "hide": hide, "mod": mod, "reply": reply, "edit": edit, "save": save] as [String: Any]
 
         box.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-16-[scorei(12)]-2-[score(>=20)]-8-[commenti(12)]-2-[comments(>=20)]",
                 options: NSLayoutFormatOptions(rawValue: 0),
@@ -503,14 +512,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         self.contentView.layer.masksToBounds = true
 
         if (full) {
-            buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:\(AccountController.isLoggedIn && AccountController.currentName == link?.author ? "[edit(24)]-16-" : "")[reply(24)]-16-[save(24)]-16-[upvote(24)]-16-[downvote(24)]-8-|",
+            buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:\(AccountController.isLoggedIn && AccountController.currentName == link?.author ? "[edit(24)]-16-" : "")[mod(24)]-16-[reply(24)]-16-[save(24)]-16-[upvote(24)]-16-[downvote(24)]-8-|",
                     options: NSLayoutFormatOptions(rawValue: 0),
                     metrics: metrics,
                     views: views2))
         } else {
             let hideString = SettingValues.hideButton ? "[hide(24)]-12-" : ""
             let saveString = SettingValues.saveButton ? "[save(24)]-12-" : ""
-            buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:\(hideString)\(saveString)[upvote(24)]-16-[downvote(24)]-8-|",
+            buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[mod(24)]-16-\(hideString)\(saveString)[upvote(24)]-16-[downvote(24)]-8-|",
                     options: NSLayoutFormatOptions(rawValue: 0),
                     metrics: metrics,
                     views: views2))
@@ -530,6 +539,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 metrics: metrics,
                 views: views2))
         buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[hide(ishidden)]-|",
+                options: NSLayoutFormatOptions(rawValue: 0),
+                metrics: metrics,
+                views: views2))
+        buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[mod(ishidden)]-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views2))
@@ -617,6 +630,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             }
             hide.isHidden = false
         }
+        mod.isHidden = true
         if (!SettingValues.saveButton) {
             save.isHidden = true
         } else {
@@ -625,7 +639,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             }
             save.isHidden = false
         }
-        if (submission.archived || !AccountController.isLoggedIn) {
+        if (submission.archived || !AccountController.isLoggedIn || !LinkCellView.checkInternet()) {
             upvote.isHidden = true
             downvote.isHidden = true
             save.isHidden = true
@@ -637,6 +651,16 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             if (!addTouch) {
                 addTouch(view: upvote, action: #selector(LinkCellView.upvote(sender:)))
                 addTouch(view: downvote, action: #selector(LinkCellView.downvote(sender:)))
+            }
+
+            if(submission.canMod){
+                mod.isHidden = false
+                addTouch(view: mod, action: #selector(LinkCellView.mod(sender:)))
+                if(!submission.reports.isEmpty){
+                    mod.image = UIImage.init(named: "mod")?.withColor(tintColor: GMColor.red500Color()).imageResize(sizeChange: CGSize.init(width: 20, height: 20))
+                } else {
+                    mod.image = UIImage.init(named: "mod")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))
+                }
             }
 
             if (full) {
@@ -651,7 +675,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             }
             edit.isHidden = true
         }
-        //addTouch(view: more, action: #selector(LinkCellView.more(sender:)))
 
         full = parent is CommentViewController
 
@@ -941,6 +964,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             longPress?.delegate = self
             self.contentView.addGestureRecognizer(longPress!)
         }
+        
+        //todo maybe? self.contentView.backgroundColor = ColorUtil.getColorForSub(sub: submission.subreddit)
 
     }
 
@@ -968,7 +993,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
 
         let metrics = ["horizontalMargin": 75, "top": 0, "bottom": 0, "separationBetweenLabels": 0, "full": Int(contentView.frame.size.width), "bannerPadding": (full || SettingValues.postViewMode != .CARD) ? 5 : 0, "size": full ? 16 : 8, "labelMinHeight": 75, "thumb": (SettingValues.largerThumbnail ? 75 : 50), "bannerHeight": submissionHeight] as [String: Int]
-        let views = ["label": title, "body": textView, "image": thumbImage, "info": b, "tag": tagbody, "upvote": upvote, "downvote": downvote, "score": score, "comments": comments, "banner": bannerImage, "buttons": buttons, "box": box] as [String: Any]
+        let views = ["label": title, "body": textView, "image": thumbImage, "info": b, "tag": tagbody, "mod" : mod, "upvote": upvote, "downvote": downvote, "score": score, "comments": comments, "banner": bannerImage, "buttons": buttons, "box": box] as [String: Any]
         var bt = "[buttons]-8-"
         var bx = "[box]-8-"
         if (SettingValues.hideButtonActionbar && !full) {
@@ -1133,17 +1158,21 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
     }
 
+    public static var cachedInternet: Bool?
     public static func checkInternet() -> Bool {
-
+        if(LinkCellView.cachedInternet != nil){
+            return LinkCellView.cachedInternet!
+        }
         let networkStatus = Reachability().connectionStatus()
         switch networkStatus {
         case .Unknown, .Offline:
-            return false
+            LinkCellView.cachedInternet =  false
         case .Online(.WWAN):
-            return true
+            LinkCellView.cachedInternet =  true
         case .Online(.WiFi):
-            return true
+            LinkCellView.cachedInternet =  true
         }
+        return LinkCellView.cachedInternet!
     }
 
 
@@ -1384,7 +1413,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     func showMore() {
         timer!.invalidate()
         AudioServicesPlaySystemSound(1519)
-        if (!self.cancelled) {
+        if (!self.cancelled && LinkCellView.checkInternet()) {
             self.more()
         }
     }

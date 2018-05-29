@@ -38,13 +38,14 @@ class ColorUtil {
         return SettingValues.nightModeEnabled && /*todo pro*/ (hour >= SettingValues.nightStart + 12 || hour < SettingValues.nightEnd) &&  (hour == SettingValues.nightStart + 12 ? (minute >= SettingValues.nightStartMin) : true) && (hour == SettingValues.nightEnd  ? (minute < SettingValues.nightEndMin) : true)
     }
 
-    static func doInit() {
+    static func doInit() -> Bool {
         var defaultTheme = Theme.DARK
         if let name = UserDefaults.standard.string(forKey: "theme") {
             if let t = Theme(rawValue: name) {
                 defaultTheme = t
             }
         }
+        var toReturn = false
 
         print("Theme is \(theme) and default is \(defaultTheme) and night theme is \(SettingValues.nightTheme) and should be night is \(shouldBeNight())")
         if(theme != defaultTheme || (shouldBeNight() || (!shouldBeNight() && theme == SettingValues.nightTheme))) {
@@ -52,10 +53,12 @@ class ColorUtil {
                 theme = SettingValues.nightTheme
                 print("Setting night!")
                 CachedTitle.titles.removeAll()
+                toReturn = true
             } else if(!shouldBeNight() && theme != defaultTheme){
                 theme = defaultTheme
                 print("Setting default!")
                 CachedTitle.titles.removeAll()
+                toReturn = true
             }
         }
         foregroundColor = theme.foregroundColor
@@ -69,6 +72,7 @@ class ColorUtil {
         if (accent != nil) {
             baseAccent = accent!
         }
+        return toReturn
     }
 
     static var foregroundColor = UIColor.white

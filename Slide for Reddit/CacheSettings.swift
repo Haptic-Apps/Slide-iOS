@@ -13,11 +13,9 @@ class CacheSettings: UITableViewController {
     var subs: [String] = []
     var autoCache: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "auto")
     var cacheContent: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "cache")
-    var offlineScreen: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "offline")
 
     var autoCacheSwitch = UISwitch()
     var cacheContentSwitch = UISwitch()
-    var offlineScreenSwitch = UISwitch()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,16 +46,6 @@ class CacheSettings: UITableViewController {
         self.cacheContent.backgroundColor = ColorUtil.foregroundColor
         self.cacheContent.textLabel?.textColor = ColorUtil.fontColor
         self.cacheContent.detailTextLabel?.textColor = ColorUtil.fontColor
-
-        offlineScreenSwitch = UISwitch()
-        offlineScreenSwitch.isOn = SettingValues.hiddenFAB
-        offlineScreenSwitch.addTarget(self, action: #selector(CacheSettings.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        self.offlineScreen.textLabel?.text = "Open offline content screen"
-        self.offlineScreen.detailTextLabel?.text = "Automatically display when no internet is detected"
-        self.offlineScreen.accessoryView = offlineScreenSwitch
-        self.offlineScreen.backgroundColor = ColorUtil.foregroundColor
-        self.offlineScreen.textLabel?.textColor = ColorUtil.fontColor
-        self.offlineScreen.detailTextLabel?.textColor = ColorUtil.fontColor
 
         self.tableView.tableFooterView = UIView()
     }
@@ -116,9 +104,13 @@ class CacheSettings: UITableViewController {
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 2
     }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: false)
+    }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return section == 0 ? 3 : subs.count
+        return section == 0 ? 2 : subs.count
     }
 
 
@@ -138,10 +130,8 @@ class CacheSettings: UITableViewController {
         if(indexPath.section == 0){
             if(indexPath.row == 0){
                 return autoCache
-            } else if(indexPath.row == 1) {
-                return cacheContent
             } else {
-                return offlineScreen
+                return cacheContent
             }
         } else {
             let thing = subs[indexPath.row]

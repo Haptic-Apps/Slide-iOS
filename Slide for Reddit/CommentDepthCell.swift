@@ -585,7 +585,6 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         }
     }
 
-    
     func modBan(why: String, duration: Int?) {
         if (content is RComment) {
             do {

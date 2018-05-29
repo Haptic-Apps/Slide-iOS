@@ -106,7 +106,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
                         for sub in subs {
                             toReturn.append(sub.displayName)
                             let color = (UIColor.init(hexString: sub.keyColor))
-                            if (UserDefaults.standard.colorForKey(key: "color+" + sub.displayName) == nil) {
+                            if (UserDefaults.standard.colorForKey(key: "color+" + sub.displayName) == nil && color != .black) {
                                 defaults.setColor(color: color, forKey: "color+" + sub.displayName)
                                 self.count += 1
                             }
@@ -123,7 +123,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
                     for sub in subs {
                         toReturn.append(sub.displayName)
                         let color = (UIColor.init(hexString: sub.keyColor))
-                        if (UserDefaults.standard.colorForKey(key: "color+" + sub.displayName) == nil) {
+                        if (UserDefaults.standard.colorForKey(key: "color+" + sub.displayName) == nil && color.hexString != "#000000") {
                             defaults.setColor(color: color, forKey: "color+" + sub.displayName)
                             self.count += 1
                         }
@@ -131,7 +131,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
                     for m in multis {
                         toReturn.append("/m/" + m.displayName)
                         let color = (UIColor.init(hexString: m.keyColor))
-                        if (UserDefaults.standard.colorForKey(key: "color+" + m.displayName) == nil) {
+                        if (UserDefaults.standard.colorForKey(key: "color+" + m.displayName) == nil && color.hexString != "#000000") {
                             defaults.setColor(color: color, forKey: "color+" + m.displayName)
                             self.count += 1
                         }
