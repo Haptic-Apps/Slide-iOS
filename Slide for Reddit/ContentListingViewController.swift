@@ -71,7 +71,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.tableView.register(MessageCellView.classForCoder(), forCellWithReuseIdentifier: "message")
         tableView.backgroundColor = ColorUtil.backgroundColor
 
-        if (baseData is ProfileContributionLoader || baseData is InboxContributionLoader) {
+        if (baseData is ProfileContributionLoader || baseData is InboxContributionLoader || baseData is ModQueueContributionLoader || baseData is ModMailContributionLoader) {
             self.tableView.contentInset = UIEdgeInsets.init(top: 45, left: 0, bottom: 0, right: 0)
         }
         session = (UIApplication.shared.delegate as! AppDelegate).session

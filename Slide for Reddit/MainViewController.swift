@@ -23,10 +23,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
 
-
-        if (AccountController.isLoggedIn) {
-            checkForMail()
-        }
         if (SubredditReorderViewController.changed || ColorUtil.shouldBeNight()) {
             if (ColorUtil.doInit()){
                 restartVC()
@@ -68,6 +64,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                     let diff = unread - lastMail
                     if(profile.isMod && AccountController.modSubs.isEmpty){
                         self.menuNav?.setMod(profile.hasModMail)
+                        print("Getting mod subs")
                         AccountController.doModOf()
                     }
                     DispatchQueue.main.async {
@@ -110,8 +107,9 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             self.splitViewController?.preferredPrimaryColumnWidthFraction = 1
 
         }
-
-
+        if (AccountController.isLoggedIn) {
+            checkForMail()
+        }
     }
 
 

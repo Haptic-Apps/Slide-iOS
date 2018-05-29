@@ -21,7 +21,7 @@ class ModQueueContributionLoader: ContributionLoader {
 
     init(subreddit: String){
         self.subreddit = subreddit
-        color = ColorUtil.getColorForSub(sub: subreddit)
+        color = ColorUtil.getColorForSub(sub: "")
         paginator = Paginator()
         content = []
     }
@@ -38,7 +38,7 @@ class ModQueueContributionLoader: ContributionLoader {
                 if(reload){
                     paginator = Paginator()
                 }
-                try delegate?.session?.getModQueue(subreddit, completion: { (result) in
+                try delegate?.session?.getModQueue(paginator, subreddit: Subreddit.init(subreddit: subreddit), completion: { (result) in
                     switch result {
                     case .failure:
                         self.delegate?.failed(error: result.error!)

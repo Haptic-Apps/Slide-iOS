@@ -126,6 +126,24 @@ class RealmDataWrapper {
         rSubmission.isSelf = submission.isSelf
         rSubmission.body = submission.selftext
         rSubmission.permalink = submission.permalink
+        rSubmission.canMod = submission.canMod
+        rSubmission.spoiler = submission.baseJson["spoiler"] as? Bool ?? false
+        rSubmission.removedBy = submission.baseJson["banned_by"] as? String ?? ""
+        rSubmission.removalReason = submission.baseJson["ban_note"] as? String ?? ""
+        rSubmission.removalNote = submission.baseJson["mod_note"] as? String ?? ""
+        rSubmission.removed = !rSubmission.removedBy.isEmpty()
+
+        for item in submission.baseJson["mod_reports"] as? [AnyObject] ?? [] {
+            let array = item as! Array<Any>
+            rSubmission.reports.append("\(array[0]): \(array[1])")
+        }
+        for item in submission.baseJson["user_reports"] as? [AnyObject] ?? [] {
+            let array = item as! Array<Any>
+            rSubmission.reports.append("\(array[0]): \(array[1])")
+        }
+        rSubmission.approvedBy = submission.baseJson["approved_by"] as? String ?? ""
+        rSubmission.approved = !rSubmission.approvedBy.isEmpty()
+
 
         if (json?["crosspost_parent_list"] != nil) {
             rSubmission.isCrosspost = true
@@ -158,6 +176,14 @@ class RealmDataWrapper {
 
         let previews = ((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["resolutions"] as? [Any])
         let preview = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["url"] as? String)
+
+        var videoPreview = (((((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["variants"] as? [String: Any])?["mp4"] as? [String: Any])?["source"] as? [String: Any])?["url"] as? String)
+        if (videoPreview != nil && videoPreview!.isEmpty || videoPreview == nil) {
+            videoPreview = (((json?["media"] as? [String: Any])?["reddit_video"] as? [String: Any])?["fallback_url"] as? String)
+        }
+        if ((videoPreview != nil && videoPreview!.isEmpty || videoPreview == nil) && json?["crosspost_parent_list"] != nil) {
+            videoPreview = (((((json?["crosspost_parent_list"] as? [Any])?.first as? [String: Any])?["media"] as? [String: Any])?["reddit_video"] as? [String: Any])?["fallback_url"] as? String)
+        }
 
         if (preview != nil && !(preview?.isEmpty())!) {
             burl = (preview!.replacingOccurrences(of: "&amp;", with: "&"))
@@ -248,7 +274,7 @@ class RealmDataWrapper {
         rSubmission.isSelf = submission.isSelf
         rSubmission.body = submission.selftext
         rSubmission.permalink = submission.permalink
-        
+
         for item in submission.baseJson["mod_reports"] as? [AnyObject] ?? [] {
             let array = item as! Array<Any>
             rSubmission.reports.append("\(array[0]): \(array[1])")
@@ -261,7 +287,6 @@ class RealmDataWrapper {
         rSubmission.approved = !rSubmission.approvedBy.isEmpty()
 
     }
-    
 
 
     static func commentToRealm(comment: Thing, depth: Int) -> Object {
