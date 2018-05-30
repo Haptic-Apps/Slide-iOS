@@ -239,8 +239,10 @@ class CommentCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate,
         
         let accent = ColorUtil.accentColorForSub(sub: ((comment).subreddit))
         if(!comment.body.isEmpty()){
-            let html = comment.htmlText
+            var html = comment.htmlText
             do {
+                html = WrapSpoilers.addSpoilers(html)
+                html = WrapSpoilers.addTables(html)
                 let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
                 let font = FontGenerator.fontOfSize(size: 16, submission: false)
                 let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: accent)

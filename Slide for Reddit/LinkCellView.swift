@@ -197,8 +197,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         let link = self.link!
         let color = ColorUtil.accentColorForSub(sub: ((link).subreddit))
         if (!link.htmlBody.isEmpty) {
-            let html = link.htmlBody.trimmed()
+            var html = link.htmlBody.trimmed()
             do {
+                html = WrapSpoilers.addSpoilers(html)
+                html = WrapSpoilers.addTables(html)
                 let attr = html.toAttributedString()!
                 let font = FontGenerator.fontOfSize(size: 16, submission: false)
                 let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
@@ -375,7 +377,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         b = info.withPadding(padding: UIEdgeInsets.init(top: 4, left: 10, bottom: 4, right: 10))
         b.backgroundColor = UIColor.black.withAlphaComponent(0.6)
         b.clipsToBounds = true
-        b.layer.cornerRadius = 10
+        b.layer.cornerRadius = 15
 
         self.box = UIStackView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
         self.buttons = UIStackView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));

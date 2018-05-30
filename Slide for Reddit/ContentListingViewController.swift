@@ -360,8 +360,10 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
 
                     var content: CellContent?
                     if (!comment.body.isEmpty()) {
-                        let html = comment.htmlText
+                        var html = comment.htmlText
                         do {
+                            html = WrapSpoilers.addSpoilers(html)
+                            html = WrapSpoilers.addTables(html)
                             let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
                             let font = FontGenerator.fontOfSize(size: 16, submission: false)
                             let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: .white)
@@ -531,9 +533,9 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
 
     func doneLoading() {
         DispatchQueue.main.async {
+            self.refreshControl.endRefreshing()
             self.tableView.reloadData()
             self.flowLayout.reset()
-            self.refreshControl.endRefreshing()
             self.loading = false
             if (self.baseData.content.count == 0) {
                 let message = MDCSnackbarMessage()

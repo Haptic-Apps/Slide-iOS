@@ -55,7 +55,14 @@ class ContentType {
             return true
         }
         return false
+    }
 
+    public static func isTable(uri: URL) -> Bool {
+        var urlString = uri.absoluteString
+        if (urlString.contains("http://view.table/")) {
+            return true
+        }
+        return false
     }
     
     public static func isGifLoadInstantly(uri: URL) -> Bool {
@@ -144,6 +151,10 @@ class ContentType {
             || urlString == ("#b")
             || urlString == ("#sp"))) {
             return CType.SPOILER;
+        }
+
+        if(urlString.contains("http://view.table/")){
+            return CType.TABLE
         }
         
         if (urlString.hasPrefix("//")) {urlString = "https:" + urlString}
@@ -247,7 +258,7 @@ class ContentType {
         case CType.ALBUM, CType.DEVIANTART, CType.GIF, CType.IMAGE, CType.IMGUR, CType.STREAMABLE, CType.TUMBLR, CType.XKCD, CType.VIDEO, CType.SELF, CType.VID_ME:
             return true
             
-        case CType.EMBEDDED, CType.EXTERNAL, CType.LINK, CType.NONE, CType.REDDIT, CType.SPOILER, CType.UNKNOWN:
+        case CType.EMBEDDED, CType.EXTERNAL, CType.LINK, CType.NONE, CType.REDDIT, CType.SPOILER, CType.TABLE, CType.UNKNOWN:
             return false
         }
     }
@@ -288,6 +299,7 @@ class ContentType {
         case TUMBLR
         case VID_ME
         case UNKNOWN
+        case TABLE
     }
     
     static func getThumbnailType(submission: Link) -> ThumbnailType{

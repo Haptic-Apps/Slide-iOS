@@ -45,7 +45,25 @@ public class WrapSpoilers: NSObject {
         }
         
     }
-    
+
+    public static func addTables(_ text: String) -> String{
+        do {
+            var base = text
+            for match in base.capturedGroups(withRegex: "<table>(.*?)</table>") {
+                let newPiece = match[0]
+                let tableEscaped = newPiece.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)!
+                let inner = "\n<h1><a href=\"http://view.table/\(tableEscaped)\">View table</a></h1>\n";
+                base = base.replacingOccurrences(of: match[0], with: inner);
+            }
+
+            return base
+        } catch {
+            print(error.localizedDescription)
+            return text
+        }
+
+    }
+
 }
 extension String {
     func capturedGroups(withRegex pattern: String) -> [[String]] {
@@ -53,7 +71,7 @@ extension String {
         
         var regex: NSRegularExpression
         do {
-            regex = try NSRegularExpression(pattern: pattern, options: [])
+            regex = try NSRegularExpression(pattern: pattern, options: [NSRegularExpression.Options.dotMatchesLineSeparators])
         } catch {
             return results
         }

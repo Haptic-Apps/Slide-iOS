@@ -11,6 +11,7 @@ import reddift
 import SDWebImage
 import MaterialComponents.MaterialProgressView
 import SafariServices
+import MaterialComponents.MDCBottomSheetController
 
 class MediaViewController: UIViewController, UIViewControllerTransitioningDelegate {
 
@@ -28,7 +29,7 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
 
         let type = ContentType.getContentType(submission: lnk)
 
-        if(type == .EXTERNAL){
+        if (type == .EXTERNAL) {
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(lnk.url!, options: [:], completionHandler: nil)
             } else {
@@ -44,7 +45,7 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
             } else {
                 if (lq && shownURL != nil) {
                     doShow(url: url, lq: shownURL)
-                } else if(shownURL != nil && ContentType.imageType(t: type)) {
+                } else if (shownURL != nil && ContentType.imageType(t: type)) {
                     doShow(url: shownURL!)
                 } else {
                     doShow(url: url)
@@ -68,7 +69,7 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
             return AlbumViewController.init(urlB: contentUrl!)
         } else if (contentUrl != nil && ContentType.displayImage(t: type) && SettingValues.internalImageView || (type == .GIF && SettingValues.internalGifView) || type == .STREAMABLE || type == .VID_ME || (type == ContentType.CType.VIDEO && SettingValues.internalYouTube)) {
             if (!ContentType.isGifLoadInstantly(uri: baseUrl) && type == .GIF) {
-                if(SettingValues.safariVC){
+                if (SettingValues.safariVC) {
                     let safariVC = SFHideSafariViewController(url: baseUrl)
                     if #available(iOS 10.0, *) {
                         safariVC.preferredBarTintColor = ColorUtil.backgroundColor
@@ -82,7 +83,7 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
             }
             return SingleContentViewController.init(url: contentUrl!, lq: lq)
         } else if (type == ContentType.CType.LINK || type == ContentType.CType.NONE) {
-            if(SettingValues.safariVC){
+            if (SettingValues.safariVC) {
                 let safariVC = SFHideSafariViewController(url: baseUrl)
                 if #available(iOS 10.0, *) {
                     safariVC.preferredBarTintColor = ColorUtil.backgroundColor
@@ -97,7 +98,7 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
         } else if (type == ContentType.CType.REDDIT) {
             return RedditLink.getViewControllerForURL(urlS: contentUrl!)
         }
-        if(SettingValues.safariVC){
+        if (SettingValues.safariVC) {
             let safariVC = SFHideSafariViewController(url: baseUrl)
             if #available(iOS 10.0, *) {
                 safariVC.preferredBarTintColor = ColorUtil.backgroundColor
@@ -124,8 +125,12 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
         present(controller, animated: true, completion: nil)
     }
 
+    public static func handleCloseNav(controller: UIButtonWithContext) {
+        controller.parentController!.dismiss(animated: true)
+    }
+
     func doShow(url: URL, lq: URL? = nil) {
-        if(ContentType.isExternal(url)){
+        if (ContentType.isExternal(url)) {
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
             } else {
@@ -133,8 +138,19 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
             }
         } else {
             contentUrl = URL.init(string: String.init(htmlEncodedString: url.absoluteString))!
-            var spoiler = ContentType.isSpoiler(uri: url)
-            if (spoiler) {
+            if (ContentType.isTable(uri: url)) {
+                let controller = TableDisplayViewController.init(baseHtml: url.absoluteString, color: navigationController?.navigationBar.barTintColor ?? ColorUtil.getColorForSub(sub: ""))
+
+                let newParent = TapBehindModalViewController.init(rootViewController: controller)
+                newParent.navigationBar.shadowImage = UIImage()
+                newParent.navigationBar.isTranslucent = false
+
+                newParent.view.layer.cornerRadius = 15
+                newParent.view.clipsToBounds = true
+
+                present(MDCBottomSheetController.init(contentViewController: newParent), animated: true, completion: nil)
+
+            } else if (ContentType.isSpoiler(uri: url)) {
                 let controller = UIAlertController.init(title: "Spoiler", message: url.absoluteString, preferredStyle: .alert)
                 present(controller, animated: true, completion: nil)
             } else {

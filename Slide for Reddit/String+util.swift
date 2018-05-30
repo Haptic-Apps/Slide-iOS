@@ -300,7 +300,14 @@ public extension String {
         let end = self.characters.index(self.startIndex, offsetBy: startIndex + length)
         return self[start..<end]
     }
-    
+
+    func subsequence(_ startIndex: Int, endIndex: Int) -> String {
+        let start = self.characters.index(self.startIndex, offsetBy: startIndex)
+        let end = self.characters.index(self.startIndex, offsetBy: endIndex)
+        return self[start..<end]
+    }
+
+
     subscript(i: Int) -> Character {
         get {
             let index = self.characters.index(self.startIndex, offsetBy: i)

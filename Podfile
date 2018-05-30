@@ -24,6 +24,7 @@ pod 'BiometricAuthentication'
 pod 'MaterialComponents/ShadowElevations'
 pod 'MaterialComponents/Snackbar’
 pod 'MaterialComponents/ActivityIndicator'
+pod "SwiftSpreadsheet"
 pod 'MaterialComponents/Tabs'
   pod “RLBAlertsPickers”, :git => ‘https://github.com/ccrama/Alerts-Pickers'
   pod “SloppySwiper”, :git => ‘https://github.com/fastred/SloppySwiper'

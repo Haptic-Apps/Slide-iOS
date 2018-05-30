@@ -10,7 +10,7 @@ import UIKit
 
 class LinkParser {
     public static func parse(_ attributedString: NSAttributedString, _ color: UIColor) -> NSMutableAttributedString {
-        let string = NSMutableAttributedString.init(attributedString: attributedString)
+        var string = NSMutableAttributedString.init(attributedString: attributedString)
         if (string.length > 0) {
             string.enumerateAttributes(in: NSRange.init(location: 0, length: string.length), options: .longestEffectiveRangeNotRequired, using: { (attrs, range, pointer) in
                 for attr in attrs {
@@ -73,6 +73,7 @@ class LinkParser {
         }
         return string
     }
+
 }
 
 // Used from https://gist.github.com/aquajach/4d9398b95a748fd37e88

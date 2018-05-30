@@ -1254,6 +1254,8 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         if (single || !SettingValues.viewType) {
             navigationController?.setNavigationBarHidden(false, animated: true)
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub)
+            self.navigationController?.navigationBar.shadowImage = UIImage()
+            navigationController?.navigationBar.isTranslucent = false
         }
 
 

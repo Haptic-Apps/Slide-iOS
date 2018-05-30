@@ -22,7 +22,7 @@ class PlaceholderViewController : UIViewController {
         label.font = UIFont.boldSystemFont(ofSize: 12)
         label.textAlignment = .center
         
-        let image = UIImage(named: "roundicon")
+        let image = UIImage(named: "roundicon")!.convertToGrayScale()
         imageView.image = image
         
         self.view.addSubview(imageView)
@@ -31,24 +31,11 @@ class PlaceholderViewController : UIViewController {
     }
 }
 extension UIImage {
-    func convertedToGrayImage() -> UIImage? {
-        let width = self.size.width
-        let height = self.size.height
-        let rect = CGRect(x: 0.0, y: 0.0, width: width, height: height)
-        let colorSpace = CGColorSpaceCreateDeviceGray()
-        let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.none.rawValue)
-        
-        guard let context = CGContext(data: nil, width: Int(width), height: Int(height), bitsPerComponent: 8, bytesPerRow: 0, space: colorSpace, bitmapInfo: bitmapInfo.rawValue) else {
-            return nil
-        }
-        
-        guard let cgImage = cgImage else { return nil }
-        
-        context.draw(cgImage, in: rect)
-        guard let imageRef = context.makeImage() else { return nil }
-        let newImage = UIImage(cgImage: imageRef.copy()!)
-        
-        return newImage
+    func convertToGrayScale() -> UIImage {
+        let filter: CIFilter = CIFilter(name: "CIPhotoEffectMono")!
+        filter.setDefaults()
+        filter.setValue(CoreImage.CIImage(image: self)!, forKey: kCIInputImageKey)
+
+        return UIImage(cgImage:CIContext(options: nil).createCGImage(filter.outputImage!, from: filter.outputImage!.extent)!)
     }
 }
-

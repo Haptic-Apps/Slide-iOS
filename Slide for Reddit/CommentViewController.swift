@@ -596,17 +596,14 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                 }
                                 self.refreshControl.endRefreshing()
                                 self.indicator?.stopAnimating()
-                                self.tableView.reloadData(with: .fade)
-                                if (SettingValues.collapseDefault && self.context.isEmpty()) {
-                                    self.collapseAll()
-                                }
+                                self.tableView.reloadData()
 
                                 var index = 0
                                 if (!self.context.isEmpty()) {
                                     for comment in self.comments {
                                         if (comment.contains(self.context)) {
-                                            self.goToCell(i: index)
-                                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                                self.goToCell(i: index)
                                                 self.showCommentMenu(self.tableView.cellForRow(at: IndexPath.init(row: index, section: 0)) as! CommentDepthCell)
                                             }
                                             break
@@ -614,6 +611,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                             index += 1
                                         }
                                     }
+                                } else if (SettingValues.collapseDefault) {
+                                    self.collapseAll()
                                 }
                             })
 
@@ -1136,6 +1135,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 var html = comment.bodyHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
                 do {
                     html = WrapSpoilers.addSpoilers(html)
+                    html = WrapSpoilers.addTables(html)
                     let attr = try NSMutableAttributedString(data: html.data(using: .unicode)!, options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
                     let font = FontGenerator.fontOfSize(size: 16, submission: false)
                     let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
@@ -1435,6 +1435,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             items.append(space)
             items.append(moreB)
         }
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        navigationController?.navigationBar.isTranslucent = false
+
         if (parent != nil && parent is PagingCommentViewController) {
             parent?.toolbarItems = items
             parent?.navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor

@@ -500,7 +500,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             menuNav?.setViewController(controller: self)
             self.menuNav?.setSubreddit(subreddit: MainViewController.current)
             bottomSheet = MDCBottomSheetController(contentViewController: menuNav!)
-
         }
 
 
@@ -519,12 +518,13 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             }
 
             self.navigationController?.navigationBar.shadowImage = UIImage()
+            navigationController?.navigationBar.isTranslucent = false
+
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: self.currentTitle)
             if(tabBar != nil){
                 tabBar.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
             }
 
-            navigationController?.navigationBar.isTranslucent = false
 
             menuNav?.header.doColors()
             if (menuNav?.tableView != nil) {

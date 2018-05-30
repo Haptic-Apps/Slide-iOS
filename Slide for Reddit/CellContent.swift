@@ -29,7 +29,9 @@ struct CellContent {
         self.id = id
         self.width =  width
         let font = FontGenerator.fontOfSize(size: fontSize, submission: id.hasPrefix("t3"))
-        attributedString = NSAttributedString(string: string, attributes: [NSFontAttributeName : font])
+        var newString = WrapSpoilers.addSpoilers(string)
+        newString = WrapSpoilers.addTables(newString)
+        attributedString = NSAttributedString(string: newString, attributes: [NSFontAttributeName : font])
         let horizontalMargin = CommentDepthCell.margin().left + CommentDepthCell.margin().right
         let verticalMargin = CommentDepthCell.margin().top + CommentDepthCell.margin().bottom
         let size = (string).boundingRect(with: CGSize.init(width: width-horizontalMargin, height:10000), options: [.usesLineFragmentOrigin , .usesFontLeading], context: nil).height
@@ -64,7 +66,9 @@ struct CellContent {
         self.id = id
         self.width = width
         let font = FontGenerator.fontOfSize(size: fontSize, submission: id.hasPrefix("t3"))
-        attributedString = NSAttributedString(string: string, attributes: [NSFontAttributeName : font])
+        var newString = WrapSpoilers.addSpoilers(string)
+        newString = WrapSpoilers.addTables(newString)
+        attributedString = NSAttributedString(string: newString, attributes: [NSFontAttributeName : font])
         let horizontalMargin = CommentDepthCell.margin().left + CommentDepthCell.margin().right
         let verticalMargin = CommentDepthCell.margin().top + CommentDepthCell.margin().bottom
         let size = (string).boundingRect(with: CGSize.init(width: width-horizontalMargin, height:10000), options: [.usesLineFragmentOrigin , .usesFontLeading], context: nil).height

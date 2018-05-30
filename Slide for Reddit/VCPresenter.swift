@@ -19,6 +19,9 @@ public class VCPresenter {
         }
         if ((parentNavigationController != nil && parentNavigationController!.modalPresentationStyle != .pageSheet) && !(parentViewController is SubSidebarViewController) && popupIfPossible && UIDevice.current.orientation.isLandscape || parentNavigationController == nil) {
             var newParent = TapBehindModalViewController.init(rootViewController: viewController);
+            newParent.navigationBar.shadowImage = UIImage()
+            newParent.navigationBar.isTranslucent = false
+
             let button = UIButtonWithContext.init(type: .custom)
             button.parentController = newParent
             button.imageView?.contentMode = UIViewContentMode.scaleAspectFit
