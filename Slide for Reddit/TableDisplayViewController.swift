@@ -161,7 +161,7 @@ class TableDisplayViewController: MediaViewController, UICollectionViewDelegate,
             for cell in row {
                 let framesetter = CTFramesetterCreateWithAttributedString(cell)
                 let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: CGFloat.greatestFiniteMagnitude, height: CGFloat(40)), nil)
-                var length = textSize.width + 25
+                let length = textSize.width + 25
                 currentWidths.append(length)
             }
             widths.append(currentWidths)
@@ -189,10 +189,11 @@ class TableDisplayViewController: MediaViewController, UICollectionViewDelegate,
 
     var list = true
 
+    var layout = SpreadsheetLayout()
     override func viewDidLoad() {
         super.viewDidLoad()
         let frame = CGRect.init(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-        let layout = SpreadsheetLayout(delegate: self,
+        layout = SpreadsheetLayout(delegate: self,
                 topLeftDecorationViewNib: nil,
                 topRightDecorationViewNib: nil,
                 bottomLeftDecorationViewNib: nil,
@@ -214,6 +215,9 @@ class TableDisplayViewController: MediaViewController, UICollectionViewDelegate,
     func doList(){
         list = !list
         doData()
+        layout.resetLayoutCache()
+        tableView.reloadData()
+
         if(list){
             let list = UIButton.init(type: .custom)
             list.setImage(UIImage.init(named: "grid")?.menuIcon(), for: UIControlState.normal)
@@ -229,7 +233,6 @@ class TableDisplayViewController: MediaViewController, UICollectionViewDelegate,
             let listB = UIBarButtonItem.init(customView: list)
             navigationItem.rightBarButtonItem = listB
         }
-        tableView.reloadData()
     }
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
