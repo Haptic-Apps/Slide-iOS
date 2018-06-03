@@ -77,17 +77,12 @@ class PagingCommentViewController : SwipeDownModalVC, UIPageViewControllerDataSo
         
         
         if(!(firstViewController as! CommentViewController).loaded){
-        PagingCommentViewController.savedComment = firstViewController as! CommentViewController
+            PagingCommentViewController.savedComment = firstViewController as? CommentViewController
 
         (firstViewController as! CommentViewController).refresh(firstViewController)
         }
 
-        for view in view.subviews {
-            if view is UIScrollView {
-                (view as! UIScrollView).delegate =  self
-                break
-            }
-        }
+
         setViewControllers([firstViewController],
                            direction: .forward,
                            animated: true,
@@ -107,19 +102,6 @@ class PagingCommentViewController : SwipeDownModalVC, UIPageViewControllerDataSo
 
     }
 
-    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        super.scrollViewDidScroll(scrollView)
-        self.lastPosition = scrollView.contentOffset.x
-
-        if (currentIndex == vCs.count - 1) && (lastPosition > scrollView.frame.width) {
-            scrollView.contentOffset.x = scrollView.frame.width
-            return
-
-        } else if currentIndex == 0 && lastPosition < scrollView.frame.width {
-            scrollView.contentOffset.x = scrollView.frame.width
-            return
-        }
-    }
 
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerBefore viewController: UIViewController) -> UIViewController? {

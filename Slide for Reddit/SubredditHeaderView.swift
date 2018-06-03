@@ -13,19 +13,17 @@ import MaterialComponents.MaterialSnackbar
 
 class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewingDelegate {
 
-    var back: UIView = UIView()
+    var back: UILabel = UILabel()
     var subscribers: UILabel = UILabel()
     var here: UILabel = UILabel()
-    var desc: UZTextView = UZTextView()
     var info: UZTextView = UZTextView()
 
-    var subscribe: UITableViewCell = UITableViewCell()
     var theme = UITableViewCell()
     var submit = UITableViewCell()
-    var wiki = UITableViewCell()
     var sorting = UITableViewCell()
     var mods = UITableViewCell()
 
+    var subbed = UISwitch()
 
     func mods(_ sender: UITableViewCell) {
         var list: [User] = []
@@ -106,46 +104,41 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        self.subscribe.textLabel?.text = "Subscribed"
-        self.subscribe.accessoryType = .none
-        self.subscribe.backgroundColor = ColorUtil.foregroundColor
-        self.subscribe.textLabel?.textColor = ColorUtil.fontColor
-        self.subscribe.imageView?.image = UIImage.init(named: "subbed")?.menuIcon().withRenderingMode(.alwaysTemplate)
-
         self.theme.textLabel?.text = "Subreddit theme"
         self.theme.accessoryType = .none
         self.theme.backgroundColor = ColorUtil.foregroundColor
         self.theme.textLabel?.textColor = ColorUtil.fontColor
-        self.theme.imageView?.image = UIImage.init(named: "palette")?.menuIcon().withRenderingMode(.alwaysTemplate)
+        self.theme.imageView?.image = UIImage.init(named: "palette")?.menuIcon()
+        self.theme.imageView?.tintColor = ColorUtil.fontColor
+        self.theme.layer.cornerRadius = 5
+        self.theme.clipsToBounds = true
 
         self.submit.textLabel?.text = "New post"
         self.submit.accessoryType = .none
         self.submit.backgroundColor = ColorUtil.foregroundColor
         self.submit.textLabel?.textColor = ColorUtil.fontColor
-        self.submit.imageView?.image = UIImage.init(named: "edit")?.menuIcon().withRenderingMode(.alwaysTemplate)
-
-        self.wiki.textLabel?.text = "Subreddit wiki"
-        self.wiki.accessoryType = .none
-        self.wiki.backgroundColor = ColorUtil.foregroundColor
-        self.wiki.textLabel?.textColor = ColorUtil.fontColor
-        self.wiki.imageView?.image = UIImage.init(named: "wiki")?.menuIcon().withRenderingMode(.alwaysTemplate)
+        self.submit.imageView?.image = UIImage.init(named: "edit")?.menuIcon()
+        self.submit.imageView?.tintColor = ColorUtil.fontColor
+        self.submit.layer.cornerRadius = 5
+        self.submit.clipsToBounds = true
 
         self.sorting.textLabel?.text = "Default subreddit sorting"
         self.sorting.accessoryType = .none
         self.sorting.backgroundColor = ColorUtil.foregroundColor
         self.sorting.textLabel?.textColor = ColorUtil.fontColor
-        self.sorting.imageView?.image = UIImage.init(named: "ic_sort_white")?.menuIcon().withRenderingMode(.alwaysTemplate)
+        self.sorting.imageView?.image = UIImage.init(named: "ic_sort_white")?.menuIcon()
+        self.sorting.imageView?.tintColor = ColorUtil.fontColor
+        self.sorting.layer.cornerRadius = 5
+        self.sorting.clipsToBounds = true
 
         self.mods.textLabel?.text = "Subreddit moderators"
         self.mods.accessoryType = .none
         self.mods.backgroundColor = ColorUtil.foregroundColor
         self.mods.textLabel?.textColor = ColorUtil.fontColor
-        self.mods.imageView?.image = UIImage.init(named: "mod")?.menuIcon().withRenderingMode(.alwaysTemplate)
-
-        self.desc = UZTextView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
-        self.desc.delegate = self
-        self.desc.isUserInteractionEnabled = true
-        self.desc.backgroundColor = .clear
+        self.mods.imageView?.image = UIImage.init(named: "mod")?.menuIcon()
+        self.mods.imageView?.tintColor = ColorUtil.fontColor
+        self.mods.layer.cornerRadius = 5
+        self.mods.clipsToBounds = true
 
         self.info = UZTextView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
         self.info.delegate = self
@@ -162,35 +155,32 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
         here.font = UIFont.systemFont(ofSize: 16)
         here.textColor = UIColor.white
 
-        self.back = UIImageView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
+        self.back = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 56))
 
         theme.translatesAutoresizingMaskIntoConstraints = false
         submit.translatesAutoresizingMaskIntoConstraints = false
-        subscribe.translatesAutoresizingMaskIntoConstraints = false
         back.translatesAutoresizingMaskIntoConstraints = false
-        desc.translatesAutoresizingMaskIntoConstraints = false
         info.translatesAutoresizingMaskIntoConstraints = false
         subscribers.translatesAutoresizingMaskIntoConstraints = false
         here.translatesAutoresizingMaskIntoConstraints = false
         sorting.translatesAutoresizingMaskIntoConstraints = false
-        wiki.translatesAutoresizingMaskIntoConstraints = false
         mods.translatesAutoresizingMaskIntoConstraints = false
-
+        
         addSubview(theme)
         addSubview(submit)
-        addSubview(subscribe)
         addSubview(back)
         addSubview(info)
-        back.addSubview(subscribers)
-        back.addSubview(here)
-        back.addSubview(desc)
-        back.addSubview(sorting)
-        back.addSubview(wiki)
-        back.addSubview(mods)
+        addSubview(subscribers)
+        addSubview(here)
+        addSubview(sorting)
+        addSubview(mods)
 
         self.clipsToBounds = true
         updateConstraints()
-
+        
+        
+        back.addSubview(subbed)
+        subbed.frame.origin = CGPoint.init(x: 24, y: back.frame.size.height / 2)
 
         let pTap = UITapGestureRecognizer(target: self, action: #selector(self.mods(_:)))
         mods.addGestureRecognizer(pTap)
@@ -204,6 +194,48 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
         submit.addGestureRecognizer(nTap)
         submit.isUserInteractionEnabled = true
 
+    }
+    
+    func doSub(_ changed: UISwitch) {
+        if (changed.isOn) {
+            //was not subscriber, changed, and unsubscribing again
+            Subscriptions.unsubscribe(subreddit!.displayName, session: (UIApplication.shared.delegate as! AppDelegate).session!)
+            let message = MDCSnackbarMessage()
+            message.text = "Unsubscribed from /r/\(subreddit!.displayName)"
+            MDCSnackbarManager.show(message)
+        } else {
+            let alrController = UIAlertController.init(title: "Subscribe to \(subreddit!.displayName)", message: nil, preferredStyle: .actionSheet)
+            if (AccountController.isLoggedIn) {
+                let somethingAction = UIAlertAction(title: "Add to sub list and subscribe", style: UIAlertActionStyle.default, handler: { (alert: UIAlertAction!) in
+                    Subscriptions.subscribe(self.subreddit!.displayName, true, session: (UIApplication.shared.delegate as! AppDelegate).session!)
+                    let message = MDCSnackbarMessage()
+                    message.text = "Subscribed"
+                    MDCSnackbarManager.show(message)
+                })
+                alrController.addAction(somethingAction)
+            }
+            
+            let somethingAction = UIAlertAction(title: "Just add to sub list", style: UIAlertActionStyle.default, handler: { (alert: UIAlertAction!) in
+                Subscriptions.subscribe(self.subreddit!.displayName, false, session: (UIApplication.shared.delegate as! AppDelegate).session!)
+                let message = MDCSnackbarMessage()
+                message.text = "Added /r/\(self.subreddit!.displayName) to your sub list!"
+                MDCSnackbarManager.show(message)
+            })
+            alrController.addAction(somethingAction)
+            
+            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: { (alert: UIAlertAction!) in print("cancel") })
+            
+            alrController.addAction(cancelAction)
+            
+            alrController.modalPresentationStyle = .fullScreen
+            if let presenter = alrController.popoverPresentationController {
+                presenter.sourceView = changed
+                presenter.sourceRect = changed.bounds
+            }
+            
+            parentController?.present(alrController, animated: true, completion: {})
+            
+        }
     }
 
     func new(_ selector: UITableViewCell) {
@@ -332,27 +364,41 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
         self.setWidth = width
         self.parentController = parent
         back.backgroundColor = ColorUtil.getColorForSub(sub: subreddit.displayName)
-        subscribers.text = "\(subreddit.subscribers) subscribers"
-        here.text = "\(subreddit.accountsActive) here"
+        back.text = subreddit.displayName
+        back.textColor = .white
+        back.font = FontGenerator.boldFontOfSize(size: 24, submission: true)
+        back.textAlignment = .center
+        
+        subbed.isOn = Subscriptions.isSubscriber(subreddit.displayName)
+        subbed.onTintColor = ColorUtil.accentColorForSub(sub: subreddit.displayName)
+        subbed.addTarget(self, action: #selector(doSub(_:)), for: .valueChanged)
 
-        if (!subreddit.publicDescription.isEmpty()) {
-            let html = subreddit.publicDescriptionHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
-            do {
-                let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
-                let font = UIFont(name: ".SFUIText-Light", size: 16) ?? UIFont.systemFont(ofSize: 16)
-                let attr2 = attr.reconstruct(with: font, color: .white, linkColor: ColorUtil.accentColorForSub(sub: subreddit.displayName))
-                content = CellContent.init(string: LinkParser.parse(attr2, ColorUtil.accentColorForSub(sub: subreddit.displayName)), width: setWidth - 24)
-                desc.attributedString = content?.attributedString
-                textHeight = (content?.textHeight)!
-            } catch {
-            }
-        }
+        here.numberOfLines = 0
+        subscribers.numberOfLines = 0
+        subscribers.font = FontGenerator.boldFontOfSize(size: 14, submission: true)
+        here.font = subscribers.font
+        here.textAlignment = .center
+        subscribers.textAlignment = .center
+        here.textColor = ColorUtil.fontColor
+        subscribers.textColor = ColorUtil.fontColor
+        
+
+        let attrs = [NSFontAttributeName : FontGenerator.boldFontOfSize(size: 20, submission: true)]
+        var attributedString = NSMutableAttributedString(string: "\(subreddit.subscribers.delimiter)", attributes:attrs)
+        var subt = NSMutableAttributedString(string: "\nSUBSCRIBERS")
+        attributedString.append(subt)
+        subscribers.attributedText = attributedString
+        
+        attributedString = NSMutableAttributedString(string: "\(subreddit.accountsActive.delimiter)", attributes:attrs)
+        subt = NSMutableAttributedString(string: "\nHERE")
+        attributedString.append(subt)
+        here.attributedText = attributedString
 
         if (!subreddit.descriptionHtml.isEmpty()) {
             let html = subreddit.descriptionHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
             do {
                 let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
-                let font = UIFont(name: ".SFUIText-Light", size: 16) ?? UIFont.systemFont(ofSize: 16)
+                let font = FontGenerator.fontOfSize(size: 16, submission: false)
                 let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: ColorUtil.accentColorForSub(sub: subreddit.displayName))
                 contentInfo = CellContent.init(string: LinkParser.parse(attr2, ColorUtil.accentColorForSub(sub: subreddit.displayName)), width: setWidth - 24)
                 info.attributedString = contentInfo?.attributedString
@@ -374,37 +420,14 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
     override func updateConstraints() {
         super.updateConstraints()
 
-        let metrics = ["topMargin": 0, "bh": CGFloat(130 + textHeight), "dh": descHeight, "b": textHeight + 30, "w": setWidth]
-        let views = ["theme": theme, "submit": submit, "subscribe": subscribe, "mods": mods, "back": back, "sort": sorting, "wiki": wiki, "desc": desc, "info": info, "subscribers": subscribers, "here": here] as [String: Any]
+        let metrics = ["topMargin": 0, "swidth": ((setWidth - 32) / 2), "bh": CGFloat(130 + textHeight), "dh": descHeight, "b": textHeight + 30, "w": setWidth]
+        let views = ["theme": theme, "submit": submit, "mods": mods, "back": back, "sort": sorting,"info": info, "subscribers": subscribers, "here": here] as [String: Any]
 
-
-        back.removeConstraints(constraintBack)
-        constraintBack = []
-
-
-        constraintBack.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(16)-[desc]-(16)-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-
-        constraintBack.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(16)-[subscribers]-(16)-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-
-        constraintBack.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(16)-[here]-(16)-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-        constraintBack.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-16-[subscribers]-2-[here]-2-[desc]-4-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-
-        back.addConstraints(constraintBack)
 
         removeConstraints(constraintMain)
+
         constraintMain = []
+
 
         constraintMain.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(0)-[back(w)]-(0)-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
@@ -415,16 +438,7 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
                 metrics: metrics,
                 views: views))
 
-        constraintMain.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(12)-[subscribe]-(12)-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
         constraintMain.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(12)-[sort]-(12)-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-
-        constraintMain.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(12)-[wiki]-(12)-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
@@ -433,7 +447,6 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
-
 
         constraintMain.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(12)-[info]-(12)-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
@@ -444,19 +457,25 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
+        
+        constraintMain.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(12)-[subscribers(swidth)]-(8)-[here(swidth)]-(12)-|",options: NSLayoutFormatOptions(rawValue: 0),metrics: metrics,views: views))
 
 
-        constraintMain.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(0)-[back]-(8)-[subscribe(50)]-(2)-[theme(50)]-(2)-[wiki(50)]-(2)-[submit(50)]-(2)-[mods(50)]-(2)-[sort(50)]-(8)-[info(dh)]-(4)-|",
+        constraintMain.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(0)-[back(86)]-6-[subscribers(50)]-(8)-[theme(50)]-(2)-[submit(50)]-(2)-[mods(50)]-(2)-[sort(50)]-(8)-[info(dh)]-(4)-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
+        constraintMain.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(0)-[back(86)]-6-[here(50)]-(8)-[theme(50)]-(2)-[submit(50)]-(2)-[mods(50)]-(2)-[sort(50)]-(8)-[info(dh)]-(4)-|",
+                                                                         options: NSLayoutFormatOptions(rawValue: 0),
+                                                                         metrics: metrics,
+                                                                         views: views))
 
         addConstraints(constraintMain)
 
     }
 
     func getEstHeight() -> CGFloat {
-        return CGFloat(60 + textHeight) + ((contentInfo == nil) ? 0 : descHeight) + (50 * 7)
+        return CGFloat(62) + ((contentInfo == nil) ? 0 : descHeight) + (50 * 7)
     }
 
 
@@ -648,6 +667,17 @@ extension UIView {
             action?()
         }
     }
-
-
 }
+extension Int {
+    private static var numberFormatter: NumberFormatter = {
+        let numberFormatter = NumberFormatter()
+        numberFormatter.numberStyle = .decimal
+        
+        return numberFormatter
+    }()
+    
+    var delimiter: String {
+        return Int.numberFormatter.string(from: NSNumber(value: self)) ?? ""
+    }
+}
+

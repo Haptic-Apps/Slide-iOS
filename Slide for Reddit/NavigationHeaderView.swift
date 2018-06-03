@@ -24,11 +24,13 @@ class NavigationHeaderView: UIView {
     var search: UISearchBar = UISearchBar()
 
     func setIsMod(_ hasMail: Bool){
-        mod.isHidden = false
-        if(hasMail){
-            mod.setImage(UIImage.init(named: "mod")!.withColor(tintColor: GMColor.red500Color()).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
-        } else {
-            mod.setImage(UIImage.init (named: "mod")!.withColor(tintColor: .white).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
+        DispatchQueue.main.async {
+            self.mod.isHidden = false
+            if(hasMail){
+                self.mod.setImage(UIImage.init(named: "mod")!.withColor(tintColor: GMColor.red500Color()).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
+            } else {
+                self.mod.setImage(UIImage.init (named: "mod")!.withColor(tintColor: .white).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
+            }
         }
     }
 

@@ -80,11 +80,14 @@ class AccountController {
     }
 
     static func doModOf() {
-        getSubscriptionsFully(session: (UIApplication.shared.delegate as! AppDelegate).session!) { (subs: [Subreddit]) in
-            print("Finished mod subs")
-            for sub in subs {
-                print("Got mod sub \(sub.displayName)")
-                modSubs.append(sub.displayName)
+        DispatchQueue.main.async {
+            let session = (UIApplication.shared.delegate as! AppDelegate).session!
+            getSubscriptionsFully(session: session) { (subs: [Subreddit]) in
+                print("Finished mod subs")
+                for sub in subs {
+                    print("Got mod sub \(sub.displayName)")
+                    modSubs.append(sub.displayName)
+                }
             }
         }
     }

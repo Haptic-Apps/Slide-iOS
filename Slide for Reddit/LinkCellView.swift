@@ -116,29 +116,21 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if (url) != nil {
             if parentViewController != nil {
 
-                let alertController: BottomSheetActionController = BottomSheetActionController()
-                alertController.headerData = url.absoluteString
-
+                let alertController = UIAlertController.init(title: nil, message: nil, preferredStyle: .actionSheet)
 
                 let open = OpenInChromeController.init()
                 if (open.isChromeInstalled()) {
-                    alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "web")!.menuIcon()), style: .default, handler: { action in
+                    alertController.addAction(image: UIImage.init(named: "web"), title: "Open in Chrome", color: ColorUtil.fontColor, style: .default, isEnabled: true) { (action) in
                         open.openInChrome(url, callbackURL: nil, createNewTab: true)
-                    }))
+                    }
                 }
-
-                alertController.addAction(Action(ActionData(title: "Open in Safari", image: UIImage(named: "nav")!.menuIcon()), style: .default, handler: { action in
+                alertController.addAction(image: UIImage.init(named: "Open in Safari"), title: "nav", color: ColorUtil.fontColor, style: .default, isEnabled: true) { (action) in
                     if #available(iOS 10.0, *) {
                         UIApplication.shared.open(url, options: [:], completionHandler: nil)
                     } else {
                         UIApplication.shared.openURL(url)
                     }
-                }))
-                alertController.addAction(Action(ActionData(title: "Copy URL", image: UIImage(named: "save-1")!.menuIcon()), style: .default, handler: { action in
-                    UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
-                }))
-                alertController.addAction(Action(ActionData(title: "Close", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { action in
-                }))
+                }
 
                 VCPresenter.presentAlert(alertController, parentVC: parentViewController!)
             }
@@ -1461,9 +1453,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             self.deleteSelf(self)
         }))
 
-        alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { action in
-        }))
-
         VCPresenter.presentAlert(alertController, parentVC: parentViewController!)
     }
 
@@ -1489,14 +1478,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 delegate.deleteSelf(self)
             }
         }))
-
-
-        alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { action in
-        }))
-
-
+        
         VCPresenter.presentAlert(alertController, parentVC: parentViewController!)
-
     }
 
     func flairSelf() {

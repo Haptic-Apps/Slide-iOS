@@ -2,8 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4e152e64-2f09-48b9-9864-06428fccec3c" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/Slide for Reddit/Assets.xcassets/copy.imageset/Contents.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Slide for Reddit/Assets.xcassets/copy.imageset/round_file_copy_white_48pt_1x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Slide for Reddit/Assets.xcassets/copy.imageset/round_file_copy_white_48pt_2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Slide for Reddit/Assets.xcassets/copy.imageset/round_file_copy_white_48pt_3x.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Slide for Reddit/TableDisplayViewController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/Slide for Reddit/TableDisplayViewController.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Slide for Reddit/CommentDepthCell.swift" beforeDir="false" afterPath="$PROJECT_DIR$/Slide for Reddit/CommentDepthCell.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Slide for Reddit/CommentViewController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/Slide for Reddit/CommentViewController.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Slide for Reddit/ContentListingViewController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/Slide for Reddit/ContentListingViewController.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Slide for Reddit/NavigationHeaderView.swift" beforeDir="false" afterPath="$PROJECT_DIR$/Slide for Reddit/NavigationHeaderView.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Slide for Reddit/SingleSubredditViewController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/Slide for Reddit/SingleSubredditViewController.swift" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -15,10 +23,34 @@
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="iphoneos_b4f2266089219190fedc1e40334b9efd8b9b10f5" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="iphoneos_afd30477ae0bb8a053add1ff6cc0579cd74963a5" />
+  <component name="FileEditorManager">
+    <leaf>
+      <file leaf-file-name="CommentDepthCell.swift" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Slide for Reddit/CommentDepthCell.swift">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="438">
+              <caret line="665" column="28" selection-start-line="665" selection-start-column="28" selection-end-line="665" selection-end-column="28" />
+              <folding>
+                <element signature="e#152#164#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TextViewController.swift" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Pods/RLBAlertsPickers/Source/Viewers/TextViewController.swift">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="192">
+              <caret line="17" column="16" selection-start-line="17" selection-start-column="16" selection-end-line="17" selection-end-column="16" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>c</find>
       <find>content to hide</find>
       <find>filter content</find>
       <find>bottomsheetcontroller</find>
@@ -48,6 +80,7 @@
       <find>colors</find>
       <find>list</find>
       <find>reloaddata</find>
+      <find>copy</find>
     </findStrings>
     <replaceStrings>
       <replace>-12</replace>
@@ -113,13 +146,13 @@
         <option value="$PROJECT_DIR$/Slide for Reddit/String+util.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/GridFlowLayout.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/VCPresenter.swift" />
-        <option value="$PROJECT_DIR$/Slide for Reddit/CommentDepthCell.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/CellContent.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/CommentCellView.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/Spoilers.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/LinkCellView.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/MediaViewController.swift" />
         <option value="$PROJECT_DIR$/Slide for Reddit/TableDisplayViewController.swift" />
+        <option value="$PROJECT_DIR$/Slide for Reddit/CommentDepthCell.swift" />
       </list>
     </option>
   </component>
@@ -134,16 +167,16 @@
   </component>
   <component name="ProjectFrameBounds">
     <option name="y" value="22" />
-    <option name="width" value="2560" />
-    <option name="height" value="1354" />
+    <option name="width" value="1680" />
+    <option name="height" value="965" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="Cidr.FilesView" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -328,11 +361,12 @@
       <workItem from="1527638438667" duration="304000" />
       <workItem from="1527638894556" duration="13194000" />
       <workItem from="1527712480679" duration="9228000" />
+      <workItem from="1527799043497" duration="537000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="416803000" />
+    <option name="totallyTimeSpent" value="417340000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -344,27 +378,28 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="22" width="2560" height="1354" extended-state="0" />
+    <frame x="0" y="22" width="1680" height="965" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info id="Designer" order="2" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.23749247" />
+      <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.49625838" weight="0.32856005" />
+      <window_info anchor="bottom" id="Messages" order="7" sideWeight="0.4731766" weight="0.3076037" />
       <window_info anchor="right" id="Palette&#9;" order="3" />
+      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.443038" side_tool="true" visible="true" weight="0.3076037" />
+      <window_info anchor="bottom" id="Version Control" order="8" weight="0.32911393" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.556962" weight="0.3559908" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.24954791" />
+      <window_info anchor="bottom" id="Terminal" order="10" sideWeight="0.49704608" weight="0.32856005" />
+      <window_info id="Favorites" order="3" side_tool="true" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.4994279" weight="0.398568" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.20795588" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.24954791" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.49625838" weight="0.32856005" />
-      <window_info anchor="bottom" id="Version Control" order="8" weight="0.32911393" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.55730605" weight="0.35640413" />
-      <window_info anchor="bottom" id="Terminal" order="10" sideWeight="0.49704608" weight="0.32856005" />
-      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.4994279" weight="0.398568" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.44269398" side_tool="true" visible="true" weight="0.30867144" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Find" order="1" sideWeight="0.4942891" weight="0.32856005" />
-      <window_info anchor="bottom" id="Messages" order="7" sideWeight="0.47420245" weight="0.30867144" />
-      <window_info id="Favorites" order="3" side_tool="true" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -390,6 +425,23 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2400">
           <caret line="160" column="29" lean-forward="true" selection-start-line="160" selection-start-column="29" selection-end-line="160" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Pods/RLBAlertsPickers/Source/Viewers/TextViewController.swift">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="192">
+          <caret line="17" column="16" selection-start-line="17" selection-start-column="16" selection-end-line="17" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Slide for Reddit/CommentDepthCell.swift">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="438">
+          <caret line="665" column="28" selection-start-line="665" selection-start-column="28" selection-end-line="665" selection-end-column="28" />
+          <folding>
+            <element signature="e#152#164#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

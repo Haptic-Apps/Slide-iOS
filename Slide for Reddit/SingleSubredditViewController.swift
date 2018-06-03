@@ -27,6 +27,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     let minHeaderHeight: CGFloat = 56;
 
     func openComments(id: String) {
+        print("Opening comments")
         var index = 0
         for s in links {
             if (s.getId() == id) {
@@ -39,9 +40,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             newLinks.append(links[i])
         }
 
-        var comment: UIViewController = UIViewController()
-
-        if (self.splitViewController != nil && !SettingValues.multiColumn) {
+        if (self.splitViewController != nil && UIScreen.main.traitCollection.userInterfaceIdiom == .pad && !SettingValues.multiColumn) {
             let comment = CommentViewController.init(submission: newLinks[0])
             let nav = UINavigationController.init(rootViewController: comment)
             self.splitViewController?.showDetailViewController(nav, sender: self)
@@ -444,12 +443,23 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             currentViewController.present(activityViewController, animated: true, completion: nil);
         }))
 
+        if(link.isSelf){
+            alertController.addAction(Action(ActionData(title: "Copy text", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { action in
+                let alert = UIAlertController.init(title: "Copy text", message: "", preferredStyle: .alert)
+                alert.addTextViewer(text: .text(self.link!.body))
+                alert.addAction(UIAlertAction.init(title: "Copy all", style: .default, handler: { (action) in
+                    UIPasteboard.general.string = self.link!.body
+                }))
+                alert.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: { (action) in
+                    
+                }))
+                let currentViewController: UIViewController = UIApplication.shared.keyWindow!.rootViewController!
+                currentViewController.present(alert, animated: true, completion: nil);
+            }))
+        }
         alertController.addAction(Action(ActionData(title: "Filter this content", image: UIImage(named: "filter")!.menuIcon()), style: .default, handler: { action in
             self.showFilterMenu(link)
         }))
-
-
-        alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: nil))
 
         //todo make this work on ipad
         self.present(alertController, animated: true, completion: nil)
@@ -765,7 +775,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     override func viewDidLoad() {
         super.viewDidLoad()
         flowLayout.delegate = self
-        var frame = self.view.bounds
+        let frame = self.view.bounds
         self.tableView = UICollectionView(frame: frame, collectionViewLayout: flowLayout)
         self.view = UIView.init(frame: CGRect.zero)
 
@@ -857,7 +867,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
     var headerView = UIView()
 
-
     func reloadNeedingColor() {
         tableView.backgroundColor = ColorUtil.backgroundColor
 
@@ -873,7 +882,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         self.tableView.register(ThumbnailLinkCellView.classForCoder(), forCellWithReuseIdentifier: "thumb")
         self.tableView.register(TextLinkCellView.classForCoder(), forCellWithReuseIdentifier: "text")
 
-        var top = 56
+        var top = 20
         if #available(iOS 11.0, *) {
             top = 0
         }
@@ -1045,7 +1054,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                 alrController.addAction(somethingAction)
             }
 
-            let somethingAction = UIAlertAction(title: "Add to sub list", style: UIAlertActionStyle.default, handler: { (alert: UIAlertAction!) in
+            let somethingAction = UIAlertAction(title: "Just add to sub list", style: UIAlertActionStyle.default, handler: { (alert: UIAlertAction!) in
                 Subscriptions.subscribe(self.sub, false, session: self.session!)
                 self.subChanged = true
                 let message = MDCSnackbarMessage()
@@ -1346,12 +1355,12 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
         let alertController: BottomSheetActionController = BottomSheetActionController()
         alertController.headerData = "/r/\(sub)"
-
-
+        
+        
         alertController.addAction(Action(ActionData(title: "Search", image: UIImage(named: "search")!.menuIcon()), style: .default, handler: { action in
             self.search()
         }))
-
+        
         if (sub.contains("/m/")) {
             alertController.addAction(Action(ActionData(title: "Manage multireddit", image: UIImage(named: "info")!.menuIcon()), style: .default, handler: { action in
                 self.displayMultiredditSidebar()
@@ -1361,19 +1370,19 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                 self.doDisplaySidebar()
             }))
         }
-
+        
         alertController.addAction(Action(ActionData(title: "Refresh", image: UIImage(named: "sync")!.menuIcon()), style: .default, handler: { action in
             self.refresh()
         }))
-
+        
         alertController.addAction(Action(ActionData(title: "Gallery", image: UIImage(named: "image")!.menuIcon()), style: .default, handler: { action in
             self.galleryMode()
         }))
-
+        
         alertController.addAction(Action(ActionData(title: "Shadowbox", image: UIImage(named: "shadowbox")!.menuIcon()), style: .default, handler: { action in
             self.shadowboxMode()
         }))
-
+        
         alertController.addAction(Action(ActionData(title: "Subreddit theme", image: UIImage(named: "colors")!.menuIcon()), style: .default, handler: { action in
             if (parentVC != nil) {
                 let p = (parentVC!)
@@ -1382,20 +1391,17 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                 self.pickTheme(sender: sender, parent: nil)
             }
         }))
-
+        
         if (!single && (sub != "all" && sub != "frontpage" && !sub.contains("+") && !sub.contains("/m/"))) {
             alertController.addAction(Action(ActionData(title: "Submit", image: UIImage(named: "edit")!.menuIcon()), style: .default, handler: { action in
                 self.newPost(sender)
             }))
         }
-
+        
         alertController.addAction(Action(ActionData(title: "Filter content", image: UIImage(named: "filter")!.menuIcon()), style: .default, handler: { action in
             self.filterContent()
         }))
-
-        alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { action in
-        }))
-
+    
         VCPresenter.presentAlert(alertController, parentVC: self)
 
     }
@@ -2031,8 +2037,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self);
         }))
 
-        alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: nil))
-
         VCPresenter.presentAlert(alertController, parentVC: self)
     }
 
@@ -2415,6 +2419,4 @@ extension UIApplication {
     var statusBarView: UIView? {
         return value(forKey: "statusBar") as? UIView
     }
-
 }
-

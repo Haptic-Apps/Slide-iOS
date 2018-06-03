@@ -116,9 +116,6 @@ class LinkTableViewCell: UITableViewCell, UIViewControllerPreviewingDelegate, TT
                 alertController.addAction(Action(ActionData(title: "Copy URL", image: UIImage(named: "save-1")!.menuIcon()), style: .default, handler: { action in
                     UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
                 }))
-                alertController.addAction(Action(ActionData(title: "Close", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { action in
-                }))
-
                 VCPresenter.presentAlert(alertController, parentVC: parentViewController!)
             }
         }

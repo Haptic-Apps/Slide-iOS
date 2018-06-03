@@ -129,7 +129,7 @@ DEPENDENCIES:
   - SwiftyJSON
   - TTTAttributedLabel
   - UZTextView (from `https://github.com/ccrama/UZTextView`)
-  - XLActionController
+  - XLActionController (from `https://github.com/ccrama/XLActionController`)
 
 EXTERNAL SOURCES:
   ActionSheetPicker-3.0:
@@ -142,6 +142,8 @@ EXTERNAL SOURCES:
     :git: https://github.com/fastred/SloppySwiper
   UZTextView:
     :git: https://github.com/ccrama/UZTextView
+  XLActionController:
+    :git: https://github.com/ccrama/XLActionController
 
 CHECKOUT OPTIONS:
   ActionSheetPicker-3.0:
@@ -159,6 +161,9 @@ CHECKOUT OPTIONS:
   UZTextView:
     :commit: 15b553d05544ddc429b76f23b413fc9be256901d
     :git: https://github.com/ccrama/UZTextView
+  XLActionController:
+    :commit: 491f3ce546a70a4f9e11fa5274bf807bbf9de1cd
+    :git: https://github.com/ccrama/XLActionController
 
 SPEC CHECKSUMS:
   ActionSheetPicker-3.0: d11a4c12c6aaf704b8a3f56d179198c99f3e41e6
@@ -184,6 +189,6 @@ SPEC CHECKSUMS:
   UZTextView: d8d45a8459b0de6f2c393458a05c65352f89e00a
   XLActionController: 007868251c0eed70d649d06c1625259b73b3a600
 
-PODFILE CHECKSUM: 547bb23d3c9ce4529e79731ead7653562d1d72b9
+PODFILE CHECKSUM: 1c73bb8a3c44656836e5f14ad7a3020809c2fa9b
 
 COCOAPODS: 1.4.0

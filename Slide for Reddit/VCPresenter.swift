@@ -41,9 +41,10 @@ public class VCPresenter {
                 newParent.modalPresentationStyle = .fullScreen
                 newParent.modalTransitionStyle = .crossDissolve
             }
+            
+            viewController.navigationItem.leftBarButtonItems = [barButton]
 
             parentViewController!.present(newParent, animated: true, completion: nil)
-            viewController.navigationItem.leftBarButtonItems = [barButton]
             if (viewController is SFHideSafariViewController) {
                 newParent.setNavigationBarHidden(true, animated: false)
             }
@@ -56,7 +57,7 @@ public class VCPresenter {
             button.addTarget(self, action: #selector(VCPresenter.handleBackButton(controller:)), for: .touchUpInside)
 
             let barButton = UIBarButtonItem.init(customView: button)
-
+     
             parentNavigationController!.pushViewController(viewController, animated: true)
 
             viewController.navigationItem.leftBarButtonItem = barButton

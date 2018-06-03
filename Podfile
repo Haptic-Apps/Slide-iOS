@@ -20,7 +20,7 @@ pod 'MaterialComponents/ProgressView'
 pod "MKColorPicker"
 pod 'LicensesViewController', '~> 0.6.5'
 pod 'BiometricAuthentication'
-  pod 'XLActionController'
+  pod 'XLActionController', :git => 'https://github.com/ccrama/XLActionController'
 pod 'MaterialComponents/ShadowElevations'
 pod 'MaterialComponents/Snackbar’
 pod 'MaterialComponents/ActivityIndicator'

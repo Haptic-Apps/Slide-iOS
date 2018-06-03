@@ -319,7 +319,6 @@ class MessageCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate,
                     VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: url)!), popupIfPossible: true, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController)
                 }))
             }
-            alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: nil))
 
             VCPresenter.presentAlert(alertController, parentVC: parentViewController!)
 

@@ -295,8 +295,20 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             let currentViewController: UIViewController = UIApplication.shared.keyWindow!.rootViewController!
             currentViewController.present(activityViewController, animated: true, completion: nil);
         }))
-
-        alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: nil))
+        if(link.isSelf){
+            alertController.addAction(Action(ActionData(title: "Copy text", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { action in
+                let alert = UIAlertController.init(title: "Copy text", message: "", preferredStyle: .alert)
+                alert.addTextViewer(text: .text(self.link!.body))
+                alert.addAction(UIAlertAction.init(title: "Copy all", style: .default, handler: { (action) in
+                    UIPasteboard.general.string = self.link!.body
+                }))
+                alert.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: { (action) in
+                    
+                }))
+                let currentViewController: UIViewController = UIApplication.shared.keyWindow!.rootViewController!
+                currentViewController.present(alert, animated: true, completion: nil);
+            }))
+        }
 
         VCPresenter.presentAlert(alertController, parentVC: self)
 
@@ -399,7 +411,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         refreshControl.tintColor = ColorUtil.fontColor
         refreshControl.attributedTitle = NSAttributedString(string: "")
         refreshControl.addTarget(self, action: #selector(CommentViewController.refresh(_:)), for: UIControlEvents.valueChanged)
-        var top = CGFloat(56)
+        var top = CGFloat(64)
         var bottom = CGFloat(45)
         if #available(iOS 11.0, *) {
             top = 0
@@ -463,6 +475,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                         self.updateStringsSingle(temp)
                                     }
                                     DispatchQueue.main.async(execute: { () -> Void in
+                                        self.refreshControl.endRefreshing()
+                                        self.indicator?.stopAnimating()
+
                                         if (!self.comments.isEmpty) {
                                             var time = timeval(tv_sec: 0, tv_usec: 0)
                                             gettimeofday(&time, nil)
@@ -472,8 +487,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
                                             self.tableView.reloadData(with: .fade)
                                         }
-                                        self.refreshControl.endRefreshing()
-                                        self.indicator?.stopAnimating()
                                         if (self.comments.isEmpty) {
                                             let message = MDCSnackbarMessage()
                                             message.text = "No cached comments found"
@@ -728,7 +741,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         searchBar.textColor = .white
         searchBar.showsCancelButton = true
 
-        tableView.estimatedRowHeight = UITableViewAutomaticDimension
+        tableView.estimatedRowHeight = 200
         tableView.rowHeight = UITableViewAutomaticDimension
 
         self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "Cell")
@@ -889,7 +902,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     override func viewWillAppear(_ animated: Bool) {
 
         super.viewWillAppear(animated)
-        self.navigationController?.navigationBar.shadowImage = UIImage()
         (navigationController)?.setNavigationBarHidden(false, animated: false)
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
@@ -905,8 +917,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
 
         if (navigationController != nil) {
-
-
             let sort = UIButton.init(type: .custom)
             sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControlState.normal)
             sort.addTarget(self, action: #selector(self.sort(_:)), for: UIControlEvents.touchUpInside)
@@ -922,8 +932,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             navigationItem.rightBarButtonItems = [sortB, searchB]
             navigationItem.rightBarButtonItem?.imageInsets = UIEdgeInsetsMake(0, 0, 0, -20)
             doSubbed()
-
-
         }
 
     }
@@ -1015,10 +1023,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
         alertController.addAction(Action(ActionData(title: "Collapse child comments", image: UIImage(named: "comments")!.menuIcon()), style: .default, handler: { action in
             self.collapseAll()
-        }))
-
-
-        alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { action in
         }))
 
         VCPresenter.presentAlert(alertController, parentVC: self)
@@ -1679,7 +1683,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     func doReplySubmission() {
         menuShown = true
-        var top = CGFloat(56)
+        var top = CGFloat(64)
         var bottom = CGFloat(45)
         if #available(iOS 11.0, *) {
             top = 0
@@ -1700,7 +1704,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     func doReply() {
         menuShown = false
-        var top = CGFloat(56)
+        var top = CGFloat(64)
         var bottom = CGFloat(45)
         if #available(iOS 11.0, *) {
             top = 0
@@ -1771,7 +1775,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         tableView.beginUpdates()
         tableView.deleteRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .fade)
         tableView.endUpdates()
-        var top = CGFloat(56)
+        var top = CGFloat(64)
         var bottom = CGFloat(45)
         if #available(iOS 11.0, *) {
             top = 0
@@ -2188,8 +2192,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             let prof = ProfileViewController.init(name: cell.link!.author)
             VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self);
         }))
-
-        alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: nil))
 
         VCPresenter.presentAlert(alertController, parentVC: self)
     }

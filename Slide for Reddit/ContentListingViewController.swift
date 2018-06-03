@@ -613,9 +613,21 @@ extension ContentListingViewController: LinkCellViewDelegate {
             currentViewController.present(activityViewController, animated: true, completion: nil);
         }))
 
-
-        alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: nil))
-
+        if(link.isSelf){
+            alertController.addAction(Action(ActionData(title: "Copy text", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { action in
+                let alert = UIAlertController.init(title: "Copy text", message: "", preferredStyle: .alert)
+                alert.addTextViewer(text: .text(self.link!.body))
+                alert.addAction(UIAlertAction.init(title: "Copy all", style: .default, handler: { (action) in
+                    UIPasteboard.general.string = self.link!.body
+                }))
+                alert.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: { (action) in
+                    
+                }))
+                let currentViewController: UIViewController = UIApplication.shared.keyWindow!.rootViewController!
+                currentViewController.present(alert, animated: true, completion: nil);
+            }))
+        }
+        
         //todo make this work on ipad
         self.present(alertController, animated: true, completion: nil)
     }
@@ -767,8 +779,6 @@ extension ContentListingViewController: LinkCellViewDelegate {
             let prof = ProfileViewController.init(name: cell.link!.author)
             VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self);
         }))
-
-        alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: nil))
 
         VCPresenter.presentAlert(alertController, parentVC: self)
     }

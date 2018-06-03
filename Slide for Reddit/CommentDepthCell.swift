@@ -14,6 +14,7 @@ import RealmSwift
 import AudioToolbox
 import XLActionController
 import MaterialComponents.MaterialSnackbar
+import RLBAlertsPickers
 
 protocol UZTextViewCellDelegate: class {
     func pushedMoreButton(_ cell: CommentDepthCell)
@@ -639,7 +640,17 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         alertController.addAction(Action(ActionData(title: "Report", image: UIImage(named: "hide")!.menuIcon()), style: .default, handler: { action in
             par.report(self.comment!)
         }))
-        alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: nil))
+        alertController.addAction(Action(ActionData(title: "Copy text", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { action in
+            let alert = UIAlertController.init(title: "Copy text", message: "", preferredStyle: .alert)
+            alert.addTextViewer(text: .text(self.comment!.body))
+            alert.addAction(UIAlertAction.init(title: "Copy all", style: .default, handler: { (action) in
+                UIPasteboard.general.string = self.comment!.body
+            }))
+            alert.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: { (action) in
+                
+            }))
+            par.present(alert, animated: true)
+        }))
 
         VCPresenter.presentAlert(alertController, parentVC: par.parent!)
     }
@@ -703,8 +714,6 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
             let prof = ProfileViewController.init(name: self.comment!.author)
             VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: nil, parentViewController: par);
         }))
-
-        alertController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: nil))
 
         VCPresenter.presentAlert(alertController, parentVC: par.parent!)
     }
