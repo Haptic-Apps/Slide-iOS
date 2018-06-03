@@ -638,7 +638,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
             }))
         }
         alertController.addAction(Action(ActionData(title: "Report", image: UIImage(named: "hide")!.menuIcon()), style: .default, handler: { action in
-            par.report(self.comment!)
+            PostActions.report(self.comment!, parent: par)
         }))
         alertController.addAction(Action(ActionData(title: "Copy text", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { action in
             let alert = UIAlertController.init(title: "Copy text", message: "", preferredStyle: .alert)

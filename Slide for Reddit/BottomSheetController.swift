@@ -125,11 +125,13 @@ open class BottomSheetActionController: ActionController<BottomSheetCell, Action
         
         collectionViewLayout.minimumLineSpacing = 0
         settings.cancelView.showCancel = true
+        settings.cancelView.fontColor = ColorUtil.fontColor
         settings.cancelView.height = 52
         //collectionView.contentInset = UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 12)
         settings.cancelView.backgroundColor = ColorUtil.backgroundColor
         settings.behavior.hideOnScrollDown = false
         settings.behavior.bounces = true
+        settings.behavior.hideOnTap = true
         settings.animation.scale = nil
         settings.behavior.useDynamics = false
         settings.behavior.scrollEnabled = true

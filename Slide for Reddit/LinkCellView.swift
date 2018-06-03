@@ -575,12 +575,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
 
         refresh()
-
-
         let more = History.commentsSince(s: submission)
-
         comments.text = " \(submission.commentCount)" + (more > 0 ? " (+\(more))" : "")
-
     }
 
     var link: RSubmission?

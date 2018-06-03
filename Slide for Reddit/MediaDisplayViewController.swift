@@ -356,6 +356,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
             ytPlayer = YTPlayerView.init(frame: CGRect.init(x: 0, y: (self.view.frame.size.height - he) / 2, width: self.view.frame.size.width, height: he))
             ytPlayer.isHidden = true
             self.view.addSubview(ytPlayer)
+            self.progressView?.setHidden(true, animated: true)
             getYouTube(ytPlayer, urlS: baseURL!.absoluteString)
         }
     }
