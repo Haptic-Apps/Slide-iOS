@@ -254,7 +254,7 @@ class LinkTableViewCell: UITableViewCell, UIViewControllerPreviewingDelegate, TT
             let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude), nil)
 
             let totalHeight = paddingTop + paddingBottom + (thumb ? max(ceil(textSize.height), imageHeight) : ceil(textSize.height) + imageHeight) + innerPadding + actionbar + textHeight + (full ? CGFloat(10) : CGFloat(0))
-            estimatedHeight = totalHeight
+            estimatedHeight = totalHeight + 25
         }
         return estimatedHeight
     }
