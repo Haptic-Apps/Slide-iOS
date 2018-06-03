@@ -197,8 +197,7 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
     }
     
     func doSub(_ changed: UISwitch) {
-        if (changed.isOn) {
-            //was not subscriber, changed, and unsubscribing again
+        if (!changed.isOn) {
             Subscriptions.unsubscribe(subreddit!.displayName, session: (UIApplication.shared.delegate as! AppDelegate).session!)
             let message = MDCSnackbarMessage()
             message.text = "Unsubscribed from /r/\(subreddit!.displayName)"
@@ -372,7 +371,10 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
         subbed.isOn = Subscriptions.isSubscriber(subreddit.displayName)
         subbed.onTintColor = ColorUtil.accentColorForSub(sub: subreddit.displayName)
         subbed.addTarget(self, action: #selector(doSub(_:)), for: .valueChanged)
-
+        subbed.isUserInteractionEnabled = true
+        
+        back.isUserInteractionEnabled = true
+        
         here.numberOfLines = 0
         subscribers.numberOfLines = 0
         subscribers.font = FontGenerator.boldFontOfSize(size: 14, submission: true)
