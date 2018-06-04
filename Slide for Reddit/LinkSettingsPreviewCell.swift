@@ -225,7 +225,7 @@ class LinkTableViewCell: UITableViewCell, UIViewControllerPreviewingDelegate, TT
                 innerPadding += 18 //between label and bottom box
                 innerPadding += 8 //between box and end
             } else if (big) {
-                if (SettingValues.centerLeadImage || full) {
+                if (SettingValues.postViewMode == .CENTER || full) {
                     innerPadding += 16 //between label
                     innerPadding += 12 //between banner and box
                 } else {
@@ -981,7 +981,7 @@ class LinkTableViewCell: UITableViewCell, UIViewControllerPreviewingDelegate, TT
                     metrics: metrics,
                     views: views))
 
-            if (SettingValues.centerLeadImage || full) {
+            if (SettingValues.postViewMode == .CENTER || full) {
                 thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[label]-8@999-[banner]-12@999-\(bx)|",
                         options: NSLayoutFormatOptions(rawValue: 0),
                         metrics: metrics,

@@ -309,7 +309,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                         innerPadding += 18 //between label and bottom box
                         innerPadding += 8 //between box and end
                     } else if (big) {
-                        if (SettingValues.centerLeadImage) {
+                        if (SettingValues.postViewMode == .CENTER) {
                             innerPadding += 16 //between label
                             innerPadding += 12 //between banner and box
                         } else {

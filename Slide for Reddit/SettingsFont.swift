@@ -182,7 +182,7 @@ class SettingsFont: UITableViewController {
         }
         actionSheetController.addAction(cancelActionButton)
 
-        let currentLinkSize = SettingValues.commentFontOffset
+        let currentLinkSize = SettingValues.postFontOffset
         let selected = UIImage.init(named: "selected")!.imageResize(sizeChange: CGSize.init(width: 20, height: 20)).withColor(tintColor: .blue)
 
         cancelActionButton = UIAlertAction(title: "Extra Large", style: .default) { action -> Void in

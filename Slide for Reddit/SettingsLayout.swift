@@ -8,6 +8,7 @@
 
 import UIKit
 import reddift
+import XLActionController
 
 class SettingsLayout: UITableViewController {
     
@@ -17,12 +18,8 @@ class SettingsLayout: UITableViewController {
     var hideBannerImageCell: UITableViewCell = UITableViewCell()
     var hideBannerImage = UISwitch()
     
-    var cardModeCell: UITableViewCell = UITableViewCell()
-    var cardMode = UISwitch()
-    
-    var centerLeadImageCell: UITableViewCell = UITableViewCell()
-    var centerLeadImage = UISwitch()
-    
+    var cardModeCell: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "mode")
+
     var hideActionbarCell: UITableViewCell = UITableViewCell()
     var hideActionbar = UISwitch()
 
@@ -79,20 +76,11 @@ class SettingsLayout: UITableViewController {
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_cropBigPic)
         } else if(changed == hideBannerImage){
             SettingValues.bannerHidden = changed.isOn
+            SubredditReorderViewController.changed = true
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_bannerHidden)
         } else if(changed == smalltag){
             SettingValues.smallerTag = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_smallTag)
-        } else if(changed == cardMode){
-            if(changed.isOn){
-                SettingValues.postViewMode = .CARD
-            } else {
-                SettingValues.postViewMode = .LIST
-            }
-            UserDefaults.standard.set((changed.isOn ? "card" : "list"), forKey: SettingValues.pref_postViewMode)
-        } else if(changed == centerLeadImage){
-            SettingValues.centerLeadImage = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_centerLead)
         } else if(changed == hideActionbar){
             SettingValues.hideButtonActionbar = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_hideButtonActionbar)
@@ -196,6 +184,55 @@ class SettingsLayout: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        if(indexPath.section == 1 && indexPath.row == 0){
+            let alertController: BottomSheetActionController = BottomSheetActionController()
+            alertController.addAction(Action(ActionData(title: "List view", image: UIImage(named: "list")!.menuIcon()), style: .default, handler: { action in
+                UserDefaults.standard.set("list", forKey: SettingValues.pref_postViewMode)
+                SettingValues.postViewMode = .LIST
+                UserDefaults.standard.synchronize()
+                self.doDisables()
+                self.doLink()
+                tableView.reloadData()
+                self.cardModeCell.detailTextLabel?.text = SettingValues.postViewMode.rawValue.capitalize()
+                SubredditReorderViewController.changed = true
+            }))
+            
+            alertController.addAction(Action(ActionData(title: "Card view", image: UIImage(named: "card")!.menuIcon()), style: .default, handler: { action in
+                UserDefaults.standard.set("card", forKey: SettingValues.pref_postViewMode)
+                SettingValues.postViewMode = .CARD
+                UserDefaults.standard.synchronize()
+                self.doDisables()
+                self.doLink()
+                tableView.reloadData()
+                self.cardModeCell.detailTextLabel?.text = SettingValues.postViewMode.rawValue.capitalize()
+                SubredditReorderViewController.changed = true
+            }))
+            
+            alertController.addAction(Action(ActionData(title: "Centered card view", image: UIImage(named: "centeredimage")!.menuIcon()), style: .default, handler: { action in
+                UserDefaults.standard.set("center", forKey: SettingValues.pref_postViewMode)
+                SettingValues.postViewMode = .CENTER
+                UserDefaults.standard.synchronize()
+                self.doDisables()
+                self.doLink()
+                tableView.reloadData()
+                self.cardModeCell.detailTextLabel?.text = SettingValues.postViewMode.rawValue.capitalize()
+                SubredditReorderViewController.changed = true
+            }))
+                
+            alertController.addAction(Action(ActionData(title: "Compact view", image: UIImage(named: "compact")!.menuIcon()), style: .default, handler: { action in
+                UserDefaults.standard.set("compact", forKey: SettingValues.pref_postViewMode)
+                SettingValues.postViewMode = .COMPACT
+                UserDefaults.standard.synchronize()
+                self.doDisables()
+                self.doLink()
+                tableView.reloadData()
+                self.cardModeCell.detailTextLabel?.text = SettingValues.postViewMode.rawValue.capitalize()
+                SubredditReorderViewController.changed = true
+            }))
+            
+            VCPresenter.presentAlert(alertController, parentVC: self)
+
+        }
     }
     
     override func loadView() {
@@ -233,23 +270,12 @@ class SettingsLayout: UITableViewController {
         selftextCell.textLabel?.textColor = ColorUtil.fontColor
         selftextCell.selectionStyle = UITableViewCellSelectionStyle.none
         
-        cardMode = UISwitch()
-        cardMode.isOn = SettingValues.postViewMode == .CARD
-        cardMode.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        cardModeCell.textLabel?.text = "Card mode"
-        cardModeCell.accessoryView = cardMode
+        cardModeCell.textLabel?.text = "Layout mode"
         cardModeCell.backgroundColor = ColorUtil.foregroundColor
         cardModeCell.textLabel?.textColor = ColorUtil.fontColor
+        cardModeCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        cardModeCell.detailTextLabel?.text = SettingValues.postViewMode.rawValue.capitalize()
         cardModeCell.selectionStyle = UITableViewCellSelectionStyle.none
-
-        centerLeadImage = UISwitch()
-        centerLeadImage.isOn = SettingValues.centerLeadImage
-        centerLeadImage.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        centerLeadImageCell.textLabel?.text = "Center lead image"
-        centerLeadImageCell.accessoryView = centerLeadImage
-        centerLeadImageCell.backgroundColor = ColorUtil.foregroundColor
-        centerLeadImageCell.textLabel?.textColor = ColorUtil.fontColor
-        centerLeadImageCell.selectionStyle = UITableViewCellSelectionStyle.none
 
         smalltag = UISwitch()
         smalltag.isOn = SettingValues.smallerTag
@@ -339,10 +365,8 @@ class SettingsLayout: UITableViewController {
     
     func doDisables(){
         if(SettingValues.bannerHidden){
-            centerLeadImage.isEnabled = false
             cropBigPic.isEnabled = false
         } else {
-            centerLeadImage.isEnabled = true
             cropBigPic.isEnabled = true
         }
         if(SettingValues.hideButtonActionbar){
@@ -385,11 +409,10 @@ class SettingsLayout: UITableViewController {
             case 0: return self.cardModeCell
             case 1: return self.hideBannerImageCell
             case 2: return self.cropBigPicCell
-            case 3: return self.centerLeadImageCell
-            case 4: return self.largerThumbnailCell
-            case 5: return self.leftThumbCell
-            case 6: return self.selftextCell
-            case 7: return self.smalltagCell
+            case 3: return self.largerThumbnailCell
+            case 4: return self.leftThumbCell
+            case 5: return self.selftextCell
+            case 6: return self.smalltagCell
 
             default: fatalError("Unknown row in section 0")
             }
@@ -411,7 +434,7 @@ class SettingsLayout: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch(section) {
         case 0: return 1
-        case 1: return 8
+        case 1: return 7
         case 2: return 6
         default: fatalError("Unknown number of sections")
         }

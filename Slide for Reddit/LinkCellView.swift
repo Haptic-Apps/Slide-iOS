@@ -224,7 +224,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             var paddingLeft = CGFloat(0)
             var paddingRight = CGFloat(0)
             var innerPadding = CGFloat(0)
-            if(SettingValues.postViewMode == .CARD && !full){
+            if((SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full){
                 paddingTop = 5
                 paddingBottom = 5
                 paddingLeft = 5
@@ -234,38 +234,38 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             let actionbar = CGFloat(!full && SettingValues.hideButtonActionbar ? 0 : 24)
 
             var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
-            let thumbheight = SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50)
+            let thumbheight = (SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50))  - (SettingValues.postViewMode == .COMPACT ? 15 : 0)
             let textHeight = (!hasText || !full) ? CGFloat(0) : CGFloat((content?.textHeight)!)
 
             if(thumb){
                 imageHeight = thumbheight
-                innerPadding += 8 //between top and thumbnail
-                innerPadding += 18 //between label and bottom box
-                innerPadding += 8 //between box and end
+                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between top and thumbnail
+                innerPadding += 18 - (SettingValues.postViewMode == .COMPACT ? 4 : 0) //between label and bottom box
+                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
             } else if(big){
-                if (SettingValues.centerLeadImage || full) {
-                    innerPadding += 16 //between label
-                    innerPadding += 12 //between banner and box
+                if (SettingValues.postViewMode == .CENTER || full) {
+                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 16) //between label
+                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between banner and box
                 } else {
-                    innerPadding += 8 //between banner and label
-                    innerPadding += 12 //between label and box
+                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between banner and label
+                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between label and box
                 }
 
-                innerPadding += 8 //between box and end
+                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
             } else {
-                innerPadding += 8
+                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8)
                 innerPadding += 5 //between label and body
-                innerPadding += 12 //between body and box
-                innerPadding += 8 //between box and end
+                innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between body and box
+                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
             }
 
             var estimatedUsableWidth = aspectWidth - paddingLeft - paddingRight
             if(thumb){
                 estimatedUsableWidth -= thumbheight //is the same as the width
-                estimatedUsableWidth -= 12 //between edge and thumb
-                estimatedUsableWidth -= 8 //between thumb and label
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between edge and thumb
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between thumb and label
             } else {
-                estimatedUsableWidth -= 24 //12 padding on either side
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //12 padding on either side
             }
 
             let framesetter = CTFramesetterCreateWithAttributedString(title.attributedText)
@@ -279,7 +279,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.thumbImage = UIImageView(frame: CGRect(x: 0, y: 8, width: (SettingValues.largerThumbnail ? 75 : 50), height: (SettingValues.largerThumbnail ? 75 : 50)))
+        self.thumbImage = UIImageView(frame: CGRect(x: 0, y: 8, width: (SettingValues.largerThumbnail ? 75 : 50) - (SettingValues.postViewMode == .COMPACT ? 15 : 0), height: (SettingValues.largerThumbnail ? 75 : 50) - (SettingValues.postViewMode == .COMPACT ? 15 : 0)))
         thumbImage.layer.cornerRadius = 15;
         thumbImage.backgroundColor = UIColor.white
         thumbImage.clipsToBounds = true;
@@ -459,7 +459,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         var innerpadding = 0
         var radius = 0
 
-        if (SettingValues.postViewMode == .CARD && !full) {
+        if ((SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full) {
             topmargin = 5
             bottommargin = 5
             leftmargin = 5
@@ -982,10 +982,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             return
         }
 
-        let metrics = ["horizontalMargin": 75, "top": 0, "bottom": 0, "separationBetweenLabels": 0, "full": Int(contentView.frame.size.width), "bannerPadding": (full || SettingValues.postViewMode != .CARD) ? 5 : 0, "size": full ? 16 : 8, "labelMinHeight": 75, "thumb": (SettingValues.largerThumbnail ? 75 : 50), "bannerHeight": submissionHeight] as [String: Int]
+        let metrics = ["horizontalMargin": 75, "top": 0, "bottom": 0, "separationBetweenLabels": 0, "full": Int(contentView.frame.size.width),"ctwelve": SettingValues.postViewMode == .COMPACT ? 8 : 12,"ceight": SettingValues.postViewMode == .COMPACT ? 4 : 8, "bannerPadding": (full || SettingValues.postViewMode != .CARD) ? 5 : 0, "size": full ? 16 : 8, "labelMinHeight": 75, "thumb": (SettingValues.largerThumbnail ? 75 : 50) - (SettingValues.postViewMode == .COMPACT ? 15 : 0), "bannerHeight": submissionHeight] as [String: Int]
         let views = ["label": title, "body": textView, "image": thumbImage, "info": b, "tag": tagbody, "mod" : mod, "upvote": upvote, "downvote": downvote, "score": score, "comments": comments, "banner": bannerImage, "buttons": buttons, "box": box] as [String: Any]
-        var bt = "[buttons]-8-"
-        var bx = "[box]-8-"
+        var bt = "[buttons]-(ceight)-"
+        var bx = "[box]-(ceight)-"
         if (SettingValues.hideButtonActionbar && !full) {
             bt = "[buttons(0)]-4-"
             bx = "[box(0)]-4-"
@@ -995,22 +995,22 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         thumbConstraint = []
 
         if (target == .thumb) {
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[image(thumb)]",
+            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(ceight))-[image(thumb)]",
                     options: NSLayoutFormatOptions(rawValue: 0),
                     metrics: metrics,
                     views: views))
             if (SettingValues.leftThumbnail) {
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[image(thumb)]-8-[label]-12-|",
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(ctwelve)-[image(thumb)]-(ceight)-[label]-(ctwelve)-|",
                         options: NSLayoutFormatOptions(rawValue: 0),
                         metrics: metrics,
                         views: views))
             } else {
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[label]-8-[image(thumb)]-12-|",
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(ctwelve)-[label]-(ceight)-[image(thumb)]-(ctwelve)-|",
                         options: NSLayoutFormatOptions(rawValue: 0),
                         metrics: metrics,
                         views: views))
             }
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[label]-10-\(bx)|",
+            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(ceight)-[label]-10-\(bx)|",
                     options: NSLayoutFormatOptions(rawValue: 0),
                     metrics: metrics,
                     views: views))
@@ -1024,13 +1024,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     options: NSLayoutFormatOptions(rawValue: 0),
                     metrics: metrics,
                     views: views))
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[label]-12-|",
+            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(ctwelve)-[label]-(ctwelve)-|",
                     options: NSLayoutFormatOptions(rawValue: 0),
                     metrics: metrics,
                     views: views))
 
-            if (SettingValues.centerLeadImage || full) {
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[label]-8@999-[banner]-12@999-\(bx)|",
+            if (SettingValues.postViewMode == .CENTER || full) {
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(ceight)-[label]-(ceight)-[banner]-(ctwelve)-\(bx)|",
                         options: NSLayoutFormatOptions(rawValue: 0),
                         metrics: metrics,
                         views: views))
@@ -1043,20 +1043,20 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                         metrics: metrics,
                         views: views))
 
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[info(45)]-8-[buttons]",
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[info(45)]-(ceight)-[buttons]",
                         options: NSLayoutFormatOptions(rawValue: 0),
                         metrics: metrics,
                         views: views))
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[info]-8-[box]",
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[info(45)]-(ceight)-[box]",
                         options: NSLayoutFormatOptions(rawValue: 0),
                         metrics: metrics,
                         views: views))
 
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[tag]-11-[buttons]",
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[tag]-(ctwelve)-[buttons]",
                         options: NSLayoutFormatOptions(rawValue: 0),
                         metrics: metrics,
                         views: views))
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[tag]-11-[box]",
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[tag]-(ctwelve)-[box]",
                         options: NSLayoutFormatOptions(rawValue: 0),
                         metrics: metrics,
                         views: views))
@@ -1064,15 +1064,15 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
             } else {
 
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(bannerPadding)-[banner]-8@999-[label]-12@999-\(bx)|",
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(bannerPadding)-[banner]-(ceight)-[label]-(ctwelve)-\(bx)|",
                         options: NSLayoutFormatOptions(rawValue: 0),
                         metrics: metrics,
                         views: views))
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[info(45)]-8@999-[label]",
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[info(45)]-(ceight)-[label]",
                         options: NSLayoutFormatOptions(rawValue: 0),
                         metrics: metrics,
                         views: views))
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[tag]-11@999-[label]",
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[tag]-(ctwelve)-[label]",
                         options: NSLayoutFormatOptions(rawValue: 0),
                         metrics: metrics,
                         views: views))
@@ -1096,24 +1096,24 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     options: NSLayoutFormatOptions(rawValue: 0),
                     metrics: metrics,
                     views: views))
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[tag]-12-|",
+            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[tag]-(ctwelve)-|",
                     options: NSLayoutFormatOptions.alignAllLastBaseline,
                     metrics: metrics,
                     views: views))
 
         } else if (target == .text) {
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[image(0)]",
+            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(ceight)-[image(0)]",
                     options: NSLayoutFormatOptions(rawValue: 0),
                     metrics: metrics,
                     views: views))
 
 
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[label]-12-|",
+            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(ctwelve)-[label]-(ctwelve)-|",
                     options: NSLayoutFormatOptions(rawValue: 0),
                     metrics: metrics,
                     views: views))
 
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[body]-12-|",
+            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(ctwelve)-[body]-(ctwelve)-|",
                     options: NSLayoutFormatOptions(rawValue: 0),
                     metrics: metrics,
                     views: views))
@@ -1668,7 +1668,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         var leftmargin = 0
         var rightmargin = 0
 
-        if (SettingValues.postViewMode == .CARD && !full) {
+        if ((SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full) {
             topmargin = 5
             bottommargin = 5
             leftmargin = 5

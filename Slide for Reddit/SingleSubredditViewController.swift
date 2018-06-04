@@ -150,7 +150,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             var paddingLeft = CGFloat(0)
             var paddingRight = CGFloat(0)
             var innerPadding = CGFloat(0)
-            if (SettingValues.postViewMode == .CARD) {
+            if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) {
                 paddingTop = 5
                 paddingBottom = 5
                 paddingLeft = 5
@@ -160,47 +160,46 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             let actionbar = CGFloat(SettingValues.hideButtonActionbar ? 0 : 24)
 
             var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
-            let thumbheight = SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50)
+            let thumbheight = (SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50))  - (SettingValues.postViewMode == .COMPACT ? 15 : 0)
             let textHeight = CGFloat(0)
 
             if (thumb) {
                 imageHeight = thumbheight
-                innerPadding += 8 //between top and thumbnail
-                innerPadding += 18 //between label and bottom box
-                innerPadding += 8 //between box and end
-            } else if (big) {
-                if (SettingValues.centerLeadImage) {
-                    innerPadding += 16 //between label
-                    innerPadding += 12 //between banner and box
+                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between top and thumbnail
+                innerPadding += 18 - (SettingValues.postViewMode == .COMPACT ? 4 : 0) //between label and bottom box
+                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
+            } else if(big){
+                if (SettingValues.postViewMode == .CENTER) {
+                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 16) //between label
+                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between banner and box
                 } else {
-                    innerPadding += 8 //between banner and label
-                    innerPadding += 12 //between label and box
+                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between banner and label
+                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between label and box
                 }
-
-                innerPadding += 8 //between box and end
+                
+                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
             } else {
-                innerPadding += 8
+                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8)
                 innerPadding += 5 //between label and body
-                innerPadding += 12 //between body and box
-                innerPadding += 8 //between box and end
+                innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between body and box
+                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
             }
 
             var estimatedUsableWidth = itemWidth - paddingLeft - paddingRight
             if (thumb) {
                 estimatedUsableWidth -= thumbheight //is the same as the width
-                estimatedUsableWidth -= 12 //between edge and thumb
-                estimatedUsableWidth -= 8 //between thumb and label
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between edge and thumb
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between thumb and label
             } else {
-                estimatedUsableWidth -= 24 //12 padding on either side
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //12 padding on either side
             }
 
             let framesetter = CTFramesetterCreateWithAttributedString(CachedTitle.getTitle(submission: submission, full: false, false))
             let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude), nil)
 
             let totalHeight = paddingTop + paddingBottom + (thumb ? max(ceil(textSize.height), imageHeight) : ceil(textSize.height) + imageHeight) + innerPadding + actionbar + textHeight
-            var estimatedHeight = totalHeight
-
-            return CGSize(width: itemWidth, height: estimatedHeight)
+            
+            return CGSize(width: itemWidth, height: totalHeight)
         }
         return CGSize(width: itemWidth, height: 0)
     }
@@ -991,9 +990,10 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
         if (SubredditReorderViewController.changed) {
             self.reloadNeedingColor()
+            flowLayout.reset()
+            CachedTitle.titles.removeAll()
             self.tableView.reloadData()
         }
-
 
         if (single || !SettingValues.viewType) {
             navigationController?.setNavigationBarHidden(false, animated: true)
@@ -1001,7 +1001,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             self.navigationController?.navigationBar.shadowImage = UIImage()
             navigationController?.navigationBar.isTranslucent = false
         }
-
 
         self.automaticallyAdjustsScrollViewInsets = false
         self.edgesForExtendedLayout = UIRectEdge.all
@@ -1465,7 +1464,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                 if (sub.hasPrefix("/m/")) {
                     subreddit = Multireddit.init(name: sub.substring(3, length: sub.length - 3), user: AccountController.currentName)
                 }
-
+                
                 try session?.getList(paginator, subreddit: subreddit, sort: sort, timeFilterWithin: time, completion: { (result) in
                     switch result {
                     case .failure:

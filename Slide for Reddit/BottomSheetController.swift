@@ -117,6 +117,34 @@ open class ActionControllerHeader: UICollectionReusableView {
     }
 }
 
+class ButtonsHeader: UIView {
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        let cancelView = UIView(frame: CGRect(x: 12, y: -24, width: UIScreen.main.bounds.width - 24, height: 52 ))
+        cancelView.backgroundColor = ColorUtil.backgroundColor
+        
+        let upvote = UIButton(frame: CGRect(x: 0, y: 0, width: 100, height: 52))
+        upvote.setImage(UIImage.init(named: "upvote"), for: .normal)
+        upvote.translatesAutoresizingMaskIntoConstraints = false
+        upvote.tintColor = ColorUtil.fontColor
+        
+        cancelView.addSubview(upvote)
+        
+        let metrics = ["height": 52]
+        cancelView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[button]-|", options: [], metrics: metrics, views: ["button": upvote]))
+        cancelView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-(0)-[button(height)]-|", options: [], metrics: metrics, views: ["button": upvote]))
+        
+        cancelView.layer.cornerRadius = 15
+        cancelView.clipsToBounds = false
+        self.addSubview(cancelView)
+    }
+    
+    required public init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+}
+
 
 open class BottomSheetActionController: ActionController<BottomSheetCell, ActionData, ActionControllerHeader, String, UICollectionReusableView, Void> {
     
@@ -171,7 +199,7 @@ open class BottomSheetActionController: ActionController<BottomSheetCell, Action
                 corners = corners.union([.bottomLeft, .bottomRight])
                 cell.contentView.layoutMargins = UIEdgeInsets.init(top: 0, left: 12, bottom: 20, right: 12)
             }
-            
+
             if corners == .allCorners  {
                 cell.layer.mask = nil
                 cell.layer.cornerRadius = 15.0
@@ -183,7 +211,7 @@ open class BottomSheetActionController: ActionController<BottomSheetCell, Action
             }
         }
     }
-    
+        
     //Swift 4 messes up this method for some reason...
     @objc(collectionView:layout:insetForSectionAtIndex:)  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets{
         if (UIScreen.main.traitCollection.userInterfaceIdiom == .pad && !UIApplication.shared.isSplitOrSlideOver) {

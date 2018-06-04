@@ -90,19 +90,19 @@ class NavigationHeaderView: UIView {
         account.imageView?.contentMode = UIViewContentMode.scaleAspectFit
         account.setImage(UIImage.init(named: "profile")!.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
         account.addTarget(self, action: #selector(self.switchAccounts(_:)), for: UIControlEvents.touchUpInside)
-        account.frame = CGRect.init(x: 0, y: 0, width: 40, height: 40)
+        account.frame = CGRect.init(x: 0, y: 0, width: 60, height: 60)
 
         self.settings = UIButton.init(type: .custom)
         settings.imageView?.contentMode = UIViewContentMode.scaleAspectFit
         settings.setImage(UIImage.init(named: "settings")!.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
         settings.addTarget(self, action: #selector(self.settings(_:)), for: UIControlEvents.touchUpInside)
-        settings.frame = CGRect.init(x: 0, y: 0, width: 40, height: 40)
+        settings.frame = CGRect.init(x: 0, y: 0, width: 60, height: 60)
 
         self.mod = UIButton.init(type: .custom)
         mod.imageView?.contentMode = UIViewContentMode.scaleAspectFit
         mod.setImage(UIImage.init(named: "mod")!.withColor(tintColor: .white).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
         mod.addTarget(self, action: #selector(self.mod(_:)), for: UIControlEvents.touchUpInside)
-        mod.frame = CGRect.init(x: 0, y: 0, width: 40, height: 40)
+        mod.frame = CGRect.init(x: 0, y: 0, width: 60, height: 60)
 
         mod.isHidden = true
 
@@ -382,7 +382,7 @@ class NavigationHeaderView: UIView {
 
         var titleConstraints: [NSLayoutConstraint] = []
 
-        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[account]-4-[mod]",
+        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[account]-8-[mod]",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
@@ -391,15 +391,15 @@ class NavigationHeaderView: UIView {
                 metrics: metrics,
                 views: views))
 
-        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-30-[account]",
+        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[account]",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
-        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-30-[mod]",
+        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[mod]",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
-        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-30-[settings]",
+        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[settings]",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))

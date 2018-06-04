@@ -41,7 +41,6 @@ class SettingValues {
     public static let pref_upvotePercentage = "UPVOTE_PERCENTAGE"
     public static let pref_cropBigPic = "BIG_PIC_CROPPED"
     public static let pref_bannerHidden = "BANNER_HIDDEN"
-    public static let pref_centerLead = "CENTER_LEAD_IMAGE"
     public static let pref_largerThumbnail = "LARGER_THUMBNAIL"
     public static let pref_scoreInTitle = "SCORE_IN_TITLE"
     public static let pref_dataSavingEnabled = "DATA_SAVING_ENABLED"
@@ -81,7 +80,6 @@ class SettingValues {
     public static let pref_nightMode = "NIGHT_ENABLED"
     public static let pref_multiColumnCount = "MULTICOLUMN_COUNT"
 
-
     public static var viewType = true
     public static var hiddenFAB = true
     public static var upvotePercentage = true
@@ -98,7 +96,6 @@ class SettingValues {
     public static var abbreviateScores = true
     public static var commentCountLastVisit = true
     public static var rightThumbnail = true
-    public static var centerLeadImage = true
     public static var multiColumnCount = 2
 
     public static var hideButtonActionbar = false
@@ -154,8 +151,9 @@ class SettingValues {
 
     enum PostViewType: String {
         case LIST = "list"
-        case DESKTOP = "desktop"
+        case COMPACT = "compact"
         case CARD = "card"
+        case CENTER = "center"
     }
 
     public static func getLinkSorting(forSubreddit: String) -> LinkSortType {
@@ -269,7 +267,6 @@ class SettingValues {
         SettingValues.largerThumbnail = settings.object(forKey: SettingValues.pref_largerThumbnail) == nil ? true : settings.bool(forKey: SettingValues.pref_largerThumbnail)
         SettingValues.bannerHidden = settings.bool(forKey: SettingValues.pref_bannerHidden)
         SettingValues.viewType = settings.bool(forKey: SettingValues.pref_viewType)
-        SettingValues.centerLeadImage = settings.bool(forKey: SettingValues.pref_centerLead)
         SettingValues.abbreviateScores = settings.bool(forKey: SettingValues.pref_abbreviateScores)
         SettingValues.scoreInTitle = settings.bool(forKey: SettingValues.pref_scoreInTitle)
         SettingValues.hideButtonActionbar = settings.bool(forKey: SettingValues.pref_hideButtonActionbar)
