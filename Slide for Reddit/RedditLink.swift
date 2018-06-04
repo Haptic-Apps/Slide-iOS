@@ -47,8 +47,8 @@ class RedditLink{
         case .SHORTENED:
             return CommentViewController.init(submission: parts[1], subreddit: nil)
         case .LIVE:
-            
-            break
+            print(parts[1])
+            return LiveThreadViewController.init(id: parts[2])
         case .WIKI:
             
             break
