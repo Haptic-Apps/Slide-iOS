@@ -68,13 +68,18 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
         return c
     }
 
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        socket?.disconnect()
+    }
 
     func collectionView(_ collectionView: UICollectionView, width: CGFloat, indexPath: IndexPath) -> CGSize {
         let data = content[indexPath.row]
         var itemWidth = width
         let id = data["id"] as! String
         if (estimatedHeights[id] == nil) {
-            let titleString = NSMutableAttributedString.init(string: data["author"] as! String, attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 18, submission: false)])
+            let titleString = NSMutableAttributedString.init(string: data["author"] as! String, attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 14, submission: true)])
             
             var content: CellContent?
             if (!(data["body_html"] as? String ?? "").isEmpty()) {
@@ -104,7 +109,6 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
                 let framesetterB = CTFramesetterCreateWithAttributedString(content!.attributedString)
                 let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: itemWidth - 16, height: CGFloat.greatestFiniteMagnitude), nil)
                 
-                
                 estimatedHeights[id] = CGFloat(24 + textSizeT.height + textSizeB.height + CGFloat(imageHeight))
             } else {
                 estimatedHeights[id] = CGFloat(24 + textSizeT.height +  CGFloat(imageHeight))
@@ -125,13 +129,31 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
                 case .success(let rawdetails):
                     print(rawdetails)
                     self.getOldThreads()
-                    self.title = ((rawdetails as! JSONDictionary)["data"] as! JSONDictionary)["title"] as! String
+                    self.doInfo(((rawdetails as! JSONDictionary)["data"] as! JSONDictionary))
                     self.setupWatcher(websocketUrl: ((rawdetails as! JSONDictionary)["data"] as! JSONDictionary)["websocket_url"] as! String)
                 }
             })
         } catch {
             print(error)
         }
+    }
+    
+    func doInfo(_ json: JSONDictionary){
+        self.baseData = json
+        self.title = json["title"] as! String
+        let more = UIButton.init(type: .custom)
+        more.setImage(UIImage.init(named: "info")?.navIcon(), for: UIControlState.normal)
+        more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
+        more.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+        var moreB = UIBarButtonItem.init(customView: more)
+        navigationItem.rightBarButtonItem = moreB
+    }
+    
+    var baseData: JSONDictionary?
+    func showMenu(_ sender: AnyObject){
+        let alert = UIAlertController.init(title: baseData!["title"] as! String, message: "\n\n\(baseData!["viewer_count"] as! Int) watching\n\n\n\(baseData!["description"] as! String)" , preferredStyle: .alert)
+        alert.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: nil))
+        present(alert, animated: true)
     }
     
     func getOldThreads(){
@@ -173,9 +195,8 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
                     if let payload = (text as! JSONDictionary)["payload"] as? JSONDictionary, let data = payload["data"] as? JSONDictionary{
                         DispatchQueue.main.async {
                             self.content.insert(data, at: 0)
+                            self.tableView.reloadData()
                             self.flowLayout.reset()
-                            print(data)
-                            self.tableView.insertItems(at: [IndexPath.init(row: 0, section: 0)])
                         }
                     }
                 }

@@ -207,24 +207,6 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
         toolbar = ToolbarTextView.init(textView: text!, parent: self)
         self.view.layer.cornerRadius = 5
         self.view.layer.masksToBounds = true
-        if (type == .SUBMIT_IMAGE) {
-            let alert = UIAlertController.init(style: .alert)
-            alert.addPhotoLibraryPicker(
-                    flow: .horizontal,
-                    paging: true,
-                    selection: .multiple(action: { images in
-                        if(!images.isEmpty){
-                            let alert = UIAlertController.init(title: "Confirm upload", message: "Would you like to upload \(images.count) image\(images.count > 1 ? "s" : "") anonymously to Imgur.com? This cannot be undone", preferredStyle: .alert)
-                            alert.addAction(UIAlertAction.init(title: "No", style: .destructive, handler: nil))
-                            alert.addAction(UIAlertAction.init(title: "Yes", style: .default) { action in
-                                self.toolbar!.uploadAsync(images)
-                            })
-                            alert.show()
-                        }
-                    }))
-            alert.addAction(title: "Cancel", style: .cancel)
-            alert.show()
-        }
     }
 
     func registerKeyboardNotifications() {
@@ -302,6 +284,28 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
 
         registerKeyboardNotifications()
 
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if (type == .SUBMIT_IMAGE) {
+            let alert = UIAlertController.init(style: .alert)
+            alert.addPhotoLibraryPicker(
+                flow: .horizontal,
+                paging: true,
+                selection: .multiple(action: { images in
+                    if(!images.isEmpty){
+                        let alert = UIAlertController.init(title: "Confirm upload", message: "Would you like to upload \(images.count) image\(images.count > 1 ? "s" : "") anonymously to Imgur.com? This cannot be undone", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction.init(title: "No", style: .destructive, handler: nil))
+                        alert.addAction(UIAlertAction.init(title: "Yes", style: .default) { action in
+                            self.toolbar!.uploadAsync(images)
+                        })
+                        alert.show()
+                    }
+                }))
+            alert.addAction(title: "Cancel", style: .cancel)
+            alert.show()
+        }
     }
 
     func close(_ sender: AnyObject) {

@@ -122,7 +122,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, UZTex
         self.title = UILabel(frame: CGRect(x: 0, y: 0, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude));
         title.numberOfLines = 0
         title.lineBreakMode = NSLineBreakMode.byWordWrapping
-        title.font = FontGenerator.fontOfSize(size: 18, submission: false)
+        title.font = FontGenerator.fontOfSize(size: 14, submission: true)
         
         title.textColor = ColorUtil.fontColor
         
@@ -161,7 +161,8 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, UZTex
     override func updateConstraints() {
         super.updateConstraints()
         
-        let metrics=["horizontalMargin":75,"top":0,"bottom":0,"separationBetweenLabels":0,"labelMinHeight":75]
+        let metrics=["horizontalMargin":75,"top":0,"bottom":0,"separationBetweenLabels":0,"bh":imageHeight,
+                     "labelMinHeight":75]
         let views=["label":title, "body": textView, "banner": image, "info": info] as [String : Any]
         
         self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[label]-8-|",
@@ -188,7 +189,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, UZTex
         }
         
         lsC = []
-        lsC.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-4-[banner(0)]-4-[label]-4-[info]-4-[body]-8-|",
+        lsC.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-4-[banner(bh)]-4-[label]-4-[info]-4-[body]-8-|",
                                                               options: NSLayoutFormatOptions(rawValue: 0),
                                                               metrics: metrics,
                                                               views: views))
@@ -207,7 +208,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, UZTex
         if(navViewController == nil && nav != nil){
             navViewController = nav
         }
-        title.text = "/u/\(json["author"] as! String)"
+        title.text = "/u/\(json["author"] as! String) \(DateFormatter().timeSince(from: NSDate(timeIntervalSince1970: TimeInterval(json["created_utc"] as! Int)), numericDates: true))"
         title.sizeToFit()
         
         if let url = json["original_url"] as? String {
@@ -216,9 +217,6 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, UZTex
             commentClick.delegate = self
             self.addGestureRecognizer(commentClick)
         }
-        
-        
-        title.sizeToFit()
         
         let infoString = NSMutableAttributedString()
         info.attributedText = infoString
@@ -245,6 +243,9 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, UZTex
         if(bigConstraint != nil){
             removeConstraint(bigConstraint!)
         }
+        imageHeight = 0
+        image.alpha = 0
+
         if(json["mobile_embeds"] != nil && !(json["mobile_embeds"] as? JSONArray)!.isEmpty){
             if let embedsB = json["mobile_embeds"] as? JSONArray, let embeds = embedsB[0] as? JSONDictionary, let height = embeds["height"] as? Int, let width = embeds["width"] as? Int, let url = embeds["url"] as? String {
                 image.alpha = 0
@@ -277,11 +278,12 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, UZTex
                 })
             }
         }
+        setNeedsUpdateConstraints()
     }
     
     func getHeightFromAspectRatio(imageHeight: Int, imageWidth: Int) -> Int {
         let ratio = Double(imageHeight) / Double(imageWidth)
-        let width = Double(contentView.frame.size.width);
+        let width = Double(contentView.frame.size.width - 16);
         return Int(width * ratio)
         
     }
