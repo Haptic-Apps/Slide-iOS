@@ -27,7 +27,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     let minHeaderHeight: CGFloat = 56;
 
     func openComments(id: String) {
-        print("Opening comments")
         var index = 0
         for s in links {
             if (s.getId() == id) {
@@ -46,7 +45,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             self.splitViewController?.showDetailViewController(nav, sender: self)
         } else {
             let comment = PagingCommentViewController.init(submissions: newLinks)
-            VCPresenter.showVC(viewController: comment, popupIfPossible: true, parentNavigationController: navigationController, parentViewController: self)
+            VCPresenter.showVC(viewController: comment, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
         }
     }
 

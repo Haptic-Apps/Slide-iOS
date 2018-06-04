@@ -17,7 +17,7 @@ public class VCPresenter {
             parentViewController?.present(viewController, animated: true)
             return
         }
-        if ((parentNavigationController != nil && parentNavigationController!.modalPresentationStyle != .pageSheet) && !(parentViewController is SubSidebarViewController) && popupIfPossible && UIDevice.current.orientation.isLandscape || parentNavigationController == nil) {
+        if (((parentNavigationController != nil && parentNavigationController!.modalPresentationStyle != .pageSheet) && !(parentViewController is SubSidebarViewController) && popupIfPossible && UIApplication.shared.statusBarOrientation.isLandscape ) || parentNavigationController == nil) {
             var newParent = TapBehindModalViewController.init(rootViewController: viewController);
             newParent.navigationBar.shadowImage = UIImage()
             newParent.navigationBar.isTranslucent = false
