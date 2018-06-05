@@ -314,9 +314,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         if let link = self.submission {
             sub = link.subreddit
             self.navigationItem.title = link.subreddit
-            if (Subscriptions.isSubscriber(link.subreddit)) {
-                doSubbed()
-            }
             reset = false
             do {
                 try session?.getArticles(link.name, sort: sort, comments: (context.isEmpty ? nil : [context]), context: 3, completion: { (result) -> Void in
@@ -352,7 +349,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                     }
                                     if (!self.comments.isEmpty) {
                                         self.updateStringsSingle(temp)
+                                        self.doArrays()
+                                        self.lastSeen = (self.context.isEmpty ? History.getSeenTime(s: link) : Double(0))
                                     }
+
                                     DispatchQueue.main.async(execute: { () -> Void in
                                         self.refreshControl.endRefreshing()
                                         self.indicator?.stopAnimating()
@@ -360,9 +360,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                         if (!self.comments.isEmpty) {
                                             var time = timeval(tv_sec: 0, tv_usec: 0)
                                             gettimeofday(&time, nil)
-
-                                            self.doArrays()
-                                            self.lastSeen = (self.context.isEmpty ? History.getSeenTime(s: link) : Double(0))
 
                                             self.tableView.reloadData(with: .fade)
                                         }
@@ -455,9 +452,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                             }
                             self.doArrays()
                             self.lastSeen = (self.context.isEmpty ? History.getSeenTime(s: self.submission!) : Double(0))
+                            History.setComments(s: link)
+                            History.addSeen(s: link)
                             DispatchQueue.main.async(execute: { () -> Void in
-                                History.setComments(s: link)
-                                History.addSeen(s: link)
                                 if (!self.hasSubmission) {
                                     self.headerCell = LinkCellView()
                                     self.headerCell?.del = self
@@ -779,7 +776,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     // MARK: - Table view data source
 
     override func viewWillAppear(_ animated: Bool) {
-
         super.viewWillAppear(animated)
         (navigationController)?.setNavigationBarHidden(false, animated: false)
         self.edgesForExtendedLayout = UIRectEdge.all
@@ -810,7 +806,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
             navigationItem.rightBarButtonItems = [sortB, searchB]
             navigationItem.rightBarButtonItem?.imageInsets = UIEdgeInsetsMake(0, 0, 0, -20)
-            doSubbed()
         }
 
     }
@@ -836,31 +831,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     var duringAnimation = false
     var interactionController: UIPercentDrivenInteractiveTransition?
-
-
-    func doSubbed() {
-        //todo do we want this anymore?
-        /*
-        let close = UIButton.init(type: .custom)
-        close.setImage(UIImage.init(named: "close")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
-        close.addTarget(self, action: #selector(self.close(_:)), for: UIControlEvents.touchUpInside)
-        close.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-        let closeB = UIBarButtonItem.init(customView: close)
-
-
-        if(!Subscriptions.isSubscriber((submission?.subreddit)!)){
-
-        let sub = UIButton.init(type: .custom)
-            sub.setImage(UIImage.init(named: "addcircle")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
-        sub.addTarget(self, action: #selector(self.subscribeSingle(_:)), for: UIControlEvents.touchUpInside)
-        sub.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-        let subB = UIBarButtonItem.init(customView: sub)
-            navigationItem.leftBarButtonItems = [closeB, subB]
-
-        } else {
-            navigationItem.leftBarButtonItems = [closeB]
-        }*/
-    }
 
     func close(_ sender: AnyObject) {
         if (self.navigationController?.viewControllers.count == 1 && self.navigationController?.navigationController == nil) {
@@ -908,49 +878,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
 
     var sub: String = ""
-
-    func subscribeSingle(_ selector: AnyObject) {
-        if (subChanged && !Subscriptions.isSubscriber(sub) || Subscriptions.isSubscriber(sub)) {
-            //was not subscriber, changed, and unsubscribing again
-            Subscriptions.unsubscribe(sub, session: session!)
-            subChanged = false
-            let message = MDCSnackbarMessage()
-            message.text = "Unsubscribed"
-            MDCSnackbarManager.show(message)
-            doSubbed()
-        } else {
-            let alrController = UIAlertController.init(title: "Subscribe to \(sub)", message: nil, preferredStyle: .actionSheet)
-            if (AccountController.isLoggedIn) {
-                let somethingAction = UIAlertAction(title: "Add to sub list and subscribe", style: UIAlertActionStyle.default, handler: { (alert: UIAlertAction!) in
-                    Subscriptions.subscribe(self.sub, true, session: self.session!)
-                    self.subChanged = true
-                    let message = MDCSnackbarMessage()
-                    message.text = "Subscribed"
-                    MDCSnackbarManager.show(message)
-                    self.doSubbed()
-                })
-                alrController.addAction(somethingAction)
-            }
-
-            let somethingAction = UIAlertAction(title: "Add to sub list", style: UIAlertActionStyle.default, handler: { (alert: UIAlertAction!) in
-                Subscriptions.subscribe(self.sub, false, session: self.session!)
-                self.subChanged = true
-                let message = MDCSnackbarMessage()
-                message.text = "Added"
-                MDCSnackbarManager.show(message)
-                self.doSubbed()
-            })
-            alrController.addAction(somethingAction)
-
-            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: { (alert: UIAlertAction!) in print("cancel") })
-
-            alrController.addAction(cancelAction)
-
-            VCPresenter.presentAlert(alrController, parentVC: self)
-
-        }
-
-    }
 
     var subInfo: Subreddit?
 
@@ -1644,6 +1571,13 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         menuIndex = index + 1
         tableView.insertRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .fade)
         tableView.endUpdates()
+        var top = CGFloat(64)
+        var bottom = CGFloat(450)
+        if #available(iOS 11.0, *) {
+            top = 0
+        }
+        tableView.contentInset = UIEdgeInsetsMake(top, 0, bottom, 0)
+
     }
 
     func hideCommentMenu(_ cell: CommentDepthCell) {

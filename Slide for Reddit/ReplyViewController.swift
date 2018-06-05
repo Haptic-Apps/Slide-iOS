@@ -286,28 +286,6 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
 
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        if (type == .SUBMIT_IMAGE) {
-            let alert = UIAlertController.init(style: .alert)
-            alert.addPhotoLibraryPicker(
-                flow: .horizontal,
-                paging: true,
-                selection: .multiple(action: { images in
-                    if(!images.isEmpty){
-                        let alert = UIAlertController.init(title: "Confirm upload", message: "Would you like to upload \(images.count) image\(images.count > 1 ? "s" : "") anonymously to Imgur.com? This cannot be undone", preferredStyle: .alert)
-                        alert.addAction(UIAlertAction.init(title: "No", style: .destructive, handler: nil))
-                        alert.addAction(UIAlertAction.init(title: "Yes", style: .default) { action in
-                            self.toolbar!.uploadAsync(images)
-                        })
-                        alert.show()
-                    }
-                }))
-            alert.addAction(title: "Cancel", style: .cancel)
-            alert.show()
-        }
-    }
-
     func close(_ sender: AnyObject) {
         //todo cancel message?
         let alert = UIAlertController.init(title: "Discard this \(type.isMessage() ? "message" : "submission")?", message: "", preferredStyle: .alert)
@@ -514,7 +492,6 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
         lineView.backgroundColor = ColorUtil.backgroundColor
         text?.addSubview(lineView)
 
-
         if (type.isMessage()) {
             subjectCell = InputCell.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 70), input: "subject:", width: self.tableView.frame.size.width)
             recipientCell = InputCell.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 70), input: "recipient:", width: self.tableView.frame.size.width)
@@ -523,10 +500,35 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
             recipientCell = InputCell.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 70), input: "subreddit:", width: self.tableView.frame.size.width)
         }
 
-        linkCell = InputCell.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 70), input: "link:", width: self.tableView.frame.size.width)
+        if (type == .SUBMIT_IMAGE) {
+            linkCell = InputCell.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 70), input: "Tap to add image", width: self.tableView.frame.size.width)
+            linkCell.cellLabel.isEditable = false
+            linkCell.cellLabel.addTapGestureRecognizer {
+                let alert = UIAlertController.init(style: .actionSheet)
+                alert.addPhotoLibraryPicker(
+                    flow: .vertical,
+                    paging: false,
+                    selection: .multiple(action: { images in
+                        if(!images.isEmpty){
+                            let alert = UIAlertController.init(title: "Confirm upload", message: "Would you like to upload \(images.count) image\(images.count > 1 ? "s" : "") anonymously to Imgur.com? This cannot be undone", preferredStyle: .alert)
+                            alert.addAction(UIAlertAction.init(title: "No", style: .destructive, handler: nil))
+                            alert.addAction(UIAlertAction.init(title: "Yes", style: .default) { action in
+                                self.toolbar!.uploadAsync(images)
+                            })
+                            self.present(alert, animated: true)
+                        }
+                    }))
+                alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: { (action) in
+                    self.dismiss(animated: true, completion: nil)
+                }))
+                self.present(alert, animated: true)
+            }
+        } else {
+            linkCell = InputCell.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 70), input: "link:", width: self.tableView.frame.size.width)
+        }
 
         if (type == .REPLY_MESSAGE) {
-            subjectCell.cellLabel.text = "re: " + (toReplyTo as! RMessage).subject
+            subjectCell.cellLabel.text = (!(toReplyTo as! RMessage).subject.hasPrefix("re") ? "re: " : "") + (toReplyTo as! RMessage).subject
             subjectCell.cellLabel.isEditable = false
             recipientCell.cellLabel.text = (toReplyTo as! RMessage).author
             recipientCell.cellLabel.isEditable = false

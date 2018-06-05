@@ -398,3 +398,8 @@ public class ToolbarTextView: NSObject {
         wrapIn("~~")
     }
 }
+class TouchUIScrollView: UIScrollView {
+    override func touchesShouldCancel(in view: UIView) -> Bool {
+        return true
+    }
+}

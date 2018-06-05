@@ -1160,9 +1160,9 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
 
         cancelActionButton2 = UIAlertAction(title: "Image", style: .default) { action -> Void in
-            VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(subreddit: self.sub, type: ReplyViewController.ReplyType.SUBMIT_IMAGE, completion: { (submission) in
+            VCPresenter.showVC(viewController: ReplyViewController.init(subreddit: self.sub, type: ReplyViewController.ReplyType.SUBMIT_IMAGE, completion: { (submission) in
                 VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
-            })), parentVC: self)
+            }), popupIfPossible: true, parentNavigationController: nil, parentViewController: self)
         }
         actionSheetController2.addAction(cancelActionButton2)
 

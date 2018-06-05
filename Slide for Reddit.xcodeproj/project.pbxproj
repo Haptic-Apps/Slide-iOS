@@ -35,7 +35,6 @@
 		BE2B89F31E2450D70053D493 /* ColorPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2B89F21E2450D70053D493 /* ColorPicker.swift */; };
 		BE2B89F61E246CA60053D493 /* GMColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2B89F41E246CA60053D493 /* GMColor.swift */; };
 		BE2B89F71E246CA60053D493 /* GMPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2B89F51E246CA60053D493 /* GMPalette.swift */; };
-		BE2B89F91E2533990053D493 /* EditorToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2B89F81E2533990053D493 /* EditorToolbar.swift */; };
 		BE2B89FB1E253D610053D493 /* ReplyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2B89FA1E253D610053D493 /* ReplyViewController.swift */; };
 		BE2B8A071E25D9CD0053D493 /* Pods_Slide_for_Reddit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E10B0B547111FDC79C24DA78 /* Pods_Slide_for_Reddit.framework */; };
 		BE2B8A091E25EEDF0053D493 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2B8A081E25EEDF0053D493 /* SettingsViewController.swift */; };
@@ -237,7 +236,6 @@
 		BE2B89F21E2450D70053D493 /* ColorPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorPicker.swift; sourceTree = "<group>"; };
 		BE2B89F41E246CA60053D493 /* GMColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GMColor.swift; sourceTree = "<group>"; };
 		BE2B89F51E246CA60053D493 /* GMPalette.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GMPalette.swift; sourceTree = "<group>"; };
-		BE2B89F81E2533990053D493 /* EditorToolbar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditorToolbar.swift; sourceTree = "<group>"; };
 		BE2B89FA1E253D610053D493 /* ReplyViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReplyViewController.swift; sourceTree = "<group>"; };
 		BE2B8A081E25EEDF0053D493 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		BE2B8A0A1E2602CA0053D493 /* SubredditReorderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubredditReorderViewController.swift; sourceTree = "<group>"; };
@@ -655,7 +653,6 @@
 				BEBF45DC1E23384500764BB8 /* comments.plist */,
 				BE2B89EE1E2444D20053D493 /* Settings.bundle */,
 				BE2B89F21E2450D70053D493 /* ColorPicker.swift */,
-				BE2B89F81E2533990053D493 /* EditorToolbar.swift */,
 				BE1DA3951E26AD5700EC0A04 /* SearchViewController.swift */,
 				BE1DA3971E26ADEA00EC0A04 /* SearchContributionLoader.swift */,
 				BEC494271E307D57006618F3 /* GalleryTableViewController.swift */,
@@ -1126,7 +1123,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BE2B89F91E2533990053D493 /* EditorToolbar.swift in Sources */,
 				BE6EA6E41E1DA24700E9E709 /* ContentListingViewController.swift in Sources */,
 				BE0E8BC01E26E91E004B56B1 /* BouncyViewControllerAnimator.swift in Sources */,
 				BE8C29211EDE8001004D7514 /* MarginedTableViewCell.swift in Sources */,

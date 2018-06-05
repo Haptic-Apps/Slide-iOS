@@ -43,6 +43,7 @@ enum CurrentType {
 class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TTTAttributedLabelDelegate, UIGestureRecognizerDelegate {
 
     func upvote(sender: UITapGestureRecognizer? = nil) {
+        //todo maybe? contentView.blink(color: GMColor.orange500Color())
         if let delegate = self.del {
             delegate.upvote(self)
         }
@@ -572,6 +573,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             let comment = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openComment(sender:)))
             comment.delegate = self
             self.addGestureRecognizer(comment)
+            
+            //let vote = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.upvote(sender:)))
+           // vote.delegate = self
+            //vote.numberOfTapsRequired = 2
+           // self.addGestureRecognizer(vote)
+           // comment.require(toFail: vote)
         }
 
         refresh()
@@ -828,6 +835,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             let comment = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openComment(sender:)))
             comment.delegate = self
             self.addGestureRecognizer(comment)
+            
+            //let vote = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.upvote(sender:)))
+           // vote.delegate = self
+           // vote.numberOfTapsRequired = 2
+            //self.addGestureRecognizer(vote)
+            //comment.require(toFail: vote)
         }
 
         //title.sizeToFit()
@@ -995,7 +1008,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         thumbConstraint = []
 
         if (target == .thumb) {
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(ceight))-[image(thumb)]",
+            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(ceight)-[image(thumb)]",
                     options: NSLayoutFormatOptions(rawValue: 0),
                     metrics: metrics,
                     views: views))
@@ -1821,5 +1834,16 @@ extension String {
         let htmlString = try? NSMutableAttributedString(data: data, options: [NSCharacterEncodingDocumentAttribute: String.Encoding.utf8.rawValue, NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
 
         return htmlString
+    }
+}
+extension UIView{
+    func blink(color: UIColor) {
+        UIView.animate(withDuration: 0.25, delay: 0.0, options: [.curveLinear], animations: {
+            self.backgroundColor = color
+        }, completion: {finished in
+            UIView.animate(withDuration: 0.25, delay: 0.0, options: [.curveLinear], animations: {
+                self.backgroundColor = ColorUtil.foregroundColor
+            }, completion: nil)
+        })
     }
 }
