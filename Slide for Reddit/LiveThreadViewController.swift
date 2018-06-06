@@ -21,7 +21,7 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
     init(id: String) {
         self.id = id
         super.init(nibName: nil, bundle: nil)
-        setBarColors(color: GMColor.red200Color())
+        setBarColors(color: GMColor.red500Color())
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -40,6 +40,7 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
         flowLayout.delegate = self
         let frame = self.view.bounds
         self.tableView = UICollectionView(frame: frame, collectionViewLayout: flowLayout)
+        tableView.contentInset = UIEdgeInsets.init(top: 4, left: 0, bottom: 56, right: 0)
         self.view = UIView.init(frame: CGRect.zero)
 
         self.view.addSubview(tableView)
@@ -76,14 +77,15 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
 
     func collectionView(_ collectionView: UICollectionView, width: CGFloat, indexPath: IndexPath) -> CGSize {
         let data = content[indexPath.row]
-        var itemWidth = width
+        var itemWidth = width - 10
         let id = data["id"] as! String
         if (estimatedHeights[id] == nil) {
             let titleString = NSMutableAttributedString.init(string: data["author"] as! String, attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 14, submission: true)])
             
             var content: CellContent?
             if (!(data["body_html"] as? String ?? "").isEmpty()) {
-                var html = data["body_html"] as! String
+                var html = (data["body_html"] as! String).gtm_stringByUnescapingFromHTML()!
+                html = html.trimmed()
                 do {
                     html = WrapSpoilers.addSpoilers(html)
                     html = WrapSpoilers.addTables(html)
@@ -109,9 +111,9 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
                 let framesetterB = CTFramesetterCreateWithAttributedString(content!.attributedString)
                 let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: itemWidth - 16, height: CGFloat.greatestFiniteMagnitude), nil)
                 
-                estimatedHeights[id] = CGFloat(24 + textSizeT.height + textSizeB.height + CGFloat(imageHeight))
+                estimatedHeights[id] = CGFloat(34 + textSizeT.height + textSizeB.height + CGFloat(imageHeight))
             } else {
-                estimatedHeights[id] = CGFloat(24 + textSizeT.height +  CGFloat(imageHeight))
+                estimatedHeights[id] = CGFloat(34 + textSizeT.height +  CGFloat(imageHeight))
             }
         }
         return CGSize(width: itemWidth, height: estimatedHeights[id]!)
@@ -127,10 +129,11 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
                     print(error)
                     break
                 case .success(let rawdetails):
-                    print(rawdetails)
                     self.getOldThreads()
                     self.doInfo(((rawdetails as! JSONDictionary)["data"] as! JSONDictionary))
-                    self.setupWatcher(websocketUrl: ((rawdetails as! JSONDictionary)["data"] as! JSONDictionary)["websocket_url"] as! String)
+                    if(!(((rawdetails as! JSONDictionary)["data"] as! JSONDictionary)["websocket_url"] is NSNull)){
+                        self.setupWatcher(websocketUrl: ((rawdetails as! JSONDictionary)["data"] as! JSONDictionary)["websocket_url"] as! String)
+                    }
                 }
             })
         } catch {

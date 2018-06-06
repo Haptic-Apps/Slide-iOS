@@ -92,10 +92,10 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, UZTex
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        var topmargin = 0
-        var bottommargin = 2
-        var leftmargin = 0
-        var rightmargin = 0
+        var topmargin = 5
+        var bottommargin = 5
+        var leftmargin = 5
+        var rightmargin = 5
         
         let f = self.contentView.frame
         let fr = UIEdgeInsetsInsetRect(f, UIEdgeInsetsMake(CGFloat(topmargin), CGFloat(leftmargin), CGFloat(bottommargin), CGFloat(rightmargin)))
@@ -114,7 +114,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, UZTex
         }
         return estimatedHeight
     }
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.contentView.layoutMargins = UIEdgeInsets.init(top: 2, left: 0, bottom: 0, right: 0)
@@ -160,7 +160,11 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, UZTex
     
     override func updateConstraints() {
         super.updateConstraints()
-        
+
+        self.contentView.layoutMargins = UIEdgeInsets.init(top: CGFloat(5), left: CGFloat(5), bottom: CGFloat(5), right: CGFloat(5))
+        self.contentView.layer.cornerRadius = 15
+        self.contentView.clipsToBounds = true
+
         let metrics=["horizontalMargin":75,"top":0,"bottom":0,"separationBetweenLabels":0,"bh":imageHeight,
                      "labelMinHeight":75]
         let views=["label":title, "body": textView, "banner": image, "info": info] as [String : Any]
@@ -226,6 +230,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, UZTex
             if(!body.isEmpty()){
                 var html = body.gtm_stringByUnescapingFromHTML()!
                 do {
+                    html = html.trimmed()
                     html = WrapSpoilers.addSpoilers(html)
                     html = WrapSpoilers.addTables(html)
                     let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)

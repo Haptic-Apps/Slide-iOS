@@ -1,6 +1,7 @@
 PODS:
   - ActionSheetPicker-3.0 (2.2.0)
   - Alamofire (4.7.2)
+  - BadgeSwift (5.0.1)
   - BiometricAuthentication (1.0.5)
   - LicensesViewController (0.6.5)
   - MaterialComponents/ActivityIndicator (55.3.0):
@@ -105,6 +106,7 @@ PODS:
 DEPENDENCIES:
   - ActionSheetPicker-3.0 (from `https://github.com/ccrama/ActionSheetPicker-3.0`)
   - Alamofire (~> 4.3)
+  - BadgeSwift (~> 5.0)
   - BiometricAuthentication
   - LicensesViewController (~> 0.6.5)
   - MaterialComponents/ActivityIndicator
@@ -152,7 +154,7 @@ CHECKOUT OPTIONS:
     :commit: 752459578d8162c11f6311987bd3463e6d85712b
     :git: https://github.com/ccrama/ActionSheetPicker-3.0
   reddift:
-    :commit: 1667c41f0de1fdc9a5c39bc565afd12f5c70aee6
+    :commit: 1a4fdb2753ab082afabd6e31c8ed123538c410e7
     :git: https://github.com/ccrama/reddift
   RLBAlertsPickers:
     :commit: 516a802c88e8123d8c5c54ee520f776da5d12076
@@ -170,6 +172,7 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   ActionSheetPicker-3.0: d11a4c12c6aaf704b8a3f56d179198c99f3e41e6
   Alamofire: e4fa87002c137ba2d8d634d2c51fabcda0d5c223
+  BadgeSwift: 3defa56f504bfb46f2300122c4a565ec9e405c1e
   BiometricAuthentication: e80e99bf1fe871ab624172eb91f1ddbbc47499b5
   LicensesViewController: 1f2982b1bab8402d3f88e23197957038e8abb907
   MaterialComponents: 915f4e844400a35db3ea4c710a9af40aa8bcb093
@@ -192,6 +195,6 @@ SPEC CHECKSUMS:
   UZTextView: d8d45a8459b0de6f2c393458a05c65352f89e00a
   XLActionController: 007868251c0eed70d649d06c1625259b73b3a600
 
-PODFILE CHECKSUM: df764be8b078309410f5b9cc0263726f9a9007b9
+PODFILE CHECKSUM: 99f37b1f0f9e649deb6ccc84b83265883c7c7a9e
 
 COCOAPODS: 1.4.0

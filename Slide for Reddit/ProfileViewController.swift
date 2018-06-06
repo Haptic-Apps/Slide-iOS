@@ -18,6 +18,7 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
     var isReload = false
     var session: Session? = nil
     var vCs : [UIViewController] = []
+    var openTo = 0
 
     public func colorPickerView(_ colorPickerView: ColorPickerView, didSelectItemAt indexPath: IndexPath) {
         self.navigationController?.navigationBar.barTintColor = colorPickerView.colors[indexPath.row]
@@ -334,7 +335,7 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
         tabBar.autoresizingMask = [.flexibleWidth, .flexibleBottomMargin]
         
         // 3
-        tabBar.selectedItem = tabBar.items[0]
+        tabBar.selectedItem = tabBar.items[openTo]
         // 4
         tabBar.delegate = self
         tabBar.tintColor = ColorUtil.accentColorForSub(sub: "NONE")
@@ -349,7 +350,7 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
         self.delegate = self
         
         self.navigationController?.view.backgroundColor = UIColor.clear
-        let firstViewController = vCs[0]
+        let firstViewController = vCs[openTo]
         for view in view.subviews {
             if view is UIScrollView {
                 (view as! UIScrollView).delegate =  self

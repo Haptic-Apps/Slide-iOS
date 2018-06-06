@@ -18,6 +18,7 @@ pod 'MaterialComponents/TextFields'
 pod 'MaterialComponents/BottomSheet'
 pod 'MaterialComponents/ProgressView' 
 pod "MKColorPicker"
+pod 'BadgeSwift', '~> 5.0'
 pod 'LicensesViewController', '~> 0.6.5'
 pod 'BiometricAuthentication'
   pod 'XLActionController', :git => 'https://github.com/ccrama/XLActionController'

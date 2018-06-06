@@ -9,34 +9,28 @@
 import UIKit
 import reddift
 import RLBAlertsPickers
+import XLActionController
+import BadgeSwift
 
 class NavigationHeaderView: UIView {
     var title = UILabel()
-    var inbox = UILabel()
-
-    var profile: UITableViewCell = UITableViewCell()
-    var inboxBody = UITableViewCell()
 
     var account = UIButton()
-    var settings = UIButton()
-    var mod = UIButton()
+    var inbox = UIButton()
+    var more = UIButton()
 
     var search: UISearchBar = UISearchBar()
 
-    func setIsMod(_ hasMail: Bool){
-        DispatchQueue.main.async {
-            self.mod.isHidden = false
-            if(hasMail){
-                self.mod.setImage(UIImage.init(named: "mod")!.withColor(tintColor: GMColor.red500Color()).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
-            } else {
-                self.mod.setImage(UIImage.init (named: "mod")!.withColor(tintColor: .white).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
-            }
-        }
+    var mod = false
+
+    func setIsMod(_ hasMail: Bool) {
+        mod = true
     }
 
-    func doColors(_ sub: String){
+    func doColors(_ sub: String) {
         title.backgroundColor = ColorUtil.getColorForSub(sub: sub)
     }
+
     func doColors() {
         var titleFont = UIFont.systemFont(ofSize: 15)
         title.numberOfLines = 0
@@ -44,47 +38,29 @@ class NavigationHeaderView: UIView {
         title.textColor = .white
 
         if (AccountController.isLoggedIn) {
-            var titleT = NSMutableAttributedString.init(string: "Hello\n", attributes: [NSFontAttributeName: titleFont])
-            titleFont = UIFont.systemFont(ofSize: 20)
+            var titleT = NSMutableAttributedString.init(string: "\t\t", attributes: [NSFontAttributeName: titleFont])
+            titleFont = UIFont.systemFont(ofSize: 25)
             titleT.append(NSMutableAttributedString.init(string: AccountController.currentName, attributes: [NSFontAttributeName: titleFont.bold()]))
             title.attributedText = titleT
             inbox.isHidden = false
         } else {
             inbox.isHidden = true
-            var titleT = NSMutableAttributedString.init(string: "Guest\n", attributes: [NSFontAttributeName: titleFont])
+            var titleT = NSMutableAttributedString.init(string: "\t\tGuest\n", attributes: [NSFontAttributeName: titleFont])
             titleFont = UIFont.systemFont(ofSize: 20)
-            titleT.append(NSMutableAttributedString.init(string: "Tap to sign in", attributes: [NSFontAttributeName: titleFont.bold()]))
+            titleT.append(NSMutableAttributedString.init(string: "\t\tTap to sign in", attributes: [NSFontAttributeName: titleFont.bold()]))
             title.attributedText = titleT
         }
 
-        title.textAlignment = .center
+        title.textAlignment = .left
         title.backgroundColor = ColorUtil.getColorForSub(sub: "")
         backgroundColor = ColorUtil.foregroundColor
-
-        self.profile.backgroundColor = ColorUtil.foregroundColor
-        self.profile.textLabel?.textColor = ColorUtil.fontColor
-        self.profile.imageView?.image = UIImage.init(named: "user")?.menuIcon().withRenderingMode(.alwaysTemplate)
-
-        self.inboxBody.backgroundColor = ColorUtil.foregroundColor
-        self.inboxBody.textLabel?.textColor = ColorUtil.fontColor
-        self.inboxBody.imageView?.image = UIImage.init(named: "inbox")?.menuIcon().withRenderingMode(.alwaysTemplate)
-
-        profile.tintColor = ColorUtil.fontColor
-        inboxBody.tintColor = ColorUtil.fontColor
     }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.search = UISearchBar(frame: CGRect(x: 0, y: 0, width: 3, height: 50))
-        self.inbox = UILabel(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
         self.title = UILabel(frame: CGRect(x: 0, y: 0, width: 50, height: 60))
         self.inbox.clipsToBounds = true
-
-        self.profile.textLabel?.text = "Go to a profile"
-        self.profile.accessoryType = .none
-        self.profile.backgroundColor = ColorUtil.foregroundColor
-        self.profile.textLabel?.textColor = ColorUtil.fontColor
-        self.profile.imageView?.image = UIImage.init(named: "user")?.menuIcon().withRenderingMode(.alwaysTemplate)
 
         self.account = UIButton.init(type: .custom)
         account.imageView?.contentMode = UIViewContentMode.scaleAspectFit
@@ -92,47 +68,24 @@ class NavigationHeaderView: UIView {
         account.addTarget(self, action: #selector(self.switchAccounts(_:)), for: UIControlEvents.touchUpInside)
         account.frame = CGRect.init(x: 0, y: 0, width: 60, height: 60)
 
-        self.settings = UIButton.init(type: .custom)
-        settings.imageView?.contentMode = UIViewContentMode.scaleAspectFit
-        settings.setImage(UIImage.init(named: "settings")!.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
-        settings.addTarget(self, action: #selector(self.settings(_:)), for: UIControlEvents.touchUpInside)
-        settings.frame = CGRect.init(x: 0, y: 0, width: 60, height: 60)
+        self.more = UIButton.init(type: .custom)
+        more.imageView?.contentMode = UIViewContentMode.scaleAspectFit
+        more.setImage(UIImage.init(named: "moreh")!.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
+        more.addTarget(self, action: #selector(self.showMore(_:)), for: UIControlEvents.touchUpInside)
+        more.frame = CGRect.init(x: 0, y: 0, width: 60, height: 60)
 
-        self.mod = UIButton.init(type: .custom)
-        mod.imageView?.contentMode = UIViewContentMode.scaleAspectFit
-        mod.setImage(UIImage.init(named: "mod")!.withColor(tintColor: .white).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
-        mod.addTarget(self, action: #selector(self.mod(_:)), for: UIControlEvents.touchUpInside)
-        mod.frame = CGRect.init(x: 0, y: 0, width: 60, height: 60)
+        self.inbox = UIButton.init(type: .custom)
+        inbox.imageView?.contentMode = UIViewContentMode.scaleAspectFit
+        inbox.setImage(UIImage.init(named: "inbox")!.withColor(tintColor: .white).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
+        inbox.addTarget(self, action: #selector(self.mod(_:)), for: UIControlEvents.touchUpInside)
+        inbox.frame = CGRect.init(x: 0, y: 0, width: 60, height: 60)
 
-        mod.isHidden = true
-
-        self.inboxBody.textLabel?.text = "Inbox"
-        self.inboxBody.accessoryView = inbox
-        self.inboxBody.backgroundColor = ColorUtil.foregroundColor
-        self.inboxBody.textLabel?.textColor = ColorUtil.fontColor
-        self.inboxBody.imageView?.image = UIImage.init(named: "inbox")?.menuIcon().withRenderingMode(.alwaysTemplate)
 
         search.translatesAutoresizingMaskIntoConstraints = false
         title.translatesAutoresizingMaskIntoConstraints = false
-        profile.translatesAutoresizingMaskIntoConstraints = false
         account.translatesAutoresizingMaskIntoConstraints = false
-        settings.translatesAutoresizingMaskIntoConstraints = false
-        mod.translatesAutoresizingMaskIntoConstraints = false
-        inboxBody.translatesAutoresizingMaskIntoConstraints = false
-
-        profile.tintColor = ColorUtil.fontColor
-        inboxBody.tintColor = ColorUtil.fontColor
-
-        inbox.textColor = .white
-        inbox.font = UIFont.boldSystemFont(ofSize: 16)
-        inbox.backgroundColor = GMColor.red300Color()
-        inbox.layer.cornerRadius = 10
-        inbox.layer.masksToBounds = true
-        inbox.textAlignment = .center
-
-        let pTap = UITapGestureRecognizer(target: self, action: #selector(self.showProfileDialog(_:)))
-        profile.addGestureRecognizer(pTap)
-        profile.isUserInteractionEnabled = true
+        inbox.translatesAutoresizingMaskIntoConstraints = false
+        more.translatesAutoresizingMaskIntoConstraints = false
 
         if (AccountController.isLoggedIn) {
             let yTap = UITapGestureRecognizer(target: self, action: #selector(self.you(_:)))
@@ -141,20 +94,18 @@ class NavigationHeaderView: UIView {
             let yTap = UITapGestureRecognizer(target: self, action: #selector(self.switchAccounts(_:)))
             title.addGestureRecognizer(yTap)
         }
+
         title.isUserInteractionEnabled = true
 
         let iTap = UITapGestureRecognizer(target: self, action: #selector(self.inbox(_:)))
-        inboxBody.addGestureRecognizer(iTap)
-        inboxBody.isUserInteractionEnabled = true
+        inbox.addGestureRecognizer(iTap)
+        inbox.isUserInteractionEnabled = true
 
-        addSubview(inboxBody)
         addSubview(search)
         addSubview(title)
-        addSubview(inbox)
-        addSubview(profile)
-        self.title.addSubview(settings)
-        self.title.addSubview(mod)
+        self.title.addSubview(more)
         self.title.addSubview(account)
+        self.title.addSubview(inbox)
 
         self.clipsToBounds = true
         updateConstraints()
@@ -176,46 +127,51 @@ class NavigationHeaderView: UIView {
     }
 
     func showMore(_ sender: AnyObject) {
-        let optionMenu = UIAlertController(title: nil, message: "Navigate", preferredStyle: .actionSheet)
 
-        let prof = UIAlertAction(title: "Go to a profile", style: .default, handler: {
-            (alert: UIAlertAction!) -> Void in
-            self.showProfileDialog(self.inbox)
-        })
-        optionMenu.addAction(prof)
+        let alertController: BottomSheetActionController = BottomSheetActionController()
+        alertController.headerData = "Navigate"
 
-        let saved = UIAlertAction(title: "Your saved content", style: .default, handler: {
-            (alert: UIAlertAction!) -> Void in
-            let profile = ProfileViewController.init(name: AccountController.currentName)
-            (self.parentController as! NavigationSidebarViewController).parentController?.navigationController?.pushViewController(profile, animated: true)
-            self.parentController!.dismiss(animated: true, completion: nil)
 
-        })
-        optionMenu.addAction(saved)
-
-        let inbox = UIAlertAction(title: "Inbox", style: .default, handler: {
-            (alert: UIAlertAction!) -> Void in
-            self.inbox(self.inbox)
-        })
-        optionMenu.addAction(inbox)
-
-        let settings = UIAlertAction(title: "Settings", style: .default, handler: {
-            (alert: UIAlertAction!) -> Void in
+        alertController.addAction(Action(ActionData(title: "Settings", image: UIImage(named: "settings")!.menuIcon()), style: .default, handler: { action in
             self.settings(self.inbox)
-        })
-        optionMenu.addAction(settings)
+        }))
 
-        optionMenu.modalPresentationStyle = .popover
-        if let presenter = optionMenu.popoverPresentationController {
-            presenter.sourceView = account
-            presenter.sourceRect = account.bounds
+        if(mod){
+            alertController.addAction(Action(ActionData(title: "Moderation", image: UIImage(named: "mod")!.menuIcon()), style: .default, handler: { action in
+                self.settings(self.inbox)
+            }))
         }
 
-        parentController?.present(optionMenu, animated: true, completion: nil)
+        alertController.addAction(Action(ActionData(title: "Offline cache now", image: UIImage(named: "download")!.menuIcon()), style: .default, handler: { action in
+            //todo this
+        }))
+
+        alertController.addAction(Action(ActionData(title: "Go to a profile", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { action in
+            self.showProfileDialog(self.inbox)
+        }))
+
+        alertController.addAction(Action(ActionData(title: "Saved submissions", image: UIImage(named: "save")!.menuIcon()), style: .default, handler: { action in
+            self.parentController!.dismiss(animated: true) {
+                let profile = ProfileViewController.init(name: AccountController.currentName)
+                profile.openTo = 6
+                VCPresenter.showVC(viewController: profile, popupIfPossible: true, parentNavigationController: (self.parentController as! NavigationSidebarViewController).parentController?.navigationController, parentViewController: (self.parentController as! NavigationSidebarViewController).parentController)
+            }
+        }))
+
+        alertController.addAction(Action(ActionData(title: "Upvoted submissions", image: UIImage(named: "upvote")!.menuIcon()), style: .default, handler: { action in
+            self.parentController!.dismiss(animated: true) {
+                let profile = ProfileViewController.init(name: AccountController.currentName)
+                profile.openTo = 3
+                VCPresenter.showVC(viewController: profile, popupIfPossible: true, parentNavigationController: (self.parentController as! NavigationSidebarViewController).parentController?.navigationController, parentViewController: (self.parentController as! NavigationSidebarViewController).parentController)
+            }
+        }))
+
+
+        parentController?.present(alertController, animated: true, completion: nil)
 
     }
 
-    var profileString : String?
+    var profileString: String?
 
     func showProfileDialog(_ sender: AnyObject) {
         let alert = UIAlertController(title: "Enter a username", message: "", preferredStyle: .alert)
@@ -253,14 +209,14 @@ class NavigationHeaderView: UIView {
     }
 
     func settings(_ sender: AnyObject) {
-        self.parentController!.dismiss(animated: true){
+        self.parentController!.dismiss(animated: true) {
             let settings = SettingsViewController()
             VCPresenter.showVC(viewController: settings, popupIfPossible: true, parentNavigationController: (self.parentController as! NavigationSidebarViewController).parentController?.navigationController, parentViewController: (self.parentController as! NavigationSidebarViewController).parentController)
         }
     }
 
     func mod(_ sender: AnyObject) {
-        self.parentController!.dismiss(animated: true){
+        self.parentController!.dismiss(animated: true) {
             let settings = ModerationViewController()
             VCPresenter.showVC(viewController: settings, popupIfPossible: true, parentNavigationController: (self.parentController as! NavigationSidebarViewController).parentController?.navigationController, parentViewController: (self.parentController as! NavigationSidebarViewController).parentController)
         }
@@ -347,7 +303,7 @@ class NavigationHeaderView: UIView {
         super.updateConstraints()
 
         let metrics = ["topMargin": 0]
-        let views = ["title": title, "account": account, "mod": mod, "inbox": inboxBody, "inboxc": inbox, "settings": settings, "profile": profile, "search": search] as [String: Any]
+        let views = ["title": title, "account": account, "inbox": inbox,  "more": more, "search": search] as [String: Any]
 
         var constraint: [NSLayoutConstraint] = []
 
@@ -360,20 +316,8 @@ class NavigationHeaderView: UIView {
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
-        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[search]-0-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[inbox]-0-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[profile]-0-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
 
-        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[title(90)]-[profile(40)]-4-[inbox(40)]-4-[search]-4-|",
+        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[title(90)]-4-[search]-4-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
@@ -382,24 +326,23 @@ class NavigationHeaderView: UIView {
 
         var titleConstraints: [NSLayoutConstraint] = []
 
-        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[account]-8-[mod]",
+        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[account]",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
-        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[settings]-12-|",
+        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[inbox]-8-[more]-12-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
-
         titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[account]",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
-        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[mod]",
+        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[inbox]",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
-        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[settings]",
+        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[more]",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
@@ -408,12 +351,56 @@ class NavigationHeaderView: UIView {
     }
 
     func getEstHeight() -> CGFloat {
-        return CGFloat(title.frame.size.height + (3 * settings.frame.size.height) + 50)
+        return CGFloat(title.frame.size.height + 120)
     }
 
+    var mailBadge: BadgeSwift?
+
     func setMail(_ mailcount: Int) {
-        inbox.text = "\(mailcount)"
+        if(mailBadge != nil){
+            mailBadge!.removeFromSuperview()
+            mailBadge = nil
+        }
+
+        mailBadge = BadgeSwift()
+        inbox.addSubview(mailBadge!)
+
+        mailBadge!.text = "\(mailcount)"
+        mailBadge!.insets = CGSize(width: 3, height: 3)
+        mailBadge!.font = UIFont.systemFont(ofSize: 11)
+        mailBadge!.textColor = UIColor.white
+        mailBadge!.badgeColor = UIColor.red
+        mailBadge!.shadowOpacityBadge = 0
+        positionBadge(mailBadge!)
     }
+
+    private func positionBadge(_ badge: UIView) {
+        badge.translatesAutoresizingMaskIntoConstraints = false
+        var constraints = [NSLayoutConstraint]()
+
+        // Center the badge vertically in its container
+        constraints.append(NSLayoutConstraint(
+                item: badge,
+                attribute: NSLayoutAttribute.centerY,
+                relatedBy: NSLayoutRelation.equal,
+                toItem: inbox,
+                attribute: NSLayoutAttribute.centerY,
+                multiplier: 1, constant: -10)
+        )
+
+        // Center the badge horizontally in its container
+        constraints.append(NSLayoutConstraint(
+                item: badge,
+                attribute: NSLayoutAttribute.centerX,
+                relatedBy: NSLayoutRelation.equal,
+                toItem: inbox,
+                attribute: NSLayoutAttribute.centerX,
+                multiplier: 1, constant: 15)
+        )
+
+        inbox.addConstraints(constraints)
+    }
+
 }
 
 //https://stackoverflow.com/a/44698425/3697225
@@ -440,6 +427,6 @@ extension UIFont {
     }
 
     func boldItalics() -> UIFont {
-        return withTraits([ .traitBold, .traitItalic ])
+        return withTraits([.traitBold, .traitItalic])
     }
 }

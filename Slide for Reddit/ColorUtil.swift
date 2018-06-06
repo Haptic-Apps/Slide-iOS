@@ -48,7 +48,7 @@ class ColorUtil {
         var toReturn = false
 
         print("Theme is \(theme) and default is \(defaultTheme) and night theme is \(SettingValues.nightTheme) and should be night is \(shouldBeNight())")
-        if(theme != defaultTheme || (shouldBeNight() || (!shouldBeNight() && theme == SettingValues.nightTheme))) {
+        if(theme != defaultTheme || (shouldBeNight() || (!shouldBeNight() && theme == SettingValues.nightTheme)) || (defaultTheme == SettingValues.nightTheme && theme != defaultTheme)) {
             if(shouldBeNight() && theme != SettingValues.nightTheme && SettingValues.nightTheme != defaultTheme){
                 theme = SettingValues.nightTheme
                 print("Setting night!")
@@ -57,6 +57,10 @@ class ColorUtil {
             } else if(!shouldBeNight() && theme != defaultTheme){
                 theme = defaultTheme
                 print("Setting default!")
+                CachedTitle.titles.removeAll()
+                toReturn = true
+            } else if(defaultTheme == SettingValues.nightTheme && theme != defaultTheme){
+                theme = defaultTheme
                 CachedTitle.titles.removeAll()
                 toReturn = true
             }
