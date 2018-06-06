@@ -36,7 +36,7 @@ class WrappingFlowLayout: UICollectionViewLayout{
         }
     }
     var cellPadding: CGFloat {
-        return (numberOfColumns > 1 && (SettingValues.postViewMode != .LIST) && (SettingValues.postViewMode != .COMPACT) ) ? CGFloat(6) : CGFloat(0)
+        return (numberOfColumns > 1 && (SettingValues.postViewMode != .LIST) && (SettingValues.postViewMode != .COMPACT) ) ? CGFloat(6) : CGFloat(2)
     }
     
     // 3

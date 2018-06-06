@@ -32,6 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var seenFile: String?
     var commentsFile: String?
     var totalBackground = false
+    var isPro = false
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         let settings = UIUserNotificationSettings(types: UIUserNotificationType.alert, categories: nil)

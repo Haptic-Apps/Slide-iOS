@@ -48,7 +48,7 @@ class PostActions : NSObject {
                 PostActions.crosspost(cell.link!, parent)
             }))
             
-            alertController.addAction(Action(ActionData(title: "Report", image: UIImage(named: "hide")!.menuIcon()), style: .default, handler: { action in
+            alertController.addAction(Action(ActionData(title: "Report", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { action in
                 PostActions.report(cell.link!, parent: parent)
             }))
         }

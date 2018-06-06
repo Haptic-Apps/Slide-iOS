@@ -24,9 +24,16 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
         self.tableView.allowsSelectionDuringEditing = true
         self.tableView.allowsMultipleSelectionDuringEditing = true
         for sub in Subscriptions.subreddits {
-            subs.append(sub)
+            if(UserDefaults.standard.colorForKey(key: "color+" + sub) != nil || UserDefaults.standard.colorForKey(key: "accent+" + sub) != nil){
+                subs.append(sub)
+            }
+        }
+        self.subs = self.subs.sorted() {
+            $0.localizedCaseInsensitiveCompare($1) == ComparisonResult.orderedAscending
         }
         tableView.reloadData()
+
+        self.title = "Subreddit themes"
 
         let sync = UIButton.init(type: .custom)
         sync.setImage(UIImage.init(named: "sync")!.navIcon(), for: UIControlState.normal)
@@ -35,7 +42,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
         let syncB = UIBarButtonItem.init(customView: sync)
 
         let add = UIButton.init(type: .custom)
-        add.setImage(UIImage.init(named: "add")!.navIcon(), for: UIControlState.normal)
+        add.setImage(UIImage.init(named: "edit")!.navIcon(), for: UIControlState.normal)
         add.addTarget(self, action: #selector(self.add(_:)), for: UIControlEvents.touchUpInside)
         add.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let addB = UIBarButtonItem.init(customView: add)
@@ -53,18 +60,29 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
 
     public func add(_ selector: AnyObject) {
         var selected: [String] = []
-        for i in tableView.indexPathsForSelectedRows! {
-            selected.append(subs[i.row])
+        if(tableView.indexPathsForSelectedRows != nil){
+            for i in tableView.indexPathsForSelectedRows! {
+                selected.append(subs[i.row])
+            }
+            self.edit(selected, sender: selector as! UIButton)
         }
-        self.edit(selected, sender: selector as! UIButton)
     }
 
     public func remove(_ selector: AnyObject) {
-        for i in tableView.indexPathsForSelectedRows! {
-            doDelete(subs[i.row])
-            tableView.deselectRow(at: i, animated: true)
+        if(tableView.indexPathsForSelectedRows != nil) {
+            for i in tableView.indexPathsForSelectedRows! {
+                doDelete(subs[i.row])
+                tableView.deselectRow(at: i, animated: true)
+            }
+            var toRemove = [String]()
+            for i in tableView.indexPathsForSelectedRows! {
+                toRemove.append(subs[i.row])
+            }
+            self.subs = self.subs.filter({ (input) -> Bool in
+                return !toRemove.contains(input)
+            })
+            self.tableView.reloadData()
         }
-        self.tableView.reloadData()
     }
 
     public static var changed = false
@@ -262,30 +280,29 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
 
         alertController.view.addSubview(MKColorPicker)
 
-        let somethingAction = UIAlertAction(title: "Save", style: .default, handler: { (alert: UIAlertAction!) in
+        alertController.addAction(image: UIImage(named: "colors"), title: "Accent color", color: ColorUtil.baseAccent, style: .default) { action in
             if (self.colorChosen != nil) {
                 for sub in self.editSubs {
                     ColorUtil.setColorForSub(sub: sub, color: self.colorChosen!)
                 }
             }
+            self.pickAccent(sub, sender: sender)
             self.tableView.reloadData()
-        })
+        }
 
-        let accentAction = UIAlertAction(title: "Accent color", style: .default, handler: { (alert: UIAlertAction!) in
+        alertController.addAction(image: nil, title: "Save", color: ColorUtil.baseAccent, style: .default) { action in
             if (self.colorChosen != nil) {
                 for sub in self.editSubs {
                     ColorUtil.setColorForSub(sub: sub, color: self.colorChosen!)
                 }
             }
-            self.pickAccent(sub)
             self.tableView.reloadData()
-        })
+        }
+
 
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { (alert: UIAlertAction!) in
         })
 
-        alertController.addAction(accentAction)
-        alertController.addAction(somethingAction)
         alertController.addAction(cancelAction)
         alertController.modalPresentationStyle = .popover
         if let presenter = alertController.popoverPresentationController {
@@ -297,7 +314,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
     }
 
     var isAccent = false
-    func pickAccent(_ sub: [String]) {
+    func pickAccent(_ sub: [String], sender: UIButton) {
         isAccent = true
         let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
 
@@ -315,19 +332,33 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
 
         alertController.view.addSubview(MKColorPicker)
 
-        let somethingAction = UIAlertAction(title: "Save", style: .default, handler: { (alert: UIAlertAction!) in
+        alertController.addAction(image: UIImage(named: "palette"), title: "Primary color", color: ColorUtil.baseAccent, style: .default) { action in
+            if self.accentChosen != nil {
+                for sub in self.editSubs {
+                    ColorUtil.setAccentColorForSub(sub: sub, color: self.accentChosen!)
+                }
+            }
+            self.edit(sub, sender: sender)
+            self.tableView.reloadData()
+        }
+
+        alertController.addAction(image: nil, title: "Save", color: ColorUtil.baseAccent, style: .default) { action in
             if self.accentChosen != nil {
                 for sub in self.editSubs {
                     ColorUtil.setAccentColorForSub(sub: sub, color: self.accentChosen!)
                 }
             }
             self.tableView.reloadData()
-        })
+        }
+
+        if let presenter = alertController.popoverPresentationController {
+            presenter.sourceView = savedView
+            presenter.sourceRect = savedView.bounds
+        }
 
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { (alert: UIAlertAction!) in
         })
 
-        alertController.addAction(somethingAction)
         alertController.addAction(cancelAction)
 
         present(alertController, animated: true, completion: nil)

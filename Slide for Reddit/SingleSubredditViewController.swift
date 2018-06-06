@@ -160,7 +160,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             let actionbar = CGFloat(SettingValues.hideButtonActionbar ? 0 : 24)
 
             var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
-            let thumbheight = (SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50))  - (SettingValues.postViewMode == .COMPACT ? 15 : 0)
+            let thumbheight = (SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50)) - (SettingValues.postViewMode == .COMPACT ? 15 : 0)
             let textHeight = CGFloat(0)
 
             if (thumb) {
@@ -168,7 +168,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between top and thumbnail
                 innerPadding += 18 - (SettingValues.postViewMode == .COMPACT ? 4 : 0) //between label and bottom box
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
-            } else if(big){
+            } else if (big) {
                 if (SettingValues.postViewMode == .CENTER) {
                     innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 16) //between label
                     innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between banner and box
@@ -176,7 +176,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                     innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between banner and label
                     innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between label and box
                 }
-                
+
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
             } else {
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8)
@@ -198,7 +198,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude), nil)
 
             let totalHeight = paddingTop + paddingBottom + (thumb ? max(ceil(textSize.height), imageHeight) : ceil(textSize.height) + imageHeight) + innerPadding + actionbar + textHeight
-            
+
             return CGSize(width: itemWidth, height: totalHeight)
         }
         return CGSize(width: itemWidth, height: 0)
@@ -214,10 +214,11 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
         if (isAccent) {
             accentChosen = colorPickerView.colors[indexPath.row]
-            hide.backgroundColor = accentChosen
+            SingleSubredditViewController.fab?.backgroundColor = accentChosen
         } else {
             let c = colorPickerView.colors[indexPath.row]
             self.navigationController?.navigationBar.barTintColor = c
+            UIApplication.shared.statusBarView?.backgroundColor = c
             sideView.backgroundColor = c
             add.backgroundColor = c
             sideView.backgroundColor = c
@@ -527,7 +528,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             SingleSubredditViewController.fab!.removeFromSuperview()
             SingleSubredditViewController.fab = nil
         }
-        if(!MainViewController.isOffline){
+        if (!MainViewController.isOffline) {
             SingleSubredditViewController.fab = UIButton(frame: CGRect.init(x: (tableView.frame.size.width / 2) - 70, y: -20, width: 140, height: 45))
             SingleSubredditViewController.fab!.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
             SingleSubredditViewController.fab!.layer.cornerRadius = 22.5
@@ -538,13 +539,13 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             SingleSubredditViewController.fab!.elevate(elevation: 2)
             SingleSubredditViewController.fab!.titleLabel?.textAlignment = .center
             SingleSubredditViewController.fab!.titleLabel?.font = UIFont.systemFont(ofSize: 14)
-            
+
             var width = title.size(with: SingleSubredditViewController.fab!.titleLabel!.font).width + CGFloat(65)
             SingleSubredditViewController.fab!.frame = CGRect.init(x: (tableView.frame.size.width / 2) - (width / 2), y: -20, width: width, height: CGFloat(45))
-            
+
             SingleSubredditViewController.fab!.titleEdgeInsets = UIEdgeInsets.init(top: 0, left: 20, bottom: 0, right: 20)
             navigationController?.toolbar.addSubview(SingleSubredditViewController.fab!)
-            
+
             SingleSubredditViewController.fab!.addTapGestureRecognizer {
                 switch (SettingValues.fabType) {
                 case .SIDEBAR:
@@ -564,11 +565,11 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                     break
                 }
             }
-            
+
             SingleSubredditViewController.fab!.addLongTapGestureRecognizer {
                 self.changeFab()
             }
-            
+
             SingleSubredditViewController.fab!.transform = CGAffineTransform.init(scaleX: 0.001, y: 0.001)
             UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
                 SingleSubredditViewController.fab!.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
@@ -623,7 +624,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
         top = top + ((SettingValues.viewType && !single) ? 52 : 0)
 
-        self.tableView.contentInset = UIEdgeInsets.init(top: CGFloat(top) , left: 0, bottom: 0, right: 0)
+        self.tableView.contentInset = UIEdgeInsets.init(top: CGFloat(top), left: 0, bottom: 0, right: 0)
 
         session = (UIApplication.shared.delegate as! AppDelegate).session
 
@@ -895,34 +896,43 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         let margin: CGFloat = 10.0
         let rect = CGRect(x: margin, y: margin, width: alertController.view.bounds.size.width - margin * 4.0, height: 150)
         let MKColorPicker = ColorPickerView.init(frame: rect)
+        MKColorPicker.scrollToPreselectedIndex = true
         MKColorPicker.delegate = self
         MKColorPicker.colors = GMPalette.allColor()
         MKColorPicker.selectionStyle = .check
         MKColorPicker.scrollDirection = .vertical
-
         MKColorPicker.style = .circle
+
+        var baseColor = ColorUtil.getColorForSub(sub: sub).toHexString()
+        var index = 0
+        for color in GMPalette.allColor() {
+            if (color.toHexString() == baseColor) {
+                break
+            }
+            index += 1
+        }
+
+        MKColorPicker.preselectedIndex = index
 
         alertController.view.addSubview(MKColorPicker)
 
-        let somethingAction = UIAlertAction(title: "Save", style: .default, handler: { (alert: UIAlertAction!) in
-            ColorUtil.setColorForSub(sub: self.sub, color: (self.navigationController?.navigationBar.barTintColor)!)
-            self.reloadDataReset()
-        })
 
-        let accentAction = UIAlertAction(title: "Accent color", style: .default, handler: { (alert: UIAlertAction!) in
+        alertController.addAction(image: UIImage(named: "colors"), title: "Accent color", color: ColorUtil.accentColorForSub(sub: sub), style: .default) { action in
             ColorUtil.setColorForSub(sub: self.sub, color: (self.navigationController?.navigationBar.barTintColor)!)
             self.pickAccent(sender: sender, parent: parent)
             self.reloadDataReset()
-        })
+        }
+
+        alertController.addAction(image: nil, title: "Save", color: ColorUtil.accentColorForSub(sub: sub), style: .default) { action in
+            ColorUtil.setColorForSub(sub: self.sub, color: (self.navigationController?.navigationBar.barTintColor)!)
+            self.reloadDataReset()
+        }
+
 
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { (alert: UIAlertAction!) in
-            if (parent != nil) {
-                parent?.resetColors()
-            }
+            self.resetColors()
         })
 
-        alertController.addAction(accentAction)
-        alertController.addAction(somethingAction)
         alertController.addAction(cancelAction)
 
         alertController.modalPresentationStyle = .popover
@@ -931,7 +941,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             presenter.sourceRect = (sender as! UIButton).bounds
         }
 
-        //todo make this work on ipad
         present(alertController, animated: true, completion: nil)
     }
 
@@ -943,32 +952,42 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         let margin: CGFloat = 10.0
         let rect = CGRect(x: margin, y: margin, width: alertController.view.bounds.size.width - margin * 4.0, height: 150)
         let MKColorPicker = ColorPickerView.init(frame: rect)
+        MKColorPicker.scrollToPreselectedIndex = true
         MKColorPicker.delegate = self
         MKColorPicker.colors = GMPalette.allColorAccent()
         MKColorPicker.selectionStyle = .check
         MKColorPicker.scrollDirection = .vertical
-
         MKColorPicker.style = .circle
+
+        var baseColor = ColorUtil.accentColorForSub(sub: sub).toHexString()
+        var index = 0
+        for color in GMPalette.allColorAccent() {
+            if (color.toHexString() == baseColor) {
+                break
+            }
+            index += 1
+        }
+
+        MKColorPicker.preselectedIndex = index
 
         alertController.view.addSubview(MKColorPicker)
 
-        let somethingAction = UIAlertAction(title: "Save", style: .default, handler: { (alert: UIAlertAction!) in
-            if self.accentChosen != nil {
-                ColorUtil.setAccentColorForSub(sub: self.sub, color: self.accentChosen!)
-            }
+
+        alertController.addAction(image: UIImage(named: "palette"), title: "Primary color", color: ColorUtil.accentColorForSub(sub: sub), style: .default) { action in
+            ColorUtil.setAccentColorForSub(sub: self.sub, color: self.accentChosen!)
+            self.pickTheme(sender: sender, parent: parent)
             self.reloadDataReset()
-        })
+        }
+
+        alertController.addAction(image: nil, title: "Save", color: ColorUtil.accentColorForSub(sub: sub), style: .default) { action in
+            ColorUtil.setAccentColorForSub(sub: self.sub, color: self.accentChosen!)
+            self.reloadDataReset()
+        }
 
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { (alert: UIAlertAction!) in
-            if (parent != nil) {
-                parent?.resetColors()
-                self.sideView.backgroundColor = ColorUtil.getColorForSub(sub: self.sub)
-                self.add.backgroundColor = ColorUtil.getColorForSub(sub: self.sub)
-                self.hide.backgroundColor = ColorUtil.accentColorForSub(sub: self.sub)
-            }
+            self.resetColors()
         })
 
-        alertController.addAction(somethingAction)
         alertController.addAction(cancelAction)
 
         alertController.modalPresentationStyle = .popover
@@ -977,7 +996,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             presenter.sourceRect = (sender as! UIButton).bounds
         }
 
-        //todo make this work on ipad
         present(alertController, animated: true, completion: nil)
     }
 
@@ -1025,11 +1043,17 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
     }
 
+    func resetColors(){
+        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub)
+        setupFab()
+    }
+
     func reloadDataReset() {
         heightAtIndexPath.removeAllObjects()
         self.flowLayout.reset()
         tableView.reloadData()
         tableView.layoutIfNeeded()
+        setupFab()
     }
 
     func showMoreNone(_ sender: AnyObject) {
@@ -1089,12 +1113,12 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
         let alertController: BottomSheetActionController = BottomSheetActionController()
         alertController.headerData = "/r/\(sub)"
-        
-        
+
+
         alertController.addAction(Action(ActionData(title: "Search", image: UIImage(named: "search")!.menuIcon()), style: .default, handler: { action in
             self.search()
         }))
-        
+
         if (sub.contains("/m/")) {
             alertController.addAction(Action(ActionData(title: "Manage multireddit", image: UIImage(named: "info")!.menuIcon()), style: .default, handler: { action in
                 self.displayMultiredditSidebar()
@@ -1104,19 +1128,19 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                 self.doDisplaySidebar()
             }))
         }
-        
+
         alertController.addAction(Action(ActionData(title: "Refresh", image: UIImage(named: "sync")!.menuIcon()), style: .default, handler: { action in
             self.refresh()
         }))
-        
+
         alertController.addAction(Action(ActionData(title: "Gallery", image: UIImage(named: "image")!.menuIcon()), style: .default, handler: { action in
             self.galleryMode()
         }))
-        
+
         alertController.addAction(Action(ActionData(title: "Shadowbox", image: UIImage(named: "shadowbox")!.menuIcon()), style: .default, handler: { action in
             self.shadowboxMode()
         }))
-        
+
         alertController.addAction(Action(ActionData(title: "Subreddit theme", image: UIImage(named: "colors")!.menuIcon()), style: .default, handler: { action in
             if (parentVC != nil) {
                 let p = (parentVC!)
@@ -1125,26 +1149,26 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                 self.pickTheme(sender: sender, parent: nil)
             }
         }))
-        
+
         if (!single && (sub != "all" && sub != "frontpage" && !sub.contains("+") && !sub.contains("/m/"))) {
             alertController.addAction(Action(ActionData(title: "Submit", image: UIImage(named: "edit")!.menuIcon()), style: .default, handler: { action in
                 self.newPost(sender)
             }))
         }
-        
+
         alertController.addAction(Action(ActionData(title: "Filter content", image: UIImage(named: "filter")!.menuIcon()), style: .default, handler: { action in
             self.filterContent()
         }))
-    
+
         VCPresenter.presentAlert(alertController, parentVC: self)
 
     }
-    
-    func filterContent(){
+
+    func filterContent() {
         let alert = UIAlertController(title: "Content to hide on", message: "/r/\(sub)", preferredStyle: .alert)
-        
+
         let settings = Filter(subreddit: sub, parent: self)
-        
+
         alert.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: nil))
         alert.setValue(settings, forKey: "contentViewController")
         present(alert, animated: true, completion: nil)
@@ -1356,7 +1380,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             let saveActionButton: UIAlertAction = UIAlertAction(title: link.description, style: .default) { action -> Void in
                 self.showTimeMenu(s: link, selector: selector)
             }
-            if(sort == link){
+            if (sort == link) {
                 saveActionButton.setValue(selected, forKey: "image")
             }
             actionSheetController.addAction(saveActionButton)
@@ -1392,7 +1416,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                     self.time = t
                     self.refresh()
                 }
-                if(time == t){
+                if (time == t) {
                     saveActionButton.setValue(selected, forKey: "image")
                 }
 
@@ -1464,7 +1488,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                 if (sub.hasPrefix("/m/")) {
                     subreddit = Multireddit.init(name: sub.substring(3, length: sub.length - 3), user: AccountController.currentName)
                 }
-                
+
                 try session?.getList(paginator, subreddit: subreddit, sort: sort, timeFilterWithin: time, completion: { (result) in
                     switch result {
                     case .failure:
@@ -1488,9 +1512,9 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                                     paths.append(IndexPath.init(item: i, section: 0))
                                 }
 
-                                    self.flowLayout.reset()
-                                    self.tableView.reloadData()
-                                    self.tableView.contentOffset = CGPoint.init(x: 0, y: -64 + ((SettingValues.viewType && !self.single) ? -20 : 0))
+                                self.flowLayout.reset()
+                                self.tableView.reloadData()
+                                self.tableView.contentOffset = CGPoint.init(x: 0, y: -64 + ((SettingValues.viewType && !self.single) ? -20 : 0))
 
                                 self.refreshControl.endRefreshing()
                                 self.indicator?.stopAnimating()
@@ -1669,7 +1693,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         }
 
     }
-    
+
     func mod(_ cell: LinkCellView) {
         PostActions.showModMenu(cell, parent: self)
     }
