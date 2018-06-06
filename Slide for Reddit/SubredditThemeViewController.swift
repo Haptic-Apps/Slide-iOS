@@ -72,7 +72,6 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
         if(tableView.indexPathsForSelectedRows != nil) {
             for i in tableView.indexPathsForSelectedRows! {
                 doDelete(subs[i.row])
-                tableView.deselectRow(at: i, animated: true)
             }
             var toRemove = [String]()
             for i in tableView.indexPathsForSelectedRows! {

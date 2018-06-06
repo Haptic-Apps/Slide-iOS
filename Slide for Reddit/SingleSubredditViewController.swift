@@ -357,21 +357,48 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
         })
         (navigationController)?.setToolbarHidden(true, animated: true)
+
+        if(!single){
+            if(AutoCache.progressView != nil){
+                oldY = AutoCache.progressView!.frame.origin.y
+                UIView.animate(withDuration: 0.25, delay: 0.0, options: UIViewAnimationOptions.curveEaseInOut, animations: {
+                    AutoCache.progressView!.frame.origin.y = self.view.frame.size.height - 56
+                },completion: nil)
+            }
+        }
     }
+
+    var oldY = CGFloat(0)
 
     func showUI() {
         if (single || !SettingValues.viewType) {
             (navigationController)?.setNavigationBarHidden(false, animated: true)
         }
-        SingleSubredditViewController.fab?.isHidden = false
+        if(!single && AutoCache.progressView != nil){
+                UIView.animate(withDuration: 0.25, delay: 0.0, options: UIViewAnimationOptions.curveEaseInOut, animations: {
+                    AutoCache.progressView!.frame.origin.y = self.oldY
+                }, completion: { b in
+                    SingleSubredditViewController.fab?.isHidden = false
 
-        UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
-            SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
-        }, completion: { finished in
+                    UIView.animate(withDuration: 0.25, delay: 0.25, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+                        SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
+                    }, completion: { finished in
 
-        })
+                    })
 
-        (navigationController)?.setToolbarHidden(false, animated: true)
+                    (self.navigationController)?.setToolbarHidden(false, animated: true)
+                })
+        } else {
+            SingleSubredditViewController.fab?.isHidden = false
+
+            UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+                SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
+            }, completion: { finished in
+
+            })
+
+            (navigationController)?.setToolbarHidden(false, animated: true)
+        }
     }
 
 

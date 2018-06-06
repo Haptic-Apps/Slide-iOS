@@ -11,6 +11,7 @@ import reddift
 import RLBAlertsPickers
 import XLActionController
 import BadgeSwift
+import MaterialComponents.MaterialProgressView
 
 class NavigationHeaderView: UIView {
     var title = UILabel()
@@ -126,7 +127,7 @@ class NavigationHeaderView: UIView {
         }
     }
 
-    func showMore(_ sender: AnyObject) {
+     func showMore(_ sender: AnyObject) {
 
         let alertController: BottomSheetActionController = BottomSheetActionController()
         alertController.headerData = "Navigate"
@@ -143,7 +144,9 @@ class NavigationHeaderView: UIView {
         }
 
         alertController.addAction(Action(ActionData(title: "Offline cache now", image: UIImage(named: "download")!.menuIcon()), style: .default, handler: { action in
-            //todo this
+            self.parentController!.dismiss(animated: true) {
+                AutoCache.init(baseController: (self.parentController as! NavigationSidebarViewController).parentController!)
+            }
         }))
 
         alertController.addAction(Action(ActionData(title: "Go to a profile", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { action in
@@ -165,7 +168,6 @@ class NavigationHeaderView: UIView {
                 VCPresenter.showVC(viewController: profile, popupIfPossible: true, parentNavigationController: (self.parentController as! NavigationSidebarViewController).parentController?.navigationController, parentViewController: (self.parentController as! NavigationSidebarViewController).parentController)
             }
         }))
-
 
         parentController?.present(alertController, animated: true, completion: nil)
 
