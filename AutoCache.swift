@@ -18,8 +18,7 @@ public class AutoCache: NSObject {
     init(baseController: MainViewController) {
         AutoCache.progressView = UILabel()
         super.init()
-        AutoCache.subs.append("all")
-        AutoCache.subs.append("slide_ios")
+        AutoCache.subs.append(contentsOf: Subscriptions.offline)
         if (!AutoCache.subs.isEmpty) {
             setupProgressView(baseController)
         }

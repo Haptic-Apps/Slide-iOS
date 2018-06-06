@@ -19,13 +19,13 @@ class CacheSettings: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        selected.append(contentsOf: Subscriptions.offline)
         self.tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "sub")
         subs.append(contentsOf: Subscriptions.subreddits)
         self.subs = self.subs.sorted() {
             $0.localizedCaseInsensitiveCompare($1) == ComparisonResult.orderedAscending
         }
         tableView.reloadData()
-
 
         autoCacheSwitch = UISwitch()
         autoCacheSwitch.isOn = SettingValues.viewType
@@ -115,16 +115,18 @@ class CacheSettings: UITableViewController {
 
 
     func switchIsChanged(_ changed: UISwitch) {
-       /* Todo this if (changed == viewTypeSwitch) {
-            SubredditReorderViewController.changed = true
-            SettingValues.viewType = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_viewType)
-        } else if (changed == hideFABSwitch) {
-            SettingValues.hiddenFAB = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_hiddenFAB)
+        if(!changed.isOn){
+            selected.remove(at: selected.index(of: changed.accessibilityIdentifier!)!)
+            Subscriptions.setOffline(subs: selected) {
+            }
+        } else {
+            selected.append(changed.accessibilityIdentifier!)
+            Subscriptions.setOffline(subs: selected) {
+            }
         }
-        UserDefaults.standard.synchronize()*/
     }
+    
+    var selected = [String]()
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if(indexPath.section == 0){
@@ -140,11 +142,16 @@ class CacheSettings: UITableViewController {
             c.setSubreddit(subreddit: thing, nav: nil)
             cell = c
             cell?.backgroundColor = ColorUtil.foregroundColor
-            c.accessoryView = UISwitch()
+            var aSwitch = UISwitch()
+            if(selected.contains(thing)){
+                aSwitch.isOn = true
+            }
+            aSwitch.accessibilityIdentifier = thing
+            aSwitch.addTarget(self, action: #selector(switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+            c.accessoryView = aSwitch
             return cell!
         }
     }
-
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)

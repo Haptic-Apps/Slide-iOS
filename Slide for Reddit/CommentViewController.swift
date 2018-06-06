@@ -26,6 +26,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     var parents: [String: String] = [:]
     var approved: [String] = []
     var removed: [String] = []
+    var offline = false
 
     func replySent(comment: Comment?) {
         if (comment != nil && menuId != "sub") {
@@ -198,8 +199,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
 
     func reply(_ cell: LinkCellView) {
-        print("Replying")
-        doReplySubmission()
+        if(!offline){
+            print("Replying")
+            doReplySubmission()
+        }
     }
 
     func upvote(_ cell: LinkCellView) {
@@ -216,18 +219,20 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
 
     func deleteSelf(_ cell: LinkCellView) {
-        do {
-            try session?.deleteCommentOrLink(cell.link!.getId(), completion: { (steam) in
-                DispatchQueue.main.async {
-                    if (self.navigationController!.modalPresentationStyle == .formSheet) {
-                        self.navigationController!.dismiss(animated: true)
-                    } else {
-                        self.navigationController!.popViewController(animated: true)
+        if(!offline){
+            do {
+                try session?.deleteCommentOrLink(cell.link!.getId(), completion: { (steam) in
+                    DispatchQueue.main.async {
+                        if (self.navigationController!.modalPresentationStyle == .formSheet) {
+                            self.navigationController!.dismiss(animated: true)
+                        } else {
+                            self.navigationController!.popViewController(animated: true)
+                        }
                     }
-                }
-            })
-        } catch {
-
+                })
+            } catch {
+            
+            }
         }
     }
 
@@ -246,7 +251,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
 
     func more(_ cell: LinkCellView) {
-        PostActions.showMoreMenu(cell: cell, parent: self, nav: self.navigationController!, mutableList: false, delegate: self)
+        if(!offline){
+            PostActions.showMoreMenu(cell: cell, parent: self, nav: self.navigationController!, mutableList: false, delegate: self)
+        }
     }
 
     var submission: RSubmission? = nil
@@ -321,6 +328,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     case .failure(let _):
                         self.loaded = true
                         DispatchQueue.main.async {
+                            self.offline = true
                             do {
 
                                 let realm = try Realm()
@@ -574,28 +582,30 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
 
     func sort(_ selector: UIButton?) {
-        let actionSheetController: UIAlertController = UIAlertController(title: "Default comment sorting", message: "", preferredStyle: .actionSheet)
-
-        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
-            print("Cancel")
-        }
-        actionSheetController.addAction(cancelActionButton)
-
-        for c in CommentSort.cases {
-            let saveActionButton: UIAlertAction = UIAlertAction(title: c.description, style: .default) { action -> Void in
-                self.sort = c
-                self.reset = true
-                self.refresh(self)
+        if(!offline){
+            let actionSheetController: UIAlertController = UIAlertController(title: "Default comment sorting", message: "", preferredStyle: .actionSheet)
+            
+            let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
+                print("Cancel")
             }
-            actionSheetController.addAction(saveActionButton)
+            actionSheetController.addAction(cancelActionButton)
+            
+            for c in CommentSort.cases {
+                let saveActionButton: UIAlertAction = UIAlertAction(title: c.description, style: .default) { action -> Void in
+                    self.sort = c
+                    self.reset = true
+                    self.refresh(self)
+                }
+                actionSheetController.addAction(saveActionButton)
+            }
+            
+            if let presenter = actionSheetController.popoverPresentationController {
+                presenter.sourceView = selector!
+                presenter.sourceRect = selector!.bounds
+            }
+            
+            self.present(actionSheetController, animated: true, completion: nil)
         }
-
-        if let presenter = actionSheetController.popoverPresentationController {
-            presenter.sourceView = selector!
-            presenter.sourceRect = selector!.bounds
-        }
-
-        self.present(actionSheetController, animated: true, completion: nil)
     }
 
     var indicator: MDCActivityIndicator? = nil
@@ -843,37 +853,38 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
 
     func showMenu(_ sender: AnyObject) {
-        let link = submission!
-
-
-        let alertController: BottomSheetActionController = BottomSheetActionController()
-        alertController.headerData = "Comment actions"
-
-
-        alertController.addAction(Action(ActionData(title: "Refresh", image: UIImage(named: "sync")!.menuIcon()), style: .default, handler: { action in
-            self.reset = true
-            self.refresh(self)
-        }))
-
-        alertController.addAction(Action(ActionData(title: "/r/\(link.subreddit)", image: UIImage(named: "subs")!.menuIcon()), style: .default, handler: { action in
-            VCPresenter.openRedditLink("www.reddit.com/r/\(link.subreddit)", self.navigationController, self)
-        }))
-
-        alertController.addAction(Action(ActionData(title: "Related submissions", image: UIImage(named: "size")!.menuIcon()), style: .default, handler: { action in
-            let related = RelatedViewController.init(thing: self.submission!)
-            VCPresenter.showVC(viewController: related, popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
-        }))
-
-
-        alertController.addAction(Action(ActionData(title: "View /r/\(link.subreddit) sidebar", image: UIImage(named: "info")!.menuIcon()), style: .default, handler: { action in
-            Sidebar.init(parent: self, subname: self.submission!.subreddit).displaySidebar()
-        }))
-
-        alertController.addAction(Action(ActionData(title: "Collapse child comments", image: UIImage(named: "comments")!.menuIcon()), style: .default, handler: { action in
-            self.collapseAll()
-        }))
-
-        VCPresenter.presentAlert(alertController, parentVC: self)
+        if(!offline){
+            let link = submission!
+            
+            let alertController: BottomSheetActionController = BottomSheetActionController()
+            alertController.headerData = "Comment actions"
+            
+            
+            alertController.addAction(Action(ActionData(title: "Refresh", image: UIImage(named: "sync")!.menuIcon()), style: .default, handler: { action in
+                self.reset = true
+                self.refresh(self)
+            }))
+            
+            alertController.addAction(Action(ActionData(title: "/r/\(link.subreddit)", image: UIImage(named: "subs")!.menuIcon()), style: .default, handler: { action in
+                VCPresenter.openRedditLink("www.reddit.com/r/\(link.subreddit)", self.navigationController, self)
+            }))
+            
+            alertController.addAction(Action(ActionData(title: "Related submissions", image: UIImage(named: "size")!.menuIcon()), style: .default, handler: { action in
+                let related = RelatedViewController.init(thing: self.submission!)
+                VCPresenter.showVC(viewController: related, popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
+            }))
+            
+            
+            alertController.addAction(Action(ActionData(title: "View /r/\(link.subreddit) sidebar", image: UIImage(named: "info")!.menuIcon()), style: .default, handler: { action in
+                Sidebar.init(parent: self, subname: self.submission!.subreddit).displaySidebar()
+            }))
+            
+            alertController.addAction(Action(ActionData(title: "Collapse child comments", image: UIImage(named: "comments")!.menuIcon()), style: .default, handler: { action in
+                self.collapseAll()
+            }))
+            
+            VCPresenter.presentAlert(alertController, parentVC: self)
+        }
     }
 
 
@@ -1065,9 +1076,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         case LINK
         case YOU
     }
-
-
-
 
     func getCount(sort: CommentNavType) -> Int {
         var count = 0
@@ -1487,48 +1495,49 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
 
     func doReplySubmission() {
-        menuShown = true
-        var top = CGFloat(64)
-        var bottom = CGFloat(45)
-        if #available(iOS 11.0, *) {
-            top = 0
-            bottom = 0
+        if(!offline){
+            menuShown = true
+            var top = CGFloat(64)
+            var bottom = CGFloat(45)
+            if #available(iOS 11.0, *) {
+                top = 0
+                bottom = 0
+            }
+            
+            let insets = UIEdgeInsets(top: top, left: 0, bottom: 50, right: 0)
+            self.tableView.contentInset = insets
+            menuId = "sub"
+            menuIndex = 0
+            replyShown = true
+            reply!.setContent(thing: submission!, sub: submission!.subreddit, editing: false, delegate: self, parent: self)
+            tableView.beginUpdates()
+            tableView.insertRows(at: [IndexPath.init(row: 0, section: 0)], with: .fade)
+            tableView.endUpdates()
         }
-
-        let insets = UIEdgeInsets(top: top, left: 0, bottom: 50, right: 0)
-        self.tableView.contentInset = insets
-        menuId = "sub"
-        menuIndex = 0
-        replyShown = true
-        reply!.setContent(thing: submission!, sub: submission!.subreddit, editing: false, delegate: self, parent: self)
-        tableView.beginUpdates()
-        tableView.insertRows(at: [IndexPath.init(row: 0, section: 0)], with: .fade)
-        tableView.endUpdates()
-
     }
 
     func doReply() {
-        menuShown = false
-        var top = CGFloat(64)
-        var bottom = CGFloat(45)
-        if #available(iOS 11.0, *) {
-            top = 0
-            bottom = 0
+        if(!offline){
+            menuShown = false
+            var top = CGFloat(64)
+            var bottom = CGFloat(45)
+            if #available(iOS 11.0, *) {
+                top = 0
+                bottom = 0
+            }
+            
+            let insets = UIEdgeInsets(top: top, left: 0, bottom: 50, right: 0)
+            self.tableView.contentInset = insets
+            
+            tableView.beginUpdates()
+            let cell = tableView.cellForRow(at: IndexPath.init(row: menuIndex - 1, section: 0)) as! CommentDepthCell
+            tableView.deleteRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .fade)
+            menuShown = true
+            replyShown = true
+            reply!.setContent(thing: cell.content!, sub: (cell.content as! RComment).subreddit, editing: false, delegate: self, parent: self)
+            tableView.insertRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .fade)
+            tableView.endUpdates()
         }
-
-        let insets = UIEdgeInsets(top: top, left: 0, bottom: 50, right: 0)
-        self.tableView.contentInset = insets
-
-        tableView.beginUpdates()
-        let cell = tableView.cellForRow(at: IndexPath.init(row: menuIndex - 1, section: 0)) as! CommentDepthCell
-        tableView.deleteRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .fade)
-        menuShown = true
-        replyShown = true
-        reply!.setContent(thing: cell.content!, sub: (cell.content as! RComment).subreddit, editing: false, delegate: self, parent: self)
-        tableView.insertRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .fade)
-        tableView.endUpdates()
-
-
     }
 
     var activeField: UITextField?
@@ -1542,7 +1551,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
 
     func showCommentMenu(_ cell: CommentDepthCell) {
-        if (cell.content! is RMore) {
+        if (cell.content! is RMore || offline) {
             pushedSingleTap(cell)
             return
         }

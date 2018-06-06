@@ -35,6 +35,13 @@ class Subscriptions{
         return []
     }
     
+    public static var offline: [String] {
+        if let accounts = UserDefaults.standard.array(forKey: "subsO"){
+            return accounts as! [String]
+        }
+        return []
+    }
+
     public static func isSubscriber(_ sub: String) -> Bool{
         for s in subreddits {
             if(s.lowercased() == sub.lowercased()){
@@ -100,6 +107,11 @@ class Subscriptions{
         Subscriptions.sync(name: name, completion: completion)
     }
     
+    public static func setOffline( subs: [String], completion: @escaping () -> Void){
+        UserDefaults.standard.set(subs, forKey: "subsO")
+        UserDefaults.standard.synchronize()
+    }
+
     public static func subscribe(_ name: String, _ subscribe: Bool, session: Session){
         var sub = Subscriptions.subreddits
         sub.append(name)
