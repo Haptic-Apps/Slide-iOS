@@ -25,8 +25,8 @@ class WrappingFlowLayout: UICollectionViewLayout{
             portraitCount = 2
         }
         if(SettingValues.multiColumn){
-            if(UIApplication.shared.statusBarOrientation.isPortrait){
-                if(UIScreen.main.traitCollection.userInterfaceIdiom != .pad){
+            if(UIApplication.shared.statusBarOrientation.isPortrait || !SettingValues.isProFeature){
+                if(UIScreen.main.traitCollection.userInterfaceIdiom != .pad || !SettingValues.isProFeature){
                     return 1
                 } else {
                     return portraitCount

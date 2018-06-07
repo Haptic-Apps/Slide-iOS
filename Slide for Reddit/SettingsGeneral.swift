@@ -47,8 +47,12 @@ class SettingsGeneral: UITableViewController {
             UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_hiddenFAB)
             SubredditReorderViewController.changed = true
         } else if (changed == scrubUsernameSwitch) {
-            SettingValues.nameScrubbing = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_nameScrubbing)
+            if(!VCPresenter.proDialogShown(feature: false, self)){
+                SettingValues.nameScrubbing = changed.isOn
+                UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_nameScrubbing)
+            } else {
+                changed.isOn = false
+            }
         }
         UserDefaults.standard.synchronize()
     }

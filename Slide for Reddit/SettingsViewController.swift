@@ -231,8 +231,12 @@ class SettingsViewController: UITableViewController {
             SettingValues.multiColumn = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_multiColumn)
         } else if (changed == lock) {
-            SettingValues.biometrics = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_biometrics)
+            if(!VCPresenter.proDialogShown(feature: true, self)){
+                SettingValues.biometrics = changed.isOn
+                UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_biometrics)
+            } else {
+                changed.isOn = false
+            }
         }
     }
 
@@ -310,33 +314,35 @@ class SettingsViewController: UITableViewController {
     }
     
     func showMultiColumn(){
-        let actionSheetController: UIAlertController = UIAlertController(title: "Multi Column Mode", message: "", preferredStyle: .actionSheet)
-        
-        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Close", style: .cancel) { action -> Void in
+        if(!VCPresenter.proDialogShown(feature: true, self)){
+            let actionSheetController: UIAlertController = UIAlertController(title: "Multi Column Mode", message: "", preferredStyle: .actionSheet)
+            
+            let cancelActionButton: UIAlertAction = UIAlertAction(title: "Close", style: .cancel) { action -> Void in
+            }
+            actionSheetController.addAction(cancelActionButton)
+            
+            multiColumn = UISwitch.init(frame: CGRect.init(x: 20, y: 20, width: 75, height: 50))
+            multiColumn.isOn = SettingValues.multiColumn
+            multiColumn.addTarget(self, action: #selector(SettingsViewController.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+            actionSheetController.view.addSubview(multiColumn)
+            
+            let values = [["1","2","3","4","5"]]
+            actionSheetController.addPickerView(values: values, initialSelection: [(0, SettingValues.multiColumnCount - 1)]) { (_, _, chosen, _) in
+                SettingValues.multiColumnCount = chosen.row + 1
+                UserDefaults.standard.set(chosen.row + 1, forKey: SettingValues.pref_multiColumnCount)
+                UserDefaults.standard.synchronize()
+                SubredditReorderViewController.changed = true
+            }
+            
+            actionSheetController.modalPresentationStyle = .popover
+            
+            if let presenter = actionSheetController.popoverPresentationController {
+                presenter.sourceView = multiColumnCell
+                presenter.sourceRect = multiColumnCell.bounds
+            }
+            
+            self.present(actionSheetController, animated: true, completion: nil)
         }
-        actionSheetController.addAction(cancelActionButton)
-        
-        multiColumn = UISwitch.init(frame: CGRect.init(x: 20, y: 20, width: 75, height: 50))
-        multiColumn.isOn = SettingValues.multiColumn
-        multiColumn.addTarget(self, action: #selector(SettingsViewController.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        actionSheetController.view.addSubview(multiColumn)
-        
-        let values = [["1","2","3","4","5"]]
-        actionSheetController.addPickerView(values: values, initialSelection: [(0, SettingValues.multiColumnCount - 1)]) { (_, _, chosen, _) in
-            SettingValues.multiColumnCount = chosen.row + 1
-            UserDefaults.standard.set(chosen.row + 1, forKey: SettingValues.pref_multiColumnCount)
-            UserDefaults.standard.synchronize()
-            SubredditReorderViewController.changed = true
-        }
-        
-        actionSheetController.modalPresentationStyle = .popover
-        
-        if let presenter = actionSheetController.popoverPresentationController {
-            presenter.sourceView = multiColumnCell
-            presenter.sourceRect = multiColumnCell.bounds
-        }
-        
-        self.present(actionSheetController, animated: true, completion: nil)
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

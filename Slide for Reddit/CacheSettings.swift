@@ -115,7 +115,15 @@ class CacheSettings: UITableViewController {
 
 
     func switchIsChanged(_ changed: UISwitch) {
-        if(!changed.isOn){
+        if(changed == autoCacheSwitch){
+            if(!VCPresenter.proDialogShown(feature: true, self)){
+                //todo this setting
+            } else {
+                changed.isOn = false
+            }
+        } else if(changed == cacheContentSwitch){
+            //todo this setting
+        } else if(!changed.isOn){
             selected.remove(at: selected.index(of: changed.accessibilityIdentifier!)!)
             Subscriptions.setOffline(subs: selected) {
             }

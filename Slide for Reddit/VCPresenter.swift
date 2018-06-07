@@ -13,11 +13,11 @@ public class VCPresenter {
 
     public static func showVC(viewController: UIViewController, popupIfPossible: Bool, parentNavigationController: UINavigationController?, parentViewController: UIViewController?) {
 
-        if(viewController is SFHideSafariViewController){
+        if (viewController is SFHideSafariViewController) {
             parentViewController?.present(viewController, animated: true)
             return
         }
-        if (((parentNavigationController != nil && parentNavigationController!.modalPresentationStyle != .pageSheet) && !(parentViewController is SubSidebarViewController) && popupIfPossible && UIApplication.shared.statusBarOrientation.isLandscape ) || parentNavigationController == nil) {
+        if (((parentNavigationController != nil && parentNavigationController!.modalPresentationStyle != .pageSheet) && !(parentViewController is SubSidebarViewController) && popupIfPossible && UIApplication.shared.statusBarOrientation.isLandscape) || parentNavigationController == nil) {
             var newParent = TapBehindModalViewController.init(rootViewController: viewController);
             newParent.navigationBar.shadowImage = UIImage()
             newParent.navigationBar.isTranslucent = false
@@ -41,7 +41,7 @@ public class VCPresenter {
                 newParent.modalPresentationStyle = .fullScreen
                 newParent.modalTransitionStyle = .crossDissolve
             }
-            
+
             viewController.navigationItem.leftBarButtonItems = [barButton]
 
             parentViewController!.present(newParent, animated: true, completion: nil)
@@ -57,7 +57,7 @@ public class VCPresenter {
             button.addTarget(self, action: #selector(VCPresenter.handleBackButton(controller:)), for: .touchUpInside)
 
             let barButton = UIBarButtonItem.init(customView: button)
-     
+
             parentNavigationController!.pushViewController(viewController, animated: true)
 
             viewController.navigationItem.leftBarButtonItem = barButton
@@ -67,6 +67,34 @@ public class VCPresenter {
         }
 
     }
+
+    public static func proDialogShown(feature: Bool, _ parentViewController: UIViewController) -> Bool {
+        if((feature && !SettingValues.isProFeature) || (!feature && !SettingValues.isProCustomization)){
+            let viewController = SettingsPro()
+            var newParent = TapBehindModalViewController.init(rootViewController: viewController);
+            newParent.navigationBar.shadowImage = UIImage()
+            newParent.navigationBar.isTranslucent = false
+            
+            let button = UIButtonWithContext.init(type: .custom)
+            button.parentController = newParent
+            button.imageView?.contentMode = UIViewContentMode.scaleAspectFit
+            button.setImage(UIImage.init(named: "close")!.navIcon(), for: UIControlState.normal)
+            button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+            button.addTarget(self, action: #selector(VCPresenter.handleCloseNav(controller:)), for: .touchUpInside)
+            
+            let barButton = UIBarButtonItem.init(customView: button)
+            
+            newParent.modalPresentationStyle = .popover
+            newParent.modalTransitionStyle = .crossDissolve
+            
+            viewController.navigationItem.leftBarButtonItems = [barButton]
+            
+            parentViewController.present(newParent, animated: true, completion: nil)
+            return true
+        }
+        return false
+    }
+
 
     @objc public static func handleBackButton(controller: UIButtonWithContext) {
         controller.parentController!.popViewController(animated: true);

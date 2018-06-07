@@ -940,7 +940,29 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         MKColorPicker.preselectedIndex = index
 
         alertController.view.addSubview(MKColorPicker)
+        
+        alertController.addAction(image: UIImage.init(named: "accent"), title: "Custom color", color: ColorUtil.accentColorForSub(sub: sub), style: .default, isEnabled: true) { (action) in
+            if(!VCPresenter.proDialogShown(feature: false, self)){
+                let alert = UIAlertController.init(title: "Choose a color", message: nil, preferredStyle: .actionSheet)
+                alert.addColorPicker(color: (self.navigationController?.navigationBar.barTintColor)!, selection: { (c) in
+                    ColorUtil.setColorForSub(sub: self.sub, color: (self.navigationController?.navigationBar.barTintColor)!)
+                    self.reloadDataReset()
+                    self.navigationController?.navigationBar.barTintColor = c
+                    UIApplication.shared.statusBarView?.backgroundColor = c
+                    self.sideView.backgroundColor = c
+                    self.add.backgroundColor = c
+                    self.sideView.backgroundColor = c
+                    if (self.parentController != nil) {
+                        self.parentController?.colorChanged()
+                    }
+                })
+                alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: { (action) in
+                    self.pickTheme(sender: sender, parent: parent)
+                }))
+                self.present(alert, animated: true)
+            }
 
+        }
 
         alertController.addAction(image: UIImage(named: "colors"), title: "Accent color", color: ColorUtil.accentColorForSub(sub: sub), style: .default) { action in
             ColorUtil.setColorForSub(sub: self.sub, color: (self.navigationController?.navigationBar.barTintColor)!)
@@ -1238,16 +1260,18 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     }
 
     func galleryMode() {
-        let controller = GalleryTableViewController()
-        var gLinks: [RSubmission] = []
-        for l in links {
-            if l.banner {
-                gLinks.append(l)
+        if(!VCPresenter.proDialogShown(feature: true, self)){
+            let controller = GalleryTableViewController()
+            var gLinks: [RSubmission] = []
+            for l in links {
+                if l.banner {
+                    gLinks.append(l)
+                }
             }
+            controller.setLinks(links: gLinks)
+            controller.modalPresentationStyle = .overFullScreen
+            present(controller, animated: true, completion: nil)
         }
-        controller.setLinks(links: gLinks)
-        controller.modalPresentationStyle = .overFullScreen
-        present(controller, animated: true, completion: nil)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -1259,9 +1283,11 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     }
 
     func shadowboxMode() {
-        let controller = ShadowboxViewController.init(submissions: links)
-        controller.modalPresentationStyle = .overFullScreen
-        present(controller, animated: true, completion: nil)
+        if(!VCPresenter.proDialogShown(feature: true, self)){
+            let controller = ShadowboxViewController.init(submissions: links)
+            controller.modalPresentationStyle = .overFullScreen
+            present(controller, animated: true, completion: nil)
+        }
     }
 
     override func didReceiveMemoryWarning() {

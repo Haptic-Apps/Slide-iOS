@@ -55,6 +55,21 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
 
         alertController.view.addSubview(MKColorPicker)
 
+        let custom = UIAlertAction(title: "Custom color", style: .default, handler: { (alert: UIAlertAction!) in
+            if(!VCPresenter.proDialogShown(feature: false, self)){
+                let alert = UIAlertController.init(title: "Choose a color", message: nil, preferredStyle: .actionSheet)
+                alert.addColorPicker(color: (self.navigationController?.navigationBar.barTintColor)!, selection: { (color) in
+                    UserDefaults.standard.setColor(color: (self.navigationController?.navigationBar.barTintColor)!, forKey: "basecolor")
+                    UserDefaults.standard.synchronize()
+                    ColorUtil.doInit()
+                })
+                alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: { (action) in
+                    self.pickTheme()
+                }))
+                self.present(alert, animated: true)
+            }
+        })
+
         let somethingAction = UIAlertAction(title: "Save", style: .default, handler: { (alert: UIAlertAction!) in
             UserDefaults.standard.setColor(color: (self.navigationController?.navigationBar.barTintColor)!, forKey: "basecolor")
             UserDefaults.standard.synchronize()
@@ -65,6 +80,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
             self.navigationController?.navigationBar.barTintColor = ColorUtil.baseColor
         })
 
+        alertController.addAction(custom)
         alertController.addAction(somethingAction)
         alertController.addAction(cancelAction)
 
@@ -267,7 +283,9 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         } else if (indexPath.section == 1 && indexPath.row == 0) {
             //tintmode
         } else if (indexPath.section == 0 && indexPath.row == 3) {
-            showNightTheme()
+            if(!VCPresenter.proDialogShown(feature: false, self)){
+                showNightTheme()
+            }
         }
     }
 
@@ -428,16 +446,22 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         actionSheetController.addAction(cancelActionButton)
 
         for theme in ColorUtil.Theme.cases {
-            let saveActionButton: UIAlertAction = UIAlertAction(title: theme.rawValue, style: .default) { action -> Void in
-                UserDefaults.standard.set(theme.rawValue, forKey: "theme")
-                UserDefaults.standard.synchronize()
-                ColorUtil.doInit()
-                self.loadView()
-                self.tableView.reloadData(with: .automatic)
-                self.tochange!.doCells()
-                self.tochange!.tableView.reloadData()
+            if(!SettingValues.isProCustomization && (theme == ColorUtil.Theme.BLACK || theme == ColorUtil.Theme.SEPIA || theme == ColorUtil.Theme.DEEP)){
+                actionSheetController.addAction(image: UIImage.init(named: "support"), title: theme.rawValue + " (pro)", color: GMColor.red500Color(), style: .default, isEnabled: true) { (action) in
+                    VCPresenter.proDialogShown(feature: false, self)
+                }
+            } else {
+                let saveActionButton: UIAlertAction = UIAlertAction(title: theme.rawValue, style: .default) { action -> Void in
+                    UserDefaults.standard.set(theme.rawValue, forKey: "theme")
+                    UserDefaults.standard.synchronize()
+                    ColorUtil.doInit()
+                    self.loadView()
+                    self.tableView.reloadData(with: .automatic)
+                    self.tochange!.doCells()
+                    self.tochange!.tableView.reloadData()
+                }
+                actionSheetController.addAction(saveActionButton)
             }
-            actionSheetController.addAction(saveActionButton)
         }
         actionSheetController.modalPresentationStyle = .popover
         if let presenter = actionSheetController.popoverPresentationController {

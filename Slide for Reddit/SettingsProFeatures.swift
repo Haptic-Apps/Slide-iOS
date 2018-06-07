@@ -68,6 +68,7 @@ class SettingsProFeatures: UITableViewController {
         self.shadowbox.textLabel?.textColor = ColorUtil.fontColor
         self.shadowbox.imageView?.image = UIImage.init(named: "shadowbox")?.toolbarIcon()
         self.shadowbox.imageView?.tintColor = ColorUtil.fontColor
+        self.shadowbox.detailTextLabel?.textColor = ColorUtil.fontColor
 
         self.gallery.textLabel?.text = "Gallery mode"
         self.gallery.detailTextLabel?.text = "r/pics never looked better"
@@ -75,6 +76,7 @@ class SettingsProFeatures: UITableViewController {
         self.gallery.textLabel?.textColor = ColorUtil.fontColor
         self.gallery.imageView?.image = UIImage.init(named: "image")?.toolbarIcon()
         self.gallery.imageView?.tintColor = ColorUtil.fontColor
+        self.gallery.detailTextLabel?.textColor = ColorUtil.fontColor
 
         self.biometric.textLabel?.text = "Biometric lock"
         self.biometric.detailTextLabel?.text = "Keep your Reddit content safe"
@@ -82,6 +84,7 @@ class SettingsProFeatures: UITableViewController {
         self.biometric.textLabel?.textColor = ColorUtil.fontColor
         self.biometric.imageView?.image = UIImage.init(named: "lockapp")?.toolbarIcon()
         self.biometric.imageView?.tintColor = ColorUtil.fontColor
+        self.biometric.detailTextLabel?.textColor = ColorUtil.fontColor
 
         self.multicolumn.textLabel?.text = "Multicolumn mode"
         self.multicolumn.detailTextLabel?.text = "A must-have for iPads!"
@@ -89,6 +92,7 @@ class SettingsProFeatures: UITableViewController {
         self.multicolumn.textLabel?.textColor = ColorUtil.fontColor
         self.multicolumn.imageView?.image = UIImage.init(named: "multicolumn")?.toolbarIcon()
         self.multicolumn.imageView?.tintColor = ColorUtil.fontColor
+        self.multicolumn.detailTextLabel?.textColor = ColorUtil.fontColor
 
         self.autocache.textLabel?.text = "Autocache subreddits"
         self.autocache.detailTextLabel?.text = "Cache your favorite subs for your morning commute"
@@ -96,7 +100,7 @@ class SettingsProFeatures: UITableViewController {
         self.autocache.textLabel?.textColor = ColorUtil.fontColor
         self.autocache.imageView?.image = UIImage.init(named: "download")?.toolbarIcon()
         self.autocache.imageView?.tintColor = ColorUtil.fontColor
-
+        self.autocache.detailTextLabel?.textColor = ColorUtil.fontColor
 
         var purchasePro = UILabel(frame: CGRect.init(x:  0, y: -30, width: (self.view.frame.size.width / 2), height: 200))
         purchasePro.backgroundColor = ColorUtil.foregroundColor

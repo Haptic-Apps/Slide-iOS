@@ -67,6 +67,7 @@ class SettingsProCustomization: UITableViewController {
         self.night.textLabel?.textColor = ColorUtil.fontColor
         self.night.imageView?.image = UIImage.init(named: "night")?.toolbarIcon()
         self.night.imageView?.tintColor = ColorUtil.fontColor
+        self.night.detailTextLabel?.textColor = ColorUtil.fontColor
 
         self.username.textLabel?.text = "Username scrubbing"
         self.username.detailTextLabel?.text = "Keep your account names a secret"
@@ -74,10 +75,12 @@ class SettingsProCustomization: UITableViewController {
         self.username.textLabel?.textColor = ColorUtil.fontColor
         self.username.imageView?.image = UIImage.init(named: "hide")?.toolbarIcon()
         self.username.imageView?.tintColor = ColorUtil.fontColor
+        self.username.detailTextLabel?.textColor = ColorUtil.fontColor
 
         self.custom.textLabel?.text = "Custom theme colors"
         self.custom.detailTextLabel?.text = "Choose a custom color for your themes"
         self.custom.backgroundColor = ColorUtil.foregroundColor
+        self.custom.detailTextLabel?.textColor = ColorUtil.fontColor
         self.custom.textLabel?.textColor = ColorUtil.fontColor
         self.custom.imageView?.image = UIImage.init(named: "accent")?.toolbarIcon()
         self.custom.imageView?.tintColor = ColorUtil.fontColor
@@ -85,6 +88,7 @@ class SettingsProCustomization: UITableViewController {
         self.themes.textLabel?.text = "More base themes"
         self.themes.detailTextLabel?.text = "Unlocks AMOLED, Sepia, and Deep themes"
         self.themes.backgroundColor = .black
+        self.themes.detailTextLabel?.textColor = .white
         self.themes.textLabel?.textColor = .white
         self.themes.imageView?.image = UIImage.init(named: "colors")?.toolbarIcon().withColor(tintColor: .white)
         self.themes.imageView?.tintColor = .white
