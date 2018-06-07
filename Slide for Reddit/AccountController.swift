@@ -89,6 +89,28 @@ class AccountController {
             }
         }
     }
+    
+    public static func formatUsername(input: String, small: Bool) -> String {
+        if(SettingValues.nameScrubbing && input == AccountController.currentName){
+            return "you"
+        } else {
+            if(small){
+                return input
+            }
+            return "u/\(input)"
+        }
+    }
+    
+    public static func formatUsernamePosessive(input: String, small: Bool) -> String {
+        if(SettingValues.nameScrubbing && input == AccountController.currentName){
+            return "Your"
+        } else {
+            if(small){
+                return input
+            }
+            return "u/\(input)'s"
+        }
+    }
 
     public static func getSubscriptionsUntilCompletion(session: Session, p: Paginator, tR: [Subreddit], completion: @escaping (_ result: [Subreddit]) -> Void) {
         var toReturn = tR

@@ -69,8 +69,8 @@
       <file leaf-file-name="CommentViewController.swift" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Slide for Reddit/CommentViewController.swift">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="353">
-              <caret line="370" selection-start-line="370" selection-end-line="370" />
+            <state relative-caret-position="473">
+              <caret line="378" selection-start-line="378" selection-end-line="378" />
             </state>
           </provider>
         </entry>
@@ -426,12 +426,12 @@
       <workItem from="1527638894556" duration="13194000" />
       <workItem from="1527712480679" duration="9228000" />
       <workItem from="1527799043497" duration="537000" />
-      <workItem from="1528130180175" duration="27100000" />
+      <workItem from="1528130180175" duration="27697000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="444440000" />
+    <option name="totallyTimeSpent" value="445037000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -444,14 +444,13 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="22" width="2560" height="1354" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.49625838" weight="0.32856005" />
       <window_info anchor="bottom" id="Messages" order="7" sideWeight="0.4407247" weight="0.39140812" />
       <window_info anchor="right" id="Palette&#9;" order="3" />
       <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.5592753" side_tool="true" weight="0.61654735" />
       <window_info anchor="bottom" id="Version Control" order="8" weight="0.32911393" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.5332808" visible="true" weight="0.22434367" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.5332808" weight="0.22434367" />
       <window_info anchor="bottom" id="Terminal" order="10" sideWeight="0.49704608" weight="0.32856005" />
       <window_info id="Designer" order="2" />
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1551792" />
@@ -822,8 +821,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Slide for Reddit/CommentViewController.swift">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="353">
-          <caret line="370" selection-start-line="370" selection-end-line="370" />
+        <state relative-caret-position="473">
+          <caret line="378" selection-start-line="378" selection-end-line="378" />
         </state>
       </provider>
     </entry>

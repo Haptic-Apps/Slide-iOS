@@ -415,7 +415,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         }
         actionSheetController.addAction(cancelActionButton)
 
-        cancelActionButton = UIAlertAction(title: "Posts by /u/\(link.author)", style: .default) { action -> Void in
+        cancelActionButton = UIAlertAction(title: "Posts by u/\(link.author)", style: .default) { action -> Void in
             PostFilter.profiles.append(link.author as NSString)
             PostFilter.saveAndUpdate()
             self.links = PostFilter.filter(self.links, previous: nil, baseSubreddit: self.sub)
@@ -423,7 +423,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         }
         actionSheetController.addAction(cancelActionButton)
 
-        cancelActionButton = UIAlertAction(title: "Posts from /r/\(link.subreddit)", style: .default) { action -> Void in
+        cancelActionButton = UIAlertAction(title: "Posts from r/\(link.subreddit)", style: .default) { action -> Void in
             PostFilter.subreddits.append(link.subreddit as NSString)
             PostFilter.saveAndUpdate()
             self.links = PostFilter.filter(self.links, previous: nil, baseSubreddit: self.sub)
@@ -693,7 +693,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                                 self.load(reset: true)
                             } else {
                                 DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
-                                    let alert = UIAlertController.init(title: "Subreddit not found", message: "/r/\(self.sub) could not be found, is it spelled correctly?", preferredStyle: .alert)
+                                    let alert = UIAlertController.init(title: "Subreddit not found", message: "r/\(self.sub) could not be found, is it spelled correctly?", preferredStyle: .alert)
                                     alert.addAction(UIAlertAction.init(title: "Close", style: .default, handler: { (_) in
                                         self.navigationController?.popViewController(animated: true)
                                         self.dismiss(animated: true, completion: nil)
@@ -709,7 +709,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                         DispatchQueue.main.async {
                             if (self.subInfo!.over18 && !SettingValues.nsfwEnabled) {
                                 DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
-                                    let alert = UIAlertController.init(title: "/r/\(self.sub) is NSFW", message: "If you are 18 and willing to see adult content, enable NSFW content in Settings > Content", preferredStyle: .alert)
+                                    let alert = UIAlertController.init(title: "r/\(self.sub) is NSFW", message: "If you are 18 and willing to see adult content, enable NSFW content in Settings > Content", preferredStyle: .alert)
                                     alert.addAction(UIAlertAction.init(title: "Close", style: .default, handler: { (_) in
                                         self.navigationController?.popViewController(animated: true)
                                         self.dismiss(animated: true, completion: nil)
@@ -766,7 +766,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     func doDisplayMultiSidebar(_ sub: Multireddit) {
         let alrController = UIAlertController(title: sub.displayName, message: sub.descriptionMd, preferredStyle: UIAlertControllerStyle.actionSheet)
         for s in sub.subreddits {
-            let somethingAction = UIAlertAction(title: "/r/" + s, style: UIAlertActionStyle.default, handler: { (alert: UIAlertAction!) in
+            let somethingAction = UIAlertAction(title: "r/" + s, style: UIAlertActionStyle.default, handler: { (alert: UIAlertAction!) in
                 self.show(SingleSubredditViewController.init(subName: s, single: true), sender: self)
             })
             let color = ColorUtil.getColorForSub(sub: s)
@@ -1139,7 +1139,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     func showMore(_ sender: AnyObject, parentVC: MainViewController? = nil) {
 
         let alertController: BottomSheetActionController = BottomSheetActionController()
-        alertController.headerData = "/r/\(sub)"
+        alertController.headerData = "r/\(sub)"
 
 
         alertController.addAction(Action(ActionData(title: "Search", image: UIImage(named: "search")!.menuIcon()), style: .default, handler: { action in
@@ -1192,7 +1192,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     }
 
     func filterContent() {
-        let alert = UIAlertController(title: "Content to hide on", message: "/r/\(sub)", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Content to hide on", message: "r/\(sub)", preferredStyle: .alert)
 
         let settings = Filter(subreddit: sub, parent: self)
 

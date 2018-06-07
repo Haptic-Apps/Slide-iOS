@@ -79,6 +79,7 @@ class SettingValues {
     public static let pref_nightTheme = "NIGHTTHEME"
     public static let pref_nightMode = "NIGHT_ENABLED"
     public static let pref_multiColumnCount = "MULTICOLUMN_COUNT"
+    public static let pref_nameScrubbing = "NAME_SCRUBBING"
 
     public static var viewType = true
     public static var hiddenFAB = true
@@ -97,6 +98,7 @@ class SettingValues {
     public static var commentCountLastVisit = true
     public static var rightThumbnail = true
     public static var multiColumnCount = 2
+    public static var nameScrubbing = true
 
     public static var hideButtonActionbar = false
     public static var saveButtonActionbar = true
@@ -245,6 +247,7 @@ class SettingValues {
         SettingValues.biometrics = settings.bool(forKey: SettingValues.pref_biometrics)
         SettingValues.enlargeLinks = settings.object(forKey: SettingValues.pref_enlargeLinks) == nil ? true : settings.bool(forKey: SettingValues.pref_enlargeLinks)
         SettingValues.showLinkContentType = settings.object(forKey: SettingValues.pref_showLinkContentType) == nil ? true : settings.bool(forKey: SettingValues.pref_showLinkContentType)
+        SettingValues.nameScrubbing = settings.bool(forKey: SettingValues.pref_nameScrubbing)
 
         SettingValues.dataSavingEnabled = settings.bool(forKey: SettingValues.pref_dataSavingEnabled)
         SettingValues.dataSavingDisableWiFi = settings.bool(forKey: SettingValues.pref_dataSavingDisableWifi)

@@ -349,7 +349,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: comment.created, numericDates: true))  •  ")
 
                     let boldString = NSMutableAttributedString(string: "\(comment.score)pts", attributes: attrs)
-                    let subString = NSMutableAttributedString(string: "/r/\(comment.subreddit)")
+                    let subString = NSMutableAttributedString(string: "r/\(comment.subreddit)")
                     let color = ColorUtil.getColorForSub(sub: comment.subreddit)
                     if (color != ColorUtil.baseColor) {
                         subString.addAttribute(NSForegroundColorAttributeName, value: color, range: NSRange.init(location: 0, length: subString.length))
@@ -401,7 +401,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
 
                     let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: message.created, numericDates: true))  •  from \(message.author)")
 
-                    let subString = NSMutableAttributedString(string: "/r/\(message.subreddit)")
+                    let subString = NSMutableAttributedString(string: "r/\(message.subreddit)")
                     let color = ColorUtil.getColorForSub(sub: message.subreddit)
                     if (color != ColorUtil.baseColor) {
                         subString.addAttribute(NSForegroundColorAttributeName, value: color, range: NSRange.init(location: 0, length: subString.length))

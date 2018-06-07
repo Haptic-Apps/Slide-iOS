@@ -224,7 +224,7 @@ class CommentCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate,
         let endString = NSMutableAttributedString(string:"  •  \(DateFormatter().timeSince(from: comment.created, numericDates: true))  •  ")
         
         let boldString = NSMutableAttributedString(string: "\(comment.score)pts", attributes:attrs)
-        let subString = NSMutableAttributedString(string: "/r/\(comment.subreddit)")
+        let subString = NSMutableAttributedString(string: "r/\(comment.subreddit)")
         let color = ColorUtil.getColorForSub(sub: comment.subreddit)
         if(color != ColorUtil.baseColor){
             subString.addAttribute(NSForegroundColorAttributeName, value: color, range: NSRange.init(location: 0, length: subString.length))

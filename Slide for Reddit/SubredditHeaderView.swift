@@ -40,21 +40,21 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
                 case .success(let users):
                     list.append(contentsOf: users)
                     DispatchQueue.main.async {
-                        let sheet = UIAlertController(title: "/r/\(self.subreddit!.displayName) mods", message: nil, preferredStyle: .actionSheet)
+                        let sheet = UIAlertController(title: "r/\(self.subreddit!.displayName) mods", message: nil, preferredStyle: .actionSheet)
                         sheet.addAction(
                                 UIAlertAction(title: "Close", style: .cancel) { (action) in
                                     sheet.dismiss(animated: true, completion: nil)
                                 }
                         )
                         sheet.addAction(
-                                UIAlertAction(title: "Message /r/\(self.subreddit!.displayName) moderators", style: .default) { (action) in
+                                UIAlertAction(title: "Message r/\(self.subreddit!.displayName) moderators", style: .default) { (action) in
                                     sheet.dismiss(animated: true, completion: nil)
                                     //todo this
                                 }
                         )
 
                         for user in users {
-                            let somethingAction = UIAlertAction(title: "/u/\(user.name)", style: .default) { (action) in
+                            let somethingAction = UIAlertAction(title: "u/\(user.name)", style: .default) { (action) in
                                 sheet.dismiss(animated: true, completion: nil)
                                 VCPresenter.showVC(viewController: ProfileViewController.init(name: user.name), popupIfPossible: false, parentNavigationController: self.parentController?.navigationController, parentViewController: self.parentController)
                             }
@@ -200,7 +200,7 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
         if (!changed.isOn) {
             Subscriptions.unsubscribe(subreddit!.displayName, session: (UIApplication.shared.delegate as! AppDelegate).session!)
             let message = MDCSnackbarMessage()
-            message.text = "Unsubscribed from /r/\(subreddit!.displayName)"
+            message.text = "Unsubscribed from r/\(subreddit!.displayName)"
             MDCSnackbarManager.show(message)
         } else {
             let alrController = UIAlertController.init(title: "Subscribe to \(subreddit!.displayName)", message: nil, preferredStyle: .actionSheet)
@@ -217,7 +217,7 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
             let somethingAction = UIAlertAction(title: "Just add to sub list", style: UIAlertActionStyle.default, handler: { (alert: UIAlertAction!) in
                 Subscriptions.subscribe(self.subreddit!.displayName, false, session: (UIApplication.shared.delegate as! AppDelegate).session!)
                 let message = MDCSnackbarMessage()
-                message.text = "Added /r/\(self.subreddit!.displayName) to your sub list!"
+                message.text = "Added r/\(self.subreddit!.displayName) to your sub list!"
                 MDCSnackbarManager.show(message)
             })
             alrController.addAction(somethingAction)

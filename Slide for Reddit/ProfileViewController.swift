@@ -68,7 +68,7 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
     var tagText : String?
 
     func tagUser(){
-        let alertController = UIAlertController(title: "Tag /u/\(name)", message: nil, preferredStyle: UIAlertControllerStyle.alert)
+        let alertController = UIAlertController(title: "Tag \(AccountController.formatUsernamePosessive(input: name, small: true)) profile", message: nil, preferredStyle: UIAlertControllerStyle.alert)
         let confirmAction = UIAlertAction(title: "Set", style: .default) { (_) in
             if let text = self.tagText {
                 ColorUtil.setTagForUser(name: self.name, tag: text)
@@ -159,7 +159,7 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.title = name
+        self.title = AccountController.formatUsername(input: name, small: true)
         navigationController?.navigationBar.tintColor = .white
         navigationController?.navigationBar.isTranslucent = false
         self.navigationController?.setNavigationBarHidden(false, animated: true)
@@ -187,7 +187,10 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
     }
     
     func showMenu(sender: AnyObject, user: Account){
-        let alrController = UIAlertController(title: user.name + "\n\n\n\n", message: "\(user.linkKarma) post karma\n\(user.commentKarma) comment karma\nRedditor for \("todo")", preferredStyle: UIAlertControllerStyle.actionSheet)
+        var date = Date(timeIntervalSince1970: TimeInterval(user.createdUtc))
+        let df = DateFormatter()
+        df.dateFormat = "MM/dd/yyyy"
+        let alrController = UIAlertController(title:"\n\n\n\n\n", message: "\(user.linkKarma) post karma\n\(user.commentKarma) comment karma\nRedditor since \(df.string(from: date))", preferredStyle: UIAlertControllerStyle.actionSheet)
         
         let margin:CGFloat = 8.0
         let rect = CGRect.init(x: margin, y: margin + 23, width: alrController.view.bounds.size.width - margin * 4.0, height:75)
@@ -236,7 +239,7 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
                         try self.session?.unfriend(user.name, completion: { (result) in
                             DispatchQueue.main.async {
                                 let message = MDCSnackbarMessage()
-                                message.text = "Unfriended /u/\(user.name)"
+                                message.text = "Unfriended u/\(user.name)"
                                 MDCSnackbarManager.show(message)
                             }
                         })
@@ -253,7 +256,7 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
                             }
                             DispatchQueue.main.async {
                                 let message = MDCSnackbarMessage()
-                                message.text = "Friended /u/\(user.name)"
+                                message.text = "Friended u/\(user.name)"
                                 MDCSnackbarManager.show(message)
                             }
                         })

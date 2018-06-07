@@ -182,7 +182,7 @@ class MessageCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate,
 
         let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: message.created, numericDates: true))  •  from \(message.author)")
 
-        let subString = NSMutableAttributedString(string: "/r/\(message.subreddit)")
+        let subString = NSMutableAttributedString(string: "r/\(message.subreddit)")
         let color = ColorUtil.getColorForSub(sub: message.subreddit)
         if (color != ColorUtil.baseColor) {
             subString.addAttribute(NSForegroundColorAttributeName, value: color, range: NSRange.init(location: 0, length: subString.length))
@@ -269,10 +269,10 @@ class MessageCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate,
             //read reply full thread
 
             let alertController: BottomSheetActionController = BottomSheetActionController()
-            alertController.headerData = "Message from /u/\(self.message!.author)"
+            alertController.headerData = "Message from u/\(self.message!.author)"
 
 
-            alertController.addAction(Action(ActionData(title: "/u/\(self.message!.author)'s profile", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { action in
+            alertController.addAction(Action(ActionData(title: "\(AccountController.formatUsernamePosessive(input: self.message!.author, small: false)) profile", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { action in
 
                 let prof = ProfileViewController.init(name: self.message!.author)
                 VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController);

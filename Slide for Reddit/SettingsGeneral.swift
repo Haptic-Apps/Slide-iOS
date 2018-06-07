@@ -13,11 +13,13 @@ class SettingsGeneral: UITableViewController {
 
     var viewType: UITableViewCell = UITableViewCell()
     var hideFAB: UITableViewCell = UITableViewCell()
+    var scrubUsername: UITableViewCell = UITableViewCell()
     var postSorting: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "post")
     var commentSorting: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "comment")
     var notifications: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "notif")
     var viewTypeSwitch = UISwitch()
     var hideFABSwitch = UISwitch()
+    var scrubUsernameSwitch = UISwitch()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,6 +45,9 @@ class SettingsGeneral: UITableViewController {
         } else if (changed == hideFABSwitch) {
             SettingValues.hiddenFAB = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_hiddenFAB)
+        } else if (changed == scrubUsernameSwitch) {
+            SettingValues.nameScrubbing = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_nameScrubbing)
         }
         UserDefaults.standard.synchronize()
     }
@@ -93,6 +98,15 @@ class SettingsGeneral: UITableViewController {
         self.hideFAB.textLabel?.textColor = ColorUtil.fontColor
         hideFAB.selectionStyle = UITableViewCellSelectionStyle.none
 
+        scrubUsernameSwitch = UISwitch()
+        scrubUsernameSwitch.isOn = SettingValues.nameScrubbing
+        scrubUsernameSwitch.addTarget(self, action: #selector(SettingsGeneral.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+        self.scrubUsername.textLabel?.text = "Scrub your username (you will become \"you\")"
+        self.scrubUsername.accessoryView = scrubUsernameSwitch
+        self.scrubUsername.backgroundColor = ColorUtil.foregroundColor
+        self.scrubUsername.textLabel?.textColor = ColorUtil.fontColor
+        scrubUsername.selectionStyle = UITableViewCellSelectionStyle.none
+
         self.postSorting.textLabel?.text = "Default post sorting"
         self.postSorting.detailTextLabel?.text = SettingValues.defaultSorting.description
         self.postSorting.detailTextLabel?.textColor = ColorUtil.fontColor
@@ -136,6 +150,7 @@ class SettingsGeneral: UITableViewController {
             switch (indexPath.row) {
             case 0: return self.viewType
             case 1: return self.hideFAB
+            case 2: return self.scrubUsername
             default: fatalError("Unknown row in section 0")
             }
         case 1:
@@ -275,7 +290,7 @@ class SettingsGeneral: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch (section) {
-        case 0: return 2    // section 0 has 2 rows
+        case 0: return 3    // section 0 has 2 rows
         case 1: return 1
         case 2: return 2    // section 1 has 1 row
         default: fatalError("Unknown number of sections")

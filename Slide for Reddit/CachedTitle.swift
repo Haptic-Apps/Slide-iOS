@@ -99,7 +99,7 @@ class CachedTitle {
 
         let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: submission.created, numericDates: true))\((submission.isEdited ? ("(edit \(DateFormatter().timeSince(from: submission.edited, numericDates: true)))") : ""))  •  ", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: colorF])
 
-        let authorString = NSMutableAttributedString(string: "\u{00A0}\(submission.author)\u{00A0}", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: colorF])
+        let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.author, small: false))\u{00A0}", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: colorF])
 
 
         let userColor = ColorUtil.getColorForUser(name: submission.author)
@@ -128,7 +128,7 @@ class CachedTitle {
             endString.append(tagString)
         }
 
-        let boldString = NSMutableAttributedString(string: "/r/\(submission.subreddit)", attributes: attrs)
+        let boldString = NSMutableAttributedString(string: "r/\(submission.subreddit)", attributes: attrs)
 
         let color = ColorUtil.getColorForSub(sub: submission.subreddit)
         if (color != ColorUtil.baseColor) {
@@ -172,7 +172,7 @@ class CachedTitle {
             let endString = NSMutableAttributedString(string: "Crossposted to ", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: colorF])
             let by = NSMutableAttributedString(string: " by ", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: colorF])
 
-            let boldString = NSMutableAttributedString(string: "/r/\(submission.crosspostSubreddit)", attributes: attrs)
+            let boldString = NSMutableAttributedString(string: "r/\(submission.crosspostSubreddit)", attributes: attrs)
 
             let color = ColorUtil.getColorForSub(sub: submission.crosspostSubreddit)
             if (color != ColorUtil.baseColor) {
@@ -181,7 +181,7 @@ class CachedTitle {
 
             endString.append(boldString)
 
-            let authorString = NSMutableAttributedString(string: "\u{00A0}\(submission.author)\u{00A0}", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: colorF])
+            let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.author, small: false))\u{00A0}", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: colorF])
 
 
             let userColor = ColorUtil.getColorForUser(name: submission.crosspostAuthor)

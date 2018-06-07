@@ -281,7 +281,7 @@ public class AutoCache: NSObject {
         AutoCache.cancel = false
         AutoCache.doCache(subs: AutoCache.subs, progress: { sub, post, total, failed in
             DispatchQueue.main.async {
-                AutoCache.progressView?.text = "\tCaching post \(post)/\(total)\(failed > 0 ? " (\(failed) failed)" : "") in /r/\(sub)"
+                AutoCache.progressView?.text = "\tCaching post \(post)/\(total)\(failed > 0 ? " (\(failed) failed)" : "") in r/\(sub)"
                 AutoCache.progressBar?.progress = Float(post) / Float(total)
             }
         }, completion: {

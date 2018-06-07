@@ -865,7 +865,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 self.refresh(self)
             }))
             
-            alertController.addAction(Action(ActionData(title: "/r/\(link.subreddit)", image: UIImage(named: "subs")!.menuIcon()), style: .default, handler: { action in
+            alertController.addAction(Action(ActionData(title: "r/\(link.subreddit)", image: UIImage(named: "subs")!.menuIcon()), style: .default, handler: { action in
                 VCPresenter.openRedditLink("www.reddit.com/r/\(link.subreddit)", self.navigationController, self)
             }))
             
@@ -875,7 +875,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             }))
             
             
-            alertController.addAction(Action(ActionData(title: "View /r/\(link.subreddit) sidebar", image: UIImage(named: "info")!.menuIcon()), style: .default, handler: { action in
+            alertController.addAction(Action(ActionData(title: "r/\(link.subreddit) sidebar", image: UIImage(named: "info")!.menuIcon()), style: .default, handler: { action in
                 Sidebar.init(parent: self, subname: self.submission!.subreddit).displaySidebar()
             }))
             

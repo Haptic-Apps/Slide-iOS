@@ -41,7 +41,7 @@ class NavigationHeaderView: UIView {
         if (AccountController.isLoggedIn) {
             var titleT = NSMutableAttributedString.init(string: "\t\t", attributes: [NSFontAttributeName: titleFont])
             titleFont = UIFont.systemFont(ofSize: 25)
-            titleT.append(NSMutableAttributedString.init(string: AccountController.currentName, attributes: [NSFontAttributeName: titleFont.bold()]))
+            titleT.append(NSMutableAttributedString.init(string: AccountController.formatUsername(input: AccountController.currentName, small: true), attributes: [NSFontAttributeName: titleFont.bold()]))
             title.attributedText = titleT
             inbox.isHidden = false
         } else {
@@ -328,11 +328,11 @@ class NavigationHeaderView: UIView {
 
         var titleConstraints: [NSLayoutConstraint] = []
 
-        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-12-[account]",
+        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-16-[account]",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
-        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[inbox]-8-[more]-12-|",
+        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[inbox]-16-[more]-16-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))

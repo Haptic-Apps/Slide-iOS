@@ -101,7 +101,7 @@ class SettingsContent: UITableViewController {
         hideCollectionViews = UISwitch()
         hideCollectionViews.isOn = SettingValues.hideNSFWCollection
         hideCollectionViews.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        hideCollectionViewsCell.textLabel?.text = "Hide NSFW image previews in collections (such as /r/all)"
+        hideCollectionViewsCell.textLabel?.text = "Hide NSFW image previews in collections (such as r/all)"
         hideCollectionViewsCell.accessoryView = hideCollectionViews
         hideCollectionViewsCell.backgroundColor = ColorUtil.foregroundColor
         hideCollectionViewsCell.textLabel?.textColor = ColorUtil.fontColor

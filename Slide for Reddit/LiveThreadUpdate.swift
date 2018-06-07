@@ -212,7 +212,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, UZTex
         if(navViewController == nil && nav != nil){
             navViewController = nav
         }
-        title.text = "/u/\(json["author"] as! String) \(DateFormatter().timeSince(from: NSDate(timeIntervalSince1970: TimeInterval(json["created_utc"] as! Int)), numericDates: true))"
+        title.text = "u/\(json["author"] as! String) \(DateFormatter().timeSince(from: NSDate(timeIntervalSince1970: TimeInterval(json["created_utc"] as! Int)), numericDates: true))"
         title.sizeToFit()
         
         if let url = json["original_url"] as? String {

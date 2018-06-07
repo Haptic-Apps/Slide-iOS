@@ -24,15 +24,15 @@ class PostActions : NSObject {
         let link = cell.link!
         
         let alertController: BottomSheetActionController = BottomSheetActionController()
-        alertController.headerData = "Post by /u/\(link.author)"
+        alertController.headerData = "Post by \(AccountController.formatUsername(input: link.author, small: true))"
         
         
-        alertController.addAction(Action(ActionData(title: "/u/\(link.author)'s profile", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "\(AccountController.formatUsernamePosessive(input: link.author, small: false)) profile", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { action in
             
             let prof = ProfileViewController.init(name: link.author)
             VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: nav, parentViewController: parent)
         }))
-        alertController.addAction(Action(ActionData(title: "/r/\(link.subreddit)", image: UIImage(named: "subs")!.menuIcon()), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "r/\(link.subreddit)", image: UIImage(named: "subs")!.menuIcon()), style: .default, handler: { action in
             
             let sub = SingleSubredditViewController.init(subName: link.subreddit, single: true)
             VCPresenter.showVC(viewController: sub, popupIfPossible: true, parentNavigationController:nav, parentViewController: parent)
@@ -108,7 +108,7 @@ class PostActions : NSObject {
     static func showModMenu(_ cell: LinkCellView, parent: UIViewController){
         //todo remove with reason, new icons
         let alertController: BottomSheetActionController = BottomSheetActionController()
-        alertController.headerData = "Submission by /u/\(cell.link!.author)"
+        alertController.headerData = "Submission by u/\(cell.link!.author)"
         
         alertController.addAction(Action(ActionData(title: "\(cell.link!.reports.count) reports", image: UIImage(named: "reports")!.menuIcon()), style: .default, handler: { action in
             var reports = ""
@@ -444,7 +444,7 @@ class PostActions : NSObject {
                 case .success(_):
                     DispatchQueue.main.async {
                         let message = MDCSnackbarMessage()
-                        message.text = "/u/\(cell.link!.author) banned!"
+                        message.text = "u/\(cell.link!.author) banned!"
                         MDCSnackbarManager.show(message)
                     }
                     break
