@@ -367,11 +367,11 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         self.tintColor = ColorUtil.getColorForSub(sub: MainViewController.current)
         self.menuNav?.setSubreddit(subreddit: MainViewController.current)
         self.currentTitle = MainViewController.current
+        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: vc.sub)
 
         if (!(vc).loaded) {
             (vc).load(reset: true)
         }
-
 
         let label = UILabel()
         label.text = "   \(self.currentTitle)"
@@ -525,19 +525,13 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                 tabBar.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
             }
 
-
             menuNav?.header.doColors()
             if (menuNav?.tableView != nil) {
                 menuNav?.tableView.reloadData()
             }
         }
     }
-
-    func resetColors() {
-        // self.navigationController?.navigationBar.barTintColor = self.tintColor
-        //todo self.buttonBarView.backgroundColor = self.tintColor
-    }
-
+    
     public static var isOffline = false
 
     func doButtons(){
@@ -718,9 +712,7 @@ extension MainViewController: MDCTabBarDelegate {
                 completion: nil)
 
         self.doCurrentPage(tabBar.items.index(of: item)!)
-        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: self.currentTitle)
         tabBar.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
-
     }
 }
 

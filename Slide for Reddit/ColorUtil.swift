@@ -102,10 +102,9 @@ class ColorUtil {
     public static var upvoteColor = UIColor.init(hexString: "#FF9800")
     public static var downvoteColor = UIColor.init(hexString: "#2196F3")
 
-
     public static func getColorForSub(sub: String) -> UIColor {
         let color = UserDefaults.standard.colorForKey(key: "color+" + sub)
-        if (color == nil || color == .black) {
+        if (color == nil || color!.hexString == UIColor.black.hexString) {
             return baseColor
         } else {
             return color!

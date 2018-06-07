@@ -211,7 +211,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     var isAccent = false
 
     public func colorPickerView(_ colorPickerView: ColorPickerView, didSelectItemAt indexPath: IndexPath) {
-
         if (isAccent) {
             accentChosen = colorPickerView.colors[indexPath.row]
             SingleSubredditViewController.fab?.backgroundColor = accentChosen
@@ -225,7 +224,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             if (parentController != nil) {
                 parentController?.colorChanged()
             }
-
         }
     }
 
@@ -555,7 +553,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             SingleSubredditViewController.fab!.removeFromSuperview()
             SingleSubredditViewController.fab = nil
         }
-        if (!MainViewController.isOffline) {
+        if (!MainViewController.isOffline && !SettingValues.hiddenFAB) {
             SingleSubredditViewController.fab = UIButton(frame: CGRect.init(x: (tableView.frame.size.width / 2) - 70, y: -20, width: 140, height: 45))
             SingleSubredditViewController.fab!.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
             SingleSubredditViewController.fab!.layer.cornerRadius = 22.5
@@ -1030,9 +1028,8 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     var first = true
     var indicator: MDCActivityIndicator?
 
-
     override func viewWillAppear(_ animated: Bool) {
-
+        super.viewWillAppear(animated)
         if (SubredditReorderViewController.changed) {
             self.reloadNeedingColor()
             flowLayout.reset()
@@ -1066,8 +1063,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         }
 
         self.view.backgroundColor = ColorUtil.backgroundColor
-
-
     }
 
     func resetColors(){

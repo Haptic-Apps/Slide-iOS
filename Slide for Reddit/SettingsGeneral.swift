@@ -43,8 +43,9 @@ class SettingsGeneral: UITableViewController {
             SettingValues.viewType = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_viewType)
         } else if (changed == hideFABSwitch) {
-            SettingValues.hiddenFAB = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_hiddenFAB)
+            SettingValues.hiddenFAB = !changed.isOn
+            UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_hiddenFAB)
+            SubredditReorderViewController.changed = true
         } else if (changed == scrubUsernameSwitch) {
             SettingValues.nameScrubbing = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_nameScrubbing)
@@ -90,7 +91,7 @@ class SettingsGeneral: UITableViewController {
         viewType.selectionStyle = UITableViewCellSelectionStyle.none
 
         hideFABSwitch = UISwitch()
-        hideFABSwitch.isOn = SettingValues.hiddenFAB
+        hideFABSwitch.isOn = !SettingValues.hiddenFAB
         hideFABSwitch.addTarget(self, action: #selector(SettingsGeneral.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
         self.hideFAB.textLabel?.text = "Subreddit floating button"
         self.hideFAB.accessoryView = hideFABSwitch

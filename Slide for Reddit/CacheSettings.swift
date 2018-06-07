@@ -38,7 +38,7 @@ class CacheSettings: UITableViewController {
         self.autoCache.detailTextLabel?.textColor = ColorUtil.fontColor
 
         cacheContentSwitch = UISwitch()
-        cacheContentSwitch.isOn = SettingValues.hiddenFAB
+        cacheContentSwitch.isOn = false
         cacheContentSwitch.addTarget(self, action: #selector(CacheSettings.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
         self.cacheContent.textLabel?.text = "Cache content"
         self.cacheContent.detailTextLabel?.text = "Other than images (gifs, albums, etc)"
