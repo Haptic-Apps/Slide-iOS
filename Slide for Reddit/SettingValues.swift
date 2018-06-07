@@ -120,6 +120,8 @@ class SettingValues {
     public static var postFontOffset = -4
     public static var commentFontOffset = -4
     public static var largerThumbnail = true
+    public static var isProFeature = false
+    public static var isProCustomization = false
     public static var lqLow = true
     public static var nsfwEnabled = false
     public static var nsfwPreviews = false

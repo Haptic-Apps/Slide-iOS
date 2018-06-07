@@ -14,8 +14,10 @@
 		B776B41AF52E177BCE0241F3 /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BF86D3E6B5AC2EEEDE63 /* Filter.swift */; };
 		B776B496CD1CCCF42B176B00 /* YTPlayer.html in Resources */ = {isa = PBXBuildFile; fileRef = B776BD038659E2DE04B541FA /* YTPlayer.html */; };
 		B776B5282EE4DA559E97F9B3 /* ModerationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BECBFCB8F58AC234156A /* ModerationViewController.swift */; };
+		B776B61A62658A69CA381DCC /* SettingsPro.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BDCF49F38F9EF8BB3E8A /* SettingsPro.swift */; };
 		B776B6AC686D43299A5C8384 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B776B793D6901741B17CAD65 /* Main.storyboard */; };
 		B776B87EDB6E25D8D1B2D4B5 /* CustomAlbum.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BF3F4BCDE57E4274764F /* CustomAlbum.swift */; };
+		B776B8EC3A2DB5BE10A81EAF /* SettingsProFeatures.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BCB9B15BA3905A63A199 /* SettingsProFeatures.swift */; };
 		B776B919A0E908BFAB060DE7 /* ToolbarTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BA78CCE4C75BD7FC5DA3 /* ToolbarTextView.swift */; };
 		B776BA8D503319846E83C4A4 /* VideoDisplayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B4EE978D7F23FF4C74BE /* VideoDisplayer.swift */; };
 		B776BAD2D3F58C29030A4230 /* SFHideSafariViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B89DC40DC7FB5ECB6C4A /* SFHideSafariViewController.swift */; };
@@ -26,6 +28,7 @@
 		B776BD2C5BBC647BF29E06F8 /* CustomAnimateUITableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B5502C1178D6A0F51B6A /* CustomAnimateUITableView.swift */; };
 		B776BD48651556FF298BF3EB /* TableDisplayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BDC00CB0E0C8961A71A3 /* TableDisplayViewController.swift */; };
 		B776BF494A7A822D5DB4B5BC /* ColorMuxPagingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B21CFB79FA354C296037 /* ColorMuxPagingViewController.swift */; };
+		B776BF996268E128E5E888DB /* SettingsProCustomization.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B92897D84E990B333539 /* SettingsProCustomization.swift */; };
 		BE0E8BC01E26E91E004B56B1 /* BouncyViewControllerAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0E8BBF1E26E91E004B56B1 /* BouncyViewControllerAnimator.swift */; };
 		BE0EF7C41F43C9520058D572 /* Spoilers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0EF7C31F43C9510058D572 /* Spoilers.swift */; };
 		BE1DA3961E26AD5700EC0A04 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1DA3951E26AD5700EC0A04 /* SearchViewController.swift */; };
@@ -216,11 +219,14 @@
 		B776B64AFABC174BF4DEE478 /* CacheSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheSettings.swift; sourceTree = "<group>"; };
 		B776B793D6901741B17CAD65 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		B776B89DC40DC7FB5ECB6C4A /* SFHideSafariViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SFHideSafariViewController.swift; sourceTree = "<group>"; };
+		B776B92897D84E990B333539 /* SettingsProCustomization.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsProCustomization.swift; sourceTree = "<group>"; };
 		B776B9FD1DF77B11274D680F /* ModMailContributionLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModMailContributionLoader.swift; sourceTree = "<group>"; };
 		B776BA78CCE4C75BD7FC5DA3 /* ToolbarTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToolbarTextView.swift; sourceTree = "<group>"; };
 		B776BA7C2B7217C3875F3BEC /* ModQueueContributionLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModQueueContributionLoader.swift; sourceTree = "<group>"; };
+		B776BCB9B15BA3905A63A199 /* SettingsProFeatures.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsProFeatures.swift; sourceTree = "<group>"; };
 		B776BD038659E2DE04B541FA /* YTPlayer.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = YTPlayer.html; sourceTree = "<group>"; };
 		B776BDC00CB0E0C8961A71A3 /* TableDisplayViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableDisplayViewController.swift; sourceTree = "<group>"; };
+		B776BDCF49F38F9EF8BB3E8A /* SettingsPro.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsPro.swift; sourceTree = "<group>"; };
 		B776BECBFCB8F58AC234156A /* ModerationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModerationViewController.swift; sourceTree = "<group>"; };
 		B776BF3F4BCDE57E4274764F /* CustomAlbum.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAlbum.swift; sourceTree = "<group>"; };
 		B776BF86D3E6B5AC2EEEDE63 /* Filter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
@@ -445,6 +451,9 @@
 				B776BDC00CB0E0C8961A71A3 /* TableDisplayViewController.swift */,
 				B776B6360A2BA2ABC0297545 /* LiveThreadViewController.swift */,
 				B776B2E54F7438959A76E42E /* LiveThreadUpdate.swift */,
+				B776BDCF49F38F9EF8BB3E8A /* SettingsPro.swift */,
+				B776BCB9B15BA3905A63A199 /* SettingsProFeatures.swift */,
+				B776B92897D84E990B333539 /* SettingsProCustomization.swift */,
 			);
 			name = ContentViewControllers;
 			sourceTree = "<group>";
@@ -1260,6 +1269,9 @@
 				B776BB7F8D38650384698FD1 /* LiveThreadViewController.swift in Sources */,
 				B776BB2D5B79A707C1A41B8C /* LiveThreadUpdate.swift in Sources */,
 				B776B2D12CF5BF9AC64427BA /* AutoCache.swift in Sources */,
+				B776B61A62658A69CA381DCC /* SettingsPro.swift in Sources */,
+				B776B8EC3A2DB5BE10A81EAF /* SettingsProFeatures.swift in Sources */,
+				B776BF996268E128E5E888DB /* SettingsProCustomization.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

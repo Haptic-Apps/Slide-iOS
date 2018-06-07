@@ -16,6 +16,8 @@ import RLBAlertsPickers
 
 class SettingsViewController: UITableViewController {
 
+    var goPro: UITableViewCell = UITableViewCell()
+
     var general: UITableViewCell = UITableViewCell()
     var manageSubs: UITableViewCell = UITableViewCell()
     var mainTheme: UITableViewCell = UITableViewCell()
@@ -70,105 +72,112 @@ class SettingsViewController: UITableViewController {
         self.general.accessoryType = .disclosureIndicator
         self.general.backgroundColor = ColorUtil.foregroundColor
         self.general.textLabel?.textColor = ColorUtil.fontColor
-        self.general.imageView?.image = UIImage.init(named: "settings")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
+        self.general.imageView?.image = UIImage.init(named: "settings")?.toolbarIcon()
         self.general.imageView?.tintColor = ColorUtil.fontColor
 
         self.manageSubs.textLabel?.text = "Manage your subreddits"
         self.manageSubs.accessoryType = .disclosureIndicator
         self.manageSubs.backgroundColor = ColorUtil.foregroundColor
         self.manageSubs.textLabel?.textColor = ColorUtil.fontColor
-        self.manageSubs.imageView?.image = UIImage.init(named: "subs")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
+        self.manageSubs.imageView?.image = UIImage.init(named: "subs")?.toolbarIcon()
         self.manageSubs.imageView?.tintColor = ColorUtil.fontColor
 
         self.mainTheme.textLabel?.text = "Main theme"
         self.mainTheme.accessoryType = .disclosureIndicator
         self.mainTheme.backgroundColor = ColorUtil.foregroundColor
         self.mainTheme.textLabel?.textColor = ColorUtil.fontColor
-        self.mainTheme.imageView?.image = UIImage.init(named: "colors")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
+        self.mainTheme.imageView?.image = UIImage.init(named: "colors")?.toolbarIcon()
         self.mainTheme.imageView?.tintColor = ColorUtil.fontColor
+
+        self.goPro.textLabel?.text = "Support Slide, Go Pro!"
+        self.goPro.accessoryType = .disclosureIndicator
+        self.goPro.backgroundColor = ColorUtil.foregroundColor
+        self.goPro.textLabel?.textColor = ColorUtil.fontColor
+        self.goPro.imageView?.image = UIImage.init(named: "support")?.toolbarIcon().withColor(tintColor: GMColor.red500Color())
+        self.goPro.imageView?.tintColor = ColorUtil.fontColor
 
         self.clearCell.textLabel?.text = "Clear cache"
         self.clearCell.accessoryType = .disclosureIndicator
         self.clearCell.backgroundColor = ColorUtil.foregroundColor
         self.clearCell.textLabel?.textColor = ColorUtil.fontColor
-        self.clearCell.imageView?.image = UIImage.init(named: "multis")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
+        self.clearCell.imageView?.image = UIImage.init(named: "multis")?.toolbarIcon()
         self.clearCell.imageView?.tintColor = ColorUtil.fontColor
 
         self.cacheCell.textLabel?.text = "Offline caching"
         self.cacheCell.accessoryType = .disclosureIndicator
         self.cacheCell.backgroundColor = ColorUtil.foregroundColor
         self.cacheCell.textLabel?.textColor = ColorUtil.fontColor
-        self.cacheCell.imageView?.image = UIImage.init(named: "save-1")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
+        self.cacheCell.imageView?.image = UIImage.init(named: "save-1")?.toolbarIcon()
         self.cacheCell.imageView?.tintColor = ColorUtil.fontColor
 
         self.postLayout.textLabel?.text = "Post layout"
         self.postLayout.accessoryType = .disclosureIndicator
         self.postLayout.backgroundColor = ColorUtil.foregroundColor
         self.postLayout.textLabel?.textColor = ColorUtil.fontColor
-        self.postLayout.imageView?.image = UIImage.init(named: "layout")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
+        self.postLayout.imageView?.image = UIImage.init(named: "layout")?.toolbarIcon()
         self.postLayout.imageView?.tintColor = ColorUtil.fontColor
 
         self.subThemes.textLabel?.text = "Subreddit themes"
         self.subThemes.accessoryType = .disclosureIndicator
         self.subThemes.backgroundColor = ColorUtil.foregroundColor
         self.subThemes.textLabel?.textColor = ColorUtil.fontColor
-        self.subThemes.imageView?.image = UIImage.init(named: "subs")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
+        self.subThemes.imageView?.image = UIImage.init(named: "subs")?.toolbarIcon()
         self.subThemes.imageView?.tintColor = ColorUtil.fontColor
 
         self.font.textLabel?.text = "Font"
         self.font.accessoryType = .disclosureIndicator
         self.font.backgroundColor = ColorUtil.foregroundColor
         self.font.textLabel?.textColor = ColorUtil.fontColor
-        self.font.imageView?.image = UIImage.init(named: "size")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
+        self.font.imageView?.image = UIImage.init(named: "size")?.toolbarIcon()
         self.font.imageView?.tintColor = ColorUtil.fontColor
 
         self.comments.textLabel?.text = "Comments"
         self.comments.accessoryType = .disclosureIndicator
         self.comments.backgroundColor = ColorUtil.foregroundColor
         self.comments.textLabel?.textColor = ColorUtil.fontColor
-        self.comments.imageView?.image = UIImage.init(named: "comments")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
+        self.comments.imageView?.image = UIImage.init(named: "comments")?.toolbarIcon()
         self.comments.imageView?.tintColor = ColorUtil.fontColor
 
         self.linkHandling.textLabel?.text = "Link handling"
         self.linkHandling.accessoryType = .disclosureIndicator
         self.linkHandling.backgroundColor = ColorUtil.foregroundColor
         self.linkHandling.textLabel?.textColor = ColorUtil.fontColor
-        self.linkHandling.imageView?.image = UIImage.init(named: "link")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
+        self.linkHandling.imageView?.image = UIImage.init(named: "link")?.toolbarIcon()
         self.linkHandling.imageView?.tintColor = ColorUtil.fontColor
 
         self.history.textLabel?.text = "History"
         self.history.accessoryType = .disclosureIndicator
         self.history.backgroundColor = ColorUtil.foregroundColor
         self.history.textLabel?.textColor = ColorUtil.fontColor
-        self.history.imageView?.image = UIImage.init(named: "history")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
+        self.history.imageView?.image = UIImage.init(named: "history")?.toolbarIcon()
         self.history.imageView?.tintColor = ColorUtil.fontColor
 
         self.dataSaving.textLabel?.text = "Data saving"
         self.dataSaving.accessoryType = .disclosureIndicator
         self.dataSaving.backgroundColor = ColorUtil.foregroundColor
         self.dataSaving.textLabel?.textColor = ColorUtil.fontColor
-        self.dataSaving.imageView?.image = UIImage.init(named: "data")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
+        self.dataSaving.imageView?.image = UIImage.init(named: "data")?.toolbarIcon()
         self.dataSaving.imageView?.tintColor = ColorUtil.fontColor
 
         self.content.textLabel?.text = "Content"
         self.content.accessoryType = .disclosureIndicator
         self.content.backgroundColor = ColorUtil.foregroundColor
         self.content.textLabel?.textColor = ColorUtil.fontColor
-        self.content.imageView?.image = UIImage.init(named: "image")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
+        self.content.imageView?.image = UIImage.init(named: "image")?.toolbarIcon()
         self.content.imageView?.tintColor = ColorUtil.fontColor
 
         self.subCell.textLabel?.text = "Visit the Slide subreddit!"
         self.subCell.accessoryType = .disclosureIndicator
         self.subCell.backgroundColor = ColorUtil.foregroundColor
         self.subCell.textLabel?.textColor = ColorUtil.fontColor
-        self.subCell.imageView?.image = UIImage.init(named: "subs")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
+        self.subCell.imageView?.image = UIImage.init(named: "subs")?.toolbarIcon()
         self.subCell.imageView?.tintColor = ColorUtil.fontColor
 
         self.filters.textLabel?.text = "Filters"
         self.filters.accessoryType = .disclosureIndicator
         self.filters.backgroundColor = ColorUtil.foregroundColor
         self.filters.textLabel?.textColor = ColorUtil.fontColor
-        self.filters.imageView?.image = UIImage.init(named: "filter")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
+        self.filters.imageView?.image = UIImage.init(named: "filter")?.toolbarIcon()
         self.filters.imageView?.tintColor = ColorUtil.fontColor
 
         self.aboutCell.textLabel?.text = "Slide \(getVersion())"
@@ -176,28 +185,28 @@ class SettingsViewController: UITableViewController {
         self.aboutCell.backgroundColor = ColorUtil.foregroundColor
         self.aboutCell.textLabel?.textColor = ColorUtil.fontColor
         self.aboutCell.imageView?.image = UIImage.init(named: "info")?.toolbarIcon()
-            .withRenderingMode(.alwaysTemplate)
+            
         self.aboutCell.imageView?.tintColor = ColorUtil.fontColor
 
         self.githubCell.textLabel?.text = "Github"
         self.githubCell.accessoryType = .disclosureIndicator
         self.githubCell.backgroundColor = ColorUtil.foregroundColor
         self.githubCell.textLabel?.textColor = ColorUtil.fontColor
-        self.githubCell.imageView?.image = UIImage.init(named: "github")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
+        self.githubCell.imageView?.image = UIImage.init(named: "github")?.toolbarIcon()
         self.githubCell.imageView?.tintColor = ColorUtil.fontColor
 
         self.licenseCell.textLabel?.text = "Open source licenses"
         self.licenseCell.accessoryType = .disclosureIndicator
         self.licenseCell.backgroundColor = ColorUtil.foregroundColor
         self.licenseCell.textLabel?.textColor = ColorUtil.fontColor
-        self.licenseCell.imageView?.image = UIImage.init(named: "code")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
+        self.licenseCell.imageView?.image = UIImage.init(named: "code")?.toolbarIcon()
         self.licenseCell.imageView?.tintColor = ColorUtil.fontColor
 
         multiColumnCell.textLabel?.text = "Multi Column mode"
         multiColumnCell.backgroundColor = ColorUtil.foregroundColor
         multiColumnCell.textLabel?.textColor = ColorUtil.fontColor
         multiColumnCell.selectionStyle = UITableViewCellSelectionStyle.none
-        self.multiColumnCell.imageView?.image = UIImage.init(named: "multicolumn")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
+        self.multiColumnCell.imageView?.image = UIImage.init(named: "multicolumn")?.toolbarIcon()
         self.multiColumnCell.imageView?.tintColor = ColorUtil.fontColor
 
         lock = UISwitch()
@@ -209,7 +218,7 @@ class SettingsViewController: UITableViewController {
         lockCell.backgroundColor = ColorUtil.foregroundColor
         lockCell.textLabel?.textColor = ColorUtil.fontColor
         lockCell.selectionStyle = UITableViewCellSelectionStyle.none
-        self.lockCell.imageView?.image = UIImage.init(named: "lockapp")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
+        self.lockCell.imageView?.image = UIImage.init(named: "lockapp")?.toolbarIcon()
         self.lockCell.imageView?.tintColor = ColorUtil.fontColor
 
         if (reset) {
@@ -247,6 +256,7 @@ class SettingsViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch (indexPath.section) {
         case 0:
+        if(SettingValues.isProCustomization && SettingValues.isProFeature){
             switch (indexPath.row) {
             case 0: return self.general
             case 1: return self.manageSubs
@@ -255,6 +265,17 @@ class SettingsViewController: UITableViewController {
 
             default: fatalError("Unknown row in section 0")
             }
+        } else {
+            switch (indexPath.row) {
+            case 0: return self.general
+            case 1: return self.manageSubs
+            case 2: return self.goPro
+            case 3: return self.multiColumnCell
+            case 4: return self.lockCell
+
+            default: fatalError("Unknown row in section 0")
+            }
+        }
         case 1:
             switch (indexPath.row) {
             case 0: return self.mainTheme
@@ -323,10 +344,18 @@ class SettingsViewController: UITableViewController {
         var ch: UIViewController?
         if (indexPath.section == 0 && indexPath.row == 1) {
             ch = SubredditReorderViewController()
-        } else if(indexPath.section == 0 && indexPath.row == 2){
-            showMultiColumn()
         } else if (indexPath.section == 0 && indexPath.row == 0) {
             ch = SettingsGeneral()
+        } else if (indexPath.section == 0 && indexPath.row == 2) {
+            if((!SettingValues.isProCustomization || !SettingValues.isProCustomization)){
+                ch = SettingsPro()
+            } else {
+                showMultiColumn()
+            }
+        } else if (indexPath.section == 0 && indexPath.row == 3) {
+            if((!SettingValues.isProCustomization || !SettingValues.isProCustomization)){
+                showMultiColumn()
+            }
         } else if (indexPath.section == 2 && indexPath.row == 4) {
             ch = FiltersViewController()
         } else if (indexPath.section == 1 && indexPath.row == 2) {
@@ -410,7 +439,7 @@ class SettingsViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch (section) {
-        case 0: return 4    // section 0 has 2 rows
+        case 0: return (SettingValues.isProCustomization && SettingValues.isProCustomization) ? 4 : 5   // section 0 has 2 rows
         case 1: return 5    // section 1 has 1 row
         case 2: return 7
         case 3: return 4
