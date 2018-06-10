@@ -205,7 +205,10 @@ class MessageCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate,
             let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: accent)
             content = CellContent.init(string: LinkParser.parse(attr2, ColorUtil.accentColorForSub(sub: "")), width: (width - 16 - (message.subject.hasPrefix("re:") ? 30 : 0)))
             textView.attributedString = content?.attributedString
-            textView.frame.size.height = (content?.textHeight)!
+            let framesetterB = CTFramesetterCreateWithAttributedString(content!.attributedString)
+            let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: width - 16 - (message.subject.hasPrefix("re:") ? 22 : 0), height: CGFloat.greatestFiniteMagnitude), nil)
+
+            textView.frame.size.height = textSizeB.height
             hasText = true
         } catch {
         }

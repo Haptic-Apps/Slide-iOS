@@ -205,7 +205,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
                 textView.delegate = self
                 textView.setText(content?.attributedString)
-                textView.frame.size.height = (content?.textHeight)!
                 hasText = true
             } catch {
             }

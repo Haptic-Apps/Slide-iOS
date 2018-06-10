@@ -550,9 +550,19 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
     func setupFab() {
         if (SingleSubredditViewController.fab != nil) {
-            SingleSubredditViewController.fab!.removeFromSuperview()
-            SingleSubredditViewController.fab = nil
+            UIView.animate(withDuration: 0.15, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+                SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
+            }, completion: { finished in
+                SingleSubredditViewController.fab!.removeFromSuperview()
+                SingleSubredditViewController.fab = nil
+                self.addNewFab()
+            })
+        } else {
+            addNewFab()
         }
+    }
+    
+    func addNewFab(){
         if (!MainViewController.isOffline && !SettingValues.hiddenFAB) {
             SingleSubredditViewController.fab = UIButton(frame: CGRect.init(x: (tableView.frame.size.width / 2) - 70, y: -20, width: 140, height: 45))
             SingleSubredditViewController.fab!.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
@@ -564,13 +574,13 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             SingleSubredditViewController.fab!.elevate(elevation: 2)
             SingleSubredditViewController.fab!.titleLabel?.textAlignment = .center
             SingleSubredditViewController.fab!.titleLabel?.font = UIFont.systemFont(ofSize: 14)
-
+            
             var width = title.size(with: SingleSubredditViewController.fab!.titleLabel!.font).width + CGFloat(65)
             SingleSubredditViewController.fab!.frame = CGRect.init(x: (tableView.frame.size.width / 2) - (width / 2), y: -20, width: width, height: CGFloat(45))
-
+            
             SingleSubredditViewController.fab!.titleEdgeInsets = UIEdgeInsets.init(top: 0, left: 20, bottom: 0, right: 20)
             navigationController?.toolbar.addSubview(SingleSubredditViewController.fab!)
-
+            
             SingleSubredditViewController.fab!.addTapGestureRecognizer {
                 switch (SettingValues.fabType) {
                 case .SIDEBAR:
@@ -590,11 +600,11 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                     break
                 }
             }
-
+            
             SingleSubredditViewController.fab!.addLongTapGestureRecognizer {
                 self.changeFab()
             }
-
+            
             SingleSubredditViewController.fab!.transform = CGAffineTransform.init(scaleX: 0.001, y: 0.001)
             UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
                 SingleSubredditViewController.fab!.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
@@ -893,19 +903,17 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         if (single || !SettingValues.viewType) {
             self.navigationController?.setNavigationBarHidden(false, animated: true)
         }
+        
         UIApplication.shared.statusBarStyle = .lightContent
 
         if (single) {
             UIApplication.shared.statusBarView?.backgroundColor = .clear
+            UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+                SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
+            }, completion: { finished in
+                SingleSubredditViewController.fab?.isHidden = true
+            })
         }
-
-
-        UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
-            SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
-        }, completion: { finished in
-            SingleSubredditViewController.fab?.isHidden = true
-        })
-
     }
 
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -1061,10 +1069,11 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
         if (single || !SettingValues.viewType) {
             navigationController?.setNavigationBarHidden(false, animated: true)
-            navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub)
             self.navigationController?.navigationBar.shadowImage = UIImage()
             navigationController?.navigationBar.isTranslucent = false
         }
+
+        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub)
 
         self.automaticallyAdjustsScrollViewInsets = false
         self.edgesForExtendedLayout = UIRectEdge.all
@@ -1278,7 +1287,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         super.viewDidAppear(animated)
         UIApplication.shared.statusBarView?.backgroundColor = ColorUtil.getColorForSub(sub: self.sub)
         (navigationController)?.setToolbarHidden(false, animated: true)
-
         setupFab()
     }
 

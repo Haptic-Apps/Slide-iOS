@@ -30,10 +30,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         }
 
         self.navigationController?.navigationBar.shadowImage = UIImage()
-        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: self.currentTitle)
-        if(tabBar != nil){
-            tabBar.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
-        }
         navigationController?.navigationBar.isTranslucent = false
 
         navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
@@ -124,25 +120,25 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     }
 
     func goToSubreddit(subreddit: String) {
-        if (Subscriptions.subreddits.contains(subreddit)) {
-            let index = Subscriptions.subreddits.index(of: subreddit)
-            let firstViewController = MainViewController.vCs[index!]
+        menuNav?.dismiss(animated: true) {
+            if (Subscriptions.subreddits.contains(subreddit)) {
+                let index = Subscriptions.subreddits.index(of: subreddit)
+                let firstViewController = MainViewController.vCs[index!]
+                
+                self.setViewControllers([firstViewController],
+                                        direction: index! > self.currentPage ? .forward : .reverse,
+                                        animated: SettingValues.viewType ? true : false,
+                                   completion: nil)
 
-
-            setViewControllers([firstViewController],
-                    direction: .forward,
-                    animated: true,
-                    completion: nil)
-            self.doCurrentPage(index!)
-            navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: subreddit)
-            if(tabBar != nil){
-                tabBar.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
+                self.doCurrentPage(index!)
+                self.navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: subreddit)
+                self.tabBar.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
+                firstViewController.viewDidAppear(true)
+            } else {
+                //todo better sanitation
+                VCPresenter.openRedditLink("/r/" + subreddit.replacingOccurrences(of: " ", with: ""), self.navigationController, self)
             }
-        } else {
-            //todo better sanitation
-            VCPresenter.openRedditLink("/r/" + subreddit.replacingOccurrences(of: " ", with: ""), self.navigationController, self)
         }
-        menuNav?.dismiss(animated: true)
     }
 
     func goToSubreddit(index: Int) {

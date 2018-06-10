@@ -16,6 +16,7 @@ class RedditLink{
         let oldUrl = urlS
         
         var url = formatRedditUrl(urlS: urlS)
+        var np = false
         if (url.isEmpty()) {
             if(SettingValues.safariVC){
                 let safariVC = SFHideSafariViewController(url: oldUrl)
@@ -29,6 +30,7 @@ class RedditLink{
             }
             return WebsiteViewController.init(url: oldUrl, subreddit: "")
         } else if (url.hasPrefix("np")) {
+            np = true
             url = url.substring(2, length: url.length - 2)
         }
         
@@ -45,7 +47,7 @@ class RedditLink{
         
         switch (type) {
         case .SHORTENED:
-            return CommentViewController.init(submission: parts[1], subreddit: nil)
+            return CommentViewController.init(submission: parts[1], subreddit: nil, np: np)
         case .LIVE:
             print(parts[1])
             return LiveThreadViewController.init(id: parts[2])
@@ -78,13 +80,13 @@ class RedditLink{
             if(contextNumber == 0){
                 contextNumber = 3
             }
-            return CommentViewController.init(submission: parts[4], comment: comment, context: contextNumber, subreddit: parts[2])
+            return CommentViewController.init(submission: parts[4], comment: comment, context: contextNumber, subreddit: parts[2], np: np)
             
         case .SUBMISSION:
-            return CommentViewController.init(submission: parts[4], subreddit: parts[2])
+            return CommentViewController.init(submission: parts[4], subreddit: parts[2], np: np)
             
         case .SUBMISSION_WITHOUT_SUB:
-            return CommentViewController.init(submission: parts[2], subreddit: nil)
+            return CommentViewController.init(submission: parts[2], subreddit: nil, np: np)
             
         case .SUBREDDIT:
             return SingleSubredditViewController.init(subName: parts[2], single: true)

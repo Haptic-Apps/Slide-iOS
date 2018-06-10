@@ -137,6 +137,11 @@ class NavigationHeaderView: UIView {
             self.settings(self.inbox)
         }))
 
+        alertController.addAction(Action(ActionData(title: "Pro override (TESTING)", image: UIImage(named: "support")!.menuIcon()), style: .default, handler: { action in
+            SettingValues.isProCustomization = !SettingValues.isProCustomization
+            SettingValues.isProFeature = !SettingValues.isProFeature
+        }))
+        
         if(mod){
             alertController.addAction(Action(ActionData(title: "Moderation", image: UIImage(named: "mod")!.menuIcon()), style: .default, handler: { action in
                 self.settings(self.inbox)

@@ -32,6 +32,7 @@ private enum Attribute {
     case superscript(Int, Int)
     case strike(Int, Int)
     case code(Int, Int)
+    case head(Int, Int, CGFloat)
 }
 
 /// Extension for NSParagraphStyle
@@ -51,7 +52,7 @@ extension NSParagraphStyle {
 #endif
         paragraphStyle.lineBreakMode = .byWordWrapping
         paragraphStyle.alignment = .left
-        paragraphStyle.maximumLineHeight = fontSize + 2
+        paragraphStyle.maximumLineHeight = fontSize + 10
         paragraphStyle.minimumLineHeight = fontSize + 2
         paragraphStyle.lineSpacing = 1
         paragraphStyle.paragraphSpacing = 1
@@ -167,14 +168,48 @@ extension NSAttributedString {
      */
     private func __reconstruct(with normalFont: _Font, color: _Color, linkColor: _Color, codeBackgroundColor: _Color) -> NSAttributedString {
         let attributes = self.attributesForReddift
-        let (italicFont, boldFont, codeFont, superscriptFont, _) = createDerivativeFonts(normalFont)
+        let (italicFont, boldFont, codeFont, superscriptFont, paragraphStyle) = createDerivativeFonts(normalFont)
         
-        let output = NSMutableAttributedString(string: string)
+        let output = NSMutableAttributedString.init(attributedString: self)
         
+        while output.mutableString.contains("\t•\t") {
+            let rangeOfStringToBeReplaced = output.mutableString.range(of: "\t•\t")
+            output.replaceCharacters(in: rangeOfStringToBeReplaced, with: " • ")
+        }
+        
+        while output.mutableString.contains("\t◦\t") {
+            let rangeOfStringToBeReplaced = output.mutableString.range(of: "\t◦\t")
+            output.replaceCharacters(in: rangeOfStringToBeReplaced, with: " ◦ ")
+        }
+
+        while output.mutableString.contains("\t▪\t") {
+            let rangeOfStringToBeReplaced = output.mutableString.range(of: "\t▪\t")
+            output.replaceCharacters(in: rangeOfStringToBeReplaced, with: " ▪ ")
+        }
+
         // You can set default paragraph style, here.
-        // output.addAttribute(NSParagraphStyleAttributeName, value: paragraphStyle, range: NSRange(0, output.length))
-        output.addAttribute(NSFontAttributeName, value: normalFont, range: NSRange(location: 0, length: output.length))
         output.addAttribute(NSForegroundColorAttributeName, value: color, range: NSRange(location: 0, length: output.length))
+        
+        //From https://stackoverflow.com/a/48881442/3697225
+        let range = NSRange(location: 0, length: output.length)
+        output.enumerateAttribute(NSFontAttributeName, in: range, options: .longestEffectiveRangeNotRequired) { attrib, range, _ in
+            if let htmlFont = attrib as? UIFont {
+                let traits = htmlFont.fontDescriptor.symbolicTraits
+                var descrip = htmlFont.fontDescriptor.withFamily(normalFont.familyName)
+                
+                if (traits.rawValue & UIFontDescriptorSymbolicTraits.traitBold.rawValue) != 0 {
+                    descrip = descrip.withSymbolicTraits(.traitBold)!
+                }
+                
+                if (traits.rawValue & UIFontDescriptorSymbolicTraits.traitItalic.rawValue) != 0 {
+                    descrip = descrip.withSymbolicTraits(.traitItalic)!
+                }
+                
+                output.addAttribute(NSFontAttributeName, value: normalFont.withSize(htmlFont.pointSize == 12 ? normalFont.pointSize : (htmlFont.pointSize / 12) * normalFont.pointSize), range: range)
+            }
+        }
+
+
         attributes.forEach {
             switch $0 {
             case .link(let URL, let loc, let len):
@@ -191,8 +226,12 @@ extension NSAttributedString {
             case .code(let loc, let len):
                 output.addAttribute(NSFontAttributeName, value:codeFont, range: NSRange(location: loc, length: len))
                 output.addAttribute(NSBackgroundColorAttributeName, value: codeBackgroundColor, range: NSRange(location: loc, length: len))
+            case .head(let loc, let len, let size):
+                output.addAttribute(NSFontAttributeName, value:boldFont.withSize(size), range: NSRange(location: loc, length: len))
             }
         }
+
+
         return output
     }
     
@@ -243,19 +282,25 @@ extension NSAttributedString {
                 case "TimesNewRomanPS-BoldItalicMT":
                     attributes.append(Attribute.italic(range.location, range.length))
                     attributes.append(Attribute.bold(range.location, range.length))
+                    break
                 case "TimesNewRomanPS-ItalicMT":
                     attributes.append(Attribute.italic(range.location, range.length))
+                    break
                 case "TimesNewRomanPS-BoldMT":
-                    attributes.append(Attribute.bold(range.location, range.length))
+                    if(font.pointSize == 12){
+                        attributes.append(Attribute.bold(range.location, range.length))
+                    } else {
+                        attributes.append(Attribute.head(range.location, range.length, font.pointSize))
+                    }
+                    break
                 case "Courier":
                     attributes.append(Attribute.code(range.location, range.length))
+                    break
                 default:
                     do {}
                 }
                 if font.pointSize < 12 {
                     attributes.append(Attribute.superscript(range.location, range.length))
-                } else if font.pointSize > 12 {
-                    attributes.append(Attribute.strike(range.location, range.length))
                 }
             }
             })

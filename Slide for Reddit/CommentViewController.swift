@@ -22,11 +22,52 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     func showFilterMenu(_ cell: LinkCellView) {
         //Not implemented
     }
+    
+    init(submission: RSubmission, single: Bool) {
+        self.submission = submission
+        self.single = single
+        super.init(nibName: nil, bundle: nil)
+        setBarColors(color: ColorUtil.getColorForSub(sub: submission.subreddit))
+    }
+    
+    init(submission: RSubmission) {
+        self.submission = submission
+        super.init(nibName: nil, bundle: nil)
+        setBarColors(color: ColorUtil.getColorForSub(sub: submission.subreddit))
+    }
+    
+    init(submission: String, subreddit: String?, np: Bool = false) {
+        self.submission = RSubmission()
+        self.np = np
+        self.submission!.name = submission
+        hasSubmission = false
+        if (subreddit != nil) {
+            self.subreddit = subreddit!
+        }
+        super.init(nibName: nil, bundle: nil)
+        if (subreddit != nil) {
+            setBarColors(color: ColorUtil.getColorForSub(sub: subreddit!))
+        }
+    }
+    
+    init(submission: String, comment: String, context: Int, subreddit: String, np: Bool = false) {
+        self.submission = RSubmission()
+        self.submission!.name = submission
+        self.submission!.subreddit = subreddit
+        hasSubmission = false
+        self.context = comment
+        self.np = np
+        print("Context is \(context)")
+        self.contextNumber = context
+        super.init(nibName: nil, bundle: nil)
+        setBarColors(color: ColorUtil.getColorForSub(sub: subreddit))
+    }
 
     var parents: [String: String] = [:]
     var approved: [String] = []
     var removed: [String] = []
     var offline = false
+    var np = false
 
     func replySent(comment: Comment?) {
         if (comment != nil && menuId != "sub") {
@@ -491,9 +532,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                     self.headerCell?.refreshLink(self.submission!)
                                     self.headerCell?.showBody(width: self.view.frame.size.width)
                                 }
+                                self.tableView.reloadData()
                                 self.refreshControl.endRefreshing()
                                 self.indicator?.stopAnimating()
-                                self.tableView.reloadData()
+                                self.indicator?.isHidden = true
+                                self.doBanner(self.submission!)
 
                                 var index = 0
                                 if (!self.context.isEmpty()) {
@@ -535,6 +578,58 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         } else {
             return super.navigationItem
         }
+    }
+    
+    func doBanner(_ link: RSubmission){
+        var text = ""
+        if(np) {
+            text = "This is a no participation link. Please don't vote or comment."
+        }
+        if(link.archived){
+            text = "This is an archived post. You won't be able to vote or comment."
+        } else if(link.locked){
+            text = "This is a locked post. You won't be able to comment."
+        }
+        
+        if(!text.isEmpty){
+            var top = CGFloat(64)
+            var bottom = CGFloat(45)
+            if #available(iOS 11.0, *) {
+                top = 0
+                bottom = 0
+            }
+            bottom += 64
+            normalInsets = UIEdgeInsets.init(top: top, left: 0, bottom: bottom, right: 0)
+            
+            let popup = UILabel.init(frame: CGRect.init(x: 12, y: self.view.frame.size.height - 105, width: self.view.frame.size.width - 24, height: 48))
+            popup.backgroundColor = ColorUtil.accentColorForSub(sub: link.subreddit)
+            popup.textAlignment = .center
+            popup.isUserInteractionEnabled = true
+            popup.text = text
+            popup.numberOfLines = 0
+            popup.font = UIFont.systemFont(ofSize: 15)
+            popup.textColor = .white
+            
+            popup.elevate(elevation: 2)
+            popup.layer.cornerRadius = 5
+            popup.clipsToBounds = true
+            popup.transform = CGAffineTransform.init(scaleX: 0.001, y: 0.001)
+            self.view.superview?.addSubview(popup)
+            UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+                popup.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
+            }, completion: nil)
+
+        } else {
+            var top = CGFloat(64)
+            var bottom = CGFloat(45)
+            if #available(iOS 11.0, *) {
+                top = 0
+                bottom = 0
+            }
+            normalInsets = UIEdgeInsets.init(top: top, left: 0, bottom: bottom, right: 0)
+        }
+        self.tableView.contentInset = normalInsets
+
     }
 
     func showSearchBar() {
@@ -660,19 +755,18 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     func keyboardWillShow(_ notification: Notification) {
         if let keyboardFrame: NSValue = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRectangle = keyboardFrame.cgRectValue
-            let keyboardHeight = keyboardRectangle.height
-            tableView.contentInset = UIEdgeInsetsMake(tableView.contentInset.top, 0, tableView.contentInset.bottom +  self.reply!.frame.size.height, 0)
+            if(keyboardHeight == 0){
+                keyboardHeight = keyboardRectangle.height
+            }
+            tableView.contentInset = UIEdgeInsetsMake(tableView.contentInset.top, 0, 350 +  self.reply!.frame.size.height, 0)
         }
     }
+    
+
+    var normalInsets = UIEdgeInsetsMake(0, 0, 0, 0)
 
     func keyboardWillHide(_ notification: Notification){
-
-        var bottom = CGFloat(45)
-        if #available(iOS 11.0, *) {
-            bottom = 0
-        }
-
-        tableView.contentInset = UIEdgeInsetsMake(tableView.contentInset.top, 0, bottom, 0)
+        tableView.contentInset = normalInsets
     }
 
     var single = true
@@ -731,44 +825,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
         }
 
-    }
-
-    init(submission: RSubmission, single: Bool) {
-        self.submission = submission
-        self.single = single
-        super.init(nibName: nil, bundle: nil)
-        setBarColors(color: ColorUtil.getColorForSub(sub: submission.subreddit))
-    }
-
-    init(submission: RSubmission) {
-        self.submission = submission
-        super.init(nibName: nil, bundle: nil)
-        setBarColors(color: ColorUtil.getColorForSub(sub: submission.subreddit))
-    }
-
-    init(submission: String, subreddit: String?) {
-        self.submission = RSubmission()
-        self.submission!.name = submission
-        hasSubmission = false
-        if (subreddit != nil) {
-            self.subreddit = subreddit!
-        }
-        super.init(nibName: nil, bundle: nil)
-        if (subreddit != nil) {
-            setBarColors(color: ColorUtil.getColorForSub(sub: subreddit!))
-        }
-    }
-
-    init(submission: String, comment: String, context: Int, subreddit: String) {
-        self.submission = RSubmission()
-        self.submission!.name = submission
-        self.submission!.subreddit = subreddit
-        hasSubmission = false
-        self.context = comment
-        print("Context is \(context)")
-        self.contextNumber = context
-        super.init(nibName: nil, bundle: nil)
-        setBarColors(color: ColorUtil.getColorForSub(sub: subreddit))
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -1504,7 +1560,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 bottom = 0
             }
             
-            let insets = UIEdgeInsets(top: top, left: 0, bottom: 50, right: 0)
+            let insets = UIEdgeInsets(top: top, left: 0, bottom: 350, right: 0)
             self.tableView.contentInset = insets
             menuId = "sub"
             menuIndex = 0
@@ -1526,7 +1582,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 bottom = 0
             }
             
-            let insets = UIEdgeInsets(top: top, left: 0, bottom: 50, right: 0)
+            let insets = UIEdgeInsets(top: top, left: 0, bottom: 350, right: 0)
             self.tableView.contentInset = insets
             
             tableView.beginUpdates()
@@ -1602,7 +1658,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             top = 0
             bottom = 0
         }
-        tableView.contentInset = UIEdgeInsetsMake(top, 0, bottom, 0)
+        tableView.contentInset = normalInsets
     }
 
     override func becomeFirstResponder() -> Bool {

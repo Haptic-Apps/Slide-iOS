@@ -188,17 +188,17 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
         setNavColors()
     }
 
-    func animationControllerForPresentedController(presented: UIViewController, presentingController presenting: UIViewController, sourceController source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        return LeftTransition()
+    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
+        return SmallerPresentationController(presentedViewController: presented,
+                                             presenting: presenting)
     }
+}
 
-    func animationControllerForDismissedController(dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        let leftTransiton = LeftTransition()
-        leftTransiton.dismiss = true
-        return leftTransiton
+class SmallerPresentationController: UIPresentationController {
+    
+    override var frameOfPresentedViewInContainerView: CGRect {
+        return self.presentingViewController.view.bounds.insetBy(dx: 24, dy: 48)
     }
-
-
 }
 
 extension URL {

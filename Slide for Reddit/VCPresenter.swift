@@ -84,11 +84,19 @@ public class VCPresenter {
             
             let barButton = UIBarButtonItem.init(customView: button)
             
-            newParent.modalPresentationStyle = .popover
-            newParent.modalTransitionStyle = .crossDissolve
-            
+            if(parentViewController is MediaViewController && false){
+                newParent.modalPresentationStyle = .custom
+                newParent.modalTransitionStyle = .crossDissolve
+                newParent.transitioningDelegate = parentViewController as! MediaViewController
+                newParent.view.layer.cornerRadius = 15
+                newParent.view.clipsToBounds = true
+            } else {
+                newParent.modalPresentationStyle = .formSheet
+                newParent.modalTransitionStyle = .crossDissolve
+            }
+
             viewController.navigationItem.leftBarButtonItems = [barButton]
-            
+        
             parentViewController.present(newParent, animated: true, completion: nil)
             return true
         }

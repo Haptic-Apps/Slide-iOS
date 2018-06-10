@@ -394,9 +394,9 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                 if (estimatedHeights[message.id] == nil) {
                     var title: NSMutableAttributedString = NSMutableAttributedString()
                     if (message.wasComment) {
-                        title = NSMutableAttributedString.init(string: message.linkTitle, attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 18, submission: false)])
+                        title = NSMutableAttributedString.init(string: message.linkTitle, attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 18, submission: true)])
                     } else {
-                        title = NSMutableAttributedString.init(string: message.subject, attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 18, submission: false)])
+                        title = NSMutableAttributedString.init(string: message.subject, attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 18, submission: true)])
                     }
 
                     let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: message.created, numericDates: true))  •  from \(message.author)")
@@ -407,13 +407,12 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                         subString.addAttribute(NSForegroundColorAttributeName, value: color, range: NSRange.init(location: 0, length: subString.length))
                     }
 
-                    let infoString = NSMutableAttributedString.init(string: "", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: false)])
+                    let infoString = NSMutableAttributedString.init(string: "", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true)])
                     infoString.append(endString)
                     if (!message.subreddit.isEmpty) {
                         infoString.append(NSAttributedString.init(string: "  •  "))
                         infoString.append(subString)
                     }
-
 
                     let html = message.htmlBody
                     var content: CellContent?
@@ -422,10 +421,11 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                             let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
                             let font = FontGenerator.fontOfSize(size: 16, submission: false)
                             let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: .white)
-                            content = CellContent.init(string: LinkParser.parse(attr2, .white), width: (width - 16))
+                            content = CellContent.init(string: LinkParser.parse(attr2, .white), width: (width - 16 - (message.subject.hasPrefix("re:") ? 30 : 0)))
                         } catch {
                         }
                     }
+                    
                     let framesetterT = CTFramesetterCreateWithAttributedString(title)
                     let textSizeT = CTFramesetterSuggestFrameSizeWithConstraints(framesetterT, CFRange(), nil, CGSize.init(width: itemWidth - 16 - (message.subject.hasPrefix("re:") ? 22 : 0), height: CGFloat.greatestFiniteMagnitude), nil)
                     let framesetterI = CTFramesetterCreateWithAttributedString(infoString)
