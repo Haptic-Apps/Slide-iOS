@@ -196,7 +196,7 @@ class SettingsProFeatures: UITableViewController {
 }
  class PaddingLabel: UILabel {
 
-     var topInset: CGFloat = 20.0
+     var topInset: CGFloat = 220.0
      var bottomInset: CGFloat = 20.0
      var leftInset: CGFloat = 20.0
      var rightInset: CGFloat = 20.0

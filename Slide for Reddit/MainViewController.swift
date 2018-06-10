@@ -47,46 +47,48 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     }
 
     func checkForMail() {
-        let lastMail = UserDefaults.standard.integer(forKey: "mail")
-        let session = (UIApplication.shared.delegate as! AppDelegate).session
-
-        do {
-            try session?.getProfile({ (result) in
-                switch (result) {
-                case .failure(let error):
-                    print(error)
-                case .success(let profile):
-                    let unread = profile.inboxCount
-                    let diff = unread - lastMail
-                    if(profile.isMod && AccountController.modSubs.isEmpty){
-                        self.menuNav?.setMod(profile.hasModMail)
-                        print("Getting mod subs")
-                        AccountController.doModOf()
-                    }
-                    DispatchQueue.main.async {
-                        self.menuNav?.setmail(mailcount: unread)
-
-                        if (diff > 0) {
-                            let action = MDCSnackbarMessageAction()
-                            let actionHandler = { () in
-                                let inbox = InboxViewController.init()
-                                self.show(inbox, sender: self)
-                            }
-                            action.handler = actionHandler
-                            action.title = "VIEW"
-                            let mes = MDCSnackbarMessage.init(text: "\(diff) new message\(diff > 1 ? "s" : "")!")
-                            mes.action = action
-                            MDCSnackbarManager.show(mes)
-                            UserDefaults.standard.set(unread, forKey: "mail")
-                            UserDefaults.standard.synchronize()
+        DispatchQueue.main.async {
+            let lastMail = UserDefaults.standard.integer(forKey: "mail")
+            let session = (UIApplication.shared.delegate as! AppDelegate).session
+            
+            do {
+                try session?.getProfile({ (result) in
+                    switch (result) {
+                    case .failure(let error):
+                        print(error)
+                    case .success(let profile):
+                        let unread = profile.inboxCount
+                        let diff = unread - lastMail
+                        if(profile.isMod && AccountController.modSubs.isEmpty){
+                            self.menuNav?.setMod(profile.hasModMail)
+                            print("Getting mod subs")
+                            AccountController.doModOf()
                         }
+                        DispatchQueue.main.async {
+                            self.menuNav?.setmail(mailcount: unread)
+                            
+                            if (diff > 0) {
+                                let action = MDCSnackbarMessageAction()
+                                let actionHandler = { () in
+                                    let inbox = InboxViewController.init()
+                                    self.show(inbox, sender: self)
+                                }
+                                action.handler = actionHandler
+                                action.title = "VIEW"
+                                let mes = MDCSnackbarMessage.init(text: "\(diff) new message\(diff > 1 ? "s" : "")!")
+                                mes.action = action
+                                MDCSnackbarManager.show(mes)
+                                UserDefaults.standard.set(unread, forKey: "mail")
+                                UserDefaults.standard.synchronize()
+                            }
+                        }
+                        break
+                        
                     }
-                    break
-
-                }
-            })
-        } catch {
-
+                })
+            } catch {
+                
+            }
         }
     }
 
@@ -120,6 +122,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     }
 
     func goToSubreddit(subreddit: String) {
+        SingleSubredditViewController.ignoreFab = true
         menuNav?.dismiss(animated: true) {
             if (Subscriptions.subreddits.contains(subreddit)) {
                 let index = Subscriptions.subreddits.index(of: subreddit)
@@ -142,6 +145,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     }
 
     func goToSubreddit(index: Int) {
+        SingleSubredditViewController.ignoreFab = true
         let firstViewController = MainViewController.vCs[index]
 
         setViewControllers([firstViewController],
@@ -285,12 +289,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     }
     
     func didChooseSub(_ gesture: UITapGestureRecognizer) {
-        print("Chose")
-
         let sub = gesture.view!.tag
         goToSubreddit(index: sub)
-
-
     }
 
     func generateSubs() -> (Int, [UIView]) {

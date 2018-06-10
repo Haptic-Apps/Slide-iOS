@@ -55,7 +55,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
 
         alertController.view.addSubview(MKColorPicker)
 
-        let custom = UIAlertAction(title: "Custom color", style: .default, handler: { (alert: UIAlertAction!) in
+        /*todo maybe ? let custom = UIAlertAction(title: "Custom color", style: .default, handler: { (alert: UIAlertAction!) in
             if(!VCPresenter.proDialogShown(feature: false, self)){
                 let alert = UIAlertController.init(title: "Choose a color", message: nil, preferredStyle: .actionSheet)
                 alert.addColorPicker(color: (self.navigationController?.navigationBar.barTintColor)!, selection: { (color) in
@@ -68,7 +68,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
                 }))
                 self.present(alert, animated: true)
             }
-        })
+        })*/
 
         let somethingAction = UIAlertAction(title: "Save", style: .default, handler: { (alert: UIAlertAction!) in
             UserDefaults.standard.setColor(color: (self.navigationController?.navigationBar.barTintColor)!, forKey: "basecolor")
@@ -80,7 +80,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
             self.navigationController?.navigationBar.barTintColor = ColorUtil.baseColor
         })
 
-        alertController.addAction(custom)
+        //alertController.addAction(custom)
         alertController.addAction(somethingAction)
         alertController.addAction(cancelAction)
 

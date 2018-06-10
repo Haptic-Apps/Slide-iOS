@@ -161,7 +161,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
             var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
             let thumbheight = (SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50)) - (SettingValues.postViewMode == .COMPACT ? 15 : 0)
-            let textHeight = CGFloat(0)
+            let textHeight = CGFloat(submission.isSelf ? 5 : 0)
 
             if (thumb) {
                 imageHeight = thumbheight
@@ -352,7 +352,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         }, completion: { finished in
             SingleSubredditViewController.fab?.isHidden = true
             self.isHiding = false
-
         })
         (navigationController)?.setToolbarHidden(true, animated: true)
 
@@ -549,7 +548,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     }
 
     func setupFab() {
-        if (SingleSubredditViewController.fab != nil) {
+        if (SingleSubredditViewController.fab != nil && !SingleSubredditViewController.fab!.isHidden) {
             UIView.animate(withDuration: 0.15, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
                 SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
             }, completion: { finished in
@@ -558,11 +557,16 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                 self.addNewFab()
             })
         } else {
+            if(SingleSubredditViewController.fab != nil){
+                SingleSubredditViewController.fab!.removeFromSuperview()
+                SingleSubredditViewController.fab = nil
+            }
             addNewFab()
         }
     }
     
     func addNewFab(){
+        SingleSubredditViewController.ignoreFab = false
         if (!MainViewController.isOffline && !SettingValues.hiddenFAB) {
             SingleSubredditViewController.fab = UIButton(frame: CGRect.init(x: (tableView.frame.size.width / 2) - 70, y: -20, width: 140, height: 45))
             SingleSubredditViewController.fab!.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
@@ -874,6 +878,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     }
 
     var listingId: String = "" //a random id for use in Realm
+    static var ignoreFab = false
 
     func hideReadPosts() {
         var indexPaths: [IndexPath] = []
@@ -908,6 +913,8 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
         if (single) {
             UIApplication.shared.statusBarView?.backgroundColor = .clear
+        }
+        if(!SingleSubredditViewController.ignoreFab){
             UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
                 SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
             }, completion: { finished in
@@ -949,7 +956,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
         alertController.view.addSubview(MKColorPicker)
         
-        alertController.addAction(image: UIImage.init(named: "accent"), title: "Custom color", color: ColorUtil.accentColorForSub(sub: sub), style: .default, isEnabled: true) { (action) in
+        /*todo maybe ?alertController.addAction(image: UIImage.init(named: "accent"), title: "Custom color", color: ColorUtil.accentColorForSub(sub: sub), style: .default, isEnabled: true) { (action) in
             if(!VCPresenter.proDialogShown(feature: false, self)){
                 let alert = UIAlertController.init(title: "Choose a color", message: nil, preferredStyle: .actionSheet)
                 alert.addColorPicker(color: (self.navigationController?.navigationBar.barTintColor)!, selection: { (c) in
@@ -970,7 +977,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                 self.present(alert, animated: true)
             }
 
-        }
+        }*/
 
         alertController.addAction(image: UIImage(named: "colors"), title: "Accent color", color: ColorUtil.accentColorForSub(sub: sub), style: .default) { action in
             ColorUtil.setColorForSub(sub: self.sub, color: (self.navigationController?.navigationBar.barTintColor)!)
