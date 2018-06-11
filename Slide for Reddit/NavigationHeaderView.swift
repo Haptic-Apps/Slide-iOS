@@ -143,7 +143,7 @@ class NavigationHeaderView: UIView {
         
         if(mod){
             alertController.addAction(Action(ActionData(title: "Moderation", image: UIImage(named: "mod")!.menuIcon()), style: .default, handler: { action in
-                self.settings(self.inbox)
+                self.mod(self.inbox)
             }))
         }
 
