@@ -184,14 +184,16 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         var finalSubs = subs
         if(!subs.contains("slide_ios")){
             let alert = UIAlertController.init(title: "Subscribe to r/slide_ios?", message: "Would you like to subscribe to the Slide for Reddit iOS community and receive news and updates first?", preferredStyle: .alert)
-            alert.addAction(UIAlertAction.init(title: "Maybe later.", style: .cancel, handler: {(action) in
+            alert.addAction(UIAlertAction.init(title: "Maybe later", style: .cancel, handler: {(action) in
                 self.finalizeSetup(subs)
             }))
-            alert.addAction(UIAlertAction.init(title: "Sure!", style: .default, handler: { (action) in
+            alert.addAction(UIAlertAction.init(title: "Sure!", style: .default, handler: {(action) in
                 finalSubs.insert("slide_ios", at: 2)
                 self.finalizeSetup(finalSubs)
                 do {
-                     try (UIApplication.shared.delegate as! AppDelegate).session!.setSubscribeSubreddit(Subreddit.init(subreddit: "slide_ios"), subscribe: true, completion: nil)
+                    try (UIApplication.shared.delegate as! AppDelegate).session!.setSubscribeSubreddit(Subreddit.init(subreddit: "slide_ios"), subscribe: true, completion: { (result) in
+                        
+                    })
                 } catch {
                     
                 }
