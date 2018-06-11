@@ -67,19 +67,19 @@ class NavigationHeaderView: UIView {
         account.imageView?.contentMode = UIViewContentMode.scaleAspectFit
         account.setImage(UIImage.init(named: "profile")!.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
         account.addTarget(self, action: #selector(self.switchAccounts(_:)), for: UIControlEvents.touchUpInside)
-        account.frame = CGRect.init(x: 0, y: 0, width: 60, height: 60)
+        account.frame = CGRect.init(x: 0, y: 0, width: 60, height: 90)
 
         self.more = UIButton.init(type: .custom)
         more.imageView?.contentMode = UIViewContentMode.scaleAspectFit
         more.setImage(UIImage.init(named: "moreh")!.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
         more.addTarget(self, action: #selector(self.showMore(_:)), for: UIControlEvents.touchUpInside)
-        more.frame = CGRect.init(x: 0, y: 0, width: 60, height: 60)
+        more.frame = CGRect.init(x: 0, y: 0, width: 60, height: 90)
 
         self.inbox = UIButton.init(type: .custom)
         inbox.imageView?.contentMode = UIViewContentMode.scaleAspectFit
         inbox.setImage(UIImage.init(named: "inbox")!.withColor(tintColor: .white).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
         inbox.addTarget(self, action: #selector(self.mod(_:)), for: UIControlEvents.touchUpInside)
-        inbox.frame = CGRect.init(x: 0, y: 0, width: 60, height: 60)
+        inbox.frame = CGRect.init(x: 0, y: 0, width: 60, height: 90)
 
 
         search.translatesAutoresizingMaskIntoConstraints = false
@@ -323,7 +323,7 @@ class NavigationHeaderView: UIView {
                 metrics: metrics,
                 views: views))
 
-        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[title(90)]-4-[search]-4-|",
+        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[title(90)]-4-[search]",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
@@ -340,15 +340,15 @@ class NavigationHeaderView: UIView {
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
-        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[account]",
+        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[account]-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
-        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[inbox]",
+        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[inbox]-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
-        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[more]",
+        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[more]-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
@@ -357,7 +357,7 @@ class NavigationHeaderView: UIView {
     }
 
     func getEstHeight() -> CGFloat {
-        return CGFloat(title.frame.size.height + 120)
+        return CGFloat(90 + 50 + 4)
     }
 
     var mailBadge: BadgeSwift?

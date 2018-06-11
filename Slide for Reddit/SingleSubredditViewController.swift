@@ -539,7 +539,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         super.viewDidLoad()
         flowLayout.delegate = self
         let frame = self.view.bounds
-        self.tableView = UICollectionView(frame: frame, collectionViewLayout: flowLayout)
+        self.tableView = UICollectionView(frame: CGRect.zero, collectionViewLayout: flowLayout)
         self.view = UIView.init(frame: CGRect.zero)
 
         self.view.addSubview(tableView)
@@ -663,6 +663,8 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         var top = 20
         if #available(iOS 11.0, *) {
             top = 0
+        } else {
+            top = 64
         }
 
         top = top + ((SettingValues.viewType && !single) ? 52 : 0)
@@ -1501,7 +1503,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                     indicator?.radius = 20
                     indicator?.indicatorMode = .indeterminate
                     indicator?.cycleColors = [ColorUtil.getColorForSub(sub: sub), ColorUtil.accentColorForSub(sub: sub)]
-                    let center = CGPoint.init(x: self.tableView.center.x, y: CGFloat(tableView.bounds.height / 2))
+                    let center = CGPoint.init(x: UIScreen.main.bounds.width / 2, y: 150 + UIScreen.main.bounds.width / 2)
                     indicator?.center = center
                     self.tableView.addSubview(indicator!)
                     indicator?.startAnimating()

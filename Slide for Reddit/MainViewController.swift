@@ -136,7 +136,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                 self.navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: subreddit)
                 self.tabBar.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
                 self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
-                firstViewController.viewDidAppear(true)
             } else {
                 //todo better sanitation
                 VCPresenter.openRedditLink("/r/" + subreddit.replacingOccurrences(of: " ", with: ""), self.navigationController, self)

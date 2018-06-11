@@ -327,11 +327,6 @@ class CommentCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate,
     
     func openComment(sender: UITapGestureRecognizer? = nil){
         let comment = CommentViewController.init(submission: (self.comment?.linkid.substring(3, length: (self.comment?.linkid.length)! - 3))! , comment: self.comment!.id, context: 3, subreddit: (self.comment?.subreddit)!)
-        if((self.navViewController as? UINavigationController)?.splitViewController != nil && !SettingValues.multiColumn){
-            let nav = UINavigationController(rootViewController:comment)
-            (self.navViewController as? UINavigationController)?.splitViewController?.showDetailViewController(nav, sender: nil)
-        } else {
-            VCPresenter.showVC(viewController: comment, popupIfPossible: false, parentNavigationController: parentViewController?.navigationController, parentViewController: parentViewController)
-        }
+        VCPresenter.showVC(viewController: comment, popupIfPossible: true, parentNavigationController: parentViewController?.navigationController, parentViewController: parentViewController)
     }
 }
