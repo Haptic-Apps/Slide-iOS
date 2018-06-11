@@ -16,6 +16,8 @@ import RLBAlertsPickers
 import MessageUI
 
 class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
+    
+    static var changed = false
 
     var restore: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "restore")
     var shadowbox: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "shadow")
@@ -43,6 +45,11 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         super.loadView()
         doCells()
     }
+    
+    var three = UILabel()
+    var six = UILabel()
+    var purchasePro = UILabel()
+    var purchaseBundle = UILabel()
 
     func doCells(_ reset: Bool = true) {
         self.view.backgroundColor = ColorUtil.backgroundColor
@@ -100,7 +107,8 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         about.textAlignment = .center
         about.lineBreakMode = .byClipping
         about.sizeToFit()
-        var three = UILabel(frame: CGRect.init(x:  (self.tableView.frame.size.width / 4) - 50, y: 140, width: 100, height: 45))
+        three = UILabel(frame: CGRect.init(x:  (self.tableView.frame.size.width / 4) - 50, y: 160, width: 100, height: 45))
+
         three.text = "$4.99"
         three.backgroundColor = GMColor.lightGreen300Color()
         three.layer.cornerRadius = 22.5
@@ -110,7 +118,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         three.textAlignment = .center
         
         
-        var six = UILabel(frame: CGRect.init(x:  (self.tableView.frame.size.width / 4) - 50, y: 140, width: 100, height: 45))
+        six = UILabel(frame: CGRect.init(x:  (self.tableView.frame.size.width / 4) - 50, y: 160, width: 100, height: 45))
         six.text = "$7.99"
         six.backgroundColor = GMColor.lightBlue300Color()
         six.layer.cornerRadius = 22.5
@@ -160,7 +168,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.autocache.imageView?.tintColor = ColorUtil.fontColor
         self.autocache.detailTextLabel?.textColor = ColorUtil.fontColor
         
-        var purchasePro = UILabel(frame: CGRect.init(x:  0, y: -30, width: (self.view.frame.size.width / 2), height: 200))
+        purchasePro = UILabel(frame: CGRect.init(x:  0, y: -30, width: (self.view.frame.size.width / 2), height: 200))
         purchasePro.backgroundColor = ColorUtil.foregroundColor
         purchasePro.text = "Purchase\nPro"
         purchasePro.textAlignment = .center
@@ -170,7 +178,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         purchasePro.addSubview(three)
         purchasePro.isUserInteractionEnabled = true
         
-        var purchaseBundle = UILabel(frame: CGRect.init(x:  (self.view.frame.size.width / 2), y: -30, width: (self.view.frame.size.width / 2), height: 200))
+        purchaseBundle = UILabel(frame: CGRect.init(x:  (self.view.frame.size.width / 2), y: -30, width: (self.view.frame.size.width / 2), height: 200))
         purchaseBundle.backgroundColor = ColorUtil.foregroundColor
         purchaseBundle.text = "Purchase Pro\nWith $3 Donation"
         purchaseBundle.textAlignment = .center
@@ -199,6 +207,24 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         IAPHandler.shared.fetchAvailableProducts()
+        IAPHandler.shared.getItemsBlock = {(items) in
+            let numberFormatter = NumberFormatter()
+            numberFormatter.formatterBehavior = .behavior10_4
+            numberFormatter.numberStyle = .currency
+            numberFormatter.locale = items[0].priceLocale
+            let price1Str = numberFormatter.string(from: items[0].price)
+            let price2Str = numberFormatter.string(from: items[1].price)
+            if(self.three.text! != price1Str!){
+                //Is a sale
+                let off = Int(self.three.text!.substring(1, length: 1))! - Int(price1Str!.substring(1, length: 1))! + (price1Str!.contains(".99") ? 0 : 1)
+                self.purchasePro.text = "Purchase Pro\nWith $3 Donation\n\nSALE! $\(off) off"
+                self.purchaseBundle.text = "Purchase Pro\nWith $3 Donation\n\nSALE! $\(off) off"
+                
+                self.three.text = price1Str
+                self.six.text = price2Str
+
+            }
+        }
         IAPHandler.shared.purchaseStatusBlock = {[weak self] (type) in
             guard let strongSelf = self else{ return }
             if type == .purchased  || type == .restored {
@@ -211,6 +237,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
                 SettingValues.isPro = true
                 UserDefaults.standard.set(true, forKey: SettingValues.pref_pro)
                 UserDefaults.standard.synchronize()
+                SettingsPro.changed = true
             } else {
                 let alertView = UIAlertController(title: "", message: "Slide Pro purchase not found. Make sure you are signed in with the same Apple ID as you purchased Slide Pro with originally.\nIf this issue persists, feel free to send me an email!", preferredStyle: .alert)
                 let action = UIAlertAction(title: "Close", style: .cancel, handler: { (alert) in

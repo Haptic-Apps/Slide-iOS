@@ -30,10 +30,11 @@ class IAPHandler: NSObject {
 
     fileprivate var productID = ""
     fileprivate var productsRequest = SKProductsRequest()
-    fileprivate var iapProducts = [SKProduct]()
+    public var iapProducts = [SKProduct]()
     
     var purchaseStatusBlock: ((IAPHandlerAlertType) -> Void)?
-    
+    var getItemsBlock: (([SKProduct]) -> Void)?
+
     // MARK: - MAKE PURCHASE OF A PRODUCT
     func canMakePurchases() -> Bool {  return SKPaymentQueue.canMakePayments()  }
     
@@ -65,7 +66,7 @@ class IAPHandler: NSObject {
     func fetchAvailableProducts(){
         
         // Put here your IAP Products ID's
-        let productIdentifiers = NSSet(objects: PRO)
+        let productIdentifiers = NSSet(objects: PRO, PRO_DONATE)
         
         productsRequest = SKProductsRequest(productIdentifiers: productIdentifiers as! Set<String>)
         productsRequest.delegate = self
@@ -76,7 +77,7 @@ class IAPHandler: NSObject {
 extension IAPHandler: SKProductsRequestDelegate, SKPaymentTransactionObserver{
     // MARK: - REQUEST IAP PRODUCTS
     func productsRequest (_ request:SKProductsRequest, didReceive response:SKProductsResponse) {
-        
+        getItemsBlock?(response.products)
         if (response.products.count > 0) {
             iapProducts = response.products
             for product in iapProducts{

@@ -15,7 +15,7 @@ import RealmSwift
 import RLBAlertsPickers
 import MessageUI
 
-class SettingsViewController: UITableViewController {
+class SettingsViewController: UITableViewController, MFMailComposeViewControllerDelegate {
 
     var goPro: UITableViewCell = UITableViewCell()
 
@@ -57,13 +57,18 @@ class SettingsViewController: UITableViewController {
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: "")
         navigationController?.navigationBar.tintColor = UIColor.white
         navigationController?.setToolbarHidden(true, animated: false)
+        if(SettingsPro.changed){
+            loadView()
+        }
     }
 
     override func loadView() {
         super.loadView()
         doCells()
-        let menuB = UIBarButtonItem(image: UIImage.init(named: "support")?.toolbarIcon().withColor(tintColor: GMColor.red500Color()), style: .plain, target: self, action: #selector(SettingsViewController.didPro(_:)))
-        navigationItem.rightBarButtonItem = menuB
+        if(SettingValues.isPro){
+            let menuB = UIBarButtonItem(image: UIImage.init(named: "support")?.toolbarIcon().withColor(tintColor: GMColor.red500Color()), style: .plain, target: self, action: #selector(SettingsViewController.didPro(_:)))
+            navigationItem.rightBarButtonItem = menuB
+        }
     }
     
     func didPro(_ sender: AnyObject){
@@ -71,6 +76,7 @@ class SettingsViewController: UITableViewController {
         alert.addAction(UIAlertAction.init(title: "Email", style: .default, handler: { (action) in
             if MFMailComposeViewController.canSendMail() {
                 let mail = MFMailComposeViewController()
+                mail.mailComposeDelegate = self
                 mail.setToRecipients(["hapticappsdev@gmail.com"])
                 mail.setSubject("Slide Pro Purchase Support")
                 self.present(mail, animated: true)
@@ -280,6 +286,10 @@ class SettingsViewController: UITableViewController {
 
 
     func tableView(tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+    }
+    
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        controller.dismiss(animated: true, completion: nil)
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
