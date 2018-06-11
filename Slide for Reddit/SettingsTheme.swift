@@ -164,6 +164,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         self.view.backgroundColor = ColorUtil.backgroundColor
         // set the title
         self.title = "Edit theme"
+        self.tableView.separatorStyle = .none
 
         self.primary.textLabel?.text = "Primary color"
         self.primary.accessoryType = .none

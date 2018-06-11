@@ -84,7 +84,8 @@ class SettingsHistory: UITableViewController {
         self.view.backgroundColor = ColorUtil.backgroundColor
         // set the title
         self.title = "History"
-        
+        self.tableView.separatorStyle = .none
+
         saveHistory = UISwitch()
         saveHistory.isOn = SettingValues.saveHistory
         saveHistory.addTarget(self, action: #selector(SettingsHistory.switchIsChanged(_:)), for: UIControlEvents.valueChanged)

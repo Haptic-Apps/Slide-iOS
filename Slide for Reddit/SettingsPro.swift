@@ -29,6 +29,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
     var username: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "username")
     var custom: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "custom")
     var themes: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "themes")
+    var backup: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "backup")
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -55,6 +56,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.view.backgroundColor = ColorUtil.backgroundColor
         // set the title
         self.title = "Support Slide for Reddit!"
+        self.tableView.separatorStyle = .none
 
         self.night.textLabel?.text = "Auto night mode"
         self.night.detailTextLabel?.text = "Select a custom night theme and night hours, Slide does the rest"
@@ -72,6 +74,14 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.username.imageView?.tintColor = ColorUtil.fontColor
         self.username.detailTextLabel?.textColor = ColorUtil.fontColor
         
+        self.backup.textLabel?.text = "Backup and Restore"
+        self.backup.detailTextLabel?.text = "Sync your Slide settings between devices"
+        self.backup.backgroundColor = ColorUtil.foregroundColor
+        self.backup.textLabel?.textColor = ColorUtil.fontColor
+        self.backup.imageView?.image = UIImage.init(named: "download")?.toolbarIcon()
+        self.backup.imageView?.tintColor = ColorUtil.fontColor
+        self.backup.detailTextLabel?.textColor = ColorUtil.fontColor
+
         self.custom.textLabel?.text = "Custom theme colors"
         self.custom.detailTextLabel?.text = "Choose a custom color for your themes"
         self.custom.backgroundColor = ColorUtil.foregroundColor
@@ -283,12 +293,13 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
             case 0: return self.restore
             case 1: return self.multicolumn
             case 2: return self.shadowbox
-            case 3: return self.night
-            case 4: return self.biometric
-            case 5: return self.themes
-            case 6: return self.gallery
-            case 7: return self.autocache
-            case 8: return self.username
+            case 3: return self.backup
+            case 4: return self.night
+            case 5: return self.biometric
+            case 6: return self.themes
+            case 7: return self.gallery
+            case 8: return self.autocache
+            case 9: return self.username
 
             default: fatalError("Unknown row in section 0")
             }
@@ -329,7 +340,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch (section) {
-        case 0: return 9
+        case 0: return 10
         default: fatalError("Unknown number of sections")
         }
     }

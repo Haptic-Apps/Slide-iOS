@@ -26,6 +26,7 @@ class CacheSettings: UITableViewController {
             $0.localizedCaseInsensitiveCompare($1) == ComparisonResult.orderedAscending
         }
         tableView.reloadData()
+        self.tableView.separatorStyle = .none
 
         autoCacheSwitch = UISwitch()
         autoCacheSwitch.isOn = SettingValues.autoCache

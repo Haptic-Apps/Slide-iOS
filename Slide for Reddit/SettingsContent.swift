@@ -79,7 +79,8 @@ class SettingsContent: UITableViewController {
         self.view.backgroundColor = ColorUtil.backgroundColor
         // set the title
         self.title = "Data Saving"
-        
+        self.tableView.separatorStyle = .none
+
         showNSFWContent = UISwitch()
         showNSFWContent.isOn = SettingValues.nsfwEnabled
         showNSFWContent.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)

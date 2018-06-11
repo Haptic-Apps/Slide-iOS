@@ -90,7 +90,8 @@ class SettingsData: UITableViewController {
         self.view.backgroundColor = ColorUtil.backgroundColor
         // set the title
         self.title = "Data Saving"
-        
+        self.tableView.separatorStyle = .none
+
         enableDataSaving = UISwitch()
         enableDataSaving.isOn = SettingValues.dataSavingEnabled
         enableDataSaving.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)

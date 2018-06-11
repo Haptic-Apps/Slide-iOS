@@ -76,6 +76,7 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
         self.view.backgroundColor = ColorUtil.backgroundColor
         // set the title
         self.title = "Filters"
+        self.tableView.separatorStyle = .none
 
         domainEnter.searchBarStyle = UISearchBarStyle.minimal
         domainEnter.placeholder = "Add a new domain to filter"

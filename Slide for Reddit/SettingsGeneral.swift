@@ -84,6 +84,7 @@ class SettingsGeneral: UITableViewController {
         self.view.backgroundColor = ColorUtil.backgroundColor
         // set the title
         self.title = "General"
+        self.tableView.separatorStyle = .none
 
         viewTypeSwitch = UISwitch()
         viewTypeSwitch.isOn = SettingValues.viewType

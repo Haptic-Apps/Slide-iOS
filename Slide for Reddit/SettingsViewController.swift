@@ -38,6 +38,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
     var githubCell: UITableViewCell = UITableViewCell()
     var clearCell: UITableViewCell = UITableViewCell()
     var cacheCell: UITableViewCell = UITableViewCell()
+    var backupCell: UITableViewCell = UITableViewCell()
 
     var multiColumnCell: UITableViewCell = UITableViewCell()
     var multiColumn = UISwitch()
@@ -98,6 +99,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         self.view.backgroundColor = ColorUtil.backgroundColor
         // set the title
         self.title = "Settings"
+        self.tableView.separatorStyle = .none
 
         self.general.textLabel?.text = "General"
         self.general.accessoryType = .disclosureIndicator
@@ -133,6 +135,13 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         self.clearCell.textLabel?.textColor = ColorUtil.fontColor
         self.clearCell.imageView?.image = UIImage.init(named: "multis")?.toolbarIcon()
         self.clearCell.imageView?.tintColor = ColorUtil.fontColor
+
+        self.backupCell.textLabel?.text = "Backup and Restore"
+        self.backupCell.accessoryType = .disclosureIndicator
+        self.backupCell.backgroundColor = ColorUtil.foregroundColor
+        self.backupCell.textLabel?.textColor = ColorUtil.fontColor
+        self.backupCell.imageView?.image = UIImage.init(named: "restore")?.toolbarIcon()
+        self.backupCell.imageView?.tintColor = ColorUtil.fontColor
 
         self.cacheCell.textLabel?.text = "Offline caching"
         self.cacheCell.accessoryType = .disclosureIndicator
@@ -333,6 +342,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
             case 4: return self.filters
             case 5: return self.cacheCell
             case 6: return self.clearCell
+            case 7: return self.backupCell
             default: fatalError("Unknown row in section 2")
             }
         case 3:
@@ -418,6 +428,12 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
             ch = SettingsLinkHandling()
         } else if (indexPath.section == 2 && indexPath.row == 1) {
             ch = SettingsHistory()
+        } else if (indexPath.section == 2 && indexPath.row == 7) {
+            if(!SettingValues.isPro){
+                ch = SettingsPro()
+            } else {
+                ch = SettingsBackup()
+            }
         } else if (indexPath.section == 2 && indexPath.row == 6) {
             let realm = try! Realm()
             try! realm.write {
@@ -480,9 +496,9 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch (section) {
-        case 0: return (SettingValues.isPro) ? 4 : 5   // section 0 has 2 rows
-        case 1: return 5    // section 1 has 1 row
-        case 2: return 7
+        case 0: return (SettingValues.isPro) ? 4 : 5
+        case 1: return 5
+        case 2: return 8
         case 3: return 4
         default: fatalError("Unknown number of sections")
         }

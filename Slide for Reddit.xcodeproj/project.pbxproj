@@ -14,6 +14,7 @@
 		B776B2D12CF5BF9AC64427BA /* AutoCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BFA91C6E10E78077FCE0 /* AutoCache.swift */; };
 		B776B41AF52E177BCE0241F3 /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BF86D3E6B5AC2EEEDE63 /* Filter.swift */; };
 		B776B496CD1CCCF42B176B00 /* YTPlayer.html in Resources */ = {isa = PBXBuildFile; fileRef = B776BD038659E2DE04B541FA /* YTPlayer.html */; };
+		B776B4F018104C3E2A89B878 /* SettingsBackup.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BBAC46362B38981E24E0 /* SettingsBackup.swift */; };
 		B776B5282EE4DA559E97F9B3 /* ModerationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BECBFCB8F58AC234156A /* ModerationViewController.swift */; };
 		B776B6AC686D43299A5C8384 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B776B793D6901741B17CAD65 /* Main.storyboard */; };
 		B776B87EDB6E25D8D1B2D4B5 /* CustomAlbum.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BF3F4BCDE57E4274764F /* CustomAlbum.swift */; };
@@ -222,6 +223,7 @@
 		B776B9FD1DF77B11274D680F /* ModMailContributionLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModMailContributionLoader.swift; sourceTree = "<group>"; };
 		B776BA78CCE4C75BD7FC5DA3 /* ToolbarTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToolbarTextView.swift; sourceTree = "<group>"; };
 		B776BA7C2B7217C3875F3BEC /* ModQueueContributionLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModQueueContributionLoader.swift; sourceTree = "<group>"; };
+		B776BBAC46362B38981E24E0 /* SettingsBackup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsBackup.swift; sourceTree = "<group>"; };
 		B776BD038659E2DE04B541FA /* YTPlayer.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = YTPlayer.html; sourceTree = "<group>"; };
 		B776BDC00CB0E0C8961A71A3 /* TableDisplayViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableDisplayViewController.swift; sourceTree = "<group>"; };
 		B776BECBFCB8F58AC234156A /* ModerationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModerationViewController.swift; sourceTree = "<group>"; };
@@ -373,6 +375,7 @@
 		BEE5BF631E11A15500E3C9AE /* LinkCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkCellView.swift; sourceTree = "<group>"; };
 		BEE5BF6B1E12C92F00E3C9AE /* DateFormatter+util.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DateFormatter+util.swift"; sourceTree = "<group>"; };
 		BEE5BF831E14836E00E3C9AE /* MediaViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaViewController.swift; sourceTree = "<group>"; };
+		BEE9385320CF31C80021BE80 /* Slide for Reddit.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Slide for Reddit.entitlements"; sourceTree = "<group>"; };
 		BEF3ACE11E15C101005848B6 /* ContentType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentType.swift; sourceTree = "<group>"; };
 		BEF6F5351E19B4A2002B03B6 /* adsources.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = adsources.txt; sourceTree = "<group>"; };
 		BEF6F5381E19BE9E002B03B6 /* UZTextView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UZTextView.h; sourceTree = "<group>"; };
@@ -484,6 +487,7 @@
 				B776B64AFABC174BF4DEE478 /* CacheSettings.swift */,
 				B776B2AEE4A2438F5803329C /* SettingsPro.swift */,
 				BE42B6F220CE01BD00607A54 /* IAPHandler.swift */,
+				B776BBAC46362B38981E24E0 /* SettingsBackup.swift */,
 			);
 			name = Settings;
 			sourceTree = "<group>";
@@ -617,6 +621,7 @@
 		BE8FCA061E0C46090063B8EF /* Slide for Reddit */ = {
 			isa = PBXGroup;
 			children = (
+				BEE9385320CF31C80021BE80 /* Slide for Reddit.entitlements */,
 				BE97422A1F00112F00BF48E0 /* LinkCellViews */,
 				BE2F3F501EF70EB2003C1B28 /* YTPlayerHelper */,
 				BE7439F41E2162A8008BB63B /* AccountController.swift */,
@@ -844,6 +849,9 @@
 							};
 							com.apple.Maps.iOS = {
 								enabled = 0;
+							};
+							com.apple.iCloud = {
+								enabled = 1;
 							};
 						};
 					};
@@ -1268,6 +1276,7 @@
 				B776BB2D5B79A707C1A41B8C /* LiveThreadUpdate.swift in Sources */,
 				B776B2D12CF5BF9AC64427BA /* AutoCache.swift in Sources */,
 				B776B1DF80711B443ED76B61 /* SettingsPro.swift in Sources */,
+				B776B4F018104C3E2A89B878 /* SettingsBackup.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1424,6 +1433,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "Slide for Reddit/Slide for Reddit.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = FTT89576VQ;
@@ -1458,6 +1468,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "Slide for Reddit/Slide for Reddit.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = FTT89576VQ;

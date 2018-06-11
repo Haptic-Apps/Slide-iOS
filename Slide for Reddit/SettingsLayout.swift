@@ -241,7 +241,8 @@ class SettingsLayout: UITableViewController {
         self.view.backgroundColor = ColorUtil.backgroundColor
         // set the title
         self.title = "General"
-        
+        self.tableView.separatorStyle = .none
+
         cropBigPic = UISwitch()
         cropBigPic.isOn = SettingValues.bigPicCropped
         cropBigPic.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)

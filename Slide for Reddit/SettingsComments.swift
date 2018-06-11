@@ -97,7 +97,8 @@ class SettingsComments: UITableViewController {
         self.view.backgroundColor = ColorUtil.backgroundColor
         // set the title
         self.title = "Comments"
-        
+        self.tableView.separatorStyle = .none
+
         disableNavigationBar = UISwitch()
         disableNavigationBar.isOn = SettingValues.disableNavigationBar
         disableNavigationBar.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)

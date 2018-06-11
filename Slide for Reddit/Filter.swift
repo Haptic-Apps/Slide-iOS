@@ -88,6 +88,7 @@ class Filter: UITableViewController {
         super.loadView()
 
         self.view.backgroundColor = .clear
+        self.tableView.separatorStyle = .none
 
         imageSwitch = UISwitch()
         imageSwitch.isOn = enabled[0]

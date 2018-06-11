@@ -255,7 +255,8 @@ class SettingsFont: UITableViewController {
         self.view.backgroundColor = ColorUtil.backgroundColor
         // set the title
         self.title = "Font"
-        
+        self.tableView.separatorStyle = .none
+
         enlarge = UISwitch()
         enlarge.isOn = SettingValues.enlargeLinks
         enlarge.addTarget(self, action: #selector(SettingsFont.switchIsChanged(_:)), for: UIControlEvents.valueChanged)

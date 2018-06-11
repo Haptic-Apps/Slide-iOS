@@ -60,7 +60,7 @@ class NavigationHeaderView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.search = UISearchBar(frame: CGRect(x: 0, y: 0, width: 3, height: 50))
-        self.title = UILabel(frame: CGRect(x: 0, y: 0, width: 50, height: 60))
+        self.title = UILabel(frame: CGRect(x: 0, y: 0, width: 50, height: 90))
         self.inbox.clipsToBounds = true
 
         self.account = UIButton.init(type: .custom)
@@ -340,15 +340,15 @@ class NavigationHeaderView: UIView {
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
-        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[account]-|",
+        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[account(90)]-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
-        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[inbox]-|",
+        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[inbox(90)]-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
-        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[more]-|",
+        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[more(90)]-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))

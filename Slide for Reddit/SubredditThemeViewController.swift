@@ -19,6 +19,8 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.tableView.separatorStyle = .none
+
         self.tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "sub")
         self.tableView.isEditing = true
         self.tableView.allowsSelectionDuringEditing = true

@@ -90,6 +90,7 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         self.view.backgroundColor = ColorUtil.backgroundColor
         // set the title
         self.title = "Link Handling"
+        self.tableView.separatorStyle = .none
 
         internalGif = UISwitch()
         internalGif.isOn = SettingValues.internalGifView
