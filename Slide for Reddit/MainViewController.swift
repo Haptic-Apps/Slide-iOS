@@ -183,30 +183,34 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     func complete(subs: [String]) {
         var finalSubs = subs
         if(!subs.contains("slide_ios")){
-            let alert = UIAlertController.init(title: "Subscribe to r/slide_ios?", message: "Would you like to subscribe to the Slide for Reddit iOS community and receive news and updates first?", preferredStyle: .alert)
-            alert.addAction(UIAlertAction.init(title: "Maybe later", style: .cancel, handler: {(action) in
-                self.finalizeSetup(subs)
-            }))
-            alert.addAction(UIAlertAction.init(title: "Sure!", style: .default, handler: {(action) in
-                finalSubs.insert("slide_ios", at: 2)
-                self.finalizeSetup(finalSubs)
-                do {
-                    try (UIApplication.shared.delegate as! AppDelegate).session!.setSubscribeSubreddit(Subreddit.init(subreddit: "slide_ios"), subscribe: true, completion: { (result) in
+            self.alertController?.dismiss(animated: true, completion: {
+                let alert = UIAlertController.init(title: "Subscribe to r/slide_ios?", message: "Would you like to subscribe to the Slide for Reddit iOS community and receive news and updates first?", preferredStyle: .alert)
+                alert.addAction(UIAlertAction.init(title: "Maybe later", style: .cancel, handler: {(action) in
+                    self.finalizeSetup(subs)
+                }))
+                alert.addAction(UIAlertAction.init(title: "Sure!", style: .default, handler: {(action) in
+                    finalSubs.insert("slide_ios", at: 2)
+                    self.finalizeSetup(finalSubs)
+                    do {
+                        try (UIApplication.shared.delegate as! AppDelegate).session!.setSubscribeSubreddit(Subreddit.init(subreddit: "slide_ios"), subscribe: true, completion: { (result) in
+                            
+                        })
+                    } catch {
                         
-                    })
-                } catch {
-                    
-                }
-            }))
-            present(alert, animated: true, completion: nil)
+                    }
+                }))
+                self.present(alert, animated: true, completion: nil)
+            })
         } else {
-            finalizeSetup(subs)
+            self.alertController?.dismiss(animated: true, completion: {
+                self.finalizeSetup(subs)
+            })
         }
     }
     
     func finalizeSetup(_ subs: [String]){
         Subscriptions.set(name: (tempToken?.name)!, subs: subs, completion: {
-            self.alertController?.dismiss(animated: true, completion: nil)
+            self.menuNav = nil
             self.restartVC()
         })
     }
@@ -677,6 +681,12 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     var currentPage = 0
 
     func showDrawer(_ sender: AnyObject) {
+        if(menuNav == nil){
+            menuNav = NavigationSidebarViewController()
+            menuNav?.setViewController(controller: self)
+            self.menuNav?.setSubreddit(subreddit: MainViewController.current)
+            bottomSheet = MDCBottomSheetController(contentViewController: menuNav!)
+        }
         menuNav!.setColors(MainViewController.current)
         present(bottomSheet!, animated: true, completion: nil)
     }

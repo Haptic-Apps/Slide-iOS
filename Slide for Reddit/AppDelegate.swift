@@ -310,7 +310,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         $0.localizedCaseInsensitiveCompare($1) == ComparisonResult.orderedAscending
                     }
                     toReturn.insert("all", at: 0)
-                    toReturn.insert("slide_ios", at: 0)
                     toReturn.insert("frontpage", at: 0)
                     if (subredditController != nil) {
                         DispatchQueue.main.async(execute: { () -> Void in
