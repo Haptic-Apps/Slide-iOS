@@ -341,18 +341,33 @@ class NavigationHeaderView: UIView {
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
-        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[account(>=90)]-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[inbox(>=90)]-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[more(>=90)]-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
+        if #available(iOS 11.0, *){
+            titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[account(90)]-|",
+                                                                               options: NSLayoutFormatOptions(rawValue: 0),
+                                                                               metrics: metrics,
+                                                                               views: views))
+            titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[inbox(90)]-|",
+                                                                               options: NSLayoutFormatOptions(rawValue: 0),
+                                                                               metrics: metrics,
+                                                                               views: views))
+            titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[more(90)]-|",
+                                                                               options: NSLayoutFormatOptions(rawValue: 0),
+                                                                               metrics: metrics,
+                                                                               views: views))
+        } else {
+            titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[account]-|",
+                                                                               options: NSLayoutFormatOptions(rawValue: 0),
+                                                                               metrics: metrics,
+                                                                               views: views))
+            titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[inbox]-|",
+                                                                               options: NSLayoutFormatOptions(rawValue: 0),
+                                                                               metrics: metrics,
+                                                                               views: views))
+            titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[more]-|",
+                                                                               options: NSLayoutFormatOptions(rawValue: 0),
+                                                                               metrics: metrics,
+                                                                               views: views))
+        }
 
         title.addConstraints(titleConstraints)
     }
