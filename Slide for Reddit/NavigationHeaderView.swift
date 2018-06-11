@@ -138,8 +138,7 @@ class NavigationHeaderView: UIView {
         }))
 
         alertController.addAction(Action(ActionData(title: "Pro override (TESTING)", image: UIImage(named: "support")!.menuIcon()), style: .default, handler: { action in
-            SettingValues.isProCustomization = !SettingValues.isProCustomization
-            SettingValues.isProFeature = !SettingValues.isProFeature
+            SettingValues.isPro = !SettingValues.isPro
         }))
         
         if(mod){

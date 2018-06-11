@@ -69,7 +69,7 @@ public class VCPresenter {
     }
 
     public static func proDialogShown(feature: Bool, _ parentViewController: UIViewController) -> Bool {
-        if((feature && !SettingValues.isProFeature) || (!feature && !SettingValues.isProCustomization)){
+        if((feature && !SettingValues.isPro) || (!feature && !SettingValues.isPro)){
             let viewController = SettingsPro()
             var newParent = TapBehindModalViewController.init(rootViewController: viewController);
             newParent.navigationBar.shadowImage = UIImage()

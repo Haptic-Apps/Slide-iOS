@@ -13,6 +13,7 @@ import SDWebImage
 import MaterialComponents.MaterialSnackbar
 import RealmSwift
 import RLBAlertsPickers
+import MessageUI
 
 class SettingsViewController: UITableViewController {
 
@@ -61,6 +62,30 @@ class SettingsViewController: UITableViewController {
     override func loadView() {
         super.loadView()
         doCells()
+        let menuB = UIBarButtonItem(image: UIImage.init(named: "support")?.toolbarIcon().withColor(tintColor: GMColor.red500Color()), style: .plain, target: self, action: #selector(SettingsViewController.didPro(_:)))
+        navigationItem.rightBarButtonItem = menuB
+    }
+    
+    func didPro(_ sender: AnyObject){
+        let alert = UIAlertController.init(title: "Pro Supporter", message: "Thank you for supporting my work and going Pro :)\n\nIf you need any assistance with pro features, feel free to send me a message!", preferredStyle: .alert)
+        alert.addAction(UIAlertAction.init(title: "Email", style: .default, handler: { (action) in
+            if MFMailComposeViewController.canSendMail() {
+                let mail = MFMailComposeViewController()
+                mail.setToRecipients(["hapticappsdev@gmail.com"])
+                mail.setSubject("Slide Pro Purchase Support")
+                self.present(mail, animated: true)
+            }
+        }))
+        
+        alert.addAction(UIAlertAction.init(title: "Private Message", style: .default, handler: { (action) in
+            VCPresenter.showVC(viewController: ReplyViewController.init(name: "ccrama", completion: { (_) in
+            }), popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
+        }))
+            
+        alert.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: nil))
+            
+        self.present(alert, animated: true)
+
     }
 
     func doCells(_ reset: Bool = true) {
@@ -260,7 +285,7 @@ class SettingsViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch (indexPath.section) {
         case 0:
-        if(SettingValues.isProCustomization && SettingValues.isProFeature){
+        if(SettingValues.isPro){
             switch (indexPath.row) {
             case 0: return self.general
             case 1: return self.manageSubs
@@ -353,13 +378,13 @@ class SettingsViewController: UITableViewController {
         } else if (indexPath.section == 0 && indexPath.row == 0) {
             ch = SettingsGeneral()
         } else if (indexPath.section == 0 && indexPath.row == 2) {
-            if((!SettingValues.isProCustomization || !SettingValues.isProCustomization)){
+            if(!SettingValues.isPro){
                 ch = SettingsPro()
             } else {
                 showMultiColumn()
             }
         } else if (indexPath.section == 0 && indexPath.row == 3) {
-            if((!SettingValues.isProCustomization || !SettingValues.isProCustomization)){
+            if(!SettingValues.isPro){
                 showMultiColumn()
             }
         } else if (indexPath.section == 2 && indexPath.row == 4) {
@@ -445,7 +470,7 @@ class SettingsViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch (section) {
-        case 0: return (SettingValues.isProCustomization && SettingValues.isProCustomization) ? 4 : 5   // section 0 has 2 rows
+        case 0: return (SettingValues.isPro) ? 4 : 5   // section 0 has 2 rows
         case 1: return 5    // section 1 has 1 row
         case 2: return 7
         case 3: return 4

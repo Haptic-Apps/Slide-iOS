@@ -13,8 +13,9 @@ import SDWebImage
 import MaterialComponents.MaterialSnackbar
 import RealmSwift
 import RLBAlertsPickers
+import MessageUI
 
-class SettingsPro: UITableViewController {
+class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
 
     var restore: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "restore")
     var shadowbox: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "shadow")
@@ -117,7 +118,7 @@ class SettingsPro: UITableViewController {
         six.textColor = .white
         six.font = UIFont.boldSystemFont(ofSize: 20)
         six.textAlignment = .center
-        
+
         
         self.shadowbox.textLabel?.text = "Shadowbox mode"
         self.shadowbox.detailTextLabel?.text = "View your favorite subreddits distraction free"
@@ -167,6 +168,7 @@ class SettingsPro: UITableViewController {
         purchasePro.font = UIFont.boldSystemFont(ofSize: 18)
         purchasePro.numberOfLines = 0
         purchasePro.addSubview(three)
+        purchasePro.isUserInteractionEnabled = true
         
         var purchaseBundle = UILabel(frame: CGRect.init(x:  (self.view.frame.size.width / 2), y: -30, width: (self.view.frame.size.width / 2), height: 200))
         purchaseBundle.backgroundColor = ColorUtil.foregroundColor
@@ -176,15 +178,60 @@ class SettingsPro: UITableViewController {
         purchaseBundle.numberOfLines = 0
         purchaseBundle.font = UIFont.boldSystemFont(ofSize: 18)
         purchaseBundle.addSubview(six)
+        purchaseBundle.isUserInteractionEnabled = true
         
+        purchasePro.addTapGestureRecognizer {
+            IAPHandler.shared.purchaseMyProduct(index: 0)
+        }
         
+        purchaseBundle.addTapGestureRecognizer {
+            IAPHandler.shared.purchaseMyProduct(index: 1)
+        }
+
         about.frame.size.height = about.frame.size.height + 200
         about.addSubview(purchasePro)
         about.addSubview(purchaseBundle)
         tableView.tableHeaderView = about
+        tableView.tableHeaderView?.isUserInteractionEnabled = true
 
     }
 
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        IAPHandler.shared.fetchAvailableProducts()
+        IAPHandler.shared.purchaseStatusBlock = {[weak self] (type) in
+            guard let strongSelf = self else{ return }
+            if type == .purchased  || type == .restored {
+                let alertView = UIAlertController(title: "", message: type.message(), preferredStyle: .alert)
+                let action = UIAlertAction(title: "Close", style: .cancel, handler: { (alert) in
+                    strongSelf.navigationController?.dismiss(animated: true)
+                })
+                alertView.addAction(action)
+                strongSelf.present(alertView, animated: true, completion: nil)
+                SettingValues.isPro = true
+                UserDefaults.standard.set(true, forKey: SettingValues.pref_pro)
+                UserDefaults.standard.synchronize()
+            } else {
+                let alertView = UIAlertController(title: "", message: "Slide Pro purchase not found. Make sure you are signed in with the same Apple ID as you purchased Slide Pro with originally.\nIf this issue persists, feel free to send me an email!", preferredStyle: .alert)
+                let action = UIAlertAction(title: "Close", style: .cancel, handler: { (alert) in
+                })
+                alertView.addAction(action)
+                alertView.addAction(UIAlertAction.init(title: "Message me", style: .default, handler: { (alert) in
+                    if MFMailComposeViewController.canSendMail() {
+                        let mail = MFMailComposeViewController()
+                        mail.mailComposeDelegate = strongSelf
+                        mail.setToRecipients(["hapticappsdev@gmail.com"])
+                        mail.setSubject("Slide Pro Purchase Restore")
+                        mail.setMessageBody("<p>Apple ID: \nName:\n\n</p>", isHTML: true)
+                        
+                        strongSelf.present(mail, animated: true)
+                    }
+                }))
+                strongSelf.present(alertView, animated: true, completion: nil)
+            }
+        }
+
+    }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
@@ -225,6 +272,13 @@ class SettingsPro: UITableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        if(indexPath.row == 0){
+            IAPHandler.shared.restorePurchase()
+        }
+    }
+   
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        controller.dismiss(animated: true, completion: nil)
     }
 
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -253,4 +307,16 @@ class SettingsPro: UITableViewController {
         }
     }
 
+}
+class PaddingLabel: UILabel {
+    
+    var topInset: CGFloat = 220.0
+    var bottomInset: CGFloat = 20.0
+    var leftInset: CGFloat = 20.0
+    var rightInset: CGFloat = 20.0
+    
+    override func drawText(in rect: CGRect) {
+        let insets = UIEdgeInsets(top: topInset, left: leftInset, bottom: bottomInset, right: rightInset)
+        super.drawText(in: UIEdgeInsetsInsetRect(rect, insets))
+    }
 }

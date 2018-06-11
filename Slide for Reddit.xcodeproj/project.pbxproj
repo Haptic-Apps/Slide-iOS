@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		2097F94228BB31C58ECC96F9 /* Pods_Slide_for_RedditUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C29CF7355B69CCB84BE2FD6B /* Pods_Slide_for_RedditUITests.framework */; };
 		22FE497D2AAA9FDCC43D8B39 /* Pods_Slide_for_RedditTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE1DDF77D2F040B83CE26E0F /* Pods_Slide_for_RedditTests.framework */; };
-		B776B1184FAAF5C44362F0E3 /* SettingsProFeatures.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B7D2F7BC31B899679CC3 /* SettingsProFeatures.swift */; };
 		B776B17D5CA92860424F37C0 /* ModQueueContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BA7C2B7217C3875F3BEC /* ModQueueContributionLoader.swift */; };
 		B776B1DF80711B443ED76B61 /* SettingsPro.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B2AEE4A2438F5803329C /* SettingsPro.swift */; };
 		B776B2D12CF5BF9AC64427BA /* AutoCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BFA91C6E10E78077FCE0 /* AutoCache.swift */; };
@@ -18,7 +17,6 @@
 		B776B5282EE4DA559E97F9B3 /* ModerationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BECBFCB8F58AC234156A /* ModerationViewController.swift */; };
 		B776B6AC686D43299A5C8384 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B776B793D6901741B17CAD65 /* Main.storyboard */; };
 		B776B87EDB6E25D8D1B2D4B5 /* CustomAlbum.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BF3F4BCDE57E4274764F /* CustomAlbum.swift */; };
-		B776B8B97002CB862677BF72 /* SettingsProCustomization.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B479178854A426B4F4E0 /* SettingsProCustomization.swift */; };
 		B776B919A0E908BFAB060DE7 /* ToolbarTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BA78CCE4C75BD7FC5DA3 /* ToolbarTextView.swift */; };
 		B776BA8D503319846E83C4A4 /* VideoDisplayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B4EE978D7F23FF4C74BE /* VideoDisplayer.swift */; };
 		B776BAD2D3F58C29030A4230 /* SFHideSafariViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B89DC40DC7FB5ECB6C4A /* SFHideSafariViewController.swift */; };
@@ -74,6 +72,7 @@
 		BE3E5C1D1E177B2C00749C0C /* CommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3E5C1C1E177B2C00749C0C /* CommentViewController.swift */; };
 		BE3E5C1F1E18223600749C0C /* CellContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3E5C1E1E18223600749C0C /* CellContent.swift */; };
 		BE3E5C211E18227500749C0C /* CommentDepthCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3E5C201E18227500749C0C /* CommentDepthCell.swift */; };
+		BE42B6F320CE01BD00607A54 /* IAPHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE42B6F220CE01BD00607A54 /* IAPHandler.swift */; };
 		BE44B5841FFAC5FE00D3F6D5 /* BottomSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE44B5831FFAC5FE00D3F6D5 /* BottomSheetController.swift */; };
 		BE44B5881FFAC66100D3F6D5 /* BSCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = BE44B5861FFAC66100D3F6D5 /* BSCell.xib */; };
 		BE50892A1E3D65610026EAE1 /* InboxListingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5089291E3D65600026EAE1 /* InboxListingViewController.swift */; };
@@ -214,13 +213,11 @@
 		B776B21CFB79FA354C296037 /* ColorMuxPagingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorMuxPagingViewController.swift; sourceTree = "<group>"; };
 		B776B2AEE4A2438F5803329C /* SettingsPro.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsPro.swift; sourceTree = "<group>"; };
 		B776B2E54F7438959A76E42E /* LiveThreadUpdate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LiveThreadUpdate.swift; sourceTree = "<group>"; };
-		B776B479178854A426B4F4E0 /* SettingsProCustomization.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsProCustomization.swift; sourceTree = "<group>"; };
 		B776B4EE978D7F23FF4C74BE /* VideoDisplayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoDisplayer.swift; sourceTree = "<group>"; };
 		B776B5502C1178D6A0F51B6A /* CustomAnimateUITableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAnimateUITableView.swift; sourceTree = "<group>"; };
 		B776B6360A2BA2ABC0297545 /* LiveThreadViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LiveThreadViewController.swift; sourceTree = "<group>"; };
 		B776B64AFABC174BF4DEE478 /* CacheSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheSettings.swift; sourceTree = "<group>"; };
 		B776B793D6901741B17CAD65 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
-		B776B7D2F7BC31B899679CC3 /* SettingsProFeatures.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsProFeatures.swift; sourceTree = "<group>"; };
 		B776B89DC40DC7FB5ECB6C4A /* SFHideSafariViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SFHideSafariViewController.swift; sourceTree = "<group>"; };
 		B776B9FD1DF77B11274D680F /* ModMailContributionLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModMailContributionLoader.swift; sourceTree = "<group>"; };
 		B776BA78CCE4C75BD7FC5DA3 /* ToolbarTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToolbarTextView.swift; sourceTree = "<group>"; };
@@ -280,6 +277,7 @@
 		BE3E5C1C1E177B2C00749C0C /* CommentViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentViewController.swift; sourceTree = "<group>"; };
 		BE3E5C1E1E18223600749C0C /* CellContent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CellContent.swift; sourceTree = "<group>"; };
 		BE3E5C201E18227500749C0C /* CommentDepthCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentDepthCell.swift; sourceTree = "<group>"; };
+		BE42B6F220CE01BD00607A54 /* IAPHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPHandler.swift; sourceTree = "<group>"; };
 		BE44B5831FFAC5FE00D3F6D5 /* BottomSheetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheetController.swift; sourceTree = "<group>"; };
 		BE44B5861FFAC66100D3F6D5 /* BSCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BSCell.xib; sourceTree = "<group>"; };
 		BE5089291E3D65600026EAE1 /* InboxListingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxListingViewController.swift; sourceTree = "<group>"; };
@@ -485,8 +483,7 @@
 				B776BF86D3E6B5AC2EEEDE63 /* Filter.swift */,
 				B776B64AFABC174BF4DEE478 /* CacheSettings.swift */,
 				B776B2AEE4A2438F5803329C /* SettingsPro.swift */,
-				B776B7D2F7BC31B899679CC3 /* SettingsProFeatures.swift */,
-				B776B479178854A426B4F4E0 /* SettingsProCustomization.swift */,
+				BE42B6F220CE01BD00607A54 /* IAPHandler.swift */,
 			);
 			name = Settings;
 			sourceTree = "<group>";
@@ -1232,6 +1229,7 @@
 				BEBF45C81E230CC900764BB8 /* History.swift in Sources */,
 				BE6EA6E01E1C228100E9E709 /* GfycatTranscoded.swift in Sources */,
 				BEE5BF641E11A15500E3C9AE /* LinkCellView.swift in Sources */,
+				BE42B6F320CE01BD00607A54 /* IAPHandler.swift in Sources */,
 				BE6EA6CA1E1C1E9400E9E709 /* Files.swift in Sources */,
 				BE7439F91E21A59C008BB63B /* ActionStates.swift in Sources */,
 				BE86300F1E2E6A54004F0E1F /* PostFilter.swift in Sources */,
@@ -1270,8 +1268,6 @@
 				B776BB2D5B79A707C1A41B8C /* LiveThreadUpdate.swift in Sources */,
 				B776B2D12CF5BF9AC64427BA /* AutoCache.swift in Sources */,
 				B776B1DF80711B443ED76B61 /* SettingsPro.swift in Sources */,
-				B776B1184FAAF5C44362F0E3 /* SettingsProFeatures.swift in Sources */,
-				B776B8B97002CB862677BF72 /* SettingsProCustomization.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

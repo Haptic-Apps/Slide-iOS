@@ -526,6 +526,17 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                 menuNav?.tableView.reloadData()
             }
         }
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MM/dd/yyyy"
+        let today =  formatter.string(from: Date())
+    
+        if(SettingValues.autoCache) {
+            if (UserDefaults.standard.string(forKey: "DAY_LAUNCH") != today) {
+                AutoCache.init(baseController: self)
+                UserDefaults.standard.setValue(today, forKey: "DAY_LAUNCH")
+            }
+        }
     }
     
     public static var isOffline = false

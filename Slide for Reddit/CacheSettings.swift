@@ -28,10 +28,10 @@ class CacheSettings: UITableViewController {
         tableView.reloadData()
 
         autoCacheSwitch = UISwitch()
-        autoCacheSwitch.isOn = SettingValues.viewType
+        autoCacheSwitch.isOn = SettingValues.autoCache
         autoCacheSwitch.addTarget(self, action: #selector(CacheSettings.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
         self.autoCache.textLabel?.text = "Cache subreddits automatically"
-        self.autoCache.detailTextLabel?.text = "Will run the first time Slide opens in a day"
+        self.autoCache.detailTextLabel?.text = "Will run the first time Slide opens each day"
         self.autoCache.accessoryView = autoCacheSwitch
         self.autoCache.backgroundColor = ColorUtil.foregroundColor
         self.autoCache.textLabel?.textColor = ColorUtil.fontColor
@@ -39,9 +39,10 @@ class CacheSettings: UITableViewController {
 
         cacheContentSwitch = UISwitch()
         cacheContentSwitch.isOn = false
+        cacheContentSwitch.isEnabled = false
         cacheContentSwitch.addTarget(self, action: #selector(CacheSettings.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        self.cacheContent.textLabel?.text = "Cache content"
-        self.cacheContent.detailTextLabel?.text = "Other than images (gifs, albums, etc)"
+        self.cacheContent.textLabel?.text = "Cache gifs and albums"
+        self.cacheContent.detailTextLabel?.text = "Coming soon!"
         self.cacheContent.accessoryView = cacheContentSwitch
         self.cacheContent.backgroundColor = ColorUtil.foregroundColor
         self.cacheContent.textLabel?.textColor = ColorUtil.fontColor
@@ -117,7 +118,8 @@ class CacheSettings: UITableViewController {
     func switchIsChanged(_ changed: UISwitch) {
         if(changed == autoCacheSwitch){
             if(!VCPresenter.proDialogShown(feature: true, self)){
-                //todo this setting
+                SettingValues.autoCache = changed.isOn
+                UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_autoCache)
             } else {
                 changed.isOn = false
             }
