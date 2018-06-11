@@ -194,10 +194,10 @@ class TableDisplayViewController: MediaViewController, UICollectionViewDelegate,
         super.viewDidLoad()
         let frame = CGRect.init(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         layout = SpreadsheetLayout(delegate: self,
-                topLeftDecorationViewNib: nil,
-                topRightDecorationViewNib: nil,
-                bottomLeftDecorationViewNib: nil,
-                bottomRightDecorationViewNib: nil)
+                                   topLeftDecorationViewType: nil,
+                                   topRightDecorationViewType: nil,
+                                   bottomLeftDecorationViewType: nil,
+                                   bottomRightDecorationViewType: nil)
 
         self.tableView = UICollectionView.init(frame: frame, collectionViewLayout: layout)
         self.view = tableView

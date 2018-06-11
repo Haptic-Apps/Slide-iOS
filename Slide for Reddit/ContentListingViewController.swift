@@ -44,6 +44,9 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.automaticallyAdjustsScrollViewInsets = false
+        self.edgesForExtendedLayout = UIRectEdge.all
+        self.extendedLayoutIncludesOpaqueBars = true
         self.navigationController?.setToolbarHidden(true, animated: false)
     }
 
@@ -52,10 +55,10 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     override func viewDidLoad() {
         super.viewDidLoad()
         flowLayout.delegate = self
-        var frame = self.view.bounds
+        let frame = self.view.bounds
         self.tableView = UICollectionView(frame: frame, collectionViewLayout: flowLayout)
         self.view = UIView.init(frame: CGRect.zero)
-
+        
         self.view.addSubview(tableView)
 
         self.tableView.delegate = self
@@ -81,6 +84,19 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         session = (UIApplication.shared.delegate as! AppDelegate).session
 
         refresh()
+    }
+    
+    var oldsize = CGFloat(0)
+
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        tableView.frame = self.view.bounds
+        if (self.view.bounds.width != oldsize) {
+            oldsize = self.view.bounds.width
+            flowLayout.reset()
+            tableView.reloadData()
+        }
+        
     }
 
     var tC: UIViewController?
@@ -290,53 +306,53 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     var paddingLeft = CGFloat(0)
                     var paddingRight = CGFloat(0)
                     var innerPadding = CGFloat(0)
-                    if (SettingValues.postViewMode == .CARD) {
+                    if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) {
                         paddingTop = 5
                         paddingBottom = 5
                         paddingLeft = 5
                         paddingRight = 5
                     }
-
+                    
                     let actionbar = CGFloat(SettingValues.hideButtonActionbar ? 0 : 24)
-
+                    
                     var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
-                    let thumbheight = SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50)
-                    let textHeight = CGFloat(0)
-
+                    let thumbheight = (SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50)) - (SettingValues.postViewMode == .COMPACT ? 15 : 0)
+                    let textHeight = CGFloat(submission.isSelf ? 5 : 0)
+                    
                     if (thumb) {
                         imageHeight = thumbheight
-                        innerPadding += 8 //between top and thumbnail
-                        innerPadding += 18 //between label and bottom box
-                        innerPadding += 8 //between box and end
+                        innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between top and thumbnail
+                        innerPadding += 18 - (SettingValues.postViewMode == .COMPACT ? 4 : 0) //between label and bottom box
+                        innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
                     } else if (big) {
                         if (SettingValues.postViewMode == .CENTER) {
-                            innerPadding += 16 //between label
-                            innerPadding += 12 //between banner and box
+                            innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 16) //between label
+                            innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between banner and box
                         } else {
-                            innerPadding += 8 //between banner and label
-                            innerPadding += 12 //between label and box
+                            innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between banner and label
+                            innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between label and box
                         }
-
-                        innerPadding += 8 //between box and end
+                        
+                        innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
                     } else {
-                        innerPadding += 8
+                        innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8)
                         innerPadding += 5 //between label and body
-                        innerPadding += 12 //between body and box
-                        innerPadding += 8 //between box and end
+                        innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between body and box
+                        innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
                     }
-
+                    
                     var estimatedUsableWidth = itemWidth - paddingLeft - paddingRight
                     if (thumb) {
                         estimatedUsableWidth -= thumbheight //is the same as the width
-                        estimatedUsableWidth -= 12 //between edge and thumb
-                        estimatedUsableWidth -= 8 //between thumb and label
+                        estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb
+                        estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between thumb and label
                     } else {
-                        estimatedUsableWidth -= 24 //12 padding on either side
+                        estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //12 padding on either side
                     }
-
+                    
                     let framesetter = CTFramesetterCreateWithAttributedString(CachedTitle.getTitle(submission: submission, full: false, false))
                     let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude), nil)
-
+                    
                     let totalHeight = paddingTop + paddingBottom + (thumb ? max(ceil(textSize.height), imageHeight) : ceil(textSize.height) + imageHeight) + innerPadding + actionbar + textHeight
 
                     estimatedHeights[submission.id] = totalHeight
@@ -551,8 +567,8 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
 }
 
 extension ContentListingViewController: LinkCellViewDelegate {
-    func openComments(id: String) {
-        let comment = CommentViewController.init(submission: id, subreddit: nil)
+    func openComments(id: String, subreddit: String?) {
+        let comment = CommentViewController.init(submission: id, subreddit: subreddit)
         VCPresenter.showVC(viewController: comment, popupIfPossible: true, parentNavigationController: navigationController, parentViewController: self)
     }
 

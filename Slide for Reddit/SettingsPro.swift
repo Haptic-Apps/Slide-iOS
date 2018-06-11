@@ -39,11 +39,11 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: "")
         navigationController?.navigationBar.tintColor = UIColor.white
         navigationController?.setToolbarHidden(true, animated: false)
+        doCells()
     }
 
     override func loadView() {
         super.loadView()
-        doCells()
     }
     
     var three = UILabel()

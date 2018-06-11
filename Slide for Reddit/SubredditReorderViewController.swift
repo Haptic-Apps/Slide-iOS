@@ -247,6 +247,19 @@ class SubredditReorderViewController: UITableViewController {
             $0.localizedCaseInsensitiveCompare($1) == ComparisonResult.orderedAscending
         }
         self.subs.insert(contentsOf: pinned, at: 0)
+        if(self.subs.contains("all")){
+            self.subs.remove(at: self.subs.index(of: "all")!)
+            self.subs.insert("all", at: 0)
+        }
+        if(self.subs.contains("popular")){
+            self.subs.remove(at: self.subs.index(of: "popular")!)
+            self.subs.insert("popular", at: 0)
+        }
+        if(self.subs.contains("frontpage")){
+            self.subs.remove(at: self.subs.index(of: "frontpage")!)
+            self.subs.insert("frontpage", at: 0)
+        }
+
         tableView.reloadData()
         let indexPath = IndexPath.init(row: 0, section: 0)
         self.tableView.scrollToRow(at: indexPath,

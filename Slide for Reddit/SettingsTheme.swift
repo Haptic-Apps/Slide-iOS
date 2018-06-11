@@ -36,7 +36,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
         isAccent = false
         let margin: CGFloat = 10.0
-        let rect = CGRect(x: margin, y: margin, width: alertController.view.bounds.size.width - margin * 4.0, height: 150)
+        let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
         let MKColorPicker = ColorPickerView.init(frame: rect)
         MKColorPicker.delegate = self
         MKColorPicker.colors = GMPalette.allColor()
@@ -97,7 +97,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
 
         let margin: CGFloat = 10.0
-        let rect = CGRect(x: margin, y: margin, width: alertController.view.bounds.size.width - margin * 4.0, height: 150)
+        let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
         let MKColorPicker = ColorPickerView.init(frame: rect)
         MKColorPicker.delegate = self
         MKColorPicker.colors = GMPalette.allColorAccent()

@@ -26,7 +26,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     let maxHeaderHeight: CGFloat = 120;
     let minHeaderHeight: CGFloat = 56;
 
-    func openComments(id: String) {
+    func openComments(id: String, subreddit: String?) {
         var index = 0
         for s in links {
             if (s.getId() == id) {
@@ -188,7 +188,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             var estimatedUsableWidth = itemWidth - paddingLeft - paddingRight
             if (thumb) {
                 estimatedUsableWidth -= thumbheight //is the same as the width
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between edge and thumb
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb
                 estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between thumb and label
             } else {
                 estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //12 padding on either side
@@ -217,7 +217,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         } else {
             let c = colorPickerView.colors[indexPath.row]
             self.navigationController?.navigationBar.barTintColor = c
-            UIApplication.shared.statusBarView?.backgroundColor = c
             sideView.backgroundColor = c
             add.backgroundColor = c
             sideView.backgroundColor = c
@@ -345,7 +344,10 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         if (single || !SettingValues.viewType) {
             (navigationController)?.setNavigationBarHidden(true, animated: true)
         }
-        UIApplication.shared.statusBarView?.backgroundColor = ColorUtil.getColorForSub(sub: self.sub)
+        
+        if(navigationController?.modalPresentationStyle != .pageSheet){
+            UIApplication.shared.statusBarView?.backgroundColor = ColorUtil.getColorForSub(sub: self.sub)
+        }
 
         UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
             SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
@@ -371,6 +373,8 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         if (single || !SettingValues.viewType) {
             (navigationController)?.setNavigationBarHidden(false, animated: true)
         }
+        UIApplication.shared.statusBarView?.backgroundColor = .clear
+
         if(!single && AutoCache.progressView != nil){
                 UIView.animate(withDuration: 0.25, delay: 0.0, options: UIViewAnimationOptions.curveEaseInOut, animations: {
                     AutoCache.progressView!.frame.origin.y = self.oldY
@@ -507,7 +511,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     var subb: UIButton = UIButton()
 
     func drefresh(_ sender: AnyObject) {
-        load(reset: true)
+        refresh()
     }
 
 
@@ -934,7 +938,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
         isAccent = false
         let margin: CGFloat = 10.0
-        let rect = CGRect(x: margin, y: margin, width: alertController.view.bounds.size.width - margin * 4.0, height: 150)
+        let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
         let MKColorPicker = ColorPickerView.init(frame: rect)
         MKColorPicker.scrollToPreselectedIndex = true
         MKColorPicker.delegate = self
@@ -1012,7 +1016,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
         isAccent = true
         let margin: CGFloat = 10.0
-        let rect = CGRect(x: margin, y: margin, width: alertController.view.bounds.size.width - margin * 4.0, height: 150)
+        let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
         let MKColorPicker = ColorPickerView.init(frame: rect)
         MKColorPicker.scrollToPreselectedIndex = true
         MKColorPicker.delegate = self
@@ -1073,6 +1077,8 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             CachedTitle.titles.removeAll()
             self.tableView.reloadData()
         }
+        
+        navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
 
         if (single || !SettingValues.viewType) {
             navigationController?.setNavigationBarHidden(false, animated: true)
@@ -1255,7 +1261,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        UIApplication.shared.statusBarView?.backgroundColor = ColorUtil.getColorForSub(sub: self.sub)
         (navigationController)?.setToolbarHidden(false, animated: true)
         setupFab()
     }

@@ -2,18 +2,18 @@ PODS:
   - ActionSheetPicker-3.0 (2.2.0)
   - Alamofire (4.7.2)
   - BadgeSwift (5.0.1)
-  - BiometricAuthentication (1.0.5)
+  - BiometricAuthentication (1.0.6)
   - LicensesViewController (0.6.5)
-  - MaterialComponents/ActivityIndicator (55.3.0):
+  - MaterialComponents/ActivityIndicator (55.4.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Application
     - MDFInternationalization
     - MotionAnimator (~> 2.0)
-  - MaterialComponents/AnimationTiming (55.3.0)
-  - MaterialComponents/BottomSheet (55.3.0):
+  - MaterialComponents/AnimationTiming (55.4.0)
+  - MaterialComponents/BottomSheet (55.4.0):
     - MaterialComponents/private/KeyboardWatcher
     - MaterialComponents/private/Math
-  - MaterialComponents/Buttons (55.3.0):
+  - MaterialComponents/Buttons (55.4.0):
     - MaterialComponents/Ink
     - MaterialComponents/private/Math
     - MaterialComponents/private/Shapes
@@ -22,35 +22,35 @@ PODS:
     - MaterialComponents/Typography
     - MDFInternationalization
     - MDFTextAccessibility
-  - MaterialComponents/Dialogs (55.3.0):
+  - MaterialComponents/Dialogs (55.4.0):
     - MaterialComponents/Buttons
     - MaterialComponents/private/KeyboardWatcher
     - MaterialComponents/ShadowElevations
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/Ink (55.3.0):
+  - MaterialComponents/Ink (55.4.0):
     - MaterialComponents/private/Math
-  - MaterialComponents/OverlayWindow (55.3.0):
+  - MaterialComponents/OverlayWindow (55.4.0):
     - MaterialComponents/private/Application
-  - MaterialComponents/Palettes (55.3.0)
-  - MaterialComponents/private/Application (55.3.0)
-  - MaterialComponents/private/KeyboardWatcher (55.3.0):
+  - MaterialComponents/Palettes (55.4.0)
+  - MaterialComponents/private/Application (55.4.0)
+  - MaterialComponents/private/KeyboardWatcher (55.4.0):
     - MaterialComponents/private/Application
-  - MaterialComponents/private/Math (55.3.0)
-  - MaterialComponents/private/Overlay (55.3.0)
-  - MaterialComponents/private/Shapes (55.3.0):
+  - MaterialComponents/private/Math (55.4.0)
+  - MaterialComponents/private/Overlay (55.4.0)
+  - MaterialComponents/private/Shapes (55.4.0):
     - MaterialComponents/private/Math
     - MaterialComponents/ShadowLayer
-  - MaterialComponents/ProgressView (55.3.0):
+  - MaterialComponents/ProgressView (55.4.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
     - MDFInternationalization
     - MotionAnimator (~> 2.1)
-  - MaterialComponents/ShadowElevations (55.3.0)
-  - MaterialComponents/ShadowLayer (55.3.0):
+  - MaterialComponents/ShadowElevations (55.4.0)
+  - MaterialComponents/ShadowLayer (55.4.0):
     - MaterialComponents/ShadowElevations
-  - MaterialComponents/Snackbar (55.3.0):
+  - MaterialComponents/Snackbar (55.4.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Buttons
     - MaterialComponents/OverlayWindow
@@ -58,7 +58,7 @@ PODS:
     - MaterialComponents/private/KeyboardWatcher
     - MaterialComponents/private/Overlay
     - MaterialComponents/Typography
-  - MaterialComponents/Tabs (55.3.0):
+  - MaterialComponents/Tabs (55.4.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Ink
     - MaterialComponents/private/Math
@@ -66,13 +66,13 @@ PODS:
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/TextFields (55.3.0):
+  - MaterialComponents/TextFields (55.4.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
     - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/Typography (55.3.0):
+  - MaterialComponents/Typography (55.4.0):
     - MaterialComponents/private/Application
   - MDFInternationalization (1.0.4)
   - MDFTextAccessibility (1.2.0)
@@ -80,11 +80,11 @@ PODS:
   - MotionAnimator (2.8.1):
     - MotionInterchange (~> 1.6)
   - MotionInterchange (1.6.0)
-  - Realm (3.6.0):
-    - Realm/Headers (= 3.6.0)
-  - Realm/Headers (3.6.0)
-  - RealmSwift (3.6.0):
-    - Realm (= 3.6.0)
+  - Realm (3.7.1):
+    - Realm/Headers (= 3.7.1)
+  - Realm/Headers (3.7.1)
+  - RealmSwift (3.7.1):
+    - Realm (= 3.7.1)
   - reddift (2.0.0):
     - reddift/MiniKeychain (= 2.0.0)
   - reddift/MiniKeychain (2.0.0)
@@ -95,7 +95,7 @@ PODS:
   - SideMenu (4.0.0)
   - SloppySwiper (0.6)
   - Starscream (3.0.5)
-  - SwiftSpreadsheet (1.1.0)
+  - SwiftSpreadsheet (1.2.0)
   - SwiftyJSON (4.1.0)
   - TTTAttributedLabel (2.0.0)
   - UZTextView (1.0.8)
@@ -154,7 +154,7 @@ CHECKOUT OPTIONS:
     :commit: 752459578d8162c11f6311987bd3463e6d85712b
     :git: https://github.com/ccrama/ActionSheetPicker-3.0
   reddift:
-    :commit: 1a4fdb2753ab082afabd6e31c8ed123538c410e7
+    :commit: 324ca464de1b7e73f0fedf9955f12446ee2c694f
     :git: https://github.com/ccrama/reddift
   RLBAlertsPickers:
     :commit: 516a802c88e8123d8c5c54ee520f776da5d12076
@@ -173,23 +173,23 @@ SPEC CHECKSUMS:
   ActionSheetPicker-3.0: d11a4c12c6aaf704b8a3f56d179198c99f3e41e6
   Alamofire: e4fa87002c137ba2d8d634d2c51fabcda0d5c223
   BadgeSwift: 3defa56f504bfb46f2300122c4a565ec9e405c1e
-  BiometricAuthentication: e80e99bf1fe871ab624172eb91f1ddbbc47499b5
+  BiometricAuthentication: 31cf4595d4e699e73a037604a6edca54beac05f1
   LicensesViewController: 1f2982b1bab8402d3f88e23197957038e8abb907
-  MaterialComponents: 915f4e844400a35db3ea4c710a9af40aa8bcb093
+  MaterialComponents: 1a021ab211e40e95e27eb87d9051d558e8f095bd
   MDFInternationalization: e355b0cebecf53d60233bd267084e49366c82513
   MDFTextAccessibility: 94098925e0853551c5a311ce7c1ecefbe297cdb6
   MKColorPicker: 8998b2ab977e4f240fdf254db27a18b810da3cfc
   MotionAnimator: ee16aa30567c5bae0fb2750c132915829cfaaf8a
   MotionInterchange: ead0e3ae1f3a5fb539e289debbc7ae036160a10d
-  Realm: 08b464b462d4f31bbd4ba5f5a1c8722ef0a700b7
-  RealmSwift: 973e1499c44ab571f894c2c908e2db450be280c3
+  Realm: 906be37d52f17f25484ac01643a7f26a9d3bfbd5
+  RealmSwift: 1c2b6bae3dc55bb87e080ffa96537d71442f6dce
   reddift: 3066e687c2a934b0f9aca6ee6e2161abc4c93a56
   RLBAlertsPickers: 60b4bd5afcd92065774ed1b21d836bc89cc79d98
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
   SideMenu: 70ee5657df63ec3382660ec4ef470bf1cf5db07d
   SloppySwiper: 37e38f6da8df5c805914c6f32ec6ec8da63abe7c
   Starscream: faf918b2f2eff7d5dd21180646bf015a669673bd
-  SwiftSpreadsheet: bf014416e9186f1e4aee2b391fb45e5d4f21e1be
+  SwiftSpreadsheet: fa241abcd0c2e0bdfa641494413c3613d67efbca
   SwiftyJSON: c29297daf073d2aa016295d5809cdd68045c39b3
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   UZTextView: d8d45a8459b0de6f2c393458a05c65352f89e00a

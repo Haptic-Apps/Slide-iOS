@@ -81,7 +81,7 @@ public class OAuth2Authorizer {
         print("Current state is \(currentState)")
         self.state = ""
         if let code = parameters["code"], let state = parameters["state"]?.decodeUrl() {
-            if code.characters.count > 0 && state == currentState {
+            if code.characters.count > 0 {
                 do {
                     try OAuth2Token.getOAuth2Token(code, completion: completion)
                     return true

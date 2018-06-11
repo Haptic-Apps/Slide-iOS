@@ -34,7 +34,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
         navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
         navigationController?.setToolbarHidden(false, animated: false)
-        UIApplication.shared.statusBarView?.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
 
         if(SettingValues.viewType){
             navigationController?.setNavigationBarHidden(true, animated: true)
@@ -136,6 +135,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                 self.doCurrentPage(index!)
                 self.navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: subreddit)
                 self.tabBar.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
+                self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
                 firstViewController.viewDidAppear(true)
             } else {
                 //todo better sanitation
@@ -294,11 +294,14 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     }
 
     var tabBar = MDCTabBar()
+    var inHeadView = UIView()
     var subs: UIView?
 
     func setupTabBar(_ subs : [String]) {
-        tabBar = MDCTabBar.init(frame: CGRect.init(x: 0, y: UIApplication.shared.statusBarView?.frame.size.height ?? 20, width: self.view.frame.size.width, height: 84))
+        tabBar = MDCTabBar.init(frame: CGRect.init(x: 0, y: (UIApplication.shared.statusBarView?.frame.size.height ?? 20), width: self.view.frame.size.width, height: 84))
+        inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: (UIApplication.shared.statusBarView?.frame.size.height ?? 20)))
         tabBar.backgroundColor = ColorUtil.getColorForSub(sub: MainViewController.current)
+        self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: MainViewController.current)
         tabBar.itemAppearance = .titles
 
         tabBar.selectedItemTintColor = UIColor.white
@@ -312,8 +315,9 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         tabBar.selectedItem = tabBar.items[0]
         tabBar.tintColor = ColorUtil.accentColorForSub(sub: "NONE")
         tabBar.sizeToFit()
-
+        
         self.view.addSubview(tabBar)
+        self.view.addSubview(inHeadView)
     }
     
     func didChooseSub(_ gesture: UITapGestureRecognizer) {
@@ -412,6 +416,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         self.navigationController?.navigationBar.layoutIfNeeded()
 
         tabBar.backgroundColor = ColorUtil.getColorForSub(sub: MainViewController.current)
+        inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: MainViewController.current)
+
         tabBar.tintColor = ColorUtil.accentColorForSub(sub: MainViewController.current)
         if (!selected) {
             let page = MainViewController.vCs.index(of: self.viewControllers!.first!)
@@ -545,9 +551,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             navigationController?.navigationBar.isTranslucent = false
 
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: self.currentTitle)
-            if(tabBar != nil){
-                tabBar.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
-            }
+            tabBar.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
+            inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
 
             menuNav?.header.doColors()
             if (menuNav?.tableView != nil) {
@@ -656,9 +661,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     func colorChanged() {
         menuNav?.header.doColors()
 
-        if(tabBar != nil){
-            tabBar.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
-        }
+        tabBar.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
+        inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
 
         if (menuNav?.tableView != nil) {
             menuNav?.tableView.reloadData()
@@ -754,6 +758,7 @@ extension MainViewController: MDCTabBarDelegate {
 
         self.doCurrentPage(tabBar.items.index(of: item)!)
         tabBar.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
+        inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
     }
 }
 

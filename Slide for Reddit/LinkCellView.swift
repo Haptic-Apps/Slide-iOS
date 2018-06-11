@@ -31,7 +31,7 @@ protocol LinkCellViewDelegate: class {
     func more(_ cell: LinkCellView)
     func reply(_ cell: LinkCellView)
     func hide(_ cell: LinkCellView)
-    func openComments(id: String)
+    func openComments(id: String, subreddit: String?)
     func deleteSelf(_ cell: LinkCellView)
     func mod(_ cell: LinkCellView)
 }
@@ -262,7 +262,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             var estimatedUsableWidth = aspectWidth - paddingLeft - paddingRight
             if(thumb){
                 estimatedUsableWidth -= thumbheight //is the same as the width
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between edge and thumb
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb
                 estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between thumb and label
             } else {
                 estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //12 padding on either side
@@ -1745,7 +1745,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     func openComment(sender: UITapGestureRecognizer? = nil) {
         if (!full) {
             if let delegate = self.del {
-                delegate.openComments(id: link!.getId())
+                delegate.openComments(id: link!.getId(), subreddit: link!.subreddit)
             }
         }
     }

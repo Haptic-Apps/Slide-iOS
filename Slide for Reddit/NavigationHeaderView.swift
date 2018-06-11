@@ -217,7 +217,7 @@ class NavigationHeaderView: UIView {
     func settings(_ sender: AnyObject) {
         self.parentController!.dismiss(animated: true) {
             let settings = SettingsViewController()
-            VCPresenter.showVC(viewController: settings, popupIfPossible: true, parentNavigationController: (self.parentController as! NavigationSidebarViewController).parentController?.navigationController, parentViewController: (self.parentController as! NavigationSidebarViewController).parentController)
+            VCPresenter.showVC(viewController: settings, popupIfPossible: false, parentNavigationController: (self.parentController as! NavigationSidebarViewController).parentController?.navigationController, parentViewController: (self.parentController as! NavigationSidebarViewController).parentController)
         }
     }
 

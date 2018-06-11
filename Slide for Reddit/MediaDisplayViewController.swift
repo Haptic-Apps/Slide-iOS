@@ -333,7 +333,6 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
     override func viewWillAppear(_ animated: Bool) {
         savedColor = UIApplication.shared.statusBarView?.backgroundColor
         UIApplication.shared.statusBarView?.backgroundColor = .clear
-
         super.viewWillAppear(animated)
     }
 
