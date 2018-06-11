@@ -211,7 +211,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         self.filters.imageView?.image = UIImage.init(named: "filter")?.toolbarIcon()
         self.filters.imageView?.tintColor = ColorUtil.fontColor
 
-        self.aboutCell.textLabel?.text = "Slide \(getVersion())"
+        self.aboutCell.textLabel?.text = "Version: \(getVersion())"
         self.aboutCell.accessoryType = .disclosureIndicator
         self.aboutCell.backgroundColor = ColorUtil.foregroundColor
         self.aboutCell.textLabel?.textColor = ColorUtil.fontColor
@@ -492,7 +492,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         let dictionary = Bundle.main.infoDictionary!
         let version = dictionary["CFBundleShortVersionString"] as! String
         let build = dictionary["CFBundleVersion"] as! String
-        return "v\(version).\(build)"
+        return "\(version) build \(build)"
     }
 
 }
