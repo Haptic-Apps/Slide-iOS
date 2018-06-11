@@ -61,7 +61,6 @@ class NavigationHeaderView: UIView {
         super.init(frame: frame)
         self.search = UISearchBar(frame: CGRect(x: 0, y: 0, width: 3, height: 50))
         self.title = UILabel(frame: CGRect(x: 0, y: 0, width: 50, height: 90))
-        self.inbox.clipsToBounds = true
 
         self.account = UIButton.init(type: .custom)
         account.imageView?.contentMode = UIViewContentMode.scaleAspectFit
@@ -80,7 +79,6 @@ class NavigationHeaderView: UIView {
         inbox.setImage(UIImage.init(named: "inbox")!.withColor(tintColor: .white).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
         inbox.addTarget(self, action: #selector(self.mod(_:)), for: UIControlEvents.touchUpInside)
         inbox.frame = CGRect.init(x: 0, y: 0, width: 60, height: 90)
-
 
         search.translatesAutoresizingMaskIntoConstraints = false
         title.translatesAutoresizingMaskIntoConstraints = false
@@ -308,6 +306,9 @@ class NavigationHeaderView: UIView {
     override func updateConstraints() {
         super.updateConstraints()
 
+        self.removeConstraints(self.constraints)
+        title.removeConstraints(title.constraints)
+
         let metrics = ["topMargin": 0]
         let views = ["title": title, "account": account, "inbox": inbox,  "more": more, "search": search] as [String: Any]
 
@@ -340,15 +341,15 @@ class NavigationHeaderView: UIView {
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
-        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[account(90)]-|",
+        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[account(>=90)]-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
-        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[inbox(90)]-|",
+        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[inbox(>=90)]-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
-        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[more(90)]-|",
+        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[more(>=90)]-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
