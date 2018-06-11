@@ -18,7 +18,6 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
     var here: UILabel = UILabel()
     var info: UZTextView = UZTextView()
 
-    var theme = UITableViewCell()
     var submit = UITableViewCell()
     var sorting = UITableViewCell()
     var mods = UITableViewCell()
@@ -104,15 +103,6 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        self.theme.textLabel?.text = "Subreddit theme"
-        self.theme.accessoryType = .none
-        self.theme.backgroundColor = ColorUtil.foregroundColor
-        self.theme.textLabel?.textColor = ColorUtil.fontColor
-        self.theme.imageView?.image = UIImage.init(named: "palette")?.menuIcon()
-        self.theme.imageView?.tintColor = ColorUtil.fontColor
-        self.theme.layer.cornerRadius = 5
-        self.theme.clipsToBounds = true
-
         self.submit.textLabel?.text = "New post"
         self.submit.accessoryType = .none
         self.submit.backgroundColor = ColorUtil.foregroundColor
@@ -157,7 +147,6 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
 
         self.back = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 56))
 
-        theme.translatesAutoresizingMaskIntoConstraints = false
         submit.translatesAutoresizingMaskIntoConstraints = false
         back.translatesAutoresizingMaskIntoConstraints = false
         info.translatesAutoresizingMaskIntoConstraints = false
@@ -166,7 +155,6 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
         sorting.translatesAutoresizingMaskIntoConstraints = false
         mods.translatesAutoresizingMaskIntoConstraints = false
         
-        addSubview(theme)
         addSubview(submit)
         addSubview(back)
         addSubview(info)
@@ -238,43 +226,9 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
     }
 
     func new(_ selector: UITableViewCell) {
-        let actionSheetController2: UIAlertController = UIAlertController(title: "", message: "", preferredStyle: .actionSheet)
-
-        var cancelActionButton2: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
-        }
-        actionSheetController2.addAction(cancelActionButton2)
-
-
-        cancelActionButton2 = UIAlertAction(title: "Image", style: .default) { action -> Void in
-            VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(subreddit: self.subreddit!.displayName, type: ReplyViewController.ReplyType.SUBMIT_IMAGE, completion: { (submission) in
-                VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: self.parentController?.navigationController, parentViewController: self.parentController)
-            })), parentVC: self.parentController!)
-        }
-        actionSheetController2.addAction(cancelActionButton2)
-
-
-        cancelActionButton2 = UIAlertAction(title: "Link", style: .default) { action -> Void in
-            VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(subreddit: self.subreddit!.displayName, type: ReplyViewController.ReplyType.SUBMIT_LINK, completion: { (submission) in
-                VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: self.parentController?.navigationController, parentViewController: self.parentController)
-            })), parentVC: self.parentController!)
-        }
-        actionSheetController2.addAction(cancelActionButton2)
-
-
-        cancelActionButton2 = UIAlertAction(title: "Text", style: .default) { action -> Void in
-            VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(subreddit: self.subreddit!.displayName, type: ReplyViewController.ReplyType.SUBMIT_TEXT, completion: { (submission) in
-                VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: self.parentController?.navigationController, parentViewController: self.parentController)
-            })), parentVC: self.parentController!)
-        }
-        actionSheetController2.addAction(cancelActionButton2)
-
-        if let presenter = actionSheetController2.popoverPresentationController {
-            presenter.sourceView = selector
-            presenter.sourceRect = selector.bounds
-        }
-        parentController?.present(actionSheetController2, animated: true)
+        PostActions.showPostMenu(parentController!, sub: self.subreddit!.displayName)
     }
-
+    
     func sort(_ selector: UITableViewCell) {
         let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
 
@@ -423,7 +377,7 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
         super.updateConstraints()
 
         let metrics = ["topMargin": 0, "swidth": ((setWidth - 32) / 2), "bh": CGFloat(130 + textHeight), "dh": descHeight, "b": textHeight + 30, "w": setWidth]
-        let views = ["theme": theme, "submit": submit, "mods": mods, "back": back, "sort": sorting,"info": info, "subscribers": subscribers, "here": here] as [String: Any]
+        let views = ["submit": submit, "mods": mods, "back": back, "sort": sorting,"info": info, "subscribers": subscribers, "here": here] as [String: Any]
 
 
         removeConstraints(constraintMain)
@@ -450,11 +404,6 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
                 metrics: metrics,
                 views: views))
 
-        constraintMain.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(12)-[info]-(12)-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-
         constraintMain.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(12)-[mods]-(12)-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
@@ -463,11 +412,11 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
         constraintMain.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(12)-[subscribers(swidth)]-(8)-[here(swidth)]-(12)-|",options: NSLayoutFormatOptions(rawValue: 0),metrics: metrics,views: views))
 
 
-        constraintMain.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(0)-[back(86)]-6-[subscribers(50)]-(8)-[theme(50)]-(2)-[submit(50)]-(2)-[mods(50)]-(2)-[sort(50)]-(8)-[info(dh)]-(4)-|",
+        constraintMain.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(0)-[back(86)]-6-[subscribers(50)]-(8)-[submit(50)]-(2)-[mods(50)]-(2)-[sort(50)]-(8)-[info(dh)]-(4)-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
-        constraintMain.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(0)-[back(86)]-6-[here(50)]-(8)-[theme(50)]-(2)-[submit(50)]-(2)-[mods(50)]-(2)-[sort(50)]-(8)-[info(dh)]-(4)-|",
+        constraintMain.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(0)-[back(86)]-6-[here(50)]-(8)-[submit(50)]-(2)-[mods(50)]-(2)-[sort(50)]-(8)-[info(dh)]-(4)-|",
                                                                          options: NSLayoutFormatOptions(rawValue: 0),
                                                                          metrics: metrics,
                                                                          views: views))
@@ -477,7 +426,7 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
     }
 
     func getEstHeight() -> CGFloat {
-        return CGFloat(62) + ((contentInfo == nil) ? 0 : descHeight) + (50 * 7)
+        return CGFloat(62) + ((contentInfo == nil) ? 0 : descHeight) + (50 * 6)
     }
 
 

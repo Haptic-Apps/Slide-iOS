@@ -20,6 +20,33 @@ protocol SubmissionMoreDelegate: class {
 }
 
 class PostActions : NSObject {
+    
+    public static func showPostMenu(_ parent: UIViewController, sub: String){
+        let alertController: BottomSheetActionController = BottomSheetActionController()
+        alertController.headerData = "New post"
+        
+        
+        alertController.addAction(Action(ActionData(title: "Image", image: UIImage(named: "camera")!.menuIcon()), style: .default, handler: { action in
+            VCPresenter.showVC(viewController: ReplyViewController.init(subreddit: sub, type: ReplyViewController.ReplyType.SUBMIT_IMAGE, completion: { (submission) in
+                VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: parent.navigationController, parentViewController: parent)
+            }), popupIfPossible: true, parentNavigationController: nil, parentViewController: parent)
+        }))
+        
+        alertController.addAction(Action(ActionData(title: "Link", image: UIImage(named: "link")!.menuIcon()), style: .default, handler: { action in
+            VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(subreddit: sub, type: ReplyViewController.ReplyType.SUBMIT_LINK, completion: { (submission) in
+                VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: parent.navigationController, parentViewController: parent)
+            })), parentVC: parent)
+        }))
+        
+        alertController.addAction(Action(ActionData(title: "Selftext", image: UIImage(named: "size")!.menuIcon()), style: .default, handler: { action in
+            VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(subreddit: sub, type: ReplyViewController.ReplyType.SUBMIT_TEXT, completion: { (submission) in
+                VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: parent.navigationController, parentViewController: parent)
+            })), parentVC: parent)
+        }))
+        VCPresenter.presentAlert(alertController, parentVC: parent)
+
+    }
+    
     public static func showMoreMenu(cell: LinkCellView, parent: UIViewController, nav: UINavigationController, mutableList: Bool, delegate: SubmissionMoreDelegate){
         let link = cell.link!
         

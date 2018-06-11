@@ -217,8 +217,8 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
             if(self.three.text! != price1Str!){
                 //Is a sale
                 let off = Int(self.three.text!.substring(1, length: 1))! - Int(price1Str!.substring(1, length: 1))! + (price1Str!.contains(".99") ? 0 : 1)
-                self.purchasePro.text = "Purchase Pro\nWith $3 Donation\n\nSALE! $\(off) off"
-                self.purchaseBundle.text = "Purchase Pro\nWith $3 Donation\n\nSALE! $\(off) off"
+                self.purchasePro.text = "Purchase Pro\nWith $3 Donation\n\nSale: $\(off) off!"
+                self.purchaseBundle.text = "Purchase Pro\nWith $3 Donation\n\nSale: $\(off) off!"
                 
                 self.three.text = price1Str
                 self.six.text = price2Str
