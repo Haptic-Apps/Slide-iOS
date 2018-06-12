@@ -27,6 +27,7 @@ class GalleryTableViewController: MediaViewController, UITableViewDelegate, UITa
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
+        UIApplication.shared.statusBarView?.backgroundColor = .clear
         navigationController?.navigationBar.isHidden = false
     }
     
