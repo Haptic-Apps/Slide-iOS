@@ -34,7 +34,6 @@
 		BE1DA3981E26ADEA00EC0A04 /* SearchContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1DA3971E26ADEA00EC0A04 /* SearchContributionLoader.swift */; };
 		BE1DA39C1E26E86800EC0A04 /* OverlayTransitioningDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1DA39B1E26E86800EC0A04 /* OverlayTransitioningDelegate.swift */; };
 		BE1DA39E1E26E89800EC0A04 /* OverlayPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1DA39D1E26E89800EC0A04 /* OverlayPresentationController.swift */; };
-		BE2B89EF1E2444D20053D493 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = BE2B89EE1E2444D20053D493 /* Settings.bundle */; };
 		BE2B89F31E2450D70053D493 /* ColorPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2B89F21E2450D70053D493 /* ColorPicker.swift */; };
 		BE2B89F61E246CA60053D493 /* GMColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2B89F41E246CA60053D493 /* GMColor.swift */; };
 		BE2B89F71E246CA60053D493 /* GMPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2B89F51E246CA60053D493 /* GMPalette.swift */; };
@@ -240,7 +239,6 @@
 		BE1DA3971E26ADEA00EC0A04 /* SearchContributionLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchContributionLoader.swift; sourceTree = "<group>"; };
 		BE1DA39B1E26E86800EC0A04 /* OverlayTransitioningDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OverlayTransitioningDelegate.swift; sourceTree = "<group>"; };
 		BE1DA39D1E26E89800EC0A04 /* OverlayPresentationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OverlayPresentationController.swift; sourceTree = "<group>"; };
-		BE2B89EE1E2444D20053D493 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		BE2B89F21E2450D70053D493 /* ColorPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorPicker.swift; sourceTree = "<group>"; };
 		BE2B89F41E246CA60053D493 /* GMColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GMColor.swift; sourceTree = "<group>"; };
 		BE2B89F51E246CA60053D493 /* GMPalette.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GMPalette.swift; sourceTree = "<group>"; };
@@ -440,7 +438,9 @@
 		BE1DA3991E26D52500EC0A04 /* ContentViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				BE7AF5771F363A7C0003B24B /* ShadowboxViewController.swift */,
 				BEDDA9901E19AB5D003CD6C3 /* WebsiteViewController.swift */,
+				BEC494271E307D57006618F3 /* GalleryTableViewController.swift */,
 				BEE5BF831E14836E00E3C9AE /* MediaViewController.swift */,
 				BE5E53741E1DAEB7004FE226 /* RedditLink.swift */,
 				BE981D341E31855500BD3846 /* OpenInChrome.swift */,
@@ -596,15 +596,15 @@
 		BE8FC9FB1E0C46090063B8EF = {
 			isa = PBXGroup;
 			children = (
+				B776BFA91C6E10E78077FCE0 /* AutoCache.swift */,
 				BE77470720367D98006C72E8 /* Credits.plist */,
+				298777278D5F06761FD8FF4B /* Frameworks */,
+				CA62E6258F89232082F52D05 /* Pods */,
+				BE8FCA051E0C46090063B8EF /* Products */,
+				BE0EF7CA1F43F9C30058D572 /* Share to Slide */,
 				BE8FCA061E0C46090063B8EF /* Slide for Reddit */,
 				BE8FCA1B1E0C46090063B8EF /* Slide for RedditTests */,
 				BE8FCA261E0C46090063B8EF /* Slide for RedditUITests */,
-				BE0EF7CA1F43F9C30058D572 /* Share to Slide */,
-				BE8FCA051E0C46090063B8EF /* Products */,
-				CA62E6258F89232082F52D05 /* Pods */,
-				298777278D5F06761FD8FF4B /* Frameworks */,
-				B776BFA91C6E10E78077FCE0 /* AutoCache.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -669,11 +669,9 @@
 				BE7439F21E20C9BD008BB63B /* CommentCellView.swift */,
 				BEBF45DA1E23383D00764BB8 /* seen.plist */,
 				BEBF45DC1E23384500764BB8 /* comments.plist */,
-				BE2B89EE1E2444D20053D493 /* Settings.bundle */,
 				BE2B89F21E2450D70053D493 /* ColorPicker.swift */,
 				BE1DA3951E26AD5700EC0A04 /* SearchViewController.swift */,
 				BE1DA3971E26ADEA00EC0A04 /* SearchContributionLoader.swift */,
-				BEC494271E307D57006618F3 /* GalleryTableViewController.swift */,
 				BEC494291E307DDA006618F3 /* GalleryCellView.swift */,
 				BE780B5F1E32CA8F00DAA1EB /* RelatedContributionLoader.swift */,
 				BE780B611E32CB9600DAA1EB /* RelatedViewController.swift */,
@@ -737,7 +735,6 @@
 				BE3D6B851F1F20C300E64682 /* LinkSettingsPreviewCell.swift */,
 				BED7B6B91F2258E700E31A82 /* CachedTitle.swift */,
 				BE7AF5751F3529E00003B24B /* ShadowboxLinkViewController.swift */,
-				BE7AF5771F363A7C0003B24B /* ShadowboxViewController.swift */,
 				BE0EF7C31F43C9510058D572 /* Spoilers.swift */,
 				BE9428E920C46B5600E1A33A /* PostActions.swift */,
 			);
@@ -896,7 +893,6 @@
 			files = (
 				BE77470820367D98006C72E8 /* Credits.plist in Resources */,
 				BE35217A1E3D2E3B00C30B8D /* Roboto-MediumItalic.ttf in Resources */,
-				BE2B89EF1E2444D20053D493 /* Settings.bundle in Resources */,
 				BE35217C1E3D2E4000C30B8D /* RobotoCondensed-Italic.ttf in Resources */,
 				BE35217B1E3D2E3D00C30B8D /* RobotoCondensed-BoldItalic.ttf in Resources */,
 				BE8FCA121E0C46090063B8EF /* LaunchScreen.storyboard in Resources */,
@@ -1456,7 +1452,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Slide for Reddit/Slide for Reddit-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				"SWIFT_OPTIMIZATION_LEVEL[arch=*]" = "-O";
+				"SWIFT_OPTIMIZATION_LEVEL[arch=*]" = "-Onone";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;

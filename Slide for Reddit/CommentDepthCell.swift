@@ -867,7 +867,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         c.alpha = 0
         self.contentView.backgroundColor = ColorUtil.foregroundColor
         if (depth - 1 > 0) {
-            sideWidth = 4
+            sideWidth = 3
             marginTop = 1
             let i22 = depth - 2;
             if (SettingValues.disableColor) {
@@ -966,7 +966,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
 
         self.depth = depth
         if (depth - 1 > 0) {
-            sideWidth = 4
+            sideWidth = 3
             marginTop = 1
             let i22 = depth - 2;
             if (SettingValues.disableColor) {

@@ -14,12 +14,15 @@ class SettingsGeneral: UITableViewController {
     var viewType: UITableViewCell = UITableViewCell()
     var hideFAB: UITableViewCell = UITableViewCell()
     var scrubUsername: UITableViewCell = UITableViewCell()
+    var pinToolbar: UITableViewCell = UITableViewCell()
+
     var postSorting: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "post")
     var commentSorting: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "comment")
     var notifications: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "notif")
     var viewTypeSwitch = UISwitch()
     var hideFABSwitch = UISwitch()
     var scrubUsernameSwitch = UISwitch()
+    var pinToolbarSwitch = UISwitch()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,6 +48,10 @@ class SettingsGeneral: UITableViewController {
         } else if (changed == hideFABSwitch) {
             SettingValues.hiddenFAB = !changed.isOn
             UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_hiddenFAB)
+            SubredditReorderViewController.changed = true
+        } else if (changed == pinToolbarSwitch) {
+            SettingValues.pinToolbar = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_pinToolbar)
             SubredditReorderViewController.changed = true
         } else if (changed == scrubUsernameSwitch) {
             if(!VCPresenter.proDialogShown(feature: false, self)){
@@ -113,6 +120,15 @@ class SettingsGeneral: UITableViewController {
         self.scrubUsername.textLabel?.textColor = ColorUtil.fontColor
         scrubUsername.selectionStyle = UITableViewCellSelectionStyle.none
 
+        pinToolbarSwitch = UISwitch()
+        pinToolbarSwitch.isOn = SettingValues.pinToolbar
+        pinToolbarSwitch.addTarget(self, action: #selector(SettingsGeneral.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+        self.pinToolbar.textLabel?.text = "Don't autohide toolbars"
+        self.pinToolbar.accessoryView = pinToolbarSwitch
+        self.pinToolbar.backgroundColor = ColorUtil.foregroundColor
+        self.pinToolbar.textLabel?.textColor = ColorUtil.fontColor
+        pinToolbar.selectionStyle = UITableViewCellSelectionStyle.none
+
         self.postSorting.textLabel?.text = "Default post sorting"
         self.postSorting.detailTextLabel?.text = SettingValues.defaultSorting.description
         self.postSorting.detailTextLabel?.textColor = ColorUtil.fontColor
@@ -156,7 +172,8 @@ class SettingsGeneral: UITableViewController {
             switch (indexPath.row) {
             case 0: return self.viewType
             case 1: return self.hideFAB
-            case 2: return self.scrubUsername
+            case 2: return self.pinToolbar
+            case 3: return self.scrubUsername
             default: fatalError("Unknown row in section 0")
             }
         case 1:
@@ -296,9 +313,9 @@ class SettingsGeneral: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch (section) {
-        case 0: return 3    // section 0 has 2 rows
+        case 0: return 4
         case 1: return 1
-        case 2: return 2    // section 1 has 1 row
+        case 2: return 2
         default: fatalError("Unknown number of sections")
         }
     }

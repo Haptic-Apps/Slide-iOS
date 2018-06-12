@@ -25,6 +25,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
     let maxHeaderHeight: CGFloat = 120;
     let minHeaderHeight: CGFloat = 56;
+    public var inHeadView = UIView()
 
     func openComments(id: String, subreddit: String?) {
         var index = 0
@@ -220,6 +221,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             sideView.backgroundColor = c
             add.backgroundColor = c
             sideView.backgroundColor = c
+            inHeadView.backgroundColor = c
             if (parentController != nil) {
                 parentController?.colorChanged()
             }
@@ -327,13 +329,15 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
 
-        let currentY = scrollView.contentOffset.y;
-        if (currentY > lastYUsed && currentY > 60) {
-            if (navigationController != nil && !isHiding && !(navigationController!.isToolbarHidden)) {
-                hideUI(inHeader: true)
+        let currentY = scrollView.contentOffset.y
+        if(!SettingValues.pinToolbar){
+            if (currentY > lastYUsed && currentY > 60) {
+                if (navigationController != nil && !isHiding && !(navigationController!.isToolbarHidden)) {
+                    hideUI(inHeader: true)
+                }
+            } else if ((currentY < lastYUsed + 20) && !isHiding && navigationController != nil && (navigationController!.isToolbarHidden)) {
+                showUI()
             }
-        } else if ((currentY < lastYUsed + 20) && !isHiding && navigationController != nil && (navigationController!.isToolbarHidden)) {
-            showUI()
         }
         lastYUsed = currentY
         lastY = currentY
@@ -345,16 +349,13 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             (navigationController)?.setNavigationBarHidden(true, animated: true)
         }
         
-        if(navigationController?.modalPresentationStyle != .pageSheet){
-            UIApplication.shared.statusBarView?.backgroundColor = ColorUtil.getColorForSub(sub: self.sub)
-        }
-
         UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
             SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
         }, completion: { finished in
             SingleSubredditViewController.fab?.isHidden = true
             self.isHiding = false
         })
+        
         (navigationController)?.setToolbarHidden(true, animated: true)
 
         if(!single){
@@ -383,8 +384,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                     UIView.animate(withDuration: 0.25, delay: 0.25, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
                         SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
                     }, completion: { finished in
-                        UIApplication.shared.statusBarView?.backgroundColor = .clear
-
                     })
 
                     (self.navigationController)?.setToolbarHidden(false, animated: true)
@@ -547,7 +546,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         self.tableView.delegate = self
         self.tableView.dataSource = self
         refreshControl = UIRefreshControl()
-
+        
         reloadNeedingColor()
     }
 
@@ -754,7 +753,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             } catch {
             }
         }
-
     }
 
     func exit() {
@@ -1080,6 +1078,13 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             self.tableView.reloadData()
         }
         
+        inHeadView.removeFromSuperview()
+        inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: (UIApplication.shared.statusBarView?.frame.size.height ?? 20)))
+        
+        if(!(navigationController is TapBehindModalViewController)){
+            self.view.addSubview(inHeadView)
+        }
+        
         navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
 
         if (single || !SettingValues.viewType) {
@@ -1089,6 +1094,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         }
 
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub)
+        self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: sub)
 
         self.automaticallyAdjustsScrollViewInsets = false
         self.edgesForExtendedLayout = UIRectEdge.all
@@ -1268,8 +1274,8 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     }
 
     func shadowboxMode() {
-        if(!VCPresenter.proDialogShown(feature: true, self)){
-            let controller = ShadowboxViewController.init(submissions: links)
+        if(!VCPresenter.proDialogShown(feature: true, self) && !links.isEmpty){
+            let controller = ShadowboxViewController.init(submissions: links, subreddit: sub)
             controller.modalPresentationStyle = .overFullScreen
             present(controller, animated: true, completion: nil)
         }

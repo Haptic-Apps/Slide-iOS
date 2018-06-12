@@ -53,7 +53,7 @@ class GalleryTableViewController: MediaViewController, UITableViewDelegate, UITa
         self.tableView.register(GalleryCellView.classForCoder(), forCellReuseIdentifier: "cell")
         self.tableView.backgroundColor = UIColor.black
         self.tableView.separatorStyle = .none
-        let navigationBar = UINavigationBar.init(frame: CGRect.init(x: 0, y: 20, width: self.view.frame.size.width, height: 56))
+        let navigationBar = UINavigationBar.init(frame: CGRect.init(x: 0, y: (UIApplication.shared.statusBarView?.frame.size.height ?? 20), width: self.view.frame.size.width, height: 56))
         navigationBar.isTranslucent = false
         navigationBar.barTintColor = .black
 

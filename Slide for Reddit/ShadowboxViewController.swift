@@ -13,19 +13,21 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
 
     var vCs: [UIViewController] = []
     var baseSubmissions: [RSubmission] = []
+    var subreddit : String
 
     func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
         color2 = (pendingViewControllers[0] as! ShadowboxLinkViewController).color
         color1 = (currentVc as! ShadowboxLinkViewController).color
     }
 
-    public init(submissions: [RSubmission]) {
+    public init(submissions: [RSubmission], subreddit: String) {
+        self.subreddit = subreddit
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
 
         self.baseSubmissions = submissions
 
         for s in baseSubmissions {
-            self.vCs.append(ShadowboxLinkViewController.init(submission: s))
+            self.vCs.append(ShadowboxLinkViewController.init(submission: s, parent: self))
         }
 
         let firstViewController = self.vCs[0]
@@ -64,7 +66,7 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         self.navigationController?.view.backgroundColor = UIColor.clear
         viewToMux = self.background
 
-        let navigationBar = UINavigationBar.init(frame: CGRect.init(x: 0, y: 20, width: self.view.frame.size.width, height: 56))
+        let navigationBar = UINavigationBar.init(frame: CGRect.init(x: 0, y: 30, width: self.view.frame.size.width, height: 56))
         navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationBar.shadowImage = UIImage()
         navigationBar.isTranslucent = true

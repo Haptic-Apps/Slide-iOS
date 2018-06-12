@@ -302,7 +302,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         self.hide = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20))
         hide.image = UIImage.init(named: "hide")?.menuIcon()
 
-
         self.reply = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20))
         reply.image = UIImage.init(named: "reply")?.menuIcon()
 

@@ -553,7 +553,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                     if (comment.contains(self.context)) {
                                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                                             self.goToCell(i: index)
-                                            self.showCommentMenu(self.tableView.cellForRow(at: IndexPath.init(row: index, section: 0)) as! CommentDepthCell)
+                                            var cell = self.tableView(self.tableView, cellForRowAt: IndexPath.init(row: index, section: 0))
+                                            print(cell)
+                                            self.showCommentMenu(cell as! CommentDepthCell)
                                         }
                                         break
                                     } else {

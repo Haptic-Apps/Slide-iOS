@@ -82,6 +82,7 @@ class SettingValues {
     public static let pref_nameScrubbing = "NAME_SCRUBBING"
     public static let pref_autoCache = "AUTO_CACHE"
     public static let pref_pro = "PRO"
+    public static let pref_pinToolbar = "PIN_TOOLBAR"
 
     public static var viewType = true
     public static var hiddenFAB = true
@@ -102,6 +103,7 @@ class SettingValues {
     public static var multiColumnCount = 2
     public static var nameScrubbing = true
     public static var autoCache = false
+    public static var pinToolbar = false
 
     public static var hideButtonActionbar = false
     public static var saveButtonActionbar = true
@@ -239,7 +241,6 @@ class SettingValues {
         SettingValues.nsfwEnabled = settings.bool(forKey: SettingValues.pref_nsfwEnabled)
         SettingValues.nsfwPreviews = settings.bool(forKey: SettingValues.pref_nsfwPreviews)
         SettingValues.swapLongPress = settings.bool(forKey: SettingValues.pref_swapLongPress)
-        SettingValues.hideNSFWCollection = settings.bool(forKey: SettingValues.pref_hideNSFWCollection)
         SettingValues.domainInInfo = settings.bool(forKey: SettingValues.pref_domainInInfo)
         SettingValues.showFirstParagraph = settings.object(forKey: SettingValues.pref_showFirstParagraph) == nil ? true : settings.bool(forKey: SettingValues.pref_showFirstParagraph)
         SettingValues.disableNavigationBar = settings.bool(forKey: SettingValues.pref_disableNavigationBar)
@@ -255,6 +256,7 @@ class SettingValues {
         SettingValues.nameScrubbing = settings.bool(forKey: SettingValues.pref_nameScrubbing)
         SettingValues.hiddenFAB = settings.bool(forKey: SettingValues.pref_hiddenFAB)
         SettingValues.isPro = settings.bool(forKey: SettingValues.pref_pro)
+        SettingValues.pinToolbar = settings.bool(forKey: SettingValues.pref_pinToolbar)
 
         SettingValues.dataSavingEnabled = settings.bool(forKey: SettingValues.pref_dataSavingEnabled)
         SettingValues.dataSavingDisableWiFi = settings.bool(forKey: SettingValues.pref_dataSavingDisableWifi)
