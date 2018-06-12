@@ -1641,6 +1641,10 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                             self.refreshControl.endRefreshing()
                             self.indicator?.stopAnimating()
                             self.loading = false
+                            if(MainViewController.first){
+                                MainViewController.first = false
+                                self.parentController?.checkForMail()
+                            }
                         }
                     }
                 })

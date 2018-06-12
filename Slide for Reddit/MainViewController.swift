@@ -94,6 +94,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     func splitViewController(_ svc: UISplitViewController, shouldHide vc: UIViewController, in orientation: UIInterfaceOrientation) -> Bool {
         return false
     }
+    
+    public static var first = true
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -104,7 +106,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             self.splitViewController?.preferredPrimaryColumnWidthFraction = 1
 
         }
-        if (AccountController.isLoggedIn) {
+        if (AccountController.isLoggedIn && !MainViewController.first) {
             checkForMail()
         }
     }
@@ -263,9 +265,16 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         } else {
             finalSubs = Subscriptions.subreddits
             MainViewController.isOffline = false
+            var subs = [UIMutableApplicationShortcutItem]()
             for subname in finalSubs {
                 MainViewController.vCs.append(SingleSubredditViewController(subName: subname, parent: self))
+                if(subs.count < 3 && !subname.contains("/")){
+                    subs.append(UIMutableApplicationShortcutItem.init(type: "me.ccrama.redditslide.subreddit", localizedTitle: subname, localizedSubtitle: nil, icon: UIApplicationShortcutIcon.init(templateImageName: "subs"), userInfo: [ "sub": "\(subname)" ]))
+                }
+                
+                subs.reverse()
             }
+            UIApplication.shared.shortcutItems = subs
         }
 
         if (SettingValues.viewType) {

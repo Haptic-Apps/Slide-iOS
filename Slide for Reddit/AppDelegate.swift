@@ -160,6 +160,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         getData(completionHandler);
     }
+    
+    func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
+        let url = shortcutItem.userInfo!["sub"]!
+        VCPresenter.openRedditLink("/r/\(url)", nil, window?.rootViewController)
+    }
 
     func getData(_ completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         

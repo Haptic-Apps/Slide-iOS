@@ -108,13 +108,13 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
 
     func getHeightFromAspectRatio(imageHeight: CGFloat, imageWidth: CGFloat) -> CGFloat {
         let ratio = Double(imageHeight) / Double(imageWidth)
-        let width = Double(view.frame.size.width);
+        let width = Double(view.frame.size.width)
         return CGFloat(width * ratio)
     }
 
     func getWidthFromAspectRatio(imageHeight: CGFloat, imageWidth: CGFloat) -> CGFloat {
         let ratio = Double(imageWidth) / Double(imageHeight)
-        let height = Double(view.frame.size.height * 0.60);
+        let height = Double(view.frame.size.height * 0.60)
         return CGFloat(height * ratio)
     }
 
@@ -127,7 +127,7 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
 
         self.scrollView = UIScrollView.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height - 50))
         self.scrollView.minimumZoomScale = 1
-        self.scrollView.maximumZoomScale = 6.0
+        self.scrollView.maximumZoomScale = 1
         self.scrollView.backgroundColor = .clear
         toolbar = UIView.init(frame: CGRect.init(x: 0, y: self.view.frame.size.height - 55, width: self.view.frame.size.width, height: 24))
         scrollView.addTapGestureRecognizer(action: {
@@ -148,8 +148,12 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
         self.view.addSubview(scrollView)
 
         var text = CachedTitle.getTitle(submission: submission, full: true, false, true)
-        estHeight = text.boundingRect(with: CGSize.init(width: self.view.frame.size.width - 24, height: 10000), options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).height
-        textB = TTTAttributedLabel.init(frame: CGRect.init(x: 24, y: self.view.frame.size.height - estHeight - 60, width: self.view.frame.size.width - 48, height: estHeight + 20))
+        
+        let framesetter = CTFramesetterCreateWithAttributedString(text)
+        let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: self.view.frame.size.width - 48, height: CGFloat.greatestFiniteMagnitude), nil)
+
+        estHeight = textSize.height
+        textB = TTTAttributedLabel.init(frame: CGRect.init(x: 24, y: self.view.frame.size.height - estHeight - 64, width: self.view.frame.size.width - 48, height: estHeight + 20))
         textB.numberOfLines = 0
         textB.setText(text)
 
