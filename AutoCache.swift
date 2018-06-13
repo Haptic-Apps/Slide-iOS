@@ -171,7 +171,7 @@ public class AutoCache: NSObject {
             var thumb = submission.thumbnail
             var big = submission.banner
             var height = submission.height
-            var type = ContentType.getContentType(baseUrl: submission.url!)
+            var type = ContentType.getContentType(baseUrl: submission.url)
             if (submission.isSelf) {
                 type = .SELF
             }

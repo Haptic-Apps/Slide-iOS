@@ -62,7 +62,7 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
             let content = contentUrl?.absoluteString
             contentUrl = URL.init(string: (content?.substring(to: (content?.characters.index(of: "."))!))!)
         }
-        let type = ContentType.getContentType(baseUrl: contentUrl!)
+        let type = ContentType.getContentType(baseUrl: contentUrl)
 
         if (type == ContentType.CType.ALBUM && SettingValues.internalAlbumView) {
             print("Showing album")

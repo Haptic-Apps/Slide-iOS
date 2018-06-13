@@ -426,7 +426,7 @@ class RSubmission: Object {
             return .SELF
         }
         if url != nil {
-            return ContentType.getContentType(baseUrl: url!)
+            return ContentType.getContentType(baseUrl: url)
         } else {
             return .NONE
         }

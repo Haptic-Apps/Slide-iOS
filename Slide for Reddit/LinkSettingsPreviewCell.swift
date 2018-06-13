@@ -635,7 +635,7 @@ class LinkTableViewCell: UITableViewCell, UIViewControllerPreviewingDelegate, TT
 
         submissionHeight = submission.height
 
-        var type = ContentType.getContentType(baseUrl: submission.url!)
+        var type = ContentType.getContentType(baseUrl: submission.url)
         if (submission.isSelf) {
             type = .SELF
         }
@@ -1153,7 +1153,7 @@ class LinkTableViewCell: UITableViewCell, UIViewControllerPreviewingDelegate, TT
 
         submissionHeight = submission.height
 
-        var type = ContentType.getContentType(baseUrl: submission.url!)
+        var type = ContentType.getContentType(baseUrl: submission.url)
         if (submission.isSelf) {
             type = .SELF
         }

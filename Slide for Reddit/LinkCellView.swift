@@ -686,7 +686,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
         submissionHeight = submission.height
 
-        var type = ContentType.getContentType(baseUrl: submission.url!)
+        var type = ContentType.getContentType(baseUrl: submission.url)
         if (submission.isSelf) {
             type = .SELF
         }
@@ -1216,7 +1216,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
         submissionHeight = submission.height
 
-        var type = ContentType.getContentType(baseUrl: submission.url!)
+        var type = ContentType.getContentType(baseUrl: submission.url)
         if (submission.isSelf) {
             type = .SELF
         }

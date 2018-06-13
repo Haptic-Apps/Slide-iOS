@@ -121,7 +121,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             var big = submission.banner
             let height = submission.height
 
-            var type = ContentType.getContentType(baseUrl: submission.url!)
+            var type = ContentType.getContentType(baseUrl: submission.url)
             if (submission.isSelf) {
                 type = .SELF
             }
@@ -231,7 +231,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     var thumb = submission.thumbnail
                     var big = submission.banner
 
-                    var type = ContentType.getContentType(baseUrl: submission.url!)
+                    var type = ContentType.getContentType(baseUrl: submission.url)
                     if (submission.isSelf) {
                         type = .SELF
                     }

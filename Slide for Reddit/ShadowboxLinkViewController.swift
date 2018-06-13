@@ -40,7 +40,7 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
         self.submission = submission
         self.baseURL = submission.url
         super.init(nibName: nil, bundle: nil)
-        type = ContentType.getContentType(baseUrl: baseURL!)
+        type = ContentType.getContentType(baseUrl: baseURL)
         color = .black
     }
 

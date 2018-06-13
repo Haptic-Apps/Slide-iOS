@@ -137,13 +137,13 @@ class ContentType {
      * @param url URL to get ContentType from
      * @return ContentType of the URL
      */
-    public static func getContentType(baseUrl: URL) -> CType {
-        var urlString = baseUrl.absoluteString
-        if(urlString.hasPrefix("applewebdata:")){
-            urlString = baseUrl.path
-        }
-        if(urlString.isEmpty()){
+    public static func getContentType(baseUrl: URL?) -> CType {
+        if(baseUrl == nil || baseUrl!.absoluteString.isEmpty()){
             return CType.NONE
+        }
+        var urlString = baseUrl!.absoluteString
+        if(urlString.hasPrefix("applewebdata:")){
+            urlString = baseUrl!.path
         }
         if (!urlString.hasPrefix("//") && ((urlString.hasPrefix("/") && urlString.length < 4)
             || urlString.hasPrefix("#spoil")
@@ -228,7 +228,7 @@ class ContentType {
             return .NONE
         }
 
-        let basicType = getContentType(baseUrl: url!);
+        let basicType = getContentType(baseUrl: url)
         
         if (submission?.isSelf)! {
             return CType.SELF;
