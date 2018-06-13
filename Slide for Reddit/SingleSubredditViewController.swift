@@ -1662,6 +1662,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             var thumb = submission.thumbnail
             var big = submission.banner
             var height = submission.height
+            if(submission.url != nil){
             var type = ContentType.getContentType(baseUrl: submission.url!)
             if (submission.isSelf) {
                 type = .SELF
@@ -1727,7 +1728,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                     }
                 }
             }
-
+            }
         }
         SDWebImagePrefetcher.init().prefetchURLs(urls)
     }

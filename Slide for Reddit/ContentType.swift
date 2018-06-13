@@ -142,7 +142,10 @@ class ContentType {
         if(urlString.hasPrefix("applewebdata:")){
             urlString = baseUrl.path
         }
-        if (!urlString.hasPrefix("//") && ((urlString.hasPrefix("/") && urlString.characters.count < 4)
+        if(urlString.isEmpty()){
+            return CType.NONE
+        }
+        if (!urlString.hasPrefix("//") && ((urlString.hasPrefix("/") && urlString.length < 4)
             || urlString.hasPrefix("#spoil")
             || urlString.hasPrefix("/spoil")
             || urlString.hasPrefix("#s-")
