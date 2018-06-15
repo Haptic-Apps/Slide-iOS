@@ -84,6 +84,20 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         tableView.reloadData()
     }
 
+    public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String){
+        cell.textLabel?.text = text
+        cell.textLabel?.textColor = ColorUtil.fontColor
+        cell.backgroundColor = ColorUtil.foregroundColor
+        cell.textLabel?.numberOfLines = 0
+        cell.textLabel?.lineBreakMode = .byWordWrapping
+        if let s = switchV {
+            s.isOn = isOn
+            s.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+            cell.accessoryView = s
+        }
+        cell.selectionStyle = UITableViewCellSelectionStyle.none
+    }
+
     override func loadView() {
         super.loadView()
 
@@ -92,53 +106,17 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         self.title = "Link Handling"
         self.tableView.separatorStyle = .none
 
-        internalGif = UISwitch()
-        internalGif.isOn = SettingValues.internalGifView
-        internalGif.addTarget(self, action: #selector(SettingsLinkHandling.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        internalGifCell.textLabel?.text = "Load gifs in app"
-        internalGifCell.accessoryView = internalGif
-        internalGifCell.backgroundColor = ColorUtil.foregroundColor
-        internalGifCell.textLabel?.textColor = ColorUtil.fontColor
-        internalGifCell.selectionStyle = UITableViewCellSelectionStyle.none
-
-        internalAlbum = UISwitch()
-        internalAlbum.isOn = SettingValues.internalAlbumView
-        internalAlbum.addTarget(self, action: #selector(SettingsLinkHandling.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        internalAlbumCell.textLabel?.text = "Load albums in app"
-        internalAlbumCell.accessoryView = internalAlbum
-        internalAlbumCell.backgroundColor = ColorUtil.foregroundColor
-        internalAlbumCell.textLabel?.textColor = ColorUtil.fontColor
-        internalAlbumCell.selectionStyle = UITableViewCellSelectionStyle.none
-
-        internalImage = UISwitch()
-        internalImage.isOn = SettingValues.internalImageView
-        internalImage.addTarget(self, action: #selector(SettingsLinkHandling.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        internalImageCell.textLabel?.text = "Load images in app"
-        internalImageCell.accessoryView = internalImage
-        internalImageCell.backgroundColor = ColorUtil.foregroundColor
-        internalImageCell.textLabel?.textColor = ColorUtil.fontColor
-        internalImageCell.selectionStyle = UITableViewCellSelectionStyle.none
-
-        internalYouTube = UISwitch()
-        internalYouTube.isOn = SettingValues.internalYouTube
-        internalYouTube.addTarget(self, action: #selector(SettingsLinkHandling.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        internalYouTubeCell.textLabel?.text = "Load YouTube videos in app"
-        internalYouTubeCell.accessoryView = internalYouTube
-        internalYouTubeCell.backgroundColor = ColorUtil.foregroundColor
-        internalYouTubeCell.textLabel?.textColor = ColorUtil.fontColor
-        internalYouTubeCell.selectionStyle = UITableViewCellSelectionStyle.none
-
-        useSafariVC = UISwitch()
-        useSafariVC.isOn = SettingValues.safariVC
-        useSafariVC.addTarget(self, action: #selector(SettingsLinkHandling.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        useSafariVCCell.textLabel?.text = "Use Safari web view"
+        createCell(internalGifCell, internalGif, isOn: SettingValues.internalGifView, text: "Load gifs in app")
+        createCell(internalAlbumCell, internalAlbum, isOn: SettingValues.internalAlbumView, text: "Load albums in app")
+        createCell(internalImageCell, internalImage, isOn: SettingValues.internalImageView, text: "Load images in app")
+        createCell(internalYouTubeCell, internalYouTube, isOn: SettingValues.internalYouTube, text: "Load YouTube videos in app")
+        createCell(useSafariVCCell, useSafariVC, isOn: SettingValues.safariVC, text: "Use Safari web view instead of internal Website view")
         useSafariVCCell.detailTextLabel?.text = "The Safari VC will still show ads if you have purchased pro"
-        useSafariVCCell.accessoryView = useSafariVC
-        useSafariVCCell.backgroundColor = ColorUtil.foregroundColor
-        useSafariVCCell.textLabel?.textColor = ColorUtil.fontColor
-        useSafariVCCell.selectionStyle = UITableViewCellSelectionStyle.none
-        self.tableView.tableFooterView = UIView()
+        useSafariVCCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        useSafariVCCell.detailTextLabel?.numberOfLines = 0
+        useSafariVCCell.detailTextLabel?.lineBreakMode = .byWordWrapping
 
+        self.tableView.tableFooterView = UIView()
 
         domainEnter.searchBarStyle = UISearchBarStyle.minimal
         domainEnter.placeholder = "Enter domain to open externally"

@@ -11,7 +11,7 @@ import Foundation
 class SwipeDownModalVC: ColorMuxPagingViewController {
     var panGestureRecognizer: UIPanGestureRecognizer?
     var panGestureRecognizer2: UIPanGestureRecognizer?
-    public var background: UIView?;
+    public var background: UIView?
 
     var originalPosition: CGPoint?
     var currentPositionTouched: CGPoint?
@@ -22,17 +22,18 @@ class SwipeDownModalVC: ColorMuxPagingViewController {
         panGestureRecognizer2 = UIPanGestureRecognizer(target: self, action: #selector(panGestureAction(_:)))
         panGestureRecognizer!.direction = .vertical
         panGestureRecognizer2!.direction = .horizontal
+        
         view.addGestureRecognizer(panGestureRecognizer!)
-
         view.addGestureRecognizer(panGestureRecognizer2!)
 
         background = UIView()
         background!.frame = self.view.frame
+        background!.autoresizingMask = [.flexibleHeight, .flexibleWidth]
         background!.backgroundColor = .black
 
         self.view.insertSubview(background!, at: 0)
     }
-
+    
     func panGestureAction(_ panGesture: UIPanGestureRecognizer) {
         let translation = panGesture.translation(in: view)
 
@@ -44,7 +45,7 @@ class SwipeDownModalVC: ColorMuxPagingViewController {
                     x: 0,
                     y: translation.y
             )
-            var progress = translation.y / (self.view.frame.size.height / 2)
+            let progress = translation.y / (self.view.frame.size.height / 2)
             background!.alpha = 1 - (abs(progress) * 0.9)
 
         } else if panGesture.state == .ended {

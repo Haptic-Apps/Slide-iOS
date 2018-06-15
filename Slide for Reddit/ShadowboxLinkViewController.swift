@@ -207,13 +207,13 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
         toolbar.isUserInteractionEnabled = true
     
         self.comment = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20))
-        comment.image = UIImage.init(named: "comments")?.menuIcon()
+        comment.image = UIImage.init(named: "comments")?.menuIcon().withColor(tintColor: .white)
 
         self.upvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20))
-        upvote.image = UIImage.init(named: "upvote")?.menuIcon()
+        upvote.image = UIImage.init(named: "upvote")?.menuIcon().withColor(tintColor: .white)
 
         self.downvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20))
-        downvote.image = UIImage.init(named: "downvote")?.menuIcon()
+        downvote.image = UIImage.init(named: "downvote")?.menuIcon().withColor(tintColor: .white)
 
         doVoteImages()
         
@@ -253,8 +253,8 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
     }
     
     func doVoteImages(){
-        upvote.image = UIImage.init(named: "upvote")?.menuIcon()
-        downvote.image = UIImage.init(named: "downvote")?.menuIcon()
+        upvote.image = UIImage.init(named: "upvote")?.menuIcon().withColor(tintColor: .white)
+        downvote.image = UIImage.init(named: "downvote")?.menuIcon().withColor(tintColor: .white)
         switch (ActionStates.getVoteDirection(s: submission)) {
         case .down:
             downvote.image = UIImage.init(named: "downvote")?.withColor(tintColor: ColorUtil.downvoteColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))

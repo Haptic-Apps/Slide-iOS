@@ -40,8 +40,13 @@ class NavigationHeaderView: UIView {
 
         if (AccountController.isLoggedIn) {
             var titleT = NSMutableAttributedString.init(string: "\t\t", attributes: [NSFontAttributeName: titleFont])
-            titleFont = UIFont.systemFont(ofSize: 25)
+            if(AccountController.formatUsername(input: AccountController.currentName, small: true).length > 15){
+                titleFont = UIFont.systemFont(ofSize: 15)
+            } else {
+                titleFont = UIFont.systemFont(ofSize: 25)
+            }
             titleT.append(NSMutableAttributedString.init(string: AccountController.formatUsername(input: AccountController.currentName, small: true), attributes: [NSFontAttributeName: titleFont.bold()]))
+            title.adjustsFontSizeToFitWidth = true
             title.attributedText = titleT
             inbox.isHidden = false
         } else {

@@ -17,6 +17,20 @@ class CacheSettings: UITableViewController {
     var autoCacheSwitch = UISwitch()
     var cacheContentSwitch = UISwitch()
 
+    public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String){
+        cell.textLabel?.text = text
+        cell.textLabel?.textColor = ColorUtil.fontColor
+        cell.backgroundColor = ColorUtil.foregroundColor
+        cell.textLabel?.numberOfLines = 0
+        cell.textLabel?.lineBreakMode = .byWordWrapping
+        if let s = switchV {
+            s.isOn = isOn
+            s.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+            cell.accessoryView = s
+        }
+        cell.selectionStyle = UITableViewCellSelectionStyle.none
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         selected.append(contentsOf: Subscriptions.offline)
@@ -28,26 +42,17 @@ class CacheSettings: UITableViewController {
         tableView.reloadData()
         self.tableView.separatorStyle = .none
 
-        autoCacheSwitch = UISwitch()
-        autoCacheSwitch.isOn = SettingValues.autoCache
-        autoCacheSwitch.addTarget(self, action: #selector(CacheSettings.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        self.autoCache.textLabel?.text = "Cache subreddits automatically"
+        createCell(autoCache, autoCacheSwitch, isOn: SettingValues.autoCache, text: "Cache subreddits automatically")
         self.autoCache.detailTextLabel?.text = "Will run the first time Slide opens each day"
-        self.autoCache.accessoryView = autoCacheSwitch
-        self.autoCache.backgroundColor = ColorUtil.foregroundColor
-        self.autoCache.textLabel?.textColor = ColorUtil.fontColor
         self.autoCache.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.autoCache.detailTextLabel?.lineBreakMode = .byWordWrapping
+        self.autoCache.detailTextLabel?.numberOfLines = 0
 
-        cacheContentSwitch = UISwitch()
-        cacheContentSwitch.isOn = false
-        cacheContentSwitch.isEnabled = false
-        cacheContentSwitch.addTarget(self, action: #selector(CacheSettings.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        self.cacheContent.textLabel?.text = "Cache gifs and albums"
+        createCell(cacheContent, cacheContentSwitch, isOn: false, text: "Cache subreddits automatically")
         self.cacheContent.detailTextLabel?.text = "Coming soon!"
-        self.cacheContent.accessoryView = cacheContentSwitch
-        self.cacheContent.backgroundColor = ColorUtil.foregroundColor
-        self.cacheContent.textLabel?.textColor = ColorUtil.fontColor
         self.cacheContent.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.cacheContent.detailTextLabel?.lineBreakMode = .byWordWrapping
+        self.cacheContent.detailTextLabel?.numberOfLines = 0
 
         self.tableView.tableFooterView = UIView()
     }

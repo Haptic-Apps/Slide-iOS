@@ -84,6 +84,20 @@ class SettingsGeneral: UITableViewController {
         }
         return toReturn
     }
+    
+    public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String){
+        cell.textLabel?.text = text
+        cell.textLabel?.textColor = ColorUtil.fontColor
+        cell.backgroundColor = ColorUtil.foregroundColor
+        cell.textLabel?.numberOfLines = 0
+        cell.textLabel?.lineBreakMode = .byWordWrapping
+        if let s = switchV {
+            s.isOn = isOn
+            s.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+            cell.accessoryView = s
+        }
+        cell.selectionStyle = UITableViewCellSelectionStyle.none
+    }
 
     override func loadView() {
         super.loadView()
@@ -93,41 +107,10 @@ class SettingsGeneral: UITableViewController {
         self.title = "General"
         self.tableView.separatorStyle = .none
 
-        viewTypeSwitch = UISwitch()
-        viewTypeSwitch.isOn = SettingValues.viewType
-        viewTypeSwitch.addTarget(self, action: #selector(SettingsGeneral.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        self.viewType.textLabel?.text = "Subreddit tabs mode"
-        self.viewType.accessoryView = viewTypeSwitch
-        self.viewType.backgroundColor = ColorUtil.foregroundColor
-        self.viewType.textLabel?.textColor = ColorUtil.fontColor
-        viewType.selectionStyle = UITableViewCellSelectionStyle.none
-
-        hideFABSwitch = UISwitch()
-        hideFABSwitch.isOn = !SettingValues.hiddenFAB
-        hideFABSwitch.addTarget(self, action: #selector(SettingsGeneral.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        self.hideFAB.textLabel?.text = "Subreddit floating button"
-        self.hideFAB.accessoryView = hideFABSwitch
-        self.hideFAB.backgroundColor = ColorUtil.foregroundColor
-        self.hideFAB.textLabel?.textColor = ColorUtil.fontColor
-        hideFAB.selectionStyle = UITableViewCellSelectionStyle.none
-
-        scrubUsernameSwitch = UISwitch()
-        scrubUsernameSwitch.isOn = SettingValues.nameScrubbing
-        scrubUsernameSwitch.addTarget(self, action: #selector(SettingsGeneral.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        self.scrubUsername.textLabel?.text = "Scrub your username (you will become \"you\")"
-        self.scrubUsername.accessoryView = scrubUsernameSwitch
-        self.scrubUsername.backgroundColor = ColorUtil.foregroundColor
-        self.scrubUsername.textLabel?.textColor = ColorUtil.fontColor
-        scrubUsername.selectionStyle = UITableViewCellSelectionStyle.none
-
-        pinToolbarSwitch = UISwitch()
-        pinToolbarSwitch.isOn = SettingValues.pinToolbar
-        pinToolbarSwitch.addTarget(self, action: #selector(SettingsGeneral.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        self.pinToolbar.textLabel?.text = "Don't autohide toolbars"
-        self.pinToolbar.accessoryView = pinToolbarSwitch
-        self.pinToolbar.backgroundColor = ColorUtil.foregroundColor
-        self.pinToolbar.textLabel?.textColor = ColorUtil.fontColor
-        pinToolbar.selectionStyle = UITableViewCellSelectionStyle.none
+        createCell(viewType, viewTypeSwitch, isOn: SettingValues.viewType, text: "Swiping subreddit tabs mode")
+        createCell(hideFAB, hideFABSwitch, isOn: SettingValues.hiddenFAB, text: "Show subreddit floating action button")
+        createCell(scrubUsername, scrubUsernameSwitch, isOn: SettingValues.nameScrubbing, text: "Scrub your username (you will show as \"you\"")
+        createCell(pinToolbar, pinToolbarSwitch, isOn: SettingValues.pinToolbar, text: "Pin header navigation bar and toolbar in subreddit view")
 
         self.postSorting.textLabel?.text = "Default post sorting"
         self.postSorting.detailTextLabel?.text = SettingValues.defaultSorting.description

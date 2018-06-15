@@ -66,8 +66,8 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
                             sheet.addAction(somethingAction)
                         }
                         if let presenter = sheet.popoverPresentationController {
-                            presenter.sourceView = sender
-                            presenter.sourceRect = sender.bounds
+                            presenter.sourceView = self.mods
+                            presenter.sourceRect = self.mods.bounds
                         }
 
                         self.parentController?.present(sheet, animated: true)
@@ -236,17 +236,23 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
             print("Cancel")
         }
         actionSheetController.addAction(cancelActionButton)
+        let selected = UIImage.init(named: "selected")!.imageResize(sizeChange: CGSize.init(width: 20, height: 20)).withColor(tintColor: .blue)
 
         for link in LinkSortType.cases {
             let saveActionButton: UIAlertAction = UIAlertAction(title: link.description, style: .default) { action -> Void in
                 self.showTimeMenu(s: link, selector: selector)
             }
+            
+            if(SettingValues.getLinkSorting(forSubreddit: self.subreddit!.displayName) == link){
+                saveActionButton.setValue(selected, forKey: "image")
+            }
+
             actionSheetController.addAction(saveActionButton)
         }
 
         if let presenter = actionSheetController.popoverPresentationController {
-            presenter.sourceView = selector
-            presenter.sourceRect = selector.bounds
+            presenter.sourceView = self.sorting
+            presenter.sourceRect = self.sorting.bounds
         }
 
         self.parentController?.present(actionSheetController, animated: true, completion: nil)
@@ -266,6 +272,7 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
                 print("Cancel")
             }
             actionSheetController.addAction(cancelActionButton)
+            let selected = UIImage.init(named: "selected")!.imageResize(sizeChange: CGSize.init(width: 20, height: 20)).withColor(tintColor: .blue)
 
             for t in TimeFilterWithin.cases {
                 let saveActionButton: UIAlertAction = UIAlertAction(title: t.param, style: .default) { action -> Void in
@@ -274,6 +281,11 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
                     UserDefaults.standard.set(t.param, forKey: self.subreddit!.displayName + "Time")
                     UserDefaults.standard.synchronize()
                 }
+                
+                if(SettingValues.getTimePeriod(forSubreddit: self.subreddit!.displayName) == t){
+                    saveActionButton.setValue(selected, forKey: "image")
+                }
+
                 actionSheetController.addAction(saveActionButton)
             }
 

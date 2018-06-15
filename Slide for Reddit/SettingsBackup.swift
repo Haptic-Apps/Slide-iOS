@@ -58,17 +58,6 @@ class SettingsBackup: UITableViewController {
         self.restore.detailTextLabel?.text = "Restore your backup data from iCloud"
         self.restore.imageView?.image = UIImage.init(named: "restore")?.toolbarIcon().withColor(tintColor: .white)
         self.restore.imageView?.tintColor = ColorUtil.fontColor
-        
-        let about = PaddingLabel(frame: CGRect.init(x:  0, y: 0, width: self.tableView.frame.size.width, height: 200))
-        about.font = UIFont.systemFont(ofSize: 16)
-        about.backgroundColor = ColorUtil.foregroundColor
-        about.textColor = ColorUtil.fontColor
-        about.text = "Slide backup will store all user data, including subreddits and account information, to your iCloud account"
-        about.numberOfLines = 0
-        about.textAlignment = .center
-        about.lineBreakMode = .byClipping
-        about.sizeToFit()
-        tableView.tableHeaderView = about
     }
 
     override func viewDidLoad() {

@@ -230,7 +230,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        return 1
     }
 
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {

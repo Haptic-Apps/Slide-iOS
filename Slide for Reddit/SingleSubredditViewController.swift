@@ -223,7 +223,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             sideView.backgroundColor = c
             inHeadView.backgroundColor = c
             if (parentController != nil) {
-                parentController?.colorChanged()
+                parentController?.colorChanged(c)
             }
         }
     }
@@ -780,10 +780,10 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
 
     func doDisplayMultiSidebar(_ sub: Multireddit) {
-        let alrController = UIAlertController(title: sub.displayName, message: sub.descriptionMd, preferredStyle: UIAlertControllerStyle.actionSheet)
+        let alrController = UIAlertController(title: sub.displayName, message: sub.descriptionMd, preferredStyle: UIAlertControllerStyle.alert)
         for s in sub.subreddits {
             let somethingAction = UIAlertAction(title: "r/" + s, style: UIAlertActionStyle.default, handler: { (alert: UIAlertAction!) in
-                self.show(SingleSubredditViewController.init(subName: s, single: true), sender: self)
+                VCPresenter.showVC(viewController: SingleSubredditViewController.init(subName: s, single: true), popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
             })
             let color = ColorUtil.getColorForSub(sub: s)
             if (color != ColorUtil.baseColor) {
@@ -992,6 +992,9 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         alertController.addAction(image: nil, title: "Save", color: ColorUtil.accentColorForSub(sub: sub), style: .default) { action in
             ColorUtil.setColorForSub(sub: self.sub, color: (self.navigationController?.navigationBar.barTintColor)!)
             self.reloadDataReset()
+            if (self.parentController != nil) {
+                self.parentController?.colorChanged(ColorUtil.getColorForSub(sub: self.sub))
+            }
         }
 
 
@@ -1048,6 +1051,9 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         alertController.addAction(image: nil, title: "Save", color: ColorUtil.accentColorForSub(sub: sub), style: .default) { action in
             ColorUtil.setAccentColorForSub(sub: self.sub, color: self.accentChosen!)
             self.reloadDataReset()
+            if (self.parentController != nil) {
+                self.parentController?.colorChanged(ColorUtil.getColorForSub(sub: self.sub))
+            }
         }
 
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { (alert: UIAlertAction!) in
@@ -1079,8 +1085,9 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         }
         
         inHeadView.removeFromSuperview()
-        inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: (UIApplication.shared.statusBarView?.frame.size.height ?? 20)))
-        
+        inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarView?.frame.size.height ?? 20)))
+        self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: sub)
+
         if(!(navigationController is TapBehindModalViewController)){
             self.view.addSubview(inHeadView)
         }
@@ -1094,7 +1101,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         }
 
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub)
-        self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: sub)
 
         self.automaticallyAdjustsScrollViewInsets = false
         self.edgesForExtendedLayout = UIRectEdge.all
@@ -1120,6 +1126,9 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     func resetColors(){
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub)
         setupFab()
+        if (parentController != nil) {
+            parentController?.colorChanged(ColorUtil.getColorForSub(sub: sub))
+        }
     }
 
     func reloadDataReset() {
@@ -1509,7 +1518,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                     indicator?.radius = 20
                     indicator?.indicatorMode = .indeterminate
                     indicator?.cycleColors = [ColorUtil.getColorForSub(sub: sub), ColorUtil.accentColorForSub(sub: sub)]
-                    let center = CGPoint.init(x: UIScreen.main.bounds.width / 2, y: 150 + UIScreen.main.bounds.width / 2)
+                    let center = CGPoint.init(x: UIScreen.main.bounds.width / 2, y: 150 + UIScreen.main.bounds.height / 2)
                     indicator?.center = center
                     self.tableView.addSubview(indicator!)
                     indicator?.startAnimating()
@@ -1658,6 +1667,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
     func preloadImages(_ values: [RSubmission]) {
         var urls: [URL] = []
+        if(!SettingValues.noImages){
         for submission in values {
             var thumb = submission.thumbnail
             var big = submission.banner
@@ -1731,6 +1741,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             }
         }
         SDWebImagePrefetcher.init().prefetchURLs(urls)
+        }
     }
 
     var oldsize = CGFloat(0)

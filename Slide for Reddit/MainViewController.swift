@@ -24,7 +24,14 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         self.extendedLayoutIncludesOpaqueBars = true
 
         if (SubredditReorderViewController.changed || ColorUtil.shouldBeNight()) {
-            if (ColorUtil.doInit()){
+            var subChanged = false
+            for i in 0...finalSubs.count {
+                if(finalSubs[i] != Subscriptions.subreddits[i]){
+                    subChanged = true
+                    break
+                }
+            }
+            if (ColorUtil.doInit() || subChanged){
                 restartVC()
             }
         }
@@ -33,6 +40,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         navigationController?.navigationBar.isTranslucent = false
 
         navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
+
         navigationController?.setToolbarHidden(false, animated: false)
 
         if(SettingValues.viewType){
@@ -136,6 +144,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
                 self.doCurrentPage(index!)
                 self.navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: subreddit)
+                self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
                 self.tabBar.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
             } else {
                 //todo better sanitation
@@ -214,6 +223,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             self.restartVC()
         })
     }
+    
+    var finalSubs = [String]()
 
     func restartVC() {
 
@@ -237,7 +248,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         SubredditReorderViewController.changed = false
 
         MainViewController.vCs = []
-        var finalSubs : [String] = []
+        finalSubs = []
         LinkCellView.cachedInternet = nil
         if(Reachability().connectionStatus().description == ReachabilityStatus.Offline.description){
             MainViewController.isOffline = true
@@ -277,6 +288,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             UIApplication.shared.shortcutItems = subs
         }
 
+        tabBar.removeFromSuperview()
         if (SettingValues.viewType) {
             setupTabBar(finalSubs)
         }
@@ -304,7 +316,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     var subs: UIView?
 
     func setupTabBar(_ subs : [String]) {
-        tabBar = MDCTabBar.init(frame: CGRect.init(x: 0, y: (UIApplication.shared.statusBarView?.frame.size.height ?? 20), width: self.view.frame.size.width, height: 84))
+        tabBar = MDCTabBar.init(frame: CGRect.init(x: 0, y: -4 + (UIApplication.shared.statusBarView?.frame.size.height ?? 20), width: self.view.frame.size.width, height: 76))
         tabBar.backgroundColor = ColorUtil.getColorForSub(sub: MainViewController.current)
         tabBar.itemAppearance = .titles
 
@@ -319,6 +331,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         tabBar.selectedItem = tabBar.items[0]
         tabBar.tintColor = ColorUtil.accentColorForSub(sub: "NONE")
         tabBar.sizeToFit()
+        tabBar.frame.size.height = 48
         
         self.view.addSubview(tabBar)
     }
@@ -399,6 +412,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         self.menuNav?.setSubreddit(subreddit: MainViewController.current)
         self.currentTitle = MainViewController.current
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: vc.sub)
+        self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: vc.sub)
 
         if (!(vc).loaded) {
             (vc).load(reset: true)
@@ -502,6 +516,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         }, completion: nil)
     }
 
+    var inHeadView = UIView()
 
     override func viewDidLoad() {
 
@@ -534,30 +549,34 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             bottomSheet = MDCBottomSheetController(contentViewController: menuNav!)
         }
 
-
+        inHeadView.removeFromSuperview()
+        inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarView?.frame.size.height ?? 20)))
+        self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
+        
+        if(SettingValues.viewType){
+            self.view.addSubview(inHeadView)
+        }
+        
         checkForUpdate()
 
         if (UIScreen.main.traitCollection.userInterfaceIdiom == .pad) {
             self.edgesForExtendedLayout = UIRectEdge.all
             self.extendedLayoutIncludesOpaqueBars = true
 
-
-            if (AccountController.isLoggedIn) {
-                checkForMail()
-            }
-            if (SubredditReorderViewController.changed) {
-                restartVC()
-            }
-
             self.navigationController?.navigationBar.shadowImage = UIImage()
             navigationController?.navigationBar.isTranslucent = false
 
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: self.currentTitle)
             tabBar.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
+            self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
+
 
             menuNav?.header.doColors()
             if (menuNav?.tableView != nil) {
                 menuNav?.tableView.reloadData()
+            }
+            if(SettingValues.viewType){
+                navigationController?.setNavigationBarHidden(true, animated: false)
             }
         }
         
@@ -659,14 +678,10 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         }
     }
 
-    func colorChanged() {
-        menuNav?.header.doColors()
-
-        tabBar.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
-
-        if (menuNav?.tableView != nil) {
-            menuNav?.tableView.reloadData()
-        }
+    func colorChanged(_ color: UIColor) {
+        tabBar.tintColor = ColorUtil.accentColorForSub(sub: MainViewController.current)
+        tabBar.backgroundColor = color
+        inHeadView.backgroundColor = color
     }
 
     override func viewWillDisappear(_ animated: Bool) {

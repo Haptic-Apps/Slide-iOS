@@ -59,9 +59,6 @@ class SettingValues {
     public static let pref_leftThumbnail = "LEFT_THUMB"
     public static let pref_hideButton = "HIDE_BUTTON"
     public static let pref_saveButton = "SAVE_BUTTON"
-    public static let pref_internalGif = "INTERNAL_GIF"
-    public static let pref_internalImage = "INTERNAL_IMAGE"
-    public static let pref_internalAlbum = "INTERNAL_ALBUM"
     public static let pref_internalYouTube = "INTERNAL_YOUTUBE"
     public static let pref_multiColumn = "MULTI_COLUMN"
     public static let pref_showFirstParagraph = "FIRST_P"
@@ -138,9 +135,6 @@ class SettingValues {
     public static var leftThumbnail = false
     public static var hideButton = false
     public static var saveButton = false
-    public static var internalImage = true
-    public static var internalAlbum = true
-    public static var internalGif = true
     public static var internalYouTube = true
     public static var multiColumn = false
     public static var showFirstParagraph = true
@@ -205,6 +199,22 @@ class SettingValues {
         }
         SettingValues.multiColumnCount = settings.object(forKey: SettingValues.pref_multiColumnCount) == nil ? columns : settings.integer(forKey: SettingValues.pref_multiColumnCount)
         SettingValues.highlightOp = settings.object(forKey: SettingValues.pref_highlightOp) == nil ? true : settings.bool(forKey: SettingValues.pref_highlightOp)
+
+        var basePath = settings.string(forKey: SettingValues.pref_defaultSorting)
+        for sort in LinkSortType.cases {
+            if(sort.path == basePath){
+                SettingValues.defaultSorting = sort
+                break
+            }
+        }
+
+        basePath = settings.string(forKey: SettingValues.pref_defaultTimePeriod)
+        for time in TimeFilterWithin.cases {
+            if(time.param == basePath){
+                SettingValues.defaultTimePeriod = time
+                break
+            }
+        }
 
         SettingValues.postFontOffset = settings.object(forKey: SettingValues.pref_postFontSize) == nil ? 0 : settings.integer(forKey: SettingValues.pref_postFontSize)
         SettingValues.commentFontOffset = settings.object(forKey: SettingValues.pref_commentFontSize) == nil ? 0 : settings.integer(forKey: SettingValues.pref_commentFontSize)
@@ -285,9 +295,9 @@ class SettingValues {
         SettingValues.postViewMode = PostViewType.init(rawValue: settings.string(forKey: SettingValues.pref_postViewMode) ?? "card")!
         SettingValues.fabType = FabType.init(rawValue: settings.string(forKey: SettingValues.pref_fabType) ?? "hide")!
 
-        SettingValues.internalImage = settings.object(forKey: SettingValues.pref_internalImage) == nil ? true : settings.bool(forKey: SettingValues.pref_internalImage)
-        SettingValues.internalGif = settings.object(forKey: SettingValues.pref_internalGif) == nil ? true : settings.bool(forKey: SettingValues.pref_internalGif)
-        SettingValues.internalAlbum = settings.object(forKey: SettingValues.pref_internalAlbum) == nil ? true : settings.bool(forKey: SettingValues.pref_internalAlbum)
+        SettingValues.internalImageView = settings.object(forKey: SettingValues.pref_internalImageView) == nil ? true : settings.bool(forKey: SettingValues.pref_internalImageView)
+        SettingValues.internalGifView = settings.object(forKey: SettingValues.pref_internalGifView) == nil ? true : settings.bool(forKey: SettingValues.pref_internalGifView)
+        SettingValues.internalAlbumView = settings.object(forKey: SettingValues.pref_internalAlbumView) == nil ? true : settings.bool(forKey: SettingValues.pref_internalAlbumView)
         SettingValues.internalYouTube = settings.object(forKey: SettingValues.pref_internalYouTube) == nil ? true : settings.bool(forKey: SettingValues.pref_internalYouTube)
 
     }

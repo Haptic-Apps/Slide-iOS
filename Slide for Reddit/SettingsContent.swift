@@ -73,6 +73,20 @@ class SettingsContent: UITableViewController {
         return toReturn
     }
     
+    public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String){
+        cell.textLabel?.text = text
+        cell.textLabel?.textColor = ColorUtil.fontColor
+        cell.backgroundColor = ColorUtil.foregroundColor
+        cell.textLabel?.numberOfLines = 0
+        cell.textLabel?.lineBreakMode = .byWordWrapping
+        if let s = switchV {
+            s.isOn = isOn
+            s.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+            cell.accessoryView = s
+        }
+        cell.selectionStyle = UITableViewCellSelectionStyle.none
+    }
+    
     override func loadView() {
         super.loadView()
         
@@ -81,42 +95,10 @@ class SettingsContent: UITableViewController {
         self.title = "Data Saving"
         self.tableView.separatorStyle = .none
 
-        showNSFWContent = UISwitch()
-        showNSFWContent.isOn = SettingValues.nsfwEnabled
-        showNSFWContent.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        showNSFWContentCell.textLabel?.text = "I am 18 or older and willing to see adult content"
-        showNSFWContentCell.accessoryView = showNSFWContent
-        showNSFWContentCell.backgroundColor = ColorUtil.foregroundColor
-        showNSFWContentCell.textLabel?.textColor = ColorUtil.fontColor
-        showNSFWContentCell.selectionStyle = UITableViewCellSelectionStyle.none
-        
-        showNSFWPreviews = UISwitch()
-        showNSFWPreviews.isOn = SettingValues.nsfwPreviews
-        showNSFWPreviews.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        showNSFWPreviewsCell.textLabel?.text = "Show NSFW image previews"
-        showNSFWPreviewsCell.accessoryView = showNSFWPreviews
-        showNSFWPreviewsCell.backgroundColor = ColorUtil.foregroundColor
-        showNSFWPreviewsCell.textLabel?.textColor = ColorUtil.fontColor
-        showNSFWPreviewsCell.selectionStyle = UITableViewCellSelectionStyle.none
-        
-        hideCollectionViews = UISwitch()
-        hideCollectionViews.isOn = SettingValues.hideNSFWCollection
-        hideCollectionViews.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        hideCollectionViewsCell.textLabel?.text = "Hide NSFW image previews in collections (such as r/all)"
-        hideCollectionViewsCell.accessoryView = hideCollectionViews
-        hideCollectionViewsCell.backgroundColor = ColorUtil.foregroundColor
-        hideCollectionViewsCell.textLabel?.textColor = ColorUtil.fontColor
-        hideCollectionViewsCell.selectionStyle = UITableViewCellSelectionStyle.none
-        
-        /*dontLoadImagePreviews = UISwitch()
-        dontLoadImagePreviews.isOn = SettingValues.noImages
-        dontLoadImagePreviews.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        dontLoadImagePreviewsCell.textLabel?.text = "Don't load images"
-        dontLoadImagePreviewsCell.accessoryView = dontLoadImagePreviews
-        dontLoadImagePreviewsCell.backgroundColor = ColorUtil.foregroundColor
-        dontLoadImagePreviewsCell.textLabel?.textColor = ColorUtil.fontColor
-        dontLoadImagePreviewsCell.selectionStyle = UITableViewCellSelectionStyle.none*/
-        
+        createCell(showNSFWContentCell, showNSFWContent, isOn: SettingValues.nsfwEnabled, text: "I am 18 years old or older, and am willing to see adult content")
+        createCell(showNSFWPreviewsCell, showNSFWPreviews, isOn: SettingValues.nsfwPreviews, text: "Show NSFW image previews")
+        createCell(hideCollectionViewsCell, hideCollectionViews, isOn: SettingValues.hideNSFWCollection, text: "Hide NSFW image previews in collections (such as r/all)")
+
         doDisables()
         self.tableView.tableFooterView = UIView()
 

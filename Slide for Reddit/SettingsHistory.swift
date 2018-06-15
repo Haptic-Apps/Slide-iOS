@@ -78,6 +78,20 @@ class SettingsHistory: UITableViewController {
         return toReturn
     }
     
+    public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String){
+        cell.textLabel?.text = text
+        cell.textLabel?.textColor = ColorUtil.fontColor
+        cell.backgroundColor = ColorUtil.foregroundColor
+        cell.textLabel?.numberOfLines = 0
+        cell.textLabel?.lineBreakMode = .byWordWrapping
+        if let s = switchV {
+            s.isOn = isOn
+            s.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+            cell.accessoryView = s
+        }
+        cell.selectionStyle = UITableViewCellSelectionStyle.none
+    }
+    
     override func loadView() {
         super.loadView()
         
@@ -86,32 +100,9 @@ class SettingsHistory: UITableViewController {
         self.title = "History"
         self.tableView.separatorStyle = .none
 
-        saveHistory = UISwitch()
-        saveHistory.isOn = SettingValues.saveHistory
-        saveHistory.addTarget(self, action: #selector(SettingsHistory.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        saveHistoryCell.textLabel?.text = "Save submission history"
-        saveHistoryCell.accessoryView = saveHistory
-        saveHistoryCell.backgroundColor = ColorUtil.foregroundColor
-        saveHistoryCell.textLabel?.textColor = ColorUtil.fontColor
-        saveHistoryCell.selectionStyle = UITableViewCellSelectionStyle.none
-        
-        saveNSFWHistory = UISwitch()
-        saveNSFWHistory.isOn = SettingValues.saveNSFWHistory
-        saveNSFWHistory.addTarget(self, action: #selector(SettingsHistory.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        saveNSFWHistoryCell.textLabel?.text = "Save NSFW history"
-        saveNSFWHistoryCell.accessoryView = saveNSFWHistory
-        saveNSFWHistoryCell.backgroundColor = ColorUtil.foregroundColor
-        saveNSFWHistoryCell.textLabel?.textColor = ColorUtil.fontColor
-        saveNSFWHistoryCell.selectionStyle = UITableViewCellSelectionStyle.none
-
-        readOnScroll = UISwitch()
-        readOnScroll.isOn = SettingValues.markReadOnScroll
-        readOnScroll.addTarget(self, action: #selector(SettingsHistory.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        readOnScrollCell.textLabel?.text = "Mark as read on scroll"
-        readOnScrollCell.accessoryView = readOnScroll
-        readOnScrollCell.backgroundColor = ColorUtil.foregroundColor
-        readOnScrollCell.textLabel?.textColor = ColorUtil.fontColor
-        readOnScrollCell.selectionStyle = UITableViewCellSelectionStyle.none
+        createCell(saveHistoryCell, saveHistory, isOn: SettingValues.saveHistory, text: "Save submission and subreddit history")
+        createCell(saveNSFWHistoryCell, saveNSFWHistory, isOn: SettingValues.saveNSFWHistory, text: "Save NSFW submission and subreddit history")
+        createCell(readOnScrollCell, readOnScroll, isOn: SettingValues.markReadOnScroll, text: "Mark submissions as read when scrolled past")
 
         clearHistory.textLabel?.text = "Clear submission history"
         clearHistory.backgroundColor = ColorUtil.foregroundColor

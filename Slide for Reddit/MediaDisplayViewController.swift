@@ -182,11 +182,11 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
         self.scrollView = UIScrollView.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height))
         self.scrollView.contentSize = CGSize.init(width: self.view.frame.width, height: self.view.frame.height)
         self.scrollView.delegate = self
-
         self.scrollView.minimumZoomScale = 1
         self.scrollView.maximumZoomScale = 6.0
         self.scrollView.backgroundColor = .clear
         self.view.addSubview(scrollView)
+        self.scrollView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
 
 
         (parent as? SwipeDownModalVC)?.background?.backgroundColor = UIColor.black.withAlphaComponent(0.7)
@@ -213,19 +213,23 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
         size = UILabel(frame: CGRect(x: 55, y: toolbar.bounds.height - 40, width: 250, height: 50))
         size?.textAlignment = .left
         size?.textColor = .white
-        size?.text = "mb"
+        size?.text = "Connecting..."
         size?.font = UIFont.boldSystemFont(ofSize: 12)
         toolbar.addSubview(size!)
 
         progressView = MDCProgressView()
         progressView?.progress = 0
-        let progressViewHeight = CGFloat(5)
-        progressView?.frame = CGRect(x: 0, y: 5 + (UIApplication.shared.statusBarView?.frame.size.height ?? 20), width: toolbar.bounds.width, height: progressViewHeight)
+        progressView?.frame = CGRect(x: 0, y: 5 + (UIApplication.shared.statusBarView?.frame.size.height ?? 20), width: toolbar.bounds.width, height: CGFloat(5))
         self.view.addSubview(progressView!)
 
         self.view.addSubview(toolbar)
-
         startDisplay()
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        toolbar.frame = CGRect.init(x: 0, y: size.height - 35, width: size.width, height: 30)
+        progressView?.frame = CGRect(x: 0, y: 5 + (UIApplication.shared.statusBarView?.frame.size.height ?? 20), width: size.width, height: CGFloat(5))
     }
 
     func showTitle(_ sender: AnyObject) {

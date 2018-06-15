@@ -270,6 +270,8 @@ class SettingsFont: UITableViewController {
         type.isOn = SettingValues.showLinkContentType
         type.addTarget(self, action: #selector(SettingsFont.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
         self.typeCell.textLabel?.text = "Show content type next to links"
+        self.typeCell.textLabel?.numberOfLines = 0
+        self.typeCell.textLabel?.lineBreakMode = .byWordWrapping
         self.typeCell.accessoryView = type
         self.typeCell.backgroundColor = ColorUtil.foregroundColor
         self.typeCell.textLabel?.textColor = ColorUtil.fontColor

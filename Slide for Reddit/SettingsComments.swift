@@ -92,6 +92,20 @@ class SettingsComments: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
+    public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String){
+        cell.textLabel?.text = text
+        cell.textLabel?.textColor = ColorUtil.fontColor
+        cell.backgroundColor = ColorUtil.foregroundColor
+        cell.textLabel?.numberOfLines = 0
+        cell.textLabel?.lineBreakMode = .byWordWrapping
+        if let s = switchV {
+            s.isOn = isOn
+            s.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+            cell.accessoryView = s
+        }
+        cell.selectionStyle = UITableViewCellSelectionStyle.none
+    }
+
     override func loadView() {
         super.loadView()
         self.view.backgroundColor = ColorUtil.backgroundColor
@@ -99,60 +113,12 @@ class SettingsComments: UITableViewController {
         self.title = "Comments"
         self.tableView.separatorStyle = .none
 
-        disableNavigationBar = UISwitch()
-        disableNavigationBar.isOn = SettingValues.disableNavigationBar
-        disableNavigationBar.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        disableNavigationBarCell.textLabel?.text = "Disable comment navigation bar"
-        disableNavigationBarCell.accessoryView = disableNavigationBar
-        disableNavigationBarCell.backgroundColor = ColorUtil.foregroundColor
-        disableNavigationBarCell.textLabel?.textColor = ColorUtil.fontColor
-        disableNavigationBarCell.selectionStyle = UITableViewCellSelectionStyle.none
-        
-        
-        disableColor = UISwitch()
-        disableColor.isOn = SettingValues.disableColor
-        disableColor.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        disableColorCell.textLabel?.text = "Monochrome comment depth indicators"
-        disableColorCell.accessoryView = disableColor
-        disableColorCell.backgroundColor = ColorUtil.foregroundColor
-        disableColorCell.textLabel?.textColor = ColorUtil.fontColor
-        disableColorCell.selectionStyle = UITableViewCellSelectionStyle.none
-        
-        collapseDefault = UISwitch()
-        disableColor.isOn = SettingValues.collapseDefault
-        collapseDefault.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        collapseDefaultCell.textLabel?.text = "Collapse all comments by default"
-        collapseDefaultCell.accessoryView = collapseDefault
-        collapseDefaultCell.backgroundColor = ColorUtil.foregroundColor
-        collapseDefaultCell.textLabel?.textColor = ColorUtil.fontColor
-        collapseDefaultCell.selectionStyle = UITableViewCellSelectionStyle.none
-        
-        swapLongPress = UISwitch()
-        swapLongPress.isOn = SettingValues.swapLongPress
-        swapLongPress.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        swapLongPressCell.textLabel?.text = "Swap tap and long press actions"
-        swapLongPressCell.accessoryView = swapLongPress
-        swapLongPressCell.backgroundColor = ColorUtil.foregroundColor
-        swapLongPressCell.textLabel?.textColor = ColorUtil.fontColor
-        swapLongPressCell.selectionStyle = UITableViewCellSelectionStyle.none
-        
-        collapseFully = UISwitch()
-        collapseFully.isOn = SettingValues.collapseFully
-        collapseFully.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        collapseFullyCell.textLabel?.text = "Collapse comments fully"
-        collapseFullyCell.accessoryView = collapseFully
-        collapseFullyCell.backgroundColor = ColorUtil.foregroundColor
-        collapseFullyCell.textLabel?.textColor = ColorUtil.fontColor
-        collapseFullyCell.selectionStyle = UITableViewCellSelectionStyle.none
-
-        highlightOp = UISwitch()
-        highlightOp.isOn = SettingValues.highlightOp
-        highlightOp.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        highlightOpCell.textLabel?.text = "Highlight op replies of parent comments "
-        highlightOpCell.accessoryView = highlightOp
-        highlightOpCell.backgroundColor = ColorUtil.foregroundColor
-        highlightOpCell.textLabel?.textColor = ColorUtil.fontColor
-        highlightOpCell.selectionStyle = UITableViewCellSelectionStyle.none
+        createCell(disableNavigationBarCell, disableNavigationBar, isOn: SettingValues.disableNavigationBar, text: "Disable comment navigation toolbar")
+        createCell(disableColorCell, disableColor, isOn: SettingValues.disableColor, text: "Monochrome comment depth indicators")
+        createCell(collapseDefaultCell, collapseDefault, isOn: SettingValues.collapseDefault, text: "Collapse all comments automatically")
+        createCell(swapLongPressCell, swapLongPress, isOn: SettingValues.swapLongPress, text: "Swap tap and long press actions")
+        createCell(collapseFullyCell, collapseFully, isOn: SettingValues.collapseFully, text: "Collapse comments fully")
+        createCell(highlightOpCell, highlightOp, isOn: SettingValues.highlightOp, text: "Highlight op replies of parent comments")
 
         self.tableView.tableFooterView = UIView()
     }

@@ -84,6 +84,20 @@ class SettingsData: UITableViewController {
         return toReturn
     }
     
+    public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String){
+        cell.textLabel?.text = text
+        cell.textLabel?.textColor = ColorUtil.fontColor
+        cell.backgroundColor = ColorUtil.foregroundColor
+        cell.textLabel?.numberOfLines = 0
+        cell.textLabel?.lineBreakMode = .byWordWrapping
+        if let s = switchV {
+            s.isOn = isOn
+            s.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+            cell.accessoryView = s
+        }
+        cell.selectionStyle = UITableViewCellSelectionStyle.none
+    }
+    
     override func loadView() {
         super.loadView()
         
@@ -92,50 +106,11 @@ class SettingsData: UITableViewController {
         self.title = "Data Saving"
         self.tableView.separatorStyle = .none
 
-        enableDataSaving = UISwitch()
-        enableDataSaving.isOn = SettingValues.dataSavingEnabled
-        enableDataSaving.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        enableDataSavingCell.textLabel?.text = "Data saving enabled"
-        enableDataSavingCell.accessoryView = enableDataSaving
-        enableDataSavingCell.backgroundColor = ColorUtil.foregroundColor
-        enableDataSavingCell.textLabel?.textColor = ColorUtil.fontColor
-        enableDataSavingCell.selectionStyle = UITableViewCellSelectionStyle.none
-        
-        disableOnWifi = UISwitch()
-        disableOnWifi.isOn = SettingValues.dataSavingDisableWiFi
-        disableOnWifi.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        disableOnWifiCell.textLabel?.text = "Disable data saving on WiFi"
-        disableOnWifiCell.accessoryView = disableOnWifi
-        disableOnWifiCell.backgroundColor = ColorUtil.foregroundColor
-        disableOnWifiCell.textLabel?.textColor = ColorUtil.fontColor
-        disableOnWifiCell.selectionStyle = UITableViewCellSelectionStyle.none
-        
-        loadHQViewer = UISwitch()
-        loadHQViewer.isOn = SettingValues.loadContentHQ
-        loadHQViewer.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        loadHQViewerCell.textLabel?.text = "Load HQ image when clicked"
-        loadHQViewerCell.accessoryView = loadHQViewer
-        loadHQViewerCell.backgroundColor = ColorUtil.foregroundColor
-        loadHQViewerCell.textLabel?.textColor = ColorUtil.fontColor
-        loadHQViewerCell.selectionStyle = UITableViewCellSelectionStyle.none
-        
-        lowerQualityMode = UISwitch()
-        lowerQualityMode.isOn = SettingValues.lqLow
-        lowerQualityMode.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        lowerQualityModeCell.textLabel?.text = "Lowest quality images"
-        lowerQualityModeCell.accessoryView = lowerQualityMode
-        lowerQualityModeCell.backgroundColor = ColorUtil.foregroundColor
-        lowerQualityModeCell.textLabel?.textColor = ColorUtil.fontColor
-        lowerQualityModeCell.selectionStyle = UITableViewCellSelectionStyle.none
-        
-        dontLoadImagePreviews = UISwitch()
-        dontLoadImagePreviews.isOn = SettingValues.noImages
-        dontLoadImagePreviews.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        dontLoadImagePreviewsCell.textLabel?.text = "Don't load images"
-        dontLoadImagePreviewsCell.accessoryView = dontLoadImagePreviews
-        dontLoadImagePreviewsCell.backgroundColor = ColorUtil.foregroundColor
-        dontLoadImagePreviewsCell.textLabel?.textColor = ColorUtil.fontColor
-        dontLoadImagePreviewsCell.selectionStyle = UITableViewCellSelectionStyle.none
+        createCell(enableDataSavingCell, enableDataSaving, isOn: SettingValues.dataSavingEnabled, text: "Data saving mode")
+        createCell(disableOnWifiCell, disableOnWifi, isOn: SettingValues.dataSavingDisableWiFi, text: "Disable data saving on WiFi")
+        createCell(loadHQViewerCell, loadHQViewer, isOn: SettingValues.loadContentHQ, text: "Load images in high quality automatically when opened")
+        createCell(lowerQualityModeCell, lowerQualityMode, isOn: SettingValues.lqLow, text: "Load lowest image quality")
+        createCell(dontLoadImagePreviewsCell, dontLoadImagePreviews, isOn: SettingValues.noImages, text: "Don't load any images")
         
         doDisables()
         self.tableView.tableFooterView = UIView()

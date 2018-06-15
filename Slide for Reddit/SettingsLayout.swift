@@ -235,6 +235,20 @@ class SettingsLayout: UITableViewController {
         }
     }
     
+    public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String){
+        cell.textLabel?.text = text
+        cell.textLabel?.textColor = ColorUtil.fontColor
+        cell.backgroundColor = ColorUtil.foregroundColor
+        cell.textLabel?.numberOfLines = 0
+        cell.textLabel?.lineBreakMode = .byWordWrapping
+        if let s = switchV {
+            s.isOn = isOn
+            s.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+            cell.accessoryView = s
+        }
+        cell.selectionStyle = UITableViewCellSelectionStyle.none
+    }
+    
     override func loadView() {
         super.loadView()
         doLink()
@@ -243,121 +257,23 @@ class SettingsLayout: UITableViewController {
         self.title = "General"
         self.tableView.separatorStyle = .none
 
-        cropBigPic = UISwitch()
-        cropBigPic.isOn = SettingValues.bigPicCropped
-        cropBigPic.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        cropBigPicCell.textLabel?.text = "Crop big pic"
-        cropBigPicCell.accessoryView = cropBigPic
-        cropBigPicCell.backgroundColor = ColorUtil.foregroundColor
-        cropBigPicCell.textLabel?.textColor = ColorUtil.fontColor
-        cropBigPicCell.selectionStyle = UITableViewCellSelectionStyle.none
-        
-        
-        hideBannerImage = UISwitch()
-        hideBannerImage.isOn = SettingValues.bannerHidden
-        hideBannerImage.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        hideBannerImageCell.textLabel?.text = "Hide banner image"
-        hideBannerImageCell.accessoryView = hideBannerImage
-        hideBannerImageCell.backgroundColor = ColorUtil.foregroundColor
-        hideBannerImageCell.textLabel?.textColor = ColorUtil.fontColor
-        hideBannerImageCell.selectionStyle = UITableViewCellSelectionStyle.none
-
-        selftext = UISwitch()
-        selftext.isOn = SettingValues.showFirstParagraph
-        selftext.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        selftextCell.textLabel?.text = "Show first paragraph of selftext"
-        selftextCell.accessoryView = selftext
-        selftextCell.backgroundColor = ColorUtil.foregroundColor
-        selftextCell.textLabel?.textColor = ColorUtil.fontColor
-        selftextCell.selectionStyle = UITableViewCellSelectionStyle.none
-        
-        cardModeCell.textLabel?.text = "Layout mode"
-        cardModeCell.backgroundColor = ColorUtil.foregroundColor
-        cardModeCell.textLabel?.textColor = ColorUtil.fontColor
+        createCell(cropBigPicCell, cropBigPic, isOn: SettingValues.bigPicCropped, text: "Crop big pic")
+        createCell(hideBannerImageCell, hideBannerImage, isOn: SettingValues.bannerHidden, text: "Hide banner image")
+        createCell(selftextCell, selftext, isOn: SettingValues.showFirstParagraph, text: "Show selftext preview")
+        createCell(cardModeCell, isOn: SettingValues.bigPicCropped, text: "Layout mode")
         cardModeCell.detailTextLabel?.textColor = ColorUtil.fontColor
         cardModeCell.detailTextLabel?.text = SettingValues.postViewMode.rawValue.capitalize()
-        cardModeCell.selectionStyle = UITableViewCellSelectionStyle.none
-
-        smalltag = UISwitch()
-        smalltag.isOn = SettingValues.smallerTag
-        smalltag.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        smalltagCell.textLabel?.text = "Smaller content tag"
-        smalltagCell.accessoryView = smalltag
-        smalltagCell.backgroundColor = ColorUtil.foregroundColor
-        smalltagCell.textLabel?.textColor = ColorUtil.fontColor
-        smalltagCell.selectionStyle = UITableViewCellSelectionStyle.none
-
-        hideActionbar = UISwitch()
-        hideActionbar.isOn = SettingValues.hideButtonActionbar
-        hideActionbar.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        hideActionbarCell.textLabel?.text = "Hide actionbar"
-        hideActionbarCell.accessoryView = hideActionbar
-        hideActionbarCell.backgroundColor = ColorUtil.foregroundColor
-        hideActionbarCell.textLabel?.textColor = ColorUtil.fontColor
-        hideActionbarCell.selectionStyle = UITableViewCellSelectionStyle.none
-
-        largerThumbnail = UISwitch()
-        largerThumbnail.isOn = SettingValues.largerThumbnail
-        largerThumbnail.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        largerThumbnailCell.textLabel?.text = "Larger thumbnail"
-        largerThumbnailCell.accessoryView = largerThumbnail
-        largerThumbnailCell.backgroundColor = ColorUtil.foregroundColor
-        largerThumbnailCell.textLabel?.textColor = ColorUtil.fontColor
-        largerThumbnailCell.selectionStyle = UITableViewCellSelectionStyle.none
-
-        scoreTitle = UISwitch()
-        scoreTitle.isOn = SettingValues.scoreInTitle
-        scoreTitle.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        scoreTitleCell.textLabel?.text = "Score and comments in title"
-        scoreTitleCell.accessoryView = scoreTitle
-        scoreTitleCell.backgroundColor = ColorUtil.foregroundColor
-        scoreTitleCell.textLabel?.textColor = ColorUtil.fontColor
-        scoreTitleCell.selectionStyle = UITableViewCellSelectionStyle.none
-
-        abbreviateScore = UISwitch()
-        abbreviateScore.isOn = SettingValues.abbreviateScores
-        abbreviateScore.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        abbreviateScoreCell.textLabel?.text = "Abbreviate scores"
-        abbreviateScoreCell.accessoryView = abbreviateScore
-        abbreviateScoreCell.backgroundColor = ColorUtil.foregroundColor
-        abbreviateScoreCell.textLabel?.textColor = ColorUtil.fontColor
-        abbreviateScoreCell.selectionStyle = UITableViewCellSelectionStyle.none
-
-        domainInfo = UISwitch()
-        domainInfo.isOn = SettingValues.domainInInfo
-        domainInfo.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        domainInfoCell.textLabel?.text = "Show domain in info line"
-        domainInfoCell.accessoryView = domainInfo
-        domainInfoCell.backgroundColor = ColorUtil.foregroundColor
-        domainInfoCell.textLabel?.textColor = ColorUtil.fontColor
-        domainInfoCell.selectionStyle = UITableViewCellSelectionStyle.none
-
-        leftThumb = UISwitch()
-        leftThumb.isOn = SettingValues.leftThumbnail
-        leftThumb.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        leftThumbCell.textLabel?.text = "Thumbnail on left"
-        leftThumbCell.accessoryView = leftThumb
-        leftThumbCell.backgroundColor = ColorUtil.foregroundColor
-        leftThumbCell.textLabel?.textColor = ColorUtil.fontColor
-        leftThumbCell.selectionStyle = UITableViewCellSelectionStyle.none
-
-        hide = UISwitch()
-        hide.isOn = SettingValues.hideButton
-        hide.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        hideCell.textLabel?.text = "Show hide post button"
-        hideCell.accessoryView = hide
-        hideCell.backgroundColor = ColorUtil.foregroundColor
-        hideCell.textLabel?.textColor = ColorUtil.fontColor
-        hideCell.selectionStyle = UITableViewCellSelectionStyle.none
-
-        save = UISwitch()
-        save.isOn = SettingValues.saveButton
-        save.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        saveCell.textLabel?.text = "Show save button"
-        saveCell.accessoryView = save
-        saveCell.backgroundColor = ColorUtil.foregroundColor
-        saveCell.textLabel?.textColor = ColorUtil.fontColor
-        saveCell.selectionStyle = UITableViewCellSelectionStyle.none
+        cardModeCell.detailTextLabel?.numberOfLines = 0
+        cardModeCell.detailTextLabel?.lineBreakMode = .byWordWrapping
+        createCell(smalltagCell, smalltag, isOn: SettingValues.smallerTag, text: "Smaller content tag")
+        createCell(hideActionbarCell, hideActionbar, isOn: SettingValues.hideButtonActionbar, text: "Hide actionbar")
+        createCell(largerThumbnailCell, largerThumbnail, isOn: SettingValues.largerThumbnail, text: "Larger thumbnail")
+        createCell(scoreTitleCell, scoreTitle, isOn: SettingValues.scoreInTitle, text: "Score and comment count in title")
+        createCell(abbreviateScoreCell, abbreviateScore, isOn: SettingValues.abbreviateScores, text: "Abbreviate post scores (ex: 10k)")
+        createCell(domainInfoCell, domainInfo, isOn: SettingValues.domainInInfo, text: "Show domain in info line")
+        createCell(leftThumbCell, leftThumb, isOn: SettingValues.leftThumbnail, text: "Thumbnail on left side")
+        createCell(hideCell, hide, isOn: SettingValues.hideButton, text: "Show hide post button")
+        createCell(saveCell, save, isOn: SettingValues.saveButton, text: "Show save button")
 
         doDisables()
         self.tableView.tableFooterView = UIView()
