@@ -327,6 +327,6 @@ class GMPalette {
     }
 
     class func blackAndWhite() -> [UIColor] {
-        return [GMColor.blackColor(), GMColor.whiteColor()]
+        return [GMColor.blackColor()]
     }
 }

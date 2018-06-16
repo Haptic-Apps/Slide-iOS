@@ -15,6 +15,8 @@ class SwipeDownModalVC: ColorMuxPagingViewController {
 
     var originalPosition: CGPoint?
     var currentPositionTouched: CGPoint?
+    
+    var didStartPan : (_ panStart: Bool)->() = { result in}
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,6 +42,7 @@ class SwipeDownModalVC: ColorMuxPagingViewController {
         if panGesture.state == .began {
             originalPosition = view.center
             currentPositionTouched = panGesture.location(in: view)
+            didStartPan(true)
         } else if panGesture.state == .changed {
             view.frame.origin = CGPoint(
                     x: 0,

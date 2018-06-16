@@ -9,6 +9,7 @@
 import UIKit
 import MaterialComponents.MaterialProgressView
 import SDWebImage
+import CoreMedia
 
 class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestureRecognizerDelegate {
 
@@ -54,9 +55,13 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
             self.scrollView.addGestureRecognizer(dtap)
 
             if (!inAlbum) {
-                let tap = UITapGestureRecognizer.init(target: self, action: #selector(close(recognizer:)))
+                let tap = UITapGestureRecognizer.init(target: self, action: #selector(handleTap(recognizer:)))
                 tap.require(toFail: dtap)
                 self.scrollView.addGestureRecognizer(tap)
+            }
+            
+            (parent as? SwipeDownModalVC)?.didStartPan = {result in
+                self.unFullscreen(self.imageView)
             }
 
             imageView = UIImageView.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height))
@@ -87,6 +92,38 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
 
     func close(recognizer: UITapGestureRecognizer) {
         self.parent?.dismiss(animated: true, completion: nil)
+    }
+    
+    var ignore = false
+    
+    func handleTap(recognizer: UITapGestureRecognizer?) {
+        if(fullscreen){
+            if(playButton != nil && !playButton!.isHidden){
+                self.playButton!.isHidden = true
+                self.playbackSlider.isHidden = true
+            } else {
+                unFullscreen(imageView)
+            }
+        } else {
+            if(playButton != nil && playButton!.isHidden){
+                showControls()
+            } else {
+                fullscreen(imageView)
+            }
+        }
+    }
+    
+    func showControls(){
+        self.ignore = true
+        playButton!.isHidden = false
+        playbackSlider.isHidden = false
+        let deadlineTime = DispatchTime.now() + .seconds(2)
+        DispatchQueue.main.asyncAfter(deadline: deadlineTime, execute: {
+            if(!self.ignore){
+                self.playButton!.isHidden = true
+                self.playbackSlider.isHidden = true
+            }
+        })
     }
 
     func hd(_ sender: AnyObject) {
@@ -197,7 +234,6 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
             var textB = UIBarButtonItem(image: UIImage(named: "size")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.showTitle(_:)))
             items.append(textB)
         }
-        items.append(UIBarButtonItem(image: UIImage(named: "fullscreen")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.fullscreen(_:))))
 
         items.append(space)
         items.append(UIBarButtonItem(image: UIImage(named: "download")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.download(_:))))
@@ -210,7 +246,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
         toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
         toolbar.tintColor = UIColor.white
 
-        size = UILabel(frame: CGRect(x: 55, y: toolbar.bounds.height - 40, width: 250, height: 50))
+        size = UILabel(frame: CGRect(x: 12, y: toolbar.bounds.height - 40, width: 250, height: 50))
         size?.textAlignment = .left
         size?.textColor = .white
         size?.text = "Connecting..."
@@ -219,6 +255,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
 
         progressView = MDCProgressView()
         progressView?.progress = 0
+        progressView?.tintColor = ColorUtil.accentColorForSub(sub: "")
         progressView?.frame = CGRect(x: 0, y: 5 + (UIApplication.shared.statusBarView?.frame.size.height ?? 20), width: toolbar.bounds.width, height: CGFloat(5))
         self.view.addSubview(progressView!)
 
@@ -241,8 +278,14 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
         present(alertController, animated: true, completion: nil)
     }
 
+    var fullscreen = false
+
     func fullscreen(_ sender: AnyObject) {
+        fullscreen = true
         UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+            let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
+            statusBar.isHidden = true
+
             (self.parent as? SwipeDownModalVC)?.background?.backgroundColor = UIColor.black
             self.toolbar.alpha = 0
 
@@ -250,10 +293,21 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
             self.toolbar.isHidden = true
 
         })
-
     }
 
-
+    func unFullscreen(_ sender: AnyObject) {
+        fullscreen = false
+        self.toolbar.isHidden = false
+        UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+            let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
+            statusBar.isHidden = false
+            
+            (self.parent as? SwipeDownModalVC)?.background?.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+            self.toolbar.alpha = 1
+            
+        }, completion: {finished in
+        })
+    }
 
     func download(_ sender: AnyObject) {
         if(imageLoaded){
@@ -349,7 +403,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
             } else {
                 loadImage(imageURL: baseURL!)
             }
-        } else if (type == .GIF || type == .STREAMABLE || type == .VID_ME) {
+        } else if (type == .GIF || type == .STREAMABLE || type == .VID_ME || type == .VIDEO) {
             getGif(urlS: baseURL!.absoluteString)
         } else if (type == .IMGUR) {
             loadImage(imageURL: URL.init(string: baseURL!.absoluteString + ".png")!)
@@ -363,10 +417,94 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
             getYouTube(ytPlayer, urlS: baseURL!.absoluteString)
         }
     }
+    
+    var playButton: UIButton?
+    var playbackSlider = UISlider()
+    
+    //from http://swiftdeveloperblog.com/code-examples/add-playback-slider-to-avplayer-example-in-swift/
+    func doControls(){
+        playButton = UIButton.init(type: .system)
+        
+        playButton!.frame = CGRect(x: scrollView.center.x - 37.5, y: scrollView.center.y - 37.5, width: 75, height:75)
+        playButton!.setImage(UIImage.init(named: "pause"), for: .normal)
+        playButton!.isHidden = true
+        playButton!.tintColor = UIColor.white
+        playButton!.addTarget(self, action: #selector(MediaDisplayViewController.playButtonTapped(_:)), for: .touchUpInside)
+        
+        self.view.addSubview(playButton!)
+        
+        playbackSlider = UISlider(frame:CGRect(x:12, y: scrollView.frame.size.height - 60, width:scrollView.frame.size.width - 24, height:20))
+        playbackSlider.minimumValue = 0
+        
+        let duration = self.player.currentItem!.asset.duration
+        let seconds : Float64 = CMTimeGetSeconds(duration)
+        
+        playbackSlider.maximumValue = Float(seconds)
+        playbackSlider.isContinuous = true
+        playbackSlider.isHidden = true
+        playbackSlider.tintColor = ColorUtil.accentColorForSub(sub: "")
+        playbackSlider.setThumbImage(UIImage(named: "circle")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)).withColor(tintColor: playbackSlider.tintColor), for: .normal)
+
+        self.player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.05, preferredTimescale: CMTimeScale(NSEC_PER_SEC)), queue: DispatchQueue.main) { (time) in
+            self.updateSlider(time)
+        }
+        playbackSlider.addTarget(self, action: #selector(MediaDisplayViewController.playbackSliderValueChanged(_:)), for: .valueChanged)
+        playbackSlider.addTarget(self, action: #selector(MediaDisplayViewController.playbackSliderValueChanged(_:)), for: .valueChanged)
+        self.view.addSubview(playbackSlider)
+        
+    }
+    
+    func updateSlider(_ elapsedTime: CMTime) {
+        let playerDuration = self.player.currentItem!.asset.duration
+        if CMTIME_IS_INVALID(playerDuration) {
+            playbackSlider.minimumValue = 0.0
+            return
+        }
+        let duration = Float(CMTimeGetSeconds(playerDuration))
+        if duration.isFinite && duration > 0 {
+            playbackSlider.minimumValue = 0.0
+            playbackSlider.maximumValue = duration
+            let time = Float(CMTimeGetSeconds(elapsedTime))
+            playbackSlider.setValue(time, animated: true)
+        }
+    }
+
+    func playbackSliderValueChanged(_ playbackSlider:UISlider) {
+        
+        let seconds : Int64 = Int64(playbackSlider.value)
+        let targetTime:CMTime = CMTimeMake(seconds, 1)
+        
+        self.player.seek(to: targetTime)
+        
+        if player.rate == 0
+        {
+            player.play()
+            playButton!.setImage(UIImage(named: "pause"), for: .normal)
+        }
+        let deadlineTime = DispatchTime.now() + .seconds(1)
+        DispatchQueue.main.asyncAfter(deadline: deadlineTime, execute: {
+                self.playButton!.isHidden = true
+                self.playbackSlider.isHidden = true
+        })
+
+    }
+    
+    
+    func playButtonTapped(_ sender:UIButton) {
+        if player.rate == 0
+        {
+            player.play()
+            playButton!.setImage(UIImage(named: "pause"), for: .normal)
+        } else {
+            player.pause()
+            playButton!.setImage(UIImage(named: "play"), for: .normal)
+        }
+    }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
+        UIApplication.shared.statusBarView?.isHidden = false
         if(savedColor != nil){
             UIApplication.shared.statusBarView?.backgroundColor = savedColor
         }
@@ -377,32 +515,4 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
         }
 
     }
-
-    override var prefersStatusBarHidden: Bool {
-        return true
-    }
-
-
-    /// Prevents delivery of touch gestures to AVPlayerViewController's gesture recognizer,
-    /// which would cause controls to hide immediately after being shown.
-    ///
-    /// `-[AVPlayerViewController _handleSingleTapGesture] goes like this:
-    ///
-    ///     if self._showsPlaybackControlsView() {
-    ///         _hidePlaybackControlsViewIfPossibleUntilFurtherUserInteraction()
-    ///     } else {
-    ///         _showPlaybackControlsViewIfNeededAndHideIfPossibleAfterDelayIfPlaying()
-    ///     }
-    public func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailByGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        if !playerVC.showsPlaybackControls {
-            // print("\nshouldBeRequiredToFailByGestureRecognizer? \(otherGestureRecognizer)")
-            if let tapGesture = otherGestureRecognizer as? UITapGestureRecognizer {
-                if tapGesture.numberOfTouchesRequired == 1 {
-                    return true
-                }
-            }
-        }
-        return false
-    }
-
 }

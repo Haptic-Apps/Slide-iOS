@@ -9,7 +9,7 @@
 import Foundation
 import SloppySwiper
 
-class PagingCommentViewController : SwipeDownModalVC, UIPageViewControllerDataSource, UIPageViewControllerDelegate{
+class PagingCommentViewController : SwipeDownModalVC, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     var submissions: [RSubmission] = []
     static weak var savedComment : CommentViewController?
     var vCs: [UIViewController] = []
@@ -70,6 +70,7 @@ class PagingCommentViewController : SwipeDownModalVC, UIPageViewControllerDataSo
             if (view is UIScrollView){
                 var scrollView = view as! UIScrollView
                 //swiper!.panRecognizer.require(toFail:scrollView.panGestureRecognizer)
+                scrollView.delegate = self
                 scrollView.panGestureRecognizer.require(toFail: swiper!.panRecognizer)
                 break;
             }
@@ -89,6 +90,25 @@ class PagingCommentViewController : SwipeDownModalVC, UIPageViewControllerDataSo
                            completion: nil)
 
     }
+    
+    //From https://stackoverflow.com/a/25167681/3697225
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if (currentIndex == 0 && scrollView.contentOffset.x < scrollView.bounds.size.width) {
+            scrollView.contentOffset = CGPoint(x: scrollView.bounds.size.width, y: 0);
+        } else if (currentIndex == submissions.count - 1 && scrollView.contentOffset.x > scrollView.bounds.size.width) {
+            scrollView.contentOffset = CGPoint(x: scrollView.bounds.size.width, y: 0);
+        }
+    }
+    
+    //From https://stackoverflow.com/a/25167681/3697225
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        if (currentIndex == 0 && scrollView.contentOffset.x <= scrollView.bounds.size.width) {
+            targetContentOffset.pointee = CGPoint(x: scrollView.bounds.size.width, y: 0);
+        } else if (currentIndex == submissions.count - 1 && scrollView.contentOffset.x >= scrollView.bounds.size.width) {
+            targetContentOffset.pointee = CGPoint(x: scrollView.bounds.size.width, y: 0);
+        }
+    }
+
 
     var currentIndex = 0
     var lastPosition : CGFloat = 0

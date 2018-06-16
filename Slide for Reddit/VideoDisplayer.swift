@@ -74,7 +74,6 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
         let url = formatUrl(sS: urlS)
         let videoType = getVideoType(url: url)
 
-
         switch (videoType) {
         case .GFYCAT:
             let name = url.substring(url.lastIndexOf("/")!, length: url.length - url.lastIndexOf("/")!)
@@ -399,6 +398,9 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
 
             self.scrollView.isUserInteractionEnabled = true
             self.player.play()
+            if(self is MediaDisplayViewController){
+                (self as! MediaDisplayViewController).doControls()
+            }
         }
     }
 
