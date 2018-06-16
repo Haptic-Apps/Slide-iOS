@@ -1233,7 +1233,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             }
         }))
 
-        if (!single && (sub != "all" && sub != "frontpage" && !sub.contains("+") && !sub.contains("/m/"))) {
+        if ((sub != "all" && sub != "frontpage" && !sub.contains("+") && !sub.contains("/m/"))) {
             alertController.addAction(Action(ActionData(title: "Submit", image: UIImage(named: "edit")!.menuIcon()), style: .default, handler: { action in
                 self.newPost(sender)
             }))

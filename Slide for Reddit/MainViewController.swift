@@ -25,10 +25,14 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
         if (SubredditReorderViewController.changed || ColorUtil.shouldBeNight()) {
             var subChanged = false
-            for i in 0...finalSubs.count {
-                if(finalSubs[i] != Subscriptions.subreddits[i]){
-                    subChanged = true
-                    break
+            if(finalSubs.count != Subscriptions.subreddits.count){
+                subChanged = true
+            } else {
+                for i in 0...finalSubs.count - 1 {
+                    if(finalSubs[i] != Subscriptions.subreddits[i]){
+                        subChanged = true
+                        break
+                    }
                 }
             }
             if (ColorUtil.doInit() || subChanged){
