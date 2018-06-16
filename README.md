@@ -1,13 +1,13 @@
-# Slide [![Snoonet](https://img.shields.io/badge/IRC-%23slide-CF49FF.svg)](https://kiwiirc.com/client/irc.snoonet.org/#slide)
+# Slide [![Discord](https://img.shields.io/discord/407573578985242635.svg)](https://discord.gg/hVWAY8A)
 
 <img src="/slide_ios_rounded.png" align="left"
 width="150"
     hspace="10" vspace="10">
 
-Slide is an open source, ad free Reddit browser for iOS. It is based around
-the [Reddift](https://github.com/sonsongithub/reddift).
+Slide is an open-source, ad-free Reddit browser for iOS. It is based around
+the [Reddift](https://github.com/sonsongithub/reddift) Reddit API wrapper.
 
-Slide is not yet avaliable for download on the App Store, but there is a small TestFlight group. For more information regarding availability, feel free to join us on [Reddit](https://www.reddit.com/r/slide_ios)  
+Slide is not yet avaliable for download on the App Store, but is currently going through Alpha testing through TestFlight. For more information regarding availability, feel free to join us on [the subreddit](https://www.reddit.com/r/slide_ios)  
 
 
 
@@ -23,7 +23,7 @@ To get started with Slide iOS development, you need to set up Cocoapods integrat
     5. Open "Slide for Reddit.xcworkspace" through finder
 
 ### What needs to be done
-Slide is still in Pre-alpha, and a lot of work has yet to be done. I will be going through and adding more documentation soon (issue #4), and will be taking care of the Settings screens myself. Any issues are fair game, but any issue with the "Help Wanted" tag is an issue that I have not started on or that would be straightforward to implement with a single PR. If you have any questions or want to be pointed in the right direction, feel free to send me a PM on Reddit to /u/ccrama, or join us on our IRC channel (top banner)!
+Slide is in beta, and there are issues that need to be resolved and some feature additions that need to be integrated before the public version 1 release. Any issues are fair game, but any issue with the "Help Wanted" tag is an issue that I have not started on or that should be straightforward to implement with a single PR! If you have any questions or want to be pointed in the right direction, feel free to send me a PM on Reddit to /u/ccrama, or join us on Discord (top banner)!
 
 ### Issues
 
@@ -44,8 +44,7 @@ by attaching a link (to Imgur, for example), whichever is easier for you.
 If you are a developer and wish to contribute to the app please fork the project
 and submit a pull request.
 
-If you have any questions, feel free to
-[ask in the IRC channel](https://kiwiirc.com/client/irc.snoonet.org/#slide) or
+If you have any questions, feel free to message me on Discord or
 [drop me a message](https://www.reddit.com/message/compose/?to=ccrama) on Reddit.
 
 ## Changelog
@@ -58,5 +57,4 @@ commits](https://github.com/ccrama/Slide-ios/commits/master).
 
 Slide is licensed under the [Apache 2 License.](LICENSE)
 
-In addition to the terms set by the Apache 2 License, I ask that if you use
-any code from this repository that you send me a message to let me know.
+If you find Slide's code useful or you use code from this repository, feel free to let me know!
