@@ -10,6 +10,10 @@ import UIKit
 import reddift
 
 class GalleryTableViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource {
+    var panGestureRecognizer: UIPanGestureRecognizer?
+    public var background: UIView?
+        var originalPosition: CGPoint?
+    var currentPositionTouched: CGPoint?
     
     var items: [RSubmission] = []
     
@@ -21,19 +25,15 @@ class GalleryTableViewController: MediaViewController, UITableViewDelegate, UITa
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         UIApplication.shared.statusBarView?.backgroundColor = .black
-
-        navigationController?.navigationBar.isHidden = true
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         UIApplication.shared.statusBarView?.backgroundColor = .clear
-        navigationController?.navigationBar.isHidden = false
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        navigationController?.navigationBar.isHidden = false
     }
     
     var tableView: UITableView = UITableView()
@@ -44,33 +44,79 @@ class GalleryTableViewController: MediaViewController, UITableViewDelegate, UITa
         self.view.addSubview(tableView)
         self.tableView.delegate = self
         self.tableView.dataSource = self
-        self.tableView.contentInset = UIEdgeInsets.init(top: 56, left: 0, bottom: 0, right: 0)
+        self.tableView.contentInset = UIEdgeInsets.init(top: 0, left: 0, bottom: 56, right: 0)
     }
-
-    var navItem: UINavigationItem?
 
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.register(GalleryCellView.classForCoder(), forCellReuseIdentifier: "cell")
         self.tableView.backgroundColor = UIColor.black
         self.tableView.separatorStyle = .none
-        let navigationBar = UINavigationBar.init(frame: CGRect.init(x: 0, y: (UIApplication.shared.statusBarView?.frame.size.height ?? 20), width: self.view.frame.size.width, height: 56))
-        navigationBar.isTranslucent = false
-        navigationBar.barTintColor = .black
+        let exit = UIView.init(frame: CGRect.init(x: 0, y: UIScreen.main.bounds.height - 56, width: self.view.frame.size.width, height: 56))
+        exit.backgroundColor = .black
 
-        navItem = UINavigationItem(title: "")
         let close = UIButton.init(type: .custom)
         close.setImage(UIImage.init(named: "close")?.navIcon(), for: UIControlState.normal)
         close.addTarget(self, action: #selector(self.exit), for: UIControlEvents.touchUpInside)
-        close.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-        let closeB = UIBarButtonItem.init(customView: close)
-        navItem?.leftBarButtonItem = closeB
+        close.frame = CGRect.init(x: self.view.frame.size.width - 40, y: 13, width: 30, height: 30)
 
-        // navItem?.rightBarButtonItem = gridB
+        exit.addSubview(close)
+        self.view.addSubview(exit)
+        
+        panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panGestureAction(_:)))
+        panGestureRecognizer!.direction = .vertical
+        
+        view.addGestureRecognizer(panGestureRecognizer!)
+        background = UIView()
+        background!.frame = self.view.frame
+        background!.autoresizingMask = [.flexibleHeight, .flexibleWidth]
+        background!.backgroundColor = .black
 
-        navigationBar.setItems([navItem!], animated: false)
-        self.view.addSubview(navigationBar)
     }
+    
+    func panGestureAction(_ panGesture: UIPanGestureRecognizer) {
+        let translation = panGesture.translation(in: view)
+        
+        if panGesture.state == .began {
+            originalPosition = view.center
+            currentPositionTouched = panGesture.location(in: view)
+        } else if panGesture.state == .changed {
+            view.frame.origin = CGPoint(
+                x: 0,
+                y: translation.y
+            )
+            let progress = translation.y / (self.view.frame.size.height / 2)
+            background!.alpha = 1 - (abs(progress) * 0.9)
+            
+        } else if panGesture.state == .ended {
+            let velocity = panGesture.velocity(in: view)
+            
+            let down = panGesture.velocity(in: view).y > 0
+            if abs(velocity.y) >= 1000 || abs(self.view.frame.origin.y) > self.view.frame.size.height / 2{
+                
+                UIView.animate(withDuration: 0.2
+                    , animations: {
+                        self.view.frame.origin = CGPoint(
+                            x: self.view.frame.origin.x,
+                            y: self.view.frame.size.height * (down ? 1 : -1) )
+                        
+                        self.background!.alpha = 0.1
+                        
+                }, completion: { (isCompleted) in
+                    if isCompleted {
+                        self.dismiss(animated: false, completion: nil)
+                    }
+                })
+            } else {
+                UIView.animate(withDuration: 0.2, animations: {
+                    self.view.center = self.originalPosition!
+                    self.background!.alpha = 1
+                    
+                })
+            }
+        }
+    }
+
 
     func exit() {
         self.dismiss(animated: true, completion: nil)
