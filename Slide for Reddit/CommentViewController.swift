@@ -1341,6 +1341,56 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableViewAutomaticDimension
     }
+    
+    var tagText : String?
+    func tagUser(name: String){
+        let alertController = UIAlertController(title: "Tag \(AccountController.formatUsernamePosessive(input: name, small: true)) profile", message: nil, preferredStyle: UIAlertControllerStyle.alert)
+        let confirmAction = UIAlertAction(title: "Set", style: .default) { (_) in
+            if let text = self.tagText {
+                ColorUtil.setTagForUser(name: name, tag: text)
+                self.tableView.reloadData()
+            } else {
+                // user did not fill field
+            }
+        }
+        
+        if(!ColorUtil.getTagForUser(name: name).isEmpty){
+            let removeAction = UIAlertAction(title: "Remove tag", style: .default) { (_) in
+                ColorUtil.removeTagForUser(name: name)
+                self.tableView.reloadData()
+            }
+            alertController.addAction(removeAction)
+        }
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) in }
+        
+        let config: TextField.Config = { textField in
+            textField.becomeFirstResponder()
+            textField.textColor = .black
+            textField.placeholder = "Tag"
+            textField.left(image: UIImage.init(named: "flag"), color: .black)
+            textField.leftViewPadding = 12
+            textField.borderWidth = 1
+            textField.cornerRadius = 8
+            textField.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
+            textField.backgroundColor = .white
+            textField.keyboardAppearance = .default
+            textField.keyboardType = .default
+            textField.returnKeyType = .done
+            textField.text = ColorUtil.getTagForUser(name: name)
+            textField.action { textField in
+                self.tagText = textField.text
+            }
+        }
+        
+        alertController.addOneTextField(configuration: config)
+        
+        alertController.addAction(confirmAction)
+        alertController.addAction(cancelAction)
+        
+        self.present(alertController, animated: true, completion: nil)
+        
+    }
 
     var isCurrentlyChanging = false
 

@@ -61,7 +61,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         }
         
         if(!UserDefaults.standard.bool(forKey: "beta")){
-            let alert = UIAlertController.init(title: "Welcome to Slide Beta testing!", message: "Bugs are to be expected! If you run into an issue or have a feature request, please:\n\nPost to the Subreddit\nor\nPost to GitHub", preferredStyle: .alert)
+            let alert = UIAlertController.init(title: "Welcome to Slide Beta testing!", message: "\nBy clicking agree, you signify your understanding that you are testing Beta software that may contain bugs or incomplete features.\n\nBy using this Beta, you agree to report bugs and feature requests to either GitHub or the slide_ios subreddit. Please do not send reports through the TestFlight feedback system.", preferredStyle: .alert)
             alert.addAction(UIAlertAction.init(title: "Open GitHub", style: .default, handler: { (action) in
                 if #available(iOS 10.0, *) {
                     UIApplication.shared.open(URL.init(string: "https://github.com/ccrama/Slide-iOS")!, options: [:], completionHandler: nil)
@@ -74,7 +74,9 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                 VCPresenter.openRedditLink("/r/slide_ios", self.navigationController, self)
             }))
             
-            alert.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: { (action) in
+            alert.addAction(UIAlertAction.init(title: "Agree", style: .destructive, handler: { (action) in
+                UserDefaults.standard.set(true, forKey: "beta")
+                UserDefaults.standard.synchronize()
             }))
             
             self.present(alert, animated: true)
@@ -83,7 +85,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
     func hardReset(){
         navigationController?.popViewController(animated: false)
-        navigationController?.pushViewController(MainViewController(), animated: false)
+        navigationController?.pushViewController(MainViewController.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil), animated: false)
     }
     
     func checkForMail() {
@@ -321,10 +323,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             UIApplication.shared.shortcutItems = subs
         }
 
-        tabBar.removeFromSuperview()
-        if (SettingValues.viewType) {
-            setupTabBar(finalSubs)
-        }
 
         let firstViewController = MainViewController.vCs[0]
 
@@ -343,6 +341,11 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         menuNav?.dismiss(animated: true)
 
         doButtons()
+        
+        tabBar.removeFromSuperview()
+        if (SettingValues.viewType) {
+            setupTabBar(finalSubs)
+        }
     }
 
     var tabBar = MDCTabBar()

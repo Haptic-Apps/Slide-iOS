@@ -165,8 +165,10 @@ class SettingsWelcome: UIViewController {
         UserDefaults.standard.set(ColorUtil.Theme.DARK.rawValue, forKey: "theme")
         UserDefaults.standard.set(FontGenerator.Font.ROBOTO_BOLD.rawValue, forKey: "postfont")
         UserDefaults.standard.set(FontGenerator.Font.ROBOTO_MEDIUM.rawValue, forKey: "commentfont")
-        UserDefaults.standard.setColor(color: GMColor.orangeA400Color(), forKey: "accentcolor")
+        UserDefaults.standard.setColor(color: GMColor.yellowA400Color(), forKey: "accentcolor")
         UserDefaults.standard.set(true, forKey: "firstOpen")
+        SettingValues.viewType = true
+        UserDefaults.standard.set(true, forKey: SettingValues.pref_viewType)
         UserDefaults.standard.synchronize()
         ColorUtil.doInit()
         parentVC.hardReset()

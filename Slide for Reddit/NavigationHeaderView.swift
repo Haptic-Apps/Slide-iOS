@@ -159,22 +159,25 @@ class NavigationHeaderView: UIView {
         alertController.addAction(Action(ActionData(title: "Go to a profile", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { action in
             self.showProfileDialog(self.inbox)
         }))
-
-        alertController.addAction(Action(ActionData(title: "Saved submissions", image: UIImage(named: "save")!.menuIcon()), style: .default, handler: { action in
-            self.parentController!.dismiss(animated: true) {
-                let profile = ProfileViewController.init(name: AccountController.currentName)
-                profile.openTo = 6
-                VCPresenter.showVC(viewController: profile, popupIfPossible: true, parentNavigationController: (self.parentController as! NavigationSidebarViewController).parentController?.navigationController, parentViewController: (self.parentController as! NavigationSidebarViewController).parentController)
-            }
-        }))
-
-        alertController.addAction(Action(ActionData(title: "Upvoted submissions", image: UIImage(named: "upvote")!.menuIcon()), style: .default, handler: { action in
-            self.parentController!.dismiss(animated: true) {
-                let profile = ProfileViewController.init(name: AccountController.currentName)
-                profile.openTo = 3
-                VCPresenter.showVC(viewController: profile, popupIfPossible: true, parentNavigationController: (self.parentController as! NavigationSidebarViewController).parentController?.navigationController, parentViewController: (self.parentController as! NavigationSidebarViewController).parentController)
-            }
-        }))
+        
+        
+        if(AccountController.isLoggedIn){
+            alertController.addAction(Action(ActionData(title: "Saved submissions", image: UIImage(named: "save")!.menuIcon()), style: .default, handler: { action in
+                self.parentController!.dismiss(animated: true) {
+                    let profile = ProfileViewController.init(name: AccountController.currentName)
+                    profile.openTo = 6
+                    VCPresenter.showVC(viewController: profile, popupIfPossible: true, parentNavigationController: (self.parentController as! NavigationSidebarViewController).parentController?.navigationController, parentViewController: (self.parentController as! NavigationSidebarViewController).parentController)
+                }
+            }))
+            
+            alertController.addAction(Action(ActionData(title: "Upvoted submissions", image: UIImage(named: "upvote")!.menuIcon()), style: .default, handler: { action in
+                self.parentController!.dismiss(animated: true) {
+                    let profile = ProfileViewController.init(name: AccountController.currentName)
+                    profile.openTo = 3
+                    VCPresenter.showVC(viewController: profile, popupIfPossible: true, parentNavigationController: (self.parentController as! NavigationSidebarViewController).parentController?.navigationController, parentViewController: (self.parentController as! NavigationSidebarViewController).parentController)
+                }
+            }))
+        }
 
         parentController?.present(alertController, animated: true, completion: nil)
 
