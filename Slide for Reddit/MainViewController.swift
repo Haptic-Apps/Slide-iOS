@@ -55,8 +55,37 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         if (menuNav?.tableView != nil) {
             menuNav?.tableView.reloadData()
         }
+        
+        if(!UserDefaults.standard.bool(forKey: "firstOpen")){
+            VCPresenter.showVC(viewController: SettingsWelcome(parent: self), popupIfPossible: true, parentNavigationController: nil, parentViewController: self)
+        }
+        
+        if(!UserDefaults.standard.bool(forKey: "beta")){
+            let alert = UIAlertController.init(title: "Welcome to Slide Beta testing!", message: "Bugs are to be expected! If you run into an issue or have a feature request, please:\n\nPost to the Subreddit\nor\nPost to GitHub", preferredStyle: .alert)
+            alert.addAction(UIAlertAction.init(title: "Open GitHub", style: .default, handler: { (action) in
+                if #available(iOS 10.0, *) {
+                    UIApplication.shared.open(URL.init(string: "https://github.com/ccrama/Slide-iOS")!, options: [:], completionHandler: nil)
+                } else {
+                    UIApplication.shared.openURL(URL.init(string: "https://github.com/ccrama/Slide-iOS")!)
+                }
+            }))
+            
+            alert.addAction(UIAlertAction.init(title: "Visit the subreddit", style: .default, handler: { (action) in
+                VCPresenter.openRedditLink("/r/slide_ios", self.navigationController, self)
+            }))
+            
+            alert.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: { (action) in
+            }))
+            
+            self.present(alert, animated: true)
+        }
     }
 
+    func hardReset(){
+        navigationController?.popViewController(animated: false)
+        navigationController?.pushViewController(MainViewController(), animated: false)
+    }
+    
     func checkForMail() {
         DispatchQueue.main.async {
             let lastMail = UserDefaults.standard.integer(forKey: "mail")
