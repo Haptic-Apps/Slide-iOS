@@ -146,6 +146,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 // do nothing on canceled
                 if error == .canceledByUser || error == .canceledBySystem {
                     exit(0)
+                    
                 }
 
                 BioMetricAuthenticator.authenticateWithPasscode(reason: "Enter your password", cancelTitle: "Exit", success: {

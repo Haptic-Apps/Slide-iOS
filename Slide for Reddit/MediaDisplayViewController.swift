@@ -255,7 +255,8 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
 
         progressView = MDCProgressView()
         progressView?.progress = 0
-        progressView?.tintColor = ColorUtil.accentColorForSub(sub: "")
+        progressView?.trackTintColor = ColorUtil.accentColorForSub(sub: "").withAlphaComponent(0.3)
+        progressView?.progressTintColor = ColorUtil.accentColorForSub(sub: "")
         progressView?.frame = CGRect(x: 0, y: 5 + (UIApplication.shared.statusBarView?.frame.size.height ?? 20), width: toolbar.bounds.width, height: CGFloat(5))
         self.view.addSubview(progressView!)
 
@@ -471,6 +472,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
 
     func playbackSliderValueChanged(_ playbackSlider:UISlider) {
         
+        ignore = true
         let seconds : Int64 = Int64(playbackSlider.value)
         let targetTime:CMTime = CMTimeMake(seconds, 1)
         
@@ -479,12 +481,15 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
         if player.rate == 0
         {
             player.play()
+            ignore = false
             playButton!.setImage(UIImage(named: "pause"), for: .normal)
         }
         let deadlineTime = DispatchTime.now() + .seconds(1)
         DispatchQueue.main.asyncAfter(deadline: deadlineTime, execute: {
+            if(!self.ignore){
                 self.playButton!.isHidden = true
                 self.playbackSlider.isHidden = true
+            }
         })
 
     }
@@ -494,9 +499,13 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
         if player.rate == 0
         {
             player.play()
+            self.playButton!.isHidden = true
+            self.playbackSlider.isHidden = true
+
             playButton!.setImage(UIImage(named: "pause"), for: .normal)
         } else {
             player.pause()
+            ignore = true
             playButton!.setImage(UIImage(named: "play"), for: .normal)
         }
     }

@@ -590,6 +590,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     func setLink(submission: RSubmission, parent: MediaViewController, nav: UIViewController?, baseSub: String) {
         loadedImage = nil
         full = parent is CommentViewController
+        print("setLink called again")
         lq = false
         if (true || full) { //todo logic for this
             self.contentView.backgroundColor = ColorUtil.foregroundColor

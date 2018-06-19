@@ -446,10 +446,10 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        tableView.collectionViewLayout.invalidateLayout()
         super.viewWillTransition(to: size, with: coordinator)
-    }
+        tableView.reloadData()
 
+    }
 
     var links: [RSubmission] = []
     var paginator = Paginator()
