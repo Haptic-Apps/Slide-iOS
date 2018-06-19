@@ -9,33 +9,33 @@ target 'Slide for Reddit' do
   pod 'reddift', :git =>  'https://github.com/ccrama/reddift'
   pod 'SDWebImage', '~>3.8'
   pod 'SideMenu'
-pod 'MaterialComponents/AnimationTiming'
-pod 'MaterialComponents/Buttons'
-pod 'MaterialComponents/Dialogs'
-pod 'MaterialComponents/Ink'
-pod 'MaterialComponents/Palettes'
-pod 'MaterialComponents/TextFields'
-pod 'MaterialComponents/BottomSheet'
-pod 'MaterialComponents/ProgressView' 
-pod "MKColorPicker"
-pod 'BadgeSwift', '~> 5.0'
-pod 'LicensesViewController', '~> 0.6.5'
-pod 'BiometricAuthentication'
+  pod 'MaterialComponents/AnimationTiming'
+  pod 'MaterialComponents/Buttons'
+  pod 'MaterialComponents/Dialogs'
+  pod 'MaterialComponents/Ink'
+  pod 'MaterialComponents/Palettes'
+  pod 'MaterialComponents/TextFields'
+  pod 'MaterialComponents/BottomSheet'
+  pod 'MaterialComponents/ProgressView'
+  pod 'MKColorPicker'
+  pod 'BadgeSwift', '~> 5.0'
+  pod 'LicensesViewController', '~> 0.6.5'
+  pod 'BiometricAuthentication'
   pod 'XLActionController', :git => 'https://github.com/ccrama/XLActionController'
-pod 'MaterialComponents/ShadowElevations'
-pod 'MaterialComponents/Snackbar’
-pod 'MaterialComponents/ActivityIndicator'
-pod "SwiftSpreadsheet"
-pod 'Starscream', '~> 3.0.2'
-pod 'MaterialComponents/Tabs'
-  pod “RLBAlertsPickers”, :git => ‘https://github.com/ccrama/Alerts-Pickers'
-  pod “SloppySwiper”, :git => ‘https://github.com/fastred/SloppySwiper'
+  pod 'MaterialComponents/ShadowElevations'
+  pod 'MaterialComponents/Snackbar'
+  pod 'MaterialComponents/ActivityIndicator'
+  pod 'SwiftSpreadsheet'
+  pod 'Starscream', '~> 3.0.2'
+  pod 'MaterialComponents/Tabs'
+  pod 'RLBAlertsPickers', :git => 'https://github.com/ccrama/Alerts-Pickers'
+  pod 'SloppySwiper', :git => 'https://github.com/fastred/SloppySwiper'
   pod 'UZTextView', :git => 'https://github.com/ccrama/UZTextView'
   pod 'TTTAttributedLabel'
   pod 'Alamofire', '~> 4.3'
-    pod 'SwiftyJSON'
-pod 'ActionSheetPicker-3.0’, :git => ‘https://github.com/ccrama/ActionSheetPicker-3.0'
-  pod ‘RealmSwift’
+  pod 'SwiftyJSON'
+  pod 'ActionSheetPicker-3.0', :git => 'https://github.com/ccrama/ActionSheetPicker-3.0'
+  pod 'RealmSwift'
 
   target 'Slide for RedditTests' do
     inherit! :search_paths
@@ -50,9 +50,9 @@ pod 'ActionSheetPicker-3.0’, :git => ‘https://github.com/ccrama/ActionSheetP
 end
 
 post_install do |installer|
-    installer.pods_project.targets.each do |target|
-        target.build_configurations.each do |config|
-            config.build_settings['SWIFT_VERSION'] = '3.0'
-        end
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['SWIFT_VERSION'] = '3.0'
     end
   end
+end
