@@ -92,7 +92,7 @@ class SettingsContent: UITableViewController {
         
         self.view.backgroundColor = ColorUtil.backgroundColor
         // set the title
-        self.title = "Data Saving"
+        self.title = "Reddit Content"
         self.tableView.separatorStyle = .none
 
         createCell(showNSFWContentCell, showNSFWContent, isOn: SettingValues.nsfwEnabled, text: "I am 18 years old or older, and am willing to see adult content")
