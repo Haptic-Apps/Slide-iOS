@@ -49,10 +49,9 @@ and submit a pull request.
 If you have any questions, feel free to message me on Discord or
 [drop me a message](https://www.reddit.com/message/compose/?to=ccrama) on Reddit.
 
-## Changelog
+## Changes
 
-The file [CHANGELOG.md](CHANGELOG.md) provides an overview of the changes for a
-release; for a more detailed look at changes to the app, [view individual
+For a detailed look at changes to the app you can, [view individual
 commits](https://github.com/ccrama/Slide-ios/commits/master).
 
 ## Licensing
