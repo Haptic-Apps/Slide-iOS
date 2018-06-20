@@ -66,6 +66,7 @@ class SettingValues {
     public static let pref_collapseFully = "COLLAPSE_FULLY"
     public static let pref_highlightOp = "HIGHLIGHT_OP"
     public static let pref_smallTag = "SMALLER_TAG"
+    public static let pref_roundCorners = "ROUND_CORNERS"
     public static let pref_biometrics = "BIOMETRICS"
     public static let pref_safariVC = "SAFARIVC"
     public static let pref_fabType = "FABTYPE"
@@ -142,6 +143,7 @@ class SettingValues {
     public static var collapseFully = true
     public static var highlightOp = true
     public static var smallerTag = true
+    public static var roundCorners = true
     public static var biometrics = true
     public static var safariVC = true
     public static var nightStart = 1
@@ -247,6 +249,7 @@ class SettingValues {
         }
 
         SettingValues.smallerTag = settings.bool(forKey: SettingValues.pref_smallTag)
+        SettingValues.roundCorners = settings.bool(forKey: SettingValues.pref_roundCorners)
         SettingValues.markReadOnScroll = settings.bool(forKey: SettingValues.pref_markReadOnScroll)
         SettingValues.nsfwEnabled = settings.bool(forKey: SettingValues.pref_nsfwEnabled)
         SettingValues.nsfwPreviews = settings.bool(forKey: SettingValues.pref_nsfwPreviews)
