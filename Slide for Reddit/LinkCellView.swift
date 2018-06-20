@@ -369,10 +369,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         info.textColor = .white
         b = info.withPadding(padding: UIEdgeInsets.init(top: 4, left: 10, bottom: 4, right: 10))
         b.backgroundColor = UIColor.black.withAlphaComponent(0.6)
-        if(SettingValues.roundCorners){
-            b.clipsToBounds = true
-            b.layer.cornerRadius = 15
-        }
+        b.clipsToBounds = true
+        b.layer.cornerRadius = 15
 
         self.box = UIStackView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
         self.buttons = UIStackView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
