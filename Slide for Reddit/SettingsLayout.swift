@@ -53,8 +53,9 @@ class SettingsLayout: UITableViewController {
     var roundCornerCell: UITableViewCell = UITableViewCell()
     var roundcorner = UISwitch()
 
-
-    var link = LinkTableViewCell()
+    var linkCell = UITableViewCell()
+    
+    var link = LinkCellView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -85,7 +86,7 @@ class SettingsLayout: UITableViewController {
             SettingValues.smallerTag = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_smallTag)
         } else if(changed == roundcorner){
-            SettingValues.roundedCorners = changed.isOn
+            SettingValues.roundCorners = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_roundCorners)
         } else if(changed == hideActionbar){
             SettingValues.hideButtonActionbar = changed.isOn
@@ -122,7 +123,9 @@ class SettingsLayout: UITableViewController {
     }
     
     func doLink(){
-        link = LinkTableViewCell()
+        link.contentView.removeFromSuperview()
+        link = LinkCellView.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 500))
+        
         let fakesub = RSubmission.init()
         let calendar: NSCalendar! = NSCalendar(calendarIdentifier: NSCalendar.Identifier.gregorian)
         let now: NSDate! = NSDate()
@@ -164,9 +167,15 @@ class SettingsLayout: UITableViewController {
         fakesub.width = 636
         fakesub.vote = false
         
-        
-        self.link.setLinkForPreview(submission: fakesub)
+        link.aspectWidth = self.tableView.frame.size.width
+        self.link.setLink(submission: fakesub, parent: MediaViewController(), nav: nil, baseSub: "all", test: true)
         self.link.isUserInteractionEnabled = false
+        linkCell.contentView.backgroundColor = ColorUtil.backgroundColor
+        link.contentView.frame = CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: link.estimateHeight(false, true))
+        link.updateConstraints()
+        link.doConstraints()
+        linkCell.contentView.addSubview(link.contentView)
+        linkCell.frame = CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: link.estimateHeight(false, true))
     }
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let label : UILabel = UILabel()
@@ -272,7 +281,7 @@ class SettingsLayout: UITableViewController {
         cardModeCell.detailTextLabel?.numberOfLines = 0
         cardModeCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         createCell(smalltagCell, smalltag, isOn: SettingValues.smallerTag, text: "Smaller content tag")
-        createCell(roundCornerCell, roundcorner, isOn: SettingValues.roundedCorners, text: "Round corners")
+        createCell(roundCornerCell, roundcorner, isOn: SettingValues.roundCorners, text: "Round corners")
         createCell(hideActionbarCell, hideActionbar, isOn: SettingValues.hideButtonActionbar, text: "Hide actionbar")
         createCell(largerThumbnailCell, largerThumbnail, isOn: SettingValues.largerThumbnail, text: "Larger thumbnail")
         createCell(scoreTitleCell, scoreTitle, isOn: SettingValues.scoreInTitle, text: "Score and comment count in title")
@@ -327,7 +336,7 @@ class SettingsLayout: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch(indexPath.section) {
         case 0:
-          return link
+          return linkCell
         case 1:
             switch(indexPath.row) {
             case 0: return self.cardModeCell
@@ -359,7 +368,7 @@ class SettingsLayout: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch(section) {
         case 0: return 1
-        case 1: return 7
+        case 1: return 8
         case 2: return 6
         default: fatalError("Unknown number of sections")
         }
