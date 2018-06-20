@@ -108,7 +108,7 @@ class SettingsGeneral: UITableViewController {
         self.tableView.separatorStyle = .none
 
         createCell(viewType, viewTypeSwitch, isOn: SettingValues.viewType, text: "Swiping subreddit tabs mode")
-        createCell(hideFAB, hideFABSwitch, isOn: SettingValues.hiddenFAB, text: "Show subreddit floating action button")
+        createCell(hideFAB, hideFABSwitch, isOn: !SettingValues.hiddenFAB, text: "Show subreddit floating action button")
         createCell(scrubUsername, scrubUsernameSwitch, isOn: SettingValues.nameScrubbing, text: "Scrub your username (you will show as \"you\"")
         createCell(pinToolbar, pinToolbarSwitch, isOn: SettingValues.pinToolbar, text: "Pin header navigation bar and toolbar in subreddit view")
 

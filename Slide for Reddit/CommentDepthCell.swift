@@ -823,7 +823,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         if (!menuC.isEmpty) {
             self.contentView.removeConstraints(menuC)
         }
-        menuC = NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[topviewspace(marginTop)]-4-[title]-6-|",
+        menuC = NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[topviewspace(marginTop)]-8-[title]-8-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views)
@@ -1122,7 +1122,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         }
 
 
-        infoString.append(NSAttributedString.init(string: "\n"))
+        infoString.append(NSAttributedString.init(string: "\n\n"))
         if (!isCollapsed || !SettingValues.collapseFully) {
             infoString.append(text)
         }
