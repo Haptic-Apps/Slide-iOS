@@ -290,10 +290,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
         self.bannerImage = UIImageView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 0))
         bannerImage.contentMode = UIViewContentMode.scaleAspectFill
-        if(SettingValues.roundCorners){
-            bannerImage.layer.cornerRadius = 15;
-            bannerImage.clipsToBounds = true
-        }
+        bannerImage.layer.cornerRadius = 15;
+        bannerImage.clipsToBounds = true
         bannerImage.backgroundColor = UIColor.white
 
         self.title = TTTAttributedLabel(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude));
@@ -434,8 +432,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
         buttons.isUserInteractionEnabled = true
         bannerImage.contentMode = UIViewContentMode.scaleAspectFill
-        bannerImage.layer.cornerRadius = 15;
-        bannerImage.clipsToBounds = true
+        if(SettingValues.roundCorners){
+            bannerImage.layer.cornerRadius = 15;
+            bannerImage.clipsToBounds = true
+        }
         bannerImage.backgroundColor = UIColor.white
         thumbImage.layer.cornerRadius = 10;
         thumbImage.backgroundColor = UIColor.white
