@@ -249,7 +249,7 @@ class SettingValues {
         }
 
         SettingValues.smallerTag = settings.bool(forKey: SettingValues.pref_smallTag)
-        SettingValues.roundCorners = settings.bool(forKey: SettingValues.pref_roundCorners)
+        SettingValues.roundCorners = settings.object(forKey: SettingValues.pref_roundCorners) == nil ? true : settings.bool(forKey: SettingValues.pref_roundCorners)
         SettingValues.markReadOnScroll = settings.bool(forKey: SettingValues.pref_markReadOnScroll)
         SettingValues.nsfwEnabled = settings.bool(forKey: SettingValues.pref_nsfwEnabled)
         SettingValues.nsfwPreviews = settings.bool(forKey: SettingValues.pref_nsfwPreviews)
