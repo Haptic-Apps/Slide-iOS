@@ -1,4 +1,6 @@
 # Xcode workspace user data
 Slide\ for\ Reddit.xcworkspace/
 .DS_Store
-Pods/
+Pods/*
+Slide for Reddit/SettingsLayout.swift
+Slide for Reddit/SettingsLayout.swift

@@ -571,7 +571,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     func addNewFab(){
         SingleSubredditViewController.ignoreFab = false
         if (!MainViewController.isOffline && !SettingValues.hiddenFAB) {
-            SingleSubredditViewController.fab = UIButton(frame: CGRect.init(x: (tableView.frame.size.width / 2) - 70, y: -20, width: 140, height: 45))
+            SingleSubredditViewController.fab = UIButton(frame: CGRect.init(x: (self.view.frame.size.width / 2) - 70, y: -20, width: 140, height: 45))
             SingleSubredditViewController.fab!.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
             SingleSubredditViewController.fab!.layer.cornerRadius = 22.5
             SingleSubredditViewController.fab!.clipsToBounds = true
@@ -899,10 +899,12 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         }
 
         //todo save realm
-        tableView.performBatchUpdates({
-            self.tableView.deleteItems(at: indexPaths)
-            self.flowLayout.reset()
-        }, completion: nil)
+        DispatchQueue.main.async {
+            self.tableView.performBatchUpdates({
+                self.tableView.deleteItems(at: indexPaths)
+                self.flowLayout.reset()
+            }, completion: nil)
+        }
     }
 
     static var fab: UIButton?

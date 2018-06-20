@@ -123,6 +123,8 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         three.backgroundColor = GMColor.lightGreen300Color()
         three.layer.cornerRadius = 22.5
         three.clipsToBounds = true
+        three.numberOfLines = 0
+        three.lineBreakMode = .byWordWrapping
         three.textColor = .white
         three.font = UIFont.boldSystemFont(ofSize: 20)
         three.textAlignment = .center
@@ -134,6 +136,8 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         six.layer.cornerRadius = 22.5
         six.clipsToBounds = true
         six.textColor = .white
+        six.numberOfLines = 0
+        six.lineBreakMode = .byWordWrapping
         six.font = UIFont.boldSystemFont(ofSize: 20)
         six.textAlignment = .center
 
@@ -226,13 +230,27 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
             let price2Str = numberFormatter.string(from: items[1].price)
             if(self.three.text! != price1Str!){
                 //Is a sale
-                let off = Int(self.three.text!.substring(1, length: 1))! - Int(price1Str!.substring(1, length: 1))! + (price1Str!.contains(".99") ? 0 : 1)
-                self.purchasePro.text = "Purchase Pro\nWith $3 Donation\n\nSale: $\(off) off!"
-                self.purchaseBundle.text = "Purchase Pro\nWith $3 Donation\n\nSale: $\(off) off!"
                 
-                self.three.text = price1Str
-                self.six.text = price2Str
+                let crossedString = NSMutableAttributedString.init(string: "$4.99\n", attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSStrikethroughStyleAttributeName: NSNumber(value: NSUnderlineStyle.styleSingle.rawValue)])
+                let crossedString2 = NSMutableAttributedString.init(string: "$7.99\n", attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSStrikethroughStyleAttributeName: NSNumber(value: NSUnderlineStyle.styleSingle.rawValue)])
 
+                let newString = NSMutableAttributedString.init(string: price1Str!, attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 18)])
+                let newString2 = NSMutableAttributedString.init(string: price2Str!, attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 18)])
+                
+                var finalString = NSMutableAttributedString()
+                var finalString2 = NSMutableAttributedString()
+                
+                finalString.append(crossedString)
+                finalString.append(newString)
+                
+                finalString2.append(crossedString2)
+                finalString2.append(newString2)
+                
+                self.three.attributedText = finalString
+                self.six.attributedText = finalString2
+                
+                self.three.frame = CGRect.init(x:  (self.tableView.frame.size.width / 4) - 50, y: 150, width: 100, height: 80)
+                self.six.frame = CGRect.init(x:  (self.tableView.frame.size.width / 4) - 50, y: 150, width: 100, height: 80)
             }
         }
         IAPHandler.shared.purchaseStatusBlock = {[weak self] (type) in

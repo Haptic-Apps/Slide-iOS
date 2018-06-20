@@ -79,7 +79,7 @@ class SettingValues {
     public static let pref_multiColumnCount = "MULTICOLUMN_COUNT"
     public static let pref_nameScrubbing = "NAME_SCRUBBING"
     public static let pref_autoCache = "AUTO_CACHE"
-    public static let pref_pro = "PRO"
+    public static let pref_pro = "PRO_ENABLED"
     public static let pref_pinToolbar = "PIN_TOOLBAR"
 
     public static var viewType = true

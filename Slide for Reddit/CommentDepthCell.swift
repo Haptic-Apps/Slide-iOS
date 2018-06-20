@@ -302,7 +302,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
 
         self.title = TTTAttributedLabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
         title.numberOfLines = 0
-        title.font = FontGenerator.fontOfSize(size: 12, submission: false)
+        title.font = FontGenerator.fontOfSize(size: 16, submission: false)
         title.isUserInteractionEnabled = true
         title.delegate = self
         title.textColor = ColorUtil.fontColor
@@ -640,6 +640,11 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         alertController.addAction(Action(ActionData(title: "Report", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { action in
             PostActions.report(self.comment!, parent: par)
         }))
+        
+        alertController.addAction(Action(ActionData(title: "Tag user", image: UIImage(named: "subs")!.menuIcon()), style: .default, handler: { action in
+            par.tagUser(name: self.comment!.author)
+        }))
+
         alertController.addAction(Action(ActionData(title: "Copy text", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { action in
             let alert = UIAlertController.init(title: "Copy text", message: "", preferredStyle: .alert)
             alert.addTextViewer(text: .text(self.comment!.body))
@@ -763,11 +768,22 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         let metrics = ["marginTop": marginTop, "nmarginTop": -marginTop, "horizontalMargin": 75, "top": 0, "bottom": 0, "separationBetweenLabels": 0, "labelMinHeight": 75, "sidewidth": 4 * (depth), "width": sideWidth]
         let views = ["title": title, "topviewspace": topViewSpace, "more": moreButton, "side": sideView, "cell": self.contentView, "sideviewspace": sideViewSpace] as [String: Any]
 
-
+        
+        if (!menuC.isEmpty) {
+            self.contentView.removeConstraints(menuC)
+        }
+        menuC = NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[topviewspace(marginTop)]-8-[title]-8-|",
+                                               options: NSLayoutFormatOptions(rawValue: 0),
+                                               metrics: metrics,
+                                               views: views)
+        self.contentView.addConstraints(menuC)
         sideConstraint = NSLayoutConstraint.constraints(withVisualFormat: "H:|-(-8)-[sideviewspace(sidewidth)]-0-[side(width)]",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views)
+                                                        options: NSLayoutFormatOptions(rawValue: 0),
+                                                        metrics: metrics,
+                                                        views: views)
+
+
+
         sideConstraint!.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(-8)-[sideviewspace(sidewidth)]-0-[side(width)]-12-[title]-4-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
@@ -802,8 +818,6 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         let views = ["title": title, "topviewspace": topViewSpace, "children": c, "more": moreButton, "side": sideView, "cell": self.contentView, "sideviewspace": sideViewSpace] as [String: Any]
 
 
-        contentView.bounds = CGRect.init(x: 0, y: 0, width: contentView.frame.size.width, height: contentView.frame.size.height + CGFloat(marginTop))
-
         var constraint: [NSLayoutConstraint] = []
 
         constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(-8)-[sideviewspace]-0-[side]-12-[title]-4-|",
@@ -814,15 +828,6 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
-
-        if (!menuC.isEmpty) {
-            self.contentView.removeConstraints(menuC)
-        }
-        menuC = NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[topviewspace(marginTop)]-4-[title]-6-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views)
-        constraint.append(contentsOf: menuC)
 
 
         constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-2-[more]-2-|",
@@ -840,11 +845,11 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
                 metrics: metrics,
                 views: views))
 
-        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[topviewspace(marginTop)]-(nmarginTop)-[side]-(-1)-|",
+        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[topviewspace]-(nmarginTop)-[side]-(-1)-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
-        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[topviewspace(marginTop)]-(nmarginTop)-[sideviewspace]-0-|",
+        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[topviewspace]-(nmarginTop)-[sideviewspace]-0-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
@@ -853,8 +858,6 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         self.contentView.addConstraints(constraint)
 
         updateDepthConstraints()
-
-
     }
 
     var sideWidth: Int = 0
@@ -899,6 +902,10 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
             marginTop = 8
             sideWidth = 0
         }
+        
+        if(depth == 1){
+            marginTop = 8
+        }
 
         var attr = NSMutableAttributedString()
         if (more.children.isEmpty) {
@@ -908,7 +915,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         }
         let font = FontGenerator.fontOfSize(size: 16, submission: false)
         let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: .white)
-        title.setText(attr2)
+        title.attributedText = attr2
         updateDepthConstraints()
     }
 
@@ -998,11 +1005,13 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
                 sideView.backgroundColor = GMColor.purple500Color()
             }
         } else {
-            //marginTop = 8
-            marginTop = 1
+            marginTop = 8
             sideWidth = 0
         }
-
+        
+        if(depth == 1){
+            marginTop = 8
+        }
 
         refresh(comment: comment, submissionAuthor: author, text: text)
 
@@ -1040,12 +1049,15 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
 
 
         let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: comment.author, small: true))\u{00A0}", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
+        let authorStringNoFlair = NSMutableAttributedString(string: "\(AccountController.formatUsername(input: comment.author, small: true))\u{00A0}", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
+
         let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(comment.flair)\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
         let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
         let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(comment.gilded) ", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false)])
 
         let spacer = NSMutableAttributedString.init(string: "  ")
         let userColor = ColorUtil.getColorForUser(name: comment.author)
+        var authorSmall = false
         if (comment.distinguished == "admin") {
           authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#E57373"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
         } else if (comment.distinguished == "special") {
@@ -1058,15 +1070,21 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
             authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#64B5F6"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
         } else if (userColor != ColorUtil.baseColor) {
             authorString.addAttributes([kTTTBackgroundFillColorAttributeName: userColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
+        } else {
+            authorSmall = true
         }
 
-        let infoString = NSMutableAttributedString(string: "\u{00A0}")
-        infoString.append(authorString)
+        let infoString = NSMutableAttributedString(string: "")
+        if(authorSmall){
+            infoString.append(authorStringNoFlair)
+        } else {
+            infoString.append(authorString)
+        }
 
         let tag = ColorUtil.getTagForUser(name: comment.author)
         if (!tag.isEmpty) {
             let tagString = NSMutableAttributedString(string: "\u{00A0}\(tag)\u{00A0}", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
-            tagString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor(rgb: 0x2196f3), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
+            tagString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor(rgb: 0x2196f3), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: tagString.length))
             infoString.append(spacer)
             infoString.append(tagString)
         }
@@ -1108,7 +1126,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         }
 
 
-        infoString.append(NSAttributedString.init(string: "\n"))
+        infoString.append(NSAttributedString.init(string: "\n\n", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 5)]))
         if (!isCollapsed || !SettingValues.collapseFully) {
             infoString.append(text)
         }

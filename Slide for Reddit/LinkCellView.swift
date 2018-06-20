@@ -591,10 +591,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var link: RSubmission?
     var aspectWidth = CGFloat(0)
 
-    func setLink(submission: RSubmission, parent: MediaViewController, nav: UIViewController?, baseSub: String) {
+    func setLink(submission: RSubmission, parent: MediaViewController, nav: UIViewController?, baseSub: String, test : Bool = false) {
         loadedImage = nil
         full = parent is CommentViewController
-        print("setLink called again")
         lq = false
         if (true || full) { //todo logic for this
             self.contentView.backgroundColor = ColorUtil.foregroundColor
@@ -691,7 +690,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
         submissionHeight = submission.height
 
-        var type = ContentType.getContentType(baseUrl: submission.url)
+        var type = test ? ContentType.CType.LINK : ContentType.getContentType(baseUrl: submission.url)
         if (submission.isSelf) {
             type = .SELF
         }
@@ -707,11 +706,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             big = false
             thumb = true
         } else if (big && (SettingValues.bigPicCropped || full)) {
-            submissionHeight = 200
+            submissionHeight = test ? 150 : 200
         } else if (big) {
             let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: submission.width)
             if (h == 0) {
-                submissionHeight = 200
+                submissionHeight = test ? 150 : 200
             } else {
                 submissionHeight = h
             }
@@ -785,8 +784,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 aspect = 1
             }
             if (full || SettingValues.bigPicCropped) {
-                aspect = (full ? aspectWidth : self.contentView.frame.size.width) / 200
-                submissionHeight = 200
+                aspect = (full ? aspectWidth : self.contentView.frame.size.width) / (test ? 150 : 200)
+                submissionHeight = test ? 150 : 200
                 bigConstraint = NSLayoutConstraint(item: bannerImage, attribute: NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: bannerImage, attribute: NSLayoutAttribute.height, multiplier: aspect, constant: 0.0)
             } else {
                 bigConstraint = NSLayoutConstraint(item: bannerImage, attribute: NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: bannerImage, attribute: NSLayoutAttribute.height, multiplier: aspect, constant: 0.0)
@@ -830,7 +829,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             bannerImage.sd_setImage(with: URL.init(string: ""))
         }
 
-        if(!full){
+        if(!full && !test){
             aspectWidth = self.contentView.frame.size.width
         }
 
@@ -1012,136 +1011,135 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
         if (target == .thumb) {
             thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(ceight)-[image(thumb)]",
-                    options: NSLayoutFormatOptions(rawValue: 0),
-                    metrics: metrics,
-                    views: views))
-            if (SettingValues.leftThumbnail) {
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(ctwelve)-[image(thumb)]-(ceight)-[label]-(ctwelve)-|",
-                        options: NSLayoutFormatOptions(rawValue: 0),
-                        metrics: metrics,
-                        views: views))
+                                                                              options: NSLayoutFormatOptions(rawValue: 0),
+                                                                              metrics: metrics,
+                                                                              views: views))
+            if(SettingValues.leftThumbnail){
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(ceight)-[image(thumb)]-(ceight)-[label]-(ctwelve)-|",
+                                                                                  options: NSLayoutFormatOptions(rawValue: 0),
+                                                                                  metrics: metrics,
+                                                                                  views: views))
             } else {
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(ctwelve)-[label]-(ceight)-[image(thumb)]-(ctwelve)-|",
-                        options: NSLayoutFormatOptions(rawValue: 0),
-                        metrics: metrics,
-                        views: views))
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(ctwelve)-[label]-(ceight)-[image(thumb)]-(ceight)-|",
+                                                                                  options: NSLayoutFormatOptions(rawValue: 0),
+                                                                                  metrics: metrics,
+                                                                                  views: views))
             }
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(ceight)-[label]-10-\(bx)|",
-                    options: NSLayoutFormatOptions(rawValue: 0),
-                    metrics: metrics,
-                    views: views))
-
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[image]-(>=5)-\(bt)|",
-                    options: NSLayoutFormatOptions(rawValue: 0),
-                    metrics: metrics,
-                    views: views))
+            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(ceight)-[label]-\(bx)|",
+                options: NSLayoutFormatOptions(rawValue: 0),
+                metrics: metrics,
+                views: views))
+            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(ceight)-[label]-\(bt)|",
+                options: NSLayoutFormatOptions(rawValue: 0),
+                metrics: metrics,
+                views: views))
         } else if (target == .banner) {
             thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[image(0)]",
-                    options: NSLayoutFormatOptions(rawValue: 0),
-                    metrics: metrics,
-                    views: views))
+                                                                              options: NSLayoutFormatOptions(rawValue: 0),
+                                                                              metrics: metrics,
+                                                                              views: views))
             thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(ctwelve)-[label]-(ctwelve)-|",
-                    options: NSLayoutFormatOptions(rawValue: 0),
-                    metrics: metrics,
-                    views: views))
-
-            if (SettingValues.postViewMode == .CENTER || full) {
+                                                                              options: NSLayoutFormatOptions(rawValue: 0),
+                                                                              metrics: metrics,
+                                                                              views: views))
+            if(SettingValues.postViewMode == .CENTER || full){
                 thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(ceight)-[label]-(ceight)-[banner]-(ctwelve)-\(bx)|",
-                        options: NSLayoutFormatOptions(rawValue: 0),
-                        metrics: metrics,
-                        views: views))
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[info]-0-[banner]",
-                        options: NSLayoutFormatOptions.alignAllLastBaseline,
-                        metrics: metrics,
-                        views: views))
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[banner]-0-[tag]",
-                        options: NSLayoutFormatOptions.alignAllLastBaseline,
-                        metrics: metrics,
-                        views: views))
-
+                    options: NSLayoutFormatOptions(rawValue: 0),
+                    metrics: metrics,
+                    views: views))
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[info]-[banner]",
+                                                                                  options: NSLayoutFormatOptions.alignAllLastBaseline,
+                                                                                  metrics: metrics,
+                                                                                  views: views))
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[banner]-[tag]",
+                                                                                  options: NSLayoutFormatOptions.alignAllLastBaseline,
+                                                                                  metrics: metrics,
+                                                                                  views: views))
+                
                 thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[info(45)]-(ceight)-[buttons]",
-                        options: NSLayoutFormatOptions(rawValue: 0),
-                        metrics: metrics,
-                        views: views))
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[info(45)]-(ceight)-[box]",
-                        options: NSLayoutFormatOptions(rawValue: 0),
-                        metrics: metrics,
-                        views: views))
-
+                                                                                  options: NSLayoutFormatOptions(rawValue: 0),
+                                                                                  metrics: metrics,
+                                                                                  views: views))
                 thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[tag]-(ctwelve)-[buttons]",
-                        options: NSLayoutFormatOptions(rawValue: 0),
-                        metrics: metrics,
-                        views: views))
+                                                                                  options: NSLayoutFormatOptions(rawValue: 0),
+                                                                                  metrics: metrics,
+                                                                                  views: views))
+                
+                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[info]-(ceight)-[box]",
+                                                                                  options: NSLayoutFormatOptions(rawValue: 0),
+                                                                                  metrics: metrics,
+                                                                                  views: views))
                 thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[tag]-(ctwelve)-[box]",
-                        options: NSLayoutFormatOptions(rawValue: 0),
-                        metrics: metrics,
-                        views: views))
-
-
+                                                                                  options: NSLayoutFormatOptions(rawValue: 0),
+                                                                                  metrics: metrics,
+                                                                                  views: views))
+                
+                
             } else {
-
+                
                 thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(bannerPadding)-[banner]-(ceight)-[label]-(ctwelve)-\(bx)|",
-                        options: NSLayoutFormatOptions(rawValue: 0),
-                        metrics: metrics,
-                        views: views))
+                    options: NSLayoutFormatOptions(rawValue: 0),
+                    metrics: metrics,
+                    views: views))
                 thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[info(45)]-(ceight)-[label]",
-                        options: NSLayoutFormatOptions(rawValue: 0),
-                        metrics: metrics,
-                        views: views))
+                                                                                  options: NSLayoutFormatOptions(rawValue: 0),
+                                                                                  metrics: metrics,
+                                                                                  views: views))
+                
                 thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[tag]-(ctwelve)-[label]",
-                        options: NSLayoutFormatOptions(rawValue: 0),
-                        metrics: metrics,
-                        views: views))
-
+                                                                                  options: NSLayoutFormatOptions(rawValue: 0),
+                                                                                  metrics: metrics,
+                                                                                  views: views))
+                
             }
-
+            
             thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:\(bt)|",
-                    options: NSLayoutFormatOptions(rawValue: 0),
-                    metrics: metrics,
-                    views: views))
+                options: NSLayoutFormatOptions(rawValue: 0),
+                metrics: metrics,
+                views: views))
             thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:\(bx)|",
-                    options: NSLayoutFormatOptions(rawValue: 0),
-                    metrics: metrics,
-                    views: views))
-
+                options: NSLayoutFormatOptions(rawValue: 0),
+                metrics: metrics,
+                views: views))
+            
             thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(bannerPadding)-[banner]-(bannerPadding)-|",
-                    options: NSLayoutFormatOptions(rawValue: 0),
-                    metrics: metrics,
-                    views: views))
+                                                                              options: NSLayoutFormatOptions(rawValue: 0),
+                                                                              metrics: metrics,
+                                                                              views: views))
             thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(bannerPadding)-[info]-(bannerPadding)-|",
-                    options: NSLayoutFormatOptions(rawValue: 0),
-                    metrics: metrics,
-                    views: views))
+                                                                              options: NSLayoutFormatOptions(rawValue: 0),
+                                                                              metrics: metrics,
+                                                                              views: views))
             thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[tag]-(ctwelve)-|",
-                    options: NSLayoutFormatOptions.alignAllLastBaseline,
-                    metrics: metrics,
-                    views: views))
-
+                                                                              options: NSLayoutFormatOptions(rawValue: 0),
+                                                                              metrics: metrics,
+                                                                              views: views))
         } else if (target == .text) {
+            
             thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(ceight)-[image(0)]",
-                    options: NSLayoutFormatOptions(rawValue: 0),
-                    metrics: metrics,
-                    views: views))
-
-
+                                                                              options: NSLayoutFormatOptions(rawValue: 0),
+                                                                              metrics: metrics,
+                                                                              views: views))
+            
+            
             thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(ctwelve)-[label]-(ctwelve)-|",
-                    options: NSLayoutFormatOptions(rawValue: 0),
-                    metrics: metrics,
-                    views: views))
-
+                                                                              options: NSLayoutFormatOptions(rawValue: 0),
+                                                                              metrics: metrics,
+                                                                              views: views))
+            
             thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(ctwelve)-[body]-(ctwelve)-|",
-                    options: NSLayoutFormatOptions(rawValue: 0),
-                    metrics: metrics,
-                    views: views))
-
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-size-[label]-5@1000-[body]-12@1000-\(bx)|",
-                    options: NSLayoutFormatOptions(rawValue: 0),
-                    metrics: metrics,
-                    views: views))
+                                                                              options: NSLayoutFormatOptions(rawValue: 0),
+                                                                              metrics: metrics,
+                                                                              views: views))
+            
+            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(ctwelve)-[label]-5@1000-[body]-(ctwelve)-\(bx)|",
+                options: NSLayoutFormatOptions(rawValue: 0),
+                metrics: metrics,
+                views: views))
             thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:\(bt)|",
-                    options: NSLayoutFormatOptions(rawValue: 0),
-                    metrics: metrics,
-                    views: views))
+                options: NSLayoutFormatOptions(rawValue: 0),
+                metrics: metrics,
+                views: views))
         }
         self.contentView.addConstraints(thumbConstraint)
         if (target == .banner && bigConstraint != nil) {

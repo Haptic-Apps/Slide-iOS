@@ -55,8 +55,39 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         if (menuNav?.tableView != nil) {
             menuNav?.tableView.reloadData()
         }
+        
+        if(!UserDefaults.standard.bool(forKey: "firstOpen")){
+            VCPresenter.showVC(viewController: SettingsWelcome(parent: self), popupIfPossible: true, parentNavigationController: nil, parentViewController: self)
+        }
+        
+        if(!UserDefaults.standard.bool(forKey: "beta")){
+            let alert = UIAlertController.init(title: "Welcome to Slide Beta testing!", message: "\nBy clicking agree, you signify your understanding that you are testing Beta software that may contain bugs or incomplete features.\n\nBy using this Beta, you agree to report bugs and feature requests to either GitHub or the slide_ios subreddit. Please do not send reports through the TestFlight feedback system.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction.init(title: "Open GitHub", style: .default, handler: { (action) in
+                if #available(iOS 10.0, *) {
+                    UIApplication.shared.open(URL.init(string: "https://github.com/ccrama/Slide-iOS")!, options: [:], completionHandler: nil)
+                } else {
+                    UIApplication.shared.openURL(URL.init(string: "https://github.com/ccrama/Slide-iOS")!)
+                }
+            }))
+            
+            alert.addAction(UIAlertAction.init(title: "Visit the subreddit", style: .default, handler: { (action) in
+                VCPresenter.openRedditLink("/r/slide_ios", self.navigationController, self)
+            }))
+            
+            alert.addAction(UIAlertAction.init(title: "Agree", style: .destructive, handler: { (action) in
+                UserDefaults.standard.set(true, forKey: "beta")
+                UserDefaults.standard.synchronize()
+            }))
+            
+            self.present(alert, animated: true)
+        }
     }
 
+    func hardReset(){
+        navigationController?.popViewController(animated: false)
+        navigationController?.pushViewController(MainViewController.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil), animated: false)
+    }
+    
     func checkForMail() {
         DispatchQueue.main.async {
             let lastMail = UserDefaults.standard.integer(forKey: "mail")
@@ -292,10 +323,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             UIApplication.shared.shortcutItems = subs
         }
 
-        tabBar.removeFromSuperview()
-        if (SettingValues.viewType) {
-            setupTabBar(finalSubs)
-        }
 
         let firstViewController = MainViewController.vCs[0]
 
@@ -314,6 +341,11 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         menuNav?.dismiss(animated: true)
 
         doButtons()
+        
+        tabBar.removeFromSuperview()
+        if (SettingValues.viewType) {
+            setupTabBar(finalSubs)
+        }
     }
 
     var tabBar = MDCTabBar()

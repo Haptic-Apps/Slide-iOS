@@ -657,7 +657,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     var moreB = UIBarButtonItem()
 
     func hideSearchBar() {
-        navigationController?.setNavigationBarHidden(true, animated: true)
+        navigationController?.setNavigationBarHidden(false, animated: true)
         isSearching = false
         tableView.tableHeaderView = savedHeaderView!
 
@@ -812,7 +812,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 indicator?.radius = 20
                 indicator?.indicatorMode = .indeterminate
                 indicator?.cycleColors = [ColorUtil.getColorForSub(sub: submission?.subreddit ?? ""), ColorUtil.accentColorForSub(sub: submission?.subreddit ?? "")]
-                let center = CGPoint.init(x: self.tableView.center.x, y: CGFloat(tableView.bounds.height - 200))
+                let center = CGPoint.init(x: UIScreen.main.bounds.width / 2, y: CGFloat(UIScreen.main.bounds.height - 200))
                 indicator?.center = center
                 self.tableView.addSubview(indicator!)
                 indicator?.startAnimating()
@@ -1215,12 +1215,15 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             contents = content[dataArray[topCell]]
         }
         goToCell(i: topCell)
+        lastMoved = topCell
     }
 
+    var lastMoved = -1
     func goDown(_ sender: AnyObject) {
         var topCell = (tableView.indexPathsForVisibleRows?[0].row)!
-        if (topCell <= 0) {
+        if (topCell <= 0 && lastMoved != 0) {
             goToCell(i: 0)
+            lastMoved = 0
         } else {
             var contents = content[dataArray[topCell]]
             while ((contents is RMore || (contents as! RComment).depth > 1) && dataArray.count > topCell) {
@@ -1229,8 +1232,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             }
             for i in (topCell + 1)...(dataArray.count - 1) {
                 contents = content[dataArray[i]]
-                if (contents is RComment && matches(comment: contents as! RComment, sort: currentSort)) {
+                if (contents is RComment && matches(comment: contents as! RComment, sort: currentSort) && i != lastMoved) {
                     goToCell(i: i)
+                    lastMoved = i
                     break
                 }
             }
@@ -1340,6 +1344,56 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableViewAutomaticDimension
+    }
+    
+    var tagText : String?
+    func tagUser(name: String){
+        let alertController = UIAlertController(title: "Tag \(AccountController.formatUsernamePosessive(input: name, small: true)) profile", message: nil, preferredStyle: UIAlertControllerStyle.alert)
+        let confirmAction = UIAlertAction(title: "Set", style: .default) { (_) in
+            if let text = self.tagText {
+                ColorUtil.setTagForUser(name: name, tag: text)
+                self.tableView.reloadData()
+            } else {
+                // user did not fill field
+            }
+        }
+        
+        if(!ColorUtil.getTagForUser(name: name).isEmpty){
+            let removeAction = UIAlertAction(title: "Remove tag", style: .default) { (_) in
+                ColorUtil.removeTagForUser(name: name)
+                self.tableView.reloadData()
+            }
+            alertController.addAction(removeAction)
+        }
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) in }
+        
+        let config: TextField.Config = { textField in
+            textField.becomeFirstResponder()
+            textField.textColor = .black
+            textField.placeholder = "Tag"
+            textField.left(image: UIImage.init(named: "flag"), color: .black)
+            textField.leftViewPadding = 12
+            textField.borderWidth = 1
+            textField.cornerRadius = 8
+            textField.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
+            textField.backgroundColor = .white
+            textField.keyboardAppearance = .default
+            textField.keyboardType = .default
+            textField.returnKeyType = .done
+            textField.text = ColorUtil.getTagForUser(name: name)
+            textField.action { textField in
+                self.tagText = textField.text
+            }
+        }
+        
+        alertController.addOneTextField(configuration: config)
+        
+        alertController.addAction(confirmAction)
+        alertController.addAction(cancelAction)
+        
+        self.present(alertController, animated: true, completion: nil)
+        
     }
 
     var isCurrentlyChanging = false
