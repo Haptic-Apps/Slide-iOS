@@ -280,9 +280,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.thumbImage = UIImageView(frame: CGRect(x: 0, y: 8, width: (SettingValues.largerThumbnail ? 75 : 50) - (SettingValues.postViewMode == .COMPACT ? 15 : 0), height: (SettingValues.largerThumbnail ? 75 : 50) - (SettingValues.postViewMode == .COMPACT ? 15 : 0)))
-        thumbImage.layer.cornerRadius = 15;
+        if(SettingValues.roundCorners){
+            thumbImage.layer.cornerRadius = 15;
+            thumbImage.clipsToBounds = true;
+        }
         thumbImage.backgroundColor = UIColor.white
-        thumbImage.clipsToBounds = true;
         thumbImage.contentMode = .scaleAspectFill
         thumbImage.elevate(elevation: 2.0)
 
@@ -367,8 +369,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         info.textColor = .white
         b = info.withPadding(padding: UIEdgeInsets.init(top: 4, left: 10, bottom: 4, right: 10))
         b.backgroundColor = UIColor.black.withAlphaComponent(0.6)
-        b.clipsToBounds = true
-        b.layer.cornerRadius = 15
+        if(SettingValues.roundCorners){
+            b.clipsToBounds = true
+            b.layer.cornerRadius = 15
+        }
 
         self.box = UIStackView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
         self.buttons = UIStackView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
