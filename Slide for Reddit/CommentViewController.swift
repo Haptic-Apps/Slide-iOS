@@ -812,7 +812,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 indicator?.radius = 20
                 indicator?.indicatorMode = .indeterminate
                 indicator?.cycleColors = [ColorUtil.getColorForSub(sub: submission?.subreddit ?? ""), ColorUtil.accentColorForSub(sub: submission?.subreddit ?? "")]
-                let center = CGPoint.init(x: self.tableView.center.x, y: CGFloat(tableView.bounds.height - 200))
+                let center = CGPoint.init(x: UIScreen.main.bounds.width / 2, y: CGFloat(UIScreen.main.bounds.height - 200))
                 indicator?.center = center
                 self.tableView.addSubview(indicator!)
                 indicator?.startAnimating()
@@ -1215,6 +1215,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             contents = content[dataArray[topCell]]
         }
         goToCell(i: topCell)
+        lastMoved = topCell
     }
 
     var lastMoved = -1
@@ -1231,8 +1232,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             }
             for i in (topCell + 1)...(dataArray.count - 1) {
                 contents = content[dataArray[i]]
-                if (contents is RComment && matches(comment: contents as! RComment, sort: currentSort)) {
+                if (contents is RComment && matches(comment: contents as! RComment, sort: currentSort) && i != lastMoved) {
                     goToCell(i: i)
+                    lastMoved = i
                     break
                 }
             }
