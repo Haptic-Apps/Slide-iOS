@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import reddift
 
 class SubredditReorderViewController: UITableViewController {
 
@@ -276,10 +277,31 @@ class SubredditReorderViewController: UITableViewController {
             }
             actionSheetController.addAction(cancelActionButton)
 
-            cancelActionButton = UIAlertAction(title: "Remove and unsubscribe", style: .default) { action -> Void in
-                //todo unsub
+            if(AccountController.isLoggedIn){
+                cancelActionButton = UIAlertAction(title: "Remove and unsubscribe", style: .default) { action -> Void in
+                    //todo unsub
+                    var top: [String] = []
+                    for i in rows {
+                        top.append(self.subs[i.row])
+                    }
+                    self.subs = self.subs.filter({ (input) -> Bool in
+                        return !top.contains(input)
+                    })
+                    self.tableView.reloadData()
+                    self.navigationItem.setRightBarButtonItems(self.normalItems, animated: true)
+                    
+                    for sub in top {
+                        do {
+                            try (UIApplication.shared.delegate as! AppDelegate).session?.setSubscribeSubreddit(Subreddit.init(subreddit: sub), subscribe: false, completion: { (result) in
+                                
+                            })
+                        } catch {
+                            
+                        }
+                    }
+                }
+                actionSheetController.addAction(cancelActionButton)
             }
-            actionSheetController.addAction(cancelActionButton)
 
             cancelActionButton = UIAlertAction(title: "Just remove", style: .default) { action -> Void in
                 var top: [String] = []

@@ -116,7 +116,7 @@ class SettingsFont: UITableViewController {
         }
         actionSheetController.addAction(cancelActionButton)
         
-        cancelActionButton = UIAlertAction(title: "Large", style: .default) { action -> Void in
+        cancelActionButton = UIAlertAction(title: "Very Large", style: .default) { action -> Void in
             self.setSizeComment(size: 4)
         }
         if(currentCommentSize == 4){
@@ -125,7 +125,7 @@ class SettingsFont: UITableViewController {
 
         actionSheetController.addAction(cancelActionButton)
 
-        cancelActionButton = UIAlertAction(title: "Very Large", style: .default) { action -> Void in
+        cancelActionButton = UIAlertAction(title: "Large", style: .default) { action -> Void in
             self.setSizeComment(size: 2)
         }
         if(currentCommentSize == 2){
@@ -193,7 +193,7 @@ class SettingsFont: UITableViewController {
         }
         actionSheetController.addAction(cancelActionButton)
         
-        cancelActionButton = UIAlertAction(title: "Large", style: .default) { action -> Void in
+        cancelActionButton = UIAlertAction(title: "Very Large", style: .default) { action -> Void in
             self.setSizeSubmission(size: 4)
         }
         if(currentLinkSize == 4){
@@ -201,7 +201,7 @@ class SettingsFont: UITableViewController {
         }
         actionSheetController.addAction(cancelActionButton)
         
-        cancelActionButton = UIAlertAction(title: "Very Large", style: .default) { action -> Void in
+        cancelActionButton = UIAlertAction(title: "Large", style: .default) { action -> Void in
             self.setSizeSubmission(size: 2)
         }
         if(currentLinkSize == 2){

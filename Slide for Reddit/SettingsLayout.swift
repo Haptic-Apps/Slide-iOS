@@ -49,9 +49,11 @@ class SettingsLayout: UITableViewController {
 
     var smalltagCell: UITableViewCell = UITableViewCell()
     var smalltag = UISwitch()
+    
+    var linkCell = UITableViewCell()
 
 
-    var link = LinkTableViewCell()
+    var link = LinkCellView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -116,7 +118,9 @@ class SettingsLayout: UITableViewController {
     }
     
     func doLink(){
-        link = LinkTableViewCell()
+        link.contentView.removeFromSuperview()
+        link = LinkCellView.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 500))
+        
         let fakesub = RSubmission.init()
         let calendar: NSCalendar! = NSCalendar(calendarIdentifier: NSCalendar.Identifier.gregorian)
         let now: NSDate! = NSDate()
@@ -158,9 +162,15 @@ class SettingsLayout: UITableViewController {
         fakesub.width = 636
         fakesub.vote = false
         
-        
-        self.link.setLinkForPreview(submission: fakesub)
+        link.aspectWidth = self.tableView.frame.size.width
+        self.link.setLink(submission: fakesub, parent: MediaViewController(), nav: nil, baseSub: "all", test: true)
         self.link.isUserInteractionEnabled = false
+        linkCell.contentView.backgroundColor = ColorUtil.backgroundColor
+        link.contentView.frame = CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: link.estimateHeight(false, true))
+        link.updateConstraints()
+        link.doConstraints()
+        linkCell.contentView.addSubview(link.contentView)
+        linkCell.frame = CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: link.estimateHeight(false, true))
     }
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let label : UILabel = UILabel()
@@ -274,7 +284,7 @@ class SettingsLayout: UITableViewController {
         createCell(leftThumbCell, leftThumb, isOn: SettingValues.leftThumbnail, text: "Thumbnail on left side")
         createCell(hideCell, hide, isOn: SettingValues.hideButton, text: "Show hide post button")
         createCell(saveCell, save, isOn: SettingValues.saveButton, text: "Show save button")
-
+        
         doDisables()
         self.tableView.tableFooterView = UIView()
 
@@ -320,7 +330,7 @@ class SettingsLayout: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch(indexPath.section) {
         case 0:
-          return link
+          return linkCell
         case 1:
             switch(indexPath.row) {
             case 0: return self.cardModeCell

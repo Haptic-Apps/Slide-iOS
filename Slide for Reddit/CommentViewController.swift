@@ -657,7 +657,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     var moreB = UIBarButtonItem()
 
     func hideSearchBar() {
-        navigationController?.setNavigationBarHidden(true, animated: true)
+        navigationController?.setNavigationBarHidden(false, animated: true)
         isSearching = false
         tableView.tableHeaderView = savedHeaderView!
 
@@ -1217,10 +1217,12 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         goToCell(i: topCell)
     }
 
+    var lastMoved = -1
     func goDown(_ sender: AnyObject) {
         var topCell = (tableView.indexPathsForVisibleRows?[0].row)!
-        if (topCell <= 0) {
+        if (topCell <= 0 && lastMoved != 0) {
             goToCell(i: 0)
+            lastMoved = 0
         } else {
             var contents = content[dataArray[topCell]]
             while ((contents is RMore || (contents as! RComment).depth > 1) && dataArray.count > topCell) {

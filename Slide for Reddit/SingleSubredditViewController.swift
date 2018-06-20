@@ -899,10 +899,12 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         }
 
         //todo save realm
-        tableView.performBatchUpdates({
-            self.tableView.deleteItems(at: indexPaths)
-            self.flowLayout.reset()
-        }, completion: nil)
+        DispatchQueue.main.async {
+            self.tableView.performBatchUpdates({
+                self.tableView.deleteItems(at: indexPaths)
+                self.flowLayout.reset()
+            }, completion: nil)
+        }
     }
 
     static var fab: UIButton?
