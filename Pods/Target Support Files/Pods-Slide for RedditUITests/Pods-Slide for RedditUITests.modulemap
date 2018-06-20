@@ -1,6 +1,0 @@
-framework module Pods_Slide_for_RedditUITests {
-  umbrella header "Pods-Slide for RedditUITests-umbrella.h"
-
-  export *
-  module * { export * }
-}

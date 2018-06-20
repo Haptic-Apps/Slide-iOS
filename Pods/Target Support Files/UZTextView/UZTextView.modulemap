@@ -1,6 +1,0 @@
-framework module UZTextView {
-  umbrella header "UZTextView-umbrella.h"
-
-  export *
-  module * { export * }
-}
