@@ -166,7 +166,7 @@ CHECKOUT OPTIONS:
     :commit: 15b553d05544ddc429b76f23b413fc9be256901d
     :git: https://github.com/ccrama/UZTextView
   XLActionController:
-    :commit: 166ca086b8641b1c07c62368d63636e121ae6b0e
+    :commit: d3361823f2359da959a752d36965aaeb3a3fd475
     :git: https://github.com/ccrama/XLActionController
 
 SPEC CHECKSUMS:
