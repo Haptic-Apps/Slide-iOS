@@ -50,9 +50,11 @@ class SettingsLayout: UITableViewController {
     var smalltagCell: UITableViewCell = UITableViewCell()
     var smalltag = UISwitch()
     
+    var roundCornerCell: UITableViewCell = UITableViewCell()
+    var roundcorner = UISwitch()
+
     var linkCell = UITableViewCell()
-
-
+    
     var link = LinkCellView()
 
     override func viewDidLoad() {
@@ -83,6 +85,9 @@ class SettingsLayout: UITableViewController {
         } else if(changed == smalltag){
             SettingValues.smallerTag = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_smallTag)
+        } else if(changed == roundcorner){
+            SettingValues.roundCorners = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_roundCorners)
         } else if(changed == hideActionbar){
             SettingValues.hideButtonActionbar = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_hideButtonActionbar)
@@ -276,6 +281,7 @@ class SettingsLayout: UITableViewController {
         cardModeCell.detailTextLabel?.numberOfLines = 0
         cardModeCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         createCell(smalltagCell, smalltag, isOn: SettingValues.smallerTag, text: "Smaller content tag")
+        createCell(roundCornerCell, roundcorner, isOn: SettingValues.roundCorners, text: "Round corners")
         createCell(hideActionbarCell, hideActionbar, isOn: SettingValues.hideButtonActionbar, text: "Hide actionbar")
         createCell(largerThumbnailCell, largerThumbnail, isOn: SettingValues.largerThumbnail, text: "Larger thumbnail")
         createCell(scoreTitleCell, scoreTitle, isOn: SettingValues.scoreInTitle, text: "Score and comment count in title")
@@ -284,7 +290,7 @@ class SettingsLayout: UITableViewController {
         createCell(leftThumbCell, leftThumb, isOn: SettingValues.leftThumbnail, text: "Thumbnail on left side")
         createCell(hideCell, hide, isOn: SettingValues.hideButton, text: "Show hide post button")
         createCell(saveCell, save, isOn: SettingValues.saveButton, text: "Show save button")
-        
+
         doDisables()
         self.tableView.tableFooterView = UIView()
 
@@ -340,6 +346,7 @@ class SettingsLayout: UITableViewController {
             case 4: return self.leftThumbCell
             case 5: return self.selftextCell
             case 6: return self.smalltagCell
+            case 7: return self.roundCornerCell
 
             default: fatalError("Unknown row in section 0")
             }
@@ -361,7 +368,7 @@ class SettingsLayout: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch(section) {
         case 0: return 1
-        case 1: return 7
+        case 1: return 8
         case 2: return 6
         default: fatalError("Unknown number of sections")
         }
