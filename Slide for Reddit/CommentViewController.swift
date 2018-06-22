@@ -1845,6 +1845,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 if (isSearching) {
                     t = highlight(t)
                 }
+                
                 cell.setComment(comment: content[thing] as! RComment, depth: cDepth[thing]!, parent: self, hiddenCount: count, date: lastSeen, author: submission?.author, text: t, isCollapsed: hiddenP, parentOP: parentOP ?? "")
                 if (thing == menuId && menuShown) {
                     cell.doHighlight()
@@ -1860,27 +1861,56 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     @available(iOS 11.0, *)
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let cell = tableView.cellForRow(at: indexPath)
-        if(cell is CommentDepthCell){
-            var upvote = UIContextualAction.init(style: .normal, title: "", handler: { (action, view, b) in
-                (cell as! CommentDepthCell).upvote()
-                b(true)
-            })
-            upvote.backgroundColor = ColorUtil.upvoteColor
-            upvote.image = UIImage.init(named: "upvote")?.navIcon()
+        if(cell is CommentDepthCell && SettingValues.commentTwoSwipe && (SettingValues.commentActionLeft != .NONE || SettingValues.commentActionRight != .NONE)){
             
-            var downvote = UIContextualAction.init(style: .normal, title: "", handler: { (action, view, b) in
-                (cell as! CommentDepthCell).downvote()
-                b(true)
-            })
-            downvote.backgroundColor = ColorUtil.downvoteColor
-            downvote.image = UIImage.init(named: "downvote")?.navIcon()
-            
-            let config = UISwipeActionsConfiguration.init(actions: [upvote, downvote])
+            var actions = [UIContextualAction]()
+            if(SettingValues.commentActionRight != .NONE){
+                let action = UIContextualAction.init(style: .normal, title: "", handler: { (action, view, b) in
+                    b(true)
+                    self.doAction(cell: cell as! CommentDepthCell, action: SettingValues.commentActionRight)
+                })
+                action.backgroundColor = SettingValues.commentActionRight.getColor()
+                action.image = UIImage.init(named: SettingValues.commentActionRight.getPhoto())?.navIcon()
+
+                actions.append(action)
+            }
+            if(SettingValues.commentActionLeft != .NONE){
+                let action = UIContextualAction.init(style: .normal, title: "", handler: { (action, view, b) in
+                    b(true)
+                    self.doAction(cell: cell as! CommentDepthCell, action: SettingValues.commentActionLeft)
+                })
+                action.backgroundColor = SettingValues.commentActionLeft.getColor()
+                action.image = UIImage.init(named: SettingValues.commentActionLeft.getPhoto())?.navIcon()
+                
+                actions.append(action)
+            }
+            let config = UISwipeActionsConfiguration.init(actions: actions)
             
             return config
 
         } else {
-            return nil
+            return UISwipeActionsConfiguration.init()
+        }
+    }
+    
+    func doAction(cell: CommentDepthCell, action: SettingValues.CommentAction){
+        switch(action){
+        case .UPVOTE:
+            cell.upvote()
+            break
+        case .DOWNVOTE:
+            cell.downvote()
+            break
+        case .SAVE:
+            cell.save()
+            break
+        case .MENU:
+            cell.menu()
+            break
+        case .COLLAPSE:
+            break
+        case .NONE:
+            break
         }
     }
     

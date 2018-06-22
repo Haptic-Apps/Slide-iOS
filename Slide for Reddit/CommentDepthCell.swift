@@ -299,6 +299,13 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         self.refresh(comment: comment!, submissionAuthor: (parent!.submission?.author)!, text: self.cellContent!)
     }
 
+    func save() {
+        parent!.saveComment(self.comment!)
+    }
+
+    func menu() {
+        more(parent!)
+    }
 
     var delegate: UZTextViewCellDelegate? = nil
     var content: Object? = nil
@@ -955,6 +962,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
     }
 
     public var isCollapsed = false
+    var dtap : UITapGestureRecognizer?
 
     func setComment(comment: RComment, depth: Int, parent: CommentViewController, hiddenCount: Int, date: Double, author: String?, text: NSAttributedString, isCollapsed: Bool, parentOP: String) {
         self.comment = comment
@@ -969,6 +977,12 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
 
         if (date != 0 && date < Double(comment.created.timeIntervalSince1970)) {
             setIsNew(sub: comment.subreddit)
+        }
+        
+        if(dtap == nil && SettingValues.commentActionDoubleTap != .NONE){
+            dtap = UITapGestureRecognizer.init(target: self, action: #selector(self.doDTap(_:)))
+            dtap!.numberOfTapsRequired = 2
+            self.contentView.addGestureRecognizer(dtap!)
         }
 
         if (hiddenCount > 0) {
@@ -1027,6 +1041,25 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
             registered = true
         }
         updateDepthConstraints()
+    }
+    
+    func doDTap(_ sender: AnyObject){
+        switch(SettingValues.commentActionDoubleTap){
+        case .UPVOTE:
+            self.upvote()
+            break
+        case .DOWNVOTE:
+            self.downvote()
+            break
+        case .SAVE:
+            self.save()
+            break
+        case .MENU:
+            self.menu()
+            break
+        default:
+            break
+        }
     }
 
     var cellContent: NSAttributedString?

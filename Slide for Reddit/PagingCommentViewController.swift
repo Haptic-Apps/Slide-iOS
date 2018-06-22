@@ -71,7 +71,7 @@ class PagingCommentViewController : ColorMuxPagingViewController, UIPageViewCont
                 var scrollView = view as! UIScrollView
                 //swiper!.panRecognizer.require(toFail:scrollView.panGestureRecognizer)
                 scrollView.delegate = self
-                if(scrollView.isPagingEnabled){
+                if(scrollView.isPagingEnabled && SettingValues.commentTwoSwipe){
                     scrollView.panGestureRecognizer.minimumNumberOfTouches = 2
                 }
                 scrollView.panGestureRecognizer.require(toFail: swiper!.panRecognizer)

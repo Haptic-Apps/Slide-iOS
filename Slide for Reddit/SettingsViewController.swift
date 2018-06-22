@@ -39,6 +39,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
     var clearCell: UITableViewCell = UITableViewCell()
     var cacheCell: UITableViewCell = UITableViewCell()
     var backupCell: UITableViewCell = UITableViewCell()
+    var gestureCell: UITableViewCell = UITableViewCell()
 
     var multiColumnCell: UITableViewCell = UITableViewCell()
     var multiColumn = UISwitch()
@@ -142,6 +143,13 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         self.backupCell.textLabel?.textColor = ColorUtil.fontColor
         self.backupCell.imageView?.image = UIImage.init(named: "restore")?.toolbarIcon()
         self.backupCell.imageView?.tintColor = ColorUtil.fontColor
+
+        self.gestureCell.textLabel?.text = "Gestures"
+        self.gestureCell.accessoryType = .disclosureIndicator
+        self.gestureCell.backgroundColor = ColorUtil.foregroundColor
+        self.gestureCell.textLabel?.textColor = ColorUtil.fontColor
+        self.gestureCell.imageView?.image = UIImage.init(named: "gestures")?.toolbarIcon()
+        self.gestureCell.imageView?.tintColor = ColorUtil.fontColor
 
         self.cacheCell.textLabel?.text = "Offline caching"
         self.cacheCell.accessoryType = .disclosureIndicator
@@ -310,6 +318,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
             case 1: return self.manageSubs
             case 2: return self.multiColumnCell
             case 3: return self.lockCell
+            case 4: return self.gestureCell
 
             default: fatalError("Unknown row in section 0")
             }
@@ -320,7 +329,8 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
             case 2: return self.goPro
             case 3: return self.multiColumnCell
             case 4: return self.lockCell
-
+            case 5: return self.gestureCell
+                
             default: fatalError("Unknown row in section 0")
             }
         }
@@ -428,6 +438,8 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
             ch = SettingsLinkHandling()
         } else if (indexPath.section == 2 && indexPath.row == 1) {
             ch = SettingsHistory()
+        } else if (indexPath.section == 0 && indexPath.row == (SettingValues.isPro ? 4 : 5)) {
+            ch = SettingsGestures()
         } else if (indexPath.section == 2 && indexPath.row == 7) {
             if(!SettingValues.isPro){
                 ch = SettingsPro()
@@ -496,7 +508,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch (section) {
-        case 0: return (SettingValues.isPro) ? 4 : 5
+        case 0: return (SettingValues.isPro) ? 5 : 6
         case 1: return 5
         case 2: return 8
         case 3: return 4

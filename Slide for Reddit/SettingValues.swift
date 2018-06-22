@@ -80,8 +80,17 @@ class SettingValues {
     public static let pref_autoCache = "AUTO_CACHE"
     public static let pref_pro = "PRO_ENABLED"
     public static let pref_pinToolbar = "PIN_TOOLBAR"
+    public static let pref_commentTwoSwipe = "COMMENT_GESTURES"
+    public static let pref_commentActionLeft = "COMMENT_LEFT"
+    public static let pref_commentActionRight = "COMMENT_RIGHT"
+    public static let pref_commentActionDoubleTap = "COMMENT_DOUBLE_TAP"
+
+    public static var commentActionRight = CommentAction.UPVOTE
+    public static var commentActionLeft = CommentAction.DOWNVOTE
+    public static var commentActionDoubleTap = CommentAction.NONE
 
     public static var viewType = true
+    public static var commentTwoSwipe = true
     public static var hiddenFAB = true
     public static var upvotePercentage = true
     public static var defaultSorting = LinkSortType.hot
@@ -273,6 +282,7 @@ class SettingValues {
         SettingValues.loadContentHQ = settings.bool(forKey: SettingValues.pref_loadContentHQ)
         SettingValues.noImages = settings.bool(forKey: SettingValues.pref_noImg)
         SettingValues.lqLow = settings.bool(forKey: SettingValues.pref_lqLow)
+        SettingValues.commentTwoSwipe = settings.object(forKey: SettingValues.pref_commentTwoSwipe) == nil ? true : settings.bool(forKey: SettingValues.pref_commentTwoSwipe)
         SettingValues.saveButton = settings.object(forKey: SettingValues.pref_saveButton) == nil ? true : settings.bool(forKey: SettingValues.pref_saveButton)
         SettingValues.hideButton = settings.bool(forKey: SettingValues.pref_hideButton)
         SettingValues.nightModeEnabled = settings.bool(forKey: SettingValues.pref_nightMode)
@@ -294,7 +304,11 @@ class SettingValues {
         SettingValues.hideButtonActionbar = settings.bool(forKey: SettingValues.pref_hideButtonActionbar)
         SettingValues.postViewMode = PostViewType.init(rawValue: settings.string(forKey: SettingValues.pref_postViewMode) ?? "card")!
         SettingValues.fabType = FabType.init(rawValue: settings.string(forKey: SettingValues.pref_fabType) ?? "hide")!
-
+        
+        SettingValues.commentActionLeft = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionLeft) ?? "downvote")!
+        SettingValues.commentActionRight = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionRight) ?? "upvote")!
+        SettingValues.commentActionDoubleTap = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionDoubleTap) ?? "none")!
+        
         SettingValues.internalImageView = settings.object(forKey: SettingValues.pref_internalImageView) == nil ? true : settings.bool(forKey: SettingValues.pref_internalImageView)
         SettingValues.internalGifView = settings.object(forKey: SettingValues.pref_internalGifView) == nil ? true : settings.bool(forKey: SettingValues.pref_internalGifView)
         SettingValues.internalAlbumView = settings.object(forKey: SettingValues.pref_internalAlbumView) == nil ? true : settings.bool(forKey: SettingValues.pref_internalAlbumView)
@@ -324,6 +338,68 @@ class SettingValues {
         message.action = action
         MDCSnackbarManager.show(message)
 
+    }
+    
+    public enum CommentAction: String {
+        public static let cases: [CommentAction] = [.UPVOTE, .DOWNVOTE, .MENU, .SAVE, .NONE]
+        
+        case UPVOTE = "upvote"
+        case DOWNVOTE = "downvote"
+        case MENU = "menu"
+        case COLLAPSE = "collapse"
+        case SAVE = "save"
+        case NONE = "none"
+        
+        func getTitle() -> String {
+            switch(self){
+            case .COLLAPSE :
+                return "Collapse parent"
+            case .UPVOTE:
+                return "Upvote"
+            case .DOWNVOTE:
+                return "Downvote"
+            case .SAVE:
+                return "Save"
+            case .MENU:
+                return "Comment menu"
+            case .NONE:
+                return "Disabled"
+            }
+        }
+        
+        func getPhoto() -> String {
+            switch (self) {
+            case .COLLAPSE :
+                return "down"
+            case .UPVOTE:
+                return "upvote"
+            case .DOWNVOTE:
+                return "downvote"
+            case .SAVE:
+                return "save"
+            case .MENU:
+                return "moreh"
+            case .NONE:
+                return "close"
+            }
+        }
+        
+        func getColor() -> UIColor {
+            switch (self) {
+            case .COLLAPSE :
+                return ColorUtil.backgroundColor
+            case .UPVOTE:
+                return ColorUtil.upvoteColor
+            case .DOWNVOTE:
+                return ColorUtil.downvoteColor
+            case .SAVE:
+                return GMColor.yellow500Color()
+            case .MENU:
+                return ColorUtil.baseAccent
+            case .NONE:
+                return GMColor.red500Color()
+            }
+        }
     }
 
     public enum FabType: String {
