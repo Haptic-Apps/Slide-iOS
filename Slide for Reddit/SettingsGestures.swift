@@ -74,6 +74,8 @@ class SettingsGestures: UITableViewController {
             showAction(cell: leftActionCell)
         } else if(indexPath.row == 3){
             showAction(cell: doubleTapActionCell)
+        } else if(indexPath.row == 0 && indexPath.section == 1){
+            showAction(cell: doubleTapSubActionCell)
         }
     }
     
@@ -81,13 +83,16 @@ class SettingsGestures: UITableViewController {
         let alertController: BottomSheetActionController = BottomSheetActionController()
         for action in SettingValues.CommentAction.cases{
             alertController.addAction(Action(ActionData(title: action.getTitle(), image: UIImage(named: action.getPhoto())!.menuIcon()), style: .default, handler: { action2 in
-                UserDefaults.standard.set(action.rawValue, forKey: cell == self.rightActionCell ? SettingValues.pref_commentActionRight : (cell == self.leftActionCell ? SettingValues.pref_commentActionLeft : SettingValues.pref_commentActionDoubleTap))
+                UserDefaults.standard.set(action.rawValue, forKey: cell == self.rightActionCell ? SettingValues.pref_commentActionRight : (cell == self.leftActionCell ? SettingValues.pref_commentActionLeft : (cell == self.doubleTapSubActionCell ? SettingValues.pref_submissionActionDoubleTap :  SettingValues.pref_commentActionDoubleTap)))
                 if(cell == self.rightActionCell){
                     SettingValues.commentActionRight = action
                 } else if(cell == self.leftActionCell){
                     SettingValues.commentActionLeft = action
-                } else {
+                } else if (cell == self.doubleTapActionCell){
                     SettingValues.commentActionDoubleTap = action
+                } else {
+                    SettingValues.submissionActionDoubleTap = action
+                    SubredditReorderViewController.changed = true
                 }
                 UserDefaults.standard.synchronize()
                 self.updateCells()
@@ -166,6 +171,14 @@ class SettingsGestures: UITableViewController {
             self.leftActionCell.isUserInteractionEnabled = true
             self.leftActionCell.alpha = 1
         }
+        
+        createLeftView(cell: doubleTapSubActionCell, image: SettingValues.submissionActionDoubleTap.getPhoto(), color: SettingValues.submissionActionDoubleTap.getColor())
+        self.doubleTapSubActionCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.doubleTapSubActionCell.detailTextLabel?.lineBreakMode = .byWordWrapping
+        self.doubleTapSubActionCell.detailTextLabel?.numberOfLines = 0
+        self.doubleTapSubActionCell.detailTextLabel?.text = SettingValues.submissionActionDoubleTap.getTitle()
+        self.doubleTapSubActionCell.imageView?.layer.cornerRadius = 5
+
 
     }
     
