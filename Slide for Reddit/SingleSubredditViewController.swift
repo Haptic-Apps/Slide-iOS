@@ -1304,7 +1304,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return links.count
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         var target = CurrentType.none
         let submission = self.links[(indexPath as NSIndexPath).row]

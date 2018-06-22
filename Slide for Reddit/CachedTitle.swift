@@ -117,7 +117,7 @@ class CachedTitle {
 
         endString.append(authorString)
         if (SettingValues.domainInInfo && !full) {
-            endString.append(NSAttributedString.init(string: "  •  \(submission.domain)"))
+            endString.append(NSAttributedString.init(string: "  •  \(submission.domain)", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: colorF]))
         }
 
         let tag = ColorUtil.getTagForUser(name: submission.author)

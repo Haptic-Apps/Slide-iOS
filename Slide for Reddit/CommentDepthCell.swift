@@ -358,11 +358,20 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         self.contentView.addSubview(title)
         self.contentView.addSubview(c)
 
+        if(dtap == nil && SettingValues.commentActionDoubleTap != .NONE){
+            dtap = UIShortTapGestureRecognizer.init(target: self, action: #selector(self.doDTap(_:)))
+            dtap!.numberOfTapsRequired = 2
+            self.contentView.addGestureRecognizer(dtap!)
+        }
+
         moreButton.addTarget(self, action: #selector(CommentDepthCell.pushedMoreButton(_:)), for: UIControlEvents.touchUpInside)
 
         let tapGestureRecognizer = UITapGestureRecognizer.init(target: self, action: #selector(self.handleShortPress(_:)))
         tapGestureRecognizer.cancelsTouchesInView = false
         tapGestureRecognizer.delegate = self
+        if(dtap != nil){
+            tapGestureRecognizer.require(toFail: dtap!)
+        }
         self.title.addGestureRecognizer(tapGestureRecognizer)
 
         long = UILongPressGestureRecognizer.init(target: self, action: #selector(self.handleLongPress(_:)))
@@ -962,7 +971,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
     }
 
     public var isCollapsed = false
-    var dtap : UITapGestureRecognizer?
+    var dtap : UIShortTapGestureRecognizer?
 
     func setComment(comment: RComment, depth: Int, parent: CommentViewController, hiddenCount: Int, date: Double, author: String?, text: NSAttributedString, isCollapsed: Bool, parentOP: String) {
         self.comment = comment
@@ -979,12 +988,6 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
             setIsNew(sub: comment.subreddit)
         }
         
-        if(dtap == nil && SettingValues.commentActionDoubleTap != .NONE){
-            dtap = UITapGestureRecognizer.init(target: self, action: #selector(self.doDTap(_:)))
-            dtap!.numberOfTapsRequired = 2
-            self.contentView.addGestureRecognizer(dtap!)
-        }
-
         if (hiddenCount > 0) {
             c.alpha = 1
             children.text = "+\(hiddenCount)"
@@ -1308,5 +1311,20 @@ extension UIView {
                 withVisualFormat: "V:|-(\(padding.top)@999)-[view]-(\(padding.bottom)@999)-|",
                 options: [], metrics: nil, views: ["view": self]))
         return container
+    }
+}
+
+//from https://stackoverflow.com/a/48847585/3697225
+class UIShortTapGestureRecognizer: UITapGestureRecognizer {
+    let tapMaxDelay: Double = 0.3 //anything below 0.3 may cause doubleTap to be inaccessible by many users
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent) {
+        super.touchesBegan(touches, with: event)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + tapMaxDelay) { [weak self] in
+            if self?.state != UIGestureRecognizerState.recognized {
+                self?.state = UIGestureRecognizerState.failed
+            }
+        }
     }
 }

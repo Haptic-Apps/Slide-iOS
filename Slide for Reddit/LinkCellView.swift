@@ -562,14 +562,25 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var bigConstraint: NSLayoutConstraint?
     var thumbConstraint: [NSLayoutConstraint] = []
 
+    var dtap : UIShortTapGestureRecognizer?
+
     func refreshLink(_ submission: RSubmission) {
         self.link = submission
 
         title.setText(CachedTitle.getTitle(submission: submission, full: full, true, false))
 
+        if(dtap == nil && SettingValues.submissionActionDoubleTap != .NONE){
+            dtap = UIShortTapGestureRecognizer.init(target: self, action: #selector(self.doDTap(_:)))
+            dtap!.numberOfTapsRequired = 2
+            self.addGestureRecognizer(dtap!)
+        }
+        
         if (!full) {
             let comment = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openComment(sender:)))
             comment.delegate = self
+            if(dtap != nil){
+                comment.require(toFail: dtap!)
+            }
             self.addGestureRecognizer(comment)
             
             //let vote = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.upvote(sender:)))
@@ -583,6 +594,26 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         let more = History.commentsSince(s: submission)
         comments.text = " \(submission.commentCount)" + (more > 0 ? " (+\(more))" : "")
     }
+    
+    func doDTap(_ sender: AnyObject){
+        switch(SettingValues.submissionActionDoubleTap){
+        case .UPVOTE:
+            self.upvote()
+            break
+        case .DOWNVOTE:
+            self.downvote()
+            break
+        case .SAVE:
+            self.save()
+            break
+        case .MENU:
+            self.more()
+            break
+        default:
+            break
+        }
+    }
+
 
     var link: RSubmission?
     var aspectWidth = CGFloat(0)

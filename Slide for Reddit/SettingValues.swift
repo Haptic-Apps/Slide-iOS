@@ -84,10 +84,12 @@ class SettingValues {
     public static let pref_commentActionLeft = "COMMENT_LEFT"
     public static let pref_commentActionRight = "COMMENT_RIGHT"
     public static let pref_commentActionDoubleTap = "COMMENT_DOUBLE_TAP"
+    public static let pref_submissionActionDoubleTap = "SUBMISSION_DOUBLE_TAP"
 
     public static var commentActionRight = CommentAction.UPVOTE
     public static var commentActionLeft = CommentAction.DOWNVOTE
     public static var commentActionDoubleTap = CommentAction.NONE
+    public static var submissionActionDoubleTap = CommentAction.NONE
 
     public static var viewType = true
     public static var commentTwoSwipe = true
@@ -308,7 +310,8 @@ class SettingValues {
         SettingValues.commentActionLeft = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionLeft) ?? "downvote")!
         SettingValues.commentActionRight = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionRight) ?? "upvote")!
         SettingValues.commentActionDoubleTap = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionDoubleTap) ?? "none")!
-        
+        SettingValues.submissionActionDoubleTap = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_submissionActionDoubleTap) ?? "none")!
+
         SettingValues.internalImageView = settings.object(forKey: SettingValues.pref_internalImageView) == nil ? true : settings.bool(forKey: SettingValues.pref_internalImageView)
         SettingValues.internalGifView = settings.object(forKey: SettingValues.pref_internalGifView) == nil ? true : settings.bool(forKey: SettingValues.pref_internalGifView)
         SettingValues.internalAlbumView = settings.object(forKey: SettingValues.pref_internalAlbumView) == nil ? true : settings.bool(forKey: SettingValues.pref_internalAlbumView)

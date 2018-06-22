@@ -20,6 +20,8 @@ class SettingsGestures: UITableViewController {
 
     var doubleTapActionCell: UITableViewCell = UITableViewCell.init(style: UITableViewCellStyle.subtitle, reuseIdentifier: "dtap")
 
+    var doubleTapSubActionCell: UITableViewCell = UITableViewCell.init(style: UITableViewCellStyle.subtitle, reuseIdentifier: "dtaps")
+
     override func viewDidLoad() {
         super.viewDidLoad()
         updateCells()
@@ -115,7 +117,7 @@ class SettingsGestures: UITableViewController {
         self.title = "Gestures"
         self.tableView.separatorStyle = .none
         
-        createCell(doubleSwipeCell, doubleSwipe, isOn: SettingValues.commentTwoSwipe, text: "Double finger swipe to go through comments")
+        createCell(doubleSwipeCell, doubleSwipe, isOn: SettingValues.commentTwoSwipe, text: "Double finger swipe to  go to next submission in comments view")
         self.doubleSwipeCell.detailTextLabel?.textColor = ColorUtil.fontColor
         self.doubleSwipeCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.doubleSwipeCell.detailTextLabel?.numberOfLines = 0
@@ -125,9 +127,10 @@ class SettingsGestures: UITableViewController {
     }
     
     func updateCells(){
-        createCell(rightActionCell, nil, isOn: false, text: "First right swipe button")
-        createCell(leftActionCell, nil, isOn: false, text: "Second right swipe button (also triggered by a long swipe)")
+        createCell(rightActionCell, nil, isOn: false, text: "First right swipe button (also triggered by a long swipe)")
+        createCell(leftActionCell, nil, isOn: false, text: "Second right swipe button")
         createCell(doubleTapActionCell, nil, isOn: false, text: "Double tap comment action")
+        createCell(doubleTapSubActionCell, nil, isOn: false, text: "Double tap submission action")
 
         createLeftView(cell: doubleSwipeCell, image: "twofinger", color: ColorUtil.foregroundColor)
         
@@ -136,21 +139,21 @@ class SettingsGestures: UITableViewController {
         self.rightActionCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.rightActionCell.detailTextLabel?.numberOfLines = 0
         self.rightActionCell.detailTextLabel?.text = SettingValues.commentActionRight.getTitle()
-        self.rightActionCell.imageView?.cornerRadius = 5
+        self.rightActionCell.imageView?.layer.cornerRadius = 5
 
         createLeftView(cell: leftActionCell, image: SettingValues.commentActionLeft.getPhoto(), color: SettingValues.commentActionLeft.getColor())
         self.leftActionCell.detailTextLabel?.textColor = ColorUtil.fontColor
         self.leftActionCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.leftActionCell.detailTextLabel?.numberOfLines = 0
         self.leftActionCell.detailTextLabel?.text = SettingValues.commentActionLeft.getTitle()
-        self.leftActionCell.imageView?.cornerRadius = 5
+        self.leftActionCell.imageView?.layer.cornerRadius = 5
 
         createLeftView(cell: doubleTapActionCell, image: SettingValues.commentActionDoubleTap.getPhoto(), color: SettingValues.commentActionDoubleTap.getColor())
         self.doubleTapActionCell.detailTextLabel?.textColor = ColorUtil.fontColor
         self.doubleTapActionCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.doubleTapActionCell.detailTextLabel?.numberOfLines = 0
         self.doubleTapActionCell.detailTextLabel?.text = SettingValues.commentActionDoubleTap.getTitle()
-        self.doubleTapActionCell.imageView?.cornerRadius = 5
+        self.doubleTapActionCell.imageView?.layer.cornerRadius = 5
 
         if(!SettingValues.commentTwoSwipe){
             self.rightActionCell.isUserInteractionEnabled = false
@@ -172,7 +175,7 @@ class SettingsGestures: UITableViewController {
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return 2
     }
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if(section == 0){
@@ -199,6 +202,11 @@ class SettingsGestures: UITableViewController {
             case 3: return self.doubleTapActionCell
             default: fatalError("Unknown row in section 0")
             }
+        case 1:
+            switch(indexPath.row) {
+            case 0: return self.doubleTapSubActionCell
+            default: fatalError("Unknown row in section 0")
+            }
         default: fatalError("Unknown section")
         }
         
@@ -208,6 +216,7 @@ class SettingsGestures: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch(section) {
         case 0: return 4
+        case 1: return 1
         default: fatalError("Unknown number of sections")
         }
     }
