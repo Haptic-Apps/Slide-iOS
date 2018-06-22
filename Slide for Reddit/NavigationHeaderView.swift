@@ -345,7 +345,7 @@ class NavigationHeaderView: UIView {
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
-        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[inbox]-16-[more]-16-|",
+        titleConstraints.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[inbox]-24-[more]-16-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))
@@ -387,9 +387,12 @@ class NavigationHeaderView: UIView {
     var mailBadge: BadgeSwift?
 
     func setMail(_ mailcount: Int) {
-        if(mailBadge != nil){
+        if(mailBadge != nil || mailcount == 0){
             mailBadge!.removeFromSuperview()
             mailBadge = nil
+        }
+        if(mailcount == 0){
+            return
         }
 
         mailBadge = BadgeSwift()

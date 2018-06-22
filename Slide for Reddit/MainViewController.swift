@@ -57,7 +57,10 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         }
         
         if(!UserDefaults.standard.bool(forKey: "firstOpen")){
-            VCPresenter.showVC(viewController: SettingsWelcome(parent: self), popupIfPossible: true, parentNavigationController: nil, parentViewController: self)
+            var vc = SettingsWelcome(parent: self)
+            vc.modalPresentationStyle = .fullScreen
+            vc.modalTransitionStyle = .crossDissolve
+            self.present(vc, animated: true, completion: nil)
         }
         
         if(!UserDefaults.standard.bool(forKey: "beta")){

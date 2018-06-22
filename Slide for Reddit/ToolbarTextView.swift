@@ -50,6 +50,9 @@ public class ToolbarTextView: NSObject {
         }
         scrollView.delaysContentTouches = false
         text!.inputAccessoryView = scrollView
+        if(ColorUtil.theme != .LIGHT){
+            text!.keyboardAppearance = .dark
+        }
     }
 
     func generateButtons(image: String, action: Selector) -> (UIButton, Selector) {

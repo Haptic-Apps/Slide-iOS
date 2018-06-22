@@ -81,7 +81,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 let queue: [Object] = [RealmDataWrapper.commentToRComment(comment: comment!, depth: startDepth)]
                 self.cDepth[comment!.getId()] = startDepth
 
-
                 var realPosition = 0
                 for c in self.comments {
                     let id = c
@@ -98,6 +97,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     ids.append(id)
                     self.content[id] = item
                 }
+                
                 self.dataArray.insert(contentsOf: ids, at: self.menuIndex)
                 self.comments.insert(contentsOf: ids, at: realPosition + 1)
                 self.updateStringsSingle(queue)
@@ -1840,6 +1840,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 if (hiddenP) {
                     count = getChildNumber(n: content[thing]!.getIdentifier())
                 }
+                print("Thing is \(thing)")
                 var t = text[thing]!
                 if (isSearching) {
                     t = highlight(t)
@@ -1855,8 +1856,34 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
         return cell
     }
+    
+    @available(iOS 11.0, *)
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let cell = tableView.cellForRow(at: indexPath)
+        if(cell is CommentDepthCell){
+            var upvote = UIContextualAction.init(style: .normal, title: "", handler: { (action, view, b) in
+                (cell as! CommentDepthCell).upvote()
+                b(true)
+            })
+            upvote.backgroundColor = ColorUtil.upvoteColor
+            upvote.image = UIImage.init(named: "upvote")?.navIcon()
+            
+            var downvote = UIContextualAction.init(style: .normal, title: "", handler: { (action, view, b) in
+                (cell as! CommentDepthCell).downvote()
+                b(true)
+            })
+            downvote.backgroundColor = ColorUtil.downvoteColor
+            downvote.image = UIImage.init(named: "downvote")?.navIcon()
+            
+            let config = UISwipeActionsConfiguration.init(actions: [upvote, downvote])
+            
+            return config
 
-
+        } else {
+            return nil
+        }
+    }
+    
     func getChildNumber(n: String) -> Int {
         let children = walkTreeFully(n: n);
         return children.count - 1

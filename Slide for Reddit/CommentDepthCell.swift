@@ -290,8 +290,15 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
     }
 
     func upvote() {
-
+        parent!.vote(comment: comment!, dir: .up)
+        self.refresh(comment: comment!, submissionAuthor: (parent!.submission?.author)!, text: self.cellContent!)
     }
+    
+    func downvote() {
+        parent!.vote(comment: comment!, dir: .down)
+        self.refresh(comment: comment!, submissionAuthor: (parent!.submission?.author)!, text: self.cellContent!)
+    }
+
 
     var delegate: UZTextViewCellDelegate? = nil
     var content: Object? = nil

@@ -900,10 +900,12 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
         //todo save realm
         DispatchQueue.main.async {
-            self.tableView.performBatchUpdates({
-                self.tableView.deleteItems(at: indexPaths)
-                self.flowLayout.reset()
-            }, completion: nil)
+            if(indexPaths.isEmpty){
+                self.tableView.performBatchUpdates({
+                    self.tableView.deleteItems(at: indexPaths)
+                    self.flowLayout.reset()
+                }, completion: nil)
+            }
         }
     }
 
@@ -1242,7 +1244,9 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
          }
 
         alertController.addAction(Action(ActionData(title: "Filter content", image: UIImage(named: "filter")!.menuIcon()), style: .default, handler: { action in
-            self.filterContent()
+            if(!self.links.isEmpty || self.loaded){
+                self.filterContent()
+            }
         }))
 
         VCPresenter.presentAlert(alertController, parentVC: self)
@@ -1627,34 +1631,51 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                         }
                         self.preloadImages(values)
                         DispatchQueue.main.async {
-                            var paths = [IndexPath]()
-                            for i in before...(self.links.count - 1) {
-                                paths.append(IndexPath.init(item: i, section: 0))
-                            }
-
-                            if (before == 0) {
+                            if(self.links.isEmpty){
                                 self.flowLayout.reset()
                                 self.tableView.reloadData()
-                                var top = CGFloat(0)
-                                if #available(iOS 11, *){
-                                    top += 22
-                                    if((!SettingValues.viewType)){
-                                        top += 4
+                                
+                                self.refreshControl.endRefreshing()
+                                self.indicator?.stopAnimating()
+                                self.loading = false
+                                if(MainViewController.first){
+                                    MainViewController.first = false
+                                    self.parentController?.checkForMail()
+                                }
+                                let message = MDCSnackbarMessage()
+                                message.text = "No posts found, check your filter settings"
+                                MDCSnackbarManager.show(message)
+                            } else {
+                                var paths = [IndexPath]()
+                                for i in before...(self.links.count - 1) {
+                                    paths.append(IndexPath.init(item: i, section: 0))
+                                }
+
+                                if (before == 0) {
+                                    self.flowLayout.reset()
+                                    self.tableView.reloadData()
+                                    var top = CGFloat(0)
+                                    if #available(iOS 11, *){
+                                        top += 22
+                                        if((!SettingValues.viewType)){
+                                            top += 4
+                                        }
                                     }
+                                
+                                    self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + (-1 * ((SettingValues.viewType && !self.single) ?    (52 ) : (self.navigationController?.navigationBar.frame.size.height ?? 64))) - top)
+                                } else {
+                                    self.tableView.insertItems(at: paths)
+                                    self.flowLayout.reset()
+                                }
+
+                                self.refreshControl.endRefreshing()
+                                self.indicator?.stopAnimating()
+                                self.loading = false
+                                if(MainViewController.first){
+                                    MainViewController.first = false
+                                    self.parentController?.checkForMail()
                                 }
                                 
-                                self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + (-1 * ((SettingValues.viewType && !self.single) ? (52 ) : (self.navigationController?.navigationBar.frame.size.height ?? 64))) - top)
-                            } else {
-                                self.tableView.insertItems(at: paths)
-                                self.flowLayout.reset()
-                            }
-
-                            self.refreshControl.endRefreshing()
-                            self.indicator?.stopAnimating()
-                            self.loading = false
-                            if(MainViewController.first){
-                                MainViewController.first = false
-                                self.parentController?.checkForMail()
                             }
                         }
                     }

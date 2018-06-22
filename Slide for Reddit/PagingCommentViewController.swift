@@ -9,7 +9,7 @@
 import Foundation
 import SloppySwiper
 
-class PagingCommentViewController : SwipeDownModalVC, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
+class PagingCommentViewController : ColorMuxPagingViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     var submissions: [RSubmission] = []
     static weak var savedComment : CommentViewController?
     var vCs: [UIViewController] = []
@@ -71,8 +71,11 @@ class PagingCommentViewController : SwipeDownModalVC, UIPageViewControllerDataSo
                 var scrollView = view as! UIScrollView
                 //swiper!.panRecognizer.require(toFail:scrollView.panGestureRecognizer)
                 scrollView.delegate = self
+                if(scrollView.isPagingEnabled){
+                    scrollView.panGestureRecognizer.minimumNumberOfTouches = 2
+                }
                 scrollView.panGestureRecognizer.require(toFail: swiper!.panRecognizer)
-                break;
+                break
             }
         }
         
