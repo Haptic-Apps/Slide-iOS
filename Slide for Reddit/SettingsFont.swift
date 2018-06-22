@@ -87,6 +87,7 @@ class SettingsFont: UITableViewController {
         SettingValues.commentFontOffset = size
         UserDefaults.standard.set(size, forKey: SettingValues.pref_commentFontSize)
         UserDefaults.standard.synchronize()
+        FontGenerator.initialize()
     }
     
     func setSizeSubmission(size: Int){
@@ -94,6 +95,8 @@ class SettingsFont: UITableViewController {
         UserDefaults.standard.set(size, forKey: SettingValues.pref_postFontSize)
         UserDefaults.standard.synchronize()
         SubredditReorderViewController.changed = true
+        CachedTitle.titleFont = FontGenerator.fontOfSize(size: 18, submission: true)
+        FontGenerator.initialize()
     }
 
     
@@ -522,7 +525,6 @@ class SettingsFont: UITableViewController {
                 break
             default: fatalError("Unknown row in section 1")
             }
-            FontGenerator.initialize()
             doChecks()
         } else if(indexPath.section == 2){
             switch(indexPath.row) {
@@ -556,11 +558,10 @@ class SettingsFont: UITableViewController {
                 break
             default: fatalError("Unknown row in section 1")
             }
-            FontGenerator.initialize()
             doChecks()
         }
         tableView.deselectRow(at: indexPath, animated: true)
-        
+        FontGenerator.initialize()
     }
 
     
