@@ -582,12 +582,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 comment.require(toFail: dtap!)
             }
             self.addGestureRecognizer(comment)
-            
-            //let vote = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.upvote(sender:)))
-           // vote.delegate = self
-            //vote.numberOfTapsRequired = 2
-           // self.addGestureRecognizer(vote)
-           // comment.require(toFail: vote)
         }
 
         refresh()
@@ -860,20 +854,21 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             aspectWidth = self.contentView.frame.size.width
         }
 
+        if(dtap == nil && SettingValues.submissionActionDoubleTap != .NONE){
+            dtap = UIShortTapGestureRecognizer.init(target: self, action: #selector(self.doDTap(_:)))
+            dtap!.numberOfTapsRequired = 2
+            self.addGestureRecognizer(dtap!)
+        }
+        
         if (!full) {
             let comment = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openComment(sender:)))
             comment.delegate = self
+            if(dtap != nil){
+                comment.require(toFail: dtap!)
+            }
             self.addGestureRecognizer(comment)
-            
-            //let vote = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.upvote(sender:)))
-           // vote.delegate = self
-           // vote.numberOfTapsRequired = 2
-            //self.addGestureRecognizer(vote)
-            //comment.require(toFail: vote)
         }
-
-        //title.sizeToFit()
-
+        
         let mo = History.commentsSince(s: submission)
         comments.text = " \(submission.commentCount)" + (mo > 0 ? "(+\(mo))" : "")
 
