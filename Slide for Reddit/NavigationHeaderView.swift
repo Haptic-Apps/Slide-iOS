@@ -387,11 +387,9 @@ class NavigationHeaderView: UIView {
     var mailBadge: BadgeSwift?
 
     func setMail(_ mailcount: Int) {
-        if(mailBadge != nil || mailcount == 0){
-            mailBadge!.removeFromSuperview()
+        guard mailcount != 0 else {
+            mailBadge?.removeFromSuperview()
             mailBadge = nil
-        }
-        if(mailcount == 0){
             return
         }
 
