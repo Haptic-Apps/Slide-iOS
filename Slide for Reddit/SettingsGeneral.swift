@@ -42,7 +42,7 @@ class SettingsGeneral: UITableViewController {
 
     func switchIsChanged(_ changed: UISwitch) {
         if (changed == viewTypeSwitch) {
-            SubredditReorderViewController.changed = true
+            MainViewController.needsRestart = true
             SettingValues.viewType = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_viewType)
         } else if (changed == hideFABSwitch) {

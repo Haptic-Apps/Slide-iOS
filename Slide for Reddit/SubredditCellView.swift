@@ -25,7 +25,7 @@ class SubredditCellView: UITableViewCell {
 
         self.title = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
         title.numberOfLines = 0
-        title.font = FontGenerator.fontOfSize(size: 16, submission: true)
+        title.font = UIFont.systemFont(ofSize: 16)
 
         self.sideView = UIView(frame: CGRect(x: 0, y: 0, width: 4, height: CGFloat.greatestFiniteMagnitude))
         self.pin = UIImageView(frame: CGRect(x: 0, y:0, width: 10, height: CGFloat.greatestFiniteMagnitude))

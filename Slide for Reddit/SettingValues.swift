@@ -85,6 +85,7 @@ class SettingValues {
     public static let pref_commentActionRight = "COMMENT_RIGHT"
     public static let pref_commentActionDoubleTap = "COMMENT_DOUBLE_TAP"
     public static let pref_submissionActionDoubleTap = "SUBMISSION_DOUBLE_TAP"
+    public static let pref_commentFullScreen = "COMMENT_FULLSCREEN"
 
     public static var commentActionRight = CommentAction.UPVOTE
     public static var commentActionLeft = CommentAction.DOWNVOTE
@@ -161,6 +162,7 @@ class SettingValues {
     public static var nightEndMin = 0
     public static var nightModeEnabled = false
     public static var nightTheme = ColorUtil.Theme.DARK
+    public static var commentFullScreen = true
 
     enum PostViewType: String {
         case LIST = "list"
@@ -273,6 +275,7 @@ class SettingValues {
         SettingValues.leftThumbnail = settings.bool(forKey: SettingValues.pref_leftThumbnail)
         SettingValues.biometrics = settings.bool(forKey: SettingValues.pref_biometrics)
         SettingValues.enlargeLinks = settings.object(forKey: SettingValues.pref_enlargeLinks) == nil ? true : settings.bool(forKey: SettingValues.pref_enlargeLinks)
+        SettingValues.commentFullScreen = settings.object(forKey: SettingValues.pref_commentFullScreen) == nil ? true : settings.bool(forKey: SettingValues.pref_commentFullScreen)
         SettingValues.showLinkContentType = settings.object(forKey: SettingValues.pref_showLinkContentType) == nil ? true : settings.bool(forKey: SettingValues.pref_showLinkContentType)
         SettingValues.nameScrubbing = settings.bool(forKey: SettingValues.pref_nameScrubbing)
         SettingValues.hiddenFAB = settings.bool(forKey: SettingValues.pref_hiddenFAB)

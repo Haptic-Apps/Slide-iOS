@@ -17,11 +17,18 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     var isReload = false
     public static var vCs: [UIViewController] = []
     public static var current: String = ""
+    public static var needsRestart = false
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
+        
+        if(MainViewController.needsRestart){
+            MainViewController.needsRestart = false
+            hardReset()
+            return
+        }
 
         if (SubredditReorderViewController.changed || ColorUtil.shouldBeNight()) {
             var subChanged = false

@@ -25,6 +25,9 @@ class SettingsComments: UITableViewController {
     var collapseFullyCell: UITableViewCell = UITableViewCell()
     var collapseFully = UISwitch()
 
+    var fullscreenImageCell: UITableViewCell = UITableViewCell()
+    var fullscreenImage = UISwitch()
+
     var highlightOpCell: UITableViewCell = UITableViewCell()
     var highlightOp = UISwitch()
 
@@ -61,6 +64,9 @@ class SettingsComments: UITableViewController {
         } else if(changed == collapseFully){
             SettingValues.collapseFully = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_collapseFully)
+        } else if(changed == fullscreenImage){
+            SettingValues.commentFullScreen = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_commentFullScreen)
         } else if(changed == highlightOp){
             SettingValues.highlightOp = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_highlightOp)
@@ -76,9 +82,9 @@ class SettingsComments: UITableViewController {
         toReturn.backgroundColor = ColorUtil.backgroundColor
         
         switch(section) {
-        case 0: label.text  = "Preview"
+        case 0: label.text  = "Submission"
             break
-        case 1: label.text  = "Display"
+        case 1: label.text  = "Comments"
             break
         case 2: label.text = "Actionbar"
             break
@@ -114,6 +120,7 @@ class SettingsComments: UITableViewController {
         self.tableView.separatorStyle = .none
 
         createCell(disableNavigationBarCell, disableNavigationBar, isOn: SettingValues.disableNavigationBar, text: "Disable comment navigation toolbar")
+        createCell(fullscreenImageCell, fullscreenImage, isOn: SettingValues.commentFullScreen, text: "Show full height submission image in commment view")
         createCell(disableColorCell, disableColor, isOn: SettingValues.disableColor, text: "Monochrome comment depth indicators")
         createCell(collapseDefaultCell, collapseDefault, isOn: SettingValues.collapseDefault, text: "Collapse all comments automatically")
         createCell(swapLongPressCell, swapLongPress, isOn: SettingValues.swapLongPress, text: "Swap tap and long press actions")
@@ -124,12 +131,9 @@ class SettingsComments: UITableViewController {
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return 2
     }
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if(section == 0){
-            return 0
-        }
         return 70
     }
     
@@ -144,6 +148,8 @@ class SettingsComments: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch(indexPath.section) {
         case 0:
+            return self.fullscreenImageCell
+        case 1:
             switch(indexPath.row) {
             case 0: return self.collapseDefaultCell
             case 1: return self.collapseFullyCell
@@ -160,7 +166,8 @@ class SettingsComments: UITableViewController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch(section) {
-        case 0: return 5    // section 1 has 1 row
+        case 0: return 1
+        case 1: return 5    // section 1 has 1 row
         default: fatalError("Unknown number of sections")
         }
     }

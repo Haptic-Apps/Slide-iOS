@@ -553,9 +553,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
     func getHeightFromAspectRatio(imageHeight: Int, imageWidth: Int) -> Int {
         let ratio = Double(imageHeight) / Double(imageWidth)
-        let width = Double(contentView.frame.size.width);
+        let width = Double(contentView.frame.size.width == 0 ? aspectWidth : contentView.frame.size.width)
         return Int(width * ratio)
-
     }
 
     var big = false
@@ -726,11 +725,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if (!fullImage && submissionHeight < 50) {
             big = false
             thumb = true
-        } else if (big && (SettingValues.bigPicCropped || full)) {
+        } else if (big && ((!full && SettingValues.bigPicCropped) || (full && !SettingValues.commentFullScreen))) {
             submissionHeight = test ? 150 : 200
         } else if (big) {
             let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: submission.width)
             if (h == 0) {
+                print("Setting full 2")
                 submissionHeight = test ? 150 : 200
             } else {
                 submissionHeight = h
@@ -799,13 +799,17 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
         if (big) {
             bannerImage.alpha = 0
-            let imageSize = CGSize.init(width: submission.width, height: (full || SettingValues.bigPicCropped) ? 200 : submission.height);
+            let imageSize = CGSize.init(width: submission.width, height: ((full && !SettingValues.commentFullScreen) ||  (!full && SettingValues.bigPicCropped)) ? 200 : submission.height)
+            print("Setting full 3")
+
             var aspect = imageSize.width / imageSize.height
             if (aspect == 0 || aspect > 10000 || aspect.isNaN) {
                 aspect = 1
             }
-            if (full || SettingValues.bigPicCropped) {
+            if ((full && !SettingValues.commentFullScreen) || (!full && SettingValues.bigPicCropped)) {
                 aspect = (full ? aspectWidth : self.contentView.frame.size.width) / (test ? 150 : 200)
+                print("Setting full 4")
+
                 submissionHeight = test ? 150 : 200
                 bigConstraint = NSLayoutConstraint(item: bannerImage, attribute: NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: bannerImage, attribute: NSLayoutAttribute.height, multiplier: aspect, constant: 0.0)
             } else {
@@ -1199,237 +1203,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             LinkCellView.cachedInternet =  true
         }
         return LinkCellView.cachedInternet!
-    }
-
-
-    func setLinkForPreview(submission: RSubmission) {
-        full = false
-        lq = false
-        self.contentView.backgroundColor = ColorUtil.foregroundColor
-        comments.textColor = ColorUtil.fontColor
-        title.textColor = ColorUtil.fontColor
-
-        self.link = submission
-
-        title.setText(CachedTitle.getTitle(submission: submission, full: false, false))
-        title.sizeToFit()
-
-        reply.isHidden = true
-        if (!SettingValues.hideButton) {
-            hide.isHidden = true
-        } else {
-            hide.isHidden = false
-        }
-        if (!SettingValues.saveButton) {
-            save.isHidden = true
-        } else {
-            save.isHidden = false
-        }
-
-        upvote.isHidden = false
-        downvote.isHidden = false
-        edit.isHidden = true
-
-        thumb = submission.thumbnail
-        big = submission.banner
-        //todo test if big image
-        //todo test if self and hideSelftextLeadImage, don't show anything
-        //test if should be LQ, get LQ image instead of banner image
-        if (bigConstraint != nil) {
-            self.contentView.removeConstraint(bigConstraint!)
-        }
-
-        submissionHeight = submission.height
-
-        var type = ContentType.getContentType(baseUrl: submission.url)
-        if (submission.isSelf) {
-            type = .SELF
-        }
-
-        if (SettingValues.bannerHidden && !full) {
-            big = false
-            thumb = true
-        }
-
-
-        let fullImage = ContentType.fullImage(t: type)
-
-        if (!fullImage && submissionHeight < 50) {
-            big = false
-            thumb = true
-        } else if (big && (SettingValues.bigPicCropped || full)) {
-            submissionHeight = 200
-        } else if (big) {
-            let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: submission.width)
-            if (h == 0) {
-                submissionHeight = 200
-            } else {
-                submissionHeight = h
-            }
-        }
-
-        if (SettingValues.hideButtonActionbar && !full) {
-            buttons.isHidden = true
-            box.isHidden = true
-        }
-
-        if (type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big || type == .SELF && full) {
-            big = false
-            thumb = false
-        }
-
-        if (submissionHeight < 50) {
-            thumb = true
-            big = false
-        }
-
-        let shouldShowLq = false
-        if (type == ContentType.CType.SELF && SettingValues.hideImageSelftext
-                || SettingValues.noImages && submission.isSelf) {
-            big = false
-            thumb = false
-        }
-
-        if (big || !submission.thumbnail) {
-            thumb = false
-        }
-        if (thumb && type == .SELF) {
-            thumb = false
-        }
-
-
-        if (!big && !thumb && submission.type != .SELF && submission.type != .NONE) { //If a submission has a link but no images, still show the web thumbnail
-            thumb = true
-            addTouch(view: thumbImage, action: #selector(LinkCellView.openLink(sender:)))
-            thumbImage.image = UIImage.init(named: "web")
-        }
-
-        if (thumb && !big) {
-            addTouch(view: thumbImage, action: #selector(LinkCellView.openLink(sender:)))
-            if (submission.thumbnailUrl == "nsfw" || (submission.nsfw && !SettingValues.nsfwPreviews)) {
-                thumbImage.image = UIImage.init(named: "nsfw")
-            } else if (submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty) {
-                thumbImage.image = UIImage.init(named: "web")
-            } else {
-                thumbImage.sd_setImage(with: URL.init(string: submission.thumbnailUrl), placeholderImage: UIImage.init(named: "web"))
-            }
-        } else {
-            thumbImage.sd_setImage(with: URL.init(string: ""))
-            self.thumbImage.frame.size.width = 0
-        }
-
-
-        if (big) {
-            bannerImage.alpha = 0
-            let imageSize = CGSize.init(width: submission.width, height: full ? 200 : submission.height);
-            var aspect = imageSize.width / imageSize.height
-            if (aspect == 0 || aspect > 10000 || aspect.isNaN) {
-                aspect = 1
-            }
-            if (!full) {
-                bigConstraint = NSLayoutConstraint(item: bannerImage, attribute: NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: bannerImage, attribute: NSLayoutAttribute.height, multiplier: aspect, constant: 0.0)
-            } else {
-                aspect = self.contentView.frame.size.width / 200
-                submissionHeight = 200
-                bigConstraint = NSLayoutConstraint(item: bannerImage, attribute: NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: bannerImage, attribute: NSLayoutAttribute.height, multiplier: aspect, constant: 0.0)
-
-            }
-            bannerImage.isUserInteractionEnabled = true
-            let tap = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openLink(sender:)))
-            tap.delegate = self
-            bannerImage.addGestureRecognizer(tap)
-            if (shouldShowLq) {
-                bannerImage.sd_setImage(with: URL.init(string: submission.lqUrl), completed: { (image, error, cache, url) in
-                    self.bannerImage.contentMode = .scaleAspectFill
-                    if (cache == .none) {
-                        UIView.animate(withDuration: 0.3, animations: {
-                            self.bannerImage.alpha = 1
-                        })
-                    } else {
-                        self.bannerImage.alpha = 1
-                    }
-                })
-            } else {
-                bannerImage.sd_setImage(with: URL.init(string: submission.bannerUrl), completed: { (image, error, cache, url) in
-                    self.bannerImage.contentMode = .scaleAspectFill
-                    if (cache == .none) {
-                        UIView.animate(withDuration: 0.3, animations: {
-                            self.bannerImage.alpha = 1
-                        })
-                    } else {
-                        self.bannerImage.alpha = 1
-                    }
-                })
-            }
-        } else {
-            bannerImage.sd_setImage(with: URL.init(string: ""))
-        }
-
-        comments.text = " \(submission.commentCount)"
-
-        doConstraints()
-
-        refresh()
-
-
-        if (type != .IMAGE && type != .SELF && !thumb) {
-            b.isHidden = false
-            var text = ""
-            switch (type) {
-            case .ALBUM:
-                text = ("Album")
-                break
-            case .EXTERNAL:
-                text = "External Link"
-                break
-            case .LINK, .EMBEDDED, .NONE:
-                text = "Link"
-                break
-            case .DEVIANTART:
-                text = "Deviantart"
-                break
-            case .TUMBLR:
-                text = "Tumblr"
-                break
-            case .XKCD:
-                text = ("XKCD")
-                break
-            case .GIF:
-                text = ("GIF")
-                break
-            case .IMGUR:
-                text = ("Imgur")
-                break
-            case .VIDEO:
-                text = "YouTube"
-                break
-            case .STREAMABLE:
-                text = "Streamable"
-                break
-            case .VID_ME:
-                text = ("Vid.me")
-                break
-            case .REDDIT:
-                text = ("Reddit content")
-                break
-            default:
-                text = "Link"
-                break
-            }
-            if (SettingValues.smallerTag && !full) {
-                b.isHidden = true
-                tagbody.isHidden = false
-                taglabel.text = " \(text.uppercased()) "
-            } else {
-                tagbody.isHidden = true
-                let finalText = NSMutableAttributedString.init(string: text, attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 14, submission: true)])
-                finalText.append(NSAttributedString.init(string: "\n\(submission.domain)"))
-                info.attributedText = finalText
-            }
-
-        } else {
-            b.isHidden = true
-        }
     }
 
     var longPress: UILongPressGestureRecognizer?
