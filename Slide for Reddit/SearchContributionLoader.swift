@@ -20,7 +20,9 @@ class SearchContributionLoader: ContributionLoader {
     var sub: String
     var color: UIColor
     var canGetMore = true
-    
+    var sorting: SearchSortBy = .relevance
+    var time: SearchTimePeriod = .all
+
     init(query: String, sub: String){
         self.query = query
         self.sub = sub
@@ -41,7 +43,7 @@ class SearchContributionLoader: ContributionLoader {
                 if(reload){
                     paginator = Paginator()
                 }
-                try delegate?.session?.getSearch(Subreddit.init(subreddit: sub), query: query, paginator: paginator, sort: .relevance, completion: { (result) in
+                try delegate?.session?.getSearch(Subreddit.init(subreddit: sub), query: query, paginator: paginator, sort: sorting, time: time, completion: { (result) in
                     switch result {
                     case .failure:
                         print(result.error!)

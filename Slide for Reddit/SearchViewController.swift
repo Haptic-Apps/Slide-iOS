@@ -8,6 +8,7 @@
 
 import UIKit
 import RLBAlertsPickers
+import reddift
 
 class SearchViewController: ContentListingViewController {
 
@@ -30,8 +31,81 @@ class SearchViewController: ContentListingViewController {
         edit.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let editB = UIBarButtonItem.init(customView: edit)
 
-        navigationItem.rightBarButtonItems = [editB]
+        let time = UIButton.init(type: .custom)
+        time.setImage(UIImage.init(named: "restore")?.navIcon(), for: UIControlState.normal)
+        time.addTarget(self, action: #selector(self.time(_:)), for: UIControlEvents.touchUpInside)
+        time.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+        timeB = UIBarButtonItem.init(customView: time)
 
+        let filter = UIButton.init(type: .custom)
+        filter.setImage(UIImage.init(named: "filter")?.navIcon(), for: UIControlState.normal)
+        filter.addTarget(self, action: #selector(self.filter(_:)), for: UIControlEvents.touchUpInside)
+        filter.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+        filterB = UIBarButtonItem.init(customView: filter)
+
+        navigationItem.rightBarButtonItems = [editB, filterB, timeB]
+
+    }
+    
+    var filterB = UIBarButtonItem.init()
+    var timeB = UIBarButtonItem.init()
+    
+    func time(_ sender: UIView){
+        let actionSheetController: UIAlertController = UIAlertController(title: "Time period", message: "", preferredStyle: .actionSheet)
+        
+        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Close", style: .cancel) { action -> Void in
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        let selected = UIImage.init(named: "selected")!.imageResize(sizeChange: CGSize.init(width: 20, height: 20)).withColor(tintColor: .blue)
+        
+        for t in SearchTimePeriod.cases {
+            let saveActionButton: UIAlertAction = UIAlertAction(title: t.path.uppercased(), style: .default) { action -> Void in
+                (self.baseData as! SearchContributionLoader).time = t
+                self.refresh()
+            }
+            if ((baseData as! SearchContributionLoader).time == t) {
+                saveActionButton.setValue(selected, forKey: "image")
+            }
+            
+            actionSheetController.addAction(saveActionButton)
+        }
+        
+        if let presenter = actionSheetController.popoverPresentationController {
+            presenter.sourceView = sender
+            presenter.sourceRect = sender.bounds
+        }
+        
+        self.present(actionSheetController, animated: true, completion: nil)
+    }
+    
+    func filter(_ sender: UIView){
+        let actionSheetController: UIAlertController = UIAlertController(title: "Search sort", message: "", preferredStyle: .actionSheet)
+        
+        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Close", style: .cancel) { action -> Void in
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        let selected = UIImage.init(named: "selected")!.imageResize(sizeChange: CGSize.init(width: 20, height: 20)).withColor(tintColor: .blue)
+        
+        for t in SearchSortBy.cases {
+            let saveActionButton: UIAlertAction = UIAlertAction(title: t.path.uppercased(), style: .default) { action -> Void in
+                (self.baseData as! SearchContributionLoader).sorting = t
+                self.refresh()
+            }
+            if ((baseData as! SearchContributionLoader).sorting == t) {
+                saveActionButton.setValue(selected, forKey: "image")
+            }
+            
+            actionSheetController.addAction(saveActionButton)
+        }
+        
+        if let presenter = actionSheetController.popoverPresentationController {
+            presenter.sourceView = sender
+            presenter.sourceRect = sender.bounds
+        }
+        
+        self.present(actionSheetController, animated: true, completion: nil)
     }
 
     var searchText : String?
