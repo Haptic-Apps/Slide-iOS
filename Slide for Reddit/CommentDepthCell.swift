@@ -84,7 +84,7 @@ class CommentMenuCell: UITableViewCell {
     }
 
     func reply(_ s: AnyObject) {
-        self.parent!.doReply()
+        self.parent!.doReply(commentView!)
     }
 
     var sideConstraint: [NSLayoutConstraint] = []

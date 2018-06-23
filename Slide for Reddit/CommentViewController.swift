@@ -70,11 +70,12 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     var approved: [String] = []
     var removed: [String] = []
     var offline = false
+    var replyingTo: CommentDepthCell?
     var np = false
 
     func replySent(comment: Comment?) {
         if (comment != nil && menuId != "sub") {
-            let cell = tableView.cellForRow(at: IndexPath.init(row: menuIndex - 1, section: 0)) as! CommentDepthCell
+            let cell = replyingTo!
             DispatchQueue.main.async(execute: { () -> Void in
                 let startDepth = self.cDepth[cell.comment!.getIdentifier()]! + 1
 
@@ -89,7 +90,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     }
                     realPosition += 1
                 }
-                self.hideCommentMenu(cell)
 
                 var ids: [String] = []
                 for item in queue {
@@ -104,6 +104,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 self.doArrays()
                 self.isReply = false
                 self.tableView.reloadData()
+                self.hideCommentMenu(cell)
             })
         } else if (comment != nil && menuId == "sub") {
             DispatchQueue.main.async(execute: { () -> Void in
@@ -1049,6 +1050,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
                     self.text[comment.getIdentifier()] = LinkParser.parse(attr2, color)
                 } catch {
+                    print(error)
                     self.text[comment.getIdentifier()] = NSAttributedString(string: "")
                 }
             } else {
@@ -1634,7 +1636,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
     }
 
-    func doReply() {
+    func doReply(_ cell: CommentDepthCell) {
         if (!offline) {
             menuShown = false
             var top = CGFloat(64)
@@ -1648,7 +1650,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             self.tableView.contentInset = insets
 
             tableView.beginUpdates()
-            let cell = tableView.cellForRow(at: IndexPath.init(row: menuIndex - 1, section: 0)) as! CommentDepthCell
+            replyingTo = cell
             tableView.deleteRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .fade)
             menuShown = true
             replyShown = true

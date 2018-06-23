@@ -888,19 +888,21 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         var indexPaths: [IndexPath] = []
         var newLinks: [RSubmission] = []
 
+        var index = 0
         var count = 0
         for submission in links {
             if (History.getSeen(s: submission)) {
                 indexPaths.append(IndexPath(row: count, section: 0))
-                links.remove(at: count)
+                links.remove(at: index)
             } else {
-                count += 1
+                index += 1
             }
+            count += 1
         }
 
         //todo save realm
         DispatchQueue.main.async {
-            if(indexPaths.isEmpty){
+            if(!indexPaths.isEmpty){
                 self.tableView.performBatchUpdates({
                     self.tableView.deleteItems(at: indexPaths)
                     self.flowLayout.reset()

@@ -198,7 +198,7 @@ class SettingsGestures: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 90
+        return indexPath.row == 0 && indexPath.section == 0 ? 120 : 70
     }
     
     
