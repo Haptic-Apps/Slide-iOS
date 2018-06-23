@@ -60,7 +60,7 @@ class SearchViewController: ContentListingViewController {
         let selected = UIImage.init(named: "selected")!.imageResize(sizeChange: CGSize.init(width: 20, height: 20)).withColor(tintColor: .blue)
         
         for t in SearchTimePeriod.cases {
-            let saveActionButton: UIAlertAction = UIAlertAction(title: t.path.uppercased(), style: .default) { action -> Void in
+            let saveActionButton: UIAlertAction = UIAlertAction(title: t.path.firstUppercased, style: .default) { action -> Void in
                 (self.baseData as! SearchContributionLoader).time = t
                 self.refresh()
             }
@@ -89,7 +89,7 @@ class SearchViewController: ContentListingViewController {
         let selected = UIImage.init(named: "selected")!.imageResize(sizeChange: CGSize.init(width: 20, height: 20)).withColor(tintColor: .blue)
         
         for t in SearchSortBy.cases {
-            let saveActionButton: UIAlertAction = UIAlertAction(title: t.path.uppercased(), style: .default) { action -> Void in
+            let saveActionButton: UIAlertAction = UIAlertAction(title: t.path.firstUppercased, style: .default) { action -> Void in
                 (self.baseData as! SearchContributionLoader).sorting = t
                 self.refresh()
             }
@@ -151,4 +151,12 @@ class SearchViewController: ContentListingViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+}
+
+//https://stackoverflow.com/a/28288340/3697225
+extension StringProtocol {
+    var firstUppercased: String {
+        guard let first = first else { return "" }
+        return String(first).uppercased() + dropFirst()
+    }
 }
