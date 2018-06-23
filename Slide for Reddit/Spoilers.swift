@@ -32,8 +32,9 @@ public class WrapSpoilers: NSObject {
             //match unconventional spoiler tags
             for match in base.capturedGroups(withRegex: "<a href=\"([#/](?:spoiler|sp|s))\">([^<]*)</a>") {
                 var newPiece = match[0]
-                let inner = "<a href=\"/spoiler\">spoiler [[s[ \(newPiece.substring(newPiece.indexOf(">")! + 1, length: newPiece.lastIndexOf(">")!))]s]]</a>";
-                base = base.replacingOccurrences(of: match[0], with: inner);
+                let inner = "<a href=\"/spoiler\">spoiler [[s[ \(newPiece.subsequence(newPiece.indexOf(">")! + 1, endIndex: newPiece.lastIndexOf("<")!))]s]]</a>"
+                print("Inner is \(inner)")
+                base = base.replacingOccurrences(of: match[0], with: inner)
             }
             
             if(spoil){
