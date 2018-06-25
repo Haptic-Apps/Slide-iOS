@@ -23,6 +23,8 @@ import XLActionController
 import reddift
 import SafariServices
 import RLBAlertsPickers
+import Then
+import Anchorage
 
 protocol LinkCellViewDelegate: class {
     func upvote(_ cell: LinkCellView)
@@ -90,13 +92,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
     var bannerImage = UIImageView()
     var thumbImage = UIImageView()
-    var title = TTTAttributedLabel.init(frame: CGRect.zero)
+    var title = TTTAttributedLabel(frame: CGRect.zero)
     var score = UILabel()
     var box = UIStackView()
     var buttons = UIStackView()
     var comments = UILabel()
     var info = UILabel()
-    var textView = TTTAttributedLabel.init(frame: CGRect.zero)
+    var textView = TTTAttributedLabel(frame: CGRect.zero)
     var save = UIImageView()
     var upvote = UIImageView()
     var hide = UIImageView()
@@ -108,10 +110,164 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var submissionicon = UIImageView()
     var del: LinkCellViewDelegate? = nil
     var taglabel = UILabel()
+    var tagbody = UIView()
     var crosspost = UITableViewCell()
 
     var loadedImage: URL?
     var lq = false
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        self.thumbImage = UIImageView().then {
+            $0.frame = CGRect(x: 0, y: 8, width: (SettingValues.largerThumbnail ? 75 : 50) - (SettingValues.postViewMode == .COMPACT ? 15 : 0), height: (SettingValues.largerThumbnail ? 75 : 50) - (SettingValues.postViewMode == .COMPACT ? 15 : 0))
+            $0.backgroundColor = UIColor.white
+            $0.clipsToBounds = true;
+            $0.contentMode = .scaleAspectFill
+            $0.elevate(elevation: 2.0)
+
+            $0.layer.cornerRadius = 10
+        }
+
+        self.bannerImage = UIImageView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 0)).then {
+            $0.contentMode = .scaleAspectFill
+            $0.layer.cornerRadius = 15
+            $0.clipsToBounds = true
+            $0.backgroundColor = UIColor.white
+        }
+
+        self.title = TTTAttributedLabel(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude)).then {
+            $0.numberOfLines = 0
+            $0.lineBreakMode = .byWordWrapping
+            $0.font = FontGenerator.fontOfSize(size: 18, submission: true)
+        }
+
+        self.hide = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20)).then {
+            $0.image = UIImage.init(named: "hide")?.menuIcon()
+            $0.contentMode = .center
+        }
+
+        self.reply = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20)).then {
+            $0.image = UIImage.init(named: "reply")?.menuIcon()
+            $0.contentMode = .center
+        }
+
+        self.edit = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20)).then {
+            $0.image = UIImage.init(named: "edit")?.menuIcon()
+            $0.contentMode = .center
+        }
+
+        self.save = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20))
+        save.contentMode = .center
+
+        self.upvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20))
+        upvote.contentMode = .center
+
+        self.downvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20))
+        downvote.contentMode = .center
+
+        self.mod = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20)).then {
+            $0.image = UIImage(named: "mod")?.menuIcon().imageResize(sizeChange: CGSize.init(width: 20, height: 20))
+            $0.contentMode = .center
+        }
+
+        self.commenticon = UIImageView(frame: CGRect(x: 0, y: 0, width: 10, height: 10)).then {
+            $0.image = UIImage(named: "comments")?.menuIcon()
+            $0.contentMode = .scaleAspectFit
+        }
+
+        self.submissionicon = UIImageView(frame: CGRect(x: 0, y: 0, width: 10, height: 10)).then {
+            $0.image = UIImage(named: "upvote")?.menuIcon()
+            $0.contentMode = .scaleAspectFit
+        }
+
+        self.textView = TTTAttributedLabel(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude)).then {
+            $0.numberOfLines = 0
+            $0.isUserInteractionEnabled = true
+            $0.backgroundColor = .clear
+        }
+        self.textView.delegate = self
+
+        self.score = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)).then {
+            $0.numberOfLines = 1
+            $0.font = FontGenerator.fontOfSize(size: 12, submission: true)
+            $0.textColor = ColorUtil.fontColor
+        }
+
+        self.comments = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)).then {
+            $0.numberOfLines = 1
+            $0.font = FontGenerator.fontOfSize(size: 12, submission: true)
+            $0.textColor = ColorUtil.fontColor
+        }
+
+        self.taglabel = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)).then {
+            $0.numberOfLines = 1
+            $0.font = FontGenerator.boldFontOfSize(size: 12, submission: true)
+            $0.textColor = UIColor.black
+        }
+
+        self.tagbody = taglabel.withPadding(padding: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1)).then {
+            $0.backgroundColor = UIColor.white
+            $0.clipsToBounds = true
+            $0.layer.cornerRadius = 4
+        }
+
+        self.info = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)).then {
+            $0.numberOfLines = 2
+            $0.font = FontGenerator.fontOfSize(size: 12, submission: true)
+            $0.textColor = .white
+        }
+
+        self.b = info.withPadding(padding: UIEdgeInsets.init(top: 4, left: 10, bottom: 4, right: 10)).then {
+            $0.backgroundColor = UIColor.black.withAlphaComponent(0.6)
+            $0.clipsToBounds = true
+            $0.layer.cornerRadius = 15
+        }
+
+        if (!addTouch) {
+            addTouch(view: save, action: #selector(LinkCellView.save(sender:)))
+            addTouch(view: upvote, action: #selector(LinkCellView.upvote(sender:)))
+            addTouch(view: reply, action: #selector(LinkCellView.reply(sender:)))
+            addTouch(view: downvote, action: #selector(LinkCellView.downvote(sender:)))
+            addTouch(view: mod, action: #selector(LinkCellView.mod(sender:)))
+            addTouch(view: edit, action: #selector(LinkCellView.edit(sender:)))
+            addTouch(view: hide, action: #selector(LinkCellView.hide(sender:)))
+            addTouch = true
+        }
+
+        contentView.addSubviews(bannerImage, thumbImage, title, textView, b, tagbody)
+
+        self.box = UIStackView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
+        box.addSubviews(score, comments, commenticon, submissionicon)
+        self.contentView.addSubview(box)
+
+        self.buttons = UIStackView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
+        buttons.addSubviews(edit, reply, save, hide, upvote, downvote, mod)
+        self.contentView.addSubview(buttons)
+
+        buttons.isUserInteractionEnabled = true
+
+
+        bannerImage.translatesAutoresizingMaskIntoConstraints = false
+        thumbImage.translatesAutoresizingMaskIntoConstraints = false
+        title.translatesAutoresizingMaskIntoConstraints = false
+        score.translatesAutoresizingMaskIntoConstraints = false
+        comments.translatesAutoresizingMaskIntoConstraints = false
+        box.translatesAutoresizingMaskIntoConstraints = false
+        textView.translatesAutoresizingMaskIntoConstraints = false
+        upvote.translatesAutoresizingMaskIntoConstraints = false
+        hide.translatesAutoresizingMaskIntoConstraints = false
+        downvote.translatesAutoresizingMaskIntoConstraints = false
+        mod.translatesAutoresizingMaskIntoConstraints = false
+        edit.translatesAutoresizingMaskIntoConstraints = false
+        save.translatesAutoresizingMaskIntoConstraints = false
+        reply.translatesAutoresizingMaskIntoConstraints = false
+        buttons.translatesAutoresizingMaskIntoConstraints = false
+        b.translatesAutoresizingMaskIntoConstraints = false
+        tagbody.translatesAutoresizingMaskIntoConstraints = false
+        commenticon.translatesAutoresizingMaskIntoConstraints = false
+        submissionicon.translatesAutoresizingMaskIntoConstraints = false
+
+    }
 
     func attributedLabel(_ label: TTTAttributedLabel!, didLongPressLinkWith url: URL!, at point: CGPoint) {
         if (url) != nil {
@@ -215,7 +371,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var full = false
     var b = UIView()
     var estimatedHeight = CGFloat(0)
-    var tagbody = UIView()
 
     func estimateHeight(_ full: Bool, _ reset: Bool = false) -> CGFloat {
         if (estimatedHeight == 0 || reset) {
@@ -275,167 +430,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             estimatedHeight = totalHeight
         }
         return estimatedHeight
-    }
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        self.thumbImage = UIImageView(frame: CGRect(x: 0, y: 8, width: (SettingValues.largerThumbnail ? 75 : 50) - (SettingValues.postViewMode == .COMPACT ? 15 : 0), height: (SettingValues.largerThumbnail ? 75 : 50) - (SettingValues.postViewMode == .COMPACT ? 15 : 0)))
-        thumbImage.layer.cornerRadius = 15;
-        thumbImage.backgroundColor = UIColor.white
-        thumbImage.clipsToBounds = true;
-        thumbImage.contentMode = .scaleAspectFill
-        thumbImage.elevate(elevation: 2.0)
-
-        self.bannerImage = UIImageView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 0))
-        bannerImage.contentMode = UIViewContentMode.scaleAspectFill
-        bannerImage.layer.cornerRadius = 15;
-        bannerImage.clipsToBounds = true
-        bannerImage.backgroundColor = UIColor.white
-
-        self.title = TTTAttributedLabel(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude));
-        title.numberOfLines = 0
-        title.lineBreakMode = NSLineBreakMode.byWordWrapping
-        title.font = FontGenerator.fontOfSize(size: 18, submission: true)
-
-        self.upvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20))
-
-        self.hide = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20))
-        hide.image = UIImage.init(named: "hide")?.menuIcon()
-
-        self.reply = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20))
-        reply.image = UIImage.init(named: "reply")?.menuIcon()
-
-        self.edit = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20))
-        edit.image = UIImage.init(named: "edit")?.menuIcon()
-
-        self.save = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20))
-
-        self.downvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20))
-
-        self.mod = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20))
-        mod.image = UIImage.init(named: "mod")?.menuIcon().imageResize(sizeChange: CGSize.init(width: 20, height: 20))
-
-        self.commenticon = UIImageView(frame: CGRect(x: 0, y: 0, width: 10, height: 10))
-        commenticon.image = UIImage.init(named: "comments")?.menuIcon()
-
-        self.submissionicon = UIImageView(frame: CGRect(x: 0, y: 0, width: 10, height: 10))
-        submissionicon.image = UIImage.init(named: "upvote")?.menuIcon()
-
-        submissionicon.contentMode = .scaleAspectFit
-        commenticon.contentMode = .scaleAspectFit
-
-
-        upvote.contentMode = .center
-        downvote.contentMode = .center
-        hide.contentMode = .center
-        reply.contentMode = .center
-        edit.contentMode = .center
-        save.contentMode = .center
-        mod.contentMode = .center
-
-        self.textView = TTTAttributedLabel(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
-        self.textView.delegate = self
-        self.textView.numberOfLines = 0
-        self.textView.isUserInteractionEnabled = true
-        self.textView.backgroundColor = .clear
-
-        self.score = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
-        score.numberOfLines = 1
-        score.font = FontGenerator.fontOfSize(size: 12, submission: true)
-        score.textColor = ColorUtil.fontColor
-
-
-        self.comments = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
-        comments.numberOfLines = 1
-        comments.font = FontGenerator.fontOfSize(size: 12, submission: true)
-        comments.textColor = ColorUtil.fontColor
-
-        self.taglabel = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
-        taglabel.numberOfLines = 1
-        taglabel.font = FontGenerator.boldFontOfSize(size: 12, submission: true)
-        taglabel.textColor = UIColor.black
-
-        tagbody = taglabel.withPadding(padding: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1))
-        tagbody.backgroundColor = UIColor.white
-        tagbody.clipsToBounds = true
-        tagbody.layer.cornerRadius = 4
-
-
-        self.info = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
-        info.numberOfLines = 2
-        info.font = FontGenerator.fontOfSize(size: 12, submission: true)
-        info.textColor = .white
-        b = info.withPadding(padding: UIEdgeInsets.init(top: 4, left: 10, bottom: 4, right: 10))
-        b.backgroundColor = UIColor.black.withAlphaComponent(0.6)
-        b.clipsToBounds = true
-        b.layer.cornerRadius = 15
-
-        self.box = UIStackView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
-        self.buttons = UIStackView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
-
-        bannerImage.translatesAutoresizingMaskIntoConstraints = false
-        thumbImage.translatesAutoresizingMaskIntoConstraints = false
-        title.translatesAutoresizingMaskIntoConstraints = false
-        score.translatesAutoresizingMaskIntoConstraints = false
-        comments.translatesAutoresizingMaskIntoConstraints = false
-        box.translatesAutoresizingMaskIntoConstraints = false
-        textView.translatesAutoresizingMaskIntoConstraints = false
-        upvote.translatesAutoresizingMaskIntoConstraints = false
-        hide.translatesAutoresizingMaskIntoConstraints = false
-        downvote.translatesAutoresizingMaskIntoConstraints = false
-        mod.translatesAutoresizingMaskIntoConstraints = false
-        edit.translatesAutoresizingMaskIntoConstraints = false
-        save.translatesAutoresizingMaskIntoConstraints = false
-        reply.translatesAutoresizingMaskIntoConstraints = false
-        buttons.translatesAutoresizingMaskIntoConstraints = false
-        b.translatesAutoresizingMaskIntoConstraints = false
-        tagbody.translatesAutoresizingMaskIntoConstraints = false
-
-        commenticon.translatesAutoresizingMaskIntoConstraints = false
-        submissionicon.translatesAutoresizingMaskIntoConstraints = false
-
-        if (!addTouch) {
-            addTouch(view: save, action: #selector(LinkCellView.save(sender:)))
-            addTouch(view: upvote, action: #selector(LinkCellView.upvote(sender:)))
-            addTouch(view: reply, action: #selector(LinkCellView.reply(sender:)))
-            addTouch(view: downvote, action: #selector(LinkCellView.downvote(sender:)))
-            addTouch(view: mod, action: #selector(LinkCellView.mod(sender:)))
-            addTouch(view: edit, action: #selector(LinkCellView.edit(sender:)))
-            addTouch(view: hide, action: #selector(LinkCellView.hide(sender:)))
-            addTouch = true
-        }
-
-        self.contentView.addSubview(bannerImage)
-        self.contentView.addSubview(thumbImage)
-        self.contentView.addSubview(title)
-        self.contentView.addSubview(textView)
-        self.contentView.addSubview(b)
-        self.contentView.addSubview(tagbody)
-        box.addSubview(score)
-        box.addSubview(comments)
-        box.addSubview(commenticon)
-        box.addSubview(submissionicon)
-
-        buttons.addSubview(edit)
-        buttons.addSubview(reply)
-        buttons.addSubview(save)
-        buttons.addSubview(hide)
-        buttons.addSubview(upvote)
-        buttons.addSubview(downvote)
-        buttons.addSubview(mod)
-        self.contentView.addSubview(box)
-        self.contentView.addSubview(buttons)
-
-        buttons.isUserInteractionEnabled = true
-        bannerImage.contentMode = UIViewContentMode.scaleAspectFill
-        bannerImage.layer.cornerRadius = 15;
-        bannerImage.clipsToBounds = true
-        bannerImage.backgroundColor = UIColor.white
-        thumbImage.layer.cornerRadius = 10;
-        thumbImage.backgroundColor = UIColor.white
-        thumbImage.clipsToBounds = true;
-        thumbImage.contentMode = .scaleAspectFill
-
     }
 
     func addTouch(view: UIView, action: Selector) {
