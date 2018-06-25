@@ -205,7 +205,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
 
 
         toolbar = ToolbarTextView.init(textView: text!, parent: self)
-        self.view.layer.cornerRadius = 5
+        self.view.layer.cornerRadius = 15
         self.view.layer.masksToBounds = true
     }
 
@@ -470,7 +470,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
         super.loadView()
 
         self.tableView.backgroundColor = ColorUtil.backgroundColor
-
+        self.tableView.separatorColor = .clear
         self.tableView.allowsSelection = false
         text = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 500))
         text?.isEditable = true
@@ -499,7 +499,6 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
             subjectCell = InputCell.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 70), input: "title...", width: self.tableView.frame.size.width)
             recipientCell = InputCell.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 70), input: "subreddit:", width: self.tableView.frame.size.width)
         }
-
         if (type == .SUBMIT_IMAGE) {
             linkCell = InputCell.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 70), input: "Tap to add image", width: self.tableView.frame.size.width)
             linkCell.cellLabel.isEditable = false
@@ -583,6 +582,10 @@ class InputCell: UITableViewCell {
         cellLabel.textColor = ColorUtil.fontColor
         cellLabel.font = FontGenerator.boldFontOfSize(size: 16, submission: true)
         cellLabel.placeholder = input
+        cellLabel.tintColor = ColorUtil.fontColor
+        if(ColorUtil.theme != .LIGHT){
+            cellLabel.keyboardAppearance = .dark
+        }
 
         cellLabel.textContainerInset = UIEdgeInsets.init(top: 30, left: 10, bottom: 0, right: 0)
         backgroundColor = ColorUtil.foregroundColor

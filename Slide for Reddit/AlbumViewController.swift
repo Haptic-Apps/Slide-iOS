@@ -139,7 +139,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         view.backgroundColor = UIColor.black.withAlphaComponent(0.7)
         self.navigationController?.view.backgroundColor = UIColor.clear
 
-        let navigationBar = UINavigationBar.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: 56))
+        let navigationBar = UINavigationBar.init(frame: CGRect.init(x: 0, y: 5 + (UIApplication.shared.statusBarView?.frame.size.height ?? 20), width: self.view.frame.size.width, height: 56))
         navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationBar.shadowImage = UIImage()
         navigationBar.isTranslucent = true

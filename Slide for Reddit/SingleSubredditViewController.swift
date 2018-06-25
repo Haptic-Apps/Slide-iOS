@@ -448,7 +448,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
         tableView.reloadData()
-
+        setupFab()
     }
 
     var links: [RSubmission] = []
@@ -643,6 +643,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     static var firstPresented = true
 
     var headerView = UIView()
+    var more = UIButton()
 
     func reloadNeedingColor() {
         tableView.backgroundColor = ColorUtil.backgroundColor
@@ -681,11 +682,11 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
             let sort = UIButton.init(type: .custom)
             sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControlState.normal)
-            sort.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
+            sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControlEvents.touchUpInside)
             sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let sortB = UIBarButtonItem.init(customView: sort)
 
-            let more = UIButton.init(type: .custom)
+            more = UIButton.init(type: .custom)
             more.setImage(UIImage.init(named: "moreh")?.menuIcon(), for: UIControlState.normal)
             more.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControlEvents.touchUpInside)
             more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
@@ -1182,8 +1183,8 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
         if (sub != "all" && sub != "frontpage" && sub != "friends" && !sub.startsWith("/m/")) {
             alert.addAction(UIAlertAction(title: "Search \(sub)", style: .default, handler: { [weak alert] (_) in
-                let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
-                let search = SearchViewController.init(subreddit: self.sub, searchFor: (textField?.text!)!)
+                let text = self.searchText ?? ""
+                let search = SearchViewController.init(subreddit: self.sub, searchFor: text)
                 VCPresenter.showVC(viewController: search, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
             }))
         }
@@ -1193,7 +1194,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         present(alert, animated: true, completion: nil)
 
     }
-
+    
     func doDisplaySidebar() {
         Sidebar.init(parent: self, subname: self.sub).displaySidebar()
     }
@@ -1207,6 +1208,12 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         alertController.addAction(Action(ActionData(title: "Search", image: UIImage(named: "search")!.menuIcon()), style: .default, handler: { action in
             self.search()
         }))
+        
+        if(!single && SettingValues.viewType){
+            alertController.addAction(Action(ActionData(title: "Sort (current \(sort.description))", image: UIImage(named: "filter")!.menuIcon()), style: .default, handler: { action in
+                self.showSortMenu(self.more)
+            }))
+        }
 
         if (sub.contains("/m/")) {
             alertController.addAction(Action(ActionData(title: "Manage multireddit", image: UIImage(named: "info")!.menuIcon()), style: .default, handler: { action in
@@ -1422,7 +1429,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     var sort = SettingValues.defaultSorting
     var time = SettingValues.defaultTimePeriod
 
-    func showMenu(_ selector: UIButton?) {
+    func showSortMenu(_ selector: UIView?) {
         let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
 
         let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
@@ -1451,7 +1458,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
     }
 
-    func showTimeMenu(s: LinkSortType, selector: UIButton?) {
+    func showTimeMenu(s: LinkSortType, selector: UIView?) {
         if (s == .hot || s == .new) {
             sort = s
             refresh()

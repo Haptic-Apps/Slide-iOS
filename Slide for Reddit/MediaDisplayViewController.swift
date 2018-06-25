@@ -216,7 +216,8 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.scrollView = UIScrollView.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height))
+        var xstart = (parent is AlbumViewController) ? (5 + (UIApplication.shared.statusBarView?.frame.size.height ?? 20) + 56) : 0
+        self.scrollView = UIScrollView.init(frame: CGRect.init(x: 0, y: xstart, width: self.view.frame.size.width, height: self.view.frame.size.height - xstart))
         self.scrollView.contentSize = CGSize.init(width: self.view.frame.width, height: self.view.frame.height)
         self.scrollView.delegate = self
         self.scrollView.minimumZoomScale = 1
@@ -404,7 +405,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
             } else {
                 loadImage(imageURL: baseURL!)
             }
-        } else if (type == .GIF || type == .STREAMABLE || type == .VID_ME || type == .VIDEO) {
+        } else if (type == .GIF || type == .STREAMABLE || type == .VID_ME) {
             getGif(urlS: baseURL!.absoluteString)
         } else if (type == .IMGUR) {
             loadImage(imageURL: URL.init(string: baseURL!.absoluteString + ".png")!)
@@ -491,9 +492,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
                 self.playbackSlider.isHidden = true
             }
         })
-
     }
-    
     
     func playButtonTapped(_ sender:UIButton) {
         if player.rate == 0

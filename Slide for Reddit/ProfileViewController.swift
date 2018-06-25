@@ -383,7 +383,7 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
     var currentVc = UIViewController()
     
     func showSortMenu(_ sender: UIButton?){
-        (self.currentVc as? SingleSubredditViewController)?.showMenu(sender)
+        (self.currentVc as? SingleSubredditViewController)?.showSortMenu(sender)
     }
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerBefore viewController: UIViewController) -> UIViewController? {

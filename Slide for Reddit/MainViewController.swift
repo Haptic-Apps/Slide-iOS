@@ -740,7 +740,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     }
 
     func showSortMenu(_ sender: UIButton?) {
-        (MainViewController.vCs[currentPage] as? SingleSubredditViewController)?.showMenu(sender)
+        (MainViewController.vCs[currentPage] as? SingleSubredditViewController)?.showSortMenu(sender)
     }
 
     var currentPage = 0

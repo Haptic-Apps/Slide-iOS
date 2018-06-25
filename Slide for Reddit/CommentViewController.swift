@@ -693,13 +693,18 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 print("Cancel")
             }
             actionSheetController.addAction(cancelActionButton)
-
+            let selected = UIImage.init(named: "selected")!.imageResize(sizeChange: CGSize.init(width: 20, height: 20)).withColor(tintColor: .blue)
+            
             for c in CommentSort.cases {
                 let saveActionButton: UIAlertAction = UIAlertAction(title: c.description, style: .default) { action -> Void in
                     self.sort = c
                     self.reset = true
                     self.refresh(self)
                 }
+                if(sort == c){
+                    saveActionButton.setValue(selected, forKey: "image")
+                }
+
                 actionSheetController.addAction(saveActionButton)
             }
 
@@ -1615,7 +1620,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
 
     func doReplySubmission() {
-        if (!offline) {
+        if (!offline && loaded) {
             menuShown = true
             var top = CGFloat(64)
             var bottom = CGFloat(45)
@@ -1842,7 +1847,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 if (hiddenP) {
                     count = getChildNumber(n: content[thing]!.getIdentifier())
                 }
-                print("Thing is \(thing)")
                 var t = text[thing]!
                 if (isSearching) {
                     t = highlight(t)
