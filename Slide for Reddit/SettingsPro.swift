@@ -10,7 +10,6 @@ import UIKit
 import BiometricAuthentication
 import LicensesViewController
 import SDWebImage
-import MaterialComponents.MaterialSnackbar
 import RealmSwift
 import RLBAlertsPickers
 import MessageUI

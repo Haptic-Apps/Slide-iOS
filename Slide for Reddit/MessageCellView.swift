@@ -10,7 +10,6 @@
 import UIKit
 import reddift
 import UZTextView
-import MaterialComponents.MaterialSnackbar
 import AudioToolbox
 import XLActionController
 
@@ -429,9 +428,7 @@ class MessageCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate,
             } else {
                 VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(message: message, completion: {(message) in
                     DispatchQueue.main.async(execute: { () -> Void in
-                        let message = MDCSnackbarMessage()
-                        message.text = "Message sent!"
-                        MDCSnackbarManager.show(message)
+                        BannerUtil.makeBanner(text: "Message sent!", seconds: 3, context: self.parentViewController)
                     })
                 })), parentVC: parentViewController!)
             }

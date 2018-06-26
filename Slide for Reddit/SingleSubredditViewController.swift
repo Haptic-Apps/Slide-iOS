@@ -815,9 +815,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             //was not subscriber, changed, and unsubscribing again
             Subscriptions.unsubscribe(sub, session: session!)
             subChanged = false
-            let message = MDCSnackbarMessage()
-            message.text = "Unsubscribed"
-            MDCSnackbarManager.show(message)
+            BannerUtil.makeBanner(text: "Unsubscribed", color: ColorUtil.accentColorForSub(sub: sub), seconds: 3, context: self)
             subb.setImage(UIImage.init(named: "addcircle")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
         } else {
             let alrController = UIAlertController.init(title: "Subscribe to \(sub)", message: nil, preferredStyle: .actionSheet)
@@ -825,9 +823,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                 let somethingAction = UIAlertAction(title: "Add to sub list and subscribe", style: UIAlertActionStyle.default, handler: { (alert: UIAlertAction!) in
                     Subscriptions.subscribe(self.sub, true, session: self.session!)
                     self.subChanged = true
-                    let message = MDCSnackbarMessage()
-                    message.text = "Subscribed"
-                    MDCSnackbarManager.show(message)
+                    BannerUtil.makeBanner(text: "Subscribed", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 3, context: self)
                     self.subb.setImage(UIImage.init(named: "subbed")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
                 })
                 alrController.addAction(somethingAction)
@@ -836,9 +832,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             let somethingAction = UIAlertAction(title: "Just add to sub list", style: UIAlertActionStyle.default, handler: { (alert: UIAlertAction!) in
                 Subscriptions.subscribe(self.sub, false, session: self.session!)
                 self.subChanged = true
-                let message = MDCSnackbarMessage()
-                message.text = "Added"
-                MDCSnackbarManager.show(message)
+                BannerUtil.makeBanner(text: "Added to subreddit list", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 3, context: self)
                 self.subb.setImage(UIImage.init(named: "subbed")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
             })
             alrController.addAction(somethingAction)
@@ -870,9 +864,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                     }
                 default:
                     DispatchQueue.main.async {
-                        let message = MDCSnackbarMessage()
-                        message.text = "Multireddit info not found"
-                        MDCSnackbarManager.show(message)
+                        BannerUtil.makeBanner(text: "Multireddit information not found", color: GMColor.red500Color(), seconds: 3, context: self)
                     }
                     break
                 }
@@ -1586,13 +1578,9 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                                 self.nomore = true
 
                                 if (self.links.isEmpty) {
-                                    let message = MDCSnackbarMessage()
-                                    message.text = "No offline content found"
-                                    MDCSnackbarManager.show(message)
+                                    BannerUtil.makeBanner(text: "No offline content found! You can set up subreddit caching in Settings > Auto Cache", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 5, context: self)
                                 } else {
-                                    let message = MDCSnackbarMessage()
-                                    message.text = "Showing offline content (\(DateFormatter().timeSince(from: updated, numericDates: true)))"
-                                    MDCSnackbarManager.show(message)
+                                    BannerUtil.makeBanner(text: "Showing offline content (\(DateFormatter().timeSince(from: updated, numericDates: true)))", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 3, context: self)
                                 }
                             } catch {
 
@@ -1651,9 +1639,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                                     MainViewController.first = false
                                     self.parentController?.checkForMail()
                                 }
-                                let message = MDCSnackbarMessage()
-                                message.text = "No posts found, check your filter settings"
-                                MDCSnackbarManager.show(message)
+                                BannerUtil.makeBanner(text: "No posts found! Check your filter settings", color: GMColor.red500Color(), seconds: 5, context: self)
                             } else {
                                 var paths = [IndexPath]()
                                 for i in before...(self.links.count - 1) {

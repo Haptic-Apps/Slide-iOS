@@ -314,11 +314,11 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
     func download(_ sender: AnyObject) {
         if(imageLoaded){
             if(imageView.image != nil){
-                CustomAlbum.shared.save(image: imageView.image!)
+                CustomAlbum.shared.save(image: imageView.image!, parent: self)
             }
         } else {
             if(displayedVideo != nil){
-                CustomAlbum.shared.saveMovieToLibrary(movieURL: displayedVideo!)
+                CustomAlbum.shared.saveMovieToLibrary(movieURL: displayedVideo!, parent: self)
             }
         }
     }

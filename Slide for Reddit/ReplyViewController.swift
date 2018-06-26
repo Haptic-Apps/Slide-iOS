@@ -14,7 +14,6 @@ import MobileCoreServices
 import SwiftyJSON
 import ActionSheetPicker_3_0
 import RealmSwift
-import MaterialComponents.MaterialSnackbar
 
 class ReplyViewController: UITableViewController, UITextViewDelegate {
 
@@ -345,18 +344,12 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
 
     func send(_ sender: AnyObject) {
         if (subjectCell.cellLabel.text!.isEmpty()) {
-            let message = MDCSnackbarMessage()
-            message.text = type.isMessage() ? "Subject cannot be empty." : "Title cannot be empty."
-            MDCSnackbarManager.show(message)
+            BannerUtil.makeBanner(text: type.isMessage() ? "Subject cannot be empty" : "Title cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
             return
         } else if (recipientCell.cellLabel.text!.isEmpty()) {
-            let message = MDCSnackbarMessage()
-            message.text = type.isMessage() ? "Recipient cannot be empty." : "Subreddit cannot be empty."
-            MDCSnackbarManager.show(message)
+            BannerUtil.makeBanner(text: type.isMessage() ? "Recipient cannot be empty" : "Subreddit cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
         } else if ((type == .SUBMIT_LINK || type == .SUBMIT_IMAGE) && linkCell.cellLabel.text!.isEmpty()) {
-            let message = MDCSnackbarMessage()
-            message.text = "Link cannot be empty."
-            MDCSnackbarManager.show(message)
+            BannerUtil.makeBanner(text: "Link cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
         }
         if (type.isMessage()) {
             alertController = UIAlertController(title: nil, message: "Sending message...\n\n", preferredStyle: .alert)

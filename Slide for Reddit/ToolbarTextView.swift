@@ -5,7 +5,6 @@
 
 import UIKit
 import ActionSheetPicker_3_0
-import MaterialComponents.MaterialSnackbar
 import Alamofire
 import SwiftyJSON
 import Photos
@@ -75,9 +74,7 @@ public class ToolbarTextView: NSObject {
         if let toSave = text!.text {
             if (!toSave.isEmpty()) {
                 Drafts.addDraft(s: text!.text)
-                let message = MDCSnackbarMessage()
-                message.text = "Draft saved"
-                MDCSnackbarManager.show(message)
+                BannerUtil.makeBanner(text: "Draft saved!", seconds: 3, context: parent, top: true)
             }
         }
     }

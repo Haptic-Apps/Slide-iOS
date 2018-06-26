@@ -8,7 +8,7 @@
 
 import UIKit
 import reddift
-import MaterialComponents.MaterialSnackbar
+import MaterialComponents.MaterialTabs
 
 class ModerationViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIToolbarDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate {
     var content: [String] = ["Mod Mail", "Mod Mail Unread"]

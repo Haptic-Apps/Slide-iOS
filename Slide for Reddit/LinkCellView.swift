@@ -1296,9 +1296,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 case .failure(let error):
                     print(error)
                     DispatchQueue.main.async {
-                        let message = MDCSnackbarMessage()
-                        message.text = "No subreddit flairs found"
-                        MDCSnackbarManager.show(message)
+                        BannerUtil.makeBanner(text: "No subreddit flairs found", seconds: 3, context: self.parentViewController)
                     }
                     break
                 case .success(let flairs):
@@ -1379,17 +1377,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 case .failure(let error):
                     print(error)
                     DispatchQueue.main.async {
-                        let message = MDCSnackbarMessage()
-                        message.text = "Could not change flair"
-                        MDCSnackbarManager.show(message)
+                        BannerUtil.makeBanner(text: "Flair not set", color: GMColor.red500Color(), seconds: 3, context: self.parentViewController)
                     }
                     break
                 case .success(let success):
                     print(success)
                     DispatchQueue.main.async {
-                        let message = MDCSnackbarMessage()
-                        message.text = "Flair set successfully"
-                        MDCSnackbarManager.show(message)
+                        BannerUtil.makeBanner(text: "Flair set successfully!", seconds: 3, context: self.parentViewController)
                         self.link!.flair = (text != nil && !text!.isEmpty) ? text! : flair.text
                         CachedTitle.getTitle(submission: self.link!, full: true, true, false)
                         self.setLink(submission: self.link!, parent: self.parentViewController!, nav: self.navViewController!, baseSub: (self.link?.subreddit)!)

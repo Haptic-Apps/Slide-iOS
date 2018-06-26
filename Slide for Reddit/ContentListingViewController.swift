@@ -9,7 +9,6 @@
 import UIKit
 import reddift
 import SDWebImage
-import MaterialComponents.MaterialSnackbar
 import XLActionController
 
 class ContentListingViewController: MediaViewController, UICollectionViewDelegate, WrappingFlowLayoutDelegate, UICollectionViewDataSource, SubmissionMoreDelegate {
@@ -558,9 +557,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             self.flowLayout.reset()
             self.loading = false
             if (self.baseData.content.count == 0) {
-                let message = MDCSnackbarMessage()
-                message.text = "No content found"
-                MDCSnackbarManager.show(message)
+                BannerUtil.makeBanner(text: "No content found!", seconds: 5, context: self)
             }
         }
     }

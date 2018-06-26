@@ -14,7 +14,6 @@ import MobileCoreServices
 import SwiftyJSON
 import ActionSheetPicker_3_0
 import RealmSwift
-import MaterialComponents.MaterialSnackbar
 
 protocol ReplyDelegate {
     func replySent(comment: Comment?)

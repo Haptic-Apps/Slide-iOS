@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import MaterialComponents.MaterialSnackbar
 
 class SettingsHistory: UITableViewController {
     
@@ -123,14 +122,10 @@ class SettingsHistory: UITableViewController {
         if(indexPath.section == 1){
             if(indexPath.row == 0){
                 History.clearHistory()
-                let message = MDCSnackbarMessage()
-                message.text = "Submission history cleared"
-                MDCSnackbarManager.show(message)
+                BannerUtil.makeBanner(text: "Submission history cleared!", color: GMColor.green500Color(), seconds: 5, context: self)
             } else {
                 Subscriptions.clearSubHistory()
-                let message = MDCSnackbarMessage()
-                message.text = "Subreddit history cleared"
-                MDCSnackbarManager.show(message)
+                BannerUtil.makeBanner(text: "Subreddit history cleared!", color: GMColor.green500Color(), seconds: 5, context: self)
             }
         }
         tableView.deselectRow(at: indexPath, animated: true)

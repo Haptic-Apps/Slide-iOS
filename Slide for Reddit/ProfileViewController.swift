@@ -8,9 +8,9 @@
 
 import UIKit
 import reddift
-import MaterialComponents.MaterialSnackbar
 import MKColorPicker
 import RLBAlertsPickers
+import MaterialComponents.MDCTabBar
 
 class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, ColorPickerViewDelegate, UIToolbarDelegate, UIScrollViewDelegate {
     var content : [UserContent] = []
@@ -238,9 +238,7 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
                     do {
                         try self.session?.unfriend(user.name, completion: { (result) in
                             DispatchQueue.main.async {
-                                let message = MDCSnackbarMessage()
-                                message.text = "Unfriended u/\(user.name)"
-                                MDCSnackbarManager.show(message)
+                                BannerUtil.makeBanner(text: "Unfriended u/\(user.name)", seconds: 3, context: self)
                             }
                         })
                     } catch {
@@ -255,9 +253,7 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
                                 print(result.error!)
                             }
                             DispatchQueue.main.async {
-                                let message = MDCSnackbarMessage()
-                                message.text = "Friended u/\(user.name)"
-                                MDCSnackbarManager.show(message)
+                                BannerUtil.makeBanner(text: "Friended u/\(user.name)", seconds: 3, context: self)
                             }
                         })
                     } catch {

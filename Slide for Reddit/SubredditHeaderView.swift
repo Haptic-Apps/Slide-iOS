@@ -9,7 +9,6 @@
 import UIKit
 import reddift
 import UZTextView
-import MaterialComponents.MaterialSnackbar
 
 class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewingDelegate {
 
@@ -31,9 +30,7 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
                 switch result {
                 case .failure(let error):
                     DispatchQueue.main.async {
-                        let message = MDCSnackbarMessage()
-                        message.text = "No subreddit moderators found"
-                        MDCSnackbarManager.show(message)
+                        BannerUtil.makeBanner(text: "No subreddit moderators found!", color: GMColor.red500Color(), seconds: 3, context: self.parentController)
                     }
                     break
                 case .success(let users):
@@ -187,26 +184,21 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
     func doSub(_ changed: UISwitch) {
         if (!changed.isOn) {
             Subscriptions.unsubscribe(subreddit!.displayName, session: (UIApplication.shared.delegate as! AppDelegate).session!)
-            let message = MDCSnackbarMessage()
-            message.text = "Unsubscribed from r/\(subreddit!.displayName)"
-            MDCSnackbarManager.show(message)
+            BannerUtil.makeBanner(text: "Unsubscribed from r/\(subreddit!.displayName)", color: ColorUtil.accentColorForSub(sub: subreddit!.displayName), seconds: 3, context: parentController)
+
         } else {
             let alrController = UIAlertController.init(title: "Subscribe to \(subreddit!.displayName)", message: nil, preferredStyle: .actionSheet)
             if (AccountController.isLoggedIn) {
                 let somethingAction = UIAlertAction(title: "Add to sub list and subscribe", style: UIAlertActionStyle.default, handler: { (alert: UIAlertAction!) in
                     Subscriptions.subscribe(self.subreddit!.displayName, true, session: (UIApplication.shared.delegate as! AppDelegate).session!)
-                    let message = MDCSnackbarMessage()
-                    message.text = "Subscribed"
-                    MDCSnackbarManager.show(message)
+                    BannerUtil.makeBanner(text: "Subscribed", color: ColorUtil.accentColorForSub(sub: self.subreddit!.displayName), seconds: 3, context: self.parentController)
                 })
                 alrController.addAction(somethingAction)
             }
             
             let somethingAction = UIAlertAction(title: "Just add to sub list", style: UIAlertActionStyle.default, handler: { (alert: UIAlertAction!) in
                 Subscriptions.subscribe(self.subreddit!.displayName, false, session: (UIApplication.shared.delegate as! AppDelegate).session!)
-                let message = MDCSnackbarMessage()
-                message.text = "Added r/\(self.subreddit!.displayName) to your sub list!"
-                MDCSnackbarManager.show(message)
+                BannerUtil.makeBanner(text: "Added to subreddit list", color: ColorUtil.accentColorForSub(sub: self.subreddit!.displayName), seconds: 3, context: self.parentController)
             })
             alrController.addAction(somethingAction)
             

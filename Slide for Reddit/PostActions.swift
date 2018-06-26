@@ -11,7 +11,6 @@ import XLActionController
 import RLBAlertsPickers
 import reddift
 import RealmSwift
-import MaterialComponents.MaterialSnackbar
 
 protocol SubmissionMoreDelegate: class {
     func save(_ cell: LinkCellView)
@@ -242,9 +241,7 @@ class PostActions : NSObject {
                 case .failure(let error):
                     print(error.description)
                     DispatchQueue.main.async {
-                        let message = MDCSnackbarMessage()
-                        message.text = "Locking submission failed!"
-                        MDCSnackbarManager.show(message)
+                        BannerUtil.makeBanner(text: "Locking submission failed!", color: GMColor.red500Color(), seconds: 3, context: cell.parentViewController)
                     }
                     break
                 case .success(_):
@@ -253,9 +250,7 @@ class PostActions : NSObject {
                         CachedTitle.removed.remove(at: CachedTitle.removed.index(of: id)!)
                     }
                     DispatchQueue.main.async {
-                        let message = MDCSnackbarMessage()
-                        message.text = "Submission locked!"
-                        MDCSnackbarManager.show(message)
+                        BannerUtil.makeBanner(text: "Submission locked!", color: ColorUtil.accentColorForSub(sub: cell.link!.subreddit), seconds: 3, context: cell.parentViewController)
                         cell.link!.locked = set
                         cell.refreshLink(cell.link!)
                     }
@@ -275,9 +270,7 @@ class PostActions : NSObject {
                 case .failure(let error):
                     print(error.description)
                     DispatchQueue.main.async {
-                        let message = MDCSnackbarMessage()
-                        message.text = "Request failed!"
-                        MDCSnackbarManager.show(message)
+                        BannerUtil.makeBanner(text: "Request failed!", color: GMColor.red500Color(), seconds: 3, context: cell.parentViewController)
                     }
                     break
                 case .success(_):
@@ -286,11 +279,9 @@ class PostActions : NSObject {
                         CachedTitle.removed.remove(at: CachedTitle.removed.index(of: id)!)
                     }
                     DispatchQueue.main.async {
-                        let message = MDCSnackbarMessage()
-                        message.text = "Spoiler tag set!"
+                        BannerUtil.makeBanner(text: "Spoiler tag set!", color: ColorUtil.accentColorForSub(sub: cell.link!.subreddit), seconds: 3, context: cell.parentViewController)
                         cell.link!.spoiler = set
                         cell.refreshLink(cell.link!)
-                        MDCSnackbarManager.show(message)
                     }
                     break
                 }
@@ -308,9 +299,7 @@ class PostActions : NSObject {
                 case .failure(let error):
                     print(error.description)
                     DispatchQueue.main.async {
-                        let message = MDCSnackbarMessage()
-                        message.text = "Request failed!"
-                        MDCSnackbarManager.show(message)
+                        BannerUtil.makeBanner(text: "Request failed!", color: GMColor.red500Color(), seconds: 3, context: cell.parentViewController)
                     }
                     break
                 case .success(_):
@@ -319,11 +308,9 @@ class PostActions : NSObject {
                         CachedTitle.removed.remove(at: CachedTitle.removed.index(of: id)!)
                     }
                     DispatchQueue.main.async {
-                        let message = MDCSnackbarMessage()
-                        message.text = "NSFW tag set!"
+                        BannerUtil.makeBanner(text: "NSFW tag set!", color: ColorUtil.accentColorForSub(sub: cell.link!.subreddit), seconds: 3, context: cell.parentViewController)
                         cell.link!.nsfw = set
                         cell.refreshLink(cell.link!)
-                        MDCSnackbarManager.show(message)
                     }
                     break
                 }
@@ -341,9 +328,7 @@ class PostActions : NSObject {
                 case .failure(let error):
                     print(error.description)
                     DispatchQueue.main.async {
-                        let message = MDCSnackbarMessage()
-                        message.text = "Approving submission failed!"
-                        MDCSnackbarManager.show(message)
+                        BannerUtil.makeBanner(text: "Approving submission failed!", color: GMColor.red500Color(), seconds: 3, context: cell.parentViewController)
                     }
                     break
                 case .success(_):
@@ -352,10 +337,8 @@ class PostActions : NSObject {
                         CachedTitle.removed.remove(at: CachedTitle.removed.index(of: id)!)
                     }
                     DispatchQueue.main.async {
-                        let message = MDCSnackbarMessage()
-                        message.text = "Submission approved!"
                         cell.refreshLink(cell.link!)
-                        MDCSnackbarManager.show(message)
+                        BannerUtil.makeBanner(text: "Submission approved!", color: ColorUtil.accentColorForSub(sub: cell.link!.subreddit), seconds: 3, context: cell.parentViewController)
                     }
                     break
                 }
@@ -373,18 +356,14 @@ class PostActions : NSObject {
                 case .failure(let error):
                     print(error.description)
                     DispatchQueue.main.async {
-                        let message = MDCSnackbarMessage()
-                        message.text = "Distinguishing submission failed!"
-                        MDCSnackbarManager.show(message)
+                        BannerUtil.makeBanner(text: "Distinguishing submission failed!", color: GMColor.red500Color(), seconds: 3, context: cell.parentViewController)
                     }
                     break
                 case .success(_):
                     DispatchQueue.main.async {
-                        let message = MDCSnackbarMessage()
-                        message.text = "Submission distinguished!"
                         cell.link!.distinguished = "mod"
                         cell.refreshLink(cell.link!)
-                        MDCSnackbarManager.show(message)
+                        BannerUtil.makeBanner(text: "Submission distinguished!", color: ColorUtil.accentColorForSub(sub: cell.link!.subreddit), seconds: 3, context: cell.parentViewController)
                     }
                     break
                 }
@@ -402,18 +381,14 @@ class PostActions : NSObject {
                 case .failure(let error):
                     print(error.description)
                     DispatchQueue.main.async {
-                        let message = MDCSnackbarMessage()
-                        message.text = "Couldn't \(sticky ? "" : "un-")sticky submission!"
-                        MDCSnackbarManager.show(message)
+                        BannerUtil.makeBanner(text: "Couldn't \(sticky ? "" : "un-")sticky submission!", color: GMColor.red500Color(), seconds: 3, context: cell.parentViewController)
                     }
                     break
                 case .success(_):
                     DispatchQueue.main.async {
-                        let message = MDCSnackbarMessage()
-                        message.text = "Submission \(sticky ? "" : "un-")stickied!"
+                        BannerUtil.makeBanner(text: "Submission \(sticky ? "" : "un-")stickied!", color: ColorUtil.accentColorForSub(sub: cell.link!.subreddit), seconds: 3, context: cell.parentViewController)
                         cell.link!.stickied = sticky
                         cell.refreshLink(cell.link!)
-                        MDCSnackbarManager.show(message)
                     }
                     break
                 }
@@ -431,9 +406,7 @@ class PostActions : NSObject {
                 case .failure(let error):
                     print(error.description)
                     DispatchQueue.main.async {
-                        let message = MDCSnackbarMessage()
-                        message.text = "Removing submission failed!"
-                        MDCSnackbarManager.show(message)
+                        BannerUtil.makeBanner(text: "Removing submission failed!", color: GMColor.red500Color(), seconds: 3, context: cell.parentViewController)
                     }
                     break
                 case .success(_):
@@ -442,9 +415,7 @@ class PostActions : NSObject {
                         CachedTitle.approved.remove(at: CachedTitle.approved.index(of: id)!)
                     }
                     DispatchQueue.main.async {
-                        let message = MDCSnackbarMessage()
-                        message.text = "Submission removed!"
-                        MDCSnackbarManager.show(message)
+                        BannerUtil.makeBanner(text: "Submission removed!", color: ColorUtil.accentColorForSub(sub: cell.link!.subreddit), seconds: 3, context: cell.parentViewController)
                     }
                     break
                 }
@@ -463,16 +434,12 @@ class PostActions : NSObject {
                 case .failure(let error):
                     print(error.description)
                     DispatchQueue.main.async {
-                        let message = MDCSnackbarMessage()
-                        message.text = "Banning user failed!"
-                        MDCSnackbarManager.show(message)
+                        BannerUtil.makeBanner(text: "Banning user failed!", color: GMColor.red500Color(), seconds: 3, context: cell.parentViewController)
                     }
                     break
                 case .success(_):
                     DispatchQueue.main.async {
-                        let message = MDCSnackbarMessage()
-                        message.text = "u/\(cell.link!.author) banned!"
-                        MDCSnackbarManager.show(message)
+                        BannerUtil.makeBanner(text: "u/\(cell.link!.author) banned!", color: ColorUtil.accentColorForSub(sub: cell.link!.subreddit), seconds: 3, context: cell.parentViewController)
                     }
                     break
                 }
@@ -615,16 +582,12 @@ class PostActions : NSObject {
                 let name = (thing is RComment) ? (thing as! RComment).id : (thing as! RSubmission).id
                 try (UIApplication.shared.delegate as! AppDelegate).session?.report(name, reason: text, otherReason: "", completion: { (result) in
                     DispatchQueue.main.async {
-                        let message = MDCSnackbarMessage()
-                        message.text = "Report sent"
-                        MDCSnackbarManager.show(message)
+                        BannerUtil.makeBanner(text: "Report sent!", color: GMColor.green500Color(), seconds: 3, context: parent)
                     }
                 })
             } catch {
                 DispatchQueue.main.async {
-                    let message = MDCSnackbarMessage()
-                    message.text = "Error sending report. Try again later"
-                    MDCSnackbarManager.show(message)
+                    BannerUtil.makeBanner(text: "Error sending report, try again later", color: GMColor.red500Color(), seconds: 3, context: parent)
                 }
             }
         }))

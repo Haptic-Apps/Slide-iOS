@@ -9,7 +9,6 @@
 import UIKit
 import reddift
 import SDWebImage
-import MaterialComponents.MaterialSnackbar
 import XLActionController
 import TTTAttributedLabel
 import SwiftSpreadsheet

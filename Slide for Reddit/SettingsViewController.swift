@@ -10,7 +10,6 @@ import UIKit
 import BiometricAuthentication
 import LicensesViewController
 import SDWebImage
-import MaterialComponents.MaterialSnackbar
 import RealmSwift
 import RLBAlertsPickers
 import MessageUI
@@ -456,11 +455,8 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
             SDImageCache.shared().clearDisk()
             SDWebImageManager.shared().imageCache.clearMemory()
             SDWebImageManager.shared().imageCache.clearDisk()
-
-            let message = MDCSnackbarMessage()
-            message.text = "All caches cleared!"
-            MDCSnackbarManager.show(message)
-
+            
+            BannerUtil.makeBanner(text: "All caches cleared!", color: GMColor.green500Color(), seconds: 3, context: self)
         } else if (indexPath.section == 3 && indexPath.row == 0) {
             //todo Show changlog?
         } else if (indexPath.section == 3 && indexPath.row == 1) {

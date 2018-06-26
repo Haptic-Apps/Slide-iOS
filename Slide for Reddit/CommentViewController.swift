@@ -11,7 +11,6 @@ import reddift
 import AudioToolbox.AudioServices
 import TTTAttributedLabel
 import RealmSwift
-import MaterialComponents.MaterialSnackbar
 import MaterialComponents.MDCActivityIndicator
 import SloppySwiper
 import XLActionController
@@ -201,10 +200,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     print(result.error!)
                 }
                 DispatchQueue.main.async {
-                    let message = MDCSnackbarMessage()
-                    message.text = state ? "Saved" : "Unsaved"
-                    message.duration = 3
-                    MDCSnackbarManager.show(message)
+                    BannerUtil.makeBanner(text: state ? "Saved" : "Unsaved", color: ColorUtil.accentColorForSub(sub: self.subreddit) ,seconds: 3, context: self)
                 }
             })
             ActionStates.setSaved(s: cell.link!, saved: !ActionStates.isSaved(s: cell.link!))
@@ -219,10 +215,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             let state = !ActionStates.isSaved(s: comment)
             try session?.setSave(state, name: comment.id, completion: { (result) in
                 DispatchQueue.main.async {
-                    let message = MDCSnackbarMessage()
-                    message.text = state ? "Saved" : "Unsaved"
-                    message.duration = 3
-                    MDCSnackbarManager.show(message)
+                    BannerUtil.makeBanner(text: state ? "Saved" : "Unsaved", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 3, context: self)
                 }
             })
             ActionStates.setSaved(s: comment, saved: !ActionStates.isSaved(s: comment))
@@ -422,21 +415,15 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                             self.tableView.reloadData(with: .fade)
                                         }
                                         if (self.comments.isEmpty) {
-                                            let message = MDCSnackbarMessage()
-                                            message.text = "No cached comments found"
-                                            MDCSnackbarManager.show(message)
+                                            BannerUtil.makeBanner(text:"No cached comments found! You can set up auto-cache in Settings > Auto Cache", color: ColorUtil.accentColorForSub(sub: self.subreddit) ,seconds: 5, context: self)
                                         } else {
-                                            let message = MDCSnackbarMessage()
-                                            message.text = "Showing cached comments"
-                                            MDCSnackbarManager.show(message)
+                                            BannerUtil.makeBanner(text:"Showing cached comments", color: ColorUtil.accentColorForSub(sub: self.subreddit) ,seconds: 5, context: self)
                                         }
 
                                     })
                                 }
                             } catch {
-                                let message = MDCSnackbarMessage()
-                                message.text = "No cached comments found"
-                                MDCSnackbarManager.show(message)
+                                BannerUtil.makeBanner(text:"No cached comments found! You can set up auto-cache in Settings > Auto Cache", color: ColorUtil.accentColorForSub(sub: self.subreddit) ,seconds: 5, context: self)
                             }
                         }
 

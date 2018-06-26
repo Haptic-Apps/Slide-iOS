@@ -8,7 +8,6 @@
 
 import UIKit
 import reddift
-import MaterialComponents.MaterialSnackbar
 import MaterialComponents.MaterialBottomSheet
 import SideMenu
 import RealmSwift

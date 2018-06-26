@@ -9,7 +9,7 @@
 import Foundation
 import TTTAttributedLabel
 import reddift
-import MaterialComponents.MaterialSnackbar
+import MaterialComponents.MaterialBottomSheet
 
 class Sidebar: NSObject, TTTAttributedLabelDelegate  {
     
@@ -82,9 +82,7 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate  {
                     }
                 default:
                     DispatchQueue.main.async{
-                        let message = MDCSnackbarMessage()
-                        message.text = "Subreddit sidebar not found"
-                        MDCSnackbarManager.show(message)
+                        BannerUtil.makeBanner(text: "Subreddit sidebar not found", seconds: 3, context: self.parent)
                     }
                     break
                 }
@@ -106,18 +104,14 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate  {
             //was not subscriber, changed, and unsubscribing again
             Subscriptions.unsubscribe(sub.displayName, session: (UIApplication.shared.delegate as! AppDelegate).session!)
             parent!.subChanged = false
-            let message = MDCSnackbarMessage()
-            message.text = "Unsubscribed"
-            MDCSnackbarManager.show(message)
+            BannerUtil.makeBanner(text: "Unsubscribed", seconds: 5, context: self.parent)
         } else {
             let alrController = UIAlertController.init(title: "Subscribe to \(sub.displayName)", message: nil, preferredStyle: .actionSheet)
             if(AccountController.isLoggedIn){
                 let somethingAction = UIAlertAction(title: "Add to sub list and subscribe", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in
                     Subscriptions.subscribe(sub.displayName, true, session: (UIApplication.shared.delegate as! AppDelegate).session!)
                     self.parent!.subChanged = true
-                    let message = MDCSnackbarMessage()
-                    message.text = "Subscribed"
-                    MDCSnackbarManager.show(message)
+                    BannerUtil.makeBanner(text: "Subscribed", seconds: 5, context: self.parent)
                 })
                 alrController.addAction(somethingAction)
             }
@@ -125,9 +119,7 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate  {
             let somethingAction = UIAlertAction(title: "Add to sub list", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in
                 Subscriptions.subscribe(sub.displayName, false, session: (UIApplication.shared.delegate as! AppDelegate).session!)
                 self.parent!.subChanged = true
-                let message = MDCSnackbarMessage()
-                message.text = "Added"
-                MDCSnackbarManager.show(message)
+                BannerUtil.makeBanner(text: "Added to subscription list", seconds: 5, context: self.parent)
             })
             alrController.addAction(somethingAction)
             
