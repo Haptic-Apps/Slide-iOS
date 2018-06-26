@@ -254,7 +254,7 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
     func showTimeMenu(s: LinkSortType, selector: UITableViewCell) {
         if (s == .hot || s == .new) {
             UserDefaults.standard.set(s.path, forKey: self.subreddit!.displayName + "Sorting")
-            UserDefaults.standard.set(TimeFilterWithin.day, forKey: self.subreddit!.displayName + "Time")
+            UserDefaults.standard.set(TimeFilterWithin.day.param, forKey: self.subreddit!.displayName + "Time")
             UserDefaults.standard.synchronize()
             return
         } else {

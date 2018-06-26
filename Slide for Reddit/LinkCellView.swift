@@ -715,7 +715,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             type = .SELF
         }
 
-        if (SettingValues.bannerHidden && !full) {
+        if (SettingValues.postImageMode == .THUMBNAIL && !full) {
             big = false
             thumb = true
         }
@@ -725,7 +725,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if (!fullImage && submissionHeight < 50) {
             big = false
             thumb = true
-        } else if (big && ((!full && SettingValues.bigPicCropped) || (full && !SettingValues.commentFullScreen))) {
+        } else if (big && ((!full && SettingValues.postImageMode == .CROPPED_IMAGE) || (full && !SettingValues.commentFullScreen))) {
             submissionHeight = test ? 150 : 200
         } else if (big) {
             let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: submission.width)
@@ -799,14 +799,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
         if (big) {
             bannerImage.alpha = 0
-            let imageSize = CGSize.init(width: submission.width, height: ((full && !SettingValues.commentFullScreen) ||  (!full && SettingValues.bigPicCropped)) ? 200 : submission.height)
+            let imageSize = CGSize.init(width: submission.width, height: ((full && !SettingValues.commentFullScreen) ||  (!full && SettingValues.postImageMode == .CROPPED_IMAGE)) ? 200 : submission.height)
             print("Setting full 3")
 
             var aspect = imageSize.width / imageSize.height
             if (aspect == 0 || aspect > 10000 || aspect.isNaN) {
                 aspect = 1
             }
-            if ((full && !SettingValues.commentFullScreen) || (!full && SettingValues.bigPicCropped)) {
+            if ((full && !SettingValues.commentFullScreen) || (!full && SettingValues.postImageMode == .CROPPED_IMAGE)) {
                 aspect = (full ? aspectWidth : self.contentView.frame.size.width) / (test ? 150 : 200)
                 print("Setting full 4")
 

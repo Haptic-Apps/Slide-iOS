@@ -125,7 +125,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                 type = .SELF
             }
 
-            if (SettingValues.bannerHidden) {
+            if (SettingValues.postImageMode == .THUMBNAIL) {
                 big = false
                 thumb = true
             }
@@ -235,7 +235,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                         type = .SELF
                     }
 
-                    if (SettingValues.bannerHidden) {
+                    if (SettingValues.postImageMode == .THUMBNAIL) {
                         big = false
                         thumb = true
                     }
@@ -246,7 +246,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     if (!fullImage && submissionHeight < 50) {
                         big = false
                         thumb = true
-                    } else if (big && (SettingValues.bigPicCropped)) {
+                    } else if (big && (SettingValues.postImageMode == .CROPPED_IMAGE)) {
                         submissionHeight = 200
                     } else if (big) {
                         let ratio = Double(submissionHeight) / Double(submission.width)

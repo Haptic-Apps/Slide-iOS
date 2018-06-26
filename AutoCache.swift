@@ -185,7 +185,7 @@ public class AutoCache: NSObject {
             if (!fullImage && height < 50) {
                 big = false
                 thumb = true
-            } else if (big && (SettingValues.bigPicCropped)) {
+            } else if (big && (SettingValues.postImageMode == .CROPPED_IMAGE)) {
                 height = 200
             }
 

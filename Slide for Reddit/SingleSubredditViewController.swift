@@ -80,7 +80,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                 type = .SELF
             }
 
-            if (SettingValues.bannerHidden) {
+            if (SettingValues.postImageMode == .THUMBNAIL) {
                 big = false
                 thumb = true
             }
@@ -91,7 +91,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             if (!fullImage && submissionHeight < 50) {
                 big = false
                 thumb = true
-            } else if (big && (SettingValues.bigPicCropped)) {
+            } else if (big && (SettingValues.postImageMode == .CROPPED_IMAGE)) {
                 submissionHeight = 200
             } else if (big) {
                 let ratio = Double(submissionHeight) / Double(submission.width)
@@ -1311,7 +1311,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             type = .SELF
         }
 
-        if (SettingValues.bannerHidden) {
+        if (SettingValues.postImageMode == .THUMBNAIL) {
             big = false
             thumb = true
         }
@@ -1697,7 +1697,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             if (!fullImage && height < 50) {
                 big = false
                 thumb = true
-            } else if (big && (SettingValues.bigPicCropped)) {
+            } else if (big && (SettingValues.postImageMode == .CROPPED_IMAGE)) {
                 height = 200
             }
 
