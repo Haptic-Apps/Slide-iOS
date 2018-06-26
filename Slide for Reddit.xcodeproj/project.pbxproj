@@ -163,6 +163,7 @@
 		BEE5BF841E14836E00E3C9AE /* MediaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE5BF831E14836E00E3C9AE /* MediaViewController.swift */; };
 		BEEA03CD20E1B53E007A8928 /* HapticUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEEA03CC20E1B53E007A8928 /* HapticUtility.swift */; };
 		BEEA03CF20E2A411007A8928 /* BannerUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEEA03CE20E2A411007A8928 /* BannerUtil.swift */; };
+		BEEA03D120E2C8DC007A8928 /* LinkCellImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEEA03D020E2C8DC007A8928 /* LinkCellImageCache.swift */; };
 		BEF3ACE21E15C101005848B6 /* ContentType.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF3ACE11E15C101005848B6 /* ContentType.swift */; };
 		BEF6F5361E19B4A2002B03B6 /* adsources.txt in Resources */ = {isa = PBXBuildFile; fileRef = BEF6F5351E19B4A2002B03B6 /* adsources.txt */; };
 		BEF7483220DD894100B6236B /* SettingsGestures.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF7483120DD894100B6236B /* SettingsGestures.swift */; };
@@ -379,6 +380,7 @@
 		BEE9385320CF31C80021BE80 /* Slide for Reddit.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Slide for Reddit.entitlements"; sourceTree = "<group>"; };
 		BEEA03CC20E1B53E007A8928 /* HapticUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticUtility.swift; sourceTree = "<group>"; };
 		BEEA03CE20E2A411007A8928 /* BannerUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerUtil.swift; sourceTree = "<group>"; };
+		BEEA03D020E2C8DC007A8928 /* LinkCellImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkCellImageCache.swift; sourceTree = "<group>"; };
 		BEF3ACE11E15C101005848B6 /* ContentType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentType.swift; sourceTree = "<group>"; };
 		BEF6F5351E19B4A2002B03B6 /* adsources.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = adsources.txt; sourceTree = "<group>"; };
 		BEF6F5381E19BE9E002B03B6 /* UZTextView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UZTextView.h; sourceTree = "<group>"; };
@@ -737,6 +739,7 @@
 		BE97422A1F00112F00BF48E0 /* LinkCellViews */ = {
 			isa = PBXGroup;
 			children = (
+				BEEA03D020E2C8DC007A8928 /* LinkCellImageCache.swift */,
 				BEE5BF631E11A15500E3C9AE /* LinkCellView.swift */,
 				BE97422B1F00116D00BF48E0 /* BannerLinkCellView.swift */,
 				BE97422D1F0011BE00BF48E0 /* ThumbnailLinkCellView.swift */,
@@ -1226,6 +1229,7 @@
 				BE780B5E1E32B41300DAA1EB /* SubredditThemeViewController.swift in Sources */,
 				BE1DA39C1E26E86800EC0A04 /* OverlayTransitioningDelegate.swift in Sources */,
 				BE3E5C151E16BA2200749C0C /* AlbumJSONBase.swift in Sources */,
+				BEEA03D120E2C8DC007A8928 /* LinkCellImageCache.swift in Sources */,
 				BEE5BF841E14836E00E3C9AE /* MediaViewController.swift in Sources */,
 				BE2B89FB1E253D610053D493 /* ReplyViewController.swift in Sources */,
 				BE6EA6D71E1C1FC700E9E709 /* VidMeJSONBase.swift in Sources */,
