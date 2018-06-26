@@ -389,6 +389,17 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
             self.playerVC.player = self.player
             self.playerVC.videoGravity = AVLayerVideoGravityResizeAspect
             self.playerVC.showsPlaybackControls = false
+            do {
+                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
+            } catch let error as NSError {
+                print(error)
+            }
+            
+            do {
+                try AVAudioSession.sharedInstance().setActive(true)
+            } catch let error as NSError {
+                print(error)
+            }
 
             self.videoView = (self.playerVC.view)
             self.addChildViewController(self.playerVC)
