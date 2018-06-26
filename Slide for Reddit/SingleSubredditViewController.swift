@@ -12,7 +12,6 @@ import SDWebImage
 import SideMenu
 import UZTextView
 import RealmSwift
-import MaterialComponents.MaterialSnackbar
 import MaterialComponents.MDCActivityIndicator
 import MaterialComponents.MaterialBottomSheet
 import TTTAttributedLabel
@@ -299,23 +298,16 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
             tableView.performBatchUpdates({
                 self.tableView.deleteItems(at: [IndexPath.init(item: location, section: 0)])
-                let message = MDCSnackbarMessage.init(text: "Submission hidden forever")
-                let action = MDCSnackbarMessageAction()
-                let actionHandler = { () in
+                BannerUtil.makeBanner(text: "Submission hidden forever, tap to undo", color: GMColor.red500Color(), seconds: 4, context: self, callback: {
                     self.links.insert(item, at: location)
                     self.tableView.insertItems(at: [IndexPath.init(item: location, section: 0)])
                     do {
                         try self.session?.setHide(false, name: cell.link!.getId(), completion: { (result) in })
                     } catch {
-
+                        
                     }
-                }
-                action.handler = actionHandler
-                action.title = "UNDO"
-
-                message.action = action
-                MDCSnackbarManager.show(message)
-
+                })
+                
                 self.flowLayout.reset()
             }, completion: nil)
 
@@ -815,7 +807,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             //was not subscriber, changed, and unsubscribing again
             Subscriptions.unsubscribe(sub, session: session!)
             subChanged = false
-            BannerUtil.makeBanner(text: "Unsubscribed", color: ColorUtil.accentColorForSub(sub: sub), seconds: 3, context: self)
+            BannerUtil.makeBanner(text: "Unsubscribed", color: ColorUtil.accentColorForSub(sub: sub), seconds: 3, context: self, top: true)
             subb.setImage(UIImage.init(named: "addcircle")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
         } else {
             let alrController = UIAlertController.init(title: "Subscribe to \(sub)", message: nil, preferredStyle: .actionSheet)
@@ -823,7 +815,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                 let somethingAction = UIAlertAction(title: "Add to sub list and subscribe", style: UIAlertActionStyle.default, handler: { (alert: UIAlertAction!) in
                     Subscriptions.subscribe(self.sub, true, session: self.session!)
                     self.subChanged = true
-                    BannerUtil.makeBanner(text: "Subscribed", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 3, context: self)
+                    BannerUtil.makeBanner(text: "Subscribed", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 3, context: self, top: true)
                     self.subb.setImage(UIImage.init(named: "subbed")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
                 })
                 alrController.addAction(somethingAction)
@@ -832,7 +824,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             let somethingAction = UIAlertAction(title: "Just add to sub list", style: UIAlertActionStyle.default, handler: { (alert: UIAlertAction!) in
                 Subscriptions.subscribe(self.sub, false, session: self.session!)
                 self.subChanged = true
-                BannerUtil.makeBanner(text: "Added to subreddit list", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 3, context: self)
+                BannerUtil.makeBanner(text: "Added to subreddit list", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 3, context: self, top: true)
                 self.subb.setImage(UIImage.init(named: "subbed")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
             })
             alrController.addAction(somethingAction)

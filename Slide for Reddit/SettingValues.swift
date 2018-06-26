@@ -8,7 +8,6 @@
 
 import Foundation
 import reddift
-import MaterialComponents.MaterialSnackbar
 
 class SettingValues {
 
@@ -336,17 +335,11 @@ class SettingValues {
         settings.set(title, forKey: "vtitle")
         settings.set(permalink, forKey: "vlink")
         settings.synchronize()
-        let message = MDCSnackbarMessage.init(text: title)
-        let action = MDCSnackbarMessageAction()
-        let actionHandler = { () in
+        let finalTitle = title + "\nTap to view Changelog"
+        
+        BannerUtil.makeBanner(text: finalTitle, color: GMColor.green500Color(), seconds: 7, context: parentVC, top: true, callback: {
             VCPresenter.openRedditLink(permalink, parentVC.navigationController, parentVC)
-        }
-        action.handler = actionHandler
-        action.title = "CHANGELOG"
-
-        message.action = action
-        MDCSnackbarManager.show(message)
-
+        })
     }
     
     public enum CommentAction: String {

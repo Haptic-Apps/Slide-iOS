@@ -120,16 +120,11 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                             self.menuNav?.setmail(mailcount: unread)
                             
                             if (diff > 0) {
-                                let action = MDCSnackbarMessageAction()
-                                let actionHandler = { () in
+                                BannerUtil.makeBanner(text: "\(diff) new message\(diff > 1 ? "s" : "")!", seconds: 5, context: self, top: true, callback: {
+                                    () in
                                     let inbox = InboxViewController.init()
-                                    self.show(inbox, sender: self)
-                                }
-                                action.handler = actionHandler
-                                action.title = "VIEW"
-                                let mes = MDCSnackbarMessage.init(text: "\(diff) new message\(diff > 1 ? "s" : "")!")
-                                mes.action = action
-                                MDCSnackbarManager.show(mes)
+                                    VCPresenter.showVC(viewController: inbox, popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
+                                })
                                 UserDefaults.standard.set(unread, forKey: "mail")
                                 UserDefaults.standard.synchronize()
                             }
@@ -683,7 +678,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     }
 
     func checkForUpdate() {
-        if(!SettingValues.doneVersion()) {
+        if(!SettingValues.doneVersion() || true) {
             print("Getting posts for version \(Bundle.main.releaseVersionNumber!)")
             let session = (UIApplication.shared.delegate as! AppDelegate).session
             do {
