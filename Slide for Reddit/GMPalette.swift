@@ -309,9 +309,7 @@ class GMPalette {
     }
 
     class func grey() -> [UIColor] {
-        return [GMColor.grey100Color(),
-                GMColor.grey200Color(), GMColor.grey300Color(),
-                GMColor.grey400Color(), GMColor.grey500Color(),
+        return [GMColor.grey400Color(), GMColor.grey500Color(),
                 GMColor.grey600Color(), GMColor.grey700Color(),
                 GMColor.grey800Color(), GMColor.grey900Color()
         ]

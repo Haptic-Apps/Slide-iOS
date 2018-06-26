@@ -52,9 +52,9 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
     var scrollView: UIScrollView?
 
     //Callbacks
-    var messageCallback: (Any?) -> Void = { (comment) in
+    var messageCallback: (Any?, Error?) -> Void = { (comment, error) in
     }
-    var submissionCallback: (Link?) -> Void = { (link) in
+    var submissionCallback: (Link?, Error?) -> Void = { (link, error) in
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -88,14 +88,21 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
         type = .NEW_MESSAGE
         self.subreddit = ""
         super.init(nibName: nil, bundle: nil)
-        self.messageCallback = { (message) in
+        self.messageCallback = { (message, error) in
             DispatchQueue.main.async {
-                //todo on error
-                //todo string from message
-                completion("")
-                self.alertController?.dismiss(animated: false, completion: {
-                    self.dismiss(animated: true, completion: nil)
-                })
+                if (error != nil) {
+                    self.toolbar?.saveDraft(self)
+                    self.alertController?.dismiss(animated: false, completion: {
+                        let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your message has not been sent, please try again\n\nError:\(error!.localizedDescription)", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+                        self.present(alert, animated: true, completion: nil)
+                    })
+                } else {
+                    completion("")
+                    self.alertController?.dismiss(animated: false, completion: {
+                        self.dismiss(animated: true, completion: nil)
+                    })
+                }
             }
         }
     }
@@ -110,15 +117,22 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
         self.subreddit = (message as! RMessage).author
         self.toReplyTo = message
         super.init(nibName: nil, bundle: nil)
-        self.messageCallback = { (message) in
+        self.messageCallback = { (message, error) in
             DispatchQueue.main.async {
-                //todo on error
-                //todo get message
-                self.alertController?.dismiss(animated: false, completion: {
-                    self.dismiss(animated: true, completion: {
-                        completion("")
+                if (error != nil) {
+                    self.toolbar?.saveDraft(self)
+                    self.alertController?.dismiss(animated: false, completion: {
+                        let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your message has not been sent, please try again\n\nError:\(error!.localizedDescription)", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+                        self.present(alert, animated: true, completion: nil)
                     })
-                })
+                } else {
+                    self.alertController?.dismiss(animated: false, completion: {
+                        self.dismiss(animated: true, completion: {
+                            completion("")
+                        })
+                    })
+                }
             }
         }
     }
@@ -130,12 +144,12 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
         self.toReplyTo = submission
         super.init(nibName: nil, bundle: nil)
         self.subreddit = submission.subreddit
-        self.submissionCallback = { (link) in
+        self.submissionCallback = { (link, error) in
             DispatchQueue.main.async {
-                if (link == nil) {
+                if (error != nil) {
                     self.toolbar?.saveDraft(self)
                     self.alertController?.dismiss(animated: false, completion: {
-                        let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your submission has not been edited (but has been saved as a draft), please try again", preferredStyle: .alert)
+                        let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your submission has not been edited (but has been saved as a draft), please try again\n\nError:\(error!.localizedDescription)", preferredStyle: .alert)
                         alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
                         self.present(alert, animated: true, completion: nil)
                     })
@@ -154,12 +168,16 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
     init(type: ReplyType, completion: @escaping (Link?) -> Void) {
         self.type = type
         super.init(nibName: nil, bundle: nil)
-        self.submissionCallback = { (link) in
+        self.submissionCallback = { (link, error) in
             DispatchQueue.main.async {
-                if (link == nil) {
-                    //todo this
+                if (error != nil) {
+                    self.toolbar?.saveDraft(self)
+                    self.alertController?.dismiss(animated: false, completion: {
+                        let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your message has not been sent, please try again\n\nError:\(error!.localizedDescription)", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+                        self.present(alert, animated: true, completion: nil)
+                    })
                 } else {
-                    //todo get sub string
                     self.alertController?.dismiss(animated: false, completion: {
                         self.dismiss(animated: true, completion: {
                             completion(link)
@@ -305,10 +323,12 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
                 switch res {
                 case .failure:
                     print(res.error ?? "Error?")
+                    self.submissionCallback(nil, res.error)
+                    break
                 case .success(let listing):
                     if listing.children.count == 1 {
                         if let submission = listing.children[0] as? Link {
-                            self.submissionCallback(submission)
+                            self.submissionCallback(submission, nil)
                         }
                     }
                 }
@@ -316,7 +336,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
             })
         } catch {
             //todo success but null child
-            self.submissionCallback(nil)
+            self.submissionCallback(nil, error)
         }
 
     }
@@ -356,9 +376,10 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
                         switch result {
                         case .failure(let error):
                             print(error.description)
-                            self.messageCallback(nil)
+                            self.messageCallback(nil, error)
+                            break
                         case .success(let message):
-                            self.messageCallback(message)
+                            self.messageCallback(message, nil)
                         }
 
                     })
@@ -372,9 +393,10 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
                         switch result {
                         case .failure(let error):
                             print(error.description)
-                            self.messageCallback(nil)
+                            self.messageCallback(nil, error)
+                            break
                         case .success(let comment):
-                            self.messageCallback(comment)
+                            self.messageCallback(comment, nil)
                         }
                     })
                 } catch {
@@ -422,7 +444,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
                         switch result {
                         case .failure(let error):
                             print(error.description)
-                            self.submissionCallback(nil)
+                            self.submissionCallback(nil, error)
                             break
                         case .success(let submission):
                             let string = self.getIDString(submission).value!
@@ -436,7 +458,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
                         switch result {
                         case .failure(let error):
                             print(error.description)
-                            self.submissionCallback(nil)
+                            self.submissionCallback(nil, error)
                             break
                         case .success(let submission):
                             let string = self.getIDString(submission).value!

@@ -109,6 +109,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                     case .failure(let error):
                         print(error)
                     case .success(let profile):
+                        SettingValues.nsfwEnabled = profile.over18
                         let unread = profile.inboxCount
                         let diff = unread - lastMail
                         if(profile.isMod && AccountController.modSubs.isEmpty){
@@ -447,7 +448,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         let page = MainViewController.vCs.index(of: self.viewControllers!.first!)
         doCurrentPage(page!)
     }
-
 
     func doCurrentPage(_ page: Int) {
         self.currentPage = page

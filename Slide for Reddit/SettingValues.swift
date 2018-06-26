@@ -86,6 +86,7 @@ class SettingValues {
     public static let pref_commentActionDoubleTap = "COMMENT_DOUBLE_TAP"
     public static let pref_submissionActionDoubleTap = "SUBMISSION_DOUBLE_TAP"
     public static let pref_commentFullScreen = "COMMENT_FULLSCREEN"
+    public static let pref_hapticFeedback = "HAPTIC_FEEDBACK"
 
     public static var commentActionRight = CommentAction.UPVOTE
     public static var commentActionLeft = CommentAction.DOWNVOTE
@@ -113,6 +114,7 @@ class SettingValues {
     public static var nameScrubbing = true
     public static var autoCache = false
     public static var pinToolbar = false
+    public static var hapticFeedback = true
 
     public static var hideButtonActionbar = false
     public static var saveButtonActionbar = true
@@ -221,6 +223,8 @@ class SettingValues {
             }
         }
 
+        SettingValues.hapticFeedback = settings.object(forKey: SettingValues.pref_hapticFeedback) == nil ? true : settings.bool(forKey: SettingValues.pref_hapticFeedback)
+
         basePath = settings.string(forKey: SettingValues.pref_defaultTimePeriod)
         for time in TimeFilterWithin.cases {
             if(time.param == basePath){
@@ -261,7 +265,6 @@ class SettingValues {
 
         SettingValues.smallerTag = settings.bool(forKey: SettingValues.pref_smallTag)
         SettingValues.markReadOnScroll = settings.bool(forKey: SettingValues.pref_markReadOnScroll)
-        SettingValues.nsfwEnabled = settings.bool(forKey: SettingValues.pref_nsfwEnabled)
         SettingValues.nsfwPreviews = settings.bool(forKey: SettingValues.pref_nsfwPreviews)
         SettingValues.swapLongPress = settings.bool(forKey: SettingValues.pref_swapLongPress)
         SettingValues.domainInInfo = settings.bool(forKey: SettingValues.pref_domainInInfo)

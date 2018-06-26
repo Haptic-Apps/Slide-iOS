@@ -1210,7 +1210,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         }))
         
         if(!single && SettingValues.viewType){
-            alertController.addAction(Action(ActionData(title: "Sort (current \(sort.description))", image: UIImage(named: "filter")!.menuIcon()), style: .default, handler: { action in
+            alertController.addAction(Action(ActionData(title: "Sort (currently \(sort.path))", image: UIImage(named: "filter")!.menuIcon()), style: .default, handler: { action in
                 self.showSortMenu(self.more)
             }))
         }

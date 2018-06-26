@@ -1866,6 +1866,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     @available(iOS 11.0, *)
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        HapticUtility.hapticActionComplete()
         let cell = tableView.cellForRow(at: indexPath)
         if(cell is CommentDepthCell && SettingValues.commentTwoSwipe && (SettingValues.commentActionLeft != .NONE || SettingValues.commentActionRight != .NONE)){
             

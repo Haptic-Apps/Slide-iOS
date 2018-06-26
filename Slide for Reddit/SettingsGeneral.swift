@@ -15,6 +15,7 @@ class SettingsGeneral: UITableViewController {
     var hideFAB: UITableViewCell = UITableViewCell()
     var scrubUsername: UITableViewCell = UITableViewCell()
     var pinToolbar: UITableViewCell = UITableViewCell()
+    var hapticFeedback: UITableViewCell = UITableViewCell()
 
     var postSorting: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "post")
     var commentSorting: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "comment")
@@ -23,6 +24,7 @@ class SettingsGeneral: UITableViewController {
     var hideFABSwitch = UISwitch()
     var scrubUsernameSwitch = UISwitch()
     var pinToolbarSwitch = UISwitch()
+    var hapticFeedbackSwitch = UISwitch()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,6 +51,9 @@ class SettingsGeneral: UITableViewController {
             SettingValues.hiddenFAB = !changed.isOn
             UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_hiddenFAB)
             SubredditReorderViewController.changed = true
+        } else if (changed == hapticFeedback) {
+            SettingValues.hapticFeedback = !changed.isOn
+            UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_hapticFeedback)
         } else if (changed == pinToolbarSwitch) {
             SettingValues.pinToolbar = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_pinToolbar)
@@ -78,7 +83,6 @@ class SettingsGeneral: UITableViewController {
             break
         case 2: label.text = "Sorting"
             break
-
         default: label.text = ""
             break
         }
@@ -108,6 +112,7 @@ class SettingsGeneral: UITableViewController {
         self.tableView.separatorStyle = .none
 
         createCell(viewType, viewTypeSwitch, isOn: SettingValues.viewType, text: "Swiping subreddit tabs mode")
+        createCell(hapticFeedback, hapticFeedbackSwitch, isOn: SettingValues.hapticFeedback, text: "Haptic feedback throughout app")
         createCell(hideFAB, hideFABSwitch, isOn: !SettingValues.hiddenFAB, text: "Show subreddit floating action button")
         createCell(scrubUsername, scrubUsernameSwitch, isOn: SettingValues.nameScrubbing, text: "Scrub your username (you will show as \"you\"")
         createCell(pinToolbar, pinToolbarSwitch, isOn: SettingValues.pinToolbar, text: "Pin header navigation bar and toolbar in subreddit view")
@@ -119,7 +124,7 @@ class SettingsGeneral: UITableViewController {
         self.postSorting.textLabel?.textColor = ColorUtil.fontColor
 
         self.notifications.textLabel?.text = "Notification check interval"
-        self.notifications.detailTextLabel?.text = "Notification support coming soon!"
+        self.notifications.detailTextLabel?.text = "Notification settings coming soon!"
         self.notifications.detailTextLabel?.textColor = ColorUtil.fontColor
         self.notifications.backgroundColor = ColorUtil.foregroundColor
         self.notifications.textLabel?.textColor = ColorUtil.fontColor
@@ -157,6 +162,7 @@ class SettingsGeneral: UITableViewController {
             case 1: return self.hideFAB
             case 2: return self.pinToolbar
             case 3: return self.scrubUsername
+            case 4: return self.hapticFeedback
             default: fatalError("Unknown row in section 0")
             }
         case 1:
@@ -296,7 +302,7 @@ class SettingsGeneral: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch (section) {
-        case 0: return 4
+        case 0: return 5
         case 1: return 1
         case 2: return 2
         default: fatalError("Unknown number of sections")
