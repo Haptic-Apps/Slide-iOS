@@ -32,7 +32,12 @@ public class BannerUtil {
         if (context.navigationController != nil && !context.navigationController!.isToolbarHidden) {
             bottommargin += 48
         }
-        let frame = CGRect.init(x: 12, y: top ? 72 : UIScreen.main.bounds.height - bottommargin, width: UIScreen.main.bounds.width - 24, height: 48)
+        var xmargin = CGFloat(12)
+        if(UIScreen.main.bounds.width > 350){
+            xmargin += (UIScreen.main.bounds.width - 350) / 2
+        }
+        let frame = CGRect.init(x: xmargin, y: top ? 72 : UIScreen.main.bounds.height - bottommargin, width: UIScreen.main.bounds.width - (xmargin * 2), height: 48)
+        print(frame)
         popup = UILabel.init(frame: frame)
         popup.backgroundColor = color
         popup.textAlignment = .center

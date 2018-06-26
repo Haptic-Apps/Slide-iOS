@@ -678,7 +678,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     }
 
     func checkForUpdate() {
-        if(!SettingValues.doneVersion() || true) {
+        if(!SettingValues.doneVersion()) {
             print("Getting posts for version \(Bundle.main.releaseVersionNumber!)")
             let session = (UIApplication.shared.delegate as! AppDelegate).session
             do {
