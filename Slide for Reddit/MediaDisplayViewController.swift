@@ -10,6 +10,7 @@ import UIKit
 import MaterialComponents.MaterialProgressView
 import SDWebImage
 import CoreMedia
+import RLBAlertsPickers
 
 class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestureRecognizerDelegate {
 
@@ -272,11 +273,9 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
     }
 
     func showTitle(_ sender: AnyObject) {
-        let alertController = MDCAlertController(title: nil, message: text!)
-        let action = MDCAlertAction(title: "DONE") { (action) in
-            print("OK")
-        }
-        alertController.addAction(action)
+        let alertController = UIAlertController.init(title: "Caption", message: nil, preferredStyle: .alert)
+        alertController.addTextViewer(text: .text(title!))
+        alertController.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: nil))
         present(alertController, animated: true, completion: nil)
     }
 
