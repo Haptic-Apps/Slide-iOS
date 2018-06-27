@@ -21,7 +21,6 @@ final class BannerLinkCellView: LinkCellView {
                 title.topAnchor == contentView.topAnchor + 8
                 title.horizontalAnchors == contentView.horizontalAnchors + 8
                 title.bottomAnchor <= bannerImage.topAnchor - 8
-//                title.bottomAnchor == bannerImage.topAnchor - 8 ~ .low
 
                 bannerImage.horizontalAnchors == contentView.horizontalAnchors
                 bannerImage.bottomAnchor == box.topAnchor - 8
@@ -30,7 +29,6 @@ final class BannerLinkCellView: LinkCellView {
                 // Image goes above title
                 bannerImage.topAnchor == contentView.topAnchor
                 bannerImage.horizontalAnchors == contentView.horizontalAnchors
-                // TODO: Need to set height
 
                 title.topAnchor == bannerImage.bottomAnchor + 8
                 title.horizontalAnchors == contentView.horizontalAnchors + 8

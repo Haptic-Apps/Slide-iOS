@@ -337,6 +337,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 //        configureForType(target)
     }
 
+    // Reconfigures the layout of the cell.
     func configureLayout() {
 
         // Remove all constraints previously applied by this method
@@ -381,7 +382,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
     }
 
-    func layoutForType() {
+    internal func layoutForType() {
 
         thumbImageContainer.isHidden = true
         bannerImage.isHidden = true
