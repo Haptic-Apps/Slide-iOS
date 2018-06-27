@@ -9,6 +9,7 @@
 import UIKit
 import reddift
 import XLActionController
+import Anchorage
 
 class SettingsLayout: UITableViewController {
     
@@ -119,6 +120,7 @@ class SettingsLayout: UITableViewController {
     
     func doLink(){
         link.contentView.removeFromSuperview()
+        // TODO: Initialize the proper subclass rather than linkcellview
         link = LinkCellView.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 500))
         
         let fakesub = RSubmission.init()
@@ -163,14 +165,16 @@ class SettingsLayout: UITableViewController {
         fakesub.vote = false
         
         link.aspectWidth = self.tableView.frame.size.width
-        self.link.setLink(submission: fakesub, parent: MediaViewController(), nav: nil, baseSub: "all", test: true)
+        self.link.configure(submission: fakesub, parent: MediaViewController(), nav: nil, baseSub: "all", test: true)
         self.link.isUserInteractionEnabled = false
         linkCell.contentView.backgroundColor = ColorUtil.backgroundColor
-        link.contentView.frame = CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: link.estimateHeight(false, true))
+//        link.contentView.frame = CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: link.estimateHeight(false, true))
         link.updateConstraints()
-        link.doConstraints()
+        // TODO:
+//        link.doConstraints()
         linkCell.contentView.addSubview(link.contentView)
-        linkCell.frame = CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: link.estimateHeight(false, true))
+        link.contentView.edgeAnchors == linkCell.contentView.edgeAnchors
+//        linkCell.frame = CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: link.estimateHeight(false, true))
     }
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let label : UILabel = UILabel()

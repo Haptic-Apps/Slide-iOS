@@ -46,51 +46,38 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
     func upvote(sender: UITapGestureRecognizer? = nil) {
         //todo maybe? contentView.blink(color: GMColor.orange500Color())
-        if let delegate = self.del {
-            delegate.upvote(self)
-        }
+        del?.upvote(self)
     }
 
     func hide(sender: UITapGestureRecognizer? = nil) {
-        if let delegate = self.del {
-            delegate.hide(self)
-        }
+        del?.hide(self)
     }
 
 
     func reply(sender: UITapGestureRecognizer? = nil) {
-        if let delegate = self.del {
-            delegate.reply(self)
-        }
+        del?.reply(self)
     }
 
     func downvote(sender: UITapGestureRecognizer? = nil) {
-        if let delegate = self.del {
-            delegate.downvote(self)
-        }
+        del?.downvote(self)
     }
 
     func more(sender: UITapGestureRecognizer? = nil) {
-        if let delegate = self.del {
-            delegate.more(self)
-        }
+        del?.more(self)
     }
 
     func mod(sender: UITapGestureRecognizer? = nil) {
-        if let delegate = self.del {
-            delegate.mod(self)
-        }
+        del?.mod(self)
     }
 
 
     func save(sender: UITapGestureRecognizer? = nil) {
-        if let delegate = self.del {
-            delegate.save(self)
-        }
+        del?.save(self)
     }
 
 
     var bannerImage = UIImageView()
+    var thumbImageContainer = UIView()
     var thumbImage = UIImageView()
     var title = TTTAttributedLabel(frame: CGRect.zero)
     var score = UILabel()
@@ -116,157 +103,31 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var loadedImage: URL?
     var lq = false
 
+    var content: CellContent?
+    var hasText = false
+
+    var full = false
+    var infoContainer = UIView()
+    var estimatedHeight = CGFloat(0)
+
+    var big = false
+    var dtap : UIShortTapGestureRecognizer?
+
+    var thumb = true
+    private var submissionHeight: Int = 0
+    var addTouch = false
+
+    var link: RSubmission?
+    var aspectWidth = CGFloat(0)
+
+    var tempConstraints: [NSLayoutConstraint] = []
+    var constraintsForType: [NSLayoutConstraint] = []
+
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.thumbImage = UIImageView().then {
-            $0.frame = CGRect(x: 0, y: 8, width: (SettingValues.largerThumbnail ? 75 : 50) - (SettingValues.postViewMode == .COMPACT ? 15 : 0), height: (SettingValues.largerThumbnail ? 75 : 50) - (SettingValues.postViewMode == .COMPACT ? 15 : 0))
-            $0.backgroundColor = UIColor.white
-            $0.clipsToBounds = true;
-            $0.contentMode = .scaleAspectFill
-            $0.elevate(elevation: 2.0)
 
-            $0.layer.cornerRadius = 10
-        }
-
-        self.bannerImage = UIImageView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 0)).then {
-            $0.contentMode = .scaleAspectFill
-            $0.layer.cornerRadius = 15
-            $0.clipsToBounds = true
-            $0.backgroundColor = UIColor.white
-        }
-
-        self.title = TTTAttributedLabel(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude)).then {
-            $0.numberOfLines = 0
-            $0.lineBreakMode = .byWordWrapping
-            $0.font = FontGenerator.fontOfSize(size: 18, submission: true)
-        }
-
-        self.hide = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20)).then {
-            $0.image = UIImage.init(named: "hide")?.menuIcon()
-            $0.contentMode = .center
-        }
-
-        self.reply = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20)).then {
-            $0.image = UIImage.init(named: "reply")?.menuIcon()
-            $0.contentMode = .center
-        }
-
-        self.edit = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20)).then {
-            $0.image = UIImage.init(named: "edit")?.menuIcon()
-            $0.contentMode = .center
-        }
-
-        self.save = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20))
-        save.contentMode = .center
-
-        self.upvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20))
-        upvote.contentMode = .center
-
-        self.downvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20))
-        downvote.contentMode = .center
-
-        self.mod = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20)).then {
-            $0.image = UIImage(named: "mod")?.menuIcon().imageResize(sizeChange: CGSize.init(width: 20, height: 20))
-            $0.contentMode = .center
-        }
-
-        self.commenticon = UIImageView(frame: CGRect(x: 0, y: 0, width: 10, height: 10)).then {
-            $0.image = UIImage(named: "comments")?.menuIcon()
-            $0.contentMode = .scaleAspectFit
-        }
-
-        self.submissionicon = UIImageView(frame: CGRect(x: 0, y: 0, width: 10, height: 10)).then {
-            $0.image = UIImage(named: "upvote")?.menuIcon()
-            $0.contentMode = .scaleAspectFit
-        }
-
-        self.textView = TTTAttributedLabel(frame: CGRect(x: 75, y: 8, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude)).then {
-            $0.numberOfLines = 0
-            $0.isUserInteractionEnabled = true
-            $0.backgroundColor = .clear
-        }
-        self.textView.delegate = self
-
-        self.score = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)).then {
-            $0.numberOfLines = 1
-            $0.font = FontGenerator.fontOfSize(size: 12, submission: true)
-            $0.textColor = ColorUtil.fontColor
-        }
-
-        self.comments = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)).then {
-            $0.numberOfLines = 1
-            $0.font = FontGenerator.fontOfSize(size: 12, submission: true)
-            $0.textColor = ColorUtil.fontColor
-        }
-
-        self.taglabel = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)).then {
-            $0.numberOfLines = 1
-            $0.font = FontGenerator.boldFontOfSize(size: 12, submission: true)
-            $0.textColor = UIColor.black
-        }
-
-        self.tagbody = taglabel.withPadding(padding: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1)).then {
-            $0.backgroundColor = UIColor.white
-            $0.clipsToBounds = true
-            $0.layer.cornerRadius = 4
-        }
-
-        self.info = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)).then {
-            $0.numberOfLines = 2
-            $0.font = FontGenerator.fontOfSize(size: 12, submission: true)
-            $0.textColor = .white
-        }
-
-        self.b = info.withPadding(padding: UIEdgeInsets.init(top: 4, left: 10, bottom: 4, right: 10)).then {
-            $0.backgroundColor = UIColor.black.withAlphaComponent(0.6)
-            $0.clipsToBounds = true
-            $0.layer.cornerRadius = 15
-        }
-
-        if (!addTouch) {
-            addTouch(view: save, action: #selector(LinkCellView.save(sender:)))
-            addTouch(view: upvote, action: #selector(LinkCellView.upvote(sender:)))
-            addTouch(view: reply, action: #selector(LinkCellView.reply(sender:)))
-            addTouch(view: downvote, action: #selector(LinkCellView.downvote(sender:)))
-            addTouch(view: mod, action: #selector(LinkCellView.mod(sender:)))
-            addTouch(view: edit, action: #selector(LinkCellView.edit(sender:)))
-            addTouch(view: hide, action: #selector(LinkCellView.hide(sender:)))
-            addTouch = true
-        }
-
-        contentView.addSubviews(bannerImage, thumbImage, title, textView, b, tagbody)
-
-        self.box = UIStackView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
-        box.addSubviews(score, comments, commenticon, submissionicon)
-        self.contentView.addSubview(box)
-
-        self.buttons = UIStackView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
-        buttons.addSubviews(edit, reply, save, hide, upvote, downvote, mod)
-        self.contentView.addSubview(buttons)
-
-        buttons.isUserInteractionEnabled = true
-
-
-        bannerImage.translatesAutoresizingMaskIntoConstraints = false
-        thumbImage.translatesAutoresizingMaskIntoConstraints = false
-        title.translatesAutoresizingMaskIntoConstraints = false
-        score.translatesAutoresizingMaskIntoConstraints = false
-        comments.translatesAutoresizingMaskIntoConstraints = false
-        box.translatesAutoresizingMaskIntoConstraints = false
-        textView.translatesAutoresizingMaskIntoConstraints = false
-        upvote.translatesAutoresizingMaskIntoConstraints = false
-        hide.translatesAutoresizingMaskIntoConstraints = false
-        downvote.translatesAutoresizingMaskIntoConstraints = false
-        mod.translatesAutoresizingMaskIntoConstraints = false
-        edit.translatesAutoresizingMaskIntoConstraints = false
-        save.translatesAutoresizingMaskIntoConstraints = false
-        reply.translatesAutoresizingMaskIntoConstraints = false
-        buttons.translatesAutoresizingMaskIntoConstraints = false
-        b.translatesAutoresizingMaskIntoConstraints = false
-        tagbody.translatesAutoresizingMaskIntoConstraints = false
-        commenticon.translatesAutoresizingMaskIntoConstraints = false
-        submissionicon.translatesAutoresizingMaskIntoConstraints = false
-
+        configureView()
+        configureLayout()
     }
 
     func attributedLabel(_ label: TTTAttributedLabel!, didLongPressLinkWith url: URL!, at point: CGPoint) {
@@ -292,6 +153,253 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 VCPresenter.presentAlert(alertController, parentVC: parentViewController!)
             }
         }
+    }
+
+    func configureView() {
+        self.thumbImageContainer = UIView().then {
+            $0.accessibilityIdentifier = "Thumbnail Image Container"
+            $0.frame = CGRect(x: 0, y: 8, width: (SettingValues.largerThumbnail ? 75 : 50) - (SettingValues.postViewMode == .COMPACT ? 15 : 0), height: (SettingValues.largerThumbnail ? 75 : 50) - (SettingValues.postViewMode == .COMPACT ? 15 : 0))
+            $0.elevate(elevation: 2.0)
+        }
+
+        self.thumbImage = UIImageView().then {
+            $0.accessibilityIdentifier = "Thumbnail Image"
+            $0.backgroundColor = UIColor.white
+            $0.layer.cornerRadius = 10
+            $0.contentMode = .scaleAspectFill
+            $0.clipsToBounds = true
+        }
+        self.thumbImageContainer.addSubview(self.thumbImage)
+        self.thumbImage.edgeAnchors == self.thumbImageContainer.edgeAnchors
+
+        self.bannerImage = UIImageView().then {
+            $0.accessibilityIdentifier = "Banner Image"
+            $0.contentMode = .scaleAspectFill
+            $0.layer.cornerRadius = 15
+            $0.clipsToBounds = true
+            $0.backgroundColor = UIColor.white
+        }
+
+        self.title = TTTAttributedLabel(frame: CGRect(x: 75, y: 8, width: 0, height: 0)).then {
+            $0.accessibilityIdentifier = "Title"
+            $0.numberOfLines = 0
+            $0.lineBreakMode = .byWordWrapping
+            $0.font = FontGenerator.fontOfSize(size: 18, submission: true)
+        }
+
+        self.hide = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20)).then {
+            $0.accessibilityIdentifier = "Hide Button"
+            $0.image = UIImage.init(named: "hide")?.menuIcon()
+            $0.contentMode = .center
+        }
+
+        self.reply = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20)).then {
+            $0.accessibilityIdentifier = "Reply Button"
+            $0.image = UIImage.init(named: "reply")?.menuIcon()
+            $0.contentMode = .center
+        }
+
+        self.edit = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20)).then {
+            $0.accessibilityIdentifier = "Edit Button"
+            $0.image = UIImage.init(named: "edit")?.menuIcon()
+            $0.contentMode = .center
+        }
+
+        self.save = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20)).then {
+            $0.accessibilityIdentifier = "Save Button"
+            $0.contentMode = .center
+        }
+
+        self.upvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20)).then {
+            $0.accessibilityIdentifier = "Upvote Button"
+            $0.contentMode = .center
+        }
+
+        self.downvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20)).then {
+            $0.accessibilityIdentifier = "Downvote Button"
+            $0.contentMode = .center
+        }
+
+        self.mod = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20)).then {
+            $0.accessibilityIdentifier = "Mod Button"
+            $0.image = UIImage(named: "mod")?.menuIcon().imageResize(sizeChange: CGSize.init(width: 20, height: 20))
+            $0.contentMode = .center
+        }
+
+        self.commenticon = UIImageView(frame: CGRect(x: 0, y: 0, width: 10, height: 10)).then {
+            $0.accessibilityIdentifier = "Comment Count Icon"
+            $0.image = UIImage(named: "comments")?.smallIcon()
+            $0.contentMode = .scaleAspectFit
+        }
+
+        self.submissionicon = UIImageView(frame: CGRect(x: 0, y: 0, width: 10, height: 10)).then {
+            $0.accessibilityIdentifier = "Score Icon"
+            $0.image = UIImage(named: "upvote")?.smallIcon()
+            $0.contentMode = .scaleAspectFit
+        }
+
+        self.textView = TTTAttributedLabel(frame: CGRect(x: 75, y: 8, width: 0, height: 0)).then {
+            $0.accessibilityIdentifier = "Self Text View"
+            $0.numberOfLines = 0
+            $0.isUserInteractionEnabled = true
+            $0.backgroundColor = .clear
+        }
+        self.textView.delegate = self
+
+        self.score = UILabel().then {
+            $0.accessibilityIdentifier = "Score Label"
+            $0.numberOfLines = 1
+            $0.font = FontGenerator.fontOfSize(size: 12, submission: true)
+            $0.textColor = ColorUtil.fontColor
+        }
+
+        self.comments = UILabel().then {
+            $0.accessibilityIdentifier = "Comment Count Label"
+            $0.numberOfLines = 1
+            $0.font = FontGenerator.fontOfSize(size: 12, submission: true)
+            $0.textColor = ColorUtil.fontColor
+        }
+
+        self.taglabel = UILabel().then {
+            $0.accessibilityIdentifier = "Tag Label"
+            $0.numberOfLines = 1
+            $0.font = FontGenerator.boldFontOfSize(size: 12, submission: true)
+            $0.textColor = UIColor.black
+        }
+
+        self.tagbody = taglabel.withPadding(padding: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1)).then {
+            $0.accessibilityIdentifier = "Tag Body"
+            $0.backgroundColor = UIColor.white
+            $0.clipsToBounds = true
+            $0.layer.cornerRadius = 4
+        }
+
+        self.info = UILabel().then {
+            $0.accessibilityIdentifier = "Banner Info"
+            $0.numberOfLines = 2
+            $0.font = FontGenerator.fontOfSize(size: 12, submission: true)
+            $0.textColor = .white
+        }
+
+        self.infoContainer = info.withPadding(padding: UIEdgeInsets.init(top: 4, left: 10, bottom: 4, right: 10)).then {
+            $0.accessibilityIdentifier = "Banner Info Container"
+            $0.backgroundColor = UIColor.black.withAlphaComponent(0.6)
+            $0.clipsToBounds = true
+            $0.layer.cornerRadius = 15
+        }
+
+        if (!addTouch) {
+            addTouch(view: save, action: #selector(LinkCellView.save(sender:)))
+            addTouch(view: upvote, action: #selector(LinkCellView.upvote(sender:)))
+            addTouch(view: reply, action: #selector(LinkCellView.reply(sender:)))
+            addTouch(view: downvote, action: #selector(LinkCellView.downvote(sender:)))
+            addTouch(view: mod, action: #selector(LinkCellView.mod(sender:)))
+            addTouch(view: edit, action: #selector(LinkCellView.edit(sender:)))
+            addTouch(view: hide, action: #selector(LinkCellView.hide(sender:)))
+            addTouch = true
+        }
+
+        contentView.addSubviews(bannerImage, thumbImageContainer, title, textView, infoContainer, tagbody)
+        contentView.layer.masksToBounds = true
+
+        self.box = UIStackView().then {
+            $0.axis = .horizontal
+            $0.alignment = .center
+        }
+        box.addArrangedSubviews(submissionicon, horizontalSpace(2), score, horizontalSpace(8), commenticon, horizontalSpace(2), comments)
+        self.contentView.addSubview(box)
+
+        self.buttons = UIStackView().then {
+            $0.axis = .horizontal
+            $0.alignment = .center
+            $0.distribution = .fill
+            $0.spacing = 10
+        }
+        buttons.addArrangedSubview(save)
+        buttons.addArrangedSubviews(edit, reply, save, hide, upvote, downvote, mod)
+        self.contentView.addSubview(buttons)
+
+        buttons.isHidden = SettingValues.hideButtonActionbar
+        buttons.isUserInteractionEnabled = !SettingValues.hideButtonActionbar
+    }
+
+    func doConstraints() {
+//        var target: CurrentType = .none
+//
+//        if (thumb && !big) {
+//            target = .thumb
+//        } else if (big) {
+//            target = .banner
+//        } else {
+//            target = .text
+//        }
+//
+//        configureForType(target)
+    }
+
+    func configureLayout() {
+
+        // Remove all constraints previously applied by this method
+        for constraint in tempConstraints {
+            constraint.isActive = false
+        }
+        tempConstraints = []
+
+        tempConstraints = batch {
+            var topmargin = 0
+            var bottommargin = 2
+            var leftmargin = 0
+            var rightmargin = 0
+            var innerpadding = 0
+            var radius = 0
+
+            if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full {
+                topmargin = 5
+                bottommargin = 5
+                leftmargin = 5
+                rightmargin = 5
+                innerpadding = 5
+                radius = 15
+            }
+
+            self.contentView.layoutMargins = UIEdgeInsets.init(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin))
+
+            self.contentView.layer.cornerRadius = CGFloat(radius)
+
+            box.leftAnchor == contentView.leftAnchor + 8
+            box.bottomAnchor == contentView.bottomAnchor - 8
+            box.centerYAnchor == buttons.centerYAnchor // Align vertically with buttons
+            box.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+
+            buttons.rightAnchor == contentView.rightAnchor - 8
+            buttons.bottomAnchor == contentView.bottomAnchor - 8
+
+            title.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+        }
+
+        layoutForType()
+
+    }
+
+    func layoutForType() {
+
+        thumbImageContainer.isHidden = true
+        bannerImage.isHidden = true
+
+        // Remove all constraints previously applied by this method
+        for constraint in constraintsForType {
+            constraint.isActive = false
+        }
+        constraintsForType = []
+
+        // Deriving classes will populate constraintsForType in the override for this method.
+
+    }
+
+    func configure(submission: RSubmission, parent: MediaViewController, nav: UIViewController?, baseSub: String, test : Bool = false) {
+        self.link = submission
+        self.setLink(submission: submission, parent: parent, nav: nav, baseSub: baseSub, test: test)
+        configureLayout()
     }
 
     func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
@@ -338,9 +446,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         return super.hitTest(point, with: event)
     }
 
-    var content: CellContent?
-    var hasText = false
-
     func showBody(width: CGFloat) {
         full = true
         let link = self.link!
@@ -368,69 +473,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
     }
 
-    var full = false
-    var b = UIView()
-    var estimatedHeight = CGFloat(0)
-
-    func estimateHeight(_ full: Bool, _ reset: Bool = false) -> CGFloat {
-        if (estimatedHeight == 0 || reset) {
-            var paddingTop = CGFloat(0)
-            var paddingBottom = CGFloat(2)
-            var paddingLeft = CGFloat(0)
-            var paddingRight = CGFloat(0)
-            var innerPadding = CGFloat(0)
-            if((SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full){
-                paddingTop = 5
-                paddingBottom = 5
-                paddingLeft = 5
-                paddingRight = 5
-            }
-
-            let actionbar = CGFloat(!full && SettingValues.hideButtonActionbar ? 0 : 24)
-
-            var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
-            let thumbheight = (SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50))  - (SettingValues.postViewMode == .COMPACT ? 15 : 0)
-            let textHeight = (!hasText || !full) ? CGFloat(0) : CGFloat((content?.textHeight)!)
-
-            if(thumb){
-                imageHeight = thumbheight
-                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between top and thumbnail
-                innerPadding += 18 - (SettingValues.postViewMode == .COMPACT ? 4 : 0) //between label and bottom box
-                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
-            } else if(big){
-                if (SettingValues.postViewMode == .CENTER || full) {
-                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 16) //between label
-                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between banner and box
-                } else {
-                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between banner and label
-                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between label and box
-                }
-
-                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
-            } else {
-                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8)
-                innerPadding += 5 //between label and body
-                innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between body and box
-                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
-            }
-
-            var estimatedUsableWidth = aspectWidth - paddingLeft - paddingRight
-            if(thumb){
-                estimatedUsableWidth -= thumbheight //is the same as the width
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between thumb and label
-            } else {
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //12 padding on either side
-            }
-
-            let framesetter = CTFramesetterCreateWithAttributedString(title.attributedText)
-            let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude), nil)
-
-            let totalHeight = paddingTop + paddingBottom + (thumb ? max(ceil(textSize.height), imageHeight): ceil(textSize.height) + imageHeight) + innerPadding + actionbar + textHeight + (full ? CGFloat(10) : CGFloat(0))
-            estimatedHeight = totalHeight
-        }
-        return estimatedHeight
-    }
+//    func estimateHeight(_ full: Bool, _ reset: Bool = false) -> CGFloat {
+//        estimatedHeight = frame.size.height
+//        return estimatedHeight
+//    }
 
     func addTouch(view: UIView, action: Selector) {
         view.isUserInteractionEnabled = true
@@ -439,130 +485,18 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         view.addGestureRecognizer(tap)
     }
 
-    var thumb = true
-    var submissionHeight: Int = 0
-    var addTouch = false
-
-    override func updateConstraints() {
-        super.updateConstraints()
-        var topmargin = 0
-        var bottommargin = 2
-        var leftmargin = 0
-        var rightmargin = 0
-        var innerpadding = 0
-        var radius = 0
-
-        if ((SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full) {
-            topmargin = 5
-            bottommargin = 5
-            leftmargin = 5
-            rightmargin = 5
-            innerpadding = 5
-            radius = 15
-        }
-
-        self.contentView.layoutMargins = UIEdgeInsets.init(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin))
-
-        let metrics = ["horizontalMargin": 75, "top": topmargin, "bottom": bottommargin, "separationBetweenLabels": 0, "labelMinHeight": 75, "bannerHeight": submissionHeight, "left": leftmargin, "padding": innerpadding, "ishidden": !full && SettingValues.hideButtonActionbar ? 0 : 24, "ishiddeni": !full && SettingValues.hideButtonActionbar ? 0 : 18] as [String: Int]
-        let views = ["label": title, "body": textView, "image": thumbImage, "score": score, "comments": comments, "banner": bannerImage, "scorei": submissionicon, "commenti": commenticon, "box": box] as [String: Any]
-        let views2 = ["buttons": buttons, "upvote": upvote, "downvote": downvote, "hide": hide, "mod": mod, "reply": reply, "edit": edit, "save": save] as [String: Any]
-
-        box.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-16-[scorei(12)]-2-[score(>=20)]-8-[commenti(12)]-2-[comments(>=20)]",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-
-        box.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[score(ishidden)]-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-        box.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:[scorei(ishiddeni)]-4-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-        box.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:[commenti(ishiddeni)]-4-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-
-        self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[buttons(ishidden)]-12-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views2))
-
-        box.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[comments(ishidden)]-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-
-        self.contentView.layer.cornerRadius = CGFloat(radius)
-        self.contentView.layer.masksToBounds = true
-
-        if (full) {
-            buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:\(AccountController.isLoggedIn && AccountController.currentName == link?.author ? "[edit(24)]-16-" : "")[mod(24)]-16-[reply(24)]-16-[save(24)]-16-[upvote(24)]-16-[downvote(24)]-8-|",
-                    options: NSLayoutFormatOptions(rawValue: 0),
-                    metrics: metrics,
-                    views: views2))
-        } else {
-            let hideString = SettingValues.hideButton ? "[hide(24)]-12-" : ""
-            let saveString = SettingValues.saveButton ? "[save(24)]-12-" : ""
-            buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[mod(24)]-16-\(hideString)\(saveString)[upvote(24)]-16-[downvote(24)]-8-|",
-                    options: NSLayoutFormatOptions(rawValue: 0),
-                    metrics: metrics,
-                    views: views2))
-        }
-        buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[upvote(ishidden)]-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views2))
-
-        buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[downvote(ishidden)]-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views2))
-
-        buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[save(ishidden)]-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views2))
-        buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[hide(ishidden)]-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views2))
-        buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[mod(ishidden)]-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views2))
-
-        buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[reply(ishidden)]-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views2))
-        buttons.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[edit(ishidden)]-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views2))
-
-    }
-
     func getHeightFromAspectRatio(imageHeight: Int, imageWidth: Int) -> Int {
         let ratio = Double(imageHeight) / Double(imageWidth)
         let width = Double(contentView.frame.size.width == 0 ? aspectWidth : contentView.frame.size.width)
         return Int(width * ratio)
     }
 
-    var big = false
-    var bigConstraint: NSLayoutConstraint?
-    var thumbConstraint: [NSLayoutConstraint] = []
-
-    var dtap : UIShortTapGestureRecognizer?
-
     func refreshLink(_ submission: RSubmission) {
         self.link = submission
 
         title.setText(CachedTitle.getTitle(submission: submission, full: full, true, false))
 
-        if(dtap == nil && SettingValues.submissionActionDoubleTap != .NONE){
+        if(dtap == nil && SettingValues.submissionActionDoubleTap != .NONE) {
             dtap = UIShortTapGestureRecognizer.init(target: self, action: #selector(self.doDTap(_:)))
             dtap!.numberOfTapsRequired = 2
             self.addGestureRecognizer(dtap!)
@@ -586,26 +520,18 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         switch(SettingValues.submissionActionDoubleTap){
         case .UPVOTE:
             self.upvote()
-            break
         case .DOWNVOTE:
             self.downvote()
-            break
         case .SAVE:
             self.save()
-            break
         case .MENU:
             self.more()
-            break
         default:
             break
         }
     }
 
-
-    var link: RSubmission?
-    var aspectWidth = CGFloat(0)
-
-    func setLink(submission: RSubmission, parent: MediaViewController, nav: UIViewController?, baseSub: String, test : Bool = false) {
+    private func setLink(submission: RSubmission, parent: MediaViewController, nav: UIViewController?, baseSub: String, test : Bool = false) {
         loadedImage = nil
         full = parent is CommentViewController
         lq = false
@@ -625,8 +551,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             navViewController = nav
         }
 
-        title.setText(CachedTitle.getTitle(submission: submission, full: full, false
-                , false))
+        title.setText(CachedTitle.getTitle(submission: submission, full: full, false, false))
 
         let activeLinkAttributes = NSMutableDictionary(dictionary: title.activeLinkAttributes)
         activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.accentColorForSub(sub: submission.subreddit)
@@ -698,10 +623,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         thumb = submission.thumbnail
         big = submission.banner
 
-        if (bigConstraint != nil) {
-            self.contentView.removeConstraint(bigConstraint!)
-        }
-
         submissionHeight = submission.height
 
         var type = test ? ContentType.CType.LINK : ContentType.getContentType(baseUrl: submission.url)
@@ -762,7 +683,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             thumb = true
         }
 
-
         if (SettingValues.noImages) {
             big = false
             thumb = false
@@ -805,9 +725,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 print("Setting full 4")
 
                 submissionHeight = test ? 150 : 200
-                bigConstraint = NSLayoutConstraint(item: bannerImage, attribute: NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: bannerImage, attribute: NSLayoutAttribute.height, multiplier: aspect, constant: 0.0)
-            } else {
-                bigConstraint = NSLayoutConstraint(item: bannerImage, attribute: NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: bannerImage, attribute: NSLayoutAttribute.height, multiplier: aspect, constant: 0.0)
+
             }
             bannerImage.isUserInteractionEnabled = true
             let tap = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openLink(sender:)))
@@ -817,7 +735,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             let tap2 = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openLink(sender:)))
             tap2.delegate = self
 
-            b.addGestureRecognizer(tap2)
+            infoContainer.addGestureRecognizer(tap2)
             if (shouldShowLq) {
                 lq = true
                 loadedImage = URL.init(string: submission.lqUrl)
@@ -875,7 +793,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             registered = true
         }
 
-        doConstraints()
+        // TODO:
+//        doConstraints()
 
         refresh()
         if (full) {
@@ -883,7 +802,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
 
         if (type != .IMAGE && type != .SELF && !thumb) {
-            b.isHidden = false
+            infoContainer.isHidden = false
             var text = ""
             switch (type) {
             case .ALBUM:
@@ -928,7 +847,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             }
 
             if (SettingValues.smallerTag && !full) {
-                b.isHidden = true
+                infoContainer.isHidden = true
                 tagbody.isHidden = false
                 taglabel.text = " \(text.uppercased()) "
             } else {
@@ -966,7 +885,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     endString.append(boldString)
                     finalText.append(endString)
 
-                    b.addTapGestureRecognizer {
+                    infoContainer.addTapGestureRecognizer {
                         VCPresenter.openRedditLink(submission.crosspostPermalink, self.parentViewController?.navigationController, self.parentViewController)
                     }
                     info.attributedText = finalText
@@ -979,7 +898,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             }
 
         } else {
-            b.isHidden = true
+            infoContainer.isHidden = true
             tagbody.isHidden = true
         }
 
@@ -995,179 +914,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     }
 
     var currentType: CurrentType = .none
-
-    //This function will update constraints if they need to be changed to change the display type
-    func doConstraints() {
-        var target = CurrentType.none
-
-        if (thumb && !big) {
-            target = .thumb
-        } else if (big) {
-            target = .banner
-        } else {
-            target = .text
-        }
-
-        print(currentType == target)
-
-        if (currentType == target && target != .banner) {
-            return //work is already done
-        } else if (currentType == target && target == .banner && bigConstraint != nil) {
-            self.contentView.addConstraint(bigConstraint!)
-            return
-        }
-
-        let metrics = ["horizontalMargin": 75, "top": 0, "bottom": 0, "separationBetweenLabels": 0, "full": Int(contentView.frame.size.width),"ctwelve": SettingValues.postViewMode == .COMPACT ? 8 : 12,"ceight": SettingValues.postViewMode == .COMPACT ? 4 : 8, "bannerPadding": (full || SettingValues.postViewMode != .CARD) ? 5 : 0, "size": full ? 16 : 8, "labelMinHeight": 75, "thumb": (SettingValues.largerThumbnail ? 75 : 50) - (SettingValues.postViewMode == .COMPACT ? 15 : 0), "bannerHeight": submissionHeight] as [String: Int]
-        let views = ["label": title, "body": textView, "image": thumbImage, "info": b, "tag": tagbody, "mod" : mod, "upvote": upvote, "downvote": downvote, "score": score, "comments": comments, "banner": bannerImage, "buttons": buttons, "box": box] as [String: Any]
-        var bt = "[buttons]-(ceight)-"
-        var bx = "[box]-(ceight)-"
-        if (SettingValues.hideButtonActionbar && !full) {
-            bt = "[buttons(0)]-4-"
-            bx = "[box(0)]-4-"
-        }
-
-        self.contentView.removeConstraints(thumbConstraint)
-        thumbConstraint = []
-
-        if (target == .thumb) {
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(ceight)-[image(thumb)]",
-                                                                              options: NSLayoutFormatOptions(rawValue: 0),
-                                                                              metrics: metrics,
-                                                                              views: views))
-            if(SettingValues.leftThumbnail){
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(ceight)-[image(thumb)]-(ceight)-[label]-(ctwelve)-|",
-                                                                                  options: NSLayoutFormatOptions(rawValue: 0),
-                                                                                  metrics: metrics,
-                                                                                  views: views))
-            } else {
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(ctwelve)-[label]-(ceight)-[image(thumb)]-(ceight)-|",
-                                                                                  options: NSLayoutFormatOptions(rawValue: 0),
-                                                                                  metrics: metrics,
-                                                                                  views: views))
-            }
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(ceight)-[label]-\(bx)|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(ceight)-[label]-\(bt)|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-        } else if (target == .banner) {
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-[image(0)]",
-                                                                              options: NSLayoutFormatOptions(rawValue: 0),
-                                                                              metrics: metrics,
-                                                                              views: views))
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(ctwelve)-[label]-(ctwelve)-|",
-                                                                              options: NSLayoutFormatOptions(rawValue: 0),
-                                                                              metrics: metrics,
-                                                                              views: views))
-            if(SettingValues.postViewMode == .CENTER || full){
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(ceight)-[label]-(ceight)-[banner]-(ctwelve)-\(bx)|",
-                    options: NSLayoutFormatOptions(rawValue: 0),
-                    metrics: metrics,
-                    views: views))
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[info]-[banner]",
-                                                                                  options: NSLayoutFormatOptions.alignAllLastBaseline,
-                                                                                  metrics: metrics,
-                                                                                  views: views))
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[banner]-[tag]",
-                                                                                  options: NSLayoutFormatOptions.alignAllLastBaseline,
-                                                                                  metrics: metrics,
-                                                                                  views: views))
-                
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[info(45)]-(ceight)-[buttons]",
-                                                                                  options: NSLayoutFormatOptions(rawValue: 0),
-                                                                                  metrics: metrics,
-                                                                                  views: views))
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[tag]-(ctwelve)-[buttons]",
-                                                                                  options: NSLayoutFormatOptions(rawValue: 0),
-                                                                                  metrics: metrics,
-                                                                                  views: views))
-                
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[info]-(ceight)-[box]",
-                                                                                  options: NSLayoutFormatOptions(rawValue: 0),
-                                                                                  metrics: metrics,
-                                                                                  views: views))
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[tag]-(ctwelve)-[box]",
-                                                                                  options: NSLayoutFormatOptions(rawValue: 0),
-                                                                                  metrics: metrics,
-                                                                                  views: views))
-                
-                
-            } else {
-                
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(bannerPadding)-[banner]-(ceight)-[label]-(ctwelve)-\(bx)|",
-                    options: NSLayoutFormatOptions(rawValue: 0),
-                    metrics: metrics,
-                    views: views))
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[info(45)]-(ceight)-[label]",
-                                                                                  options: NSLayoutFormatOptions(rawValue: 0),
-                                                                                  metrics: metrics,
-                                                                                  views: views))
-                
-                thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[tag]-(ctwelve)-[label]",
-                                                                                  options: NSLayoutFormatOptions(rawValue: 0),
-                                                                                  metrics: metrics,
-                                                                                  views: views))
-                
-            }
-            
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:\(bt)|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:\(bx)|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-            
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(bannerPadding)-[banner]-(bannerPadding)-|",
-                                                                              options: NSLayoutFormatOptions(rawValue: 0),
-                                                                              metrics: metrics,
-                                                                              views: views))
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(bannerPadding)-[info]-(bannerPadding)-|",
-                                                                              options: NSLayoutFormatOptions(rawValue: 0),
-                                                                              metrics: metrics,
-                                                                              views: views))
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[tag]-(ctwelve)-|",
-                                                                              options: NSLayoutFormatOptions(rawValue: 0),
-                                                                              metrics: metrics,
-                                                                              views: views))
-        } else if (target == .text) {
-            
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(ceight)-[image(0)]",
-                                                                              options: NSLayoutFormatOptions(rawValue: 0),
-                                                                              metrics: metrics,
-                                                                              views: views))
-            
-            
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(ctwelve)-[label]-(ctwelve)-|",
-                                                                              options: NSLayoutFormatOptions(rawValue: 0),
-                                                                              metrics: metrics,
-                                                                              views: views))
-            
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(ctwelve)-[body]-(ctwelve)-|",
-                                                                              options: NSLayoutFormatOptions(rawValue: 0),
-                                                                              metrics: metrics,
-                                                                              views: views))
-            
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(ctwelve)-[label]-5@1000-[body]-(ctwelve)-\(bx)|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-            thumbConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:\(bt)|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-        }
-        self.contentView.addConstraints(thumbConstraint)
-        if (target == .banner && bigConstraint != nil) {
-            self.contentView.addConstraint(bigConstraint!)
-            return
-        }
-        currentType = target
-    }
 
     public static func checkWiFi() -> Bool {
 
@@ -1462,6 +1208,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         } else {
             self.title.alpha = 1
         }
+
+//        layoutForType()
     }
 
     override func layoutSubviews() {
@@ -1505,6 +1253,70 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
         return nil
     }
+
+    func estimateHeight(_ full: Bool, _reset: Bool = false) -> CGFloat {
+        return systemLayoutSizeFitting(UILayoutFittingCompressedSize, withHorizontalFittingPriority: UILayoutPriorityDefaultLow, verticalFittingPriority: UILayoutPriorityDefaultHigh).height
+    }
+
+//    func estimateHeight(_ full: Bool, _ reset: Bool = false) -> CGFloat {
+//        if (estimatedHeight == 0 || reset) {
+//            var paddingTop = CGFloat(0)
+//            var paddingBottom = CGFloat(2)
+//            var paddingLeft = CGFloat(0)
+//            var paddingRight = CGFloat(0)
+//            var innerPadding = CGFloat(0)
+//            if((SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full){
+//                paddingTop = 5
+//                paddingBottom = 5
+//                paddingLeft = 5
+//                paddingRight = 5
+//            }
+//
+//            let actionbar = CGFloat(!full && SettingValues.hideButtonActionbar ? 0 : 24)
+//
+//            var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
+//            let thumbheight = (SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50))  - (SettingValues.postViewMode == .COMPACT ? 15 : 0)
+//            let textHeight = (!hasText || !full) ? CGFloat(0) : CGFloat((content?.textHeight)!)
+//
+//            if(thumb){
+//                imageHeight = thumbheight
+//                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between top and thumbnail
+//                innerPadding += 18 - (SettingValues.postViewMode == .COMPACT ? 4 : 0) //between label and bottom box
+//                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
+//            } else if(big){
+//                if (SettingValues.postViewMode == .CENTER || full) {
+//                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 16) //between label
+//                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between banner and box
+//                } else {
+//                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between banner and label
+//                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between label and box
+//                }
+//
+//                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
+//            } else {
+//                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8)
+//                innerPadding += 5 //between label and body
+//                innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between body and box
+//                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
+//            }
+//
+//            var estimatedUsableWidth = aspectWidth - paddingLeft - paddingRight
+//            if(thumb){
+//                estimatedUsableWidth -= thumbheight //is the same as the width
+//                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb
+//                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between thumb and label
+//            } else {
+//                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //12 padding on either side
+//            }
+//
+//            let framesetter = CTFramesetterCreateWithAttributedString(title.attributedText)
+//            let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude), nil)
+//
+//            let totalHeight = paddingTop + paddingBottom + (thumb ? max(ceil(textSize.height), imageHeight): ceil(textSize.height) + imageHeight) + innerPadding + actionbar + textHeight + (full ? CGFloat(10) : CGFloat(0))
+//            estimatedHeight = totalHeight
+//        }
+//        return estimatedHeight
+//    }
 
     func getInfo(locationInTextView: CGPoint) -> (URL, CGRect)? {
         if let attr = textView.link(at: locationInTextView) {
@@ -1588,18 +1400,11 @@ extension UILabel {
     }
 }
 
-extension UIImage {
-    func withColor(tintColor: UIColor) -> UIImage {
-        var image = withRenderingMode(.alwaysTemplate)
-        UIGraphicsBeginImageContextWithOptions(size, false, scale)
-        tintColor.set()
-        image.draw(in: CGRect(x: 0, y: 0, width: size.width, height: size.height))
-        image = UIGraphicsGetImageFromCurrentImageContext()!
-        UIGraphicsEndImageContext()
-        return image
-    }
+protocol MaterialView {
+    func elevate(elevation: Double)
 }
 
+// TODO: This function will be on every UIView, not just those that conform to MaterialView.
 extension UIView: MaterialView {
     func elevate(elevation: Double) {
         self.layer.masksToBounds = false
@@ -1607,33 +1412,5 @@ extension UIView: MaterialView {
         self.layer.shadowOffset = CGSize(width: 0, height: elevation)
         self.layer.shadowRadius = CGFloat(elevation)
         self.layer.shadowOpacity = 0.24
-    }
-}
-
-protocol MaterialView {
-    func elevate(elevation: Double)
-}
-
-extension String {
-    func toAttributedString() -> NSAttributedString? {
-        guard let data = self.data(using: String.Encoding.utf8,
-                allowLossyConversion: false) else {
-            return nil
-        }
-
-        let htmlString = try? NSMutableAttributedString(data: data, options: [NSCharacterEncodingDocumentAttribute: String.Encoding.utf8.rawValue, NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
-
-        return htmlString
-    }
-}
-extension UIView{
-    func blink(color: UIColor) {
-        UIView.animate(withDuration: 0.25, delay: 0.0, options: [.curveLinear], animations: {
-            self.backgroundColor = color
-        }, completion: {finished in
-            UIView.animate(withDuration: 0.25, delay: 0.0, options: [.curveLinear], animations: {
-                self.backgroundColor = ColorUtil.foregroundColor
-            }, completion: nil)
-        })
     }
 }

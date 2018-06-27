@@ -515,6 +515,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
 
     var heightAtIndexPath = NSMutableDictionary()
+    let sizingCell = BannerLinkCellView()
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableViewAutomaticDimension
@@ -537,6 +538,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     override func viewDidLoad() {
         super.viewDidLoad()
         flowLayout.delegate = self
+//        flowLayout.estimatedItemSize = CGSize(width: 1, height: 1)
         let frame = self.view.bounds
         self.tableView = UICollectionView(frame: CGRect.zero, collectionViewLayout: flowLayout)
         self.view = UIView.init(frame: CGRect.zero)
@@ -655,6 +657,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         self.automaticallyAdjustsScrollViewInsets = false
 
 
+        // TODO: Can just use .self instead of .classForCoder()
         self.tableView.register(BannerLinkCellView.classForCoder(), forCellWithReuseIdentifier: "banner")
         self.tableView.register(ThumbnailLinkCellView.classForCoder(), forCellWithReuseIdentifier: "thumb")
         self.tableView.register(TextLinkCellView.classForCoder(), forCellWithReuseIdentifier: "text")
@@ -933,10 +936,10 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         }
     }
 
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        let height = NSNumber(value: Float(cell.frame.size.height))
-        heightAtIndexPath.setObject(height, forKey: indexPath as NSCopying)
-    }
+//    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+//        let height = NSNumber(value: Float(cell.frame.size.height))
+//        heightAtIndexPath.setObject(height, forKey: indexPath as NSCopying)
+//    }
 
     func pickTheme(sender: AnyObject?, parent: MainViewController?) {
         parentController = parent
@@ -1378,7 +1381,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             target = .text
         }
 
-        var cell: LinkCellView?
+        var cell: LinkCellView!
         if (target == .thumb) {
             cell = tableView.dequeueReusableCell(withReuseIdentifier: "thumb", for: indexPath) as! ThumbnailLinkCellView
         } else if (target == .banner) {
@@ -1387,18 +1390,17 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             cell = tableView.dequeueReusableCell(withReuseIdentifier: "text", for: indexPath) as! TextLinkCellView
         }
 
-        cell?.preservesSuperviewLayoutMargins = false
-        cell?.del = self
+        cell.preservesSuperviewLayoutMargins = false
+        cell.del = self
+        cell.layer.shouldRasterize = true
+        cell.layer.rasterizationScale = UIScreen.main.scale
+        cell.configure(submission: submission, parent: self, nav: self.navigationController, baseSub: sub)
+
         if indexPath.row == self.links.count - 3 && !loading && !nomore {
             self.loadMore()
         }
 
-        (cell)!.setLink(submission: submission, parent: self, nav: self.navigationController, baseSub: sub)
-
-        cell?.layer.shouldRasterize = true
-        cell?.layer.rasterizationScale = UIScreen.main.scale
-
-        return cell!
+        return cell
 
     }
 

@@ -1299,21 +1299,6 @@ extension UIColor {
     }
 }
 
-extension UIView {
-    func withPadding(padding: UIEdgeInsets) -> UIView {
-        let container = UIView()
-        self.translatesAutoresizingMaskIntoConstraints = false
-        container.addSubview(self)
-        container.addConstraints(NSLayoutConstraint.constraints(
-                withVisualFormat: "|-(\(padding.left))-[view]-(\(padding.right))-|"
-                , options: [], metrics: nil, views: ["view": self]))
-        container.addConstraints(NSLayoutConstraint.constraints(
-                withVisualFormat: "V:|-(\(padding.top)@999)-[view]-(\(padding.bottom)@999)-|",
-                options: [], metrics: nil, views: ["view": self]))
-        return container
-    }
-}
-
 //from https://stackoverflow.com/a/48847585/3697225
 class UIShortTapGestureRecognizer: UITapGestureRecognizer {
     let tapMaxDelay: Double = 0.3 //anything below 0.3 may cause doubleTap to be inaccessible by many users
