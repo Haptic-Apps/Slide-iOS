@@ -199,7 +199,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude), nil)
 
             let totalHeight = paddingTop + paddingBottom + (thumb ? max(ceil(textSize.height), imageHeight) : ceil(textSize.height) + imageHeight) + innerPadding + actionbar + textHeight
-
+            
             return CGSize(width: itemWidth, height: totalHeight)
         }
         return CGSize(width: itemWidth, height: 0)
@@ -515,7 +515,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
 
     var heightAtIndexPath = NSMutableDictionary()
-    let sizingCell = BannerLinkCellView()
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableViewAutomaticDimension
@@ -538,7 +537,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     override func viewDidLoad() {
         super.viewDidLoad()
         flowLayout.delegate = self
-//        flowLayout.estimatedItemSize = CGSize(width: 1, height: 1)
         let frame = self.view.bounds
         self.tableView = UICollectionView(frame: CGRect.zero, collectionViewLayout: flowLayout)
         self.view = UIView.init(frame: CGRect.zero)
@@ -936,10 +934,10 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         }
     }
 
-//    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-//        let height = NSNumber(value: Float(cell.frame.size.height))
-//        heightAtIndexPath.setObject(height, forKey: indexPath as NSCopying)
-//    }
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        let height = NSNumber(value: Float(cell.frame.size.height))
+        heightAtIndexPath.setObject(height, forKey: indexPath as NSCopying)
+    }
 
     func pickTheme(sender: AnyObject?, parent: MainViewController?) {
         parentController = parent

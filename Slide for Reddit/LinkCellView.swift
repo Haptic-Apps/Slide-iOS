@@ -114,7 +114,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var dtap : UIShortTapGestureRecognizer?
 
     var thumb = true
-    private var submissionHeight: Int = 0
+    var submissionHeight: Int = 0
     var addTouch = false
 
     var link: RSubmission?
@@ -1254,69 +1254,65 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         return nil
     }
 
-    func estimateHeight(_ full: Bool, _reset: Bool = false) -> CGFloat {
-        return systemLayoutSizeFitting(UILayoutFittingCompressedSize, withHorizontalFittingPriority: UILayoutPriorityDefaultLow, verticalFittingPriority: UILayoutPriorityDefaultHigh).height
-    }
+    func estimateHeight(_ full: Bool, _ reset: Bool = false) -> CGFloat {
+        if (estimatedHeight == 0 || reset) {
+            var paddingTop = CGFloat(0)
+            var paddingBottom = CGFloat(2)
+            var paddingLeft = CGFloat(0)
+            var paddingRight = CGFloat(0)
+            var innerPadding = CGFloat(0)
+            if((SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full){
+                paddingTop = 5
+                paddingBottom = 5
+                paddingLeft = 5
+                paddingRight = 5
+            }
 
-//    func estimateHeight(_ full: Bool, _ reset: Bool = false) -> CGFloat {
-//        if (estimatedHeight == 0 || reset) {
-//            var paddingTop = CGFloat(0)
-//            var paddingBottom = CGFloat(2)
-//            var paddingLeft = CGFloat(0)
-//            var paddingRight = CGFloat(0)
-//            var innerPadding = CGFloat(0)
-//            if((SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full){
-//                paddingTop = 5
-//                paddingBottom = 5
-//                paddingLeft = 5
-//                paddingRight = 5
-//            }
-//
-//            let actionbar = CGFloat(!full && SettingValues.hideButtonActionbar ? 0 : 24)
-//
-//            var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
-//            let thumbheight = (SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50))  - (SettingValues.postViewMode == .COMPACT ? 15 : 0)
-//            let textHeight = (!hasText || !full) ? CGFloat(0) : CGFloat((content?.textHeight)!)
-//
-//            if(thumb){
-//                imageHeight = thumbheight
-//                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between top and thumbnail
-//                innerPadding += 18 - (SettingValues.postViewMode == .COMPACT ? 4 : 0) //between label and bottom box
-//                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
-//            } else if(big){
-//                if (SettingValues.postViewMode == .CENTER || full) {
-//                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 16) //between label
-//                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between banner and box
-//                } else {
-//                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between banner and label
-//                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between label and box
-//                }
-//
-//                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
-//            } else {
-//                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8)
-//                innerPadding += 5 //between label and body
-//                innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between body and box
-//                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
-//            }
-//
-//            var estimatedUsableWidth = aspectWidth - paddingLeft - paddingRight
-//            if(thumb){
-//                estimatedUsableWidth -= thumbheight //is the same as the width
-//                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb
-//                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between thumb and label
-//            } else {
-//                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //12 padding on either side
-//            }
-//
-//            let framesetter = CTFramesetterCreateWithAttributedString(title.attributedText)
-//            let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude), nil)
-//
-//            let totalHeight = paddingTop + paddingBottom + (thumb ? max(ceil(textSize.height), imageHeight): ceil(textSize.height) + imageHeight) + innerPadding + actionbar + textHeight + (full ? CGFloat(10) : CGFloat(0))
-//            estimatedHeight = totalHeight
-//        }
-//        return estimatedHeight
-//    }
+            let actionbar = CGFloat(!full && SettingValues.hideButtonActionbar ? 0 : 24)
+
+            var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
+            let thumbheight = (SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50))  - (SettingValues.postViewMode == .COMPACT ? 15 : 0)
+            let textHeight = (!hasText || !full) ? CGFloat(0) : CGFloat((content?.textHeight)!)
+
+            if(thumb){
+                imageHeight = thumbheight
+                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between top and thumbnail
+                innerPadding += 18 - (SettingValues.postViewMode == .COMPACT ? 4 : 0) //between label and bottom box
+                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
+            } else if(big){
+                if (SettingValues.postViewMode == .CENTER || full) {
+                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 16) //between label
+                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between banner and box
+                } else {
+                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between banner and label
+                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between label and box
+                }
+
+                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
+            } else {
+                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8)
+                innerPadding += 5 //between label and body
+                innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between body and box
+                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
+            }
+
+            var estimatedUsableWidth = aspectWidth - paddingLeft - paddingRight
+            if(thumb){
+                estimatedUsableWidth -= thumbheight //is the same as the width
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between thumb and label
+            } else {
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //12 padding on either side
+            }
+
+            let framesetter = CTFramesetterCreateWithAttributedString(title.attributedText)
+            let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude), nil)
+
+            let totalHeight = paddingTop + paddingBottom + (thumb ? max(ceil(textSize.height), imageHeight): ceil(textSize.height) + imageHeight) + innerPadding + actionbar + textHeight + (full ? CGFloat(10) : CGFloat(0))
+            estimatedHeight = totalHeight
+        }
+        return estimatedHeight
+    }
 
     func getInfo(locationInTextView: CGPoint) -> (URL, CGRect)? {
         if let attr = textView.link(at: locationInTextView) {
