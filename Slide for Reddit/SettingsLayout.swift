@@ -119,9 +119,6 @@ class SettingsLayout: UITableViewController {
     }
     
     func doLink(){
-        link.contentView.removeFromSuperview()
-        // TODO: Initialize the proper subclass rather than linkcellview
-        link = LinkCellView.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 500))
         
         let fakesub = RSubmission.init()
         let calendar: NSCalendar! = NSCalendar(calendarIdentifier: NSCalendar.Identifier.gregorian)
@@ -163,6 +160,10 @@ class SettingsLayout: UITableViewController {
         fakesub.height = 288
         fakesub.width = 636
         fakesub.vote = false
+
+        link.contentView.removeFromSuperview()
+        link = getLinkCellViewForSubmission(fakesub)
+        link.frame = CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 500)
         
         link.aspectWidth = self.tableView.frame.size.width
         self.link.configure(submission: fakesub, parent: MediaViewController(), nav: nil, baseSub: "all", test: true)
@@ -176,6 +177,88 @@ class SettingsLayout: UITableViewController {
         link.contentView.edgeAnchors == linkCell.contentView.edgeAnchors
 //        linkCell.frame = CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: link.estimateHeight(false, true))
     }
+
+    func getLinkCellViewForSubmission(_ submission: RSubmission) -> LinkCellView {
+        var target = CurrentType.none
+
+        var thumb = submission.thumbnail
+        var big = submission.banner
+        let height = submission.height
+
+        var type = ContentType.getContentType(baseUrl: submission.url)
+        if (submission.isSelf) {
+            type = .SELF
+        }
+
+        if (SettingValues.bannerHidden) {
+            big = false
+            thumb = true
+        }
+
+        let fullImage = ContentType.fullImage(t: type)
+
+        if (!fullImage && height < 50) {
+            big = false
+            thumb = true
+        }
+
+        if (type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big) {
+            big = false
+            thumb = false
+        }
+
+        if (height < 50) {
+            thumb = true
+            big = false
+        }
+
+        if (type == ContentType.CType.SELF && SettingValues.hideImageSelftext
+            || SettingValues.noImages && submission.isSelf) {
+            big = false
+            thumb = false
+        }
+
+        if (big || !submission.thumbnail) {
+            thumb = false
+        }
+
+
+        if (!big && !thumb && submission.type != .SELF && submission.type != .NONE) { //If a submission has a link but no images, still show the web thumbnail
+            thumb = true
+        }
+
+//        if (submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && (sub == "all" || sub == "frontpage" || sub.contains("/m/") || sub.contains("+") || sub == "popular"))) {
+//            big = false
+//            thumb = true
+//        }
+
+        if (SettingValues.noImages) {
+            big = false
+            thumb = false
+        }
+        if (thumb && type == .SELF) {
+            thumb = false
+        }
+
+        if (thumb && !big) {
+            target = .thumb
+        } else if (big) {
+            target = .banner
+        } else {
+            target = .text
+        }
+
+        var cell: LinkCellView!
+        if (target == .thumb) {
+            cell = ThumbnailLinkCellView()
+        } else if (target == .banner) {
+            cell = BannerLinkCellView()
+        } else {
+            cell = TextLinkCellView()
+        }
+        return cell
+    }
+
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let label : UILabel = UILabel()
         label.textColor = ColorUtil.baseAccent
