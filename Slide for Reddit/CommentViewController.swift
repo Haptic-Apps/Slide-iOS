@@ -784,26 +784,29 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         if (hasSubmission && self.view.frame.size.width != 0 && !hasDone) {
-            // TODO: Get the right kind of LinkCellView derivative
-            headerCell = submission!.getLinkView()
-            headerCell?.del = self
-            self.headerCell?.parentViewController = self
             hasDone = true
-            headerCell?.aspectWidth = self.tableView.bounds.size.width
-            headerCell?.configure(submission: submission!, parent: self, nav: self.navigationController, baseSub: submission!.subreddit)
-            headerCell?.showBody(width: self.view.frame.size.width)
-            self.tableView.tableHeaderView = UIView(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.width, height: 0.01))
-            if let tableHeaderView = self.headerCell {
-                var frame = CGRect.zero
-                frame.size.width = self.tableView.bounds.size.width
-                frame.size.height = tableHeaderView.estimateHeight(true)
-                if self.tableView.tableHeaderView == nil || !frame.equalTo(tableHeaderView.frame) {
-                    tableHeaderView.frame = frame
-                    tableHeaderView.layoutIfNeeded()
-                    let view = UIView(frame: tableHeaderView.frame)
-                    view.addSubview(tableHeaderView)
-                    self.tableView.tableHeaderView = view
-                }
+
+            headerCell = BannerLinkCellView()
+
+            guard let headerCell = headerCell else {
+                return
+            }
+            headerCell.del = self
+            headerCell.parentViewController = self
+            headerCell.aspectWidth = self.tableView.bounds.size.width
+            headerCell.configure(submission: submission!, parent: self, nav: self.navigationController, baseSub: submission!.subreddit)
+            headerCell.showBody(width: self.view.frame.size.width)
+
+            // TODO: Should we force banner image to have square corners?
+            //headerCell.bannerImage.layer.cornerRadius = 0
+
+            let frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: headerCell.estimateHeight(true))
+            if self.tableView.tableHeaderView == nil || !frame.equalTo(headerCell.contentView.frame) {
+                headerCell.contentView.frame = frame
+                headerCell.contentView.layoutIfNeeded()
+                let view = UIView(frame: headerCell.contentView.frame)
+                view.addSubview(headerCell.contentView)
+                self.tableView.tableHeaderView = view
             }
 
         }
