@@ -217,9 +217,9 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        var xstart = (parent is AlbumViewController) ? (5 + (UIApplication.shared.statusBarView?.frame.size.height ?? 20) + 56) : 0
-        self.scrollView = UIScrollView.init(frame: CGRect.init(x: 0, y: xstart, width: self.view.frame.size.width, height: self.view.frame.size.height - xstart))
-        self.scrollView.contentSize = CGSize.init(width: self.view.frame.width, height: self.view.frame.height)
+        var xstart = (parent is AlbumViewController) ? CGFloat(61) : 0
+        self.scrollView = UIScrollView.init(frame: CGRect.init(x: 0, y: xstart, width: self.view.frame.size.width, height: self.view.frame.size.height - (xstart * 2) + 8))
+        self.scrollView.contentSize = CGSize.init(width: self.view.frame.width, height: self.view.frame.height - (xstart * 2) + 8)
         self.scrollView.delegate = self
         self.scrollView.minimumZoomScale = 1
         self.scrollView.maximumZoomScale = 6.0
@@ -274,7 +274,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
 
     func showTitle(_ sender: AnyObject) {
         let alertController = UIAlertController.init(title: "Caption", message: nil, preferredStyle: .alert)
-        alertController.addTextViewer(text: .text(title!))
+        alertController.addTextViewer(text: .text(text!))
         alertController.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: nil))
         present(alertController, animated: true, completion: nil)
     }

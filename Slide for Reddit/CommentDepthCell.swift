@@ -908,16 +908,16 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         if(depth == 1){
             marginTop = 8
         }
+        let font = FontGenerator.fontOfSize(size: 12, submission: false)
 
         var attr = NSMutableAttributedString()
         if (more.children.isEmpty) {
-            attr = NSMutableAttributedString(string: "Continue this thread")
+            attr = NSMutableAttributedString(string: "Continue this thread", attributes: [NSFontAttributeName: font])
         } else {
-            attr = NSMutableAttributedString(string: "Load \(more.count) more")
+            attr = NSMutableAttributedString(string: "Load \(more.count) more", attributes: [NSFontAttributeName: font])
         }
-        let font = FontGenerator.fontOfSize(size: 16, submission: false)
         let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: .white)
-        title.attributedText = attr2
+        title.setText(attr2)
         updateDepthConstraints()
     }
 

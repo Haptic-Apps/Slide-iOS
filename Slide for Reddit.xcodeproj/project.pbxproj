@@ -606,7 +606,6 @@
 		BE8FC9FB1E0C46090063B8EF = {
 			isa = PBXGroup;
 			children = (
-				B776BFA91C6E10E78077FCE0 /* AutoCache.swift */,
 				BE77470720367D98006C72E8 /* Credits.plist */,
 				298777278D5F06761FD8FF4B /* Frameworks */,
 				CA62E6258F89232082F52D05 /* Pods */,
@@ -634,6 +633,7 @@
 				BE7439F41E2162A8008BB63B /* AccountController.swift */,
 				BEDDA9921E19AEF2003CD6C3 /* AdDictionary.swift */,
 				BEF6F5351E19B4A2002B03B6 /* adsources.txt */,
+				B776BFA91C6E10E78077FCE0 /* AutoCache.swift */,
 				BE3E5C0F1E16BA1300749C0C /* Album */,
 				BE8FCA071E0C46090063B8EF /* AppDelegate.swift */,
 				BE8FCA0E1E0C46090063B8EF /* Assets.xcassets */,
