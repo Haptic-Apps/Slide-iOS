@@ -162,7 +162,7 @@ class SettingsLayout: UITableViewController {
         fakesub.vote = false
 
         link.contentView.removeFromSuperview()
-        link = getLinkCellViewForSubmission(fakesub)
+        link = fakesub.getLinkView()
         link.frame = CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 500)
         
         link.aspectWidth = self.tableView.frame.size.width

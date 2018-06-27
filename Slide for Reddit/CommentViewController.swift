@@ -526,7 +526,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                 if let tableHeaderView = self.headerCell {
                                     var frame = CGRect.zero
                                     frame.size.width = self.tableView.bounds.size.width
-                                    frame.size.height = UITableViewAutomaticDimension //tableHeaderView.estimateHeight(true)
+                                    frame.size.height = tableHeaderView.estimateHeight(true)
                                     if self.tableView.tableHeaderView == nil || !frame.equalTo(tableHeaderView.frame) {
                                         tableHeaderView.frame = frame
                                         tableHeaderView.layoutIfNeeded()
@@ -784,7 +784,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         if (hasSubmission && self.view.frame.size.width != 0 && !hasDone) {
-            headerCell = LinkCellView()
+            // TODO: Get the right kind of LinkCellView derivative
+            headerCell = submission!.getLinkView()
             headerCell?.del = self
             self.headerCell?.parentViewController = self
             hasDone = true
@@ -795,7 +796,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             if let tableHeaderView = self.headerCell {
                 var frame = CGRect.zero
                 frame.size.width = self.tableView.bounds.size.width
-                frame.size.height = UITableViewAutomaticDimension // tableHeaderView.estimateHeight(true)
+                frame.size.height = tableHeaderView.estimateHeight(true)
                 if self.tableView.tableHeaderView == nil || !frame.equalTo(tableHeaderView.frame) {
                     tableHeaderView.frame = frame
                     tableHeaderView.layoutIfNeeded()
@@ -1780,7 +1781,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         self.headerCell?.showBody(width: self.view.frame.size.width)
         var frame = self.tableView.tableHeaderView!.frame
         frame.size.width = self.view.frame.size.width
-        frame.size.height = UITableViewAutomaticDimension //self.headerCell!.estimateHeight(true, true)
+        frame.size.height = self.headerCell!.estimateHeight(true, true)
         self.tableView.tableHeaderView?.frame = frame
         self.headerCell!.frame = frame
         self.headerCell?.updateConstraints()
