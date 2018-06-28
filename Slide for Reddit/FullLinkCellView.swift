@@ -74,7 +74,7 @@ final class FullLinkCellView: LinkCellView {
         super.layoutForContent()
         
         constraintsForContent = batch {
-            bannerImage.heightAnchor == bannerImage.widthAnchor / aspect
+            bannerImage.heightAnchor <= bannerImage.widthAnchor / aspect
         }
     }
     
