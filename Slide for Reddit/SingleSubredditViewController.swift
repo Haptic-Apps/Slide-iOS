@@ -567,7 +567,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             UIView.animate(withDuration: 0.15, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
                 SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
             }, completion: { finished in
-                SingleSubredditViewController.fab!.removeFromSuperview()
+                SingleSubredditViewController.fab?.removeFromSuperview()
                 SingleSubredditViewController.fab = nil
                 self.addNewFab()
             })
