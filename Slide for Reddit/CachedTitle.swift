@@ -169,7 +169,7 @@ class CachedTitle {
         if (submission.isCrosspost && !full) {
             infoString.append(NSAttributedString.init(string: "\n\n"))
 
-            let endString = NSMutableAttributedString(string: "Crossposted to ", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: colorF])
+            let endString = NSMutableAttributedString(string: "Crossposted from ", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: colorF])
             let by = NSMutableAttributedString(string: " by ", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: colorF])
 
             let boldString = NSMutableAttributedString(string: "r/\(submission.crosspostSubreddit)", attributes: attrs)

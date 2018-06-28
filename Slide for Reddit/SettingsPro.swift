@@ -94,14 +94,14 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.themes.backgroundColor = .black
         self.themes.detailTextLabel?.textColor = .white
         self.themes.textLabel?.textColor = .white
-        self.themes.imageView?.image = UIImage.init(named: "colors")?.toolbarIcon().withColor(tintColor: .white)
+        self.themes.imageView?.image = UIImage.init(named: "colors")?.toolbarIcon().getCopy(withColor: .white)
         self.themes.imageView?.tintColor = .white
         
         self.restore.textLabel?.text = "Already a supporter?"
         self.restore.accessoryType = .disclosureIndicator
         self.restore.backgroundColor = ColorUtil.foregroundColor
         self.restore.textLabel?.textColor = GMColor.lightGreen300Color()
-        self.restore.imageView?.image = UIImage.init(named: "restore")?.toolbarIcon().withColor(tintColor: GMColor.lightGreen300Color())
+        self.restore.imageView?.image = UIImage.init(named: "restore")?.toolbarIcon().getCopy(withColor: GMColor.lightGreen300Color())
         self.restore.imageView?.tintColor = GMColor.lightGreen300Color()
         self.restore.detailTextLabel?.textColor = GMColor.lightGreen300Color()
         self.restore.detailTextLabel?.text = "Restore your purchase!"

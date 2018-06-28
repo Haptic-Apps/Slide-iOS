@@ -52,16 +52,19 @@ class ColorUtil {
                 theme = SettingValues.nightTheme
                 CachedTitle.titles.removeAll()
                 LinkCellImageCache.initialize()
+                SingleSubredditViewController.cellVersion += 1
                 toReturn = true
             } else if(!shouldBeNight() && theme != defaultTheme){
                 theme = defaultTheme
                 CachedTitle.titles.removeAll()
                 LinkCellImageCache.initialize()
+                SingleSubredditViewController.cellVersion += 1
                 toReturn = true
             } else if(defaultTheme == SettingValues.nightTheme && theme != defaultTheme){
                 theme = defaultTheme
                 CachedTitle.titles.removeAll()
                 LinkCellImageCache.initialize()
+                SingleSubredditViewController.cellVersion += 1
                 toReturn = true
             }
         }
@@ -86,7 +89,11 @@ class ColorUtil {
 
     static var foregroundColor = UIColor.white
     static var backgroundColor = UIColor.white
-    static var fontColor = UIColor.black
+    static var fontColor = UIColor.black {
+        didSet {
+            LinkCellImageCache.initialize()
+        }
+    }
 
     public static func setBackgroundToolbar(toolbar: UINavigationBar?) {
         if (toolbar != nil) {

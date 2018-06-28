@@ -74,77 +74,90 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
             var thumb = submission.thumbnail
             var big = submission.banner
-
-            var type = ContentType.getContentType(baseUrl: submission.url)
+            
+            var submissionHeight = submission.height
+            
+            var type =  ContentType.getContentType(baseUrl: submission.url)
             if (submission.isSelf) {
                 type = .SELF
             }
-
+            
             if (SettingValues.postImageMode == .THUMBNAIL) {
                 big = false
                 thumb = true
             }
-
+            
             let fullImage = ContentType.fullImage(t: type)
-            var submissionHeight = submission.height
-
+            
             if (!fullImage && submissionHeight < 50) {
                 big = false
                 thumb = true
-            } else if (big && (SettingValues.postImageMode == .CROPPED_IMAGE)) {
+            } else if (big && (( SettingValues.postImageMode == .CROPPED_IMAGE))) {
                 submissionHeight = 200
             } else if (big) {
-                let ratio = Double(submissionHeight) / Double(submission.width)
-                let width = Double(itemWidth);
-
-                let h = width * ratio
+                let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: submission.width, viewWidth: itemWidth)
                 if (h == 0) {
                     submissionHeight = 200
                 } else {
-                    submissionHeight = Int(h)
+                    submissionHeight = h
                 }
             }
-
-
+            
             if (type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big) {
                 big = false
                 thumb = false
             }
-
+            
             if (submissionHeight < 50) {
                 thumb = true
                 big = false
             }
-
-
+            
+            let shouldShowLq = SettingValues.dataSavingEnabled && submission.lQ && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi())
+            if (type == ContentType.CType.SELF && SettingValues.hideImageSelftext
+                || SettingValues.noImages && submission.isSelf) {
+                big = false
+                thumb = false
+            }
+            
             if (big || !submission.thumbnail) {
                 thumb = false
             }
-
-
-            if (!big && !thumb && submission.type != .SELF && submission.type != .NONE) { //If a submission has a link but no images, still show the web thumbnail
-                thumb = true
-            }
-
-            if (submission.nsfw && !SettingValues.nsfwPreviews) {
+            
+            if (submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && (sub == "all" || sub == "frontpage" || sub.contains("/m/") || sub.contains("+") || sub == "popular"))) {
                 big = false
                 thumb = true
             }
-
-            if (submission.nsfw && SettingValues.hideNSFWCollection && (sub == "all" || sub == "frontpage" || sub == "popular")) {
-                big = false
-                thumb = true
-            }
-
-
+            
             if (SettingValues.noImages) {
                 big = false
                 thumb = false
             }
+            
             if (thumb && type == .SELF) {
                 thumb = false
             }
-
+            
+            if (!big && !thumb && submission.type != .SELF && submission.type != .NONE) { //If a submission has a link but no images, still show the web thumbnail
+                thumb = true
+            }
+            
+            if (big) {
+                let imageSize = CGSize.init(width: submission.width, height: ((SettingValues.postImageMode == .CROPPED_IMAGE)) ? 200 : submission.height)
+                
+                var aspect = imageSize.width / imageSize.height
+                if (aspect == 0 || aspect > 10000 || aspect.isNaN) {
+                    aspect = 1
+                }
+                if ((SettingValues.postImageMode == .CROPPED_IMAGE)) {
+                    aspect = width / 200
+                    if (aspect == 0 || aspect > 10000 || aspect.isNaN) {
+                        aspect = 1
+                    }
+                    
+                    submissionHeight = 200
+                }
+            }
             var paddingTop = CGFloat(0)
             var paddingBottom = CGFloat(2)
             var paddingLeft = CGFloat(0)
@@ -165,7 +178,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
             if (thumb) {
                 imageHeight = thumbheight
-                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between top and thumbnail
+                innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between top and thumbnail
                 innerPadding += 18 - (SettingValues.postViewMode == .COMPACT ? 4 : 0) //between label and bottom box
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
             } else if (big) {
@@ -198,12 +211,16 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude), nil)
 
             let totalHeight = paddingTop + paddingBottom + (thumb ? max(ceil(textSize.height), imageHeight) : ceil(textSize.height) + imageHeight) + innerPadding + actionbar + textHeight
-
             return CGSize(width: itemWidth, height: totalHeight)
         }
         return CGSize(width: itemWidth, height: 0)
     }
 
+    func getHeightFromAspectRatio(imageHeight: Int, imageWidth: Int, viewWidth: CGFloat) -> Int {
+        let ratio = Double(imageHeight) / Double(imageWidth)
+        let width = Double(viewWidth)
+        return Int(width * ratio)
+    }
 
     var parentController: MainViewController?
     var accentChosen: UIColor?
@@ -324,7 +341,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         let currentY = scrollView.contentOffset.y
         if(!SettingValues.pinToolbar){
             if (currentY > lastYUsed && currentY > 60) {
-                if (navigationController != nil && !isHiding && !(navigationController!.isToolbarHidden)) {
+                if (navigationController != nil && !isHiding && !(navigationController!.isToolbarHidden) && !(scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height))) {
                     hideUI(inHeader: true)
                 }
             } else if ((currentY < lastYUsed + 20) && !isHiding && navigationController != nil && (navigationController!.isToolbarHidden)) {
@@ -439,8 +456,10 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        tableView.reloadData()
-        setupFab()
+        if(self.viewIfLoaded?.window != nil ){
+            tableView.reloadData()
+            setupFab()
+        }
     }
 
     var links: [RSubmission] = []
@@ -547,7 +566,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             UIView.animate(withDuration: 0.15, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
                 SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
             }, completion: { finished in
-                SingleSubredditViewController.fab!.removeFromSuperview()
+                SingleSubredditViewController.fab?.removeFromSuperview()
                 SingleSubredditViewController.fab = nil
                 self.addNewFab()
             })
@@ -633,6 +652,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
 
     static var firstPresented = true
+    static var cellVersion = 0
 
     var headerView = UIView()
     var more = UIButton()
@@ -648,9 +668,10 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         self.automaticallyAdjustsScrollViewInsets = false
 
 
-        self.tableView.register(BannerLinkCellView.classForCoder(), forCellWithReuseIdentifier: "banner")
-        self.tableView.register(ThumbnailLinkCellView.classForCoder(), forCellWithReuseIdentifier: "thumb")
-        self.tableView.register(TextLinkCellView.classForCoder(), forCellWithReuseIdentifier: "text")
+        // TODO: Can just use .self instead of .classForCoder()
+        self.tableView.register(BannerLinkCellView.classForCoder(), forCellWithReuseIdentifier: "banner\(SingleSubredditViewController.cellVersion)")
+        self.tableView.register(ThumbnailLinkCellView.classForCoder(), forCellWithReuseIdentifier: "thumb\(SingleSubredditViewController.cellVersion)")
+        self.tableView.register(TextLinkCellView.classForCoder(), forCellWithReuseIdentifier: "text\(SingleSubredditViewController.cellVersion)")
 
         var top = 20
         if #available(iOS 11.0, *) {
@@ -661,7 +682,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
         top = top + ((SettingValues.viewType && !single) ? 52 : 0)
 
-        self.tableView.contentInset = UIEdgeInsets.init(top: CGFloat(top), left: 0, bottom: 0, right: 0)
+        self.tableView.contentInset = UIEdgeInsets.init(top: CGFloat(top), left: 0, bottom: 65, right: 0)
 
         session = (UIApplication.shared.delegate as! AppDelegate).session
 
@@ -808,7 +829,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             Subscriptions.unsubscribe(sub, session: session!)
             subChanged = false
             BannerUtil.makeBanner(text: "Unsubscribed", color: ColorUtil.accentColorForSub(sub: sub), seconds: 3, context: self, top: true)
-            subb.setImage(UIImage.init(named: "addcircle")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
+            subb.setImage(UIImage.init(named: "addcircle")?.getCopy(withColor: ColorUtil.fontColor), for: UIControlState.normal)
         } else {
             let alrController = UIAlertController.init(title: "Subscribe to \(sub)", message: nil, preferredStyle: .actionSheet)
             if (AccountController.isLoggedIn) {
@@ -816,7 +837,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                     Subscriptions.subscribe(self.sub, true, session: self.session!)
                     self.subChanged = true
                     BannerUtil.makeBanner(text: "Subscribed", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 3, context: self, top: true)
-                    self.subb.setImage(UIImage.init(named: "subbed")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
+                    self.subb.setImage(UIImage.init(named: "subbed")?.getCopy(withColor: ColorUtil.fontColor), for: UIControlState.normal)
                 })
                 alrController.addAction(somethingAction)
             }
@@ -825,7 +846,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                 Subscriptions.subscribe(self.sub, false, session: self.session!)
                 self.subChanged = true
                 BannerUtil.makeBanner(text: "Added to subreddit list", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 3, context: self, top: true)
-                self.subb.setImage(UIImage.init(named: "subbed")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
+                self.subb.setImage(UIImage.init(named: "subbed")?.getCopy(withColor: ColorUtil.fontColor), for: UIControlState.normal)
             })
             alrController.addAction(somethingAction)
 
@@ -1369,27 +1390,29 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             target = .text
         }
 
-        var cell: LinkCellView?
+        var cell: LinkCellView!
         if (target == .thumb) {
-            cell = tableView.dequeueReusableCell(withReuseIdentifier: "thumb", for: indexPath) as! ThumbnailLinkCellView
+            cell = tableView.dequeueReusableCell(withReuseIdentifier: "thumb\(SingleSubredditViewController.cellVersion)", for: indexPath) as! ThumbnailLinkCellView
         } else if (target == .banner) {
-            cell = tableView.dequeueReusableCell(withReuseIdentifier: "banner", for: indexPath) as! BannerLinkCellView
+            cell = tableView.dequeueReusableCell(withReuseIdentifier: "banner\(SingleSubredditViewController.cellVersion)", for: indexPath) as! BannerLinkCellView
         } else {
-            cell = tableView.dequeueReusableCell(withReuseIdentifier: "text", for: indexPath) as! TextLinkCellView
+            cell = tableView.dequeueReusableCell(withReuseIdentifier: "text\(SingleSubredditViewController.cellVersion)", for: indexPath) as! TextLinkCellView
         }
 
-        cell?.preservesSuperviewLayoutMargins = false
-        cell?.del = self
+        cell.preservesSuperviewLayoutMargins = false
+        cell.del = self
+        cell.layer.shouldRasterize = true
+        cell.layer.rasterizationScale = UIScreen.main.scale
+
+//        DispatchQueue.main.async {
+            cell.configure(submission: submission, parent: self, nav: self.navigationController, baseSub: sub)
+//        }
+
         if indexPath.row == self.links.count - 3 && !loading && !nomore {
             self.loadMore()
         }
 
-        (cell)!.setLink(submission: submission, parent: self, nav: self.navigationController, baseSub: sub)
-
-        cell?.layer.shouldRasterize = true
-        cell?.layer.rasterizationScale = UIScreen.main.scale
-
-        return cell!
+        return cell
 
     }
 
@@ -1421,7 +1444,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         }
         actionSheetController.addAction(cancelActionButton)
 
-        let selected = UIImage.init(named: "selected")!.imageResize(sizeChange: CGSize.init(width: 20, height: 20)).withColor(tintColor: .blue)
+        let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
 
         for link in LinkSortType.cases {
             let saveActionButton: UIAlertAction = UIAlertAction(title: link.description, style: .default) { action -> Void in
@@ -1454,7 +1477,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             }
             actionSheetController.addAction(cancelActionButton)
 
-            let selected = UIImage.init(named: "selected")!.imageResize(sizeChange: CGSize.init(width: 20, height: 20)).withColor(tintColor: .blue)
+            let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
 
             for t in TimeFilterWithin.cases {
                 let saveActionButton: UIAlertAction = UIAlertAction(title: t.param, style: .default) { action -> Void in
@@ -1514,7 +1537,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                 if (indicator == nil) {
                     indicator = MDCActivityIndicator.init(frame: CGRect.init(x: CGFloat(0), y: CGFloat(0), width: CGFloat(80), height: CGFloat(80)))
                     indicator?.strokeWidth = 5
-                    indicator?.radius = 20
+                    indicator?.radius = 15
                     indicator?.indicatorMode = .indeterminate
                     indicator?.cycleColors = [ColorUtil.getColorForSub(sub: sub), ColorUtil.accentColorForSub(sub: sub)]
                     let center = CGPoint.init(x: UIScreen.main.bounds.width / 2, y: 50 + UIScreen.main.bounds.height / 2)
@@ -1899,5 +1922,92 @@ extension UIApplication {
 
     var statusBarView: UIView? {
         return value(forKey: "statusBar") as? UIView
+    }
+}
+
+extension RSubmission {
+    func getLinkView() -> LinkCellView {
+        var target = CurrentType.none
+        let submission = self
+
+        var thumb = submission.thumbnail
+        var big = submission.banner
+        let height = submission.height
+
+        var type = ContentType.getContentType(baseUrl: submission.url)
+        if (submission.isSelf) {
+            type = .SELF
+        }
+
+//        if (SettingValues.bannerHidden) {
+//            big = false
+//            thumb = true
+//        }
+
+        let fullImage = ContentType.fullImage(t: type)
+
+        if (!fullImage && height < 50) {
+            big = false
+            thumb = true
+        }
+
+        if (type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big) {
+            big = false
+            thumb = false
+        }
+
+        if (height < 50) {
+            thumb = true
+            big = false
+        }
+
+        if (type == ContentType.CType.SELF && SettingValues.hideImageSelftext
+            || SettingValues.noImages && submission.isSelf) {
+            big = false
+            thumb = false
+        }
+
+        if (big || !submission.thumbnail) {
+            thumb = false
+        }
+
+
+        if (!big && !thumb && submission.type != .SELF && submission.type != .NONE) { //If a submission has a link but no images, still show the web thumbnail
+            thumb = true
+        }
+
+        let sub = submission.subreddit
+        if (submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && (sub == "all" || sub == "frontpage" || sub.contains("/m/") || sub.contains("+") || sub == "popular"))) {
+            big = false
+            thumb = true
+        }
+
+        if (SettingValues.noImages) {
+            big = false
+            thumb = false
+        }
+        if (thumb && type == .SELF) {
+            thumb = false
+        }
+
+        if (thumb && !big) {
+            target = .thumb
+        } else if (big) {
+            target = .banner
+        } else {
+            target = .text
+        }
+
+        var cell: LinkCellView!
+        if (target == .thumb) {
+            cell = ThumbnailLinkCellView()
+        } else if (target == .banner) {
+            cell = BannerLinkCellView()
+        } else {
+            cell = TextLinkCellView()
+        }
+
+        return cell
+
     }
 }

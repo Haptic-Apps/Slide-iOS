@@ -1,6 +1,7 @@
 PODS:
   - ActionSheetPicker-3.0 (2.2.0)
   - Alamofire (4.7.2)
+  - Anchorage (4.2.4)
   - BadgeSwift (5.0.1)
   - BiometricAuthentication (2.0)
   - LicensesViewController (0.6.5)
@@ -79,6 +80,7 @@ PODS:
   - Starscream (3.0.5)
   - SwiftSpreadsheet (1.2.0)
   - SwiftyJSON (4.1.0)
+  - Then (2.3.0)
   - TTTAttributedLabel (2.0.0)
   - UZTextView (1.0.8)
   - XLActionController (4.0.1):
@@ -88,6 +90,7 @@ PODS:
 DEPENDENCIES:
   - ActionSheetPicker-3.0 (from `https://github.com/ccrama/ActionSheetPicker-3.0`)
   - Alamofire (~> 4.3)
+  - Anchorage
   - BadgeSwift (~> 5.0)
   - BiometricAuthentication
   - LicensesViewController (~> 0.6.5)
@@ -111,6 +114,7 @@ DEPENDENCIES:
   - Starscream (~> 3.0.2)
   - SwiftSpreadsheet
   - SwiftyJSON
+  - Then
   - TTTAttributedLabel
   - UZTextView (from `https://github.com/ccrama/UZTextView`)
   - XLActionController (from `https://github.com/ccrama/XLActionController`)
@@ -152,6 +156,7 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   ActionSheetPicker-3.0: d11a4c12c6aaf704b8a3f56d179198c99f3e41e6
   Alamofire: e4fa87002c137ba2d8d634d2c51fabcda0d5c223
+  Anchorage: f855157310859280c706cc0b9c9281c21702f515
   BadgeSwift: 3defa56f504bfb46f2300122c4a565ec9e405c1e
   BiometricAuthentication: fce6c7537fba0192a395834657e75ccb4d89d9f0
   LicensesViewController: 1f2982b1bab8402d3f88e23197957038e8abb907
@@ -171,10 +176,11 @@ SPEC CHECKSUMS:
   Starscream: faf918b2f2eff7d5dd21180646bf015a669673bd
   SwiftSpreadsheet: fa241abcd0c2e0bdfa641494413c3613d67efbca
   SwiftyJSON: c29297daf073d2aa016295d5809cdd68045c39b3
+  Then: ee21c97b85ff6062b9b0080c9abb1eea46743345
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   UZTextView: d8d45a8459b0de6f2c393458a05c65352f89e00a
   XLActionController: 007868251c0eed70d649d06c1625259b73b3a600
 
-PODFILE CHECKSUM: 504df8e7b826959ebeac82a750cdb3c998bd3392
+PODFILE CHECKSUM: 0df019e6298ca93cefa9da4005324c4f56783cef
 
 COCOAPODS: 1.4.0

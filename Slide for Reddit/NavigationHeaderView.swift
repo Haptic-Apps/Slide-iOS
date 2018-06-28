@@ -70,19 +70,19 @@ class NavigationHeaderView: UIView {
 
         self.account = UIButton.init(type: .custom)
         account.imageView?.contentMode = UIViewContentMode.scaleAspectFit
-        account.setImage(UIImage.init(named: "profile")!.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
+        account.setImage(UIImage.init(named: "profile")!.getCopy(withSize: .square(size: 30)), for: UIControlState.normal)
         account.addTarget(self, action: #selector(self.switchAccounts(_:)), for: UIControlEvents.touchUpInside)
         account.frame = CGRect.init(x: 0, y: 0, width: 60, height: 90)
 
         self.more = UIButton.init(type: .custom)
         more.imageView?.contentMode = UIViewContentMode.scaleAspectFit
-        more.setImage(UIImage.init(named: "moreh")!.imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
+        more.setImage(UIImage.init(named: "moreh")!.getCopy(withSize: .square(size: 30)), for: UIControlState.normal)
         more.addTarget(self, action: #selector(self.showMore(_:)), for: UIControlEvents.touchUpInside)
         more.frame = CGRect.init(x: 0, y: 0, width: 60, height: 90)
 
         self.inbox = UIButton.init(type: .custom)
         inbox.imageView?.contentMode = UIViewContentMode.scaleAspectFit
-        inbox.setImage(UIImage.init(named: "inbox")!.withColor(tintColor: .white).imageResize(sizeChange: CGSize.init(width: 30, height: 30)), for: UIControlState.normal)
+        inbox.setImage(UIImage.init(named: "inbox")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControlState.normal)
         inbox.addTarget(self, action: #selector(self.mod(_:)), for: UIControlEvents.touchUpInside)
         inbox.frame = CGRect.init(x: 0, y: 0, width: 60, height: 90)
 

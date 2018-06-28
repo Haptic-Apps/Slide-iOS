@@ -36,7 +36,7 @@ class FontGenerator {
 
     }
     
-    enum Font: String{
+    enum Font: String {
         case HELVETICA = "helvetica"
         case ROBOTOCONDENSED_REGULAR = "rcreg"
         case ROBOTOCONDENSED_BOLD = "rcbold"

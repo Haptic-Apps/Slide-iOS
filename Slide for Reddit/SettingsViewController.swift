@@ -67,7 +67,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         super.loadView()
         doCells()
         if(SettingValues.isPro){
-            let menuB = UIBarButtonItem(image: UIImage.init(named: "support")?.toolbarIcon().withColor(tintColor: GMColor.red500Color()), style: .plain, target: self, action: #selector(SettingsViewController.didPro(_:)))
+            let menuB = UIBarButtonItem(image: UIImage.init(named: "support")?.toolbarIcon().getCopy(withColor: GMColor.red500Color()), style: .plain, target: self, action: #selector(SettingsViewController.didPro(_:)))
             navigationItem.rightBarButtonItem = menuB
         }
     }
@@ -126,7 +126,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         self.goPro.accessoryType = .disclosureIndicator
         self.goPro.backgroundColor = ColorUtil.foregroundColor
         self.goPro.textLabel?.textColor = ColorUtil.fontColor
-        self.goPro.imageView?.image = UIImage.init(named: "support")?.toolbarIcon().withColor(tintColor: GMColor.red500Color())
+        self.goPro.imageView?.image = UIImage.init(named: "support")?.toolbarIcon().getCopy(withColor: GMColor.red500Color())
         self.goPro.imageView?.tintColor = ColorUtil.fontColor
 
         self.clearCell.textLabel?.text = "Clear cache"

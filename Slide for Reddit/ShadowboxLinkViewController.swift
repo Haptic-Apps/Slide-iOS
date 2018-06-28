@@ -206,13 +206,13 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
         toolbar.isUserInteractionEnabled = true
     
         self.comment = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20))
-        comment.image = UIImage.init(named: "comments")?.menuIcon().withColor(tintColor: .white)
+        comment.image = UIImage.init(named: "comments")?.menuIcon().getCopy(withColor: .white)
 
         self.upvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20))
-        upvote.image = UIImage.init(named: "upvote")?.menuIcon().withColor(tintColor: .white)
+        upvote.image = UIImage.init(named: "upvote")?.menuIcon().getCopy(withColor: .white)
 
         self.downvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20))
-        downvote.image = UIImage.init(named: "downvote")?.menuIcon().withColor(tintColor: .white)
+        downvote.image = UIImage.init(named: "downvote")?.menuIcon().getCopy(withColor: .white)
 
         doVoteImages()
         
@@ -252,14 +252,13 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
     }
     
     func doVoteImages(){
-        upvote.image = UIImage.init(named: "upvote")?.menuIcon().withColor(tintColor: .white)
-        downvote.image = UIImage.init(named: "downvote")?.menuIcon().withColor(tintColor: .white)
+        upvote.image = UIImage.init(named: "upvote")?.menuIcon().getCopy(withColor: .white)
+        downvote.image = UIImage.init(named: "downvote")?.menuIcon().getCopy(withColor: .white)
         switch (ActionStates.getVoteDirection(s: submission)) {
         case .down:
-            downvote.image = UIImage.init(named: "downvote")?.withColor(tintColor: ColorUtil.downvoteColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))
-            break
+            downvote.image = UIImage.init(named: "downvote")?.getCopy(withSize: .square(size: 20), withColor: ColorUtil.downvoteColor)
         case .up:
-            upvote.image = UIImage.init(named: "upvote")?.withColor(tintColor: ColorUtil.upvoteColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))
+            upvote.image = UIImage.init(named: "upvote")?.getCopy(withSize: .square(size: 20), withColor: ColorUtil.upvoteColor)
             break
         default:
             break

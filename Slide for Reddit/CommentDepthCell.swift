@@ -112,31 +112,28 @@ class CommentMenuCell: UITableViewCell {
         }
         
         if (comment != nil){
-        if(modShown){
-            mod.isHidden = false
-            if(!comment!.reports.isEmpty){
-                mod.setImage(UIImage.init(named: "mod")?.withColor(tintColor: GMColor.red500Color()).imageResize(sizeChange: CGSize.init(width: 20, height: 20)), for: .normal)
+            if(modShown){
+                mod.isHidden = false
+                if(!comment!.reports.isEmpty){
+                    mod.setImage(UIImage.init(named: "mod")?.getCopy(withSize: .square(size: 20), withColor: GMColor.red500Color()), for: .normal)
+                } else {
+                    mod.setImage(UIImage.init(named: "mod")?.getCopy(withSize: .square(size: 20), withColor: .white), for: .normal)
+                }
             } else {
-                mod.setImage(UIImage.init(named: "mod")?.withColor(tintColor: .white).imageResize(sizeChange: CGSize.init(width: 20, height: 20)), for: .normal)
+                mod.isHidden = true
             }
-        } else {
-            mod.isHidden = true
-        }
-        
-        switch(ActionStates.getVoteDirection(s: comment!)){
-        case .down:
-            downvote.setImage(UIImage.init(named: "downvote")?.withColor(tintColor: ColorUtil.downvoteColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20)), for: .normal)
-            upvote.setImage(UIImage.init(named: "upvote")?.withColor(tintColor: .white).imageResize(sizeChange: CGSize.init(width: 20, height: 20)), for: .normal)
-            break
-        case .up:
-            upvote.setImage(UIImage.init(named: "upvote")?.withColor(tintColor: ColorUtil.upvoteColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20)), for: .normal)
-            downvote.setImage(UIImage.init(named: "downvote")?.withColor(tintColor: .white).imageResize(sizeChange: CGSize.init(width: 20, height: 20)), for: .normal)
-            break
-        case .none:
-            upvote.setImage(UIImage.init(named: "upvote")?.withColor(tintColor: .white).imageResize(sizeChange: CGSize.init(width: 20, height: 20)), for: .normal)
-            downvote.setImage(UIImage.init(named: "downvote")?.withColor(tintColor: .white).imageResize(sizeChange: CGSize.init(width: 20, height: 20)), for: .normal)
-            break
-        }
+
+            switch(ActionStates.getVoteDirection(s: comment!)){
+            case .down:
+                downvote.setImage(UIImage.init(named: "downvote")?.getCopy(withSize: .square(size: 20), withColor: ColorUtil.downvoteColor), for: .normal)
+                upvote.setImage(UIImage.init(named: "upvote")?.getCopy(withSize: .square(size: 20), withColor: .white), for: .normal)
+            case .up:
+                upvote.setImage(UIImage.init(named: "upvote")?.getCopy(withSize: .square(size: 20), withColor: ColorUtil.upvoteColor), for: .normal)
+                downvote.setImage(UIImage.init(named: "downvote")?.getCopy(withSize: .square(size: 20), withColor: .white), for: .normal)
+            case .none:
+                upvote.setImage(UIImage.init(named: "upvote")?.getCopy(withSize: .square(size: 20), withColor: .white), for: .normal)
+                downvote.setImage(UIImage.init(named: "downvote")?.getCopy(withSize: .square(size: 20), withColor: .white), for: .normal)
+            }
         }
 
         let metrics: [String: Int] = ["width": Int(width), "full": Int(self.contentView.frame.size.width)]
@@ -1275,21 +1272,6 @@ extension UIColor {
         let b = fgA * fgB + (1 - fgA) * bgB
 
         return UIColor(red: r, green: g, blue: b, alpha: 1.0)
-    }
-}
-
-extension UIView {
-    func withPadding(padding: UIEdgeInsets) -> UIView {
-        let container = UIView()
-        self.translatesAutoresizingMaskIntoConstraints = false
-        container.addSubview(self)
-        container.addConstraints(NSLayoutConstraint.constraints(
-                withVisualFormat: "|-(\(padding.left))-[view]-(\(padding.right))-|"
-                , options: [], metrics: nil, views: ["view": self]))
-        container.addConstraints(NSLayoutConstraint.constraints(
-                withVisualFormat: "V:|-(\(padding.top)@999)-[view]-(\(padding.bottom)@999)-|",
-                options: [], metrics: nil, views: ["view": self]))
-        return container
     }
 }
 

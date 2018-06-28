@@ -57,8 +57,8 @@ class SearchViewController: ContentListingViewController {
         }
         actionSheetController.addAction(cancelActionButton)
         
-        let selected = UIImage.init(named: "selected")!.imageResize(sizeChange: CGSize.init(width: 20, height: 20)).withColor(tintColor: .blue)
-        
+        let selected = UIImage(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
+
         for t in SearchTimePeriod.cases {
             let saveActionButton: UIAlertAction = UIAlertAction(title: t.path.firstUppercased, style: .default) { action -> Void in
                 (self.baseData as! SearchContributionLoader).time = t
@@ -86,7 +86,7 @@ class SearchViewController: ContentListingViewController {
         }
         actionSheetController.addAction(cancelActionButton)
         
-        let selected = UIImage.init(named: "selected")!.imageResize(sizeChange: CGSize.init(width: 20, height: 20)).withColor(tintColor: .blue)
+        let selected = UIImage(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
         
         for t in SearchSortBy.cases {
             let saveActionButton: UIAlertAction = UIAlertAction(title: t.path.firstUppercased, style: .default) { action -> Void in

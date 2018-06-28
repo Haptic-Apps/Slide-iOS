@@ -34,6 +34,8 @@ target 'Slide for Reddit' do
   pod 'SwiftyJSON'
   pod 'ActionSheetPicker-3.0', :git => 'https://github.com/ccrama/ActionSheetPicker-3.0'
   pod 'RealmSwift'
+  pod 'Anchorage'
+  pod 'Then'
 
   target 'Slide for RedditTests' do
     inherit! :search_paths

@@ -444,7 +444,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
         playbackSlider.isContinuous = true
         playbackSlider.isHidden = true
         playbackSlider.tintColor = ColorUtil.accentColorForSub(sub: "")
-        playbackSlider.setThumbImage(UIImage(named: "circle")?.imageResize(sizeChange: CGSize.init(width: 30, height: 30)).withColor(tintColor: playbackSlider.tintColor), for: .normal)
+        playbackSlider.setThumbImage(UIImage(named: "circle")?.getCopy(withSize: .square(size: 30), withColor: playbackSlider.tintColor), for: .normal)
 
         self.player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.05, preferredTimescale: CMTimeScale(NSEC_PER_SEC)), queue: DispatchQueue.main) { (time) in
             self.updateSlider(time)

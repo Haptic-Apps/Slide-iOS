@@ -9,20 +9,50 @@
 import UIKit
 
 public class LinkCellImageCache {
+
     static var upvote = UIImage()
     static var downvote = UIImage()
     static var save = UIImage()
+
     static var upvoteTinted = UIImage()
     static var downvoteTinted = UIImage()
     static var saveTinted = UIImage()
-    
-    public static func initialize(){
-        LinkCellImageCache.upvote = UIImage.init(named: "upvote")!.menuIcon()
-        LinkCellImageCache.downvote = UIImage.init(named: "downvote")!.menuIcon()
-        LinkCellImageCache.save = UIImage.init(named: "save")!.menuIcon()
-        
-        LinkCellImageCache.upvoteTinted = (UIImage.init(named: "upvote")?.withColor(tintColor: ColorUtil.upvoteColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20)))!
-        LinkCellImageCache.downvoteTinted = (UIImage.init(named: "downvote")?.withColor(tintColor: ColorUtil.downvoteColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20)))!
-        LinkCellImageCache.saveTinted = (UIImage.init(named: "save")?.withColor(tintColor: GMColor.yellow500Color()).imageResize(sizeChange: CGSize.init(width: 20, height: 20)))!
+
+    static var votesIcon = UIImage()
+    static var commentsIcon = UIImage()
+
+    static var reply = UIImage()
+    static var mod = UIImage()
+    static var modTinted = UIImage()
+    static var hide = UIImage()
+    static var edit = UIImage()
+
+    private struct sizes {
+        static let small = CGSize(width: 12, height: 12)
+        static let medium = CGSize(width: 20, height: 20)
     }
+
+    // TODO: Call this whenever the theme changes.
+    public static func initialize(){
+        upvote = UIImage(named: "upvote")!.menuIcon()
+        upvoteTinted = upvote.getCopy(withColor: ColorUtil.upvoteColor)
+
+        downvote = UIImage(named: "downvote")!.menuIcon()
+        downvoteTinted = downvote.getCopy(withColor: ColorUtil.downvoteColor)
+
+        save = UIImage(named: "save")!.menuIcon()
+        saveTinted = save.getCopy(withColor: ColorUtil.upvoteColor)
+
+        votesIcon = UIImage(named: "upvote")!.smallIcon()
+        commentsIcon = UIImage(named: "comments")!.smallIcon()
+
+        reply = UIImage(named: "reply")!.menuIcon()
+        hide = UIImage(named: "hide")!.menuIcon()
+        edit = UIImage(named: "edit")!.menuIcon()
+
+        mod = UIImage(named: "mod")!.menuIcon()
+        modTinted = mod.getCopy(withColor: GMColor.red500Color())
+
+    }
+
 }

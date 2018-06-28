@@ -502,12 +502,12 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                         History.addSeen(s: link)
                         DispatchQueue.main.async(execute: { () -> Void in
                             if (!self.hasSubmission) {
-                                self.headerCell = LinkCellView()
+                                self.headerCell = FullLinkCellView()
                                 self.headerCell?.del = self
                                 self.headerCell?.parentViewController = self
                                 self.hasDone = true
                                 self.headerCell?.aspectWidth = self.tableView.bounds.size.width
-                                self.headerCell?.setLink(submission: self.submission!, parent: self, nav: self.navigationController, baseSub: self.submission!.subreddit)
+                                self.headerCell?.configure(submission: self.submission!, parent: self, nav: self.navigationController, baseSub: self.submission!.subreddit)
                                 self.headerCell?.showBody(width: self.view.frame.size.width)
                                 self.tableView.tableHeaderView = UIView(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.width, height: 0.01))
                                 if let tableHeaderView = self.headerCell {
@@ -680,7 +680,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 print("Cancel")
             }
             actionSheetController.addAction(cancelActionButton)
-            let selected = UIImage.init(named: "selected")!.imageResize(sizeChange: CGSize.init(width: 20, height: 20)).withColor(tintColor: .blue)
+            let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
             
             for c in CommentSort.cases {
                 let saveActionButton: UIAlertAction = UIAlertAction(title: c.description, style: .default) { action -> Void in
@@ -776,25 +776,29 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         if (hasSubmission && self.view.frame.size.width != 0 && !hasDone) {
-            headerCell = LinkCellView()
-            headerCell?.del = self
-            self.headerCell?.parentViewController = self
             hasDone = true
-            headerCell?.aspectWidth = self.tableView.bounds.size.width
-            headerCell?.setLink(submission: submission!, parent: self, nav: self.navigationController, baseSub: submission!.subreddit)
-            headerCell?.showBody(width: self.view.frame.size.width)
-            self.tableView.tableHeaderView = UIView(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.width, height: 0.01))
-            if let tableHeaderView = self.headerCell {
-                var frame = CGRect.zero
-                frame.size.width = self.tableView.bounds.size.width
-                frame.size.height = tableHeaderView.estimateHeight(true)
-                if self.tableView.tableHeaderView == nil || !frame.equalTo(tableHeaderView.frame) {
-                    tableHeaderView.frame = frame
-                    tableHeaderView.layoutIfNeeded()
-                    let view = UIView(frame: tableHeaderView.frame)
-                    view.addSubview(tableHeaderView)
-                    self.tableView.tableHeaderView = view
-                }
+
+            headerCell = FullLinkCellView()
+
+            guard let headerCell = headerCell else {
+                return
+            }
+            headerCell.del = self
+            headerCell.parentViewController = self
+            headerCell.aspectWidth = self.tableView.bounds.size.width
+            headerCell.configure(submission: submission!, parent: self, nav: self.navigationController, baseSub: submission!.subreddit)
+            headerCell.showBody(width: self.view.frame.size.width)
+
+            // TODO: Should we force banner image to have square corners?
+            //headerCell.bannerImage.layer.cornerRadius = 0
+
+            let frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: headerCell.estimateHeight(true))
+            if self.tableView.tableHeaderView == nil || !frame.equalTo(headerCell.contentView.frame) {
+                headerCell.contentView.frame = frame
+                headerCell.contentView.layoutIfNeeded()
+                let view = UIView(frame: headerCell.contentView.frame)
+                view.addSubview(headerCell.contentView)
+                self.tableView.tableHeaderView = view
             }
 
         }
@@ -1768,7 +1772,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     override func willAnimateRotation(to toInterfaceOrientation: UIInterfaceOrientation, duration: TimeInterval) {
         super.willAnimateRotation(to: toInterfaceOrientation, duration: duration)
         self.headerCell?.aspectWidth = self.tableView.bounds.size.width
-        self.headerCell?.setLink(submission: self.submission!, parent: self, nav: self.navigationController, baseSub: self.submission!.subreddit)
+        self.headerCell?.configure(submission: self.submission!, parent: self, nav: self.navigationController, baseSub: self.submission!.subreddit)
         self.headerCell?.showBody(width: self.view.frame.size.width)
         var frame = self.tableView.tableHeaderView!.frame
         frame.size.width = self.view.frame.size.width
@@ -2090,72 +2094,5 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 extension Thing {
     func getId() -> String {
         return Self.kind + "_" + id
-    }
-}
-
-extension UIImage {
-
-    func imageResize(sizeChange: CGSize) -> UIImage {
-
-        let hasAlpha = true
-        let scale: CGFloat = 0.0 // Use scale factor of main screen
-
-        UIGraphicsBeginImageContextWithOptions(sizeChange, !hasAlpha, scale)
-        self.draw(in: CGRect(origin: CGPoint.zero, size: sizeChange))
-
-        let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
-        return scaledImage!
-    }
-
-    func navIcon() -> UIImage {
-        return self.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withColor(tintColor: .white)
-    }
-
-    func toolbarIcon() -> UIImage {
-        return self.imageResize(sizeChange: CGSize.init(width: 25, height: 25)).withColor(tintColor: ColorUtil.fontColor)
-    }
-
-    func menuIcon() -> UIImage {
-        return self.imageResize(sizeChange: CGSize.init(width: 20, height: 20)).withColor(tintColor: ColorUtil.fontColor)
-    }
-}
-
-
-extension UISearchBar {
-
-    var textColor: UIColor? {
-        get {
-            if let textField = self.value(forKey: "searchField") as? UITextField {
-                return textField.textColor
-            } else {
-                return nil
-            }
-        }
-
-        set(newValue) {
-            if let textField = self.value(forKey: "searchField") as? UITextField {
-                textField.textColor = newValue
-            }
-        }
-    }
-}
-
-extension UITableView {
-    func reloadData(with animation: UITableViewRowAnimation) {
-        reloadSections(IndexSet(integersIn: 0..<numberOfSections), with: animation)
-    }
-}
-
-extension Object {
-    func getIdentifier() -> String {
-        if (self is RComment) {
-            return (self as! RComment).getId()
-        } else if (self is RMore) {
-            return (self as! RMore).getId()
-        } else if (self is RSubmission) {
-            return (self as! RSubmission).getId()
-        } else {
-            return (self as! RMessage).getId()
-        }
     }
 }
