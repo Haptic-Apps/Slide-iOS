@@ -108,8 +108,6 @@ class SettingsLayout: UITableViewController {
     }
     
     func doLink(){
-        link.contentView.removeFromSuperview()
-        link = LinkCellView.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 500))
         
         let fakesub = RSubmission.init()
         let calendar: NSCalendar! = NSCalendar(calendarIdentifier: NSCalendar.Identifier.gregorian)
@@ -151,9 +149,13 @@ class SettingsLayout: UITableViewController {
         fakesub.height = 288
         fakesub.width = 636
         fakesub.vote = false
+
+        link.contentView.removeFromSuperview()
+        link = fakesub.getLinkView()
+        link.frame = CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 500)
         
         link.aspectWidth = self.tableView.frame.size.width
-        self.link.setLink(submission: fakesub, parent: MediaViewController(), nav: nil, baseSub: "all", test: true)
+        self.link.configure(submission: fakesub, parent: MediaViewController(), nav: nil, baseSub: "all", test: true)
         self.link.isUserInteractionEnabled = false
         linkCell.contentView.backgroundColor = ColorUtil.backgroundColor
         link.contentView.frame = CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: link.estimateHeight(false, true))

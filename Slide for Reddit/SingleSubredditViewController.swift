@@ -1916,10 +1916,10 @@ extension RSubmission {
             type = .SELF
         }
 
-        if (SettingValues.bannerHidden) {
-            big = false
-            thumb = true
-        }
+//        if (SettingValues.bannerHidden) {
+//            big = false
+//            thumb = true
+//        }
 
         let fullImage = ContentType.fullImage(t: type)
 
