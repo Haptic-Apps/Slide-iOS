@@ -166,28 +166,28 @@ class SettingsLayout: UITableViewController {
         
         switch(SettingValues.postViewMode){
         case .CARD:
-            cardModeCell.imageView?.image = UIImage.init(named: "card")?.navIcon()
+            cardModeCell.imageView?.image = UIImage.init(named: "card")?.toolbarIcon()
             break
         case .CENTER:
-            cardModeCell.imageView?.image = UIImage.init(named: "centeredimage")?.navIcon()
+            cardModeCell.imageView?.image = UIImage.init(named: "centeredimage")?.toolbarIcon()
             break
         case .COMPACT:
-            cardModeCell.imageView?.image = UIImage.init(named: "compact")?.navIcon()
+            cardModeCell.imageView?.image = UIImage.init(named: "compact")?.toolbarIcon()
             break
         case .LIST:
-            cardModeCell.imageView?.image = UIImage.init(named: "list")?.navIcon()
+            cardModeCell.imageView?.image = UIImage.init(named: "list")?.toolbarIcon()
             break
         }
         
         switch(SettingValues.postImageMode){
         case .CROPPED_IMAGE:
-            imageCell.imageView?.image = UIImage.init(named: "crop")?.navIcon()
+            imageCell.imageView?.image = UIImage.init(named: "crop")?.toolbarIcon()
             break
         case .FULL_IMAGE:
-            imageCell.imageView?.image = UIImage.init(named: "full")?.navIcon()
+            imageCell.imageView?.image = UIImage.init(named: "full")?.toolbarIcon()
             break
         case .THUMBNAIL:
-            imageCell.imageView?.image = UIImage.init(named: "thumb")?.navIcon()
+            imageCell.imageView?.image = UIImage.init(named: "thumb")?.toolbarIcon()
             break
         }
 

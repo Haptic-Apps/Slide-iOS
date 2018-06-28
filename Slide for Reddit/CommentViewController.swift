@@ -502,7 +502,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                         History.addSeen(s: link)
                         DispatchQueue.main.async(execute: { () -> Void in
                             if (!self.hasSubmission) {
-                                self.headerCell = LinkCellView()
+                                self.headerCell = FullLinkCellView()
                                 self.headerCell?.del = self
                                 self.headerCell?.parentViewController = self
                                 self.hasDone = true
