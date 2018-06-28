@@ -47,7 +47,7 @@ final class BannerLinkCellView: LinkCellView {
                 infoContainer.rightAnchor == bannerImage.rightAnchor - bannerPadding - ctwelve
             }
 
-            bannerImage.heightAnchor == bannerImage.widthAnchor / aspect
+            bannerImage.heightAnchor <= bannerImage.widthAnchor / aspect
         }
     }
     
