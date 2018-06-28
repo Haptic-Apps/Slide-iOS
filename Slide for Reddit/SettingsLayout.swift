@@ -9,49 +9,48 @@
 import UIKit
 import reddift
 import XLActionController
-import Anchorage
 
 class SettingsLayout: UITableViewController {
     
     var imageCell: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "image")
     
     var cardModeCell: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "mode")
-
+    
     var hideActionbarCell: UITableViewCell = UITableViewCell()
     var hideActionbar = UISwitch()
-
+    
     var largerThumbnailCell: UITableViewCell = UITableViewCell()
     var largerThumbnail = UISwitch()
     
     var scoreTitleCell: UITableViewCell = UITableViewCell()
     var scoreTitle = UISwitch()
-
+    
     var abbreviateScoreCell: UITableViewCell = UITableViewCell()
     var abbreviateScore = UISwitch()
-
+    
     var domainInfoCell: UITableViewCell = UITableViewCell()
     var domainInfo = UISwitch()
-
+    
     var leftThumbCell: UITableViewCell = UITableViewCell()
     var leftThumb = UISwitch()
-
+    
     var hideCell: UITableViewCell = UITableViewCell()
     var hide = UISwitch()
-
+    
     var saveCell: UITableViewCell = UITableViewCell()
     var save = UISwitch()
-
+    
     var selftextCell: UITableViewCell = UITableViewCell()
     var selftext = UISwitch()
-
+    
     var smalltagCell: UITableViewCell = UITableViewCell()
     var smalltag = UISwitch()
     
     var linkCell = UITableViewCell()
-
-
+    
+    
     var link = LinkCellView()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -108,6 +107,12 @@ class SettingsLayout: UITableViewController {
     }
     
     func doLink(){
+        link.contentView.removeFromSuperview()
+        if(SettingValues.postImageMode == .THUMBNAIL){
+            link = ThumbnailLinkCellView.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 500))
+        } else {
+            link = BannerLinkCellView.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 500))
+        }
         
         let fakesub = RSubmission.init()
         let calendar: NSCalendar! = NSCalendar(calendarIdentifier: NSCalendar.Identifier.gregorian)
@@ -149,18 +154,12 @@ class SettingsLayout: UITableViewController {
         fakesub.height = 288
         fakesub.width = 636
         fakesub.vote = false
-
-        link.contentView.removeFromSuperview()
-        link = fakesub.getLinkView()
-        link.frame = CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 500)
         
         link.aspectWidth = self.tableView.frame.size.width
         self.link.configure(submission: fakesub, parent: MediaViewController(), nav: nil, baseSub: "all", test: true)
         self.link.isUserInteractionEnabled = false
         linkCell.contentView.backgroundColor = ColorUtil.backgroundColor
         link.contentView.frame = CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: link.estimateHeight(false, true))
-        link.updateConstraints()
-        link.doConstraints()
         linkCell.contentView.addSubview(link.contentView)
         linkCell.frame = CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: link.estimateHeight(false, true))
         
@@ -190,9 +189,8 @@ class SettingsLayout: UITableViewController {
             imageCell.imageView?.image = UIImage.init(named: "thumb")?.toolbarIcon()
             break
         }
-
+        
     }
-
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let label : UILabel = UILabel()
         label.textColor = ColorUtil.baseAccent
@@ -226,7 +224,6 @@ class SettingsLayout: UITableViewController {
                 tableView.reloadData()
                 self.cardModeCell.detailTextLabel?.text = SettingValues.postViewMode.rawValue.capitalize()
                 SubredditReorderViewController.changed = true
-                SingleSubredditViewController.cellVersion += 1
             }))
             
             alertController.addAction(Action(ActionData(title: "Card view", image: UIImage(named: "card")!.menuIcon()), style: .default, handler: { action in
@@ -238,7 +235,6 @@ class SettingsLayout: UITableViewController {
                 tableView.reloadData()
                 self.cardModeCell.detailTextLabel?.text = SettingValues.postViewMode.rawValue.capitalize()
                 SubredditReorderViewController.changed = true
-                SingleSubredditViewController.cellVersion += 1
             }))
             
             alertController.addAction(Action(ActionData(title: "Centered card view", image: UIImage(named: "centeredimage")!.menuIcon()), style: .default, handler: { action in
@@ -250,9 +246,8 @@ class SettingsLayout: UITableViewController {
                 tableView.reloadData()
                 self.cardModeCell.detailTextLabel?.text = SettingValues.postViewMode.rawValue.capitalize()
                 SubredditReorderViewController.changed = true
-                SingleSubredditViewController.cellVersion += 1
             }))
-                
+            
             alertController.addAction(Action(ActionData(title: "Compact view", image: UIImage(named: "compact")!.menuIcon()), style: .default, handler: { action in
                 UserDefaults.standard.set("compact", forKey: SettingValues.pref_postViewMode)
                 SettingValues.postViewMode = .COMPACT
@@ -262,11 +257,10 @@ class SettingsLayout: UITableViewController {
                 tableView.reloadData()
                 self.cardModeCell.detailTextLabel?.text = SettingValues.postViewMode.rawValue.capitalize()
                 SubredditReorderViewController.changed = true
-                SingleSubredditViewController.cellVersion += 1
             }))
             
             VCPresenter.presentAlert(alertController, parentVC: self)
-
+            
         } else if(indexPath.section == 1 && indexPath.row == 1){
             let alertController: BottomSheetActionController = BottomSheetActionController()
             alertController.addAction(Action(ActionData(title: "Full image", image: UIImage(named: "full")!.menuIcon()), style: .default, handler: { action in
@@ -327,7 +321,7 @@ class SettingsLayout: UITableViewController {
         // set the title
         self.title = "General"
         self.tableView.separatorStyle = .none
-
+        
         createCell(selftextCell, selftext, isOn: SettingValues.showFirstParagraph, text: "Show selftext preview")
         
         createCell(cardModeCell, isOn: false, text: "Layout mode")
@@ -341,7 +335,7 @@ class SettingsLayout: UITableViewController {
         imageCell.detailTextLabel?.text = SettingValues.postImageMode.rawValue.capitalize()
         imageCell.detailTextLabel?.numberOfLines = 0
         imageCell.detailTextLabel?.lineBreakMode = .byWordWrapping
-
+        
         createCell(smalltagCell, smalltag, isOn: SettingValues.smallerTag, text: "Smaller content tag")
         createCell(hideActionbarCell, hideActionbar, isOn: SettingValues.hideButtonActionbar, text: "Hide actionbar")
         createCell(largerThumbnailCell, largerThumbnail, isOn: SettingValues.largerThumbnail, text: "Larger thumbnail")
@@ -354,7 +348,7 @@ class SettingsLayout: UITableViewController {
         
         doDisables()
         self.tableView.tableFooterView = UIView()
-
+        
     }
     
     func doDisables(){
@@ -365,7 +359,7 @@ class SettingsLayout: UITableViewController {
             hide.isEnabled = true
             save.isEnabled = true
         }
-    
+        
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -392,7 +386,7 @@ class SettingsLayout: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch(indexPath.section) {
         case 0:
-          return linkCell
+            return linkCell
         case 1:
             switch(indexPath.row) {
             case 0: return self.cardModeCell
@@ -401,7 +395,7 @@ class SettingsLayout: UITableViewController {
             case 3: return self.leftThumbCell
             case 4: return self.selftextCell
             case 5: return self.smalltagCell
-
+                
             default: fatalError("Unknown row in section 0")
             }
         case 2:
@@ -412,7 +406,7 @@ class SettingsLayout: UITableViewController {
             case 3: return self.domainInfoCell
             case 4: return self.hideCell
             case 5: return self.saveCell
-
+                
             default: fatalError("Unknown row in section 0")
             }
         default: fatalError("Unknown section")
@@ -427,6 +421,4 @@ class SettingsLayout: UITableViewController {
         default: fatalError("Unknown number of sections")
         }
     }
-    
-    
 }
