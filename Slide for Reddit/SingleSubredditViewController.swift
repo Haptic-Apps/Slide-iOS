@@ -633,6 +633,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
 
     static var firstPresented = true
+    static var cellVersion = 0
 
     var headerView = UIView()
     var more = UIButton()
@@ -649,9 +650,9 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
 
         // TODO: Can just use .self instead of .classForCoder()
-        self.tableView.register(BannerLinkCellView.classForCoder(), forCellWithReuseIdentifier: "banner")
-        self.tableView.register(ThumbnailLinkCellView.classForCoder(), forCellWithReuseIdentifier: "thumb")
-        self.tableView.register(TextLinkCellView.classForCoder(), forCellWithReuseIdentifier: "text")
+        self.tableView.register(BannerLinkCellView.classForCoder(), forCellWithReuseIdentifier: "banner\(SingleSubredditViewController.cellVersion)")
+        self.tableView.register(ThumbnailLinkCellView.classForCoder(), forCellWithReuseIdentifier: "thumb\(SingleSubredditViewController.cellVersion)")
+        self.tableView.register(TextLinkCellView.classForCoder(), forCellWithReuseIdentifier: "text\(SingleSubredditViewController.cellVersion)")
 
         var top = 20
         if #available(iOS 11.0, *) {
@@ -1372,11 +1373,11 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
         var cell: LinkCellView!
         if (target == .thumb) {
-            cell = tableView.dequeueReusableCell(withReuseIdentifier: "thumb", for: indexPath) as! ThumbnailLinkCellView
+            cell = tableView.dequeueReusableCell(withReuseIdentifier: "thumb\(SingleSubredditViewController.cellVersion)", for: indexPath) as! ThumbnailLinkCellView
         } else if (target == .banner) {
-            cell = tableView.dequeueReusableCell(withReuseIdentifier: "banner", for: indexPath) as! BannerLinkCellView
+            cell = tableView.dequeueReusableCell(withReuseIdentifier: "banner\(SingleSubredditViewController.cellVersion)", for: indexPath) as! BannerLinkCellView
         } else {
-            cell = tableView.dequeueReusableCell(withReuseIdentifier: "text", for: indexPath) as! TextLinkCellView
+            cell = tableView.dequeueReusableCell(withReuseIdentifier: "text\(SingleSubredditViewController.cellVersion)", for: indexPath) as! TextLinkCellView
         }
 
         cell.preservesSuperviewLayoutMargins = false

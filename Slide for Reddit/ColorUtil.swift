@@ -52,16 +52,19 @@ class ColorUtil {
                 theme = SettingValues.nightTheme
                 CachedTitle.titles.removeAll()
                 LinkCellImageCache.initialize()
+                SingleSubredditViewController.cellVersion += 1
                 toReturn = true
             } else if(!shouldBeNight() && theme != defaultTheme){
                 theme = defaultTheme
                 CachedTitle.titles.removeAll()
                 LinkCellImageCache.initialize()
+                SingleSubredditViewController.cellVersion += 1
                 toReturn = true
             } else if(defaultTheme == SettingValues.nightTheme && theme != defaultTheme){
                 theme = defaultTheme
                 CachedTitle.titles.removeAll()
                 LinkCellImageCache.initialize()
+                SingleSubredditViewController.cellVersion += 1
                 toReturn = true
             }
         }

@@ -226,6 +226,7 @@ class SettingsLayout: UITableViewController {
                 tableView.reloadData()
                 self.cardModeCell.detailTextLabel?.text = SettingValues.postViewMode.rawValue.capitalize()
                 SubredditReorderViewController.changed = true
+                SingleSubredditViewController.cellVersion += 1
             }))
             
             alertController.addAction(Action(ActionData(title: "Card view", image: UIImage(named: "card")!.menuIcon()), style: .default, handler: { action in
@@ -237,6 +238,7 @@ class SettingsLayout: UITableViewController {
                 tableView.reloadData()
                 self.cardModeCell.detailTextLabel?.text = SettingValues.postViewMode.rawValue.capitalize()
                 SubredditReorderViewController.changed = true
+                SingleSubredditViewController.cellVersion += 1
             }))
             
             alertController.addAction(Action(ActionData(title: "Centered card view", image: UIImage(named: "centeredimage")!.menuIcon()), style: .default, handler: { action in
@@ -248,6 +250,7 @@ class SettingsLayout: UITableViewController {
                 tableView.reloadData()
                 self.cardModeCell.detailTextLabel?.text = SettingValues.postViewMode.rawValue.capitalize()
                 SubredditReorderViewController.changed = true
+                SingleSubredditViewController.cellVersion += 1
             }))
                 
             alertController.addAction(Action(ActionData(title: "Compact view", image: UIImage(named: "compact")!.menuIcon()), style: .default, handler: { action in
@@ -259,6 +262,7 @@ class SettingsLayout: UITableViewController {
                 tableView.reloadData()
                 self.cardModeCell.detailTextLabel?.text = SettingValues.postViewMode.rawValue.capitalize()
                 SubredditReorderViewController.changed = true
+                SingleSubredditViewController.cellVersion += 1
             }))
             
             VCPresenter.presentAlert(alertController, parentVC: self)
