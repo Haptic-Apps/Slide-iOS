@@ -41,12 +41,12 @@ final class BannerLinkCellView: LinkCellView {
 
             infoContainer.heightAnchor == CGFloat(45)
             if !SettingValues.smallerTag {
-                infoContainer.leftAnchor == bannerImage.leftAnchor + bannerPadding
+                infoContainer.leftAnchor == bannerImage.leftAnchor
                 infoContainer.bottomAnchor == bannerImage.bottomAnchor
-                infoContainer.rightAnchor == bannerImage.rightAnchor - bannerPadding
+                infoContainer.rightAnchor == bannerImage.rightAnchor 
             } else {
-                infoContainer.bottomAnchor == bannerImage.bottomAnchor - 4
-                infoContainer.rightAnchor == bannerImage.rightAnchor - bannerPadding - ctwelve
+                tagbody.bottomAnchor == bannerImage.bottomAnchor - 8
+                tagbody.rightAnchor == bannerImage.rightAnchor - 8
             }
         }
     }
