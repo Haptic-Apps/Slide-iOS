@@ -189,64 +189,85 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             $0.numberOfLines = 0
             $0.lineBreakMode = .byWordWrapping
             $0.font = FontGenerator.fontOfSize(size: 18, submission: true)
+            $0.isOpaque = false
+            $0.backgroundColor = ColorUtil.foregroundColor
         }
 
         self.hide = UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 24)).then {
             $0.accessibilityIdentifier = "Hide Button"
             $0.image = LinkCellImageCache.hide
             $0.contentMode = .center
+            $0.isOpaque = false
+            $0.backgroundColor = ColorUtil.foregroundColor
         }
 
         self.reply = UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 24)).then {
             $0.accessibilityIdentifier = "Reply Button"
             $0.image = LinkCellImageCache.reply
             $0.contentMode = .center
+            $0.isOpaque = false
+            $0.backgroundColor = ColorUtil.foregroundColor
         }
 
         self.edit = UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 24)).then {
             $0.accessibilityIdentifier = "Edit Button"
             $0.image = LinkCellImageCache.edit
             $0.contentMode = .center
+            $0.isOpaque = false
+            $0.backgroundColor = ColorUtil.foregroundColor
         }
 
         self.save = UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 24)).then {
             $0.accessibilityIdentifier = "Save Button"
             $0.contentMode = .center
+            $0.isOpaque = false
+            $0.backgroundColor = ColorUtil.foregroundColor
         }
 
         self.upvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 24)).then {
             $0.accessibilityIdentifier = "Upvote Button"
             $0.contentMode = .center
+            $0.isOpaque = false
+            $0.backgroundColor = ColorUtil.foregroundColor
         }
 
         self.downvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 20)).then {
             $0.accessibilityIdentifier = "Downvote Button"
             $0.contentMode = .center
+            $0.isOpaque = false
+            $0.backgroundColor = ColorUtil.foregroundColor
         }
 
         self.mod = UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 24)).then {
             $0.accessibilityIdentifier = "Mod Button"
             $0.image = LinkCellImageCache.mod
             $0.contentMode = .center
+            $0.isOpaque = false
+            $0.backgroundColor = ColorUtil.foregroundColor
         }
 
         self.commenticon = UIImageView(frame: CGRect(x: 0, y: 0, width: 10, height: 10)).then {
             $0.accessibilityIdentifier = "Comment Count Icon"
             $0.image = LinkCellImageCache.commentsIcon
             $0.contentMode = .scaleAspectFit
+            $0.isOpaque = false
+            $0.backgroundColor = ColorUtil.foregroundColor
         }
 
         self.submissionicon = UIImageView(frame: CGRect(x: 0, y: 0, width: 10, height: 10)).then {
             $0.accessibilityIdentifier = "Score Icon"
             $0.image = LinkCellImageCache.votesIcon
             $0.contentMode = .scaleAspectFit
+            $0.isOpaque = false
+            $0.backgroundColor = ColorUtil.foregroundColor
         }
 
         self.textView = TTTAttributedLabel(frame: CGRect(x: 75, y: 8, width: 0, height: 0)).then {
             $0.accessibilityIdentifier = "Self Text View"
             $0.numberOfLines = 0
             $0.isUserInteractionEnabled = true
-            $0.backgroundColor = .clear
+            $0.isOpaque = false
+            $0.backgroundColor = ColorUtil.foregroundColor
         }
         self.textView.delegate = self
 
@@ -255,6 +276,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             $0.numberOfLines = 1
             $0.font = FontGenerator.fontOfSize(size: 12, submission: true)
             $0.textColor = ColorUtil.fontColor
+            $0.isOpaque = false
+            $0.backgroundColor = ColorUtil.foregroundColor
         }
 
         self.comments = UILabel().then {
@@ -262,6 +285,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             $0.numberOfLines = 1
             $0.font = FontGenerator.fontOfSize(size: 12, submission: true)
             $0.textColor = ColorUtil.fontColor
+            $0.isOpaque = false
+            $0.backgroundColor = ColorUtil.foregroundColor
         }
 
         self.taglabel = UILabel().then {
