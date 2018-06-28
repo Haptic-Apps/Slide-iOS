@@ -74,77 +74,90 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
             var thumb = submission.thumbnail
             var big = submission.banner
-
-            var type = ContentType.getContentType(baseUrl: submission.url)
+            
+            var submissionHeight = submission.height
+            
+            var type =  ContentType.getContentType(baseUrl: submission.url)
             if (submission.isSelf) {
                 type = .SELF
             }
-
+            
             if (SettingValues.postImageMode == .THUMBNAIL) {
                 big = false
                 thumb = true
             }
-
+            
             let fullImage = ContentType.fullImage(t: type)
-            var submissionHeight = submission.height
-
+            
             if (!fullImage && submissionHeight < 50) {
                 big = false
                 thumb = true
-            } else if (big && (SettingValues.postImageMode == .CROPPED_IMAGE)) {
+            } else if (big && (( SettingValues.postImageMode == .CROPPED_IMAGE))) {
                 submissionHeight = 200
             } else if (big) {
-                let ratio = Double(submissionHeight) / Double(submission.width)
-                let width = Double(itemWidth);
-
-                let h = width * ratio
+                let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: submission.width, viewWidth: itemWidth)
                 if (h == 0) {
                     submissionHeight = 200
                 } else {
-                    submissionHeight = Int(h)
+                    submissionHeight = h
                 }
             }
-
-
+            
             if (type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big) {
                 big = false
                 thumb = false
             }
-
+            
             if (submissionHeight < 50) {
                 thumb = true
                 big = false
             }
-
-
+            
+            let shouldShowLq = SettingValues.dataSavingEnabled && submission.lQ && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi())
+            if (type == ContentType.CType.SELF && SettingValues.hideImageSelftext
+                || SettingValues.noImages && submission.isSelf) {
+                big = false
+                thumb = false
+            }
+            
             if (big || !submission.thumbnail) {
                 thumb = false
             }
-
-
-            if (!big && !thumb && submission.type != .SELF && submission.type != .NONE) { //If a submission has a link but no images, still show the web thumbnail
-                thumb = true
-            }
-
-            if (submission.nsfw && !SettingValues.nsfwPreviews) {
+            
+            if (submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && (sub == "all" || sub == "frontpage" || sub.contains("/m/") || sub.contains("+") || sub == "popular"))) {
                 big = false
                 thumb = true
             }
-
-            if (submission.nsfw && SettingValues.hideNSFWCollection && (sub == "all" || sub == "frontpage" || sub == "popular")) {
-                big = false
-                thumb = true
-            }
-
-
+            
             if (SettingValues.noImages) {
                 big = false
                 thumb = false
             }
+            
             if (thumb && type == .SELF) {
                 thumb = false
             }
-
+            
+            if (!big && !thumb && submission.type != .SELF && submission.type != .NONE) { //If a submission has a link but no images, still show the web thumbnail
+                thumb = true
+            }
+            
+            if (big) {
+                let imageSize = CGSize.init(width: submission.width, height: ((SettingValues.postImageMode == .CROPPED_IMAGE)) ? 200 : submission.height)
+                
+                var aspect = imageSize.width / imageSize.height
+                if (aspect == 0 || aspect > 10000 || aspect.isNaN) {
+                    aspect = 1
+                }
+                if ((SettingValues.postImageMode == .CROPPED_IMAGE)) {
+                    aspect = width / 200
+                    if (aspect == 0 || aspect > 10000 || aspect.isNaN) {
+                        aspect = 1
+                    }
+                    
+                    submissionHeight = 200
+                }
+            }
             var paddingTop = CGFloat(0)
             var paddingBottom = CGFloat(2)
             var paddingLeft = CGFloat(0)
@@ -204,6 +217,11 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         return CGSize(width: itemWidth, height: 0)
     }
 
+    func getHeightFromAspectRatio(imageHeight: Int, imageWidth: Int, viewWidth: CGFloat) -> Int {
+        let ratio = Double(imageHeight) / Double(imageWidth)
+        let width = Double(viewWidth)
+        return Int(width * ratio)
+    }
 
     var parentController: MainViewController?
     var accentChosen: UIColor?
