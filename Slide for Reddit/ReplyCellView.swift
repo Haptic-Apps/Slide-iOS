@@ -9,7 +9,6 @@
 import Foundation
 import reddift
 import Photos
-import Alamofire
 import MobileCoreServices
 import SwiftyJSON
 import ActionSheetPicker_3_0

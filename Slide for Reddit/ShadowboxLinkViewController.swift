@@ -10,7 +10,6 @@ import UIKit
 import MaterialComponents.MaterialProgressView
 import SDWebImage
 import AVFoundation
-import Alamofire
 import AVKit
 import TTTAttributedLabel
 

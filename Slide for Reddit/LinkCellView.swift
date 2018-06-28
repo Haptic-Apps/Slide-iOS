@@ -800,7 +800,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if (big) {
             bannerImage.alpha = 0
             let imageSize = CGSize.init(width: submission.width, height: ((full && !SettingValues.commentFullScreen) ||  (!full && SettingValues.postImageMode == .CROPPED_IMAGE)) ? 200 : submission.height)
-            print("Setting full 3")
 
             var aspect = imageSize.width / imageSize.height
             if (aspect == 0 || aspect > 10000 || aspect.isNaN) {
@@ -808,7 +807,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             }
             if ((full && !SettingValues.commentFullScreen) || (!full && SettingValues.postImageMode == .CROPPED_IMAGE)) {
                 aspect = (full ? aspectWidth : self.contentView.frame.size.width) / (test ? 150 : 200)
-                print("Setting full 4")
 
                 submissionHeight = test ? 150 : 200
                 bigConstraint = NSLayoutConstraint(item: bannerImage, attribute: NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: bannerImage, attribute: NSLayoutAttribute.height, multiplier: aspect, constant: 0.0)
