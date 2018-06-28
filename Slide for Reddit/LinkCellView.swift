@@ -327,14 +327,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             addTouch(view: edit, action: #selector(LinkCellView.edit(sender:)))
             addTouch(view: hide, action: #selector(LinkCellView.hide(sender:)))
             addTouch(view: thumbImage, action: #selector(LinkCellView.openLink(sender:)))
-            addTouch(view: thumbImage, action: #selector(LinkCellView.openLink(sender:)))
             let tap = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openLink(sender:)))
             tap.delegate = self
             bannerImage.addGestureRecognizer(tap)
             
             let tap2 = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openLink(sender:)))
             tap2.delegate = self
-            
+            infoContainer.addGestureRecognizer(tap2)
+
             if(dtap == nil && SettingValues.submissionActionDoubleTap != .NONE){
                 dtap = UIShortTapGestureRecognizer.init(target: self, action: #selector(self.doDTap(_:)))
                 dtap!.numberOfTapsRequired = 2
@@ -355,7 +355,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 longPress?.delegate = self
                 self.contentView.addGestureRecognizer(longPress!)
             }
-            infoContainer.addGestureRecognizer(tap2)
 
             addTouch = true
         }
@@ -1375,7 +1374,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
 
     func openLink(sender: UITapGestureRecognizer? = nil) {
-        (parentViewController)?.setLink(lnk: link!, shownURL: loadedImage, lq: lq, saveHistory: true) //todo check this
+        if let link = link {
+            (parentViewController)?.setLink(lnk: link, shownURL: loadedImage, lq: lq, saveHistory: true) //todo check this
+        }
     }
 
     func openComment(sender: UITapGestureRecognizer? = nil) {

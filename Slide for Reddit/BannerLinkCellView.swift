@@ -55,7 +55,7 @@ final class BannerLinkCellView: LinkCellView {
         super.layoutForContent()
 
         constraintsForContent = batch {
-            bannerImage.heightAnchor <= bannerImage.widthAnchor / aspect
+            bannerImage.heightAnchor <= CGFloat(submissionHeight)
         }
     }
     
