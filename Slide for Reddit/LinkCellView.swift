@@ -111,6 +111,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var estimatedHeight = CGFloat(0)
 
     var big = false
+    var bigConstraint: NSLayoutConstraint?
     var dtap : UIShortTapGestureRecognizer?
 
     var thumb = true
@@ -118,7 +119,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var addTouch = false
 
     var link: RSubmission?
-    var aspectWidth = CGFloat(0)
+    var aspectWidth = CGFloat(0.1)
 
     var tempConstraints: [NSLayoutConstraint] = []
     var constraintsForType: [NSLayoutConstraint] = []
@@ -187,40 +188,40 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             $0.font = FontGenerator.fontOfSize(size: 18, submission: true)
         }
 
-        self.hide = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20)).then {
+        self.hide = UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 24)).then {
             $0.accessibilityIdentifier = "Hide Button"
             $0.image = LinkCellImageCache.hide
             $0.contentMode = .center
         }
 
-        self.reply = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20)).then {
+        self.reply = UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 24)).then {
             $0.accessibilityIdentifier = "Reply Button"
             $0.image = LinkCellImageCache.reply
             $0.contentMode = .center
         }
 
-        self.edit = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20)).then {
+        self.edit = UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 24)).then {
             $0.accessibilityIdentifier = "Edit Button"
             $0.image = LinkCellImageCache.edit
             $0.contentMode = .center
         }
 
-        self.save = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20)).then {
+        self.save = UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 24)).then {
             $0.accessibilityIdentifier = "Save Button"
             $0.contentMode = .center
         }
 
-        self.upvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20)).then {
+        self.upvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 24)).then {
             $0.accessibilityIdentifier = "Upvote Button"
             $0.contentMode = .center
         }
 
-        self.downvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20)).then {
+        self.downvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 20)).then {
             $0.accessibilityIdentifier = "Downvote Button"
             $0.contentMode = .center
         }
 
-        self.mod = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20)).then {
+        self.mod = UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 24)).then {
             $0.accessibilityIdentifier = "Mod Button"
             $0.image = LinkCellImageCache.mod
             $0.contentMode = .center
@@ -313,9 +314,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             $0.axis = .horizontal
             $0.alignment = .center
             $0.distribution = .fill
-            $0.spacing = 10
+            $0.spacing = 16
         }
-        buttons.addArrangedSubview(save)
         buttons.addArrangedSubviews(edit, reply, save, hide, upvote, downvote, mod)
         self.contentView.addSubview(buttons)
 
@@ -339,7 +339,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
     // Reconfigures the layout of the cell.
     func configureLayout() {
-
+        let ceight = SettingValues.postViewMode == .COMPACT ? CGFloat(4) : CGFloat(8)
+        let ctwelve = SettingValues.postViewMode == .COMPACT ? CGFloat(8) : CGFloat(12)
         // Remove all constraints previously applied by this method
         for constraint in tempConstraints {
             constraint.isActive = false
@@ -367,13 +368,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
             self.contentView.layer.cornerRadius = CGFloat(radius)
 
-            box.leftAnchor == contentView.leftAnchor + 8
-            box.bottomAnchor == contentView.bottomAnchor - 8
+            box.leftAnchor == contentView.leftAnchor + ctwelve
+            box.bottomAnchor == contentView.bottomAnchor - ceight
             box.centerYAnchor == buttons.centerYAnchor // Align vertically with buttons
             box.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
 
-            buttons.rightAnchor == contentView.rightAnchor - 8
-            buttons.bottomAnchor == contentView.bottomAnchor - 8
+            buttons.rightAnchor == contentView.rightAnchor - ctwelve
+            buttons.bottomAnchor == contentView.bottomAnchor - ceight
 
             title.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
         }
@@ -479,6 +480,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 //        return estimatedHeight
 //    }
 
+    
     func addTouch(view: UIView, action: Selector) {
         view.isUserInteractionEnabled = true
         let tap = UITapGestureRecognizer(target: self, action: action)
@@ -531,6 +533,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             break
         }
     }
+    
+    var aspect = CGFloat(1)
 
     private func setLink(submission: RSubmission, parent: MediaViewController, nav: UIViewController?, baseSub: String, test : Bool = false) {
         loadedImage = nil
@@ -646,7 +650,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         } else if (big) {
             let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: submission.width)
             if (h == 0) {
-                print("Setting full 2")
                 submissionHeight = test ? 150 : 200
             } else {
                 submissionHeight = h
@@ -716,15 +719,17 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             bannerImage.alpha = 0
             let imageSize = CGSize.init(width: submission.width, height: ((full && !SettingValues.commentFullScreen) ||  (!full && SettingValues.postImageMode == .CROPPED_IMAGE)) ? 200 : submission.height)
 
-            var aspect = imageSize.width / imageSize.height
+            aspect = imageSize.width / imageSize.height
             if (aspect == 0 || aspect > 10000 || aspect.isNaN) {
                 aspect = 1
             }
             if ((full && !SettingValues.commentFullScreen) || (!full && SettingValues.postImageMode == .CROPPED_IMAGE)) {
                 aspect = (full ? aspectWidth : self.contentView.frame.size.width) / (test ? 150 : 200)
+                if (aspect == 0 || aspect > 10000 || aspect.isNaN) {
+                    aspect = 1
+                }
 
                 submissionHeight = test ? 150 : 200
-
             }
             bannerImage.isUserInteractionEnabled = true
             let tap = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openLink(sender:)))

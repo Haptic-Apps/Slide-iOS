@@ -165,7 +165,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
             if (thumb) {
                 imageHeight = thumbheight
-                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between top and thumbnail
+                innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between top and thumbnail
                 innerPadding += 18 - (SettingValues.postViewMode == .COMPACT ? 4 : 0) //between label and bottom box
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
             } else if (big) {

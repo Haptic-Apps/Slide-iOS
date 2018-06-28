@@ -23,25 +23,27 @@ final class ThumbnailLinkCellView: LinkCellView {
         super.layoutForType()
         constraintsForType = batch {
             thumbImageContainer.isHidden = false
-            thumbImageContainer.bottomAnchor <= box.topAnchor - 8
+            let ceight = SettingValues.postViewMode == .COMPACT ? CGFloat(4) : CGFloat(8)
+            let ctwelve = SettingValues.postViewMode == .COMPACT ? CGFloat(8) : CGFloat(12)
+            thumbImageContainer.bottomAnchor <= box.topAnchor - ceight
 
             // Thumbnail sizing
-            thumbImageContainer.topAnchor == contentView.topAnchor + 8
+            thumbImageContainer.topAnchor == contentView.topAnchor + ctwelve
             if SettingValues.leftThumbnail {
-                thumbImageContainer.leftAnchor == contentView.leftAnchor + 8
+                thumbImageContainer.leftAnchor == contentView.leftAnchor + ceight
             }
             else {
-                thumbImageContainer.rightAnchor == contentView.rightAnchor - 8
+                thumbImageContainer.rightAnchor == contentView.rightAnchor - ctwelve
             }
 
             let thumbSize: CGFloat = (SettingValues.largerThumbnail ? 75 : 50) - (SettingValues.postViewMode == .COMPACT ? 15 : 0)
             thumbImageContainer.widthAnchor == thumbSize
             thumbImageContainer.heightAnchor == thumbSize
 
-            title.topAnchor == contentView.topAnchor + 8
-            title.leftAnchor == (SettingValues.leftThumbnail ? thumbImageContainer.rightAnchor + 8 : contentView.leftAnchor + 8)
-            title.rightAnchor == (SettingValues.leftThumbnail ? contentView.rightAnchor - 8 : thumbImageContainer.leftAnchor - 8)
-            title.bottomAnchor <= box.topAnchor - 8
+            title.topAnchor == contentView.topAnchor + ctwelve
+            title.leftAnchor == (SettingValues.leftThumbnail ? thumbImageContainer.rightAnchor + ceight : contentView.leftAnchor + ctwelve)
+            title.rightAnchor == (SettingValues.leftThumbnail ? contentView.rightAnchor - ctwelve : thumbImageContainer.leftAnchor - ceight)
+            title.bottomAnchor <= box.topAnchor - ceight
         }
     }
     

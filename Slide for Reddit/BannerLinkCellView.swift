@@ -13,38 +13,43 @@ final class BannerLinkCellView: LinkCellView {
 
     override func layoutForType() {
         super.layoutForType()
+        let ceight = SettingValues.postViewMode == .COMPACT ? CGFloat(4) : CGFloat(8)
+        let ctwelve = SettingValues.postViewMode == .COMPACT ? CGFloat(8) : CGFloat(12)
+        let bannerPadding = (full || SettingValues.postViewMode != .CARD) ? CFloat(5) : CFloat(0)
         constraintsForType = batch {
             infoContainer.accessibilityIdentifier = "Link Content Info"
             bannerImage.isHidden = false
             if SettingValues.postViewMode == .CENTER {
                 // Image goes between title and buttons
-                title.topAnchor == contentView.topAnchor + 8
-                title.horizontalAnchors == contentView.horizontalAnchors + 8
-                title.bottomAnchor <= bannerImage.topAnchor - 8
+                title.topAnchor == contentView.topAnchor + ceight
+                title.horizontalAnchors == contentView.horizontalAnchors + ctwelve
+                title.bottomAnchor <= bannerImage.topAnchor - ceight
 
-                bannerImage.horizontalAnchors == contentView.horizontalAnchors
-                bannerImage.bottomAnchor == box.topAnchor - 8
+                bannerImage.horizontalAnchors == contentView.horizontalAnchors + bannerPadding
+                bannerImage.bottomAnchor == box.topAnchor - ctwelve
             }
             else {
                 // Image goes above title
-                bannerImage.topAnchor == contentView.topAnchor
-                bannerImage.horizontalAnchors == contentView.horizontalAnchors
+                bannerImage.topAnchor == contentView.topAnchor + bannerPadding
+                bannerImage.horizontalAnchors == contentView.horizontalAnchors + bannerPadding
 
-                title.topAnchor == bannerImage.bottomAnchor + 8
-                title.horizontalAnchors == contentView.horizontalAnchors + 8
-                title.bottomAnchor <= box.topAnchor - 8
+                title.topAnchor == bannerImage.bottomAnchor + ceight
+                title.horizontalAnchors == contentView.horizontalAnchors + ctwelve
+                title.bottomAnchor <= box.topAnchor - ctwelve
             }
 
-            infoContainer.bottomAnchor == bannerImage.bottomAnchor
-            infoContainer.rightAnchor == bannerImage.rightAnchor
+            infoContainer.heightAnchor == CFloat(45)
             if !SettingValues.smallerTag {
-                infoContainer.leftAnchor == bannerImage.leftAnchor
+                infoContainer.leftAnchor == bannerImage.leftAnchor + bannerPadding
+                infoContainer.bottomAnchor == bannerImage.bottomAnchor
+                infoContainer.rightAnchor == bannerImage.rightAnchor - bannerPadding
+            } else {
+                infoContainer.bottomAnchor == bannerImage.bottomAnchor - 4
+                infoContainer.rightAnchor == bannerImage.rightAnchor - bannerPadding - ctwelve
             }
 
-//            if let image = bannerImage.image {
-//                let asp: CGFloat = image.size.width / image.size.height
-//                bannerImage.heightAnchor == bannerImage.widthAnchor * asp
-//            }
+            self.bigConstraint?.isActive = false
+            self.bigConstraint = bannerImage.heightAnchor == bannerImage.widthAnchor / aspect
         }
     }
     

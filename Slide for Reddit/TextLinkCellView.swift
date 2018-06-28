@@ -21,10 +21,12 @@ final class TextLinkCellView: LinkCellView {
 
     override func layoutForType() {
         super.layoutForType()
+        let ceight = SettingValues.postViewMode == .COMPACT ? CGFloat(4) : CGFloat(8)
+        let ctwelve = SettingValues.postViewMode == .COMPACT ? CGFloat(8) : CGFloat(12)
         constraintsForType = batch {
-            title.topAnchor == contentView.topAnchor + 8
-            title.horizontalAnchors == contentView.horizontalAnchors + 8
-            title.bottomAnchor <= box.topAnchor - 8
+            title.topAnchor == contentView.topAnchor + ctwelve
+            title.horizontalAnchors == contentView.horizontalAnchors + ctwelve
+            title.bottomAnchor <= box.topAnchor - ctwelve
         }
     }
     
