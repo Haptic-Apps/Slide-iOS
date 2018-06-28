@@ -17,7 +17,6 @@ final class BannerLinkCellView: LinkCellView {
         let ctwelve = SettingValues.postViewMode == .COMPACT ? CGFloat(8) : CGFloat(12)
         let bannerPadding = (full || SettingValues.postViewMode != .CARD) ? CFloat(5) : CFloat(0)
         constraintsForType = batch {
-            infoContainer.accessibilityIdentifier = "Link Content Info"
             bannerImage.isHidden = false
             if SettingValues.postViewMode == .CENTER {
                 // Image goes between title and buttons
@@ -38,7 +37,7 @@ final class BannerLinkCellView: LinkCellView {
                 title.bottomAnchor <= box.topAnchor - ctwelve
             }
 
-            infoContainer.heightAnchor == CFloat(45)
+            infoContainer.heightAnchor == CGFloat(45)
             if !SettingValues.smallerTag {
                 infoContainer.leftAnchor == bannerImage.leftAnchor + bannerPadding
                 infoContainer.bottomAnchor == bannerImage.bottomAnchor
@@ -48,8 +47,7 @@ final class BannerLinkCellView: LinkCellView {
                 infoContainer.rightAnchor == bannerImage.rightAnchor - bannerPadding - ctwelve
             }
 
-            self.bigConstraint?.isActive = false
-            self.bigConstraint = bannerImage.heightAnchor == bannerImage.widthAnchor / aspect
+            bannerImage.heightAnchor == bannerImage.widthAnchor / aspect
         }
     }
     

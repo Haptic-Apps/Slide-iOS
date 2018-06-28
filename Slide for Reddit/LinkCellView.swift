@@ -111,7 +111,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var estimatedHeight = CGFloat(0)
 
     var big = false
-    var bigConstraint: NSLayoutConstraint?
     var dtap : UIShortTapGestureRecognizer?
 
     var thumb = true
@@ -157,6 +156,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     }
 
     func configureView() {
+
+        self.accessibilityIdentifier = "Link Cell View"
+        self.contentView.accessibilityIdentifier = "Link Cell Content View"
+        
         self.thumbImageContainer = UIView().then {
             $0.accessibilityIdentifier = "Thumbnail Image Container"
             $0.frame = CGRect(x: 0, y: 8, width: (SettingValues.largerThumbnail ? 75 : 50) - (SettingValues.postViewMode == .COMPACT ? 15 : 0), height: (SettingValues.largerThumbnail ? 75 : 50) - (SettingValues.postViewMode == .COMPACT ? 15 : 0))
@@ -304,6 +307,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         contentView.layer.masksToBounds = true
 
         self.box = UIStackView().then {
+            $0.accessibilityIdentifier = "Count Info Stack Horizontal"
             $0.axis = .horizontal
             $0.alignment = .center
         }
@@ -311,6 +315,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         self.contentView.addSubview(box)
 
         self.buttons = UIStackView().then {
+            $0.accessibilityIdentifier = "Button Stack Horizontal"
             $0.axis = .horizontal
             $0.alignment = .center
             $0.distribution = .fill
@@ -454,23 +459,22 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         let color = ColorUtil.accentColorForSub(sub: ((link).subreddit))
         if (!link.htmlBody.isEmpty) {
             var html = link.htmlBody.trimmed()
-            do {
-                html = WrapSpoilers.addSpoilers(html)
-                html = WrapSpoilers.addTables(html)
-                let attr = html.toAttributedString()!
-                let font = FontGenerator.fontOfSize(size: 16, submission: false)
-                let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
-                content = CellContent.init(string: LinkParser.parse(attr2, color), width: (width - 24 - (thumb ? 75 : 0)))
-                let activeLinkAttributes = NSMutableDictionary(dictionary: title.activeLinkAttributes)
-                activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.accentColorForSub(sub: link.subreddit)
-                textView.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
-                textView.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
 
-                textView.delegate = self
-                textView.setText(content?.attributedString)
-                hasText = true
-            } catch {
-            }
+            html = WrapSpoilers.addSpoilers(html)
+            html = WrapSpoilers.addTables(html)
+            let attr = html.toAttributedString()!
+            let font = FontGenerator.fontOfSize(size: 16, submission: false)
+            let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
+            content = CellContent.init(string: LinkParser.parse(attr2, color), width: (width - 24 - (thumb ? 75 : 0)))
+            let activeLinkAttributes = NSMutableDictionary(dictionary: title.activeLinkAttributes)
+            activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.accentColorForSub(sub: link.subreddit)
+            textView.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+            textView.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+
+            textView.delegate = self
+            textView.setText(content?.attributedString)
+            hasText = true
+
             parentViewController?.registerForPreviewing(with: self, sourceView: textView)
         }
     }
