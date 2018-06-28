@@ -439,8 +439,10 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        tableView.reloadData()
-        setupFab()
+        if(self.viewIfLoaded?.window != nil ){
+            tableView.reloadData()
+            setupFab()
+        }
     }
 
     var links: [RSubmission] = []
