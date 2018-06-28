@@ -1381,8 +1381,8 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
         cell.preservesSuperviewLayoutMargins = false
         cell.del = self
-        cell.layer.shouldRasterize = true
-        cell.layer.rasterizationScale = UIScreen.main.scale
+        //cell.layer.shouldRasterize = true
+        //cell.layer.rasterizationScale = UIScreen.main.scale
         cell.configure(submission: submission, parent: self, nav: self.navigationController, baseSub: sub)
 
         if indexPath.row == self.links.count - 3 && !loading && !nomore {
