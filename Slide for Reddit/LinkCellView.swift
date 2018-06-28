@@ -410,9 +410,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             title.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
         }
 
-        layoutForType()
-        layoutForContent()
-
+        if(!full){
+            layoutForType()
+            layoutForContent()
+        }
     }
 
     internal func layoutForType() {
@@ -577,6 +578,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     }
     
     var aspect = CGFloat(1)
+    var type : ContentType.CType = .NONE
 
     private func setLink(submission: RSubmission, parent: MediaViewController, nav: UIViewController?, baseSub: String, test : Bool = false) {
         loadedImage = nil
@@ -672,7 +674,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
         submissionHeight = submission.height
 
-        var type = test ? ContentType.CType.LINK : ContentType.getContentType(baseUrl: submission.url)
+        type = test ? ContentType.CType.LINK : ContentType.getContentType(baseUrl: submission.url)
         if (submission.isSelf) {
             type = .SELF
         }
@@ -843,11 +845,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 //        doConstraints()
 
         refresh()
-        if (full) {
-            self.setNeedsLayout()
-        }
 
-        if (type != .IMAGE && type != .SELF && !thumb) {
+        if ((type != .IMAGE && type != .SELF && !thumb) || full) {
             infoContainer.isHidden = false
             var text = ""
             switch (type) {
@@ -956,7 +955,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
         
         //todo maybe? self.contentView.backgroundColor = ColorUtil.getColorForSub(sub: submission.subreddit)
-
+        if (full) {
+            self.setNeedsLayout()
+            self.layoutForType()
+        }
     }
 
     var currentType: CurrentType = .none
@@ -1337,18 +1339,27 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             }
 
             var estimatedUsableWidth = aspectWidth - paddingLeft - paddingRight
-            if(thumb){
-                estimatedUsableWidth -= thumbheight //is the same as the width
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between thumb and label
+            var fullHeightExtras = CGFloat(0)
+            
+            if(!full){
+                if(thumb){
+                    estimatedUsableWidth -= thumbheight //is the same as the width
+                    estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb
+                    estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between thumb and label
+                } else {
+                    estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //12 padding on either side
+                }
             } else {
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //12 padding on either side
+                estimatedUsableWidth -= (24) //12 padding on either side
+                if(thumb){
+                    fullHeightExtras += 45 + 12 + 12
+                }
             }
 
             let framesetter = CTFramesetterCreateWithAttributedString(title.attributedText)
             let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude), nil)
 
-            let totalHeight = paddingTop + paddingBottom + (thumb ? max(ceil(textSize.height), imageHeight): ceil(textSize.height) + imageHeight) + innerPadding + actionbar + textHeight + (full ? CGFloat(10) : CGFloat(0))
+            let totalHeight = paddingTop + fullHeightExtras + paddingBottom + (thumb ? max(ceil(textSize.height), imageHeight): ceil(textSize.height) + imageHeight) + innerPadding + actionbar + textHeight + (full ? CGFloat(10) : CGFloat(0))
             estimatedHeight = totalHeight
         }
         return estimatedHeight

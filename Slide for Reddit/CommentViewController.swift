@@ -778,7 +778,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         if (hasSubmission && self.view.frame.size.width != 0 && !hasDone) {
             hasDone = true
 
-            headerCell = BannerLinkCellView()
+            headerCell = FullLinkCellView()
 
             guard let headerCell = headerCell else {
                 return
