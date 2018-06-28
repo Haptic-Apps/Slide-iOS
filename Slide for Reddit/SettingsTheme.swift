@@ -456,6 +456,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
                     UserDefaults.standard.set(theme.rawValue, forKey: "theme")
                     UserDefaults.standard.synchronize()
                     ColorUtil.doInit()
+                    SubredditReorderViewController.changed = true
                     self.loadView()
                     self.tableView.reloadData(with: .automatic)
                     self.tochange!.doCells()

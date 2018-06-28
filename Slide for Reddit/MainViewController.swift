@@ -43,6 +43,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             }
             if (ColorUtil.doInit() || subChanged){
                 restartVC()
+            } else if(SubredditReorderViewController.changed){
+                doButtons()
             }
         }
 
