@@ -326,6 +326,37 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             addTouch(view: mod, action: #selector(LinkCellView.mod(sender:)))
             addTouch(view: edit, action: #selector(LinkCellView.edit(sender:)))
             addTouch(view: hide, action: #selector(LinkCellView.hide(sender:)))
+            addTouch(view: thumbImage, action: #selector(LinkCellView.openLink(sender:)))
+            addTouch(view: thumbImage, action: #selector(LinkCellView.openLink(sender:)))
+            let tap = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openLink(sender:)))
+            tap.delegate = self
+            bannerImage.addGestureRecognizer(tap)
+            
+            let tap2 = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openLink(sender:)))
+            tap2.delegate = self
+            
+            if(dtap == nil && SettingValues.submissionActionDoubleTap != .NONE){
+                dtap = UIShortTapGestureRecognizer.init(target: self, action: #selector(self.doDTap(_:)))
+                dtap!.numberOfTapsRequired = 2
+                self.addGestureRecognizer(dtap!)
+            }
+            
+            if (!full) {
+                let comment = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openComment(sender:)))
+                comment.delegate = self
+                if(dtap != nil){
+                    comment.require(toFail: dtap!)
+                }
+                self.addGestureRecognizer(comment)
+            }
+            if (longPress == nil) {
+                longPress = UILongPressGestureRecognizer(target: self, action: #selector(LinkCellView.handleLongPress(_:)))
+                longPress?.minimumPressDuration = 0.25 // 1 second press
+                longPress?.delegate = self
+                self.contentView.addGestureRecognizer(longPress!)
+            }
+            infoContainer.addGestureRecognizer(tap2)
+
             addTouch = true
         }
 
@@ -579,6 +610,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     
     var aspect = CGFloat(1)
     var type : ContentType.CType = .NONE
+    var activeSet = false
 
     private func setLink(submission: RSubmission, parent: MediaViewController, nav: UIViewController?, baseSub: String, test : Bool = false) {
         loadedImage = nil
@@ -602,28 +634,25 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
         title.setText(CachedTitle.getTitle(submission: submission, full: full, false, false))
 
-        let activeLinkAttributes = NSMutableDictionary(dictionary: title.activeLinkAttributes)
-        activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.accentColorForSub(sub: submission.subreddit)
-        title.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
-        title.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+        if(!activeSet){
+            let activeLinkAttributes = NSMutableDictionary(dictionary: title.activeLinkAttributes)
+            activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.accentColorForSub(sub: submission.subreddit)
+            title.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+            title.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+            activeSet = true
+        }
 
         reply.isHidden = true
 
         if (!SettingValues.hideButton) {
             hide.isHidden = true
         } else {
-            if (!addTouch) {
-                addTouch(view: hide, action: #selector(LinkCellView.hide(sender:)))
-            }
             hide.isHidden = false
         }
         mod.isHidden = true
         if (!SettingValues.saveButton) {
             save.isHidden = true
         } else {
-            if (!addTouch) {
-                addTouch(view: save, action: #selector(LinkCellView.save(sender:)))
-            }
             save.isHidden = false
         }
         if (submission.archived || !AccountController.isLoggedIn || !LinkCellView.checkInternet()) {
@@ -635,14 +664,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         } else {
             upvote.isHidden = false
             downvote.isHidden = false
-            if (!addTouch) {
-                addTouch(view: upvote, action: #selector(LinkCellView.upvote(sender:)))
-                addTouch(view: downvote, action: #selector(LinkCellView.downvote(sender:)))
-            }
-
+            
             if(submission.canMod){
                 mod.isHidden = false
-                addTouch(view: mod, action: #selector(LinkCellView.mod(sender:)))
                 if(!submission.reports.isEmpty){
                     mod.image = LinkCellImageCache.modTinted
                 } else {
@@ -651,14 +675,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             }
 
             if (full) {
-                if (!addTouch) {
-                    addTouch(view: reply, action: #selector(LinkCellView.reply(sender:)))
-                }
                 reply.isHidden = false
                 hide.isHidden = true
-            }
-            if (link!.author == AccountController.currentName) {
-                addTouch(view: edit, action: #selector(LinkCellView.edit(sender:)))
             }
             edit.isHidden = true
         }
@@ -742,10 +760,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
         if (!big && !thumb && submission.type != .SELF && submission.type != .NONE) { //If a submission has a link but no images, still show the web thumbnail
             thumb = true
-            addTouch(view: thumbImage, action: #selector(LinkCellView.openLink(sender:)))
             thumbImage.image = UIImage.init(named: "web")
         } else if (thumb && !big) {
-            addTouch(view: thumbImage, action: #selector(LinkCellView.openLink(sender:)))
             if (submission.nsfw) {
                 thumbImage.image = UIImage.init(named: "nsfw")
             } else if (submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty) {
@@ -776,14 +792,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 submissionHeight = test ? 150 : 200
             }
             bannerImage.isUserInteractionEnabled = true
-            let tap = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openLink(sender:)))
-            tap.delegate = self
-            bannerImage.addGestureRecognizer(tap)
-
-            let tap2 = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openLink(sender:)))
-            tap2.delegate = self
-
-            infoContainer.addGestureRecognizer(tap2)
             if (shouldShowLq) {
                 lq = true
                 loadedImage = URL.init(string: submission.lqUrl)
@@ -818,21 +826,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             aspectWidth = self.contentView.frame.size.width
         }
 
-        if(dtap == nil && SettingValues.submissionActionDoubleTap != .NONE){
-            dtap = UIShortTapGestureRecognizer.init(target: self, action: #selector(self.doDTap(_:)))
-            dtap!.numberOfTapsRequired = 2
-            self.addGestureRecognizer(dtap!)
-        }
-        
-        if (!full) {
-            let comment = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openComment(sender:)))
-            comment.delegate = self
-            if(dtap != nil){
-                comment.require(toFail: dtap!)
-            }
-            self.addGestureRecognizer(comment)
-        }
-        
         let mo = History.commentsSince(s: submission)
         comments.text = " \(submission.commentCount)" + (mo > 0 ? "(+\(mo))" : "")
 
@@ -945,13 +938,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         } else {
             infoContainer.isHidden = true
             tagbody.isHidden = true
-        }
-
-        if (longPress == nil) {
-            longPress = UILongPressGestureRecognizer(target: self, action: #selector(LinkCellView.handleLongPress(_:)))
-            longPress?.minimumPressDuration = 0.25 // 1 second press
-            longPress?.delegate = self
-            self.contentView.addGestureRecognizer(longPress!)
         }
         
         //todo maybe? self.contentView.backgroundColor = ColorUtil.getColorForSub(sub: submission.subreddit)

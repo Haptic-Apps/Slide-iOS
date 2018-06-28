@@ -1384,8 +1384,8 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
         cell.preservesSuperviewLayoutMargins = false
         cell.del = self
-        //cell.layer.shouldRasterize = true
-        //cell.layer.rasterizationScale = UIScreen.main.scale
+        cell.layer.shouldRasterize = true
+        cell.layer.rasterizationScale = UIScreen.main.scale
 
 //        DispatchQueue.main.async {
             cell.configure(submission: submission, parent: self, nav: self.navigationController, baseSub: sub)
