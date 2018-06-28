@@ -1137,17 +1137,17 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
     func refresh() {
         let link = self.link!
-        upvote.image = UIImage.init(named: "upvote")?.menuIcon()
-        save.image = UIImage.init(named: "save")?.menuIcon()
-        downvote.image = UIImage.init(named: "downvote")?.menuIcon()
+        upvote.image = LinkCellImageCache.upvote
+        save.image = LinkCellImageCache.save
+        downvote.image = LinkCellImageCache.downvote
         var attrs: [String: Any] = [:]
         switch (ActionStates.getVoteDirection(s: link)) {
         case .down:
-            downvote.image = UIImage.init(named: "downvote")?.withColor(tintColor: ColorUtil.downvoteColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))
+            downvote.image = LinkCellImageCache.downvoteTinted
             attrs = ([NSForegroundColorAttributeName: ColorUtil.downvoteColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
             break
         case .up:
-            upvote.image = UIImage.init(named: "upvote")?.withColor(tintColor: ColorUtil.upvoteColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))
+            upvote.image = LinkCellImageCache.upvoteTinted
             attrs = ([NSForegroundColorAttributeName: ColorUtil.upvoteColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
             break
         default:
@@ -1194,7 +1194,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
 
         if (ActionStates.isSaved(s: link)) {
-            save.image = UIImage.init(named: "save")?.withColor(tintColor: GMColor.yellow500Color()).imageResize(sizeChange: CGSize.init(width: 20, height: 20))
+            save.image = LinkCellImageCache.saveTinted
         }
         if (History.getSeen(s: link) && !full) {
             self.title.alpha = 0.7
