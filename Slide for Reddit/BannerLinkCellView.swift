@@ -13,9 +13,11 @@ final class BannerLinkCellView: LinkCellView {
 
     override func layoutForType() {
         super.layoutForType()
+
         let ceight = SettingValues.postViewMode == .COMPACT ? CGFloat(4) : CGFloat(8)
         let ctwelve = SettingValues.postViewMode == .COMPACT ? CGFloat(8) : CGFloat(12)
         let bannerPadding = (full || SettingValues.postViewMode != .CARD) ? CFloat(5) : CFloat(0)
+
         constraintsForType = batch {
             bannerImage.isHidden = false
             if SettingValues.postViewMode == .CENTER {
@@ -46,7 +48,13 @@ final class BannerLinkCellView: LinkCellView {
                 infoContainer.bottomAnchor == bannerImage.bottomAnchor - 4
                 infoContainer.rightAnchor == bannerImage.rightAnchor - bannerPadding - ctwelve
             }
+        }
+    }
 
+    override func layoutForContent() {
+        super.layoutForContent()
+
+        constraintsForContent = batch {
             bannerImage.heightAnchor <= bannerImage.widthAnchor / aspect
         }
     }

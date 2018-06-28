@@ -46,6 +46,10 @@ final class ThumbnailLinkCellView: LinkCellView {
             title.bottomAnchor <= box.topAnchor - ceight
         }
     }
+
+    override func layoutForContent() {
+        
+    }
     
 //    override func doConstraints() {
 //        let target = CurrentType.thumb

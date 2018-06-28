@@ -1383,7 +1383,10 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         cell.del = self
         //cell.layer.shouldRasterize = true
         //cell.layer.rasterizationScale = UIScreen.main.scale
-        cell.configure(submission: submission, parent: self, nav: self.navigationController, baseSub: sub)
+
+//        DispatchQueue.main.async {
+            cell.configure(submission: submission, parent: self, nav: self.navigationController, baseSub: sub)
+//        }
 
         if indexPath.row == self.links.count - 3 && !loading && !nomore {
             self.loadMore()

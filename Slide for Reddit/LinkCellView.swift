@@ -122,6 +122,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
     var tempConstraints: [NSLayoutConstraint] = []
     var constraintsForType: [NSLayoutConstraint] = []
+    var constraintsForContent: [NSLayoutConstraint] = []
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -410,6 +411,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
 
         layoutForType()
+        layoutForContent()
 
     }
 
@@ -428,10 +430,21 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
     }
 
+    internal func layoutForContent() {
+
+        // Remove all constraints previously applied by this method
+        for constraint in constraintsForContent {
+            constraint.isActive = false
+        }
+        constraintsForContent = []
+
+        // Deriving classes will populate constraintsForContent in the override for this method.
+    }
+
     func configure(submission: RSubmission, parent: MediaViewController, nav: UIViewController?, baseSub: String, test : Bool = false) {
         self.link = submission
         self.setLink(submission: submission, parent: parent, nav: nav, baseSub: baseSub, test: test)
-        configureLayout()
+        layoutForContent()
     }
 
     func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {

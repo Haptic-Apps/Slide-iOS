@@ -29,6 +29,10 @@ final class TextLinkCellView: LinkCellView {
             title.bottomAnchor <= box.topAnchor - ctwelve
         }
     }
+
+    override func layoutForContent() {
+        
+    }
     
 //    override func doConstraints() {
 //        let target = CurrentType.text
