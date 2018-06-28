@@ -86,7 +86,11 @@ class ColorUtil {
 
     static var foregroundColor = UIColor.white
     static var backgroundColor = UIColor.white
-    static var fontColor = UIColor.black
+    static var fontColor = UIColor.black {
+        didSet {
+            LinkCellImageCache.initialize()
+        }
+    }
 
     public static func setBackgroundToolbar(toolbar: UINavigationBar?) {
         if (toolbar != nil) {

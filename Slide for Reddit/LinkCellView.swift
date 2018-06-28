@@ -189,19 +189,19 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
         self.hide = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20)).then {
             $0.accessibilityIdentifier = "Hide Button"
-            $0.image = UIImage.init(named: "hide")?.menuIcon()
+            $0.image = LinkCellImageCache.hide
             $0.contentMode = .center
         }
 
         self.reply = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20)).then {
             $0.accessibilityIdentifier = "Reply Button"
-            $0.image = UIImage.init(named: "reply")?.menuIcon()
+            $0.image = LinkCellImageCache.reply
             $0.contentMode = .center
         }
 
         self.edit = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20)).then {
             $0.accessibilityIdentifier = "Edit Button"
-            $0.image = UIImage.init(named: "edit")?.menuIcon()
+            $0.image = LinkCellImageCache.edit
             $0.contentMode = .center
         }
 
@@ -222,19 +222,19 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
         self.mod = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20)).then {
             $0.accessibilityIdentifier = "Mod Button"
-            $0.image = UIImage(named: "mod")?.menuIcon().imageResize(sizeChange: CGSize.init(width: 20, height: 20))
+            $0.image = LinkCellImageCache.mod
             $0.contentMode = .center
         }
 
         self.commenticon = UIImageView(frame: CGRect(x: 0, y: 0, width: 10, height: 10)).then {
             $0.accessibilityIdentifier = "Comment Count Icon"
-            $0.image = UIImage(named: "comments")?.smallIcon()
+            $0.image = LinkCellImageCache.commentsIcon
             $0.contentMode = .scaleAspectFit
         }
 
         self.submissionicon = UIImageView(frame: CGRect(x: 0, y: 0, width: 10, height: 10)).then {
             $0.accessibilityIdentifier = "Score Icon"
-            $0.image = UIImage(named: "upvote")?.smallIcon()
+            $0.image = LinkCellImageCache.votesIcon
             $0.contentMode = .scaleAspectFit
         }
 
@@ -596,9 +596,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 mod.isHidden = false
                 addTouch(view: mod, action: #selector(LinkCellView.mod(sender:)))
                 if(!submission.reports.isEmpty){
-                    mod.image = UIImage.init(named: "mod")?.withColor(tintColor: GMColor.red500Color()).imageResize(sizeChange: CGSize.init(width: 20, height: 20))
+                    mod.image = LinkCellImageCache.modTinted
                 } else {
-                    mod.image = UIImage.init(named: "mod")?.withColor(tintColor: ColorUtil.fontColor).imageResize(sizeChange: CGSize.init(width: 20, height: 20))
+                    mod.image = LinkCellImageCache.mod
                 }
             }
 
@@ -1373,7 +1373,8 @@ extension UILabel {
         if (image != nil) {
             textAttachment.image = image as? UIImage
         } else {
-            let img = UIImage(named: imageName)?.imageResize(sizeChange: CGSize.init(width: self.font.pointSize, height: self.font.pointSize)).withColor(tintColor: ColorUtil.fontColor)
+
+            let img = UIImage(named: imageName)?.getCopy(withSize: .square(size: self.font.pointSize), withColor: ColorUtil.fontColor)
             textAttachment.image = img
             LinkCellView.imageDictionary.setObject(img!, forKey: imageName as NSCopying)
         }

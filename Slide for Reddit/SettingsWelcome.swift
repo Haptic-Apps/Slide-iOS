@@ -81,7 +81,7 @@ class SettingsWelcome: UIViewController {
         iOS.layer.cornerRadius = 22.5
         iOS.clipsToBounds = true
         iOS.setTitle("  iOS", for: .normal)
-        iOS.leftImage(image: (UIImage.init(named: "colors")?.navIcon().withColor(tintColor: GMColor.blue500Color()))!, renderMode: UIImageRenderingMode.alwaysOriginal)
+        iOS.leftImage(image: (UIImage.init(named: "colors")?.navIcon().getCopy(withColor: GMColor.blue500Color()))!, renderMode: UIImageRenderingMode.alwaysOriginal)
         iOS.elevate(elevation: 2)
         iOS.titleLabel?.font = UIFont.systemFont(ofSize: 18)
         iOS.setTitleColor(GMColor.blue500Color(), for: .normal)
@@ -103,7 +103,7 @@ class SettingsWelcome: UIViewController {
         dark.layer.cornerRadius = 22.5
         dark.clipsToBounds = true
         dark.setTitle("  Dark material", for: .normal)
-        dark.leftImage(image: (UIImage.init(named: "colors")?.navIcon().withColor(tintColor: ColorUtil.Theme.DARK.fontColor))!, renderMode: UIImageRenderingMode.alwaysOriginal)
+        dark.leftImage(image: (UIImage.init(named: "colors")?.navIcon().getCopy(withColor: ColorUtil.Theme.DARK.fontColor))!, renderMode: UIImageRenderingMode.alwaysOriginal)
         dark.elevate(elevation: 2)
         dark.titleLabel?.font = FontGenerator.Font.ROBOTO_BOLD.font.withSize(18)
         dark.setTitleColor(ColorUtil.Theme.DARK.fontColor, for: .normal)
@@ -125,7 +125,7 @@ class SettingsWelcome: UIViewController {
         blue.layer.cornerRadius = 22.5
         blue.clipsToBounds = true
         blue.setTitle("  Deep blue", for: .normal)
-        blue.leftImage(image: (UIImage.init(named: "colors")?.navIcon().withColor(tintColor: ColorUtil.Theme.BLUE.fontColor))!, renderMode: UIImageRenderingMode.alwaysOriginal)
+        blue.leftImage(image: (UIImage.init(named: "colors")?.navIcon().getCopy(withColor: ColorUtil.Theme.BLUE.fontColor))!, renderMode: UIImageRenderingMode.alwaysOriginal)
         blue.elevate(elevation: 2)
         blue.titleLabel?.font = FontGenerator.Font.HELVETICA.font.withSize(18)
         blue.setTitleColor(ColorUtil.Theme.BLUE.fontColor, for: .normal)

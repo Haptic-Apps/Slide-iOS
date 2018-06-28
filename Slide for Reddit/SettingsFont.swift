@@ -109,7 +109,7 @@ class SettingsFont: UITableViewController {
         actionSheetController.addAction(cancelActionButton)
 
         let currentCommentSize = SettingValues.commentFontOffset
-        let selected = UIImage.init(named: "selected")!.imageResize(sizeChange: CGSize.init(width: 20, height: 20)).withColor(tintColor: .blue)
+        let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
         
         cancelActionButton = UIAlertAction(title: "Extra Large", style: .default) { action -> Void in
             self.setSizeComment(size: 8)
@@ -186,7 +186,7 @@ class SettingsFont: UITableViewController {
         actionSheetController.addAction(cancelActionButton)
 
         let currentLinkSize = SettingValues.postFontOffset
-        let selected = UIImage.init(named: "selected")!.imageResize(sizeChange: CGSize.init(width: 20, height: 20)).withColor(tintColor: .blue)
+        let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
 
         cancelActionButton = UIAlertAction(title: "Extra Large", style: .default) { action -> Void in
             self.setSizeSubmission(size: 8)

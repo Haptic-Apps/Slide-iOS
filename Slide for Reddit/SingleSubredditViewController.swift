@@ -809,7 +809,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             Subscriptions.unsubscribe(sub, session: session!)
             subChanged = false
             BannerUtil.makeBanner(text: "Unsubscribed", color: ColorUtil.accentColorForSub(sub: sub), seconds: 3, context: self, top: true)
-            subb.setImage(UIImage.init(named: "addcircle")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
+            subb.setImage(UIImage.init(named: "addcircle")?.getCopy(withColor: ColorUtil.fontColor), for: UIControlState.normal)
         } else {
             let alrController = UIAlertController.init(title: "Subscribe to \(sub)", message: nil, preferredStyle: .actionSheet)
             if (AccountController.isLoggedIn) {
@@ -817,7 +817,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                     Subscriptions.subscribe(self.sub, true, session: self.session!)
                     self.subChanged = true
                     BannerUtil.makeBanner(text: "Subscribed", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 3, context: self, top: true)
-                    self.subb.setImage(UIImage.init(named: "subbed")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
+                    self.subb.setImage(UIImage.init(named: "subbed")?.getCopy(withColor: ColorUtil.fontColor), for: UIControlState.normal)
                 })
                 alrController.addAction(somethingAction)
             }
@@ -826,7 +826,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                 Subscriptions.subscribe(self.sub, false, session: self.session!)
                 self.subChanged = true
                 BannerUtil.makeBanner(text: "Added to subreddit list", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 3, context: self, top: true)
-                self.subb.setImage(UIImage.init(named: "subbed")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
+                self.subb.setImage(UIImage.init(named: "subbed")?.getCopy(withColor: ColorUtil.fontColor), for: UIControlState.normal)
             })
             alrController.addAction(somethingAction)
 
@@ -1421,7 +1421,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         }
         actionSheetController.addAction(cancelActionButton)
 
-        let selected = UIImage.init(named: "selected")!.imageResize(sizeChange: CGSize.init(width: 20, height: 20)).withColor(tintColor: .blue)
+        let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
 
         for link in LinkSortType.cases {
             let saveActionButton: UIAlertAction = UIAlertAction(title: link.description, style: .default) { action -> Void in
@@ -1454,7 +1454,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             }
             actionSheetController.addAction(cancelActionButton)
 
-            let selected = UIImage.init(named: "selected")!.imageResize(sizeChange: CGSize.init(width: 20, height: 20)).withColor(tintColor: .blue)
+            let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
 
             for t in TimeFilterWithin.cases {
                 let saveActionButton: UIAlertAction = UIAlertAction(title: t.param, style: .default) { action -> Void in

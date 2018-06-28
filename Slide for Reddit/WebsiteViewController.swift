@@ -29,7 +29,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
 
         if(navigationController != nil){
             let sort = UIButton.init(type: .custom)
-            sort.setImage(UIImage.init(named: "size")?.imageResize(sizeChange: CGSize.init(width: 25, height: 25)), for: UIControlState.normal)
+            sort.setImage(UIImage.init(named: "size")?.getCopy(withSize: .square(size: 25)), for: UIControlState.normal)
             sort.addTarget(self, action: #selector(self.readerMode(_:)), for: UIControlEvents.touchUpInside)
             sort.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
             let sortB = UIBarButtonItem.init(customView: sort)

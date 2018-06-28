@@ -680,7 +680,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 print("Cancel")
             }
             actionSheetController.addAction(cancelActionButton)
-            let selected = UIImage.init(named: "selected")!.imageResize(sizeChange: CGSize.init(width: 20, height: 20)).withColor(tintColor: .blue)
+            let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
             
             for c in CommentSort.cases {
                 let saveActionButton: UIAlertAction = UIAlertAction(title: c.description, style: .default) { action -> Void in
