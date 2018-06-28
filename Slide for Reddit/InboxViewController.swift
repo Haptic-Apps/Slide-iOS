@@ -8,7 +8,7 @@
 
 import UIKit
 import reddift
-import MaterialComponents.MaterialSnackbar
+import MaterialComponents.MaterialTabs
 
 class InboxViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIToolbarDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate {
     var content: [MessageWhere] = []
@@ -70,9 +70,7 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
 
         VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(completion: {(message) in
             DispatchQueue.main.async(execute: { () -> Void in
-                let message = MDCSnackbarMessage()
-                message.text = "Message sent!"
-                MDCSnackbarManager.show(message)
+                BannerUtil.makeBanner(text: "Message sent!", seconds: 3, context: self)
             })
         })), parentVC: self)
 
@@ -91,9 +89,7 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
                 switch (result) {
                 case .success(_):
                     DispatchQueue.main.async {
-                        let message = MDCSnackbarMessage()
-                        message.text = "All messages marked as read"
-                        MDCSnackbarManager.show(message)
+                        BannerUtil.makeBanner(text: "All messages marked as read", seconds: 5, context: self)
                     }
                     break
                 default: break

@@ -13,7 +13,6 @@ import TTTAttributedLabel
 import RealmSwift
 import AudioToolbox
 import XLActionController
-import MaterialComponents.MaterialSnackbar
 import RLBAlertsPickers
 
 protocol UZTextViewCellDelegate: class {
@@ -490,9 +489,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
                     case .failure(let error):
                         print(error.description)
                         DispatchQueue.main.async {
-                            let message = MDCSnackbarMessage()
-                            message.text = "Approving comment failed!"
-                            MDCSnackbarManager.show(message)
+                            BannerUtil.makeBanner(text: "Approving comment failed!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit) ,seconds: 3, context: self.parent!)
                         }
                         break
                     case .success(_):
@@ -502,9 +499,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
                         }
                         DispatchQueue.main.async {
                             self.parent!.tableView.reloadData()
-                            let message = MDCSnackbarMessage()
-                            message.text = "Comment approved!"
-                            MDCSnackbarManager.show(message)
+                            BannerUtil.makeBanner(text: "Comment approved!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit) ,seconds: 3, context: self.parent!)
                         }
                         break
                     }
@@ -524,16 +519,12 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
                     case .failure(let error):
                         print(error.description)
                         DispatchQueue.main.async {
-                            let message = MDCSnackbarMessage()
-                            message.text = "Distinguishing comment failed!"
-                            MDCSnackbarManager.show(message)
+                            BannerUtil.makeBanner(text: "Distinguishing comment failed!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit) ,seconds: 3, context: self.parent!)
                         }
                         break
                     case .success(_):
                         DispatchQueue.main.async {
-                            let message = MDCSnackbarMessage()
-                            message.text = "Comment distinguished!"
-                            MDCSnackbarManager.show(message)
+                            BannerUtil.makeBanner(text: "Comment distinguished!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit) ,seconds: 3, context: self.parent!)
                         }
                         break
                     }
@@ -553,16 +544,12 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
                     case .failure(let error):
                         print(error.description)
                         DispatchQueue.main.async {
-                            let message = MDCSnackbarMessage()
-                            message.text = "Couldn't \(sticky ? "" : "un-")pin comment!"
-                            MDCSnackbarManager.show(message)
+                            BannerUtil.makeBanner(text: "Couldn't \(sticky ? "" : "un-")pin comment!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit) ,seconds: 3, context: self.parent!)
                         }
                         break
                     case .success(_):
                         DispatchQueue.main.async {
-                            let message = MDCSnackbarMessage()
-                            message.text = "Comment \(sticky ? "" : "un-")pinned!"
-                            MDCSnackbarManager.show(message)
+                            BannerUtil.makeBanner(text: "Comment \(sticky ? "" : "un-")pinned!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit) ,seconds: 3, context: self.parent!)
                         }
                         break
                     }
@@ -582,9 +569,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
                     case .failure(let error):
                     print(error.description)
                     DispatchQueue.main.async {
-                        let message = MDCSnackbarMessage()
-                        message.text = "Removing comment failed!"
-                        MDCSnackbarManager.show(message)
+                        BannerUtil.makeBanner(text: "Removing comment failed!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit) ,seconds: 3, context: self.parent!)
                         }
                         break
                     case .success(_):
@@ -594,9 +579,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
                         }
                         DispatchQueue.main.async {
                             self.parent!.tableView.reloadData()
-                            let message = MDCSnackbarMessage()
-                            message.text = "Comment removed!"
-                            MDCSnackbarManager.show(message)
+                            BannerUtil.makeBanner(text: "Comment removed!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit) ,seconds: 3, context: self.parent!)
                         }
                         break
                 }
@@ -617,16 +600,12 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
                     case .failure(let error):
                         print(error.description)
                         DispatchQueue.main.async {
-                            let message = MDCSnackbarMessage()
-                            message.text = "Banning user failed!"
-                            MDCSnackbarManager.show(message)
+                            BannerUtil.makeBanner(text: "Banning user failed!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit) ,seconds: 3, context: self.parent!)
                         }
                         break
                     case .success(_):
                         DispatchQueue.main.async {
-                            let message = MDCSnackbarMessage()
-                            message.text = "u/\(self.comment!.author) banned!"
-                            MDCSnackbarManager.show(message)
+                            BannerUtil.makeBanner(text: "u/\(self.comment!.author) banned!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit) ,seconds: 3, context: self.parent!)
                         }
                         break
                     }
@@ -929,16 +908,16 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         if(depth == 1){
             marginTop = 8
         }
+        let font = FontGenerator.fontOfSize(size: 12, submission: false)
 
         var attr = NSMutableAttributedString()
         if (more.children.isEmpty) {
-            attr = NSMutableAttributedString(string: "Continue this thread")
+            attr = NSMutableAttributedString(string: "Continue this thread", attributes: [NSFontAttributeName: font])
         } else {
-            attr = NSMutableAttributedString(string: "Load \(more.count) more")
+            attr = NSMutableAttributedString(string: "Load \(more.count) more", attributes: [NSFontAttributeName: font])
         }
-        let font = FontGenerator.fontOfSize(size: 16, submission: false)
         let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: .white)
-        title.attributedText = attr2
+        title.setText(attr2)
         updateDepthConstraints()
     }
 

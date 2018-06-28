@@ -10,7 +10,6 @@ import UIKit
 import reddift
 import SDWebImage
 import SideMenu
-import MaterialComponents.MaterialSnackbar
 
 class SubSidebarViewController: MediaViewController, UIGestureRecognizerDelegate {
     weak var scrollView: UIScrollView!

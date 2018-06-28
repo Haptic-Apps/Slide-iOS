@@ -7,7 +7,6 @@
 // Derived from https://stackoverflow.com/a/49843358/3697225
 import Foundation
 import Photos
-import MaterialComponents.MaterialSnackbar
 
 class CustomAlbum: NSObject {
     static let albumName = "Slide for Reddit"
@@ -77,7 +76,7 @@ class CustomAlbum: NSObject {
         return nil
     }
 
-    func save(image: UIImage) {
+    func save(image: UIImage, parent: UIViewController?) {
         self.checkAuthorizationWithHandler { (success) in
             if success, self.assetCollection != nil {
                 PHPhotoLibrary.shared().performChanges({
@@ -89,15 +88,12 @@ class CustomAlbum: NSObject {
                     }
 
                 }, completionHandler: { (success, error) in
-                    if success {
-                        let message = MDCSnackbarMessage()
-                        message.text = "Image saved to gallery!"
-                        MDCSnackbarManager.show(message)
-                    } else {
-                        print("Error writing to image library: \(error!.localizedDescription)")
-                        let message = MDCSnackbarMessage()
-                        message.text = "Error saving image to gallery"
-                        MDCSnackbarManager.show(message)
+                    DispatchQueue.main.async {
+                        if success {
+                            BannerUtil.makeBanner(text: "Image saved to gallery!", color: .black, seconds: 3, context: parent)
+                        } else {
+                            BannerUtil.makeBanner(text: "Error saving image! Make sure Slide has permission to access gallery", color: GMColor.red500Color(), seconds: 3, context: parent)
+                        }
                     }
                 })
 
@@ -105,7 +101,7 @@ class CustomAlbum: NSObject {
         }
     }
 
-    func saveMovieToLibrary(movieURL: URL) {
+    func saveMovieToLibrary(movieURL: URL, parent: UIViewController?) {
 
         self.checkAuthorizationWithHandler { (success) in
             if success, self.assetCollection != nil {
@@ -122,15 +118,13 @@ class CustomAlbum: NSObject {
                     }
 
                 }, completionHandler:  { (success, error) in
-                    if success {
-                        let message = MDCSnackbarMessage()
-                        message.text = "Video saved to gallery!"
-                        MDCSnackbarManager.show(message)
-                    } else {
-                        print("Error writing to movie library: \(error!.localizedDescription)")
-                        let message = MDCSnackbarMessage()
-                        message.text = "Error saving video to gallery"
-                        MDCSnackbarManager.show(message)
+                    DispatchQueue.main.async {
+                        if success {
+                            BannerUtil.makeBanner(text: "Video saved to gallery!", color: .black, seconds: 3, context: parent)
+                        } else {
+                            print("Error writing to movie library: \(error!.localizedDescription)")
+                            BannerUtil.makeBanner(text: "Error saving video! Make sure Slide has permission to access gallery", color: GMColor.red500Color(), seconds: 3, context: parent)
+                        }
                     }
                 })
 

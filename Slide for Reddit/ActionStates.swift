@@ -30,6 +30,9 @@ class ActionStates {
     }
     
     static func setVoteDirection(s: Thing, direction: VoteDirection){
+        if #available(iOS 10.0, *) {
+            HapticUtility.hapticActionComplete()
+        }
         let fullname = s.getId()
         
         if let index = upVotedFullnames.index(of: fullname) {
@@ -92,6 +95,9 @@ class ActionStates {
     }
 
     static func setSaved(s: Thing, saved: Bool){
+        if #available(iOS 10.0, *) {
+            HapticUtility.hapticActionStrong()
+        }
         let fullname = s.getId()
         if let index = savedFullnames.index(of: fullname){
             savedFullnames.remove(at: index)
@@ -118,6 +124,9 @@ class ActionStates {
     }
     
     static func setVoteDirection(s: RSubmission, direction: VoteDirection){
+        if #available(iOS 10.0, *) {
+            HapticUtility.hapticActionComplete()
+        }
         let fullname = s.getId()
         
         if let index = upVotedFullnames.index(of: fullname) {
@@ -156,6 +165,9 @@ class ActionStates {
     }
     
     static func setSaved(s: RSubmission, saved: Bool){
+        if #available(iOS 10.0, *) {
+            HapticUtility.hapticActionStrong()
+        }
         let fullname = s.getId()
         if let index = savedFullnames.index(of: fullname){
             savedFullnames.remove(at: index)
@@ -182,6 +194,9 @@ class ActionStates {
     }
     
     static func setVoteDirection(s: RComment, direction: VoteDirection){
+        if #available(iOS 10.0, *) {
+            HapticUtility.hapticActionComplete()
+        }
         let fullname = s.getId()
         
         if let index = upVotedFullnames.index(of: fullname) {
@@ -220,6 +235,9 @@ class ActionStates {
     }
     
     static func setSaved(s: RComment, saved: Bool){
+        if #available(iOS 10.0, *) {
+            HapticUtility.hapticActionStrong()
+        }
         let fullname = s.getId()
         if let index = savedFullnames.index(of: fullname){
             savedFullnames.remove(at: index)

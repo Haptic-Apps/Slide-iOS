@@ -12,7 +12,6 @@ import SDWebImage
 import SideMenu
 import UZTextView
 import RealmSwift
-import MaterialComponents.MaterialSnackbar
 import MaterialComponents.MDCActivityIndicator
 import MaterialComponents.MaterialBottomSheet
 import TTTAttributedLabel
@@ -81,7 +80,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                 type = .SELF
             }
 
-            if (SettingValues.bannerHidden) {
+            if (SettingValues.postImageMode == .THUMBNAIL) {
                 big = false
                 thumb = true
             }
@@ -92,7 +91,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             if (!fullImage && submissionHeight < 50) {
                 big = false
                 thumb = true
-            } else if (big && (SettingValues.bigPicCropped)) {
+            } else if (big && (SettingValues.postImageMode == .CROPPED_IMAGE)) {
                 submissionHeight = 200
             } else if (big) {
                 let ratio = Double(submissionHeight) / Double(submission.width)
@@ -299,23 +298,16 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
             tableView.performBatchUpdates({
                 self.tableView.deleteItems(at: [IndexPath.init(item: location, section: 0)])
-                let message = MDCSnackbarMessage.init(text: "Submission hidden forever")
-                let action = MDCSnackbarMessageAction()
-                let actionHandler = { () in
+                BannerUtil.makeBanner(text: "Submission hidden forever, tap to undo", color: GMColor.red500Color(), seconds: 4, context: self, callback: {
                     self.links.insert(item, at: location)
                     self.tableView.insertItems(at: [IndexPath.init(item: location, section: 0)])
                     do {
                         try self.session?.setHide(false, name: cell.link!.getId(), completion: { (result) in })
                     } catch {
-
+                        
                     }
-                }
-                action.handler = actionHandler
-                action.title = "UNDO"
-
-                message.action = action
-                MDCSnackbarManager.show(message)
-
+                })
+                
                 self.flowLayout.reset()
             }, completion: nil)
 
@@ -448,7 +440,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
         tableView.reloadData()
-
+        setupFab()
     }
 
     var links: [RSubmission] = []
@@ -643,6 +635,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     static var firstPresented = true
 
     var headerView = UIView()
+    var more = UIButton()
 
     func reloadNeedingColor() {
         tableView.backgroundColor = ColorUtil.backgroundColor
@@ -682,11 +675,11 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
             let sort = UIButton.init(type: .custom)
             sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControlState.normal)
-            sort.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
+            sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControlEvents.touchUpInside)
             sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let sortB = UIBarButtonItem.init(customView: sort)
 
-            let more = UIButton.init(type: .custom)
+            more = UIButton.init(type: .custom)
             more.setImage(UIImage.init(named: "moreh")?.menuIcon(), for: UIControlState.normal)
             more.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControlEvents.touchUpInside)
             more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
@@ -815,9 +808,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             //was not subscriber, changed, and unsubscribing again
             Subscriptions.unsubscribe(sub, session: session!)
             subChanged = false
-            let message = MDCSnackbarMessage()
-            message.text = "Unsubscribed"
-            MDCSnackbarManager.show(message)
+            BannerUtil.makeBanner(text: "Unsubscribed", color: ColorUtil.accentColorForSub(sub: sub), seconds: 3, context: self, top: true)
             subb.setImage(UIImage.init(named: "addcircle")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
         } else {
             let alrController = UIAlertController.init(title: "Subscribe to \(sub)", message: nil, preferredStyle: .actionSheet)
@@ -825,9 +816,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                 let somethingAction = UIAlertAction(title: "Add to sub list and subscribe", style: UIAlertActionStyle.default, handler: { (alert: UIAlertAction!) in
                     Subscriptions.subscribe(self.sub, true, session: self.session!)
                     self.subChanged = true
-                    let message = MDCSnackbarMessage()
-                    message.text = "Subscribed"
-                    MDCSnackbarManager.show(message)
+                    BannerUtil.makeBanner(text: "Subscribed", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 3, context: self, top: true)
                     self.subb.setImage(UIImage.init(named: "subbed")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
                 })
                 alrController.addAction(somethingAction)
@@ -836,9 +825,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             let somethingAction = UIAlertAction(title: "Just add to sub list", style: UIAlertActionStyle.default, handler: { (alert: UIAlertAction!) in
                 Subscriptions.subscribe(self.sub, false, session: self.session!)
                 self.subChanged = true
-                let message = MDCSnackbarMessage()
-                message.text = "Added"
-                MDCSnackbarManager.show(message)
+                BannerUtil.makeBanner(text: "Added to subreddit list", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 3, context: self, top: true)
                 self.subb.setImage(UIImage.init(named: "subbed")?.withColor(tintColor: ColorUtil.fontColor), for: UIControlState.normal)
             })
             alrController.addAction(somethingAction)
@@ -870,9 +857,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                     }
                 default:
                     DispatchQueue.main.async {
-                        let message = MDCSnackbarMessage()
-                        message.text = "Multireddit info not found"
-                        MDCSnackbarManager.show(message)
+                        BannerUtil.makeBanner(text: "Multireddit information not found", color: GMColor.red500Color(), seconds: 3, context: self)
                     }
                     break
                 }
@@ -1183,8 +1168,8 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
         if (sub != "all" && sub != "frontpage" && sub != "friends" && !sub.startsWith("/m/")) {
             alert.addAction(UIAlertAction(title: "Search \(sub)", style: .default, handler: { [weak alert] (_) in
-                let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
-                let search = SearchViewController.init(subreddit: self.sub, searchFor: (textField?.text!)!)
+                let text = self.searchText ?? ""
+                let search = SearchViewController.init(subreddit: self.sub, searchFor: text)
                 VCPresenter.showVC(viewController: search, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
             }))
         }
@@ -1194,7 +1179,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         present(alert, animated: true, completion: nil)
 
     }
-
+    
     func doDisplaySidebar() {
         Sidebar.init(parent: self, subname: self.sub).displaySidebar()
     }
@@ -1208,6 +1193,12 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         alertController.addAction(Action(ActionData(title: "Search", image: UIImage(named: "search")!.menuIcon()), style: .default, handler: { action in
             self.search()
         }))
+        
+        if(!single && SettingValues.viewType){
+            alertController.addAction(Action(ActionData(title: "Sort (currently \(sort.path))", image: UIImage(named: "filter")!.menuIcon()), style: .default, handler: { action in
+                self.showSortMenu(self.more)
+            }))
+        }
 
         if (sub.contains("/m/")) {
             alertController.addAction(Action(ActionData(title: "Manage multireddit", image: UIImage(named: "info")!.menuIcon()), style: .default, handler: { action in
@@ -1321,7 +1312,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             type = .SELF
         }
 
-        if (SettingValues.bannerHidden) {
+        if (SettingValues.postImageMode == .THUMBNAIL) {
             big = false
             thumb = true
         }
@@ -1422,7 +1413,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     var sort = SettingValues.defaultSorting
     var time = SettingValues.defaultTimePeriod
 
-    func showMenu(_ selector: UIButton?) {
+    func showSortMenu(_ selector: UIView?) {
         let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
 
         let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
@@ -1451,7 +1442,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
     }
 
-    func showTimeMenu(s: LinkSortType, selector: UIButton?) {
+    func showTimeMenu(s: LinkSortType, selector: UIView?) {
         if (s == .hot || s == .new) {
             sort = s
             refresh()
@@ -1579,13 +1570,9 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                                 self.nomore = true
 
                                 if (self.links.isEmpty) {
-                                    let message = MDCSnackbarMessage()
-                                    message.text = "No offline content found"
-                                    MDCSnackbarManager.show(message)
+                                    BannerUtil.makeBanner(text: "No offline content found! You can set up subreddit caching in Settings > Auto Cache", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 5, context: self)
                                 } else {
-                                    let message = MDCSnackbarMessage()
-                                    message.text = "Showing offline content (\(DateFormatter().timeSince(from: updated, numericDates: true)))"
-                                    MDCSnackbarManager.show(message)
+                                    BannerUtil.makeBanner(text: "Showing offline content (\(DateFormatter().timeSince(from: updated, numericDates: true)))", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 3, context: self)
                                 }
                             } catch {
 
@@ -1644,9 +1631,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                                     MainViewController.first = false
                                     self.parentController?.checkForMail()
                                 }
-                                let message = MDCSnackbarMessage()
-                                message.text = "No posts found, check your filter settings"
-                                MDCSnackbarManager.show(message)
+                                BannerUtil.makeBanner(text: "No posts found! Check your filter settings", color: GMColor.red500Color(), seconds: 5, context: self)
                             } else {
                                 var paths = [IndexPath]()
                                 for i in before...(self.links.count - 1) {
@@ -1712,7 +1697,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             if (!fullImage && height < 50) {
                 big = false
                 thumb = true
-            } else if (big && (SettingValues.bigPicCropped)) {
+            } else if (big && (SettingValues.postImageMode == .CROPPED_IMAGE)) {
                 height = 200
             }
 

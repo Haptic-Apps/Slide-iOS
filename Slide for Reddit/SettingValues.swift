@@ -8,7 +8,6 @@
 
 import Foundation
 import reddift
-import MaterialComponents.MaterialSnackbar
 
 class SettingValues {
 
@@ -39,8 +38,6 @@ class SettingValues {
     public static let pref_saveNSFWHistory = "SAVE_HISTORY_NSFW"
     public static let pref_markReadOnScroll = "MARK_READ_ON_SCROLL"
     public static let pref_upvotePercentage = "UPVOTE_PERCENTAGE"
-    public static let pref_cropBigPic = "BIG_PIC_CROPPED"
-    public static let pref_bannerHidden = "BANNER_HIDDEN"
     public static let pref_largerThumbnail = "LARGER_THUMBNAIL"
     public static let pref_scoreInTitle = "SCORE_IN_TITLE"
     public static let pref_dataSavingEnabled = "DATA_SAVING_ENABLED"
@@ -86,6 +83,8 @@ class SettingValues {
     public static let pref_commentActionDoubleTap = "COMMENT_DOUBLE_TAP"
     public static let pref_submissionActionDoubleTap = "SUBMISSION_DOUBLE_TAP"
     public static let pref_commentFullScreen = "COMMENT_FULLSCREEN"
+    public static let pref_hapticFeedback = "HAPTIC_FEEDBACK"
+    public static let pref_postImageMode = "POST_IMAGE_MODE"
 
     public static var commentActionRight = CommentAction.UPVOTE
     public static var commentActionLeft = CommentAction.DOWNVOTE
@@ -101,8 +100,8 @@ class SettingValues {
     public static var defaultCommentSorting = CommentSort.confidence
     public static var tintingMode = "TINTING_MODE"
     public static var onlyTintOutside = false
-    public static var bannerHidden = false
     public static var postViewMode = PostViewType.LIST
+    public static var postImageMode = PostImageMode.CROPPED_IMAGE
     public static var fabType = FabType.HIDE_READ
     public static var pictureMode = "PICTURE_MODE"
     public static var hideImageSelftext = false
@@ -113,10 +112,10 @@ class SettingValues {
     public static var nameScrubbing = true
     public static var autoCache = false
     public static var pinToolbar = false
+    public static var hapticFeedback = true
 
     public static var hideButtonActionbar = false
     public static var saveButtonActionbar = true
-    public static var bigPicCropped = false
     public static var enlargeLinks = true
     public static var noImages = false
     public static var showLinkContentType = true
@@ -170,6 +169,12 @@ class SettingValues {
         case CARD = "card"
         case CENTER = "center"
     }
+    
+    enum PostImageMode: String {
+        case FULL_IMAGE = "full"
+        case CROPPED_IMAGE = "cropped"
+        case THUMBNAIL = "thumbnail"
+    }
 
     public static func getLinkSorting(forSubreddit: String) -> LinkSortType {
         if let sorting = UserDefaults.standard.string(forKey: forSubreddit + "Sorting") {
@@ -201,7 +206,6 @@ class SettingValues {
 
     public static func initialize() {
         let settings = UserDefaults.standard
-        SettingValues.bigPicCropped = settings.bool(forKey: SettingValues.pref_cropBigPic)
         SettingValues.saveNSFWHistory = settings.bool(forKey: SettingValues.pref_saveNSFWHistory)
         SettingValues.saveHistory = settings.object(forKey: SettingValues.pref_saveHistory) == nil ? true : settings.bool(forKey: SettingValues.pref_saveHistory)
         SettingValues.multiColumn = settings.object(forKey: SettingValues.pref_multiColumn) == nil ? false : settings.bool(forKey: SettingValues.pref_multiColumn)
@@ -220,6 +224,8 @@ class SettingValues {
                 break
             }
         }
+
+        SettingValues.hapticFeedback = settings.object(forKey: SettingValues.pref_hapticFeedback) == nil ? true : settings.bool(forKey: SettingValues.pref_hapticFeedback)
 
         basePath = settings.string(forKey: SettingValues.pref_defaultTimePeriod)
         for time in TimeFilterWithin.cases {
@@ -261,7 +267,6 @@ class SettingValues {
 
         SettingValues.smallerTag = settings.bool(forKey: SettingValues.pref_smallTag)
         SettingValues.markReadOnScroll = settings.bool(forKey: SettingValues.pref_markReadOnScroll)
-        SettingValues.nsfwEnabled = settings.bool(forKey: SettingValues.pref_nsfwEnabled)
         SettingValues.nsfwPreviews = settings.bool(forKey: SettingValues.pref_nsfwPreviews)
         SettingValues.swapLongPress = settings.bool(forKey: SettingValues.pref_swapLongPress)
         SettingValues.domainInInfo = settings.bool(forKey: SettingValues.pref_domainInInfo)
@@ -302,12 +307,12 @@ class SettingValues {
         }
 
         SettingValues.largerThumbnail = settings.object(forKey: SettingValues.pref_largerThumbnail) == nil ? true : settings.bool(forKey: SettingValues.pref_largerThumbnail)
-        SettingValues.bannerHidden = settings.bool(forKey: SettingValues.pref_bannerHidden)
         SettingValues.viewType = settings.bool(forKey: SettingValues.pref_viewType)
         SettingValues.abbreviateScores = settings.bool(forKey: SettingValues.pref_abbreviateScores)
         SettingValues.scoreInTitle = settings.bool(forKey: SettingValues.pref_scoreInTitle)
         SettingValues.hideButtonActionbar = settings.bool(forKey: SettingValues.pref_hideButtonActionbar)
         SettingValues.postViewMode = PostViewType.init(rawValue: settings.string(forKey: SettingValues.pref_postViewMode) ?? "card")!
+        SettingValues.postImageMode = PostImageMode.init(rawValue: settings.string(forKey: SettingValues.pref_postImageMode) ?? "cropped")!
         SettingValues.fabType = FabType.init(rawValue: settings.string(forKey: SettingValues.pref_fabType) ?? "hide")!
         
         SettingValues.commentActionLeft = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionLeft) ?? "downvote")!
@@ -333,17 +338,11 @@ class SettingValues {
         settings.set(title, forKey: "vtitle")
         settings.set(permalink, forKey: "vlink")
         settings.synchronize()
-        let message = MDCSnackbarMessage.init(text: title)
-        let action = MDCSnackbarMessageAction()
-        let actionHandler = { () in
+        let finalTitle = title + "\nTap to view Changelog"
+        
+        BannerUtil.makeBanner(text: finalTitle, color: GMColor.green500Color(), seconds: 7, context: parentVC, top: true, callback: {
             VCPresenter.openRedditLink(permalink, parentVC.navigationController, parentVC)
-        }
-        action.handler = actionHandler
-        action.title = "CHANGELOG"
-
-        message.action = action
-        MDCSnackbarManager.show(message)
-
+        })
     }
     
     public enum CommentAction: String {

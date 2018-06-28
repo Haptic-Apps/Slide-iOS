@@ -8,7 +8,6 @@
 
 import UIKit
 import reddift
-import MaterialComponents.MaterialSnackbar
 import MaterialComponents.MaterialBottomSheet
 import SideMenu
 import RealmSwift
@@ -109,6 +108,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                     case .failure(let error):
                         print(error)
                     case .success(let profile):
+                        SettingValues.nsfwEnabled = profile.over18
                         let unread = profile.inboxCount
                         let diff = unread - lastMail
                         if(profile.isMod && AccountController.modSubs.isEmpty){
@@ -120,16 +120,11 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                             self.menuNav?.setmail(mailcount: unread)
                             
                             if (diff > 0) {
-                                let action = MDCSnackbarMessageAction()
-                                let actionHandler = { () in
+                                BannerUtil.makeBanner(text: "\(diff) new message\(diff > 1 ? "s" : "")!", seconds: 5, context: self, top: true, callback: {
+                                    () in
                                     let inbox = InboxViewController.init()
-                                    self.show(inbox, sender: self)
-                                }
-                                action.handler = actionHandler
-                                action.title = "VIEW"
-                                let mes = MDCSnackbarMessage.init(text: "\(diff) new message\(diff > 1 ? "s" : "")!")
-                                mes.action = action
-                                MDCSnackbarManager.show(mes)
+                                    VCPresenter.showVC(viewController: inbox, popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
+                                })
                                 UserDefaults.standard.set(unread, forKey: "mail")
                                 UserDefaults.standard.synchronize()
                             }
@@ -448,7 +443,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         doCurrentPage(page!)
     }
 
-
     func doCurrentPage(_ page: Int) {
         self.currentPage = page
         let vc = MainViewController.vCs[page] as! SingleSubredditViewController
@@ -740,7 +734,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     }
 
     func showSortMenu(_ sender: UIButton?) {
-        (MainViewController.vCs[currentPage] as? SingleSubredditViewController)?.showMenu(sender)
+        (MainViewController.vCs[currentPage] as? SingleSubredditViewController)?.showSortMenu(sender)
     }
 
     var currentPage = 0

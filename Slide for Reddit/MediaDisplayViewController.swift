@@ -10,6 +10,7 @@ import UIKit
 import MaterialComponents.MaterialProgressView
 import SDWebImage
 import CoreMedia
+import RLBAlertsPickers
 
 class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestureRecognizerDelegate {
 
@@ -216,8 +217,9 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.scrollView = UIScrollView.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height))
-        self.scrollView.contentSize = CGSize.init(width: self.view.frame.width, height: self.view.frame.height)
+        var xstart = (parent is AlbumViewController) ? CGFloat(61) : 0
+        self.scrollView = UIScrollView.init(frame: CGRect.init(x: 0, y: xstart, width: self.view.frame.size.width, height: self.view.frame.size.height - (xstart * 2) + 8))
+        self.scrollView.contentSize = CGSize.init(width: self.view.frame.width, height: self.view.frame.height - (xstart * 2) + 8)
         self.scrollView.delegate = self
         self.scrollView.minimumZoomScale = 1
         self.scrollView.maximumZoomScale = 6.0
@@ -271,11 +273,9 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
     }
 
     func showTitle(_ sender: AnyObject) {
-        let alertController = MDCAlertController(title: nil, message: text!)
-        let action = MDCAlertAction(title: "DONE") { (action) in
-            print("OK")
-        }
-        alertController.addAction(action)
+        let alertController = UIAlertController.init(title: "Caption", message: nil, preferredStyle: .alert)
+        alertController.addTextViewer(text: .text(text!))
+        alertController.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: nil))
         present(alertController, animated: true, completion: nil)
     }
 
@@ -313,11 +313,11 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
     func download(_ sender: AnyObject) {
         if(imageLoaded){
             if(imageView.image != nil){
-                CustomAlbum.shared.save(image: imageView.image!)
+                CustomAlbum.shared.save(image: imageView.image!, parent: self)
             }
         } else {
             if(displayedVideo != nil){
-                CustomAlbum.shared.saveMovieToLibrary(movieURL: displayedVideo!)
+                CustomAlbum.shared.saveMovieToLibrary(movieURL: displayedVideo!, parent: self)
             }
         }
     }
@@ -404,7 +404,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
             } else {
                 loadImage(imageURL: baseURL!)
             }
-        } else if (type == .GIF || type == .STREAMABLE || type == .VID_ME || type == .VIDEO) {
+        } else if (type == .GIF || type == .STREAMABLE || type == .VID_ME) {
             getGif(urlS: baseURL!.absoluteString)
         } else if (type == .IMGUR) {
             loadImage(imageURL: URL.init(string: baseURL!.absoluteString + ".png")!)
@@ -491,9 +491,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
                 self.playbackSlider.isHidden = true
             }
         })
-
     }
-    
     
     func playButtonTapped(_ sender:UIButton) {
         if player.rate == 0

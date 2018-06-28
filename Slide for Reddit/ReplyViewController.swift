@@ -9,12 +9,10 @@
 import UIKit
 import reddift
 import Photos
-import Alamofire
 import MobileCoreServices
 import SwiftyJSON
 import ActionSheetPicker_3_0
 import RealmSwift
-import MaterialComponents.MaterialSnackbar
 
 class ReplyViewController: UITableViewController, UITextViewDelegate {
 
@@ -52,9 +50,9 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
     var scrollView: UIScrollView?
 
     //Callbacks
-    var messageCallback: (Any?) -> Void = { (comment) in
+    var messageCallback: (Any?, Error?) -> Void = { (comment, error) in
     }
-    var submissionCallback: (Link?) -> Void = { (link) in
+    var submissionCallback: (Link?, Error?) -> Void = { (link, error) in
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -88,14 +86,21 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
         type = .NEW_MESSAGE
         self.subreddit = ""
         super.init(nibName: nil, bundle: nil)
-        self.messageCallback = { (message) in
+        self.messageCallback = { (message, error) in
             DispatchQueue.main.async {
-                //todo on error
-                //todo string from message
-                completion("")
-                self.alertController?.dismiss(animated: false, completion: {
-                    self.dismiss(animated: true, completion: nil)
-                })
+                if (error != nil) {
+                    self.toolbar?.saveDraft(self)
+                    self.alertController?.dismiss(animated: false, completion: {
+                        let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your message has not been sent, please try again\n\nError:\(error!.localizedDescription)", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+                        self.present(alert, animated: true, completion: nil)
+                    })
+                } else {
+                    completion("")
+                    self.alertController?.dismiss(animated: false, completion: {
+                        self.dismiss(animated: true, completion: nil)
+                    })
+                }
             }
         }
     }
@@ -110,15 +115,22 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
         self.subreddit = (message as! RMessage).author
         self.toReplyTo = message
         super.init(nibName: nil, bundle: nil)
-        self.messageCallback = { (message) in
+        self.messageCallback = { (message, error) in
             DispatchQueue.main.async {
-                //todo on error
-                //todo get message
-                self.alertController?.dismiss(animated: false, completion: {
-                    self.dismiss(animated: true, completion: {
-                        completion("")
+                if (error != nil) {
+                    self.toolbar?.saveDraft(self)
+                    self.alertController?.dismiss(animated: false, completion: {
+                        let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your message has not been sent, please try again\n\nError:\(error!.localizedDescription)", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+                        self.present(alert, animated: true, completion: nil)
                     })
-                })
+                } else {
+                    self.alertController?.dismiss(animated: false, completion: {
+                        self.dismiss(animated: true, completion: {
+                            completion("")
+                        })
+                    })
+                }
             }
         }
     }
@@ -130,12 +142,12 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
         self.toReplyTo = submission
         super.init(nibName: nil, bundle: nil)
         self.subreddit = submission.subreddit
-        self.submissionCallback = { (link) in
+        self.submissionCallback = { (link, error) in
             DispatchQueue.main.async {
-                if (link == nil) {
+                if (error != nil) {
                     self.toolbar?.saveDraft(self)
                     self.alertController?.dismiss(animated: false, completion: {
-                        let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your submission has not been edited (but has been saved as a draft), please try again", preferredStyle: .alert)
+                        let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your submission has not been edited (but has been saved as a draft), please try again\n\nError:\(error!.localizedDescription)", preferredStyle: .alert)
                         alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
                         self.present(alert, animated: true, completion: nil)
                     })
@@ -154,12 +166,16 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
     init(type: ReplyType, completion: @escaping (Link?) -> Void) {
         self.type = type
         super.init(nibName: nil, bundle: nil)
-        self.submissionCallback = { (link) in
+        self.submissionCallback = { (link, error) in
             DispatchQueue.main.async {
-                if (link == nil) {
-                    //todo this
+                if (error != nil) {
+                    self.toolbar?.saveDraft(self)
+                    self.alertController?.dismiss(animated: false, completion: {
+                        let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your message has not been sent, please try again\n\nError:\(error!.localizedDescription)", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+                        self.present(alert, animated: true, completion: nil)
+                    })
                 } else {
-                    //todo get sub string
                     self.alertController?.dismiss(animated: false, completion: {
                         self.dismiss(animated: true, completion: {
                             completion(link)
@@ -205,7 +221,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
 
 
         toolbar = ToolbarTextView.init(textView: text!, parent: self)
-        self.view.layer.cornerRadius = 5
+        self.view.layer.cornerRadius = 15
         self.view.layer.masksToBounds = true
     }
 
@@ -305,10 +321,12 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
                 switch res {
                 case .failure:
                     print(res.error ?? "Error?")
+                    self.submissionCallback(nil, res.error)
+                    break
                 case .success(let listing):
                     if listing.children.count == 1 {
                         if let submission = listing.children[0] as? Link {
-                            self.submissionCallback(submission)
+                            self.submissionCallback(submission, nil)
                         }
                     }
                 }
@@ -316,7 +334,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
             })
         } catch {
             //todo success but null child
-            self.submissionCallback(nil)
+            self.submissionCallback(nil, error)
         }
 
     }
@@ -325,18 +343,12 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
 
     func send(_ sender: AnyObject) {
         if (subjectCell.cellLabel.text!.isEmpty()) {
-            let message = MDCSnackbarMessage()
-            message.text = type.isMessage() ? "Subject cannot be empty." : "Title cannot be empty."
-            MDCSnackbarManager.show(message)
+            BannerUtil.makeBanner(text: type.isMessage() ? "Subject cannot be empty" : "Title cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
             return
         } else if (recipientCell.cellLabel.text!.isEmpty()) {
-            let message = MDCSnackbarMessage()
-            message.text = type.isMessage() ? "Recipient cannot be empty." : "Subreddit cannot be empty."
-            MDCSnackbarManager.show(message)
+            BannerUtil.makeBanner(text: type.isMessage() ? "Recipient cannot be empty" : "Subreddit cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
         } else if ((type == .SUBMIT_LINK || type == .SUBMIT_IMAGE) && linkCell.cellLabel.text!.isEmpty()) {
-            let message = MDCSnackbarMessage()
-            message.text = "Link cannot be empty."
-            MDCSnackbarManager.show(message)
+            BannerUtil.makeBanner(text: "Link cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
         }
         if (type.isMessage()) {
             alertController = UIAlertController(title: nil, message: "Sending message...\n\n", preferredStyle: .alert)
@@ -356,9 +368,10 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
                         switch result {
                         case .failure(let error):
                             print(error.description)
-                            self.messageCallback(nil)
+                            self.messageCallback(nil, error)
+                            break
                         case .success(let message):
-                            self.messageCallback(message)
+                            self.messageCallback(message, nil)
                         }
 
                     })
@@ -372,9 +385,10 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
                         switch result {
                         case .failure(let error):
                             print(error.description)
-                            self.messageCallback(nil)
+                            self.messageCallback(nil, error)
+                            break
                         case .success(let comment):
-                            self.messageCallback(comment)
+                            self.messageCallback(comment, nil)
                         }
                     })
                 } catch {
@@ -422,7 +436,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
                         switch result {
                         case .failure(let error):
                             print(error.description)
-                            self.submissionCallback(nil)
+                            self.submissionCallback(nil, error)
                             break
                         case .success(let submission):
                             let string = self.getIDString(submission).value!
@@ -436,7 +450,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
                         switch result {
                         case .failure(let error):
                             print(error.description)
-                            self.submissionCallback(nil)
+                            self.submissionCallback(nil, error)
                             break
                         case .success(let submission):
                             let string = self.getIDString(submission).value!
@@ -470,7 +484,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
         super.loadView()
 
         self.tableView.backgroundColor = ColorUtil.backgroundColor
-
+        self.tableView.separatorColor = .clear
         self.tableView.allowsSelection = false
         text = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 500))
         text?.isEditable = true
@@ -499,7 +513,6 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
             subjectCell = InputCell.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 70), input: "title...", width: self.tableView.frame.size.width)
             recipientCell = InputCell.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 70), input: "subreddit:", width: self.tableView.frame.size.width)
         }
-
         if (type == .SUBMIT_IMAGE) {
             linkCell = InputCell.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 70), input: "Tap to add image", width: self.tableView.frame.size.width)
             linkCell.cellLabel.isEditable = false
@@ -583,6 +596,10 @@ class InputCell: UITableViewCell {
         cellLabel.textColor = ColorUtil.fontColor
         cellLabel.font = FontGenerator.boldFontOfSize(size: 16, submission: true)
         cellLabel.placeholder = input
+        cellLabel.tintColor = ColorUtil.fontColor
+        if(ColorUtil.theme != .LIGHT){
+            cellLabel.keyboardAppearance = .dark
+        }
 
         cellLabel.textContainerInset = UIEdgeInsets.init(top: 30, left: 10, bottom: 0, right: 0)
         backgroundColor = ColorUtil.foregroundColor

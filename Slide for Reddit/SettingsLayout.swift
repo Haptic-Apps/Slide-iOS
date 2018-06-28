@@ -13,11 +13,7 @@ import Anchorage
 
 class SettingsLayout: UITableViewController {
     
-    var cropBigPicCell: UITableViewCell = UITableViewCell()
-    var cropBigPic = UISwitch()
-    
-    var hideBannerImageCell: UITableViewCell = UITableViewCell()
-    var hideBannerImage = UISwitch()
+    var imageCell: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "image")
     
     var cardModeCell: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "mode")
 
@@ -74,14 +70,7 @@ class SettingsLayout: UITableViewController {
     }
     
     func switchIsChanged(_ changed: UISwitch) {
-        if(changed == cropBigPic){
-            SettingValues.bigPicCropped = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_cropBigPic)
-        } else if(changed == hideBannerImage){
-            SettingValues.bannerHidden = changed.isOn
-            SubredditReorderViewController.changed = true
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_bannerHidden)
-        } else if(changed == smalltag){
+        if(changed == smalltag){
             SettingValues.smallerTag = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_smallTag)
         } else if(changed == hideActionbar){
@@ -119,6 +108,8 @@ class SettingsLayout: UITableViewController {
     }
     
     func doLink(){
+        link.contentView.removeFromSuperview()
+        link = LinkCellView.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 500))
         
         let fakesub = RSubmission.init()
         let calendar: NSCalendar! = NSCalendar(calendarIdentifier: NSCalendar.Identifier.gregorian)
@@ -160,22 +151,44 @@ class SettingsLayout: UITableViewController {
         fakesub.height = 288
         fakesub.width = 636
         fakesub.vote = false
-
-        link.contentView.removeFromSuperview()
-        link = fakesub.getLinkView()
-        link.frame = CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 500)
         
         link.aspectWidth = self.tableView.frame.size.width
-        self.link.configure(submission: fakesub, parent: MediaViewController(), nav: nil, baseSub: "all", test: true)
+        self.link.setLink(submission: fakesub, parent: MediaViewController(), nav: nil, baseSub: "all", test: true)
         self.link.isUserInteractionEnabled = false
         linkCell.contentView.backgroundColor = ColorUtil.backgroundColor
-//        link.contentView.frame = CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: link.estimateHeight(false, true))
+        link.contentView.frame = CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: link.estimateHeight(false, true))
         link.updateConstraints()
-        // TODO:
-//        link.doConstraints()
+        link.doConstraints()
         linkCell.contentView.addSubview(link.contentView)
-        link.contentView.edgeAnchors == linkCell.contentView.edgeAnchors
-//        linkCell.frame = CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: link.estimateHeight(false, true))
+        linkCell.frame = CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: link.estimateHeight(false, true))
+        
+        switch(SettingValues.postViewMode){
+        case .CARD:
+            cardModeCell.imageView?.image = UIImage.init(named: "card")?.navIcon()
+            break
+        case .CENTER:
+            cardModeCell.imageView?.image = UIImage.init(named: "centeredimage")?.navIcon()
+            break
+        case .COMPACT:
+            cardModeCell.imageView?.image = UIImage.init(named: "compact")?.navIcon()
+            break
+        case .LIST:
+            cardModeCell.imageView?.image = UIImage.init(named: "list")?.navIcon()
+            break
+        }
+        
+        switch(SettingValues.postImageMode){
+        case .CROPPED_IMAGE:
+            imageCell.imageView?.image = UIImage.init(named: "crop")?.navIcon()
+            break
+        case .FULL_IMAGE:
+            imageCell.imageView?.image = UIImage.init(named: "full")?.navIcon()
+            break
+        case .THUMBNAIL:
+            imageCell.imageView?.image = UIImage.init(named: "thumb")?.navIcon()
+            break
+        }
+
     }
 
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -248,6 +261,42 @@ class SettingsLayout: UITableViewController {
             
             VCPresenter.presentAlert(alertController, parentVC: self)
 
+        } else if(indexPath.section == 1 && indexPath.row == 1){
+            let alertController: BottomSheetActionController = BottomSheetActionController()
+            alertController.addAction(Action(ActionData(title: "Full image", image: UIImage(named: "full")!.menuIcon()), style: .default, handler: { action in
+                UserDefaults.standard.set("full", forKey: SettingValues.pref_postImageMode)
+                SettingValues.postImageMode = .FULL_IMAGE
+                UserDefaults.standard.synchronize()
+                self.doDisables()
+                self.doLink()
+                tableView.reloadData()
+                self.imageCell.detailTextLabel?.text = SettingValues.postImageMode.rawValue.capitalize()
+                SubredditReorderViewController.changed = true
+            }))
+            
+            alertController.addAction(Action(ActionData(title: "Cropped image", image: UIImage(named: "crop")!.menuIcon()), style: .default, handler: { action in
+                UserDefaults.standard.set("cropped", forKey: SettingValues.pref_postImageMode)
+                SettingValues.postImageMode = .CROPPED_IMAGE
+                UserDefaults.standard.synchronize()
+                self.doDisables()
+                self.doLink()
+                tableView.reloadData()
+                self.imageCell.detailTextLabel?.text = SettingValues.postImageMode.rawValue.capitalize()
+                SubredditReorderViewController.changed = true
+            }))
+            
+            alertController.addAction(Action(ActionData(title: "Thumbnail only", image: UIImage(named: "thumb")!.menuIcon()), style: .default, handler: { action in
+                UserDefaults.standard.set("thumbnail", forKey: SettingValues.pref_postImageMode)
+                SettingValues.postImageMode = .THUMBNAIL
+                UserDefaults.standard.synchronize()
+                self.doDisables()
+                self.doLink()
+                tableView.reloadData()
+                self.imageCell.detailTextLabel?.text = SettingValues.postImageMode.rawValue.capitalize()
+                SubredditReorderViewController.changed = true
+            }))
+            
+            VCPresenter.presentAlert(alertController, parentVC: self)
         }
     }
     
@@ -273,14 +322,20 @@ class SettingsLayout: UITableViewController {
         self.title = "General"
         self.tableView.separatorStyle = .none
 
-        createCell(cropBigPicCell, cropBigPic, isOn: SettingValues.bigPicCropped, text: "Crop big pic")
-        createCell(hideBannerImageCell, hideBannerImage, isOn: SettingValues.bannerHidden, text: "Hide banner image")
         createCell(selftextCell, selftext, isOn: SettingValues.showFirstParagraph, text: "Show selftext preview")
-        createCell(cardModeCell, isOn: SettingValues.bigPicCropped, text: "Layout mode")
+        
+        createCell(cardModeCell, isOn: false, text: "Layout mode")
         cardModeCell.detailTextLabel?.textColor = ColorUtil.fontColor
         cardModeCell.detailTextLabel?.text = SettingValues.postViewMode.rawValue.capitalize()
         cardModeCell.detailTextLabel?.numberOfLines = 0
         cardModeCell.detailTextLabel?.lineBreakMode = .byWordWrapping
+        
+        createCell(imageCell, isOn: false, text: "Image mode")
+        imageCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        imageCell.detailTextLabel?.text = SettingValues.postImageMode.rawValue.capitalize()
+        imageCell.detailTextLabel?.numberOfLines = 0
+        imageCell.detailTextLabel?.lineBreakMode = .byWordWrapping
+
         createCell(smalltagCell, smalltag, isOn: SettingValues.smallerTag, text: "Smaller content tag")
         createCell(hideActionbarCell, hideActionbar, isOn: SettingValues.hideButtonActionbar, text: "Hide actionbar")
         createCell(largerThumbnailCell, largerThumbnail, isOn: SettingValues.largerThumbnail, text: "Larger thumbnail")
@@ -297,11 +352,6 @@ class SettingsLayout: UITableViewController {
     }
     
     func doDisables(){
-        if(SettingValues.bannerHidden){
-            cropBigPic.isEnabled = false
-        } else {
-            cropBigPic.isEnabled = true
-        }
         if(SettingValues.hideButtonActionbar){
             hide.isEnabled = false
             save.isEnabled = false
@@ -340,12 +390,11 @@ class SettingsLayout: UITableViewController {
         case 1:
             switch(indexPath.row) {
             case 0: return self.cardModeCell
-            case 1: return self.hideBannerImageCell
-            case 2: return self.cropBigPicCell
-            case 3: return self.largerThumbnailCell
-            case 4: return self.leftThumbCell
-            case 5: return self.selftextCell
-            case 6: return self.smalltagCell
+            case 1: return self.imageCell
+            case 2: return self.largerThumbnailCell
+            case 3: return self.leftThumbCell
+            case 4: return self.selftextCell
+            case 5: return self.smalltagCell
 
             default: fatalError("Unknown row in section 0")
             }
@@ -367,7 +416,7 @@ class SettingsLayout: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch(section) {
         case 0: return 1
-        case 1: return 7
+        case 1: return 6
         case 2: return 6
         default: fatalError("Unknown number of sections")
         }

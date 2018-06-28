@@ -1,9 +1,8 @@
 PODS:
   - ActionSheetPicker-3.0 (2.2.0)
   - Alamofire (4.7.2)
-  - Anchorage (4.2.3)
   - BadgeSwift (5.0.1)
-  - BiometricAuthentication (1.0.6)
+  - BiometricAuthentication (2.0)
   - LicensesViewController (0.6.5)
   - MaterialComponents/ActivityIndicator (55.5.0):
     - MaterialComponents/Palettes
@@ -23,23 +22,13 @@ PODS:
     - MaterialComponents/Typography
     - MDFInternationalization
     - MDFTextAccessibility
-  - MaterialComponents/Dialogs (55.5.0):
-    - MaterialComponents/Buttons
-    - MaterialComponents/private/KeyboardWatcher
-    - MaterialComponents/ShadowElevations
-    - MaterialComponents/ShadowLayer
-    - MaterialComponents/Typography
-    - MDFInternationalization
   - MaterialComponents/Ink (55.5.0):
     - MaterialComponents/private/Math
-  - MaterialComponents/OverlayWindow (55.5.0):
-    - MaterialComponents/private/Application
   - MaterialComponents/Palettes (55.5.0)
   - MaterialComponents/private/Application (55.5.0)
   - MaterialComponents/private/KeyboardWatcher (55.5.0):
     - MaterialComponents/private/Application
   - MaterialComponents/private/Math (55.5.0)
-  - MaterialComponents/private/Overlay (55.5.0)
   - MaterialComponents/private/Shapes (55.5.0):
     - MaterialComponents/private/Math
     - MaterialComponents/ShadowLayer
@@ -51,14 +40,6 @@ PODS:
   - MaterialComponents/ShadowElevations (55.5.0)
   - MaterialComponents/ShadowLayer (55.5.0):
     - MaterialComponents/ShadowElevations
-  - MaterialComponents/Snackbar (55.5.0):
-    - MaterialComponents/AnimationTiming
-    - MaterialComponents/Buttons
-    - MaterialComponents/OverlayWindow
-    - MaterialComponents/private/Application
-    - MaterialComponents/private/KeyboardWatcher
-    - MaterialComponents/private/Overlay
-    - MaterialComponents/Typography
   - MaterialComponents/Tabs (55.5.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Ink
@@ -98,7 +79,6 @@ PODS:
   - Starscream (3.0.5)
   - SwiftSpreadsheet (1.2.0)
   - SwiftyJSON (4.1.0)
-  - Then (2.3.0)
   - TTTAttributedLabel (2.0.0)
   - UZTextView (1.0.8)
   - XLActionController (4.0.1):
@@ -108,7 +88,6 @@ PODS:
 DEPENDENCIES:
   - ActionSheetPicker-3.0 (from `https://github.com/ccrama/ActionSheetPicker-3.0`)
   - Alamofire (~> 4.3)
-  - Anchorage
   - BadgeSwift (~> 5.0)
   - BiometricAuthentication
   - LicensesViewController (~> 0.6.5)
@@ -116,12 +95,10 @@ DEPENDENCIES:
   - MaterialComponents/AnimationTiming
   - MaterialComponents/BottomSheet
   - MaterialComponents/Buttons
-  - MaterialComponents/Dialogs
   - MaterialComponents/Ink
   - MaterialComponents/Palettes
   - MaterialComponents/ProgressView
   - MaterialComponents/ShadowElevations
-  - MaterialComponents/Snackbar
   - MaterialComponents/Tabs
   - MaterialComponents/TextFields
   - MKColorPicker
@@ -134,7 +111,6 @@ DEPENDENCIES:
   - Starscream (~> 3.0.2)
   - SwiftSpreadsheet
   - SwiftyJSON
-  - Then
   - TTTAttributedLabel
   - UZTextView (from `https://github.com/ccrama/UZTextView`)
   - XLActionController (from `https://github.com/ccrama/XLActionController`)
@@ -161,7 +137,7 @@ CHECKOUT OPTIONS:
     :commit: ee52942674c4cab002f29f62ce58511fa22a2912
     :git: https://github.com/ccrama/reddift
   RLBAlertsPickers:
-    :commit: 516a802c88e8123d8c5c54ee520f776da5d12076
+    :commit: 583f111c780546a42320c406f1fcf21f9f2caf30
     :git: https://github.com/ccrama/Alerts-Pickers
   SloppySwiper:
     :commit: 90e1566555734d08a4c72619595f5a2157c104b3
@@ -176,9 +152,8 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   ActionSheetPicker-3.0: d11a4c12c6aaf704b8a3f56d179198c99f3e41e6
   Alamofire: e4fa87002c137ba2d8d634d2c51fabcda0d5c223
-  Anchorage: 39f742c59e28892043c81778ccc0051af3c02d26
   BadgeSwift: 3defa56f504bfb46f2300122c4a565ec9e405c1e
-  BiometricAuthentication: 31cf4595d4e699e73a037604a6edca54beac05f1
+  BiometricAuthentication: fce6c7537fba0192a395834657e75ccb4d89d9f0
   LicensesViewController: 1f2982b1bab8402d3f88e23197957038e8abb907
   MaterialComponents: 68cc8d56b82799b087240c0e5e48f6a2ab0587ee
   MDFInternationalization: e355b0cebecf53d60233bd267084e49366c82513
@@ -196,11 +171,10 @@ SPEC CHECKSUMS:
   Starscream: faf918b2f2eff7d5dd21180646bf015a669673bd
   SwiftSpreadsheet: fa241abcd0c2e0bdfa641494413c3613d67efbca
   SwiftyJSON: c29297daf073d2aa016295d5809cdd68045c39b3
-  Then: ee21c97b85ff6062b9b0080c9abb1eea46743345
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   UZTextView: d8d45a8459b0de6f2c393458a05c65352f89e00a
   XLActionController: 007868251c0eed70d649d06c1625259b73b3a600
 
-PODFILE CHECKSUM: f8ec36bdba6d8df9ba5c41d2dc8d35a8ea553361
+PODFILE CHECKSUM: 504df8e7b826959ebeac82a750cdb3c998bd3392
 
 COCOAPODS: 1.4.0

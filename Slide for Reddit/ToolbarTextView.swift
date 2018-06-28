@@ -5,7 +5,6 @@
 
 import UIKit
 import ActionSheetPicker_3_0
-import MaterialComponents.MaterialSnackbar
 import Alamofire
 import SwiftyJSON
 import Photos
@@ -50,6 +49,7 @@ public class ToolbarTextView: NSObject {
         }
         scrollView.delaysContentTouches = false
         text!.inputAccessoryView = scrollView
+        text!.tintColor = .white
         if(ColorUtil.theme != .LIGHT){
             text!.keyboardAppearance = .dark
         }
@@ -74,9 +74,7 @@ public class ToolbarTextView: NSObject {
         if let toSave = text!.text {
             if (!toSave.isEmpty()) {
                 Drafts.addDraft(s: text!.text)
-                let message = MDCSnackbarMessage()
-                message.text = "Draft saved"
-                MDCSnackbarManager.show(message)
+                BannerUtil.makeBanner(text: "Draft saved!", seconds: 3, context: parent, top: true)
             }
         }
     }
@@ -177,7 +175,7 @@ public class ToolbarTextView: NSObject {
                                                 let config: TextField.Config = { textField in
                                                     textField.becomeFirstResponder()
                                                     textField.textColor = .black
-                                                    textField.placeholder = "Caption"
+                                                    textField.placeholder = "Caption (optional)"
                                                     textField.left(image: UIImage.init(named: "link"), color: .black)
                                                     textField.leftViewPadding = 12
                                                     textField.borderWidth = 1
@@ -196,8 +194,11 @@ public class ToolbarTextView: NSObject {
 
                                                 alert.addAction(UIAlertAction(title: "Insert", style: .default, handler: { (action) in
                                                     let text = self.insertText ?? ""
-                                                    self.text!.insertText("[\(text)](\(url))")
-
+                                                    if(text.isEmpty()){
+                                                        self.text!.insertText("\(url)")
+                                                    } else {
+                                                        self.text!.insertText("[\(text)](\(url))")
+                                                    }
                                                 }))
 
                                                 alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))

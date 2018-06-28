@@ -497,11 +497,9 @@ class SettingsFont: UITableViewController {
             switch(indexPath.row) {
             case 0:
                 UserDefaults.standard.set(FontGenerator.Font.HELVETICA.rawValue, forKey: "postfont")
-                UserDefaults.standard.synchronize()
                 break
             case 1:
                 UserDefaults.standard.set(FontGenerator.Font.ROBOTOCONDENSED_REGULAR.rawValue, forKey: "postfont")
-                UserDefaults.standard.synchronize()
                 break
             case 2:
                 UserDefaults.standard.set(FontGenerator.Font.ROBOTOCONDENSED_BOLD.rawValue, forKey: "postfont")
@@ -509,59 +507,48 @@ class SettingsFont: UITableViewController {
                 break
             case 3:
                 UserDefaults.standard.set(FontGenerator.Font.ROBOTO_LIGHT.rawValue, forKey: "postfont")
-                UserDefaults.standard.synchronize()
                 break
             case 4:
                 UserDefaults.standard.set(FontGenerator.Font.ROBOTO_BOLD.rawValue, forKey: "postfont")
-                UserDefaults.standard.synchronize()
                 break
             case 5:
                 UserDefaults.standard.set(FontGenerator.Font.ROBOTO_MEDIUM.rawValue, forKey: "postfont")
-                UserDefaults.standard.synchronize()
                 break
             case 6:
                 UserDefaults.standard.set(FontGenerator.Font.SYSTEM.rawValue, forKey: "postfont")
-                UserDefaults.standard.synchronize()
                 break
             default: fatalError("Unknown row in section 1")
             }
-            doChecks()
         } else if(indexPath.section == 2){
             switch(indexPath.row) {
             case 0:
                 UserDefaults.standard.set(FontGenerator.Font.HELVETICA.rawValue, forKey: "commentfont")
-                UserDefaults.standard.synchronize()
                 break
             case 1:
                 UserDefaults.standard.set(FontGenerator.Font.ROBOTOCONDENSED_REGULAR.rawValue, forKey: "commentfont")
-                UserDefaults.standard.synchronize()
                 break
             case 2:
                 UserDefaults.standard.set(FontGenerator.Font.ROBOTOCONDENSED_BOLD.rawValue, forKey: "commentfont")
-                UserDefaults.standard.synchronize()
                 break
             case 3:
                 UserDefaults.standard.set(FontGenerator.Font.ROBOTO_LIGHT.rawValue, forKey: "commentfont")
-                UserDefaults.standard.synchronize()
                 break
             case 4:
                 UserDefaults.standard.set(FontGenerator.Font.ROBOTO_BOLD.rawValue, forKey: "commentfont")
-                UserDefaults.standard.synchronize()
                 break
             case 5:
                 UserDefaults.standard.set(FontGenerator.Font.ROBOTO_MEDIUM.rawValue, forKey: "commentfont")
-                UserDefaults.standard.synchronize()
                 break
             case 6:
                 UserDefaults.standard.set(FontGenerator.Font.SYSTEM.rawValue, forKey: "commentfont")
-                UserDefaults.standard.synchronize()
                 break
             default: fatalError("Unknown row in section 1")
             }
-            doChecks()
         }
         tableView.deselectRow(at: indexPath, animated: true)
+        UserDefaults.standard.synchronize()
         FontGenerator.initialize()
+        doChecks()
     }
 
     

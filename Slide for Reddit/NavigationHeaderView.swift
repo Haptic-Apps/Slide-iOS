@@ -29,6 +29,7 @@ class NavigationHeaderView: UIView {
     }
 
     func doColors(_ sub: String) {
+        doColors()
         title.backgroundColor = ColorUtil.getColorForSub(sub: sub)
     }
 
@@ -251,6 +252,7 @@ class NavigationHeaderView: UIView {
                     } else {
                         Subscriptions.sync(name: s, completion: {
                             (self.parentController as! NavigationSidebarViewController).parentController?.restartVC()
+                            (self.parentController as! NavigationSidebarViewController).parentController?.doCurrentPage(0)
                         })
                     }
                 })

@@ -11,7 +11,7 @@ import reddift
 
 class SettingsContent: UITableViewController {
     
-    var showNSFWContentCell: UITableViewCell = UITableViewCell()
+    var showNSFWContentCell: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "nsfwcontent")
     var showNSFWContent = UISwitch()
     
     var showNSFWPreviewsCell: UITableViewCell = UITableViewCell()
@@ -96,6 +96,12 @@ class SettingsContent: UITableViewController {
         self.tableView.separatorStyle = .none
 
         createCell(showNSFWContentCell, showNSFWContent, isOn: SettingValues.nsfwEnabled, text: "I am 18 years old or older, and am willing to see adult content")
+        self.showNSFWContentCell.detailTextLabel?.text = "Tap to change this at reddit.com under 'Content Options'"
+        self.showNSFWContentCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.showNSFWContentCell.detailTextLabel?.lineBreakMode = .byWordWrapping
+        self.showNSFWContentCell.detailTextLabel?.numberOfLines = 0
+        showNSFWContent.isEnabled = false
+        
         createCell(showNSFWPreviewsCell, showNSFWPreviews, isOn: SettingValues.nsfwPreviews, text: "Show NSFW image previews")
         createCell(hideCollectionViewsCell, hideCollectionViews, isOn: SettingValues.hideNSFWCollection, text: "Hide NSFW image previews in collections (such as r/all)")
 
@@ -116,6 +122,17 @@ class SettingsContent: UITableViewController {
             hideCollectionViews.isEnabled = false
         }
     }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if(indexPath.row == 0) {
+            let url = URL.init(string: "https://www.reddit.com/prefs")!
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            } else {
+                UIApplication.shared.openURL(url)
+            }
+        }
+    }
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
@@ -124,7 +141,7 @@ class SettingsContent: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60
+        return indexPath.row == 0 ? 80 : 60
     }
     
     

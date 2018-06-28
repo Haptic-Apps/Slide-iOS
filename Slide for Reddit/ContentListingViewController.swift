@@ -9,7 +9,6 @@
 import UIKit
 import reddift
 import SDWebImage
-import MaterialComponents.MaterialSnackbar
 import XLActionController
 
 class ContentListingViewController: MediaViewController, UICollectionViewDelegate, WrappingFlowLayoutDelegate, UICollectionViewDataSource, SubmissionMoreDelegate {
@@ -126,7 +125,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                 type = .SELF
             }
 
-            if (SettingValues.bannerHidden) {
+            if (SettingValues.postImageMode == .THUMBNAIL) {
                 big = false
                 thumb = true
             }
@@ -236,7 +235,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                         type = .SELF
                     }
 
-                    if (SettingValues.bannerHidden) {
+                    if (SettingValues.postImageMode == .THUMBNAIL) {
                         big = false
                         thumb = true
                     }
@@ -247,7 +246,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     if (!fullImage && submissionHeight < 50) {
                         big = false
                         thumb = true
-                    } else if (big && (SettingValues.bigPicCropped)) {
+                    } else if (big && (SettingValues.postImageMode == .CROPPED_IMAGE)) {
                         submissionHeight = 200
                     } else if (big) {
                         let ratio = Double(submissionHeight) / Double(submission.width)
@@ -558,9 +557,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             self.flowLayout.reset()
             self.loading = false
             if (self.baseData.content.count == 0) {
-                let message = MDCSnackbarMessage()
-                message.text = "No content found"
-                MDCSnackbarManager.show(message)
+                BannerUtil.makeBanner(text: "No content found!", seconds: 5, context: self)
             }
         }
     }
