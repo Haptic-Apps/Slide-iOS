@@ -32,6 +32,7 @@ final class BannerLinkCellView: LinkCellView {
             else {
                 // Image goes above title
                 bannerImage.topAnchor == contentView.topAnchor + bannerPadding
+                bannerImage.bottomAnchor == title.topAnchor - ceight
                 bannerImage.horizontalAnchors == contentView.horizontalAnchors + bannerPadding
 
                 title.topAnchor == bannerImage.bottomAnchor + ceight
@@ -55,7 +56,7 @@ final class BannerLinkCellView: LinkCellView {
         super.layoutForContent()
 
         constraintsForContent = batch {
-            bannerImage.heightAnchor <= CGFloat(submissionHeight)
+            bannerImage.heightAnchor >= CGFloat(submissionHeight)
         }
     }
     

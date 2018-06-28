@@ -74,7 +74,7 @@ final class FullLinkCellView: LinkCellView {
         super.layoutForContent()
         
         constraintsForContent = batch {
-            bannerImage.heightAnchor <= CGFloat(submissionHeight)
+            bannerImage.heightAnchor == CGFloat(submissionHeight)
         }
     }
     

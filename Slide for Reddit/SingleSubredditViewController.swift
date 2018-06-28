@@ -211,7 +211,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude), nil)
 
             let totalHeight = paddingTop + paddingBottom + (thumb ? max(ceil(textSize.height), imageHeight) : ceil(textSize.height) + imageHeight) + innerPadding + actionbar + textHeight
-            
             return CGSize(width: itemWidth, height: totalHeight)
         }
         return CGSize(width: itemWidth, height: 0)
@@ -342,7 +341,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         let currentY = scrollView.contentOffset.y
         if(!SettingValues.pinToolbar){
             if (currentY > lastYUsed && currentY > 60) {
-                if (navigationController != nil && !isHiding && !(navigationController!.isToolbarHidden)) {
+                if (navigationController != nil && !isHiding && !(navigationController!.isToolbarHidden) && !(scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height))) {
                     hideUI(inHeader: true)
                 }
             } else if ((currentY < lastYUsed + 20) && !isHiding && navigationController != nil && (navigationController!.isToolbarHidden)) {
@@ -683,7 +682,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
         top = top + ((SettingValues.viewType && !single) ? 52 : 0)
 
-        self.tableView.contentInset = UIEdgeInsets.init(top: CGFloat(top), left: 0, bottom: 0, right: 0)
+        self.tableView.contentInset = UIEdgeInsets.init(top: CGFloat(top), left: 0, bottom: 65, right: 0)
 
         session = (UIApplication.shared.delegate as! AppDelegate).session
 
@@ -1538,7 +1537,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                 if (indicator == nil) {
                     indicator = MDCActivityIndicator.init(frame: CGRect.init(x: CGFloat(0), y: CGFloat(0), width: CGFloat(80), height: CGFloat(80)))
                     indicator?.strokeWidth = 5
-                    indicator?.radius = 20
+                    indicator?.radius = 15
                     indicator?.indicatorMode = .indeterminate
                     indicator?.cycleColors = [ColorUtil.getColorForSub(sub: sub), ColorUtil.accentColorForSub(sub: sub)]
                     let center = CGPoint.init(x: UIScreen.main.bounds.width / 2, y: 50 + UIScreen.main.bounds.height / 2)
