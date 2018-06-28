@@ -122,18 +122,18 @@ class SettingsGestures: UITableViewController {
         self.title = "Gestures"
         self.tableView.separatorStyle = .none
         
-        createCell(doubleSwipeCell, doubleSwipe, isOn: SettingValues.commentTwoSwipe, text: "Double finger swipe to  go to next submission in comments view")
+        createCell(doubleSwipeCell, doubleSwipe, isOn: SettingValues.commentTwoSwipe, text: "Double finger swipe to go to next submission in comments view")
         self.doubleSwipeCell.detailTextLabel?.textColor = ColorUtil.fontColor
         self.doubleSwipeCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.doubleSwipeCell.detailTextLabel?.numberOfLines = 0
-        self.doubleSwipeCell.detailTextLabel?.text = "Turning this off enables single finger swipe mode, which will disable comment swipe gestures"
+        self.doubleSwipeCell.detailTextLabel?.text = "Turning this off enables single finger swipe mode, which will disable comment slide gestures"
         updateCells()
         self.tableView.tableFooterView = UIView()
     }
     
     func updateCells(){
-        createCell(rightActionCell, nil, isOn: false, text: "First right swipe button (also triggered by a long swipe)")
-        createCell(leftActionCell, nil, isOn: false, text: "Second right swipe button")
+        createCell(rightActionCell, nil, isOn: false, text: "First right slide button (also triggered by a long slide)")
+        createCell(leftActionCell, nil, isOn: false, text: "Second right slide button")
         createCell(doubleTapActionCell, nil, isOn: false, text: "Double tap comment action")
         createCell(doubleTapSubActionCell, nil, isOn: false, text: "Double tap submission action")
 
