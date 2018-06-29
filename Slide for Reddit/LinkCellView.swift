@@ -394,10 +394,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     func configureLayout() {
         let ceight = SettingValues.postViewMode == .COMPACT ? CGFloat(4) : CGFloat(8)
         let ctwelve = SettingValues.postViewMode == .COMPACT ? CGFloat(8) : CGFloat(12)
+
         // Remove all constraints previously applied by this method
-        for constraint in tempConstraints {
-            constraint.isActive = false
-        }
+        NSLayoutConstraint.deactivate(tempConstraints)
         tempConstraints = []
 
         tempConstraints = batch {
@@ -444,9 +443,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         bannerImage.isHidden = true
 
         // Remove all constraints previously applied by this method
-        for constraint in constraintsForType {
-            constraint.isActive = false
-        }
+        NSLayoutConstraint.deactivate(constraintsForType)
         constraintsForType = []
 
         // Deriving classes will populate constraintsForType in the override for this method.
@@ -456,9 +453,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     internal func layoutForContent() {
 
         // Remove all constraints previously applied by this method
-        for constraint in constraintsForContent {
-            constraint.isActive = false
-        }
+        NSLayoutConstraint.deactivate(constraintsForContent)
         constraintsForContent = []
 
         // Deriving classes will populate constraintsForContent in the override for this method.
