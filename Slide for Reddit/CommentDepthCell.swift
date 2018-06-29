@@ -828,6 +828,10 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
                 metrics: metrics,
                 views: views))
 
+        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[more]",
+                options: NSLayoutFormatOptions(rawValue: 0),
+                metrics: metrics,
+                views: views))
 
         constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-2-[more]-2-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
