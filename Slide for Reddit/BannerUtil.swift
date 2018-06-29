@@ -32,6 +32,12 @@ public class BannerUtil {
         if (context.navigationController != nil && !context.navigationController!.isToolbarHidden) {
             bottommargin += 48
         }
+        if #available(iOS 11.0, *) {
+            if let window = UIApplication.shared.keyWindow {
+                bottommargin += window.safeAreaInsets.bottom
+            }
+        }
+
         var xmargin = CGFloat(12)
         if(UIScreen.main.bounds.width > 350){
             xmargin += (UIScreen.main.bounds.width - 350) / 2
