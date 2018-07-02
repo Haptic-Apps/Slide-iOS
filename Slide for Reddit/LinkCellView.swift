@@ -734,6 +734,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             big = false
             thumb = true
         }
+        
+        if(type == .LINK && SettingValues.linkAlwaysThumbnail){
+            thumb = true
+            big = false
+        }
 
         if (SettingValues.noImages) {
             big = false

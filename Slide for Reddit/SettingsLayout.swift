@@ -22,6 +22,9 @@ class SettingsLayout: UITableViewController {
     var largerThumbnailCell: UITableViewCell = UITableViewCell()
     var largerThumbnail = UISwitch()
     
+    var thumbLinkCell: UITableViewCell = UITableViewCell()
+    var thumbLink = UISwitch()
+
     var scoreTitleCell: UITableViewCell = UITableViewCell()
     var scoreTitle = UISwitch()
     
@@ -87,6 +90,9 @@ class SettingsLayout: UITableViewController {
         } else if(changed == scoreTitle){
             SettingValues.scoreInTitle = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_scoreInTitle)
+        } else if(changed == thumbLink){
+            SettingValues.linkAlwaysThumbnail = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_linkAlwaysThumbnail)
         } else if(changed == domainInfo){
             SettingValues.domainInInfo = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_domainInInfo)
@@ -345,7 +351,8 @@ class SettingsLayout: UITableViewController {
         createCell(leftThumbCell, leftThumb, isOn: SettingValues.leftThumbnail, text: "Thumbnail on left side")
         createCell(hideCell, hide, isOn: SettingValues.hideButton, text: "Show hide post button")
         createCell(saveCell, save, isOn: SettingValues.saveButton, text: "Show save button")
-        
+        createCell(thumbLinkCell, thumbLink, isOn: SettingValues.linkAlwaysThumbnail, text: "Always show thumbnail on link posts")
+
         doDisables()
         self.tableView.tableFooterView = UIView()
         
@@ -359,7 +366,11 @@ class SettingsLayout: UITableViewController {
             hide.isEnabled = true
             save.isEnabled = true
         }
-        
+        if(SettingValues.postImageMode == .THUMBNAIL){
+            thumbLink.isEnabled = false
+        } else {
+            thumbLink.isEnabled = true
+        }
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -393,8 +404,9 @@ class SettingsLayout: UITableViewController {
             case 1: return self.imageCell
             case 2: return self.largerThumbnailCell
             case 3: return self.leftThumbCell
-            case 4: return self.selftextCell
-            case 5: return self.smalltagCell
+            case 4: return self.thumbLinkCell
+            case 5: return self.selftextCell
+            case 6: return self.smalltagCell
                 
             default: fatalError("Unknown row in section 0")
             }
@@ -416,7 +428,7 @@ class SettingsLayout: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch(section) {
         case 0: return 1
-        case 1: return 6
+        case 1: return 7
         case 2: return 6
         default: fatalError("Unknown number of sections")
         }

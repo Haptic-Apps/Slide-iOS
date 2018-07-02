@@ -1389,6 +1389,10 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         } else {
             target = .text
         }
+        
+        if(type == .LINK && SettingValues.linkAlwaysThumbnail){
+            target == .thumb
+        }
 
         var cell: LinkCellView!
         if (target == .thumb) {
@@ -1996,6 +2000,10 @@ extension RSubmission {
             target = .banner
         } else {
             target = .text
+        }
+        
+        if(type == .LINK && SettingValues.linkAlwaysThumbnail){
+            target == .thumb
         }
 
         var cell: LinkCellView!

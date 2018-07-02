@@ -85,6 +85,7 @@ class SettingValues {
     public static let pref_commentFullScreen = "COMMENT_FULLSCREEN"
     public static let pref_hapticFeedback = "HAPTIC_FEEDBACK"
     public static let pref_postImageMode = "POST_IMAGE_MODE"
+    public static let pref_linkAlwaysThumbnail = "LINK_ALWAYS_THUMBNAIL"
 
     public static var commentActionRight = CommentAction.UPVOTE
     public static var commentActionLeft = CommentAction.DOWNVOTE
@@ -162,6 +163,7 @@ class SettingValues {
     public static var nightModeEnabled = false
     public static var nightTheme = ColorUtil.Theme.DARK
     public static var commentFullScreen = true
+    public static var linkAlwaysThumbnail = false
 
     enum PostViewType: String {
         case LIST = "list"
@@ -286,6 +288,7 @@ class SettingValues {
         SettingValues.hiddenFAB = settings.bool(forKey: SettingValues.pref_hiddenFAB)
         SettingValues.isPro = settings.bool(forKey: SettingValues.pref_pro)
         SettingValues.pinToolbar = settings.bool(forKey: SettingValues.pref_pinToolbar)
+        SettingValues.linkAlwaysThumbnail = settings.bool(forKey: SettingValues.pref_linkAlwaysThumbnail)
 
         SettingValues.dataSavingEnabled = settings.bool(forKey: SettingValues.pref_dataSavingEnabled)
         SettingValues.dataSavingDisableWiFi = settings.bool(forKey: SettingValues.pref_dataSavingDisableWifi)
