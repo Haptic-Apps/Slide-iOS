@@ -1101,13 +1101,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             self.tableView.reloadData()
         }
         
-        inHeadView.removeFromSuperview()
-        inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarView?.frame.size.height ?? 20)))
-        self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: sub)
-
-        if(!(navigationController is TapBehindModalViewController)){
-            self.view.addSubview(inHeadView)
-        }
+        doHeadView()
         
         navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
 
@@ -1140,6 +1134,16 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         self.view.backgroundColor = ColorUtil.backgroundColor
     }
 
+    func doHeadView(){
+        inHeadView.removeFromSuperview()
+        inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarView?.frame.size.height ?? 20)))
+        self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: sub)
+        
+        if(!(navigationController is TapBehindModalViewController)){
+            self.view.addSubview(inHeadView)
+        }
+    }
+    
     func resetColors(){
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub)
         setupFab()
