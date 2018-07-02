@@ -15,6 +15,7 @@ import MaterialComponents.MDCActivityIndicator
 import SloppySwiper
 import XLActionController
 import RLBAlertsPickers
+import Anchorage
 
 class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, UZTextViewCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate, TTTAttributedLabelDelegate, ReplyDelegate, SubmissionMoreDelegate {
 
@@ -1771,15 +1772,30 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     override func willAnimateRotation(to toInterfaceOrientation: UIInterfaceOrientation, duration: TimeInterval) {
         super.willAnimateRotation(to: toInterfaceOrientation, duration: duration)
-        self.headerCell?.aspectWidth = self.tableView.bounds.size.width
-        self.headerCell?.configure(submission: self.submission!, parent: self, nav: self.navigationController, baseSub: self.submission!.subreddit)
-        self.headerCell?.showBody(width: self.view.frame.size.width)
+
         var frame = self.tableView.tableHeaderView!.frame
-        frame.size.width = self.view.frame.size.width
+        var leftInset: CGFloat = 0
+        var rightInset: CGFloat = 0
+
+        if #available(iOS 11.0, *) {
+            leftInset = self.tableView.safeAreaInsets.left
+            rightInset = self.tableView.safeAreaInsets.right
+            frame.origin.x = leftInset
+        } else {
+            // Fallback on earlier versions
+        }
+
+        self.headerCell!.aspectWidth = self.tableView.bounds.size.width - (leftInset + rightInset)
+
+        frame.size.width = self.tableView.bounds.size.width - (leftInset + rightInset)
         frame.size.height = self.headerCell!.estimateHeight(true, true)
-        self.tableView.tableHeaderView?.frame = frame
-        self.headerCell!.frame = frame
-        self.headerCell?.updateConstraints()
+
+        self.headerCell!.contentView.frame = frame
+        self.tableView.tableHeaderView!.frame = frame
+
+//        self.headerCell?.configureLayout()
+//        self.headerCell?.updateConstraints()
+
         tableView.reloadData(with: .none)
     }
 

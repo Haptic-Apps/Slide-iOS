@@ -8,66 +8,82 @@
 
 import UIKit
 import AudioToolbox
+import Anchorage
+import Then
 
 class SubredditCellView: UITableViewCell {
+
+    var subreddit = ""
+    var timer: Timer?
+    var subname = "" // TODO: Do we need this if we have `subreddit`?
+    var cancelled = false
+
     var sideView: UIView = UIView()
     var pin = UIImageView()
     var title: UILabel = UILabel()
     var navController: UIViewController?
 
-    func showPin(_ shouldShow: Bool){
-        pin.isHidden = !shouldShow
-    }
 
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
-        self.title = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
-        title.numberOfLines = 0
-        title.font = UIFont.systemFont(ofSize: 16)
+        configureViews()
+        configureLayout()
+        configureActions()
+    }
 
-        self.sideView = UIView(frame: CGRect(x: 0, y: 0, width: 4, height: CGFloat.greatestFiniteMagnitude))
-        self.pin = UIImageView(frame: CGRect(x: 0, y:0, width: 10, height: CGFloat.greatestFiniteMagnitude))
+    func configureViews() {
+        self.clipsToBounds = true
 
-        self.pin.image = UIImage.init(named: "lock")!.menuIcon()
-        self.pin.isHidden = true
+        self.title = UILabel().then {
+            $0.numberOfLines = 0
+            $0.font = UIFont.systemFont(ofSize: 16)
+        }
 
-        sideView.translatesAutoresizingMaskIntoConstraints = false
-        title.translatesAutoresizingMaskIntoConstraints = false
-        pin.translatesAutoresizingMaskIntoConstraints = false
+        self.sideView = UIView().then {
+            $0.frame = CGRect(x: 0, y: 0, width: 16, height: 16)
+            $0.layer.cornerRadius = 8
+            $0.clipsToBounds = true
+        }
 
-        self.contentView.addSubview(sideView)
-        self.contentView.addSubview(title)
-        self.contentView.addSubview(pin)
+        self.pin = UIImageView().then {
+            $0.frame = CGRect(x: 0, y:0, width: 10, height: 10)
+            $0.image = UIImage.init(named: "lock")!.menuIcon() // TODO: Should cache this image
+            $0.isHidden = true
+        }
 
+        self.contentView.addSubviews(sideView, title, pin)
+    }
+
+    func configureLayout() {
+        batch {
+            sideView.leftAnchor == contentView.leftAnchor + 16
+            sideView.sizeAnchors == CGSize.square(size: 16)
+            sideView.centerYAnchor == contentView.centerYAnchor
+
+            pin.leftAnchor == sideView.rightAnchor + 6
+            pin.sizeAnchors == CGSize.square(size: 10)
+            pin.centerYAnchor == contentView.centerYAnchor
+
+            title.leftAnchor == pin.rightAnchor + 2
+            title.centerYAnchor == contentView.centerYAnchor
+        }
+    }
+
+    func configureActions() {
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(self.handleLongPress(_:)))
         longPress.minimumPressDuration = 0.25
         longPress.delegate = self
         self.contentView.addGestureRecognizer(longPress)
-
-
-        self.clipsToBounds = true
     }
 
-    func handleLongPress(_ sender: UILongPressGestureRecognizer) {
-        if (sender.state == UIGestureRecognizerState.began) {
-            cancelled = false
-            timer = Timer.scheduledTimer(timeInterval: 0.25,
-                    target: self,
-                    selector: #selector(self.openFull(_:)),
-                    userInfo: nil,
-                    repeats: false)
-
-
-        }
-        if (sender.state == UIGestureRecognizerState.ended) {
-            timer!.invalidate()
-            cancelled = true
-        }
+    func showPin(_ shouldShow: Bool){
+        pin.isHidden = !shouldShow
     }
-
-    var cancelled = false
 
     func openFull(_ sender: AnyObject) {
         timer!.invalidate()
@@ -83,9 +99,6 @@ class SubredditCellView: UITableViewCell {
         }
     }
 
-    var timer: Timer?
-    var subname = ""
-
     func setSubreddit(subreddit: String, nav: UIViewController?) {
         title.textColor = ColorUtil.fontColor
         self.contentView.backgroundColor = ColorUtil.foregroundColor
@@ -94,51 +107,32 @@ class SubredditCellView: UITableViewCell {
         self.subreddit = subreddit
         title.text = subreddit
         sideView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
-        updateConstraints()
         let selectedView = UIView()
         selectedView.backgroundColor = ColorUtil.backgroundColor
         selectedBackgroundView = selectedView
 
     }
 
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+}
+
+// MARK: Actions
+extension SubredditCellView {
+
+    func handleLongPress(_ sender: UILongPressGestureRecognizer) {
+        if (sender.state == UIGestureRecognizerState.began) {
+            cancelled = false
+            timer = Timer.scheduledTimer(timeInterval: 0.25,
+                                         target: self,
+                                         selector: #selector(self.openFull(_:)),
+                                         userInfo: nil,
+                                         repeats: false)
+
+
+        }
+        if (sender.state == UIGestureRecognizerState.ended) {
+            timer!.invalidate()
+            cancelled = true
+        }
     }
 
-    var subreddit = ""
-
-    override func updateConstraints() {
-        super.updateConstraints()
-
-        let metrics = ["topMargin": 0]
-        let views = ["title": title, "pin": pin, "side": sideView] as [String: Any]
-
-        var constraint: [NSLayoutConstraint] = []
-        constraint = NSLayoutConstraint.constraints(withVisualFormat: "H:|-16-[side(16)]-6-[pin(10)]-2-[title]-2-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views)
-
-
-        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(22)-[side(16)]-(22)-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-
-        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-2-[title(56)]-2-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-
-        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(25)-[pin(10)]-(25)-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-
-
-        self.contentView.addConstraints(constraint)
-        sideView.layer.cornerRadius = 8
-        sideView.clipsToBounds = true
-
-    }
 }

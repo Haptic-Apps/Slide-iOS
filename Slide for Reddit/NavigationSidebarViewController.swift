@@ -98,11 +98,11 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
     
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableViewAutomaticDimension
+        return 60
     }
     
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableViewAutomaticDimension
+        return 60
     }
     
     var header: NavigationHeaderView = NavigationHeaderView()

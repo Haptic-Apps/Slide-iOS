@@ -309,6 +309,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
+        self.backgroundColor = ColorUtil.backgroundColor
 
         self.title = TTTAttributedLabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
         title.numberOfLines = 0
@@ -828,6 +829,10 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
                 metrics: metrics,
                 views: views))
 
+        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[more]",
+                options: NSLayoutFormatOptions(rawValue: 0),
+                metrics: metrics,
+                views: views))
 
         constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-2-[more]-2-|",
                 options: NSLayoutFormatOptions(rawValue: 0),

@@ -353,6 +353,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         if (SettingValues.viewType) {
             setupTabBar(finalSubs)
         }
+        
     }
 
     var tabBar = MDCTabBar()
@@ -448,7 +449,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     func doCurrentPage(_ page: Int) {
         self.currentPage = page
         let vc = MainViewController.vCs[page] as! SingleSubredditViewController
-        vc.viewWillAppear(true)
+        //vc.viewWillAppear(true)
         MainViewController.current = vc.sub
         self.tintColor = ColorUtil.getColorForSub(sub: MainViewController.current)
         self.menuNav?.setSubreddit(subreddit: MainViewController.current)
