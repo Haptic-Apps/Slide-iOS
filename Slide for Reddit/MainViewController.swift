@@ -11,6 +11,7 @@ import reddift
 import MaterialComponents.MaterialBottomSheet
 import SideMenu
 import RealmSwift
+import StoreKit
 
 class MainViewController: ColorMuxPagingViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UISplitViewControllerDelegate {
     var isReload = false
@@ -92,6 +93,32 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             
             self.present(alert, animated: true)
         }
+    }
+    
+    //from https://github.com/CleverTap/ios-request-review/blob/master/Example/RatingExample/ViewController.swift
+    private func requestReviewIfAppropriate() {
+        if #available(iOS 10.3, *) {
+            let lastReviewedVersion = UserDefaults.standard.string(forKey: "lastReviewed")
+            let timesOpened = UserDefaults.standard.integer(forKey: "appOpens")
+            if (lastReviewedVersion != nil && (getVersion() == lastReviewedVersion!) || timesOpened < 3) {
+                UserDefaults.standard.set(timesOpened + 1, forKey: "appOpens")
+                UserDefaults.standard.synchronize()
+                return
+            }
+            SKStoreReviewController.requestReview()
+            UserDefaults.standard.set(0, forKey: "appOpens")
+            UserDefaults.standard.set(getVersion(), forKey: "lastReviewed")
+            UserDefaults.standard.synchronize()
+        } else {
+            print("SKStoreReviewController not available")
+        }
+    }
+    
+    func getVersion() -> String {
+        let dictionary = Bundle.main.infoDictionary!
+        let version = dictionary["CFBundleShortVersionString"] as! String
+        let build = dictionary["CFBundleVersion"] as! String
+        return "\(version) build \(build)"
     }
 
     func hardReset(){
@@ -633,6 +660,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                 UserDefaults.standard.setValue(today, forKey: "DAY_LAUNCH")
             }
         }
+        requestReviewIfAppropriate()
     }
     
     public static var isOffline = false

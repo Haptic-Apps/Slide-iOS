@@ -225,6 +225,7 @@ class SettingsLayout: UITableViewController {
                 UserDefaults.standard.set("list", forKey: SettingValues.pref_postViewMode)
                 SettingValues.postViewMode = .LIST
                 UserDefaults.standard.synchronize()
+                SingleSubredditViewController.cellVersion += 1
                 self.doDisables()
                 self.doLink()
                 tableView.reloadData()
@@ -236,6 +237,7 @@ class SettingsLayout: UITableViewController {
                 UserDefaults.standard.set("card", forKey: SettingValues.pref_postViewMode)
                 SettingValues.postViewMode = .CARD
                 UserDefaults.standard.synchronize()
+                SingleSubredditViewController.cellVersion += 1
                 self.doDisables()
                 self.doLink()
                 tableView.reloadData()
@@ -247,6 +249,7 @@ class SettingsLayout: UITableViewController {
                 UserDefaults.standard.set("center", forKey: SettingValues.pref_postViewMode)
                 SettingValues.postViewMode = .CENTER
                 UserDefaults.standard.synchronize()
+                SingleSubredditViewController.cellVersion += 1
                 self.doDisables()
                 self.doLink()
                 tableView.reloadData()
@@ -258,6 +261,7 @@ class SettingsLayout: UITableViewController {
                 UserDefaults.standard.set("compact", forKey: SettingValues.pref_postViewMode)
                 SettingValues.postViewMode = .COMPACT
                 UserDefaults.standard.synchronize()
+                SingleSubredditViewController.cellVersion += 1
                 self.doDisables()
                 self.doLink()
                 tableView.reloadData()
