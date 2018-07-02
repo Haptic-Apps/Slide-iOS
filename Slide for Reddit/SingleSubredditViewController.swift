@@ -582,7 +582,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     func addNewFab(){
         SingleSubredditViewController.ignoreFab = false
         if (!MainViewController.isOffline && !SettingValues.hiddenFAB) {
-            SingleSubredditViewController.fab = UIButton(frame: CGRect.init(x: (self.view.frame.size.width / 2) - 70, y: -20, width: 140, height: 45))
+            SingleSubredditViewController.fab = UIButton(frame: CGRect.init(x: (UIScreen.main.bounds.width / 2) - 70, y: -20, width: 140, height: 45))
             SingleSubredditViewController.fab!.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
             SingleSubredditViewController.fab!.layer.cornerRadius = 22.5
             SingleSubredditViewController.fab!.clipsToBounds = true
@@ -594,7 +594,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             SingleSubredditViewController.fab!.titleLabel?.font = UIFont.systemFont(ofSize: 14)
             
             var width = title.size(with: SingleSubredditViewController.fab!.titleLabel!.font).width + CGFloat(65)
-            SingleSubredditViewController.fab!.frame = CGRect.init(x: (tableView.frame.size.width / 2) - (width / 2), y: -20, width: width, height: CGFloat(45))
+            SingleSubredditViewController.fab!.frame = CGRect.init(x: (UIScreen.main.bounds.width / 2) - (width / 2), y: -20, width: width, height: CGFloat(45))
             
             SingleSubredditViewController.fab!.titleEdgeInsets = UIEdgeInsets.init(top: 0, left: 20, bottom: 0, right: 20)
             navigationController?.toolbar.addSubview(SingleSubredditViewController.fab!)
