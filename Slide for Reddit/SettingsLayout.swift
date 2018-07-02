@@ -114,7 +114,7 @@ class SettingsLayout: UITableViewController {
     
     func doLink(){
         link.contentView.removeFromSuperview()
-        if(SettingValues.postImageMode == .THUMBNAIL){
+        if(SettingValues.postImageMode == .THUMBNAIL || SettingValues.linkAlwaysThumbnail){
             link = ThumbnailLinkCellView.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 500))
         } else {
             link = BannerLinkCellView.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 500))
