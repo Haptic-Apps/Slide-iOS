@@ -97,6 +97,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     
     //from https://github.com/CleverTap/ios-request-review/blob/master/Example/RatingExample/ViewController.swift
     private func requestReviewIfAppropriate() {
+        return //Disable this until out of TestFlight
         if #available(iOS 10.3, *) {
             let lastReviewedVersion = UserDefaults.standard.string(forKey: "lastReviewed")
             let timesOpened = UserDefaults.standard.integer(forKey: "appOpens")

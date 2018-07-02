@@ -288,7 +288,7 @@ class SettingValues {
         SettingValues.hiddenFAB = settings.bool(forKey: SettingValues.pref_hiddenFAB)
         SettingValues.isPro = settings.bool(forKey: SettingValues.pref_pro)
         SettingValues.pinToolbar = settings.bool(forKey: SettingValues.pref_pinToolbar)
-        SettingValues.linkAlwaysThumbnail = settings.bool(forKey: SettingValues.pref_linkAlwaysThumbnail)
+        SettingValues.linkAlwaysThumbnail = settings.object(forKey: SettingValues.pref_linkAlwaysThumbnail) == nil ? true : settings.bool(forKey: SettingValues.pref_linkAlwaysThumbnail)
 
         SettingValues.dataSavingEnabled = settings.bool(forKey: SettingValues.pref_dataSavingEnabled)
         SettingValues.dataSavingDisableWiFi = settings.bool(forKey: SettingValues.pref_dataSavingDisableWifi)
