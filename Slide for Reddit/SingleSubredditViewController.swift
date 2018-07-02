@@ -142,6 +142,11 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                 thumb = true
             }
             
+            if(type == .LINK && SettingValues.linkAlwaysThumbnail) {
+                thumb = true
+                big = false
+            }
+            
             if (big) {
                 let imageSize = CGSize.init(width: submission.width, height: ((SettingValues.postImageMode == .CROPPED_IMAGE)) ? 200 : submission.height)
                 
@@ -1391,7 +1396,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         }
         
         if(type == .LINK && SettingValues.linkAlwaysThumbnail){
-            target == .thumb
+            target = .thumb
         }
 
         var cell: LinkCellView!
