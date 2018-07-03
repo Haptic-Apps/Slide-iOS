@@ -797,13 +797,16 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     
                 }
                 bannerImage.sd_setImage(with: URL.init(string: submission.lqUrl), completed: { (image, error, cache, url) in
-                    self.bannerImage.alpha = 1
+                    UIView.animate(withDuration: 0.3, animations: {
+                        self.bannerImage.alpha = 1
+                    })
                 })
             } else {
                 loadedImage = URL.init(string: submission.bannerUrl)
                 bannerImage.sd_setImage(with: URL.init(string: submission.bannerUrl), completed: { (image, error, cache, url) in
-                    self.bannerImage.alpha = 1
-
+                    UIView.animate(withDuration: 0.3, animations: {
+                        self.bannerImage.alpha = 1
+                    })
                 })
             }
         } else {
