@@ -764,7 +764,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             } else if (submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty) {
                 thumbImage.image = UIImage.init(named: "web")
             } else {
-                thumbImage.sd_setImage(with: URL.init(string: submission.thumbnailUrl), placeholderImage: UIImage.init(named: "web"))
+                DispatchQueue.global(qos: .userInteractive).async {
+                    self.thumbImage.sd_setImage(with: URL.init(string: submission.thumbnailUrl), placeholderImage: UIImage.init(named: "web"))
+                }
             }
         } else {
             thumbImage.sd_setImage(with: URL.init(string: ""))
@@ -796,18 +798,22 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 DispatchQueue.main.async{
                     
                 }
-                bannerImage.sd_setImage(with: URL.init(string: submission.lqUrl), completed: { (image, error, cache, url) in
-                    UIView.animate(withDuration: 0.3, animations: {
-                        self.bannerImage.alpha = 1
+                DispatchQueue.global(qos: .userInteractive).async {
+                    self.bannerImage.sd_setImage(with: URL.init(string: submission.lqUrl), completed: { (image, error, cache, url) in
+                        UIView.animate(withDuration: 0.3, animations: {
+                            self.bannerImage.alpha = 1
+                        })
                     })
-                })
+                }
             } else {
                 loadedImage = URL.init(string: submission.bannerUrl)
-                bannerImage.sd_setImage(with: URL.init(string: submission.bannerUrl), completed: { (image, error, cache, url) in
-                    UIView.animate(withDuration: 0.3, animations: {
-                        self.bannerImage.alpha = 1
+                DispatchQueue.global(qos: .userInteractive).async {
+                    self.bannerImage.sd_setImage(with: URL.init(string: submission.bannerUrl), completed: { (image, error, cache, url) in
+                        UIView.animate(withDuration: 0.3, animations: {
+                            self.bannerImage.alpha = 1
+                        })
                     })
-                })
+                }
             }
         } else {
             bannerImage.sd_setImage(with: URL.init(string: ""))
