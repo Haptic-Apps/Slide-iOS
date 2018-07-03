@@ -420,6 +420,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
             self.contentView.layer.cornerRadius = CGFloat(radius)
 
+            box.heightAnchor == CGFloat(24)
+            buttons.heightAnchor == CGFloat(24)
             box.leftAnchor == contentView.leftAnchor + ctwelve
             box.bottomAnchor == contentView.bottomAnchor - ceight
             box.centerYAnchor == buttons.centerYAnchor // Align vertically with buttons
@@ -427,8 +429,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
             buttons.rightAnchor == contentView.rightAnchor - ctwelve
             buttons.bottomAnchor == contentView.bottomAnchor - ceight
-
             title.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+            buttons.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
         }
 
         if(!full){
@@ -457,6 +459,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         constraintsForContent = []
 
         // Deriving classes will populate constraintsForContent in the override for this method.
+    }
+    
+    override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
+        return layoutAttributes
     }
 
     func configure(submission: RSubmission, parent: MediaViewController, nav: UIViewController?, baseSub: String, test : Bool = false) {
@@ -576,7 +582,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
         refresh()
         let more = History.commentsSince(s: submission)
-        comments.text = " \(submission.commentCount)" + (more > 0 ? " (+\(more))" : "")
+        comments.text = " \(submission.commentCount)\(more > 0 ? " (+\(more))" : "")"
     }
     
     func doDTap(_ sender: AnyObject){
@@ -786,27 +792,18 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             if (shouldShowLq) {
                 lq = true
                 loadedImage = URL.init(string: submission.lqUrl)
+                
+                DispatchQueue.main.async{
+                    
+                }
                 bannerImage.sd_setImage(with: URL.init(string: submission.lqUrl), completed: { (image, error, cache, url) in
-                    self.bannerImage.contentMode = .scaleAspectFill
-                    if (cache == .none) {
-                        UIView.animate(withDuration: 0.3, animations: {
-                            self.bannerImage.alpha = 1
-                        })
-                    } else {
-                        self.bannerImage.alpha = 1
-                    }
+                    self.bannerImage.alpha = 1
                 })
             } else {
                 loadedImage = URL.init(string: submission.bannerUrl)
                 bannerImage.sd_setImage(with: URL.init(string: submission.bannerUrl), completed: { (image, error, cache, url) in
-                    self.bannerImage.contentMode = .scaleAspectFill
-                    if (cache == .none) {
-                        UIView.animate(withDuration: 0.3, animations: {
-                            self.bannerImage.alpha = 1
-                        })
-                    } else {
-                        self.bannerImage.alpha = 1
-                    }
+                    self.bannerImage.alpha = 1
+
                 })
             }
         } else {
@@ -824,9 +821,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             parent.registerForPreviewing(with: self, sourceView: self.contentView)
             registered = true
         }
-
-        // TODO:
-//        doConstraints()
 
         refresh()
 
@@ -1218,7 +1212,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             score.text = (link.score >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(link.score) / Double(1000))) : " \(link.score)"
         }
 
-
         if (ActionStates.isSaved(s: link)) {
             save.image = LinkCellImageCache.saveTinted
         }
@@ -1227,8 +1220,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         } else {
             self.title.alpha = 1
         }
-
-//        layoutForType()
     }
 
     override func layoutSubviews() {

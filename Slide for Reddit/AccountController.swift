@@ -65,6 +65,7 @@ class AccountController {
                 } catch {
                     print(error)
                     (UIApplication.shared.delegate as! AppDelegate).session = Session()
+                    AccountController.isLoggedIn = false
                 }
             }
         } else {

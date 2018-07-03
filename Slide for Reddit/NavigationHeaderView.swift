@@ -228,9 +228,14 @@ class NavigationHeaderView: UIView {
 // MARK: Actions
 extension NavigationHeaderView {
     func you(_ sender: AnyObject) {
-        self.parentController?.dismiss(animated: true) {
-            let profile = ProfileViewController.init(name: AccountController.currentName)
-            VCPresenter.showVC(viewController: profile, popupIfPossible: true, parentNavigationController: (self.parentController as! NavigationSidebarViewController).parentController?.navigationController, parentViewController: (self.parentController as! NavigationSidebarViewController).parentController)
+        if(AccountController.isLoggedIn){
+            self.parentController?.dismiss(animated: true) {
+                let profile = ProfileViewController.init(name: AccountController.currentName)
+                VCPresenter.showVC(viewController: profile, popupIfPossible: true, parentNavigationController: (self.parentController as! NavigationSidebarViewController).parentController?.navigationController, parentViewController: (self.parentController as! NavigationSidebarViewController).parentController)
+                
+            }
+        } else {
+            self.switchAccounts(sender)
         }
     }
 

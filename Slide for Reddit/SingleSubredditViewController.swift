@@ -66,7 +66,8 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
     let margin: CGFloat = 10
     let cellsPerRow = 3
-
+    
+    var times = 0
     func collectionView(_ collectionView: UICollectionView, width: CGFloat, indexPath: IndexPath) -> CGSize {
         var itemWidth = width
         if (indexPath.row < links.count) {
@@ -75,7 +76,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             var thumb = submission.thumbnail
             var big = submission.banner
             
-            var submissionHeight = submission.height
+            var submissionHeight = CGFloat(submission.height)
             
             var type =  ContentType.getContentType(baseUrl: submission.url)
             if (submission.isSelf) {
@@ -95,7 +96,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             } else if (big && (( SettingValues.postImageMode == .CROPPED_IMAGE))) {
                 submissionHeight = 200
             } else if (big) {
-                let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: submission.width, viewWidth: itemWidth)
+                let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: CGFloat(submission.width), viewWidth: itemWidth  - ((SettingValues.postViewMode != .CARD) ? CGFloat(5) : CGFloat(0)))
                 if (h == 0) {
                     submissionHeight = 200
                 } else {
@@ -177,12 +178,10 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
             let actionbar = CGFloat(SettingValues.hideButtonActionbar ? 0 : 24)
 
-            var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
             let thumbheight = (SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50)) - (SettingValues.postViewMode == .COMPACT ? 15 : 0)
             let textHeight = CGFloat(submission.isSelf ? 5 : 0)
 
             if (thumb) {
-                imageHeight = thumbheight
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between top and thumbnail
                 innerPadding += 18 - (SettingValues.postViewMode == .COMPACT ? 4 : 0) //between label and bottom box
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
@@ -211,20 +210,26 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             } else {
                 estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //12 padding on either side
             }
+            
+            submissionHeight = getHeightFromAspectRatio(imageHeight: submissionHeight == 200 ? CGFloat(200) : CGFloat(submission.height), imageWidth: CGFloat(submission.width), viewWidth: estimatedUsableWidth)
+            var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
+            
+            if(thumb){
+                imageHeight = thumbheight
+            }
 
             let framesetter = CTFramesetterCreateWithAttributedString(CachedTitle.getTitle(submission: submission, full: false, false))
             let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude), nil)
 
-            let totalHeight = paddingTop + paddingBottom + (thumb ? max(ceil(textSize.height), imageHeight) : ceil(textSize.height) + imageHeight) + innerPadding + actionbar + textHeight
+            let totalHeight = paddingTop + paddingBottom + (thumb ? max(ceil(textSize.height), imageHeight) : ceil(textSize.height) + imageHeight) + innerPadding + actionbar + textHeight + CGFloat(5)
             return CGSize(width: itemWidth, height: totalHeight)
         }
         return CGSize(width: itemWidth, height: 0)
     }
-
-    func getHeightFromAspectRatio(imageHeight: Int, imageWidth: Int, viewWidth: CGFloat) -> Int {
-        let ratio = Double(imageHeight) / Double(imageWidth)
-        let width = Double(viewWidth)
-        return Int(width * ratio)
+    
+    func getHeightFromAspectRatio(imageHeight: CGFloat, imageWidth: CGFloat, viewWidth: CGFloat) -> CGFloat {
+        let ratio = imageHeight / imageWidth
+        return viewWidth * ratio
     }
 
     var parentController: MainViewController?
@@ -527,20 +532,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
     func drefresh(_ sender: AnyObject) {
         refresh()
-    }
-
-
-    var heightAtIndexPath = NSMutableDictionary()
-
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableViewAutomaticDimension
-
-        /*
-        if let height = heightAtIndexPath.object(forKey: indexPath) as? NSNumber {
-            return CGFloat(height.floatValue)
-        } else {
-            return UITableViewAutomaticDimension
-        }*/
     }
 
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
@@ -944,11 +935,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         }
     }
 
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        let height = NSNumber(value: Float(cell.frame.size.height))
-        heightAtIndexPath.setObject(height, forKey: indexPath as NSCopying)
-    }
-
     func pickTheme(sender: AnyObject?, parent: MainViewController?) {
         parentController = parent
         let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
@@ -1153,7 +1139,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     }
 
     func reloadDataReset() {
-        heightAtIndexPath.removeAllObjects()
         self.flowLayout.reset()
         tableView.reloadData()
         tableView.layoutIfNeeded()
@@ -1417,16 +1402,13 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         cell.layer.shouldRasterize = true
         cell.layer.rasterizationScale = UIScreen.main.scale
 
-//        DispatchQueue.main.async {
-            cell.configure(submission: submission, parent: self, nav: self.navigationController, baseSub: sub)
-//        }
+        cell.configure(submission: submission, parent: self, nav: self.navigationController, baseSub: self.sub)
 
         if indexPath.row == self.links.count - 3 && !loading && !nomore {
             self.loadMore()
         }
-
+        
         return cell
-
     }
 
     var loading = false

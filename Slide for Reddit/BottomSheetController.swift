@@ -29,6 +29,8 @@
 
 import Foundation
 import XLActionController
+import Then
+import Anchorage
 
 open class BottomSheetCell: ActionCell {
     
@@ -117,31 +119,46 @@ open class ActionControllerHeader: UICollectionReusableView {
     }
 }
 
-class ButtonsHeader: UIView {
+class ButtonsHeader: UIStackView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        let cancelView = UIView(frame: CGRect(x: 12, y: -24, width: UIScreen.main.bounds.width - 24, height: 52 ))
-        cancelView.backgroundColor = ColorUtil.backgroundColor
+
+        self.then {
+            $0.accessibilityIdentifier = "Post menu quick actions"
+            $0.axis = .horizontal
+            $0.alignment = .center
+            $0.backgroundColor = ColorUtil.backgroundColor
+        }
         
-        let upvote = UIButton(frame: CGRect(x: 0, y: 0, width: 100, height: 52))
-        upvote.setImage(UIImage.init(named: "upvote"), for: .normal)
-        upvote.translatesAutoresizingMaskIntoConstraints = false
-        upvote.tintColor = ColorUtil.fontColor
-        
-        cancelView.addSubview(upvote)
-        
-        let metrics = ["height": 52]
-        cancelView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[button]-|", options: [], metrics: metrics, views: ["button": upvote]))
-        cancelView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-(0)-[button(height)]-|", options: [], metrics: metrics, views: ["button": upvote]))
-        
-        cancelView.layer.cornerRadius = 15
-        cancelView.clipsToBounds = false
-        self.addSubview(cancelView)
+        let upvote = UIButton(frame: CGRect(x: 0, y: 0, width: 100, height: 52)).then {
+            $0.contentMode = .center
+            $0.setImage(UIImage.init(named:"upvote")?.menuIcon(), for: .normal)
+            $0.backgroundColor = ColorUtil.upvoteColor
+        }
+        let downvote = UIButton(frame: CGRect(x: 0, y: 0, width: 100, height: 52)).then {
+            $0.contentMode = .center
+            $0.setImage(UIImage.init(named:"downvote")?.menuIcon(), for: .normal)
+            $0.backgroundColor = ColorUtil.downvoteColor
+        }
+
+        let save = UIButton(frame: CGRect(x: 0, y: 0, width: 100, height: 52)).then {
+            $0.contentMode = .center
+            $0.setImage(UIImage.init(named:"save")?.menuIcon(), for: .normal)
+            $0.backgroundColor = GMColor.yellow500Color()
+        }
+
+        self.addArrangedSubviews(save, downvote, upvote)
+        self.layer.cornerRadius = 15
+        self.clipsToBounds = true
+
+        self.heightAnchor == CGFloat(52)
+        self.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+
     }
     
-    required public init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
+    required init(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 
@@ -180,6 +197,8 @@ open class BottomSheetActionController: ActionController<BottomSheetCell, Action
             header.label.text = "  " + title
         }
         
+        //todo this self.header = ButtonsHeader.init(frame: CGRect.init(x: 0, y: 0, width: UIScreen.main.bounds.width - 24, height: 52))
+        var doneOnce = false
         onConfigureCellForAction = { cell, action, indexPath in
             cell.setup(action.data?.title, detail: action.data?.subtitle, image: action.data?.image)
             cell.alpha = action.enabled ? 1.0 : 0.5
@@ -191,6 +210,14 @@ open class BottomSheetActionController: ActionController<BottomSheetCell, Action
             self.collectionView.layer.cornerRadius = 15
             self.collectionView.clipsToBounds = true
             
+            if(!doneOnce && false){ //todo this later maybe
+                self.header!.bottomAnchor == self.collectionView.topAnchor - CGFloat(12)
+                self.header!.widthAnchor == self.collectionView.widthAnchor
+                self.header!.heightAnchor == CGFloat(52)
+                self.header!.leftAnchor == self.collectionView.leftAnchor
+                self.header!.backgroundColor = ColorUtil.foregroundColor
+                doneOnce = true
+            }
             var corners = UIRectCorner()
             if indexPath.item == 0 {
                 corners = [.topLeft, .topRight]

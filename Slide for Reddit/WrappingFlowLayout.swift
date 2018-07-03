@@ -16,42 +16,14 @@ class WrappingFlowLayout: UICollectionViewLayout {
     var delegate: WrappingFlowLayoutDelegate!
     
     // 2
-    var numberOfColumns: Int {
-        var portraitCount = SettingValues.multiColumnCount / 2
-        if(portraitCount == 0){
-            portraitCount = 1
-        }
-        
-        var pad = UIScreen.main.traitCollection.userInterfaceIdiom == .pad
-        if(portraitCount == 1 && pad){
-            portraitCount = 2
-        }
-        if(pad && UIApplication.shared.keyWindow?.frame != UIScreen.main.bounds){
-            return 1
-        }
-        if(SettingValues.multiColumn){
-            if(UIApplication.shared.statusBarOrientation.isPortrait || !SettingValues.isPro){
-                if(UIScreen.main.traitCollection.userInterfaceIdiom != .pad || !SettingValues.isPro){
-                    return 1
-                } else {
-                    return portraitCount
-                }
-            } else {
-                return SettingValues.multiColumnCount
-            }
-        } else {
-            return 1
-        }
-    }
+    var numberOfColumns = 0
     
     override func invalidateLayout() {
         cache.removeAll()
         super.invalidateLayout()
     }
     
-    var cellPadding: CGFloat {
-        return (numberOfColumns > 1 && (SettingValues.postViewMode != .LIST) && (SettingValues.postViewMode != .COMPACT) ) ? CGFloat(3) : ((SettingValues.postViewMode == .LIST) ? CGFloat(1) : CGFloat(0))
-    }
+    var cellPadding = CGFloat(0)
     
     // 3
     private var cache = [UICollectionViewLayoutAttributes]()
@@ -68,6 +40,34 @@ class WrappingFlowLayout: UICollectionViewLayout {
     func reset(){
         cache = []
         prepare()
+        var portraitCount = SettingValues.multiColumnCount / 2
+        if(portraitCount == 0){
+            portraitCount = 1
+        }
+        
+        var pad = UIScreen.main.traitCollection.userInterfaceIdiom == .pad
+        if(portraitCount == 1 && pad){
+            portraitCount = 2
+        }
+        if(pad && UIApplication.shared.keyWindow?.frame != UIScreen.main.bounds){
+            numberOfColumns =  1
+        }
+        if(SettingValues.multiColumn){
+            if(UIApplication.shared.statusBarOrientation.isPortrait || !SettingValues.isPro){
+                if(UIScreen.main.traitCollection.userInterfaceIdiom != .pad || !SettingValues.isPro){
+                    numberOfColumns =  1
+                } else {
+                    numberOfColumns =  portraitCount
+                }
+            } else {
+                numberOfColumns =  SettingValues.multiColumnCount
+            }
+        } else {
+            numberOfColumns =  1
+        }
+        
+        cellPadding = (numberOfColumns > 1 && (SettingValues.postViewMode != .LIST) && (SettingValues.postViewMode != .COMPACT) ) ? CGFloat(3) : ((SettingValues.postViewMode == .LIST) ? CGFloat(1) : CGFloat(0))
+
     }
     
     override func prepare() {
