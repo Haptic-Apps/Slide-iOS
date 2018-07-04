@@ -322,6 +322,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     var sort: CommentSort = SettingValues.defaultCommentSorting
 
     override func loadView() {
+        print("Did load view")
         self.view = UITableView(frame: CGRect.zero, style: .plain)
         self.automaticallyAdjustsScrollViewInsets = false
         self.tableView = self.view as! UITableView
@@ -375,7 +376,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 self.indicator.center = center
                 self.indicator.startAnimating()
             }
-            self.view.addSubview(self.indicator)
+            self.tableView.addSubview(self.indicator)
             indicator.layer.speed = 0.6667 //normal speed = 1 / tableview speed (1.5)
         }
         session = (UIApplication.shared.delegate as! AppDelegate).session
@@ -840,6 +841,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     // MARK: - Table view data source
 
+    var forceLoad = false
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         (navigationController)?.setNavigationBarHidden(false, animated: false)
@@ -856,7 +859,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             self.setBarColors(color: ColorUtil.getColorForSub(sub: self.navigationItem.title!))
         }
 
-        if (single && !loaded) {
+        if (single && !loaded || forceLoad) {
             refresh(self)
         }
 

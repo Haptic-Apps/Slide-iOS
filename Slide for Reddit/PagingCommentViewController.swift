@@ -82,8 +82,7 @@ class PagingCommentViewController : ColorMuxPagingViewController, UIPageViewCont
         
         if(!(firstViewController as! CommentViewController).loaded){
             PagingCommentViewController.savedComment = firstViewController as? CommentViewController
-
-        (firstViewController as! CommentViewController).refresh(firstViewController)
+            (firstViewController as! CommentViewController).forceLoad = true
         }
 
 
@@ -152,7 +151,7 @@ class PagingCommentViewController : ColorMuxPagingViewController, UIPageViewCont
         }
         
         if(!(viewController as! CommentViewController).loaded){
-        (viewController as! CommentViewController).refresh(viewController)
+            (viewController as! CommentViewController).refresh(viewController)
         }
         
         let nextIndex = viewControllerIndex + 1
