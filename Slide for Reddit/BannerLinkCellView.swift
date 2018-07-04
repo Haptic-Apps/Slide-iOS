@@ -23,7 +23,13 @@ final class BannerLinkCellView: LinkCellView {
             if SettingValues.postViewMode == .CENTER {
                 // Image goes between title and buttons
                 title.topAnchor == contentView.topAnchor + ctwelve
-                title.horizontalAnchors == contentView.horizontalAnchors + ctwelve
+                sideButtons.topAnchor == contentView.topAnchor + ctwelve
+                if(SettingValues.sideButtons){
+                    title.leftAnchor == sideButtons.rightAnchor + ctwelve
+                    title.rightAnchor == contentView.rightAnchor - ctwelve
+                } else {
+                    title.horizontalAnchors == contentView.horizontalAnchors + ctwelve
+                }
                 title.bottomAnchor == bannerImage.topAnchor - ceight
 
                 bannerImage.horizontalAnchors == contentView.horizontalAnchors + bannerPadding
@@ -31,12 +37,20 @@ final class BannerLinkCellView: LinkCellView {
             }
             else {
                 // Image goes above title
-                title.horizontalAnchors == contentView.horizontalAnchors + ctwelve
+                if(SettingValues.sideButtons){
+                    title.leftAnchor == sideButtons.rightAnchor + ctwelve
+                    title.rightAnchor == contentView.rightAnchor - ctwelve
+                } else {
+                    title.horizontalAnchors == contentView.horizontalAnchors + ctwelve
+                }
                 title.bottomAnchor == box.topAnchor - ctwelve
                 
                 bannerImage.topAnchor == contentView.topAnchor + bannerPadding
                 bannerImage.bottomAnchor == title.topAnchor - ceight
                 bannerImage.horizontalAnchors == contentView.horizontalAnchors + bannerPadding
+                if(SettingValues.sideButtons){
+                    sideButtons.topAnchor == bannerImage.bottomAnchor + ceight
+                }
             }
 
             infoContainer.heightAnchor == CGFloat(45)

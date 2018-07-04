@@ -14,9 +14,15 @@ public class LinkCellImageCache {
     static var downvote = UIImage()
     static var save = UIImage()
 
+    static var upvoteSmall = UIImage()
+    static var downvoteSmall = UIImage()
+
     static var upvoteTinted = UIImage()
     static var downvoteTinted = UIImage()
     static var saveTinted = UIImage()
+
+    static var upvoteTintedSmall = UIImage()
+    static var downvoteTintedSmall = UIImage()
 
     static var votesIcon = UIImage()
     static var commentsIcon = UIImage()
@@ -42,6 +48,12 @@ public class LinkCellImageCache {
 
         save = UIImage(named: "save")!.menuIcon()
         saveTinted = save.getCopy(withColor: ColorUtil.upvoteColor)
+
+        upvoteSmall = UIImage(named: "up")!.menuIcon()
+        upvoteTintedSmall = upvoteSmall.getCopy(withColor: ColorUtil.upvoteColor)
+        
+        downvoteSmall = UIImage(named: "down")!.menuIcon()
+        downvoteTintedSmall = downvoteSmall.getCopy(withColor: ColorUtil.downvoteColor)
 
         votesIcon = UIImage(named: "upvote")!.smallIcon()
         commentsIcon = UIImage(named: "comments")!.smallIcon()

@@ -16,9 +16,8 @@ class SettingsLayout: UITableViewController {
     
     var cardModeCell: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "mode")
     
-    var hideActionbarCell: UITableViewCell = UITableViewCell()
-    var hideActionbar = UISwitch()
-    
+    var actionBarCell: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "mode")
+
     var largerThumbnailCell: UITableViewCell = UITableViewCell()
     var largerThumbnail = UISwitch()
     
@@ -75,9 +74,6 @@ class SettingsLayout: UITableViewController {
         if(changed == smalltag){
             SettingValues.smallerTag = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_smallTag)
-        } else if(changed == hideActionbar){
-            SettingValues.hideButtonActionbar = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_hideButtonActionbar)
         } else if(changed == selftext){
             SettingValues.showFirstParagraph = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_showFirstParagraph)
@@ -196,6 +192,19 @@ class SettingsLayout: UITableViewController {
             break
         }
         
+        switch(SettingValues.actionBarMode){
+        case .FULL:
+            actionBarCell.imageView?.image = UIImage.init(named: "code")?.toolbarIcon()
+            break
+        case .NONE:
+            actionBarCell.imageView?.image = UIImage.init(named: "hide")?.toolbarIcon()
+            break
+        case .SIDE:
+            actionBarCell.imageView?.image = UIImage.init(named: "up")?.toolbarIcon()
+            break
+        }
+
+        
     }
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let label : UILabel = UILabel()
@@ -307,6 +316,42 @@ class SettingsLayout: UITableViewController {
             }))
             
             VCPresenter.presentAlert(alertController, parentVC: self)
+        } else if(indexPath.section == 2 && indexPath.row == 0){
+            let alertController: BottomSheetActionController = BottomSheetActionController()
+            alertController.addAction(Action(ActionData(title: "Full action bar", image: UIImage(named: "code")!.menuIcon()), style: .default, handler: { action in
+                UserDefaults.standard.set("full", forKey: SettingValues.pref_postImageMode)
+                SettingValues.postImageMode = .FULL_IMAGE
+                UserDefaults.standard.synchronize()
+                self.doDisables()
+                self.doLink()
+                tableView.reloadData()
+                self.imageCell.detailTextLabel?.text = SettingValues.postImageMode.rawValue.capitalize()
+                SubredditReorderViewController.changed = true
+            }))
+            
+            alertController.addAction(Action(ActionData(title: "Side action bar", image: UIImage(named: "up")!.menuIcon()), style: .default, handler: { action in
+                UserDefaults.standard.set("none", forKey: SettingValues.pref_postImageMode)
+                SettingValues.postImageMode = .CROPPED_IMAGE
+                UserDefaults.standard.synchronize()
+                self.doDisables()
+                self.doLink()
+                tableView.reloadData()
+                self.imageCell.detailTextLabel?.text = SettingValues.postImageMode.rawValue.capitalize()
+                SubredditReorderViewController.changed = true
+            }))
+            
+            alertController.addAction(Action(ActionData(title: "Hide action bar", image: UIImage(named: "hide")!.menuIcon()), style: .default, handler: { action in
+                UserDefaults.standard.set("side", forKey: SettingValues.pref_postImageMode)
+                SettingValues.postImageMode = .THUMBNAIL
+                UserDefaults.standard.synchronize()
+                self.doDisables()
+                self.doLink()
+                tableView.reloadData()
+                self.imageCell.detailTextLabel?.text = SettingValues.postImageMode.rawValue.capitalize()
+                SubredditReorderViewController.changed = true
+            }))
+            
+            VCPresenter.presentAlert(alertController, parentVC: self)
         }
     }
     
@@ -346,8 +391,13 @@ class SettingsLayout: UITableViewController {
         imageCell.detailTextLabel?.numberOfLines = 0
         imageCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         
+        createCell(actionBarCell, isOn: false, text: "Action Bar mode")
+        actionBarCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        actionBarCell.detailTextLabel?.text = SettingValues.postImageMode.rawValue.capitalize()
+        actionBarCell.detailTextLabel?.numberOfLines = 0
+        actionBarCell.detailTextLabel?.lineBreakMode = .byWordWrapping
+
         createCell(smalltagCell, smalltag, isOn: SettingValues.smallerTag, text: "Smaller content tag")
-        createCell(hideActionbarCell, hideActionbar, isOn: SettingValues.hideButtonActionbar, text: "Hide actionbar")
         createCell(largerThumbnailCell, largerThumbnail, isOn: SettingValues.largerThumbnail, text: "Larger thumbnail")
         createCell(scoreTitleCell, scoreTitle, isOn: SettingValues.scoreInTitle, text: "Score and comment count in title")
         createCell(abbreviateScoreCell, abbreviateScore, isOn: SettingValues.abbreviateScores, text: "Abbreviate post scores (ex: 10k)")
@@ -363,7 +413,7 @@ class SettingsLayout: UITableViewController {
     }
     
     func doDisables(){
-        if(SettingValues.hideButtonActionbar){
+        if(SettingValues.actionBarMode != .FULL){
             hide.isEnabled = false
             save.isEnabled = false
         } else {
@@ -416,7 +466,7 @@ class SettingsLayout: UITableViewController {
             }
         case 2:
             switch(indexPath.row) {
-            case 0: return self.hideActionbarCell
+            case 0: return self.actionBarCell
             case 1: return self.scoreTitleCell
             case 2: return self.abbreviateScoreCell
             case 3: return self.domainInfoCell

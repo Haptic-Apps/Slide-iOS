@@ -25,7 +25,13 @@ final class TextLinkCellView: LinkCellView {
         let ctwelve = SettingValues.postViewMode == .COMPACT ? CGFloat(8) : CGFloat(12)
         constraintsForType = batch {
             title.topAnchor == contentView.topAnchor + ctwelve
-            title.horizontalAnchors == contentView.horizontalAnchors + ctwelve
+            sideButtons.topAnchor == contentView.topAnchor + ctwelve
+            if(SettingValues.sideButtons){
+                title.leftAnchor == sideButtons.rightAnchor + ctwelve
+                title.rightAnchor == contentView.rightAnchor - ctwelve
+            } else {
+                title.horizontalAnchors == contentView.horizontalAnchors + ctwelve
+            }
             title.bottomAnchor <= box.topAnchor - ctwelve
         }
     }

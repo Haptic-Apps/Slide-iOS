@@ -201,7 +201,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     print(result.error!)
                 }
                 DispatchQueue.main.async {
-                    BannerUtil.makeBanner(text: state ? "Saved" : "Unsaved", color: ColorUtil.accentColorForSub(sub: self.subreddit) ,seconds: 3, context: self)
+                    BannerUtil.makeBanner(text: state ? "Saved" : "Unsaved", color: ColorUtil.accentColorForSub(sub: self.subreddit) ,seconds: 1, context: self)
                 }
             })
             ActionStates.setSaved(s: cell.link!, saved: !ActionStates.isSaved(s: cell.link!))
@@ -216,7 +216,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             let state = !ActionStates.isSaved(s: comment)
             try session?.setSave(state, name: comment.id, completion: { (result) in
                 DispatchQueue.main.async {
-                    BannerUtil.makeBanner(text: state ? "Saved" : "Unsaved", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 3, context: self)
+                    BannerUtil.makeBanner(text: state ? "Saved" : "Unsaved", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 1, context: self)
                 }
             })
             ActionStates.setSaved(s: comment, saved: !ActionStates.isSaved(s: comment))
@@ -365,7 +365,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 self.indicator.cycleColors = [ColorUtil.getColorForSub(sub: submission?.subreddit ?? ""), ColorUtil.accentColorForSub(sub: submission?.subreddit ?? "")]
                 let center = CGPoint.init(x: UIScreen.main.bounds.width / 2, y: CGFloat(UIScreen.main.bounds.height - 200))
                 self.indicator.center = center
-                self.indicator.startAnimating()
             } else {
                 self.indicator = MDCActivityIndicator.init(frame: CGRect.init(x: CGFloat(0), y: CGFloat(0), width: CGFloat(80), height: CGFloat(80)))
                 self.indicator.strokeWidth = 5
@@ -374,9 +373,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 self.indicator.cycleColors = [ColorUtil.getColorForSub(sub: submission?.subreddit ?? ""), ColorUtil.accentColorForSub(sub: submission?.subreddit ?? "")]
                 let center = CGPoint.init(x: UIScreen.main.bounds.width / 2, y: CGFloat(UIScreen.main.bounds.height / 2))
                 self.indicator.center = center
-                self.indicator.startAnimating()
             }
             self.tableView.addSubview(self.indicator)
+            self.indicator.startAnimating()
             indicator.layer.speed = 0.6667 //normal speed = 1 / tableview speed (1.5)
         }
         session = (UIApplication.shared.delegate as! AppDelegate).session

@@ -74,6 +74,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var title = TTTAttributedLabel(frame: CGRect.zero)
     var score = UILabel()
     var box = UIStackView()
+    var sideButtons = UIStackView()
     var buttons = UIStackView()
     var comments = UILabel()
     var info = UILabel()
@@ -91,6 +92,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var taglabel = UILabel()
     var tagbody = UIView()
     var crosspost = UITableViewCell()
+    var sideUpvote = UIImageView()
+    var sideDownvote = UIImageView()
+    var sideScore = UILabel()
 
     var loadedImage: URL?
     var lq = false
@@ -230,6 +234,20 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
         }
+        
+        self.sideUpvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 24)).then {
+            $0.accessibilityIdentifier = "Upvote Button"
+            $0.contentMode = .center
+            $0.isOpaque = false
+            $0.backgroundColor = ColorUtil.foregroundColor
+        }
+        
+        self.sideDownvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 20)).then {
+            $0.accessibilityIdentifier = "Downvote Button"
+            $0.contentMode = .center
+            $0.isOpaque = false
+            $0.backgroundColor = ColorUtil.foregroundColor
+        }
 
         self.mod = UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 24)).then {
             $0.accessibilityIdentifier = "Mod Button"
@@ -267,6 +285,16 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         self.score = UILabel().then {
             $0.accessibilityIdentifier = "Score Label"
             $0.numberOfLines = 1
+            $0.font = FontGenerator.fontOfSize(size: 12, submission: true)
+            $0.textColor = ColorUtil.fontColor
+            $0.isOpaque = false
+            $0.backgroundColor = ColorUtil.foregroundColor
+        }
+
+        self.sideScore = UILabel().then {
+            $0.accessibilityIdentifier = "Score Label"
+            $0.numberOfLines = 1
+            $0.textAlignment = .center
             $0.font = FontGenerator.fontOfSize(size: 12, submission: true)
             $0.textColor = ColorUtil.fontColor
             $0.isOpaque = false
@@ -313,6 +341,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if (!addTouch) {
             addTouch(view: save, action: #selector(LinkCellView.save(sender:)))
             addTouch(view: upvote, action: #selector(LinkCellView.upvote(sender:)))
+            if(SettingValues.sideButtons){
+                addTouch(view: sideUpvote, action: #selector(LinkCellView.upvote(sender:)))
+                addTouch(view: sideDownvote, action: #selector(LinkCellView.downvote(sender:)))
+            }
             addTouch(view: reply, action: #selector(LinkCellView.reply(sender:)))
             addTouch(view: downvote, action: #selector(LinkCellView.downvote(sender:)))
             addTouch(view: mod, action: #selector(LinkCellView.mod(sender:)))
@@ -353,7 +385,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
         contentView.addSubviews(bannerImage, thumbImageContainer, title, textView, infoContainer, tagbody)
         contentView.layer.masksToBounds = true
-
+        
         self.box = UIStackView().then {
             $0.accessibilityIdentifier = "Count Info Stack Horizontal"
             $0.axis = .horizontal
@@ -372,8 +404,20 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         buttons.addArrangedSubviews(edit, reply, save, hide, upvote, downvote, mod)
         self.contentView.addSubview(buttons)
 
-        buttons.isHidden = SettingValues.hideButtonActionbar
-        buttons.isUserInteractionEnabled = !SettingValues.hideButtonActionbar
+        self.sideButtons = UIStackView().then {
+            $0.accessibilityIdentifier = "Button Stack Vertical"
+            $0.axis = .vertical
+            $0.alignment = .center
+            $0.distribution = .equalCentering
+            $0.spacing = 2
+        }
+        sideButtons.addArrangedSubviews(sideUpvote, sideScore, sideDownvote)
+        self.contentView.addSubview(sideButtons)
+        
+        sideButtons.isHidden = !SettingValues.sideButtons || full
+
+        buttons.isHidden = SettingValues.hideButtonActionbar && !full
+        buttons.isUserInteractionEnabled = !SettingValues.hideButtonActionbar || full
     }
 
     func doConstraints() {
@@ -420,12 +464,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
             self.contentView.layer.cornerRadius = CGFloat(radius)
 
-            box.heightAnchor == CGFloat(24)
-            buttons.heightAnchor == CGFloat(24)
             box.leftAnchor == contentView.leftAnchor + ctwelve
             box.bottomAnchor == contentView.bottomAnchor - ceight
             box.centerYAnchor == buttons.centerYAnchor // Align vertically with buttons
             box.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+            
+            sideButtons.leftAnchor == contentView.leftAnchor + ceight
+            sideButtons.widthAnchor == CGFloat(36)
 
             buttons.rightAnchor == contentView.rightAnchor - ctwelve
             buttons.bottomAnchor == contentView.bottomAnchor - ceight
@@ -488,7 +533,16 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if downvote.bounds.contains(pointForTargetViewdownvote) {
             return downvote
         }
-
+        if(SettingValues.sideButtons){
+            let pointForTargetViewupvoteSide: CGPoint = sideUpvote.convert(point, from: self)
+            if sideUpvote.bounds.contains(pointForTargetViewupvoteSide) {
+                return sideUpvote
+            }
+            let pointForTargetViewdownvoteSide: CGPoint = sideDownvote.convert(point, from: self)
+            if sideDownvote.bounds.contains(pointForTargetViewdownvoteSide) {
+                return sideDownvote
+            }
+        }
         let pointForTargetViewupvote: CGPoint = upvote.convert(point, from: self)
         if upvote.bounds.contains(pointForTargetViewupvote) {
             return upvote
@@ -653,10 +707,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             save.isHidden = true
             reply.isHidden = true
             edit.isHidden = true
+            sideUpvote.isHidden = true
+            sideDownvote.isHidden = true
         } else {
             upvote.isHidden = false
             downvote.isHidden = false
-            
+            sideUpvote.isHidden = false
+            sideDownvote.isHidden = false
+
             if(submission.canMod){
                 mod.isHidden = false
                 if(!submission.reports.isEmpty){
@@ -1017,7 +1075,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         let alertController: BottomSheetActionController = BottomSheetActionController()
         alertController.headerData = "Edit your submission"
 
-
         if (link.isSelf) {
             alertController.addAction(Action(ActionData(title: "Edit selftext", image: UIImage(named: "edit")!.menuIcon()), style: .default, handler: { action in
                 self.editSelftext()
@@ -1177,14 +1234,18 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         upvote.image = LinkCellImageCache.upvote
         save.image = LinkCellImageCache.save
         downvote.image = LinkCellImageCache.downvote
+        sideUpvote.image = LinkCellImageCache.upvoteSmall
+        sideDownvote.image = LinkCellImageCache.downvoteSmall
         var attrs: [String: Any] = [:]
         switch (ActionStates.getVoteDirection(s: link)) {
         case .down:
             downvote.image = LinkCellImageCache.downvoteTinted
+            sideDownvote.image = LinkCellImageCache.downvoteTintedSmall
             attrs = ([NSForegroundColorAttributeName: ColorUtil.downvoteColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
             break
         case .up:
             upvote.image = LinkCellImageCache.upvoteTinted
+            sideUpvote.image = LinkCellImageCache.upvoteTintedSmall
             attrs = ([NSForegroundColorAttributeName: ColorUtil.upvoteColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
             break
         default:
@@ -1227,6 +1288,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             score.attributedText = subScore
         } else {
             score.text = (link.score >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(link.score) / Double(1000))) : " \(link.score)"
+            sideScore.text = score.text
         }
 
         if (ActionStates.isSaved(s: link)) {
@@ -1341,10 +1403,15 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 }
             }
 
+            if(SettingValues.sideButtons){
+                estimatedUsableWidth -= 36
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //buttons horizontal margins
+            }
+            
             let framesetter = CTFramesetterCreateWithAttributedString(title.attributedText)
             let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude), nil)
-
-            let totalHeight = paddingTop + fullHeightExtras + paddingBottom + (thumb ? max(ceil(textSize.height), imageHeight): ceil(textSize.height) + imageHeight) + innerPadding + actionbar + textHeight + (full ? CGFloat(10) : CGFloat(0))
+            
+            let totalHeight = paddingTop + paddingBottom + (thumb ? max((SettingValues.sideButtons ? max(ceil(textSize.height), 50) : ceil(textSize.height)), imageHeight) : (SettingValues.sideButtons ? max(ceil(textSize.height), 50) : ceil(textSize.height)) + imageHeight) + innerPadding + actionbar + textHeight
             estimatedHeight = totalHeight
         }
         return estimatedHeight

@@ -24,8 +24,6 @@ class SettingValues {
     public static let pref_abbreviateScores = "ABBREVIATE_SCORES"
     public static let pref_commentCountLastVisit = "COMMENT_COUNT_LAST_VISIT"
     public static let pref_rightThumbnail = "RIGHT_ALIGNED_THUMBNAIL"
-    public static let pref_hideButtonActionbar = "HIDE_BUTTON_ACTIONBAR"
-    public static let pref_saveButtonActionbar = "SHOW_BUTTON_ACTIONBAR"
     public static let pref_enlargeLinks = "ENLARGE_LINKS"
     public static let pref_showLinkContentType = "SHOW_LINK_CONTENT_TYPE"
     public static let pref_commentFontSize = "COMMENT_FONT_SIZE"
@@ -86,6 +84,7 @@ class SettingValues {
     public static let pref_hapticFeedback = "HAPTIC_FEEDBACK"
     public static let pref_postImageMode = "POST_IMAGE_MODE"
     public static let pref_linkAlwaysThumbnail = "LINK_ALWAYS_THUMBNAIL"
+    public static let pref_actionbarMode = "ACTIONBAR_MODE"
 
     public static var commentActionRight = CommentAction.UPVOTE
     public static var commentActionLeft = CommentAction.DOWNVOTE
@@ -103,6 +102,7 @@ class SettingValues {
     public static var onlyTintOutside = false
     public static var postViewMode = PostViewType.LIST
     public static var postImageMode = PostImageMode.CROPPED_IMAGE
+    public static var actionBarMode = ActionBarMode.FULL
     public static var fabType = FabType.HIDE_READ
     public static var pictureMode = "PICTURE_MODE"
     public static var hideImageSelftext = false
@@ -115,8 +115,6 @@ class SettingValues {
     public static var pinToolbar = false
     public static var hapticFeedback = true
 
-    public static var hideButtonActionbar = false
-    public static var saveButtonActionbar = true
     public static var enlargeLinks = true
     public static var noImages = false
     public static var showLinkContentType = true
@@ -176,6 +174,12 @@ class SettingValues {
         case FULL_IMAGE = "full"
         case CROPPED_IMAGE = "cropped"
         case THUMBNAIL = "thumbnail"
+    }
+
+    enum ActionBarMode: String {
+        case NONE = "none"
+        case FULL = "full"
+        case SIDE = "side"
     }
 
     public static func getLinkSorting(forSubreddit: String) -> LinkSortType {
@@ -313,8 +317,8 @@ class SettingValues {
         SettingValues.viewType = settings.bool(forKey: SettingValues.pref_viewType)
         SettingValues.abbreviateScores = settings.bool(forKey: SettingValues.pref_abbreviateScores)
         SettingValues.scoreInTitle = settings.bool(forKey: SettingValues.pref_scoreInTitle)
-        SettingValues.hideButtonActionbar = settings.bool(forKey: SettingValues.pref_hideButtonActionbar)
         SettingValues.postViewMode = PostViewType.init(rawValue: settings.string(forKey: SettingValues.pref_postViewMode) ?? "card")!
+        SettingValues.actionBarMode = ActionBarMode.init(rawValue: settings.string(forKey: SettingValues.pref_actionbarMode) ?? "full")!
         SettingValues.postImageMode = PostImageMode.init(rawValue: settings.string(forKey: SettingValues.pref_postImageMode) ?? "cropped")!
         SettingValues.fabType = FabType.init(rawValue: settings.string(forKey: SettingValues.pref_fabType) ?? "hide")!
         

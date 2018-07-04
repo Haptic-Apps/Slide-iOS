@@ -218,10 +218,15 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                 imageHeight = thumbheight
             }
 
+            if(SettingValues.sideButtons){
+                estimatedUsableWidth -= 36
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //buttons horizontal margins
+            }
+            
             let framesetter = CTFramesetterCreateWithAttributedString(CachedTitle.getTitle(submission: submission, full: false, false))
             let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude), nil)
 
-            let totalHeight = paddingTop + paddingBottom + (thumb ? max(ceil(textSize.height), imageHeight) : ceil(textSize.height) + imageHeight) + innerPadding + actionbar + textHeight + CGFloat(5)
+            let totalHeight = paddingTop + paddingBottom + (thumb ? max((SettingValues.sideButtons ? max(ceil(textSize.height), 50) : ceil(textSize.height)), imageHeight) : (SettingValues.sideButtons ? max(ceil(textSize.height), 50) : ceil(textSize.height)) + imageHeight) + innerPadding + actionbar + textHeight
             return CGSize(width: itemWidth, height: totalHeight)
         }
         return CGSize(width: itemWidth, height: 0)

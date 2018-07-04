@@ -30,7 +30,11 @@ final class ThumbnailLinkCellView: LinkCellView {
             // Thumbnail sizing
             thumbImageContainer.topAnchor == contentView.topAnchor + ctwelve
             if SettingValues.leftThumbnail {
-                thumbImageContainer.leftAnchor == contentView.leftAnchor + ceight
+                if(SettingValues.sideButtons){
+                    thumbImageContainer.leftAnchor == sideButtons.rightAnchor + ceight
+                } else {
+                    thumbImageContainer.leftAnchor == contentView.leftAnchor + ceight
+                }
             }
             else {
                 thumbImageContainer.rightAnchor == contentView.rightAnchor - ctwelve
@@ -39,10 +43,15 @@ final class ThumbnailLinkCellView: LinkCellView {
             let thumbSize: CGFloat = (SettingValues.largerThumbnail ? 75 : 50) - (SettingValues.postViewMode == .COMPACT ? 15 : 0)
             thumbImageContainer.widthAnchor == thumbSize
             thumbImageContainer.heightAnchor == thumbSize
-
+            if(SettingValues.sideButtons){
+                title.leftAnchor == (SettingValues.leftThumbnail ? thumbImageContainer.rightAnchor + ceight : sideButtons.rightAnchor + ctwelve)
+                title.rightAnchor == (SettingValues.leftThumbnail ? contentView.rightAnchor - ctwelve : thumbImageContainer.leftAnchor - ceight)
+            } else {
+                title.leftAnchor == (SettingValues.leftThumbnail ? thumbImageContainer.rightAnchor + ceight : contentView.leftAnchor + ctwelve)
+                title.rightAnchor == (SettingValues.leftThumbnail ? contentView.rightAnchor - ctwelve : thumbImageContainer.leftAnchor - ceight)
+            }
             title.topAnchor == contentView.topAnchor + ctwelve
-            title.leftAnchor == (SettingValues.leftThumbnail ? thumbImageContainer.rightAnchor + ceight : contentView.leftAnchor + ctwelve)
-            title.rightAnchor == (SettingValues.leftThumbnail ? contentView.rightAnchor - ctwelve : thumbImageContainer.leftAnchor - ceight)
+            sideButtons.topAnchor == contentView.topAnchor + ctwelve
             title.bottomAnchor <= box.topAnchor - ceight
         }
     }
