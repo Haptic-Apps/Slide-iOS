@@ -391,6 +391,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 $0.axis = .horizontal
                 $0.alignment = .center
             }
+            
             box.addArrangedSubviews(submissionicon, horizontalSpace(2), score, horizontalSpace(8), commenticon, horizontalSpace(2), comments)
             self.contentView.addSubview(box)
             
@@ -414,11 +415,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 $0.spacing = 1
             }
             sideButtons.addArrangedSubviews(sideUpvote, sideScore, sideDownvote)
+            sideScore.textAlignment = .center
             self.contentView.addSubview(sideButtons)
         }
         
         sideButtons.isHidden = !SettingValues.actionBarMode.isSide() || full
-
         buttons.isHidden = SettingValues.actionBarMode != .FULL && !full
         buttons.isUserInteractionEnabled = SettingValues.actionBarMode != .FULL || full
     }
@@ -483,6 +484,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 } else {
                     sideButtons.leftAnchor == contentView.leftAnchor + ceight
                 }
+                sideScore.widthAnchor == CGFloat(36)
                 sideButtons.widthAnchor == CGFloat(36)
             }
         

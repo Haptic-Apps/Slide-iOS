@@ -186,8 +186,9 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                 if(SettingValues.actionBarMode == .FULL){
                     innerPadding += 18 - (SettingValues.postViewMode == .COMPACT ? 4 : 0) //between label and bottom box
                     innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
+                } else {
+                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between thumbnail and bottom
                 }
-                innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between thumbnail and bottom
             } else if (big) {
                 if (SettingValues.postViewMode == .CENTER) {
                     innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 16) //between label
