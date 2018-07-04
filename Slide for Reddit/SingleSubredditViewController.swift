@@ -211,7 +211,11 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                 estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //12 padding on either side
             }
             
-            submissionHeight = getHeightFromAspectRatio(imageHeight: submissionHeight == 200 ? CGFloat(200) : CGFloat(submission.height), imageWidth: CGFloat(submission.width), viewWidth: estimatedUsableWidth)
+            if(SettingValues.postImageMode == .CROPPED_IMAGE) {
+                submissionHeight = 200
+            } else {
+                submissionHeight = getHeightFromAspectRatio(imageHeight: submissionHeight == 200 ? CGFloat(200) : CGFloat(submission.height), imageWidth: CGFloat(submission.width), viewWidth: estimatedUsableWidth)
+            }
             var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
             
             if(thumb){

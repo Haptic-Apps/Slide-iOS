@@ -317,10 +317,10 @@ class SettingValues {
         SettingValues.viewType = settings.bool(forKey: SettingValues.pref_viewType)
         SettingValues.abbreviateScores = settings.bool(forKey: SettingValues.pref_abbreviateScores)
         SettingValues.scoreInTitle = settings.bool(forKey: SettingValues.pref_scoreInTitle)
-        SettingValues.postViewMode = PostViewType.init(rawValue: settings.string(forKey: SettingValues.pref_postViewMode) ?? "card")!
-        SettingValues.actionBarMode = ActionBarMode.init(rawValue: settings.string(forKey: SettingValues.pref_actionbarMode) ?? "full")!
-        SettingValues.postImageMode = PostImageMode.init(rawValue: settings.string(forKey: SettingValues.pref_postImageMode) ?? "cropped")!
-        SettingValues.fabType = FabType.init(rawValue: settings.string(forKey: SettingValues.pref_fabType) ?? "hide")!
+        SettingValues.postViewMode = PostViewType.init(rawValue: settings.string(forKey: SettingValues.pref_postViewMode) ?? "card") ?? .CARD
+        SettingValues.actionBarMode = ActionBarMode.init(rawValue: settings.string(forKey: SettingValues.pref_actionbarMode) ?? "full") ?? .FULL
+        SettingValues.postImageMode = PostImageMode.init(rawValue: settings.string(forKey: SettingValues.pref_postImageMode) ?? "cropped") ?? .CROPPED_IMAGE
+        SettingValues.fabType = FabType.init(rawValue: settings.string(forKey: SettingValues.pref_fabType) ?? "hide") ?? .HIDE_READ
         
         SettingValues.commentActionLeft = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionLeft) ?? "downvote")!
         SettingValues.commentActionRight = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionRight) ?? "upvote")!

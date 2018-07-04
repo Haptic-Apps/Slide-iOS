@@ -320,34 +320,34 @@ class SettingsLayout: UITableViewController {
             let alertController: BottomSheetActionController = BottomSheetActionController()
             alertController.addAction(Action(ActionData(title: "Full action bar", image: UIImage(named: "code")!.menuIcon()), style: .default, handler: { action in
                 UserDefaults.standard.set("full", forKey: SettingValues.pref_postImageMode)
-                SettingValues.postImageMode = .FULL_IMAGE
+                SettingValues.actionBarMode = .FULL
                 UserDefaults.standard.synchronize()
                 self.doDisables()
                 self.doLink()
                 tableView.reloadData()
-                self.imageCell.detailTextLabel?.text = SettingValues.postImageMode.rawValue.capitalize()
+                self.actionBarCell.detailTextLabel?.text = SettingValues.actionBarMode.rawValue.capitalize()
                 SubredditReorderViewController.changed = true
             }))
             
             alertController.addAction(Action(ActionData(title: "Side action bar", image: UIImage(named: "up")!.menuIcon()), style: .default, handler: { action in
-                UserDefaults.standard.set("none", forKey: SettingValues.pref_postImageMode)
-                SettingValues.postImageMode = .CROPPED_IMAGE
+                UserDefaults.standard.set("side", forKey: SettingValues.pref_postImageMode)
+                SettingValues.actionBarMode = .SIDE
                 UserDefaults.standard.synchronize()
                 self.doDisables()
                 self.doLink()
                 tableView.reloadData()
-                self.imageCell.detailTextLabel?.text = SettingValues.postImageMode.rawValue.capitalize()
+                self.actionBarCell.detailTextLabel?.text = SettingValues.actionBarMode.rawValue.capitalize()
                 SubredditReorderViewController.changed = true
             }))
             
             alertController.addAction(Action(ActionData(title: "Hide action bar", image: UIImage(named: "hide")!.menuIcon()), style: .default, handler: { action in
-                UserDefaults.standard.set("side", forKey: SettingValues.pref_postImageMode)
-                SettingValues.postImageMode = .THUMBNAIL
+                UserDefaults.standard.set("none", forKey: SettingValues.pref_postImageMode)
+                SettingValues.actionBarMode = .NONE
                 UserDefaults.standard.synchronize()
                 self.doDisables()
                 self.doLink()
                 tableView.reloadData()
-                self.imageCell.detailTextLabel?.text = SettingValues.postImageMode.rawValue.capitalize()
+                self.actionBarCell.detailTextLabel?.text = SettingValues.actionBarMode.rawValue.capitalize()
                 SubredditReorderViewController.changed = true
             }))
             
@@ -393,7 +393,7 @@ class SettingsLayout: UITableViewController {
         
         createCell(actionBarCell, isOn: false, text: "Action Bar mode")
         actionBarCell.detailTextLabel?.textColor = ColorUtil.fontColor
-        actionBarCell.detailTextLabel?.text = SettingValues.postImageMode.rawValue.capitalize()
+        actionBarCell.detailTextLabel?.text = SettingValues.actionBarMode.rawValue.capitalize()
         actionBarCell.detailTextLabel?.numberOfLines = 0
         actionBarCell.detailTextLabel?.lineBreakMode = .byWordWrapping
 
