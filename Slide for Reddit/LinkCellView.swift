@@ -800,18 +800,26 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 }
                 DispatchQueue.global(qos: .userInteractive).async {
                     self.bannerImage.sd_setImage(with: URL.init(string: submission.lqUrl), completed: { (image, error, cache, url) in
-                        UIView.animate(withDuration: 0.3, animations: {
+                        if (cache == .none) {
+                            UIView.animate(withDuration: 0.3, animations: {
+                                self.bannerImage.alpha = 1
+                            })
+                        } else {
                             self.bannerImage.alpha = 1
-                        })
+                        }
                     })
                 }
             } else {
                 loadedImage = URL.init(string: submission.bannerUrl)
                 DispatchQueue.global(qos: .userInteractive).async {
                     self.bannerImage.sd_setImage(with: URL.init(string: submission.bannerUrl), completed: { (image, error, cache, url) in
-                        UIView.animate(withDuration: 0.3, animations: {
+                        if (cache == .none) {
+                            UIView.animate(withDuration: 0.3, animations: {
+                                self.bannerImage.alpha = 1
+                            })
+                        } else {
                             self.bannerImage.alpha = 1
-                        })
+                        }
                     })
                 }
             }

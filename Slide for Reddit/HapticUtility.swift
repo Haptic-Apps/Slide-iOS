@@ -74,6 +74,30 @@ public class HapticUtility{
             }
         }
     }
+    
+    @available(iOS 10.0, *)
+    public static func hapticActionWeak(){
+        if(SettingValues.hapticFeedback){
+            // Play haptic signal
+            if let feedbackSupportLevel = UIDevice.current.value(forKey: "_feedbackSupportLevel") as? Int {
+                switch feedbackSupportLevel {
+                case 2:
+                    HapticUtility.impactFeedbackGenerator.light.prepare()
+                    // 2nd Generation Taptic Engine w/ Haptic Feedback (iPhone 7/7+)
+                    HapticUtility.impactFeedbackGenerator.light.impactOccurred()
+                    break
+                case 1:
+                    // 1st Generation Taptic Engine (iPhone 6S/6S+)
+                    AudioServicesPlaySystemSound(HapticUtility.peek)
+                    break
+                case 0:
+                    // No Taptic Engine
+                    break
+                default: break
+                }
+            }
+        }
+    }
 
     
     public static func hapticError(){
