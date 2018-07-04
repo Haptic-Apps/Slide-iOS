@@ -344,7 +344,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
         tableView.contentInset = UIEdgeInsetsMake(top, 0, bottom, 0)
         tableView.addSubview(refreshControl) // not required when using UITableViewController
-
     }
 
     func getSelf() -> CommentViewController {
@@ -352,33 +351,32 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
 
     var reset = false
-
+    var indicatorSet = false
+    
     func refresh(_ sender: AnyObject) {
-        if (indicator == nil) {
+        if (!indicatorSet) {
+            indicatorSet = true
             if (hasSubmission) {
-                indicator = MDCActivityIndicator.init(frame: CGRect.init(x: CGFloat(0), y: CGFloat(0), width: CGFloat(80), height: CGFloat(80)))
-                indicator?.strokeWidth = 5
-                indicator?.radius = 15
-                indicator?.indicatorMode = .indeterminate
-                indicator?.cycleColors = [ColorUtil.getColorForSub(sub: submission?.subreddit ?? ""), ColorUtil.accentColorForSub(sub: submission?.subreddit ?? "")]
+                self.indicator = MDCActivityIndicator.init(frame: CGRect.init(x: CGFloat(0), y: CGFloat(0), width: CGFloat(80), height: CGFloat(80)))
+                self.indicator.strokeWidth = 5
+                self.indicator.radius = 15
+                self.indicator.indicatorMode = .indeterminate
+                self.indicator.cycleColors = [ColorUtil.getColorForSub(sub: submission?.subreddit ?? ""), ColorUtil.accentColorForSub(sub: submission?.subreddit ?? "")]
                 let center = CGPoint.init(x: UIScreen.main.bounds.width / 2, y: CGFloat(UIScreen.main.bounds.height - 200))
-                indicator?.center = center
-                self.tableView.addSubview(indicator!)
-                indicator?.startAnimating()
-                
+                self.indicator.center = center
+                self.indicator.startAnimating()
             } else {
-                indicator = MDCActivityIndicator.init(frame: CGRect.init(x: CGFloat(0), y: CGFloat(0), width: CGFloat(80), height: CGFloat(80)))
-                indicator?.strokeWidth = 5
-                indicator?.radius = 15
-                indicator?.indicatorMode = .indeterminate
-                indicator?.cycleColors = [ColorUtil.getColorForSub(sub: submission?.subreddit ?? ""), ColorUtil.accentColorForSub(sub: submission?.subreddit ?? "")]
-                let center = CGPoint.init(x: self.tableView.center.x, y: self.tableView.center.y)
-                indicator?.center = center
-                self.tableView.addSubview(indicator!)
-                indicator?.startAnimating()
-                
+                self.indicator = MDCActivityIndicator.init(frame: CGRect.init(x: CGFloat(0), y: CGFloat(0), width: CGFloat(80), height: CGFloat(80)))
+                self.indicator.strokeWidth = 5
+                self.indicator.radius = 15
+                self.indicator.indicatorMode = .indeterminate
+                self.indicator.cycleColors = [ColorUtil.getColorForSub(sub: submission?.subreddit ?? ""), ColorUtil.accentColorForSub(sub: submission?.subreddit ?? "")]
+                let center = CGPoint.init(x: UIScreen.main.bounds.width / 2, y: CGFloat(UIScreen.main.bounds.height / 2))
+                self.indicator.center = center
+                self.indicator.startAnimating()
             }
-            indicator?.layer.speed = 0.6667 //normal speed = 1 / tableview speed (1.5)
+            self.view.addSubview(self.indicator)
+            indicator.layer.speed = 0.6667 //normal speed = 1 / tableview speed (1.5)
         }
         session = (UIApplication.shared.delegate as! AppDelegate).session
         approved.removeAll()
@@ -433,7 +431,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
                                     DispatchQueue.main.async(execute: { () -> Void in
                                         self.refreshControl.endRefreshing()
-                                        self.indicator?.stopAnimating()
+                                        self.indicator.stopAnimating()
 
                                         if (!self.comments.isEmpty) {
                                             var time = timeval(tv_sec: 0, tv_usec: 0)
@@ -558,8 +556,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                             }
                             self.tableView.reloadData()
                             self.refreshControl.endRefreshing()
-                            self.indicator?.stopAnimating()
-                            self.indicator?.isHidden = true
+                            self.indicator.stopAnimating()
+                            self.indicator.isHidden = true
                             self.doBanner(self.submission!)
 
                             var index = 0
@@ -731,7 +729,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
     }
 
-    var indicator: MDCActivityIndicator? = nil
+    var indicator: MDCActivityIndicator = MDCActivityIndicator()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -761,9 +759,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         self.menu = self.tableView.dequeueReusableCell(withIdentifier: "menu") as? CommentMenuCell
         self.reply = self.tableView.dequeueReusableCell(withIdentifier: "dreply") as? ReplyCellView
 
-        if (single) {
-            refresh(self)
-        }
         NotificationCenter.default.addObserver(
                 self,
                 selector: #selector(keyboardWillShow(_:)),
@@ -859,6 +854,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
         if (submission != nil) {
             self.setBarColors(color: ColorUtil.getColorForSub(sub: self.navigationItem.title!))
+        }
+
+        if (single && !loaded) {
+            refresh(self)
         }
 
         if (navigationController != nil) {
