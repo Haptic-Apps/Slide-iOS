@@ -312,7 +312,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                         paddingRight = 5
                     }
                     
-                    let actionbar = CGFloat(SettingValues.hideButtonActionbar ? 0 : 24)
+                    let actionbar = CGFloat(SettingValues.actionBarMode != .FULL ? 0 : 24)
                     
                     var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
                     let thumbheight = (SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50)) - (SettingValues.postViewMode == .COMPACT ? 15 : 0)

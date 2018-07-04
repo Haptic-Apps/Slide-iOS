@@ -30,7 +30,7 @@ final class ThumbnailLinkCellView: LinkCellView {
             // Thumbnail sizing
             thumbImageContainer.topAnchor == contentView.topAnchor + ctwelve
             if SettingValues.leftThumbnail {
-                if(SettingValues.sideButtons){
+                if(SettingValues.actionBarMode == .SIDE){
                     thumbImageContainer.leftAnchor == sideButtons.rightAnchor + ceight
                 } else {
                     thumbImageContainer.leftAnchor == contentView.leftAnchor + ceight
@@ -43,7 +43,7 @@ final class ThumbnailLinkCellView: LinkCellView {
             let thumbSize: CGFloat = (SettingValues.largerThumbnail ? 75 : 50) - (SettingValues.postViewMode == .COMPACT ? 15 : 0)
             thumbImageContainer.widthAnchor == thumbSize
             thumbImageContainer.heightAnchor == thumbSize
-            if(SettingValues.sideButtons){
+            if(SettingValues.actionBarMode == .SIDE){
                 title.leftAnchor == (SettingValues.leftThumbnail ? thumbImageContainer.rightAnchor + ceight : sideButtons.rightAnchor + ctwelve)
                 title.rightAnchor == (SettingValues.leftThumbnail ? contentView.rightAnchor - ctwelve : thumbImageContainer.leftAnchor - ceight)
             } else {

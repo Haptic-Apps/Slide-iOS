@@ -176,7 +176,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                 paddingRight = 5
             }
 
-            let actionbar = CGFloat(SettingValues.hideButtonActionbar ? 0 : 24)
+            let actionbar = CGFloat(SettingValues.actionBarMode != .FULL ? 0 : 24)
 
             let thumbheight = (SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50)) - (SettingValues.postViewMode == .COMPACT ? 15 : 0)
             let textHeight = CGFloat(submission.isSelf ? 5 : 0)
@@ -218,7 +218,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                 imageHeight = thumbheight
             }
 
-            if(SettingValues.sideButtons){
+            if(SettingValues.actionBarMode == .SIDE){
                 estimatedUsableWidth -= 36
                 estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //buttons horizontal margins
             }
@@ -226,7 +226,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             let framesetter = CTFramesetterCreateWithAttributedString(CachedTitle.getTitle(submission: submission, full: false, false))
             let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude), nil)
 
-            let totalHeight = paddingTop + paddingBottom + (thumb ? max((SettingValues.sideButtons ? max(ceil(textSize.height), 50) : ceil(textSize.height)), imageHeight) : (SettingValues.sideButtons ? max(ceil(textSize.height), 50) : ceil(textSize.height)) + imageHeight) + innerPadding + actionbar + textHeight
+            let totalHeight = paddingTop + paddingBottom + (thumb ? max((SettingValues.actionBarMode == .SIDE ? max(ceil(textSize.height), 50) : ceil(textSize.height)), imageHeight) : (SettingValues.actionBarMode == .SIDE ? max(ceil(textSize.height), 50) : ceil(textSize.height)) + imageHeight) + innerPadding + actionbar + textHeight
             return CGSize(width: itemWidth, height: totalHeight)
         }
         return CGSize(width: itemWidth, height: 0)
