@@ -65,7 +65,6 @@ class CommentMenuCell: UITableViewCell {
 
     }
 
-
     func upvote(_ s: AnyObject) {
         parent!.vote(comment: comment!, dir: .up)
         commentView!.refresh(comment: comment!, submissionAuthor: (parent!.submission?.author)!, text: commentView!.cellContent!)

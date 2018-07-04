@@ -118,12 +118,20 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
         self.messageCallback = { (message, error) in
             DispatchQueue.main.async {
                 if (error != nil) {
-                    self.toolbar?.saveDraft(self)
-                    self.alertController?.dismiss(animated: false, completion: {
-                        let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your message has not been sent, please try again\n\nError:\(error!.localizedDescription)", preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
-                        self.present(alert, animated: true, completion: nil)
-                    })
+                    if(error!.localizedDescription.contains("25")){
+                        self.alertController?.dismiss(animated: false, completion: {
+                            self.dismiss(animated: true, completion: {
+                                completion("")
+                            })
+                        })
+                    } else {
+                        self.toolbar?.saveDraft(self)
+                        self.alertController?.dismiss(animated: false, completion: {
+                            let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your message has not been sent, please try again\n\nError:\(error!.localizedDescription)", preferredStyle: .alert)
+                            alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+                            self.present(alert, animated: true, completion: nil)
+                        })
+                    }
                 } else {
                     self.alertController?.dismiss(animated: false, completion: {
                         self.dismiss(animated: true, completion: {

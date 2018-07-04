@@ -345,6 +345,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
         tableView.contentInset = UIEdgeInsetsMake(top, 0, bottom, 0)
         tableView.addSubview(refreshControl) // not required when using UITableViewController
+        refreshControl.beginRefreshing()
     }
 
     func getSelf() -> CommentViewController {
@@ -355,29 +356,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     var indicatorSet = false
     
     func refresh(_ sender: AnyObject) {
-        if (!indicatorSet) {
-            indicatorSet = true
-            if (hasSubmission) {
-                self.indicator = MDCActivityIndicator.init(frame: CGRect.init(x: CGFloat(0), y: CGFloat(0), width: CGFloat(80), height: CGFloat(80)))
-                self.indicator.strokeWidth = 5
-                self.indicator.radius = 15
-                self.indicator.indicatorMode = .indeterminate
-                self.indicator.cycleColors = [ColorUtil.getColorForSub(sub: submission?.subreddit ?? ""), ColorUtil.accentColorForSub(sub: submission?.subreddit ?? "")]
-                let center = CGPoint.init(x: UIScreen.main.bounds.width / 2, y: CGFloat(UIScreen.main.bounds.height - 200))
-                self.indicator.center = center
-            } else {
-                self.indicator = MDCActivityIndicator.init(frame: CGRect.init(x: CGFloat(0), y: CGFloat(0), width: CGFloat(80), height: CGFloat(80)))
-                self.indicator.strokeWidth = 5
-                self.indicator.radius = 15
-                self.indicator.indicatorMode = .indeterminate
-                self.indicator.cycleColors = [ColorUtil.getColorForSub(sub: submission?.subreddit ?? ""), ColorUtil.accentColorForSub(sub: submission?.subreddit ?? "")]
-                let center = CGPoint.init(x: UIScreen.main.bounds.width / 2, y: CGFloat(UIScreen.main.bounds.height / 2))
-                self.indicator.center = center
-            }
-            self.tableView.addSubview(self.indicator)
-            self.indicator.startAnimating()
-            indicator.layer.speed = 0.6667 //normal speed = 1 / tableview speed (1.5)
-        }
         session = (UIApplication.shared.delegate as! AppDelegate).session
         approved.removeAll()
         removed.removeAll()

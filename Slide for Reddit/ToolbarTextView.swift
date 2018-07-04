@@ -49,7 +49,11 @@ public class ToolbarTextView: NSObject {
         }
         scrollView.delaysContentTouches = false
         text!.inputAccessoryView = scrollView
-        text!.tintColor = .white
+        if(!(parent is ReplyViewController)){
+            text!.tintColor = .white
+        } else {
+            text!.tintColor = ColorUtil.fontColor
+        }
         if(ColorUtil.theme != .LIGHT){
             text!.keyboardAppearance = .dark
         }
