@@ -354,6 +354,32 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     var reset = false
 
     func refresh(_ sender: AnyObject) {
+        if (indicator == nil) {
+            if (hasSubmission) {
+                indicator = MDCActivityIndicator.init(frame: CGRect.init(x: CGFloat(0), y: CGFloat(0), width: CGFloat(80), height: CGFloat(80)))
+                indicator?.strokeWidth = 5
+                indicator?.radius = 15
+                indicator?.indicatorMode = .indeterminate
+                indicator?.cycleColors = [ColorUtil.getColorForSub(sub: submission?.subreddit ?? ""), ColorUtil.accentColorForSub(sub: submission?.subreddit ?? "")]
+                let center = CGPoint.init(x: UIScreen.main.bounds.width / 2, y: CGFloat(UIScreen.main.bounds.height - 200))
+                indicator?.center = center
+                self.tableView.addSubview(indicator!)
+                indicator?.startAnimating()
+                
+            } else {
+                indicator = MDCActivityIndicator.init(frame: CGRect.init(x: CGFloat(0), y: CGFloat(0), width: CGFloat(80), height: CGFloat(80)))
+                indicator?.strokeWidth = 5
+                indicator?.radius = 15
+                indicator?.indicatorMode = .indeterminate
+                indicator?.cycleColors = [ColorUtil.getColorForSub(sub: submission?.subreddit ?? ""), ColorUtil.accentColorForSub(sub: submission?.subreddit ?? "")]
+                let center = CGPoint.init(x: self.tableView.center.x, y: self.tableView.center.y)
+                indicator?.center = center
+                self.tableView.addSubview(indicator!)
+                indicator?.startAnimating()
+                
+            }
+            indicator?.layer.speed = 0.6667 //normal speed = 1 / tableview speed (1.5)
+        }
         session = (UIApplication.shared.delegate as! AppDelegate).session
         approved.removeAll()
         removed.removeAll()
@@ -803,34 +829,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             }
 
         }
-        if (indicator == nil) {
-            if (hasSubmission) {
-                indicator = MDCActivityIndicator.init(frame: CGRect.init(x: CGFloat(0), y: CGFloat(0), width: CGFloat(80), height: CGFloat(80)))
-                indicator?.strokeWidth = 5
-                indicator?.radius = 20
-                indicator?.indicatorMode = .indeterminate
-                indicator?.cycleColors = [ColorUtil.getColorForSub(sub: submission?.subreddit ?? ""), ColorUtil.accentColorForSub(sub: submission?.subreddit ?? "")]
-                let center = CGPoint.init(x: UIScreen.main.bounds.width / 2, y: CGFloat(UIScreen.main.bounds.height - 200))
-                indicator?.center = center
-                self.tableView.addSubview(indicator!)
-                indicator?.startAnimating()
-
-            } else {
-                indicator = MDCActivityIndicator.init(frame: CGRect.init(x: CGFloat(0), y: CGFloat(0), width: CGFloat(80), height: CGFloat(80)))
-                indicator?.strokeWidth = 5
-                indicator?.radius = 20
-                indicator?.indicatorMode = .indeterminate
-                indicator?.cycleColors = [ColorUtil.getColorForSub(sub: submission?.subreddit ?? ""), ColorUtil.accentColorForSub(sub: submission?.subreddit ?? "")]
-                let center = CGPoint.init(x: self.tableView.center.x, y: self.tableView.center.y)
-                indicator?.center = center
-                self.tableView.addSubview(indicator!)
-                indicator?.startAnimating()
-
-            }
-            indicator?.layer.speed = 0.6667 //normal speed = 1 / tableview speed (1.5)
-
-        }
-
     }
 
     required init?(coder aDecoder: NSCoder) {
