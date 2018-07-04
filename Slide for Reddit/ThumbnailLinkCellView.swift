@@ -37,11 +37,14 @@ final class ThumbnailLinkCellView: LinkCellView {
                 if(SettingValues.actionBarMode == .SIDE){
                     thumbImageContainer.leftAnchor == sideButtons.rightAnchor + ceight
                 } else {
-                    thumbImageContainer.leftAnchor == contentView.leftAnchor + ceight
+                    thumbImageContainer.leftAnchor == contentView.leftAnchor + ctwelve
                 }
-            }
-            else {
-                thumbImageContainer.rightAnchor == contentView.rightAnchor - ctwelve
+            } else {
+                if(SettingValues.actionBarMode == .SIDE_RIGHT){
+                    thumbImageContainer.rightAnchor == sideButtons.leftAnchor - ceight
+                } else {
+                    thumbImageContainer.rightAnchor == contentView.rightAnchor - ctwelve
+                }
             }
 
             let thumbSize: CGFloat = (SettingValues.largerThumbnail ? 75 : 50) - (SettingValues.postViewMode == .COMPACT ? 15 : 0)
@@ -50,6 +53,9 @@ final class ThumbnailLinkCellView: LinkCellView {
             if(SettingValues.actionBarMode == .SIDE){
                 title.leftAnchor == (SettingValues.leftThumbnail ? thumbImageContainer.rightAnchor + ceight : sideButtons.rightAnchor + ceight)
                 title.rightAnchor == (SettingValues.leftThumbnail ? contentView.rightAnchor - ctwelve : thumbImageContainer.leftAnchor - ceight)
+            } else if(SettingValues.actionBarMode == .SIDE_RIGHT){
+                title.leftAnchor == (SettingValues.leftThumbnail ? thumbImageContainer.rightAnchor + ceight : contentView.leftAnchor + ceight)
+                title.rightAnchor == (SettingValues.leftThumbnail ? sideButtons.rightAnchor - ceight : thumbImageContainer.leftAnchor - ceight)
             } else {
                 title.leftAnchor == (SettingValues.leftThumbnail ? thumbImageContainer.rightAnchor + ceight : contentView.leftAnchor + ctwelve)
                 title.rightAnchor == (SettingValues.leftThumbnail ? contentView.rightAnchor - ctwelve : thumbImageContainer.leftAnchor - ceight)

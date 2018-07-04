@@ -202,6 +202,9 @@ class SettingsLayout: UITableViewController {
         case .SIDE:
             actionBarCell.imageView?.image = UIImage.init(named: "up")?.toolbarIcon()
             break
+        case .SIDE_RIGHT:
+            actionBarCell.imageView?.image = UIImage.init(named: "down")?.toolbarIcon()
+            break
         }
 
         
@@ -340,6 +343,17 @@ class SettingsLayout: UITableViewController {
                 SubredditReorderViewController.changed = true
             }))
             
+            alertController.addAction(Action(ActionData(title: "Right side action bar", image: UIImage(named: "down")!.menuIcon()), style: .default, handler: { action in
+                UserDefaults.standard.set("right", forKey: SettingValues.pref_actionbarMode)
+                SettingValues.actionBarMode = .SIDE_RIGHT
+                UserDefaults.standard.synchronize()
+                self.doDisables()
+                self.doLink()
+                tableView.reloadData()
+                self.actionBarCell.detailTextLabel?.text = SettingValues.actionBarMode.rawValue.capitalize()
+                SubredditReorderViewController.changed = true
+            }))
+
             alertController.addAction(Action(ActionData(title: "Hide action bar", image: UIImage(named: "hide")!.menuIcon()), style: .default, handler: { action in
                 UserDefaults.standard.set("none", forKey: SettingValues.pref_actionbarMode)
                 SettingValues.actionBarMode = .NONE

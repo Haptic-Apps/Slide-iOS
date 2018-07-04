@@ -180,6 +180,11 @@ class SettingValues {
         case NONE = "none"
         case FULL = "full"
         case SIDE = "side"
+        case SIDE_RIGHT = "right"
+        
+        func isSide() -> Bool {
+            return self == .SIDE || self == .SIDE_RIGHT
+        }
     }
 
     public static func getLinkSorting(forSubreddit: String) -> LinkSortType {

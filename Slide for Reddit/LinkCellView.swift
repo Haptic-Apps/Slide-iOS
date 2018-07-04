@@ -340,7 +340,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if (!addTouch) {
             addTouch(view: save, action: #selector(LinkCellView.save(sender:)))
             addTouch(view: upvote, action: #selector(LinkCellView.upvote(sender:)))
-            if(SettingValues.actionBarMode == .SIDE){
+            if(SettingValues.actionBarMode.isSide()){
                 addTouch(view: sideUpvote, action: #selector(LinkCellView.upvote(sender:)))
                 addTouch(view: sideDownvote, action: #selector(LinkCellView.downvote(sender:)))
             }
@@ -405,7 +405,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             self.contentView.addSubview(buttons)
         }
         
-        if(SettingValues.actionBarMode == .SIDE || full){
+        if(SettingValues.actionBarMode.isSide() || full){
             self.sideButtons = UIStackView().then {
                 $0.accessibilityIdentifier = "Button Stack Vertical"
                 $0.axis = .vertical
@@ -417,7 +417,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             self.contentView.addSubview(sideButtons)
         }
         
-        sideButtons.isHidden = SettingValues.actionBarMode != .SIDE || full
+        sideButtons.isHidden = !SettingValues.actionBarMode.isSide() || full
 
         buttons.isHidden = SettingValues.actionBarMode != .FULL && !full
         buttons.isUserInteractionEnabled = SettingValues.actionBarMode != .FULL || full
@@ -477,8 +477,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 buttons.rightAnchor == contentView.rightAnchor - ctwelve
                 buttons.bottomAnchor == contentView.bottomAnchor - ceight
                 buttons.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
-            } else if(SettingValues.actionBarMode == .SIDE){
-                sideButtons.leftAnchor == contentView.leftAnchor + ceight
+            } else if(SettingValues.actionBarMode.isSide()){
+                if(SettingValues.actionBarMode == .SIDE_RIGHT) {
+                    sideButtons.rightAnchor == contentView.rightAnchor - ceight
+                } else {
+                    sideButtons.leftAnchor == contentView.leftAnchor + ceight
+                }
                 sideButtons.widthAnchor == CGFloat(36)
             }
         
@@ -540,7 +544,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if downvote.bounds.contains(pointForTargetViewdownvote) {
             return downvote
         }
-        if(SettingValues.actionBarMode == .SIDE){
+        if(SettingValues.actionBarMode.isSide()){
             let pointForTargetViewupvoteSide: CGPoint = sideUpvote.convert(point, from: self)
             if sideUpvote.bounds.contains(pointForTargetViewupvoteSide) {
                 return sideUpvote
@@ -1413,7 +1417,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 }
             }
 
-            if(SettingValues.actionBarMode == .SIDE && !full){
+            if(SettingValues.actionBarMode.isSide() && !full){
                 estimatedUsableWidth -= 36
                 estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //buttons horizontal margins
             }
@@ -1421,7 +1425,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             let framesetter = CTFramesetterCreateWithAttributedString(title.attributedText)
             let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude), nil)
             
-            let totalHeight = paddingTop + paddingBottom + (full ? ceil(textSize.height) : (thumb && !full ? max((!full && SettingValues.actionBarMode == .SIDE ? max(ceil(textSize.height), 50) : ceil(textSize.height)), imageHeight) : (!full && SettingValues.actionBarMode == .SIDE ? max(ceil(textSize.height), 50) : ceil(textSize.height)) + imageHeight)) + innerPadding + actionbar + textHeight + fullHeightExtras
+            let totalHeight = paddingTop + paddingBottom + (full ? ceil(textSize.height) : (thumb && !full ? max((!full && SettingValues.actionBarMode.isSide() ? max(ceil(textSize.height), 50) : ceil(textSize.height)), imageHeight) : (!full && SettingValues.actionBarMode.isSide() ? max(ceil(textSize.height), 50) : ceil(textSize.height)) + imageHeight)) + innerPadding + actionbar + textHeight + fullHeightExtras
             estimatedHeight = totalHeight
         }
         return estimatedHeight

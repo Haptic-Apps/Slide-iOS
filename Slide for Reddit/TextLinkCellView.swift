@@ -26,14 +26,17 @@ final class TextLinkCellView: LinkCellView {
         constraintsForType = batch {
             title.topAnchor == contentView.topAnchor + ctwelve
             sideButtons.topAnchor == contentView.topAnchor + ctwelve
-            if(SettingValues.actionBarMode == .SIDE){
+            if(SettingValues.actionBarMode == .SIDE_RIGHT){
+                title.rightAnchor == sideButtons.leftAnchor - ceight
+                title.leftAnchor == contentView.leftAnchor + ctwelve
+            } else if(SettingValues.actionBarMode == .SIDE) {
                 title.leftAnchor == sideButtons.rightAnchor + ceight
                 title.rightAnchor == contentView.rightAnchor - ctwelve
             } else {
                 title.horizontalAnchors == contentView.horizontalAnchors + ctwelve
             }
             if(SettingValues.actionBarMode != .FULL){
-                title.bottomAnchor <= contentView.bottomAnchor - ceight
+                title.bottomAnchor == contentView.bottomAnchor - ctwelve
             } else {
                 title.bottomAnchor <= box.topAnchor - ceight
             }
