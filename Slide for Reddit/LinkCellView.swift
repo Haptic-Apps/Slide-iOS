@@ -292,13 +292,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
 
         self.sideScore = UILabel().then {
-            $0.accessibilityIdentifier = "Score Label"
+            $0.accessibilityIdentifier = "Score Label vertical"
             $0.numberOfLines = 1
             $0.textAlignment = .center
             $0.font = FontGenerator.fontOfSize(size: 12, submission: true)
             $0.textColor = ColorUtil.fontColor
             $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.foregroundColor
         }
 
         self.comments = UILabel().then {
@@ -386,33 +385,37 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         contentView.addSubviews(bannerImage, thumbImageContainer, title, textView, infoContainer, tagbody)
         contentView.layer.masksToBounds = true
         
-        self.box = UIStackView().then {
-            $0.accessibilityIdentifier = "Count Info Stack Horizontal"
-            $0.axis = .horizontal
-            $0.alignment = .center
+        if(SettingValues.actionBarMode == .FULL || full){
+            self.box = UIStackView().then {
+                $0.accessibilityIdentifier = "Count Info Stack Horizontal"
+                $0.axis = .horizontal
+                $0.alignment = .center
+            }
+            box.addArrangedSubviews(submissionicon, horizontalSpace(2), score, horizontalSpace(8), commenticon, horizontalSpace(2), comments)
+            self.contentView.addSubview(box)
+            
+            self.buttons = UIStackView().then {
+                $0.accessibilityIdentifier = "Button Stack Horizontal"
+                $0.axis = .horizontal
+                $0.alignment = .center
+                $0.distribution = .fill
+                $0.spacing = 16
+            }
+            buttons.addArrangedSubviews(edit, reply, save, hide, upvote, downvote, mod)
+            self.contentView.addSubview(buttons)
         }
-        box.addArrangedSubviews(submissionicon, horizontalSpace(2), score, horizontalSpace(8), commenticon, horizontalSpace(2), comments)
-        self.contentView.addSubview(box)
-
-        self.buttons = UIStackView().then {
-            $0.accessibilityIdentifier = "Button Stack Horizontal"
-            $0.axis = .horizontal
-            $0.alignment = .center
-            $0.distribution = .fill
-            $0.spacing = 16
+        
+        if(SettingValues.actionBarMode == .SIDE || full){
+            self.sideButtons = UIStackView().then {
+                $0.accessibilityIdentifier = "Button Stack Vertical"
+                $0.axis = .vertical
+                $0.alignment = .center
+                $0.distribution = .fill
+                $0.spacing = 1
+            }
+            sideButtons.addArrangedSubviews(sideUpvote, sideScore, sideDownvote)
+            self.contentView.addSubview(sideButtons)
         }
-        buttons.addArrangedSubviews(edit, reply, save, hide, upvote, downvote, mod)
-        self.contentView.addSubview(buttons)
-
-        self.sideButtons = UIStackView().then {
-            $0.accessibilityIdentifier = "Button Stack Vertical"
-            $0.axis = .vertical
-            $0.alignment = .center
-            $0.distribution = .equalCentering
-            $0.spacing = 2
-        }
-        sideButtons.addArrangedSubviews(sideUpvote, sideScore, sideDownvote)
-        self.contentView.addSubview(sideButtons)
         
         sideButtons.isHidden = SettingValues.actionBarMode != .SIDE || full
 
@@ -463,19 +466,23 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             self.contentView.layoutMargins = UIEdgeInsets.init(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin))
 
             self.contentView.layer.cornerRadius = CGFloat(radius)
-
-            box.leftAnchor == contentView.leftAnchor + ctwelve
-            box.bottomAnchor == contentView.bottomAnchor - ceight
-            box.centerYAnchor == buttons.centerYAnchor // Align vertically with buttons
-            box.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
             
-            sideButtons.leftAnchor == contentView.leftAnchor + ceight
-            sideButtons.widthAnchor == CGFloat(36)
-
-            buttons.rightAnchor == contentView.rightAnchor - ctwelve
-            buttons.bottomAnchor == contentView.bottomAnchor - ceight
+            if(SettingValues.actionBarMode == .FULL || full){
+                box.leftAnchor == contentView.leftAnchor + ctwelve
+                box.bottomAnchor == contentView.bottomAnchor - ceight
+                box.centerYAnchor == buttons.centerYAnchor // Align vertically with buttons
+                box.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+                box.heightAnchor == CGFloat(24)
+                buttons.heightAnchor == CGFloat(24)
+                buttons.rightAnchor == contentView.rightAnchor - ctwelve
+                buttons.bottomAnchor == contentView.bottomAnchor - ceight
+                buttons.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+            } else if(SettingValues.actionBarMode == .SIDE){
+                sideButtons.leftAnchor == contentView.leftAnchor + ceight
+                sideButtons.widthAnchor == CGFloat(36)
+            }
+        
             title.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
-            buttons.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
         }
 
         if(!full){
@@ -1360,7 +1367,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             let actionbar = CGFloat(!full && SettingValues.actionBarMode != .FULL ? 0 : 24)
 
             var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
-            let thumbheight = (SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50))  - (SettingValues.postViewMode == .COMPACT ? 15 : 0)
+            let thumbheight = (full || SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50))  - (!full && SettingValues.postViewMode == .COMPACT ? 15 : 0)
             let textHeight = (!hasText || !full) ? CGFloat(0) : CGFloat((content?.textHeight)!)
 
             if(thumb){
@@ -1397,13 +1404,16 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //12 padding on either side
                 }
             } else {
+                fullHeightExtras += 24
                 estimatedUsableWidth -= (24) //12 padding on either side
                 if(thumb){
                     fullHeightExtras += 45 + 12 + 12
+                } else {
+                    fullHeightExtras += imageHeight
                 }
             }
 
-            if(SettingValues.actionBarMode == .SIDE){
+            if(SettingValues.actionBarMode == .SIDE && !full){
                 estimatedUsableWidth -= 36
                 estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //buttons horizontal margins
             }
@@ -1411,7 +1421,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             let framesetter = CTFramesetterCreateWithAttributedString(title.attributedText)
             let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude), nil)
             
-            let totalHeight = paddingTop + paddingBottom + (thumb ? max((SettingValues.actionBarMode == .SIDE ? max(ceil(textSize.height), 50) : ceil(textSize.height)), imageHeight) : (SettingValues.actionBarMode == .SIDE ? max(ceil(textSize.height), 50) : ceil(textSize.height)) + imageHeight) + innerPadding + actionbar + textHeight
+            let totalHeight = paddingTop + paddingBottom + (full ? ceil(textSize.height) : (thumb && !full ? max((!full && SettingValues.actionBarMode == .SIDE ? max(ceil(textSize.height), 50) : ceil(textSize.height)), imageHeight) : (!full && SettingValues.actionBarMode == .SIDE ? max(ceil(textSize.height), 50) : ceil(textSize.height)) + imageHeight)) + innerPadding + actionbar + textHeight + fullHeightExtras
             estimatedHeight = totalHeight
         }
         return estimatedHeight

@@ -183,23 +183,37 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
             if (thumb) {
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between top and thumbnail
-                innerPadding += 18 - (SettingValues.postViewMode == .COMPACT ? 4 : 0) //between label and bottom box
-                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
+                if(SettingValues.actionBarMode == .FULL){
+                    innerPadding += 18 - (SettingValues.postViewMode == .COMPACT ? 4 : 0) //between label and bottom box
+                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
+                }
+                innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between thumbnail and bottom
             } else if (big) {
                 if (SettingValues.postViewMode == .CENTER) {
                     innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 16) //between label
-                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between banner and box
+                    if(SettingValues.actionBarMode == .FULL){
+                        innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between banner and box
+                    } else {
+                        innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between buttons and bottom
+                    }
                 } else {
                     innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between banner and label
-                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between label and box
+                    if(SettingValues.actionBarMode == .FULL){
+                        innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between label and box
+                    } else {
+                        innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between buttons and bottom
+                    }
                 }
-
-                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
+                if(SettingValues.actionBarMode == .FULL){
+                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
+                }
             } else {
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8)
                 innerPadding += 5 //between label and body
-                innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between body and box
-                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
+                if(SettingValues.actionBarMode == .FULL){
+                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between body and box
+                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
+                }
             }
 
             var estimatedUsableWidth = itemWidth - paddingLeft - paddingRight
@@ -224,13 +238,12 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
             if(SettingValues.actionBarMode == .SIDE){
                 estimatedUsableWidth -= 36
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //buttons horizontal margins
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 8 : 16) //buttons horizontal margins
             }
             
             let framesetter = CTFramesetterCreateWithAttributedString(CachedTitle.getTitle(submission: submission, full: false, false))
             let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude), nil)
-
-            let totalHeight = paddingTop + paddingBottom + (thumb ? max((SettingValues.actionBarMode == .SIDE ? max(ceil(textSize.height), 50) : ceil(textSize.height)), imageHeight) : (SettingValues.actionBarMode == .SIDE ? max(ceil(textSize.height), 50) : ceil(textSize.height)) + imageHeight) + innerPadding + actionbar + textHeight
+            let totalHeight = paddingTop + paddingBottom + (thumb ? max((SettingValues.actionBarMode == .SIDE ? max(ceil(textSize.height), 60) : ceil(textSize.height)), imageHeight) : (SettingValues.actionBarMode == .SIDE ? max(ceil(textSize.height), 60) : ceil(textSize.height)) + imageHeight) + innerPadding + actionbar + textHeight
             return CGSize(width: itemWidth, height: totalHeight)
         }
         return CGSize(width: itemWidth, height: 0)

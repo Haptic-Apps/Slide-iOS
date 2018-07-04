@@ -319,7 +319,7 @@ class SettingsLayout: UITableViewController {
         } else if(indexPath.section == 2 && indexPath.row == 0){
             let alertController: BottomSheetActionController = BottomSheetActionController()
             alertController.addAction(Action(ActionData(title: "Full action bar", image: UIImage(named: "code")!.menuIcon()), style: .default, handler: { action in
-                UserDefaults.standard.set("full", forKey: SettingValues.pref_postImageMode)
+                UserDefaults.standard.set("full", forKey: SettingValues.pref_actionbarMode)
                 SettingValues.actionBarMode = .FULL
                 UserDefaults.standard.synchronize()
                 self.doDisables()
@@ -330,7 +330,7 @@ class SettingsLayout: UITableViewController {
             }))
             
             alertController.addAction(Action(ActionData(title: "Side action bar", image: UIImage(named: "up")!.menuIcon()), style: .default, handler: { action in
-                UserDefaults.standard.set("side", forKey: SettingValues.pref_postImageMode)
+                UserDefaults.standard.set("side", forKey: SettingValues.pref_actionbarMode)
                 SettingValues.actionBarMode = .SIDE
                 UserDefaults.standard.synchronize()
                 self.doDisables()
@@ -341,7 +341,7 @@ class SettingsLayout: UITableViewController {
             }))
             
             alertController.addAction(Action(ActionData(title: "Hide action bar", image: UIImage(named: "hide")!.menuIcon()), style: .default, handler: { action in
-                UserDefaults.standard.set("none", forKey: SettingValues.pref_postImageMode)
+                UserDefaults.standard.set("none", forKey: SettingValues.pref_actionbarMode)
                 SettingValues.actionBarMode = .NONE
                 UserDefaults.standard.synchronize()
                 self.doDisables()

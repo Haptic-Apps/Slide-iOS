@@ -25,7 +25,7 @@ final class BannerLinkCellView: LinkCellView {
                 title.topAnchor == contentView.topAnchor + ctwelve
                 sideButtons.topAnchor == contentView.topAnchor + ctwelve
                 if(SettingValues.actionBarMode == .SIDE){
-                    title.leftAnchor == sideButtons.rightAnchor + ctwelve
+                    title.leftAnchor == sideButtons.rightAnchor + ceight
                     title.rightAnchor == contentView.rightAnchor - ctwelve
                 } else {
                     title.horizontalAnchors == contentView.horizontalAnchors + ctwelve
@@ -33,18 +33,26 @@ final class BannerLinkCellView: LinkCellView {
                 title.bottomAnchor == bannerImage.topAnchor - ceight
 
                 bannerImage.horizontalAnchors == contentView.horizontalAnchors + bannerPadding
-                bannerImage.bottomAnchor == box.topAnchor - ctwelve
+                
+                if(SettingValues.actionBarMode == .FULL){
+                    bannerImage.bottomAnchor == box.topAnchor - ctwelve
+                } else {
+                    bannerImage.bottomAnchor == contentView.bottomAnchor - ctwelve
+                }
             }
             else {
                 // Image goes above title
                 if(SettingValues.actionBarMode == .SIDE){
-                    title.leftAnchor == sideButtons.rightAnchor + ctwelve
+                    title.leftAnchor == sideButtons.rightAnchor + ceight
                     title.rightAnchor == contentView.rightAnchor - ctwelve
                 } else {
                     title.horizontalAnchors == contentView.horizontalAnchors + ctwelve
                 }
-                title.bottomAnchor == box.topAnchor - ctwelve
-                
+                if(SettingValues.actionBarMode != .FULL){
+                    title.bottomAnchor <= contentView.bottomAnchor - ceight
+                } else {
+                    title.bottomAnchor <= box.topAnchor - ceight
+                }
                 bannerImage.topAnchor == contentView.topAnchor + bannerPadding
                 bannerImage.bottomAnchor == title.topAnchor - ceight
                 bannerImage.horizontalAnchors == contentView.horizontalAnchors + bannerPadding

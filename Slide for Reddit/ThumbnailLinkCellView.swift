@@ -25,7 +25,11 @@ final class ThumbnailLinkCellView: LinkCellView {
             thumbImageContainer.isHidden = false
             let ceight = SettingValues.postViewMode == .COMPACT ? CGFloat(4) : CGFloat(8)
             let ctwelve = SettingValues.postViewMode == .COMPACT ? CGFloat(8) : CGFloat(12)
-            thumbImageContainer.bottomAnchor <= box.topAnchor - ceight
+            if(SettingValues.actionBarMode != .FULL){
+                thumbImageContainer.bottomAnchor <= contentView.bottomAnchor - ceight
+            } else {
+                thumbImageContainer.bottomAnchor <= box.topAnchor - ceight
+            }
 
             // Thumbnail sizing
             thumbImageContainer.topAnchor == contentView.topAnchor + ctwelve
@@ -44,7 +48,7 @@ final class ThumbnailLinkCellView: LinkCellView {
             thumbImageContainer.widthAnchor == thumbSize
             thumbImageContainer.heightAnchor == thumbSize
             if(SettingValues.actionBarMode == .SIDE){
-                title.leftAnchor == (SettingValues.leftThumbnail ? thumbImageContainer.rightAnchor + ceight : sideButtons.rightAnchor + ctwelve)
+                title.leftAnchor == (SettingValues.leftThumbnail ? thumbImageContainer.rightAnchor + ceight : sideButtons.rightAnchor + ceight)
                 title.rightAnchor == (SettingValues.leftThumbnail ? contentView.rightAnchor - ctwelve : thumbImageContainer.leftAnchor - ceight)
             } else {
                 title.leftAnchor == (SettingValues.leftThumbnail ? thumbImageContainer.rightAnchor + ceight : contentView.leftAnchor + ctwelve)
@@ -52,7 +56,11 @@ final class ThumbnailLinkCellView: LinkCellView {
             }
             title.topAnchor == contentView.topAnchor + ctwelve
             sideButtons.topAnchor == contentView.topAnchor + ctwelve
-            title.bottomAnchor <= box.topAnchor - ceight
+            if(SettingValues.actionBarMode != .FULL){
+                title.bottomAnchor <= contentView.bottomAnchor - ceight
+            } else {
+                title.bottomAnchor <= box.topAnchor - ceight
+            }
         }
     }
 
