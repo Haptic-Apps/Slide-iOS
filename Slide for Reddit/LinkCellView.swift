@@ -1410,7 +1410,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //12 padding on either side
                 }
             } else {
-                fullHeightExtras += 24
+                fullHeightExtras += 12
                 estimatedUsableWidth -= (24) //12 padding on either side
                 if(thumb){
                     fullHeightExtras += 45 + 12 + 12

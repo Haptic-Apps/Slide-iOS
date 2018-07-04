@@ -211,8 +211,8 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             } else {
                 if(!submission.body.trimmed().isEmpty()){
                     innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8)
-                    innerPadding += 5 //between label and body
                 }
+                innerPadding += 5 //between label and body
                 if(SettingValues.actionBarMode == .FULL){
                     innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between body and box
                     innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
