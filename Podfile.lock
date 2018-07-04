@@ -5,16 +5,16 @@ PODS:
   - BadgeSwift (5.0.1)
   - BiometricAuthentication (2.0)
   - LicensesViewController (0.6.5)
-  - MaterialComponents/ActivityIndicator (55.5.0):
+  - MaterialComponents/ActivityIndicator (56.0.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Application
     - MDFInternationalization
     - MotionAnimator (~> 2.0)
-  - MaterialComponents/AnimationTiming (55.5.0)
-  - MaterialComponents/BottomSheet (55.5.0):
+  - MaterialComponents/AnimationTiming (56.0.0)
+  - MaterialComponents/BottomSheet (56.0.0):
     - MaterialComponents/private/KeyboardWatcher
     - MaterialComponents/private/Math
-  - MaterialComponents/Buttons (55.5.0):
+  - MaterialComponents/Buttons (56.0.0):
     - MaterialComponents/Ink
     - MaterialComponents/private/Math
     - MaterialComponents/private/Shapes
@@ -23,25 +23,25 @@ PODS:
     - MaterialComponents/Typography
     - MDFInternationalization
     - MDFTextAccessibility
-  - MaterialComponents/Ink (55.5.0):
+  - MaterialComponents/Ink (56.0.0):
     - MaterialComponents/private/Math
-  - MaterialComponents/Palettes (55.5.0)
-  - MaterialComponents/private/Application (55.5.0)
-  - MaterialComponents/private/KeyboardWatcher (55.5.0):
+  - MaterialComponents/Palettes (56.0.0)
+  - MaterialComponents/private/Application (56.0.0)
+  - MaterialComponents/private/KeyboardWatcher (56.0.0):
     - MaterialComponents/private/Application
-  - MaterialComponents/private/Math (55.5.0)
-  - MaterialComponents/private/Shapes (55.5.0):
+  - MaterialComponents/private/Math (56.0.0)
+  - MaterialComponents/private/Shapes (56.0.0):
     - MaterialComponents/private/Math
     - MaterialComponents/ShadowLayer
-  - MaterialComponents/ProgressView (55.5.0):
+  - MaterialComponents/ProgressView (56.0.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
     - MDFInternationalization
     - MotionAnimator (~> 2.1)
-  - MaterialComponents/ShadowElevations (55.5.0)
-  - MaterialComponents/ShadowLayer (55.5.0):
+  - MaterialComponents/ShadowElevations (56.0.0)
+  - MaterialComponents/ShadowLayer (56.0.0):
     - MaterialComponents/ShadowElevations
-  - MaterialComponents/Tabs (55.5.0):
+  - MaterialComponents/Tabs (56.0.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Ink
     - MaterialComponents/private/Math
@@ -49,13 +49,13 @@ PODS:
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/TextFields (55.5.0):
+  - MaterialComponents/TextFields (56.0.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
     - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/Typography (55.5.0):
+  - MaterialComponents/Typography (56.0.0):
     - MaterialComponents/private/Application
   - MDFInternationalization (1.0.4)
   - MDFTextAccessibility (1.2.0)
@@ -138,7 +138,7 @@ CHECKOUT OPTIONS:
     :commit: 752459578d8162c11f6311987bd3463e6d85712b
     :git: https://github.com/ccrama/ActionSheetPicker-3.0
   reddift:
-    :commit: ee52942674c4cab002f29f62ce58511fa22a2912
+    :commit: 7876024f9fd229fe79371fd80a82a1e106e9740b
     :git: https://github.com/ccrama/reddift
   RLBAlertsPickers:
     :commit: 583f111c780546a42320c406f1fcf21f9f2caf30
@@ -160,7 +160,7 @@ SPEC CHECKSUMS:
   BadgeSwift: 3defa56f504bfb46f2300122c4a565ec9e405c1e
   BiometricAuthentication: fce6c7537fba0192a395834657e75ccb4d89d9f0
   LicensesViewController: 1f2982b1bab8402d3f88e23197957038e8abb907
-  MaterialComponents: 68cc8d56b82799b087240c0e5e48f6a2ab0587ee
+  MaterialComponents: e4edce947dba33f9c4dd14c34024602999afcbed
   MDFInternationalization: e355b0cebecf53d60233bd267084e49366c82513
   MDFTextAccessibility: 94098925e0853551c5a311ce7c1ecefbe297cdb6
   MKColorPicker: 8998b2ab977e4f240fdf254db27a18b810da3cfc

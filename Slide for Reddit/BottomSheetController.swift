@@ -211,11 +211,11 @@ open class BottomSheetActionController: ActionController<BottomSheetCell, Action
             self.collectionView.clipsToBounds = true
             
             if(!doneOnce && false){ //todo this later maybe
-                self.header!.bottomAnchor == self.collectionView.topAnchor - CGFloat(12)
-                self.header!.widthAnchor == self.collectionView.widthAnchor
-                self.header!.heightAnchor == CGFloat(52)
-                self.header!.leftAnchor == self.collectionView.leftAnchor
-                self.header!.backgroundColor = ColorUtil.foregroundColor
+               // self.header!.bottomAnchor == self.collectionView.topAnchor - CGFloat(12)
+               // self.header!.widthAnchor == self.collectionView.widthAnchor
+               // self.header!.heightAnchor == CGFloat(52)
+               // self.header!.leftAnchor == self.collectionView.leftAnchor
+               // self.header!.backgroundColor = ColorUtil.foregroundColor
                 doneOnce = true
             }
             var corners = UIRectCorner()
