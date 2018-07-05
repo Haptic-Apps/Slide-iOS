@@ -107,6 +107,8 @@ class SettingsLayout: UITableViewController {
         } else if(changed == flatMode){
             SettingValues.flatMode = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_flatMode)
+            SingleSubredditViewController.cellVersion += 1
+            SubredditReorderViewController.changed = true
         }
         UserDefaults.standard.synchronize()
         doDisables()
