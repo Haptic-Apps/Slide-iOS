@@ -54,7 +54,9 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
         navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
 
-        navigationController?.setToolbarHidden(false, animated: false)
+        if(!SettingValues.bottomBarHidden){
+            navigationController?.setToolbarHidden(false, animated: false)
+        }
 
         if(SettingValues.viewType){
             navigationController?.setNavigationBarHidden(true, animated: true)
@@ -498,7 +500,11 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         label.sizeToFit()
         let leftItem = UIBarButtonItem(customView: label)
 
-        self.navigationItem.leftBarButtonItems = [ leftItem]
+        if(SettingValues.bottomBarHidden){
+            self.navigationItem.leftBarButtonItems = [menuB, leftItem]
+        } else {
+            self.navigationItem.leftBarButtonItems = [leftItem]
+        }
 
         self.navigationController?.navigationBar.shadowImage = UIImage()
         self.navigationController?.navigationBar.layoutIfNeeded()
@@ -665,6 +671,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     }
     
     public static var isOffline = false
+    var menuB = UIBarButtonItem()
 
     func doButtons(){
         let sort = UIButton.init(type: .custom)
@@ -673,17 +680,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let sortB = UIBarButtonItem.init(customView: sort)
 
-        let more = UIButton.init(type: .custom)
-        more.setImage(UIImage.init(named: "moreh")?.toolbarIcon(), for: UIControlState.normal)
-        more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
-        more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-        let moreB = UIBarButtonItem.init(customView: more)
-
-        let menu = UIButton.init(type: .custom)
-        menu.setImage(UIImage.init(named: "menu")?.toolbarIcon(), for: UIControlState.normal)
-        menu.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControlEvents.touchUpInside)
-        menu.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
-        let menuB = UIBarButtonItem.init(customView: menu)
 
         let settings = UIButton.init(type: .custom)
         settings.setImage(UIImage.init(named: "settings")?.toolbarIcon(), for: UIControlState.normal)
@@ -702,11 +698,44 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         if(!MainViewController.isOffline){
-            toolbarItems = [menuB, flexButton, moreB]
+            if(SettingValues.bottomBarHidden){
+                let more = UIButton.init(type: .custom)
+                more.setImage(UIImage.init(named: "moreh")?.navIcon(), for: UIControlState.normal)
+                more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
+                more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+                let moreB = UIBarButtonItem.init(customView: more)
+                
+                let menu = UIButton.init(type: .custom)
+                menu.setImage(UIImage.init(named: "menu")?.navIcon(), for: UIControlState.normal)
+                menu.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControlEvents.touchUpInside)
+                menu.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+                menuB = UIBarButtonItem.init(customView: menu)
+
+                navigationItem.leftBarButtonItem = menuB
+                navigationItem.rightBarButtonItems = [moreB, sortB]
+            } else {
+                let more = UIButton.init(type: .custom)
+                more.setImage(UIImage.init(named: "moreh")?.toolbarIcon(), for: UIControlState.normal)
+                more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
+                more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+                let moreB = UIBarButtonItem.init(customView: more)
+                
+                let menu = UIButton.init(type: .custom)
+                menu.setImage(UIImage.init(named: "menu")?.toolbarIcon(), for: UIControlState.normal)
+                menu.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControlEvents.touchUpInside)
+                menu.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+                menuB = UIBarButtonItem.init(customView: menu)
+
+                toolbarItems = [menuB, flexButton, moreB]
+                navigationItem.rightBarButtonItem = sortB
+            }
         } else {
-            toolbarItems = [settingsB, flexButton, offlineB]
+            if(SettingValues.bottomBarHidden){
+                navigationItem.rightBarButtonItems = [settingsB, offlineB]
+            } else {
+                toolbarItems = [settingsB, flexButton, offlineB]
+            }
         }
-        navigationItem.rightBarButtonItem = sortB
     }
 
     func checkForUpdate() {
