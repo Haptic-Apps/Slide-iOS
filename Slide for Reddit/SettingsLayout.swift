@@ -16,7 +16,10 @@ class SettingsLayout: UITableViewController {
     
     var cardModeCell: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "mode")
     
-    var actionBarCell: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "mode")
+    var actionBarCell: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "mode") // TODO: Should this have a different reuseIdentifier?
+
+    var flatModeCell: UITableViewCell = UITableViewCell()
+    var flatMode = UISwitch()
 
     var largerThumbnailCell: UITableViewCell = UITableViewCell()
     var largerThumbnail = UISwitch()
@@ -101,6 +104,9 @@ class SettingsLayout: UITableViewController {
         } else if(changed == save){
             SettingValues.saveButton = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_saveButton)
+        } else if(changed == flatMode){
+            SettingValues.flatMode = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_flatMode)
         }
         UserDefaults.standard.synchronize()
         doDisables()
@@ -420,6 +426,7 @@ class SettingsLayout: UITableViewController {
         createCell(hideCell, hide, isOn: SettingValues.hideButton, text: "Show hide post button")
         createCell(saveCell, save, isOn: SettingValues.saveButton, text: "Show save button")
         createCell(thumbLinkCell, thumbLink, isOn: SettingValues.linkAlwaysThumbnail, text: "Always show thumbnail on link posts")
+        createCell(flatModeCell, flatMode, isOn: SettingValues.flatMode, text: "Flat Mode")
 
         doDisables()
         self.tableView.tableFooterView = UIView()
@@ -475,8 +482,9 @@ class SettingsLayout: UITableViewController {
             case 4: return self.thumbLinkCell
             case 5: return self.selftextCell
             case 6: return self.smalltagCell
+            case 7: return self.flatModeCell
                 
-            default: fatalError("Unknown row in section 0")
+            default: fatalError("Unknown row in section 1")
             }
         case 2:
             switch(indexPath.row) {
@@ -487,7 +495,7 @@ class SettingsLayout: UITableViewController {
             case 4: return self.hideCell
             case 5: return self.saveCell
                 
-            default: fatalError("Unknown row in section 0")
+            default: fatalError("Unknown row in section 2")
             }
         default: fatalError("Unknown section")
         }
@@ -496,7 +504,7 @@ class SettingsLayout: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch(section) {
         case 0: return 1
-        case 1: return 7
+        case 1: return 8
         case 2: return 6
         default: fatalError("Unknown number of sections")
         }

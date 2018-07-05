@@ -85,6 +85,7 @@ class SettingValues {
     public static let pref_postImageMode = "POST_IMAGE_MODE"
     public static let pref_linkAlwaysThumbnail = "LINK_ALWAYS_THUMBNAIL"
     public static let pref_actionbarMode = "ACTIONBAR_MODE"
+    public static let pref_flatMode = "FLAT_MODE"
     public static let pref_bottomBarHidden = "BOTTOM_BAR_HIDDEN"
 
     public static var commentActionRight = CommentAction.UPVOTE
@@ -104,6 +105,7 @@ class SettingValues {
     public static var postViewMode = PostViewType.LIST
     public static var postImageMode = PostImageMode.CROPPED_IMAGE
     public static var actionBarMode = ActionBarMode.FULL
+    public static var flatMode = false
     public static var fabType = FabType.HIDE_READ
     public static var pictureMode = "PICTURE_MODE"
     public static var hideImageSelftext = false
@@ -327,6 +329,7 @@ class SettingValues {
         SettingValues.scoreInTitle = settings.bool(forKey: SettingValues.pref_scoreInTitle)
         SettingValues.postViewMode = PostViewType.init(rawValue: settings.string(forKey: SettingValues.pref_postViewMode) ?? "card") ?? .CARD
         SettingValues.actionBarMode = ActionBarMode.init(rawValue: settings.string(forKey: SettingValues.pref_actionbarMode) ?? "full") ?? .FULL
+        SettingValues.flatMode = settings.bool(forKey: SettingValues.pref_flatMode)
         SettingValues.postImageMode = PostImageMode.init(rawValue: settings.string(forKey: SettingValues.pref_postImageMode) ?? "cropped") ?? .CROPPED_IMAGE
         SettingValues.fabType = FabType.init(rawValue: settings.string(forKey: SettingValues.pref_fabType) ?? "hide") ?? .HIDE_READ
         
