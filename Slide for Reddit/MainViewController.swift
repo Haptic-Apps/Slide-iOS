@@ -224,6 +224,13 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             }
         }
     }
+    
+    func goToUser(profile: String) {
+        SingleSubredditViewController.ignoreFab = true
+        menuNav?.dismiss(animated: true) {
+            VCPresenter.openRedditLink("/u/" + profile.replacingOccurrences(of: " ", with: ""), self.navigationController, self)
+        }
+    }
 
     func goToSubreddit(index: Int) {
         SingleSubredditViewController.ignoreFab = true
