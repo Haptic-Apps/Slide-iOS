@@ -337,6 +337,7 @@ class SettingsLayout: UITableViewController {
                 self.doLink()
                 tableView.reloadData()
                 self.actionBarCell.detailTextLabel?.text = SettingValues.actionBarMode.rawValue.capitalize()
+                SingleSubredditViewController.cellVersion += 1
                 SubredditReorderViewController.changed = true
             }))
             
@@ -348,6 +349,7 @@ class SettingsLayout: UITableViewController {
                 self.doLink()
                 tableView.reloadData()
                 self.actionBarCell.detailTextLabel?.text = SettingValues.actionBarMode.rawValue.capitalize()
+                SingleSubredditViewController.cellVersion += 1
                 SubredditReorderViewController.changed = true
             }))
             
@@ -359,6 +361,7 @@ class SettingsLayout: UITableViewController {
                 self.doLink()
                 tableView.reloadData()
                 self.actionBarCell.detailTextLabel?.text = SettingValues.actionBarMode.rawValue.capitalize()
+                SingleSubredditViewController.cellVersion += 1
                 SubredditReorderViewController.changed = true
             }))
 
@@ -370,6 +373,7 @@ class SettingsLayout: UITableViewController {
                 self.doLink()
                 tableView.reloadData()
                 self.actionBarCell.detailTextLabel?.text = SettingValues.actionBarMode.rawValue.capitalize()
+                SingleSubredditViewController.cellVersion += 1
                 SubredditReorderViewController.changed = true
             }))
             

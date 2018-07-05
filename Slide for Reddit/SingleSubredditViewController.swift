@@ -209,10 +209,10 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                     innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
                 }
             } else {
-                if(!submission.body.trimmed().isEmpty()){
+                if(!submission.body.trimmed().isEmpty() && SettingValues.showFirstParagraph){
                     innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8)
                 }
-                innerPadding += 5 //between label and body
+                innerPadding += (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between top and title
                 if(SettingValues.actionBarMode == .FULL){
                     innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between body and box
                     innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
@@ -241,7 +241,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
             if(SettingValues.actionBarMode.isSide()){
                 estimatedUsableWidth -= 36
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 8 : 16) //buttons horizontal margins
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 12 : 20) //buttons horizontal margins
             }
             
             let framesetter = CTFramesetterCreateWithAttributedString(CachedTitle.getTitle(submission: submission, full: false, false))
