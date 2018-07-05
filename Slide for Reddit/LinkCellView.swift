@@ -160,13 +160,17 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         self.thumbImageContainer = UIView().then {
             $0.accessibilityIdentifier = "Thumbnail Image Container"
             $0.frame = CGRect(x: 0, y: 8, width: (SettingValues.largerThumbnail ? 75 : 50) - (SettingValues.postViewMode == .COMPACT ? 15 : 0), height: (SettingValues.largerThumbnail ? 75 : 50) - (SettingValues.postViewMode == .COMPACT ? 15 : 0))
-            $0.elevate(elevation: 2.0)
+            if !SettingValues.flatMode {
+                $0.elevate(elevation: 2.0)
+            }
         }
 
         self.thumbImage = UIImageView().then {
             $0.accessibilityIdentifier = "Thumbnail Image"
             $0.backgroundColor = UIColor.white
-            $0.layer.cornerRadius = 10
+            if !SettingValues.flatMode {
+                $0.layer.cornerRadius = 10
+            }
             $0.contentMode = .scaleAspectFill
             $0.clipsToBounds = true
         }
@@ -176,7 +180,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         self.bannerImage = UIImageView().then {
             $0.accessibilityIdentifier = "Banner Image"
             $0.contentMode = .scaleAspectFill
-            $0.layer.cornerRadius = 15
+            if !SettingValues.flatMode {
+                $0.layer.cornerRadius = 15
+            }
             $0.clipsToBounds = true
             $0.backgroundColor = UIColor.white
         }
@@ -320,7 +326,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             $0.accessibilityIdentifier = "Tag Body"
             $0.backgroundColor = UIColor.white
             $0.clipsToBounds = true
-            $0.layer.cornerRadius = 4
+            if !SettingValues.flatMode {
+                $0.layer.cornerRadius = 4
+            }
         }
 
         self.info = UILabel().then {
@@ -334,7 +342,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             $0.accessibilityIdentifier = "Banner Info Container"
             $0.backgroundColor = UIColor.black.withAlphaComponent(0.6)
             $0.clipsToBounds = true
+            if !SettingValues.flatMode {
             $0.layer.cornerRadius = 15
+            }
         }
 
         if (!addTouch) {
@@ -466,7 +476,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
             self.contentView.layoutMargins = UIEdgeInsets.init(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin))
 
-            self.contentView.layer.cornerRadius = CGFloat(radius)
+            if !SettingValues.flatMode {
+                self.contentView.layer.cornerRadius = CGFloat(radius)
+            }
             
             if(SettingValues.actionBarMode == .FULL || full){
                 box.leftAnchor == contentView.leftAnchor + ctwelve
@@ -1326,7 +1338,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             bottommargin = 5
             leftmargin = 5
             rightmargin = 5
-            self.contentView.elevate(elevation: 2)
+            if !SettingValues.flatMode {
+                self.contentView.elevate(elevation: 2)
+            }
         }
 
         let f = self.contentView.frame
