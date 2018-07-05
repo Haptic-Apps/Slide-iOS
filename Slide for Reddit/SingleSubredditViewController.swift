@@ -370,13 +370,14 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
     var isCollapsed = false
     var isHiding = false
+    var isToolbarHidden = false
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
 
         let currentY = scrollView.contentOffset.y
         if(!SettingValues.pinToolbar){
             if (currentY > lastYUsed && currentY > 60) {
-                if (navigationController != nil && !isHiding && !(navigationController!.isToolbarHidden) && !(scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height))) {
+                if (navigationController != nil && !isHiding && !isToolbarHidden && !(scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height))) {
                     hideUI(inHeader: true)
                 }
             } else if ((currentY < lastYUsed + 20) && !isHiding && navigationController != nil && (navigationController!.isToolbarHidden)) {
@@ -400,7 +401,10 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             self.isHiding = false
         })
         
-        (navigationController)?.setToolbarHidden(true, animated: true)
+        if(!SettingValues.bottomBarHidden){
+            (self.navigationController)?.setToolbarHidden(true, animated: true)
+        }
+        self.isToolbarHidden = true
 
         if(!single){
             if(AutoCache.progressView != nil){
@@ -430,7 +434,10 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                     }, completion: { finished in
                     })
 
-                    (self.navigationController)?.setToolbarHidden(false, animated: true)
+                    if(!SettingValues.bottomBarHidden){
+                        (self.navigationController)?.setToolbarHidden(false, animated: true)
+                    }
+                    self.isToolbarHidden = false
                 })
         } else {
             SingleSubredditViewController.fab?.isHidden = false
@@ -441,7 +448,10 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
             })
 
-            (navigationController)?.setToolbarHidden(false, animated: true)
+            if(!SettingValues.bottomBarHidden){
+                (navigationController)?.setToolbarHidden(false, animated: true)
+            }
+            self.isToolbarHidden = false
         }
     }
 
@@ -583,20 +593,22 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
     }
 
     func setupFab() {
-        if (SingleSubredditViewController.fab != nil && !SingleSubredditViewController.fab!.isHidden) {
-            UIView.animate(withDuration: 0.15, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
-                SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
-            }, completion: { finished in
-                SingleSubredditViewController.fab?.removeFromSuperview()
-                SingleSubredditViewController.fab = nil
-                self.addNewFab()
-            })
-        } else {
-            if(SingleSubredditViewController.fab != nil){
-                SingleSubredditViewController.fab!.removeFromSuperview()
-                SingleSubredditViewController.fab = nil
+        if(!SettingValues.bottomBarHidden){
+            if (SingleSubredditViewController.fab != nil && !SingleSubredditViewController.fab!.isHidden) {
+                UIView.animate(withDuration: 0.15, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+                    SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
+                }, completion: { finished in
+                    SingleSubredditViewController.fab?.removeFromSuperview()
+                    SingleSubredditViewController.fab = nil
+                    self.addNewFab()
+                })
+            } else {
+                if(SingleSubredditViewController.fab != nil){
+                    SingleSubredditViewController.fab!.removeFromSuperview()
+                    SingleSubredditViewController.fab = nil
+                }
+                addNewFab()
             }
-            addNewFab()
         }
     }
     
@@ -720,16 +732,26 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
             sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let sortB = UIBarButtonItem.init(customView: sort)
 
-            more = UIButton.init(type: .custom)
-            more.setImage(UIImage.init(named: "moreh")?.menuIcon(), for: UIControlState.normal)
-            more.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControlEvents.touchUpInside)
-            more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-            let moreB = UIBarButtonItem.init(customView: more)
-
-            navigationItem.rightBarButtonItems = [sortB]
-            let flexButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil)
-
-            toolbarItems = [flexButton, moreB]
+            if(SettingValues.bottomBarHidden){
+                more = UIButton.init(type: .custom)
+                more.setImage(UIImage.init(named: "moreh")?.navIcon(), for: UIControlState.normal)
+                more.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControlEvents.touchUpInside)
+                more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+                let moreB = UIBarButtonItem.init(customView: more)
+                
+                navigationItem.rightBarButtonItems = [moreB, sortB]
+            } else {
+                more = UIButton.init(type: .custom)
+                more.setImage(UIImage.init(named: "moreh")?.menuIcon(), for: UIControlState.normal)
+                more.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControlEvents.touchUpInside)
+                more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+                let moreB = UIBarButtonItem.init(customView: more)
+                
+                navigationItem.rightBarButtonItems = [sortB]
+                let flexButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil)
+                
+                toolbarItems = [flexButton, moreB]
+            }
             title = sub
 
             self.sort = SettingValues.getLinkSorting(forSubreddit: self.sub)
@@ -1317,8 +1339,10 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        (navigationController)?.setToolbarHidden(false, animated: true)
-        setupFab()
+        if(!SettingValues.bottomBarHidden){
+            navigationController?.setToolbarHidden(false, animated: false)
+            setupFab()
+        }
     }
 
     func shadowboxMode() {

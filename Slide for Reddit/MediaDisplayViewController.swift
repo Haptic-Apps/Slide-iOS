@@ -23,7 +23,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
     var imageView = UIImageView()
     var menuB: UIBarButtonItem?
     var inAlbum = false
-
+    
     init(url: URL, text: String?, lqURL: URL?, inAlbum: Bool = false) {
         super.init(nibName: nil, bundle: nil)
         self.baseURL = url
@@ -76,6 +76,10 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
                     let textB = UIBarButtonItem(image: UIImage(named: "size")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.showTitle(_:)))
                     items.append(textB)
                 }
+                if(commentCallback != nil){
+                    let textB = UIBarButtonItem(image: UIImage(named: "comments")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.openComments(_:)))
+                    items.append(textB)
+                }
                 let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
                 let hdB = UIBarButtonItem(image: UIImage(named: "hd")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.hd(_:)))
                 items.append(hdB)
@@ -87,6 +91,14 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
 
                 toolbar.items = items
 
+            }
+        }
+    }
+    
+    func openComments(_ sender: AnyObject){
+        if(commentCallback != nil){
+            self.dismiss(animated: true) {
+                self.commentCallback!()
             }
         }
     }
@@ -132,6 +144,10 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
         var items: [UIBarButtonItem] = []
         if (text != nil && !(text!.isEmpty)) {
             let textB = UIBarButtonItem(image: UIImage(named: "size")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.showTitle(_:)))
+            items.append(textB)
+        }
+        if(commentCallback != nil){
+            let textB = UIBarButtonItem(image: UIImage(named: "comments")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.openComments(_:)))
             items.append(textB)
         }
         let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
@@ -229,14 +245,22 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
 
 
         (parent as? SwipeDownModalVC)?.background?.backgroundColor = UIColor.black.withAlphaComponent(0.7)
-        toolbar = UIToolbar.init(frame: CGRect.init(x: 0, y: self.view.frame.size.height - 35, width: self.view.frame.size.width, height: 30))
+        if #available(iOS 11.0, *) {
+            toolbar = UIToolbar.init(frame: CGRect.init(x: 0, y: self.view.frame.size.height - 45 - ((UIApplication.shared.keyWindow?.safeAreaInsets.bottom) ?? 0), width: self.view.frame.size.width, height: 45))
+        } else {
+            toolbar = UIToolbar.init(frame: CGRect.init(x: 0, y: self.view.frame.size.height - 45, width: self.view.frame.size.width, height: 45))
+        }
         let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         var items: [UIBarButtonItem] = []
         if (text != nil && !(text!.isEmpty)) {
             var textB = UIBarButtonItem(image: UIImage(named: "size")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.showTitle(_:)))
             items.append(textB)
         }
-
+        
+        if(commentCallback != nil){
+            let textB = UIBarButtonItem(image: UIImage(named: "comments")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.openComments(_:)))
+            items.append(textB)
+        }
         items.append(space)
         items.append(UIBarButtonItem(image: UIImage(named: "download")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.download(_:))))
         menuB = UIBarButtonItem(image: UIImage(named: "moreh")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.showImageMenu(_:)))
@@ -248,7 +272,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
         toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
         toolbar.tintColor = UIColor.white
 
-        size = UILabel(frame: CGRect(x: 12, y: toolbar.bounds.height - 40, width: 250, height: 50))
+        size = UILabel(frame: CGRect(x: 72, y: toolbar.bounds.height - 50, width: 250, height: 50))
         size?.textAlignment = .left
         size?.textColor = .white
         size?.text = "Connecting..."

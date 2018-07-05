@@ -18,6 +18,7 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
     var subChanged = false
 
     var link: RSubmission!
+    var commentCallback: (() -> Void)?
 
     public func setLink(lnk: RSubmission, shownURL: URL?, lq: Bool, saveHistory: Bool) { //lq is should load lq and did load lq
         if (saveHistory) {
@@ -25,7 +26,12 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
         }
         self.link = lnk
         let url = link.url!
-
+        
+        print("Setting comment callback")
+        commentCallback = { () in
+            let comment = CommentViewController.init(submission: self.link, single: true)
+                VCPresenter.showVC(viewController: comment, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+        }
 
         let type = ContentType.getContentType(submission: lnk)
 
@@ -81,7 +87,7 @@ class MediaViewController: UIViewController, UIViewControllerTransitioningDelega
                 }
                 return WebsiteViewController(url: baseUrl, subreddit: link == nil ? "" : link.subreddit)
             }
-            return SingleContentViewController.init(url: contentUrl!, lq: lq)
+            return SingleContentViewController.init(url: contentUrl!, lq: lq, commentCallback)
         } else if (type == ContentType.CType.LINK || type == ContentType.CType.NONE) {
             if (SettingValues.safariVC) {
                 let safariVC = SFHideSafariViewController(url: baseUrl)

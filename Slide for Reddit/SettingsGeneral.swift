@@ -16,6 +16,7 @@ class SettingsGeneral: UITableViewController {
     var scrubUsername: UITableViewCell = UITableViewCell()
     var pinToolbar: UITableViewCell = UITableViewCell()
     var hapticFeedback: UITableViewCell = UITableViewCell()
+    var bottomBarHidden: UITableViewCell = UITableViewCell()
 
     var postSorting: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "post")
     var commentSorting: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "comment")
@@ -25,6 +26,7 @@ class SettingsGeneral: UITableViewController {
     var scrubUsernameSwitch = UISwitch()
     var pinToolbarSwitch = UISwitch()
     var hapticFeedbackSwitch = UISwitch()
+    var bottomBarSwitch = UISwitch()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,6 +49,10 @@ class SettingsGeneral: UITableViewController {
             MainViewController.needsRestart = true
             SettingValues.viewType = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_viewType)
+        } else if (changed == bottomBarSwitch) {
+            MainViewController.needsRestart = true
+            SettingValues.bottomBarHidden = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_bottomBarHidden)
         } else if (changed == hideFABSwitch) {
             SettingValues.hiddenFAB = !changed.isOn
             UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_hiddenFAB)
@@ -110,12 +116,13 @@ class SettingsGeneral: UITableViewController {
         // set the title
         self.title = "General"
         self.tableView.separatorStyle = .none
-
+        
+        createCell(bottomBarHidden, bottomBarSwitch, isOn: SettingValues.bottomBarHidden, text: "Hide bottom toolbar in subreddit views")
         createCell(viewType, viewTypeSwitch, isOn: SettingValues.viewType, text: "Swiping subreddit tabs mode")
         createCell(hapticFeedback, hapticFeedbackSwitch, isOn: SettingValues.hapticFeedback, text: "Haptic feedback throughout app")
         createCell(hideFAB, hideFABSwitch, isOn: !SettingValues.hiddenFAB, text: "Show subreddit floating action button")
         createCell(scrubUsername, scrubUsernameSwitch, isOn: SettingValues.nameScrubbing, text: "Scrub your username (you will show as \"you\"")
-        createCell(pinToolbar, pinToolbarSwitch, isOn: SettingValues.pinToolbar, text: "Pin header navigation bar and toolbar in subreddit view")
+        createCell(pinToolbar, pinToolbarSwitch, isOn: SettingValues.pinToolbar, text: "Pin header navigation bar and toolbar in subreddit views")
 
         self.postSorting.textLabel?.text = "Default post sorting"
         self.postSorting.detailTextLabel?.text = SettingValues.defaultSorting.description
@@ -160,9 +167,10 @@ class SettingsGeneral: UITableViewController {
             switch (indexPath.row) {
             case 0: return self.viewType
             case 1: return self.hideFAB
-            case 2: return self.pinToolbar
-            case 3: return self.scrubUsername
-            case 4: return self.hapticFeedback
+            case 3: return self.bottomBarHidden
+            case 4: return self.pinToolbar
+            case 5: return self.scrubUsername
+            case 6: return self.hapticFeedback
             default: fatalError("Unknown row in section 0")
             }
         case 1:
@@ -302,7 +310,7 @@ class SettingsGeneral: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch (section) {
-        case 0: return 5
+        case 0: return 6
         case 1: return 1
         case 2: return 2
         default: fatalError("Unknown number of sections")

@@ -13,10 +13,12 @@ class SingleContentViewController: SwipeDownModalVC, UIPageViewControllerDataSou
     var vCs: [UIViewController] = [ClearVC()]
     var baseURL: URL?
     var lqURL: URL?
-    public init(url: URL, lq: URL?){
+    public init(url: URL, lq: URL?, _ commentCallback: (() -> Void)?){
         self.baseURL = url
         self.lqURL = lq
-        self.vCs.append(MediaDisplayViewController.init(url: baseURL!, text: nil, lqURL: lq))//todo change this
+        let media = MediaDisplayViewController.init(url: baseURL!, text: nil, lqURL: lq)
+        media.commentCallback = commentCallback
+        self.vCs.append(media)//todo change this
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
     }
     
