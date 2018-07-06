@@ -364,7 +364,7 @@ class SettingValues {
     }
     
     public enum CommentAction: String {
-        public static let cases: [CommentAction] = [.UPVOTE, .DOWNVOTE, .MENU, .SAVE, .NONE]
+        public static let cases: [CommentAction] = [.UPVOTE, .DOWNVOTE, .MENU, .COLLAPSE, .SAVE, .NONE]
         
         case UPVOTE = "upvote"
         case DOWNVOTE = "downvote"

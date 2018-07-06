@@ -1858,7 +1858,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             if(SettingValues.commentActionRight != .NONE){
                 let action = UIContextualAction.init(style: .normal, title: "", handler: { (action, view, b) in
                     b(true)
-                    self.doAction(cell: cell as! CommentDepthCell, action: SettingValues.commentActionRight)
+                    self.doAction(cell: cell as! CommentDepthCell, action: SettingValues.commentActionRight, indexPath: indexPath)
                 })
                 action.backgroundColor = SettingValues.commentActionRight.getColor()
                 action.image = UIImage.init(named: SettingValues.commentActionRight.getPhoto())?.navIcon()
@@ -1868,7 +1868,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             if(SettingValues.commentActionLeft != .NONE){
                 let action = UIContextualAction.init(style: .normal, title: "", handler: { (action, view, b) in
                     b(true)
-                    self.doAction(cell: cell as! CommentDepthCell, action: SettingValues.commentActionLeft)
+                    self.doAction(cell: cell as! CommentDepthCell, action: SettingValues.commentActionLeft, indexPath: indexPath)
                 })
                 action.backgroundColor = SettingValues.commentActionLeft.getColor()
                 action.image = UIImage.init(named: SettingValues.commentActionLeft.getPhoto())?.navIcon()
@@ -1884,7 +1884,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
     }
     
-    func doAction(cell: CommentDepthCell, action: SettingValues.CommentAction){
+    func doAction(cell: CommentDepthCell, action: SettingValues.CommentAction, indexPath: IndexPath){
         switch(action){
         case .UPVOTE:
             cell.upvote()
@@ -1899,9 +1899,52 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             cell.menu()
             break
         case .COLLAPSE:
+            collapseParent(indexPath, cell: cell)
             break
         case .NONE:
             break
+        }
+    }
+    
+    func collapseParent(_ indexPath: IndexPath, cell: CommentDepthCell){
+        var topCell = indexPath.row
+        var contents = content[dataArray[topCell]]
+        var id = ""
+        if((contents as! RComment).depth == 1){
+            //collapse self
+            id = cell.comment!.getIdentifier()
+        } else {
+            while ((contents is RMore || (contents as! RComment).depth > 1) && dataArray.count > topCell) {
+                topCell -= 1
+                contents = content[dataArray[topCell]]
+            }
+            let indexPath = IndexPath.init(row: topCell, section: 0)
+            self.tableView.scrollToRow(at: indexPath,
+                                       at: UITableViewScrollPosition.none, animated: true)
+            id = (contents as! RComment).getIdentifier()
+        }
+        let childNumber = getChildNumber(n: id)
+        if (childNumber == 0) {
+            if (!SettingValues.collapseFully) {
+            } else if (cell.isCollapsed) {
+            } else {
+                self.tableView.beginUpdates()
+                cell.collapse(childNumber: 0)
+                self.tableView.endUpdates()
+            }
+        } else {
+            if (hiddenPersons.contains((id)) && childNumber > 0) {
+            } else {
+                if (childNumber > 0) {
+                    hideAll(comment: id, i: topCell + 1)
+                    if (!hiddenPersons.contains(id)) {
+                        hiddenPersons.insert(id)
+                    }
+                    if (childNumber > 0) {
+                        cell.collapse(childNumber: childNumber)
+                    }
+                }
+            }
         }
     }
     
@@ -1970,7 +2013,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 if let comment = cell.content as? RComment {
                     let row = tableView.indexPath(for: cell)?.row
                     let id = comment.getIdentifier()
-                    let childNumber = getChildNumber(n: comment.getIdentifier());
+                    let childNumber = getChildNumber(n: comment.getIdentifier())
                     if (childNumber == 0) {
                         if (!SettingValues.collapseFully) {
                             cell.showMenu(nil)
@@ -1991,9 +2034,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                             //todo hide child number
                         } else {
                             if (childNumber > 0) {
-                                hideAll(comment: comment.getIdentifier(), i: row! + 1);
+                                hideAll(comment: comment.getIdentifier(), i: row! + 1)
                                 if (!hiddenPersons.contains(id)) {
-                                    hiddenPersons.insert(id);
+                                    hiddenPersons.insert(id)
                                 }
                                 if (childNumber > 0) {
                                     cell.collapse(childNumber: childNumber)
