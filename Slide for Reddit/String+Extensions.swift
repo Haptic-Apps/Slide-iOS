@@ -9,6 +9,7 @@
 import Foundation
 
 extension String {
+    
     func toAttributedString() -> NSAttributedString? {
         guard let data = self.data(using: String.Encoding.utf8, allowLossyConversion: false) else {
             return nil
@@ -18,4 +19,11 @@ extension String {
 
         return htmlString
     }
+
+    func size(with: UIFont) -> CGSize {
+        let fontAttribute = [NSFontAttributeName: with]
+        let size = self.size(attributes: fontAttribute)  // for Single Line
+        return size;
+    }
+
 }

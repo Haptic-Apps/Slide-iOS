@@ -14,6 +14,13 @@
 		0965260D20E2989600EA53BE /* UITableView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0965260C20E2989600EA53BE /* UITableView+Extensions.swift */; };
 		0965260F20E298BB00EA53BE /* Object+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0965260E20E298BB00EA53BE /* Object+Extensions.swift */; };
 		0965261120E2AA5400EA53BE /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0965261020E2AA5400EA53BE /* String+Extensions.swift */; };
+		098B5A4120EFC58300FE201B /* UIApplication+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098B5A4020EFC58300FE201B /* UIApplication+Extensions.swift */; };
+		098B5A4320EFC5B600FE201B /* UIButton+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098B5A4220EFC5B600FE201B /* UIButton+Extensions.swift */; };
+		098B5A4520EFC5E800FE201B /* RSubmission+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098B5A4420EFC5E800FE201B /* RSubmission+Extensions.swift */; };
+		098B5A4720EFC68100FE201B /* UITabBarController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098B5A4620EFC68100FE201B /* UITabBarController+Extensions.swift */; };
+		098B5A4920EFC6A200FE201B /* UINavigationController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098B5A4820EFC6A200FE201B /* UINavigationController+Extensions.swift */; };
+		098B5A4B20EFC6C000FE201B /* UILabel+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098B5A4A20EFC6C000FE201B /* UILabel+Extensions.swift */; };
+		098B5A4D20EFC6E200FE201B /* UIViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098B5A4C20EFC6E200FE201B /* UIViewController+Extensions.swift */; };
 		098FC80F20E52D1A00F819F3 /* CGSize+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098FC80E20E52D1A00F819F3 /* CGSize+Extensions.swift */; };
 		2097F94228BB31C58ECC96F9 /* Pods_Slide_for_RedditUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C29CF7355B69CCB84BE2FD6B /* Pods_Slide_for_RedditUITests.framework */; };
 		22FE497D2AAA9FDCC43D8B39 /* Pods_Slide_for_RedditTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE1DDF77D2F040B83CE26E0F /* Pods_Slide_for_RedditTests.framework */; };
@@ -226,6 +233,13 @@
 		0965260C20E2989600EA53BE /* UITableView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableView+Extensions.swift"; sourceTree = "<group>"; };
 		0965260E20E298BB00EA53BE /* Object+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Object+Extensions.swift"; sourceTree = "<group>"; };
 		0965261020E2AA5400EA53BE /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
+		098B5A4020EFC58300FE201B /* UIApplication+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+Extensions.swift"; sourceTree = "<group>"; };
+		098B5A4220EFC5B600FE201B /* UIButton+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+Extensions.swift"; sourceTree = "<group>"; };
+		098B5A4420EFC5E800FE201B /* RSubmission+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RSubmission+Extensions.swift"; sourceTree = "<group>"; };
+		098B5A4620EFC68100FE201B /* UITabBarController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITabBarController+Extensions.swift"; sourceTree = "<group>"; };
+		098B5A4820EFC6A200FE201B /* UINavigationController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UINavigationController+Extensions.swift"; sourceTree = "<group>"; };
+		098B5A4A20EFC6C000FE201B /* UILabel+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+Extensions.swift"; sourceTree = "<group>"; };
+		098B5A4C20EFC6E200FE201B /* UIViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extensions.swift"; sourceTree = "<group>"; };
 		098FC80E20E52D1A00F819F3 /* CGSize+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGSize+Extensions.swift"; sourceTree = "<group>"; };
 		6BAF8E6D96B86B50F10DB7B2 /* Pods-Slide for Reddit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for Reddit.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit.debug.xcconfig"; sourceTree = "<group>"; };
 		93C2383A3BDA4B7B033991ED /* Pods-Slide for RedditUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for RedditUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Slide for RedditUITests/Pods-Slide for RedditUITests.release.xcconfig"; sourceTree = "<group>"; };
@@ -450,6 +464,13 @@
 				0965260E20E298BB00EA53BE /* Object+Extensions.swift */,
 				0965261020E2AA5400EA53BE /* String+Extensions.swift */,
 				098FC80E20E52D1A00F819F3 /* CGSize+Extensions.swift */,
+				098B5A4020EFC58300FE201B /* UIApplication+Extensions.swift */,
+				098B5A4220EFC5B600FE201B /* UIButton+Extensions.swift */,
+				098B5A4420EFC5E800FE201B /* RSubmission+Extensions.swift */,
+				098B5A4620EFC68100FE201B /* UITabBarController+Extensions.swift */,
+				098B5A4820EFC6A200FE201B /* UINavigationController+Extensions.swift */,
+				098B5A4A20EFC6C000FE201B /* UILabel+Extensions.swift */,
+				098B5A4C20EFC6E200FE201B /* UIViewController+Extensions.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -1211,6 +1232,7 @@
 				BE6EA6CC1E1C1E9400E9E709 /* StremableMp4Mobile.swift in Sources */,
 				BE6EA6C31E1C1DCE00E9E709 /* GfyItem.swift in Sources */,
 				BEF7483220DD894100B6236B /* SettingsGestures.swift in Sources */,
+				098B5A4920EFC6A200FE201B /* UINavigationController+Extensions.swift in Sources */,
 				BEDDA9911E19AB5D003CD6C3 /* WebsiteViewController.swift in Sources */,
 				0965261120E2AA5400EA53BE /* String+Extensions.swift in Sources */,
 				BE7BFB421F128F9B009CA2E1 /* Sidebar.swift in Sources */,
@@ -1230,6 +1252,7 @@
 				BE780B641E3405F300DAA1EB /* SettingsTheme.swift in Sources */,
 				BE6EA6CB1E1C1E9400E9E709 /* StreamableJSONBase.swift in Sources */,
 				BE6EA6E21E1DA1A300E9E709 /* ContributionLoader.swift in Sources */,
+				098B5A4520EFC5E800FE201B /* RSubmission+Extensions.swift in Sources */,
 				BE6EA6DA1E1C1FC700E9E709 /* Watchers.swift in Sources */,
 				BE7360A11FB9089B00CA32AD /* TapBehindModalViewController.swift in Sources */,
 				BE3521801E3D3BDD00C30B8D /* LinkParser.swift in Sources */,
@@ -1240,6 +1263,7 @@
 				BEDDA9931E19AEF2003CD6C3 /* AdDictionary.swift in Sources */,
 				BE3E5C141E16BA2200749C0C /* Images.swift in Sources */,
 				BEF3ACE21E15C101005848B6 /* ContentType.swift in Sources */,
+				098B5A4D20EFC6E200FE201B /* UIViewController+Extensions.swift in Sources */,
 				BE7439F11E203D05008BB63B /* NavigationHeaderView.swift in Sources */,
 				BE2DEAAE1E2682A800FBF0B5 /* SettingsGeneral.swift in Sources */,
 				BE6EA6CD1E1C1E9400E9E709 /* StremableMp4.swift in Sources */,
@@ -1262,6 +1286,7 @@
 				BED7B6BA1F2258E700E31A82 /* CachedTitle.swift in Sources */,
 				BE2DEAB41E2693C100FBF0B5 /* SubredditHeaderView.swift in Sources */,
 				BE2B8A0B1E2602CD0053D493 /* SubredditReorderViewController.swift in Sources */,
+				098B5A4320EFC5B600FE201B /* UIButton+Extensions.swift in Sources */,
 				BEE206F61F1CF7D3008BB5F1 /* SettingsLinkHandling.swift in Sources */,
 				BEC494281E307D57006618F3 /* GalleryTableViewController.swift in Sources */,
 				BEE206F41F1B0D53008BB5F1 /* ReplyCellView.swift in Sources */,
@@ -1285,6 +1310,7 @@
 				BE3E5C171E16BC1A00749C0C /* String+util.swift in Sources */,
 				BE9742381F0409BA00BF48E0 /* SettingsComments.swift in Sources */,
 				BE2F3F581EF886D9003C1B28 /* Reachability.swift in Sources */,
+				098B5A4B20EFC6C000FE201B /* UILabel+Extensions.swift in Sources */,
 				BE44B5841FFAC5FE00D3F6D5 /* BottomSheetController.swift in Sources */,
 				BE9742301F0011E500BF48E0 /* TextLinkCellView.swift in Sources */,
 				BE8FCA0A1E0C46090063B8EF /* SingleSubredditViewController.swift in Sources */,
@@ -1322,8 +1348,10 @@
 				BE97422E1F0011BE00BF48E0 /* ThumbnailLinkCellView.swift in Sources */,
 				BE9455FE1F32B5220097EEF0 /* SingleContentViewController.swift in Sources */,
 				B776BF494A7A822D5DB4B5BC /* ColorMuxPagingViewController.swift in Sources */,
+				098B5A4720EFC68100FE201B /* UITabBarController+Extensions.swift in Sources */,
 				B776B919A0E908BFAB060DE7 /* ToolbarTextView.swift in Sources */,
 				B776BAD2D3F58C29030A4230 /* SFHideSafariViewController.swift in Sources */,
+				098B5A4120EFC58300FE201B /* UIApplication+Extensions.swift in Sources */,
 				B776BA8D503319846E83C4A4 /* VideoDisplayer.swift in Sources */,
 				B776BD2C5BBC647BF29E06F8 /* CustomAnimateUITableView.swift in Sources */,
 				B776B41AF52E177BCE0241F3 /* Filter.swift in Sources */,
