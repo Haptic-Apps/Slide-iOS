@@ -8,6 +8,7 @@
 
 import Foundation
 import MaterialComponents
+import MTColorDistance
 
 extension UIColor {
     convenience init(hexString: String) {
@@ -251,9 +252,21 @@ class ColorUtil {
                 return UIColor(hexString: "#FFFFFF").withAlphaComponent(0.87)
             }
         }
-
-
     }
+    
+    public static func distance(a: UIColor, b: UIColor) -> CGFloat {
+        let redDist = pow(a.redValue - b.redValue, 2)
+        let greenDist = pow(a.greenValue - b.greenValue, 2)
+        let blueDist = pow(a.blueValue - b.blueValue, 2)
+        return sqrt(redDist + greenDist + blueDist)
+    }
+    
+    public static func getClosestColor(hex: String) -> UIColor {
+        let allColors = GMPalette.allColorNoBlack()
+        
+        return UIColor.init(hexString: hex).closestColor(inPalette: allColors)
+    }
+
 }
 
 extension UserDefaults {

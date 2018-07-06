@@ -274,7 +274,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         for sub in self.subreddits {
                             toReturn.append(sub.displayName)
                             if (!sub.keyColor.isEmpty) {
-                                let color = (UIColor.init(hexString: sub.keyColor))
+                                let color = ColorUtil.getClosestColor(hex:  sub.keyColor)
                                 if (defaults.object(forKey: "color" + sub.displayName) == nil) {
                                     defaults.setColor(color: color, forKey: "color+" + sub.displayName)
                                 }
@@ -294,7 +294,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     for sub in subs {
                         toReturn.append(sub.displayName)
                         if (!sub.keyColor.isEmpty) {
-                            let color = (UIColor.init(hexString: sub.keyColor))
+                            let color = ColorUtil.getClosestColor(hex:  sub.keyColor)
                             if (defaults.object(forKey: "color" + sub.displayName) == nil) {
                                 defaults.setColor(color: color, forKey: "color+" + sub.displayName)
                             }

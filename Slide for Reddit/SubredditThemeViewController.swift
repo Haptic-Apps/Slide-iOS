@@ -122,11 +122,13 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
                     case .success(let listing):
                         let subs = listing.children.flatMap({ $0 as? Subreddit })
                         for sub in subs {
-                            toReturn.append(sub.displayName)
-                            let color = (UIColor.init(hexString: sub.keyColor))
-                            if (UserDefaults.standard.colorForKey(key: "color+" + sub.displayName) == nil && color != .black) {
-                                defaults.setColor(color: color, forKey: "color+" + sub.displayName)
-                                self.count += 1
+                            if(!sub.keyColor.isEmpty()){
+                                toReturn.append(sub.displayName)
+                                let color = ColorUtil.getClosestColor(hex:  sub.keyColor)
+                                if (UserDefaults.standard.colorForKey(key: "color+" + sub.displayName) == nil && color != .black) {
+                                    defaults.setColor(color: color, forKey: "color+" + sub.displayName)
+                                    self.count += 1
+                                }
                             }
                         }
 
@@ -139,11 +141,14 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
             } else {
                 Subscriptions.getSubscriptionsFully(session: (UIApplication.shared.delegate as! AppDelegate).session!, completion: { (subs, multis) in
                     for sub in subs {
-                        toReturn.append(sub.displayName)
-                        let color = (UIColor.init(hexString: sub.keyColor))
-                        if (UserDefaults.standard.colorForKey(key: "color+" + sub.displayName) == nil && color.hexString != "#000000") {
-                            defaults.setColor(color: color, forKey: "color+" + sub.displayName)
-                            self.count += 1
+                        if(!sub.keyColor.isEmpty()){
+                            print("Coloring \(sub.displayName)")
+                            toReturn.append(sub.displayName)
+                            let color = ColorUtil.getClosestColor(hex:  sub.keyColor)
+                            if (UserDefaults.standard.colorForKey(key: "color+" + sub.displayName) == nil && color.hexString != "#000000") {
+                                defaults.setColor(color: color, forKey: "color+" + sub.displayName)
+                                self.count += 1
+                            }
                         }
                     }
                     for m in multis {
@@ -177,6 +182,16 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
         alertController!.dismiss(animated: true, completion: nil)
         BannerUtil.makeBanner(text: "\(count) subs colored", seconds: 5, context: self)
         count = 0
+        subs.removeAll()
+        for sub in Subscriptions.subreddits {
+            if(UserDefaults.standard.colorForKey(key: "color+" + sub) != nil || UserDefaults.standard.colorForKey(key: "accent+" + sub) != nil){
+                subs.append(sub)
+            }
+        }
+        self.subs = self.subs.sorted() {
+            $0.localizedCaseInsensitiveCompare($1) == ComparisonResult.orderedAscending
+        }
+
         tableView.reloadData()
     }
 

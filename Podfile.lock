@@ -63,6 +63,7 @@ PODS:
   - MotionAnimator (2.8.1):
     - MotionInterchange (~> 1.6)
   - MotionInterchange (1.6.0)
+  - MTColorDistance (0.0.3)
   - Realm (3.7.4):
     - Realm/Headers (= 3.7.4)
   - Realm/Headers (3.7.4)
@@ -105,6 +106,7 @@ DEPENDENCIES:
   - MaterialComponents/Tabs
   - MaterialComponents/TextFields
   - MKColorPicker
+  - MTColorDistance
   - RealmSwift
   - reddift (from `https://github.com/ccrama/reddift`)
   - RLBAlertsPickers (from `https://github.com/ccrama/Alerts-Pickers`)
@@ -166,6 +168,7 @@ SPEC CHECKSUMS:
   MKColorPicker: 8998b2ab977e4f240fdf254db27a18b810da3cfc
   MotionAnimator: ee16aa30567c5bae0fb2750c132915829cfaaf8a
   MotionInterchange: ead0e3ae1f3a5fb539e289debbc7ae036160a10d
+  MTColorDistance: 5ab8708eb88bc22d4d88e309d09eb912f3a6e27b
   Realm: a469bb59e33f9926102ccaea4349822c53b9117e
   RealmSwift: a45861b21c180f5cf0f122144b9759fa8dde3e9e
   reddift: 3066e687c2a934b0f9aca6ee6e2161abc4c93a56
@@ -181,6 +184,6 @@ SPEC CHECKSUMS:
   UZTextView: d8d45a8459b0de6f2c393458a05c65352f89e00a
   XLActionController: 007868251c0eed70d649d06c1625259b73b3a600
 
-PODFILE CHECKSUM: 0df019e6298ca93cefa9da4005324c4f56783cef
+PODFILE CHECKSUM: 46a9631d250412d1409de597114051615888e9db
 
 COCOAPODS: 1.4.0

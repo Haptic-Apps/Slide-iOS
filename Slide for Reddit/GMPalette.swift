@@ -20,6 +20,17 @@ class GMPalette {
                 blueGrey(), blackAndWhite()
         ]
     }
+    
+    static func allNoBlack() -> [[UIColor]] {
+        return [red(), pink(), purple(),
+                deepPurple(), indigo(), blue(),
+                lightBlue(), cyan(), teal(),
+                green(), lightGreen(), lime(),
+                yellow(), amber(), orange(),
+                deepOrange(), brown(), grey(),
+                blueGrey()
+        ]
+    }
 
     static func allAccent() -> [[UIColor]] {
         return [redA(), pinkA(), purpleA(),
@@ -46,6 +57,14 @@ class GMPalette {
     static func allColor() -> [UIColor] {
         var toReturn: [UIColor] = []
         for i in all() {
+            toReturn.append(contentsOf: i)
+        }
+        return toReturn
+    }
+    
+    static func allColorNoBlack() -> [UIColor] {
+        var toReturn: [UIColor] = []
+        for i in allNoBlack() {
             toReturn.append(contentsOf: i)
         }
         return toReturn

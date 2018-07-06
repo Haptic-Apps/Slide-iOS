@@ -20,6 +20,7 @@ target 'Slide for Reddit' do
   pod 'BadgeSwift', '~> 5.0'
   pod 'LicensesViewController', '~> 0.6.5'
   pod 'BiometricAuthentication'
+  pod 'MTColorDistance'
   pod 'XLActionController', :git => 'https://github.com/ccrama/XLActionController'
   pod 'MaterialComponents/ShadowElevations'
   pod 'MaterialComponents/ActivityIndicator'
