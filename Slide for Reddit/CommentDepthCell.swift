@@ -729,12 +729,14 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
     var sideConstraint: [NSLayoutConstraint]?
 
     func collapse(childNumber: Int) {
-        children.text = "+\(childNumber)"
-        UIView.animate(withDuration: 0.4, delay: 0.0, options:
-        UIViewAnimationOptions.curveEaseOut, animations: {
-            self.c.alpha = 1
-        }, completion: { finished in
-        })
+        if(childNumber != 0){
+            children.text = "+\(childNumber)"
+            UIView.animate(withDuration: 0.4, delay: 0.0, options:
+                UIViewAnimationOptions.curveEaseOut, animations: {
+                    self.c.alpha = 1
+            }, completion: { finished in
+            })
+        }
         isCollapsed = true
         if (SettingValues.collapseFully) {
             refresh(comment: comment!, submissionAuthor: parent!.submission!.author, text: cellContent!)

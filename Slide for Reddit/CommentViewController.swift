@@ -1975,9 +1975,13 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                         if (!SettingValues.collapseFully) {
                             cell.showMenu(nil)
                         } else if (cell.isCollapsed) {
+                            self.tableView.beginUpdates()
                             cell.expandSingle()
+                            self.tableView.endUpdates()
                         } else {
+                            self.tableView.beginUpdates()
                             cell.collapse(childNumber: 0)
+                            self.tableView.endUpdates()
                         }
                     } else {
                         if (hiddenPersons.contains((id)) && childNumber > 0) {
@@ -1989,7 +1993,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                             if (childNumber > 0) {
                                 hideAll(comment: comment.getIdentifier(), i: row! + 1);
                                 if (!hiddenPersons.contains(id)) {
-                                    print("ID is \(id)")
                                     hiddenPersons.insert(id);
                                 }
                                 if (childNumber > 0) {
