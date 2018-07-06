@@ -1341,6 +1341,7 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         super.viewDidAppear(animated)
         if(!SettingValues.bottomBarHidden){
             navigationController?.setToolbarHidden(false, animated: false)
+            self.isToolbarHidden = false
             setupFab()
         }
     }
