@@ -186,6 +186,7 @@ class SingleSubredditViewController: MediaViewController {
 
         if(!SettingValues.bottomBarHidden){
             navigationController?.setToolbarHidden(false, animated: false)
+            self.isToolbarHidden = false
             setupFab()
         }
     }
