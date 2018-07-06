@@ -1147,6 +1147,84 @@ class SingleSubredditViewController: MediaViewController {
         }
     }
 
+    // TODO: This is mostly replicated by `RSubmission.getLinkView()`. Can we consolidate?
+    func cellType(forSubmission submission: RSubmission) -> CurrentType {
+        var target: CurrentType = .none
+
+        var thumb = submission.thumbnail
+        var big = submission.banner
+        let height = submission.height
+
+        var type = ContentType.getContentType(baseUrl: submission.url)
+        if (submission.isSelf) {
+            type = .SELF
+        }
+
+        if (SettingValues.postImageMode == .THUMBNAIL) {
+            big = false
+            thumb = true
+        }
+
+        let fullImage = ContentType.fullImage(t: type)
+
+        if (!fullImage && height < 50) {
+            big = false
+            thumb = true
+        }
+
+        if (type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big) {
+            big = false
+            thumb = false
+        }
+
+        if (height < 50) {
+            thumb = true
+            big = false
+        }
+
+        if (type == ContentType.CType.SELF && SettingValues.hideImageSelftext
+            || SettingValues.noImages && submission.isSelf) {
+            big = false
+            thumb = false
+        }
+
+        if (big || !submission.thumbnail) {
+            thumb = false
+        }
+
+
+        if (!big && !thumb && submission.type != .SELF && submission.type != .NONE) { //If a submission has a link but no images, still show the web thumbnail
+            thumb = true
+        }
+
+        if (submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && (sub == "all" || sub == "frontpage" || sub.contains("/m/") || sub.contains("+") || sub == "popular"))) {
+            big = false
+            thumb = true
+        }
+
+        if (SettingValues.noImages) {
+            big = false
+            thumb = false
+        }
+        if (thumb && type == .SELF) {
+            thumb = false
+        }
+
+        if (thumb && !big) {
+            target = .thumb
+        } else if (big) {
+            target = .banner
+        } else {
+            target = .text
+        }
+
+        if(type == .LINK && SettingValues.linkAlwaysThumbnail){
+            target = .thumb
+        }
+
+        return target
+    }
+
 }
 
 // MARK: - Actions
@@ -1404,86 +1482,16 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        var target = CurrentType.none
         let submission = self.links[(indexPath as NSIndexPath).row]
 
-        var thumb = submission.thumbnail
-        var big = submission.banner
-        let height = submission.height
-
-        var type = ContentType.getContentType(baseUrl: submission.url)
-        if (submission.isSelf) {
-            type = .SELF
-        }
-
-        if (SettingValues.postImageMode == .THUMBNAIL) {
-            big = false
-            thumb = true
-        }
-
-        let fullImage = ContentType.fullImage(t: type)
-
-        if (!fullImage && height < 50) {
-            big = false
-            thumb = true
-        }
-
-        if (type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big) {
-            big = false
-            thumb = false
-        }
-
-        if (height < 50) {
-            thumb = true
-            big = false
-        }
-
-        if (type == ContentType.CType.SELF && SettingValues.hideImageSelftext
-            || SettingValues.noImages && submission.isSelf) {
-            big = false
-            thumb = false
-        }
-
-        if (big || !submission.thumbnail) {
-            thumb = false
-        }
-
-
-        if (!big && !thumb && submission.type != .SELF && submission.type != .NONE) { //If a submission has a link but no images, still show the web thumbnail
-            thumb = true
-        }
-
-        if (submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && (sub == "all" || sub == "frontpage" || sub.contains("/m/") || sub.contains("+") || sub == "popular"))) {
-            big = false
-            thumb = true
-        }
-
-        if (SettingValues.noImages) {
-            big = false
-            thumb = false
-        }
-        if (thumb && type == .SELF) {
-            thumb = false
-        }
-
-        if (thumb && !big) {
-            target = .thumb
-        } else if (big) {
-            target = .banner
-        } else {
-            target = .text
-        }
-
-        if(type == .LINK && SettingValues.linkAlwaysThumbnail){
-            target = .thumb
-        }
-
         var cell: LinkCellView!
-        if (target == .thumb) {
+
+        switch cellType(forSubmission: submission) {
+        case .thumb:
             cell = tableView.dequeueReusableCell(withReuseIdentifier: "thumb\(SingleSubredditViewController.cellVersion)", for: indexPath) as! ThumbnailLinkCellView
-        } else if (target == .banner) {
+        case .banner:
             cell = tableView.dequeueReusableCell(withReuseIdentifier: "banner\(SingleSubredditViewController.cellVersion)", for: indexPath) as! BannerLinkCellView
-        } else {
+        default:
             cell = tableView.dequeueReusableCell(withReuseIdentifier: "text\(SingleSubredditViewController.cellVersion)", for: indexPath) as! TextLinkCellView
         }
 
@@ -1500,6 +1508,7 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
 
         return cell
     }
+
 }
 
 // MARK: - Collection View Prefetching Data Source

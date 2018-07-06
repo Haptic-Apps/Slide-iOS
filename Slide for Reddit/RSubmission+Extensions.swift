@@ -11,6 +11,7 @@ import Realm
 import reddift
 
 extension RSubmission {
+    
     func getLinkView() -> LinkCellView {
         var target = CurrentType.none
         let submission = self
@@ -100,3 +101,5 @@ extension RSubmission {
 
     }
 }
+
+
