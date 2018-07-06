@@ -55,3 +55,80 @@ extension UIView {
     }
 
 }
+
+// Convenient safe anchor accessors
+extension UIView {
+
+    var safeTopAnchor: NSLayoutYAxisAnchor {
+        if #available(iOS 11.0, *) {
+            return safeAreaLayoutGuide.topAnchor
+        }
+        else {
+            return topAnchor
+        }
+    }
+
+    var safeBottomAnchor: NSLayoutYAxisAnchor {
+        if #available(iOS 11.0, *) {
+            return safeAreaLayoutGuide.bottomAnchor
+        }
+        else {
+            return bottomAnchor
+        }
+    }
+
+    var safeLeadingAnchor: NSLayoutXAxisAnchor {
+        if #available(iOS 11.0, *) {
+            return safeAreaLayoutGuide.leadingAnchor
+        }
+        else {
+            return leadingAnchor
+        }
+    }
+
+    var safeTrailingAnchor: NSLayoutXAxisAnchor {
+        if #available(iOS 11.0, *) {
+            return safeAreaLayoutGuide.trailingAnchor
+        }
+        else {
+            return trailingAnchor
+        }
+    }
+
+    var safeCenterXAnchor: NSLayoutXAxisAnchor {
+        if #available(iOS 11.0, *) {
+            return safeAreaLayoutGuide.centerXAnchor
+        }
+        else {
+            return centerXAnchor
+        }
+    }
+
+    var safeCenterYAnchor: NSLayoutYAxisAnchor {
+        if #available(iOS 11.0, *) {
+            return safeAreaLayoutGuide.centerYAnchor
+        }
+        else {
+            return centerYAnchor
+        }
+    }
+
+    var safeCenterAnchors: AnchorPair<NSLayoutXAxisAnchor, NSLayoutYAxisAnchor> {
+        if #available(iOS 11.0, *) {
+            return AnchorPair(first: safeAreaLayoutGuide.centerXAnchor, second: safeAreaLayoutGuide.centerYAnchor)
+        }
+        else {
+            return centerAnchors
+        }
+    }
+
+    var safeHorizontalAnchors: AnchorPair<NSLayoutXAxisAnchor, NSLayoutXAxisAnchor> {
+        if #available(iOS 11.0, *) {
+            return AnchorPair(first: safeAreaLayoutGuide.leadingAnchor, second: safeAreaLayoutGuide.trailingAnchor)
+        }
+        else {
+            return horizontalAnchors
+        }
+    }
+
+}

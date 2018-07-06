@@ -20,360 +20,222 @@ import XLActionController
 import MKColorPicker
 import RLBAlertsPickers
 
-class SingleSubredditViewController: MediaViewController, UICollectionViewDelegate, UICollectionViewDataSource, LinkCellViewDelegate, ColorPickerViewDelegate, WrappingFlowLayoutDelegate, SubmissionMoreDelegate {
-
-    let maxHeaderHeight: CGFloat = 120;
-    let minHeaderHeight: CGFloat = 56;
-    public var inHeadView = UIView()
-
-    func openComments(id: String, subreddit: String?) {
-        var index = 0
-        for s in links {
-            if (s.getId() == id) {
-                break
-            }
-            index += 1
-        }
-        var newLinks: [RSubmission] = []
-        for i in index...links.count - 1 {
-            newLinks.append(links[i])
-        }
-
-        if (self.splitViewController != nil && UIScreen.main.traitCollection.userInterfaceIdiom == .pad && !SettingValues.multiColumn) {
-            let comment = CommentViewController.init(submission: newLinks[0])
-            let nav = UINavigationController.init(rootViewController: comment)
-            self.splitViewController?.showDetailViewController(nav, sender: self)
-        } else {
-            let comment = PagingCommentViewController.init(submissions: newLinks)
-            VCPresenter.showVC(viewController: comment, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
-        }
-    }
-
-    override func becomeFirstResponder() -> Bool {
-        return true
-    }
+// MARK: - Base
+class SingleSubredditViewController: MediaViewController {
 
     override var keyCommands: [UIKeyCommand]? {
         return [UIKeyCommand(input: " ", modifierFlags: [], action: #selector(spacePressed))]
     }
 
-    @objc func spacePressed() {
-        UIView.animate(withDuration: 0.2, delay: 0, options: UIViewAnimationOptions.curveEaseOut, animations: {
-            self.tableView.contentOffset.y = self.tableView.contentOffset.y + 350
-        }, completion: nil)
-    }
-
+    let maxHeaderHeight: CGFloat = 120;
+    let minHeaderHeight: CGFloat = 56;
+    public var inHeadView = UIView()
 
     let margin: CGFloat = 10
     let cellsPerRow = 3
     
     var times = 0
-    func collectionView(_ collectionView: UICollectionView, width: CGFloat, indexPath: IndexPath) -> CGSize {
-        var itemWidth = width
-        if (indexPath.row < links.count) {
-            let submission = links[indexPath.row]
-
-            var thumb = submission.thumbnail
-            var big = submission.banner
-            
-            var submissionHeight = CGFloat(submission.height)
-            
-            var type =  ContentType.getContentType(baseUrl: submission.url)
-            if (submission.isSelf) {
-                type = .SELF
-            }
-            
-            if (SettingValues.postImageMode == .THUMBNAIL) {
-                big = false
-                thumb = true
-            }
-            
-            let fullImage = ContentType.fullImage(t: type)
-            
-            if (!fullImage && submissionHeight < 50) {
-                big = false
-                thumb = true
-            } else if (big && (( SettingValues.postImageMode == .CROPPED_IMAGE))) {
-                submissionHeight = 200
-            } else if (big) {
-                let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: CGFloat(submission.width), viewWidth: itemWidth  - ((SettingValues.postViewMode != .CARD) ? CGFloat(5) : CGFloat(0)))
-                if (h == 0) {
-                    submissionHeight = 200
-                } else {
-                    submissionHeight = h
-                }
-            }
-            
-            if (type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big) {
-                big = false
-                thumb = false
-            }
-            
-            if (submissionHeight < 50) {
-                thumb = true
-                big = false
-            }
-            
-            let shouldShowLq = SettingValues.dataSavingEnabled && submission.lQ && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi())
-            if (type == ContentType.CType.SELF && SettingValues.hideImageSelftext
-                || SettingValues.noImages && submission.isSelf) {
-                big = false
-                thumb = false
-            }
-            
-            if (big || !submission.thumbnail) {
-                thumb = false
-            }
-            
-            if (submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && (sub == "all" || sub == "frontpage" || sub.contains("/m/") || sub.contains("+") || sub == "popular"))) {
-                big = false
-                thumb = true
-            }
-            
-            if (SettingValues.noImages) {
-                big = false
-                thumb = false
-            }
-            
-            if (thumb && type == .SELF) {
-                thumb = false
-            }
-            
-            if (!big && !thumb && submission.type != .SELF && submission.type != .NONE) { //If a submission has a link but no images, still show the web thumbnail
-                thumb = true
-            }
-            
-            if(type == .LINK && SettingValues.linkAlwaysThumbnail) {
-                thumb = true
-                big = false
-            }
-            
-            if (big) {
-                let imageSize = CGSize.init(width: submission.width, height: ((SettingValues.postImageMode == .CROPPED_IMAGE)) ? 200 : submission.height)
-                
-                var aspect = imageSize.width / imageSize.height
-                if (aspect == 0 || aspect > 10000 || aspect.isNaN) {
-                    aspect = 1
-                }
-                if ((SettingValues.postImageMode == .CROPPED_IMAGE)) {
-                    aspect = width / 200
-                    if (aspect == 0 || aspect > 10000 || aspect.isNaN) {
-                        aspect = 1
-                    }
-                    
-                    submissionHeight = 200
-                }
-            }
-            var paddingTop = CGFloat(0)
-            var paddingBottom = CGFloat(2)
-            var paddingLeft = CGFloat(0)
-            var paddingRight = CGFloat(0)
-            var innerPadding = CGFloat(0)
-            if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) {
-                paddingTop = 5
-                paddingBottom = 5
-                paddingLeft = 5
-                paddingRight = 5
-            }
-
-            let actionbar = CGFloat(SettingValues.actionBarMode != .FULL ? 0 : 24)
-
-            let thumbheight = (SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50)) - (SettingValues.postViewMode == .COMPACT ? 15 : 0)
-            let textHeight = CGFloat(submission.isSelf ? 5 : 0)
-
-            if (thumb) {
-                innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between top and thumbnail
-                if(SettingValues.actionBarMode == .FULL){
-                    innerPadding += 18 - (SettingValues.postViewMode == .COMPACT ? 4 : 0) //between label and bottom box
-                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
-                } else {
-                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between thumbnail and bottom
-                }
-            } else if (big) {
-                if (SettingValues.postViewMode == .CENTER) {
-                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 16) //between label
-                    if(SettingValues.actionBarMode == .FULL){
-                        innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between banner and box
-                    } else {
-                        innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between buttons and bottom
-                    }
-                } else {
-                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between banner and label
-                    if(SettingValues.actionBarMode == .FULL){
-                        innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between label and box
-                    } else {
-                        innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between buttons and bottom
-                    }
-                }
-                if(SettingValues.actionBarMode == .FULL){
-                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
-                }
-            } else {
-                if(!submission.body.trimmed().isEmpty() && SettingValues.showFirstParagraph){
-                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8)
-                }
-                innerPadding += (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between top and title
-                if(SettingValues.actionBarMode == .FULL){
-                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between body and box
-                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
-                }
-            }
-
-            var estimatedUsableWidth = itemWidth - paddingLeft - paddingRight
-            if (thumb) {
-                estimatedUsableWidth -= thumbheight //is the same as the width
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between thumb and label
-            } else {
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //12 padding on either side
-            }
-            
-            if(SettingValues.postImageMode == .CROPPED_IMAGE) {
-                submissionHeight = 200
-            } else {
-                submissionHeight = getHeightFromAspectRatio(imageHeight: submissionHeight == 200 ? CGFloat(200) : CGFloat(submission.height), imageWidth: CGFloat(submission.width), viewWidth: estimatedUsableWidth)
-            }
-            var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
-            
-            if(thumb){
-                imageHeight = thumbheight
-            }
-
-            if(SettingValues.actionBarMode.isSide()){
-                estimatedUsableWidth -= 36
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 12 : 20) //buttons horizontal margins
-            }
-            
-            let framesetter = CTFramesetterCreateWithAttributedString(CachedTitle.getTitle(submission: submission, full: false, false))
-            let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude), nil)
-            let totalHeight = paddingTop + paddingBottom + (thumb ? max((SettingValues.actionBarMode.isSide() ? max(ceil(textSize.height), 60) : ceil(textSize.height)), imageHeight) : (SettingValues.actionBarMode.isSide() ? max(ceil(textSize.height), 60) : ceil(textSize.height)) + imageHeight) + innerPadding + actionbar + textHeight
-            return CGSize(width: itemWidth, height: totalHeight)
-        }
-        return CGSize(width: itemWidth, height: 0)
-    }
-    
-    func getHeightFromAspectRatio(imageHeight: CGFloat, imageWidth: CGFloat, viewWidth: CGFloat) -> CGFloat {
-        let ratio = imageHeight / imageWidth
-        return viewWidth * ratio
-    }
 
     var parentController: MainViewController?
     var accentChosen: UIColor?
 
     var isAccent = false
 
-    public func colorPickerView(_ colorPickerView: ColorPickerView, didSelectItemAt indexPath: IndexPath) {
-        if (isAccent) {
-            accentChosen = colorPickerView.colors[indexPath.row]
-            SingleSubredditViewController.fab?.backgroundColor = accentChosen
-        } else {
-            let c = colorPickerView.colors[indexPath.row]
-            self.navigationController?.navigationBar.barTintColor = c
-            sideView.backgroundColor = c
-            add.backgroundColor = c
-            sideView.backgroundColor = c
-            inHeadView.backgroundColor = c
-            if (parentController != nil) {
-                parentController?.colorChanged(c)
-            }
-        }
-    }
-
-    func valueChanged(_ value: CGFloat, accent: Bool) {
-
-    }
-
-    func reply(_ cell: LinkCellView) {
-
-    }
-
-    func save(_ cell: LinkCellView) {
-        do {
-            try session?.setSave(!ActionStates.isSaved(s: cell.link!), name: (cell.link?.getId())!, completion: { (result) in
-
-            })
-            ActionStates.setSaved(s: cell.link!, saved: !ActionStates.isSaved(s: cell.link!))
-            History.addSeen(s: cell.link!)
-            cell.refresh()
-        } catch {
-
-        }
-    }
-
-    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        if (SettingValues.markReadOnScroll) {
-            History.addSeen(s: links[indexPath.row])
-        }
-    }
-
-    func upvote(_ cell: LinkCellView) {
-        do {
-            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up, name: (cell.link?.getId())!, completion: { (result) in
-
-            })
-            ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up)
-            History.addSeen(s: cell.link!)
-            cell.refresh()
-        } catch {
-
-        }
-    }
-
-    func downvote(_ cell: LinkCellView) {
-        do {
-            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down, name: (cell.link?.getId())!, completion: { (result) in
-
-            })
-            ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down)
-            History.addSeen(s: cell.link!)
-            cell.refresh()
-        } catch {
-
-        }
-    }
-
-    func hide(_ cell: LinkCellView) {
-        do {
-            try session?.setHide(true, name: cell.link!.getId(), completion: { (result) in })
-            let id = cell.link!.getId()
-            var location = 0
-            var item = links[0]
-            for submission in links {
-                if (submission.getId() == id) {
-                    item = links[location]
-                    print("Removing link")
-                    links.remove(at: location)
-                    break
-                }
-                location += 1
-            }
-
-            tableView.performBatchUpdates({
-                self.tableView.deleteItems(at: [IndexPath.init(item: location, section: 0)])
-                BannerUtil.makeBanner(text: "Submission hidden forever, tap to undo", color: GMColor.red500Color(), seconds: 4, context: self, callback: {
-                    self.links.insert(item, at: location)
-                    self.tableView.insertItems(at: [IndexPath.init(item: location, section: 0)])
-                    do {
-                        try self.session?.setHide(false, name: cell.link!.getId(), completion: { (result) in })
-                    } catch {
-                        
-                    }
-                })
-                
-                self.flowLayout.reset()
-            }, completion: nil)
-
-        } catch {
-
-        }
-    }
-
     var isCollapsed = false
     var isHiding = false
     var isToolbarHidden = false
 
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    var oldY = CGFloat(0)
 
+    var links: [RSubmission] = []
+    var paginator = Paginator()
+    var sub: String
+    var session: Session? = nil
+    var tableView: UICollectionView = UICollectionView.init(frame: CGRect.zero, collectionViewLayout: UICollectionViewLayout.init())
+    var single: Bool = false
+
+    var loaded = false
+    var sideView: UIView = UIView()
+    var subb: UIButton = UIButton()
+
+    var subInfo: Subreddit?
+    var flowLayout: WrappingFlowLayout = WrappingFlowLayout.init()
+
+    static var firstPresented = true
+    static var cellVersion = 0
+
+    var headerView = UIView()
+    var more = UIButton()
+
+    var lastY: CGFloat = CGFloat(0)
+    var add: MDCFloatingButton = MDCFloatingButton()
+    var hide: MDCFloatingButton = MDCFloatingButton()
+    var lastYUsed = CGFloat(0)
+
+    var listingId: String = "" //a random id for use in Realm
+    static var ignoreFab = false
+
+    static var fab: UIButton?
+
+    var first = true
+    var indicator: MDCActivityIndicator?
+
+    var searchText: String?
+
+    var loading = false
+    var nomore = false
+
+    var showing = false
+
+    var sort = SettingValues.defaultSorting
+    var time = SettingValues.defaultTimePeriod
+
+    var refreshControl: UIRefreshControl!
+
+    var savedIndex: IndexPath?
+    var realmListing: RListing?
+
+    var oldsize = CGFloat(0)
+
+    init(subName: String, parent: MainViewController) {
+        sub = subName;
+        self.parentController = parent
+
+        super.init(nibName: nil, bundle: nil)
+        //  setBarColors(color: ColorUtil.getColorForSub(sub: subName))
+    }
+
+    init(subName: String, single: Bool) {
+        sub = subName
+        self.single = true
+        super.init(nibName: nil, bundle: nil)
+        // setBarColors(color: ColorUtil.getColorForSub(sub: subName))
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func becomeFirstResponder() -> Bool {
+        return true
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        flowLayout.delegate = self
+        let frame = self.view.bounds
+        self.tableView = UICollectionView(frame: CGRect.zero, collectionViewLayout: flowLayout)
+        self.view = UIView.init(frame: CGRect.zero)
+
+        self.view.addSubview(tableView)
+
+        self.tableView.delegate = self
+        self.tableView.dataSource = self
+//        self.tableView.prefetchDataSource = self
+        refreshControl = UIRefreshControl()
+
+        reloadNeedingColor()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if (SubredditReorderViewController.changed) {
+            self.reloadNeedingColor()
+            flowLayout.reset()
+            CachedTitle.titles.removeAll()
+            self.tableView.reloadData()
+        }
+
+        doHeadView()
+
+        navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
+
+        if (single || !SettingValues.viewType) {
+            navigationController?.setNavigationBarHidden(false, animated: true)
+            self.navigationController?.navigationBar.shadowImage = UIImage()
+            navigationController?.navigationBar.isTranslucent = false
+        }
+
+        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub)
+
+        self.automaticallyAdjustsScrollViewInsets = false
+        self.edgesForExtendedLayout = UIRectEdge.all
+        self.extendedLayoutIncludesOpaqueBars = true
+
+        first = false
+        tableView.delegate = self
+
+        if (savedIndex != nil) {
+            tableView.reloadItems(at: [savedIndex!])
+        } else {
+            tableView.reloadData()
+        }
+
+        if (single && navigationController!.modalPresentationStyle != .pageSheet) {
+            // let swiper = SloppySwiper.init(navigationController: self.navigationController!)
+            // self.navigationController!.delegate = swiper!
+        }
+
+        self.view.backgroundColor = ColorUtil.backgroundColor
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if(!SettingValues.bottomBarHidden){
+            navigationController?.setToolbarHidden(false, animated: false)
+            setupFab()
+        }
+    }
+
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        tableView.frame = self.view.bounds
+
+        if (self.view.bounds.width != oldsize) {
+            oldsize = self.view.bounds.width
+            flowLayout.reset()
+            tableView.reloadData()
+        }
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if (single || !SettingValues.viewType) {
+            self.navigationController?.setNavigationBarHidden(false, animated: true)
+        }
+
+        UIApplication.shared.statusBarStyle = .lightContent
+
+        if (single) {
+            UIApplication.shared.statusBarView?.backgroundColor = .clear
+        }
+        if(!SingleSubredditViewController.ignoreFab){
+            UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+                SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
+            }, completion: { finished in
+                SingleSubredditViewController.fab?.isHidden = true
+            })
+        }
+    }
+
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        if(self.viewIfLoaded?.window != nil ){
+            tableView.reloadData()
+            setupFab()
+        }
+    }
+
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
+
+    func getHeightFromAspectRatio(imageHeight: CGFloat, imageWidth: CGFloat, viewWidth: CGFloat) -> CGFloat {
+        let ratio = imageHeight / imageWidth
+        return viewWidth * ratio
+    }
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let currentY = scrollView.contentOffset.y
         if(!SettingValues.pinToolbar){
             if (currentY > lastYUsed && currentY > 60) {
@@ -416,8 +278,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         }
     }
 
-    var oldY = CGFloat(0)
-
     func showUI() {
         if (single || !SettingValues.viewType) {
             (navigationController)?.setNavigationBarHidden(false, animated: true)
@@ -455,84 +315,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         }
     }
 
-
-    func more(_ cell: LinkCellView) {
-        PostActions.showMoreMenu(cell: cell, parent: self, nav: self.navigationController!, mutableList: true, delegate: self)
-    }
-
-    func showFilterMenu(_ cell: LinkCellView) {
-        let link = cell.link!
-        let actionSheetController: UIAlertController = UIAlertController(title: "What would you like to filter?", message: "", preferredStyle: .alert)
-
-        var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
-            print("Cancel")
-        }
-        actionSheetController.addAction(cancelActionButton)
-
-        cancelActionButton = UIAlertAction(title: "Posts by u/\(link.author)", style: .default) { action -> Void in
-            PostFilter.profiles.append(link.author as NSString)
-            PostFilter.saveAndUpdate()
-            self.links = PostFilter.filter(self.links, previous: nil, baseSubreddit: self.sub)
-            self.reloadDataReset()
-        }
-        actionSheetController.addAction(cancelActionButton)
-
-        cancelActionButton = UIAlertAction(title: "Posts from r/\(link.subreddit)", style: .default) { action -> Void in
-            PostFilter.subreddits.append(link.subreddit as NSString)
-            PostFilter.saveAndUpdate()
-            self.links = PostFilter.filter(self.links, previous: nil, baseSubreddit: self.sub)
-            self.reloadDataReset()
-        }
-        actionSheetController.addAction(cancelActionButton)
-
-        cancelActionButton = UIAlertAction(title: "Posts linking to \(link.domain)", style: .default) { action -> Void in
-            PostFilter.domains.append(link.domain as NSString)
-            PostFilter.saveAndUpdate()
-            self.links = PostFilter.filter(self.links, previous: nil, baseSubreddit: self.sub)
-            self.reloadDataReset()
-        }
-        actionSheetController.addAction(cancelActionButton)
-
-        //todo make this work on ipad
-        self.present(actionSheetController, animated: true, completion: nil)
-
-    }
-
-
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        super.viewWillTransition(to: size, with: coordinator)
-        if(self.viewIfLoaded?.window != nil ){
-            tableView.reloadData()
-            setupFab()
-        }
-    }
-
-    var links: [RSubmission] = []
-    var paginator = Paginator()
-    var sub: String
-    var session: Session? = nil
-    var tableView: UICollectionView = UICollectionView.init(frame: CGRect.zero, collectionViewLayout: UICollectionViewLayout.init())
-    var single: Bool = false
-
-    init(subName: String, parent: MainViewController) {
-        sub = subName;
-        self.parentController = parent
-
-        super.init(nibName: nil, bundle: nil)
-        //  setBarColors(color: ColorUtil.getColorForSub(sub: subName))
-    }
-
-    init(subName: String, single: Bool) {
-        sub = subName
-        self.single = true
-        super.init(nibName: nil, bundle: nil)
-        // setBarColors(color: ColorUtil.getColorForSub(sub: subName))
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     func show(_ animated: Bool = true) {
         if (SingleSubredditViewController.fab != nil) {
             if animated == true {
@@ -558,38 +340,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
                 SingleSubredditViewController.fab!.isHidden = true
             }
         }
-    }
-
-
-    var loaded = false
-    var sideView: UIView = UIView()
-    var subb: UIButton = UIButton()
-
-    func drefresh(_ sender: AnyObject) {
-        refresh()
-    }
-
-    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true
-    }
-
-    var subInfo: Subreddit?
-    var flowLayout: WrappingFlowLayout = WrappingFlowLayout.init()
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        flowLayout.delegate = self
-        let frame = self.view.bounds
-        self.tableView = UICollectionView(frame: CGRect.zero, collectionViewLayout: flowLayout)
-        self.view = UIView.init(frame: CGRect.zero)
-
-        self.view.addSubview(tableView)
-
-        self.tableView.delegate = self
-        self.tableView.dataSource = self
-        refreshControl = UIRefreshControl()
-        
-        reloadNeedingColor()
     }
 
     func setupFab() {
@@ -682,13 +432,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
         self.present(actionSheetController, animated: true, completion: nil)
     }
-
-
-    static var firstPresented = true
-    static var cellVersion = 0
-
-    var headerView = UIView()
-    var more = UIButton()
 
     func reloadNeedingColor() {
         tableView.backgroundColor = ColorUtil.backgroundColor
@@ -819,23 +562,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         }
     }
 
-    var lastY: CGFloat = CGFloat(0)
-    var add: MDCFloatingButton = MDCFloatingButton()
-    var hide: MDCFloatingButton = MDCFloatingButton()
-    var lastYUsed = CGFloat(0)
-
-    func hideAll(_ sender: AnyObject) {
-        for submission in links {
-            if (History.getSeen(s: submission)) {
-                let index = links.index(of: submission)!
-                links.remove(at: index)
-            }
-        }
-        tableView.reloadData()
-        self.flowLayout.reset()
-    }
-
-
     func doDisplayMultiSidebar(_ sub: Multireddit) {
         let alrController = UIAlertController(title: sub.displayName, message: sub.descriptionMd, preferredStyle: UIAlertControllerStyle.alert)
         for s in sub.subreddits {
@@ -930,9 +656,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         }
     }
 
-    var listingId: String = "" //a random id for use in Realm
-    static var ignoreFab = false
-
     func hideReadPosts() {
         var indexPaths: [IndexPath] = []
         var newLinks: [RSubmission] = []
@@ -960,213 +683,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         }
     }
 
-    static var fab: UIButton?
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        if (single || !SettingValues.viewType) {
-            self.navigationController?.setNavigationBarHidden(false, animated: true)
-        }
-        
-        UIApplication.shared.statusBarStyle = .lightContent
-
-        if (single) {
-            UIApplication.shared.statusBarView?.backgroundColor = .clear
-        }
-        if(!SingleSubredditViewController.ignoreFab){
-            UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
-                SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
-            }, completion: { finished in
-                SingleSubredditViewController.fab?.isHidden = true
-            })
-        }
-    }
-
-    func pickTheme(sender: AnyObject?, parent: MainViewController?) {
-        parentController = parent
-        let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
-
-        isAccent = false
-        let margin: CGFloat = 10.0
-        let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
-        let MKColorPicker = ColorPickerView.init(frame: rect)
-        MKColorPicker.scrollToPreselectedIndex = true
-        MKColorPicker.delegate = self
-        MKColorPicker.colors = GMPalette.allColor()
-        MKColorPicker.selectionStyle = .check
-        MKColorPicker.scrollDirection = .vertical
-        MKColorPicker.style = .circle
-
-        var baseColor = ColorUtil.getColorForSub(sub: sub).toHexString()
-        var index = 0
-        for color in GMPalette.allColor() {
-            if (color.toHexString() == baseColor) {
-                break
-            }
-            index += 1
-        }
-
-        MKColorPicker.preselectedIndex = index
-
-        alertController.view.addSubview(MKColorPicker)
-        
-        /*todo maybe ?alertController.addAction(image: UIImage.init(named: "accent"), title: "Custom color", color: ColorUtil.accentColorForSub(sub: sub), style: .default, isEnabled: true) { (action) in
-            if(!VCPresenter.proDialogShown(feature: false, self)){
-                let alert = UIAlertController.init(title: "Choose a color", message: nil, preferredStyle: .actionSheet)
-                alert.addColorPicker(color: (self.navigationController?.navigationBar.barTintColor)!, selection: { (c) in
-                    ColorUtil.setColorForSub(sub: self.sub, color: (self.navigationController?.navigationBar.barTintColor)!)
-                    self.reloadDataReset()
-                    self.navigationController?.navigationBar.barTintColor = c
-                    UIApplication.shared.statusBarView?.backgroundColor = c
-                    self.sideView.backgroundColor = c
-                    self.add.backgroundColor = c
-                    self.sideView.backgroundColor = c
-                    if (self.parentController != nil) {
-                        self.parentController?.colorChanged()
-                    }
-                })
-                alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: { (action) in
-                    self.pickTheme(sender: sender, parent: parent)
-                }))
-                self.present(alert, animated: true)
-            }
-
-        }*/
-
-        alertController.addAction(image: UIImage(named: "colors"), title: "Accent color", color: ColorUtil.accentColorForSub(sub: sub), style: .default) { action in
-            ColorUtil.setColorForSub(sub: self.sub, color: (self.navigationController?.navigationBar.barTintColor)!)
-            self.pickAccent(sender: sender, parent: parent)
-            self.reloadDataReset()
-        }
-
-        alertController.addAction(image: nil, title: "Save", color: ColorUtil.accentColorForSub(sub: sub), style: .default) { action in
-            ColorUtil.setColorForSub(sub: self.sub, color: (self.navigationController?.navigationBar.barTintColor)!)
-            self.reloadDataReset()
-            if (self.parentController != nil) {
-                self.parentController?.colorChanged(ColorUtil.getColorForSub(sub: self.sub))
-            }
-        }
-
-
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { (alert: UIAlertAction!) in
-            self.resetColors()
-        })
-
-        alertController.addAction(cancelAction)
-
-        alertController.modalPresentationStyle = .popover
-        if let presenter = alertController.popoverPresentationController {
-            presenter.sourceView = sender as! UIButton
-            presenter.sourceRect = (sender as! UIButton).bounds
-        }
-
-        present(alertController, animated: true, completion: nil)
-    }
-
-    func pickAccent(sender: AnyObject?, parent: MainViewController?) {
-        parentController = parent
-        let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
-
-        isAccent = true
-        let margin: CGFloat = 10.0
-        let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
-        let MKColorPicker = ColorPickerView.init(frame: rect)
-        MKColorPicker.scrollToPreselectedIndex = true
-        MKColorPicker.delegate = self
-        MKColorPicker.colors = GMPalette.allColorAccent()
-        MKColorPicker.selectionStyle = .check
-        MKColorPicker.scrollDirection = .vertical
-        MKColorPicker.style = .circle
-
-        var baseColor = ColorUtil.accentColorForSub(sub: sub).toHexString()
-        var index = 0
-        for color in GMPalette.allColorAccent() {
-            if (color.toHexString() == baseColor) {
-                break
-            }
-            index += 1
-        }
-
-        MKColorPicker.preselectedIndex = index
-
-        alertController.view.addSubview(MKColorPicker)
-
-
-        alertController.addAction(image: UIImage(named: "palette"), title: "Primary color", color: ColorUtil.accentColorForSub(sub: sub), style: .default) { action in
-            ColorUtil.setAccentColorForSub(sub: self.sub, color: self.accentChosen!)
-            self.pickTheme(sender: sender, parent: parent)
-            self.reloadDataReset()
-        }
-
-        alertController.addAction(image: nil, title: "Save", color: ColorUtil.accentColorForSub(sub: sub), style: .default) { action in
-            ColorUtil.setAccentColorForSub(sub: self.sub, color: self.accentChosen!)
-            self.reloadDataReset()
-            if (self.parentController != nil) {
-                self.parentController?.colorChanged(ColorUtil.getColorForSub(sub: self.sub))
-            }
-        }
-
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { (alert: UIAlertAction!) in
-            self.resetColors()
-        })
-
-        alertController.addAction(cancelAction)
-
-        alertController.modalPresentationStyle = .popover
-        if let presenter = alertController.popoverPresentationController {
-            presenter.sourceView = sender as! UIButton
-            presenter.sourceRect = (sender as! UIButton).bounds
-        }
-
-        present(alertController, animated: true, completion: nil)
-    }
-
-
-    var first = true
-    var indicator: MDCActivityIndicator?
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        if (SubredditReorderViewController.changed) {
-            self.reloadNeedingColor()
-            flowLayout.reset()
-            CachedTitle.titles.removeAll()
-            self.tableView.reloadData()
-        }
-        
-        doHeadView()
-        
-        navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
-
-        if (single || !SettingValues.viewType) {
-            navigationController?.setNavigationBarHidden(false, animated: true)
-            self.navigationController?.navigationBar.shadowImage = UIImage()
-            navigationController?.navigationBar.isTranslucent = false
-        }
-
-        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub)
-
-        self.automaticallyAdjustsScrollViewInsets = false
-        self.edgesForExtendedLayout = UIRectEdge.all
-        self.extendedLayoutIncludesOpaqueBars = true
-
-        first = false
-        tableView.delegate = self
-
-        if (savedIndex != nil) {
-            tableView.reloadItems(at: [savedIndex!])
-        } else {
-            tableView.reloadData()
-        }
-
-        if (single && navigationController!.modalPresentationStyle != .pageSheet) {
-            // let swiper = SloppySwiper.init(navigationController: self.navigationController!)
-            // self.navigationController!.delegate = swiper!
-        }
-
-        self.view.backgroundColor = ColorUtil.backgroundColor
-    }
-
     func doHeadView(){
         inHeadView.removeFromSuperview()
         inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarView?.frame.size.height ?? 20)))
@@ -1191,12 +707,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         tableView.layoutIfNeeded()
         setupFab()
     }
-
-    func showMoreNone(_ sender: AnyObject) {
-        showMore(sender, parentVC: nil)
-    }
-
-    var searchText: String?
 
     func search() {
         let alert = UIAlertController(title: "Search", message: "", preferredStyle: .alert)
@@ -1245,69 +755,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         Sidebar.init(parent: self, subname: self.sub).displaySidebar()
     }
 
-    func showMore(_ sender: AnyObject, parentVC: MainViewController? = nil) {
-
-        let alertController: BottomSheetActionController = BottomSheetActionController()
-        alertController.headerData = "r/\(sub)"
-
-
-        alertController.addAction(Action(ActionData(title: "Search", image: UIImage(named: "search")!.menuIcon()), style: .default, handler: { action in
-            self.search()
-        }))
-        
-        if(!single && SettingValues.viewType){
-            alertController.addAction(Action(ActionData(title: "Sort (currently \(sort.path))", image: UIImage(named: "filter")!.menuIcon()), style: .default, handler: { action in
-                self.showSortMenu(self.more)
-            }))
-        }
-
-        if (sub.contains("/m/")) {
-            alertController.addAction(Action(ActionData(title: "Manage multireddit", image: UIImage(named: "info")!.menuIcon()), style: .default, handler: { action in
-                self.displayMultiredditSidebar()
-            }))
-        } else {
-            alertController.addAction(Action(ActionData(title: "Sidebar", image: UIImage(named: "info")!.menuIcon()), style: .default, handler: { action in
-                self.doDisplaySidebar()
-            }))
-        }
-
-        alertController.addAction(Action(ActionData(title: "Refresh", image: UIImage(named: "sync")!.menuIcon()), style: .default, handler: { action in
-            self.refresh()
-        }))
-
-        alertController.addAction(Action(ActionData(title: "Gallery", image: UIImage(named: "image")!.menuIcon()), style: .default, handler: { action in
-            self.galleryMode()
-        }))
-
-        alertController.addAction(Action(ActionData(title: "Shadowbox", image: UIImage(named: "shadowbox")!.menuIcon()), style: .default, handler: { action in
-            self.shadowboxMode()
-        }))
-    
-        alertController.addAction(Action(ActionData(title: "Subreddit theme", image: UIImage(named: "colors")!.menuIcon()), style: .default, handler: { action in
-            if (parentVC != nil) {
-                let p = (parentVC!)
-                self.pickTheme(sender: sender, parent: p)
-            } else {
-                self.pickTheme(sender: sender, parent: nil)
-            }
-        }))
-
-        if ((sub != "all" && sub != "frontpage" && !sub.contains("+") && !sub.contains("/m/"))) {
-            alertController.addAction(Action(ActionData(title: "Submit", image: UIImage(named: "edit")!.menuIcon()), style: .default, handler: { action in
-                self.newPost(sender)
-            }))
-         }
-
-        alertController.addAction(Action(ActionData(title: "Filter content", image: UIImage(named: "filter")!.menuIcon()), style: .default, handler: { action in
-            if(!self.links.isEmpty || self.loaded){
-                self.filterContent()
-            }
-        }))
-
-        VCPresenter.presentAlert(alertController, parentVC: self)
-
-    }
-
     func filterContent() {
         let alert = UIAlertController(title: "Content to hide on", message: "r/\(sub)", preferredStyle: .alert)
 
@@ -1316,10 +763,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         alert.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: nil))
         alert.setValue(settings, forKey: "contentViewController")
         present(alert, animated: true, completion: nil)
-    }
-
-    func newPost(_ sender: AnyObject) {
-        PostActions.showPostMenu(self, sub: self.sub)
     }
 
     func galleryMode() {
@@ -1337,14 +780,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         }
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        if(!SettingValues.bottomBarHidden){
-            navigationController?.setToolbarHidden(false, animated: false)
-            setupFab()
-        }
-    }
-
     func shadowboxMode() {
         if(!VCPresenter.proDialogShown(feature: true, self) && !links.isEmpty){
             let controller = ShadowboxViewController.init(submissions: links, subreddit: sub)
@@ -1358,111 +793,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         // Dispose of any resources that can be recreated.
     }
 
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return links.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        var target = CurrentType.none
-        let submission = self.links[(indexPath as NSIndexPath).row]
-
-        var thumb = submission.thumbnail
-        var big = submission.banner
-        let height = submission.height
-
-        var type = ContentType.getContentType(baseUrl: submission.url)
-        if (submission.isSelf) {
-            type = .SELF
-        }
-
-        if (SettingValues.postImageMode == .THUMBNAIL) {
-            big = false
-            thumb = true
-        }
-
-        let fullImage = ContentType.fullImage(t: type)
-
-        if (!fullImage && height < 50) {
-            big = false
-            thumb = true
-        }
-
-        if (type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big) {
-            big = false
-            thumb = false
-        }
-
-        if (height < 50) {
-            thumb = true
-            big = false
-        }
-
-        if (type == ContentType.CType.SELF && SettingValues.hideImageSelftext
-                || SettingValues.noImages && submission.isSelf) {
-            big = false
-            thumb = false
-        }
-
-        if (big || !submission.thumbnail) {
-            thumb = false
-        }
-
-
-        if (!big && !thumb && submission.type != .SELF && submission.type != .NONE) { //If a submission has a link but no images, still show the web thumbnail
-            thumb = true
-        }
-
-        if (submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && (sub == "all" || sub == "frontpage" || sub.contains("/m/") || sub.contains("+") || sub == "popular"))) {
-            big = false
-            thumb = true
-        }
-
-        if (SettingValues.noImages) {
-            big = false
-            thumb = false
-        }
-        if (thumb && type == .SELF) {
-            thumb = false
-        }
-
-        if (thumb && !big) {
-            target = .thumb
-        } else if (big) {
-            target = .banner
-        } else {
-            target = .text
-        }
-        
-        if(type == .LINK && SettingValues.linkAlwaysThumbnail){
-            target = .thumb
-        }
-
-        var cell: LinkCellView!
-        if (target == .thumb) {
-            cell = tableView.dequeueReusableCell(withReuseIdentifier: "thumb\(SingleSubredditViewController.cellVersion)", for: indexPath) as! ThumbnailLinkCellView
-        } else if (target == .banner) {
-            cell = tableView.dequeueReusableCell(withReuseIdentifier: "banner\(SingleSubredditViewController.cellVersion)", for: indexPath) as! BannerLinkCellView
-        } else {
-            cell = tableView.dequeueReusableCell(withReuseIdentifier: "text\(SingleSubredditViewController.cellVersion)", for: indexPath) as! TextLinkCellView
-        }
-
-        cell.preservesSuperviewLayoutMargins = false
-        cell.del = self
-        cell.layer.shouldRasterize = true
-        cell.layer.rasterizationScale = UIScreen.main.scale
-
-        cell.configure(submission: submission, parent: self, nav: self.navigationController, baseSub: self.sub)
-
-        if indexPath.row == self.links.count - 3 && !loading && !nomore {
-            self.loadMore()
-        }
-        
-        return cell
-    }
-
-    var loading = false
-    var nomore = false
-
     func loadMore() {
         if (!showing) {
             showLoader()
@@ -1470,15 +800,10 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         load(reset: false)
     }
 
-    var showing = false
-
     func showLoader() {
         showing = true
         //todo maybe?
     }
-
-    var sort = SettingValues.defaultSorting
-    var time = SettingValues.defaultTimePeriod
 
     func showSortMenu(_ selector: UIView?) {
         let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
@@ -1546,8 +871,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         }
     }
 
-    var refreshControl: UIRefreshControl!
-
     func refresh() {
         links = []
         tableView.reloadData()
@@ -1571,9 +894,6 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
 
         }
     }
-
-    var savedIndex: IndexPath?
-    var realmListing: RListing?
 
     func load(reset: Bool) {
         if (!loading) {
@@ -1821,158 +1141,265 @@ class SingleSubredditViewController: MediaViewController, UICollectionViewDelega
         }
     }
 
-    var oldsize = CGFloat(0)
-
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-        tableView.frame = self.view.bounds
-        if (self.view.bounds.width != oldsize) {
-            oldsize = self.view.bounds.width
-            flowLayout.reset()
-            tableView.reloadData()
-        }
-
-    }
-
-    func mod(_ cell: LinkCellView) {
-        PostActions.showModMenu(cell, parent: self)
-    }
 }
 
-extension UIViewController {
-    func topMostViewController() -> UIViewController {
-        // Handling Modal views/Users/carloscrane/Desktop/Slide for Reddit/Slide for Reddit/SettingValues.swift
-        if let presentedViewController = self.presentedViewController {
-            return presentedViewController.topMostViewController()
-        }
-        // Handling UIViewController's added as subviews to some other views.
-        else {
-            for view in self.view.subviews {
-                // Key property which most of us are unaware of / rarely use.
-                if let subViewController = view.next {
-                    if subViewController is UIViewController {
-                        let viewController = subViewController as! UIViewController
-                        return viewController.topMostViewController()
-                    }
-                }
-            }
-            return self
-        }
+// MARK: - Actions
+extension SingleSubredditViewController {
+
+    @objc func spacePressed() {
+        UIView.animate(withDuration: 0.2, delay: 0, options: UIViewAnimationOptions.curveEaseOut, animations: {
+            self.tableView.contentOffset.y = self.tableView.contentOffset.y + 350
+        }, completion: nil)
     }
-}
 
-extension UITabBarController {
-    override func topMostViewController() -> UIViewController {
-        return self.selectedViewController!.topMostViewController()
+    func drefresh(_ sender: AnyObject) {
+        refresh()
     }
-}
 
-extension UINavigationController {
-    override func topMostViewController() -> UIViewController {
-        return self.visibleViewController!.topMostViewController()
+    func showMoreNone(_ sender: AnyObject) {
+        showMore(sender, parentVC: nil)
     }
-}
 
-extension UILabel {
-
-    func fitFontForSize(minFontSize: CGFloat = 5.0, maxFontSize: CGFloat = 300.0, accuracy: CGFloat = 1.0) {
-        var minFontSize = minFontSize
-        var maxFontSize = maxFontSize
-        assert(maxFontSize > minFontSize)
-        layoutIfNeeded()
-        let constrainedSize = bounds.size
-        while maxFontSize - minFontSize > accuracy {
-            let midFontSize: CGFloat = ((minFontSize + maxFontSize) / 2)
-            font = font.withSize(midFontSize)
-            sizeToFit()
-            let checkSize: CGSize = bounds.size
-            if checkSize.height < constrainedSize.height && checkSize.width < constrainedSize.width {
-                minFontSize = midFontSize
-            } else {
-                maxFontSize = midFontSize
+    func hideAll(_ sender: AnyObject) {
+        for submission in links {
+            if (History.getSeen(s: submission)) {
+                let index = links.index(of: submission)!
+                links.remove(at: index)
             }
         }
-        font = font.withSize(minFontSize)
-        sizeToFit()
-        layoutIfNeeded()
+        tableView.reloadData()
+        self.flowLayout.reset()
     }
 
-}
+    func pickTheme(sender: AnyObject?, parent: MainViewController?) {
+        parentController = parent
+        let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
 
-extension UIImage {
-    func cropToBounds(image: UIImage, width: Double, height: Double) -> UIImage {
+        isAccent = false
+        let margin: CGFloat = 10.0
+        let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
+        let MKColorPicker = ColorPickerView.init(frame: rect)
+        MKColorPicker.scrollToPreselectedIndex = true
+        MKColorPicker.delegate = self
+        MKColorPicker.colors = GMPalette.allColor()
+        MKColorPicker.selectionStyle = .check
+        MKColorPicker.scrollDirection = .vertical
+        MKColorPicker.style = .circle
 
-        let contextImage: UIImage = UIImage(cgImage: image.cgImage!)
+        var baseColor = ColorUtil.getColorForSub(sub: sub).toHexString()
+        var index = 0
+        for color in GMPalette.allColor() {
+            if (color.toHexString() == baseColor) {
+                break
+            }
+            index += 1
+        }
 
-        let contextSize: CGSize = contextImage.size
+        MKColorPicker.preselectedIndex = index
 
-        var posX: CGFloat = 0.0
-        var posY: CGFloat = 0.0
-        var cgwidth: CGFloat = CGFloat(width)
-        var cgheight: CGFloat = CGFloat(height)
+        alertController.view.addSubview(MKColorPicker)
 
-        // See what size is longer and create the center off of that
-        if contextSize.width > contextSize.height {
-            posX = ((contextSize.width - contextSize.height) / 2)
-            posY = 0
-            cgwidth = contextSize.height
-            cgheight = contextSize.height
+        /*todo maybe ?alertController.addAction(image: UIImage.init(named: "accent"), title: "Custom color", color: ColorUtil.accentColorForSub(sub: sub), style: .default, isEnabled: true) { (action) in
+         if(!VCPresenter.proDialogShown(feature: false, self)){
+         let alert = UIAlertController.init(title: "Choose a color", message: nil, preferredStyle: .actionSheet)
+         alert.addColorPicker(color: (self.navigationController?.navigationBar.barTintColor)!, selection: { (c) in
+         ColorUtil.setColorForSub(sub: self.sub, color: (self.navigationController?.navigationBar.barTintColor)!)
+         self.reloadDataReset()
+         self.navigationController?.navigationBar.barTintColor = c
+         UIApplication.shared.statusBarView?.backgroundColor = c
+         self.sideView.backgroundColor = c
+         self.add.backgroundColor = c
+         self.sideView.backgroundColor = c
+         if (self.parentController != nil) {
+         self.parentController?.colorChanged()
+         }
+         })
+         alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: { (action) in
+         self.pickTheme(sender: sender, parent: parent)
+         }))
+         self.present(alert, animated: true)
+         }
+
+         }*/
+
+        alertController.addAction(image: UIImage(named: "colors"), title: "Accent color", color: ColorUtil.accentColorForSub(sub: sub), style: .default) { action in
+            ColorUtil.setColorForSub(sub: self.sub, color: (self.navigationController?.navigationBar.barTintColor)!)
+            self.pickAccent(sender: sender, parent: parent)
+            self.reloadDataReset()
+        }
+
+        alertController.addAction(image: nil, title: "Save", color: ColorUtil.accentColorForSub(sub: sub), style: .default) { action in
+            ColorUtil.setColorForSub(sub: self.sub, color: (self.navigationController?.navigationBar.barTintColor)!)
+            self.reloadDataReset()
+            if (self.parentController != nil) {
+                self.parentController?.colorChanged(ColorUtil.getColorForSub(sub: self.sub))
+            }
+        }
+
+
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { (alert: UIAlertAction!) in
+            self.resetColors()
+        })
+
+        alertController.addAction(cancelAction)
+
+        alertController.modalPresentationStyle = .popover
+        if let presenter = alertController.popoverPresentationController {
+            presenter.sourceView = sender as! UIButton
+            presenter.sourceRect = (sender as! UIButton).bounds
+        }
+
+        present(alertController, animated: true, completion: nil)
+    }
+
+    func pickAccent(sender: AnyObject?, parent: MainViewController?) {
+        parentController = parent
+        let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
+
+        isAccent = true
+        let margin: CGFloat = 10.0
+        let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
+        let MKColorPicker = ColorPickerView.init(frame: rect)
+        MKColorPicker.scrollToPreselectedIndex = true
+        MKColorPicker.delegate = self
+        MKColorPicker.colors = GMPalette.allColorAccent()
+        MKColorPicker.selectionStyle = .check
+        MKColorPicker.scrollDirection = .vertical
+        MKColorPicker.style = .circle
+
+        var baseColor = ColorUtil.accentColorForSub(sub: sub).toHexString()
+        var index = 0
+        for color in GMPalette.allColorAccent() {
+            if (color.toHexString() == baseColor) {
+                break
+            }
+            index += 1
+        }
+
+        MKColorPicker.preselectedIndex = index
+
+        alertController.view.addSubview(MKColorPicker)
+
+
+        alertController.addAction(image: UIImage(named: "palette"), title: "Primary color", color: ColorUtil.accentColorForSub(sub: sub), style: .default) { action in
+            ColorUtil.setAccentColorForSub(sub: self.sub, color: self.accentChosen!)
+            self.pickTheme(sender: sender, parent: parent)
+            self.reloadDataReset()
+        }
+
+        alertController.addAction(image: nil, title: "Save", color: ColorUtil.accentColorForSub(sub: sub), style: .default) { action in
+            ColorUtil.setAccentColorForSub(sub: self.sub, color: self.accentChosen!)
+            self.reloadDataReset()
+            if (self.parentController != nil) {
+                self.parentController?.colorChanged(ColorUtil.getColorForSub(sub: self.sub))
+            }
+        }
+
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { (alert: UIAlertAction!) in
+            self.resetColors()
+        })
+
+        alertController.addAction(cancelAction)
+
+        alertController.modalPresentationStyle = .popover
+        if let presenter = alertController.popoverPresentationController {
+            presenter.sourceView = sender as! UIButton
+            presenter.sourceRect = (sender as! UIButton).bounds
+        }
+
+        present(alertController, animated: true, completion: nil)
+    }
+
+    func newPost(_ sender: AnyObject) {
+        PostActions.showPostMenu(self, sub: self.sub)
+    }
+
+    func showMore(_ sender: AnyObject, parentVC: MainViewController? = nil) {
+
+        let alertController: BottomSheetActionController = BottomSheetActionController()
+        alertController.headerData = "r/\(sub)"
+
+
+        alertController.addAction(Action(ActionData(title: "Search", image: UIImage(named: "search")!.menuIcon()), style: .default, handler: { action in
+            self.search()
+        }))
+
+        if(!single && SettingValues.viewType){
+            alertController.addAction(Action(ActionData(title: "Sort (currently \(sort.path))", image: UIImage(named: "filter")!.menuIcon()), style: .default, handler: { action in
+                self.showSortMenu(self.more)
+            }))
+        }
+
+        if (sub.contains("/m/")) {
+            alertController.addAction(Action(ActionData(title: "Manage multireddit", image: UIImage(named: "info")!.menuIcon()), style: .default, handler: { action in
+                self.displayMultiredditSidebar()
+            }))
         } else {
-            posX = 0
-            posY = ((contextSize.height - contextSize.width) / 2)
-            cgwidth = contextSize.width
-            cgheight = contextSize.width
+            alertController.addAction(Action(ActionData(title: "Sidebar", image: UIImage(named: "info")!.menuIcon()), style: .default, handler: { action in
+                self.doDisplaySidebar()
+            }))
         }
 
-        let rect: CGRect = CGRect.init(x: posX, y: posY, width: cgwidth, height: cgheight)
+        alertController.addAction(Action(ActionData(title: "Refresh", image: UIImage(named: "sync")!.menuIcon()), style: .default, handler: { action in
+            self.refresh()
+        }))
 
-        // Create bitmap image from context using the rect
-        let imageRef: CGImage = (contextImage.cgImage?.cropping(to: rect)!)!
+        alertController.addAction(Action(ActionData(title: "Gallery", image: UIImage(named: "image")!.menuIcon()), style: .default, handler: { action in
+            self.galleryMode()
+        }))
 
-        // Create a new image based on the imageRef and rotate back to the original orientation
-        let image: UIImage = UIImage.init(cgImage: imageRef, scale: image.scale, orientation: image.imageOrientation)
+        alertController.addAction(Action(ActionData(title: "Shadowbox", image: UIImage(named: "shadowbox")!.menuIcon()), style: .default, handler: { action in
+            self.shadowboxMode()
+        }))
 
-        return image
+        alertController.addAction(Action(ActionData(title: "Subreddit theme", image: UIImage(named: "colors")!.menuIcon()), style: .default, handler: { action in
+            if (parentVC != nil) {
+                let p = (parentVC!)
+                self.pickTheme(sender: sender, parent: p)
+            } else {
+                self.pickTheme(sender: sender, parent: nil)
+            }
+        }))
+
+        if ((sub != "all" && sub != "frontpage" && !sub.contains("+") && !sub.contains("/m/"))) {
+            alertController.addAction(Action(ActionData(title: "Submit", image: UIImage(named: "edit")!.menuIcon()), style: .default, handler: { action in
+                self.newPost(sender)
+            }))
+        }
+
+        alertController.addAction(Action(ActionData(title: "Filter content", image: UIImage(named: "filter")!.menuIcon()), style: .default, handler: { action in
+            if(!self.links.isEmpty || self.loaded){
+                self.filterContent()
+            }
+        }))
+
+        VCPresenter.presentAlert(alertController, parentVC: self)
+
     }
+
 }
 
-//https://stackoverflow.com/a/50127204/3697225
-extension UIButton {
-    func leftImage(image: UIImage, renderMode: UIImageRenderingMode) {
-        self.setImage(image.withRenderingMode(renderMode), for: .normal)
-        self.imageEdgeInsets = UIEdgeInsets(top: 0, left: image.size.width / 2, bottom: 0, right: image.size.width / 2)
-        self.contentHorizontalAlignment = .left
-        self.imageView?.contentMode = .scaleAspectFit
+// MARK: - Collection View Delegate
+extension SingleSubredditViewController: UICollectionViewDelegate {
+
+    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if (SettingValues.markReadOnScroll) {
+            History.addSeen(s: links[indexPath.row])
+        }
     }
 
-    func rightImage(image: UIImage, renderMode: UIImageRenderingMode) {
-        self.setImage(image.withRenderingMode(renderMode), for: .normal)
-        self.imageEdgeInsets = UIEdgeInsets(top: 0, left: image.size.width / 2, bottom: 0, right: 0)
-        self.contentHorizontalAlignment = .right
-        self.imageView?.contentMode = .scaleAspectFit
-    }
 }
 
-
-extension String {
-    func size(with: UIFont) -> CGSize {
-        let fontAttribute = [NSFontAttributeName: with]
-        let size = self.size(attributes: fontAttribute)  // for Single Line
-        return size;
+// MARK: - Collection View Data Source
+extension SingleSubredditViewController: UICollectionViewDataSource {
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return links.count
     }
-}
 
-extension UIApplication {
-
-    var statusBarView: UIView? {
-        return value(forKey: "statusBar") as? UIView
-    }
-}
-
-extension RSubmission {
-    func getLinkView() -> LinkCellView {
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         var target = CurrentType.none
-        let submission = self
+        let submission = self.links[(indexPath as NSIndexPath).row]
 
         var thumb = submission.thumbnail
         var big = submission.banner
@@ -1983,10 +1410,10 @@ extension RSubmission {
             type = .SELF
         }
 
-//        if (SettingValues.bannerHidden) {
-//            big = false
-//            thumb = true
-//        }
+        if (SettingValues.postImageMode == .THUMBNAIL) {
+            big = false
+            thumb = true
+        }
 
         let fullImage = ContentType.fullImage(t: type)
 
@@ -2020,7 +1447,6 @@ extension RSubmission {
             thumb = true
         }
 
-        let sub = submission.subreddit
         if (submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && (sub == "all" || sub == "frontpage" || sub.contains("/m/") || sub.contains("+") || sub == "popular"))) {
             big = false
             thumb = true
@@ -2041,21 +1467,400 @@ extension RSubmission {
         } else {
             target = .text
         }
-        
+
         if(type == .LINK && SettingValues.linkAlwaysThumbnail){
-            target == .thumb
+            target = .thumb
         }
 
         var cell: LinkCellView!
         if (target == .thumb) {
-            cell = ThumbnailLinkCellView()
+            cell = tableView.dequeueReusableCell(withReuseIdentifier: "thumb\(SingleSubredditViewController.cellVersion)", for: indexPath) as! ThumbnailLinkCellView
         } else if (target == .banner) {
-            cell = BannerLinkCellView()
+            cell = tableView.dequeueReusableCell(withReuseIdentifier: "banner\(SingleSubredditViewController.cellVersion)", for: indexPath) as! BannerLinkCellView
         } else {
-            cell = TextLinkCellView()
+            cell = tableView.dequeueReusableCell(withReuseIdentifier: "text\(SingleSubredditViewController.cellVersion)", for: indexPath) as! TextLinkCellView
+        }
+
+        cell.preservesSuperviewLayoutMargins = false
+        cell.del = self
+        cell.layer.shouldRasterize = true
+        cell.layer.rasterizationScale = UIScreen.main.scale
+
+        cell.configure(submission: submission, parent: self, nav: self.navigationController, baseSub: self.sub)
+
+        if indexPath.row == self.links.count - 3 && !loading && !nomore {
+            self.loadMore()
         }
 
         return cell
+    }
+}
+
+// MARK: - Collection View Prefetching Data Source
+//extension SingleSubredditViewController: UICollectionViewDataSourcePrefetching {
+//    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+//        // TODO: Implement
+//    }
+//}
+
+// MARK: - Link Cell View Delegate
+extension SingleSubredditViewController: LinkCellViewDelegate {
+
+    func openComments(id: String, subreddit: String?) {
+        var index = 0
+        for s in links {
+            if (s.getId() == id) {
+                break
+            }
+            index += 1
+        }
+        var newLinks: [RSubmission] = []
+        for i in index...links.count - 1 {
+            newLinks.append(links[i])
+        }
+
+        if (self.splitViewController != nil && UIScreen.main.traitCollection.userInterfaceIdiom == .pad && !SettingValues.multiColumn) {
+            let comment = CommentViewController.init(submission: newLinks[0])
+            let nav = UINavigationController.init(rootViewController: comment)
+            self.splitViewController?.showDetailViewController(nav, sender: self)
+        } else {
+            let comment = PagingCommentViewController.init(submissions: newLinks)
+            VCPresenter.showVC(viewController: comment, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+        }
+    }
+}
+
+// MARK: - Color Picker View Delegate
+extension SingleSubredditViewController: ColorPickerViewDelegate {
+    public func colorPickerView(_ colorPickerView: ColorPickerView, didSelectItemAt indexPath: IndexPath) {
+        if (isAccent) {
+            accentChosen = colorPickerView.colors[indexPath.row]
+            SingleSubredditViewController.fab?.backgroundColor = accentChosen
+        } else {
+            let c = colorPickerView.colors[indexPath.row]
+            self.navigationController?.navigationBar.barTintColor = c
+            sideView.backgroundColor = c
+            add.backgroundColor = c
+            sideView.backgroundColor = c
+            inHeadView.backgroundColor = c
+            if (parentController != nil) {
+                parentController?.colorChanged(c)
+            }
+        }
+    }
+}
+
+// MARK: - Wrapping Flow Layout Delegate
+extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
+    func collectionView(_ collectionView: UICollectionView, width: CGFloat, indexPath: IndexPath) -> CGSize {
+        var itemWidth = width
+        if (indexPath.row < links.count) {
+            let submission = links[indexPath.row]
+
+            var thumb = submission.thumbnail
+            var big = submission.banner
+
+            var submissionHeight = CGFloat(submission.height)
+
+            var type =  ContentType.getContentType(baseUrl: submission.url)
+            if (submission.isSelf) {
+                type = .SELF
+            }
+
+            if (SettingValues.postImageMode == .THUMBNAIL) {
+                big = false
+                thumb = true
+            }
+
+            let fullImage = ContentType.fullImage(t: type)
+
+            if (!fullImage && submissionHeight < 50) {
+                big = false
+                thumb = true
+            } else if (big && (( SettingValues.postImageMode == .CROPPED_IMAGE))) {
+                submissionHeight = 200
+            } else if (big) {
+                let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: CGFloat(submission.width), viewWidth: itemWidth  - ((SettingValues.postViewMode != .CARD) ? CGFloat(5) : CGFloat(0)))
+                if (h == 0) {
+                    submissionHeight = 200
+                } else {
+                    submissionHeight = h
+                }
+            }
+
+            if (type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big) {
+                big = false
+                thumb = false
+            }
+
+            if (submissionHeight < 50) {
+                thumb = true
+                big = false
+            }
+
+            let shouldShowLq = SettingValues.dataSavingEnabled && submission.lQ && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi())
+            if (type == ContentType.CType.SELF && SettingValues.hideImageSelftext
+                || SettingValues.noImages && submission.isSelf) {
+                big = false
+                thumb = false
+            }
+
+            if (big || !submission.thumbnail) {
+                thumb = false
+            }
+
+            if (submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && (sub == "all" || sub == "frontpage" || sub.contains("/m/") || sub.contains("+") || sub == "popular"))) {
+                big = false
+                thumb = true
+            }
+
+            if (SettingValues.noImages) {
+                big = false
+                thumb = false
+            }
+
+            if (thumb && type == .SELF) {
+                thumb = false
+            }
+
+            if (!big && !thumb && submission.type != .SELF && submission.type != .NONE) { //If a submission has a link but no images, still show the web thumbnail
+                thumb = true
+            }
+
+            if(type == .LINK && SettingValues.linkAlwaysThumbnail) {
+                thumb = true
+                big = false
+            }
+
+            if (big) {
+                let imageSize = CGSize.init(width: submission.width, height: ((SettingValues.postImageMode == .CROPPED_IMAGE)) ? 200 : submission.height)
+
+                var aspect = imageSize.width / imageSize.height
+                if (aspect == 0 || aspect > 10000 || aspect.isNaN) {
+                    aspect = 1
+                }
+                if ((SettingValues.postImageMode == .CROPPED_IMAGE)) {
+                    aspect = width / 200
+                    if (aspect == 0 || aspect > 10000 || aspect.isNaN) {
+                        aspect = 1
+                    }
+
+                    submissionHeight = 200
+                }
+            }
+            var paddingTop = CGFloat(0)
+            var paddingBottom = CGFloat(2)
+            var paddingLeft = CGFloat(0)
+            var paddingRight = CGFloat(0)
+            var innerPadding = CGFloat(0)
+            if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) {
+                paddingTop = 5
+                paddingBottom = 5
+                paddingLeft = 5
+                paddingRight = 5
+            }
+
+            let actionbar = CGFloat(SettingValues.actionBarMode != .FULL ? 0 : 24)
+
+            let thumbheight = (SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50)) - (SettingValues.postViewMode == .COMPACT ? 15 : 0)
+            let textHeight = CGFloat(submission.isSelf ? 5 : 0)
+
+            if (thumb) {
+                innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between top and thumbnail
+                if(SettingValues.actionBarMode == .FULL){
+                    innerPadding += 18 - (SettingValues.postViewMode == .COMPACT ? 4 : 0) //between label and bottom box
+                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
+                } else {
+                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between thumbnail and bottom
+                }
+            } else if (big) {
+                if (SettingValues.postViewMode == .CENTER) {
+                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 16) //between label
+                    if(SettingValues.actionBarMode == .FULL){
+                        innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between banner and box
+                    } else {
+                        innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between buttons and bottom
+                    }
+                } else {
+                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between banner and label
+                    if(SettingValues.actionBarMode == .FULL){
+                        innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between label and box
+                    } else {
+                        innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between buttons and bottom
+                    }
+                }
+                if(SettingValues.actionBarMode == .FULL){
+                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
+                }
+            } else {
+                if(!submission.body.trimmed().isEmpty() && SettingValues.showFirstParagraph){
+                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8)
+                }
+                innerPadding += (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between top and title
+                if(SettingValues.actionBarMode == .FULL){
+                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between body and box
+                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
+                }
+            }
+
+            var estimatedUsableWidth = itemWidth - paddingLeft - paddingRight
+            if (thumb) {
+                estimatedUsableWidth -= thumbheight //is the same as the width
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between thumb and label
+            } else {
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //12 padding on either side
+            }
+
+            if(SettingValues.postImageMode == .CROPPED_IMAGE) {
+                submissionHeight = 200
+            } else {
+                submissionHeight = getHeightFromAspectRatio(imageHeight: submissionHeight == 200 ? CGFloat(200) : CGFloat(submission.height), imageWidth: CGFloat(submission.width), viewWidth: estimatedUsableWidth)
+            }
+            var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
+
+            if(thumb){
+                imageHeight = thumbheight
+            }
+
+            if(SettingValues.actionBarMode.isSide()){
+                estimatedUsableWidth -= 36
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 12 : 20) //buttons horizontal margins
+            }
+
+            let framesetter = CTFramesetterCreateWithAttributedString(CachedTitle.getTitle(submission: submission, full: false, false))
+            let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude), nil)
+            let totalHeight = paddingTop + paddingBottom + (thumb ? max((SettingValues.actionBarMode.isSide() ? max(ceil(textSize.height), 60) : ceil(textSize.height)), imageHeight) : (SettingValues.actionBarMode.isSide() ? max(ceil(textSize.height), 60) : ceil(textSize.height)) + imageHeight) + innerPadding + actionbar + textHeight
+            return CGSize(width: itemWidth, height: totalHeight)
+        }
+        return CGSize(width: itemWidth, height: 0)
+    }
+}
+
+// MARK: - Submission More Delegate
+extension SingleSubredditViewController: SubmissionMoreDelegate {
+    func reply(_ cell: LinkCellView) {
+
+    }
+
+    func save(_ cell: LinkCellView) {
+        do {
+            try session?.setSave(!ActionStates.isSaved(s: cell.link!), name: (cell.link?.getId())!, completion: { (result) in
+
+            })
+            ActionStates.setSaved(s: cell.link!, saved: !ActionStates.isSaved(s: cell.link!))
+            History.addSeen(s: cell.link!)
+            cell.refresh()
+        } catch {
+
+        }
+    }
+
+    func upvote(_ cell: LinkCellView) {
+        do {
+            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up, name: (cell.link?.getId())!, completion: { (result) in
+
+            })
+            ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up)
+            History.addSeen(s: cell.link!)
+            cell.refresh()
+        } catch {
+
+        }
+    }
+
+    func downvote(_ cell: LinkCellView) {
+        do {
+            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down, name: (cell.link?.getId())!, completion: { (result) in
+
+            })
+            ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down)
+            History.addSeen(s: cell.link!)
+            cell.refresh()
+        } catch {
+
+        }
+    }
+
+    func hide(_ cell: LinkCellView) {
+        do {
+            try session?.setHide(true, name: cell.link!.getId(), completion: { (result) in })
+            let id = cell.link!.getId()
+            var location = 0
+            var item = links[0]
+            for submission in links {
+                if (submission.getId() == id) {
+                    item = links[location]
+                    print("Removing link")
+                    links.remove(at: location)
+                    break
+                }
+                location += 1
+            }
+
+            tableView.performBatchUpdates({
+                self.tableView.deleteItems(at: [IndexPath.init(item: location, section: 0)])
+                BannerUtil.makeBanner(text: "Submission hidden forever, tap to undo", color: GMColor.red500Color(), seconds: 4, context: self, callback: {
+                    self.links.insert(item, at: location)
+                    self.tableView.insertItems(at: [IndexPath.init(item: location, section: 0)])
+                    do {
+                        try self.session?.setHide(false, name: cell.link!.getId(), completion: { (result) in })
+                    } catch {
+
+                    }
+                })
+
+                self.flowLayout.reset()
+            }, completion: nil)
+
+        } catch {
+
+        }
+    }
+
+    func more(_ cell: LinkCellView) {
+        PostActions.showMoreMenu(cell: cell, parent: self, nav: self.navigationController!, mutableList: true, delegate: self)
+    }
+
+    func mod(_ cell: LinkCellView) {
+        PostActions.showModMenu(cell, parent: self)
+    }
+
+    func showFilterMenu(_ cell: LinkCellView) {
+        let link = cell.link!
+        let actionSheetController: UIAlertController = UIAlertController(title: "What would you like to filter?", message: "", preferredStyle: .alert)
+
+        var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
+            print("Cancel")
+        }
+        actionSheetController.addAction(cancelActionButton)
+
+        cancelActionButton = UIAlertAction(title: "Posts by u/\(link.author)", style: .default) { action -> Void in
+            PostFilter.profiles.append(link.author as NSString)
+            PostFilter.saveAndUpdate()
+            self.links = PostFilter.filter(self.links, previous: nil, baseSubreddit: self.sub)
+            self.reloadDataReset()
+        }
+        actionSheetController.addAction(cancelActionButton)
+
+        cancelActionButton = UIAlertAction(title: "Posts from r/\(link.subreddit)", style: .default) { action -> Void in
+            PostFilter.subreddits.append(link.subreddit as NSString)
+            PostFilter.saveAndUpdate()
+            self.links = PostFilter.filter(self.links, previous: nil, baseSubreddit: self.sub)
+            self.reloadDataReset()
+        }
+        actionSheetController.addAction(cancelActionButton)
+
+        cancelActionButton = UIAlertAction(title: "Posts linking to \(link.domain)", style: .default) { action -> Void in
+            PostFilter.domains.append(link.domain as NSString)
+            PostFilter.saveAndUpdate()
+            self.links = PostFilter.filter(self.links, previous: nil, baseSubreddit: self.sub)
+            self.reloadDataReset()
+        }
+        actionSheetController.addAction(cancelActionButton)
+
+        //todo make this work on ipad
+        self.present(actionSheetController, animated: true, completion: nil)
 
     }
 }
