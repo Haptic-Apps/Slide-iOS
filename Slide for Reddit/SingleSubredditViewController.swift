@@ -122,6 +122,7 @@ class SingleSubredditViewController: MediaViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
         flowLayout.delegate = self
         let frame = self.view.bounds
         self.tableView = UICollectionView(frame: CGRect.zero, collectionViewLayout: flowLayout)
@@ -139,6 +140,7 @@ class SingleSubredditViewController: MediaViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
         if (SubredditReorderViewController.changed) {
             self.reloadNeedingColor()
             flowLayout.reset()
@@ -181,6 +183,7 @@ class SingleSubredditViewController: MediaViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+
         if(!SettingValues.bottomBarHidden){
             navigationController?.setToolbarHidden(false, animated: false)
             setupFab()
@@ -189,6 +192,7 @@ class SingleSubredditViewController: MediaViewController {
 
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
+
         tableView.frame = self.view.bounds
 
         if (self.view.bounds.width != oldsize) {
@@ -200,6 +204,7 @@ class SingleSubredditViewController: MediaViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+
         if (single || !SettingValues.viewType) {
             self.navigationController?.setNavigationBarHidden(false, animated: true)
         }
@@ -220,6 +225,7 @@ class SingleSubredditViewController: MediaViewController {
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
+
         if(self.viewIfLoaded?.window != nil ){
             tableView.reloadData()
             setupFab()
