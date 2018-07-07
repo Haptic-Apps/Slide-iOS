@@ -16,6 +16,9 @@ class SettingsComments: UITableViewController {
     var disableColorCell: UITableViewCell = UITableViewCell()
     var disableColor = UISwitch()
     
+    var wideIndicatorCell: UITableViewCell = UITableViewCell()
+    var wideIndicator = UISwitch()
+    
     var collapseDefaultCell: UITableViewCell = UITableViewCell()
     var collapseDefault = UISwitch()
     
@@ -55,6 +58,9 @@ class SettingsComments: UITableViewController {
         } else if(changed == disableColor){
             SettingValues.disableColor = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_disableColor)
+        } else if(changed == wideIndicator){
+            SettingValues.wideIndicator = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_wideIndicator)
         } else if(changed == collapseDefault){
             SettingValues.collapseDefault = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_collapseDefault)
@@ -126,6 +132,7 @@ class SettingsComments: UITableViewController {
         createCell(swapLongPressCell, swapLongPress, isOn: SettingValues.swapLongPress, text: "Swap tap and long press actions")
         createCell(collapseFullyCell, collapseFully, isOn: SettingValues.collapseFully, text: "Collapse comments fully")
         createCell(highlightOpCell, highlightOp, isOn: SettingValues.highlightOp, text: "Highlight op replies of parent comments")
+        createCell(wideIndicatorCell, wideIndicator, isOn: SettingValues.wideIndicator, text: "Make comment depth indicator wider")
 
         self.tableView.tableFooterView = UIView()
     }
@@ -154,8 +161,9 @@ class SettingsComments: UITableViewController {
             case 0: return self.collapseDefaultCell
             case 1: return self.collapseFullyCell
             case 2: return self.disableColorCell
-            case 3: return self.swapLongPressCell
-            case 4: return self.highlightOpCell
+            case 3: return self.wideIndicatorCell
+            case 4: return self.swapLongPressCell
+            case 5: return self.highlightOpCell
             default: fatalError("Unknown row in section 0")
             }
         default: fatalError("Unknown section")
@@ -167,7 +175,7 @@ class SettingsComments: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch(section) {
         case 0: return 1
-        case 1: return 5    // section 1 has 1 row
+        case 1: return 6    // section 1 has 1 row
         default: fatalError("Unknown number of sections")
         }
     }

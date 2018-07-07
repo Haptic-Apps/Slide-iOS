@@ -371,8 +371,10 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
         } else {
             let color = ColorUtil.accentColorForSub(sub: (submission.subreddit))
             if (!submission.htmlBody.isEmpty) {
-                let html = submission.htmlBody.trimmed()
+                var html = submission.htmlBody.trimmed()
                 do {
+                    html = WrapSpoilers.addSpoilers(html)
+                    html = WrapSpoilers.addTables(html)
                     let attr = html.toAttributedString()!
                     let font = FontGenerator.fontOfSize(size: 16, submission: false)
                     let attr2 = attr.reconstruct(with: font, color: .white, linkColor: color)

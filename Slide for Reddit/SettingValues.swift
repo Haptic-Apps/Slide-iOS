@@ -87,6 +87,7 @@ class SettingValues {
     public static let pref_actionbarMode = "ACTIONBAR_MODE"
     public static let pref_flatMode = "FLAT_MODE"
     public static let pref_bottomBarHidden = "BOTTOM_BAR_HIDDEN"
+    public static let pref_widerIndicators = "WIDE_INDICATORS"
 
     public static var commentActionRight = CommentAction.UPVOTE
     public static var commentActionLeft = CommentAction.DOWNVOTE
@@ -117,6 +118,7 @@ class SettingValues {
     public static var autoCache = false
     public static var pinToolbar = false
     public static var hapticFeedback = true
+    public static var wideIndicators = false
 
     public static var enlargeLinks = true
     public static var noImages = false
@@ -292,6 +294,7 @@ class SettingValues {
         SettingValues.volumeButtonNavigation = settings.bool(forKey: SettingValues.pref_volumeButtonNavigation)
         SettingValues.collapseFully = settings.bool(forKey: SettingValues.pref_collapseFully)
         SettingValues.autoCache = settings.bool(forKey: SettingValues.pref_autoCache)
+        SettingValues.wideIndicators = settings.bool(forKey: SettingValues.pref_widerIndicators)
         SettingValues.leftThumbnail = settings.bool(forKey: SettingValues.pref_leftThumbnail)
         SettingValues.biometrics = settings.bool(forKey: SettingValues.pref_biometrics)
         SettingValues.enlargeLinks = settings.object(forKey: SettingValues.pref_enlargeLinks) == nil ? true : settings.bool(forKey: SettingValues.pref_enlargeLinks)
