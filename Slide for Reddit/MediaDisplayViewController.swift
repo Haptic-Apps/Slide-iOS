@@ -44,10 +44,11 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
         }
         if let image = baseImage {
             self.imageLoaded = true
+            var xstart = (parent is AlbumViewController) ? CGFloat(61) : 0
             if (image.size.height > image.size.width ||  UIApplication.shared.statusBarOrientation != .portrait) {
-                self.scrollView.contentSize = CGSize.init(width: min(self.view.frame.size.width, getWidthFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width)), height: self.view.frame.size.height)
+                self.scrollView.contentSize = CGSize.init(width: min(self.view.frame.size.width, getWidthFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width)), height: self.view.frame.size.height - (xstart * 2) + 8)
             } else {
-                self.scrollView.contentSize = CGSize.init(width: self.view.frame.size.width, height: min(self.view.frame.size.height, getHeightFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width)))
+                self.scrollView.contentSize = CGSize.init(width: self.view.frame.size.width, height: min(self.view.frame.size.height, getHeightFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width)) - (xstart * 2) + 8)
             }
             self.scrollView.delegate = self
 

@@ -1107,7 +1107,6 @@
 				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
 				"${BUILT_PRODUCTS_DIR}/TTTAttributedLabel/TTTAttributedLabel.framework",
 				"${BUILT_PRODUCTS_DIR}/Then/Then.framework",
-				"${BUILT_PRODUCTS_DIR}/UZTextView/UZTextView.framework",
 				"${BUILT_PRODUCTS_DIR}/XLActionController/XLActionController.framework",
 				"${BUILT_PRODUCTS_DIR}/reddift/reddift.framework",
 			);
@@ -1137,7 +1136,6 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TTTAttributedLabel.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Then.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/UZTextView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/XLActionController.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/reddift.framework",
 			);
@@ -1532,8 +1530,6 @@
 					"-framework",
 					"\"SideMenu\"",
 					"-framework",
-					"\"UZTextView\"",
-					"-framework",
 					"\"reddift\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = ccrama.me.redditslide;
@@ -1568,8 +1564,6 @@
 					"\"SDWebImage\"",
 					"-framework",
 					"\"SideMenu\"",
-					"-framework",
-					"\"UZTextView\"",
 					"-framework",
 					"\"reddift\"",
 				);

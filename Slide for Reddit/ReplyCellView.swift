@@ -11,7 +11,6 @@ import reddift
 import Photos
 import MobileCoreServices
 import SwiftyJSON
-import ActionSheetPicker_3_0
 import RealmSwift
 
 protocol ReplyDelegate {

@@ -83,7 +83,6 @@ PODS:
   - SwiftyJSON (4.1.0)
   - Then (2.3.0)
   - TTTAttributedLabel (2.0.0)
-  - UZTextView (1.0.8)
   - XLActionController (4.0.1):
     - XLActionController/Core (= 4.0.1)
   - XLActionController/Core (4.0.1)
@@ -112,13 +111,12 @@ DEPENDENCIES:
   - RLBAlertsPickers (from `https://github.com/ccrama/Alerts-Pickers`)
   - SDWebImage (~> 3.8)
   - SideMenu
-  - SloppySwiper (from `https://github.com/fastred/SloppySwiper`)
+  - SloppySwiper (from `https://github.com/fastred/sloppySwiper`)
   - Starscream (~> 3.0.2)
   - SwiftSpreadsheet
   - SwiftyJSON
   - Then
   - TTTAttributedLabel
-  - UZTextView (from `https://github.com/ccrama/UZTextView`)
   - XLActionController (from `https://github.com/ccrama/XLActionController`)
 
 EXTERNAL SOURCES:
@@ -129,9 +127,7 @@ EXTERNAL SOURCES:
   RLBAlertsPickers:
     :git: https://github.com/ccrama/Alerts-Pickers
   SloppySwiper:
-    :git: https://github.com/fastred/SloppySwiper
-  UZTextView:
-    :git: https://github.com/ccrama/UZTextView
+    :git: https://github.com/fastred/sloppySwiper
   XLActionController:
     :git: https://github.com/ccrama/XLActionController
 
@@ -140,17 +136,14 @@ CHECKOUT OPTIONS:
     :commit: 752459578d8162c11f6311987bd3463e6d85712b
     :git: https://github.com/ccrama/ActionSheetPicker-3.0
   reddift:
-    :commit: 7876024f9fd229fe79371fd80a82a1e106e9740b
+    :commit: e58d5b594137ec60d92e5d30b48f42315862d8fe
     :git: https://github.com/ccrama/reddift
   RLBAlertsPickers:
     :commit: 583f111c780546a42320c406f1fcf21f9f2caf30
     :git: https://github.com/ccrama/Alerts-Pickers
   SloppySwiper:
     :commit: 90e1566555734d08a4c72619595f5a2157c104b3
-    :git: https://github.com/fastred/SloppySwiper
-  UZTextView:
-    :commit: 15b553d05544ddc429b76f23b413fc9be256901d
-    :git: https://github.com/ccrama/UZTextView
+    :git: https://github.com/fastred/sloppySwiper
   XLActionController:
     :commit: d3361823f2359da959a752d36965aaeb3a3fd475
     :git: https://github.com/ccrama/XLActionController
@@ -181,9 +174,8 @@ SPEC CHECKSUMS:
   SwiftyJSON: c29297daf073d2aa016295d5809cdd68045c39b3
   Then: ee21c97b85ff6062b9b0080c9abb1eea46743345
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
-  UZTextView: d8d45a8459b0de6f2c393458a05c65352f89e00a
   XLActionController: 007868251c0eed70d649d06c1625259b73b3a600
 
-PODFILE CHECKSUM: 46a9631d250412d1409de597114051615888e9db
+PODFILE CHECKSUM: 4ec11f8ac751b5179891a55d7bd38207214bdfb9
 
 COCOAPODS: 1.4.0

@@ -59,8 +59,8 @@ class SettingsComments: UITableViewController {
             SettingValues.disableColor = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_disableColor)
         } else if(changed == wideIndicator){
-            SettingValues.wideIndicator = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_wideIndicator)
+            SettingValues.wideIndicators = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_widerIndicators)
         } else if(changed == collapseDefault){
             SettingValues.collapseDefault = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_collapseDefault)
@@ -132,7 +132,7 @@ class SettingsComments: UITableViewController {
         createCell(swapLongPressCell, swapLongPress, isOn: SettingValues.swapLongPress, text: "Swap tap and long press actions")
         createCell(collapseFullyCell, collapseFully, isOn: SettingValues.collapseFully, text: "Collapse comments fully")
         createCell(highlightOpCell, highlightOp, isOn: SettingValues.highlightOp, text: "Highlight op replies of parent comments")
-        createCell(wideIndicatorCell, wideIndicator, isOn: SettingValues.wideIndicator, text: "Make comment depth indicator wider")
+        createCell(wideIndicatorCell, wideIndicator, isOn: SettingValues.wideIndicators, text: "Make comment depth indicator wider")
 
         self.tableView.tableFooterView = UIView()
     }

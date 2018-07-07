@@ -871,6 +871,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
         if (!SettingValues.disableNavigationBar) {
             navigationController?.setToolbarHidden(false, animated: true)
+            self.isToolbarHidden = false
         }
     }
 
@@ -1257,6 +1258,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     func updateToolbar() {
         navigationController?.setToolbarHidden(false, animated: false)
+        self.isToolbarHidden = false
         let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         var items: [UIBarButtonItem] = []
         if (!context.isEmpty()) {
@@ -1778,29 +1780,90 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
 
     var lastYUsed = CGFloat(0)
+    var isToolbarHidden = false
+    var isHiding = false
+    var lastY = CGFloat(0)
+    var oldY = CGFloat(0)
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-
-        /*   let currentY = scrollView.contentOffset.y;
-           let headerHeight = CGFloat(70);
-
-           if (currentY > lastYUsed && currentY > 0) {
-               hideUI(inHeader: (currentY > headerHeight))
-           } else if ((currentY < 70 || currentY < lastYUsed + 20)) {
-               showUI()
-           }
-           lastYUsed = currentY*/
-        //todo maybe turn this back on?
+        let currentY = scrollView.contentOffset.y
+        if(!SettingValues.pinToolbar){
+            if (currentY > lastYUsed && currentY > 60) {
+                if (navigationController != nil && !isHiding && !isToolbarHidden && !(scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height))) {
+                    hideUI(inHeader: true)
+                }
+            } else if ((currentY < lastYUsed + 20) && !isHiding && navigationController != nil && (isToolbarHidden)) {
+                showUI()
+            }
+        }
+        lastYUsed = currentY
+        lastY = currentY
     }
-
+    
     func hideUI(inHeader: Bool) {
-        (navigationController)?.setNavigationBarHidden(true, animated: true)
+        isHiding = true
+        if (single || !SettingValues.viewType) {
+            (navigationController)?.setNavigationBarHidden(true, animated: true)
+        }
+        
+        UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+            SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
+        }, completion: { finished in
+            SingleSubredditViewController.fab?.isHidden = true
+            self.isHiding = false
+        })
+        
+        if(!SettingValues.bottomBarHidden){
+            (self.navigationController)?.setToolbarHidden(true, animated: true)
+        }
+        self.isToolbarHidden = true
+        
+        if(!single){
+            if(AutoCache.progressView != nil){
+                oldY = AutoCache.progressView!.frame.origin.y
+                UIView.animate(withDuration: 0.25, delay: 0.0, options: UIViewAnimationOptions.curveEaseInOut, animations: {
+                    AutoCache.progressView!.frame.origin.y = self.view.frame.size.height - 56
+                },completion: nil)
+            }
+        }
     }
-
+    
     func showUI() {
-        (navigationController)?.setNavigationBarHidden(false, animated: true)
+        if (single || !SettingValues.viewType) {
+            (navigationController)?.setNavigationBarHidden(false, animated: true)
+        }
+        
+        if(!single && AutoCache.progressView != nil){
+            UIView.animate(withDuration: 0.25, delay: 0.0, options: UIViewAnimationOptions.curveEaseInOut, animations: {
+                AutoCache.progressView!.frame.origin.y = self.oldY
+            }, completion: { b in
+                SingleSubredditViewController.fab?.isHidden = false
+                
+                UIView.animate(withDuration: 0.25, delay: 0.25, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+                    SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
+                }, completion: { finished in
+                })
+                
+                if(!SettingValues.bottomBarHidden){
+                    (self.navigationController)?.setToolbarHidden(false, animated: true)
+                }
+                self.isToolbarHidden = false
+            })
+        } else {
+            SingleSubredditViewController.fab?.isHidden = false
+            
+            UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+                SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
+            }, completion: { finished in
+                
+            })
+            
+            if(!SettingValues.bottomBarHidden){
+                (navigationController)?.setToolbarHidden(false, animated: true)
+            }
+            self.isToolbarHidden = false
+        }
     }
-
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell: UITableViewCell! = nil

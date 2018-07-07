@@ -4,12 +4,12 @@
 //
 
 import UIKit
-import ActionSheetPicker_3_0
 import Alamofire
 import SwiftyJSON
 import Photos
 import MobileCoreServices
 import RLBAlertsPickers
+import ActionSheetPicker_3_0
 
 public class ToolbarTextView: NSObject {
 
