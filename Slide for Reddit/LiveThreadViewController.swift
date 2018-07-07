@@ -81,7 +81,7 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
         if (estimatedHeights[id] == nil) {
             let titleString = NSMutableAttributedString.init(string: data["author"] as! String, attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 14, submission: true)])
             
-            var content: CellContent?
+            var content: NSAttributedString?
             if (!(data["body_html"] as? String ?? "").isEmpty()) {
                 var html = (data["body_html"] as! String).gtm_stringByUnescapingFromHTML()!
                 html = html.trimmed()
@@ -91,9 +91,12 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
                     let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
                     let font = FontGenerator.fontOfSize(size: 16, submission: false)
                     let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: .white)
-                    content = CellContent.init(string: LinkParser.parse(attr2, .white), width: (width - 16))
+                    content = LinkParser.parse(attr2, .white)
                 } catch {
+                    content = NSAttributedString()
                 }
+            } else {
+                content = NSAttributedString()
             }
             var imageHeight = 0
             if(data["mobile_embeds"] != nil && !(data["mobile_embeds"] as? JSONArray)!.isEmpty){
@@ -107,7 +110,7 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
             let framesetterT = CTFramesetterCreateWithAttributedString(titleString)
             let textSizeT = CTFramesetterSuggestFrameSizeWithConstraints(framesetterT, CFRange(), nil, CGSize.init(width: itemWidth - 16, height: CGFloat.greatestFiniteMagnitude), nil)
             if (content != nil) {
-                let framesetterB = CTFramesetterCreateWithAttributedString(content!.attributedString)
+                let framesetterB = CTFramesetterCreateWithAttributedString(content!)
                 let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: itemWidth - 16, height: CGFloat.greatestFiniteMagnitude), nil)
                 
                 estimatedHeights[id] = CGFloat(34 + textSizeT.height + textSizeB.height + CGFloat(imageHeight))

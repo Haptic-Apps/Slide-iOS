@@ -85,7 +85,6 @@
 		BE3E5C171E16BC1A00749C0C /* String+util.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3E5C161E16BC1A00749C0C /* String+util.swift */; };
 		BE3E5C191E16BC3900749C0C /* StringHTML+util.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3E5C181E16BC3900749C0C /* StringHTML+util.swift */; };
 		BE3E5C1D1E177B2C00749C0C /* CommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3E5C1C1E177B2C00749C0C /* CommentViewController.swift */; };
-		BE3E5C1F1E18223600749C0C /* CellContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3E5C1E1E18223600749C0C /* CellContent.swift */; };
 		BE3E5C211E18227500749C0C /* CommentDepthCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3E5C201E18227500749C0C /* CommentDepthCell.swift */; };
 		BE42B6F320CE01BD00607A54 /* IAPHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE42B6F220CE01BD00607A54 /* IAPHandler.swift */; };
 		BE44B5841FFAC5FE00D3F6D5 /* BottomSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE44B5831FFAC5FE00D3F6D5 /* BottomSheetController.swift */; };
@@ -310,7 +309,6 @@
 		BE3E5C161E16BC1A00749C0C /* String+util.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+util.swift"; sourceTree = "<group>"; };
 		BE3E5C181E16BC3900749C0C /* StringHTML+util.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "StringHTML+util.swift"; sourceTree = "<group>"; };
 		BE3E5C1C1E177B2C00749C0C /* CommentViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentViewController.swift; sourceTree = "<group>"; };
-		BE3E5C1E1E18223600749C0C /* CellContent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CellContent.swift; sourceTree = "<group>"; };
 		BE3E5C201E18227500749C0C /* CommentDepthCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentDepthCell.swift; sourceTree = "<group>"; };
 		BE42B6F220CE01BD00607A54 /* IAPHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPHandler.swift; sourceTree = "<group>"; };
 		BE44B5831FFAC5FE00D3F6D5 /* BottomSheetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheetController.swift; sourceTree = "<group>"; };
@@ -694,7 +692,6 @@
 				BE8FCA0E1E0C46090063B8EF /* Assets.xcassets */,
 				BE44B5831FFAC5FE00D3F6D5 /* BottomSheetController.swift */,
 				BE44B5861FFAC66100D3F6D5 /* BSCell.xib */,
-				BE3E5C1E1E18223600749C0C /* CellContent.swift */,
 				B776B21CFB79FA354C296037 /* ColorMuxPagingViewController.swift */,
 				BE2B89F21E2450D70053D493 /* ColorPicker.swift */,
 				BE3E5C0B1E160D7000749C0C /* ColorUtil.swift */,
@@ -1298,7 +1295,6 @@
 				BE7AF5781F363A7C0003B24B /* ShadowboxViewController.swift in Sources */,
 				BE3521701E3D238400C30B8D /* FontGenerator.swift in Sources */,
 				BE2B89F71E246CA60053D493 /* GMPalette.swift in Sources */,
-				BE3E5C1F1E18223600749C0C /* CellContent.swift in Sources */,
 				BE780B5E1E32B41300DAA1EB /* SubredditThemeViewController.swift in Sources */,
 				BE1DA39C1E26E86800EC0A04 /* OverlayTransitioningDelegate.swift in Sources */,
 				BE3E5C151E16BA2200749C0C /* AlbumJSONBase.swift in Sources */,

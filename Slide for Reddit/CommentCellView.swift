@@ -102,7 +102,7 @@ class CommentCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate,
         self.contentView.frame = fr
     }
 
-    var content: CellContent?
+    var content: NSAttributedString?
     var hasText = false
     
     var full = false
@@ -110,7 +110,10 @@ class CommentCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate,
     
     func estimateHeight() ->CGFloat {
         if(estimatedHeight == 0){
-            estimatedHeight =  CGFloat(24) + CGFloat(!hasText ? 0 : (content?.textHeight)!)
+            let framesetterB = CTFramesetterCreateWithAttributedString(content!)
+            let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: width - 16, height: CGFloat.greatestFiniteMagnitude), nil)
+
+            estimatedHeight =  CGFloat(24) + CGFloat(!hasText ? 0 : textSizeB.height)
         }
         return estimatedHeight
     }
@@ -246,9 +249,11 @@ class CommentCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate,
                 let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
                 let font = FontGenerator.fontOfSize(size: 16, submission: false)
                 let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: accent)
-                content = CellContent.init(string:LinkParser.parse(attr2, accent), width:(width - 16))
-                textView.attributedString = content?.attributedString
-                textView.frame.size.height = (content?.textHeight)!
+                content = LinkParser.parse(attr2, accent)
+                textView.attributedString = content
+                let framesetterB = CTFramesetterCreateWithAttributedString(content!)
+                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: width - 16, height: CGFloat.greatestFiniteMagnitude), nil)
+                textView.frame.size.height = textSizeB.height
                 hasText = true
             } catch {
             }

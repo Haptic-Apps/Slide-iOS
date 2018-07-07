@@ -1037,7 +1037,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
     }
 
-    func updateStringSearch(_ thing: Thing) -> CellContent {
+    func updateStringSearch(_ thing: Thing) -> NSAttributedString {
         let width = self.view.frame.size.width
         let color = ColorUtil.accentColorForSub(sub: (thing as! RComment).subreddit)
         if let comment = thing as? Comment {
@@ -1058,15 +1058,15 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 let font = FontGenerator.fontOfSize(size: 16, submission: false)
                 let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
 
-                return CellContent.init(string: LinkParser.parse(attr2, color), width: (width - 25), hasRelies: false, id: comment.getId())
+                return LinkParser.parse(attr2, color)
             } catch {
-                return CellContent(string: NSAttributedString(string: ""), width: width - 25, hasRelies: false, id: thing.getId())
+                return NSAttributedString(string: "")
             }
         } else {
             let attr = NSMutableAttributedString(string: "more")
             let font = FontGenerator.fontOfSize(size: 16, submission: false)
             let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
-            return CellContent.init(string: LinkParser.parse(attr2, color), width: (width - 25), hasRelies: false, id: thing.getId())
+            return  LinkParser.parse(attr2, color)
         }
     }
 
@@ -1812,7 +1812,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             }
         }
 
-        var datasetPosition = (indexPath as NSIndexPath).row;
+        var datasetPosition = (indexPath as NSIndexPath).row
 
         if (menuShown) {
             if (datasetPosition >= menuIndex) {

@@ -310,10 +310,10 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
     }
 
 
-    var content: CellContent?
+    var content: NSAttributedString?
     var textHeight: CGFloat = 0
     var descHeight: CGFloat = 0
-    var contentInfo: CellContent?
+    var contentInfo: NSAttributedString?
     var parentController: MediaViewController?
 
     func setSubreddit(subreddit: Subreddit, parent: MediaViewController, _ width: CGFloat) {
@@ -360,9 +360,12 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
                 let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
                 let font = FontGenerator.fontOfSize(size: 16, submission: false)
                 let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: ColorUtil.accentColorForSub(sub: subreddit.displayName))
-                contentInfo = CellContent.init(string: LinkParser.parse(attr2, ColorUtil.accentColorForSub(sub: subreddit.displayName)), width: setWidth - 24)
-                info.attributedString = contentInfo?.attributedString
-                descHeight = (contentInfo?.textHeight)!
+                contentInfo = LinkParser.parse(attr2, ColorUtil.accentColorForSub(sub: subreddit.displayName))
+                info.attributedString = contentInfo
+                let framesetterB = CTFramesetterCreateWithAttributedString(contentInfo!)
+                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: setWidth - 24, height: CGFloat.greatestFiniteMagnitude), nil)
+
+                descHeight = (textSizeB.height)
             } catch {
 
             }

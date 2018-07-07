@@ -99,7 +99,7 @@ class MessageCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate,
         self.contentView.frame = fr
     }
 
-    var content: CellContent?
+    var content: NSAttributedString?
     var hasText = false
 
     var full = false
@@ -107,7 +107,9 @@ class MessageCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate,
 
     func estimateHeight() -> CGFloat {
         if (estimatedHeight == 0) {
-            estimatedHeight = CGFloat(24) + CGFloat(!hasText ? 0 : (content?.textHeight)!)
+            let framesetterB = CTFramesetterCreateWithAttributedString(content!)
+            let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: width - 16 - (message!.subject.hasPrefix("re:") ? 22 : 0), height: CGFloat.greatestFiniteMagnitude), nil)
+            estimatedHeight = CGFloat(24) + CGFloat(!hasText ? 0 : textSizeB.height)
         }
         return estimatedHeight
     }
@@ -202,9 +204,9 @@ class MessageCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate,
             let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
             let font = FontGenerator.fontOfSize(size: 16, submission: false)
             let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: accent)
-            content = CellContent.init(string: LinkParser.parse(attr2, ColorUtil.accentColorForSub(sub: "")), width: (width - 16 - (message.subject.hasPrefix("re:") ? 30 : 0)))
-            textView.attributedString = content?.attributedString
-            let framesetterB = CTFramesetterCreateWithAttributedString(content!.attributedString)
+            content = LinkParser.parse(attr2, ColorUtil.accentColorForSub(sub: ""))
+            textView.attributedString = content
+            let framesetterB = CTFramesetterCreateWithAttributedString(content!)
             let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: width - 16 - (message.subject.hasPrefix("re:") ? 22 : 0), height: CGFloat.greatestFiniteMagnitude), nil)
 
             textView.frame.size.height = textSizeB.height
@@ -214,7 +216,7 @@ class MessageCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate,
         parentViewController?.registerForPreviewing(with: self, sourceView: textView)
 
 
-        let metrics = ["height": content?.textHeight] as [String: Any]
+        let metrics = ["height": textView.frame.size.height] as [String: Any]
         let views = ["label": title, "body": textView, "info": info] as [String: Any]
         if(!lsC.isEmpty){
             self.contentView.removeConstraints(lsC)

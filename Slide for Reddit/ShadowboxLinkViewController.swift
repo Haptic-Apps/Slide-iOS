@@ -376,10 +376,13 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
                     let attr = html.toAttributedString()!
                     let font = FontGenerator.fontOfSize(size: 16, submission: false)
                     let attr2 = attr.reconstruct(with: font, color: .white, linkColor: color)
-                    var content = CellContent.init(string: LinkParser.parse(attr2, color), width: self.scrollView.frame.size.width - 10)
+                    var content = LinkParser.parse(attr2, color)
+                    let framesetterB = CTFramesetterCreateWithAttributedString(content)
+                    let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: self.scrollView.frame.size.width - 10, height: CGFloat.greatestFiniteMagnitude), nil)
+                    
                     let activeLinkAttributes = NSMutableDictionary(dictionary: body.activeLinkAttributes)
                     activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.accentColorForSub(sub: submission.subreddit)
-                    body = TTTAttributedLabel.init(frame: CGRect.init(x: 5, y: 5, width: self.scrollView.frame.size.width - 10, height: content.textHeight))
+                    body = TTTAttributedLabel.init(frame: CGRect.init(x: 5, y: 5, width: self.scrollView.frame.size.width - 10, height: textSizeB.height))
                     body.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
                     body.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
                     body.numberOfLines = 0
@@ -387,7 +390,7 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
                     body.backgroundColor = .clear
 
                     body.delegate = self
-                    body.setText(content.attributedString)
+                    body.setText(content)
                     scrollView.addSubview(body)
                     self.scrollView.contentSize = body.frame.size
                     self.scrollView.frame = CGRect.init(x: 0, y: 56, width: self.view.frame.size.width, height: self.view.frame.size.height - 56 - estHeight - 50)

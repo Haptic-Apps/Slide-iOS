@@ -99,7 +99,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var loadedImage: URL?
     var lq = false
 
-    var content: CellContent?
+    var content: NSAttributedString?
     var hasText = false
 
     var full = false
@@ -600,20 +600,21 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         let color = ColorUtil.accentColorForSub(sub: ((link).subreddit))
         if (!link.htmlBody.isEmpty) {
             var html = link.htmlBody.trimmed()
-
             html = WrapSpoilers.addSpoilers(html)
             html = WrapSpoilers.addTables(html)
             let attr = html.toAttributedString()!
             let font = FontGenerator.fontOfSize(size: 16, submission: false)
             let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
-            content = CellContent.init(string: LinkParser.parse(attr2, color), width: (width - 24 - (thumb ? 75 : 0)))
+            content =  LinkParser.parse(attr2, color)
             let activeLinkAttributes = NSMutableDictionary(dictionary: title.activeLinkAttributes)
             activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.accentColorForSub(sub: link.subreddit)
             textView.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
             textView.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
 
             textView.delegate = self
-            textView.setText(content?.attributedString)
+            print("Printing")
+            print(content)
+            textView.setText(content)
             hasText = true
 
             parentViewController?.registerForPreviewing(with: self, sourceView: textView)
@@ -1385,10 +1386,19 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             }
 
             let actionbar = CGFloat(!full && SettingValues.actionBarMode != .FULL ? 0 : 24)
+            let ctwelve = CGFloat(SettingValues.postViewMode == .COMPACT ? 8 : 12)
 
             var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
             let thumbheight = (full || SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50))  - (!full && SettingValues.postViewMode == .COMPACT ? 15 : 0)
-            let textHeight = (!hasText || !full) ? CGFloat(0) : CGFloat((content?.textHeight)!)
+            
+            var height = CGFloat(0)
+            if(content != nil){
+                let framesetterB = CTFramesetterCreateWithAttributedString(content!)
+                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: aspectWidth - ctwelve * 2, height: CGFloat.greatestFiniteMagnitude), nil)
+                height = textSizeB.height
+            }
+
+            let textHeight = (!hasText || !full) ? CGFloat(0) : height
 
             if(thumb){
                 imageHeight = thumbheight

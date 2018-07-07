@@ -377,7 +377,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
 
                     let titleString = NSMutableAttributedString.init(string: comment.submissionTitle, attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 18, submission: false)])
 
-                    var content: CellContent?
+                    var content: NSAttributedString?
                     if (!comment.body.isEmpty()) {
                         var html = comment.htmlText
                         do {
@@ -386,7 +386,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                             let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
                             let font = FontGenerator.fontOfSize(size: 16, submission: false)
                             let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: .white)
-                            content = CellContent.init(string: LinkParser.parse(attr2, .white), width: (width - 16))
+                            content = LinkParser.parse(attr2, .white)
                         } catch {
                         }
                     }
@@ -395,7 +395,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     let framesetterI = CTFramesetterCreateWithAttributedString(infoString)
                     let textSizeI = CTFramesetterSuggestFrameSizeWithConstraints(framesetterI, CFRange(), nil, CGSize.init(width: itemWidth - 16, height: CGFloat.greatestFiniteMagnitude), nil)
                     if (content != nil) {
-                        let framesetterB = CTFramesetterCreateWithAttributedString(content!.attributedString)
+                        let framesetterB = CTFramesetterCreateWithAttributedString(content!)
                         let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: itemWidth - 16, height: CGFloat.greatestFiniteMagnitude), nil)
 
                         estimatedHeights[comment.id] = CGFloat(24 + textSizeT.height + textSizeI.height + textSizeB.height)
@@ -430,13 +430,13 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     }
 
                     let html = message.htmlBody
-                    var content: CellContent?
+                    var content: NSMutableAttributedString?
                     if (!html.isEmpty()) {
                         do {
                             let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
                             let font = FontGenerator.fontOfSize(size: 16, submission: false)
                             let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: .white)
-                            content = CellContent.init(string: LinkParser.parse(attr2, .white), width: (width - 16 - (message.subject.hasPrefix("re:") ? 30 : 0)))
+                            content =  LinkParser.parse(attr2, .white)
                         } catch {
                         }
                     }
@@ -446,7 +446,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     let framesetterI = CTFramesetterCreateWithAttributedString(infoString)
                     let textSizeI = CTFramesetterSuggestFrameSizeWithConstraints(framesetterI, CFRange(), nil, CGSize.init(width: itemWidth - 16 - (message.subject.hasPrefix("re:") ? 22 : 0), height: CGFloat.greatestFiniteMagnitude), nil)
                     if (content != nil) {
-                        let framesetterB = CTFramesetterCreateWithAttributedString(content!.attributedString)
+                        let framesetterB = CTFramesetterCreateWithAttributedString(content!)
                         let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: itemWidth - 16 - (message.subject.hasPrefix("re:") ? 22 : 0), height: CGFloat.greatestFiniteMagnitude), nil)
 
                         estimatedHeights[message.id] = CGFloat(24 + textSizeT.height + textSizeI.height + textSizeB.height)
