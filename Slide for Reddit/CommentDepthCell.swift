@@ -911,7 +911,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         if(depth == 1){
             marginTop = 8
         }
-        let font = FontGenerator.fontOfSize(size: 12, submission: false)
+        let font = FontGenerator.fontOfSize(size: 14, submission: false)
 
         var attr = NSMutableAttributedString()
         if (more.children.isEmpty) {
@@ -920,6 +920,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
             attr = NSMutableAttributedString(string: "Load \(more.count) more", attributes: [NSFontAttributeName: font])
         }
         let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: .white)
+        
         title.setText(attr2)
         updateDepthConstraints()
     }

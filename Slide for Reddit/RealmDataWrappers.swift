@@ -377,7 +377,11 @@ class RealmDataWrapper {
     //Takes a More from reddift and turns it into a Realm model
     static func moreToRMore(more: More) -> RMore {
         let rMore = RMore()
-        rMore.id = more.getId()
+        if(more.getId().endsWith("_")){
+            rMore.id = "more_\(NSUUID().uuidString)"
+        } else {
+            rMore.id = more.getId()
+        }
         rMore.name = more.name
         rMore.parentId = more.parentId
         rMore.count = more.count

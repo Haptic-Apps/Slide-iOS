@@ -315,7 +315,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     func doArrays() {
         dataArray = comments.filter({ (s) -> Bool in
-            !hidden.contains(s)
+            if(!hidden.contains(s)){
+                return true
+            }
+            return false
         })
     }
 
@@ -462,14 +465,14 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                 self.comments.append(item.getIdentifier())
                                 if (item is RComment) {
                                     self.submission!.comments.append(item as! RComment)
-                                }
+                                } 
                                 if (i.1 == 1 && item is RComment) {
                                     currentOP = (item as! RComment).author
                                 }
-                                self.parents[i.0.getId()] = currentOP
+                                self.parents[item.getIdentifier()] = currentOP
                                 currentIndex += 1
 
-                                self.cDepth[i.0.getId()] = i.1
+                                self.cDepth[item.getIdentifier()] = i.1
                             }
                         }
 
@@ -545,7 +548,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                                             self.goToCell(i: index)
                                             var cell = self.tableView(self.tableView, cellForRowAt: IndexPath.init(row: index, section: 0))
-                                            print(cell)
                                             self.showCommentMenu(cell as! CommentDepthCell)
                                         }
                                         break
@@ -1395,7 +1397,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
     }
 
-
     func hideAll(comment: String, i: Int) {
         if (!isCurrentlyChanging) {
             isCurrentlyChanging = true
@@ -1819,6 +1820,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 datasetPosition -= 1
             }
         }
+    
         let thing = isSearching ? filteredData[datasetPosition] : dataArray[datasetPosition]
         let parentOP = parents[(content[thing] as! Object).getIdentifier()]
 
@@ -2048,9 +2050,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     let datasetPosition = tableView.indexPath(for: cell)!.row
                     if let more = content[dataArray[datasetPosition]] as? RMore, let link = self.submission {
                         if (more.children.isEmpty) {
-                            let url = URL.init(string: "https://www.reddit.com" + submission!.permalink + more.parentId.substring(3, length: more.parentId.length - 3))
-                            print(url!.absoluteString)
-                            show(RedditLink.getViewControllerForURL(urlS: url!), sender: self)
+                            VCPresenter.openRedditLink("https://www.reddit.com" + submission!.permalink + more.parentId.substring(3, length: more.parentId.length - 3), self.navigationController, self)
                         } else {
                             do {
                                 var strings: [String] = []
