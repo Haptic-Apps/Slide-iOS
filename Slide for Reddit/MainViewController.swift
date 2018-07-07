@@ -56,6 +56,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
         if(!SettingValues.bottomBarHidden){
             navigationController?.setToolbarHidden(false, animated: false)
+        } else {
+            navigationController?.setToolbarHidden(true, animated: false)
         }
 
         if(SettingValues.viewType){

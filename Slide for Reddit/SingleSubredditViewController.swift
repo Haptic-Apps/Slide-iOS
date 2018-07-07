@@ -10,7 +10,6 @@ import UIKit
 import reddift
 import SDWebImage
 import SideMenu
-import UZTextView
 import RealmSwift
 import MaterialComponents.MDCActivityIndicator
 import MaterialComponents.MaterialBottomSheet
@@ -188,7 +187,10 @@ class SingleSubredditViewController: MediaViewController {
             navigationController?.setToolbarHidden(false, animated: false)
             self.isToolbarHidden = false
             setupFab()
+        } else {
+            navigationController?.setToolbarHidden(true, animated: false)
         }
+
     }
 
     override func viewWillLayoutSubviews() {
@@ -249,7 +251,7 @@ class SingleSubredditViewController: MediaViewController {
                 if (navigationController != nil && !isHiding && !isToolbarHidden && !(scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height))) {
                     hideUI(inHeader: true)
                 }
-            } else if ((currentY < lastYUsed + 20) && !isHiding && navigationController != nil && (navigationController!.isToolbarHidden)) {
+            } else if ((currentY < lastYUsed + 20) && !isHiding && navigationController != nil && (isToolbarHidden)) {
                 showUI()
             }
         }

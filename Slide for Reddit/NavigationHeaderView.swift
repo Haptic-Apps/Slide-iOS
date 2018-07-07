@@ -1,5 +1,5 @@
 //
-//  UZTextViewCell.swift
+//  NavigationHeaderView.swift
 //  Slide for Reddit
 //
 //  Created by Carlos Crane on 1/6/17.

@@ -8,7 +8,6 @@
 
 import UIKit
 import reddift
-import UZTextView
 import TTTAttributedLabel
 
 

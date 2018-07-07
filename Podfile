@@ -29,7 +29,6 @@ target 'Slide for Reddit' do
   pod 'MaterialComponents/Tabs'
   pod 'RLBAlertsPickers', :git => 'https://github.com/ccrama/Alerts-Pickers'
   pod 'SloppySwiper', :git => 'https://github.com/fastred/SloppySwiper'
-  pod 'UZTextView', :git => 'https://github.com/ccrama/UZTextView'
   pod 'TTTAttributedLabel'
   pod 'Alamofire', '~> 4.3'
   pod 'SwiftyJSON'

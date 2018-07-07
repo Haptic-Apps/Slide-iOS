@@ -9,82 +9,19 @@
 
 import UIKit
 import reddift
-import UZTextView
+import TTTAttributedLabel
 import AudioToolbox
 import XLActionController
 
-class MessageCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UIGestureRecognizerDelegate, UZTextViewDelegate {
+class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAttributedLabelDelegate {
 
     var title = UILabel()
-    var textView = UZTextView()
+    var textView = TTTAttributedLabel.init(frame: CGRect.zero)
     var info = UILabel()
     var single = false
 
-    func textView(_ textView: UZTextView, didLongTapLinkAttribute value: Any?) {
-        if let attr = value as? [String: Any] {
-            if let url = attr[NSLinkAttributeName] as? URL {
-                if parentViewController != nil {
-                    let sheet = UIAlertController(title: url.absoluteString, message: nil, preferredStyle: .actionSheet)
-                    sheet.addAction(
-                            UIAlertAction(title: "Close", style: .cancel) { (action) in
-                                sheet.dismiss(animated: true, completion: nil)
-                            }
-                    )
-                    let open = OpenInChromeController.init()
-                    if (open.isChromeInstalled()) {
-                        sheet.addAction(
-                                UIAlertAction(title: "Open in Chrome", style: .default) { (action) in
-                                    open.openInChrome(url, callbackURL: nil, createNewTab: true)
-                                }
-                        )
-                    }
-                    sheet.addAction(
-                            UIAlertAction(title: "Open in Safari", style: .default) { (action) in
-                                if #available(iOS 10.0, *) {
-                                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                                } else {
-                                    UIApplication.shared.openURL(url)
-                                }
-                                sheet.dismiss(animated: true, completion: nil)
-                            }
-                    )
-                    sheet.addAction(
-                            UIAlertAction(title: "Open", style: .default) { (action) in
-                                /* let controller = WebViewController(nibName: nil, bundle: nil)
-                                 controller.url = url
-                                 let nav = UINavigationController(rootViewController: controller)
-                                 self.present(nav, animated: true, completion: nil)*/
-                            }
-                    )
-                    sheet.addAction(
-                            UIAlertAction(title: "Copy URL", style: .default) { (action) in
-                                UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
-                                sheet.dismiss(animated: true, completion: nil)
-                            }
-                    )
-                    //todo make this work on ipad
-                    parentViewController?.present(sheet, animated: true, completion: nil)
-                }
-            }
-        }
-    }
-
-    func selectionDidEnd(_ textView: UZTextView) {
-    }
-
-    func selectionDidBegin(_ textView: UZTextView) {
-    }
-
-    func didTapTextDoesNotIncludeLinkTextView(_ textView: UZTextView) {
-    }
-
-
-    func textView(_ textView: UZTextView, didClickLinkAttribute value: Any?) {
-        if let attr = value as? [String: Any] {
-            if let url = attr[NSLinkAttributeName] as? URL {
-                parentViewController?.doShow(url: url)
-            }
-        }
+    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
+        parentViewController?.doShow(url: url)
     }
     
     override func layoutSubviews() {
@@ -124,9 +61,10 @@ class MessageCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate,
         title.font = FontGenerator.fontOfSize(size: 18, submission: true)
         title.textColor = ColorUtil.fontColor
 
-        self.textView = UZTextView(frame: CGRect(x: 0, y: 0, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
+        self.textView = TTTAttributedLabel(frame: CGRect(x: 0, y: 0, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
         self.textView.delegate = self
         self.textView.isUserInteractionEnabled = true
+        self.textView.numberOfLines = 0
         self.textView.backgroundColor = .clear
 
         self.info = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
@@ -205,7 +143,7 @@ class MessageCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate,
             let font = FontGenerator.fontOfSize(size: 16, submission: false)
             let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: accent)
             content = LinkParser.parse(attr2, ColorUtil.accentColorForSub(sub: ""))
-            textView.attributedString = content
+            textView.setText(content)
             let framesetterB = CTFramesetterCreateWithAttributedString(content!)
             let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: width - 16 - (message.subject.hasPrefix("re:") ? 22 : 0), height: CGFloat.greatestFiniteMagnitude), nil)
 
@@ -213,7 +151,6 @@ class MessageCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate,
             hasText = true
         } catch {
         }
-        parentViewController?.registerForPreviewing(with: self, sourceView: textView)
 
 
         let metrics = ["height": textView.frame.size.height] as [String: Any]
@@ -345,61 +282,7 @@ class MessageCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate,
 
     var registered: Bool = false
     var currentLink: URL?
-
-    func previewingContext(_ previewingContext: UIViewControllerPreviewing,
-                           viewControllerForLocation location: CGPoint) -> UIViewController? {
-        let locationInTextView = textView.convert(location, to: textView)
-
-        if let (url, rect) = getInfo(locationInTextView: locationInTextView) {
-            currentLink = url
-            previewingContext.sourceRect = textView.convert(rect, from: textView)
-            if let controller = parentViewController?.getControllerForUrl(baseUrl: url) {
-                return controller
-            }
-        }
-
-        return nil
-    }
-
-    var previewActionItems: [UIPreviewActionItem] {
-
-        var toReturn: [UIPreviewAction] = []
-
-        let likeAction = UIPreviewAction(title: "Share", style: .default) { (action, viewController) -> Void in
-            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [self.currentLink ?? ""], applicationActivities: nil);
-            let currentViewController: UIViewController = UIApplication.shared.keyWindow!.rootViewController!
-            currentViewController.present(activityViewController, animated: true, completion: nil);
-        }
-        toReturn.append(likeAction)
-
-        let deleteAction = UIPreviewAction(title: "Open in Safari", style: .default) { (action, viewController) -> Void in
-            if #available(iOS 10.0, *) {
-                UIApplication.shared.open(self.currentLink!, options: [:], completionHandler: nil)
-            } else {
-                UIApplication.shared.openURL(self.currentLink!)
-            }
-        }
-        toReturn.append(deleteAction)
-
-        return toReturn
-
-    }
-
-    func getInfo(locationInTextView: CGPoint) -> (URL, CGRect)? {
-        if let attr = textView.attributes(at: locationInTextView) {
-            if let url = attr[NSLinkAttributeName] as? URL,
-               let value = attr[UZTextViewClickedRect] as? CGRect {
-                return (url, value)
-            }
-        }
-        return nil
-    }
-
-
-    func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
-        parentViewController?.show(viewControllerToCommit, sender: parentViewController)
-    }
-
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

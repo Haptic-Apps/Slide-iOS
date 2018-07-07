@@ -9,85 +9,18 @@
 
 import UIKit
 import reddift
-import UZTextView
+import TTTAttributedLabel
 
-class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, UZTextViewDelegate {
+class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAttributedLabelDelegate {
     
     var title = UILabel()
-    var textView = UZTextView()
+    var textView = TTTAttributedLabel.init(frame: CGRect.zero)
     var info = UILabel()
     var image = UIImageView()
     
-    func textView(_ textView: UZTextView, didLongTapLinkAttribute value: Any?) {
-        if let attr = value as? [String: Any] {
-            if let url = attr[NSLinkAttributeName] as? URL {
-                if parentViewController != nil{
-                    let sheet = UIAlertController(title: url.absoluteString, message: nil, preferredStyle: .actionSheet)
-                    sheet.addAction(
-                        UIAlertAction(title: "Close", style: .cancel) { (action) in
-                            sheet.dismiss(animated: true, completion: nil)
-                        }
-                    )
-                    let open = OpenInChromeController.init()
-                    if(open.isChromeInstalled()){
-                        sheet.addAction(
-                            UIAlertAction(title: "Open in Chrome", style: .default) { (action) in
-                                open.openInChrome(url, callbackURL: nil, createNewTab: true)
-                            }
-                        )
-                    }
-                    sheet.addAction(
-                        UIAlertAction(title: "Open in Safari", style: .default) { (action) in
-                            if #available(iOS 10.0, *) {
-                                UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                            } else {
-                                UIApplication.shared.openURL(url)
-                            }
-                            sheet.dismiss(animated: true, completion: nil)
-                        }
-                    )
-                    sheet.addAction(
-                        UIAlertAction(title: "Open", style: .default) { (action) in
-                            /* let controller = WebViewController(nibName: nil, bundle: nil)
-                             controller.url = url
-                             let nav = UINavigationController(rootViewController: controller)
-                             self.present(nav, animated: true, completion: nil)*/
-                        }
-                    )
-                    sheet.addAction(
-                        UIAlertAction(title: "Copy URL", style: .default) { (action) in
-                            UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
-                            sheet.dismiss(animated: true, completion: nil)
-                        }
-                    )
-                    sheet.modalPresentationStyle = .popover
-                    if let presenter = sheet.popoverPresentationController {
-                        presenter.sourceView = textView
-                        presenter.sourceRect = textView.bounds
-                    }
-                    
-                    parentViewController?.present(sheet, animated: true, completion: nil)
-                }
-            }
-        }
-    }
     
-    func selectionDidEnd(_ textView: UZTextView) {
-    }
-    
-    func selectionDidBegin(_ textView: UZTextView) {
-    }
-    
-    func didTapTextDoesNotIncludeLinkTextView(_ textView: UZTextView) {
-    }
-    
-    
-    func textView(_ textView: UZTextView, didClickLinkAttribute value: Any?) {
-        if let attr = value as? [String: Any] {
-            if let url = attr[NSLinkAttributeName] as? URL {
-                parentViewController?.doShow(url: url)
-            }
-        }
+    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
+        parentViewController?.doShow(url: url)
     }
     
     override func layoutSubviews() {
@@ -129,7 +62,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, UZTex
         
         title.textColor = ColorUtil.fontColor
         
-        self.textView = UZTextView(frame: CGRect(x: 0, y: 0, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
+        self.textView = TTTAttributedLabel(frame: CGRect(x: 0, y: 0, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
         self.textView.delegate = self
         self.textView.isUserInteractionEnabled = true
         self.textView.backgroundColor = .clear
@@ -243,7 +176,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, UZTex
                     let framesetterB = CTFramesetterCreateWithAttributedString(content!)
                     let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: width - 16, height: CGFloat.greatestFiniteMagnitude), nil)
 
-                    textView.attributedString = content
+                    textView.setText(content)
                     textView.frame.size.height = textSizeB.height
                     hasText = true
                 } catch {

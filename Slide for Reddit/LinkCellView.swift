@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import UZTextView
 import TTTAttributedLabel
 import MaterialComponents
 import AudioToolbox

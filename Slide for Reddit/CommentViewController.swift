@@ -17,7 +17,7 @@ import XLActionController
 import RLBAlertsPickers
 import Anchorage
 
-class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, UZTextViewCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate, TTTAttributedLabelDelegate, ReplyDelegate, SubmissionMoreDelegate {
+class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate, TTTAttributedLabelDelegate, ReplyDelegate, SubmissionMoreDelegate {
 
     func showFilterMenu(_ cell: LinkCellView) {
         //Not implemented

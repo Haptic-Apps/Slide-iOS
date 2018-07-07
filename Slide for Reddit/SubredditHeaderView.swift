@@ -8,14 +8,14 @@
 
 import UIKit
 import reddift
-import UZTextView
+import TTTAttributedLabel
 
-class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewingDelegate {
+class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
 
     var back: UILabel = UILabel()
     var subscribers: UILabel = UILabel()
     var here: UILabel = UILabel()
-    var info: UZTextView = UZTextView()
+    var info: TTTAttributedLabel = TTTAttributedLabel(frame: CGRect.zero)
 
     var submit = UITableViewCell()
     var sorting = UITableViewCell()
@@ -127,7 +127,7 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
         self.mods.layer.cornerRadius = 5
         self.mods.clipsToBounds = true
 
-        self.info = UZTextView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
+        self.info = TTTAttributedLabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
         self.info.delegate = self
         self.info.isUserInteractionEnabled = true
         self.info.backgroundColor = .clear
@@ -361,7 +361,7 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
                 let font = FontGenerator.fontOfSize(size: 16, submission: false)
                 let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: ColorUtil.accentColorForSub(sub: subreddit.displayName))
                 contentInfo = LinkParser.parse(attr2, ColorUtil.accentColorForSub(sub: subreddit.displayName))
-                info.attributedString = contentInfo
+                info.setText(contentInfo)
                 let framesetterB = CTFramesetterCreateWithAttributedString(contentInfo!)
                 let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: setWidth - 24, height: CGFloat.greatestFiniteMagnitude), nil)
 
@@ -369,7 +369,6 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
             } catch {
 
             }
-            parentController?.registerForPreviewing(with: self, sourceView: info)
         }
 
         updateConstraints()
@@ -432,104 +431,10 @@ class SubredditHeaderView: UIView, UZTextViewDelegate, UIViewControllerPreviewin
     func getEstHeight() -> CGFloat {
         return CGFloat(86) + ((contentInfo == nil) ? 0 : descHeight) + (50 * 5)
     }
-
-
-    func textView(_ textView: UZTextView, didLongTapLinkAttribute value: Any?) {
-        if let attr = value as? [String: Any] {
-            if let url = attr[NSLinkAttributeName] as? URL {
-                if parentController != nil {
-                    let sheet = UIAlertController(title: url.absoluteString, message: nil, preferredStyle: .actionSheet)
-                    sheet.addAction(
-                            UIAlertAction(title: "Close", style: .cancel) { (action) in
-                                sheet.dismiss(animated: true, completion: nil)
-                            }
-                    )
-                    let open = OpenInChromeController.init()
-                    if (open.isChromeInstalled()) {
-                        sheet.addAction(
-                                UIAlertAction(title: "Open in Chrome", style: .default) { (action) in
-                                    open.openInChrome(url, callbackURL: nil, createNewTab: true)
-                                }
-                        )
-                    }
-                    sheet.addAction(
-                            UIAlertAction(title: "Open in Safari", style: .default) { (action) in
-                                if #available(iOS 10.0, *) {
-                                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                                } else {
-                                    UIApplication.shared.openURL(url)
-                                }
-                                sheet.dismiss(animated: true, completion: nil)
-                            }
-                    )
-                    sheet.addAction(
-                            UIAlertAction(title: "Open", style: .default) { (action) in
-                                /* let controller = WebViewController(nibName: nil, bundle: nil)
-                                 controller.url = url
-                                 let nav = UINavigationController(rootViewController: controller)
-                                 self.present(nav, animated: true, completion: nil)*/
-                            }
-                    )
-                    sheet.addAction(
-                            UIAlertAction(title: "Copy URL", style: .default) { (action) in
-                                UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
-                                sheet.dismiss(animated: true, completion: nil)
-                            }
-                    )
-                    //todo make this work on ipad
-                    parentController?.present(sheet, animated: true, completion: nil)
-                }
-            }
-        }
+    
+    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
+        parentController?.doShow(url: url)
     }
-
-    func textView(_ textView: UZTextView, didClickLinkAttribute value: Any?) {
-        if ((parentController) != nil) {
-            if let attr = value as? [String: Any] {
-                if let url = attr[NSLinkAttributeName] as? URL {
-                    parentController?.doShow(url: url)
-                }
-            }
-        }
-    }
-
-    func selectionDidEnd(_ textView: UZTextView) {
-    }
-
-    func selectionDidBegin(_ textView: UZTextView) {
-    }
-
-    func didTapTextDoesNotIncludeLinkTextView(_ textView: UZTextView) {
-    }
-
-    func previewingContext(_ previewingContext: UIViewControllerPreviewing,
-                           viewControllerForLocation location: CGPoint) -> UIViewController? {
-        let locationInTextView = info.convert(location, to: info)
-
-        if let (url, rect) = getInfo(locationInTextView: locationInTextView) {
-            previewingContext.sourceRect = info.convert(rect, from: info)
-            if let controller = parentController?.getControllerForUrl(baseUrl: url) {
-                return controller
-            }
-        }
-        return nil
-    }
-
-    func getInfo(locationInTextView: CGPoint) -> (URL, CGRect)? {
-        if let attr = info.attributes(at: locationInTextView) {
-            if let url = attr[NSLinkAttributeName] as? URL,
-               let value = attr[UZTextViewClickedRect] as? CGRect {
-                return (url, value)
-            }
-        }
-        return nil
-    }
-
-
-    func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
-        parentController?.show(viewControllerToCommit, sender: parentController)
-    }
-
 }
 
 extension UIImage {

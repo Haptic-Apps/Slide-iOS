@@ -1,5 +1,5 @@
 //
-//  UZTextViewCell.swift
+//  CommentDepthCell.swift
 //  Slide for Reddit
 //
 //  Created by Carlos Crane on 12/31/16.
@@ -8,14 +8,13 @@
 
 import UIKit
 import reddift
-import UZTextView
 import TTTAttributedLabel
 import RealmSwift
 import AudioToolbox
 import XLActionController
 import RLBAlertsPickers
 
-protocol UZTextViewCellDelegate: class {
+protocol TTTAttributedCellDelegate: class {
     func pushedMoreButton(_ cell: CommentDepthCell)
     func pushedSingleTap(_ cell: CommentDepthCell)
     func showCommentMenu(_ cell: CommentDepthCell)
@@ -302,7 +301,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         more(parent!)
     }
 
-    var delegate: UZTextViewCellDelegate? = nil
+    var delegate: TTTAttributedCellDelegate? = nil
     var content: Object? = nil
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
@@ -1164,7 +1163,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
             title.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
             setLinkAttrs = true
         }
-        title.setText(infoString)
+        title.attributedText = (infoString)
 
     }
 

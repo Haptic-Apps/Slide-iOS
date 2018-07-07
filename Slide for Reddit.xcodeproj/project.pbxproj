@@ -413,7 +413,6 @@
 		BEEA03D020E2C8DC007A8928 /* LinkCellImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkCellImageCache.swift; sourceTree = "<group>"; };
 		BEF3ACE11E15C101005848B6 /* ContentType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentType.swift; sourceTree = "<group>"; };
 		BEF6F5351E19B4A2002B03B6 /* adsources.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = adsources.txt; sourceTree = "<group>"; };
-		BEF6F5381E19BE9E002B03B6 /* UZTextView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UZTextView.h; sourceTree = "<group>"; };
 		BEF7483120DD894100B6236B /* SettingsGestures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsGestures.swift; sourceTree = "<group>"; };
 		C29CF7355B69CCB84BE2FD6B /* Pods_Slide_for_RedditUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Slide_for_RedditUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE1DDF77D2F040B83CE26E0F /* Pods_Slide_for_RedditTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Slide_for_RedditTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -758,7 +757,6 @@
 				BE2DEAB11E26916700FBF0B5 /* SubSidebarViewController.swift */,
 				BE7360A01FB9089B00CA32AD /* TapBehindModalViewController.swift */,
 				B776BA78CCE4C75BD7FC5DA3 /* ToolbarTextView.swift */,
-				BEF6F5381E19BE9E002B03B6 /* UZTextView.h */,
 				BECF52432012AF7A00A310F9 /* VCPresenter.swift */,
 				B776B4EE978D7F23FF4C74BE /* VideoDisplayer.swift */,
 				BE6EA6CE1E1C1FAD00E9E709 /* VidMe */,
