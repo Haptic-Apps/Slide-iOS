@@ -13,291 +13,51 @@ import RealmSwift
 import AudioToolbox
 import XLActionController
 import RLBAlertsPickers
+import Anchorage
 
 protocol TTTAttributedCellDelegate: class {
-    func pushedMoreButton(_ cell: CommentDepthCell)
     func pushedSingleTap(_ cell: CommentDepthCell)
-    func showCommentMenu(_ cell: CommentDepthCell)
-    func hideCommentMenu(_ cell: CommentDepthCell)
-    var menuShown: Bool { get set }
-    var menuId: String { get set }
+    func isMenuShown() -> Bool
+    func getMenuShown() -> String
 }
 
-class CommentMenuCell: UITableViewCell {
-    var upvote = UIButton()
-    var downvote = UIButton()
-    var reply = UIButton()
-    var more = UIButton()
-    var edit = UIButton()
-    var delete = UIButton()
-    var mod = UIButton()
-
-    var editShown = false
-    var archived = false
-    var modShown = false
-
-    var comment: RComment?
-    var commentView: CommentDepthCell?
-    var parent: CommentViewController?
-
-    func setComment(comment: RComment, cell: CommentDepthCell, parent: CommentViewController) {
-        self.comment = comment
-        self.parent = parent
-        self.commentView = cell
-        editShown = AccountController.isLoggedIn && comment.author == AccountController.currentName
-        modShown = comment.canMod
-        archived = comment.archived
-        self.contentView.backgroundColor = ColorUtil.getColorForSub(sub: comment.subreddit)
-        updateConstraints()
-    }
-
-    func edit(_ s: AnyObject) {
-        self.parent!.editComment()
-    }
-
-    func doDelete(_ s: AnyObject) {
-        self.parent!.deleteComment(cell: commentView!)
-    }
-
-    func showModMenu(_ s: AnyObject) {
-        parent!.modMenu(commentView!)
-
-    }
-
-    func upvote(_ s: AnyObject) {
-        parent!.vote(comment: comment!, dir: .up)
-        commentView!.refresh(comment: comment!, submissionAuthor: (parent!.submission?.author)!, text: commentView!.cellContent!)
-        parent!.hideCommentMenu(commentView!)
-    }
-
-    func downvote(_ s: AnyObject) {
-        parent!.vote(comment: comment!, dir: .down)
-        commentView!.refresh(comment: comment!, submissionAuthor: (parent!.submission?.author)!, text: commentView!.cellContent!)
-        parent!.hideCommentMenu(commentView!)
-    }
-
-    func more(_ s: AnyObject) {
-        parent!.moreComment(commentView!)
-    }
-
-    func reply(_ s: AnyObject) {
-        self.parent!.doReply(commentView!)
-    }
-
-    var sideConstraint: [NSLayoutConstraint] = []
-
-    override func updateConstraints() {
-        super.updateConstraints()
-        var width = min(375, UIScreen.main.bounds.size.width)
-        width = width / ((archived || !AccountController.isLoggedIn) ? 1 : (editShown ? (modShown ? 7 : 6) : (modShown ? 5 : 4)))
-
-        if (editShown) {
-            edit.isHidden = false
-            delete.isHidden = false
-        } else {
-            edit.isHidden = true
-            delete.isHidden = true
-        }
-
-        if (archived || !AccountController.isLoggedIn) {
-            edit.isHidden = true
-            delete.isHidden = true
-            upvote.isHidden = true
-            downvote.isHidden = true
-            reply.isHidden = true
-        }
-        
-        if (comment != nil){
-            if(modShown){
-                mod.isHidden = false
-                if(!comment!.reports.isEmpty){
-                    mod.setImage(UIImage.init(named: "mod")?.getCopy(withSize: .square(size: 20), withColor: GMColor.red500Color()), for: .normal)
-                } else {
-                    mod.setImage(UIImage.init(named: "mod")?.getCopy(withSize: .square(size: 20), withColor: .white), for: .normal)
-                }
-            } else {
-                mod.isHidden = true
-            }
-
-            switch(ActionStates.getVoteDirection(s: comment!)){
-            case .down:
-                downvote.setImage(UIImage.init(named: "downvote")?.getCopy(withSize: .square(size: 20), withColor: ColorUtil.downvoteColor), for: .normal)
-                upvote.setImage(UIImage.init(named: "upvote")?.getCopy(withSize: .square(size: 20), withColor: .white), for: .normal)
-            case .up:
-                upvote.setImage(UIImage.init(named: "upvote")?.getCopy(withSize: .square(size: 20), withColor: ColorUtil.upvoteColor), for: .normal)
-                downvote.setImage(UIImage.init(named: "downvote")?.getCopy(withSize: .square(size: 20), withColor: .white), for: .normal)
-            case .none:
-                upvote.setImage(UIImage.init(named: "upvote")?.getCopy(withSize: .square(size: 20), withColor: .white), for: .normal)
-                downvote.setImage(UIImage.init(named: "downvote")?.getCopy(withSize: .square(size: 20), withColor: .white), for: .normal)
-            }
-        }
-
-        let metrics: [String: Int] = ["width": Int(width), "full": Int(self.contentView.frame.size.width)]
-        let views = ["upvote": upvote, "downvote": downvote, "edit": edit, "delete": delete, "mod": mod, "view": contentView, "more": more, "reply": reply] as [String: Any]
-
-        let replyStuff = !archived && AccountController.isLoggedIn ? "[upvote(width)]-0-[downvote(width)]-0-[reply(width)]-0-" : ""
-        let editStuff = (!archived && editShown) ? "[edit(width)]-0-[delete(width)]-0-" : ""
-        let modStuff = (modShown) ? "[mod(width)]-0-" : ""
-
-        self.contentView.removeConstraints(sideConstraint)
-        sideConstraint = NSLayoutConstraint.constraints(withVisualFormat: "H:\(editStuff)\(replyStuff)[more(width)]-0-\(modStuff)|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views)
-        sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[more(45)]", options: NSLayoutFormatOptions(rawValue: 0), metrics: metrics, views: views))
-        sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[edit(45)]", options: NSLayoutFormatOptions(rawValue: 0), metrics: metrics, views: views))
-        sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[mod(45)]", options: NSLayoutFormatOptions(rawValue: 0), metrics: metrics, views: views))
-
-        sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[delete(45)]", options: NSLayoutFormatOptions(rawValue: 0), metrics: metrics, views: views))
-        sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[reply(45)]", options: NSLayoutFormatOptions(rawValue: 0), metrics: metrics, views: views))
-        sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[downvote(45)]", options: NSLayoutFormatOptions(rawValue: 0), metrics: metrics, views: views))
-        sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[upvote(45)]", options: NSLayoutFormatOptions(rawValue: 0), metrics: metrics, views: views))
-        sideConstraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[view(45)]", options: NSLayoutFormatOptions(rawValue: 0), metrics: metrics, views: views))
-
-        self.contentView.addConstraints(sideConstraint)
-    }
-
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-
-        self.upvote = UIButton.init(type: .custom)
-        self.downvote = UIButton.init(type: .custom)
-        self.reply = UIButton.init(type: .custom)
-        self.more = UIButton.init(type: .custom)
-        self.edit = UIButton.init(type: .custom)
-        self.delete = UIButton.init(type: .custom)
-        self.mod = UIButton.init(type: .custom)
-
-        upvote.setImage(UIImage.init(named: "upvote")?.navIcon(), for: .normal)
-        downvote.setImage(UIImage.init(named: "downvote")?.navIcon(), for: .normal)
-        reply.setImage(UIImage.init(named: "reply")?.navIcon(), for: .normal)
-        more.setImage(UIImage.init(named: "ic_more_vert_white")?.navIcon(), for: .normal)
-        edit.setImage(UIImage.init(named: "edit")?.navIcon(), for: .normal)
-        delete.setImage(UIImage.init(named: "delete")?.navIcon(), for: .normal)
-        mod.setImage(UIImage.init(named: "mod")?.navIcon(), for: .normal)
-
-        upvote.translatesAutoresizingMaskIntoConstraints = false
-        downvote.translatesAutoresizingMaskIntoConstraints = false
-        more.translatesAutoresizingMaskIntoConstraints = false
-        reply.translatesAutoresizingMaskIntoConstraints = false
-        edit.translatesAutoresizingMaskIntoConstraints = false
-        delete.translatesAutoresizingMaskIntoConstraints = false
-        mod.translatesAutoresizingMaskIntoConstraints = false
-
-        self.contentView.addSubview(upvote)
-        self.contentView.addSubview(more)
-        self.contentView.addSubview(downvote)
-        self.contentView.addSubview(reply)
-        self.contentView.addSubview(edit)
-        self.contentView.addSubview(delete)
-        self.contentView.addSubview(mod)
-
-        upvote.addTarget(self, action: #selector(CommentMenuCell.upvote(_:)), for: UIControlEvents.touchUpInside)
-        downvote.addTarget(self, action: #selector(CommentMenuCell.downvote(_:)), for: UIControlEvents.touchUpInside)
-        more.addTarget(self, action: #selector(CommentMenuCell.more(_:)), for: UIControlEvents.touchUpInside)
-        reply.addTarget(self, action: #selector(CommentMenuCell.reply(_:)), for: UIControlEvents.touchUpInside)
-        edit.addTarget(self, action: #selector(CommentMenuCell.edit(_:)), for: UIControlEvents.touchUpInside)
-        delete.addTarget(self, action: #selector(CommentMenuCell.doDelete(_:)), for: UIControlEvents.touchUpInside)
-        mod.addTarget(self, action: #selector(CommentMenuCell.showModMenu(_:)), for: UIControlEvents.touchUpInside)
-
-        updateConstraints()
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIViewControllerPreviewingDelegate {
-    var moreButton: UIButton = UIButton()
+class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegate {
+    
     var sideView: UIView = UIView()
+    var menu = UIStackView()
+    var menuBack = UIView()
+    var reply = UIStackView()
+    
     var sideViewSpace: UIView = UIView()
     var topViewSpace: UIView = UIView()
     var title: TTTAttributedLabel = TTTAttributedLabel.init(frame: CGRect.zero)
-    var c: UIView = UIView()
-    var children: UILabel = UILabel()
+    
+    //Buttons for comment menu
+    var upvoteButton = UIButton()
+    var downvoteButton = UIButton()
+    var replyButton = UIButton()
+    var moreButton = UIButton()
+    var editButton = UIButton()
+    var deleteButton = UIButton()
+    var modButton = UIButton()
+    var editShown = false
+    var archived = false
+    var modShown = false
+    
+    //Buttons for reply
+    var body: UITextView = UITextView()
+    var sendB = UIButton()
+    var discardB = UIButton()
+    var edit = false
+
+
+    var childrenCount: UIView = UIView()
+    var childrenCountLabel: UILabel = UILabel()
     var comment: RComment?
     var depth: Int = 0
-
-    func attributedLabel(_ label: TTTAttributedLabel!, didLongPressLinkWith url: URL!, at point: CGPoint) {
-        if parent != nil {
-            let sheet = UIAlertController(title: url.absoluteString, message: nil, preferredStyle: .actionSheet)
-            sheet.addAction(
-                    UIAlertAction(title: "Close", style: .cancel) { (action) in
-                        sheet.dismiss(animated: true, completion: nil)
-                    }
-            )
-            let open = OpenInChromeController.init()
-            if (open.isChromeInstalled()) {
-                sheet.addAction(
-                        UIAlertAction(title: "Open in Chrome", style: .default) { (action) in
-                            _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
-                        }
-                )
-            }
-            sheet.addAction(
-                    UIAlertAction(title: "Open in Safari", style: .default) { (action) in
-                        if #available(iOS 10.0, *) {
-                            UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                        } else {
-                            UIApplication.shared.openURL(url)
-                        }
-                        sheet.dismiss(animated: true, completion: nil)
-                    }
-            )
-            sheet.addAction(
-                    UIAlertAction(title: "Open", style: .default) { (action) in
-                        /* let controller = WebViewController(nibName: nil, bundle: nil)
-                         controller.url = url
-                         let nav = UINavigationController(rootViewController: controller)
-                         self.present(nav, animated: true, completion: nil)*/
-                    }
-            )
-            sheet.addAction(
-                    UIAlertAction(title: "Copy URL", style: .default) { (action) in
-                        UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
-                        sheet.dismiss(animated: true, completion: nil)
-                    }
-            )
-            sheet.modalPresentationStyle = .popover
-            if let presenter = sheet.popoverPresentationController {
-                presenter.sourceView = label
-                presenter.sourceRect = label.bounds
-            }
-
-            parent?.present(sheet, animated: true, completion: nil)
-        }
-    }
-
-    var parent: CommentViewController?
-
-    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith result: NSTextCheckingResult!) {
-        var textClicked = label.attributedText.attributedSubstring(from: result.range).string
-        if (textClicked.contains("[[s[")) {
-            parent?.showSpoiler(textClicked)
-        } else {
-            var urlClicked = result.url!
-            parent?.doShow(url: urlClicked)
-        }
-    }
-
-    func upvote() {
-        parent!.vote(comment: comment!, dir: .up)
-        self.refresh(comment: comment!, submissionAuthor: (parent!.submission?.author)!, text: self.cellContent!)
-    }
     
-    func downvote() {
-        parent!.vote(comment: comment!, dir: .down)
-        self.refresh(comment: comment!, submissionAuthor: (parent!.submission?.author)!, text: self.cellContent!)
-    }
-
-    func save() {
-        parent!.saveComment(self.comment!)
-    }
-
-    func menu() {
-        more(parent!)
-    }
+    var menuShown = false
+    var replyShown = false
 
     var delegate: TTTAttributedCellDelegate? = nil
     var content: Object? = nil
@@ -306,58 +66,45 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         self.backgroundColor = ColorUtil.backgroundColor
+        self.title = TTTAttributedLabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)).then({
+            $0.numberOfLines = 0
+            $0.font = FontGenerator.fontOfSize(size: 16, submission: false)
+            $0.isUserInteractionEnabled = true
+            $0.accessibilityIdentifier = "Comment body"
+            $0.delegate = self
+            $0.textColor = ColorUtil.fontColor
+        })
 
-        self.title = TTTAttributedLabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
-        title.numberOfLines = 0
-        title.font = FontGenerator.fontOfSize(size: 16, submission: false)
-        title.isUserInteractionEnabled = true
-        title.delegate = self
-        title.textColor = ColorUtil.fontColor
-
-        self.children = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 15))
-        children.numberOfLines = 1
-        children.font = FontGenerator.boldFontOfSize(size: 12, submission: false)
-        children.textColor = UIColor.white
-        children.layer.shadowOffset = CGSize(width: 0, height: 0)
-        children.layer.shadowOpacity = 0.4
-        children.layer.shadowRadius = 4
+        self.childrenCountLabel = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 15)).then({
+            $0.numberOfLines = 1
+            $0.font = FontGenerator.boldFontOfSize(size: 12, submission: false)
+            $0.textColor = UIColor.white
+            $0.layer.shadowOffset = CGSize(width: 0, height: 0)
+            $0.layer.shadowOpacity = 0.4
+            $0.layer.shadowRadius = 4
+        })
+        
         let padding = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
-
-
-        self.moreButton = UIButton(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
 
         self.sideView = UIView(frame: CGRect(x: 0, y: 0, width: 4, height: CGFloat.greatestFiniteMagnitude))
         self.sideViewSpace = UIView(frame: CGRect(x: 0, y: 0, width: 4, height: CGFloat.greatestFiniteMagnitude))
         self.topViewSpace = UIView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 4))
+        self.topViewSpace.accessibilityIdentifier = "Top view margin"
 
-        self.c = children.withPadding(padding: padding)
-        c.alpha = 0
-        c.backgroundColor = ColorUtil.accentColorForSub(sub: "")
-        c.layer.cornerRadius = 4
-        c.clipsToBounds = true
+        self.childrenCount = childrenCountLabel.withPadding(padding: padding).then({
+            $0.alpha = 0
+            $0.backgroundColor = ColorUtil.accentColorForSub(sub: "")
+            $0.layer.cornerRadius = 4
+            $0.clipsToBounds = true
+        })
 
-        moreButton.translatesAutoresizingMaskIntoConstraints = false
-        sideView.translatesAutoresizingMaskIntoConstraints = false
-        sideViewSpace.translatesAutoresizingMaskIntoConstraints = false
-        topViewSpace.translatesAutoresizingMaskIntoConstraints = false
-        title.translatesAutoresizingMaskIntoConstraints = false
-        children.translatesAutoresizingMaskIntoConstraints = false
-        c.translatesAutoresizingMaskIntoConstraints = false
-
-        self.contentView.addSubview(moreButton)
-        self.contentView.addSubview(sideView)
-        self.contentView.addSubview(sideViewSpace)
-        self.contentView.addSubview(topViewSpace)
-        self.contentView.addSubview(title)
-        self.contentView.addSubview(c)
-
+        self.contentView.addSubviews(sideView, sideViewSpace, topViewSpace, title, childrenCount)
+        
         if(dtap == nil && SettingValues.commentActionDoubleTap != .NONE){
             dtap = UIShortTapGestureRecognizer.init(target: self, action: #selector(self.doDTap(_:)))
             dtap!.numberOfTapsRequired = 2
             self.contentView.addGestureRecognizer(dtap!)
         }
-
-        moreButton.addTarget(self, action: #selector(CommentDepthCell.pushedMoreButton(_:)), for: UIControlEvents.touchUpInside)
 
         let tapGestureRecognizer = UITapGestureRecognizer.init(target: self, action: #selector(self.handleShortPress(_:)))
         tapGestureRecognizer.cancelsTouchesInView = false
@@ -377,6 +124,52 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         topViewSpace.backgroundColor = ColorUtil.backgroundColor
 
         self.clipsToBounds = true
+        
+        
+        self.menu = UIStackView().then {
+            $0.accessibilityIdentifier = "Comment menu"
+            $0.axis = .horizontal
+            $0.alignment = .center
+            $0.isHidden = true
+        }
+        
+        menuBack = UIView.init(frame: CGRect.init(x: 0, y: 0, width: 0, height: 0))
+        menuBack.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        menu.addSubview(menuBack)
+
+        
+        upvoteButton = UIButton.init(type: .custom).then({
+            $0.setImage(UIImage.init(named: "upvote")?.navIcon(), for: .normal)
+            $0.addTarget(self, action: #selector(self.upvote(_:)), for: UIControlEvents.touchUpInside)
+            })
+        downvoteButton = UIButton.init(type: .custom).then({
+            $0.setImage(UIImage.init(named: "downvote")?.navIcon(), for: .normal)
+            $0.addTarget(self, action: #selector(self.downvote(_:)), for: UIControlEvents.touchUpInside)
+        })
+        replyButton = UIButton.init(type: .custom).then({
+            $0.setImage(UIImage.init(named: "reply")?.navIcon(), for: .normal)
+            $0.addTarget(self, action: #selector(self.reply(_:)), for: UIControlEvents.touchUpInside)
+        })
+        moreButton = UIButton.init(type: .custom).then({
+            $0.setImage(UIImage.init(named: "ic_more_vert_white")?.navIcon(), for: .normal)
+            $0.addTarget(self, action: #selector(self.menu(_:)), for: UIControlEvents.touchUpInside)
+        })
+        editButton = UIButton.init(type: .custom).then({
+            $0.setImage(UIImage.init(named: "edit")?.navIcon(), for: .normal)
+            $0.addTarget(self, action: #selector(self.edit(_:)), for: UIControlEvents.touchUpInside)
+        })
+        deleteButton = UIButton.init(type: .custom).then({
+            $0.setImage(UIImage.init(named: "delete")?.navIcon(), for: .normal)
+            $0.addTarget(self, action: #selector(self.delete(_:)), for: UIControlEvents.touchUpInside)
+        })
+        modButton = UIButton.init(type: .custom).then({
+            $0.setImage(UIImage.init(named: "mod")?.navIcon(), for: .normal)
+            $0.addTarget(self, action: #selector(self.mod(_:)), for: UIControlEvents.touchUpInside)
+        })
+
+        menu.addArrangedSubviews(editButton, deleteButton, upvoteButton, downvoteButton, replyButton, moreButton, modButton)
+        self.contentView.addSubview(menu)
+        configureLayout()
     }
 
     func doLongClick() {
@@ -384,7 +177,8 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         AudioServicesPlaySystemSound(1519)
         if (!self.cancelled) {
             if (SettingValues.swapLongPress) {
-                if (self.delegate!.menuShown) { //todo check if comment id is the same as this comment id
+                //todo this is probably wrong
+                if (self.delegate!.isMenuShown() && self.delegate!.getMenuShown() != comment!.getIdentifier()) {
                     self.showMenu(nil)
                 } else {
                     self.pushedSingleTap(nil)
@@ -414,7 +208,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
     }
 
     func handleShortPress(_ sender: UIGestureRecognizer) {
-        if (SettingValues.swapLongPress || (self.delegate!.menuShown && delegate!.menuId == (content as! RComment).getId())) {
+        if (SettingValues.swapLongPress || (self.delegate!.isMenuShown() && delegate!.getMenuShown() == (content as! RComment).getId())) {
             self.showMenu(sender)
         } else {
             self.pushedSingleTap(sender)
@@ -432,14 +226,90 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
 
     func showMenu(_ sender: AnyObject?) {
         if let del = self.delegate {
-            if (del.menuShown && del.menuId == (content as! RComment).getId()) {
-                del.hideCommentMenu(self)
+            if (del.isMenuShown() && del.getMenuShown() == (content as! RComment).getId()) {
+                self.hideCommentMenu()
             } else {
-                del.showCommentMenu(self)
+                self.showCommentMenu()
             }
         }
     }
+    
+    func showCommentMenu(){
+        oldDepth = depth
+        if(!AccountController.isLoggedIn || comment!.archived || parent!.np){
+            upvoteButton.isHidden = true
+            downvoteButton.isHidden = true
+            replyButton.isHidden = true
+        }
+        if(!comment!.canMod){
+            modButton.isHidden = true
+        }
+        if(comment!.author != AccountController.currentName){
+            editButton.isHidden = true
+            deleteButton.isHidden = true
+        }
+        parent!.menuShown = true
+        menuShown = true
+        parent!.menuId = comment!.getIdentifier()
+        menu.isHidden = false
+        if (depth == 1) {
+            depth = 1
+        } else {
+            depth = 2
+        }
+        updateDepth()
+        self.contentView.backgroundColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.getColorForSub(sub: ((comment)!.subreddit)).withAlphaComponent(0.25))
+        menuBack.backgroundColor = ColorUtil.getColorForSub(sub: comment!.subreddit)
+        parent!.reloadHeights()
+    }
+    
+    func hideCommentMenu(){
+        menu.isHidden = true
+        parent!.menuShown = false
+        menuShown = false
+        parent!.menuId = ""
+        depth = oldDepth
+        updateDepth()
+        self.contentView.backgroundColor = ColorUtil.foregroundColor
+        parent!.reloadHeights()
+    }
 
+    var parent: CommentViewController?
+    
+    func upvote(_ s: AnyObject) {
+        parent!.vote(comment: comment!, dir: .up)
+        self.refresh(comment: comment!, submissionAuthor: (parent!.submission?.author)!, text: self.cellContent!)
+    }
+    
+    func reply(_ s: AnyObject) {
+        //todo show reply menu
+    }
+
+    func menu(_ s: AnyObject) {
+        more(parent!)
+    }
+    
+    func downvote(_ s: AnyObject) {
+        parent!.vote(comment: comment!, dir: .down)
+        self.refresh(comment: comment!, submissionAuthor: (parent!.submission?.author)!, text: self.cellContent!)
+    }
+    
+    func save() {
+        parent!.saveComment(self.comment!)
+    }
+    
+    func edit(_ s: AnyObject) {
+        self.parent!.editComment()
+    }
+    
+    func doDelete(_ s: AnyObject) {
+        self.parent!.deleteComment(cell: self)
+    }
+    
+    func showModMenu(_ s: AnyObject) {
+        parent!.modMenu(self)
+    }
+    
     func vote() {
         if (content is RComment) {
             let current = ActionStates.getVoteDirection(s: comment!)
@@ -723,14 +593,14 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         fatalError("init(coder:) has not been implemented")
     }
 
-    var sideConstraint: [NSLayoutConstraint]?
+    var sideConstraints: [NSLayoutConstraint] = []
 
     func collapse(childNumber: Int) {
         if(childNumber != 0){
-            children.text = "+\(childNumber)"
+            childrenCountLabel.text = "+\(childNumber)"
             UIView.animate(withDuration: 0.4, delay: 0.0, options:
                 UIViewAnimationOptions.curveEaseOut, animations: {
-                    self.c.alpha = 1
+                    self.childrenCount.alpha = 1
             }, completion: { finished in
             })
         }
@@ -748,7 +618,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
     func expand() {
         UIView.animate(withDuration: 0.4, delay: 0.0, options:
         UIViewAnimationOptions.curveEaseOut, animations: {
-            self.c.alpha = 0
+            self.childrenCount.alpha = 0
         }, completion: { finished in
         })
         isCollapsed = false
@@ -759,117 +629,58 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
 
     var oldDepth = 0
 
-    func updateDepthConstraints() {
-        if (sideConstraint != nil) {
-            self.contentView.removeConstraints(sideConstraint!)
-        }
-        let metrics = ["marginTop": marginTop, "nmarginTop": -marginTop, "horizontalMargin": 75, "top": 0, "bottom": 0, "separationBetweenLabels": 0, "labelMinHeight": 75, "sidewidth": (SettingValues.wideIndicators ? 8 : 4) * (depth), "width": sideWidth]
-        let views = ["title": title, "topviewspace": topViewSpace, "more": moreButton, "side": sideView, "cell": self.contentView, "sideviewspace": sideViewSpace] as [String: Any]
+    func configureLayout() {
+        topViewSpace.horizontalAnchors == contentView.horizontalAnchors
+        topViewSpace.topAnchor == contentView.topAnchor
+        topViewSpace.heightAnchor == CGFloat(marginTop)
+        title.topAnchor == topViewSpace.bottomAnchor + CGFloat(8)
+        title.bottomAnchor == menu.topAnchor - CGFloat(8)
+        menu.topAnchor == title.bottomAnchor + CGFloat(8)
 
+        title.leftAnchor == sideView.rightAnchor + CGFloat(12)
+        title.rightAnchor == contentView.rightAnchor - CGFloat(4)
         
-        if (!menuC.isEmpty) {
-            self.contentView.removeConstraints(menuC)
-        }
-        menuC = NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[topviewspace(marginTop)]-8-[title]-8-|",
-                                               options: NSLayoutFormatOptions(rawValue: 0),
-                                               metrics: metrics,
-                                               views: views)
-        self.contentView.addConstraints(menuC)
-        sideConstraint = NSLayoutConstraint.constraints(withVisualFormat: "H:|-(-8)-[sideviewspace(sidewidth)]-0-[side(width)]",
-                                                        options: NSLayoutFormatOptions(rawValue: 0),
-                                                        metrics: metrics,
-                                                        views: views)
-
-
-
-        sideConstraint!.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(-8)-[sideviewspace(sidewidth)]-0-[side(width)]-12-[title]-4-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-        self.contentView.addConstraints(sideConstraint!)
-
+        childrenCount.topAnchor == topViewSpace.bottomAnchor + CGFloat(4)
+        childrenCount.rightAnchor == contentView.rightAnchor - CGFloat(4)
+        sideView.verticalAnchors == contentView.verticalAnchors
+        sideViewSpace.verticalAnchors == contentView.verticalAnchors
+        
+        menu.horizontalAnchors == contentView.horizontalAnchors
+        menu.bottomAnchor == contentView.bottomAnchor
+        updateDepth()
+        menu.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+        title.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
     }
-
-    var menuC: [NSLayoutConstraint] = []
-
-    func doHighlight() {
-        oldDepth = depth
-        if (depth == 1) {
-            depth = 1
+    
+    func updateDepth(){
+        NSLayoutConstraint.deactivate(sideConstraints)
+        sideConstraints = batch {
+            sideViewSpace.leftAnchor == contentView.leftAnchor - CGFloat(8)
+            sideViewSpace.widthAnchor == CGFloat((SettingValues.wideIndicators ? 8 : 4) * (depth))
+            sideView.leftAnchor == sideViewSpace.rightAnchor
+            sideView.widthAnchor == CGFloat(sideWidth)
+        }
+        NSLayoutConstraint.deactivate(menuHeight)
+        if(menuShown){
+            menuHeight = batch {
+                menu.heightAnchor == CGFloat(45)
+            }
         } else {
-            depth = 2
+            menuHeight = batch {
+                menu.heightAnchor == CGFloat(0)
+            }
         }
-        updateDepthConstraints()
-        self.contentView.backgroundColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.getColorForSub(sub: ((comment)!.subreddit)).withAlphaComponent(0.25))
-    }
-
-    func doUnHighlight() {
-        depth = oldDepth
-        updateDepthConstraints()
-        self.contentView.backgroundColor = ColorUtil.foregroundColor
-    }
-
-    override func updateConstraints() {
-        super.updateConstraints()
-
-        let metrics = ["marginTop": marginTop, "nmarginTop": -marginTop, "horizontalMargin": 75, "top": 0, "bottom": 0, "separationBetweenLabels": 0, "labelMinHeight": 75, "sidewidth": (SettingValues.wideIndicators ? 8 : 4)  * (depth), "width": sideWidth]
-        let views = ["title": title, "topviewspace": topViewSpace, "children": c, "more": moreButton, "side": sideView, "cell": self.contentView, "sideviewspace": sideViewSpace] as [String: Any]
-
-
-        var constraint: [NSLayoutConstraint] = []
-
-        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(-8)-[sideviewspace]-0-[side]-12-[title]-4-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[topviewspace]-0-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-
-        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[more]",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-
-        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-2-[more]-2-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-
-
-        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-4-[children]",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[children]-4-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-
-        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[topviewspace]-(nmarginTop)-[side]-(-1)-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-        constraint.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[topviewspace]-(nmarginTop)-[sideviewspace]-0-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-
-
-        self.contentView.addConstraints(constraint)
-
-        updateDepthConstraints()
     }
 
     var sideWidth: Int = 0
     var marginTop: Int = 0
+    var menuHeight : [NSLayoutConstraint] = []
 
     func setMore(more: RMore, depth: Int) {
         self.depth = depth
         self.comment = nil
         loading = false
-        c.alpha = 0
+        childrenCount.alpha = 0
         self.contentView.backgroundColor = ColorUtil.foregroundColor
         if (depth - 1 > 0) {
             sideWidth = (SettingValues.wideIndicators ? 8 : 4)
@@ -919,7 +730,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: .white)
         
         title.setText(attr2)
-        updateDepthConstraints()
+        updateDepth()
     }
 
     var numberOfDots = 3
@@ -931,23 +742,8 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         let font = FontGenerator.fontOfSize(size: 16, submission: false)
         let attr2 = NSMutableAttributedString(attributedString: attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: UIColor.blue))
 
-
         title.setText(attr2)
-
-        /* possibly todo var timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { (timer) in
-         print("Firing")
-         let range = NSMakeRange(attr2.length - self.numberOfDots, self.numberOfDots)
-         attr2.addAttribute(NSForegroundColorAttributeName, value: UIColor.clear, range: range)
-         
-         self.textView.attributedString = attr2
-         self.numberOfDots -= 1
-         if self.numberOfDots < 0 {
-         self.numberOfDots = 3
-         }
-         if(self.loading == false){
-         timer.invalidate()
-         }
-         }*/
+        //todo possibly animate?
     }
 
     public var isCollapsed = false
@@ -969,10 +765,10 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         }
         
         if (hiddenCount > 0) {
-            c.alpha = 1
-            children.text = "+\(hiddenCount)"
+            childrenCount.alpha = 1
+            childrenCountLabel.text = "+\(hiddenCount)"
         } else {
-            c.alpha = 0
+            childrenCount.alpha = 0
         }
 
         self.depth = depth
@@ -1023,22 +819,22 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
             parent.registerForPreviewing(with: self, sourceView: title)
             registered = true
         }
-        updateDepthConstraints()
+        updateDepth()
     }
     
     func doDTap(_ sender: AnyObject){
         switch(SettingValues.commentActionDoubleTap){
         case .UPVOTE:
-            self.upvote()
+            self.upvote(self)
             break
         case .DOWNVOTE:
-            self.downvote()
+            self.downvote(self)
             break
         case .SAVE:
             self.save()
             break
         case .MENU:
-            self.menu()
+            self.menu(self)
             break
         default:
             break
@@ -1234,12 +1030,6 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         parent?.show(viewControllerToCommit, sender: parent)
     }
 
-    func pushedMoreButton(_ sender: AnyObject?) {
-        if let delegate = self.delegate {
-            delegate.pushedMoreButton(self)
-        }
-    }
-
     func longPressed(_ sender: AnyObject?) {
         if self.delegate != nil {
         }
@@ -1253,6 +1043,69 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
 
     class func margin() -> UIEdgeInsets {
         return UIEdgeInsetsMake(4, 0, 2, 0)
+    }
+}
+
+extension CommentDepthCell : TTTAttributedLabelDelegate {
+    func attributedLabel(_ label: TTTAttributedLabel!, didLongPressLinkWith url: URL!, at point: CGPoint) {
+        if parent != nil {
+            let sheet = UIAlertController(title: url.absoluteString, message: nil, preferredStyle: .actionSheet)
+            sheet.addAction(
+                UIAlertAction(title: "Close", style: .cancel) { (action) in
+                    sheet.dismiss(animated: true, completion: nil)
+                }
+            )
+            let open = OpenInChromeController.init()
+            if (open.isChromeInstalled()) {
+                sheet.addAction(
+                    UIAlertAction(title: "Open in Chrome", style: .default) { (action) in
+                        _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
+                    }
+                )
+            }
+            sheet.addAction(
+                UIAlertAction(title: "Open in Safari", style: .default) { (action) in
+                    if #available(iOS 10.0, *) {
+                        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    } else {
+                        UIApplication.shared.openURL(url)
+                    }
+                    sheet.dismiss(animated: true, completion: nil)
+                }
+            )
+            sheet.addAction(
+                UIAlertAction(title: "Open", style: .default) { (action) in
+                    /* let controller = WebViewController(nibName: nil, bundle: nil)
+                     controller.url = url
+                     let nav = UINavigationController(rootViewController: controller)
+                     self.present(nav, animated: true, completion: nil)*/
+                }
+            )
+            sheet.addAction(
+                UIAlertAction(title: "Copy URL", style: .default) { (action) in
+                    UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
+                    sheet.dismiss(animated: true, completion: nil)
+                }
+            )
+            sheet.modalPresentationStyle = .popover
+            if let presenter = sheet.popoverPresentationController {
+                presenter.sourceView = label
+                presenter.sourceRect = label.bounds
+            }
+            
+            parent?.present(sheet, animated: true, completion: nil)
+        }
+    }
+    
+    
+    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith result: NSTextCheckingResult!) {
+        var textClicked = label.attributedText.attributedSubstring(from: result.range).string
+        if (textClicked.contains("[[s[")) {
+            parent?.showSpoiler(textClicked)
+        } else {
+            var urlClicked = result.url!
+            parent?.doShow(url: urlClicked)
+        }
     }
 }
 

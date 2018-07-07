@@ -483,7 +483,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 box.leftAnchor == contentView.leftAnchor + ctwelve
                 box.bottomAnchor == contentView.bottomAnchor - ceight
                 box.centerYAnchor == buttons.centerYAnchor // Align vertically with buttons
-                box.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+            box.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
                 box.heightAnchor == CGFloat(24)
                 buttons.heightAnchor == CGFloat(24)
                 buttons.rightAnchor == contentView.rightAnchor - ctwelve

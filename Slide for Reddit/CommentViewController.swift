@@ -17,7 +17,15 @@ import XLActionController
 import RLBAlertsPickers
 import Anchorage
 
-class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate, TTTAttributedLabelDelegate, ReplyDelegate, SubmissionMoreDelegate {
+class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate, TTTAttributedLabelDelegate, SubmissionMoreDelegate {
+    func isMenuShown() -> Bool {
+        return menuShown
+    }
+    
+    func getMenuShown() -> String {
+        return menuId
+    }
+    
 
     func showFilterMenu(_ cell: LinkCellView) {
         //Not implemented
@@ -104,7 +112,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 self.doArrays()
                 self.isReply = false
                 self.tableView.reloadData()
-                self.hideCommentMenu(cell)
+                //todo this self.hideCommentMenu(cell)
             })
         } else if (comment != nil && menuId == "sub") {
             DispatchQueue.main.async(execute: { () -> Void in
@@ -226,12 +234,15 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
 
     var searchBar = UISearchBar()
-    var menu: CommentMenuCell?
-    var reply: ReplyCellView?
-    var menuShown = false
+    var menuShown = false 
     var menuIndex = 0
     var replyShown = false
     var menuId = ""
+    
+    func reloadHeights(){
+        tableView.beginUpdates()
+        tableView.endUpdates()
+    }
 
     func hide(_ cell: LinkCellView) {
 
@@ -544,7 +555,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                                             self.goToCell(i: index)
                                             var cell = self.tableView(self.tableView, cellForRowAt: IndexPath.init(row: index, section: 0))
-                                            self.showCommentMenu(cell as! CommentDepthCell)
+                                            (cell as! CommentDepthCell).showCommentMenu()
                                         }
                                         break
                                     } else {
@@ -715,8 +726,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             self.navigationController!.delegate = swiper!
         }
 
-        self.tableView.register(CommentMenuCell.classForCoder(), forCellReuseIdentifier: "menu")
-        self.tableView.register(ReplyCellView.classForCoder(), forCellReuseIdentifier: "dreply")
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: UIBarButtonItemStyle.plain, target: nil, action: nil)
 
         searchBar.delegate = self
@@ -728,13 +737,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         tableView.rowHeight = UITableViewAutomaticDimension
 
         self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "Cell")
-        self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "Reply")
         self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "MoreCell")
 
         tableView.separatorStyle = .none
-        self.menu = self.tableView.dequeueReusableCell(withIdentifier: "menu") as? CommentMenuCell
-        self.reply = self.tableView.dequeueReusableCell(withIdentifier: "dreply") as? ReplyCellView
-
         NotificationCenter.default.addObserver(
                 self,
                 selector: #selector(keyboardWillShow(_:)),
@@ -757,7 +762,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             if (keyboardHeight == 0) {
                 keyboardHeight = keyboardRectangle.height
             }
-            tableView.contentInset = UIEdgeInsetsMake(tableView.contentInset.top, 0, 350 + self.reply!.frame.size.height, 0)
+//todo content insets
+            
         }
     }
 
@@ -1315,7 +1321,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return (menuShown ? 1 : 0) + (isSearching ? self.filteredData.count : self.comments.count - self.hidden.count)
+        return  (isSearching ? self.filteredData.count : self.comments.count - self.hidden.count)
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -1569,7 +1575,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
 
     func editComment() {
-        menuShown = false
+       /* This needs to be taken care of in the menu cell
+    menuShown = false
         tableView.beginUpdates()
         let cell = tableView.cellForRow(at: IndexPath.init(row: menuIndex - 1, section: 0)) as! CommentDepthCell
         tableView.deleteRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .fade)
@@ -1580,7 +1587,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         reply!.setContent(thing: cell.content!, sub: (cell.content as! RComment).subreddit, editing: true, delegate: self, parent: self)
         tableView.beginUpdates()
         tableView.insertRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .fade)
-        tableView.endUpdates()
+        tableView.endUpdates()*/
     }
 
     func deleteComment(cell: CommentDepthCell) {
@@ -1588,6 +1595,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
 
     func doReplySubmission() {
+        /* This needs to be taken care of in the menu cell
+
         if (!offline && loaded) {
             menuShown = true
             var top = CGFloat(64)
@@ -1606,10 +1615,12 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             tableView.beginUpdates()
             tableView.insertRows(at: [IndexPath.init(row: 0, section: 0)], with: .fade)
             tableView.endUpdates()
-        }
+        }*/
     }
 
     func doReply(_ cell: CommentDepthCell) {
+/* This needs to be taken care of in the menu cell
+
         if (!offline) {
             menuShown = false
             var top = CGFloat(64)
@@ -1630,7 +1641,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             reply!.setContent(thing: cell.content!, sub: (cell.content as! RComment).subreddit, editing: false, delegate: self, parent: self)
             tableView.insertRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .fade)
             tableView.endUpdates()
-        }
+        }*/
     }
 
     var activeField: UITextField?
@@ -1641,61 +1652,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     func textFieldDidEndEditing(textField: UITextField) {
         self.activeField = nil
-    }
-
-    func showCommentMenu(_ cell: CommentDepthCell) {
-        if (cell.content! is RMore || offline) {
-            pushedSingleTap(cell)
-            return
-        }
-        cell.doHighlight()
-        if (menuShown) {
-            menuShown = false
-            tableView.beginUpdates()
-            tableView.deleteRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .fade)
-            tableView.endUpdates()
-
-        }
-        menuShown = true
-        replyShown = false
-        menu!.setComment(comment: cell.content as! RComment, cell: cell, parent: self)
-        tableView.beginUpdates()
-        var index = 0
-        menuId = (cell.content as! RComment).getIdentifier()
-        for comment in dataArray {
-            if (content[comment] is RComment) {
-                if (((content[comment] as! RComment).getIdentifier() == menuId)) {
-                    break
-                }
-            }
-            index += 1
-        }
-        menuIndex = index + 1
-        tableView.insertRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .fade)
-        tableView.endUpdates()
-        var top = CGFloat(64)
-        var bottom = CGFloat(450)
-        if #available(iOS 11.0, *) {
-            top = 0
-        }
-        tableView.contentInset = UIEdgeInsetsMake(top, 0, bottom, 0)
-
-    }
-
-    func hideCommentMenu(_ cell: CommentDepthCell) {
-        menuShown = false
-        replyShown = false
-        cell.doUnHighlight()
-        tableView.beginUpdates()
-        tableView.deleteRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .fade)
-        tableView.endUpdates()
-        var top = CGFloat(64)
-        var bottom = CGFloat(45)
-        if #available(iOS 11.0, *) {
-            top = 0
-            bottom = 0
-        }
-        tableView.contentInset = normalInsets
     }
 
     override func becomeFirstResponder() -> Bool {
@@ -1810,22 +1766,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell: UITableViewCell! = nil
-        if (menuShown) {
-            if (indexPath.row >= 0 && ((indexPath.row == 0 && menuId == "sub") || (indexPath.row > 0 && dataArray[indexPath.row - 1] == menuId))) {
-                if (replyShown) {
-                    return reply!
-                }
-                return menu!
-            }
-        }
-
+    
         var datasetPosition = (indexPath as NSIndexPath).row
-
-        if (menuShown) {
-            if (datasetPosition >= menuIndex) {
-                datasetPosition -= 1
-            }
-        }
     
         let thing = isSearching ? filteredData[datasetPosition] : dataArray[datasetPosition]
         let parentOP = parents[thing]
@@ -1846,7 +1788,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 
                 cell.setComment(comment: content[thing] as! RComment, depth: cDepth[thing]!, parent: self, hiddenCount: count, date: lastSeen, author: submission?.author, text: t, isCollapsed: hiddenP, parentOP: parentOP ?? "")
                 if (thing == menuId && menuShown) {
-                    cell.doHighlight()
+                    cell.showCommentMenu()
                 }
             } else {
                 cell.setMore(more: (content[thing] as! RMore), depth: cDepth[thing]!)
@@ -1895,16 +1837,16 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     func doAction(cell: CommentDepthCell, action: SettingValues.CommentAction, indexPath: IndexPath){
         switch(action){
         case .UPVOTE:
-            cell.upvote()
+            cell.upvote(cell)
             break
         case .DOWNVOTE:
-            cell.downvote()
+            cell.downvote(cell)
             break
         case .SAVE:
             cell.save()
             break
         case .MENU:
-            cell.menu()
+            cell.menu(cell)
             break
         case .COLLAPSE:
             collapseParent(indexPath, cell: cell)

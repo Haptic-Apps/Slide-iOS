@@ -168,7 +168,6 @@
 		BEDDA9911E19AB5D003CD6C3 /* WebsiteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEDDA9901E19AB5D003CD6C3 /* WebsiteViewController.swift */; };
 		BEDDA9931E19AEF2003CD6C3 /* AdDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEDDA9921E19AEF2003CD6C3 /* AdDictionary.swift */; };
 		BEE10FC61F25078F00A72CE5 /* PagingCommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE10FC51F25078F00A72CE5 /* PagingCommentViewController.swift */; };
-		BEE206F41F1B0D53008BB5F1 /* ReplyCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE206F31F1B0D53008BB5F1 /* ReplyCellView.swift */; };
 		BEE206F61F1CF7D3008BB5F1 /* SettingsLinkHandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE206F51F1CF7D3008BB5F1 /* SettingsLinkHandling.swift */; };
 		BEE206F81F1CFC96008BB5F1 /* SettingsHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE206F71F1CFC96008BB5F1 /* SettingsHistory.swift */; };
 		BEE206FA1F1DE286008BB5F1 /* WrappingFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE206F91F1DE286008BB5F1 /* WrappingFlowLayout.swift */; };
@@ -399,7 +398,6 @@
 		BEDDA9901E19AB5D003CD6C3 /* WebsiteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebsiteViewController.swift; sourceTree = "<group>"; };
 		BEDDA9921E19AEF2003CD6C3 /* AdDictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdDictionary.swift; sourceTree = "<group>"; };
 		BEE10FC51F25078F00A72CE5 /* PagingCommentViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PagingCommentViewController.swift; sourceTree = "<group>"; };
-		BEE206F31F1B0D53008BB5F1 /* ReplyCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReplyCellView.swift; sourceTree = "<group>"; };
 		BEE206F51F1CF7D3008BB5F1 /* SettingsLinkHandling.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsLinkHandling.swift; sourceTree = "<group>"; };
 		BEE206F71F1CFC96008BB5F1 /* SettingsHistory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsHistory.swift; sourceTree = "<group>"; };
 		BEE206F91F1DE286008BB5F1 /* WrappingFlowLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WrappingFlowLayout.swift; sourceTree = "<group>"; };
@@ -739,7 +737,6 @@
 				BE8592C11E0EE72800836C1D /* reddift_config.json */,
 				BE780B5F1E32CA8F00DAA1EB /* RelatedContributionLoader.swift */,
 				BE780B611E32CB9600DAA1EB /* RelatedViewController.swift */,
-				BEE206F31F1B0D53008BB5F1 /* ReplyCellView.swift */,
 				BE2B89FA1E253D610053D493 /* ReplyViewController.swift */,
 				BE1DA3971E26ADEA00EC0A04 /* SearchContributionLoader.swift */,
 				BE1DA3951E26AD5700EC0A04 /* SearchViewController.swift */,
@@ -1282,7 +1279,6 @@
 				098B5A4320EFC5B600FE201B /* UIButton+Extensions.swift in Sources */,
 				BEE206F61F1CF7D3008BB5F1 /* SettingsLinkHandling.swift in Sources */,
 				BEC494281E307D57006618F3 /* GalleryTableViewController.swift in Sources */,
-				BEE206F41F1B0D53008BB5F1 /* ReplyCellView.swift in Sources */,
 				BEBF45E11E23EED800764BB8 /* SettingValues.swift in Sources */,
 				BED76E651E3A9576008E7717 /* RealmDataWrappers.swift in Sources */,
 				BE3E5C191E16BC3900749C0C /* StringHTML+util.swift in Sources */,
