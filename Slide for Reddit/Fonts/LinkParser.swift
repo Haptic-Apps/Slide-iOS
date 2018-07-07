@@ -31,6 +31,9 @@ class LinkParser {
                             case .ALBUM:
                                 typeString.mutableString.setString("(Album)")
                                 break
+                            case .TABLE:
+                                typeString.mutableString.setString("(Table)")
+                                break
                             case .EXTERNAL:
                                 typeString.mutableString.setString("(External link)")
                                 break
@@ -86,6 +89,7 @@ extension NSMutableAttributedString {
             for match in matchesArray {
                 let attributedText = self.attributedSubstring(from: match.range).mutableCopy() as! NSMutableAttributedString
                 attributedText.addAttribute(NSBackgroundColorAttributeName, value: color, range: NSRange(location: 0, length: attributedText.length))
+                attributedText.addAttribute(kCTForegroundColorAttributeName as String, value: color, range: NSRange(location: 0, length: attributedText.length))
                 self.replaceCharacters(in: match.range, with: attributedText)
             }
         }
