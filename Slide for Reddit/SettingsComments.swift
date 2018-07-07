@@ -171,7 +171,7 @@ class SettingsComments: UITableViewController {
             case 3: return self.wideIndicatorCell
             case 4: return self.swapLongPressCell
             case 5: return self.highlightOpCell
-            case 6: return self.wideIndicatorCell
+            case 6: return self.lockBottomCell
             default: fatalError("Unknown row in section 0")
             }
         default: fatalError("Unknown section")
