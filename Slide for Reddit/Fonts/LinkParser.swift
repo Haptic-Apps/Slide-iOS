@@ -69,6 +69,7 @@ class LinkParser {
                             string.insert(typeString, at: range.location + range.length)
                             string.addAttributes([NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor], range: NSRange.init(location: range.location + range.length, length: typeString.length))
                         }
+                        string.addAttribute(kCTForegroundColorAttributeName as String, value: color, range: range)
                         break
                     }
                 }

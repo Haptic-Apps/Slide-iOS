@@ -91,8 +91,6 @@ class CommentMenuCell: UITableViewCell {
         var width = min(375, UIScreen.main.bounds.size.width)
         width = width / ((archived || !AccountController.isLoggedIn) ? 1 : (editShown ? (modShown ? 7 : 6) : (modShown ? 5 : 4)))
 
-        
-
         if (editShown) {
             edit.isHidden = false
             delete.isHidden = false
@@ -874,7 +872,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         c.alpha = 0
         self.contentView.backgroundColor = ColorUtil.foregroundColor
         if (depth - 1 > 0) {
-            sideWidth = 3
+            sideWidth = (SettingValues.wideIndicators ? 8 : 4)
             marginTop = 1
             let i22 = depth - 2;
             if (SettingValues.disableColor) {
@@ -1163,7 +1161,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
             title.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
             setLinkAttrs = true
         }
-        title.attributedText = (infoString)
+        title.setText(infoString)
 
     }
 

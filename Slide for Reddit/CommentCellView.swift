@@ -191,8 +191,6 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
             } catch {
             }
         }
-        
-
     }
     
     var registered: Bool = false
