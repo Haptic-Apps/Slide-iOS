@@ -176,13 +176,17 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         if (!self.cancelled) {
             if (SettingValues.swapLongPress) {
                 //todo this is probably wrong
-                if (self.delegate!.isMenuShown() && self.delegate!.getMenuShown() != comment!.getIdentifier()) {
+                if (comment != nil && comment! is RComment && self.delegate!.isMenuShown() && self.delegate!.getMenuShown() != comment!.getIdentifier()) {
                     self.showMenu(nil)
                 } else {
                     self.pushedSingleTap(nil)
                 }
             } else {
-                self.showMenu(nil)
+                if(comment != nil && comment! is RComment){
+                    self.showMenu(nil)
+                } else {
+                    self.pushedSingleTap(nil)
+                }
             }
         }
     }
@@ -235,7 +239,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     func hideMenuAnimated(){
         parent!.menuCell = nil
         parent!.menuId = nil
-        depth = oldDepth
         self.hideCommentMenu()
         parent!.reloadHeights()
     }
@@ -280,6 +283,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
     
     func hideCommentMenu(){
+        depth = oldDepth
         menu.isHidden = true
         NSLayoutConstraint.deactivate(menuHeight)
         menuHeight = batch {
@@ -737,6 +741,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: .white)
         
         title.setText(attr2)
+        NSLayoutConstraint.deactivate(menuHeight)
+        menuHeight = batch {
+            menu.heightAnchor == CGFloat(0)
+        }
         updateDepth()
     }
 
