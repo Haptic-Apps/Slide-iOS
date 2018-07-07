@@ -183,7 +183,7 @@ class SingleSubredditViewController: MediaViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        if(!SettingValues.bottomBarHidden){
+        if(!SettingValues.bottomBarHidden || SettingValues.viewType){
             navigationController?.setToolbarHidden(false, animated: false)
             self.isToolbarHidden = false
             setupFab()
@@ -272,7 +272,7 @@ class SingleSubredditViewController: MediaViewController {
             self.isHiding = false
         })
         
-        if(!SettingValues.bottomBarHidden){
+        if(!SettingValues.bottomBarHidden || SettingValues.viewType){
             (self.navigationController)?.setToolbarHidden(true, animated: true)
         }
         self.isToolbarHidden = true
@@ -303,7 +303,7 @@ class SingleSubredditViewController: MediaViewController {
                     }, completion: { finished in
                     })
 
-                    if(!SettingValues.bottomBarHidden){
+                    if(!SettingValues.bottomBarHidden || SettingValues.viewType){
                         (self.navigationController)?.setToolbarHidden(false, animated: true)
                     }
                     self.isToolbarHidden = false
@@ -317,7 +317,7 @@ class SingleSubredditViewController: MediaViewController {
 
             })
 
-            if(!SettingValues.bottomBarHidden){
+            if(!SettingValues.bottomBarHidden || SettingValues.viewType){
                 (navigationController)?.setToolbarHidden(false, animated: true)
             }
             self.isToolbarHidden = false
@@ -352,7 +352,7 @@ class SingleSubredditViewController: MediaViewController {
     }
 
     func setupFab() {
-        if(!SettingValues.bottomBarHidden){
+        if(!SettingValues.bottomBarHidden || SettingValues.viewType){
             if (SingleSubredditViewController.fab != nil && !SingleSubredditViewController.fab!.isHidden) {
                 UIView.animate(withDuration: 0.15, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
                     SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
@@ -484,7 +484,7 @@ class SingleSubredditViewController: MediaViewController {
             sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let sortB = UIBarButtonItem.init(customView: sort)
 
-            if(SettingValues.bottomBarHidden){
+            if(!SettingValues.bottomBarHidden || SettingValues.viewType){
                 more = UIButton.init(type: .custom)
                 more.setImage(UIImage.init(named: "moreh")?.navIcon(), for: UIControlState.normal)
                 more.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControlEvents.touchUpInside)

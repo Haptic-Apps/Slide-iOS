@@ -54,7 +54,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
         navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
 
-        if(!SettingValues.bottomBarHidden){
+        if(!SettingValues.bottomBarHidden || SettingValues.viewType){
             navigationController?.setToolbarHidden(false, animated: false)
         } else {
             navigationController?.setToolbarHidden(true, animated: false)
@@ -509,7 +509,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         label.sizeToFit()
         let leftItem = UIBarButtonItem(customView: label)
 
-        if(SettingValues.bottomBarHidden){
+        if(SettingValues.bottomBarHidden && !SettingValues.viewType){
             self.navigationItem.leftBarButtonItems = [menuB, leftItem]
         } else {
             self.navigationItem.leftBarButtonItems = [leftItem]
@@ -707,7 +707,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         if(!MainViewController.isOffline){
-            if(SettingValues.bottomBarHidden){
+            if(SettingValues.bottomBarHidden && !SettingValues.viewType){
                 let more = UIButton.init(type: .custom)
                 more.setImage(UIImage.init(named: "moreh")?.navIcon(), for: UIControlState.normal)
                 more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
@@ -739,7 +739,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                 navigationItem.rightBarButtonItem = sortB
             }
         } else {
-            if(SettingValues.bottomBarHidden){
+            if(SettingValues.bottomBarHidden && !SettingValues.viewType){
                 navigationItem.rightBarButtonItems = [settingsB, offlineB]
             } else {
                 toolbarItems = [settingsB, flexButton, offlineB]

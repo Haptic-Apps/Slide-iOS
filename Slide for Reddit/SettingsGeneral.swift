@@ -48,6 +48,7 @@ class SettingsGeneral: UITableViewController {
         if (changed == viewTypeSwitch) {
             MainViewController.needsRestart = true
             SettingValues.viewType = changed.isOn
+            bottomBarSwitch.isEnabled = !changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_viewType)
         } else if (changed == bottomBarSwitch) {
             MainViewController.needsRestart = true
@@ -143,6 +144,8 @@ class SettingsGeneral: UITableViewController {
         self.commentSorting.textLabel?.textColor = ColorUtil.fontColor
 
         self.tableView.tableFooterView = UIView()
+        bottomBarSwitch.isEnabled = !SettingValues.viewType
+
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
