@@ -88,6 +88,7 @@ class SettingValues {
     public static let pref_flatMode = "FLAT_MODE"
     public static let pref_bottomBarHidden = "BOTTOM_BAR_HIDDEN"
     public static let pref_widerIndicators = "WIDE_INDICATORS"
+    public static let pref_lockCommentBottomBar = "LOCK_COMMENT_BOTTOM"
 
     public static var commentActionRight = CommentAction.UPVOTE
     public static var commentActionLeft = CommentAction.DOWNVOTE
@@ -168,6 +169,7 @@ class SettingValues {
     public static var commentFullScreen = true
     public static var linkAlwaysThumbnail = false
     public static var bottomBarHidden = true
+    public static var lockCommentBars = true
 
     enum PostViewType: String {
         case LIST = "list"
@@ -293,6 +295,7 @@ class SettingValues {
         SettingValues.collapseDefault = settings.bool(forKey: SettingValues.pref_collapseDefault)
         SettingValues.volumeButtonNavigation = settings.bool(forKey: SettingValues.pref_volumeButtonNavigation)
         SettingValues.collapseFully = settings.bool(forKey: SettingValues.pref_collapseFully)
+        SettingValues.lockCommentBars = settings.bool(forKey: SettingValues.pref_lockCommentBottomBar)
         SettingValues.autoCache = settings.bool(forKey: SettingValues.pref_autoCache)
         SettingValues.wideIndicators = settings.bool(forKey: SettingValues.pref_widerIndicators)
         SettingValues.leftThumbnail = settings.bool(forKey: SettingValues.pref_leftThumbnail)

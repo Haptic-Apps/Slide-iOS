@@ -765,7 +765,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
         if (sideConstraint != nil) {
             self.contentView.removeConstraints(sideConstraint!)
         }
-        let metrics = ["marginTop": marginTop, "nmarginTop": -marginTop, "horizontalMargin": 75, "top": 0, "bottom": 0, "separationBetweenLabels": 0, "labelMinHeight": 75, "sidewidth": SettingValues.wideIndicators ? 8 : 4 * (depth), "width": sideWidth]
+        let metrics = ["marginTop": marginTop, "nmarginTop": -marginTop, "horizontalMargin": 75, "top": 0, "bottom": 0, "separationBetweenLabels": 0, "labelMinHeight": 75, "sidewidth": (SettingValues.wideIndicators ? 8 : 4) * (depth), "width": sideWidth]
         let views = ["title": title, "topviewspace": topViewSpace, "more": moreButton, "side": sideView, "cell": self.contentView, "sideviewspace": sideViewSpace] as [String: Any]
 
         
@@ -814,7 +814,7 @@ class CommentDepthCell: MarginedTableViewCell, TTTAttributedLabelDelegate, UIVie
     override func updateConstraints() {
         super.updateConstraints()
 
-        let metrics = ["marginTop": marginTop, "nmarginTop": -marginTop, "horizontalMargin": 75, "top": 0, "bottom": 0, "separationBetweenLabels": 0, "labelMinHeight": 75, "sidewidth": SettingValues.wideIndicators ? 8 : 4  * (depth), "width": sideWidth]
+        let metrics = ["marginTop": marginTop, "nmarginTop": -marginTop, "horizontalMargin": 75, "top": 0, "bottom": 0, "separationBetweenLabels": 0, "labelMinHeight": 75, "sidewidth": (SettingValues.wideIndicators ? 8 : 4)  * (depth), "width": sideWidth]
         let views = ["title": title, "topviewspace": topViewSpace, "children": c, "more": moreButton, "side": sideView, "cell": self.contentView, "sideviewspace": sideViewSpace] as [String: Any]
 
 

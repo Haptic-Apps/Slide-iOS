@@ -16,6 +16,9 @@ class SettingsComments: UITableViewController {
     var disableColorCell: UITableViewCell = UITableViewCell()
     var disableColor = UISwitch()
     
+    var lockBottomCell: UITableViewCell = UITableViewCell()
+    var lockBottom = UISwitch()
+    
     var wideIndicatorCell: UITableViewCell = UITableViewCell()
     var wideIndicator = UISwitch()
     
@@ -58,6 +61,9 @@ class SettingsComments: UITableViewController {
         } else if(changed == disableColor){
             SettingValues.disableColor = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_disableColor)
+        } else if(changed == lockBottom){
+            SettingValues.lockCommentBars = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_lockCommentBottomBar)
         } else if(changed == wideIndicator){
             SettingValues.wideIndicators = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_widerIndicators)
@@ -133,6 +139,7 @@ class SettingsComments: UITableViewController {
         createCell(collapseFullyCell, collapseFully, isOn: SettingValues.collapseFully, text: "Collapse comments fully")
         createCell(highlightOpCell, highlightOp, isOn: SettingValues.highlightOp, text: "Highlight op replies of parent comments")
         createCell(wideIndicatorCell, wideIndicator, isOn: SettingValues.wideIndicators, text: "Make comment depth indicator wider")
+        createCell(lockBottomCell, lockBottom, isOn: SettingValues.lockCommentBars, text: "Don't autohide toolbars in comments")
 
         self.tableView.tableFooterView = UIView()
     }
@@ -164,6 +171,7 @@ class SettingsComments: UITableViewController {
             case 3: return self.wideIndicatorCell
             case 4: return self.swapLongPressCell
             case 5: return self.highlightOpCell
+            case 6: return self.wideIndicatorCell
             default: fatalError("Unknown row in section 0")
             }
         default: fatalError("Unknown section")
@@ -175,7 +183,7 @@ class SettingsComments: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch(section) {
         case 0: return 1
-        case 1: return 6    // section 1 has 1 row
+        case 1: return 7    // section 1 has 1 row
         default: fatalError("Unknown number of sections")
         }
     }
