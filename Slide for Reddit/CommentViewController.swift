@@ -315,17 +315,13 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     func doArrays() {
         dataArray = comments.filter({ (s) -> Bool in
-            if(!hidden.contains(s)){
-                return true
-            }
-            return false
+            !hidden.contains(s)
         })
     }
 
     var sort: CommentSort = SettingValues.defaultCommentSorting
 
     override func loadView() {
-        print("Did load view")
         self.view = UITableView(frame: CGRect.zero, style: .plain)
         self.automaticallyAdjustsScrollViewInsets = false
         self.tableView = self.view as! UITableView
@@ -1740,7 +1736,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         let children = walkTreeFlat(n: n);
 
         for name in children {
-
             if (!hidden.contains(name)) {
                 i += 1
                 hidden.insert(name)
@@ -1803,29 +1798,12 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     func hideUI(inHeader: Bool) {
         isHiding = true
         (navigationController)?.setNavigationBarHidden(true, animated: true)
-        
-        UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
-            SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
-        }, completion: { finished in
-            SingleSubredditViewController.fab?.isHidden = true
-            self.isHiding = false
-        })
-        
         (self.navigationController)?.setToolbarHidden(true, animated: true)
-        
         self.isToolbarHidden = true
     }
     
     func showUI() {
         (navigationController)?.setNavigationBarHidden(false, animated: true)
-        SingleSubredditViewController.fab?.isHidden = false
-            
-        UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
-            SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
-        }, completion: { finished in
-                
-        })
-            
         (navigationController)?.setToolbarHidden(false, animated: true)
         self.isToolbarHidden = false
     }
@@ -1850,7 +1828,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
     
         let thing = isSearching ? filteredData[datasetPosition] : dataArray[datasetPosition]
-        let parentOP = parents[(content[thing] as! Object).getIdentifier()]
+        let parentOP = parents[thing]
 
         cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as UITableViewCell
         if let cell = cell as? CommentDepthCell {
