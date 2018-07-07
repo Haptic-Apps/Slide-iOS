@@ -18,7 +18,7 @@ import Anchorage
 protocol TTTAttributedCellDelegate: class {
     func pushedSingleTap(_ cell: CommentDepthCell)
     func isMenuShown() -> Bool
-    func getMenuShown() -> String
+    func getMenuShown() -> String?
 }
 
 class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegate {
@@ -56,9 +56,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var comment: RComment?
     var depth: Int = 0
     
-    var menuShown = false
-    var replyShown = false
-
     var delegate: TTTAttributedCellDelegate? = nil
     var content: Object? = nil
 
@@ -130,6 +127,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             $0.accessibilityIdentifier = "Comment menu"
             $0.axis = .horizontal
             $0.alignment = .center
+            $0.distribution = .fillEqually
             $0.isHidden = true
         }
         
@@ -227,15 +225,32 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     func showMenu(_ sender: AnyObject?) {
         if let del = self.delegate {
             if (del.isMenuShown() && del.getMenuShown() == (content as! RComment).getId()) {
-                self.hideCommentMenu()
+                hideMenuAnimated()
             } else {
-                self.showCommentMenu()
+                showMenuAnimated()
             }
         }
     }
     
+    func hideMenuAnimated(){
+        parent!.menuCell = nil
+        parent!.menuId = nil
+        depth = oldDepth
+        self.hideCommentMenu()
+        parent!.reloadHeights()
+    }
+    
+    func showMenuAnimated(){
+        if(parent!.menuCell != nil){
+            parent!.menuCell!.hideCommentMenu()
+            parent!.reloadHeights()
+        }
+        self.showCommentMenu()
+        parent!.menuId = comment!.getIdentifier()
+        parent!.reloadHeights()
+    }
+    
     func showCommentMenu(){
-        oldDepth = depth
         if(!AccountController.isLoggedIn || comment!.archived || parent!.np){
             upvoteButton.isHidden = true
             downvoteButton.isHidden = true
@@ -248,30 +263,30 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             editButton.isHidden = true
             deleteButton.isHidden = true
         }
-        parent!.menuShown = true
-        menuShown = true
-        parent!.menuId = comment!.getIdentifier()
+        parent!.menuCell = self
         menu.isHidden = false
         if (depth == 1) {
             depth = 1
         } else {
             depth = 2
         }
+        NSLayoutConstraint.deactivate(menuHeight)
+        menuHeight = batch {
+            menu.heightAnchor == CGFloat(45)
+        }
         updateDepth()
         self.contentView.backgroundColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.getColorForSub(sub: ((comment)!.subreddit)).withAlphaComponent(0.25))
         menuBack.backgroundColor = ColorUtil.getColorForSub(sub: comment!.subreddit)
-        parent!.reloadHeights()
     }
     
     func hideCommentMenu(){
         menu.isHidden = true
-        parent!.menuShown = false
-        menuShown = false
-        parent!.menuId = ""
-        depth = oldDepth
+        NSLayoutConstraint.deactivate(menuHeight)
+        menuHeight = batch {
+            menu.heightAnchor == CGFloat(0)
+        }
         updateDepth()
         self.contentView.backgroundColor = ColorUtil.foregroundColor
-        parent!.reloadHeights()
     }
 
     var parent: CommentViewController?
@@ -279,6 +294,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     func upvote(_ s: AnyObject) {
         parent!.vote(comment: comment!, dir: .up)
         self.refresh(comment: comment!, submissionAuthor: (parent!.submission?.author)!, text: self.cellContent!)
+        self.hideMenuAnimated()
     }
     
     func reply(_ s: AnyObject) {
@@ -292,6 +308,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     func downvote(_ s: AnyObject) {
         parent!.vote(comment: comment!, dir: .down)
         self.refresh(comment: comment!, submissionAuthor: (parent!.submission?.author)!, text: self.cellContent!)
+        self.hideMenuAnimated()
     }
     
     func save() {
@@ -660,16 +677,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             sideView.leftAnchor == sideViewSpace.rightAnchor
             sideView.widthAnchor == CGFloat(sideWidth)
         }
-        NSLayoutConstraint.deactivate(menuHeight)
-        if(menuShown){
-            menuHeight = batch {
-                menu.heightAnchor == CGFloat(45)
-            }
-        } else {
-            menuHeight = batch {
-                menu.heightAnchor == CGFloat(0)
-            }
-        }
     }
 
     var sideWidth: Int = 0
@@ -772,6 +779,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
 
         self.depth = depth
+        self.oldDepth = depth
         if (depth - 1 > 0) {
             sideWidth = SettingValues.wideIndicators ? 8 : 4 
             marginTop = 1
@@ -819,7 +827,11 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             parent.registerForPreviewing(with: self, sourceView: title)
             registered = true
         }
-        updateDepth()
+        if(parent.getMenuShown() ?? "" == comment.getIdentifier()) {
+            showCommentMenu()
+        } else {
+            hideCommentMenu()
+        }
     }
     
     func doDTap(_ sender: AnyObject){

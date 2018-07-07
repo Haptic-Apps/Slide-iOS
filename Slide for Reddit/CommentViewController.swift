@@ -18,11 +18,14 @@ import RLBAlertsPickers
 import Anchorage
 
 class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate, TTTAttributedLabelDelegate, SubmissionMoreDelegate {
+    
+    var menuCell: CommentDepthCell?
+    var menuId: String?
     func isMenuShown() -> Bool {
-        return menuShown
+        return menuCell != nil
     }
     
-    func getMenuShown() -> String {
+    func getMenuShown() -> String? {
         return menuId
     }
     
@@ -82,6 +85,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     var np = false
 
     func replySent(comment: Comment?) {
+        /* Needs to be re implemented
         if (comment != nil && menuId != "sub") {
             let cell = replyingTo!
             DispatchQueue.main.async(execute: { () -> Void in
@@ -142,7 +146,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 self.isReply = false
                 self.tableView.reloadData()
             })
-        }
+        }*/
     }
 
     func openComments(id: String, subreddit: String?) {
@@ -150,6 +154,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
 
     func editSent(cr: Comment?) {
+        /* Needs to be re implemented
         if (cr != nil) {
             DispatchQueue.main.async(execute: { () -> Void in
                 var realPosition = 0
@@ -173,7 +178,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 self.discard()
             })
 
-        }
+        }*/
     }
 
     func updateHeight(textView: UITextView) {
@@ -184,6 +189,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
 
     func discard() {
+        /* NEeds to be re implemented
         self.tableView.endEditing(true)
         tableView.beginUpdates()
         replyShown = false
@@ -193,7 +199,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         } else {
             tableView.reloadRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .automatic)
         }
-        tableView.endUpdates()
+        tableView.endUpdates()*/
     }
 
     internal func pushedMoreButton(_ cell: CommentDepthCell) {
@@ -234,10 +240,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
 
     var searchBar = UISearchBar()
-    var menuShown = false 
-    var menuIndex = 0
-    var replyShown = false
-    var menuId = ""
     
     func reloadHeights(){
         tableView.beginUpdates()
@@ -1591,7 +1593,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
 
     func deleteComment(cell: CommentDepthCell) {
-        self.doDelete(comment: cell.content as! RComment, index: (menuIndex - 1))
+        //self.doDelete(comment: cell.content as! RComment, index: (menuIndex - 1))
     }
 
     func doReplySubmission() {
@@ -1787,9 +1789,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 }
                 
                 cell.setComment(comment: content[thing] as! RComment, depth: cDepth[thing]!, parent: self, hiddenCount: count, date: lastSeen, author: submission?.author, text: t, isCollapsed: hiddenP, parentOP: parentOP ?? "")
-                if (thing == menuId && menuShown) {
-                    cell.showCommentMenu()
-                }
             } else {
                 cell.setMore(more: (content[thing] as! RMore), depth: cDepth[thing]!)
             }
