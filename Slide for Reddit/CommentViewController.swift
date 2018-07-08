@@ -1811,20 +1811,20 @@ override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurat
             cell.menu(cell)
             break
         case .COLLAPSE:
-            collapseParent(indexPath, cell: cell)
+            collapseParent(indexPath, baseCell: cell)
             break
         case .NONE:
             break
         }
     }
 
-    func collapseParent(_ indexPath: IndexPath, cell: CommentDepthCell) {
+    func collapseParent(_ indexPath: IndexPath, baseCell: CommentDepthCell) {
         var topCell = indexPath.row
         var contents = content[dataArray[topCell]]
         var id = ""
         if ((contents as! RComment).depth == 1) {
             //collapse self
-            id = cell.comment!.getIdentifier()
+            id = baseCell.comment!.getIdentifier()
         } else {
             while ((contents is RMore || (contents as! RComment).depth > 1) && dataArray.count > topCell) {
                 topCell -= 1
@@ -1836,22 +1836,26 @@ override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurat
             id = (contents as! RComment).getIdentifier()
         }
         let childNumber = getChildNumber(n: id)
-        if (childNumber == 0) {
-            if (!SettingValues.collapseFully) {
-            } else if (cell.isCollapsed) {
+        let indexPath = IndexPath.init(row: topCell, section: 0)
+        if let c = tableView.cellForRow(at: indexPath)  {
+            let cell = c as! CommentDepthCell
+            if (childNumber == 0) {
+                if (!SettingValues.collapseFully) {
+                } else if (cell.isCollapsed) {
+                } else {
+                    self.tableView.beginUpdates()
+                    cell.collapse(childNumber: 0)
+                    self.tableView.endUpdates()
+                }
             } else {
-                self.tableView.beginUpdates()
-                cell.collapse(childNumber: 0)
-                self.tableView.endUpdates()
-            }
-        } else {
-            cell.collapse(childNumber: childNumber)
-            if (hiddenPersons.contains((id)) && childNumber > 0) {
-            } else {
-                if (childNumber > 0) {
-                    hideAll(comment: id, i: topCell + 1)
-                    if (!hiddenPersons.contains(id)) {
-                        hiddenPersons.insert(id)
+                cell.collapse(childNumber: childNumber)
+                if (hiddenPersons.contains((id)) && childNumber > 0) {
+                } else {
+                    if (childNumber > 0) {
+                        hideAll(comment: id, i: topCell + 1)
+                        if (!hiddenPersons.contains(id)) {
+                            hiddenPersons.insert(id)
+                        }
                     }
                 }
             }
