@@ -17,7 +17,7 @@ import XLActionController
 import RLBAlertsPickers
 import Anchorage
 
-class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate, TTTAttributedLabelDelegate, SubmissionMoreDelegate {
+class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate, TTTAttributedLabelDelegate, SubmissionMoreDelegate, ReplyDelegate {
     
     var menuCell: CommentDepthCell?
     var menuId: String?
@@ -1725,10 +1725,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
         self.headerCell!.contentView.frame = frame
         self.tableView.tableHeaderView!.frame = frame
-
-//        self.headerCell?.configureLayout()
-//        self.headerCell?.updateConstraints()
-
         tableView.reloadData(with: .none)
     }
 
@@ -1739,6 +1735,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     var oldY = CGFloat(0)
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        //self.tableView.endEditing(true)
         let currentY = scrollView.contentOffset.y
         if(!SettingValues.lockCommentBars){
             if (currentY > lastYUsed && currentY > 60) {

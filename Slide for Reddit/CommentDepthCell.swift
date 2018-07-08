@@ -21,12 +21,24 @@ protocol TTTAttributedCellDelegate: class {
     func getMenuShown() -> String?
 }
 
-class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegate {
+protocol ReplyDelegate {
+    func replySent(comment: Comment?)
+    func updateHeight(textView: UITextView)
+    func discard()
+    func editSent(cr: Comment?)
+}
+
+class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegate, UITextViewDelegate {
+    
+    func textViewDidChange(_ textView: UITextView) {
+        textView.sizeToFitHeight()
+        parent!.reloadHeights()
+    }
     
     var sideView: UIView = UIView()
     var menu = UIStackView()
     var menuBack = UIView()
-    var reply = UIStackView()
+    var reply = UIView()
     
     var sideViewSpace: UIView = UIView()
     var topViewSpace: UIView = UIView()
@@ -49,7 +61,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var sendB = UIButton()
     var discardB = UIButton()
     var edit = false
-
+    var toolbar : ToolbarTextView?
 
     var childrenCount: UIView = UIView()
     var childrenCountLabel: UILabel = UILabel()
@@ -162,11 +174,39 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         })
         modButton = UIButton.init(type: .custom).then({
             $0.setImage(UIImage.init(named: "mod")?.navIcon(), for: .normal)
-            $0.addTarget(self, action: #selector(self.mod(_:)), for: UIControlEvents.touchUpInside)
+            $0.addTarget(self, action: #selector(self.showModMenu(_:)), for: UIControlEvents.touchUpInside)
         })
 
         menu.addArrangedSubviews(editButton, deleteButton, upvoteButton, downvoteButton, replyButton, moreButton, modButton)
         self.contentView.addSubview(menu)
+        
+        
+        self.reply = UIView().then {
+            $0.accessibilityIdentifier = "Reply menu"
+            $0.isHidden = true
+        }
+        
+        self.body = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
+            $0.isEditable = true
+            $0.textColor = .white
+            $0.backgroundColor = UIColor.white.withAlphaComponent(0.3)
+            $0.layer.masksToBounds = false
+            $0.layer.cornerRadius = 10
+            $0.font = UIFont.systemFont(ofSize: 16)
+            $0.isScrollEnabled = false
+        })
+        sendB = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 200, height: 60))
+        discardB = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 200, height: 60))
+        
+        self.sendB.setTitle("Send", for: .normal)
+        self.discardB.setTitle("Discard", for: .normal)
+
+        sendB.addTarget(self, action: #selector(self.send(_:)), for: UIControlEvents.touchUpInside)
+        discardB.addTarget(self, action: #selector(self.discard(_:)), for: UIControlEvents.touchUpInside)
+
+        self.reply.addSubviews(body, sendB, discardB)
+        contentView.addSubview(reply)
+        
         configureLayout()
     }
 
@@ -268,6 +308,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
         parent!.menuCell = self
         menu.isHidden = false
+        reply.isHidden = true
         if (depth == 1) {
             depth = 1
         } else {
@@ -276,6 +317,12 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         NSLayoutConstraint.deactivate(menuHeight)
         menuHeight = batch {
             menu.heightAnchor == CGFloat(45)
+            menu.horizontalAnchors == contentView.horizontalAnchors
+            menu.bottomAnchor == contentView.bottomAnchor
+            title.bottomAnchor == menu.topAnchor - CGFloat(8)
+            menu.topAnchor == title.bottomAnchor + CGFloat(8)
+            body.heightAnchor == CGFloat(0)
+            reply.heightAnchor == CGFloat(0)
         }
         updateDepth()
         self.contentView.backgroundColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.getColorForSub(sub: ((comment)!.subreddit)).withAlphaComponent(0.25))
@@ -285,9 +332,13 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     func hideCommentMenu(){
         depth = oldDepth
         menu.isHidden = true
+        reply.isHidden = true
         NSLayoutConstraint.deactivate(menuHeight)
         menuHeight = batch {
+            title.bottomAnchor == contentView.bottomAnchor - CGFloat(8)
             menu.heightAnchor == CGFloat(0)
+            body.heightAnchor == CGFloat(0)
+            reply.heightAnchor == CGFloat(0)
         }
         updateDepth()
         self.contentView.backgroundColor = ColorUtil.foregroundColor
@@ -301,8 +352,178 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         self.hideMenuAnimated()
     }
     
+    func discard(_ sender: AnyObject) {
+        self.endEditing(true)
+        replyDelegate!.discard()
+        showCommentMenu()
+        parent!.reloadHeights()
+    }
+    
+    var alertController: UIAlertController?
+    
+    func getCommentEdited(_ name: String) {
+        let session = (UIApplication.shared.delegate as! AppDelegate).session
+        do {
+            try session?.getInfo([name], completion: { (res) in
+                switch res {
+                case .failure:
+                    DispatchQueue.main.async {
+                        self.toolbar?.saveDraft(self)
+                        self.alertController?.dismiss(animated: false, completion: {
+                            let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your message has not been edited (but has been saved as a draft), please try again", preferredStyle: .alert)
+                            alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+                            self.parent!.present(alert, animated: true, completion: nil)
+                        })
+                        self.replyDelegate!.editSent(cr: nil)
+                    }
+                case .success(let listing):
+                    if listing.children.count == 1 {
+                        if let comment = listing.children[0] as? Comment {
+                            DispatchQueue.main.async {
+                                self.alertController?.dismiss(animated: false, completion: {
+                                    self.parent!.dismiss(animated: true, completion: nil)
+                                })
+                                self.replyDelegate!.editSent(cr: comment)
+                            }
+                        }
+                    }
+                }
+                
+            })
+        } catch {
+            DispatchQueue.main.async {
+                self.toolbar?.saveDraft(self)
+                self.alertController?.dismiss(animated: false, completion: {
+                    let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your message has not been edited (but has been saved as a draft), please try again", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+                    self.parent!.present(alert, animated: true, completion: nil)
+                })
+                self.replyDelegate!.editSent(cr: nil)
+            }
+        }
+    }
+
+    
+    func doEdit(_ sender: AnyObject) {
+        alertController = UIAlertController(title: nil, message: "Editing comment...\n\n", preferredStyle: .alert)
+        
+        let spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+        spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
+        spinnerIndicator.color = UIColor.black
+        spinnerIndicator.startAnimating()
+        
+        alertController?.view.addSubview(spinnerIndicator)
+        parent!.present(alertController!, animated: true, completion: nil)
+        
+        let session = (UIApplication.shared.delegate as! AppDelegate).session
+        
+        do {
+            let name = comment!.getIdentifier()
+            try session?.editCommentOrLink(name, newBody: body.text!, completion: { (result) in
+                self.getCommentEdited(name)
+            })
+        } catch {
+            print((error as NSError).description)
+        }
+    }
+    
+    func send(_ sender: AnyObject){
+        self.endEditing(true)
+        
+        if (edit) {
+            doEdit(sender)
+            return
+        }
+        
+        let session = (UIApplication.shared.delegate as! AppDelegate).session
+        alertController = UIAlertController(title: nil, message: "Sending reply...\n\n", preferredStyle: .alert)
+        
+        let spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+        spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
+        spinnerIndicator.color = UIColor.black
+        spinnerIndicator.startAnimating()
+        
+        alertController?.view.addSubview(spinnerIndicator)
+        parent!.present(alertController!, animated: true, completion: nil)
+        
+        do {
+            let name = comment!.getIdentifier()
+            try session?.postComment(body.text!, parentName: name, completion: { (result) -> Void in
+                switch result {
+                case .failure(let error):
+                    print(error.description)
+                    DispatchQueue.main.async {
+                        self.toolbar?.saveDraft(self)
+                        self.alertController?.dismiss(animated: false, completion: {
+                            let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your comment has not been sent (but has been saved as a draft), please try again.\n\nError: \(error.localizedDescription)", preferredStyle: .alert)
+                            alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+                            self.parent!.present(alert, animated: true, completion: nil)
+                        })
+                        self.replyDelegate!.replySent(comment: nil)
+                    }
+                case .success(let postedComment):
+                    DispatchQueue.main.async {
+                        self.alertController?.dismiss(animated: false, completion: {
+                            self.parent!.dismiss(animated: true, completion: nil)
+                        })
+                        self.replyDelegate!.replySent(comment: postedComment)
+                    }
+                }
+            })
+        } catch {
+            DispatchQueue.main.async {
+                self.toolbar?.saveDraft(self)
+                self.alertController?.dismiss(animated: false, completion: {
+                    let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your comment has not been sent (but has been saved as a draft), please try again", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+                    self.parent!.present(alert, animated: true, completion: nil)
+                })
+                self.replyDelegate!.replySent(comment: nil)
+            }
+        }
+    }
+
+    func edit(_ sender: AnyObject){
+        edit = true
+        self.reply(sender)
+    }
+    
+    var replyDelegate : ReplyDelegate?
     func reply(_ s: AnyObject) {
-        //todo show reply menu
+        menu.isHidden = true
+        reply.isHidden = false
+        NSLayoutConstraint.deactivate(menuHeight)
+        menuHeight = batch {
+            title.bottomAnchor == reply.topAnchor - CGFloat(8)
+            reply.topAnchor == title.bottomAnchor + CGFloat(8)
+            reply.bottomAnchor == contentView.bottomAnchor
+            reply.horizontalAnchors == contentView.horizontalAnchors
+            body.horizontalAnchors == reply.horizontalAnchors + CGFloat(8)
+            body.topAnchor == reply.topAnchor + CGFloat(8)
+            discardB.leftAnchor == reply.leftAnchor + CGFloat(8)
+            sendB.rightAnchor == reply.rightAnchor - CGFloat(8)
+            discardB.topAnchor == body.bottomAnchor + CGFloat(8)
+            sendB.topAnchor == body.bottomAnchor + CGFloat(8)
+            discardB.bottomAnchor == reply.bottomAnchor - CGFloat(8)
+            sendB.bottomAnchor == reply.bottomAnchor - CGFloat(8)
+            sendB.heightAnchor == CGFloat(45)
+            discardB.heightAnchor == CGFloat(45)
+        }
+        updateDepth()
+
+        reply.backgroundColor = menuBack.backgroundColor
+        
+        body.text = ""
+        body.delegate = self
+        self.replyDelegate = parent!
+
+        if (edit) {
+            body.text = comment!.body
+        }
+        body.sizeToFitHeight()
+        toolbar = ToolbarTextView.init(textView: body, parent: parent!)
+        body.becomeFirstResponder()
+        parent!.reloadHeights()
     }
 
     func menu(_ s: AnyObject) {
@@ -317,10 +538,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     
     func save() {
         parent!.saveComment(self.comment!)
-    }
-    
-    func edit(_ s: AnyObject) {
-        self.parent!.editComment()
     }
     
     func doDelete(_ s: AnyObject) {
@@ -655,8 +872,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         topViewSpace.topAnchor == contentView.topAnchor
         topViewSpace.heightAnchor == CGFloat(marginTop)
         title.topAnchor == topViewSpace.bottomAnchor + CGFloat(8)
-        title.bottomAnchor == menu.topAnchor - CGFloat(8)
-        menu.topAnchor == title.bottomAnchor + CGFloat(8)
 
         title.leftAnchor == sideView.rightAnchor + CGFloat(12)
         title.rightAnchor == contentView.rightAnchor - CGFloat(4)
@@ -666,11 +881,14 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         sideView.verticalAnchors == contentView.verticalAnchors
         sideViewSpace.verticalAnchors == contentView.verticalAnchors
         
-        menu.horizontalAnchors == contentView.horizontalAnchors
-        menu.bottomAnchor == contentView.bottomAnchor
         updateDepth()
         menu.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
         title.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+        reply.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+        body.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+        sendB.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+        discardB.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+
     }
     
     func updateDepth(){
@@ -743,7 +961,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         title.setText(attr2)
         NSLayoutConstraint.deactivate(menuHeight)
         menuHeight = batch {
+            title.bottomAnchor == contentView.bottomAnchor - CGFloat(8)
             menu.heightAnchor == CGFloat(0)
+            body.heightAnchor == CGFloat(0)
+            reply.heightAnchor == CGFloat(0)
         }
         updateDepth()
     }
@@ -1166,3 +1387,13 @@ class UIShortTapGestureRecognizer: UITapGestureRecognizer {
         }
     }
 }
+
+extension UITextView {
+    func sizeToFitHeight() {
+        let size: CGSize = self.sizeThatFits(CGSize.init(width: self.frame.size.width, height: CGFloat.greatestFiniteMagnitude))
+        var frame:CGRect = self.frame
+        frame.size.height = size.height
+        self.frame = frame
+    }
+}
+
