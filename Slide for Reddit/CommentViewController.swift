@@ -17,7 +17,7 @@ import XLActionController
 import RLBAlertsPickers
 import Anchorage
 
-class CommentViewController: UITableViewController, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate, TTTAttributedLabelDelegate, SubmissionMoreDelegate, ReplyDelegate {
+class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate, TTTAttributedLabelDelegate, SubmissionMoreDelegate, ReplyDelegate {
     
     var menuCell: CommentDepthCell?
     var menuId: String?
@@ -350,6 +350,8 @@ class CommentViewController: UITableViewController, TTTAttributedCellDelegate, L
         self.view = UITableView(frame: CGRect.zero, style: .plain)
         self.automaticallyAdjustsScrollViewInsets = false
         self.tableView = self.view as! UITableView
+        self.tableView.delegate = self
+        self.tableView.dataSource = self
         self.tableView.allowsSelection = false
         self.tableView.layer.speed = 1.5
 
