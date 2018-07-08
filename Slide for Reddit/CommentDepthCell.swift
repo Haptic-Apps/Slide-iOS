@@ -22,10 +22,10 @@ protocol TTTAttributedCellDelegate: class {
 }
 
 protocol ReplyDelegate {
-    func replySent(comment: Comment?)
+    func replySent(comment: Comment?, cell: CommentDepthCell)
     func updateHeight(textView: UITextView)
     func discard()
-    func editSent(cr: Comment?)
+    func editSent(cr: Comment?, cell: CommentDepthCell)
 }
 
 class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegate, UITextViewDelegate {
@@ -374,7 +374,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                             alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
                             self.parent!.present(alert, animated: true, completion: nil)
                         })
-                        self.replyDelegate!.editSent(cr: nil)
+                        self.replyDelegate!.editSent(cr: nil, cell: self)
                     }
                 case .success(let listing):
                     if listing.children.count == 1 {
@@ -383,7 +383,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                                 self.alertController?.dismiss(animated: false, completion: {
                                     self.parent!.dismiss(animated: true, completion: nil)
                                 })
-                                self.replyDelegate!.editSent(cr: comment)
+                                self.replyDelegate!.editSent(cr: comment, cell: self)
                             }
                         }
                     }
@@ -398,7 +398,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                     alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
                     self.parent!.present(alert, animated: true, completion: nil)
                 })
-                self.replyDelegate!.editSent(cr: nil)
+                self.replyDelegate!.editSent(cr: nil, cell: self)
             }
         }
     }
@@ -459,14 +459,14 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                             alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
                             self.parent!.present(alert, animated: true, completion: nil)
                         })
-                        self.replyDelegate!.replySent(comment: nil)
+                        self.replyDelegate!.replySent(comment: nil, cell: self)
                     }
                 case .success(let postedComment):
                     DispatchQueue.main.async {
                         self.alertController?.dismiss(animated: false, completion: {
                             self.parent!.dismiss(animated: true, completion: nil)
                         })
-                        self.replyDelegate!.replySent(comment: postedComment)
+                        self.replyDelegate!.replySent(comment: postedComment, cell: self)
                     }
                 }
             })
@@ -478,7 +478,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                     alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
                     self.parent!.present(alert, animated: true, completion: nil)
                 })
-                self.replyDelegate!.replySent(comment: nil)
+                self.replyDelegate!.replySent(comment: nil, cell: self)
             }
         }
     }

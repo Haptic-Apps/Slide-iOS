@@ -29,7 +29,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         return menuId
     }
     
-
     func showFilterMenu(_ cell: LinkCellView) {
         //Not implemented
     }
@@ -71,7 +70,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         hasSubmission = false
         self.context = comment
         self.np = np
-        print("Context is \(context)")
         self.contextNumber = context
         super.init(nibName: nil, bundle: nil)
         setBarColors(color: ColorUtil.getColorForSub(sub: subreddit))
@@ -81,13 +79,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     var approved: [String] = []
     var removed: [String] = []
     var offline = false
-    var replyingTo: CommentDepthCell?
     var np = false
 
-    func replySent(comment: Comment?) {
-        /* Needs to be re implemented
+    func replySent(comment: Comment?, cell: CommentDepthCell) {
         if (comment != nil && menuId != "sub") {
-            let cell = replyingTo!
             DispatchQueue.main.async(execute: { () -> Void in
                 let startDepth = self.cDepth[cell.comment!.getIdentifier()]! + 1
 
@@ -102,6 +97,15 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     }
                     realPosition += 1
                 }
+                
+                var insertIndex = 0
+                for c in self.dataArray {
+                    let id = c
+                    if (id == cell.comment!.getIdentifier()) {
+                        break
+                    }
+                    insertIndex += 1
+                }
 
                 var ids: [String] = []
                 for item in queue {
@@ -110,13 +114,12 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     self.content[id] = item
                 }
                 
-                self.dataArray.insert(contentsOf: ids, at: self.menuIndex)
+                self.dataArray.insert(contentsOf: ids, at: insertIndex + 1)
                 self.comments.insert(contentsOf: ids, at: realPosition + 1)
                 self.updateStringsSingle(queue)
                 self.doArrays()
                 self.isReply = false
                 self.tableView.reloadData()
-                //todo this self.hideCommentMenu(cell)
             })
         } else if (comment != nil && menuId == "sub") {
             DispatchQueue.main.async(execute: { () -> Void in
@@ -127,7 +130,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
 
                 let realPosition = 0
-                self.menuShown = false
                 self.menuId = ""
                 self.tableView.beginUpdates()
                 self.tableView.deleteRows(at: [IndexPath.init(row: 0, section: 0)], with: .fade)
@@ -139,26 +141,27 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     ids.append(id)
                     self.content[id] = item
                 }
-                self.dataArray.insert(contentsOf: ids, at: self.menuIndex)
+
+                self.dataArray.insert(contentsOf: ids, at: 0)
                 self.comments.insert(contentsOf: ids, at: realPosition == 0 ? 0 : realPosition + 1)
                 self.updateStringsSingle(queue)
                 self.doArrays()
                 self.isReply = false
                 self.tableView.reloadData()
             })
-        }*/
+        }
     }
 
     func openComments(id: String, subreddit: String?) {
         //don't do anything
     }
 
-    func editSent(cr: Comment?) {
-        /* Needs to be re implemented
+    func editSent(cr: Comment?, cell: CommentDepthCell) {
         if (cr != nil) {
             DispatchQueue.main.async(execute: { () -> Void in
                 var realPosition = 0
-                var comment = (self.tableView.cellForRow(at: IndexPath.init(row: self.menuIndex - 1, section: 0)) as! CommentDepthCell).content as! RComment
+                
+                var comment = cell.comment!
                 for c in self.comments {
                     let id = c
                     if (id == comment.getIdentifier()) {
@@ -166,9 +169,19 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     }
                     realPosition += 1
                 }
+                
+                var insertIndex = 0
+                for c in self.dataArray {
+                    let id = c
+                    if (id == comment.getIdentifier()) {
+                        break
+                    }
+                    insertIndex += 1
+                }
+
                 comment = RealmDataWrapper.commentToRComment(comment: cr!, depth: 0)
-                self.dataArray.remove(at: self.menuIndex - 1)
-                self.dataArray.insert(comment.getIdentifier(), at: self.menuIndex - 1)
+                self.dataArray.remove(at: insertIndex )
+                self.dataArray.insert(comment.getIdentifier(), at: insertIndex)
                 self.comments.remove(at: realPosition)
                 self.comments.insert(comment.getIdentifier(), at: realPosition)
                 self.content[comment.getIdentifier()] = comment
@@ -177,8 +190,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 self.tableView.reloadData()
                 self.discard()
             })
-
-        }*/
+        }
     }
 
     func updateHeight(textView: UITextView) {
@@ -1540,34 +1552,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         ActionStates.setVoteDirection(s: comment, direction: direction)
     }
 
-    func doDelete(comment: RComment, index: Int) {
-        let alert = UIAlertController.init(title: "Really delete this comment?", message: "", preferredStyle: .alert)
-        alert.addAction(UIAlertAction.init(title: "Yes", style: .destructive, handler: { (action) in
-            do {
-                try self.session?.deleteCommentOrLink(comment.getIdentifier(), completion: { (result) in
-                    DispatchQueue.main.async {
-                        var realPosition = 0
-                        for c in self.comments {
-                            let id = c
-                            if (id == comment.getIdentifier()) {
-                                break
-                            }
-                            realPosition += 1
-                        }
-                        self.text[comment.getIdentifier()] = NSAttributedString(string: "[deleted]")
-                        self.doArrays()
-                        self.tableView.reloadData()
-                    }
-                })
-            } catch {
-
-            }
-        }))
-        alert.addAction(UIAlertAction.init(title: "No", style: .cancel, handler: nil))
-        VCPresenter.presentAlert(alert, parentVC: self)
-    }
-
-
     func moreComment(_ cell: CommentDepthCell) {
         cell.more(self)
     }
@@ -1576,24 +1560,31 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         cell.mod(self)
     }
 
-    func editComment() {
-       /* This needs to be taken care of in the menu cell
-    menuShown = false
-        tableView.beginUpdates()
-        let cell = tableView.cellForRow(at: IndexPath.init(row: menuIndex - 1, section: 0)) as! CommentDepthCell
-        tableView.deleteRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .fade)
-        tableView.endUpdates()
-
-        menuShown = true
-        replyShown = true
-        reply!.setContent(thing: cell.content!, sub: (cell.content as! RComment).subreddit, editing: true, delegate: self, parent: self)
-        tableView.beginUpdates()
-        tableView.insertRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .fade)
-        tableView.endUpdates()*/
-    }
-
     func deleteComment(cell: CommentDepthCell) {
-        //self.doDelete(comment: cell.content as! RComment, index: (menuIndex - 1))
+        let alert = UIAlertController.init(title: "Really delete this comment?", message: "", preferredStyle: .alert)
+        alert.addAction(UIAlertAction.init(title: "Yes", style: .destructive, handler: { (action) in
+            do {
+                try self.session?.deleteCommentOrLink(cell.comment!.getIdentifier(), completion: { (result) in
+                    DispatchQueue.main.async {
+                        var realPosition = 0
+                        for c in self.comments {
+                            let id = c
+                            if (id == cell.comment!.getIdentifier()) {
+                                break
+                            }
+                            realPosition += 1
+                        }
+                        self.text[cell.comment!.getIdentifier()] = NSAttributedString(string: "[deleted]")
+                        self.doArrays()
+                        self.tableView.reloadData()
+                    }
+                })
+            } catch {
+                
+            }
+        }))
+        alert.addAction(UIAlertAction.init(title: "No", style: .cancel, handler: nil))
+        VCPresenter.presentAlert(alert, parentVC: self)
     }
 
     func doReplySubmission() {
@@ -1618,42 +1609,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             tableView.insertRows(at: [IndexPath.init(row: 0, section: 0)], with: .fade)
             tableView.endUpdates()
         }*/
-    }
-
-    func doReply(_ cell: CommentDepthCell) {
-/* This needs to be taken care of in the menu cell
-
-        if (!offline) {
-            menuShown = false
-            var top = CGFloat(64)
-            var bottom = CGFloat(45)
-            if #available(iOS 11.0, *) {
-                top = 0
-                bottom = 0
-            }
-
-            let insets = UIEdgeInsets(top: top, left: 0, bottom: 350, right: 0)
-            self.tableView.contentInset = insets
-
-            tableView.beginUpdates()
-            replyingTo = cell
-            tableView.deleteRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .fade)
-            menuShown = true
-            replyShown = true
-            reply!.setContent(thing: cell.content!, sub: (cell.content as! RComment).subreddit, editing: false, delegate: self, parent: self)
-            tableView.insertRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .fade)
-            tableView.endUpdates()
-        }*/
-    }
-
-    var activeField: UITextField?
-
-    func textFieldDidBeginEditing(textField: UITextField) {
-        self.activeField = textField
-    }
-
-    func textFieldDidEndEditing(textField: UITextField) {
-        self.activeField = nil
     }
 
     override func becomeFirstResponder() -> Bool {
