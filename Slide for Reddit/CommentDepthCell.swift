@@ -870,7 +870,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     func configureLayout() {
         topViewSpace.horizontalAnchors == contentView.horizontalAnchors
         topViewSpace.topAnchor == contentView.topAnchor
-        topViewSpace.heightAnchor == CGFloat(marginTop)
         title.topAnchor == topViewSpace.bottomAnchor + CGFloat(8)
 
         title.leftAnchor == sideView.rightAnchor + CGFloat(12)
@@ -904,6 +903,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var sideWidth: Int = 0
     var marginTop: Int = 0
     var menuHeight : [NSLayoutConstraint] = []
+    var topMargin: [NSLayoutConstraint] = []
 
     func setMore(more: RMore, depth: Int) {
         self.depth = depth
@@ -1060,6 +1060,11 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             showCommentMenu()
         } else {
             hideCommentMenu()
+        }
+        
+        NSLayoutConstraint.deactivate(topMargin)
+        topMargin = batch {
+            topViewSpace.heightAnchor == CGFloat(marginTop)
         }
     }
     
