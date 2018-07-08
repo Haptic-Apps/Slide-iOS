@@ -89,7 +89,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
     
     var lsC: [NSLayoutConstraint] = []
 
-    func setMessage(message: RMessage, parent: MediaViewController, nav: UIViewController?, width: CGFloat) {
+    func setMessage(message: RMessage, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, width: CGFloat) {
         parentViewController = parent
         if (navViewController == nil && nav != nil) {
             navViewController = nav
@@ -288,7 +288,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
     }
 
     var message: RMessage?
-    public var parentViewController: MediaViewController?
+    public var parentViewController: UIViewController & MediaVCDelegate?
     public var navViewController: UIViewController?
 
     func doReply(sender: UITapGestureRecognizer? = nil) {

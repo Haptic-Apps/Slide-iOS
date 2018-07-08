@@ -1,5 +1,5 @@
 //
-//  MediaViewController.swift
+//  MediaTableViewController.swift
 //  Slide for Reddit
 //
 //  Created by Carlos Crane on 12/28/16.
@@ -13,7 +13,7 @@ import MaterialComponents.MaterialProgressView
 import SafariServices
 import MaterialComponents.MDCBottomSheetController
 
-class MediaViewController: UIViewController, MediaVCDelegate, UIViewControllerTransitioningDelegate {
+class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewControllerTransitioningDelegate {
 
     var subChanged = false
 

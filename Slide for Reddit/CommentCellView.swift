@@ -201,7 +201,7 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
     }
     
     var comment : RComment?
-    public var parentViewController: MediaViewController?
+    public var parentViewController: UIViewController & MediaVCDelegate?
     public var navViewController: UIViewController?
     
     

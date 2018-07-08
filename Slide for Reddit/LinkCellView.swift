@@ -483,7 +483,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 box.leftAnchor == contentView.leftAnchor + ctwelve
                 box.bottomAnchor == contentView.bottomAnchor - ceight
                 box.centerYAnchor == buttons.centerYAnchor // Align vertically with buttons
-                box.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+            box.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
                 box.heightAnchor == CGFloat(24)
                 buttons.heightAnchor == CGFloat(24)
                 buttons.rightAnchor == contentView.rightAnchor - ctwelve
@@ -534,7 +534,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         return layoutAttributes
     }
 
-    func configure(submission: RSubmission, parent: MediaViewController, nav: UIViewController?, baseSub: String, test : Bool = false) {
+    func configure(submission: RSubmission, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, baseSub: String, test : Bool = false) {
         self.link = submission
         self.setLink(submission: submission, parent: parent, nav: nav, baseSub: baseSub, test: test)
         layoutForContent()
@@ -683,7 +683,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var type : ContentType.CType = .NONE
     var activeSet = false
 
-    private func setLink(submission: RSubmission, parent: MediaViewController, nav: UIViewController?, baseSub: String, test : Bool = false) {
+    private func setLink(submission: RSubmission, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, baseSub: String, test : Bool = false) {
         loadedImage = nil
         full = parent is CommentViewController
         lq = false
@@ -1120,7 +1120,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     }
 
     func editSelftext() {
-        let reply = ReplyViewController.init(submission: link!, sub: (self.link?.subreddit)!, editing: true) { (cr) in
+        let reply = ReplyViewController.init(submission: link!, sub: (self.link?.subreddit)!) { (cr) in
             DispatchQueue.main.async(execute: { () -> Void in
                 self.setLink(submission: RealmDataWrapper.linkToRSubmission(submission: cr!), parent: self.parentViewController!, nav: self.navViewController!, baseSub: (self.link?.subreddit)!)
                 self.showBody(width: self.contentView.frame.size.width)
@@ -1475,7 +1475,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         fatalError("init(coder:) has not been implemented")
     }
 
-    public var parentViewController: MediaViewController?
+    public var parentViewController: UIViewController & MediaVCDelegate?
     public var navViewController: UIViewController?
 
 
