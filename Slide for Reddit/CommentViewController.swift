@@ -17,7 +17,7 @@ import XLActionController
 import RLBAlertsPickers
 import Anchorage
 
-class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate, TTTAttributedLabelDelegate, SubmissionMoreDelegate, ReplyDelegate {
+class CommentViewController: UITableViewController, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate, TTTAttributedLabelDelegate, SubmissionMoreDelegate, ReplyDelegate {
     
     var menuCell: CommentDepthCell?
     var menuId: String?
@@ -350,8 +350,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         self.view = UITableView(frame: CGRect.zero, style: .plain)
         self.automaticallyAdjustsScrollViewInsets = false
         self.tableView = self.view as! UITableView
-        self.tableView.delegate = self
-        self.tableView.dataSource = self
         self.tableView.allowsSelection = false
         self.tableView.layer.speed = 1.5
 
@@ -568,8 +566,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                     if (comment.contains(self.context)) {
                                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                                             self.goToCell(i: index)
-                                            var cell = self.tableView(self.tableView, cellForRowAt: IndexPath.init(row: index, section: 0))
-                                            (cell as! CommentDepthCell).showCommentMenu()
+                                            let cell = self.tableView(self.tableView, cellForRowAt: IndexPath.init(row: index, section: 0))
+                                            (cell as! CommentDepthCell).showMenuAnimated()
                                         }
                                         break
                                     } else {
@@ -1707,6 +1705,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     func hideUI(inHeader: Bool) {
         isHiding = true
+        self.tableView.endEditing(true)
         (navigationController)?.setNavigationBarHidden(true, animated: true)
         (self.navigationController)?.setToolbarHidden(true, animated: true)
         self.isToolbarHidden = true
