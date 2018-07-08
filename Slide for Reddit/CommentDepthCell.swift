@@ -520,10 +520,11 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         if (edit) {
             body.text = comment!.body
         }
+
         body.sizeToFitHeight()
+        parent!.prepareReply()
         toolbar = ToolbarTextView.init(textView: body, parent: parent!)
         body.becomeFirstResponder()
-        parent!.reloadHeights()
     }
 
     func menu(_ s: AnyObject) {
@@ -967,6 +968,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             reply.heightAnchor == CGFloat(0)
         }
         updateDepth()
+        NSLayoutConstraint.deactivate(topMargin)
     }
 
     var numberOfDots = 3

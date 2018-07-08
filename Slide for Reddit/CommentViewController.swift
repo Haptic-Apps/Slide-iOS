@@ -245,6 +245,22 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         tableView.beginUpdates()
         tableView.endUpdates()
     }
+    
+    func prepareReply() {
+        tableView.beginUpdates()
+        tableView.endUpdates()
+        var index = 0
+        for comment in self.comments {
+            if (comment.contains(getMenuShown()!)) {
+                    let indexPath = IndexPath.init(row: index, section: 0)
+                    self.tableView.scrollToRow(at: indexPath,
+                                               at: UITableViewScrollPosition.none, animated: true)
+                break
+            } else {
+                index += 1
+            }
+        }
+    }
 
     func hide(_ cell: LinkCellView) {
 
