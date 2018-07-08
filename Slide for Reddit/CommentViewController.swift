@@ -21,6 +21,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     var menuCell: CommentDepthCell?
     var menuId: String?
+    public var inHeadView = UIView()
 
     func isMenuShown() -> Bool {
         return menuCell != nil
@@ -222,6 +223,18 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             History.addSeen(s: cell.link!)
             cell.refresh()
         } catch {
+        }
+    }
+
+    func doHeadView(){
+        inHeadView.removeFromSuperview()
+        inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarView?.frame.size.height ?? 20)))
+        if(link != nil){
+            self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: link.subreddit)
+        }
+        
+        if(!(navigationController is TapBehindModalViewController)){
+            self.view.addSubview(inHeadView)
         }
     }
 
@@ -880,7 +893,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             navigationItem.rightBarButtonItems = [sortB, searchB]
             navigationItem.rightBarButtonItem?.imageInsets = UIEdgeInsetsMake(0, 0, 0, -20)
         }
-
+        doHeadView()
     }
 
     var originalPosition: CGPoint?
@@ -1280,6 +1293,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     }
 
     func updateToolbar() {
+        doHeadView()
         navigationController?.setToolbarHidden(false, animated: false)
         self.isToolbarHidden = false
         let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
@@ -1696,6 +1710,7 @@ override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         (navigationController)?.setNavigationBarHidden(true, animated: true)
         (self.navigationController)?.setToolbarHidden(true, animated: true)
         self.isToolbarHidden = true
+        isHiding = false
     }
 
     func showUI() {
