@@ -1,7 +1,7 @@
 //
 //  CommentViewController.swift
 //  Slide for Reddit
-//
+//=
 //  Created by Carlos Crane on 12/30/16.
 //  Copyright © 2016 Haptic Apps. All rights reserved.
 //
@@ -584,6 +584,8 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                             } else if (SettingValues.collapseDefault) {
                                 self.tableView.reloadData()
                                 self.collapseAll()
+                            } else {
+                                self.tableView.reloadData()
                             }
                         })
                     }
@@ -812,9 +814,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             headerCell.aspectWidth = self.tableView.bounds.size.width
             headerCell.configure(submission: submission!, parent: self, nav: self.navigationController, baseSub: submission!.subreddit)
             headerCell.showBody(width: self.view.frame.size.width)
-
-            // TODO: Should we force banner image to have square corners?
-            //headerCell.bannerImage.layer.cornerRadius = 0
 
             let frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: headerCell.estimateHeight(true))
             if self.tableView.tableHeaderView == nil || !frame.equalTo(headerCell.contentView.frame) {
