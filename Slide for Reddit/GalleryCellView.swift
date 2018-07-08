@@ -20,7 +20,7 @@ class GalleryCellView: UITableViewCell {
     var estimatedHeight = CGFloat(0)
     var link: RSubmission?
     
-    func setLink(_ link: RSubmission, parent: MediaViewController){
+    func setLink(_ link: RSubmission, parent: UIViewController & MediaVCDelegate){
         self.bannerImage = UIImageView(frame: CGRect(x: 0, y: 8, width: CGFloat.greatestFiniteMagnitude, height: 0))
         bannerImage.clipsToBounds = true;
         bannerImage.contentMode = UIViewContentMode.scaleAspectFit
@@ -91,7 +91,7 @@ class GalleryCellView: UITableViewCell {
         view.addGestureRecognizer(tap)
     }
     
-    var parentViewController: MediaViewController?
+    var parentViewController: UIViewController & MediaVCDelegate?
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

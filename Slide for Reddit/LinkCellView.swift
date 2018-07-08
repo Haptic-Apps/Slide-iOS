@@ -534,7 +534,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         return layoutAttributes
     }
 
-    func configure(submission: RSubmission, parent: MediaViewController, nav: UIViewController?, baseSub: String, test : Bool = false) {
+    func configure(submission: RSubmission, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, baseSub: String, test : Bool = false) {
         self.link = submission
         self.setLink(submission: submission, parent: parent, nav: nav, baseSub: baseSub, test: test)
         layoutForContent()
@@ -683,7 +683,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var type : ContentType.CType = .NONE
     var activeSet = false
 
-    private func setLink(submission: RSubmission, parent: MediaViewController, nav: UIViewController?, baseSub: String, test : Bool = false) {
+    private func setLink(submission: RSubmission, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, baseSub: String, test : Bool = false) {
         loadedImage = nil
         full = parent is CommentViewController
         lq = false
@@ -1475,7 +1475,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         fatalError("init(coder:) has not been implemented")
     }
 
-    public var parentViewController: MediaViewController?
+    public var parentViewController: UIViewController & MediaVCDelegate?
     public var navViewController: UIViewController?
 
 

@@ -84,10 +84,10 @@ public class VCPresenter {
             
             let barButton = UIBarButtonItem.init(customView: button)
             
-            if(parentViewController is MediaViewController && false){
+            if(parentViewController is MediaVCDelegate && false){
                 newParent.modalPresentationStyle = .custom
                 newParent.modalTransitionStyle = .crossDissolve
-                newParent.transitioningDelegate = parentViewController as! MediaViewController
+                newParent.transitioningDelegate = parentViewController as! MediaVCDelegate
                 newParent.view.layer.cornerRadius = 15
                 newParent.view.clipsToBounds = true
             } else {

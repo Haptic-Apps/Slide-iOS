@@ -13,10 +13,10 @@ import MaterialComponents.MaterialBottomSheet
 
 class Sidebar: NSObject, TTTAttributedLabelDelegate  {
     
-    var parent: MediaViewController?
+    var parent: UIViewController & MediaVCDelegate?
     var subname = ""
     
-    init(parent: MediaViewController, subname: String){
+    init(parent: UIViewController & MediaVCDelegate, subname: String){
         self.parent = parent
         self.subname = subname
     }
@@ -68,7 +68,7 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate  {
         }
     }
 
-    var inner: MediaViewController?
+    var inner: UIViewController & MediaVCDelegate?
     var subInfo: Subreddit?
 
     func displaySidebar(){

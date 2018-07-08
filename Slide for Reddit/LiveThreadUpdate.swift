@@ -142,7 +142,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAt
     var url = ""
     var imageHeight = 0
     
-    func setUpdate(rawJson: JSONAny, parent: MediaViewController, nav: UIViewController?, width: CGFloat){
+    func setUpdate(rawJson: JSONAny, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, width: CGFloat){
         let json = rawJson as! JSONDictionary
         parentViewController = parent
         if(navViewController == nil && nav != nil){
@@ -239,7 +239,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAt
     }
     
     var comment : RComment?
-    public var parentViewController: MediaViewController?
+    public var parentViewController: UIViewController & MediaVCDelegate?
     public var navViewController: UIViewController?
     
     func openContent(sender: UITapGestureRecognizer? = nil){
