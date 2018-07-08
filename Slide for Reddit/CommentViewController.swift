@@ -1219,6 +1219,15 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 at: UITableViewScrollPosition.none, animated: true)
 
     }
+    
+    var goingToCell = false
+    
+    func goToCellTop(i: Int) {
+        let indexPath = IndexPath.init(row: i, section: 0)
+        self.tableView.scrollToRow(at: indexPath,
+                                   at: UITableViewScrollPosition.top, animated: true)
+        goingToCell = true
+    }
 
     func goUp(_ sender: AnyObject) {
         var topCell = (tableView.indexPathsForVisibleRows?[0].row)!
@@ -1228,7 +1237,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             topCell -= 1
             contents = content[dataArray[topCell]]
         }
-        goToCell(i: topCell)
+        goToCellTop(i: topCell)
         lastMoved = topCell
     }
 
@@ -1237,7 +1246,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     func goDown(_ sender: AnyObject) {
         var topCell = (tableView.indexPathsForVisibleRows?[0].row)!
         if (topCell <= 0 && lastMoved != 0) {
-            goToCell(i: 0)
+            goToCellTop(i: 0)
             lastMoved = 0
         } else {
             var contents = content[dataArray[topCell]]
@@ -1248,7 +1257,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             for i in (topCell + 1)...(dataArray.count - 1) {
                 contents = content[dataArray[i]]
                 if (contents is RComment && matches(comment: contents as! RComment, sort: currentSort) && i != lastMoved) {
-                    goToCell(i: i)
+                    goToCellTop(i: i)
                     lastMoved = i
                     break
                 }
@@ -1693,11 +1702,12 @@ override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let currentY = scrollView.contentOffset.y
         if (!SettingValues.lockCommentBars) {
             if (currentY > lastYUsed && currentY > 60) {
-                if (navigationController != nil && !isHiding && !isToolbarHidden && !(scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height))) {
+                if (navigationController != nil && !isHiding && !goingToCell && !isToolbarHidden && !(scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height))) {
                     hideUI(inHeader: true)
                 }
             } else if ((currentY < lastYUsed + 20) && !isHiding && navigationController != nil && (isToolbarHidden)) {
                 showUI()
+                goingToCell = false
             }
         }
         lastYUsed = currentY
@@ -1754,7 +1764,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
 override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         HapticUtility.hapticActionWeak()
         let cell = tableView.cellForRow(at: indexPath)
-        if (cell is CommentDepthCell && SettingValues.commentTwoSwipe && (SettingValues.commentActionLeft != .NONE || SettingValues.commentActionRight != .NONE)) {
+        if (cell is CommentDepthCell && (cell as! CommentDepthCell).comment != nil && SettingValues.commentTwoSwipe && (SettingValues.commentActionLeft != .NONE || SettingValues.commentActionRight != .NONE)) {
 
             var actions = [UIContextualAction]()
             if (SettingValues.commentActionRight != .NONE) {
@@ -1835,15 +1845,13 @@ override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurat
                 self.tableView.endUpdates()
             }
         } else {
+            cell.collapse(childNumber: childNumber)
             if (hiddenPersons.contains((id)) && childNumber > 0) {
             } else {
                 if (childNumber > 0) {
                     hideAll(comment: id, i: topCell + 1)
                     if (!hiddenPersons.contains(id)) {
                         hiddenPersons.insert(id)
-                    }
-                    if (childNumber > 0) {
-                        cell.collapse(childNumber: childNumber)
                     }
                 }
             }
