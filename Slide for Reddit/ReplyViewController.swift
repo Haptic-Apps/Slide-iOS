@@ -47,6 +47,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     var text: [UITextView]?
     var toolbar: ToolbarTextView?
     var toReplyTo: Object?
+    var replyingView: UIView?
 
     var scrollView = UIScrollView()
 
@@ -260,73 +261,125 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         }
 
         if (type.isMessage()) {
-            //three
-            var text1 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
-                $0.isEditable = true
-                $0.textColor = ColorUtil.fontColor
-                $0.backgroundColor = ColorUtil.foregroundColor
-                $0.layer.masksToBounds = false
-                $0.layer.cornerRadius = 10
-                $0.font = UIFont.systemFont(ofSize: 16)
-                $0.isScrollEnabled = false
-                $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 8, right: 8)
-            })
+            if(type == .REPLY_MESSAGE){
+                //two
+                var text1 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
+                    $0.isEditable = true
+                    $0.textColor = ColorUtil.fontColor
+                    $0.backgroundColor = ColorUtil.foregroundColor
+                    $0.layer.masksToBounds = false
+                    $0.layer.cornerRadius = 10
+                    $0.font = UIFont.systemFont(ofSize: 16)
+                    $0.isScrollEnabled = false
+                    $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 0, right: 8)
+                    $0.isEditable = false
+                })
+                
+                
+                let html = (toReplyTo as! RMessage).htmlBody
+                    let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
+                    let font = FontGenerator.fontOfSize(size: 16, submission: false)
+                    let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: ColorUtil.baseAccent)
+                    let content = LinkParser.parse(attr2, ColorUtil.accentColorForSub(sub: ""))
+                    text1.attributedText = content
+                
+                var text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
+                    $0.isEditable = true
+                    $0.placeholder = "Body"
+                    $0.textColor = ColorUtil.fontColor
+                    $0.backgroundColor = ColorUtil.foregroundColor
+                    $0.layer.masksToBounds = false
+                    $0.layer.cornerRadius = 10
+                    $0.font = UIFont.systemFont(ofSize: 16)
+                    $0.isScrollEnabled = false
+                    $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 8, right: 8)
+                    $0.delegate = self
+                })
+                
+                stack.addArrangedSubviews(text1, text3)
+                text1.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
+                text3.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
+                
+                text1.topAnchor == stack.topAnchor + CGFloat(8)
+                text1.bottomAnchor == text3.topAnchor - CGFloat(8)
+                
+                text3.heightAnchor >= CGFloat(70)
+                text1.sizeToFitHeight()
 
-            var text2 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
-                $0.isEditable = true
-                $0.textColor = ColorUtil.fontColor
-                $0.backgroundColor = ColorUtil.foregroundColor
-                $0.layer.masksToBounds = false
-                $0.layer.cornerRadius = 10
-                $0.font = UIFont.systemFont(ofSize: 16)
-                $0.isScrollEnabled = false
-                $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 8, right: 8)
-            })
-
-            if (toReplyTo != nil) {
-                text1.text = "re: \((toReplyTo as! RMessage).subject)"
-                text1.isEditable = false
-                text2.text = ((toReplyTo as! RMessage).author)
-                text2.isEditable = false
+                scrollView.addSubview(stack)
+                stack.widthAnchor == scrollView.widthAnchor
+                stack.verticalAnchors == scrollView.verticalAnchors
+                
+                text = [text1, text3]
+                toolbar = ToolbarTextView.init(textView: text3, parent: self)
+            } else {
+                //three
+                var text1 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
+                    $0.isEditable = true
+                    $0.textColor = ColorUtil.fontColor
+                    $0.backgroundColor = ColorUtil.foregroundColor
+                    $0.layer.masksToBounds = false
+                    $0.layer.cornerRadius = 10
+                    $0.font = UIFont.systemFont(ofSize: 16)
+                    $0.isScrollEnabled = false
+                    $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 8, right: 8)
+                })
+                
+                var text2 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
+                    $0.isEditable = true
+                    $0.textColor = ColorUtil.fontColor
+                    $0.backgroundColor = ColorUtil.foregroundColor
+                    $0.layer.masksToBounds = false
+                    $0.layer.cornerRadius = 10
+                    $0.font = UIFont.systemFont(ofSize: 16)
+                    $0.isScrollEnabled = false
+                    $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 8, right: 8)
+                })
+                
+                if (toReplyTo != nil) {
+                    text1.text = "re: \((toReplyTo as! RMessage).subject)"
+                    text1.isEditable = false
+                    text2.text = ((toReplyTo as! RMessage).author)
+                    text2.isEditable = false
+                }
+                
+                text1.placeholder = "Subject"
+                text2.placeholder = "User"
+                
+                
+                var text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
+                    $0.isEditable = true
+                    $0.placeholder = "Body"
+                    $0.textColor = ColorUtil.fontColor
+                    $0.backgroundColor = ColorUtil.foregroundColor
+                    $0.layer.masksToBounds = false
+                    $0.layer.cornerRadius = 10
+                    $0.font = UIFont.systemFont(ofSize: 16)
+                    $0.isScrollEnabled = false
+                    $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 8, right: 8)
+                    $0.delegate = self
+                })
+                
+                stack.addArrangedSubviews(text1, text2, text3)
+                text1.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
+                text1.heightAnchor == CGFloat(70)
+                text2.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
+                text2.heightAnchor == CGFloat(70)
+                text3.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
+                
+                text1.topAnchor == stack.topAnchor + CGFloat(8)
+                text1.bottomAnchor == text2.topAnchor - CGFloat(8)
+                
+                text2.bottomAnchor == text3.topAnchor - CGFloat(8)
+                text3.heightAnchor >= CGFloat(70)
+                
+                scrollView.addSubview(stack)
+                stack.widthAnchor == scrollView.widthAnchor
+                stack.verticalAnchors == scrollView.verticalAnchors
+                
+                text = [text1, text2, text3]
+                toolbar = ToolbarTextView.init(textView: text3, parent: self)
             }
-
-            text1.placeholder = "Subject"
-            text2.placeholder = "User"
-
-
-            var text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
-                $0.isEditable = true
-                $0.placeholder = "Body"
-                $0.textColor = ColorUtil.fontColor
-                $0.backgroundColor = ColorUtil.foregroundColor
-                $0.layer.masksToBounds = false
-                $0.layer.cornerRadius = 10
-                $0.font = UIFont.systemFont(ofSize: 16)
-                $0.isScrollEnabled = false
-                $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 8, right: 8)
-                $0.delegate = self
-            })
-
-            stack.addArrangedSubviews(text1, text2, text3)
-            text1.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
-            text1.heightAnchor == CGFloat(70)
-            text2.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
-            text2.heightAnchor == CGFloat(70)
-            text3.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
-
-            text1.topAnchor == stack.topAnchor + CGFloat(8)
-            text1.bottomAnchor == text2.topAnchor - CGFloat(8)
-
-            text2.bottomAnchor == text3.topAnchor - CGFloat(8)
-            text3.heightAnchor >= CGFloat(70)
-
-            scrollView.addSubview(stack)
-            stack.widthAnchor == scrollView.widthAnchor
-            stack.verticalAnchors == scrollView.verticalAnchors
-
-            text = [text1, text2, text3]
-            toolbar = ToolbarTextView.init(textView: text3, parent: self)
-
         } else if (type.isSubmission()) {
             //three
             var text1 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
@@ -394,32 +447,86 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             text = [text1, text2, text3]
             toolbar = ToolbarTextView.init(textView: text3, parent: self)
         } else if (type.isComment()) {
-            //one
-            var text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
-                $0.isEditable = true
-                $0.placeholder = "Body"
-                $0.textColor = ColorUtil.fontColor
-                $0.backgroundColor = ColorUtil.foregroundColor
-                $0.layer.masksToBounds = false
-                $0.layer.cornerRadius = 10
-                $0.font = UIFont.systemFont(ofSize: 16)
-                $0.isScrollEnabled = false
-                $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 8, right: 8)
-                $0.delegate = self
-            })
-
-            stack.addArrangedSubviews(text3)
-            text3.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
-
-            text3.topAnchor == stack.topAnchor + CGFloat(8)
-            text3.heightAnchor >= CGFloat(70)
-
-            scrollView.addSubview(stack)
-            stack.widthAnchor == scrollView.widthAnchor
-            stack.verticalAnchors == scrollView.verticalAnchors
-
-            text = [text3]
-            toolbar = ToolbarTextView.init(textView: text3, parent: self)
+            if((toReplyTo as! RSubmission).type == .SELF){
+                //two
+                var text1 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
+                    $0.isEditable = true
+                    $0.textColor = ColorUtil.fontColor
+                    $0.backgroundColor = ColorUtil.foregroundColor
+                    $0.layer.masksToBounds = false
+                    $0.layer.cornerRadius = 10
+                    $0.font = UIFont.systemFont(ofSize: 16)
+                    $0.isScrollEnabled = false
+                    $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 0, right: 8)
+                    $0.isEditable = false
+                })
+                
+                
+                let html = (toReplyTo as! RSubmission).htmlBody
+                let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
+                let font = FontGenerator.fontOfSize(size: 16, submission: false)
+                let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: ColorUtil.baseAccent)
+                let content = LinkParser.parse(attr2, ColorUtil.accentColorForSub(sub: ""))
+                text1.attributedText = content
+                
+                var text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
+                    $0.isEditable = true
+                    $0.placeholder = "Body"
+                    $0.textColor = ColorUtil.fontColor
+                    $0.backgroundColor = ColorUtil.foregroundColor
+                    $0.layer.masksToBounds = false
+                    $0.layer.cornerRadius = 10
+                    $0.font = UIFont.systemFont(ofSize: 16)
+                    $0.isScrollEnabled = false
+                    $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 8, right: 8)
+                    $0.delegate = self
+                })
+                
+                stack.addArrangedSubviews(text1, text3)
+                text1.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
+                text3.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
+                
+                text1.topAnchor == stack.topAnchor + CGFloat(8)
+                text1.bottomAnchor == text3.topAnchor - CGFloat(8)
+                
+                text3.heightAnchor >= CGFloat(70)
+                text1.sizeToFitHeight()
+                
+                scrollView.addSubview(stack)
+                stack.widthAnchor == scrollView.widthAnchor
+                stack.verticalAnchors == scrollView.verticalAnchors
+                
+                text = [text1, text3]
+                toolbar = ToolbarTextView.init(textView: text3, parent: self)
+            } else {
+                //one
+                var text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
+                    $0.isEditable = true
+                    $0.placeholder = "Body"
+                    $0.textColor = ColorUtil.fontColor
+                    $0.backgroundColor = ColorUtil.foregroundColor
+                    $0.layer.masksToBounds = false
+                    $0.layer.cornerRadius = 10
+                    $0.font = UIFont.systemFont(ofSize: 16)
+                    $0.isScrollEnabled = false
+                    $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 8, right: 8)
+                    $0.delegate = self
+                })
+                
+                stack.addArrangedSubviews(text3)
+                text3.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
+                
+                text3.topAnchor == stack.topAnchor + CGFloat(8)
+                text3.heightAnchor >= CGFloat(70)
+                
+                scrollView.addSubview(stack)
+                stack.widthAnchor == scrollView.widthAnchor
+                stack.verticalAnchors == scrollView.verticalAnchors
+                
+                text = [text3]
+                toolbar = ToolbarTextView.init(textView: text3, parent: self)
+            }
+    
         } else if (type.isEdit()) {
             //two
             var text1 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
@@ -710,7 +817,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     }
 
     func submitComment() {
-        let body = text![0]
+        let body = text!.last!
 
         if (body.text.isEmpty()) {
             BannerUtil.makeBanner(text: "Body cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)

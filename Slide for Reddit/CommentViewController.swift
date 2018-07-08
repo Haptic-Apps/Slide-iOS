@@ -192,7 +192,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     }
 
     func discard(){
-        
+
     }
 
     func updateHeight(textView: UITextView) {
@@ -252,8 +252,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     func reply(_ cell: LinkCellView) {
         if (!offline) {
-            print("Replying")
-            VCPresenter.presentAlert(ReplyViewController.init(submission: link, sub: link.subreddit, delegate: self), parentVC: self)
+            VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(submission: cell.link!, sub: cell.link!.subreddit, delegate: self)), parentVC: self)
         }
     }
 
