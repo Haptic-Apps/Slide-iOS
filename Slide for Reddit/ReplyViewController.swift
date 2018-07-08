@@ -277,12 +277,16 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 
                 
                 let html = (toReplyTo as! RMessage).htmlBody
+                do {
                     let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
                     let font = FontGenerator.fontOfSize(size: 16, submission: false)
                     let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: ColorUtil.baseAccent)
                     let content = LinkParser.parse(attr2, ColorUtil.accentColorForSub(sub: ""))
                     text1.attributedText = content
-                
+                } catch {
+                    
+                }
+
                 var text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.isEditable = true
                     $0.placeholder = "Body"
@@ -463,11 +467,15 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 
                 
                 let html = (toReplyTo as! RSubmission).htmlBody
-                let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
-                let font = FontGenerator.fontOfSize(size: 16, submission: false)
-                let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: ColorUtil.baseAccent)
-                let content = LinkParser.parse(attr2, ColorUtil.accentColorForSub(sub: ""))
-                text1.attributedText = content
+                do {
+                    let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
+                    let font = FontGenerator.fontOfSize(size: 16, submission: false)
+                    let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: ColorUtil.baseAccent)
+                    let content = LinkParser.parse(attr2, ColorUtil.accentColorForSub(sub: ""))
+                    text1.attributedText = content
+                } catch {
+                    
+                }
                 
                 var text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.isEditable = true
