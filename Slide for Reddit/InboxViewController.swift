@@ -67,13 +67,11 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
     }
 
     func new(_ sender: AnyObject) {
-
         VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(completion: {(message) in
             DispatchQueue.main.async(execute: { () -> Void in
                 BannerUtil.makeBanner(text: "Message sent!", seconds: 3, context: self)
             })
         })), parentVC: self)
-
     }
 
     private func prepareOverlayVC(overlayVC: UIViewController) {

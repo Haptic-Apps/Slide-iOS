@@ -22,7 +22,7 @@ protocol TTTAttributedCellDelegate: class {
 }
 
 protocol ReplyDelegate {
-    func replySent(comment: Comment?, cell: CommentDepthCell)
+    func replySent(comment: Comment?, cell: CommentDepthCell?)
     func updateHeight(textView: UITextView)
     func discard()
     func editSent(cr: Comment?, cell: CommentDepthCell)

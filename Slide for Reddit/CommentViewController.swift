@@ -82,10 +82,10 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     var offline = false
     var np = false
 
-    func replySent(comment: Comment?, cell: CommentDepthCell) {
-        if (comment != nil && menuId != "sub") {
+    func replySent(comment: Comment?, cell: CommentDepthCell?) {
+        if (comment != nil && cell != nil) {
             DispatchQueue.main.async(execute: { () -> Void in
-                let startDepth = self.cDepth[cell.comment!.getIdentifier()]! + 1
+                let startDepth = self.cDepth[cell!.comment!.getIdentifier()]! + 1
 
                 let queue: [Object] = [RealmDataWrapper.commentToRComment(comment: comment!, depth: startDepth)]
                 self.cDepth[comment!.getId()] = startDepth
@@ -93,7 +93,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 var realPosition = 0
                 for c in self.comments {
                     let id = c
-                    if (id == cell.comment!.getIdentifier()) {
+                    if (id == cell!.comment!.getIdentifier()) {
                         break
                     }
                     realPosition += 1
@@ -102,7 +102,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 var insertIndex = 0
                 for c in self.dataArray {
                     let id = c
-                    if (id == cell.comment!.getIdentifier()) {
+                    if (id == cell!.comment!.getIdentifier()) {
                         break
                     }
                     insertIndex += 1
@@ -123,19 +123,15 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 self.tableView.reloadData()
 
             })
-        } else if (comment != nil && menuId == "sub") {
+        } else if (comment != nil && cell == nil) {
             DispatchQueue.main.async(execute: { () -> Void in
                 let startDepth = 0
 
                 let queue: [Object] = [RealmDataWrapper.commentToRComment(comment: comment!, depth: startDepth)]
                 self.cDepth[comment!.getId()] = startDepth
 
-
                 let realPosition = 0
-                self.menuId = ""
-                self.tableView.beginUpdates()
-                self.tableView.deleteRows(at: [IndexPath.init(row: 0, section: 0)], with: .fade)
-                self.tableView.endUpdates()
+                self.menuId = nil
 
                 var ids: [String] = []
                 for item in queue {
@@ -195,25 +191,15 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         }
     }
 
+    func discard(){
+        
+    }
+
     func updateHeight(textView: UITextView) {
         UIView.setAnimationsEnabled(false)
         self.tableView.beginUpdates()
         self.tableView.endUpdates()
         UIView.setAnimationsEnabled(true)
-    }
-
-    func discard() {
-        /* NEeds to be re implemented
-        self.tableView.endEditing(true)
-        tableView.beginUpdates()
-        replyShown = false
-        if (menuId == "sub") {
-            menuShown = false
-            tableView.deleteRows(at: [IndexPath.init(row: 0, section: 0)], with: .fade)
-        } else {
-            tableView.reloadRows(at: [IndexPath.init(row: menuIndex, section: 0)], with: .automatic)
-        }
-        tableView.endUpdates()*/
     }
 
     internal func pushedMoreButton(_ cell: CommentDepthCell) {
@@ -267,7 +253,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     func reply(_ cell: LinkCellView) {
         if (!offline) {
             print("Replying")
-            doReplySubmission()
+            VCPresenter.presentAlert(ReplyViewController.init(submission: link, sub: link.subreddit, delegate: self), parentVC: self)
         }
     }
 
@@ -1593,30 +1579,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         }))
         alert.addAction(UIAlertAction.init(title: "No", style: .cancel, handler: nil))
         VCPresenter.presentAlert(alert, parentVC: self)
-    }
-
-    func doReplySubmission() {
-        /* This needs to be taken care of in the menu cell
-
-        if (!offline && loaded) {
-            menuShown = true
-            var top = CGFloat(64)
-            var bottom = CGFloat(45)
-            if #available(iOS 11.0, *) {
-                top = 0
-                bottom = 0
-            }
-
-            let insets = UIEdgeInsets(top: top, left: 0, bottom: 350, right: 0)
-            self.tableView.contentInset = insets
-            menuId = "sub"
-            menuIndex = 0
-            replyShown = true
-            reply!.setContent(thing: submission!, sub: submission!.subreddit, editing: false, delegate: self, parent: self)
-            tableView.beginUpdates()
-            tableView.insertRows(at: [IndexPath.init(row: 0, section: 0)], with: .fade)
-            tableView.endUpdates()
-        }*/
     }
 
     override func becomeFirstResponder() -> Bool {

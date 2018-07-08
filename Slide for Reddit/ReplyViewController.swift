@@ -11,9 +11,11 @@ import reddift
 import Photos
 import MobileCoreServices
 import SwiftyJSON
+import Anchorage
+import Then
 import RealmSwift
 
-class ReplyViewController: UITableViewController, UITextViewDelegate {
+class ReplyViewController: MediaViewController, UITextViewDelegate {
 
     public enum ReplyType {
         case NEW_MESSAGE
@@ -22,9 +24,14 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
         case SUBMIT_LINK
         case SUBMIT_TEXT
         case EDIT_SELFTEXT
+        case REPLY_SUBMISSION
 
         func isEdit() -> Bool {
             return self == ReplyType.EDIT_SELFTEXT
+        }
+
+        func isComment() -> Bool {
+            return self == ReplyType.REPLY_SUBMISSION
         }
 
         func isSubmission() -> Bool {
@@ -36,54 +43,26 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
         }
     }
 
-
     var type = ReplyType.NEW_MESSAGE
+    var text: [UITextView]?
+    var toolbar: ToolbarTextView?
     var toReplyTo: Object?
-    var subreddit: String = ""
 
-    var text: UITextView?
-    var subjectCell = InputCell()
-    var recipientCell = InputCell()
-    var linkCell = InputCell()
-
-    var scrollView: UIScrollView?
+    var scrollView = UIScrollView()
 
     //Callbacks
     var messageCallback: (Any?, Error?) -> Void = { (comment, error) in
     }
+
     var submissionCallback: (Link?, Error?) -> Void = { (link, error) in
     }
 
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-
+    var commentReplyCallback: (Comment?, Error?) -> Void = { (comment, error) in
     }
 
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch (indexPath.section) {
-        case 0:
-            switch (indexPath.row) {
-            case 0: return self.subjectCell
-            case 1: return self.recipientCell
-            case 2: return self.linkCell
-            default: fatalError("Unknown row in section 0")
-            }
-
-        default: fatalError("Unknown section")
-        }
-    }
-
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return type == .SUBMIT_IMAGE || type == .SUBMIT_LINK ? 3 : 2
-    }
-
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 70
-    }
-
+    //New message no reply
     init(completion: @escaping(String?) -> Void) {
         type = .NEW_MESSAGE
-        self.subreddit = ""
         super.init(nibName: nil, bundle: nil)
         self.messageCallback = { (message, error) in
             DispatchQueue.main.async {
@@ -95,29 +74,31 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
                         self.present(alert, animated: true, completion: nil)
                     })
                 } else {
-                    completion("")
                     self.alertController?.dismiss(animated: false, completion: {
                         self.dismiss(animated: true, completion: nil)
+                        completion("")
                     })
                 }
             }
         }
     }
 
+    //New message with sub colors
     convenience init(name: String, completion: @escaping(String?) -> Void) {
         self.init(completion: completion)
-        self.subreddit = name
+        setBarColors(color: ColorUtil.getColorForUser(name: name))
     }
 
+    //New message reply
     init(message: RMessage?, completion: @escaping (String?) -> Void) {
         type = .REPLY_MESSAGE
-        self.subreddit = (message as! RMessage).author
-        self.toReplyTo = message
+        toReplyTo = message
         super.init(nibName: nil, bundle: nil)
+        setBarColors(color: ColorUtil.getColorForUser(name: message!.author))
         self.messageCallback = { (message, error) in
             DispatchQueue.main.async {
                 if (error != nil) {
-                    if(error!.localizedDescription.contains("25")){
+                    if (error!.localizedDescription.contains("25")) {
                         self.alertController?.dismiss(animated: false, completion: {
                             self.dismiss(animated: true, completion: {
                                 completion("")
@@ -142,13 +123,12 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
         }
     }
 
-    var toolbar: ToolbarTextView?
-
-    init(submission: RSubmission, sub: String, editing: Bool, completion: @escaping (Link?) -> Void) {
+    //Edit selftext
+    init(submission: RSubmission, sub: String, completion: @escaping (Link?) -> Void) {
         type = .EDIT_SELFTEXT
-        self.toReplyTo = submission
+        toReplyTo = submission
         super.init(nibName: nil, bundle: nil)
-        self.subreddit = submission.subreddit
+        setBarColors(color: ColorUtil.getColorForSub(sub: sub))
         self.submissionCallback = { (link, error) in
             DispatchQueue.main.async {
                 if (error != nil) {
@@ -159,7 +139,6 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
                         self.present(alert, animated: true, completion: nil)
                     })
                 } else {
-                    //todo get sub string
                     self.alertController?.dismiss(animated: false, completion: {
                         self.dismiss(animated: true, completion: {
                             completion(link)
@@ -170,6 +149,33 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
         }
     }
 
+    //Reply to submission
+    init(submission: RSubmission, sub: String, delegate: ReplyDelegate) {
+        type = .REPLY_SUBMISSION
+        toReplyTo = submission
+        super.init(nibName: nil, bundle: nil)
+        setBarColors(color: ColorUtil.getColorForSub(sub: sub))
+        self.commentReplyCallback = { (comment, error) in
+            DispatchQueue.main.async {
+                if (error != nil) {
+                    self.toolbar?.saveDraft(self)
+                    self.alertController?.dismiss(animated: false, completion: {
+                        let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your comment has not been posted (but has been saved as a draft), please try again\n\nError:\(error!.localizedDescription)", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+                        self.present(alert, animated: true, completion: nil)
+                    })
+                } else {
+                    self.alertController?.dismiss(animated: false, completion: {
+                        self.dismiss(animated: true, completion: {
+                            delegate.replySent(comment: comment, cell: nil)
+                        })
+                    })
+                }
+            }
+        }
+    }
+
+
     init(type: ReplyType, completion: @escaping (Link?) -> Void) {
         self.type = type
         super.init(nibName: nil, bundle: nil)
@@ -178,7 +184,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
                 if (error != nil) {
                     self.toolbar?.saveDraft(self)
                     self.alertController?.dismiss(animated: false, completion: {
-                        let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your message has not been sent, please try again\n\nError:\(error!.localizedDescription)", preferredStyle: .alert)
+                        let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your post has not been created, please try again\n\nError:\(error!.localizedDescription)", preferredStyle: .alert)
                         alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
                         self.present(alert, animated: true, completion: nil)
                     })
@@ -193,86 +199,285 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
         }
     }
 
+    func textViewDidChange(_ textView: UITextView) {
+        textView.sizeToFitHeight()
+        var height = CGFloat(8)
+        for textView in text! {
+            height += CGFloat(8)
+            height += textView.frame.size.height
+        }
+        print("Height is \(height)")
+        scrollView.contentSize = CGSize.init(width: scrollView.frame.size.width, height: height)
+    }
 
+        //Create a new post
     convenience init(subreddit: String, type: ReplyType, completion: @escaping (Link?) -> Void) {
         self.init(type: type, completion: completion)
-        self.subreddit = subreddit
-
+        setBarColors(color: ColorUtil.getColorForSub(sub: subreddit))
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func viewWillDisappear(_ animated: Bool) {
-        unregisterKeyboardNotifications()
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
-        if (subjectCell.cellLabel.text.isEmpty) {
-            subjectCell.cellLabel.becomeFirstResponder()
-        } else if (recipientCell.cellLabel.text.isEmpty) {
-            recipientCell.cellLabel.becomeFirstResponder()
-        } else {
-            text?.becomeFirstResponder()
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow), name:NSNotification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide), name:NSNotification.Name.UIKeyboardWillHide, object: nil)
+        layoutForType()
+    }
+
+    @objc func keyboardWillShow(notification:NSNotification){
+        var userInfo = notification.userInfo!
+        var keyboardFrame:CGRect = (userInfo[UIKeyboardFrameBeginUserInfoKey] as! NSValue).cgRectValue
+        keyboardFrame = self.view.convert(keyboardFrame, from: nil)
+
+        var contentInset:UIEdgeInsets = self.scrollView.contentInset
+        contentInset.bottom = keyboardFrame.size.height + CGFloat(60)
+        scrollView.contentInset = contentInset
+    }
+
+    @objc func keyboardWillHide(notification:NSNotification){
+
+        let contentInset:UIEdgeInsets = UIEdgeInsets.zero
+        scrollView.contentInset = contentInset
+    }
+
+
+    func layoutForType() {
+        self.scrollView = UIScrollView.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height))
+        self.scrollView.backgroundColor = .clear
+        self.view.addSubview(scrollView)
+        self.scrollView.backgroundColor = ColorUtil.backgroundColor
+        self.scrollView.isUserInteractionEnabled = true
+
+        let stack = UIStackView().then {
+            $0.accessibilityIdentifier = "Reply Stack Vertical"
+            $0.axis = .vertical
+            $0.alignment = .center
+            $0.distribution = .fill
+            $0.spacing = 1
         }
 
-        if(!subjectCell.cellLabel.text.isEmpty){
-            subjectCell.cellLabel.isEditable = false
+        if (type.isMessage()) {
+            //three
+            var text1 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
+                $0.isEditable = true
+                $0.textColor = ColorUtil.fontColor
+                $0.backgroundColor = ColorUtil.foregroundColor
+                $0.layer.masksToBounds = false
+                $0.layer.cornerRadius = 10
+                $0.font = UIFont.systemFont(ofSize: 16)
+                $0.isScrollEnabled = false
+                $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 8, right: 8)
+            })
+
+            var text2 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
+                $0.isEditable = true
+                $0.textColor = ColorUtil.fontColor
+                $0.backgroundColor = ColorUtil.foregroundColor
+                $0.layer.masksToBounds = false
+                $0.layer.cornerRadius = 10
+                $0.font = UIFont.systemFont(ofSize: 16)
+                $0.isScrollEnabled = false
+                $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 8, right: 8)
+            })
+
+            if (toReplyTo != nil) {
+                text1.text = "re: \((toReplyTo as! RMessage).subject)"
+                text1.isEditable = false
+                text2.text = ((toReplyTo as! RMessage).author)
+                text2.isEditable = false
+            }
+
+            text1.placeholder = "Subject"
+            text2.placeholder = "User"
+
+
+            var text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
+                $0.isEditable = true
+                $0.placeholder = "Body"
+                $0.textColor = ColorUtil.fontColor
+                $0.backgroundColor = ColorUtil.foregroundColor
+                $0.layer.masksToBounds = false
+                $0.layer.cornerRadius = 10
+                $0.font = UIFont.systemFont(ofSize: 16)
+                $0.isScrollEnabled = false
+                $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 8, right: 8)
+                $0.delegate = self
+            })
+
+            stack.addArrangedSubviews(text1, text2, text3)
+            text1.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
+            text1.heightAnchor == CGFloat(70)
+            text2.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
+            text2.heightAnchor == CGFloat(70)
+            text3.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
+
+            text1.topAnchor == stack.topAnchor + CGFloat(8)
+            text1.bottomAnchor == text2.topAnchor - CGFloat(8)
+
+            text2.bottomAnchor == text3.topAnchor - CGFloat(8)
+            text3.heightAnchor >= CGFloat(70)
+
+            scrollView.addSubview(stack)
+            stack.widthAnchor == scrollView.widthAnchor
+            stack.verticalAnchors == scrollView.verticalAnchors
+
+            text = [text1, text2, text3]
+            toolbar = ToolbarTextView.init(textView: text3, parent: self)
+
+        } else if (type.isSubmission()) {
+            //three
+            var text1 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
+                $0.isEditable = true
+                $0.textColor = ColorUtil.fontColor
+                $0.backgroundColor = ColorUtil.foregroundColor
+                $0.layer.masksToBounds = false
+                $0.layer.cornerRadius = 10
+                $0.font = UIFont.systemFont(ofSize: 16)
+                $0.isScrollEnabled = false
+                $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 8, right: 8)
+            })
+
+            var text2 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
+                $0.isEditable = true
+                $0.textColor = ColorUtil.fontColor
+                $0.backgroundColor = ColorUtil.foregroundColor
+                $0.layer.masksToBounds = false
+                $0.layer.cornerRadius = 10
+                $0.font = UIFont.systemFont(ofSize: 16)
+                $0.isScrollEnabled = false
+                $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 8, right: 8)
+            })
+
+            if (toReplyTo != nil) {
+                text1.text = "\((toReplyTo as! RSubmission).title)"
+                text1.isEditable = false
+                text2.text = ((toReplyTo as! RSubmission).subreddit)
+                text2.isEditable = false
+            }
+
+            text1.placeholder = "Title"
+            text2.placeholder = "Subreddit"
+
+            var text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
+                $0.isEditable = true
+                $0.placeholder = "Body"
+                $0.textColor = ColorUtil.fontColor
+                $0.backgroundColor = ColorUtil.foregroundColor
+                $0.layer.masksToBounds = false
+                $0.layer.cornerRadius = 10
+                $0.font = UIFont.systemFont(ofSize: 16)
+                $0.isScrollEnabled = false
+                $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 8, right: 8)
+                $0.delegate = self
+            })
+
+            stack.addArrangedSubviews(text1, text2, text3)
+            text1.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
+            text1.heightAnchor == CGFloat(70)
+            text2.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
+            text2.heightAnchor == CGFloat(70)
+            text3.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
+
+            text1.topAnchor == stack.topAnchor + CGFloat(8)
+            text1.bottomAnchor == text2.topAnchor - CGFloat(8)
+
+            text2.bottomAnchor == text3.topAnchor - CGFloat(8)
+            text3.heightAnchor >= CGFloat(70)
+
+            scrollView.addSubview(stack)
+            stack.widthAnchor == scrollView.widthAnchor
+            stack.verticalAnchors == scrollView.verticalAnchors
+
+            text = [text1, text2, text3]
+            toolbar = ToolbarTextView.init(textView: text3, parent: self)
+        } else if (type.isComment()) {
+            //one
+            var text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
+                $0.isEditable = true
+                $0.placeholder = "Body"
+                $0.textColor = ColorUtil.fontColor
+                $0.backgroundColor = ColorUtil.foregroundColor
+                $0.layer.masksToBounds = false
+                $0.layer.cornerRadius = 10
+                $0.font = UIFont.systemFont(ofSize: 16)
+                $0.isScrollEnabled = false
+                $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 8, right: 8)
+                $0.delegate = self
+            })
+
+            stack.addArrangedSubviews(text3)
+            text3.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
+
+            text3.topAnchor == stack.topAnchor + CGFloat(8)
+            text3.heightAnchor >= CGFloat(70)
+
+            scrollView.addSubview(stack)
+            stack.widthAnchor == scrollView.widthAnchor
+            stack.verticalAnchors == scrollView.verticalAnchors
+
+            text = [text3]
+            toolbar = ToolbarTextView.init(textView: text3, parent: self)
+        } else if (type.isEdit()) {
+            //two
+            var text1 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
+                $0.isEditable = true
+                $0.textColor = ColorUtil.fontColor
+                $0.backgroundColor = ColorUtil.foregroundColor
+                $0.layer.masksToBounds = false
+                $0.layer.cornerRadius = 10
+                $0.font = UIFont.systemFont(ofSize: 16)
+                $0.isScrollEnabled = false
+                $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 8, right: 8)
+                $0.delegate = self
+            })
+
+
+            if (toReplyTo != nil) {
+                text1.text = "\((toReplyTo as! RSubmission).title)"
+                text1.isEditable = false
+            }
+
+            text1.placeholder = "Title"
+
+            var text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
+                $0.isEditable = true
+                $0.placeholder = "Body"
+                $0.textColor = ColorUtil.fontColor
+                $0.backgroundColor = ColorUtil.foregroundColor
+                $0.layer.masksToBounds = false
+                $0.layer.cornerRadius = 10
+                $0.font = UIFont.systemFont(ofSize: 16)
+                $0.isScrollEnabled = false
+                $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 8, right: 8)
+                $0.delegate = self
+                $0.text = (toReplyTo as! RSubmission).body
+            })
+
+            stack.addArrangedSubviews(text1, text3)
+            text1.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
+            text1.heightAnchor == CGFloat(70)
+            text3.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
+
+            text1.topAnchor == stack.topAnchor + CGFloat(8)
+            text1.bottomAnchor == text3.topAnchor - CGFloat(8)
+
+            text3.heightAnchor >= CGFloat(70)
+
+            scrollView.addSubview(stack)
+            stack.widthAnchor == scrollView.widthAnchor
+            stack.verticalAnchors == scrollView.verticalAnchors
+
+            text = [text1, text3]
+            toolbar = ToolbarTextView.init(textView: text3, parent: self)
         }
-
-        if(!recipientCell.cellLabel.text.isEmpty){
-            recipientCell.cellLabel.isEditable = false
-        }
-
-
-        toolbar = ToolbarTextView.init(textView: text!, parent: self)
-        self.view.layer.cornerRadius = 15
-        self.view.layer.masksToBounds = true
-    }
-
-    func registerKeyboardNotifications() {
-        NotificationCenter.default.addObserver(self, selector: #selector(ReplyViewController.keyboardDidShow(notification:)), name: NSNotification.Name.UIKeyboardDidShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(ReplyViewController.keyboardWillHide(notification:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
-    }
-
-    func unregisterKeyboardNotifications() {
-        NotificationCenter.default.removeObserver(self)
-    }
-
-
-    func keyboardDidShow(notification: NSNotification) {
-        let userInfo: NSDictionary = notification.userInfo! as NSDictionary
-        let keyboardInfo = userInfo[UIKeyboardFrameBeginUserInfoKey] as! NSValue
-        let keyboardSize = keyboardInfo.cgRectValue.size
-
-        // Get the existing contentInset for the scrollView and set the bottom property to be the height of the keyboard
-        var contentInset = self.scrollView?.contentInset
-        contentInset?.bottom = keyboardSize.height
-
-        self.scrollView?.contentInset = contentInset!
-        self.scrollView?.scrollIndicatorInsets = contentInset!
-    }
-
-    func keyboardWillHide(notification: NSNotification) {
-        var contentInset = self.scrollView?.contentInset
-        contentInset?.bottom = 0
-
-        self.scrollView?.contentInset = contentInset!
-        self.scrollView?.scrollIndicatorInsets = UIEdgeInsets.zero
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        text!.last!.becomeFirstResponder()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: subreddit)
-        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
-        navigationController?.navigationBar.tintColor = UIColor.white
 
         if (type.isMessage()) {
             title = "New message"
@@ -283,6 +488,8 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
         } else {
             if (type == .EDIT_SELFTEXT) {
                 title = "Editing"
+            } else if (type.isComment()) {
+                title = "Replying to \((toReplyTo as! RSubmission).author)"
             } else {
                 title = "New submission"
             }
@@ -304,14 +511,10 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
 
         let barButton = UIBarButtonItem.init(customView: button)
         navigationItem.leftBarButtonItem = barButton
-
-        registerKeyboardNotifications()
-
     }
-    
+
     func close(_ sender: AnyObject) {
-        //todo cancel message?
-        let alert = UIAlertController.init(title: "Discard this \(type.isMessage() ? "message" : "submission")?", message: "", preferredStyle: .alert)
+        let alert = UIAlertController.init(title: "Discard this \(type.isMessage() ? "message" : (type.isComment()) ? "comment" : "submission")?", message: "", preferredStyle: .alert)
         alert.addAction(UIAlertAction.init(title: "Yes", style: .destructive, handler: { (action) in
             self.navigationController?.dismiss(animated: true, completion: nil)
         }))
@@ -348,61 +551,28 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
 
     var triedOnce = false
 
-    func send(_ sender: AnyObject) {
-        if (subjectCell.cellLabel.text!.isEmpty()) {
-            BannerUtil.makeBanner(text: type.isMessage() ? "Subject cannot be empty" : "Title cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
+    func submitLink() {
+        let title = text![0]
+        let subreddit = text![1]
+        let body = text![2]
+
+        if (title.text.isEmpty()) {
+            BannerUtil.makeBanner(text: "Title cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
             return
-        } else if (recipientCell.cellLabel.text!.isEmpty()) {
-            BannerUtil.makeBanner(text: type.isMessage() ? "Recipient cannot be empty" : "Subreddit cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
-        } else if ((type == .SUBMIT_LINK || type == .SUBMIT_IMAGE) && linkCell.cellLabel.text!.isEmpty()) {
-            BannerUtil.makeBanner(text: "Link cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
         }
-        if (type.isMessage()) {
-            alertController = UIAlertController(title: nil, message: "Sending message...\n\n", preferredStyle: .alert)
-            let spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
-            spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
-            spinnerIndicator.color = UIColor.black
-            spinnerIndicator.startAnimating()
 
-            alertController?.view.addSubview(spinnerIndicator)
-            self.present(alertController!, animated: true, completion: nil)
+        if (subreddit.text.isEmpty()) {
+            BannerUtil.makeBanner(text: "Subreddit cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
+            return
+        }
 
-            session = (UIApplication.shared.delegate as! AppDelegate).session
+        if (body.text.isEmpty()) {
+            BannerUtil.makeBanner(text: (type == .SUBMIT_LINK || type == .SUBMIT_IMAGE) ? "Link cannot be empty" : "Body cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
+            return
+        }
 
-            if (type == .NEW_MESSAGE) {
-                do {
-                    try self.session?.composeMessage(recipientCell.cellLabel.text!, subject: subjectCell.cellLabel.text!, text: text!.text, completion: { (result) in
-                        switch result {
-                        case .failure(let error):
-                            print(error.description)
-                            self.messageCallback(nil, error)
-                            break
-                        case .success(let message):
-                            self.messageCallback(message, nil)
-                        }
 
-                    })
-                } catch {
-                    print((error as NSError).description)
-                }
-            } else {
-                do {
-                    let name = toReplyTo is RMessage ? (toReplyTo as! RMessage).getId() : toReplyTo is RComment ? (toReplyTo as! RComment).getId() : (toReplyTo as! RSubmission).getId()
-                    try self.session?.replyMessage(text!.text, parentName: name, completion: { (result) -> Void in
-                        switch result {
-                        case .failure(let error):
-                            print(error.description)
-                            self.messageCallback(nil, error)
-                            break
-                        case .success(let comment):
-                            self.messageCallback(comment, nil)
-                        }
-                    })
-                } catch {
-                    print((error as NSError).description)
-                }
-            }
-        } else if (type == .EDIT_SELFTEXT) {
+        if (type == .EDIT_SELFTEXT) {
             alertController = UIAlertController(title: nil, message: "Editing submission...\n\n", preferredStyle: .alert)
 
             let spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
@@ -417,7 +587,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
 
             do {
                 let name = toReplyTo is RMessage ? (toReplyTo as! RMessage).getId() : toReplyTo is RComment ? (toReplyTo as! RComment).getId() : (toReplyTo as! RSubmission).getId()
-                try self.session?.editCommentOrLink(name, newBody: text!.text, completion: { (result) in
+                try self.session?.editCommentOrLink(name, newBody: body.text, completion: { (result) in
                     self.getSubmissionEdited(name)
                 })
             } catch {
@@ -439,7 +609,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
 
             do {
                 if (type == .SUBMIT_TEXT) {
-                    try self.session?.submitText(Subreddit.init(subreddit: recipientCell.cellLabel.text), title: subjectCell.cellLabel.text, text: text!.text, captcha: "", captchaIden: "", completion: { (result) -> Void in
+                    try self.session?.submitText(Subreddit.init(subreddit: subreddit.text), title: title.text, text: body.text, captcha: "", captchaIden: "", completion: { (result) -> Void in
                         switch result {
                         case .failure(let error):
                             print(error.description)
@@ -453,7 +623,7 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
                     })
 
                 } else {
-                    try self.session?.submitLink(Subreddit.init(subreddit: recipientCell.cellLabel.text), title: subjectCell.cellLabel.text, URL: linkCell.cellLabel.text, captcha: "", captchaIden: "", completion: { (result) -> Void in
+                    try self.session?.submitLink(Subreddit.init(subreddit: subreddit.text), title: title.text, URL: body.text, captcha: "", captchaIden: "", completion: { (result) -> Void in
                         switch result {
                         case .failure(let error):
                             print(error.description)
@@ -471,7 +641,131 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
                 print((error as NSError).description)
             }
         }
+    }
 
+    func submitMessage() {
+        let title = text![0]
+        let user = text![1]
+        let body = text![2]
+
+        if (title.text.isEmpty()) {
+            BannerUtil.makeBanner(text: "Title cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
+            return
+        }
+
+        if (user.text.isEmpty()) {
+            BannerUtil.makeBanner(text: "Recipient cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
+            return
+        }
+
+        if (body.text.isEmpty()) {
+            BannerUtil.makeBanner(text: "Body cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
+            return
+        }
+
+        alertController = UIAlertController(title: nil, message: "Sending message...\n\n", preferredStyle: .alert)
+        let spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+        spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
+        spinnerIndicator.color = UIColor.black
+        spinnerIndicator.startAnimating()
+
+        alertController?.view.addSubview(spinnerIndicator)
+        self.present(alertController!, animated: true, completion: nil)
+
+        session = (UIApplication.shared.delegate as! AppDelegate).session
+
+        if (type == .NEW_MESSAGE) {
+            do {
+                try self.session?.composeMessage(user.text, subject: title.text, text: body.text, completion: { (result) in
+                    switch result {
+                    case .failure(let error):
+                        print(error.description)
+                        self.messageCallback(nil, error)
+                        break
+                    case .success(let message):
+                        self.messageCallback(message, nil)
+                    }
+
+                })
+            } catch {
+                print((error as NSError).description)
+            }
+        } else {
+            do {
+                let name = toReplyTo!.getIdentifier()
+                try self.session?.replyMessage(body.text, parentName: name, completion: { (result) -> Void in
+                    switch result {
+                    case .failure(let error):
+                        print(error.description)
+                        self.messageCallback(nil, error)
+                        break
+                    case .success(let comment):
+                        self.messageCallback(comment, nil)
+                    }
+                })
+            } catch {
+                print((error as NSError).description)
+            }
+        }
+    }
+
+    func submitComment() {
+        let body = text![0]
+
+        if (body.text.isEmpty()) {
+            BannerUtil.makeBanner(text: "Body cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
+            return
+        }
+
+        alertController = UIAlertController(title: nil, message: "Posting comment...\n\n", preferredStyle: .alert)
+        let spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+        spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
+        spinnerIndicator.color = UIColor.black
+        spinnerIndicator.startAnimating()
+
+        alertController?.view.addSubview(spinnerIndicator)
+        self.present(alertController!, animated: true, completion: nil)
+
+        session = (UIApplication.shared.delegate as! AppDelegate).session
+
+        do {
+            let name = toReplyTo!.getIdentifier()
+            try self.session?.postComment(body.text, parentName: name, completion: { (result) -> Void in
+                switch result {
+                case .failure(let error):
+                    print(error.description)
+                    self.commentReplyCallback(nil, error)
+                    break
+                case .success(let comment):
+                    self.commentReplyCallback(comment, nil)
+                }
+            })
+        } catch {
+            print((error as NSError).description)
+        }
+
+    }
+
+    func send(_ sender: AnyObject) {
+        switch (type) {
+        case .SUBMIT_IMAGE:
+            fallthrough
+        case .SUBMIT_LINK:
+            fallthrough
+        case .SUBMIT_TEXT:
+            fallthrough
+        case .EDIT_SELFTEXT:
+            submitLink()
+            break
+        case .REPLY_SUBMISSION:
+            submitComment()
+            break
+        case .NEW_MESSAGE:
+            fallthrough
+        case .REPLY_MESSAGE:
+            submitMessage()
+            break
+        }
     }
 
     func getIDString(_ json: JSONAny) -> reddift.Result<String> {
@@ -485,90 +779,6 @@ class ReplyViewController: UITableViewController, UITextViewDelegate {
             }
         }
         return Result(error: ReddiftError.identifierOfCAPTCHAIsMalformed as NSError)
-    }
-
-    override func loadView() {
-        super.loadView()
-
-        self.tableView.backgroundColor = ColorUtil.backgroundColor
-        self.tableView.separatorColor = .clear
-        self.tableView.allowsSelection = false
-        text = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 500))
-        text?.isEditable = true
-        text?.placeholder = type.isMessage() ? "message..." : "body..."
-        text?.backgroundColor = ColorUtil.foregroundColor
-        text?.textColor = ColorUtil.fontColor
-        text?.font = UIFont.systemFont(ofSize: 18)
-        text?.textContainerInset = UIEdgeInsets.init(top: 30, left: 10, bottom: 0, right: 0)
-
-        if (type.isEdit()) {
-            if (toReplyTo is RComment) {
-                text!.text = (toReplyTo as! RComment).body
-            } else {
-                text!.text = (toReplyTo as! RSubmission).body
-            }
-        }
-
-        let lineView = UIView(frame: CGRect.init(x: 0, y: 0, width: (text?.frame.size.width)!, height: 1))
-        lineView.backgroundColor = ColorUtil.backgroundColor
-        text?.addSubview(lineView)
-
-        if (type.isMessage()) {
-            subjectCell = InputCell.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 70), input: "subject:", width: self.tableView.frame.size.width)
-            recipientCell = InputCell.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 70), input: "recipient:", width: self.tableView.frame.size.width)
-        } else {
-            subjectCell = InputCell.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 70), input: "title...", width: self.tableView.frame.size.width)
-            recipientCell = InputCell.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 70), input: "subreddit:", width: self.tableView.frame.size.width)
-        }
-        if (type == .SUBMIT_IMAGE) {
-            linkCell = InputCell.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 70), input: "Tap to add image", width: self.tableView.frame.size.width)
-            linkCell.cellLabel.isEditable = false
-            linkCell.cellLabel.addTapGestureRecognizer {
-                let alert = UIAlertController.init(style: .actionSheet)
-                alert.addPhotoLibraryPicker(
-                    flow: .vertical,
-                    paging: false,
-                    selection: .multiple(action: { images in
-                        if(!images.isEmpty){
-                            let alert = UIAlertController.init(title: "Confirm upload", message: "Would you like to upload \(images.count) image\(images.count > 1 ? "s" : "") anonymously to Imgur.com? This cannot be undone", preferredStyle: .alert)
-                            alert.addAction(UIAlertAction.init(title: "No", style: .destructive, handler: nil))
-                            alert.addAction(UIAlertAction.init(title: "Yes", style: .default) { action in
-                                self.toolbar!.uploadAsync(images)
-                            })
-                            self.present(alert, animated: true)
-                        }
-                    }))
-                alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: { (action) in
-                    self.dismiss(animated: true, completion: nil)
-                }))
-                self.present(alert, animated: true)
-            }
-        } else {
-            linkCell = InputCell.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 70), input: "link:", width: self.tableView.frame.size.width)
-        }
-
-        if (type == .REPLY_MESSAGE) {
-            subjectCell.cellLabel.text = (!(toReplyTo as! RMessage).subject.hasPrefix("re") ? "re: " : "") + (toReplyTo as! RMessage).subject
-            subjectCell.cellLabel.isEditable = false
-            recipientCell.cellLabel.text = (toReplyTo as! RMessage).author
-            recipientCell.cellLabel.isEditable = false
-        }
-
-        if (type == .EDIT_SELFTEXT) {
-            subjectCell.cellLabel.text = (toReplyTo as! RSubmission).title
-            subjectCell.cellLabel.isEditable = false
-            recipientCell.cellLabel.text = (toReplyTo as! RSubmission).subreddit
-            recipientCell.cellLabel.isEditable = false
-        }
-
-        if (!subreddit.isEmpty) {
-            recipientCell.cellLabel.text = subreddit
-        }
-
-        if (type != .SUBMIT_LINK && type != .SUBMIT_IMAGE) {
-            tableView.tableFooterView = text
-        }
-
     }
 
     func dismiss(_ sender: AnyObject) {
@@ -589,38 +799,6 @@ extension UIView {
         cont.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[innerView]|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["innerView": self]))
         cont.addConstraint(NSLayoutConstraint(item: self, attribute: .width, relatedBy: .equal, toItem: cont, attribute: .width, multiplier: 1.0, constant: 0))
         return cont
-    }
-}
-
-
-class InputCell: UITableViewCell {
-    var cellLabel: UITextView!
-
-    init(frame: CGRect, input: String, width: CGFloat) {
-        super.init(style: UITableViewCellStyle.default, reuseIdentifier: "cell")
-
-        cellLabel = UITextView(frame: CGRect.init(x: 0, y: 0, width: width, height: 70))
-        cellLabel.textColor = ColorUtil.fontColor
-        cellLabel.font = FontGenerator.boldFontOfSize(size: 16, submission: true)
-        cellLabel.placeholder = input
-        cellLabel.tintColor = ColorUtil.fontColor
-        if(ColorUtil.theme != .LIGHT){
-            cellLabel.keyboardAppearance = .dark
-        }
-
-        cellLabel.textContainerInset = UIEdgeInsets.init(top: 30, left: 10, bottom: 0, right: 0)
-        backgroundColor = ColorUtil.foregroundColor
-        cellLabel.backgroundColor = ColorUtil.foregroundColor
-
-        addSubview(cellLabel)
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
     }
 }
 
