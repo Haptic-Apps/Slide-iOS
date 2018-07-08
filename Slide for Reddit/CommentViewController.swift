@@ -121,6 +121,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 self.doArrays()
                 self.isReply = false
                 self.tableView.reloadData()
+
             })
         } else if (comment != nil && menuId == "sub") {
             DispatchQueue.main.async(execute: { () -> Void in
@@ -556,27 +557,32 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                                 self.headerCell?.refreshLink(self.submission!)
                                 self.headerCell?.showBody(width: self.view.frame.size.width)
                             }
-                            self.tableView.reloadData()
                             self.refreshControl?.endRefreshing()
                             self.indicator.stopAnimating()
                             self.indicator.isHidden = true
                             self.doBanner(self.submission!)
 
                             var index = 0
+                            var loaded = false
                             if (!self.context.isEmpty()) {
                                 for comment in self.comments {
                                     if (comment.contains(self.context)) {
+                                        self.menuId = comment
+                                        self.tableView.reloadData()
+                                        loaded = true
                                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                                             self.goToCell(i: index)
-                                            let cell = self.tableView(self.tableView, cellForRowAt: IndexPath.init(row: index, section: 0))
-                                            (cell as! CommentDepthCell).showMenuAnimated()
                                         }
                                         break
                                     } else {
                                         index += 1
                                     }
                                 }
+                                if(!loaded){
+                                    self.tableView.reloadData()
+                                }
                             } else if (SettingValues.collapseDefault) {
+                                self.tableView.reloadData()
                                 self.collapseAll()
                             }
                         })
@@ -1197,7 +1203,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     func goToCell(i: Int) {
         let indexPath = IndexPath.init(row: i, section: 0)
         self.tableView.scrollToRow(at: indexPath,
-                at: UITableViewScrollPosition.top, animated: true)
+                at: UITableViewScrollPosition.none, animated: true)
 
     }
 
