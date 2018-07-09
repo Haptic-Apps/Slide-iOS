@@ -48,7 +48,14 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     var toolbar: ToolbarTextView?
     var toReplyTo: Object?
     var replyingView: UIView?
+    var replyButtons: UIScrollView?
+    var replies: UIStateButton?
+    var distinguish: UIStateButton?
+    var sticky: UIStateButton?
+    var info: UIStateButton?
 
+    var subreddit = ""
+    var canMod = false
     var scrollView = UIScrollView()
 
     //Callbacks
@@ -152,7 +159,9 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
 
     //Reply to submission
     init(submission: RSubmission, sub: String, delegate: ReplyDelegate) {
+        subreddit = sub
         type = .REPLY_SUBMISSION
+        self.canMod = AccountController.modSubs.contains(sub)
         toReplyTo = submission
         super.init(nibName: nil, bundle: nil)
         setBarColors(color: ColorUtil.getColorForSub(sub: sub))
@@ -207,13 +216,17 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             height += CGFloat(8)
             height += textView.frame.size.height
         }
-        print("Height is \(height)")
+        if(replyButtons != nil){
+            height += CGFloat(46)
+        }
         scrollView.contentSize = CGSize.init(width: scrollView.frame.size.width, height: height)
     }
 
         //Create a new post
     convenience init(subreddit: String, type: ReplyType, completion: @escaping (Link?) -> Void) {
         self.init(type: type, completion: completion)
+        self.subreddit = subreddit
+        self.canMod = AccountController.modSubs.contains(subreddit)
         setBarColors(color: ColorUtil.getColorForSub(sub: subreddit))
     }
 
@@ -243,7 +256,110 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         let contentInset:UIEdgeInsets = UIEdgeInsets.zero
         scrollView.contentInset = contentInset
     }
+    
+    func doButtons(){
+        replyButtons = TouchUIScrollView().then {
+            $0.accessibilityIdentifier = "Reply Extra Buttons"
+        }
+        
+        replies = UIStateButton.init(frame: CGRect.init(x: 0, y: 0, width: 100, height: 30)).then {
+            $0.layer.cornerRadius = 15
+            $0.clipsToBounds = true
+            $0.setTitle("Inbox replies on", for: .selected)
+            $0.setTitle("Inbox replies off", for: .normal)
+            $0.setTitleColor(GMColor.blue500Color(), for: .normal)
+            $0.setTitleColor(.white, for: .selected)
+            $0.titleLabel?.textAlignment = .center
+            $0.titleLabel?.font = UIFont.systemFont(ofSize: 12)
+        }
+        
+        replies!.color = GMColor.blue500Color()
+        replies!.isSelected = true
+        replies!.addTarget(self, action: #selector(self.changeState(_:)), for: .touchUpInside)
+        
+        replies!.heightAnchor == CGFloat(30)
+        let width = replies!.currentTitle!.size(with: replies!.titleLabel!.font).width + CGFloat(45)
+        replies!.widthAnchor == width
+        
+        info = UIStateButton.init(frame: CGRect.init(x: 0, y: 0, width: 100, height: 30)).then {
+            $0.layer.cornerRadius = 15
+            $0.clipsToBounds = true
+            $0.setTitle("Sidebar", for: .selected)
+            $0.setTitle("Sidebar", for: .normal)
+            $0.setTitleColor(GMColor.blue500Color(), for: .normal)
+            $0.setTitleColor(.white, for: .selected)
+            $0.titleLabel?.textAlignment = .center
+            $0.titleLabel?.font = UIFont.systemFont(ofSize: 12)
+        }
+        
+        info!.color = GMColor.blue500Color()
+        info!.isSelected = true
+        info!.addTarget(self, action: #selector(self.info(_:)), for: .touchUpInside)
+        
+        info!.heightAnchor == CGFloat(30)
+        let widthI = info!.currentTitle!.size(with: replies!.titleLabel!.font).width + CGFloat(45)
+        info!.widthAnchor == widthI
 
+         sticky = UIStateButton.init(frame: CGRect.init(x: 0, y: 0, width: 100, height: 45)).then {
+            $0.layer.cornerRadius = 15
+            $0.clipsToBounds = true
+            $0.setTitle("Post stickied", for: .selected)
+            $0.setTitle("Post not stickied", for: .normal)
+            $0.setTitleColor(GMColor.green500Color(), for: .normal)
+            $0.setTitleColor(.white, for: .selected)
+            $0.titleLabel?.textAlignment = .center
+            $0.titleLabel?.font = UIFont.systemFont(ofSize: 12)
+        }
+        
+        sticky!.color = GMColor.green500Color()
+        sticky!.isSelected = false
+        sticky!.addTarget(self, action: #selector(self.changeState(_:)), for: .touchUpInside)
+        
+        sticky!.heightAnchor == CGFloat(30)
+        let widthS = sticky!.currentTitle!.size(with: replies!.titleLabel!.font).width + CGFloat(45)
+        sticky!.widthAnchor == widthS
+        
+        let buttonBase = UIStackView().then {
+            $0.accessibilityIdentifier = "Reply VC Buttons"
+            $0.axis = .horizontal
+            $0.spacing = 8
+        }
+
+        buttonBase.addArrangedSubviews(info!, replies!, sticky!)
+        
+        var finalWidth = CGFloat(0)
+        if(type == .REPLY_SUBMISSION){
+            info!.isHidden = true
+            if(canMod){
+                finalWidth = CGFloat(8) + width + widthS
+            } else {
+                sticky!.isHidden = true
+                finalWidth = width
+            }
+        } else {
+            if(canMod || (toReplyTo as! RSubmission).canMod){
+                finalWidth = CGFloat(8*2) + width + widthI + widthS
+            } else {
+                sticky!.isHidden = true
+                finalWidth = CGFloat(8) + width + widthI
+            }
+        }
+
+        replyButtons!.addSubview(buttonBase)
+        buttonBase.widthAnchor == finalWidth
+        buttonBase.heightAnchor == CGFloat(30)
+        buttonBase.leftAnchor == replyButtons!.leftAnchor
+        buttonBase.verticalAnchors == replyButtons!.verticalAnchors
+        replyButtons?.contentSize = CGSize.init(width: finalWidth, height: CGFloat(30))
+    }
+    
+    func changeState(_ sender: UIStateButton){
+        sender.isSelected = !sender.isSelected
+    }
+
+    func info(_ sender: UIStateButton){
+        Sidebar.init(parent: self, subname: subreddit).displaySidebar()
+    }
 
     func layoutForType() {
         self.scrollView = UIScrollView.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height))
@@ -251,15 +367,16 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         self.view.addSubview(scrollView)
         self.scrollView.backgroundColor = ColorUtil.backgroundColor
         self.scrollView.isUserInteractionEnabled = true
+        self.scrollView.contentInset = UIEdgeInsets.init(top: 8, left: 0, bottom: 0, right: 0)
 
         let stack = UIStackView().then {
             $0.accessibilityIdentifier = "Reply Stack Vertical"
             $0.axis = .vertical
             $0.alignment = .center
             $0.distribution = .fill
-            $0.spacing = 1
+            $0.spacing = 8
         }
-
+        
         if (type.isMessage()) {
             if(type == .REPLY_MESSAGE){
                 //two
@@ -269,6 +386,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     $0.backgroundColor = ColorUtil.foregroundColor
                     $0.layer.masksToBounds = false
                     $0.layer.cornerRadius = 10
+                    $0.textContainer.maximumNumberOfLines = 1
+                    $0.textContainer.lineBreakMode = .byTruncatingTail
                     $0.font = UIFont.systemFont(ofSize: 16)
                     $0.isScrollEnabled = false
                     $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 0, right: 8)
@@ -304,9 +423,6 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 text1.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
                 text3.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
                 
-                text1.topAnchor == stack.topAnchor + CGFloat(8)
-                text1.bottomAnchor == text3.topAnchor - CGFloat(8)
-                
                 text3.heightAnchor >= CGFloat(70)
                 text1.sizeToFitHeight()
 
@@ -324,6 +440,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     $0.backgroundColor = ColorUtil.foregroundColor
                     $0.layer.masksToBounds = false
                     $0.layer.cornerRadius = 10
+                    $0.textContainer.maximumNumberOfLines = 1
+                    $0.textContainer.lineBreakMode = .byTruncatingTail
                     $0.font = UIFont.systemFont(ofSize: 16)
                     $0.isScrollEnabled = false
                     $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 8, right: 8)
@@ -336,6 +454,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     $0.layer.masksToBounds = false
                     $0.layer.cornerRadius = 10
                     $0.font = UIFont.systemFont(ofSize: 16)
+                    $0.textContainer.maximumNumberOfLines = 1
+                    $0.textContainer.lineBreakMode = .byTruncatingTail
                     $0.isScrollEnabled = false
                     $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 8, right: 8)
                 })
@@ -371,12 +491,6 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 text2.heightAnchor == CGFloat(70)
                 text3.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
                 
-                text1.topAnchor == stack.topAnchor + CGFloat(8)
-                text1.bottomAnchor == text2.topAnchor - CGFloat(8)
-                
-                text2.bottomAnchor == text3.topAnchor - CGFloat(8)
-                text3.heightAnchor >= CGFloat(70)
-                
                 scrollView.addSubview(stack)
                 stack.widthAnchor == scrollView.widthAnchor
                 stack.verticalAnchors == scrollView.verticalAnchors
@@ -392,6 +506,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 $0.backgroundColor = ColorUtil.foregroundColor
                 $0.layer.masksToBounds = false
                 $0.layer.cornerRadius = 10
+                $0.textContainer.maximumNumberOfLines = 1
+                $0.textContainer.lineBreakMode = .byTruncatingTail
                 $0.font = UIFont.systemFont(ofSize: 16)
                 $0.isScrollEnabled = false
                 $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 8, right: 8)
@@ -403,6 +519,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 $0.backgroundColor = ColorUtil.foregroundColor
                 $0.layer.masksToBounds = false
                 $0.layer.cornerRadius = 10
+                $0.textContainer.maximumNumberOfLines = 1
+                $0.textContainer.lineBreakMode = .byTruncatingTail
                 $0.font = UIFont.systemFont(ofSize: 16)
                 $0.isScrollEnabled = false
                 $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 8, right: 8)
@@ -417,7 +535,11 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
 
             text1.placeholder = "Title"
             text2.placeholder = "Subreddit"
-
+            
+            if(!subreddit.isEmpty()){
+                text2.text = subreddit
+                text2.isEditable = false
+            }
             var text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                 $0.isEditable = true
                 $0.placeholder = "Body"
@@ -431,17 +553,21 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 $0.delegate = self
             })
 
-            stack.addArrangedSubviews(text1, text2, text3)
+            if(type != .EDIT_SELFTEXT){
+                doButtons()
+                stack.addArrangedSubviews(text1, text2, replyButtons!, text3)
+                replyButtons!.heightAnchor == CGFloat(30)
+                replyButtons!.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
+            } else {
+                stack.addArrangedSubviews(text1, text2, text3)
+            }
+
             text1.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
             text1.heightAnchor == CGFloat(70)
             text2.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
             text2.heightAnchor == CGFloat(70)
             text3.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
 
-            text1.topAnchor == stack.topAnchor + CGFloat(8)
-            text1.bottomAnchor == text2.topAnchor - CGFloat(8)
-
-            text2.bottomAnchor == text3.topAnchor - CGFloat(8)
             text3.heightAnchor >= CGFloat(70)
 
             scrollView.addSubview(stack)
@@ -490,12 +616,14 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     $0.delegate = self
                 })
                 
+                doButtons()
+                stack.addArrangedSubviews(text1, replyButtons!, text3)
+                replyButtons!.heightAnchor == CGFloat(30)
+                replyButtons!.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
+
                 stack.addArrangedSubviews(text1, text3)
                 text1.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
                 text3.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
-                
-                text1.topAnchor == stack.topAnchor + CGFloat(8)
-                text1.bottomAnchor == text3.topAnchor - CGFloat(8)
                 
                 text3.heightAnchor >= CGFloat(70)
                 text1.sizeToFitHeight()
@@ -515,16 +643,20 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     $0.backgroundColor = ColorUtil.foregroundColor
                     $0.layer.masksToBounds = false
                     $0.layer.cornerRadius = 10
+                    $0.textContainer.maximumNumberOfLines = 1
+                    $0.textContainer.lineBreakMode = .byTruncatingTail
                     $0.font = UIFont.systemFont(ofSize: 16)
                     $0.isScrollEnabled = false
                     $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 8, right: 8)
                     $0.delegate = self
                 })
                 
-                stack.addArrangedSubviews(text3)
+                doButtons()
+                stack.addArrangedSubviews(replyButtons!, text3)
+                replyButtons!.heightAnchor == CGFloat(30)
+                replyButtons!.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
                 text3.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
                 
-                text3.topAnchor == stack.topAnchor + CGFloat(8)
                 text3.heightAnchor >= CGFloat(70)
                 
                 scrollView.addSubview(stack)
@@ -576,9 +708,6 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             text1.heightAnchor == CGFloat(70)
             text3.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
 
-            text1.topAnchor == stack.topAnchor + CGFloat(8)
-            text1.bottomAnchor == text3.topAnchor - CGFloat(8)
-
             text3.heightAnchor >= CGFloat(70)
 
             scrollView.addSubview(stack)
@@ -588,7 +717,12 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             text = [text1, text3]
             toolbar = ToolbarTextView.init(textView: text3, parent: self)
         }
-        text!.last!.becomeFirstResponder()
+        for textField in text! {
+            if(textField.isEditable){
+                textField.becomeFirstResponder()
+                break
+            }
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -641,6 +775,22 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     var session: Session?
 
     func getSubmissionEdited(_ name: String) {
+        DispatchQueue.main.async {
+            if((self.type == .SUBMIT_LINK || self.type == .SUBMIT_IMAGE || self.type == .SUBMIT_TEXT) && self.sticky != nil && self.sticky!.isSelected){
+                do {
+                    try self.session?.sticky("t3_\(name)", sticky: true, completion: { (result) in
+                        self.completeGetSubmission(name)
+                    })
+                } catch {
+                    self.completeGetSubmission(name)
+                }
+            } else {
+                self.completeGetSubmission(name)
+            }
+        }
+    }
+    
+    func completeGetSubmission(_ name: String){
         do {
             try self.session?.getInfo([name.contains("t3") ? name : "t3_\(name)"], completion: { (res) in
                 switch res {
@@ -655,13 +805,12 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                         }
                     }
                 }
-
+                
             })
         } catch {
             //todo success but null child
             self.submissionCallback(nil, error)
         }
-
     }
 
     var triedOnce = false
@@ -724,7 +873,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
 
             do {
                 if (type == .SUBMIT_TEXT) {
-                    try self.session?.submitText(Subreddit.init(subreddit: subreddit.text), title: title.text, text: body.text, captcha: "", captchaIden: "", completion: { (result) -> Void in
+                    try self.session?.submitText(Subreddit.init(subreddit: subreddit.text), title: title.text, text: body.text, sendReplies: replies!.isSelected, captcha: "", captchaIden: "", completion: { (result) -> Void in
                         switch result {
                         case .failure(let error):
                             print(error.description)
@@ -738,7 +887,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     })
 
                 } else {
-                    try self.session?.submitLink(Subreddit.init(subreddit: subreddit.text), title: title.text, URL: body.text, captcha: "", captchaIden: "", completion: { (result) -> Void in
+                    try self.session?.submitLink(Subreddit.init(subreddit: subreddit.text), title: title.text, URL: body.text, sendReplies: replies!.isSelected, captcha: "", captchaIden: "", completion: { (result) -> Void in
                         switch result {
                         case .failure(let error):
                             print(error.description)
@@ -852,14 +1001,46 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     self.commentReplyCallback(nil, error)
                     break
                 case .success(let comment):
-                    self.commentReplyCallback(comment, nil)
+                    self.checkSticky(comment)
                 }
             })
         } catch {
             print((error as NSError).description)
         }
-
     }
+    
+    func checkSticky(_ comment: Comment){
+        DispatchQueue.main.async {
+            if(self.sticky != nil && self.sticky!.isSelected){
+                do {
+                    try self.session?.sticky(comment.getId(), sticky: true, completion: { (result) in
+                        self.checkReplies(comment)
+                    })
+                } catch {
+                    self.checkReplies(comment)
+                }
+            } else {
+                self.checkReplies(comment)
+            }
+        }
+    }
+    
+    func checkReplies(_ comment: Comment){
+        DispatchQueue.main.async {
+            if(self.replies != nil && self.replies!.isSelected){
+                do {
+                    try self.session?.setReplies(false, name: comment.getId(), completion: { (result) in
+                        self.commentReplyCallback(comment, nil)
+                    })
+                } catch {
+                    self.commentReplyCallback(comment, nil)
+                }
+            } else {
+                self.commentReplyCallback(comment, nil)
+            }
+        }
+    }
+
 
     func send(_ sender: AnyObject) {
         switch (type) {
@@ -1008,4 +1189,15 @@ extension UITextView: UITextViewDelegate {
         self.delegate = self;
     }
 
+}
+
+public class UIStateButton: UIButton {
+    var color = UIColor.white
+    override open var isSelected: Bool {
+        didSet {
+            backgroundColor = isSelected ? color : ColorUtil.foregroundColor
+            borderColor = color
+            borderWidth = isSelected ? CGFloat(0) : CGFloat(2)
+        }
+    }
 }
