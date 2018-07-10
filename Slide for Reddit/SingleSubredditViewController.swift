@@ -325,7 +325,7 @@ class SingleSubredditViewController: MediaViewController {
     }
 
     func show(_ animated: Bool = true) {
-        if (SingleSubredditViewController.fab != nil) {
+        if (SingleSubredditViewController.fab != nil && SingleSubredditViewController.fab!.isHidden) {
             if animated == true {
                 SingleSubredditViewController.fab!.isHidden = false
                 UIView.animate(withDuration: 0.3, animations: { () -> Void in
