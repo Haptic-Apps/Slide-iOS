@@ -115,7 +115,7 @@ public extension String {
         }
         return nil
     }
-    
+        
     func lastIndexOf(_ substring: String) -> Int? {
         if let range = range(of: substring, options: .backwards) {
             return self.distance(from: startIndex, to: range.lowerBound)
