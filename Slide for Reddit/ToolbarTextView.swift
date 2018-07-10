@@ -121,11 +121,11 @@ public class ToolbarTextView: NSObject {
                         alert.addAction(UIAlertAction.init(title: "Yes", style: .default) { action in
                             self.uploadAsync(images)
                         })
-                        alert.show()
+                        self.parent.present(alert, animated: true, completion: nil)
                     }
                 }))
         alert.addAction(title: "Cancel", style: .cancel)
-        alert.show()
+        parent.present(alert, animated: true, completion: nil)
     }
 
     var progressBar = UIProgressView()
@@ -172,7 +172,6 @@ public class ToolbarTextView: NSObject {
                                         if last != "Failure" {
                                             if (self.parent is ReplyViewController && (self.parent as! ReplyViewController).type == .SUBMIT_IMAGE) {
                                                 (self.parent as! ReplyViewController).text![2].text = url
-                                                (self.parent as! ReplyViewController).text![2].isEditable = false
                                             } else {
                                                 let alert = UIAlertController(title: "Link text", message: url, preferredStyle: .alert)
 
@@ -227,7 +226,6 @@ public class ToolbarTextView: NSObject {
                         if link != "Failure" {
                             if (self.parent is ReplyViewController && (self.parent as! ReplyViewController).type == .SUBMIT_IMAGE) {
                                 (self.parent as! ReplyViewController).text![2].text = link
-                                (self.parent as! ReplyViewController).text![2].isEditable = false
                             } else {
                                 let alert = UIAlertController(title: "Link text", message: link, preferredStyle: .alert)
 

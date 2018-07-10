@@ -327,7 +327,7 @@ class RealmDataWrapper {
         rComment.removed = !rComment.removedBy.isEmpty()
         rComment.approvedBy = comment.baseJson["approved_by"] as? String ?? ""
         rComment.approved = !rComment.approvedBy.isEmpty()
-        rComment.sticky = comment.baseJson["stickied"] as? Bool ?? false
+        rComment.sticky = comment.stickied
 
         for item in comment.modReports {
             let array = item as! Array<Any>

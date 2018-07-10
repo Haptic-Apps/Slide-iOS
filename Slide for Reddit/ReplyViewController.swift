@@ -130,6 +130,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             }
         }
     }
+    
+    var errorText = ""
 
     //Edit selftext
     init(submission: RSubmission, sub: String, completion: @escaping (Link?) -> Void) {
@@ -139,7 +141,14 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         setBarColors(color: ColorUtil.getColorForSub(sub: sub))
         self.submissionCallback = { (link, error) in
             DispatchQueue.main.async {
-                if (error != nil) {
+                if(error == nil && link == nil){
+                    self.alertController?.dismiss(animated: false, completion: {
+                        let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Reddit did not allow this post to be made.\nError message: \(self.errorText)", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+                        self.present(alert, animated: true, completion: nil)
+                    })
+
+                } else if (error != nil) {
                     self.toolbar?.saveDraft(self)
                     self.alertController?.dismiss(animated: false, completion: {
                         let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your submission has not been edited (but has been saved as a draft), please try again\n\nError:\(error!.localizedDescription)", preferredStyle: .alert)
@@ -191,7 +200,14 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         super.init(nibName: nil, bundle: nil)
         self.submissionCallback = { (link, error) in
             DispatchQueue.main.async {
-                if (error != nil) {
+                if(error == nil && link == nil){
+                    self.alertController?.dismiss(animated: false, completion: {
+                        let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Reddit did not allow this post to be made.\nError message: \(self.errorText)", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+                        self.present(alert, animated: true, completion: nil)
+                    })
+                    
+                } else if (error != nil) {
                     self.toolbar?.saveDraft(self)
                     self.alertController?.dismiss(animated: false, completion: {
                         let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your post has not been created, please try again\n\nError:\(error!.localizedDescription)", preferredStyle: .alert)
@@ -303,8 +319,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
          sticky = UIStateButton.init(frame: CGRect.init(x: 0, y: 0, width: 100, height: 45)).then {
             $0.layer.cornerRadius = 15
             $0.clipsToBounds = true
-            $0.setTitle("Post stickied", for: .selected)
-            $0.setTitle("Post not stickied", for: .normal)
+            $0.setTitle(type == .REPLY_SUBMISSION ? "Comment stickied": "Post stickied", for: .selected)
+            $0.setTitle(type == .REPLY_SUBMISSION ? "Comment not stickied": "Post not stickied", for: .normal)
             $0.setTitleColor(GMColor.green500Color(), for: .normal)
             $0.setTitleColor(.white, for: .selected)
             $0.titleLabel?.textAlignment = .center
@@ -552,6 +568,18 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 8, right: 8)
                 $0.delegate = self
             })
+            
+            if(type != .SUBMIT_TEXT){
+                text3.placeholder = "Link"
+                text3.textContainer.maximumNumberOfLines = 1
+                
+                if(type == .SUBMIT_IMAGE){
+                    text3.addTapGestureRecognizer {
+                        self.toolbar?.uploadImage(UIButton())
+                    }
+                    text3.placeholder = "Tap to choose an image"
+                }
+            }
 
             if(type != .EDIT_SELFTEXT){
                 doButtons()
@@ -626,7 +654,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 text3.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
                 
                 text3.heightAnchor >= CGFloat(70)
-                text1.sizeToFitHeight()
+//                text1.sizeToFitHeight()
                 
                 scrollView.addSubview(stack)
                 stack.widthAnchor == scrollView.widthAnchor
@@ -790,6 +818,13 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         }
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if(type == .SUBMIT_IMAGE){
+            toolbar?.uploadImage(UIButton())
+        }
+    }
+    
     func completeGetSubmission(_ name: String){
         do {
             try self.session?.getInfo([name.contains("t3") ? name : "t3_\(name)"], completion: { (res) in
@@ -880,9 +915,12 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                             self.submissionCallback(nil, error)
                             break
                         case .success(let submission):
-                            let string = self.getIDString(submission).value!
-                            print("Got \(string)")
-                            self.getSubmissionEdited(string)
+                            if let string = self.getIDString(submission).value {
+                                self.getSubmissionEdited(string)
+                            } else {
+                                self.errorText = self.getError(submission)
+                                self.submissionCallback(nil, nil)
+                            }
                         }
                     })
 
@@ -894,9 +932,12 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                             self.submissionCallback(nil, error)
                             break
                         case .success(let submission):
-                            let string = self.getIDString(submission).value!
-                            print("Got \(string)")
-                            self.getSubmissionEdited(string)
+                            if let string = self.getIDString(submission).value {
+                                self.getSubmissionEdited(string)
+                            } else {
+                                self.errorText = self.getError(submission)
+                                self.submissionCallback(nil, nil)
+                            }
                         }
                     })
 
@@ -1013,8 +1054,11 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         DispatchQueue.main.async {
             if(self.sticky != nil && self.sticky!.isSelected){
                 do {
-                    try self.session?.sticky(comment.getId(), sticky: true, completion: { (result) in
-                        self.checkReplies(comment)
+                    try self.session?.distinguish(comment.getId(), how: "yes", sticky: true, completion: { (result) -> Void in
+                        var newComment = comment
+                        newComment.stickied = true
+                        newComment.distinguished = "mod"
+                        self.checkReplies(newComment)
                     })
                 } catch {
                     self.checkReplies(comment)
@@ -1076,7 +1120,25 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         }
         return Result(error: ReddiftError.identifierOfCAPTCHAIsMalformed as NSError)
     }
+    
+    func getError(_ json: JSONAny) -> String {
+        if let json = json as? JSONDictionary {
+            if let j = json["json"] as? JSONDictionary {
+                if let data = j["errors"] as? JSONArray {
+                    if let iden = data[0] as? JSONArray {
+                        if( iden.count >= 2){
+                            return "\(iden[0]): \(iden[1])"
+                        } else {
+                            return "\(iden[0])"
+                        }
+                    }
+                }
+            }
+        }
+        return ""
+    }
 
+    
     func dismiss(_ sender: AnyObject) {
         self.dismiss(animated: true, completion: nil)
     }
