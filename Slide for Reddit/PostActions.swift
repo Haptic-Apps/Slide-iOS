@@ -66,6 +66,21 @@ class PostActions : NSObject {
         }))
         
         if (AccountController.isLoggedIn) {
+            if(SettingValues.actionBarMode != .FULL &&  AccountController.modSubs.contains(link.subreddit)){
+                alertController.addAction(Action(ActionData(title: "Moderate", image: UIImage(named: "mod")!.menuIcon()), style: .default, handler: { action in
+                    PostActions.showModMenu(cell, parent: parent)
+                }))
+            }
+            
+            if(SettingValues.actionBarMode == .NONE){
+                alertController.addAction(Action(ActionData(title: "Upvote", image: UIImage(named: "upvote")!.menuIcon().getCopy(withColor: ColorUtil.upvoteColor)), style: .default, handler: { action in
+                    cell.upvote()
+                }))
+                alertController.addAction(Action(ActionData(title: "Downvote", image: UIImage(named: "downvote")!.menuIcon().getCopy(withColor: ColorUtil.downvoteColor)), style: .default, handler: { action in
+                    cell.downvote()
+                }))
+            }
+            
             alertController.addAction(Action(ActionData(title: "Save", image: UIImage(named: "save")!.menuIcon()), style: .default, handler: { action in
                 delegate.save(cell)
             }))
@@ -152,9 +167,17 @@ class PostActions : NSObject {
             parent.present(alert, animated: true, completion: nil)
             
         }))
-        alertController.addAction(Action(ActionData(title: "Approve", image: UIImage(named: "approve")!.menuIcon()), style: .default, handler: { action in
-            self.modApprove(cell)
-        }))
+        
+        if(cell.link!.approved){
+            var action = Action(ActionData(title: "Approved by u/\(cell.link!.approvedBy)", image: UIImage(named: "approve")!.menuIcon()), style: .default, handler: { action in
+            })
+            action.enabled = false
+            alertController.addAction(action)
+        } else {
+            alertController.addAction(Action(ActionData(title: "Approve", image: UIImage(named: "approve")!.menuIcon()), style: .default, handler: { action in
+                self.modApprove(cell)
+            }))
+        }
         
         alertController.addAction(Action(ActionData(title: "Ban user", image: UIImage(named: "ban")!.menuIcon()), style: .default, handler: { action in
             //todo show dialog for this
@@ -212,14 +235,16 @@ class PostActions : NSObject {
             }
         }
         
-        alertController.addAction(Action(ActionData(title: "Remove", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { action in
-            self.modRemove(cell)
-        }))
-        
-        alertController.addAction(Action(ActionData(title: "Remove with reason", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { action in
-            self.modRemove(cell)
-            //todo this
-        }))
+        if(cell.link!.removed){
+            var action = Action(ActionData(title: "Removed by u/\(cell.link!.removedBy)", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { action in
+            })
+            action.enabled = false
+            alertController.addAction(action)
+        } else {
+            alertController.addAction(Action(ActionData(title: "Remove", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { action in
+                self.modRemove(cell)
+            }))
+        }
         
         alertController.addAction(Action(ActionData(title: "Mark as spam", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { action in
             self.modRemove(cell, spam: true)
@@ -399,6 +424,34 @@ class PostActions : NSObject {
     }
     
     static func modRemove(_ cell: LinkCellView, spam: Bool = false) {
+        let id = cell.link!.id
+        do {
+            try (UIApplication.shared.delegate as! AppDelegate).session?.remove(id, spam: spam, completion: { (result) -> Void in
+                switch result {
+                case .failure(let error):
+                    print(error.description)
+                    DispatchQueue.main.async {
+                        BannerUtil.makeBanner(text: "Removing submission failed!", color: GMColor.red500Color(), seconds: 3, context: cell.parentViewController)
+                    }
+                    break
+                case .success(_):
+                    CachedTitle.removed.append(id)
+                    if (CachedTitle.approved.contains(id)) {
+                        CachedTitle.approved.remove(at: CachedTitle.approved.index(of: id)!)
+                    }
+                    DispatchQueue.main.async {
+                        BannerUtil.makeBanner(text: "Submission removed!", color: ColorUtil.accentColorForSub(sub: cell.link!.subreddit), seconds: 3, context: cell.parentViewController)
+                    }
+                    break
+                }
+            })
+            
+        } catch {
+            print(error)
+        }
+    }
+    
+    static func modRemoveReason(_ cell: LinkCellView, spam: Bool = false) {
         let id = cell.link!.id
         do {
             try (UIApplication.shared.delegate as! AppDelegate).session?.remove(id, spam: spam, completion: { (result) -> Void in
