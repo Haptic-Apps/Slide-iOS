@@ -173,7 +173,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             $0.addTarget(self, action: #selector(self.showModMenu(_:)), for: UIControlEvents.touchUpInside)
         })
         
-        if(UIDevice.current.userInterfaceIdiom == .pad){
+        if(UIDevice.current.userInterfaceIdiom == .pad && !UIApplication.shared.isSplitOrSlideOver){
             menu.addArrangedSubviews(flexSpace(), flexSpace(), flexSpace(), editButton, deleteButton, upvoteButton, downvoteButton, replyButton, moreButton, modButton)
         } else {
             menu.addArrangedSubviews(editButton, deleteButton, upvoteButton, downvoteButton, replyButton, moreButton, modButton)
@@ -738,7 +738,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             par.present(activityViewController, animated: true, completion: {})
         }))
         if (AccountController.isLoggedIn) {
-            alertController.addAction(Action(ActionData(title: "Save", image: UIImage(named: "save")!.menuIcon()), style: .default, handler: { action in
+            alertController.addAction(Action(ActionData(title: ActionStates.isSaved(s: comment!) ? "Unsave" : "Save", image: UIImage(named: "save")!.menuIcon()), style: .default, handler: { action in
                 par.saveComment(self.comment!)
             }))
         }

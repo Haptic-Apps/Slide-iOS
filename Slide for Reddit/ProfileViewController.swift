@@ -190,7 +190,7 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
         var date = Date(timeIntervalSince1970: TimeInterval(user.createdUtc))
         let df = DateFormatter()
         df.dateFormat = "MM/dd/yyyy"
-        let alrController = UIAlertController(title:"\n\n\n\n\n", message: "\(user.linkKarma) post karma\n\(user.commentKarma) comment karma\nRedditor since \(df.string(from: date))", preferredStyle: UIAlertControllerStyle.actionSheet)
+        let alrController = UIAlertController(title:"", message: "\(user.linkKarma) post karma\n\(user.commentKarma) comment karma\nRedditor since \(df.string(from: date))", preferredStyle: UIAlertControllerStyle.actionSheet)
         
         let margin:CGFloat = 8.0
         let rect = CGRect.init(x: margin, y: margin + 23, width: alrController.view.bounds.size.width - margin * 4.0, height:75)
@@ -203,6 +203,7 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
                 switch result {
                 case .failure(let error):
                     print(error)
+                    alrController.title = ""
                 case .success(let trophies):
                     var i = 0
                     DispatchQueue.main.async {
@@ -219,6 +220,11 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
                             i += 1
                         }
                         scrollView.contentSize = CGSize.init(width: i * 75, height: 70)
+                        if(trophies.count == 0){
+                            alrController.title = ""
+                        } else {
+                            alrController.title = "\n\n\n\n\n"
+                        }
                     }
                 }
             })
@@ -226,7 +232,6 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
             
         }
         scrollView.delaysContentTouches = false
-        
     
         alrController.view.addSubview(scrollView)
         if(AccountController.isLoggedIn){

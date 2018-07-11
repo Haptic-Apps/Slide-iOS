@@ -92,6 +92,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         AccountController.initialize()
         PostFilter.initialize()
         Drafts.initialize()
+        RemovalReasons.initialize()
         Subscriptions.sync(name: AccountController.currentName, completion: nil)
         if #available(iOS 10.0, *) {
             UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {

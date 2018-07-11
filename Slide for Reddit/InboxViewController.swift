@@ -47,6 +47,7 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.title = "Inbox"
+        UIApplication.shared.applicationIconBadgeNumber = 0
         navigationController?.setNavigationBarHidden(false, animated: true)
         navigationController?.navigationBar.tintColor = .white
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: "")
