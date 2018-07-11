@@ -99,7 +99,7 @@ class TableDisplayView: UIScrollView {
             }  else if (current == tableColumnEnd || current == tableHeaderEnd) {
                 if(currentString.startsWith("<td")){
                     let index = currentString.indexOf(">")
-                    currentString = currentString.substring(index!, length: currentString.length - index!)
+                    currentString = currentString.substring(index! + 1, length: currentString.length - index! - 1)
                 }
                 columnStarted = false
                 let attr = DTHTMLAttributedStringBuilder.init(html: currentString.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor : ColorUtil.fontColor, DTDefaultFontFamily: font.familyName,DTDefaultFontSize: (isHeader ? 3 : 0) + 16 + SettingValues.commentFontOffset,  DTDefaultFontName: font.fontName], documentAttributes: nil).generatedAttributedString()!
