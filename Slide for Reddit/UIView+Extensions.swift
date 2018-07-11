@@ -38,6 +38,13 @@ extension UIView {
         }
     }
 
+    static func flexSpace() -> UIView {
+        return UIView().then {
+            $0.setContentHuggingPriority(0, for: .horizontal)
+            $0.setContentHuggingPriority(0, for: .vertical)
+        }
+    }
+
     func horizontalSpace(_ space: CGFloat) -> UIView {
         return UIView().then {
             $0.widthAnchor == space

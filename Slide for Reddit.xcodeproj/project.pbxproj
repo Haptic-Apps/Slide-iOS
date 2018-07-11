@@ -22,6 +22,11 @@
 		098B5A4B20EFC6C000FE201B /* UILabel+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098B5A4A20EFC6C000FE201B /* UILabel+Extensions.swift */; };
 		098B5A4D20EFC6E200FE201B /* UIViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098B5A4C20EFC6E200FE201B /* UIViewController+Extensions.swift */; };
 		098FC80F20E52D1A00F819F3 /* CGSize+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098FC80E20E52D1A00F819F3 /* CGSize+Extensions.swift */; };
+		09F411CD20F3EEA600D23A42 /* ModalMediaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F411CC20F3EEA600D23A42 /* ModalMediaViewController.swift */; };
+		09F411CF20F3EEB900D23A42 /* ImageMediaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F411CE20F3EEB900D23A42 /* ImageMediaViewController.swift */; };
+		09F411D120F3EEC600D23A42 /* VideoMediaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F411D020F3EEC600D23A42 /* VideoMediaViewController.swift */; };
+		09F411D320F3F20200D23A42 /* EmbeddableMediaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F411D220F3F20200D23A42 /* EmbeddableMediaViewController.swift */; };
+		09F48EBC20F652CF00BAC8AC /* VideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F48EBB20F652CF00BAC8AC /* VideoView.swift */; };
 		2097F94228BB31C58ECC96F9 /* Pods_Slide_for_RedditUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C29CF7355B69CCB84BE2FD6B /* Pods_Slide_for_RedditUITests.framework */; };
 		22FE497D2AAA9FDCC43D8B39 /* Pods_Slide_for_RedditTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE1DDF77D2F040B83CE26E0F /* Pods_Slide_for_RedditTests.framework */; };
 		B776B17D5CA92860424F37C0 /* ModQueueContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BA7C2B7217C3875F3BEC /* ModQueueContributionLoader.swift */; };
@@ -241,6 +246,11 @@
 		098B5A4A20EFC6C000FE201B /* UILabel+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+Extensions.swift"; sourceTree = "<group>"; };
 		098B5A4C20EFC6E200FE201B /* UIViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extensions.swift"; sourceTree = "<group>"; };
 		098FC80E20E52D1A00F819F3 /* CGSize+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGSize+Extensions.swift"; sourceTree = "<group>"; };
+		09F411CC20F3EEA600D23A42 /* ModalMediaViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalMediaViewController.swift; sourceTree = "<group>"; };
+		09F411CE20F3EEB900D23A42 /* ImageMediaViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageMediaViewController.swift; sourceTree = "<group>"; };
+		09F411D020F3EEC600D23A42 /* VideoMediaViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoMediaViewController.swift; sourceTree = "<group>"; };
+		09F411D220F3F20200D23A42 /* EmbeddableMediaViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmbeddableMediaViewController.swift; sourceTree = "<group>"; };
+		09F48EBB20F652CF00BAC8AC /* VideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoView.swift; sourceTree = "<group>"; };
 		6BAF8E6D96B86B50F10DB7B2 /* Pods-Slide for Reddit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for Reddit.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit.debug.xcconfig"; sourceTree = "<group>"; };
 		93C2383A3BDA4B7B033991ED /* Pods-Slide for RedditUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for RedditUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Slide for RedditUITests/Pods-Slide for RedditUITests.release.xcconfig"; sourceTree = "<group>"; };
 		AE788255F3A312FF233A5FEC /* Pods-Slide for RedditTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for RedditTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Slide for RedditTests/Pods-Slide for RedditTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -452,6 +462,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		090D6B7A20F3D8610052F3F6 /* Media */ = {
+			isa = PBXGroup;
+			children = (
+				09F411CC20F3EEA600D23A42 /* ModalMediaViewController.swift */,
+				09F48EB920F652A300BAC8AC /* Image */,
+				09F48EBA20F652AE00BAC8AC /* Video */,
+				09F411D220F3F20200D23A42 /* EmbeddableMediaViewController.swift */,
+			);
+			name = Media;
+			sourceTree = "<group>";
+		};
 		0965260320E1688400EA53BE /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -474,6 +495,23 @@
 				B776BC65995FE8D1EE75E2AB /* MediaViewController.swift */,
 			);
 			name = Extensions;
+			sourceTree = "<group>";
+		};
+		09F48EB920F652A300BAC8AC /* Image */ = {
+			isa = PBXGroup;
+			children = (
+				09F411CE20F3EEB900D23A42 /* ImageMediaViewController.swift */,
+			);
+			name = Image;
+			sourceTree = "<group>";
+		};
+		09F48EBA20F652AE00BAC8AC /* Video */ = {
+			isa = PBXGroup;
+			children = (
+				09F411D020F3EEC600D23A42 /* VideoMediaViewController.swift */,
+				09F48EBB20F652CF00BAC8AC /* VideoView.swift */,
+			);
+			name = Video;
 			sourceTree = "<group>";
 		};
 		298777278D5F06761FD8FF4B /* Frameworks */ = {
@@ -685,6 +723,7 @@
 		BE8FCA061E0C46090063B8EF /* Slide for Reddit */ = {
 			isa = PBXGroup;
 			children = (
+				090D6B7A20F3D8610052F3F6 /* Media */,
 				0965260320E1688400EA53BE /* Extensions */,
 				BE7439F41E2162A8008BB63B /* AccountController.swift */,
 				BEDDA9921E19AEF2003CD6C3 /* AdDictionary.swift */,
@@ -1243,6 +1282,7 @@
 				0965260D20E2989600EA53BE /* UITableView+Extensions.swift in Sources */,
 				BE2B8A091E25EEDF0053D493 /* SettingsViewController.swift in Sources */,
 				BEE206FA1F1DE286008BB5F1 /* WrappingFlowLayout.swift in Sources */,
+				09F411CD20F3EEA600D23A42 /* ModalMediaViewController.swift in Sources */,
 				BE7439F51E2162A8008BB63B /* AccountController.swift in Sources */,
 				BE872E8320D9BA2500E08364 /* SettingsWelcome.swift in Sources */,
 				BE780B641E3405F300DAA1EB /* SettingsTheme.swift in Sources */,
@@ -1273,6 +1313,7 @@
 				BE9456041F34B4B40097EEF0 /* AVControlsPlayer.swift in Sources */,
 				0965260720E28FEE00EA53BE /* UIStackView+Extensions.swift in Sources */,
 				BE1DA3961E26AD5700EC0A04 /* SearchViewController.swift in Sources */,
+				09F411CF20F3EEB900D23A42 /* ImageMediaViewController.swift in Sources */,
 				BE6EA6E81E1DA86100E9E709 /* ProfileViewController.swift in Sources */,
 				BE35217E1E3D325A00C30B8D /* SettingsFont.swift in Sources */,
 				BE780B601E32CA8F00DAA1EB /* RelatedContributionLoader.swift in Sources */,
@@ -1335,6 +1376,7 @@
 				BE36886220E5709300987320 /* FullLinkCellView.swift in Sources */,
 				BEB2B2351E35D25100BF761C /* InboxContributionLoader.swift in Sources */,
 				BECF52442012AF7A00A310F9 /* VCPresenter.swift in Sources */,
+				09F411D320F3F20200D23A42 /* EmbeddableMediaViewController.swift in Sources */,
 				BEE10FC61F25078F00A72CE5 /* PagingCommentViewController.swift in Sources */,
 				BE7AF57A1F3655F50003B24B /* SwipeDownModalVC.swift in Sources */,
 				BE5E53751E1DAEB7004FE226 /* RedditLink.swift in Sources */,
@@ -1353,6 +1395,8 @@
 				B776B87EDB6E25D8D1B2D4B5 /* CustomAlbum.swift in Sources */,
 				B776BC55CA329427879F17B4 /* ModMailContributionLoader.swift in Sources */,
 				B776B5282EE4DA559E97F9B3 /* ModerationViewController.swift in Sources */,
+				09F48EBC20F652CF00BAC8AC /* VideoView.swift in Sources */,
+				09F411D120F3EEC600D23A42 /* VideoMediaViewController.swift in Sources */,
 				0965260520E168B200EA53BE /* UIView+Extensions.swift in Sources */,
 				B776B17D5CA92860424F37C0 /* ModQueueContributionLoader.swift in Sources */,
 				B776BD48651556FF298BF3EB /* TableDisplayViewController.swift in Sources */,
