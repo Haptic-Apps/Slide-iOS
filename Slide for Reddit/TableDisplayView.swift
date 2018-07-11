@@ -18,8 +18,6 @@ import DTCoreText
 
 class TableDisplayView: UIScrollView {
 
-    var backupData = [[NSAttributedString]]()
-    var flippedData = [[NSAttributedString]]()
     var baseStackView = UIStackView()
 
     var baseData = [[NSAttributedString]]()
@@ -33,22 +31,7 @@ class TableDisplayView: UIScrollView {
 
         super.init(frame: CGRect.zero)
 
-        baseData = TableDisplayView.parseHtml(newData.removingPercentEncoding!)
-        self.bounces = true
-        self.isUserInteractionEnabled = true
-        
-        baseStackView = UIStackView().then({
-            $0.axis = .vertical
-        })
-        self.isScrollEnabled = true
-        
-        doList()
-    }
-    
-    init(strings: [[NSAttributedString]], color: UIColor){
-        self.baseColor = color
-        super.init(frame: CGRect.zero)
-        self.baseData = strings
+        parseHtml(newData.removingPercentEncoding!)
         self.bounces = true
         self.isUserInteractionEnabled = true
         
@@ -61,7 +44,7 @@ class TableDisplayView: UIScrollView {
     }
 
     //Algorighm from https://github.com/ccrama/Slide/blob/master/app/src/main/java/me/ccrama/redditslide/Views/CommentOverflow.java
-    static func parseHtml(_ text: String) -> [[NSAttributedString]] {
+    func parseHtml(_ text: String) {
         let tableStart = "<table>"
         let tableEnd = "</table>"
         let tableHeadStart = "<thead>"
@@ -87,7 +70,7 @@ class TableDisplayView: UIScrollView {
 
         var currentRow = [NSAttributedString]()
         let font =  FontGenerator.fontOfSize(size: 16, submission: false)
-        var baseData = [[NSAttributedString]]()
+
         while (i < text.length) {
             if (text[i] != "<") {
                 i += 1
@@ -147,9 +130,8 @@ class TableDisplayView: UIScrollView {
                 columnEnd = i
 
                 do {
-                    let attr = DTHTMLAttributedStringBuilder.init(html: text.subsequence(columnStart, endIndex: columnEnd).data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor : ColorUtil.fontColor, DTDefaultFontFamily: font.familyName,DTDefaultFontSize: (isHeader ? 2 : 0) + 16 + SettingValues.commentFontOffset,  DTDefaultFontName: font.fontName], documentAttributes: nil).generatedAttributedString()!
+                    let attr = DTHTMLAttributedStringBuilder.init(html: text.subsequence(columnStart, endIndex: columnEnd).data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor : ColorUtil.fontColor, DTDefaultFontFamily: font.familyName,DTDefaultFontSize: (isHeader ? 3 : 0) + 16 + SettingValues.commentFontOffset,  DTDefaultFontName: font.fontName], documentAttributes: nil).generatedAttributedString()!
                     currentRow.append(attr)
-                    //todo eventually bold?
                 } catch {
                     print(error.localizedDescription)
                 }
@@ -171,16 +153,12 @@ class TableDisplayView: UIScrollView {
                     flippedData.append([header[index], row[index]])
                 }
             }
-        }*/
-        return baseData
+        }
+
+        backupData = baseData*/
     }
 
     func doData(){
-        if(list){
-            baseData = flippedData
-        } else {
-            baseData = backupData
-        }
 
         widths.removeAll()
         var currentWidths = [CGFloat]()
