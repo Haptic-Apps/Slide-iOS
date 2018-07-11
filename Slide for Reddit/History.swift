@@ -12,6 +12,8 @@ import reddift
 class History {
     public static var seenTimes = NSMutableDictionary()
     public static var commentCounts = NSMutableDictionary()
+    
+    public static var currentVisits = [String]()
 
     //mark Submissions
     public static func getSeen(s: RSubmission)-> Bool {
@@ -34,8 +36,15 @@ class History {
         return 0
         }
     }
+    
+    public static func publishSeen(){
+        if(SettingValues.saveHistory && false){
+            //Possibly do this, although it's only available as an API endpoint if the user has Reddit gold
+        }
+    }
 
     public static func addSeen(s: RSubmission){
+        currentVisits.append(s.getId())
         if(!SettingValues.saveNSFWHistory && s.nsfw){
             
         } else if(SettingValues.saveHistory){
