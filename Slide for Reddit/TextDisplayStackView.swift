@@ -27,6 +27,7 @@ public class TextDisplayStackView: UIStackView {
     let fontSize: CGFloat
     let submission: Bool
     var tColor: UIColor
+    var baseFontColor: UIColor
     var tableCount = 0
     var tableData = [[[NSAttributedString]]]()
     
@@ -35,6 +36,7 @@ public class TextDisplayStackView: UIStackView {
         self.submission = false
         self.tColor = .black
         delegate = nil
+        self.baseFontColor = .white
         self.firstTextView = TTTAttributedLabel.init(frame: CGRect.zero)
         self.overflow = UIStackView()
         super.init(frame: CGRect.zero)
@@ -44,12 +46,13 @@ public class TextDisplayStackView: UIStackView {
         self.tColor = color
     }
 
-    init(fontSize: CGFloat, submission: Bool, color: UIColor, delegate: TTTAttributedLabelDelegate, width: CGFloat) {
+    init(fontSize: CGFloat, submission: Bool, color: UIColor, delegate: TTTAttributedLabelDelegate, width: CGFloat, baseFontColor: UIColor = ColorUtil.fontColor) {
         self.fontSize = fontSize
         self.submission = submission
         self.estimatedWidth = width
         self.delegate = delegate
         self.tColor = color
+        self.baseFontColor = baseFontColor
         self.firstTextView = TTTAttributedLabel.init(frame: CGRect.zero).then({
             $0.accessibilityIdentifier = "Top title"
             $0.numberOfLines = 0
@@ -194,7 +197,7 @@ public class TextDisplayStackView: UIStackView {
         for block in blocks {
             estimatedHeight += 8
             if(block.startsWith("<table>")) {
-                let table = TableDisplayView.init(baseHtml: block, color: ColorUtil.fontColor)
+                let table = TableDisplayView.init(baseHtml: block, color: baseFontColor)
                 table.accessibilityIdentifier = "Table"
                 overflow.addArrangedSubview(table)
                 table.horizontalAnchors == overflow.horizontalAnchors
@@ -213,7 +216,7 @@ public class TextDisplayStackView: UIStackView {
                 line.heightAnchor == CGFloat(1)
                 line.horizontalAnchors == overflow.horizontalAnchors
             } else if(block.startsWith("<code>")){
-                let body = CodeDisplayView.init(baseHtml: block, color: ColorUtil.fontColor)
+                let body = CodeDisplayView.init(baseHtml: block, color: baseFontColor)
                 body.accessibilityIdentifier = "Code block"
                 overflow.addArrangedSubview(body)
                 body.horizontalAnchors == overflow.horizontalAnchors
@@ -232,6 +235,7 @@ public class TextDisplayStackView: UIStackView {
                 let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
                 estimatedHeight += textSizeB.height
                 label.numberOfLines = 0
+                label.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
                 overflow.addArrangedSubview(label)
                 label.horizontalAnchors == overflow.horizontalAnchors
                 label.heightAnchor == textSizeB.height
@@ -244,7 +248,7 @@ public class TextDisplayStackView: UIStackView {
         do {
             let baseAttributedString = try NSMutableAttributedString(data: baseHTML.data(using: .unicode)!, options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
             let font = FontGenerator.fontOfSize(size: fontSize, submission: submission)
-            let constructedString = baseAttributedString.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: tColor)
+            let constructedString = baseAttributedString.reconstruct(with: font, color: baseFontColor, linkColor: tColor)
             return LinkParser.parse(constructedString, tColor)
         } catch {
             return NSMutableAttributedString.init(string: baseHTML)
