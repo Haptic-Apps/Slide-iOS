@@ -38,12 +38,14 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     init(submission: RSubmission, single: Bool) {
         self.submission = submission
         self.single = single
+        self.text = [:]
         super.init(nibName: nil, bundle: nil)
         setBarColors(color: ColorUtil.getColorForSub(sub: submission.subreddit))
     }
 
     init(submission: RSubmission) {
         self.submission = submission
+        self.text = [:]
         super.init(nibName: nil, bundle: nil)
         setBarColors(color: ColorUtil.getColorForSub(sub: submission.subreddit))
     }
@@ -58,6 +60,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             self.subreddit = subreddit!
             self.submission!.subreddit = subreddit!
         }
+        self.text = [:]
         super.init(nibName: nil, bundle: nil)
         if (subreddit != nil) {
             self.title = subreddit!
@@ -72,6 +75,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         hasSubmission = false
         self.context = comment
         self.np = np
+        self.text = [:]
         self.contextNumber = context
         super.init(nibName: nil, bundle: nil)
         setBarColors(color: ColorUtil.getColorForSub(sub: subreddit))
@@ -550,7 +554,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                                 self.hasDone = true
                                 self.headerCell?.aspectWidth = self.tableView.bounds.size.width
                                 self.headerCell?.configure(submission: self.submission!, parent: self, nav: self.navigationController, baseSub: self.submission!.subreddit)
-                                self.headerCell?.showBody(width: self.view.frame.size.width)
+                                self.headerCell?.showBody(width: self.view.frame.size.width - 24)
                                 self.tableView.tableHeaderView = UIView(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.width, height: 0.01))
                                 if let tableHeaderView = self.headerCell {
                                     var frame = CGRect.zero
@@ -569,7 +573,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                                 self.setBarColors(color: ColorUtil.getColorForSub(sub: self.navigationItem.title!))
                             } else {
                                 self.headerCell?.refreshLink(self.submission!)
-                                self.headerCell?.showBody(width: self.view.frame.size.width)
+                                self.headerCell?.showBody(width: self.view.frame.size.width - 24)
                             }
                             self.refreshControl?.endRefreshing()
                             self.indicator.stopAnimating()
@@ -827,7 +831,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             headerCell.parentViewController = self
             headerCell.aspectWidth = self.tableView.bounds.size.width
             headerCell.configure(submission: submission!, parent: self, nav: self.navigationController, baseSub: submission!.subreddit)
-            headerCell.showBody(width: self.view.frame.size.width)
+            headerCell.showBody(width: self.view.frame.size.width - 24)
 
             let frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: headerCell.estimateHeight(true))
             if self.tableView.tableHeaderView == nil || !frame.equalTo(headerCell.contentView.frame) {
@@ -873,7 +877,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             self.setBarColors(color: ColorUtil.getColorForSub(sub: self.navigationItem.title!))
         }
 
-        if (single && !loaded || forceLoad) {
+        if (!loaded && (single || forceLoad)) {
             refresh(self)
         }
 
@@ -1049,7 +1053,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         }
     }
 
-    var text: [String: NSAttributedString] = [:]
+    var text: [String: NSAttributedString]
 
     func updateStringsSingle(_ newComments: [Object]) {
         let color = ColorUtil.accentColorForSub(sub: ((newComments[0] as! RComment).subreddit))

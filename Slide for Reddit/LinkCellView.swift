@@ -1101,7 +1101,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         let reply = ReplyViewController.init(submission: link!, sub: (self.link?.subreddit)!) { (cr) in
             DispatchQueue.main.async(execute: { () -> Void in
                 self.setLink(submission: RealmDataWrapper.linkToRSubmission(submission: cr!), parent: self.parentViewController!, nav: self.navViewController!, baseSub: (self.link?.subreddit)!)
-                self.showBody(width: self.contentView.frame.size.width)
+                self.showBody(width: self.contentView.frame.size.width - 24)
             })
         }
 
@@ -1223,7 +1223,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                         self.link!.flair = (text != nil && !text!.isEmpty) ? text! : flair.text
                         CachedTitle.getTitle(submission: self.link!, full: true, true, false)
                         self.setLink(submission: self.link!, parent: self.parentViewController!, nav: self.navViewController!, baseSub: (self.link?.subreddit)!)
-                        self.showBody(width: self.contentView.frame.size.width)
+                        self.showBody(width: self.contentView.frame.size.width - 24)
                     }
                 break
             }}

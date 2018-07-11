@@ -143,41 +143,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         menuBack.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         menu.addSubview(menuBack)
 
-        
-        upvoteButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage.init(named: "upvote")?.navIcon(), for: .normal)
-            $0.addTarget(self, action: #selector(self.upvote(_:)), for: UIControlEvents.touchUpInside)
-            })
-        downvoteButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage.init(named: "downvote")?.navIcon(), for: .normal)
-            $0.addTarget(self, action: #selector(self.downvote(_:)), for: UIControlEvents.touchUpInside)
-        })
-        replyButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage.init(named: "reply")?.navIcon(), for: .normal)
-            $0.addTarget(self, action: #selector(self.reply(_:)), for: UIControlEvents.touchUpInside)
-        })
-        moreButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage.init(named: "ic_more_vert_white")?.navIcon(), for: .normal)
-            $0.addTarget(self, action: #selector(self.menu(_:)), for: UIControlEvents.touchUpInside)
-        })
-        editButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage.init(named: "edit")?.navIcon(), for: .normal)
-            $0.addTarget(self, action: #selector(self.edit(_:)), for: UIControlEvents.touchUpInside)
-        })
-        deleteButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage.init(named: "delete")?.navIcon(), for: .normal)
-            $0.addTarget(self, action: #selector(self.delete(_:)), for: UIControlEvents.touchUpInside)
-        })
-        modButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage.init(named: "mod")?.navIcon(), for: .normal)
-            $0.addTarget(self, action: #selector(self.showModMenu(_:)), for: UIControlEvents.touchUpInside)
-        })
-        
-        if(UIDevice.current.userInterfaceIdiom == .pad && !UIApplication.shared.isSplitOrSlideOver){
-            menu.addArrangedSubviews(flexSpace(), flexSpace(), flexSpace(), editButton, deleteButton, upvoteButton, downvoteButton, replyButton, moreButton, modButton)
-        } else {
-            menu.addArrangedSubviews(editButton, deleteButton, upvoteButton, downvoteButton, replyButton, moreButton, modButton)
-        }
         self.contentView.addSubview(menu)
         
         
@@ -294,6 +259,40 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
     
     func showCommentMenu(){
+        upvoteButton = UIButton.init(type: .custom).then({
+            $0.setImage(UIImage.init(named: "upvote")?.navIcon(), for: .normal)
+            $0.addTarget(self, action: #selector(self.upvote(_:)), for: UIControlEvents.touchUpInside)
+        })
+        downvoteButton = UIButton.init(type: .custom).then({
+            $0.setImage(UIImage.init(named: "downvote")?.navIcon(), for: .normal)
+            $0.addTarget(self, action: #selector(self.downvote(_:)), for: UIControlEvents.touchUpInside)
+        })
+        replyButton = UIButton.init(type: .custom).then({
+            $0.setImage(UIImage.init(named: "reply")?.navIcon(), for: .normal)
+            $0.addTarget(self, action: #selector(self.reply(_:)), for: UIControlEvents.touchUpInside)
+        })
+        moreButton = UIButton.init(type: .custom).then({
+            $0.setImage(UIImage.init(named: "ic_more_vert_white")?.navIcon(), for: .normal)
+            $0.addTarget(self, action: #selector(self.menu(_:)), for: UIControlEvents.touchUpInside)
+        })
+        editButton = UIButton.init(type: .custom).then({
+            $0.setImage(UIImage.init(named: "edit")?.navIcon(), for: .normal)
+            $0.addTarget(self, action: #selector(self.edit(_:)), for: UIControlEvents.touchUpInside)
+        })
+        deleteButton = UIButton.init(type: .custom).then({
+            $0.setImage(UIImage.init(named: "delete")?.navIcon(), for: .normal)
+            $0.addTarget(self, action: #selector(self.delete(_:)), for: UIControlEvents.touchUpInside)
+        })
+        modButton = UIButton.init(type: .custom).then({
+            $0.setImage(UIImage.init(named: "mod")?.navIcon(), for: .normal)
+            $0.addTarget(self, action: #selector(self.showModMenu(_:)), for: UIControlEvents.touchUpInside)
+        })
+        
+        if(UIDevice.current.userInterfaceIdiom == .pad && !UIApplication.shared.isSplitOrSlideOver){
+            menu.addArrangedSubviews(flexSpace(), flexSpace(), flexSpace(), editButton, deleteButton, upvoteButton, downvoteButton, replyButton, moreButton, modButton)
+        } else {
+            menu.addArrangedSubviews(editButton, deleteButton, upvoteButton, downvoteButton, replyButton, moreButton, modButton)
+        }
         if(!AccountController.isLoggedIn || comment!.archived || parent!.np){
             upvoteButton.isHidden = true
             downvoteButton.isHidden = true
@@ -950,14 +949,17 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             marginTop = 8
         }
 
-        var attr = ""
-        if (more.children.isEmpty) {
-            attr = "Continue this thread"
-        } else {
-            attr = "Load \(more.count) more"
-        }
+        let font = FontGenerator.fontOfSize(size: 14, submission: false)
         
-        title.setData(htmlString: attr)
+        var attr = NSMutableAttributedString()
+        if (more.children.isEmpty) {
+            attr = NSMutableAttributedString(string: "Continue this thread", attributes: [NSFontAttributeName: font])
+        } else {
+            attr = NSMutableAttributedString(string: "Load \(more.count) more", attributes: [NSFontAttributeName: font])
+        }
+        let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: .white)
+        
+        title.setTextWithTitleHTML(attr2, htmlString: "")
         NSLayoutConstraint.deactivate(menuHeight)
         menuHeight = batch {
             title.bottomAnchor == contentView.bottomAnchor - CGFloat(8)
@@ -967,6 +969,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
         updateDepth()
         NSLayoutConstraint.deactivate(topMargin)
+        topMargin = batch {
+            topViewSpace.heightAnchor == CGFloat(marginTop)
+        }
     }
 
     var numberOfDots = 3

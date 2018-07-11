@@ -95,7 +95,7 @@ public class TextDisplayStackView: UIStackView {
         estimatedHeight += textSizeB.height
     }
     
-    public func setTextWithTitleHTML(_ title: NSMutableAttributedString, _ body: NSAttributedString? = nil, htmlString: String){
+    public func setTextWithTitleHTML(_ title: NSAttributedString, _ body: NSAttributedString? = nil, htmlString: String){
         
         //Clear out old UIStackView from https://gist.github.com/Deub27/5eadbf1b77ce28abd9b630eadb95c1e2
         let removedSubviews = overflow.arrangedSubviews.reduce([]) { (allSubviews, subview) -> [UIView] in
@@ -114,7 +114,7 @@ public class TextDisplayStackView: UIStackView {
             
             var startIndex = 0
             
-            var newTitle = title
+            var newTitle = NSMutableAttributedString(attributedString: title)
             
             if (!blocks[0].startsWith("<table>") && !blocks[0].startsWith("<code>")) {
                 newTitle.append(NSAttributedString.init(string: "\n\n", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 5)]))
@@ -135,11 +135,11 @@ public class TextDisplayStackView: UIStackView {
                 }
             }
         } else {
-            var newTitle = title
+            var newTitle = NSMutableAttributedString(attributedString: title)
             if(body != nil){
                 newTitle.append(NSAttributedString.init(string: "\n\n", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 5)]))
                 newTitle.append(body!)
-            } else {
+            } else if(!htmlString.isEmpty()){
                 newTitle.append(NSAttributedString.init(string: "\n\n", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 5)]))
                 newTitle.append(createAttributedChunk(baseHTML: htmlString))
             }
@@ -202,7 +202,7 @@ public class TextDisplayStackView: UIStackView {
                 overflow.addArrangedSubview(table)
                 table.horizontalAnchors == overflow.horizontalAnchors
                 table.heightAnchor == table.globalHeight
-                table.backgroundColor = ColorUtil.backgroundColor
+                table.backgroundColor = ColorUtil.backgroundColor.withAlphaComponent(0.5)
                 table.clipsToBounds = true
                 table.layer.cornerRadius = 10
                 table.contentOffset = CGPoint.init(x: -8, y: 0)
@@ -221,7 +221,7 @@ public class TextDisplayStackView: UIStackView {
                 overflow.addArrangedSubview(body)
                 body.horizontalAnchors == overflow.horizontalAnchors
                 body.heightAnchor == body.globalHeight
-                body.backgroundColor = ColorUtil.backgroundColor
+                body.backgroundColor = ColorUtil.backgroundColor.withAlphaComponent(0.5)
                 body.clipsToBounds = true
                 estimatedHeight += body.globalHeight
                 body.layer.cornerRadius = 10
