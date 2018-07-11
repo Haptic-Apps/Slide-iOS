@@ -75,7 +75,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         self.backgroundColor = ColorUtil.backgroundColor
-        self.title = TextDisplayStackView(fontSize: 16, submission: false, color: .blue, delegate: self).then({
+        self.title = TextDisplayStackView(fontSize: 16, submission: false, color: .blue, delegate: self, width: contentView.frame.size.width).then({
             $0.isUserInteractionEnabled = true
             $0.accessibilityIdentifier = "Comment body"
         })
@@ -1188,19 +1188,19 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
 
 
-        infoString.append(NSAttributedString.init(string: "\n\n", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 5)]))
         if (!isCollapsed || !SettingValues.collapseFully) {
-            infoString.append(text)
+            title.setTextWithTitleHTML(infoString, text, htmlString: comment.htmlText)
+        } else {
+            title.setAttributedString(infoString)
         }
 
         if (!setLinkAttrs) {
-            let activeLinkAttributes = NSMutableDictionary(dictionary: title.activeLinkAttributes)
+            let activeLinkAttributes = NSMutableDictionary(dictionary: title.firstTextView.activeLinkAttributes)
             activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.accentColorForSub(sub: comment.subreddit)
-            title.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
-            title.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+            title.firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+            title.firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
             setLinkAttrs = true
         }
-        title.setText(infoString)
 
     }
 
@@ -1260,7 +1260,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
 
     func getInfo(locationInTextView: CGPoint) -> (URL, CGRect)? {
-        if let attr = title.link(at: locationInTextView) {
+        if let attr = title.firstTextView.link(at: locationInTextView) {
             if let url = attr.result.url {
                 return (url, title.bounds)
             }

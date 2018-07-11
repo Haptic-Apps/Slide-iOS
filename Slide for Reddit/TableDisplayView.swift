@@ -1,9 +1,9 @@
 //
-//  TableDisplayViewController.swift
+//  TableDisplayView.swift
 //  Slide for Reddit
 //
 //  Created by Carlos Crane on 05/29/18.
-//  Copyright © 2016 Haptic Apps. All rights reserved.
+//  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
 import UIKit
@@ -12,14 +12,16 @@ import SDWebImage
 import XLActionController
 import TTTAttributedLabel
 import SwiftSpreadsheet
+import Anchorage
+import Then
 
-class TableDisplayViewController: MediaViewController, UICollectionViewDelegate, UICollectionViewDataSource {
+class TableDisplayView: UIScrollView {
 
     var backupData = [[NSAttributedString]]()
     var flippedData = [[NSAttributedString]]()
+    var baseStackView = UIStackView()
 
     var baseData = [[NSAttributedString]]()
-    var tableView: UICollectionView!
     var scrollView: UIScrollView!
     var widths = [[CGFloat]]()
     var baseColor: UIColor
@@ -27,9 +29,19 @@ class TableDisplayViewController: MediaViewController, UICollectionViewDelegate,
     init(baseHtml: String, color: UIColor) {
         var newData = baseHtml.replacingOccurrences(of: "http://view.table/", with: "")
         self.baseColor = color
-        super.init(nibName: nil, bundle: nil)
+
+        super.init(frame: CGRect.zero)
+
         parseHtml(newData.removingPercentEncoding!)
-        setBarColors(color: color)
+        self.bounces = true
+        self.isUserInteractionEnabled = true
+        
+        baseStackView = UIStackView().then({
+            $0.axis = .vertical
+        })
+        self.isScrollEnabled = true
+        
+        doList()
     }
 
     //Algorighm from https://github.com/ccrama/Slide/blob/master/app/src/main/java/me/ccrama/redditslide/Views/CommentOverflow.java
@@ -55,6 +67,7 @@ class TableDisplayViewController: MediaViewController, UICollectionViewDelegate,
         var columnStart = 0
         var columnEnd = 0
         var columnStarted = false
+        var isHeader = true
 
         var currentRow = [NSAttributedString]()
         while (i < text.length) {
@@ -68,6 +81,7 @@ class TableDisplayViewController: MediaViewController, UICollectionViewDelegate,
                 currentRow = []
                 i += tableRowStart.length
             } else if (text.subsequence(i, endIndex: i + tableRowEnd.length) == tableRowEnd) {
+                isHeader = false
                 baseData.append(currentRow)
                 i += tableRowEnd.length
             } else if (text.subsequence(i, endIndex: i + tableEnd.length) == tableEnd) {
@@ -116,9 +130,14 @@ class TableDisplayViewController: MediaViewController, UICollectionViewDelegate,
 
                 do {
                     let attr = try NSMutableAttributedString(data: text.subsequence(columnStart, endIndex: columnEnd).data(using: .unicode)!, options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
-                    let font = FontGenerator.fontOfSize(size: 16, submission: false)
+                    let font =  FontGenerator.fontOfSize(size: 16, submission: false)
                     let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: baseColor)
-                    let cell = LinkParser.parse(attr2, baseColor)
+                    var cell = LinkParser.parse(attr2, baseColor)
+                    if(isHeader){
+                        cell.enumerateAttribute(NSFontAttributeName, in: NSRange.init(location: 0, length: cell.length), options: .longestEffectiveRangeNotRequired) { (attr, range, pointer) in
+                            cell.addAttribute(NSFontAttributeName, value: font.bold(), range: range)
+                        }
+                    }
                     currentRow.append(cell)
                 } catch {
                     print(error.localizedDescription)
@@ -160,12 +179,61 @@ class TableDisplayViewController: MediaViewController, UICollectionViewDelegate,
             for cell in row {
                 let framesetter = CTFramesetterCreateWithAttributedString(cell)
                 let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: CGFloat.greatestFiniteMagnitude, height: CGFloat(40)), nil)
-                let length = textSize.width + 25
+                let length = textSize.width + 16
                 currentWidths.append(length)
             }
             widths.append(currentWidths)
         }
+        addSubviews()
     }
+    
+    func addSubviews(){
+        for row in baseData {
+            let rowStack = UIStackView().then({
+                $0.axis = .horizontal
+                $0.spacing = 4
+            })
+            var column = 0
+            globalHeight += 30
+            globalWidth = 0
+            for string in row {
+                let text = UILabel.init().then({
+                    $0.heightAnchor == CGFloat(30)
+                })
+                text.attributedText = string
+                
+                let width = getWidestCell(column: column)
+                globalWidth += width
+                globalWidth += 4
+                text.widthAnchor == width
+                rowStack.addArrangedSubview(text)
+                let separator = UIView.init()
+                /*
+                separator.backgroundColor = ColorUtil.fontColor.withAlphaComponent(0.5)
+                separator.heightAnchor == CGFloat(30)
+                separator.widthAnchor == CGFloat(1)
+                globalWidth += 1*/
+                rowStack.addArrangedSubview(separator)
+                column += 1
+            }
+            globalWidth -= 4
+            baseStackView.addArrangedSubview(rowStack)
+        }
+        addSubview(baseStackView)
+        contentInset = UIEdgeInsets.init(top: 0, left: 8, bottom: 0, right: 8)
+        baseStackView.widthAnchor == globalWidth
+        baseStackView.heightAnchor == globalHeight
+        baseStackView.leftAnchor == leftAnchor
+        baseStackView.verticalAnchors == verticalAnchors
+        baseStackView.leadingAnchor == leadingAnchor
+        baseStackView.trailingAnchor == trailingAnchor
+        baseStackView.topAnchor == topAnchor
+        baseStackView.bottomAnchor == bottomAnchor
+        contentSize = CGSize.init(width: globalWidth, height: globalHeight)
+    }
+    
+    var globalHeight = CGFloat(0)
+    var globalWidth = CGFloat(0)
 
     func getWidestCell(column: Int) -> CGFloat{
         var widest = CGFloat(0)
@@ -181,94 +249,11 @@ class TableDisplayViewController: MediaViewController, UICollectionViewDelegate,
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.navigationController?.setToolbarHidden(true, animated: false)
-    }
-
     var list = true
-
-    var layout = SpreadsheetLayout()
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        let frame = CGRect.init(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-        layout = SpreadsheetLayout(delegate: self,
-                                   topLeftDecorationViewType: nil,
-                                   topRightDecorationViewType: nil,
-                                   bottomLeftDecorationViewType: nil,
-                                   bottomRightDecorationViewType: nil)
-
-        self.tableView = UICollectionView.init(frame: frame, collectionViewLayout: layout)
-        self.view = tableView
-        self.tableView.bounces = false
-
-        self.tableView.delegate = self
-        self.tableView.dataSource = self
-        self.tableView.isUserInteractionEnabled = true
-        self.tableView.register(TextCollectionViewCell.classForCoder(), forCellWithReuseIdentifier: "content")
-        self.view.backgroundColor = ColorUtil.backgroundColor
-
-        doList()
-    }
 
     func doList(){
         list = !list
         doData()
-        layout.resetLayoutCache()
-        tableView.reloadData()
-
-        if(list){
-            let list = UIButton.init(type: .custom)
-            list.setImage(UIImage.init(named: "grid")?.menuIcon(), for: UIControlState.normal)
-            list.addTarget(self, action: #selector(self.doList), for: UIControlEvents.touchUpInside)
-            list.frame = CGRect.init(x: 0, y: 0, width: 35, height: 35)
-            let listB = UIBarButtonItem.init(customView: list)
-            navigationItem.rightBarButtonItem = listB
-        } else {
-            let list = UIButton.init(type: .custom)
-            list.setImage(UIImage.init(named: "list")?.menuIcon(), for: UIControlState.normal)
-            list.addTarget(self, action: #selector(self.doList), for: UIControlEvents.touchUpInside)
-            list.frame = CGRect.init(x: 0, y: 0, width: 35, height: 35)
-            let listB = UIBarButtonItem.init(customView: list)
-            navigationItem.rightBarButtonItem = listB
-        }
-    }
-
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return baseData.count
-    }
-
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return baseData[section].count
-    }
-
-    func collectionView(_ tableView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        var cell = tableView.dequeueReusableCell(withReuseIdentifier: "content", for: indexPath) as! TextCollectionViewCell
-        cell.textLabel.setText(baseData[indexPath.section][indexPath.row])
-
-        if(list){
-            if(indexPath.row == 0){
-                cell.contentView.backgroundColor = baseColor
-            } else {
-                if indexPath.section%2 == 0 {
-                    cell.contentView.backgroundColor = ColorUtil.foregroundColor
-                } else {
-                    cell.contentView.backgroundColor = ColorUtil.backgroundColor
-                }
-            }
-
-        } else {
-            if indexPath.row%2 == 0 {
-                cell.contentView.backgroundColor = ColorUtil.foregroundColor
-            } else {
-                cell.contentView.backgroundColor = ColorUtil.backgroundColor
-            }
-
-            if(indexPath.section == 0){
-                cell.contentView.backgroundColor = baseColor
-            }
-        }
-        return cell
     }
 }
 
@@ -299,7 +284,7 @@ class TextCollectionViewCell: UICollectionViewCell {
     }
 }
 
-extension TableDisplayViewController: SpreadsheetLayoutDelegate {
+extension TableDisplayView: SpreadsheetLayoutDelegate {
     func spreadsheet(layout: SpreadsheetLayout, heightForRowsInSection section: Int) -> CGFloat {
         return 40
     }

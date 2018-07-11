@@ -376,32 +376,13 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     infoString.append(subString)
 
                     let titleString = NSMutableAttributedString.init(string: comment.submissionTitle, attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 18, submission: false)])
-
-                    var content: NSAttributedString?
-                    if (!comment.body.isEmpty()) {
-                        var html = comment.htmlText
-                        do {
-                            html = WrapSpoilers.addSpoilers(html)
-                            html = WrapSpoilers.addTables(html)
-                            let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
-                            let font = FontGenerator.fontOfSize(size: 16, submission: false)
-                            let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: .white)
-                            content = LinkParser.parse(attr2, .white)
-                        } catch {
-                        }
-                    }
-                    let framesetterT = CTFramesetterCreateWithAttributedString(titleString)
-                    let textSizeT = CTFramesetterSuggestFrameSizeWithConstraints(framesetterT, CFRange(), nil, CGSize.init(width: itemWidth - 16, height: CGFloat.greatestFiniteMagnitude), nil)
-                    let framesetterI = CTFramesetterCreateWithAttributedString(infoString)
-                    let textSizeI = CTFramesetterSuggestFrameSizeWithConstraints(framesetterI, CFRange(), nil, CGSize.init(width: itemWidth - 16, height: CGFloat.greatestFiniteMagnitude), nil)
-                    if (content != nil) {
-                        let framesetterB = CTFramesetterCreateWithAttributedString(content!)
-                        let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: itemWidth - 16, height: CGFloat.greatestFiniteMagnitude), nil)
-
-                        estimatedHeights[comment.id] = CGFloat(24 + textSizeT.height + textSizeI.height + textSizeB.height)
-                    } else {
-                        estimatedHeights[comment.id] = CGFloat(24 + textSizeT.height + textSizeI.height)
-                    }
+                    titleString.append(NSAttributedString.init(string: "\n", attributes: nil))
+                    titleString.append(infoString)
+                    
+                    let height = TextStackEstimator.init(fontSize: 16, submission: false, color: .white, width: itemWidth - 16)
+                    height.setTextWithTitleHTML(titleString, htmlString: comment.htmlText)
+                    
+                    estimatedHeights[comment.id] = height.estimatedHeight + 20
                 }
                 return CGSize(width: itemWidth, height: estimatedHeights[comment.id]!)
             } else {

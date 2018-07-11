@@ -145,16 +145,16 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
         } else {
             contentUrl = URL.init(string: String.init(htmlEncodedString: url.absoluteString))!
             if (ContentType.isTable(uri: url)) {
-                let controller = TableDisplayViewController.init(baseHtml: url.absoluteString, color: navigationController?.navigationBar.barTintColor ?? ColorUtil.getColorForSub(sub: ""))
-
-                let newParent = TapBehindModalViewController.init(rootViewController: controller)
-                newParent.navigationBar.shadowImage = UIImage()
-                newParent.navigationBar.isTranslucent = false
-
-                newParent.view.layer.cornerRadius = 15
-                newParent.view.clipsToBounds = true
-
-                present(MDCBottomSheetController.init(contentViewController: newParent), animated: true, completion: nil)
+//                let controller = TableDisplayViewController.init(baseHtml: url.absoluteString, color: navigationController?.navigationBar.barTintColor ?? ColorUtil.getColorForSub(sub: ""))
+//
+//                let newParent = TapBehindModalViewController.init(rootViewController: controller)
+//                newParent.navigationBar.shadowImage = UIImage()
+//                newParent.navigationBar.isTranslucent = false
+//
+//                newParent.view.layer.cornerRadius = 15
+//                newParent.view.clipsToBounds = true
+//
+//                present(MDCBottomSheetController.init(contentViewController: newParent), animated: true, completion: nil)
 
             } else if (ContentType.isSpoiler(uri: url)) {
                 let controller = UIAlertController.init(title: "Spoiler", message: url.absoluteString, preferredStyle: .alert)
