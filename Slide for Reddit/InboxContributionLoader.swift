@@ -16,7 +16,7 @@ class InboxContributionLoader: ContributionLoader {
     }
     
 
-    var color: UIColor
+    var color: UIColor = .black
     
     var messages: MessageWhere
     var canGetMore = true

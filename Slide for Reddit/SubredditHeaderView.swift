@@ -9,14 +9,15 @@
 import UIKit
 import reddift
 import TTTAttributedLabel
+import Anchorage
 
 class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
 
     var back: UILabel = UILabel()
     var subscribers: UILabel = UILabel()
     var here: UILabel = UILabel()
-    var info: TTTAttributedLabel = TTTAttributedLabel(frame: CGRect.zero)
-
+    var info = TextDisplayStackView()
+    
     var submit = UITableViewCell()
     var sorting = UITableViewCell()
     var mods = UITableViewCell()
@@ -127,12 +128,9 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
         self.mods.layer.cornerRadius = 5
         self.mods.clipsToBounds = true
 
-        self.info = TTTAttributedLabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
-        self.info.delegate = self
-        self.info.isUserInteractionEnabled = true
-        self.info.backgroundColor = .clear
-
-        self.subscribers = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
+        self.info = TextDisplayStackView.init(fontSize: 16, submission: false, color: .blue, delegate: self, width: width  - 24)
+        
+        self.subscribers = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
         subscribers.numberOfLines = 1
         subscribers.font = UIFont.systemFont(ofSize: 16)
         subscribers.textColor = UIColor.white
@@ -144,28 +142,15 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
 
         self.back = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 56))
 
-        submit.translatesAutoresizingMaskIntoConstraints = false
-        back.translatesAutoresizingMaskIntoConstraints = false
-        info.translatesAutoresizingMaskIntoConstraints = false
-        subscribers.translatesAutoresizingMaskIntoConstraints = false
-        here.translatesAutoresizingMaskIntoConstraints = false
-        sorting.translatesAutoresizingMaskIntoConstraints = false
-        mods.translatesAutoresizingMaskIntoConstraints = false
-        
-        addSubview(submit)
-        addSubview(back)
-        addSubview(info)
-        addSubview(subscribers)
-        addSubview(here)
-        addSubview(sorting)
-        addSubview(mods)
+        addSubviews(submit, back, info, subscribers, here, sorting, mods)
 
         self.clipsToBounds = true
-        updateConstraints()
-        
-        
+
         back.addSubview(subbed)
-        subbed.frame.origin = CGPoint.init(x: 24, y: back.frame.size.height / 2)
+        subbed.leftAnchor == back.leftAnchor + CGFloat(24)
+        subbed.centerYAnchor == back.centerYAnchor
+        
+        setupAnchors()
 
         let pTap = UITapGestureRecognizer(target: self, action: #selector(self.mods(_:)))
         mods.addGestureRecognizer(pTap)
@@ -313,7 +298,6 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
     var content: NSAttributedString?
     var textHeight: CGFloat = 0
     var descHeight: CGFloat = 0
-    var contentInfo: NSAttributedString?
     var parentController: UIViewController & MediaVCDelegate?
 
     func setSubreddit(subreddit: Subreddit, parent: MediaViewController, _ width: CGFloat) {
@@ -354,82 +338,47 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
         attributedString.append(subt)
         here.attributedText = attributedString
 
+        info.estimatedWidth = width - 24
         if (!subreddit.descriptionHtml.isEmpty()) {
-            let html = subreddit.descriptionHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
-            do {
-                let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
-                let font = FontGenerator.fontOfSize(size: 16, submission: false)
-                let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: ColorUtil.accentColorForSub(sub: subreddit.displayName))
-                contentInfo = LinkParser.parse(attr2, ColorUtil.accentColorForSub(sub: subreddit.displayName))
-                info.setText(contentInfo)
-                let framesetterB = CTFramesetterCreateWithAttributedString(contentInfo!)
-                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: setWidth - 24, height: CGFloat.greatestFiniteMagnitude), nil)
-
-                descHeight = (textSizeB.height)
-            } catch {
-
-            }
+            info.tColor = ColorUtil.accentColorForSub(sub: subreddit.displayName)
+            info.setTextWithTitleHTML(NSMutableAttributedString(), htmlString: subreddit.descriptionHtml)
+            descHeight = info.estimatedHeight
         }
-
-        updateConstraints()
     }
 
     var subreddit: Subreddit?
-    var constraintBack: [NSLayoutConstraint] = []
-    var constraintMain: [NSLayoutConstraint] = []
     var setWidth: CGFloat = 0
 
-    override func updateConstraints() {
-        super.updateConstraints()
+    func setupAnchors() {
 
-        let metrics = ["topMargin": 0, "swidth": ((setWidth - 32) / 2), "bh": CGFloat(130 + textHeight), "dh": descHeight, "b": textHeight + 30, "w": setWidth]
-        let views = ["submit": submit, "mods": mods, "back": back, "sort": sorting,"info": info, "subscribers": subscribers, "here": here] as [String: Any]
-
-
-        removeConstraints(constraintMain)
-
-        constraintMain = []
-
-        constraintMain.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(0)-[back(w)]-(0)-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-        constraintMain.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(12)-[submit]-(12)-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-        constraintMain.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(12)-[sort]-(12)-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-        constraintMain.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(12)-[mods]-(12)-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-        constraintMain.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(12)-[info]-(12)-|",
-                                                                         options: NSLayoutFormatOptions(rawValue: 0),
-                                                                         metrics: metrics,
-                                                                         views: views))
+        back.horizontalAnchors == horizontalAnchors
+        submit.horizontalAnchors == horizontalAnchors + CGFloat(12)
+        sorting.horizontalAnchors == horizontalAnchors + CGFloat(12)
+        mods.horizontalAnchors == horizontalAnchors + CGFloat(12)
+        info.horizontalAnchors == horizontalAnchors + CGFloat(12)
+        subscribers.leftAnchor == leftAnchor + CGFloat(12)
+        subscribers.rightAnchor == here.leftAnchor - CGFloat(4)
+        here.leftAnchor == subscribers.rightAnchor + CGFloat(4)
+        here.widthAnchor == subscribers.widthAnchor
+        here.rightAnchor == rightAnchor - CGFloat(12)
+        here.centerYAnchor == subscribers.centerYAnchor
         
-
-        constraintMain.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-(12)-[subscribers(swidth)]-(8)-[here(swidth)]-(12)-|",options: NSLayoutFormatOptions(rawValue: 0),metrics: metrics,views: views))
-
-
-        constraintMain.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(0)-[back(86)]-6-[subscribers(50)]-(8)-[submit(50)]-(2)-[mods(50)]-(2)-[sort(50)]-(16)-[info]-4-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-        constraintMain.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-(0)-[back(86)]-6-[here(50)]-(8)-[submit(50)]-(2)-[mods(50)]-(2)-[sort(50)]-(16)-[info]-4-|",
-                                                                         options: NSLayoutFormatOptions(rawValue: 0),
-                                                                         metrics: metrics,
-                                                                         views: views))
-
-        addConstraints(constraintMain)
-
+        back.heightAnchor == CGFloat(86)
+        back.topAnchor == topAnchor
+        subscribers.topAnchor == back.bottomAnchor + CGFloat(6)
+        submit.topAnchor == subscribers.bottomAnchor + CGFloat(8)
+        mods.topAnchor == submit.bottomAnchor + CGFloat(2)
+        sorting.topAnchor == mods.bottomAnchor + CGFloat(2)
+        info.topAnchor == sorting.bottomAnchor + CGFloat(16)
+        info.bottomAnchor == bottomAnchor - CGFloat(16)
+        subscribers.heightAnchor == CGFloat(50)
+        submit.heightAnchor == CGFloat(50)
+        mods.heightAnchor == CGFloat(50)
+        sorting.heightAnchor == CGFloat(50)
     }
 
     func getEstHeight() -> CGFloat {
-        return CGFloat(86) + ((contentInfo == nil) ? 0 : descHeight) + (50 * 5)
+        return CGFloat(320) + (descHeight)
     }
     
     func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {

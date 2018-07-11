@@ -42,7 +42,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     
     var sideViewSpace: UIView = UIView()
     var topViewSpace: UIView = UIView()
-    var title: TTTAttributedLabel = TTTAttributedLabel.init(frame: CGRect.zero)
+    var title = TextDisplayStackView()
     
     //Buttons for comment menu
     var upvoteButton = UIButton()
@@ -75,13 +75,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         self.backgroundColor = ColorUtil.backgroundColor
-        self.title = TTTAttributedLabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)).then({
-            $0.numberOfLines = 0
-            $0.font = FontGenerator.fontOfSize(size: 16, submission: false)
+        self.title = TextDisplayStackView(fontSize: 16, submission: false, color: .blue, delegate: self, width: contentView.frame.size.width).then({
             $0.isUserInteractionEnabled = true
             $0.accessibilityIdentifier = "Comment body"
-            $0.delegate = self
-            $0.textColor = ColorUtil.fontColor
         })
 
         self.childrenCountLabel = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 15)).then({
@@ -263,7 +259,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
     override func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
         if (gestureRecognizer.view == self.title) {
-            return self.title.link(at: touch.location(in: self.title)) == nil
+            return self.title.firstTextView.link(at: touch.location(in: self.title)) == nil
         }
         return true
     }
@@ -953,17 +949,15 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         if(depth == 1){
             marginTop = 8
         }
-        let font = FontGenerator.fontOfSize(size: 14, submission: false)
 
-        var attr = NSMutableAttributedString()
+        var attr = ""
         if (more.children.isEmpty) {
-            attr = NSMutableAttributedString(string: "Continue this thread", attributes: [NSFontAttributeName: font])
+            attr = "Continue this thread"
         } else {
-            attr = NSMutableAttributedString(string: "Load \(more.count) more", attributes: [NSFontAttributeName: font])
+            attr = "Load \(more.count) more"
         }
-        let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: .white)
         
-        title.setText(attr2)
+        title.setData(htmlString: attr)
         NSLayoutConstraint.deactivate(menuHeight)
         menuHeight = batch {
             title.bottomAnchor == contentView.bottomAnchor - CGFloat(8)
@@ -980,11 +974,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
     func animateMore() {
         loading = true
-        let attr = NSMutableAttributedString(string: "Loading...")
-        let font = FontGenerator.fontOfSize(size: 16, submission: false)
-        let attr2 = NSMutableAttributedString(attributedString: attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: UIColor.blue))
-
-        title.setText(attr2)
+        
+        title.setData(htmlString: "Loading...")
         //todo possibly animate?
     }
 
@@ -1197,19 +1188,19 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
 
 
-        infoString.append(NSAttributedString.init(string: "\n\n", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 5)]))
         if (!isCollapsed || !SettingValues.collapseFully) {
-            infoString.append(text)
+            title.setTextWithTitleHTML(infoString, text, htmlString: comment.htmlText)
+        } else {
+            title.setAttributedString(infoString)
         }
 
         if (!setLinkAttrs) {
-            let activeLinkAttributes = NSMutableDictionary(dictionary: title.activeLinkAttributes)
+            let activeLinkAttributes = NSMutableDictionary(dictionary: title.firstTextView.activeLinkAttributes)
             activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.accentColorForSub(sub: comment.subreddit)
-            title.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
-            title.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+            title.firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+            title.firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
             setLinkAttrs = true
         }
-        title.setText(infoString)
 
     }
 
@@ -1269,7 +1260,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
 
     func getInfo(locationInTextView: CGPoint) -> (URL, CGRect)? {
-        if let attr = title.link(at: locationInTextView) {
+        if let attr = title.firstTextView.link(at: locationInTextView) {
             if let url = attr.result.url {
                 return (url, title.bounds)
             }

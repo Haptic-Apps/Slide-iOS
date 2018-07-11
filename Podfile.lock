@@ -4,6 +4,23 @@ PODS:
   - Anchorage (4.2.4)
   - BadgeSwift (5.0.1)
   - BiometricAuthentication (2.0)
+  - DTCoreText (1.6.21):
+    - DTCoreText/Core (= 1.6.21)
+    - DTFoundation/Core (~> 1.7.5)
+    - DTFoundation/DTAnimatedGIF (~> 1.7.5)
+    - DTFoundation/DTHTMLParser (~> 1.7.5)
+    - DTFoundation/UIKit (~> 1.7.5)
+  - DTCoreText/Core (1.6.21):
+    - DTFoundation/Core (~> 1.7.5)
+    - DTFoundation/DTAnimatedGIF (~> 1.7.5)
+    - DTFoundation/DTHTMLParser (~> 1.7.5)
+    - DTFoundation/UIKit (~> 1.7.5)
+  - DTFoundation/Core (1.7.13)
+  - DTFoundation/DTAnimatedGIF (1.7.13)
+  - DTFoundation/DTHTMLParser (1.7.13):
+    - DTFoundation/Core
+  - DTFoundation/UIKit (1.7.13):
+    - DTFoundation/Core
   - LicensesViewController (0.6.5)
   - MaterialComponents/ActivityIndicator (56.0.0):
     - MaterialComponents/Palettes
@@ -93,6 +110,7 @@ DEPENDENCIES:
   - Anchorage
   - BadgeSwift (~> 5.0)
   - BiometricAuthentication
+  - DTCoreText (from `https://github.com/Cocoanetics/DTCoreText`)
   - LicensesViewController (~> 0.6.5)
   - MaterialComponents/ActivityIndicator
   - MaterialComponents/AnimationTiming
@@ -122,6 +140,8 @@ DEPENDENCIES:
 EXTERNAL SOURCES:
   ActionSheetPicker-3.0:
     :git: https://github.com/ccrama/ActionSheetPicker-3.0
+  DTCoreText:
+    :git: https://github.com/Cocoanetics/DTCoreText
   reddift:
     :git: https://github.com/ccrama/reddift
   RLBAlertsPickers:
@@ -135,6 +155,9 @@ CHECKOUT OPTIONS:
   ActionSheetPicker-3.0:
     :commit: 752459578d8162c11f6311987bd3463e6d85712b
     :git: https://github.com/ccrama/ActionSheetPicker-3.0
+  DTCoreText:
+    :commit: 1e48b2ff36f1218fb69ed88678297b204ebcc144
+    :git: https://github.com/Cocoanetics/DTCoreText
   reddift:
     :commit: e58d5b594137ec60d92e5d30b48f42315862d8fe
     :git: https://github.com/ccrama/reddift
@@ -154,6 +177,8 @@ SPEC CHECKSUMS:
   Anchorage: f855157310859280c706cc0b9c9281c21702f515
   BadgeSwift: 3defa56f504bfb46f2300122c4a565ec9e405c1e
   BiometricAuthentication: fce6c7537fba0192a395834657e75ccb4d89d9f0
+  DTCoreText: e5d688cffc9f6a61eddd1a4f94e2046851230de3
+  DTFoundation: f03be9fd786f11e505bb8fc44e2a3732bf0917df
   LicensesViewController: 1f2982b1bab8402d3f88e23197957038e8abb907
   MaterialComponents: e4edce947dba33f9c4dd14c34024602999afcbed
   MDFInternationalization: e355b0cebecf53d60233bd267084e49366c82513
@@ -176,6 +201,6 @@ SPEC CHECKSUMS:
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   XLActionController: 007868251c0eed70d649d06c1625259b73b3a600
 
-PODFILE CHECKSUM: 4ec11f8ac751b5179891a55d7bd38207214bdfb9
+PODFILE CHECKSUM: 1cdd763e932f750104bf1e58f8d224f80b252593
 
 COCOAPODS: 1.4.0

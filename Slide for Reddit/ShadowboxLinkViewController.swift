@@ -12,13 +12,14 @@ import SDWebImage
 import AVFoundation
 import AVKit
 import TTTAttributedLabel
+import Anchorage
 
 class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestureRecognizerDelegate, TTTAttributedLabelDelegate {
 
     var submission: RSubmission
     var baseURL: URL?
     var type: ContentType.CType = ContentType.CType.UNKNOWN
-    var body = TTTAttributedLabel.init(frame: CGRect.zero)
+    var body = TextDisplayStackView()
     var titleString = UILabel()
 
     var imageView = UIImageView()
@@ -125,45 +126,52 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
         sharedPlayer = false
 
         self.scrollView = UIScrollView.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height - 50))
+
         self.scrollView.minimumZoomScale = 1
         self.scrollView.maximumZoomScale = 1
         self.scrollView.backgroundColor = .clear
-        toolbar = UIView.init(frame: CGRect.init(x: 0, y: self.view.frame.size.height - 55, width: self.view.frame.size.width, height: 24))
+        toolbar = UIView()
+        self.view.addSubview(toolbar)
+        self.view.addSubview(scrollView)
+        toolbar.bottomAnchor == self.view.safeBottomAnchor - CGFloat(12)
+        toolbar.heightAnchor == CGFloat(24)
         scrollView.addTapGestureRecognizer(action: {
             if let u = self.submission.url {
                 self.doShow(url: u, lq: nil)
             }
         })
-
-        progressView = MDCProgressView()
-        progressView?.progress = 0
-        let progressViewHeight = CGFloat(5)
-        progressView?.frame = CGRect(x: 0, y: 5 + (UIApplication.shared.statusBarView?.frame.size.height ?? 20), width: toolbar.bounds.width, height: progressViewHeight)
-        view.addSubview(progressView!)
-        progressView?.setHidden(true, animated: false, completion: nil)
-
-        doButtons()
-        self.view.addSubview(toolbar)
-        self.view.addSubview(scrollView)
-
-        var text = CachedTitle.getTitle(submission: submission, full: true, false, true)
         
-        let framesetter = CTFramesetterCreateWithAttributedString(text)
-        let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: self.view.frame.size.width - 48, height: CGFloat.greatestFiniteMagnitude), nil)
+        progressView = MDCProgressView()
+        view.addSubview(progressView!)
 
-        estHeight = textSize.height
+        progressView!.progress = 0
+        progressView!.heightAnchor == CGFloat(5)
+        progressView!.topAnchor == self.view.safeTopAnchor + CGFloat(5)
+        progressView?.setHidden(true, animated: false, completion: nil)
+        self.scrollView.topAnchor == self.view.safeTopAnchor + CGFloat(20)
+        self.scrollView.horizontalAnchors == self.view.horizontalAnchors
+        doButtons()
+        var text = CachedTitle.getTitle(submission: submission, full: true, false, true)
         textB = TTTAttributedLabel.init(frame: CGRect.init(x: 24, y: self.view.frame.size.height - estHeight - 64, width: self.view.frame.size.width - 48, height: estHeight + 20))
         textB.numberOfLines = 0
         textB.setText(text)
-
+        
         textB.isUserInteractionEnabled = true
         textB.addTapGestureRecognizer {
             self.comments(self.textB)
         }
-        startDisplay()
         view.addSubview(textB)
+        
+        let framesetter = CTFramesetterCreateWithAttributedString(text)
+        let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: self.view.frame.size.width - 48, height: CGFloat.greatestFiniteMagnitude), nil)
 
-        view.layoutIfNeeded()
+        textB.heightAnchor == textSize.height
+        textB.horizontalAnchors == self.view.horizontalAnchors + CGFloat(24)
+        textB.bottomAnchor == self.toolbar.topAnchor - CGFloat(8)
+        estHeight = textSize.height
+        self.scrollView.bottomAnchor == textB.topAnchor - CGFloat(8)
+
+        startDisplay()
 
         let gradient = CAGradientLayer()
         var frame = view.bounds
@@ -372,32 +380,16 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
             let color = ColorUtil.accentColorForSub(sub: (submission.subreddit))
             if (!submission.htmlBody.isEmpty) {
                 var html = submission.htmlBody.trimmed()
-                do {
-                    html = WrapSpoilers.addSpoilers(html)
-                    html = WrapSpoilers.addTables(html)
-                    let attr = html.toAttributedString()!
-                    let font = FontGenerator.fontOfSize(size: 16, submission: false)
-                    let attr2 = attr.reconstruct(with: font, color: .white, linkColor: color)
-                    var content = LinkParser.parse(attr2, color)
-                    let framesetterB = CTFramesetterCreateWithAttributedString(content)
-                    let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: self.scrollView.frame.size.width - 10, height: CGFloat.greatestFiniteMagnitude), nil)
-                    
-                    let activeLinkAttributes = NSMutableDictionary(dictionary: body.activeLinkAttributes)
-                    activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.accentColorForSub(sub: submission.subreddit)
-                    body = TTTAttributedLabel.init(frame: CGRect.init(x: 5, y: 5, width: self.scrollView.frame.size.width - 10, height: textSizeB.height))
-                    body.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
-                    body.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
-                    body.numberOfLines = 0
-                    body.isUserInteractionEnabled = true
-                    body.backgroundColor = .clear
-
-                    body.delegate = self
-                    body.setText(content)
-                    scrollView.addSubview(body)
-                    self.scrollView.contentSize = body.frame.size
-                    self.scrollView.frame = CGRect.init(x: 0, y: 56, width: self.view.frame.size.width, height: self.view.frame.size.height - 56 - estHeight - 50)
-                } catch {
-                }
+                print(html)
+                body = TextDisplayStackView.init(fontSize: 16, submission: false, color: color, delegate: self, width: self.view.frame.size.width - 16, baseFontColor: .white)
+                body.setTextWithTitleHTML(NSMutableAttributedString(), htmlString: html)
+                scrollView.addSubview(body)
+                body.horizontalAnchors == scrollView.horizontalAnchors + CGFloat(8)
+                body.topAnchor == scrollView.topAnchor + CGFloat(20)
+                body.heightAnchor == body.estimatedHeight
+                body.widthAnchor == body.estimatedWidth
+                body.bottomAnchor == scrollView.bottomAnchor
+                self.scrollView.contentSize = CGSize.init(width: body.estimatedWidth, height: body.estimatedHeight)
             } else {
 
             }

@@ -77,7 +77,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var buttons = UIStackView()
     var comments = UILabel()
     var info = UILabel()
-    var textView = TTTAttributedLabel(frame: CGRect.zero)
+    var textView = TextDisplayStackView()
     var save = UIImageView()
     var upvote = UIImageView()
     var hide = UIImageView()
@@ -98,7 +98,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var loadedImage: URL?
     var lq = false
 
-    var content: NSAttributedString?
     var hasText = false
 
     var full = false
@@ -278,14 +277,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             $0.backgroundColor = ColorUtil.foregroundColor
         }
 
-        self.textView = TTTAttributedLabel(frame: CGRect(x: 75, y: 8, width: 0, height: 0)).then {
+        self.textView = TextDisplayStackView.init(fontSize: 16, submission: true, color: ColorUtil.baseAccent, delegate: self, width: 100).then {
             $0.accessibilityIdentifier = "Self Text View"
-            $0.numberOfLines = 0
-            $0.isUserInteractionEnabled = true
-            $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
         }
-        self.textView.delegate = self
 
         self.score = UILabel().then {
             $0.accessibilityIdentifier = "Score Label"
@@ -597,27 +592,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         full = true
         let link = self.link!
         let color = ColorUtil.accentColorForSub(sub: ((link).subreddit))
-        if (!link.htmlBody.isEmpty) {
-            var html = link.htmlBody.trimmed()
-            html = WrapSpoilers.addSpoilers(html)
-            html = WrapSpoilers.addTables(html)
-            let attr = html.toAttributedString()!
-            let font = FontGenerator.fontOfSize(size: 16, submission: false)
-            let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
-            content =  LinkParser.parse(attr2, color)
-            let activeLinkAttributes = NSMutableDictionary(dictionary: title.activeLinkAttributes)
-            activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.accentColorForSub(sub: link.subreddit)
-            textView.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
-            textView.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
-
-            textView.delegate = self
-            print("Printing")
-            print(content)
-            textView.setText(content)
-            hasText = true
-
-            parentViewController?.registerForPreviewing(with: self, sourceView: textView)
-        }
+        self.textView.setColor(color)
+        hasText = true
+        textView.estimatedWidth = width
+        textView.setTextWithTitleHTML(NSMutableAttributedString(), htmlString: link.htmlBody)
     }
 
 //    func estimateHeight(_ full: Bool, _ reset: Bool = false) -> CGFloat {
@@ -1246,7 +1224,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                         CachedTitle.getTitle(submission: self.link!, full: true, true, false)
                         self.setLink(submission: self.link!, parent: self.parentViewController!, nav: self.navViewController!, baseSub: (self.link?.subreddit)!)
                         self.showBody(width: self.contentView.frame.size.width)
-
                     }
                 break
             }}
@@ -1277,7 +1254,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             attrs = ([NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true)])
             break
         }
-
 
         if (full) {
             let subScore = NSMutableAttributedString(string: (link.score >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(link.score) / Double(1000))) : " \(link.score)", attributes: attrs)
@@ -1391,13 +1367,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             let thumbheight = (full || SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50))  - (!full && SettingValues.postViewMode == .COMPACT ? 15 : 0)
             
             var height = CGFloat(0)
-            if(content != nil){
-                let framesetterB = CTFramesetterCreateWithAttributedString(content!)
-                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: aspectWidth - ctwelve * 2, height: CGFloat.greatestFiniteMagnitude), nil)
-                height = textSizeB.height
-            }
 
-            let textHeight = (!hasText || !full) ? CGFloat(0) : height
+            let textHeight = (!hasText || !full) ? CGFloat(0) : textView.estimatedHeight
 
             if(thumb){
                 imageHeight = thumbheight
@@ -1457,7 +1428,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     }
 
     func getInfo(locationInTextView: CGPoint) -> (URL, CGRect)? {
-        if let attr = textView.link(at: locationInTextView) {
+        if let attr = textView.firstTextView.link(at: locationInTextView) {
             return (attr.result.url!, attr.accessibilityFrame)
         }
         return nil

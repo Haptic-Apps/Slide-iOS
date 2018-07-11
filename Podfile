@@ -21,6 +21,7 @@ target 'Slide for Reddit' do
   pod 'LicensesViewController', '~> 0.6.5'
   pod 'BiometricAuthentication'
   pod 'MTColorDistance'
+  pod 'DTCoreText', :git => 'https://github.com/Cocoanetics/DTCoreText'
   pod 'XLActionController', :git => 'https://github.com/ccrama/XLActionController'
   pod 'MaterialComponents/ShadowElevations'
   pod 'MaterialComponents/ActivityIndicator'

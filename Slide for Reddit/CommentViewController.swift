@@ -1761,7 +1761,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
     }
 
     @available(iOS 11.0, *)
-override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         HapticUtility.hapticActionWeak()
         let cell = tableView.cellForRow(at: indexPath)
         if (cell is CommentDepthCell && (cell as! CommentDepthCell).comment != nil && SettingValues.commentTwoSwipe && (SettingValues.commentActionLeft != .NONE || SettingValues.commentActionRight != .NONE)) {
