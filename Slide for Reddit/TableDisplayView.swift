@@ -24,11 +24,14 @@ class TableDisplayView: UIScrollView {
     var scrollView: UIScrollView!
     var widths = [[CGFloat]]()
     var baseColor: UIColor
+    var tColor: UIColor
+    var textDelegate: TTTAttributedLabelDelegate
 
-    init(baseHtml: String, color: UIColor) {
+    init(baseHtml: String, color: UIColor, accentColor: UIColor, delegate: TTTAttributedLabelDelegate) {
         var newData = baseHtml.replacingOccurrences(of: "http://view.table/", with: "")
         self.baseColor = color
-
+        self.tColor = accentColor
+        self.textDelegate = delegate
         super.init(frame: CGRect.zero)
 
         parseHtml(newData.removingPercentEncoding!)
@@ -39,7 +42,6 @@ class TableDisplayView: UIScrollView {
             $0.axis = .vertical
         })
         self.isScrollEnabled = true
-        
         doList()
     }
 
@@ -102,8 +104,7 @@ class TableDisplayView: UIScrollView {
                     currentString = currentString.substring(index! + 1, length: currentString.length - index! - 1)
                 }
                 columnStarted = false
-                let attr = DTHTMLAttributedStringBuilder.init(html: currentString.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor : ColorUtil.fontColor, DTDefaultFontFamily: font.familyName,DTDefaultFontSize: (isHeader ? 3 : 0) + 16 + SettingValues.commentFontOffset,  DTDefaultFontName: font.fontName], documentAttributes: nil).generatedAttributedString()!
-                currentRow.append(attr)
+                currentRow.append(TextDisplayStackView.createAttributedChunk(baseHTML: currentString.trimmed(), fontSize: CGFloat((isHeader ? 3 : 0) + 16 ), submission: false, accentColor: tColor))
                 currentString = ""
             } else {
                 currentString.append(current)
@@ -142,6 +143,7 @@ class TableDisplayView: UIScrollView {
     }
     
     func addSubviews(){
+        let activeLinkAttributes = [NSForegroundColorAttributeName: tColor]
         for row in baseData {
             let rowStack = UIStackView().then({
                 $0.axis = .horizontal
@@ -151,10 +153,13 @@ class TableDisplayView: UIScrollView {
             globalHeight += 30
             globalWidth = 0
             for string in row {
-                let text = UILabel.init().then({
+                let text = TTTAttributedLabel.init(frame: CGRect.zero).then({
                     $0.heightAnchor == CGFloat(30)
+                    $0.delegate = self.textDelegate
+                    $0.linkAttributes = activeLinkAttributes
+                    $0.activeLinkAttributes = activeLinkAttributes
                 })
-                text.attributedText = string
+                text.setText(string)
                 
                 let width = getWidestCell(column: column)
                 globalWidth += width
@@ -185,7 +190,7 @@ class TableDisplayView: UIScrollView {
     func getWidestCell(column: Int) -> CGFloat{
         var widest = CGFloat(0)
         for row in widths {
-            if(row[column] > widest){
+            if(column < row.count && row[column] > widest){
                 widest = row[column]
             }
         }
@@ -202,49 +207,69 @@ class TableDisplayView: UIScrollView {
         list = !list
         doData()
     }
-}
-
-class TextCollectionViewCell: UICollectionViewCell {
-    var textLabel: TTTAttributedLabel!
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        textLabel = TTTAttributedLabel.init(frame:  CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
-        textLabel.textColor = ColorUtil.fontColor
-        textLabel.textAlignment = .center
-        textLabel.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(textLabel)
-
-        contentView.layer.borderWidth = 0.25
-        contentView.layer.borderColor = ColorUtil.fontColor.cgColor
-        updateConstraints()
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    override func updateConstraints() {
-        super.updateConstraints()
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[text]-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: [:], views: ["text": textLabel]))
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[text]-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: [:], views: ["text": textLabel]))
-    }
-}
-
-extension TableDisplayView: SpreadsheetLayoutDelegate {
-    func spreadsheet(layout: SpreadsheetLayout, heightForRowsInSection section: Int) -> CGFloat {
-        return 40
-    }
-
-    func widthsOfSideRowsInSpreadsheet(layout: SpreadsheetLayout) -> (left: CGFloat?, right: CGFloat?) {
-        return (0, 0)
-    }
-
-    func spreadsheet(layout: SpreadsheetLayout, widthForColumnAtIndex index: Int) -> CGFloat {
-        return getWidestCell(column: index)
-    }
-
-    func heightsOfHeaderAndFooterColumnsInSpreadsheet(layout: SpreadsheetLayout) -> (headerHeight: CGFloat?, footerHeight: CGFloat?) {
-        return (0, 0)
+    
+    public static func getEstimatedHeight(baseHtml: String) -> CGFloat {
+        let tableStart = "<table>"
+        let tableEnd = "</table>"
+        let tableHeadStart = "<thead>"
+        let tableHeadEnd = "</thead>"
+        let tableRowStart = "<tr>"
+        let tableRowEnd = "</tr>"
+        let tableColumnStart = "<td>"
+        let tableColumnEnd = "</td>"
+        let tableColumnStartLeft = "<td align=\"left\">"
+        let tableColumnStartRight = "<td align=\"right\">"
+        let tableColumnStartCenter = "<td align=\"center\">"
+        let tableHeaderStart = "<th>"
+        let tableHeaderStartLeft = "<th align=\"left\">"
+        let tableHeaderStartRight = "<th align=\"right\">"
+        let tableHeaderStartCenter = "<th align=\"center\">"
+        let tableHeaderEnd = "</th>"
+        
+        var columnStarted = false
+        var isHeader = true
+        
+        let font =  FontGenerator.fontOfSize(size: 16, submission: false)
+        var currentString = ""
+        var estHeight = CGFloat(0)
+        for string in baseHtml.trimmed().components(separatedBy: "<"){
+            let current = "<\(string)".trimmed()
+            if(current == "<"){
+                continue
+            }
+            //print(current)
+            if (current == tableStart) {
+            } else if (current == tableHeadStart) {
+            } else if (current == tableRowStart) {
+            } else if (current == tableRowEnd) {
+                isHeader = false
+                estHeight += 30
+            } else if (current == tableEnd) {
+            } else if (current == tableHeadEnd) {
+            } else if (!columnStarted
+                && (current == tableColumnStart || current == tableHeaderStart)) {
+                columnStarted = true
+                //todo maybe gravity = Gravity.START;
+            } else if (!columnStarted && (current == tableColumnStartRight || current == tableHeaderStartRight)) {
+                columnStarted = true
+                //todo maybe gravity = Gravity.END;
+            } else if (!columnStarted && (current == tableColumnStartCenter || current == tableHeaderStartCenter)) {
+                columnStarted = true
+                //todo maybe gravity = Gravity.CENTER;
+            } else if (!columnStarted && (current == tableColumnStartLeft || current == tableHeaderStartLeft)) {
+                columnStarted = true
+                //todo maybe gravity = Gravity.START;
+            }  else if (current == tableColumnEnd || current == tableHeaderEnd) {
+                if(currentString.startsWith("<td")){
+                    let index = currentString.indexOf(">")
+                    currentString = currentString.substring(index! + 1, length: currentString.length - index! - 1)
+                }
+                columnStarted = false
+                currentString = ""
+            } else {
+                currentString.append(current)
+            }
+        }
+        return estHeight
     }
 }

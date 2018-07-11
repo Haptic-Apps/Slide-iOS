@@ -681,8 +681,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             navViewController = nav
         }
 
-        title.setText(CachedTitle.getTitle(submission: submission, full: full, false, false))
-
         if(!activeSet){
             let activeLinkAttributes = NSMutableDictionary(dictionary: title.activeLinkAttributes)
             activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.accentColorForSub(sub: submission.subreddit)
@@ -690,6 +688,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             title.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
             activeSet = true
         }
+
+        title.setText(CachedTitle.getTitle(submission: submission, full: full, false, false))
 
         reply.isHidden = true
 

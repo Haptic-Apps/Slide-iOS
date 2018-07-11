@@ -203,10 +203,14 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         } else if thing is RComment {
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "comment", for: indexPath) as! CommentCellView
             c.setComment(comment: (thing as! RComment), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
+            c.layer.shouldRasterize = true
+            c.layer.rasterizationScale = UIScreen.main.scale
             cell = c
         } else {
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "message", for: indexPath) as! MessageCellView
             c.setMessage(message: (thing as! RMessage), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
+            c.layer.shouldRasterize = true
+            c.layer.rasterizationScale = UIScreen.main.scale
             cell = c
         }
 

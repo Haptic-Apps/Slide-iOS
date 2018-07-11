@@ -402,6 +402,13 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         session = (UIApplication.shared.delegate as! AppDelegate).session
         approved.removeAll()
         removed.removeAll()
+        content.removeAll()
+        text.removeAll()
+        dataArray.removeAll()
+        cDepth.removeAll()
+        comments.removeAll()
+        hidden.removeAll()
+        tableView.reloadData()
         if let link = self.submission {
             sub = link.subreddit
             self.navigationItem.title = link.subreddit
@@ -1034,16 +1041,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             }
             if let comment = thing.0 as? Comment {
                 var html = comment.bodyHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
-                do {
-                    html = WrapSpoilers.addSpoilers(html)
-                    html = WrapSpoilers.addTables(html)
-                    let attr = try NSMutableAttributedString(data: html.data(using: .unicode)!, options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
-                    let font = FontGenerator.fontOfSize(size: 16, submission: false)
-                    let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
-                    self.text[comment.getId()] = LinkParser.parse(attr2, color)
-                } catch {
-                    self.text[comment.getId()] = NSAttributedString(string: "")
-                }
+                self.text[comment.getId()] = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: color)
             } else {
                 let attr = NSMutableAttributedString(string: "more")
                 let font = FontGenerator.fontOfSize(size: 16, submission: false)
@@ -1060,15 +1058,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         for thing in newComments {
             if let comment = thing as? RComment {
                 let html = comment.htmlText
-                do {
-                    let attr = try NSMutableAttributedString(data: html.data(using: .unicode)!, options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
-                    let font = FontGenerator.fontOfSize(size: 16, submission: false)
-                    let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
-                    self.text[comment.getIdentifier()] = LinkParser.parse(attr2, color)
-                } catch {
-                    print(error)
-                    self.text[comment.getIdentifier()] = NSAttributedString(string: "")
-                }
+                self.text[comment.getIdentifier()] = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: color)
             } else {
                 let attr = NSMutableAttributedString(string: "more")
                 let font = FontGenerator.fontOfSize(size: 16, submission: false)
@@ -1084,26 +1074,19 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         let color = ColorUtil.accentColorForSub(sub: (thing as! RComment).subreddit)
         if let comment = thing as? Comment {
             let html = comment.bodyHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
+            let attributed = NSMutableAttributedString.init(attributedString: TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: color))
+
             do {
-                let attr = try NSMutableAttributedString(data: html.data(using: .unicode)!, options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
-                do {
-                    let regex = try NSRegularExpression.init(pattern: ("\\b\(searchBar.text!)\\b"), options: .caseInsensitive)
-
-                    let substring = NSMutableAttributedString(string: searchBar.text!)
-                    substring.addAttribute(NSForegroundColorAttributeName, value: ColorUtil.getColorForSub(sub: comment.subreddit), range: NSMakeRange(0, substring.string.length))
-
-                    regex.replaceMatches(in: attr.mutableString, options: NSRegularExpression.MatchingOptions.anchored, range: NSRange.init(location: 0, length: attr.length), withTemplate: substring.string)
-                } catch {
-                    print(error)
-                }
-
-                let font = FontGenerator.fontOfSize(size: 16, submission: false)
-                let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
-
-                return LinkParser.parse(attr2, color)
+                let regex = try NSRegularExpression.init(pattern: ("\\b\(searchBar.text!)\\b"), options: .caseInsensitive)
+                
+                let substring = NSMutableAttributedString(string: searchBar.text!)
+                substring.addAttribute(NSForegroundColorAttributeName, value: ColorUtil.getColorForSub(sub: comment.subreddit), range: NSMakeRange(0, substring.string.length))
+                
+                regex.replaceMatches(in: attributed.mutableString, options: NSRegularExpression.MatchingOptions.anchored, range: NSRange.init(location: 0, length: attributed.length), withTemplate: substring.string)
             } catch {
-                return NSAttributedString(string: "")
+                print(error)
             }
+            return attributed
         } else {
             let attr = NSMutableAttributedString(string: "more")
             let font = FontGenerator.fontOfSize(size: 16, submission: false)

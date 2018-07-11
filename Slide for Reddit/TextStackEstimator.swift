@@ -9,6 +9,7 @@
 import UIKit
 import TTTAttributedLabel
 import Anchorage
+import DTCoreText
 
 public class TextStackEstimator: NSObject {
     let TABLE_START_TAG = "<table>"
@@ -42,8 +43,7 @@ public class TextStackEstimator: NSObject {
     public func setTextWithTitleHTML(_ title: NSMutableAttributedString, _ body: NSAttributedString? = nil, htmlString: String){
         
         if(htmlString.contains("<table") || htmlString.contains("<code")) {
-            let rawHTML = addSpoilers(htmlString)
-            var blocks = getBlocks(rawHTML)
+            var blocks = getBlocks(htmlString)
             
             var startIndex = 0
             
@@ -85,8 +85,7 @@ public class TextStackEstimator: NSObject {
     public func setData(htmlString: String){
         
         //Start HTML parse
-        let rawHTML = addSpoilers(htmlString)
-        var blocks = getBlocks(rawHTML)
+        var blocks = getBlocks(htmlString)
         
         var startIndex = 0
         
@@ -112,8 +111,8 @@ public class TextStackEstimator: NSObject {
         for block in blocks {
             estimatedHeight += 8
             if(block.startsWith("<table>")) {
-                let table = TableDisplayView.init(baseHtml: block, color: ColorUtil.fontColor)
-                estimatedHeight += table.globalHeight
+                let table = TableDisplayView.getEstimatedHeight(baseHtml: block)
+                estimatedHeight += table
             } else if(block.startsWith("<hr/>")){
                 estimatedHeight += 1
             } else if(block.startsWith("<code>")){
@@ -129,16 +128,13 @@ public class TextStackEstimator: NSObject {
     }
     
     public func createAttributedChunk(baseHTML: String) -> NSAttributedString {
-        do {
-            let baseAttributedString = try NSMutableAttributedString(data: baseHTML.data(using: .unicode)!, options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
-            let font = FontGenerator.fontOfSize(size: fontSize, submission: submission)
-            let constructedString = baseAttributedString.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
-            return LinkParser.parse(constructedString, color)
-        } catch {
-            return NSMutableAttributedString.init(string: baseHTML)
-        }
+        let font = FontGenerator.fontOfSize(size: fontSize, submission: submission)
+        let htmlBase = TextStackEstimator.addSpoilers(baseHTML)
+        let html = DTHTMLAttributedStringBuilder.init(html: htmlBase.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor : ColorUtil.fontColor, DTDefaultFontFamily: font.familyName,DTDefaultFontSize: font.pointSize,  DTDefaultFontName: font.fontName], documentAttributes: nil).generatedAttributedString()!
+        
+        return LinkParser.parse(html, .white)
     }
-    
+
     public func getBlocks(_ html: String) -> [String] {
         
         var codeBlockSeperated = parseCodeTags(html)
@@ -298,7 +294,7 @@ public class TextStackEstimator: NSObject {
         return newBlocks
     }
     
-    public func addSpoilers(_ text: String) -> String {
+    public static func addSpoilers(_ text: String) -> String {
         var base = text
         var spoil = false
         

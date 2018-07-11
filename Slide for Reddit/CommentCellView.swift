@@ -40,7 +40,7 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
         super.init(frame: frame)
         self.contentView.layoutMargins = UIEdgeInsets.init(top: 2, left: 0, bottom: 0, right: 0)
 
-        self.text = TextDisplayStackView.init(fontSize: 16, submission: false, color: ColorUtil.accentColorForSub(sub: ""), delegate: self, width: CGFloat(100))
+        self.text = TextDisplayStackView.init(fontSize: 16, submission: false, color: ColorUtil.accentColorForSub(sub: ""), delegate: self, width: frame.width - 16)
         self.contentView.addSubview(text)
         
         text.verticalAnchors == contentView.verticalAnchors + CGFloat(8)
@@ -75,13 +75,18 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
         }
         
         let attrs = [NSFontAttributeName : FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: uC] as [String : Any]
-        let endString = NSMutableAttributedString(string:"  •  \(DateFormatter().timeSince(from: comment.created, numericDates: true))  •  ")
+        
+        let attrs2 = [NSFontAttributeName : FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor] as [String : Any]
+
+        let endString = NSMutableAttributedString(string:"  •  \(DateFormatter().timeSince(from: comment.created, numericDates: true))  •  ", attributes: attrs2)
         
         let boldString = NSMutableAttributedString(string: "\(comment.score)pts", attributes:attrs)
         let subString = NSMutableAttributedString(string: "r/\(comment.subreddit)")
         let color = ColorUtil.getColorForSub(sub: comment.subreddit)
         if(color != ColorUtil.baseColor){
             subString.addAttribute(NSForegroundColorAttributeName, value: color, range: NSRange.init(location: 0, length: subString.length))
+        } else {
+            subString.addAttribute(NSForegroundColorAttributeName, value: ColorUtil.fontColor, range: NSRange.init(location: 0, length: subString.length))
         }
         
         let infoString = NSMutableAttributedString()

@@ -224,7 +224,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
     override func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
         if (gestureRecognizer.view == self.title) {
-            return self.title.firstTextView.link(at: touch.location(in: self.title)) == nil
+            let link = self.title.link(at: touch.location(in: self.title), withTouch: touch)
+            return link == nil
         }
         return true
     }
@@ -281,12 +282,21 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         })
         deleteButton = UIButton.init(type: .custom).then({
             $0.setImage(UIImage.init(named: "delete")?.navIcon(), for: .normal)
-            $0.addTarget(self, action: #selector(self.delete(_:)), for: UIControlEvents.touchUpInside)
+            $0.addTarget(self, action: #selector(self.doDelete(_:)), for: UIControlEvents.touchUpInside)
         })
         modButton = UIButton.init(type: .custom).then({
             $0.setImage(UIImage.init(named: "mod")?.navIcon(), for: .normal)
             $0.addTarget(self, action: #selector(self.showModMenu(_:)), for: UIControlEvents.touchUpInside)
         })
+        
+        let removedSubviews = menu.arrangedSubviews.reduce([]) { (allSubviews, subview) -> [UIView] in
+            menu.removeArrangedSubview(subview)
+            return allSubviews + [subview]
+        }
+        
+        NSLayoutConstraint.deactivate(removedSubviews.flatMap({ $0.constraints }))
+        
+        removedSubviews.forEach({ $0.removeFromSuperview() })
         
         if(UIDevice.current.userInterfaceIdiom == .pad && !UIApplication.shared.isSplitOrSlideOver){
             menu.addArrangedSubviews(flexSpace(), flexSpace(), flexSpace(), editButton, deleteButton, upvoteButton, downvoteButton, replyButton, moreButton, modButton)
@@ -1192,21 +1202,12 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             infoString.append(NSMutableAttributedString.init(string: "Approved\(!comment.approvedBy.isEmpty() ? " by \(comment.approvedBy)":"")", attributes: attrs))
         }
 
-
+        title.tColor = ColorUtil.accentColorForSub(sub: comment.subreddit)
         if (!isCollapsed || !SettingValues.collapseFully) {
             title.setTextWithTitleHTML(infoString, text, htmlString: comment.htmlText)
         } else {
             title.setAttributedString(infoString)
         }
-
-        if (!setLinkAttrs) {
-            let activeLinkAttributes = NSMutableDictionary(dictionary: title.firstTextView.activeLinkAttributes)
-            activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.accentColorForSub(sub: comment.subreddit)
-            title.firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
-            title.firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
-            setLinkAttrs = true
-        }
-
     }
 
     var setLinkAttrs = false

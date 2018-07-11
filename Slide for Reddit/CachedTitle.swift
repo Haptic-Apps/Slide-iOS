@@ -208,14 +208,8 @@ class CachedTitle {
             infoString.append(NSAttributedString.init(string: "\n\n"))
             var length = submission.htmlBody.indexOf("\n") ?? submission.htmlBody.length
             var text = submission.htmlBody.substring(0, length: length)
-            do {
-                let attr = try NSMutableAttributedString(data: (text.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
-                let font = FontGenerator.fontOfSize(size: 14, submission: false)
-                let bodyString = attr.reconstruct(with: font, color: colorF, linkColor: ColorUtil.accentColorForSub(sub: submission.subreddit))
-                infoString.append(bodyString)
-            } catch {
-
-            }
+            let attr = TextDisplayStackView.createAttributedChunk(baseHTML: text, fontSize: 14, submission: false, accentColor: ColorUtil.accentColorForSub(sub: submission.subreddit))
+            infoString.append(attr)
         }
 
 

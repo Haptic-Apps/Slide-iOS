@@ -172,7 +172,7 @@ class SingleSubredditViewController: MediaViewController {
             tableView.reloadData()
         }
 
-        if (single && navigationController!.modalPresentationStyle != .pageSheet) {
+        if (single && navigationController != nil && navigationController!.modalPresentationStyle != .pageSheet) {
             // let swiper = SloppySwiper.init(navigationController: self.navigationController!)
             // self.navigationController!.delegate = swiper!
         }

@@ -39,6 +39,7 @@ public class TextDisplayStackView: UIStackView {
         self.baseFontColor = .white
         self.firstTextView = TTTAttributedLabel.init(frame: CGRect.zero)
         self.overflow = UIStackView()
+        self.overflow.isUserInteractionEnabled = true
         super.init(frame: CGRect.zero)
     }
     
@@ -89,7 +90,13 @@ public class TextDisplayStackView: UIStackView {
         removedSubviews.forEach({ $0.removeFromSuperview() })
         overflow.isHidden = true
         
+        let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.activeLinkAttributes)
+        activeLinkAttributes[NSForegroundColorAttributeName] = tColor
+        firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+        firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+
         firstTextView.setText(string)
+
         let framesetterB = CTFramesetterCreateWithAttributedString(string)
         let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
         estimatedHeight += textSizeB.height
@@ -109,8 +116,7 @@ public class TextDisplayStackView: UIStackView {
         overflow.isHidden = true
 
         if(htmlString.contains("<table") || htmlString.contains("<code")) {
-            let rawHTML = addSpoilers(htmlString)
-            var blocks = getBlocks(rawHTML)
+            var blocks = getBlocks(htmlString)
             
             var startIndex = 0
             
@@ -121,7 +127,14 @@ public class TextDisplayStackView: UIStackView {
                 newTitle.append(createAttributedChunk(baseHTML: blocks[0]))
                 startIndex = 1
             }
+            
+            let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.activeLinkAttributes)
+            activeLinkAttributes[NSForegroundColorAttributeName] = tColor
+            firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+            firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+
             firstTextView.setText(newTitle)
+            
             let framesetterB = CTFramesetterCreateWithAttributedString(newTitle)
             let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
             estimatedHeight += textSizeB.height
@@ -143,7 +156,14 @@ public class TextDisplayStackView: UIStackView {
                 newTitle.append(NSAttributedString.init(string: "\n\n", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 5)]))
                 newTitle.append(createAttributedChunk(baseHTML: htmlString))
             }
+            
+            let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.activeLinkAttributes)
+            activeLinkAttributes[NSForegroundColorAttributeName] = tColor
+            firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+            firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+
             firstTextView.setText(newTitle)
+
             let framesetterB = CTFramesetterCreateWithAttributedString(newTitle)
             let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
             estimatedHeight += textSizeB.height
@@ -165,14 +185,20 @@ public class TextDisplayStackView: UIStackView {
         overflow.isHidden = true
         
         //Start HTML parse
-        let rawHTML = addSpoilers(htmlString)
-        var blocks = getBlocks(rawHTML)
+        var blocks = getBlocks(htmlString)
         
         var startIndex = 0
 
         if (!blocks[0].startsWith("<table>") && !blocks[0].startsWith("<code>")) {
             let text = createAttributedChunk(baseHTML: blocks[0])
+            
+            let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.activeLinkAttributes)
+            activeLinkAttributes[NSForegroundColorAttributeName] = tColor
+            firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+            firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+
             firstTextView.setText(text)
+            
             let framesetterB = CTFramesetterCreateWithAttributedString(text)
             let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
             estimatedHeight += textSizeB.height
@@ -197,7 +223,7 @@ public class TextDisplayStackView: UIStackView {
         for block in blocks {
             estimatedHeight += 8
             if(block.startsWith("<table>")) {
-                let table = TableDisplayView.init(baseHtml: block, color: baseFontColor)
+                let table = TableDisplayView.init(baseHtml: block, color: baseFontColor, accentColor: tColor, delegate: delegate!)
                 table.accessibilityIdentifier = "Table"
                 overflow.addArrangedSubview(table)
                 table.horizontalAnchors == overflow.horizontalAnchors
@@ -205,6 +231,7 @@ public class TextDisplayStackView: UIStackView {
                 table.backgroundColor = ColorUtil.backgroundColor.withAlphaComponent(0.5)
                 table.clipsToBounds = true
                 table.layer.cornerRadius = 10
+                table.isUserInteractionEnabled = true
                 table.contentOffset = CGPoint.init(x: -8, y: 0)
                 estimatedHeight += table.globalHeight
                 tableCount += 1
@@ -230,31 +257,63 @@ public class TextDisplayStackView: UIStackView {
                 let label = TTTAttributedLabel.init(frame: CGRect.zero)
                 label.accessibilityIdentifier = "New text"
                 let text = createAttributedChunk(baseHTML: block)
+                label.delegate = delegate
+                let activeLinkAttributes = NSMutableDictionary(dictionary: label.activeLinkAttributes)
+                activeLinkAttributes[NSForegroundColorAttributeName] = tColor
+                label.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+                label.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+                label.numberOfLines = 0
                 label.setText(text)
                 let framesetterB = CTFramesetterCreateWithAttributedString(text)
                 let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
                 estimatedHeight += textSizeB.height
-                label.numberOfLines = 0
                 label.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
                 overflow.addArrangedSubview(label)
                 label.horizontalAnchors == overflow.horizontalAnchors
                 label.heightAnchor == textSizeB.height
-                label.delegate = delegate
             }
         }
     }
     
     public func createAttributedChunk(baseHTML: String) -> NSAttributedString {
-        do {
-            let baseAttributedString = try NSMutableAttributedString(data: baseHTML.data(using: .unicode)!, options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
-            let font = FontGenerator.fontOfSize(size: fontSize, submission: submission)
-            let constructedString = baseAttributedString.reconstruct(with: font, color: baseFontColor, linkColor: tColor)
-            return LinkParser.parse(constructedString, tColor)
-        } catch {
-            return NSMutableAttributedString.init(string: baseHTML)
-        }
+        let font = FontGenerator.fontOfSize(size: fontSize, submission: submission)
+        let htmlBase = TextStackEstimator.addSpoilers(baseHTML)
+        let html = DTHTMLAttributedStringBuilder.init(html: htmlBase.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor : ColorUtil.fontColor, DTDefaultFontFamily: font.familyName,DTDefaultFontSize: font.pointSize,  DTDefaultFontName: font.fontName], documentAttributes: nil).generatedAttributedString()!
+        
+        return LinkParser.parse(html, .white)
     }
     
+    public static func createAttributedChunk(baseHTML: String, fontSize: CGFloat, submission: Bool, accentColor: UIColor) -> NSAttributedString {
+        let font = FontGenerator.fontOfSize(size: fontSize, submission: submission)
+        let htmlBase = TextStackEstimator.addSpoilers(baseHTML)
+        let html = DTHTMLAttributedStringBuilder.init(html: htmlBase.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor : ColorUtil.fontColor, DTDefaultFontFamily: font.familyName,DTDefaultFontSize: font.pointSize,  DTDefaultFontName: font.fontName], documentAttributes: nil).generatedAttributedString()!
+        
+        return LinkParser.parse(html, accentColor)
+    }
+    
+    public func link(at: CGPoint, withTouch: UITouch) -> TTTAttributedLabelLink? {
+        if let link = firstTextView.link(at: at){
+            return link
+        }
+        if(overflow.isHidden){
+            return nil
+        }
+        
+        for view in self.overflow.subviews {
+            if(view is TTTAttributedLabel){
+                if let link = (view as! TTTAttributedLabel).link(at: withTouch.location(in: view)){
+                    return link
+                }
+            } else if(view is TableDisplayView){
+                //Dont pass any touches through Table
+                if(view.bounds.contains( withTouch.location(in: view))){
+                    return TTTAttributedLabelLink.init()
+                }
+            }
+        }
+        return nil
+    }
+
     public func getBlocks(_ html: String) -> [String] {
 
         var codeBlockSeperated = parseCodeTags(html)

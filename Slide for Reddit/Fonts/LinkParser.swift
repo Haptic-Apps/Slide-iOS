@@ -7,10 +7,13 @@
 //
 
 import UIKit
+import TTTAttributedLabel
+import DTCoreText
 
 class LinkParser {
     public static func parse(_ attributedString: NSAttributedString, _ color: UIColor) -> NSMutableAttributedString {
         var string = NSMutableAttributedString.init(attributedString: attributedString)
+        string.removeAttribute(kCTForegroundColorFromContextAttributeName as String, range: NSRange.init(location: 0, length: string.length))
         if (string.length > 0) {
             string.enumerateAttributes(in: NSRange.init(location: 0, length: string.length), options: .longestEffectiveRangeNotRequired, using: { (attrs, range, pointer) in
                 for attr in attrs {
@@ -18,6 +21,8 @@ class LinkParser {
                         if (SettingValues.enlargeLinks) {
                             string.addAttribute(NSFontAttributeName, value: FontGenerator.boldFontOfSize(size: 18, submission: false), range: range)
                         }
+                        string.addAttribute(NSForegroundColorAttributeName, value: color, range: range)
+                        string.addAttribute(kCTUnderlineColorAttributeName as String, value: UIColor.clear, range: range)
                         let type = ContentType.getContentType(baseUrl: url)
 
                         if (type == .SPOILER) {
