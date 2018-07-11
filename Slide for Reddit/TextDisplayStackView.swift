@@ -9,6 +9,7 @@
 import UIKit
 import TTTAttributedLabel
 import Anchorage
+import DTCoreText
 
 public class TextDisplayStackView: UIStackView {
     var baseString: NSAttributedString?
@@ -26,6 +27,8 @@ public class TextDisplayStackView: UIStackView {
     let fontSize: CGFloat
     let submission: Bool
     var tColor: UIColor
+    var tableCount = 0
+    var tableData = [[[NSAttributedString]]]()
     
     init(){
         self.fontSize = 0
@@ -201,6 +204,7 @@ public class TextDisplayStackView: UIStackView {
                 table.layer.cornerRadius = 10
                 table.contentOffset = CGPoint.init(x: -8, y: 0)
                 estimatedHeight += table.globalHeight
+                tableCount += 1
             } else if(block.startsWith("<hr/>")){
                 let line = UIView()
                 line.backgroundColor = ColorUtil.fontColor
@@ -393,7 +397,8 @@ public class TextDisplayStackView: UIStackView {
                 newBlocks.append(startSeperated[0].trimmed())
                 for i in 1...startSeperated.count - 1 {
                     var split = startSeperated[i].components(separatedBy: TABLE_END_TAG)
-                    newBlocks.append("<table>" + split[0] + "</table>")
+                    let table = "<table>" + split[0] + "</table>"
+                    newBlocks.append(table)
                     if (split.count > 1) {
                         newBlocks.append(split[1])
                     }

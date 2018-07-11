@@ -594,6 +594,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         let color = ColorUtil.accentColorForSub(sub: ((link).subreddit))
         self.textView.setColor(color)
         hasText = true
+        textView.estimatedWidth = width
         textView.setTextWithTitleHTML(NSMutableAttributedString(), htmlString: link.htmlBody)
     }
 
@@ -1223,7 +1224,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                         CachedTitle.getTitle(submission: self.link!, full: true, true, false)
                         self.setLink(submission: self.link!, parent: self.parentViewController!, nav: self.navViewController!, baseSub: (self.link?.subreddit)!)
                         self.showBody(width: self.contentView.frame.size.width)
-
                     }
                 break
             }}
@@ -1254,7 +1254,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             attrs = ([NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true)])
             break
         }
-
 
         if (full) {
             let subScore = NSMutableAttributedString(string: (link.score >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(link.score) / Double(1000))) : " \(link.score)", attributes: attrs)
@@ -1369,11 +1368,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             
             var height = CGFloat(0)
 
-            let h = TextStackEstimator.init(fontSize: 16, submission: true, color: .white, width: aspectWidth - paddingLeft - paddingRight)
-            h.setTextWithTitleHTML(NSMutableAttributedString(), htmlString: link!.htmlBody)
-            height = h.estimatedHeight
-
-            let textHeight = (!hasText || !full) ? CGFloat(0) : height
+            let textHeight = (!hasText || !full) ? CGFloat(0) : textView.estimatedHeight
 
             if(thumb){
                 imageHeight = thumbheight

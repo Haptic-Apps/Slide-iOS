@@ -14,6 +14,7 @@ import TTTAttributedLabel
 import SwiftSpreadsheet
 import Anchorage
 import Then
+import DTCoreText
 
 class TableDisplayView: UIScrollView {
 
@@ -32,7 +33,22 @@ class TableDisplayView: UIScrollView {
 
         super.init(frame: CGRect.zero)
 
-        parseHtml(newData.removingPercentEncoding!)
+        baseData = TableDisplayView.parseHtml(newData.removingPercentEncoding!)
+        self.bounces = true
+        self.isUserInteractionEnabled = true
+        
+        baseStackView = UIStackView().then({
+            $0.axis = .vertical
+        })
+        self.isScrollEnabled = true
+        
+        doList()
+    }
+    
+    init(strings: [[NSAttributedString]], color: UIColor){
+        self.baseColor = color
+        super.init(frame: CGRect.zero)
+        self.baseData = strings
         self.bounces = true
         self.isUserInteractionEnabled = true
         
@@ -45,7 +61,7 @@ class TableDisplayView: UIScrollView {
     }
 
     //Algorighm from https://github.com/ccrama/Slide/blob/master/app/src/main/java/me/ccrama/redditslide/Views/CommentOverflow.java
-    func parseHtml(_ text: String) {
+    static func parseHtml(_ text: String) -> [[NSAttributedString]] {
         let tableStart = "<table>"
         let tableEnd = "</table>"
         let tableHeadStart = "<thead>"
@@ -70,6 +86,8 @@ class TableDisplayView: UIScrollView {
         var isHeader = true
 
         var currentRow = [NSAttributedString]()
+        let font =  FontGenerator.fontOfSize(size: 16, submission: false)
+        var baseData = [[NSAttributedString]]()
         while (i < text.length) {
             if (text[i] != "<") {
                 i += 1
@@ -129,16 +147,9 @@ class TableDisplayView: UIScrollView {
                 columnEnd = i
 
                 do {
-                    let attr = try NSMutableAttributedString(data: text.subsequence(columnStart, endIndex: columnEnd).data(using: .unicode)!, options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
-                    let font =  FontGenerator.fontOfSize(size: 16, submission: false)
-                    let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: baseColor)
-                    var cell = LinkParser.parse(attr2, baseColor)
-                    if(isHeader){
-                        cell.enumerateAttribute(NSFontAttributeName, in: NSRange.init(location: 0, length: cell.length), options: .longestEffectiveRangeNotRequired) { (attr, range, pointer) in
-                            cell.addAttribute(NSFontAttributeName, value: font.bold(), range: range)
-                        }
-                    }
-                    currentRow.append(cell)
+                    let attr = DTHTMLAttributedStringBuilder.init(html: text.subsequence(columnStart, endIndex: columnEnd).data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor : ColorUtil.fontColor, DTDefaultFontFamily: font.familyName,DTDefaultFontSize: (isHeader ? 2 : 0) + 16 + SettingValues.commentFontOffset,  DTDefaultFontName: font.fontName], documentAttributes: nil).generatedAttributedString()!
+                    currentRow.append(attr)
+                    //todo eventually bold?
                 } catch {
                     print(error.localizedDescription)
                 }
@@ -151,7 +162,7 @@ class TableDisplayView: UIScrollView {
             }
         }
 
-        var header = [NSAttributedString]()
+        /*var header = [NSAttributedString]()
         for row in baseData {
             if(header.isEmpty){
                 header = row
@@ -160,9 +171,8 @@ class TableDisplayView: UIScrollView {
                     flippedData.append([header[index], row[index]])
                 }
             }
-        }
-
-        backupData = baseData
+        }*/
+        return baseData
     }
 
     func doData(){
@@ -207,13 +217,6 @@ class TableDisplayView: UIScrollView {
                 globalWidth += 4
                 text.widthAnchor == width
                 rowStack.addArrangedSubview(text)
-                let separator = UIView.init()
-                /*
-                separator.backgroundColor = ColorUtil.fontColor.withAlphaComponent(0.5)
-                separator.heightAnchor == CGFloat(30)
-                separator.widthAnchor == CGFloat(1)
-                globalWidth += 1*/
-                rowStack.addArrangedSubview(separator)
                 column += 1
             }
             globalWidth -= 4
