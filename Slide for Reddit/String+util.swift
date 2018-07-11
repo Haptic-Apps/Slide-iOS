@@ -289,28 +289,30 @@ public extension String {
     
     subscript(r: Range<Int>) -> String {
         get {
-            let startIndex = self.characters.index(self.startIndex, offsetBy: r.lowerBound)
-            let endIndex = self.characters.index(self.startIndex, offsetBy: r.upperBound - r.lowerBound)
+            let startIndex = self.index(self.startIndex, offsetBy: r.lowerBound)
+            let endIndex = self.index(self.startIndex, offsetBy: r.upperBound - r.lowerBound)
             return self[startIndex..<endIndex]
         }
     }
     
     func substring(_ startIndex: Int, length: Int) -> String {
-        let start = self.characters.index(self.startIndex, offsetBy: startIndex)
-        let end = self.characters.index(self.startIndex, offsetBy: startIndex + length)
-        return self[start..<end]
+
+        let start = self.index(self.startIndex, offsetBy: startIndex)
+        let end = self.index(self.startIndex, offsetBy: startIndex + length)
+        return substring(with: start..<end)
     }
 
     func subsequence(_ startIndex: Int, endIndex: Int) -> String {
-        let start = self.characters.index(self.startIndex, offsetBy: startIndex)
-        let end = self.characters.index(self.startIndex, offsetBy: endIndex)
-        return self[start..<end]
+        let start = self.index(self.startIndex, offsetBy: startIndex)
+        let end = self.index(self.startIndex, offsetBy: endIndex)
+        
+        return substring(with: start..<end)
     }
 
 
     subscript(i: Int) -> Character {
         get {
-            let index = self.characters.index(self.startIndex, offsetBy: i)
+            let index = self.index(self.startIndex, offsetBy: i)
             return self[index]
         }
     }
@@ -324,6 +326,17 @@ public extension String {
     //		return self.substring(from: self.index((range?.lowerBound)!, offsetBy:1))
     //	}
     
+}
+
+public extension NSString {
+    func substring(_ startIndex: Int, length: Int) -> NSString {
+        return self.subsequence(startIndex, endIndex: startIndex + length)
+    }
+    
+    func subsequence(_ startIndex: Int, endIndex: Int) -> NSString {
+        return self.subsequence(startIndex, endIndex: endIndex)
+    }
+
 }
 
 private enum ThreadLocalIdentifier {

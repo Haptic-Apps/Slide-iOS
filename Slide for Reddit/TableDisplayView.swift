@@ -62,85 +62,51 @@ class TableDisplayView: UIScrollView {
         let tableHeaderStartCenter = "<th align=\"center\">"
         let tableHeaderEnd = "</th>"
 
-        var i = 0
-        var columnStart = 0
-        var columnEnd = 0
         var columnStarted = false
         var isHeader = true
 
         var currentRow = [NSAttributedString]()
         let font =  FontGenerator.fontOfSize(size: 16, submission: false)
-
-        while (i < text.length) {
-            if (text[i] != "<") {
-                i += 1
-            } else if (text.subsequence(i, endIndex: i + tableStart.length) == (tableStart)) {
-                i += tableStart.length
-            } else if (text.subsequence(i, endIndex: i + tableHeadStart.length) == tableHeadStart) {
-                i += tableHeadStart.length
-            } else if (text.subsequence(i, endIndex: i + tableRowStart.length) == tableRowStart) {
+        var currentString = ""
+        for string in text.trimmed().components(separatedBy: "<"){
+            let current = "<\(string)".trimmed()
+            if(current == "<"){
+                continue
+            }
+            //print(current)
+            if (current == tableStart) {
+            } else if (current == tableHeadStart) {
+            } else if (current == tableRowStart) {
                 currentRow = []
-                i += tableRowStart.length
-            } else if (text.subsequence(i, endIndex: i + tableRowEnd.length) == tableRowEnd) {
+            } else if (current == tableRowEnd) {
                 isHeader = false
                 baseData.append(currentRow)
-                i += tableRowEnd.length
-            } else if (text.subsequence(i, endIndex: i + tableEnd.length) == tableEnd) {
-                i += tableEnd.length
-            } else if (text.subsequence(i, endIndex: i + tableHeadEnd.length) == tableHeadEnd) {
-                i += tableHeadEnd.length
+            } else if (current == tableEnd) {
+            } else if (current == tableHeadEnd) {
             } else if (!columnStarted
-                    && i + tableColumnStart.length < text.length
-                    && (text.subsequence(i, endIndex: i + tableColumnStart.length)
-                    == tableColumnStart || text.subsequence(i, endIndex: i + tableHeaderStart.length)
-                    == tableHeaderStart)) {
+                && (current == tableColumnStart || current == tableHeaderStart)) {
                 columnStarted = true
                 //todo maybe gravity = Gravity.START;
-                i += tableColumnStart.length
-                columnStart = i
-            } else if (!columnStarted && i + tableColumnStartRight.length < text.length && (text
-                    .subsequence(i, endIndex: i + tableColumnStartRight.length)
-                    == tableColumnStartRight || text.subsequence(i,
-                    endIndex: i + tableHeaderStartRight.length) == tableHeaderStartRight)) {
+            } else if (!columnStarted && (current == tableColumnStartRight || current == tableHeaderStartRight)) {
                 columnStarted = true
                 //todo maybe gravity = Gravity.END;
-                i += tableColumnStartRight.length
-                columnStart = i;
-            } else if (!columnStarted && i + tableColumnStartCenter.length < text.length && (
-                    text.subsequence(i, endIndex: i + tableColumnStartCenter.length)
-                            == tableColumnStartCenter
-                            || text.subsequence(i, endIndex: i + tableHeaderStartCenter.length)
-                            == tableHeaderStartCenter)) {
+            } else if (!columnStarted && (current == tableColumnStartCenter || current == tableHeaderStartCenter)) {
                 columnStarted = true
                 //todo maybe gravity = Gravity.CENTER;
-                i += tableColumnStartCenter.length
-                columnStart = i
-            } else if (!columnStarted
-                    && i + tableColumnStartLeft.length < text.length
-                    && (text.subsequence(i, endIndex: i + tableColumnStartLeft.length)
-                    == tableColumnStartLeft || text.subsequence(i,
-                    endIndex: i + tableHeaderStartLeft.length) == tableHeaderStartLeft)) {
+            } else if (!columnStarted && (current == tableColumnStartLeft || current == tableHeaderStartLeft)) {
                 columnStarted = true
-               //todo maybe gravity = Gravity.START;
-                i += tableColumnStartLeft.length
-                columnStart = i
-            }  else if (text.subsequence(i, endIndex: i + tableColumnEnd.length)
-                     == tableColumnEnd || text.subsequence(i, endIndex: i + tableHeaderEnd.length)
-                    == tableHeaderEnd) {
-                columnEnd = i
-
-                do {
-                    let attr = DTHTMLAttributedStringBuilder.init(html: text.subsequence(columnStart, endIndex: columnEnd).data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor : ColorUtil.fontColor, DTDefaultFontFamily: font.familyName,DTDefaultFontSize: (isHeader ? 3 : 0) + 16 + SettingValues.commentFontOffset,  DTDefaultFontName: font.fontName], documentAttributes: nil).generatedAttributedString()!
-                    currentRow.append(attr)
-                } catch {
-                    print(error.localizedDescription)
+                //todo maybe gravity = Gravity.START;
+            }  else if (current == tableColumnEnd || current == tableHeaderEnd) {
+                if(currentString.startsWith("<td")){
+                    let index = currentString.indexOf(">")
+                    currentString = currentString.substring(index!, length: currentString.length - index!)
                 }
-
-                columnStart = 0
                 columnStarted = false
-                i += tableColumnEnd.length
+                let attr = DTHTMLAttributedStringBuilder.init(html: currentString.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor : ColorUtil.fontColor, DTDefaultFontFamily: font.familyName,DTDefaultFontSize: (isHeader ? 3 : 0) + 16 + SettingValues.commentFontOffset,  DTDefaultFontName: font.fontName], documentAttributes: nil).generatedAttributedString()!
+                currentRow.append(attr)
+                currentString = ""
             } else {
-                i += 1;
+                currentString.append(current)
             }
         }
 
