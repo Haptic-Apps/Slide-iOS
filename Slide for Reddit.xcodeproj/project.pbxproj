@@ -50,6 +50,7 @@
 		BE1CD01320F43E51007746B6 /* TextDisplayStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1CD01220F43E51007746B6 /* TextDisplayStackView.swift */; };
 		BE1CD01720F586E9007746B6 /* CodeDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1CD01620F586E9007746B6 /* CodeDisplayView.swift */; };
 		BE1CD01920F599C7007746B6 /* TextStackEstimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1CD01820F599C7007746B6 /* TextStackEstimator.swift */; };
+		BE1CD01520F51C37007746B6 /* RemovalReasons.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1CD01420F51C37007746B6 /* RemovalReasons.swift */; };
 		BE1DA3961E26AD5700EC0A04 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1DA3951E26AD5700EC0A04 /* SearchViewController.swift */; };
 		BE1DA3981E26ADEA00EC0A04 /* SearchContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1DA3971E26ADEA00EC0A04 /* SearchContributionLoader.swift */; };
 		BE1DA39C1E26E86800EC0A04 /* OverlayTransitioningDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1DA39B1E26E86800EC0A04 /* OverlayTransitioningDelegate.swift */; };
@@ -278,6 +279,7 @@
 		BE1CD01220F43E51007746B6 /* TextDisplayStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextDisplayStackView.swift; sourceTree = "<group>"; };
 		BE1CD01620F586E9007746B6 /* CodeDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeDisplayView.swift; sourceTree = "<group>"; };
 		BE1CD01820F599C7007746B6 /* TextStackEstimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextStackEstimator.swift; sourceTree = "<group>"; };
+		BE1CD01420F51C37007746B6 /* RemovalReasons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemovalReasons.swift; sourceTree = "<group>"; };
 		BE1DA3951E26AD5700EC0A04 /* SearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		BE1DA3971E26ADEA00EC0A04 /* SearchContributionLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchContributionLoader.swift; sourceTree = "<group>"; };
 		BE1DA39B1E26E86800EC0A04 /* OverlayTransitioningDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OverlayTransitioningDelegate.swift; sourceTree = "<group>"; };
@@ -661,6 +663,7 @@
 				BE7439F81E21A59C008BB63B /* ActionStates.swift */,
 				BE86300E1E2E6A54004F0E1F /* PostFilter.swift */,
 				BE780B681E3527D900DAA1EB /* Drafts.swift */,
+				BE1CD01420F51C37007746B6 /* RemovalReasons.swift */,
 			);
 			name = ContentUtilities;
 			sourceTree = "<group>";
@@ -1316,6 +1319,7 @@
 				BE6EA6D71E1C1FC700E9E709 /* VidMeJSONBase.swift in Sources */,
 				BE0EF7C41F43C9520058D572 /* Spoilers.swift in Sources */,
 				BE3E5C171E16BC1A00749C0C /* String+util.swift in Sources */,
+				BE1CD01520F51C37007746B6 /* RemovalReasons.swift in Sources */,
 				BE9742381F0409BA00BF48E0 /* SettingsComments.swift in Sources */,
 				BE2F3F581EF886D9003C1B28 /* Reachability.swift in Sources */,
 				098B5A4B20EFC6C000FE201B /* UILabel+Extensions.swift in Sources */,
