@@ -16,6 +16,11 @@ import AVFoundation
 class VideoMediaViewController: EmbeddableMediaViewController {
 
     var videoView = VideoView()
+    var youtubeView = YTPlayerView()
+
+    var millis = 0
+    var video = ""
+    var playlist = ""
 
     // Key-value observing context
     private var playerItemContext = 0
@@ -38,6 +43,10 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     func configureViews() {
 //        videoView.playerLayer.videoGravity = AVLayerVideoGravityResizeAspect
         view.addSubview(videoView)
+
+        youtubeView.delegate = self
+        youtubeView.isHidden = true
+        view.addSubview(youtubeView)
     }
 
     func configureLayout() {
@@ -45,6 +54,8 @@ class VideoMediaViewController: EmbeddableMediaViewController {
 //        videoView.horizontalAnchors == view.safeHorizontalAnchors
 //        videoView.topAnchor == view.safeTopAnchor
 //        videoView.bottomAnchor == view.safeBottomAnchor
+
+        youtubeView.edgeAnchors == view.edgeAnchors
     }
 
     func connectActions() {
@@ -52,12 +63,19 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     }
 
     func loadContent() {
-        /*
-         Make sure to set
-         videoGravity, then just make the video container fill the screen.
-         */
+
+        if contentType == ContentType.CType.VIDEO {
+            youtubeView.isHidden = false
+            loadYoutube(url: data.baseURL!.absoluteString)
+            return
+        } else {
+            youtubeView.isHidden = true
+        }
+
+
+
         let url = formatUrl(sS: data.baseURL!.absoluteString)
-        let videoType =  VideoType.fromPath(url)
+        let videoType = VideoType.fromPath(url)
 
         switch (videoType) {
         case .GFYCAT:
@@ -246,6 +264,45 @@ extension VideoMediaViewController {
         self.getVideo(muxedURL)
 
     }
+
+    func loadYoutube(url urlS: String) {
+        var url = urlS
+        if (url.contains("#t=")) {
+            url = url.replacingOccurrences(of: "#t=", with: url.contains("?") ? "&t=" : "?t=")
+        }
+
+        let i = URL.init(string: url)
+        if let dictionary = i?.queryDictionary {
+            if let t = dictionary["t"] {
+                millis = getTimeFromString(t);
+            } else if let start = dictionary["start"] {
+                millis = getTimeFromString(start);
+            }
+
+            if let list = dictionary["list"] {
+                playlist = list
+            }
+
+            if let v = dictionary["v"] {
+                video = v
+            } else if let w = dictionary["w"] {
+                video = w
+            } else if url.lowercased().contains("youtu.be") {
+                video = getLastPathSegment(url)
+            }
+
+            if let u = dictionary["u"] {
+                let param = u
+                video = param.substring(param.indexOf("=")! + 1, length: param.contains("&") ? param.indexOf("&")! : param.length);
+            }
+        }
+
+        if (!playlist.isEmpty) {
+            youtubeView.load(withPlaylistId: playlist)
+        } else {
+            youtubeView.load(withVideoId: video, playerVars: ["controls": 1, "playsinline": 1, "start": millis, "fs": 0])
+        }
+    }
 }
 
 extension VideoMediaViewController: CachingPlayerItemDelegate {
@@ -272,5 +329,72 @@ extension VideoMediaViewController: CachingPlayerItemDelegate {
 
     func playerItem(_ playerItem: CachingPlayerItem, downloadingFailedWith error: Error) {
         print(error)
+    }
+}
+
+extension VideoMediaViewController: YTPlayerViewDelegate {
+
+    func playerViewDidBecomeReady(_ playerView: YTPlayerView) {
+        youtubeView.playVideo()
+    }
+
+    func playerView(_ playerView: YTPlayerView, didPlayTime playTime: Float) {
+
+    }
+
+    func playerView(_ playerView: YTPlayerView, didChangeTo state: YTPlayerState) {
+
+    }
+
+    func playerView(_ playerView: YTPlayerView, didChangeTo quality: YTPlaybackQuality) {
+
+    }
+
+    func playerView(_ playerView: YTPlayerView, receivedError error: YTPlayerError) {
+
+    }
+
+    func playerViewPreferredWebViewBackgroundColor(_ playerView: YTPlayerView) -> UIColor {
+        return .clear
+    }
+
+//    func playerViewPreferredInitialLoading(_ playerView: YTPlayerView) -> UIView? {
+//
+//    }
+
+}
+
+extension VideoMediaViewController {
+    func getLastPathSegment(_ path: String) -> String {
+        var inv = path
+        if (inv.endsWith("/")) {
+            inv = inv.substring(0, length: inv.length - 1)
+        }
+        let slashindex = inv.lastIndexOf("/")!
+        print("Index is \(slashindex)")
+        inv = inv.substring(slashindex + 1, length: inv.length - slashindex - 1)
+        return inv
+    }
+
+    func getTimeFromString(_ time: String) -> Int {
+        var timeAdd = 0;
+        for s in time.components(separatedBy: CharacterSet.init(charactersIn: "hms")) {
+            print(s)
+            if (!s.isEmpty) {
+                if (time.contains(s + "s")) {
+                    timeAdd += Int(s)!;
+                } else if (time.contains(s + "m")) {
+                    timeAdd += 60 * Int(s)!;
+                } else if (time.contains(s + "h")) {
+                    timeAdd += 3600 * Int(s)!;
+                }
+            }
+        }
+        if (timeAdd == 0 && Int(time) != nil) {
+            timeAdd += Int(time)!;
+        }
+
+        return timeAdd * 1000;
+
     }
 }
