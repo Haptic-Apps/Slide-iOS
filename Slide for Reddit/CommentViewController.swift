@@ -233,12 +233,12 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     func doHeadView(){
         inHeadView.removeFromSuperview()
         inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarView?.frame.size.height ?? 20)))
-        if(link != nil){
-            self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: link.subreddit)
+        if(submission != nil){
+            self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: submission!.subreddit)
         }
         
-        if(!(navigationController is TapBehindModalViewController)){
-            self.view.addSubview(inHeadView)
+        if(!(navigationController?.isModalInPopover ?? false)){
+            self.navigationController?.view.addSubview(inHeadView)
         }
     }
 
@@ -1425,6 +1425,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        inHeadView.removeFromSuperview()
     }
 
     func collapseAll() {
