@@ -30,6 +30,8 @@ fileprivate extension URL {
 
     /// Is called when the media file is fully downloaded.
     @objc optional func playerItem(_ playerItem: CachingPlayerItem, didFinishDownloadingData data: Data)
+    
+    @objc optional func didReachEnd(_ playerItem: CachingPlayerItem)
 
     /// Is called every time a new portion of data is received.
     @objc optional func playerItem(_ playerItem: CachingPlayerItem, didDownloadBytesSoFar bytesDownloaded: Int, outOf bytesExpected: Int)
@@ -107,6 +109,7 @@ open class CachingPlayerItem: AVPlayerItem {
             session?.dataTask(with: url).resume()
         }
 
+        
         func resourceLoader(_ resourceLoader: AVAssetResourceLoader, didCancel loadingRequest: AVAssetResourceLoadingRequest) {
             pendingRequests.remove(loadingRequest)
         }
@@ -259,6 +262,8 @@ open class CachingPlayerItem: AVPlayerItem {
         resourceLoaderDelegate.owner = self
 
         addObserver(self, forKeyPath: "status", options: NSKeyValueObservingOptions.new, context: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(didEndHandler), name:NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: self)
 
         NotificationCenter.default.addObserver(self, selector: #selector(playbackStalledHandler), name:NSNotification.Name.AVPlayerItemPlaybackStalled, object: self)
 
@@ -275,6 +280,11 @@ open class CachingPlayerItem: AVPlayerItem {
     @objc func playbackStalledHandler() {
         delegate?.playerItemPlaybackStalled?(self)
     }
+    
+    @objc func didEndHandler() {
+        delegate?.didReachEnd?(self)
+    }
+
 
     // MARK: -
 

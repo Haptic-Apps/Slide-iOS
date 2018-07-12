@@ -23,6 +23,7 @@ class EmbeddableMediaViewController: UIViewController {
     var data: EmbeddableMediaDataModel!
     var contentType: ContentType.CType!
     var progressView: MDCProgressView = MDCProgressView()
+    var bottomButtons = UIStackView()
 
     var commentCallback: (() -> Void)?
 

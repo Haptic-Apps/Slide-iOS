@@ -24,8 +24,6 @@ class ImageMediaViewController: EmbeddableMediaViewController {
     var goToCommentsButton = UIButton()
     var showTitleButton = UIButton()
 
-    var bottomButtons = UIStackView()
-
     var forceHD = false
 
     private var aspectConstraint: NSLayoutConstraint?
@@ -103,8 +101,15 @@ class ImageMediaViewController: EmbeddableMediaViewController {
             $0.isHidden = !(data.text != nil && !(data.text!.isEmpty))
             $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         }
+        
+        size = UILabel().then {
+            $0.accessibilityIdentifier = "File size"
+            $0.font = UIFont.boldSystemFont(ofSize: 12)
+            $0.textAlignment = .center
+            $0.textColor = .white
+        }
 
-        bottomButtons.addArrangedSubviews(showTitleButton, goToCommentsButton, viewInHDButton, UIView.flexSpace(), downloadButton, menuButton)
+        bottomButtons.addArrangedSubviews(showTitleButton, goToCommentsButton, viewInHDButton, size, UIView.flexSpace(), downloadButton, menuButton)
 
     }
 
@@ -116,8 +121,8 @@ class ImageMediaViewController: EmbeddableMediaViewController {
         // Give the image an explicit width to initially fit to the view
         imageView.widthAnchor == view.widthAnchor
 
-        bottomButtons.horizontalAnchors == view.safeHorizontalAnchors
-        bottomButtons.bottomAnchor == view.safeBottomAnchor
+        bottomButtons.horizontalAnchors == view.safeHorizontalAnchors + CGFloat(8)
+        bottomButtons.bottomAnchor == view.safeBottomAnchor - CGFloat(8)
 
     }
 
@@ -140,7 +145,12 @@ class ImageMediaViewController: EmbeddableMediaViewController {
             imageURL = lqURL
             viewInHDButton.isHidden = false
         } else {
-            imageURL = data.baseURL!
+            if(ContentType.isImgurLink(uri: data.baseURL!)){
+                let urlString = "\(data.baseURL!).png"
+                imageURL = URL.init(string: urlString)!
+            } else {
+                imageURL = data.baseURL!
+            }
             viewInHDButton.isHidden = true
         }
 
@@ -152,6 +162,7 @@ class ImageMediaViewController: EmbeddableMediaViewController {
                 strongSelf.setProgressViewVisible(false)
                 strongSelf.progressView.isHidden = true
                 strongSelf.downloadButton.isHidden = false
+                strongSelf.size.isHidden = true
 
                 strongSelf.aspectConstraint?.isActive = false
                 strongSelf.aspectConstraint = strongSelf.imageView.heightAnchor == strongSelf.imageView.widthAnchor * (image.size.height / image.size.width)
@@ -186,7 +197,9 @@ class ImageMediaViewController: EmbeddableMediaViewController {
                 countBytes.allowedUnits = [.useMB]
                 countBytes.countStyle = .file
                 let fileSize = countBytes.string(fromByteCount: Int64(total))
-                self.size.text = fileSize
+                if(average > 0){
+                    self.size.text = fileSize
+                }
                 self.progressView.progress = average
 
             }, completed: { (image, _, error, _) in

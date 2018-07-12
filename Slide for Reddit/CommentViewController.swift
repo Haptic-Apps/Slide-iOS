@@ -1217,10 +1217,15 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     }
 
     func goUp(_ sender: AnyObject) {
-        var topCell = (tableView.indexPathsForVisibleRows?[0].row)!
+        var topCell = 0
+        if let top = tableView.indexPathsForVisibleRows {
+            if(top.count > 0){
+                topCell = top[0].row
+            }
+        }
         var contents = content[dataArray[topCell]]
 
-        while ((contents is RMore || (contents as! RComment).depth > 1) && dataArray.count > topCell) {
+        while (contents is RComment ?  !matches(comment: contents as! RComment, sort: currentSort) : true  && dataArray.count > topCell) {
             topCell -= 1
             contents = content[dataArray[topCell]]
         }
@@ -1231,7 +1236,12 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     var lastMoved = -1
 
     func goDown(_ sender: AnyObject) {
-        var topCell = (tableView.indexPathsForVisibleRows?[0].row)!
+        var topCell = 0
+        if let top = tableView.indexPathsForVisibleRows {
+            if(top.count > 0){
+                topCell = top[0].row
+            }
+        }
         if (topCell <= 0 && lastMoved != 0) {
             goToCellTop(i: 0)
             lastMoved = 0

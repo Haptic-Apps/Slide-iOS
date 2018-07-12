@@ -10,6 +10,7 @@ import UIKit
 import Anchorage
 import Then
 import Alamofire
+import SDWebImage
 
 import AVFoundation
 
@@ -17,10 +18,19 @@ class VideoMediaViewController: EmbeddableMediaViewController {
 
     var videoView = VideoView()
     var youtubeView = YTPlayerView()
+    var downloadedOnce = false
 
     var millis = 0
     var video = ""
     var playlist = ""
+    
+    var size = UILabel()
+    
+    var menuButton = UIButton()
+    var downloadButton = UIButton()
+    
+    var goToCommentsButton = UIButton()
+    var showTitleButton = UIButton()
 
     // Key-value observing context
     private var playerItemContext = 0
@@ -47,7 +57,60 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         youtubeView.delegate = self
         youtubeView.isHidden = true
         view.addSubview(youtubeView)
+        bottomButtons = UIStackView().then {
+            $0.accessibilityIdentifier = "Bottom Buttons"
+            $0.axis = .horizontal
+            $0.alignment = .center
+            $0.spacing = 8
+        }
+        view.addSubview(bottomButtons)
+        
+        menuButton = UIButton().then {
+            $0.accessibilityIdentifier = "More Button"
+            $0.setImage(UIImage(named: "moreh")?.navIcon(), for: [])
+            $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        }
+        
+        downloadButton = UIButton().then {
+            $0.accessibilityIdentifier = "Download Button"
+            $0.setImage(UIImage(named: "download")?.navIcon(), for: [])
+            $0.isHidden = true // The button will be unhidden once the content has loaded.
+            $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        }
+        
+        goToCommentsButton = UIButton().then {
+            $0.accessibilityIdentifier = "Go to Comments Button"
+            $0.setImage(UIImage(named: "comments")?.navIcon(), for: [])
+            $0.isHidden = commentCallback == nil
+            $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        }
+                
+        showTitleButton = UIButton().then {
+            $0.accessibilityIdentifier = "Show Title Button"
+            $0.setImage(UIImage(named: "size")?.navIcon(), for: [])
+            $0.isHidden = !(data.text != nil && !(data.text!.isEmpty))
+            $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        }
+        
+        size = UILabel().then {
+            $0.accessibilityIdentifier = "File size"
+            $0.font = UIFont.boldSystemFont(ofSize: 12)
+            $0.textAlignment = .center
+            $0.textColor = .white
+        }
+
+        bottomButtons.addArrangedSubviews(showTitleButton, goToCommentsButton, size, UIView.flexSpace(), downloadButton, menuButton)
+        
     }
+    
+    func connectActions() {
+        menuButton.addTarget(self, action: #selector(showContextMenu(_:)), for: .touchUpInside)
+        downloadButton.addTarget(self, action: #selector(downloadImageToLibrary(_:)), for: .touchUpInside)
+        goToCommentsButton.addTarget(self, action: #selector(openComments(_:)), for: .touchUpInside)
+        showTitleButton.addTarget(self, action: #selector(showTitle(_:)), for: .touchUpInside)
+    }
+    
+
 
     func configureLayout() {
         videoView.edgeAnchors == view.edgeAnchors
@@ -56,10 +119,9 @@ class VideoMediaViewController: EmbeddableMediaViewController {
 //        videoView.bottomAnchor == view.safeBottomAnchor
 
         youtubeView.edgeAnchors == view.edgeAnchors
-    }
+        bottomButtons.horizontalAnchors == view.safeHorizontalAnchors + CGFloat(8)
+        bottomButtons.bottomAnchor == view.safeBottomAnchor - CGFloat(8)
 
-    func connectActions() {
-        
     }
 
     func loadContent() {
@@ -100,10 +162,20 @@ class VideoMediaViewController: EmbeddableMediaViewController {
             fatalError("Video type unrecognized and unimplemented!")
         }
     }
-
+    
     func getVideo(_ toLoad: String) {
-        let playerItem = CachingPlayerItem(url: URL(string: toLoad)!)
-        playerItem.delegate = self
+        //get content size
+        let stringKey = SDImageCache.shared().makeDiskCachePath(self.data.baseURL!.absoluteString) + ".mp4"
+        let playerItem: AVPlayerItem!
+        if (FileManager.default.fileExists(atPath:stringKey)) {
+            playerItem = AVPlayerItem.init(url: URL(fileURLWithPath: stringKey))
+            progressView.alpha = 0
+            progressView.progress = 1
+            size.isHidden = true
+        } else {
+            playerItem = CachingPlayerItem(url: URL(string: toLoad)!)
+            (playerItem as! CachingPlayerItem).delegate = self
+        }
         videoView.player = AVPlayer(playerItem: playerItem)
         if #available(iOS 10.0, *) {
             videoView.player?.automaticallyWaitsToMinimizeStalling = false
@@ -311,15 +383,31 @@ extension VideoMediaViewController: CachingPlayerItemDelegate {
         print("Player ready to play")
         videoView.player?.play()
     }
-
+    
+    
+    func didReachEnd(_ playerItem: CachingPlayerItem) {
+        print("Reached end")
+    }
+    
     func playerItem(_ playerItem: CachingPlayerItem, didFinishDownloadingData data: Data) {
         print("File is downloaded and ready for storing")
+        DispatchQueue.main.async {
+            self.progressView.alpha = 0
+            self.size.alpha = 0
+        }
+        
+        //@colejd we might use an already-created key value in the new delegate
+        FileManager.default.createFile(atPath: SDImageCache.shared().makeDiskCachePath(self.data.baseURL!.absoluteString) + ".mp4", contents: data, attributes: nil)
     }
 
     func playerItem(_ playerItem: CachingPlayerItem, didDownloadBytesSoFar bytesDownloaded: Int, outOf bytesExpected: Int) {
-//        print("\(bytesDownloaded)/\(bytesExpected)")
         DispatchQueue.main.async {
             self.progressView.progress = Float(bytesDownloaded) / Float(bytesExpected)
+            let countBytes = ByteCountFormatter()
+            countBytes.allowedUnits = [.useMB]
+            countBytes.countStyle = .file
+            let fileSizeString = countBytes.string(fromByteCount: Int64(bytesExpected))
+            self.size.text = fileSizeString
         }
     }
 
@@ -396,5 +484,74 @@ extension VideoMediaViewController {
 
         return timeAdd * 1000;
 
+    }
+    func showTitle(_ sender: AnyObject) {
+        let alertController = UIAlertController.init(title: "Caption", message: nil, preferredStyle: .alert)
+        alertController.addTextViewer(text: .text(data.text!))
+        alertController.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: nil))
+        present(alertController, animated: true, completion: nil)
+    }
+    
+    func showContextMenu(_ sender: UIButton) {
+        guard let baseURL = self.data.baseURL else {
+            return
+        }
+        let alert = UIAlertController.init(title: baseURL.absoluteString, message: "", preferredStyle: .actionSheet)
+        let open = OpenInChromeController.init()
+        if open.isChromeInstalled() {
+            alert.addAction(
+                UIAlertAction(title: "Open in Chrome", style: .default) { (action) in
+                    open.openInChrome(baseURL, callbackURL: nil, createNewTab: true)
+                }
+            )
+        }
+        alert.addAction(
+            UIAlertAction(title: "Open in Safari", style: .default) { (action) in
+                if #available(iOS 10.0, *) {
+                    UIApplication.shared.open(baseURL, options: [:], completionHandler: nil)
+                } else {
+                    UIApplication.shared.openURL(baseURL)
+                }
+            }
+        )
+        alert.addAction(
+            UIAlertAction(title: "Share URL", style: .default) { (action) in
+                let shareItems: Array = [baseURL]
+                let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+                let window = UIApplication.shared.keyWindow!
+                if let modalVC = window.rootViewController?.presentedViewController {
+                    modalVC.present(activityViewController, animated: true, completion: nil)
+                } else {
+                    window.rootViewController!.present(activityViewController, animated: true, completion: nil)
+                }
+            }
+        )
+        alert.addAction(
+            UIAlertAction(title: "Share Video", style: .default) { (action) in
+                //TODO THIS
+            }
+        )
+        alert.addAction(
+            UIAlertAction(title: "Cancel", style: .cancel) { (action) in
+            }
+        )
+        let window = UIApplication.shared.keyWindow!
+        alert.modalPresentationStyle = .popover
+        
+        if let presenter = alert.popoverPresentationController {
+            presenter.sourceView = sender
+            presenter.sourceRect = sender.bounds
+        }
+        
+        
+        if let modalVC = window.rootViewController?.presentedViewController {
+            modalVC.present(alert, animated: true, completion: nil)
+        } else {
+            window.rootViewController!.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    func downloadImageToLibrary(_ sender: AnyObject) {
+        fatalError("Implement this")
     }
 }

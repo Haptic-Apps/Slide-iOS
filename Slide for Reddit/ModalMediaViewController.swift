@@ -79,6 +79,14 @@ class ModalMediaViewController: UIViewController {
                 strongSelf.unFullscreen(strongSelf.embeddedVC.view)
             }
         }
+        self.embeddedVC.view.addTapGestureRecognizer {
+            //@colejd possibly where we put the video control toggle?
+            if(self.fullscreen){
+                self.unFullscreen(self)
+            } else {
+                self.fullscreen(self)
+            }
+        }
     }
 
     static func getVCForContent(ofType type: ContentType.CType, withModel model: EmbeddableMediaDataModel) -> EmbeddableMediaViewController? {
@@ -105,24 +113,26 @@ extension ModalMediaViewController {
             let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
             statusBar.isHidden = true
 
-            (self.parent as? SwipeDownModalVC)?.background?.backgroundColor = UIColor.black
-            //            self.toolbar.alpha = 0
-
+            (self.parent as? SwipeDownModalVC)?.background?.alpha = 1
+            self.embeddedVC.bottomButtons.alpha = 0
+            self.embeddedVC.progressView.alpha = 0
         }, completion: {finished in
-            //            self.toolbar.isHidden = true
-
+            self.embeddedVC.bottomButtons.isHidden = true
+            self.embeddedVC.progressView.isHidden = true
         })
     }
 
     func unFullscreen(_ sender: AnyObject) {
         fullscreen = false
-        //        self.toolbar.isHidden = false
+        self.embeddedVC.progressView.isHidden = false
+        self.embeddedVC.bottomButtons.isHidden = false
         UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
             let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
             statusBar.isHidden = false
 
-            (self.parent as? SwipeDownModalVC)?.background?.backgroundColor = UIColor.black.withAlphaComponent(0.7)
-            //            self.toolbar.alpha = 1
+            (self.parent as? SwipeDownModalVC)?.background?.alpha = 0.6
+            self.embeddedVC.bottomButtons.alpha = 1
+            self.embeddedVC.progressView.alpha = self.embeddedVC.progressView.progress > 90 ? 0 : 1
 
         }, completion: {finished in
         })

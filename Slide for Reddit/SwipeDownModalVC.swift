@@ -32,6 +32,10 @@ class SwipeDownModalVC: ColorMuxPagingViewController {
         background!.frame = self.view.frame
         background!.autoresizingMask = [.flexibleHeight, .flexibleWidth]
         background!.backgroundColor = .black
+        
+        if(!(self is ShadowboxViewController)){
+            background!.alpha = 0.6
+        }
 
         self.view.insertSubview(background!, at: 0)
     }
@@ -49,7 +53,7 @@ class SwipeDownModalVC: ColorMuxPagingViewController {
                     y: translation.y
             )
             let progress = translation.y / (self.view.frame.size.height / 2)
-            background!.alpha = 1 - (abs(progress) * 0.9)
+            self.view.alpha = 1 - (abs(progress) * 1.3)
 
         } else if panGesture.state == .ended {
             let velocity = panGesture.velocity(in: view)
@@ -63,7 +67,7 @@ class SwipeDownModalVC: ColorMuxPagingViewController {
                             x: self.view.frame.origin.x,
                             y: self.view.frame.size.height * (down ? 1 : -1) )
 
-                    self.background!.alpha = 0.1
+                    self.view.alpha = 0.1
 
                 }, completion: { (isCompleted) in
                     if isCompleted {
@@ -73,7 +77,7 @@ class SwipeDownModalVC: ColorMuxPagingViewController {
             } else {
                 UIView.animate(withDuration: 0.2, animations: {
                     self.view.center = self.originalPosition!
-                    self.background!.alpha = 1
+                    self.view.alpha = 1
 
                 })
             }
