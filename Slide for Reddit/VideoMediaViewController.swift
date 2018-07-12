@@ -160,15 +160,12 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         //get content size
         let playerItem: AVPlayerItem!
         if (FileManager.default.fileExists(atPath:getKeyFromURL())) {
-            playerItem = AVPlayerItem.init(url: URL(fileURLWithPath: getKeyFromURL()))
+            playerItem = CachingPlayerItem.init(localUrl: URL.init(fileURLWithPath: getKeyFromURL()))
             progressView.alpha = 0
             progressView.progress = 1
             size.isHidden = true
             videoView.player = AVPlayer(playerItem: playerItem)
             videoView.player?.play()
-            if #available(iOS 10.0, *) {
-                videoView.player?.automaticallyWaitsToMinimizeStalling = false
-            }
         } else {
             if(videoType == .REDDIT){
                 loadVReddit(toLoad: toLoad)
@@ -446,6 +443,7 @@ extension VideoMediaViewController: CachingPlayerItemDelegate {
     
     func didReachEnd(_ playerItem: CachingPlayerItem) {
         print("Reached end")
+        playerItem.seek(to: kCMTimeZero)
     }
     
     func playerItem(_ playerItem: CachingPlayerItem, didFinishDownloadingData data: Data) {

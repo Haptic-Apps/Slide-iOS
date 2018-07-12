@@ -116,7 +116,7 @@ extension ModalMediaViewController {
 
     func unFullscreen(_ sender: AnyObject) {
         fullscreen = false
-        self.embeddedVC.progressView.isHidden = false
+        self.embeddedVC.progressView.isHidden = self.embeddedVC.progressView.progress > 0.9 ? true : false
         self.embeddedVC.bottomButtons.isHidden = false
         UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
             let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
@@ -124,7 +124,7 @@ extension ModalMediaViewController {
 
             (self.parent as? SwipeDownModalVC)?.background?.alpha = 0.6
             self.embeddedVC.bottomButtons.alpha = 1
-            self.embeddedVC.progressView.alpha = self.embeddedVC.progressView.progress > 90 ? 0 : 1
+            self.embeddedVC.progressView.alpha = self.embeddedVC.progressView.progress > 0.9 ? 0 : 1
 
         }, completion: {finished in
         })

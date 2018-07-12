@@ -238,9 +238,28 @@ open class CachingPlayerItem: AVPlayerItem {
 
         addObserver(self, forKeyPath: "status", options: NSKeyValueObservingOptions.new, context: nil)
 
+        addObserver(self, forKeyPath: "actionAtItemEnd", options: NSKeyValueObservingOptions.new, context: nil)
+
         NotificationCenter.default.addObserver(self, selector: #selector(playbackStalledHandler), name:NSNotification.Name.AVPlayerItemPlaybackStalled, object: self)
 
     }
+    
+    /// Is used for playing remote files.
+    init(localUrl: URL) {
+        
+        self.url = localUrl
+        self.initialScheme = nil
+        
+        super.init(asset: AVAsset.init(url: localUrl), automaticallyLoadedAssetKeys: nil)
+        
+        addObserver(self, forKeyPath: "status", options: NSKeyValueObservingOptions.new, context: nil)
+
+        addObserver(self, forKeyPath: "actionAtItemEnd", options: NSKeyValueObservingOptions.new, context: nil)
+
+        NotificationCenter.default.addObserver(self, selector: #selector(playbackStalledHandler), name:NSNotification.Name.AVPlayerItemPlaybackStalled, object: self)
+        
+    }
+
 
     /// Is used for playing from Data.
     init(data: Data, mimeType: String, fileExtension: String) {
@@ -263,15 +282,21 @@ open class CachingPlayerItem: AVPlayerItem {
 
         addObserver(self, forKeyPath: "status", options: NSKeyValueObservingOptions.new, context: nil)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(didEndHandler), name:NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: self)
+        addObserver(self, forKeyPath: "actionAtItemEnd", options: NSKeyValueObservingOptions.new, context: nil)
 
         NotificationCenter.default.addObserver(self, selector: #selector(playbackStalledHandler), name:NSNotification.Name.AVPlayerItemPlaybackStalled, object: self)
 
     }
 
     // MARK: KVO
+    
+    
 
     override open func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        print("Observed \(keyPath)")
+        if keyPath == "actionAtItemEnd"{
+            didEndHandler()
+        }
         delegate?.playerItemReadyToPlay?(self)
     }
 
