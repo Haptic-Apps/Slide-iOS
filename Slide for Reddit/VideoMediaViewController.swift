@@ -21,6 +21,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     var downloadedOnce = false
     
     var size = UILabel()
+    var videoType: VideoType!
     
     var menuButton = UIButton()
     var downloadButton = UIButton()
@@ -148,7 +149,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         }
 
         let url = formatUrl(sS: data.baseURL!.absoluteString)
-        let videoType = VideoType.fromPath(url)
+        videoType = VideoType.fromPath(url)
 
         videoType.getSourceObject().load(url: url) { [weak self] (urlString) in
             self?.getVideo(urlString)
@@ -157,20 +158,156 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     
     func getVideo(_ toLoad: String) {
         //get content size
-        let stringKey = SDImageCache.shared().makeDiskCachePath(self.data.baseURL!.absoluteString) + ".mp4"
         let playerItem: AVPlayerItem!
-        if (FileManager.default.fileExists(atPath:stringKey)) {
-            playerItem = AVPlayerItem.init(url: URL(fileURLWithPath: stringKey))
+        if (FileManager.default.fileExists(atPath:getKeyFromURL())) {
+            playerItem = AVPlayerItem.init(url: URL(fileURLWithPath: getKeyFromURL()))
             progressView.alpha = 0
             progressView.progress = 1
             size.isHidden = true
+            videoView.player = AVPlayer(playerItem: playerItem)
+            videoView.player?.play()
+            if #available(iOS 10.0, *) {
+                videoView.player?.automaticallyWaitsToMinimizeStalling = false
+            }
         } else {
-            playerItem = CachingPlayerItem(url: URL(string: toLoad)!)
-            (playerItem as! CachingPlayerItem).delegate = self
+            if(videoType == .REDDIT){
+                loadVReddit(toLoad: toLoad)
+            } else {
+                playerItem = CachingPlayerItem(url: URL(string: toLoad)!)
+                (playerItem as! CachingPlayerItem).delegate = self
+                videoView.player = AVPlayer(playerItem: playerItem)
+                if #available(iOS 10.0, *) {
+                    videoView.player?.automaticallyWaitsToMinimizeStalling = false
+                }
+            }
         }
-        videoView.player = AVPlayer(playerItem: playerItem)
-        if #available(iOS 10.0, *) {
-            videoView.player?.automaticallyWaitsToMinimizeStalling = false
+    }
+
+    func loadVReddit(toLoad: String) {
+        var toLoadAudio = toLoad
+        toLoadAudio = toLoad.substring(0, length: toLoad.lastIndexOf("DASH_")!)
+        toLoadAudio = toLoadAudio + "audio"
+        
+        if (FileManager.default.fileExists(atPath:getKeyFromURL())) {
+            getVideo(toLoad)
+        } else {
+            let finalUrl = URL.init(fileURLWithPath:getKeyFromURL())
+            let localUrlV = URL.init(fileURLWithPath:getKeyFromURL() + "video.mp4")
+            let localUrlAudio = URL.init(fileURLWithPath:getKeyFromURL() + "audio.mp4")
+            progressView.setHidden(false, animated: true, completion: nil)
+            
+            let request = Alamofire.download(toLoad, method: .get, to: { (url, response) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
+                return (localUrlV, [.removePreviousFile, .createIntermediateDirectories])
+            }).downloadProgress() { progress in
+                DispatchQueue.main.async {
+                    self.progressView.progress = Float(progress.fractionCompleted)
+                    let countBytes = ByteCountFormatter()
+                    countBytes.allowedUnits = [.useMB]
+                    countBytes.countStyle = .file
+                    let fileSize = countBytes.string(fromByteCount: Int64(progress.totalUnitCount))
+                    self.size.text = fileSize
+                }
+                
+                }
+                .responseData { response in
+                    if let error = response.error {
+                        print(error)
+                    } else { //no errors
+                        print("Downloaded")
+                        let request = Alamofire.download(toLoadAudio, method: .get, to: { (url, response) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
+                            return (localUrlAudio, [.removePreviousFile, .createIntermediateDirectories])
+                        }).downloadProgress() { progress in
+                            DispatchQueue.main.async {
+                                self.progressView.progress = Float(progress.fractionCompleted)
+                            }
+                            }
+                            .responseData { response2 in
+                                print(response2.response!.statusCode)
+                                if (response2.response!.statusCode != 200) {
+                                    do {
+                                        try FileManager.init().copyItem(at: localUrlV, to: finalUrl)
+                                        self.getVideo(toLoad)
+                                    } catch {
+                                        self.getVideo(toLoad)
+                                    }
+                                } else { //no errors
+                                    self.mergeFilesWithUrl(videoUrl: localUrlV, audioUrl: localUrlAudio, savePathUrl: finalUrl) {
+                                       self.getVideo(toLoad)
+                                    }
+                                }
+                        }
+                    }
+            }
+        }
+    }
+    
+    //From https://stackoverflow.com/a/39100999/3697225
+    func mergeFilesWithUrl(videoUrl: URL, audioUrl: URL, savePathUrl: URL, completion: @escaping () -> Void) {
+        let mixComposition: AVMutableComposition = AVMutableComposition()
+        var mutableCompositionVideoTrack: [AVMutableCompositionTrack] = []
+        var mutableCompositionAudioTrack: [AVMutableCompositionTrack] = []
+        let totalVideoCompositionInstruction: AVMutableVideoCompositionInstruction = AVMutableVideoCompositionInstruction()
+        
+        
+        //start merge
+        let aVideoAsset: AVAsset = AVAsset(url: videoUrl)
+        let aAudioAsset: AVAsset = AVAsset(url: audioUrl)
+        
+        mutableCompositionVideoTrack.append(mixComposition.addMutableTrack(withMediaType: AVMediaTypeVideo, preferredTrackID: kCMPersistentTrackID_Invalid))
+        mutableCompositionAudioTrack.append(mixComposition.addMutableTrack(withMediaType: AVMediaTypeAudio, preferredTrackID: kCMPersistentTrackID_Invalid))
+        
+        let aVideoAssetTrack: AVAssetTrack = aVideoAsset.tracks(withMediaType: AVMediaTypeVideo)[0]
+        let aAudioAssetTrack: AVAssetTrack = aAudioAsset.tracks(withMediaType: AVMediaTypeAudio)[0]
+        
+        
+        do {
+            try mutableCompositionVideoTrack[0].insertTimeRange(CMTimeRangeMake(kCMTimeZero, aVideoAssetTrack.timeRange.duration), of: aVideoAssetTrack, at: kCMTimeZero)
+            
+            //In my case my audio file is longer then video file so i took videoAsset duration
+            //instead of audioAsset duration
+            try mutableCompositionAudioTrack[0].insertTimeRange(CMTimeRangeMake(kCMTimeZero, aVideoAssetTrack.timeRange.duration), of: aAudioAssetTrack, at: kCMTimeZero)
+            
+            //Use this instead above line if your audiofile and video file's playing durations are same
+            //            try mutableCompositionAudioTrack[0].insertTimeRange(CMTimeRangeMake(kCMTimeZero, aVideoAssetTrack.timeRange.duration), ofTrack: aAudioAssetTrack, atTime: kCMTimeZero)
+        } catch {
+            print(error.localizedDescription)
+        }
+        
+        totalVideoCompositionInstruction.timeRange = CMTimeRangeMake(kCMTimeZero, aVideoAssetTrack.timeRange.duration)
+        
+        let mutableVideoComposition: AVMutableVideoComposition = AVMutableVideoComposition()
+        mutableVideoComposition.frameDuration = CMTimeMake(1, 30)
+        
+        mutableVideoComposition.renderSize = aVideoAssetTrack.naturalSize
+        
+        //        playerItem = AVPlayerItem(asset: mixComposition)
+        //        player = AVPlayer(playerItem: playerItem!)
+        //
+        //
+        //        AVPlayerVC.player = player
+        do {
+            try  FileManager.default.removeItem(at: savePathUrl)
+        } catch {
+            print(error.localizedDescription)
+        }
+        
+        //find your video on this URl
+        let assetExport: AVAssetExportSession = AVAssetExportSession(asset: mixComposition, presetName: AVAssetExportPresetHighestQuality)!
+        assetExport.outputFileType = AVFileTypeMPEG4
+        assetExport.outputURL = savePathUrl
+        assetExport.exportAsynchronously { () -> Void in
+            switch assetExport.status {
+                
+            case AVAssetExportSessionStatus.completed:
+                completion()
+                print("success")
+            case AVAssetExportSessionStatus.failed:
+                print("failed \(assetExport.error)")
+            case AVAssetExportSessionStatus.cancelled:
+                print("cancelled \(assetExport.error)")
+            default:
+                print("complete")
+            }
         }
     }
 
@@ -319,7 +456,7 @@ extension VideoMediaViewController: CachingPlayerItemDelegate {
         }
         
         //@colejd we might use an already-created key value in the new delegate
-        FileManager.default.createFile(atPath: SDImageCache.shared().makeDiskCachePath(self.data.baseURL!.absoluteString) + ".mp4", contents: data, attributes: nil)
+        FileManager.default.createFile(atPath: getKeyFromURL(), contents: data, attributes: nil)
     }
 
     func playerItem(_ playerItem: CachingPlayerItem, didDownloadBytesSoFar bytesDownloaded: Int, outOf bytesExpected: Int) {
@@ -339,6 +476,21 @@ extension VideoMediaViewController: CachingPlayerItemDelegate {
 
     func playerItem(_ playerItem: CachingPlayerItem, downloadingFailedWith error: Error) {
         print(error)
+    }
+    
+    func getKeyFromURL() -> String{
+        let disallowedChars = CharacterSet.urlPathAllowed.inverted
+        var key = self.data.baseURL!.absoluteString.components(separatedBy: disallowedChars).joined(separator: "_")
+        key = key.replacingOccurrences(of: ":", with: "")
+        key = key.replacingOccurrences(of: "/", with: "")
+        key = key.replacingOccurrences(of: ".gifv", with: ".mp4")
+        key = key.replacingOccurrences(of: ".gif", with: ".mp4")
+        key = key.replacingOccurrences(of: ".", with: "")
+        if (key.length > 200) {
+            key = key.substring(0, length: 200)
+        }
+        
+        return SDImageCache.shared().makeDiskCachePath(key) + ".mp4"
     }
 }
 

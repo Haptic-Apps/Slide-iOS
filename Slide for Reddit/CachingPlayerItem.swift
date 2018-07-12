@@ -230,7 +230,7 @@ open class CachingPlayerItem: AVPlayerItem {
         self.url = url
         self.initialScheme = scheme
 
-        let asset = AVURLAsset(url: url) // Jon's note: Did `url` instead of `urlWithCustomScheme` and now HLS streaming works from v.redd.it
+        let asset = AVURLAsset(url: urlWithCustomScheme) // Jon's note: Did `url` instead of `urlWithCustomScheme` and now HLS streaming works from v.redd.it
         asset.resourceLoader.setDelegate(resourceLoaderDelegate, queue: DispatchQueue.main)
         super.init(asset: asset, automaticallyLoadedAssetKeys: nil)
 
