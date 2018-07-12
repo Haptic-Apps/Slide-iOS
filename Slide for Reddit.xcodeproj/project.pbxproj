@@ -22,6 +22,7 @@
 		098B5A4B20EFC6C000FE201B /* UILabel+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098B5A4A20EFC6C000FE201B /* UILabel+Extensions.swift */; };
 		098B5A4D20EFC6E200FE201B /* UIViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098B5A4C20EFC6E200FE201B /* UIViewController+Extensions.swift */; };
 		098FC80F20E52D1A00F819F3 /* CGSize+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098FC80E20E52D1A00F819F3 /* CGSize+Extensions.swift */; };
+		09B2AF6220F6BC4100580F15 /* CachingPlayerItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B2AF6120F6BC4100580F15 /* CachingPlayerItem.swift */; };
 		09F411CD20F3EEA600D23A42 /* ModalMediaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F411CC20F3EEA600D23A42 /* ModalMediaViewController.swift */; };
 		09F411CF20F3EEB900D23A42 /* ImageMediaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F411CE20F3EEB900D23A42 /* ImageMediaViewController.swift */; };
 		09F411D120F3EEC600D23A42 /* VideoMediaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F411D020F3EEC600D23A42 /* VideoMediaViewController.swift */; };
@@ -246,6 +247,7 @@
 		098B5A4A20EFC6C000FE201B /* UILabel+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+Extensions.swift"; sourceTree = "<group>"; };
 		098B5A4C20EFC6E200FE201B /* UIViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extensions.swift"; sourceTree = "<group>"; };
 		098FC80E20E52D1A00F819F3 /* CGSize+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGSize+Extensions.swift"; sourceTree = "<group>"; };
+		09B2AF6120F6BC4100580F15 /* CachingPlayerItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachingPlayerItem.swift; sourceTree = "<group>"; };
 		09F411CC20F3EEA600D23A42 /* ModalMediaViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalMediaViewController.swift; sourceTree = "<group>"; };
 		09F411CE20F3EEB900D23A42 /* ImageMediaViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageMediaViewController.swift; sourceTree = "<group>"; };
 		09F411D020F3EEC600D23A42 /* VideoMediaViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoMediaViewController.swift; sourceTree = "<group>"; };
@@ -510,6 +512,7 @@
 			children = (
 				09F411D020F3EEC600D23A42 /* VideoMediaViewController.swift */,
 				09F48EBB20F652CF00BAC8AC /* VideoView.swift */,
+				09B2AF6120F6BC4100580F15 /* CachingPlayerItem.swift */,
 			);
 			name = Video;
 			sourceTree = "<group>";
@@ -1265,6 +1268,7 @@
 				BE2F3F5D1EF96877003C1B28 /* SettingsContent.swift in Sources */,
 				BE9456001F32DD310097EEF0 /* AlbumViewController.swift in Sources */,
 				BE6EA6CC1E1C1E9400E9E709 /* StremableMp4Mobile.swift in Sources */,
+				09B2AF6220F6BC4100580F15 /* CachingPlayerItem.swift in Sources */,
 				BE6EA6C31E1C1DCE00E9E709 /* GfyItem.swift in Sources */,
 				BEF7483220DD894100B6236B /* SettingsGestures.swift in Sources */,
 				098B5A4920EFC6A200FE201B /* UINavigationController+Extensions.swift in Sources */,
