@@ -19,10 +19,6 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     var videoView = VideoView()
     var youtubeView = YTPlayerView()
     var downloadedOnce = false
-
-    var millis = 0
-    var video = ""
-    var playlist = ""
     
     var size = UILabel()
     
@@ -38,11 +34,19 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        // Disable screen dimming due to inactivity
+        UIApplication.shared.isIdleTimerDisabled = true
+
         configureViews()
         configureLayout()
         connectActions()
 
         loadContent()
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        // Re-enable screen dimming due to inactivity
+        UIApplication.shared.isIdleTimerDisabled = false
     }
 
 //    override func didReceiveMemoryWarning() {
@@ -51,7 +55,6 @@ class VideoMediaViewController: EmbeddableMediaViewController {
 //    }
 
     func configureViews() {
-//        videoView.playerLayer.videoGravity = AVLayerVideoGravityResizeAspect
         view.addSubview(videoView)
 
         youtubeView.delegate = self
@@ -114,9 +117,6 @@ class VideoMediaViewController: EmbeddableMediaViewController {
 
     func configureLayout() {
         videoView.edgeAnchors == view.edgeAnchors
-//        videoView.horizontalAnchors == view.safeHorizontalAnchors
-//        videoView.topAnchor == view.safeTopAnchor
-//        videoView.bottomAnchor == view.safeBottomAnchor
 
         youtubeView.edgeAnchors == view.edgeAnchors
         bottomButtons.horizontalAnchors == view.safeHorizontalAnchors + CGFloat(8)
@@ -126,6 +126,19 @@ class VideoMediaViewController: EmbeddableMediaViewController {
 
     func loadContent() {
 
+        // Prevent video from stopping system background audio
+        do {
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
+        } catch let error as NSError {
+            print(error)
+        }
+
+        do {
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch let error as NSError {
+            print(error)
+        }
+
         if contentType == ContentType.CType.VIDEO {
             youtubeView.isHidden = false
             loadYoutube(url: data.baseURL!.absoluteString)
@@ -134,32 +147,11 @@ class VideoMediaViewController: EmbeddableMediaViewController {
             youtubeView.isHidden = true
         }
 
-
-
         let url = formatUrl(sS: data.baseURL!.absoluteString)
         let videoType = VideoType.fromPath(url)
 
-        switch (videoType) {
-        case .GFYCAT:
-            let name = url.substring(url.lastIndexOf("/")!, length: url.length - url.lastIndexOf("/")!)
-            loadGfycat(url: "https://gfycat.com/cajax/get" + name)
-        case .REDDIT:
-//            return url
-            loadVReddit(url: url)
-        case .DIRECT, .IMGUR:
-            var directURL = url
-            if url.contains("redditmedia") {
-                directURL = directURL.replacingOccurrences(of: ".gif", with: ".mp4")
-            }
-            getVideo(directURL)
-        case .STREAMABLE:
-            let hash = url.substring(url.lastIndexOf("/")! + 1, length: url.length - (url.lastIndexOf("/")! + 1))
-            loadStreamable(url: "https://api.streamable.com/videos/" + hash)
-        case .VID_ME:
-            loadVidMe(url: "https://api.vid.me/videoByUrl?url=" + url)
-        case .OTHER:
-            //we should never get here
-            fatalError("Video type unrecognized and unimplemented!")
+        videoType.getSourceObject().load(url: url) { [weak self] (urlString) in
+            self?.getVideo(urlString)
         }
     }
     
@@ -239,105 +231,35 @@ class VideoMediaViewController: EmbeddableMediaViewController {
             }
             return VideoType.OTHER
         }
+
+        func getSourceObject() -> VideoSource {
+            switch (self) {
+            case .GFYCAT:
+                return GfycatVideoSource()
+            case .REDDIT:
+                return RedditVideoSource()
+            case .DIRECT, .IMGUR:
+                return DirectVideoSource()
+            case .STREAMABLE:
+                return StreamableVideoSource()
+            case .VID_ME:
+                return VidMeVideoSource()
+            case .OTHER:
+                //we should never get here
+                fatalError("Video type unrecognized and unimplemented!")
+            }
+        }
     }
 
 }
 
 extension VideoMediaViewController {
-    func loadGfycat(url urlString: String) {
-        let url = URL(string: urlString)
-        URLSession.shared.dataTask(with: url!) { (data, response, error) in
-            if error != nil {
-                print(error ?? "Error loading gif...")
-            } else {
-                do {
-                    guard let json = try JSONSerialization.jsonObject(with: data!, options: []) as? NSDictionary else {
-                        return
-                    }
-
-                    let gif = GfycatJSONBase.init(dictionary: json)
-
-                    DispatchQueue.main.async {
-                        self.getVideo((gif?.gfyItem?.mp4Url)!)
-                    }
-                } catch let error as NSError {
-                    print(error)
-                }
-            }
-
-        }.resume()
-    }
-
-    func loadStreamable(url urlString: String) {
-        let url = URL(string: urlString)
-        URLSession.shared.dataTask(with: url!) { (data, response, error) in
-            if error != nil {
-                print(error ?? "Error loading gif...")
-            } else {
-                do {
-                    guard let json = try JSONSerialization.jsonObject(with: data!, options: []) as? NSDictionary else {
-                        return
-                    }
-
-                    let gif = StreamableJSONBase.init(dictionary: json)
-
-                    DispatchQueue.main.async {
-                        var video = ""
-                        if let url = gif?.files?.mp4mobile?.url {
-                            video = url
-                        } else {
-                            video = (gif?.files?.mp4?.url!)!
-                        }
-                        if (video.hasPrefix("//")) {
-                            video = "https:" + video
-                        }
-                        self.getVideo(video)
-                    }
-                } catch let error as NSError {
-                    print(error)
-                }
-            }
-
-        }.resume()
-    }
-
-    func loadVidMe(url urlString: String) {
-        let url = URL(string: urlString)
-        URLSession.shared.dataTask(with: url!) { (data, response, error) in
-            if error != nil {
-                print(error ?? "Error loading gif...")
-            } else {
-                do {
-                    guard let json = try JSONSerialization.jsonObject(with: data!, options: []) as? NSDictionary else {
-                        return
-                    }
-
-                    let gif = VidMeJSONBase.init(dictionary: json)
-
-                    DispatchQueue.main.async {
-                        self.getVideo((gif?.video?.complete_url)!)
-                    }
-                } catch let error as NSError {
-                    print(error)
-                }
-            }
-
-        }.resume()
-    }
-
-    func loadVReddit(url urlString: String) {
-        let videoURL = URL(string: urlString)
-
-        var audioURLString = urlString.substring(0, length: urlString.lastIndexOf("DASH_")!) + "audio"
-        let audioURL = URL(string: audioURLString)
-        // The resource fetched by audioURL might not exist.
-
-        let muxedURL = urlString.substring(0, length: urlString.lastIndexOf("DASH_")!) + "HLSPlaylist.m3u8"
-        self.getVideo(muxedURL)
-
-    }
 
     func loadYoutube(url urlS: String) {
+        var millis = 0
+        var video = ""
+        var playlist = ""
+        
         var url = urlS
         if (url.contains("#t=")) {
             url = url.replacingOccurrences(of: "#t=", with: url.contains("?") ? "&t=" : "?t=")
