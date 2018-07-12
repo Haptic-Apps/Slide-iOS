@@ -16,8 +16,9 @@ class SingleContentViewController: SwipeDownModalVC, UIPageViewControllerDataSou
     public init(url: URL, lq: URL?, _ commentCallback: (() -> Void)?){
         self.baseURL = url
         self.lqURL = lq
-        let media = MediaDisplayViewController.init(url: baseURL!, text: nil, lqURL: lq)
-        media.commentCallback = commentCallback
+        let media = ModalMediaViewController(model: EmbeddableMediaDataModel(baseURL: baseURL, lqURL: lq, text: nil, inAlbum: false))
+        media.embeddedVC.commentCallback = commentCallback
+
         self.vCs.append(media)//todo change this
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
     }

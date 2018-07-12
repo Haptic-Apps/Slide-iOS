@@ -141,7 +141,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
     }
 
     func hd(_ sender: AnyObject) {
-        size?.isHidden = false
+        sizeLabel?.isHidden = false
         var items: [UIBarButtonItem] = []
         if (text != nil && !(text!.isEmpty)) {
             let textB = UIBarButtonItem(image: UIImage(named: "size")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.showTitle(_:)))
@@ -192,7 +192,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
             DispatchQueue.main.async {
                 let image = SDWebImageManager.shared().imageCache.imageFromDiskCache(forKey: imageURL.absoluteString)
                 self.progressView?.setHidden(true, animated: true)
-                self.size?.isHidden = true
+                self.sizeLabel?.isHidden = true
                 self.displayImage(baseImage: image)
             }
 
@@ -204,13 +204,13 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
                 countBytes.allowedUnits = [.useMB]
                 countBytes.countStyle = .file
                 let fileSize = countBytes.string(fromByteCount: Int64(total))
-                self.size!.text = fileSize
+                self.sizeLabel!.text = fileSize
                 self.progressView!.progress = average
             }, completed: { (image, _, error, _) in
                 SDWebImageManager.shared().saveImage(toCache: image, for: imageURL)
                 DispatchQueue.main.async {
                     self.progressView?.setHidden(true, animated: true)
-                    self.size?.isHidden = true
+                    self.sizeLabel?.isHidden = true
                     self.displayImage(baseImage: image)
                 }
             })
@@ -273,12 +273,12 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
         toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
         toolbar.tintColor = UIColor.white
 
-        size = UILabel(frame: CGRect(x: 72, y: toolbar.bounds.height - 50, width: 250, height: 50))
-        size?.textAlignment = .left
-        size?.textColor = .white
-        size?.text = "Connecting..."
-        size?.font = UIFont.boldSystemFont(ofSize: 12)
-        toolbar.addSubview(size!)
+        sizeLabel = UILabel(frame: CGRect(x: 72, y: toolbar.bounds.height - 50, width: 250, height: 50))
+        sizeLabel?.textAlignment = .left
+        sizeLabel?.textColor = .white
+        sizeLabel?.text = "Connecting..."
+        sizeLabel?.font = UIFont.boldSystemFont(ofSize: 12)
+        toolbar.addSubview(sizeLabel!)
 
         progressView = MDCProgressView()
         progressView?.progress = 0
@@ -295,6 +295,13 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
         super.viewWillTransition(to: size, with: coordinator)
         toolbar.frame = CGRect.init(x: 0, y: size.height - 35, width: size.width, height: 30)
         progressView?.frame = CGRect(x: 0, y: 5 + (UIApplication.shared.statusBarView?.frame.size.height ?? 20), width: size.width, height: CGFloat(5))
+
+        // TODO: ???
+        // Will only execute if the orientation lock is off
+        if UIDevice.current.orientation.isLandscape {
+            // Undo the forced orientation
+            setOrientation(orientation: .portrait, size: size, animate: false)
+        }
     }
 
     func showTitle(_ sender: AnyObject) {
@@ -436,9 +443,13 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
         } else if (type == .VIDEO) {
             toolbar.isHidden = true
             let he = getYTHeight()
-            ytPlayer = YTPlayerView.init(frame: CGRect.init(x: 0, y: (self.view.frame.size.height - he) / 2, width: self.view.frame.size.width, height: he))
+            ytPlayer = YTPlayerView()
             ytPlayer.isHidden = true
+            ytPlayer.backgroundColor = UIColor.clear
+            ytPlayer.webView?.backgroundColor = UIColor.clear
+            ytPlayer.webView?.isOpaque = false
             self.view.addSubview(ytPlayer)
+            self.setOrientation(orientation: .landscapeLeft, size: UIScreen.main.bounds.size, animate: false)
             self.progressView?.setHidden(true, animated: true)
             getYouTube(ytPlayer, urlS: baseURL!.absoluteString)
         }
