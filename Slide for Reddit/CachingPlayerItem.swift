@@ -238,9 +238,9 @@ open class CachingPlayerItem: AVPlayerItem {
 
         addObserver(self, forKeyPath: "status", options: NSKeyValueObservingOptions.new, context: nil)
 
-        addObserver(self, forKeyPath: "actionAtItemEnd", options: NSKeyValueObservingOptions.new, context: nil)
-
         NotificationCenter.default.addObserver(self, selector: #selector(playbackStalledHandler), name:NSNotification.Name.AVPlayerItemPlaybackStalled, object: self)
+
+        NotificationCenter.default.addObserver(self, selector: #selector(didEndHandler), name: .AVPlayerItemDidPlayToEndTime, object: self)
 
     }
     
@@ -254,9 +254,9 @@ open class CachingPlayerItem: AVPlayerItem {
         
         addObserver(self, forKeyPath: "status", options: NSKeyValueObservingOptions.new, context: nil)
 
-        addObserver(self, forKeyPath: "actionAtItemEnd", options: NSKeyValueObservingOptions.new, context: nil)
-
         NotificationCenter.default.addObserver(self, selector: #selector(playbackStalledHandler), name:NSNotification.Name.AVPlayerItemPlaybackStalled, object: self)
+
+        NotificationCenter.default.addObserver(self, selector: #selector(didEndHandler), name: .AVPlayerItemDidPlayToEndTime, object: self)
         
     }
 
@@ -281,10 +281,10 @@ open class CachingPlayerItem: AVPlayerItem {
         resourceLoaderDelegate.owner = self
 
         addObserver(self, forKeyPath: "status", options: NSKeyValueObservingOptions.new, context: nil)
-        
-        addObserver(self, forKeyPath: "actionAtItemEnd", options: NSKeyValueObservingOptions.new, context: nil)
 
         NotificationCenter.default.addObserver(self, selector: #selector(playbackStalledHandler), name:NSNotification.Name.AVPlayerItemPlaybackStalled, object: self)
+
+        NotificationCenter.default.addObserver(self, selector: #selector(didEndHandler), name: .AVPlayerItemDidPlayToEndTime, object: self)
 
     }
 
@@ -293,10 +293,6 @@ open class CachingPlayerItem: AVPlayerItem {
     
 
     override open func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        print("Observed \(keyPath)")
-        if keyPath == "actionAtItemEnd"{
-            didEndHandler()
-        }
         delegate?.playerItemReadyToPlay?(self)
     }
 
