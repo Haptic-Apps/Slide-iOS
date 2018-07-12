@@ -79,14 +79,6 @@ class ModalMediaViewController: UIViewController {
                 strongSelf.unFullscreen(strongSelf.embeddedVC.view)
             }
         }
-        self.embeddedVC.view.addTapGestureRecognizer {
-            //@colejd possibly where we put the video control toggle?
-            if(self.fullscreen){
-                self.unFullscreen(self)
-            } else {
-                self.fullscreen(self)
-            }
-        }
     }
 
     static func getVCForContent(ofType type: ContentType.CType, withModel model: EmbeddableMediaDataModel) -> EmbeddableMediaViewController? {

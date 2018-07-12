@@ -125,11 +125,24 @@ class ImageMediaViewController: EmbeddableMediaViewController {
         bottomButtons.bottomAnchor == view.safeBottomAnchor - CGFloat(8)
 
     }
+    
+    func fullscreen(_ sender: AnyObject){
+        if((parent as! ModalMediaViewController).fullscreen){
+            (parent as! ModalMediaViewController).unFullscreen(self)
+        } else {
+            (parent as! ModalMediaViewController).fullscreen(self)
+        }
+    }
 
     func connectActions() {
         let dtap = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTapScrollView(recognizer:)))
         dtap.numberOfTapsRequired = 2
         scrollView.addGestureRecognizer(dtap)
+        if(parent is ModalMediaViewController){
+            let tap = UITapGestureRecognizer(target: self, action: #selector(fullscreen(_:)))
+            tap.require(toFail: dtap)
+            view.addGestureRecognizer(tap)
+        }
 
         menuButton.addTarget(self, action: #selector(showContextMenu(_:)), for: .touchUpInside)
         downloadButton.addTarget(self, action: #selector(downloadImageToLibrary(_:)), for: .touchUpInside)
