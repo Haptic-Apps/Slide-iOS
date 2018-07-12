@@ -157,7 +157,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     }
     
     func getVideo(_ toLoad: String) {
-        //get content size
+
         if (FileManager.default.fileExists(atPath: getKeyFromURL())) {
             let playerItem = CachingPlayerItem(localUrl: URL(fileURLWithPath: getKeyFromURL()))
             playerItem.delegate = self
@@ -167,17 +167,14 @@ class VideoMediaViewController: EmbeddableMediaViewController {
             videoView.player = AVPlayer(playerItem: playerItem)
             videoView.player?.play()
         } else {
-            if(videoType == .REDDIT){
-                loadVReddit(toLoad: toLoad)
-            } else {
-                let playerItem = CachingPlayerItem(url: URL(string: toLoad)!)
-                playerItem.delegate = self
-                videoView.player = AVPlayer(playerItem: playerItem)
-                if #available(iOS 10.0, *) {
-                    videoView.player?.automaticallyWaitsToMinimizeStalling = false
-                }
+            let playerItem = CachingPlayerItem(url: URL(string: toLoad)!)
+            playerItem.delegate = self
+            videoView.player = AVPlayer(playerItem: playerItem)
+            if #available(iOS 10.0, *) {
+                videoView.player?.automaticallyWaitsToMinimizeStalling = false
             }
         }
+
     }
 
     func formatUrl(sS: String) -> String {
@@ -304,133 +301,6 @@ extension VideoMediaViewController {
         }
     }
 
-    func loadVReddit(toLoad: String) {
-        var toLoadAudio = toLoad
-        toLoadAudio = toLoad.substring(0, length: toLoad.lastIndexOf("DASH_")!)
-        toLoadAudio = toLoadAudio + "audio"
-
-        if (FileManager.default.fileExists(atPath:getKeyFromURL())) {
-            getVideo(toLoad)
-        } else {
-            let finalUrl = URL.init(fileURLWithPath:getKeyFromURL())
-            let localUrlV = URL.init(fileURLWithPath:getKeyFromURL() + "video.mp4")
-            let localUrlAudio = URL.init(fileURLWithPath:getKeyFromURL() + "audio.mp4")
-            progressView.setHidden(false, animated: true, completion: nil)
-
-            let request = Alamofire.download(toLoad, method: .get, to: { (url, response) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
-                return (localUrlV, [.removePreviousFile, .createIntermediateDirectories])
-            }).downloadProgress() { progress in
-                DispatchQueue.main.async {
-                    self.progressView.progress = Float(progress.fractionCompleted)
-                    let countBytes = ByteCountFormatter()
-                    countBytes.allowedUnits = [.useMB]
-                    countBytes.countStyle = .file
-                    let fileSize = countBytes.string(fromByteCount: Int64(progress.totalUnitCount))
-                    self.size.text = fileSize
-                }
-
-                }
-                .responseData { response in
-                    if let error = response.error {
-                        print(error)
-                    } else { //no errors
-                        print("Downloaded")
-                        let request = Alamofire.download(toLoadAudio, method: .get, to: { (url, response) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
-                            return (localUrlAudio, [.removePreviousFile, .createIntermediateDirectories])
-                        }).downloadProgress() { progress in
-                            DispatchQueue.main.async {
-                                self.progressView.progress = Float(progress.fractionCompleted)
-                            }
-                            }
-                            .responseData { response2 in
-                                print(response2.response!.statusCode)
-                                if (response2.response!.statusCode != 200) {
-                                    do {
-                                        try FileManager.init().copyItem(at: localUrlV, to: finalUrl)
-                                        self.getVideo(toLoad)
-                                    } catch {
-                                        self.getVideo(toLoad)
-                                    }
-                                } else { //no errors
-                                    self.mergeFilesWithUrl(videoUrl: localUrlV, audioUrl: localUrlAudio, savePathUrl: finalUrl) {
-                                        self.getVideo(toLoad)
-                                    }
-                                }
-                        }
-                    }
-            }
-        }
-    }
-
-    //From https://stackoverflow.com/a/39100999/3697225
-    func mergeFilesWithUrl(videoUrl: URL, audioUrl: URL, savePathUrl: URL, completion: @escaping () -> Void) {
-        let mixComposition: AVMutableComposition = AVMutableComposition()
-        var mutableCompositionVideoTrack: [AVMutableCompositionTrack] = []
-        var mutableCompositionAudioTrack: [AVMutableCompositionTrack] = []
-        let totalVideoCompositionInstruction: AVMutableVideoCompositionInstruction = AVMutableVideoCompositionInstruction()
-
-
-        //start merge
-        let aVideoAsset: AVAsset = AVAsset(url: videoUrl)
-        let aAudioAsset: AVAsset = AVAsset(url: audioUrl)
-
-        mutableCompositionVideoTrack.append(mixComposition.addMutableTrack(withMediaType: AVMediaTypeVideo, preferredTrackID: kCMPersistentTrackID_Invalid))
-        mutableCompositionAudioTrack.append(mixComposition.addMutableTrack(withMediaType: AVMediaTypeAudio, preferredTrackID: kCMPersistentTrackID_Invalid))
-
-        let aVideoAssetTrack: AVAssetTrack = aVideoAsset.tracks(withMediaType: AVMediaTypeVideo)[0]
-        let aAudioAssetTrack: AVAssetTrack = aAudioAsset.tracks(withMediaType: AVMediaTypeAudio)[0]
-
-
-        do {
-            try mutableCompositionVideoTrack[0].insertTimeRange(CMTimeRangeMake(kCMTimeZero, aVideoAssetTrack.timeRange.duration), of: aVideoAssetTrack, at: kCMTimeZero)
-
-            //In my case my audio file is longer then video file so i took videoAsset duration
-            //instead of audioAsset duration
-            try mutableCompositionAudioTrack[0].insertTimeRange(CMTimeRangeMake(kCMTimeZero, aVideoAssetTrack.timeRange.duration), of: aAudioAssetTrack, at: kCMTimeZero)
-
-            //Use this instead above line if your audiofile and video file's playing durations are same
-            //            try mutableCompositionAudioTrack[0].insertTimeRange(CMTimeRangeMake(kCMTimeZero, aVideoAssetTrack.timeRange.duration), ofTrack: aAudioAssetTrack, atTime: kCMTimeZero)
-        } catch {
-            print(error.localizedDescription)
-        }
-
-        totalVideoCompositionInstruction.timeRange = CMTimeRangeMake(kCMTimeZero, aVideoAssetTrack.timeRange.duration)
-
-        let mutableVideoComposition: AVMutableVideoComposition = AVMutableVideoComposition()
-        mutableVideoComposition.frameDuration = CMTimeMake(1, 30)
-
-        mutableVideoComposition.renderSize = aVideoAssetTrack.naturalSize
-
-        //        playerItem = AVPlayerItem(asset: mixComposition)
-        //        player = AVPlayer(playerItem: playerItem!)
-        //
-        //
-        //        AVPlayerVC.player = player
-        do {
-            try  FileManager.default.removeItem(at: savePathUrl)
-        } catch {
-            print(error.localizedDescription)
-        }
-
-        //find your video on this URl
-        let assetExport: AVAssetExportSession = AVAssetExportSession(asset: mixComposition, presetName: AVAssetExportPresetHighestQuality)!
-        assetExport.outputFileType = AVFileTypeMPEG4
-        assetExport.outputURL = savePathUrl
-        assetExport.exportAsynchronously { () -> Void in
-            switch assetExport.status {
-
-            case AVAssetExportSessionStatus.completed:
-                completion()
-                print("success")
-            case AVAssetExportSessionStatus.failed:
-                print("failed \(assetExport.error)")
-            case AVAssetExportSessionStatus.cancelled:
-                print("cancelled \(assetExport.error)")
-            default:
-                print("complete")
-            }
-        }
-    }
 }
 
 extension VideoMediaViewController: CachingPlayerItemDelegate {
