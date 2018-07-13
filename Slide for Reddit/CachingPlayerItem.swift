@@ -87,6 +87,9 @@ open class CachingPlayerItem: AVPlayerItem {
                 if transformedUrl.contains("redditmedia") {
                     transformedUrl = transformedUrl.replacingOccurrences(of: ".mp4", with: ".gif")
                 }
+                if transformedUrl.contains("v.redd.it") {
+                    transformedUrl = transformedUrl.replacingOccurrences(of: ".mp4", with: "")
+                }
                 guard let finalURL = URL(string: transformedUrl),
                     let initialUrl = finalURL.withScheme(initialScheme) else {
                         fatalError("internal inconsistency")
