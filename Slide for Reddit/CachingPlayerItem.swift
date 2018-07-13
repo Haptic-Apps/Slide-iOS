@@ -90,13 +90,13 @@ open class CachingPlayerItem: AVPlayerItem {
                 if transformedUrl.contains("v.redd.it") {
                     transformedUrl = transformedUrl.replacingOccurrences(of: ".mp4", with: "")
                 }
+                
                 guard let finalURL = URL(string: transformedUrl),
                     let initialUrl = finalURL.withScheme(initialScheme) else {
                         fatalError("internal inconsistency")
                 }
 
                 startDataRequest(with: initialUrl)
-
             }
 
             pendingRequests.insert(loadingRequest)
@@ -232,8 +232,8 @@ open class CachingPlayerItem: AVPlayerItem {
 
         self.url = url
         self.initialScheme = scheme
-
-        let asset = AVURLAsset(url: urlWithCustomScheme) // Jon's note: Did `url` instead of `urlWithCustomScheme` and now HLS streaming works from v.redd.it
+        
+        let asset = AVURLAsset(url: urlWithCustomScheme)
         asset.resourceLoader.setDelegate(resourceLoaderDelegate, queue: DispatchQueue.main)
         super.init(asset: asset, automaticallyLoadedAssetKeys: nil)
 
