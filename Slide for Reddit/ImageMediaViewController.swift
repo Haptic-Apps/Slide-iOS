@@ -26,7 +26,10 @@ class ImageMediaViewController: EmbeddableMediaViewController {
 
     var forceHD = false
 
-    private var aspectConstraint: NSLayoutConstraint?
+    var imageViewTopConstraint : NSLayoutConstraint?
+    var imageViewBottomConstraint : NSLayoutConstraint?
+    var imageViewLeadingConstraint : NSLayoutConstraint?
+    var imageViewTrailingConstraint : NSLayoutConstraint?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,6 +38,11 @@ class ImageMediaViewController: EmbeddableMediaViewController {
         configureLayout()
         connectActions()
         loadContent()
+    }
+
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        updateMinZoomScaleForSize(view.bounds.size)
     }
 
 //    override func didReceiveMemoryWarning() {
@@ -46,9 +54,6 @@ class ImageMediaViewController: EmbeddableMediaViewController {
 
         scrollView = UIScrollView().then {
             $0.delegate = self
-            $0.contentSize = CGSize(width: view.frame.width, height: view.frame.height)
-            $0.minimumZoomScale = 1
-            $0.maximumZoomScale = 6.0
             $0.backgroundColor = .clear
         }
         self.view.addSubview(scrollView)
@@ -116,10 +121,10 @@ class ImageMediaViewController: EmbeddableMediaViewController {
     func configureLayout() {
         scrollView.edgeAnchors == view.edgeAnchors
 
-//        imageView.edgeAnchors == scrollView.edgeAnchors
-        imageView.centerAnchors == scrollView.centerAnchors
-        // Give the image an explicit width to initially fit to the view
-        imageView.widthAnchor == view.widthAnchor
+        imageViewTopConstraint = imageView.topAnchor == scrollView.topAnchor
+        imageViewBottomConstraint = imageView.bottomAnchor == scrollView.bottomAnchor
+        imageViewLeadingConstraint = imageView.leadingAnchor == scrollView.leadingAnchor
+        imageViewTrailingConstraint = imageView.trailingAnchor == scrollView.trailingAnchor
 
         bottomButtons.horizontalAnchors == view.safeHorizontalAnchors + CGFloat(8)
         bottomButtons.bottomAnchor == view.safeBottomAnchor - CGFloat(8)
@@ -172,25 +177,16 @@ class ImageMediaViewController: EmbeddableMediaViewController {
         loadImage(imageURL: imageURL) { [weak self] (image) in
             if let strongSelf = self {
                 strongSelf.imageView.image = image
+                strongSelf.view.layoutIfNeeded()
+
+                // Update UI
                 strongSelf.setProgressViewVisible(false)
                 strongSelf.progressView.isHidden = true
                 strongSelf.downloadButton.isHidden = false
                 strongSelf.size.isHidden = true
 
-                strongSelf.aspectConstraint?.isActive = false
-                strongSelf.aspectConstraint = strongSelf.imageView.heightAnchor == strongSelf.imageView.widthAnchor * (image.size.height / image.size.width)
             }
         }
-    }
-
-    func zoomRectForScale(scale: CGFloat, center: CGPoint) -> CGRect {
-        var zoomRect = CGRect.zero
-        zoomRect.size.height = imageView.frame.size.height / scale
-        zoomRect.size.width = imageView.frame.size.width / scale
-        let newCenter = imageView.convert(center, from: scrollView)
-        zoomRect.origin.x = newCenter.x - (zoomRect.size.width / 2.0)
-        zoomRect.origin.y = newCenter.y - (zoomRect.size.height / 2.0)
-        return zoomRect
     }
 
     func loadImage(imageURL: URL, completion: @escaping ((UIImage) -> Void) ) {
@@ -235,10 +231,12 @@ class ImageMediaViewController: EmbeddableMediaViewController {
 // MARK: - Actions
 extension ImageMediaViewController {
     @IBAction func handleDoubleTapScrollView(recognizer: UITapGestureRecognizer) {
-        if scrollView.zoomScale == 1 {
-            scrollView.zoom(to: zoomRectForScale(scale: 2.5, center: recognizer.location(in: recognizer.view)), animated: true)
+        if scrollView.zoomScale > scrollView.minimumZoomScale {
+            let zoomRect = zoomRectForScale(scale: scrollView.minimumZoomScale, center: recognizer.location(in: recognizer.view))
+            scrollView.zoom(to: zoomRect, animated: true)
+//            scrollView.setZoomScale(scrollView.minimumZoomScale, animated: true)
         } else {
-            scrollView.setZoomScale(1, animated: true)
+            scrollView.setZoomScale(scrollView.maximumZoomScale, animated: true)
         }
     }
 
@@ -333,6 +331,42 @@ extension ImageMediaViewController {
 extension ImageMediaViewController: UIScrollViewDelegate {
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return imageView
+    }
+
+    func updateMinZoomScaleForSize(_ size: CGSize) {
+        let widthScale = size.width / imageView.bounds.width
+        let heightScale = size.height / imageView.bounds.height
+        let minScale = min(widthScale, heightScale)
+
+        scrollView.minimumZoomScale = minScale
+        scrollView.zoomScale = minScale
+    }
+
+    func scrollViewDidZoom(_ scrollView: UIScrollView) {
+        updateConstraintsForSize(view.bounds.size)
+    }
+
+    func updateConstraintsForSize(_ size: CGSize) {
+
+        let yOffset = max(0, (size.height - imageView.frame.height) / 2)
+        imageViewTopConstraint?.constant = yOffset
+        imageViewBottomConstraint?.constant = yOffset
+
+        let xOffset = max(0, (size.width - imageView.frame.width) / 2)
+        imageViewLeadingConstraint?.constant = xOffset
+        imageViewTrailingConstraint?.constant = xOffset
+
+        view.layoutIfNeeded()
+    }
+
+    func zoomRectForScale(scale: CGFloat, center: CGPoint) -> CGRect {
+        var zoomRect = CGRect.zero
+        zoomRect.size.height = imageView.frame.size.height / scale
+        zoomRect.size.width = imageView.frame.size.width / scale
+        let newCenter = imageView.convert(center, from: scrollView)
+        zoomRect.origin.x = newCenter.x - (zoomRect.size.width / 2.0)
+        zoomRect.origin.y = newCenter.y - (zoomRect.size.height / 2.0)
+        return zoomRect
     }
 }
 
