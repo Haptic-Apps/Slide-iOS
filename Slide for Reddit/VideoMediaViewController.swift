@@ -188,7 +188,8 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         playbackSlider.isHidden = true
         playbackSlider.alpha = 0
         playbackSlider.tintColor = ColorUtil.accentColorForSub(sub: "")
-        playbackSlider.maximumTrackTintColor = playbackSlider.tintColor.withAlphaComponent(0.2)
+        playbackSlider.maximumTrackTintColor = playbackSlider.tintColor.withAlphaComponent(0.4)
+        max.textColor = playbackSlider.tintColor
 
         playbackSlider.setThumbImage(UIImage(named: "circle")?.getCopy(withSize: .square(size: 72), withColor: playbackSlider.tintColor), for: .normal)
         
