@@ -31,6 +31,12 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     
     var playButton: UIButton?
     var playbackSlider = UISlider()
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        videoView.player!.currentItem?.asset.cancelLoading()
+        videoView.player!.pause()
+    }
 
     // Key-value observing context
     private var playerItemContext = 0
@@ -428,7 +434,6 @@ extension VideoMediaViewController: CachingPlayerItemDelegate {
     
     
     func didReachEnd(_ playerItem: CachingPlayerItem) {
-        print("Reached end")
         self.videoView.player!.seek(to: kCMTimeZero)
         self.videoView.player!.play()
     }
@@ -613,4 +618,5 @@ extension VideoMediaViewController {
     func downloadImageToLibrary(_ sender: AnyObject) {
         fatalError("Implement this")
     }
+    
 }

@@ -85,7 +85,7 @@ open class CachingPlayerItem: AVPlayerItem {
                 // Fix the URL if we changed it to work with a reddit URL
                 var transformedUrl = interceptedUrl.absoluteString
                 if transformedUrl.contains("redditmedia") {
-                    transformedUrl = transformedUrl.replacingOccurrences(of: ".mp4", with: "")
+                    transformedUrl = transformedUrl.replacingOccurrences(of: ".mp4", with: ".gif")
                 }
                 if transformedUrl.contains("v.redd.it") {
                     transformedUrl = transformedUrl.replacingOccurrences(of: ".mp4", with: "")
