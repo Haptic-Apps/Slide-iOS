@@ -28,6 +28,9 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     
     var goToCommentsButton = UIButton()
     var showTitleButton = UIButton()
+    
+    var playButton: UIButton?
+    var playbackSlider = UISlider()
 
     // Key-value observing context
     private var playerItemContext = 0
@@ -120,7 +123,119 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         youtubeView.edgeAnchors == view.edgeAnchors
         bottomButtons.horizontalAnchors == view.safeHorizontalAnchors + CGFloat(8)
         bottomButtons.bottomAnchor == view.safeBottomAnchor - CGFloat(8)
+    }
 
+    func makeControls(){
+        playButton = UIButton.init(type: .system)
+        self.view.addSubview(playButton!)
+
+        playButton!.centerAnchors == self.videoView.centerAnchors
+        playButton!.setImage(UIImage.init(named: "pause"), for: .normal)
+        playButton!.isHidden = true
+        playButton!.tintColor = UIColor.white
+        playButton!.addTarget(self, action: #selector(MediaDisplayViewController.playButtonTapped(_:)), for: .touchUpInside)
+        playButton!.alpha = 0
+        
+        playbackSlider = UISlider()
+        self.view.addSubview(playbackSlider)
+        playbackSlider.bottomAnchor == self.bottomButtons.topAnchor - CGFloat(8)
+        playbackSlider.horizontalAnchors == self.view.horizontalAnchors + CGFloat(12)
+        playbackSlider.heightAnchor == CGFloat(16)
+        playbackSlider.minimumValue = 0
+        
+        let duration = videoView.player!.currentItem!.asset.duration
+        let seconds : Float64 = CMTimeGetSeconds(duration)
+        
+        playbackSlider.maximumValue = Float(seconds)
+        playbackSlider.isContinuous = true
+        playbackSlider.isHidden = true
+        playbackSlider.alpha = 0
+        playbackSlider.tintColor = ColorUtil.accentColorForSub(sub: "")
+        playbackSlider.setThumbImage(UIImage(named: "circle")?.getCopy(withSize: .square(size: 30), withColor: playbackSlider.tintColor), for: .normal)
+        
+        self.videoView.player!.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.05, preferredTimescale: CMTimeScale(NSEC_PER_SEC)), queue: DispatchQueue.main) { (time) in
+            self.updateSlider(time)
+        }
+        playbackSlider.addTarget(self, action: #selector(MediaDisplayViewController.playbackSliderValueChanged(_:)), for: .valueChanged)
+        playbackSlider.addTarget(self, action: #selector(MediaDisplayViewController.playbackSliderValueChanged(_:)), for: .valueChanged)
+        
+        self.view.addTapGestureRecognizer {
+            if(self.playbackSlider.isHidden){
+                self.playButton!.isHidden = false
+                self.playbackSlider.isHidden = false
+                UIView.animate(withDuration: 0.2, animations: {
+                    self.playButton!.alpha = 1
+                    self.playbackSlider.alpha = 1
+                })
+                
+                let deadlineTime = DispatchTime.now() + .seconds(2)
+                DispatchQueue.main.asyncAfter(deadline: deadlineTime, execute: {
+                    UIView.animate(withDuration: 0.2, animations: {
+                        self.playButton!.alpha = 0
+                        self.playbackSlider.alpha = 0
+                    }, completion: { (isDone) in
+                        self.playButton!.isHidden = true
+                        self.playbackSlider.isHidden = true
+                    })
+                })
+            } else {
+                UIView.animate(withDuration: 0.2, animations: {
+                    self.playButton!.alpha = 0
+                    self.playbackSlider.alpha = 0
+                }, completion: { (isDone) in
+                    self.playButton!.isHidden = true
+                    self.playbackSlider.isHidden = true
+                })
+            }
+        }
+    }
+    
+    func updateSlider(_ elapsedTime: CMTime) {
+        let playerDuration = videoView.player!.currentItem!.asset.duration
+        if CMTIME_IS_INVALID(playerDuration) {
+            playbackSlider.minimumValue = 0.0
+            return
+        }
+        let duration = Float(CMTimeGetSeconds(playerDuration))
+        if duration.isFinite && duration > 0 {
+            playbackSlider.minimumValue = 0.0
+            playbackSlider.maximumValue = duration
+            let time = Float(CMTimeGetSeconds(elapsedTime))
+            playbackSlider.setValue(time, animated: true)
+        }
+    }
+    
+    func playbackSliderValueChanged(_ playbackSlider:UISlider) {
+        
+        let seconds : Int64 = Int64(playbackSlider.value)
+        let targetTime:CMTime = CMTimeMake(seconds, 1)
+        
+        self.videoView.player?.seek(to: targetTime)
+        
+        if self.videoView.player?.rate == 0
+        {
+            self.videoView.player?.play()
+            playButton!.setImage(UIImage(named: "pause"), for: .normal)
+        }
+        let deadlineTime = DispatchTime.now() + .seconds(1)
+        DispatchQueue.main.asyncAfter(deadline: deadlineTime, execute: {
+                self.playButton!.isHidden = true
+                self.playbackSlider.isHidden = true
+        })
+    }
+    
+    func playButtonTapped(_ sender:UIButton) {
+        if self.videoView.player?.rate == 0
+        {
+            self.videoView.player?.play()
+            self.playButton!.isHidden = true
+            self.playbackSlider.isHidden = true
+            
+            playButton!.setImage(UIImage(named: "pause"), for: .normal)
+        } else {
+            self.videoView.player?.pause()
+            playButton!.setImage(UIImage(named: "play"), for: .normal)
+        }
     }
 
     func loadContent() {
@@ -308,6 +423,7 @@ extension VideoMediaViewController: CachingPlayerItemDelegate {
     func playerItemReadyToPlay(_ playerItem: CachingPlayerItem) {
         print("Player ready to play")
         videoView.player?.play()
+        makeControls()
     }
     
     
