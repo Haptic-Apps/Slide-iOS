@@ -36,12 +36,9 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        videoView.player!.currentItem?.asset.cancelLoading()
-        videoView.player!.pause()
+        videoView.player?.currentItem?.asset.cancelLoading()
+        videoView.player?.pause()
     }
-
-    // Key-value observing context
-    private var playerItemContext = 0
 
     override func viewDidLoad() {
         super.viewDidLoad()
