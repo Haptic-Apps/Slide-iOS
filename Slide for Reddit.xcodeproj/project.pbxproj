@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		09328D7820F9547B00A48983 /* VideoScrubberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09328D7720F9547B00A48983 /* VideoScrubberView.swift */; };
 		0965260520E168B200EA53BE /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0965260420E168B200EA53BE /* UIView+Extensions.swift */; };
 		0965260720E28FEE00EA53BE /* UIStackView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0965260620E28FEE00EA53BE /* UIStackView+Extensions.swift */; };
 		0965260920E2982A00EA53BE /* UIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0965260820E2982A00EA53BE /* UIImage+Extensions.swift */; };
@@ -237,6 +238,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		09328D7720F9547B00A48983 /* VideoScrubberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoScrubberView.swift; sourceTree = "<group>"; };
 		0965260420E168B200EA53BE /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
 		0965260620E28FEE00EA53BE /* UIStackView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIStackView+Extensions.swift"; sourceTree = "<group>"; };
 		0965260820E2982A00EA53BE /* UIImage+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extensions.swift"; sourceTree = "<group>"; };
@@ -524,6 +526,7 @@
 				09F48EBB20F652CF00BAC8AC /* VideoView.swift */,
 				09B2AF6120F6BC4100580F15 /* CachingPlayerItem.swift */,
 				09B2AF6320F7A2ED00580F15 /* VideoSource.swift */,
+				09328D7720F9547B00A48983 /* VideoScrubberView.swift */,
 			);
 			name = Video;
 			sourceTree = "<group>";
@@ -1432,6 +1435,7 @@
 				B776BB2D5B79A707C1A41B8C /* LiveThreadUpdate.swift in Sources */,
 				B776B2D12CF5BF9AC64427BA /* AutoCache.swift in Sources */,
 				B776B1DF80711B443ED76B61 /* SettingsPro.swift in Sources */,
+				09328D7820F9547B00A48983 /* VideoScrubberView.swift in Sources */,
 				B776B4F018104C3E2A89B878 /* SettingsBackup.swift in Sources */,
 				B776B69E386227A51C8E10DF /* MediaTableViewController.swift in Sources */,
 				B776B1E23F4DEC18069F1579 /* MediaViewController.swift in Sources */,
