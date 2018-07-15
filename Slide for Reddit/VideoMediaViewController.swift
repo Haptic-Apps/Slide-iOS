@@ -416,7 +416,6 @@ extension VideoMediaViewController: CachingPlayerItemDelegate {
         observer = self.videoView.player!.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.05, preferredTimescale: CMTimeScale(NSEC_PER_SEC)), queue: DispatchQueue.main) { [weak self] (time) in
             self?.scrubber.updateWithTime(elapsedTime: time)
         }
-        
 
         makeControls()
     }
