@@ -19,6 +19,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     var videoView = VideoView()
     var youtubeView = YTPlayerView()
     var downloadedOnce = false
+    var observer: Any?
     
     var size = UILabel()
     var videoType: VideoType!
@@ -33,6 +34,9 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        if let timeObserver = observer {
+            videoView.player?.removeTimeObserver(timeObserver)
+        }
         videoView.player?.currentItem?.asset.cancelLoading()
         videoView.player?.pause()
     }
@@ -409,7 +413,7 @@ extension VideoMediaViewController: CachingPlayerItemDelegate {
         
         // Hook up the scrubber to the player
         scrubber.totalDuration = videoView.player!.currentItem!.asset.duration
-        self.videoView.player!.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.05, preferredTimescale: CMTimeScale(NSEC_PER_SEC)), queue: DispatchQueue.main) { [weak self] (time) in
+        observer = self.videoView.player!.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.05, preferredTimescale: CMTimeScale(NSEC_PER_SEC)), queue: DispatchQueue.main) { [weak self] (time) in
             self?.scrubber.updateWithTime(elapsedTime: time)
         }
         
