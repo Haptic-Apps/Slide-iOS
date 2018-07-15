@@ -294,6 +294,7 @@ class SettingValues {
         SettingValues.disableColor = settings.bool(forKey: SettingValues.pref_disableColor)
         SettingValues.collapseDefault = settings.bool(forKey: SettingValues.pref_collapseDefault)
         SettingValues.volumeButtonNavigation = settings.bool(forKey: SettingValues.pref_volumeButtonNavigation)
+        SettingValues.hideNSFWCollection = settings.bool(forKey: SettingValues.pref_hideNSFWCollection)
         SettingValues.collapseFully = settings.bool(forKey: SettingValues.pref_collapseFully)
         SettingValues.lockCommentBars = settings.bool(forKey: SettingValues.pref_lockCommentBottomBar)
         SettingValues.autoCache = settings.bool(forKey: SettingValues.pref_autoCache)

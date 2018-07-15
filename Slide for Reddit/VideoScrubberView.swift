@@ -53,9 +53,9 @@ class VideoScrubberView: UIView {
     var timeElapsedRightConstraint: NSLayoutConstraint?
 
     var playButton = UIButton(type: .system)
-
+    
     override var intrinsicContentSize: CGSize {
-        return CGSize(width: UIViewNoIntrinsicMetric, height: 72) // Maybe 48
+        return CGSize(width: UIViewNoIntrinsicMetric, height: 12)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -74,45 +74,48 @@ class VideoScrubberView: UIView {
 //        slider.setMinimumTrackImage(UIImage.image(with: slider.tintColor).getCopy(withSize: .square(size: 72)), for: .normal)
 //        slider.setMaximumTrackImage(UIImage.image(with: slider.tintColor.withAlphaComponent(0.4)).getCopy(withSize: .square(size: 72)), for: .normal)
 //        slider.thumbTintColor = ColorUtil.accentColorForSub(sub: "")
-//        slider.minimumTrackTintColor = ColorUtil.accentColorForSub(sub: "")
-//        slider.maximumTrackTintColor = ColorUtil.accentColorForSub(sub: "").withAlphaComponent(0.4)
+        slider.minimumTrackTintColor = ColorUtil.accentColorForSub(sub: "")
+        slider.maximumTrackTintColor = ColorUtil.accentColorForSub(sub: "").withAlphaComponent(0.4)
+        slider.setThumbImage(UIImage.init(named: "circle")?.getCopy(withColor: .white), for: .normal)
         self.addSubview(slider)
 
+        self.addSubview(playButton)
+        self.addSubview(timeTotalLabel)
         slider.verticalAnchors == self.verticalAnchors
-        slider.horizontalAnchors == self.horizontalAnchors + 16
+        slider.leftAnchor == playButton.rightAnchor + 8
+        slider.bottomAnchor == self.bottomAnchor - 8
+        slider.rightAnchor == timeTotalLabel.leftAnchor - 8
+        
+        //timeElapsedLabel.font = UIFont.boldSystemFont(ofSize: 12)
+        //timeElapsedLabel.textAlignment = .center
+        //timeElapsedLabel.textColor = UIColor.white
+        //self.addSubview(timeElapsedLabel)
 
-        timeElapsedLabel.font = UIFont.boldSystemFont(ofSize: 12)
-        timeElapsedLabel.textAlignment = .center
-        timeElapsedLabel.textColor = UIColor.white
-        self.addSubview(timeElapsedLabel)
-
-        timeElapsedLabel.centerYAnchor == slider.centerYAnchor
-        timeElapsedLabel.leftAnchor >= slider.leftAnchor ~ .high
+        //timeElapsedLabel.centerYAnchor == slider.centerYAnchor
+        //timeElapsedLabel.leftAnchor >= slider.leftAnchor ~ .high
 //        timeElapsedRightConstraint = timeElapsedLabel.rightAnchor == CGFloat(slider.thumbCenterX - 16) ~ .low
 //        slider
 
         timeTotalLabel.font = UIFont.boldSystemFont(ofSize: 12)
         timeTotalLabel.textAlignment = .center
         timeTotalLabel.textColor = UIColor.white
-        self.addSubview(timeTotalLabel)
 
-        timeTotalLabel.centerYAnchor == slider.centerYAnchor
-        timeTotalLabel.rightAnchor == slider.rightAnchor - 16
+        timeTotalLabel.centerYAnchor == self.centerYAnchor
+        timeTotalLabel.rightAnchor == self.rightAnchor - 16
 
         playButton.setImage(UIImage.init(named: "pause"), for: .normal)
         playButton.tintColor = UIColor.white
         playButton.addTarget(self, action: #selector(playButtonTapped(_:)), for: .touchUpInside)
-        self.addSubview(playButton)
 
-        playButton.sizeAnchors == .square(size: 32)
-        playButton.leftAnchor == slider.leftAnchor + 16
-        playButton.centerYAnchor == slider.centerYAnchor
+        playButton.sizeAnchors == .square(size: 24)
+        playButton.leftAnchor == self.leftAnchor + 16
+        playButton.centerYAnchor == self.centerYAnchor
 
         slider.addTarget(self, action: #selector(sliderValueChanged(_:)), for: .valueChanged)
         slider.addTarget(self, action: #selector(sliderDidBeginDragging(_:)), for: .editingDidBegin)
         slider.addTarget(self, action: #selector(sliderDidEndDragging(_:)), for: .editingDidEnd)
     }
-
+    
     func updateWithTime(elapsedTime: CMTime) {
         if CMTIME_IS_INVALID(elapsedTime) {
             slider.minimumValue = 0.0
@@ -161,120 +164,10 @@ extension VideoScrubberView {
     }
 }
 
-public class ThickSlider : UIControl {
-
-    var minimumValue: Float = 0 {
-        didSet {
-//            setNeedsDisplay()
-        }
+public class ThickSlider : UISlider {
+    override public func trackRect(forBounds bounds: CGRect) -> CGRect {
+        var result = super.trackRect(forBounds: bounds)
+        result.size.height = 12
+        return result
     }
-    var maximumValue: Float = 1 {
-        didSet {
-//            setNeedsDisplay()
-        }
-    }
-
-    var value: Float = 0 {
-        didSet {
-            setNeedsDisplay()
-//            sendActions(for: .valueChanged)
-        }
-    }
-
-    override public init(frame: CGRect) {
-        super.init(frame: frame)
-
-        backgroundColor = .clear
-    }
-
-    required public init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
-
-    func setValue(_ newValue: Float, animated: Bool) {
-        value = newValue
-    }
-
-//    func positionForValue(value: Float) -> CGFloat {
-//        return bounds.width * CGFloat((value - minimumValue) / (maximumValue - minimumValue))
-//    }
-
-    // Only override draw() if you perform custom drawing.
-    // An empty implementation adversely affects performance during animation.
-    override public func draw(_ rect: CGRect) {
-        let ctx = UIGraphicsGetCurrentContext()
-        ctx!.clear(rect)
-
-        let bgPath = UIBezierPath(roundedRect: bounds, cornerRadius: bounds.size.height / 2)
-
-        // Clip
-        let layerMask = CAShapeLayer()
-        layerMask.path = bgPath.cgPath
-        layer.mask = layerMask
-
-        // Background
-        tintColor.withAlphaComponent(0.4).setFill()
-        bgPath.fill()
-
-        // Foreground
-        tintColor.setFill()
-        let prog: CGFloat = CGFloat((value - minimumValue) / (maximumValue - minimumValue))
-        let fgRect = CGRect(x: bounds.origin.x, y: bounds.origin.y, width: bounds.size.width * prog, height: bounds.size.height)
-        let fgPath = UIBezierPath(rect: fgRect)
-
-        fgPath.fill()
-    }
-
-    func lerp(low: Float, high: Float, t: Float) -> Float {
-        return low * (1 - t) + high * t
-    }
-}
-
-extension ThickSlider {
-    override public func beginTracking(_ touch: UITouch, with event: UIEvent?) -> Bool {
-        sendActions(for: .editingDidBegin)
-        return true
-    }
-
-    override public func continueTracking(_ touch: UITouch, with event: UIEvent?) -> Bool {
-        let loc = touch.location(in: self)
-
-        var v = Float(loc.x) / Float(size.width)
-        v = max(v, 0)
-        v = min(v, 1)
-
-        value = lerp(low: minimumValue, high: maximumValue, t: v)
-        self.setNeedsDisplay()
-        sendActions(for: .valueChanged)
-
-        return true
-    }
-
-    override public func endTracking(_ touch: UITouch?, with event: UIEvent?) {
-        sendActions(for: .editingDidEnd)
-    }
-//    override open func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-//
-//        if let touch = touches.first {
-//            let loc = touch.location(in: self)
-//
-//            var v = Float(loc.x) / Float(size.width)
-//            v = max(v, 0)
-//            v = min(v, 1)
-//
-//            value = lerp(low: minimumValue, high: maximumValue, t: v)
-//            self.setNeedsDisplay()
-//            sendActions(for: .valueChanged)
-//
-//        }
-//    }
-//    override open func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        sendActions(for: .editingDidBegin)
-//    }
-//
-//    override open func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        if touches.count == 0 {
-//            sendActions(for: .editingDidEnd)
-//        }
-//    }
 }
