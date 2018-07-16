@@ -528,6 +528,14 @@ extension VideoMediaViewController: YTPlayerViewDelegate {
         scrubber.totalDuration = CMTime(value: CMTimeValue(playerView.duration()), timescale: CMTimeScale(NSEC_PER_SEC))
     }
 
+    func displayLinkDidUpdate(displaylink: CADisplayLink) {
+        if let player = videoView.player {
+            if !sliderBeingUsed {
+                scrubber.updateWithTime(elapsedTime: player.currentTime())
+            }
+        }
+    }
+
     func playerView(_ playerView: YTPlayerView, didPlayTime playTime: Float) {
         if !sliderBeingUsed {
             self.scrubber.updateWithTime(elapsedTime: CMTime(value: CMTimeValue(playTime), timescale: CMTimeScale(NSEC_PER_SEC)))
