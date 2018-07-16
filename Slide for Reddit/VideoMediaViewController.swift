@@ -19,7 +19,6 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     var videoView = VideoView()
     var youtubeView = YTPlayerView()
     var downloadedOnce = false
-    var observer: Any?
     
     var size = UILabel()
     var videoType: VideoType!
@@ -39,17 +38,10 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     var timer: Timer?
     var cancelled = false
 
-    deinit {
-        if let observer = observer {
-            videoView.player?.removeTimeObserver(observer)
-        }
-    }
+    var displayLink: CADisplayLink?
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        if let timeObserver = observer {
-            videoView.player?.removeTimeObserver(timeObserver)
-        }
         timer?.invalidate()
         request?.cancel()
         NotificationCenter.default.removeObserver(self)
@@ -68,11 +60,22 @@ class VideoMediaViewController: EmbeddableMediaViewController {
 
         loadContent()
         handleHideUI()
+
+        displayLink = CADisplayLink(target: self, selector: #selector(displayLinkDidUpdate))
+        displayLink?.add(to: .current, forMode: .defaultRunLoopMode)
+        displayLink?.isPaused = true
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        displayLink?.isPaused = false
     }
 
     override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
         // Re-enable screen dimming due to inactivity
         UIApplication.shared.isIdleTimerDisabled = false
+        displayLink?.isPaused = true
     }
 
 //    override func didReceiveMemoryWarning() {
@@ -278,9 +281,6 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         videoView.player?.play()
         
         scrubber.totalDuration = videoView.player!.currentItem!.asset.duration
-        observer = self.videoView.player!.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.05, preferredTimescale: CMTimeScale(NSEC_PER_SEC)), queue: DispatchQueue.main) { [weak self] (time) in
-            self?.scrubber.updateWithTime(elapsedTime: time)
-        }
 
         NotificationCenter.default.addObserver(self, selector: #selector(playerItemDidreachEnd), name: .AVPlayerItemDidPlayToEndTime, object: playerItem)
     }
@@ -423,11 +423,12 @@ extension VideoMediaViewController: CachingPlayerItemDelegate {
         
         // Hook up the scrubber to the player
         scrubber.totalDuration = videoView.player!.currentItem!.asset.duration
-        observer = self.videoView.player!.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.05, preferredTimescale: CMTimeScale(NSEC_PER_SEC)), queue: DispatchQueue.main) { [weak self] (time) in
-            if let strongSelf = self {
-                if !strongSelf.sliderBeingUsed {
-                    strongSelf.scrubber.updateWithTime(elapsedTime: time)
-                }
+    }
+
+    func displayLinkDidUpdate(displaylink: CADisplayLink) {
+        if let player = videoView.player {
+            if !sliderBeingUsed {
+                scrubber.updateWithTime(elapsedTime: player.currentTime())
             }
         }
     }
