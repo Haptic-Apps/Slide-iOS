@@ -191,7 +191,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
                     metrics: metrics,
                     views: views))
         }
-        lsC.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[label]-4-[info]-4-[body]-8-|",
+        lsC.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-16-[label]-4-[info]-4-[body]-16-|",
                 options: NSLayoutFormatOptions(rawValue: 0),
                 metrics: metrics,
                 views: views))

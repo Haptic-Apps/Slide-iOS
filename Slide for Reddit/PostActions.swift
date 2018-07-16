@@ -11,6 +11,7 @@ import XLActionController
 import RLBAlertsPickers
 import reddift
 import RealmSwift
+import ActionSheetPicker_3_0
 
 protocol SubmissionMoreDelegate: class {
     func save(_ cell: LinkCellView)
@@ -424,6 +425,52 @@ class PostActions : NSObject {
     }
     
     static func modRemove(_ cell: LinkCellView, spam: Bool = false) {
+        do {
+            try (UIApplication.shared.delegate as! AppDelegate).session?.ruleList(cell.link!.subreddit, completion: { (result) in
+                switch(result){
+                case .success(let rules):
+                    DispatchQueue.main.async {
+                        showRemovalReasons(cell, rules: rules, spam: spam)
+                    }
+                    break
+                case .failure(let error):
+                    DispatchQueue.main.async {
+                        showRemovalReasons(cell, rules: [RuleTemplate](), spam: spam)
+                    }
+                }
+            })
+        } catch {
+            showRemovalReasons(cell, rules: [RuleTemplate](), spam: spam)
+        }
+    }
+    
+    static func showRemovalReasons(_ cell: LinkCellView, rules: [RuleTemplate], spam: Bool = false){
+        var reasons : [String] = ["Custom reason", "Spam", "Removal not spam"]
+        for rule in rules {
+            reasons.append(rule.violatonReason + "\n" + rule.description)
+        }
+        var picker = ActionSheetStringPicker(title: "Choose a removal reason", rows: reasons, initialSelection: 0, doneBlock: { (picker, index, value) in
+            //todo this
+            if(index == 0){
+                modRemoveReason(cell, reason: "")
+            } else if(index == 1){
+                removeNoReason(cell)
+            } else if(index == 2){
+                removeNoReason(cell, spam: true)
+            } else {
+                modRemoveReason(cell, reason: reasons[index])
+            }
+        }, cancel: { (picker) in
+            return
+        }, origin: cell.contentView)
+        
+        let doneButton = UIBarButtonItem.init(title: "Remove", style: .done, target: nil, action: nil)
+        picker?.setDoneButton(doneButton)
+        picker?.show()
+
+    }
+    
+    static func removeNoReason(_ cell: LinkCellView, spam: Bool = false){
         let id = cell.link!.id
         do {
             try (UIApplication.shared.delegate as! AppDelegate).session?.remove(id, spam: spam, completion: { (result) -> Void in
@@ -451,10 +498,10 @@ class PostActions : NSObject {
         }
     }
     
-    static func modRemoveReason(_ cell: LinkCellView, spam: Bool = false) {
+    static func modRemoveReason(_ cell: LinkCellView, reason: String) {
         let id = cell.link!.id
         do {
-            try (UIApplication.shared.delegate as! AppDelegate).session?.remove(id, spam: spam, completion: { (result) -> Void in
+            try (UIApplication.shared.delegate as! AppDelegate).session?.remove(id, spam: false, completion: { (result) -> Void in
                 switch result {
                 case .failure(let error):
                     print(error.description)
@@ -469,6 +516,13 @@ class PostActions : NSObject {
                     }
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Submission removed!", color: ColorUtil.accentColorForSub(sub: cell.link!.subreddit), seconds: 3, context: cell.parentViewController)
+                        VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(submission: cell.link!, sub: cell.link!.subreddit, modMessage: reason, completion: { (link) in
+                            if let link = link {
+                                BannerUtil.makeBanner(text: "Removal reason posted!", color: ColorUtil.accentColorForSub(sub: cell.link!.subreddit), seconds: 3, context: cell.parentViewController)
+                            } else {
+                                BannerUtil.makeBanner(text: "Removal reason not posted!", color: GMColor.red500Color(), seconds: 3, context: cell.parentViewController)
+                            }
+                        })), parentVC: cell.parentViewController!)
                     }
                     break
                 }
