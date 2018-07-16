@@ -164,10 +164,10 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         }
     }
     
-    func startTimerToHide(){
+    func startTimerToHide(_ duration: Double = 2){
         cancelled = false
         timer?.invalidate()
-        timer = Timer.scheduledTimer(timeInterval: 2,
+        timer = Timer.scheduledTimer(timeInterval: duration,
                                      target: self,
                                      selector: #selector(self.handleHideUI),
                                      userInfo: nil,
@@ -649,7 +649,7 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
 
     func sliderDidEndDragging() {
         self.videoView.player?.play()
-        self.handleHideUI()
+        self.startTimerToHide(1)
     }
 }
 
