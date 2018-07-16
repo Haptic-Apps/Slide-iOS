@@ -1,9 +1,9 @@
 PODS:
   - ActionSheetPicker-3.0 (2.2.0)
-  - Alamofire (4.7.2)
+  - Alamofire (4.7.3)
   - Anchorage (4.2.4)
   - BadgeSwift (5.0.1)
-  - BiometricAuthentication (2.0)
+  - BiometricAuthentication (2.0.2)
   - DTCoreText (1.6.21):
     - DTCoreText/Core (= 1.6.21)
     - DTFoundation/Core (~> 1.7.5)
@@ -22,16 +22,18 @@ PODS:
   - DTFoundation/UIKit (1.7.13):
     - DTFoundation/Core
   - LicensesViewController (0.6.5)
-  - MaterialComponents/ActivityIndicator (56.0.0):
+  - MaterialComponents/ActivityIndicator (57.0.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Application
     - MDFInternationalization
     - MotionAnimator (~> 2.0)
-  - MaterialComponents/AnimationTiming (56.0.0)
-  - MaterialComponents/BottomSheet (56.0.0):
+  - MaterialComponents/AnimationTiming (57.0.0)
+  - MaterialComponents/BottomSheet (57.0.0):
     - MaterialComponents/private/KeyboardWatcher
     - MaterialComponents/private/Math
-  - MaterialComponents/Buttons (56.0.0):
+    - MaterialComponents/private/ShapeLibrary
+    - MaterialComponents/private/Shapes
+  - MaterialComponents/Buttons (57.0.0):
     - MaterialComponents/Ink
     - MaterialComponents/private/Math
     - MaterialComponents/private/Shapes
@@ -40,25 +42,28 @@ PODS:
     - MaterialComponents/Typography
     - MDFInternationalization
     - MDFTextAccessibility
-  - MaterialComponents/Ink (56.0.0):
+  - MaterialComponents/Ink (57.0.0):
     - MaterialComponents/private/Math
-  - MaterialComponents/Palettes (56.0.0)
-  - MaterialComponents/private/Application (56.0.0)
-  - MaterialComponents/private/KeyboardWatcher (56.0.0):
+  - MaterialComponents/Palettes (57.0.0)
+  - MaterialComponents/private/Application (57.0.0)
+  - MaterialComponents/private/KeyboardWatcher (57.0.0):
     - MaterialComponents/private/Application
-  - MaterialComponents/private/Math (56.0.0)
-  - MaterialComponents/private/Shapes (56.0.0):
+  - MaterialComponents/private/Math (57.0.0)
+  - MaterialComponents/private/ShapeLibrary (57.0.0):
+    - MaterialComponents/private/Math
+    - MaterialComponents/private/Shapes
+  - MaterialComponents/private/Shapes (57.0.0):
     - MaterialComponents/private/Math
     - MaterialComponents/ShadowLayer
-  - MaterialComponents/ProgressView (56.0.0):
+  - MaterialComponents/ProgressView (57.0.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
     - MDFInternationalization
     - MotionAnimator (~> 2.1)
-  - MaterialComponents/ShadowElevations (56.0.0)
-  - MaterialComponents/ShadowLayer (56.0.0):
+  - MaterialComponents/ShadowElevations (57.0.0)
+  - MaterialComponents/ShadowLayer (57.0.0):
     - MaterialComponents/ShadowElevations
-  - MaterialComponents/Tabs (56.0.0):
+  - MaterialComponents/Tabs (57.0.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Ink
     - MaterialComponents/private/Math
@@ -66,14 +71,15 @@ PODS:
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/TextFields (56.0.0):
+  - MaterialComponents/TextFields (57.0.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
     - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/Typography (56.0.0):
+  - MaterialComponents/Typography (57.0.0):
     - MaterialComponents/private/Application
+    - MaterialComponents/private/Math
   - MDFInternationalization (1.0.4)
   - MDFTextAccessibility (1.2.0)
   - MKColorPicker (1.2)
@@ -137,6 +143,31 @@ DEPENDENCIES:
   - TTTAttributedLabel
   - XLActionController (from `https://github.com/ccrama/XLActionController`)
 
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - Alamofire
+    - Anchorage
+    - BadgeSwift
+    - BiometricAuthentication
+    - DTFoundation
+    - LicensesViewController
+    - MaterialComponents
+    - MDFInternationalization
+    - MDFTextAccessibility
+    - MKColorPicker
+    - MotionAnimator
+    - MotionInterchange
+    - MTColorDistance
+    - Realm
+    - RealmSwift
+    - SDWebImage
+    - SideMenu
+    - Starscream
+    - SwiftSpreadsheet
+    - SwiftyJSON
+    - Then
+    - TTTAttributedLabel
+
 EXTERNAL SOURCES:
   ActionSheetPicker-3.0:
     :git: https://github.com/ccrama/ActionSheetPicker-3.0
@@ -159,7 +190,7 @@ CHECKOUT OPTIONS:
     :commit: 1e48b2ff36f1218fb69ed88678297b204ebcc144
     :git: https://github.com/Cocoanetics/DTCoreText
   reddift:
-    :commit: 5a0ddf315e8b9c9d9435abc9a84b907bc9ef0dfe
+    :commit: f05486d771b8719c9b8ec025f63f3a4c4b8ec924
     :git: https://github.com/ccrama/reddift
   RLBAlertsPickers:
     :commit: 583f111c780546a42320c406f1fcf21f9f2caf30
@@ -173,14 +204,14 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   ActionSheetPicker-3.0: d11a4c12c6aaf704b8a3f56d179198c99f3e41e6
-  Alamofire: e4fa87002c137ba2d8d634d2c51fabcda0d5c223
+  Alamofire: c7287b6e5d7da964a70935e5db17046b7fde6568
   Anchorage: f855157310859280c706cc0b9c9281c21702f515
   BadgeSwift: 3defa56f504bfb46f2300122c4a565ec9e405c1e
-  BiometricAuthentication: fce6c7537fba0192a395834657e75ccb4d89d9f0
+  BiometricAuthentication: ce2f923d4df7a4b340e154137e7b47e544abc1ae
   DTCoreText: e5d688cffc9f6a61eddd1a4f94e2046851230de3
   DTFoundation: f03be9fd786f11e505bb8fc44e2a3732bf0917df
   LicensesViewController: 1f2982b1bab8402d3f88e23197957038e8abb907
-  MaterialComponents: e4edce947dba33f9c4dd14c34024602999afcbed
+  MaterialComponents: 0dfd3bf21642f205ecd59d633a4492e14571e53f
   MDFInternationalization: e355b0cebecf53d60233bd267084e49366c82513
   MDFTextAccessibility: 94098925e0853551c5a311ce7c1ecefbe297cdb6
   MKColorPicker: 8998b2ab977e4f240fdf254db27a18b810da3cfc
@@ -203,4 +234,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 1cdd763e932f750104bf1e58f8d224f80b252593
 
-COCOAPODS: 1.4.0
+COCOAPODS: 1.5.3
