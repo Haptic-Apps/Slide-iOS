@@ -10,7 +10,6 @@ target 'Slide for Reddit' do
   pod 'SDWebImage', '~>3.8'
   pod 'SideMenu'
   pod 'MaterialComponents/AnimationTiming'
-  pod 'MaterialComponents/Buttons'
   pod 'MaterialComponents/Ink'
   pod 'MaterialComponents/Palettes'
   pod 'MaterialComponents/TextFields'

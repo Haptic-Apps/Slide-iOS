@@ -290,14 +290,19 @@ class VideoMediaViewController: EmbeddableMediaViewController {
                 if (response2.response!.statusCode != 200) {
                     do {
                         try FileManager.init().copyItem(at: localUrlV, to: finalUrl)
-                        self.playVideo()
+                        DispatchQueue.main.async {
+                            self.playVideo()
+                        }
                     } catch {
-                        self.playVideo()
+                        DispatchQueue.main.async {
+                            self.playVideo()
+                        }
                     }
                 } else { //no errors
-                    print(response2.request!.url!.absoluteString)
                     self.mergeFilesWithUrl(videoUrl: localUrlV, audioUrl: localUrlAudio, savePathUrl: finalUrl) {
-                        self.playVideo()
+                        DispatchQueue.main.async {
+                            self.playVideo()
+                        }
                     }
                 }
         }
