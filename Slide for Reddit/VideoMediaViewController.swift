@@ -649,7 +649,7 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
 
     func sliderDidEndDragging() {
         self.videoView.player?.play()
-        self.startTimerToHide()
+        self.handleHideUI()
     }
 }
 
