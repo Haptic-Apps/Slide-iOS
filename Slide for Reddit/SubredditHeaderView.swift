@@ -238,8 +238,8 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
 
     func showTimeMenu(s: LinkSortType, selector: UITableViewCell) {
         if (s == .hot || s == .new) {
-            UserDefaults.standard.set(s.path, forKey: self.subreddit!.displayName + "Sorting")
-            UserDefaults.standard.set(TimeFilterWithin.day.param, forKey: self.subreddit!.displayName + "Time")
+            UserDefaults.standard.set(s.path, forKey: self.subreddit!.displayName.lowercased() + "Sorting")
+            UserDefaults.standard.set(TimeFilterWithin.day.param, forKey: self.subreddit!.displayName.lowercased() + "Time")
             UserDefaults.standard.synchronize()
             return
         } else {
@@ -253,9 +253,8 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
 
             for t in TimeFilterWithin.cases {
                 let saveActionButton: UIAlertAction = UIAlertAction(title: t.param, style: .default) { action -> Void in
-                    print("Sort is \(s) and time is \(t)")
-                    UserDefaults.standard.set(s.path, forKey: self.subreddit!.displayName + "Sorting")
-                    UserDefaults.standard.set(t.param, forKey: self.subreddit!.displayName + "Time")
+                    UserDefaults.standard.set(s.path, forKey: self.subreddit!.displayName.lowercased() + "Sorting")
+                    UserDefaults.standard.set(t.param, forKey: self.subreddit!.displayName.lowercased() + "Time")
                     UserDefaults.standard.synchronize()
                 }
                 

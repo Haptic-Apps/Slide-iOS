@@ -196,7 +196,7 @@ class SettingValues {
     }
 
     public static func getLinkSorting(forSubreddit: String) -> LinkSortType {
-        if let sorting = UserDefaults.standard.string(forKey: forSubreddit + "Sorting") {
+        if let sorting = UserDefaults.standard.string(forKey: forSubreddit.lowercased() + "Sorting") {
             for s in LinkSortType.cases {
                 if (s.path == sorting) {
                     return s
@@ -207,7 +207,7 @@ class SettingValues {
     }
 
     public static func getTimePeriod(forSubreddit: String) -> TimeFilterWithin {
-        if let time = UserDefaults.standard.string(forKey: forSubreddit + "Time") {
+        if let time = UserDefaults.standard.string(forKey: forSubreddit.lowercased() + "Time") {
             for t in TimeFilterWithin.cases {
                 if (t.param == time) {
                     return t

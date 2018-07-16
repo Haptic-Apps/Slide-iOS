@@ -480,6 +480,9 @@ class SingleSubredditViewController: MediaViewController {
             SingleSubredditViewController.firstPresented = false
         }
 
+        self.sort = SettingValues.getLinkSorting(forSubreddit: self.sub)
+        self.time = SettingValues.getTimePeriod(forSubreddit: self.sub)
+
         if (single) {
 
             let sort = UIButton.init(type: .custom)
@@ -509,9 +512,6 @@ class SingleSubredditViewController: MediaViewController {
                 toolbarItems = [flexButton, moreB]
             }
             title = sub
-
-            self.sort = SettingValues.getLinkSorting(forSubreddit: self.sub)
-            self.time = SettingValues.getTimePeriod(forSubreddit: self.sub)
 
             do {
                 try (UIApplication.shared.delegate as! AppDelegate).session?.about(sub, completion: { (result) in
