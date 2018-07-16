@@ -108,7 +108,7 @@ class VideoScrubberView: UIView {
         playButton.tintColor = UIColor.white
         playButton.addTarget(self, action: #selector(playButtonTapped(_:)), for: .touchUpInside)
 
-        playButton.sizeAnchors == .square(size: 24)
+        playButton.sizeAnchors == .square(size: 36)
         playButton.leftAnchor == self.leftAnchor + 16
         playButton.centerYAnchor == self.centerYAnchor
 
