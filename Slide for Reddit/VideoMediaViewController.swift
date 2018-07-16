@@ -521,19 +521,23 @@ extension VideoMediaViewController {
     
 }*/
 
-extension VideoMediaViewController: YTPlayerViewDelegate {
-
-    func playerViewDidBecomeReady(_ playerView: YTPlayerView) {
-        youtubeView.playVideo()
-        scrubber.totalDuration = CMTime(value: CMTimeValue(playerView.duration()), timescale: CMTimeScale(NSEC_PER_SEC))
-    }
-
+extension VideoMediaViewController {
+    
     func displayLinkDidUpdate(displaylink: CADisplayLink) {
         if let player = videoView.player {
             if !sliderBeingUsed {
                 scrubber.updateWithTime(elapsedTime: player.currentTime())
             }
         }
+    }
+
+}
+
+extension VideoMediaViewController: YTPlayerViewDelegate {
+
+    func playerViewDidBecomeReady(_ playerView: YTPlayerView) {
+        youtubeView.playVideo()
+        scrubber.totalDuration = CMTime(value: CMTimeValue(playerView.duration()), timescale: CMTimeScale(NSEC_PER_SEC))
     }
 
     func playerView(_ playerView: YTPlayerView, didPlayTime playTime: Float) {
