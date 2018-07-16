@@ -180,6 +180,17 @@ class PostActions : NSObject {
             }))
         }
         
+        if(cell.link!.removed){
+            var action = Action(ActionData(title: "Removed by u/\(cell.link!.removedBy)", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { action in
+            })
+            action.enabled = false
+            alertController.addAction(action)
+        } else {
+            alertController.addAction(Action(ActionData(title: "Remove", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { action in
+                self.modRemove(cell)
+            }))
+        }
+
         alertController.addAction(Action(ActionData(title: "Ban user", image: UIImage(named: "ban")!.menuIcon()), style: .default, handler: { action in
             //todo show dialog for this
         }))
@@ -236,16 +247,6 @@ class PostActions : NSObject {
             }
         }
         
-        if(cell.link!.removed){
-            var action = Action(ActionData(title: "Removed by u/\(cell.link!.removedBy)", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { action in
-            })
-            action.enabled = false
-            alertController.addAction(action)
-        } else {
-            alertController.addAction(Action(ActionData(title: "Remove", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { action in
-                self.modRemove(cell)
-            }))
-        }
         
         alertController.addAction(Action(ActionData(title: "Mark as spam", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { action in
             self.modRemove(cell, spam: true)
