@@ -22,8 +22,10 @@ class SwipeDownModalVC: ColorMuxPagingViewController {
         super.viewDidLoad()
         panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panGestureAction(_:)))
         panGestureRecognizer2 = UIPanGestureRecognizer(target: self, action: #selector(panGestureAction(_:)))
+        panGestureRecognizer!.delegate = self
         panGestureRecognizer!.direction = .vertical
         panGestureRecognizer2!.direction = .horizontal
+        panGestureRecognizer!.cancelsTouchesInView = false
         
         view.addGestureRecognizer(panGestureRecognizer!)
         view.addGestureRecognizer(panGestureRecognizer2!)
@@ -84,4 +86,29 @@ class SwipeDownModalVC: ColorMuxPagingViewController {
         }
     }
 
+}
+
+extension UIView {
+    // Returns true if the class is a subclass of or is identical to the given class
+    func hasParentOfClass(_ theClass: UIView.Type) -> Bool {
+        if type(of: self).isSubclass(of: theClass) {
+            return true
+        }
+
+        return superview?.hasParentOfClass(theClass) ?? false
+    }
+}
+
+extension SwipeDownModalVC: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+
+        // Reject the touch if it lands in a UIControl.
+        if let view = touch.view {
+            return !view.hasParentOfClass(UIControl.self)
+        }
+        else {
+            return true
+        }
+
+    }
 }
