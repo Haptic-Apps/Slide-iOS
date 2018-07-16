@@ -31,6 +31,15 @@ PODS:
   - MaterialComponents/BottomSheet (56.0.0):
     - MaterialComponents/private/KeyboardWatcher
     - MaterialComponents/private/Math
+  - MaterialComponents/Buttons (56.0.0):
+    - MaterialComponents/Ink
+    - MaterialComponents/private/Math
+    - MaterialComponents/private/Shapes
+    - MaterialComponents/ShadowElevations
+    - MaterialComponents/ShadowLayer
+    - MaterialComponents/Typography
+    - MDFInternationalization
+    - MDFTextAccessibility
   - MaterialComponents/Ink (56.0.0):
     - MaterialComponents/private/Math
   - MaterialComponents/Palettes (56.0.0)
@@ -38,6 +47,9 @@ PODS:
   - MaterialComponents/private/KeyboardWatcher (56.0.0):
     - MaterialComponents/private/Application
   - MaterialComponents/private/Math (56.0.0)
+  - MaterialComponents/private/Shapes (56.0.0):
+    - MaterialComponents/private/Math
+    - MaterialComponents/ShadowLayer
   - MaterialComponents/ProgressView (56.0.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
@@ -63,6 +75,7 @@ PODS:
   - MaterialComponents/Typography (56.0.0):
     - MaterialComponents/private/Application
   - MDFInternationalization (1.0.4)
+  - MDFTextAccessibility (1.2.0)
   - MKColorPicker (1.2)
   - MotionAnimator (2.8.1):
     - MotionInterchange (~> 1.6)
@@ -102,6 +115,7 @@ DEPENDENCIES:
   - MaterialComponents/ActivityIndicator
   - MaterialComponents/AnimationTiming
   - MaterialComponents/BottomSheet
+  - MaterialComponents/Buttons
   - MaterialComponents/Ink
   - MaterialComponents/Palettes
   - MaterialComponents/ProgressView
@@ -168,6 +182,7 @@ SPEC CHECKSUMS:
   LicensesViewController: 1f2982b1bab8402d3f88e23197957038e8abb907
   MaterialComponents: e4edce947dba33f9c4dd14c34024602999afcbed
   MDFInternationalization: e355b0cebecf53d60233bd267084e49366c82513
+  MDFTextAccessibility: 94098925e0853551c5a311ce7c1ecefbe297cdb6
   MKColorPicker: 8998b2ab977e4f240fdf254db27a18b810da3cfc
   MotionAnimator: ee16aa30567c5bae0fb2750c132915829cfaaf8a
   MotionInterchange: ead0e3ae1f3a5fb539e289debbc7ae036160a10d
@@ -186,6 +201,6 @@ SPEC CHECKSUMS:
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   XLActionController: 007868251c0eed70d649d06c1625259b73b3a600
 
-PODFILE CHECKSUM: 5c4911674f31fe3a58d4003d7bbcea446082b721
+PODFILE CHECKSUM: 1cdd763e932f750104bf1e58f8d224f80b252593
 
 COCOAPODS: 1.4.0
