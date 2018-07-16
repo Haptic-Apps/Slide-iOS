@@ -16,9 +16,6 @@ class DirectVideoSource: VideoSource {
     func load(url: String, completion: @escaping (String) -> Void) {
 
         var finalURL = url
-        if finalURL.contains("redditmedia") {
-            finalURL = finalURL.replacingOccurrences(of: ".gif", with: ".mp4")
-        }
         if finalURL.contains("imgur.com") {
             finalURL = finalURL.replacingOccurrences(of: ".gifv", with: ".mp4")
             finalURL = finalURL.replacingOccurrences(of: ".gif", with: ".mp4")
@@ -58,7 +55,7 @@ class GfycatVideoSource: VideoSource {
 
 class RedditVideoSource: VideoSource {
     func load(url: String, completion: @escaping (String) -> Void) {
-        let muxedURL = url + ".mp4"
+        let muxedURL = url
         completion(muxedURL)
     }
 }

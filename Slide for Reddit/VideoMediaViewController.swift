@@ -26,7 +26,8 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     
     var menuButton = UIButton()
     var downloadButton = UIButton()
-    
+    var request: DownloadRequest?
+
     var goToCommentsButton = UIButton()
     var showTitleButton = UIButton()
 
@@ -37,7 +38,8 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         if let timeObserver = observer {
             videoView.player?.removeTimeObserver(timeObserver)
         }
-        videoView.player?.currentItem?.asset.cancelLoading()
+        request?.cancel()
+        NotificationCenter.default.removeObserver(self)
         videoView.player?.pause()
     }
 
@@ -260,25 +262,55 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     }
     
     func getVideo(_ toLoad: String) {
-
         if (FileManager.default.fileExists(atPath: getKeyFromURL())) {
-            let playerItem = CachingPlayerItem(localUrl: URL(fileURLWithPath: getKeyFromURL()))
-            playerItem.delegate = self
-            progressView.alpha = 0
-            progressView.progress = 1
-            size.isHidden = true
-            videoView.player = AVPlayer(playerItem: playerItem)
-            videoView.player?.play()
+            playVideo()
         } else {
-            let playerItem = CachingPlayerItem(url: URL(string: toLoad)!)
-            playerItem.delegate = self
-            videoView.player = AVPlayer(playerItem: playerItem)
-            if #available(iOS 10.0, *) {
-                videoView.player?.automaticallyWaitsToMinimizeStalling = false
+            request = Alamofire.download(toLoad, method: .get, to: { (url, response) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
+                return (URL(fileURLWithPath: self.getKeyFromURL()), [.createIntermediateDirectories])
+                
+            }).downloadProgress() { progress in
+                DispatchQueue.main.async {
+                    self.progressView.progress = Float(progress.fractionCompleted)
+                    let countBytes = ByteCountFormatter()
+                    countBytes.allowedUnits = [.useMB]
+                    countBytes.countStyle = .file
+                    let fileSize = countBytes.string(fromByteCount: Int64(progress.totalUnitCount))
+                    self.size.text = fileSize
+                }
+                }.responseData { response in
+                    if let error = response.error {
+                        print(error)
+                    } else { //no errors
+                        DispatchQueue.main.async {
+                            self.playVideo()
+                        }
+                        print("File downloaded successfully")
+                    }
             }
         }
     }
-
+    
+    func playVideo(){
+        self.progressView.alpha = 0
+        self.progressView.progress = 1
+        self.size.isHidden = true
+        let playerItem = AVPlayerItem.init(url: URL(fileURLWithPath: getKeyFromURL()))
+        videoView.player = AVPlayer(playerItem: playerItem)
+        videoView.player?.play()
+        
+        scrubber.totalDuration = videoView.player!.currentItem!.asset.duration
+        observer = self.videoView.player!.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.05, preferredTimescale: CMTimeScale(NSEC_PER_SEC)), queue: DispatchQueue.main) { [weak self] (time) in
+            self?.scrubber.updateWithTime(elapsedTime: time)
+        }
+        
+        makeControls()
+        NotificationCenter.default.addObserver(self, selector: #selector(playerItemDidreachEnd), name: .AVPlayerItemDidPlayToEndTime, object: playerItem)
+    }
+    
+    func playerItemDidreachEnd(){
+        self.videoView.player!.seek(to: kCMTimeZero)
+    }
+    
     func formatUrl(sS: String) -> String {
         var s = sS
         if (s.hasSuffix("v") && !s.contains("streamable.com")) {
