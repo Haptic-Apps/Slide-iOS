@@ -32,6 +32,18 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     var showTitleButton = UIButton()
 
     var scrubber = VideoScrubberView()
+
+    var sliderBeingUsed: Bool = false
+
+    var tap: UITapGestureRecognizer?
+    var timer: Timer?
+    var cancelled = false
+
+    deinit {
+        if let observer = observer {
+            videoView.player?.removeTimeObserver(observer)
+        }
+    }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -130,7 +142,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         goToCommentsButton.addTarget(self, action: #selector(openComments(_:)), for: .touchUpInside)
         showTitleButton.addTarget(self, action: #selector(showTitle(_:)), for: .touchUpInside)
         
-        let tap = UITapGestureRecognizer.init(target: self, action: #selector(handleTap(_:)))
+        let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
         self.view.addGestureRecognizer(tap)
     }
 
@@ -145,13 +157,6 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         scrubber.bottomAnchor == bottomButtons.topAnchor - 16
 
     }
-
-    func makeControls(){
-    }
-    
-    var tap: UITapGestureRecognizer?
-    var timer: Timer?
-    var cancelled = false
     
     func handleTap(_ sender: UITapGestureRecognizer) {
         if (sender.state == UIGestureRecognizerState.ended) {
@@ -268,7 +273,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         self.progressView.alpha = 0
         self.progressView.progress = 1
         self.size.isHidden = true
-        let playerItem = AVPlayerItem.init(url: URL(fileURLWithPath: getKeyFromURL()))
+        let playerItem = AVPlayerItem(url: URL(fileURLWithPath: getKeyFromURL()))
         videoView.player = AVPlayer(playerItem: playerItem)
         videoView.player?.play()
         
@@ -276,8 +281,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         observer = self.videoView.player!.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.05, preferredTimescale: CMTimeScale(NSEC_PER_SEC)), queue: DispatchQueue.main) { [weak self] (time) in
             self?.scrubber.updateWithTime(elapsedTime: time)
         }
-        
-        makeControls()
+
         NotificationCenter.default.addObserver(self, selector: #selector(playerItemDidreachEnd), name: .AVPlayerItemDidPlayToEndTime, object: playerItem)
     }
     
@@ -376,7 +380,7 @@ extension VideoMediaViewController {
             url = url.replacingOccurrences(of: "#t=", with: url.contains("?") ? "&t=" : "?t=")
         }
 
-        let i = URL.init(string: url)
+        let i = URL(string: url)
         if let dictionary = i?.queryDictionary {
             if let t = dictionary["t"] {
                 millis = getTimeFromString(t);
@@ -420,10 +424,12 @@ extension VideoMediaViewController: CachingPlayerItemDelegate {
         // Hook up the scrubber to the player
         scrubber.totalDuration = videoView.player!.currentItem!.asset.duration
         observer = self.videoView.player!.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.05, preferredTimescale: CMTimeScale(NSEC_PER_SEC)), queue: DispatchQueue.main) { [weak self] (time) in
-            self?.scrubber.updateWithTime(elapsedTime: time)
+            if let strongSelf = self {
+                if !strongSelf.sliderBeingUsed {
+                    strongSelf.scrubber.updateWithTime(elapsedTime: time)
+                }
+            }
         }
-
-        makeControls()
     }
     
     
@@ -482,12 +488,13 @@ extension VideoMediaViewController: YTPlayerViewDelegate {
 
     func playerViewDidBecomeReady(_ playerView: YTPlayerView) {
         youtubeView.playVideo()
-        makeControls()
-        scrubber.totalDuration = CMTime.init(value: CMTimeValue(playerView.duration()), timescale: CMTimeScale(NSEC_PER_SEC))
+        scrubber.totalDuration = CMTime(value: CMTimeValue(playerView.duration()), timescale: CMTimeScale(NSEC_PER_SEC))
     }
 
     func playerView(_ playerView: YTPlayerView, didPlayTime playTime: Float) {
-        self.scrubber.updateWithTime(elapsedTime: CMTime.init(value: CMTimeValue(playTime), timescale: CMTimeScale(NSEC_PER_SEC)))
+        if !sliderBeingUsed {
+            self.scrubber.updateWithTime(elapsedTime: CMTime(value: CMTimeValue(playTime), timescale: CMTimeScale(NSEC_PER_SEC)))
+        }
 
     }
 
@@ -527,7 +534,7 @@ extension VideoMediaViewController {
 
     func getTimeFromString(_ time: String) -> Int {
         var timeAdd = 0;
-        for s in time.components(separatedBy: CharacterSet.init(charactersIn: "hms")) {
+        for s in time.components(separatedBy: CharacterSet(charactersIn: "hms")) {
             print(s)
             if (!s.isEmpty) {
                 if (time.contains(s + "s")) {
@@ -547,9 +554,9 @@ extension VideoMediaViewController {
 
     }
     func showTitle(_ sender: AnyObject) {
-        let alertController = UIAlertController.init(title: "Caption", message: nil, preferredStyle: .alert)
+        let alertController = UIAlertController(title: "Caption", message: nil, preferredStyle: .alert)
         alertController.addTextViewer(text: .text(data.text!))
-        alertController.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: nil))
+        alertController.addAction(UIAlertAction(title: "Close", style: .cancel, handler: nil))
         present(alertController, animated: true, completion: nil)
     }
     
@@ -557,8 +564,8 @@ extension VideoMediaViewController {
         guard let baseURL = self.data.baseURL else {
             return
         }
-        let alert = UIAlertController.init(title: baseURL.absoluteString, message: "", preferredStyle: .actionSheet)
-        let open = OpenInChromeController.init()
+        let alert = UIAlertController(title: baseURL.absoluteString, message: "", preferredStyle: .actionSheet)
+        let open = OpenInChromeController()
         if open.isChromeInstalled() {
             alert.addAction(
                 UIAlertAction(title: "Open in Chrome", style: .default) { (action) in
@@ -629,13 +636,14 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
 
     func sliderDidBeginDragging() {
         videoView.player?.pause()
+        sliderBeingUsed = true
         
     }
     
     func toggleReturnPlaying() -> Bool {
         self.handleShowUI()
         if let player = videoView.player {
-            if(player.rate != 0){
+            if player.rate != 0 {
                 player.pause()
                 return false
             } else {
@@ -650,6 +658,7 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
     func sliderDidEndDragging() {
         self.videoView.player?.play()
         self.startTimerToHide(1)
+        sliderBeingUsed = false
     }
 }
 
