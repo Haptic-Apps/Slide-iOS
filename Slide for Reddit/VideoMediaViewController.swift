@@ -34,10 +34,11 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     var scrubber = VideoScrubberView()
     
     override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+        super.viewWillDisappear(animated)
         if let timeObserver = observer {
             videoView.player?.removeTimeObserver(timeObserver)
         }
+        timer?.invalidate()
         request?.cancel()
         NotificationCenter.default.removeObserver(self)
         videoView.player?.pause()
@@ -54,6 +55,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         connectActions()
 
         loadContent()
+        handleHideUI()
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -127,12 +129,12 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         downloadButton.addTarget(self, action: #selector(downloadImageToLibrary(_:)), for: .touchUpInside)
         goToCommentsButton.addTarget(self, action: #selector(openComments(_:)), for: .touchUpInside)
         showTitleButton.addTarget(self, action: #selector(showTitle(_:)), for: .touchUpInside)
-
-        self.view.addTapGestureRecognizer {
-            self.handleShouldHideOrShow()
-        }
+        
+        let tap = UITapGestureRecognizer.init(target: self, action: #selector(handleTap(_:)))
+        self.view.addGestureRecognizer(tap)
     }
 
+    
     func configureLayout() {
         videoView.edgeAnchors == view.edgeAnchors
         youtubeView.edgeAnchors == view.edgeAnchors
@@ -147,20 +149,33 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     func makeControls(){
     }
     
+    var tap: UITapGestureRecognizer?
+    var timer: Timer?
     var cancelled = false
     
-    func handleShouldHideOrShow(){
-        if(self.scrubber.isHidden){
-            handleShowUI()
-        } else {
-            //Check for cancelled, then do it
-            
-            
+    func handleTap(_ sender: UITapGestureRecognizer) {
+        if (sender.state == UIGestureRecognizerState.ended) {
+            if(scrubber.alpha == 0){
+                self.handleShowUI()
+                self.startTimerToHide()
+            } else {
+                self.handleHideUI()
+            }
         }
     }
     
+    func startTimerToHide(){
+        cancelled = false
+        timer?.invalidate()
+        timer = Timer.scheduledTimer(timeInterval: 2,
+                                     target: self,
+                                     selector: #selector(self.handleHideUI),
+                                     userInfo: nil,
+                                     repeats: false)
+    }
+    
     func handleHideUI(){
-        if(!cancelled){
+        if(!self.scrubber.isHidden){
             UIView.animate(withDuration: 0.2, animations: {
                 self.scrubber.alpha = 0
             }, completion: { (isDone) in
@@ -169,62 +184,16 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         }
     }
     
-    func handleShowUI(_ handlesHide: Bool = false){
-        cancelled = true
-        self.scrubber.isHidden = false
-        UIView.animate(withDuration: 0.2, animations: {
-            self.scrubber.alpha = 1
-        })
-        
-        let deadlineTime = DispatchTime.now() + .seconds(2)
-        if(handlesHide) {
-            DispatchQueue.main.asyncAfter(deadline: deadlineTime, execute: {
-                self.cancelled = false
-                self.handleHideUI()
+    func handleShowUI(){
+        timer?.invalidate()
+        if(self.scrubber.isHidden){
+            self.scrubber.isHidden = false
+            UIView.animate(withDuration: 0.2, animations: {
+                self.scrubber.alpha = 1
             })
         }
     }
     
-    func updateSlider(_ elapsedTime: CMTime) {
-    }
-    
-    func playbackSliderValueChanged(_ playbackSlider:UISlider) {
-        self.cancelled = true
-        let seconds : Int64 = Int64(playbackSlider.value)
-        let targetTime:CMTime = CMTimeMake(seconds, 1)
-        
-        if(videoType != nil){
-            self.videoView.player?.seek(to: targetTime)
-            
-            if self.videoView.player?.rate == 0
-            {
-                // self.videoView.player?.play()
-                // playButton!.setImage(UIImage(named: "pause"), for: .normal)
-            }
-        } else {
-            self.youtubeView.seek(toSeconds: Float(seconds), allowSeekAhead: true)
-        }
-        let deadlineTime = DispatchTime.now() + .seconds(1)
-        DispatchQueue.main.asyncAfter(deadline: deadlineTime, execute: {
-            self.cancelled = true
-            self.handleHideUI()
-        })
-    }
-    
-//    func playButtonTapped(_ sender:UIButton) {
-//        if self.videoView.player?.rate == 0
-//        {
-//            self.videoView.player?.play()
-//            handleHideUI()
-//            playButton!.setImage(UIImage(named: "pause"), for: .normal)
-//        } else {
-//            self.videoView.player?.pause()
-//            self.handleShowUI(false)
-//            self.cancelled = true
-//            playButton!.setImage(UIImage(named: "play"), for: .normal)
-//        }
-//    }
-
     func loadContent() {
 
         // Prevent video from stopping system background audio
@@ -245,7 +214,12 @@ class VideoMediaViewController: EmbeddableMediaViewController {
             youtubeView.isHidden = false
             loadYoutube(url: data.baseURL!.absoluteString)
             youtubeView.addTapGestureRecognizer {
-                self.handleShouldHideOrShow()
+                if(self.scrubber.alpha == 0){
+                    self.handleShowUI()
+                    self.startTimerToHide()
+                } else {
+                    self.handleHideUI()
+                }
             }
             return
         } else {
@@ -513,7 +487,8 @@ extension VideoMediaViewController: YTPlayerViewDelegate {
     }
 
     func playerView(_ playerView: YTPlayerView, didPlayTime playTime: Float) {
-        updateSlider(CMTime.init(value: CMTimeValue(playTime), timescale: CMTimeScale(NSEC_PER_SEC)))
+        self.scrubber.updateWithTime(elapsedTime: CMTime.init(value: CMTimeValue(playTime), timescale: CMTimeScale(NSEC_PER_SEC)))
+
     }
 
     func playerView(_ playerView: YTPlayerView, didChangeTo state: YTPlayerState) {
@@ -645,29 +620,36 @@ extension VideoMediaViewController {
 
 extension VideoMediaViewController: VideoScrubberViewDelegate {
     func sliderValueChanged(toSeconds: Float) {
-        self.cancelled = true
+        self.handleShowUI()
+        self.videoView.player?.pause()
 
         let targetTime = CMTime(seconds: Double(toSeconds), preferredTimescale: 1000)
         self.videoView.player?.seek(to: targetTime)
-
-        if self.videoView.player?.rate == 0
-        {
-            // self.videoView.player?.play()
-            // playButton!.setImage(UIImage(named: "pause"), for: .normal)
-        }
-        let deadlineTime = DispatchTime.now() + .seconds(1)
-        DispatchQueue.main.asyncAfter(deadline: deadlineTime, execute: {
-            self.cancelled = true
-            self.handleHideUI()
-        })
     }
 
     func sliderDidBeginDragging() {
         videoView.player?.pause()
+        
+    }
+    
+    func toggleReturnPlaying() -> Bool {
+        self.handleShowUI()
+        if let player = videoView.player {
+            if(player.rate != 0){
+                player.pause()
+                return false
+            } else {
+                player.play()
+                self.startTimerToHide()
+                return true
+            }
+        }
+        return false
     }
 
     func sliderDidEndDragging() {
-        
+        self.videoView.player?.play()
+        self.startTimerToHide()
     }
 }
 

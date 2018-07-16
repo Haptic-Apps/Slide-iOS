@@ -1042,10 +1042,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         return LinkCellView.cachedInternet!
     }
 
-    var longPress: UILongPressGestureRecognizer?
-    var timer: Timer?
-    var cancelled = false
-
     func showMore() {
         timer!.invalidate()
         AudioServicesPlaySystemSound(1519)
@@ -1053,6 +1049,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             self.more()
         }
     }
+    
+    var longPress: UILongPressGestureRecognizer?
+    var timer: Timer?
+    var cancelled = false
 
     func handleLongPress(_ sender: UILongPressGestureRecognizer) {
         if (sender.state == UIGestureRecognizerState.began) {

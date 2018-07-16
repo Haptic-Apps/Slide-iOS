@@ -14,6 +14,7 @@ protocol VideoScrubberViewDelegate {
     func sliderValueChanged(toSeconds: Float)
     func sliderDidBeginDragging()
     func sliderDidEndDragging()
+    func toggleReturnPlaying() -> Bool
 }
 
 //extension UISlider {
@@ -61,7 +62,7 @@ class VideoScrubberView: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
 
@@ -113,7 +114,7 @@ class VideoScrubberView: UIView {
 
         slider.addTarget(self, action: #selector(sliderValueChanged(_:)), for: .valueChanged)
         slider.addTarget(self, action: #selector(sliderDidBeginDragging(_:)), for: .editingDidBegin)
-        slider.addTarget(self, action: #selector(sliderDidEndDragging(_:)), for: .editingDidEnd)
+        slider.addTarget(self, action: #selector(sliderDidEndDragging(_:)), for: [.touchUpInside,.touchUpOutside])
     }
     
     func updateWithTime(elapsedTime: CMTime) {
@@ -160,14 +161,20 @@ extension VideoScrubberView {
     }
 
     func playButtonTapped(_ sender: UIButton) {
-        
+        if let delegate = delegate {
+            if(delegate.toggleReturnPlaying()){
+                playButton.setImage(UIImage.init(named: "pause"), for: .normal)
+            } else {
+                playButton.setImage(UIImage.init(named: "play"), for: .normal)
+            }
+        }
     }
 }
 
 public class ThickSlider : UISlider {
     override public func trackRect(forBounds bounds: CGRect) -> CGRect {
         var result = super.trackRect(forBounds: bounds)
-        result.size.height = 12
+        result.size.height = 8
         return result
     }
 }
