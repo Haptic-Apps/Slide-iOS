@@ -856,12 +856,8 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
     webView.scrollView.scrollEnabled = NO;
     webView.scrollView.bounces = NO;
     
-    if ([self.delegate respondsToSelector:@selector(playerViewPreferredWebViewBackgroundColor:)]) {
-        webView.backgroundColor = [self.delegate playerViewPreferredWebViewBackgroundColor:self];
-        if (webView.backgroundColor == [UIColor clearColor]) {
-            webView.opaque = NO;
-        }
-    }
+    webView.backgroundColor = [UIColor clearColor];
+    webView.opaque = NO;
     
     return webView;
 }
