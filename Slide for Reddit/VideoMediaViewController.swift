@@ -180,7 +180,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         }
     }
     
-    func startTimerToHide(_ duration: Double = 2){
+    func startTimerToHide(_ duration: Double = 5){
         cancelled = false
         timer?.invalidate()
         timer = Timer.scheduledTimer(timeInterval: duration,
@@ -539,9 +539,14 @@ extension VideoMediaViewController {
 extension VideoMediaViewController {
     
     func displayLinkDidUpdate(displaylink: CADisplayLink) {
-        if let player = videoView.player {
-            if !sliderBeingUsed {
-                scrubber.updateWithTime(elapsedTime: player.currentTime())
+        if !sliderBeingUsed {
+            if isYoutubeView {
+//                self.scrubber.updateWithTime(elapsedTime: CMTime(value: CMTimeValue(youtubeView.currentTime()), timescale: CMTimeScale(NSEC_PER_SEC)))
+            }
+            else {
+                if let player = videoView.player {
+                    scrubber.updateWithTime(elapsedTime: player.currentTime())
+                }
             }
         }
     }
@@ -563,7 +568,11 @@ extension VideoMediaViewController: YTPlayerViewDelegate {
     }
 
     func playerView(_ playerView: YTPlayerView, didChangeTo state: YTPlayerState) {
-
+        if state == YTPlayerState.ended {
+            // "Seek" scrubber to end (scrubber doesn't get all the way there)
+//            self.scrubber.updateWithTime(elapsedTime: scrubber.totalDuration)
+            scrubber.setPlayButton()
+        }
     }
 
     func playerView(_ playerView: YTPlayerView, didChangeTo quality: YTPlaybackQuality) {

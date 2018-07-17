@@ -145,6 +145,14 @@ class VideoScrubberView: UIView {
         return String(format:"%02d:%02d", minutes, seconds)
     }
 
+    func setPlayButton() {
+        playButton.setImage(UIImage.init(named: "play"), for: .normal)
+    }
+
+    func setPauseButton() {
+        playButton.setImage(UIImage.init(named: "pause"), for: .normal)
+    }
+
 }
 
 extension VideoScrubberView {
@@ -162,10 +170,10 @@ extension VideoScrubberView {
 
     func playButtonTapped(_ sender: UIButton) {
         if let delegate = delegate {
-            if(delegate.toggleReturnPlaying()){
-                playButton.setImage(UIImage.init(named: "pause"), for: .normal)
+            if delegate.toggleReturnPlaying() {
+                setPauseButton()
             } else {
-                playButton.setImage(UIImage.init(named: "play"), for: .normal)
+                setPlayButton()
             }
         }
     }
