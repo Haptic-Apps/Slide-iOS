@@ -16,6 +16,10 @@ import AVFoundation
 
 class VideoMediaViewController: EmbeddableMediaViewController {
 
+    var isYoutubeView: Bool {
+        return contentType == ContentType.CType.VIDEO
+    }
+
     var videoView = VideoView()
     var youtubeView = YTPlayerView()
     var downloadedOnce = false
@@ -33,6 +37,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     var scrubber = VideoScrubberView()
 
     var sliderBeingUsed: Bool = false
+    var wasPlayingWhenPaused: Bool = false
 
     var tap: UITapGestureRecognizer?
     var timer: Timer?
@@ -220,7 +225,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         }
 
         // Load Youtube View
-        if contentType == ContentType.CType.VIDEO {
+        if isYoutubeView {
             youtubeView.isHidden = false
             loadYoutube(url: data.baseURL!.absoluteString)
             return
@@ -677,16 +682,38 @@ extension VideoMediaViewController {
 extension VideoMediaViewController: VideoScrubberViewDelegate {
     func sliderValueChanged(toSeconds: Float) {
         self.handleShowUI()
-        self.videoView.player?.pause()
+//        self.videoView.player?.pause()
 
         let targetTime = CMTime(seconds: Double(toSeconds), preferredTimescale: 1000)
         self.videoView.player?.seek(to: targetTime)
     }
 
     func sliderDidBeginDragging() {
-        videoView.player?.pause()
+        if isYoutubeView {
+            wasPlayingWhenPaused = youtubeView.playerState() == .playing
+            youtubeView.pauseVideo()
+        }
+        else {
+            if let player = videoView.player {
+                wasPlayingWhenPaused = player.rate != 0
+                player.pause()
+            }
+        }
         sliderBeingUsed = true
-        
+    }
+
+    func sliderDidEndDragging() {
+        // Start playing the video again if it was playing when the slider started being dragged
+        if wasPlayingWhenPaused {
+            if isYoutubeView {
+                youtubeView.playVideo()
+            }
+            else {
+                self.videoView.player?.play()
+            }
+        }
+        self.startTimerToHide(1)
+        sliderBeingUsed = false
     }
     
     func toggleReturnPlaying() -> Bool {
@@ -702,12 +729,6 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
             }
         }
         return false
-    }
-
-    func sliderDidEndDragging() {
-        self.videoView.player?.play()
-        self.startTimerToHide(1)
-        sliderBeingUsed = false
     }
     
     //From https://stackoverflow.com/a/39100999/3697225

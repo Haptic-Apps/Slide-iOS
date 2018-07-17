@@ -113,8 +113,8 @@ class VideoScrubberView: UIView {
         playButton.centerYAnchor == self.centerYAnchor
 
         slider.addTarget(self, action: #selector(sliderValueChanged(_:)), for: .valueChanged)
-        slider.addTarget(self, action: #selector(sliderDidBeginDragging(_:)), for: .editingDidBegin)
-        slider.addTarget(self, action: #selector(sliderDidEndDragging(_:)), for: [.touchUpInside,.touchUpOutside])
+        slider.addTarget(self, action: #selector(sliderDidBeginDragging(_:)), for: .touchDown)
+        slider.addTarget(self, action: #selector(sliderDidEndDragging(_:)), for: [.touchUpInside, .touchUpOutside])
     }
     
     func updateWithTime(elapsedTime: CMTime) {
