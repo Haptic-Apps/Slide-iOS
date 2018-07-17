@@ -206,12 +206,12 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         if (sender.state == UIGestureRecognizerState.ended) {
             let x = sender.location(in: self.view).x
             if(x > UIScreen.main.bounds.size.width / 2){
-                //skip forward 1
+                //skip forward
                 if isYoutubeView {
                     let playerCurrentTime = scrubber.slider.value
                     let maxTime = scrubber.slider.maximumValue
                     
-                    let newTime = playerCurrentTime + (maxTime / 5)
+                    let newTime = playerCurrentTime + 10
                     
                     if newTime < maxTime {
                         youtubeView.seek(toSeconds: newTime, allowSeekAhead: true)
@@ -241,7 +241,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
                     let playerCurrentTime = scrubber.slider.value
                     let maxTime = scrubber.slider.maximumValue
                     
-                    let newTime = playerCurrentTime - (maxTime / 7)
+                    let newTime = playerCurrentTime - 5
                     
                     if newTime > 0 {
                         youtubeView.seek(toSeconds: newTime, allowSeekAhead: true)
