@@ -50,11 +50,20 @@ public class BannerUtil {
         popup.backgroundColor = color
         popup.textAlignment = .center
         popup.isUserInteractionEnabled = true
-        popup.text = text
+        
+        let textParts = text.components(separatedBy: "\n")
+        
+        let finalText: NSMutableAttributedString!
+        if(textParts.count > 1){
+            let firstPart = NSMutableAttributedString.init(string: textParts[0], attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 14)])
+            let secondPart = NSMutableAttributedString.init(string: "\n" + textParts[1], attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: UIFont.systemFont(ofSize: 12)])
+            firstPart.append(secondPart)
+            finalText = firstPart
+        } else {
+            finalText = NSMutableAttributedString.init(string: text, attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 14)])
+        }
+        popup.attributedText = finalText
         popup.numberOfLines = 0
-        popup.font = UIFont.systemFont(ofSize: 15)
-        popup.textColor = .white
-
         popup.elevate(elevation: 2)
         popup.layer.cornerRadius = 5
         popup.clipsToBounds = true

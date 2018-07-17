@@ -1031,7 +1031,11 @@ class SingleSubredditViewController: MediaViewController {
                                     MainViewController.first = false
                                     self.parentController?.checkForMail()
                                 }
-                                BannerUtil.makeBanner(text: "No posts found! Check your filter settings", color: GMColor.red500Color(), seconds: 5, context: self)
+                                if(listing.children.isEmpty){
+                                    BannerUtil.makeBanner(text: "No posts found!\nMake sure this sub exists and you have permission to view it", color: GMColor.red500Color(), seconds: 5, context: self)
+                                } else {
+                                    BannerUtil.makeBanner(text: "No posts found!\nCheck your filter settings", color: GMColor.red500Color(), seconds: 5, context: self)
+                                }
                             } else {
                                 var paths = [IndexPath]()
                                 for i in before...(self.links.count - 1) {
@@ -1822,7 +1826,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
 
             tableView.performBatchUpdates({
                 self.tableView.deleteItems(at: [IndexPath.init(item: location, section: 0)])
-                BannerUtil.makeBanner(text: "Submission hidden forever, tap to undo", color: GMColor.red500Color(), seconds: 4, context: self, callback: {
+                BannerUtil.makeBanner(text: "Submission hidden forever!\nTap to undo", color: GMColor.red500Color(), seconds: 4, context: self, callback: {
                     self.links.insert(item, at: location)
                     self.tableView.insertItems(at: [IndexPath.init(item: location, section: 0)])
                     do {
