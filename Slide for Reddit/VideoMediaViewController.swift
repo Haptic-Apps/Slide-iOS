@@ -164,10 +164,16 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         
         tap = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
         tap?.require(toFail: dTap!)
-        let tap2 = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
-        tap2.require(toFail: dTap!)
-        self.youtubeView.addGestureRecognizer(tap2)
         self.view.addGestureRecognizer(tap!)
+
+        
+        let dTap2 = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTap(_:)))
+        dTap2.numberOfTapsRequired = 2
+        self.youtubeView.addGestureRecognizer(dTap2)
+
+        let tap2 = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+        tap2.require(toFail: dTap2)
+        self.youtubeView.addGestureRecognizer(tap2)
     }
 
     
@@ -201,35 +207,63 @@ class VideoMediaViewController: EmbeddableMediaViewController {
             let x = sender.location(in: self.view).x
             if(x > UIScreen.main.bounds.size.width / 2){
                 //skip forward 1
-                if let player = self.videoView.player {
-                    let playerCurrentTime = CMTimeGetSeconds(player.currentTime())
-                    let maxTime = CMTimeGetSeconds(player.currentItem!.duration)
+                if isYoutubeView {
+                    let playerCurrentTime = scrubber.slider.value
+                    let maxTime = scrubber.slider.maximumValue
                     
                     let newTime = playerCurrentTime + (maxTime / 5)
-
+                    
                     if newTime < maxTime {
-                        let time2: CMTime = CMTimeMake(Int64(newTime * 1000 as Float64), 1000)
-                        player.seek(to: time2)
+                        youtubeView.seek(toSeconds: newTime, allowSeekAhead: true)
                     } else {
-                        player.seek(to: kCMTimeZero)
+                        youtubeView.seek(toSeconds: 0, allowSeekAhead: true)
                     }
-                    player.play()
+                    youtubeView.playVideo()
+                } else {
+                    if let player = self.videoView.player {
+                        let playerCurrentTime = CMTimeGetSeconds(player.currentTime())
+                        let maxTime = CMTimeGetSeconds(player.currentItem!.duration)
+                        
+                        let newTime = playerCurrentTime + (maxTime / 5)
+                        
+                        if newTime < maxTime {
+                            let time2: CMTime = CMTimeMake(Int64(newTime * 1000 as Float64), 1000)
+                            player.seek(to: time2)
+                        } else {
+                            player.seek(to: kCMTimeZero)
+                        }
+                        player.play()
+                    }
                 }
             } else {
                 //skip back
-                if let player = self.videoView.player {
-                    let playerCurrentTime = CMTimeGetSeconds(player.currentTime())
-                    let maxTime = CMTimeGetSeconds(player.currentItem!.duration)
+                if isYoutubeView {
+                    let playerCurrentTime = scrubber.slider.value
+                    let maxTime = scrubber.slider.maximumValue
                     
                     let newTime = playerCurrentTime - (maxTime / 7)
                     
                     if newTime > 0 {
-                        let time2: CMTime = CMTimeMake(Int64(newTime * 1000 as Float64), 1000)
-                        player.seek(to: time2)
+                        youtubeView.seek(toSeconds: newTime, allowSeekAhead: true)
                     } else {
-                        player.seek(to: kCMTimeZero)
+                        youtubeView.seek(toSeconds: 0, allowSeekAhead: true)
                     }
-                    player.play()
+                    youtubeView.playVideo()
+                } else {
+                    if let player = self.videoView.player {
+                        let playerCurrentTime = CMTimeGetSeconds(player.currentTime())
+                        let maxTime = CMTimeGetSeconds(player.currentItem!.duration)
+                        
+                        let newTime = playerCurrentTime - (maxTime / 7)
+                        
+                        if newTime > 0 {
+                            let time2: CMTime = CMTimeMake(Int64(newTime * 1000 as Float64), 1000)
+                            player.seek(to: time2)
+                        } else {
+                            player.seek(to: kCMTimeZero)
+                        }
+                        player.play()
+                    }
                 }
             }
         }
