@@ -191,10 +191,12 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     
     func configureLayout() {
         videoView.edgeAnchors == view.edgeAnchors
+
         youtubeView.centerYAnchor == view.centerYAnchor
-        youtubeView.heightAnchor == UIScreen.main.bounds.width * (9/15) //Hardcoded 15:9 aspect ratio
-        youtubeView.leftAnchor == view.leftAnchor
-        youtubeView.rightAnchor == view.rightAnchor
+        youtubeView.heightAnchor == UIScreen.main.bounds.width * (9/16) //Hardcoded 16:9 aspect ratio
+        youtubeView.leadingAnchor == view.safeLeadingAnchor
+        youtubeView.trailingAnchor == view.safeTrailingAnchor
+
         bottomButtons.horizontalAnchors == view.safeHorizontalAnchors + CGFloat(8)
         bottomButtons.bottomAnchor == view.safeBottomAnchor - CGFloat(8)
 
@@ -602,6 +604,7 @@ extension VideoMediaViewController {
                 "showinfo": 0, // Hide video title uploader
                 "loop": 1,
                 "modestbranding": 1, // Remove youtube logo on bottom right
+                "autohide": 1,
                 ])
         }
     }
