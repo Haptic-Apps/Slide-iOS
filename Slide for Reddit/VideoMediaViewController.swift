@@ -52,6 +52,10 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         NotificationCenter.default.removeObserver(self)
         videoView.player?.pause()
     }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        youtubeView.heightAnchor == UIScreen.main.bounds.width * (9/15) //Hardcoded 15:9 aspect ratio
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -160,7 +164,10 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     
     func configureLayout() {
         videoView.edgeAnchors == view.edgeAnchors
-        youtubeView.edgeAnchors == view.edgeAnchors
+        youtubeView.centerYAnchor == view.centerYAnchor
+        youtubeView.heightAnchor == UIScreen.main.bounds.width * (9/15) //Hardcoded 15:9 aspect ratio
+        youtubeView.leftAnchor == view.leftAnchor
+        youtubeView.rightAnchor == view.rightAnchor
         bottomButtons.horizontalAnchors == view.safeHorizontalAnchors + CGFloat(8)
         bottomButtons.bottomAnchor == view.safeBottomAnchor - CGFloat(8)
 
@@ -228,6 +235,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         // Load Youtube View
         if isYoutubeView {
             youtubeView.isHidden = false
+            progressView.isHidden = true
             loadYoutube(url: data.baseURL!.absoluteString)
             return
         } else {
