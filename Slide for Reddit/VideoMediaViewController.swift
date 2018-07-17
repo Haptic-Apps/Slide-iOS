@@ -40,6 +40,8 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     var wasPlayingWhenPaused: Bool = false
 
     var tap: UITapGestureRecognizer?
+    var dTap: UITapGestureRecognizer?
+    
     var timer: Timer?
     var cancelled = false
 
@@ -155,10 +157,17 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         goToCommentsButton.addTarget(self, action: #selector(openComments(_:)), for: .touchUpInside)
         showTitleButton.addTarget(self, action: #selector(showTitle(_:)), for: .touchUpInside)
         
-        let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+        
+        dTap = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTap(_:)))
+        dTap?.numberOfTapsRequired = 2
+        self.view.addGestureRecognizer(dTap!)
+        
+        tap = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+        tap?.require(toFail: dTap!)
         let tap2 = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+        tap2.require(toFail: dTap!)
         self.youtubeView.addGestureRecognizer(tap2)
-        self.view.addGestureRecognizer(tap)
+        self.view.addGestureRecognizer(tap!)
     }
 
     
@@ -186,6 +195,46 @@ class VideoMediaViewController: EmbeddableMediaViewController {
             }
         }
     }
+    
+    func handleDoubleTap(_ sender: UITapGestureRecognizer) {
+        if (sender.state == UIGestureRecognizerState.ended) {
+            let x = sender.location(in: self.view).x
+            if(x > UIScreen.main.bounds.size.width / 2){
+                //skip forward 1
+                if let player = self.videoView.player {
+                    let playerCurrentTime = CMTimeGetSeconds(player.currentTime())
+                    let maxTime = CMTimeGetSeconds(player.currentItem!.duration)
+                    
+                    let newTime = playerCurrentTime + (maxTime / 5)
+
+                    if newTime < maxTime {
+                        let time2: CMTime = CMTimeMake(Int64(newTime * 1000 as Float64), 1000)
+                        player.seek(to: time2)
+                    } else {
+                        player.seek(to: kCMTimeZero)
+                    }
+                    player.play()
+                }
+            } else {
+                //skip back
+                if let player = self.videoView.player {
+                    let playerCurrentTime = CMTimeGetSeconds(player.currentTime())
+                    let maxTime = CMTimeGetSeconds(player.currentItem!.duration)
+                    
+                    let newTime = playerCurrentTime - (maxTime / 7)
+                    
+                    if newTime > 0 {
+                        let time2: CMTime = CMTimeMake(Int64(newTime * 1000 as Float64), 1000)
+                        player.seek(to: time2)
+                    } else {
+                        player.seek(to: kCMTimeZero)
+                    }
+                    player.play()
+                }
+            }
+        }
+    }
+
     
     func startTimerToHide(_ duration: Double = 5){
         cancelled = false
@@ -566,12 +615,12 @@ extension VideoMediaViewController: YTPlayerViewDelegate {
 
     func playerViewDidBecomeReady(_ playerView: YTPlayerView) {
         youtubeView.playVideo()
-        scrubber.totalDuration = CMTime(value: CMTimeValue(playerView.duration()), timescale: CMTimeScale(NSEC_PER_SEC))
+        scrubber.totalDuration = CMTime(seconds: playerView.duration(), preferredTimescale: 1000000)
     }
 
     func playerView(_ playerView: YTPlayerView, didPlayTime playTime: Float) {
         if !sliderBeingUsed {
-            self.scrubber.updateWithTime(elapsedTime: CMTime(value: CMTimeValue(playTime), timescale: CMTimeScale(NSEC_PER_SEC)))
+            self.scrubber.updateWithTime(elapsedTime: CMTime(seconds: Double(playTime), preferredTimescale: 1000000))
         }
 
     }
@@ -715,7 +764,7 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
         let targetTime = CMTime(seconds: Double(toSeconds), preferredTimescale: 1000)
 
         if isYoutubeView {
-            self.youtubeView.seek(toSeconds: toSeconds, allowSeekAhead: !sliderBeingUsed) // Disable seekahead until the user lets go
+            self.youtubeView.seek(toSeconds: toSeconds, allowSeekAhead: true) // Disable seekahead until the user lets go
         }
         else {
             self.videoView.player?.seek(to: targetTime)

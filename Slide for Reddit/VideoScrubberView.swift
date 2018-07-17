@@ -125,24 +125,20 @@ class VideoScrubberView: UIView {
         elapsedDuration = elapsedTime
         let duration = Float(CMTimeGetSeconds(totalDuration))
         let time = Float(CMTimeGetSeconds(elapsedTime))
+        
         if duration.isFinite && duration > 0 {
             slider.minimumValue = 0.0
             slider.maximumValue = duration
             slider.setValue(time, animated: true)
-            timeElapsedLabel.text = getTimeString(time)
-            timeTotalLabel.text = "-\(getTimeString(1 + duration - time))"
+            timeTotalLabel.text = "-\(getTimeString(Int(floor(1 + duration - time))))"
         }
     }
 
-    private func getTimeString(_ time: Float) -> String {
-        let totalTime = Int(floor(time))
-        var minutes = Double(totalTime) / 60
-        let seconds = totalTime % 60
-        if(totalTime < 60){
-            minutes = 0
-        }
-
-        return String(format:"%02d:%02d", minutes, seconds)
+    private func getTimeString(_ time: Int) -> String {
+        let h = time / 3600
+        let m = (time % 3600) / 60
+        let s = (time % 3600) % 60
+        return h > 0 ? String(format: "%1d:%02d:%02d", h, m, s) : String(format: "%1d:%02d", m, s)
     }
 
     func setPlayButton() {
