@@ -593,22 +593,61 @@ extension VideoMediaViewController {
             }
         }
 
-        if (!playlist.isEmpty) {
-            youtubeView.load(withPlaylistId: playlist)
-        } else {
-            // https://developers.google.com/youtube/player_parameters
-            youtubeView.load(withVideoId: video, playerVars: [
-                "controls": 0, // Disable controls
-                "playsinline": 1,
-                "start": millis,
-                "fs": 0, // Turn off fullscreen button
-                "rel": 0, // Turn off suggested content at end
-                "showinfo": 0, // Hide video title uploader
-                "loop": 1,
-                "modestbranding": 1, // Remove youtube logo on bottom right
-                "autohide": 1,
-                ])
+        getRemoteAspectRatio(videoId: video) { [weak self] (aspect) in
+            guard let strongSelf = self else {
+                return
+            }
+
+            strongSelf.youtubeHeightConstraint = strongSelf.youtubeView.heightAnchor == strongSelf.youtubeView.widthAnchor * aspect
+            if (!playlist.isEmpty) {
+                strongSelf.youtubeView.load(withPlaylistId: playlist)
+            } else {
+                // https://developers.google.com/youtube/player_parameters
+                strongSelf.youtubeView.load(withVideoId: video, playerVars: [
+                    "controls": 0, // Disable controls
+                    "playsinline": 1,
+                    "start": millis,
+                    "fs": 0, // Turn off fullscreen button
+                    "rel": 0, // Turn off suggested content at end
+                    "showinfo": 0, // Hide video title uploader
+                    "loop": 1,
+                    "modestbranding": 1, // Remove youtube logo on bottom right
+                    "autohide": 1,
+                    ])
+            }
         }
+    }
+
+    func getRemoteAspectRatio(videoId: String, completion: @escaping (CGFloat) -> Void) {
+        let metaURL = URL(string: "https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=\(videoId)&format=json")!
+
+        func failureBlock() {
+            OperationQueue.main.addOperation({
+                completion(CGFloat(9 / 16))
+            })
+        }
+        
+        //fetching the data from the url
+        URLSession.shared.dataTask(with: metaURL, completionHandler: { (data, response, error) -> Void in
+            if let _ = error {
+                failureBlock()
+                return
+            }
+            guard let data = data,
+                let jsonObj = try? JSONSerialization.jsonObject(with: data, options: .allowFragments) as? NSDictionary,
+                let dict = jsonObj else {
+                failureBlock()
+                return
+            }
+
+            let height = dict.value(forKey: "height") as! Int
+            let width = dict.value(forKey: "width") as! Int
+
+            OperationQueue.main.addOperation({
+                completion(CGFloat(height / width))
+            })
+
+        }).resume()
     }
     
     func getKeyFromURL() -> String {
