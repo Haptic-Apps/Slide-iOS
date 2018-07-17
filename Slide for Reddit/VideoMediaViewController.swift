@@ -93,6 +93,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
 
         youtubeView.delegate = self
         youtubeView.isHidden = true
+        youtubeView.isUserInteractionEnabled = false
         view.addSubview(youtubeView)
 
         view.addSubview(scrubber)
@@ -450,7 +451,16 @@ extension VideoMediaViewController {
         if (!playlist.isEmpty) {
             youtubeView.load(withPlaylistId: playlist)
         } else {
-            youtubeView.load(withVideoId: video, playerVars: ["controls": 0, "playsinline": 1, "start": millis, "fs": 0])
+            // https://developers.google.com/youtube/player_parameters
+            youtubeView.load(withVideoId: video, playerVars: [
+                "controls": 0, // Disable controls
+                "playsinline": 1,
+                "start": millis,
+                "fs": 0, // Turn off fullscreen button
+                "rel": 0, // Turn off suggested content at end
+                "showinfo": 0, // Hide video title uploader
+                "modestbranding": 1, // Remove youtube logo on bottom right
+                ])
         }
     }
     
@@ -685,7 +695,13 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
 //        self.videoView.player?.pause()
 
         let targetTime = CMTime(seconds: Double(toSeconds), preferredTimescale: 1000)
-        self.videoView.player?.seek(to: targetTime)
+
+        if isYoutubeView {
+            self.youtubeView.seek(toSeconds: toSeconds, allowSeekAhead: !sliderBeingUsed) // Disable seekahead until the user lets go
+        }
+        else {
+            self.videoView.player?.seek(to: targetTime)
+        }
     }
 
     func sliderDidBeginDragging() {
@@ -724,6 +740,18 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
                 return false
             } else {
                 player.play()
+                self.startTimerToHide()
+                return true
+            }
+        }
+
+        if isYoutubeView {
+            if youtubeView.playerState() == .playing {
+                youtubeView.pauseVideo()
+                return false
+            }
+            else {
+                youtubeView.playVideo()
                 self.startTimerToHide()
                 return true
             }
