@@ -41,6 +41,9 @@ class CodeDisplayView: UIScrollView {
     //Algorighm from https://github.com/ccrama/Slide/blob/master/app/src/main/java/me/ccrama/redditslide/Views/CommentOverflow.java
     func parseText(_ text: String) {
         for string in text.split("\n") {
+            if(string.trimmed().isEmpty()){
+                continue
+            }
             do {
                 let attr = try NSMutableAttributedString(data: string.data(using: .unicode)!, options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
                 let font = UIFont(name: "Courier", size:  16 + CGFloat(SettingValues.commentFontOffset)) ?? UIFont.systemFont(ofSize: 16)
@@ -74,13 +77,13 @@ class CodeDisplayView: UIScrollView {
         baseLabel.attributedText = finalString
         
         let framesetterB = CTFramesetterCreateWithAttributedString(finalString)
-        let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: getWidestCell() + 40, height: CGFloat.greatestFiniteMagnitude), nil)
+        let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude), nil)
 
         addSubview(baseLabel)
-        contentInset = UIEdgeInsets.init(top: 0, left: 8, bottom: 0, right: 8)
+        contentInset = UIEdgeInsets.init(top: 8, left: 8, bottom: 0, right: 8)
         baseLabel.widthAnchor == getWidestCell()
-        globalHeight = textSizeB.height - 16
-        baseLabel.heightAnchor == textSizeB.height - 16
+        globalHeight = textSizeB.height
+        baseLabel.heightAnchor == textSizeB.height
         baseLabel.verticalAnchors == verticalAnchors
         baseLabel.leftAnchor == leftAnchor
         baseLabel.leadingAnchor == leadingAnchor
