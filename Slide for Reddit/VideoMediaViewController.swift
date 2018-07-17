@@ -459,6 +459,7 @@ extension VideoMediaViewController {
                 "fs": 0, // Turn off fullscreen button
                 "rel": 0, // Turn off suggested content at end
                 "showinfo": 0, // Hide video title uploader
+                "loop": 1,
                 "modestbranding": 1, // Remove youtube logo on bottom right
                 ])
         }

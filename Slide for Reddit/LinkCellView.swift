@@ -825,8 +825,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             } else if (submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty) {
                 thumbImage.image = UIImage.init(named: "web")
             } else {
+                let thumbURL = submission.thumbnailUrl
                 DispatchQueue.global(qos: .userInteractive).async {
-                    self.thumbImage.sd_setImage(with: URL.init(string: submission.thumbnailUrl), placeholderImage: UIImage.init(named: "web"))
+                    self.thumbImage.sd_setImage(with: URL.init(string: thumbURL), placeholderImage: UIImage.init(named: "web"))
                 }
             }
         } else {
@@ -856,11 +857,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 lq = true
                 loadedImage = URL.init(string: submission.lqUrl)
                 
-                DispatchQueue.main.async{
-                    
-                }
+                let lqURL = submission.lqUrl
                 DispatchQueue.global(qos: .userInteractive).async {
-                    self.bannerImage.sd_setImage(with: URL.init(string: submission.lqUrl), completed: { (image, error, cache, url) in
+                    self.bannerImage.sd_setImage(with: URL.init(string: lqURL), completed: { (image, error, cache, url) in
                         if (cache == .none) {
                             UIView.animate(withDuration: 0.3, animations: {
                                 self.bannerImage.alpha = 1
@@ -872,8 +871,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 }
             } else {
                 loadedImage = URL.init(string: submission.bannerUrl)
+                let bannerURL = submission.bannerUrl
                 DispatchQueue.global(qos: .userInteractive).async {
-                    self.bannerImage.sd_setImage(with: URL.init(string: submission.bannerUrl), completed: { (image, error, cache, url) in
+                    self.bannerImage.sd_setImage(with: URL.init(string: bannerURL), completed: { (image, error, cache, url) in
                         if (cache == .none) {
                             UIView.animate(withDuration: 0.3, animations: {
                                 self.bannerImage.alpha = 1

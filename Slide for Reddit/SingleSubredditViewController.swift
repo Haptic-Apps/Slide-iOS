@@ -939,46 +939,46 @@ class SingleSubredditViewController: MediaViewController {
                 try session?.getList(paginator, subreddit: subreddit, sort: sort, timeFilterWithin: time, completion: { (result) in
                     switch result {
                     case .failure:
-                        //test if realm exists and show that
-                        DispatchQueue.main.async {
-                            print("Getting realm data")
-                            do {
-                                let realm = try Realm()
-                                var updated = NSDate()
-                                if let listing = realm.objects(RListing.self).filter({ (item) -> Bool in
-                                    return item.subreddit == self.sub
-                                }).first {
-                                    self.links = []
-                                    for i in listing.links {
-                                        self.links.append(i)
-                                    }
-                                    updated = listing.updated
-                                }
-                                var paths = [IndexPath]()
-                                for i in 0...(self.links.count - 1) {
-                                    paths.append(IndexPath.init(item: i, section: 0))
-                                }
-
-                                self.flowLayout.reset()
-                                self.tableView.reloadData()
-                                self.tableView.contentOffset = CGPoint.init(x: 0, y: -64 + ((SettingValues.viewType && !self.single) ? -20 : 0))
-
-                                self.refreshControl.endRefreshing()
-                                self.indicator?.stopAnimating()
-                                self.loading = false
-                                self.loading = false
-                                self.nomore = true
-
-                                if (self.links.isEmpty) {
-                                    BannerUtil.makeBanner(text: "No offline content found! You can set up subreddit caching in Settings > Auto Cache", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 5, context: self)
-                                } else {
-                                    BannerUtil.makeBanner(text: "Showing offline content (\(DateFormatter().timeSince(from: updated, numericDates: true)))", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 3, context: self)
-                                }
-                            } catch {
-
-                            }
-                        }
                         print(result.error!)
+                        //test if realm exists and show that
+                            print("Getting realm data")
+                                DispatchQueue.main.async {
+                                    do {
+                                        let realm = try Realm()
+                                        var updated = NSDate()
+                                        if let listing = realm.objects(RListing.self).filter({ (item) -> Bool in
+                                            return item.subreddit == self.sub
+                                        }).first {
+                                            self.links = []
+                                            for i in listing.links {
+                                                self.links.append(i)
+                                            }
+                                            updated = listing.updated
+                                        }
+                                        var paths = [IndexPath]()
+                                        for i in 0...(self.links.count - 1) {
+                                            paths.append(IndexPath.init(item: i, section: 0))
+                                        }
+                                        self.flowLayout.reset()
+                                        self.tableView.reloadData()
+                                        self.tableView.contentOffset = CGPoint.init(x: 0, y: -64 + ((SettingValues.viewType && !self.single) ? -20 : 0))
+                                        
+                                        self.refreshControl.endRefreshing()
+                                        self.indicator?.stopAnimating()
+                                        self.loading = false
+                                        self.loading = false
+                                        self.nomore = true
+                                        
+                                        if (self.links.isEmpty) {
+                                            BannerUtil.makeBanner(text: "No offline content found! You can set up subreddit caching in Settings > Auto Cache", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 5, context: self)
+                                        } else {
+                                            BannerUtil.makeBanner(text: "Showing offline content (\(DateFormatter().timeSince(from: updated, numericDates: true)))", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 3, context: self)
+                                        }
+                                    } catch {
+                                        
+                                    }
+
+                                }
                     case .success(let listing):
 
                         if (reset) {

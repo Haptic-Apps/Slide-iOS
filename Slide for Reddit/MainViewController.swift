@@ -186,7 +186,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         if (SettingValues.multiColumn) {
             self.splitViewController?.maximumPrimaryColumnWidth = 10000
             self.splitViewController?.preferredPrimaryColumnWidthFraction = 1
-
         }
         if (AccountController.isLoggedIn && !MainViewController.first) {
             checkForMail()
@@ -331,6 +330,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         MainViewController.vCs = []
         finalSubs = []
         LinkCellView.cachedInternet = nil
+        
         if(Reachability().connectionStatus().description == ReachabilityStatus.Offline.description){
             MainViewController.isOffline = true
             let baseSubs = Subscriptions.subreddits
