@@ -54,7 +54,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        youtubeView.heightAnchor == UIScreen.main.bounds.width * (9/15) //Hardcoded 15:9 aspect ratio
+        youtubeView.heightAnchor == size.height //Fullscreen landscape
     }
 
     override func viewDidLoad() {
