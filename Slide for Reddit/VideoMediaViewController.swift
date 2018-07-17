@@ -151,7 +151,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     
     func connectActions() {
         menuButton.addTarget(self, action: #selector(showContextMenu(_:)), for: .touchUpInside)
-        downloadButton.addTarget(self, action: #selector(downloadImageToLibrary(_:)), for: .touchUpInside)
+        downloadButton.addTarget(self, action: #selector(downloadVideoToLibrary(_:)), for: .touchUpInside)
         goToCommentsButton.addTarget(self, action: #selector(openComments(_:)), for: .touchUpInside)
         showTitleButton.addTarget(self, action: #selector(showTitle(_:)), for: .touchUpInside)
         
@@ -257,7 +257,6 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         } else {
             request = Alamofire.download(toLoad, method: .get, to: { (url, response) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
                 return (URL(fileURLWithPath: self.videoType == .REDDIT ? self.getKeyFromURL().replacingOccurrences(of: ".mp4", with: "video.mp4") : self.getKeyFromURL()), [.createIntermediateDirectories])
-                
             }).downloadProgress() { progress in
                 DispatchQueue.main.async {
                     self.progressView.progress = Float(progress.fractionCompleted)
@@ -325,6 +324,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         self.progressView.alpha = 0
         self.progressView.progress = 1
         self.size.isHidden = true
+        self.downloadButton.isHidden = false
         let playerItem = AVPlayerItem(url: URL(fileURLWithPath: getKeyFromURL()))
         videoView.player = AVPlayer(playerItem: playerItem)
         videoView.player?.play()
@@ -701,8 +701,8 @@ extension VideoMediaViewController {
         }
     }
     
-    func downloadImageToLibrary(_ sender: AnyObject) {
-        fatalError("Implement this")
+    func downloadVideoToLibrary(_ sender: AnyObject) {
+        CustomAlbum.shared.saveMovieToLibrary(movieURL: URL(fileURLWithPath: getKeyFromURL()), parent: self)
     }
     
 }
