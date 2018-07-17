@@ -6,6 +6,7 @@
 import UIKit
 import AVFoundation
 import Alamofire
+import Anchorage
 import AVKit
 import SDWebImage
 import MaterialComponents.MaterialProgressView
@@ -16,7 +17,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
     var playerVC = AVPlayerViewController()
     static var videoPlayer: AVPlayer? = nil
     var progressView: MDCProgressView?
-    var size: UILabel?
+    var sizeLabel: UILabel?
     var scrollView = UIScrollView()
     var sharedPlayer = true
 
@@ -83,9 +84,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
         case .REDDIT:
             self.loadVReddit(toLoad: url)
             break
-        case .DIRECT:
-            fallthrough
-        case .IMGUR:
+        case .DIRECT, .IMGUR:
             self.loadVideo(urlString: url)
             break
         case .STREAMABLE:
@@ -134,7 +133,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
                             countBytes.allowedUnits = [.useMB]
                             countBytes.countStyle = .file
                             let fileSize = countBytes.string(fromByteCount: Int64(progress.totalUnitCount))
-                            self.size?.text = fileSize
+                            self.sizeLabel?.text = fileSize
                         }
 
                     }
@@ -202,7 +201,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
                             countBytes.allowedUnits = [.useMB]
                             countBytes.countStyle = .file
                             let fileSize = countBytes.string(fromByteCount: Int64(progress.totalUnitCount))
-                            self.size?.text = fileSize
+                            self.sizeLabel?.text = fileSize
                         }
 
                     }
@@ -365,7 +364,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
             self.displayedVideo = file
             print("Displayed \(file.absoluteString)")
             self.progressView?.setHidden(true, animated: true)
-            self.size?.isHidden = true
+            self.sizeLabel?.isHidden = true
             if (self.sharedPlayer && MediaDisplayViewController.videoPlayer == nil) {
                 MediaDisplayViewController.videoPlayer = AVPlayer.init(playerItem: AVPlayerItem.init(url: file))
                 self.player = MediaDisplayViewController.videoPlayer!
@@ -404,7 +403,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
             self.videoView = (self.playerVC.view)
             self.addChildViewController(self.playerVC)
             self.scrollView.addSubview(self.videoView)
-            self.videoView.frame = CGRect.init(x: 0, y: 50, width: self.view.frame.width, height: self.view.frame.height - 80)
+            self.setOrientation(orientation: .landscapeLeft, size: UIScreen.main.bounds.size, animate: false)
             self.playerVC.didMove(toParentViewController: self)
 
             self.scrollView.isUserInteractionEnabled = true
@@ -413,6 +412,70 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
                 (self as! MediaDisplayViewController).doControls()
             }
         }
+    }
+
+    enum VideoOrientation {
+        case reset
+        case portrait
+        case landscapeLeft
+        case landscapeRight
+    }
+
+    func setOrientation(orientation: VideoOrientation, size: CGSize, animate: Bool = true) {
+
+//        func frameFromSize(size: CGSize) -> CGRect {
+//
+//        }
+
+        func block() {
+            switch orientation { 
+            // TODO: Adjust frames for safe area insets
+            case .reset:
+                break
+            case .portrait:
+                self.videoView.transform = .identity
+                self.videoView.frame = CGRect(x: 0, y: 50, width: self.view.frame.width, height: self.view.frame.height - 80)
+                let he = getYTHeight()
+                self.ytPlayer.transform = .identity
+                self.ytPlayer.frame = CGRect(x: 0, y: (self.view.frame.height - he) / 2, width: self.view.frame.width, height: he)
+            case .landscapeLeft:
+                self.videoView.transform = CGAffineTransform(rotationAngle: -CGFloat.pi / 2)
+                self.videoView.frame = UIScreen.main.bounds
+                self.ytPlayer.transform = CGAffineTransform(rotationAngle: -CGFloat.pi / 2)
+                self.ytPlayer.frame = UIScreen.main.bounds
+            case .landscapeRight:
+                self.videoView.transform = CGAffineTransform(rotationAngle: CGFloat.pi / 2)
+                self.videoView.frame = UIScreen.main.bounds
+                self.ytPlayer.transform = CGAffineTransform(rotationAngle: CGFloat.pi / 2)
+                self.ytPlayer.frame = UIScreen.main.bounds
+            }
+        }
+
+        if animate {
+            UIView.animate(withDuration: 0.15) {
+                block()
+            }
+        } else {
+            block()
+        }
+
+//        switch orientation {
+//        case .portrait:
+//            UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
+//            self.videoView.frame = CGRect(x: 0, y: 50, width: self.view.frame.width, height: self.view.frame.height - 80)
+//            let he = getYTHeight()
+//            self.ytPlayer.frame = CGRect(x: 0, y: (self.view.frame.size.height - he) / 2, width: self.view.frame.size.width, height: he)
+//        case .landscapeLeft:
+//            UIDevice.current.setValue(UIInterfaceOrientation.landscapeLeft.rawValue, forKey: "orientation")
+//            self.videoView.frame = UIScreen.main.bounds
+//            self.ytPlayer.frame = UIScreen.main.bounds
+//        case .landscapeRight:
+//            UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation")
+//            self.videoView.frame = UIScreen.main.bounds
+//            self.ytPlayer.frame = UIScreen.main.bounds
+//        }
+
+
     }
 
     func formatUrl(sS: String) -> String {

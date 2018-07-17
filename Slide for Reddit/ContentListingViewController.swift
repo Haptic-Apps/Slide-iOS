@@ -434,9 +434,9 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                         let framesetterB = CTFramesetterCreateWithAttributedString(content!)
                         let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: itemWidth - 16 - (message.subject.hasPrefix("re:") ? 22 : 0), height: CGFloat.greatestFiniteMagnitude), nil)
 
-                        estimatedHeights[message.id] = CGFloat(24 + textSizeT.height + textSizeI.height + textSizeB.height)
+                        estimatedHeights[message.id] = CGFloat(32 + textSizeT.height + textSizeI.height + textSizeB.height)
                     } else {
-                        estimatedHeights[message.id] = CGFloat(24 + textSizeT.height + textSizeI.height)
+                        estimatedHeights[message.id] = CGFloat(32 + textSizeT.height + textSizeI.height)
                     }
                 }
                 return CGSize(width: itemWidth, height: estimatedHeights[message.id]!)

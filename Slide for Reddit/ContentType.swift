@@ -284,6 +284,7 @@ class ContentType {
      * @return the String identifier
      */
     enum CType {
+        case UNKNOWN
         case ALBUM
         case DEVIANTART
         case EMBEDDED
@@ -301,7 +302,6 @@ class ContentType {
         case XKCD
         case TUMBLR
         case VID_ME
-        case UNKNOWN
         case TABLE
     }
     

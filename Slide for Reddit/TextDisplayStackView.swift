@@ -115,14 +115,14 @@ public class TextDisplayStackView: UIStackView {
         removedSubviews.forEach({ $0.removeFromSuperview() })
         overflow.isHidden = true
 
-        if(htmlString.contains("<table") || htmlString.contains("<code")) {
+        if(htmlString.contains("<table") || htmlString.contains("<code") || htmlString.contains("<cite")) {
             var blocks = getBlocks(htmlString)
             
             var startIndex = 0
             
             var newTitle = NSMutableAttributedString(attributedString: title)
             
-            if (!blocks[0].startsWith("<table>") && !blocks[0].startsWith("<code>")) {
+            if (!blocks[0].startsWith("<table>") && !blocks[0].startsWith("<cite>") && !blocks[0].startsWith("<code>")) {
                 newTitle.append(NSAttributedString.init(string: "\n\n", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 5)]))
                 newTitle.append(createAttributedChunk(baseHTML: blocks[0]))
                 startIndex = 1
@@ -189,7 +189,7 @@ public class TextDisplayStackView: UIStackView {
         
         var startIndex = 0
 
-        if (!blocks[0].startsWith("<table>") && !blocks[0].startsWith("<code>")) {
+        if (!blocks[0].startsWith("<table>") && !blocks[0].startsWith("<cite>") && !blocks[0].startsWith("<code>")) {
             let text = createAttributedChunk(baseHTML: blocks[0])
             
             let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.activeLinkAttributes)
@@ -221,6 +221,7 @@ public class TextDisplayStackView: UIStackView {
         }
         
         for block in blocks {
+            print("Block is \(block)")
             estimatedHeight += 8
             if(block.startsWith("<table>")) {
                 let table = TableDisplayView.init(baseHtml: block, color: baseFontColor, accentColor: tColor, delegate: delegate!)
@@ -252,7 +253,26 @@ public class TextDisplayStackView: UIStackView {
                 body.clipsToBounds = true
                 estimatedHeight += body.globalHeight
                 body.layer.cornerRadius = 10
-                body.contentOffset = CGPoint.init(x: -8, y: 0)
+                body.contentOffset = CGPoint.init(x: -8, y: -8)
+            } else if(block.startsWith("<cite>")){
+                let label = TTTAttributedLabel.init(frame: CGRect.zero)
+                label.accessibilityIdentifier = "cite"
+                let text = createAttributedChunk(baseHTML: block)
+                label.delegate = delegate
+                let activeLinkAttributes = NSMutableDictionary(dictionary: label.activeLinkAttributes)
+                activeLinkAttributes[NSForegroundColorAttributeName] = tColor
+                label.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+                label.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+                label.numberOfLines = 0
+                label.setText(text)
+                label.setBorder(border: .left, weight: 2, color: tColor)
+                let framesetterB = CTFramesetterCreateWithAttributedString(text)
+                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth - 8, height: CGFloat.greatestFiniteMagnitude), nil)
+                estimatedHeight += textSizeB.height + 4
+                label.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+                overflow.addArrangedSubview(label)
+                label.horizontalAnchors == overflow.horizontalAnchors + CGFloat(4)
+                label.heightAnchor == textSizeB.height + CGFloat(4)
             } else {
                 let label = TTTAttributedLabel.init(frame: CGRect.zero)
                 label.accessibilityIdentifier = "New text"
@@ -320,6 +340,10 @@ public class TextDisplayStackView: UIStackView {
         
         if (html.contains(HR_TAG)) {
             codeBlockSeperated = parseHR(codeBlockSeperated)
+        }
+        
+        if (html.contains("<cite>")) {
+            codeBlockSeperated = parseBlockquote(codeBlockSeperated)
         }
         
         if (html.contains("<table")) {
@@ -452,6 +476,36 @@ public class TextDisplayStackView: UIStackView {
         return newBlocks
     }
     
+    public func parseBlockquote(_ blocks: [String]) -> [String] {
+        let startTag = "<cite>"
+        let endTag = "</cite>"
+        
+        var preSeperated = [String]()
+        for html in blocks {
+            var startSeperated = html.components(separatedBy: startTag)
+            
+            var text = ""
+            var code = ""
+            var split = [String]()
+            
+            preSeperated.append(startSeperated[0])
+            if(startSeperated.count > 1){
+                for i in 1...startSeperated.count - 1 {
+                    text = startSeperated[i]
+                    split = text.components(separatedBy: endTag)
+                    code = split[0]
+                    
+                    preSeperated.append(startTag + code + endTag)
+                    if (split.count > 1) {
+                        preSeperated.append(split[1])
+                    }
+                }
+            }
+        }
+        
+        return preSeperated
+    }
+
     public func parseTableTags(_ blocks: [String]) -> [String] {
         var newBlocks = [String]()
         for block in blocks {

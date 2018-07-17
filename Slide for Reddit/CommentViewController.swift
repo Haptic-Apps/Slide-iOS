@@ -233,12 +233,12 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     func doHeadView(){
         inHeadView.removeFromSuperview()
         inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarView?.frame.size.height ?? 20)))
-        if(link != nil){
-            self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: link.subreddit)
+        if(submission != nil){
+            self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: submission!.subreddit)
         }
         
-        if(!(navigationController is TapBehindModalViewController)){
-            self.view.addSubview(inHeadView)
+        if(!(navigationController?.isModalInPopover ?? false)){
+            self.navigationController?.view.addSubview(inHeadView)
         }
     }
 
@@ -468,7 +468,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                                             self.tableView.reloadData(with: .fade)
                                         }
                                         if (self.comments.isEmpty) {
-                                            BannerUtil.makeBanner(text: "No cached comments found! You can set up auto-cache in Settings > Auto Cache", color: ColorUtil.accentColorForSub(sub: self.subreddit), seconds: 5, context: self)
+                                            BannerUtil.makeBanner(text: "No cached comments found!\nYou can set up auto-cache in Settings > Auto Cache", color: ColorUtil.accentColorForSub(sub: self.subreddit), seconds: 5, context: self)
                                         } else {
                                             BannerUtil.makeBanner(text: "Showing cached comments", color: ColorUtil.accentColorForSub(sub: self.subreddit), seconds: 5, context: self)
                                         }
@@ -476,7 +476,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                                     })
                                 }
                             } catch {
-                                BannerUtil.makeBanner(text: "No cached comments found! You can set up auto-cache in Settings > Auto Cache", color: ColorUtil.accentColorForSub(sub: self.subreddit), seconds: 5, context: self)
+                                BannerUtil.makeBanner(text: "No cached comments found!\nYou can set up auto-cache in Settings > Auto Cache", color: ColorUtil.accentColorForSub(sub: self.subreddit), seconds: 5, context: self)
                             }
                         }
 
@@ -1217,10 +1217,15 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     }
 
     func goUp(_ sender: AnyObject) {
-        var topCell = (tableView.indexPathsForVisibleRows?[0].row)!
+        var topCell = 0
+        if let top = tableView.indexPathsForVisibleRows {
+            if(top.count > 0){
+                topCell = top[0].row
+            }
+        }
         var contents = content[dataArray[topCell]]
 
-        while ((contents is RMore || (contents as! RComment).depth > 1) && dataArray.count > topCell) {
+        while (contents is RComment ?  !matches(comment: contents as! RComment, sort: currentSort) : true  && dataArray.count > topCell) {
             topCell -= 1
             contents = content[dataArray[topCell]]
         }
@@ -1231,7 +1236,12 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     var lastMoved = -1
 
     func goDown(_ sender: AnyObject) {
-        var topCell = (tableView.indexPathsForVisibleRows?[0].row)!
+        var topCell = 0
+        if let top = tableView.indexPathsForVisibleRows {
+            if(top.count > 0){
+                topCell = top[0].row
+            }
+        }
         if (topCell <= 0 && lastMoved != 0) {
             goToCellTop(i: 0)
             lastMoved = 0
@@ -1415,6 +1425,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        inHeadView.removeFromSuperview()
     }
 
     func collapseAll() {

@@ -193,7 +193,42 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             }
         }
     }
-
+    
+    var modText: String?
+    
+    init(submission: RSubmission, sub: String, modMessage: String, completion: @escaping (Comment?) -> Void) {
+        type = .REPLY_SUBMISSION
+        toReplyTo = submission
+        self.canMod = true
+        super.init(nibName: nil, bundle: nil)
+        self.modText = modMessage
+        setBarColors(color: ColorUtil.getColorForSub(sub: sub))
+        self.commentReplyCallback = { (comment, error) in
+            DispatchQueue.main.async {
+                if(error == nil && comment == nil){
+                    self.alertController?.dismiss(animated: false, completion: {
+                        let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Reddit did not allow this post to be made.\nError message: \(self.errorText)", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+                        self.present(alert, animated: true, completion: nil)
+                    })
+                    
+                } else if (error != nil) {
+                    self.toolbar?.saveDraft(self)
+                    self.alertController?.dismiss(animated: false, completion: {
+                        let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your submission has not been edited (but has been saved as a draft), please try again\n\nError:\(error!.localizedDescription)", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+                        self.present(alert, animated: true, completion: nil)
+                    })
+                } else {
+                    self.alertController?.dismiss(animated: false, completion: {
+                        self.dismiss(animated: true, completion: {
+                            completion(comment)
+                        })
+                    })
+                }
+            }
+        }
+    }
 
     init(type: ReplyType, completion: @escaping (Link?) -> Void) {
         self.type = type
@@ -328,7 +363,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         }
         
         sticky!.color = GMColor.green500Color()
-        sticky!.isSelected = false
+        sticky!.isSelected = modText != nil
         sticky!.addTarget(self, action: #selector(self.changeState(_:)), for: .touchUpInside)
         
         sticky!.heightAnchor == CGFloat(30)
@@ -644,6 +679,9 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     $0.delegate = self
                 })
                 
+                if(modText != nil){
+                    text3.text = "Hi u/\((toReplyTo as! RSubmission).author),\n\nYour submission has been removed for the following reason:\n\n\(modText!.replacingOccurrences(of: "\n", with: "\n\n"))\n\n"
+                }
                 doButtons()
                 stack.addArrangedSubviews(text1, replyButtons!, text3)
                 replyButtons!.heightAnchor == CGFloat(30)
@@ -671,14 +709,16 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     $0.backgroundColor = ColorUtil.foregroundColor
                     $0.layer.masksToBounds = false
                     $0.layer.cornerRadius = 10
-                    $0.textContainer.maximumNumberOfLines = 1
-                    $0.textContainer.lineBreakMode = .byTruncatingTail
                     $0.font = UIFont.systemFont(ofSize: 16)
                     $0.isScrollEnabled = false
                     $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 8, right: 8)
                     $0.delegate = self
                 })
                 
+                if(modText != nil){
+                    text3.text = "Hi u/\((toReplyTo as! RSubmission).author),\n\nYour submission has been removed for the following reason:\n\n\(modText!.replacingOccurrences(of: "\n", with: "\n\n"))\n\n"
+                }
+
                 doButtons()
                 stack.addArrangedSubviews(replyButtons!, text3)
                 replyButtons!.heightAnchor == CGFloat(30)

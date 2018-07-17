@@ -56,7 +56,13 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                 do {
                     if(NSString(data: data!, encoding: String.Encoding.utf8.rawValue)?.contains("[]"))!{
                         //single album image
-                        self.vCs.append(MediaDisplayViewController.init(url: URL.init(string: "https://imgur.com/\(hash).png")!, text: nil, lqURL: URL.init(string: "https://imgur.com/\(hash)m.png")))
+                        let media = ModalMediaViewController(model: EmbeddableMediaDataModel(
+                            baseURL: URL(string: "https://imgur.com/\(hash).png")!,
+                            lqURL: URL(string: "https://imgur.com/\(hash)m.png"),
+                            text: nil,
+                            inAlbum: false
+                        ))
+                        self.vCs.append(media)
                         let firstViewController = self.vCs[1]
                         
                         self.setViewControllers([firstViewController],
@@ -71,10 +77,14 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                         let album = AlbumJSONBase.init(dictionary: json)
                         DispatchQueue.main.async{
                             for image in (album?.data?.images)! {
-                                self.vCs.append(MediaDisplayViewController.init(url: URL.init(string: "https://imgur.com/\(image.hash!)\(image.ext!)")!,
-                                                                                text: image.description,
-                                                                                lqURL: URL.init(string: "https://imgur.com/\(image.hash!)\(image.ext! != ".gif" ? "m":"")\(image.ext!)"),
-                                                                                inAlbum : true))
+
+                                let media = ModalMediaViewController(model: EmbeddableMediaDataModel(
+                                    baseURL: URL.init(string: "https://imgur.com/\(image.hash!)\(image.ext!)")!,
+                                    lqURL: URL.init(string: "https://imgur.com/\(image.hash!)\(image.ext! != ".gif" ? "m":"")\(image.ext!)"),
+                                    text: image.description,
+                                    inAlbum: true
+                                ))
+                                self.vCs.append(media)
                             }
                             let firstViewController = self.vCs[1]
                             
