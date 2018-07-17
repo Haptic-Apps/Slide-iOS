@@ -46,18 +46,9 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     var cancelled = false
 
     var displayLink: CADisplayLink?
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        timer?.invalidate()
-        request?.cancel()
-        NotificationCenter.default.removeObserver(self)
-        videoView.player?.pause()
-    }
-    
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        youtubeView.heightAnchor == size.height //Fullscreen landscape
-    }
+
+    var forcedFullscreen = false
+    var oldOrientation: UIInterfaceOrientation?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -75,6 +66,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         displayLink = CADisplayLink(target: self, selector: #selector(displayLinkDidUpdate))
         displayLink?.add(to: .current, forMode: .defaultRunLoopMode)
         displayLink?.isPaused = true
+
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -82,11 +74,28 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         displayLink?.isPaused = false
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        timer?.invalidate()
+        request?.cancel()
+        NotificationCenter.default.removeObserver(self)
+        videoView.player?.pause()
+    }
+
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         // Re-enable screen dimming due to inactivity
         UIApplication.shared.isIdleTimerDisabled = false
         displayLink?.isPaused = true
+
+        // Turn off forced fullscreen
+        if forcedFullscreen {
+            disableForcedFullscreen()
+        }
+    }
+
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        youtubeView.heightAnchor == size.height //Fullscreen landscape
     }
 
 //    override func didReceiveMemoryWarning() {
@@ -174,6 +183,9 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         let tap2 = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
         tap2.require(toFail: dTap2)
         self.youtubeView.addGestureRecognizer(tap2)
+
+        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(toggleForcedLandscapeFullscreen))
+        self.view.addGestureRecognizer(longPress)
     }
 
     
@@ -298,6 +310,44 @@ class VideoMediaViewController: EmbeddableMediaViewController {
                 self.scrubber.alpha = 1
             })
         }
+    }
+
+    // TODO: Also fade background to black?
+    func toggleForcedLandscapeFullscreen(_ sender: UILongPressGestureRecognizer) {
+        guard sender.state == .began else {
+            return
+        }
+
+        if !forcedFullscreen {
+            enableForcedFullscreen()
+        }
+        else {
+            disableForcedFullscreen()
+        }
+    }
+
+    func enableForcedFullscreen() {
+        // Turn on forced fullscreen
+
+        let currentOrientation = UIApplication.shared.statusBarOrientation
+
+        // Don't allow fullscreen to be forced if it's already landscape
+        if currentOrientation != .landscapeLeft && currentOrientation != .landscapeRight {
+            oldOrientation = currentOrientation
+            AppDelegate.AppUtility.lockOrientation(UIInterfaceOrientationMask.landscapeRight, andRotateTo: UIInterfaceOrientation.landscapeRight)
+            forcedFullscreen = true
+        }
+        else {
+            print("Can't force landscape when the app is already landscape!")
+        }
+    }
+
+    func disableForcedFullscreen() {
+        // Turn off forced fullscreen
+        AppDelegate.AppUtility.lockOrientation(UIInterfaceOrientationMask.allButUpsideDown, andRotateTo: oldOrientation ?? UIInterfaceOrientation.portrait)
+        UIViewController.attemptRotationToDeviceOrientation()
+        oldOrientation = nil
+        forcedFullscreen = false
     }
     
     func loadContent() {
@@ -633,7 +683,9 @@ extension VideoMediaViewController {
     func displayLinkDidUpdate(displaylink: CADisplayLink) {
         if !sliderBeingUsed {
             if isYoutubeView {
-//                self.scrubber.updateWithTime(elapsedTime: CMTime(value: CMTimeValue(youtubeView.currentTime()), timescale: CMTimeScale(NSEC_PER_SEC)))
+                if !sliderBeingUsed {
+                    self.scrubber.updateWithTime(elapsedTime: CMTime(seconds: Double(youtubeView.currentTime()), preferredTimescale: 1000000))
+                }
             }
             else {
                 if let player = videoView.player {
@@ -653,9 +705,9 @@ extension VideoMediaViewController: YTPlayerViewDelegate {
     }
 
     func playerView(_ playerView: YTPlayerView, didPlayTime playTime: Float) {
-        if !sliderBeingUsed {
-            self.scrubber.updateWithTime(elapsedTime: CMTime(seconds: Double(playTime), preferredTimescale: 1000000))
-        }
+//        if !sliderBeingUsed {
+//            self.scrubber.updateWithTime(elapsedTime: CMTime(seconds: Double(playTime), preferredTimescale: 1000000))
+//        }
 
     }
 
