@@ -50,6 +50,8 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     var forcedFullscreen = false
     var oldOrientation: UIInterfaceOrientation?
 
+    var youtubeHeightConstraint: NSLayoutConstraint?
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -95,7 +97,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        youtubeView.heightAnchor == size.height //Fullscreen landscape
+//        youtubeView.heightAnchor == size.height //Fullscreen landscape
     }
 
 //    override func didReceiveMemoryWarning() {
@@ -193,9 +195,9 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         videoView.edgeAnchors == view.edgeAnchors
 
         youtubeView.centerYAnchor == view.centerYAnchor
-        youtubeView.heightAnchor == UIScreen.main.bounds.width * (9/16) //Hardcoded 16:9 aspect ratio
         youtubeView.leadingAnchor == view.safeLeadingAnchor
         youtubeView.trailingAnchor == view.safeTrailingAnchor
+        youtubeHeightConstraint = youtubeView.heightAnchor == youtubeView.widthAnchor * CGFloat(9.0 / 16.0)  // Hardcoded 16:9 aspect ratio
 
         bottomButtons.horizontalAnchors == view.safeHorizontalAnchors + CGFloat(8)
         bottomButtons.bottomAnchor == view.safeBottomAnchor - CGFloat(8)
