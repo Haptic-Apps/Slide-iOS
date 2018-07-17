@@ -599,21 +599,22 @@ extension VideoMediaViewController {
             }
 
             strongSelf.youtubeHeightConstraint = strongSelf.youtubeView.heightAnchor == strongSelf.youtubeView.widthAnchor * aspect
+            let vars = [
+                "controls": 0, // Disable controls
+                "playsinline": 1,
+                "start": millis,
+                "fs": 0, // Turn off fullscreen button
+                "rel": 0, // Turn off suggested content at end
+                "showinfo": 0, // Hide video title uploader
+                "loop": 1,
+                "modestbranding": 1, // Remove youtube logo on bottom right
+                "autohide": 1,
+                ]
             if (!playlist.isEmpty) {
-                strongSelf.youtubeView.load(withPlaylistId: playlist)
+                strongSelf.youtubeView.load(withPlaylistId: playlist, playerVars: vars)
             } else {
                 // https://developers.google.com/youtube/player_parameters
-                strongSelf.youtubeView.load(withVideoId: video, playerVars: [
-                    "controls": 0, // Disable controls
-                    "playsinline": 1,
-                    "start": millis,
-                    "fs": 0, // Turn off fullscreen button
-                    "rel": 0, // Turn off suggested content at end
-                    "showinfo": 0, // Hide video title uploader
-                    "loop": 1,
-                    "modestbranding": 1, // Remove youtube logo on bottom right
-                    "autohide": 1,
-                    ])
+                strongSelf.youtubeView.load(withVideoId: video, playerVars: vars)
             }
         }
     }
