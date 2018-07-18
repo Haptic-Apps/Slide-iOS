@@ -46,7 +46,7 @@ public class TextDisplayStackView: UIStackView {
     func setColor(_ color: UIColor){
         self.tColor = color
     }
-
+    
     init(fontSize: CGFloat, submission: Bool, color: UIColor, delegate: TTTAttributedLabelDelegate, width: CGFloat, baseFontColor: UIColor = ColorUtil.fontColor) {
         self.fontSize = fontSize
         self.submission = submission
@@ -94,9 +94,9 @@ public class TextDisplayStackView: UIStackView {
         activeLinkAttributes[NSForegroundColorAttributeName] = tColor
         firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
         firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
-
+        
         firstTextView.setText(string)
-
+        
         let framesetterB = CTFramesetterCreateWithAttributedString(string)
         let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
         estimatedHeight += textSizeB.height
@@ -114,7 +114,7 @@ public class TextDisplayStackView: UIStackView {
         
         removedSubviews.forEach({ $0.removeFromSuperview() })
         overflow.isHidden = true
-
+        
         if(htmlString.contains("<table") || htmlString.contains("<code") || htmlString.contains("<cite")) {
             var blocks = getBlocks(htmlString)
             
@@ -132,13 +132,13 @@ public class TextDisplayStackView: UIStackView {
             activeLinkAttributes[NSForegroundColorAttributeName] = tColor
             firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
             firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
-
+            
             firstTextView.setText(newTitle)
             
             let framesetterB = CTFramesetterCreateWithAttributedString(newTitle)
             let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
             estimatedHeight += textSizeB.height
-
+            
             if (blocks.count > 1) {
                 if (startIndex == 0) {
                     setViews(blocks)
@@ -161,14 +161,14 @@ public class TextDisplayStackView: UIStackView {
             activeLinkAttributes[NSForegroundColorAttributeName] = tColor
             firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
             firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
-
+            
             firstTextView.setText(newTitle)
-
+            
             let framesetterB = CTFramesetterCreateWithAttributedString(newTitle)
             let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
             estimatedHeight += textSizeB.height
         }
-
+        
     }
     
     public func setData(htmlString: String){
@@ -178,7 +178,7 @@ public class TextDisplayStackView: UIStackView {
             overflow.removeArrangedSubview(subview)
             return allSubviews + [subview]
         }
-    
+        
         NSLayoutConstraint.deactivate(removedSubviews.flatMap({ $0.constraints }))
         
         removedSubviews.forEach({ $0.removeFromSuperview() })
@@ -188,7 +188,7 @@ public class TextDisplayStackView: UIStackView {
         var blocks = getBlocks(htmlString)
         
         var startIndex = 0
-
+        
         if (!blocks[0].startsWith("<table>") && !blocks[0].startsWith("<cite>") && !blocks[0].startsWith("<code>")) {
             let text = createAttributedChunk(baseHTML: blocks[0])
             
@@ -196,7 +196,7 @@ public class TextDisplayStackView: UIStackView {
             activeLinkAttributes[NSForegroundColorAttributeName] = tColor
             firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
             firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
-
+            
             firstTextView.setText(text)
             
             let framesetterB = CTFramesetterCreateWithAttributedString(text)
@@ -298,7 +298,13 @@ public class TextDisplayStackView: UIStackView {
     public func createAttributedChunk(baseHTML: String) -> NSAttributedString {
         let font = FontGenerator.fontOfSize(size: fontSize, submission: submission)
         let htmlBase = TextStackEstimator.addSpoilers(baseHTML)
-        let html = DTHTMLAttributedStringBuilder.init(html: htmlBase.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor : ColorUtil.fontColor, DTDefaultFontFamily: font.familyName,DTDefaultFontSize: font.pointSize,  DTDefaultFontName: font.fontName], documentAttributes: nil).generatedAttributedString()!
+        let baseHtml = DTHTMLAttributedStringBuilder.init(html: htmlBase.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor : ColorUtil.fontColor, DTDefaultFontFamily: font.familyName,DTDefaultFontSize: font.pointSize,  DTDefaultFontName: font.fontName], documentAttributes: nil).generatedAttributedString()!
+        let html = NSMutableAttributedString(attributedString: baseHtml)
+        html.enumerateAttribute(NSStrikethroughStyleAttributeName, in: NSRange(location:0, length: html.length), options: [], using: { (value: Any?, range: NSRange, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
+            if(value != nil && value is NSNumber && (value as! NSNumber) == 1){
+                html.addAttributes([kCTForegroundColorAttributeName as String: ColorUtil.fontColor, NSBaselineOffsetAttributeName:NSNumber(floatLiteral: 0),"TTTStrikeOutAttribute": 1, NSStrikethroughStyleAttributeName:NSNumber(value:1)], range: range)
+            }
+        })
         
         return LinkParser.parse(html, .white)
     }
@@ -306,8 +312,13 @@ public class TextDisplayStackView: UIStackView {
     public static func createAttributedChunk(baseHTML: String, fontSize: CGFloat, submission: Bool, accentColor: UIColor) -> NSAttributedString {
         let font = FontGenerator.fontOfSize(size: fontSize, submission: submission)
         let htmlBase = TextStackEstimator.addSpoilers(baseHTML)
-        let html = DTHTMLAttributedStringBuilder.init(html: htmlBase.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor : ColorUtil.fontColor, DTDefaultFontFamily: font.familyName,DTDefaultFontSize: font.pointSize,  DTDefaultFontName: font.fontName], documentAttributes: nil).generatedAttributedString()!
-        
+        let baseHtml = DTHTMLAttributedStringBuilder.init(html: htmlBase.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor : ColorUtil.fontColor, DTDefaultFontFamily: font.familyName,DTDefaultFontSize: font.pointSize,  DTDefaultFontName: font.fontName], documentAttributes: nil).generatedAttributedString()!
+        let html = NSMutableAttributedString(attributedString: baseHtml)
+        html.enumerateAttribute(NSStrikethroughStyleAttributeName, in: NSRange(location:0, length: html.length), options: [], using: { (value: Any?, range: NSRange, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
+            if(value != nil && value is NSNumber && (value as! NSNumber) == 1){
+                html.addAttributes([kCTForegroundColorAttributeName as String: ColorUtil.fontColor, NSBaselineOffsetAttributeName:NSNumber(floatLiteral: 0),"TTTStrikeOutAttribute": 1, NSStrikethroughStyleAttributeName:NSNumber(value:1)], range: range)
+            }
+        })
         return LinkParser.parse(html, accentColor)
     }
     
@@ -333,9 +344,9 @@ public class TextDisplayStackView: UIStackView {
         }
         return nil
     }
-
+    
     public func getBlocks(_ html: String) -> [String] {
-
+        
         var codeBlockSeperated = parseCodeTags(html)
         
         if (html.contains(HR_TAG)) {
@@ -354,83 +365,83 @@ public class TextDisplayStackView: UIStackView {
     }
     
     /* Might add this in later, but iOS seems to handle this better than Android
-    public func parseLists(_ html: String){
-        var firstIndex = 0
-        var isNumbered = false
-        let firstOl = html.indexOf("<ol") ?? -1
-        let firstUl = html.indexOf("<ul") ?? -1
-
-        if ((firstUl != -1 && firstOl > firstUl) || firstOl == -1) {
-            firstIndex = firstUl
-            isNumbered = false
-        } else {
-            firstIndex = firstOl
-            isNumbered = true
-        }
-        
-        var listNumbers = [Int]()
-
-        var indent = -1
-        var i = firstIndex
-
-        while (i < html.length - 4 && i != -1) {
-            if (html.substring(i, length: 3) == "<ol" || html.substring(i, length: 3) == "<ul") {
-                if (html.substring(i, length: 3) == "<ol") {
-                    isNumbered = true
-                    indent += 1
-                    listNumbers.insert(1, at: indent)
-                } else {
-                    isNumbered = false
-                }
-                i = html.indexOf("<li", i)
-            } else if (html.substring(i, length: 3) == "<li") {
-                var tagEnd = html.indexOf(">", i)
-                var itemClose = html.indexOf("</li", tagEnd)
-                var ulClose = html.indexOf("<ul", tagEnd)
-                var olClose = html.indexOf("<ol", tagEnd)
-                var closeTag = ""
-                
-                // Find what is closest: </li>, <ul>, or <ol>
-                if (((ulClose == -1 && itemClose != -1) || (itemClose != -1 && ulClose != -1 && itemClose < ulClose)) && ((olClose == -1 && itemClose != -1) || (itemClose != -1 && olClose != -1 && itemClose < olClose))) {
-                    closeTag = itemClose;
-                } else if (((ulClose == -1 && olClose != -1) || (olClose != -1 && ulClose != -1 && olClose < ulClose)) && ((olClose == -1 && itemClose != -1) || (olClose != -1 && itemClose != -1 && olClose < itemClose))) {
-                    closeTag = olClose;
-                } else {
-                    closeTag = ulClose;
-                }
-                
-                String text = html.substring(tagEnd + 1, closeTag);
-                String indentSpacing = "";
-                for (int j = 0; j < indent; j++) {
-                    indentSpacing += "&nbsp;&nbsp;&nbsp;&nbsp;";
-                }
-                if (isNumbered) {
-                    html = html.substring(0, tagEnd + 1)
-                        + indentSpacing +
-                        listNumbers.get(indent)+ ". " +
-                            text + "<br/>" +
-                            html.substring(closeTag);
-                    listNumbers.set(indent, listNumbers.get(indent) + 1);
-                    i = closeTag + 3;
-                } else {
-                    html = html.substring(0, tagEnd + 1) + indentSpacing + "• " + text + "<br/>" + html.substring(closeTag);
-                    i = closeTag + 2;
-                }
-            } else {
-                i = html.indexOf("<", i + 1);
-                if (i != -1 && html.substring(i, i + 4).equals("</ol")) {
-                    indent--;
-                    if(indent == -1){
-                        isNumbered = false;
-                    }
-                }
-            }
-        }
-        
-        html = html.replace("<ol>","").replace("<ul>","").replace("<li>","").replace("</li>","").replace("</ol>", "").replace("</ul>",""); //Remove the tags, which actually work in Android 7.0 on
-        
-        return html
- }*/
+     public func parseLists(_ html: String){
+     var firstIndex = 0
+     var isNumbered = false
+     let firstOl = html.indexOf("<ol") ?? -1
+     let firstUl = html.indexOf("<ul") ?? -1
+     
+     if ((firstUl != -1 && firstOl > firstUl) || firstOl == -1) {
+     firstIndex = firstUl
+     isNumbered = false
+     } else {
+     firstIndex = firstOl
+     isNumbered = true
+     }
+     
+     var listNumbers = [Int]()
+     
+     var indent = -1
+     var i = firstIndex
+     
+     while (i < html.length - 4 && i != -1) {
+     if (html.substring(i, length: 3) == "<ol" || html.substring(i, length: 3) == "<ul") {
+     if (html.substring(i, length: 3) == "<ol") {
+     isNumbered = true
+     indent += 1
+     listNumbers.insert(1, at: indent)
+     } else {
+     isNumbered = false
+     }
+     i = html.indexOf("<li", i)
+     } else if (html.substring(i, length: 3) == "<li") {
+     var tagEnd = html.indexOf(">", i)
+     var itemClose = html.indexOf("</li", tagEnd)
+     var ulClose = html.indexOf("<ul", tagEnd)
+     var olClose = html.indexOf("<ol", tagEnd)
+     var closeTag = ""
+     
+     // Find what is closest: </li>, <ul>, or <ol>
+     if (((ulClose == -1 && itemClose != -1) || (itemClose != -1 && ulClose != -1 && itemClose < ulClose)) && ((olClose == -1 && itemClose != -1) || (itemClose != -1 && olClose != -1 && itemClose < olClose))) {
+     closeTag = itemClose;
+     } else if (((ulClose == -1 && olClose != -1) || (olClose != -1 && ulClose != -1 && olClose < ulClose)) && ((olClose == -1 && itemClose != -1) || (olClose != -1 && itemClose != -1 && olClose < itemClose))) {
+     closeTag = olClose;
+     } else {
+     closeTag = ulClose;
+     }
+     
+     String text = html.substring(tagEnd + 1, closeTag);
+     String indentSpacing = "";
+     for (int j = 0; j < indent; j++) {
+     indentSpacing += "&nbsp;&nbsp;&nbsp;&nbsp;";
+     }
+     if (isNumbered) {
+     html = html.substring(0, tagEnd + 1)
+     + indentSpacing +
+     listNumbers.get(indent)+ ". " +
+     text + "<br/>" +
+     html.substring(closeTag);
+     listNumbers.set(indent, listNumbers.get(indent) + 1);
+     i = closeTag + 3;
+     } else {
+     html = html.substring(0, tagEnd + 1) + indentSpacing + "• " + text + "<br/>" + html.substring(closeTag);
+     i = closeTag + 2;
+     }
+     } else {
+     i = html.indexOf("<", i + 1);
+     if (i != -1 && html.substring(i, i + 4).equals("</ol")) {
+     indent--;
+     if(indent == -1){
+     isNumbered = false;
+     }
+     }
+     }
+     }
+     
+     html = html.replace("<ol>","").replace("<ul>","").replace("<li>","").replace("</li>","").replace("</ol>", "").replace("</ul>",""); //Remove the tags, which actually work in Android 7.0 on
+     
+     return html
+     }*/
     
     public func parseCodeTags(_ html: String) -> [String] {
         let startTag = "<code>"
@@ -505,7 +516,7 @@ public class TextDisplayStackView: UIStackView {
         
         return preSeperated
     }
-
+    
     public func parseTableTags(_ blocks: [String]) -> [String] {
         var newBlocks = [String]()
         for block in blocks {
