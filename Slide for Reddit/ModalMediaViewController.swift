@@ -16,6 +16,7 @@ class ModalMediaViewController: UIViewController {
 
     var embeddedVC: EmbeddableMediaViewController!
     var fullscreen = false
+    private let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
 
     private var savedColor : UIColor?
 
@@ -39,6 +40,12 @@ class ModalMediaViewController: UIViewController {
         configureViews()
         configureLayout()
         connectGestures()
+        
+        let blurView = UIVisualEffectView(frame: UIScreen.main.bounds)
+        blurEffect.setValue(2, forKeyPath: "blurRadius")
+        blurView.effect = blurEffect
+        view.insertSubview(blurView, at: 0)
+
     }
 
     override func viewWillAppear(_ animated: Bool) {

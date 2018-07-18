@@ -115,6 +115,10 @@ class VideoScrubberView: UIView {
         slider.addTarget(self, action: #selector(sliderValueChanged(_:)), for: .valueChanged)
         slider.addTarget(self, action: #selector(sliderDidBeginDragging(_:)), for: .touchDown)
         slider.addTarget(self, action: #selector(sliderDidEndDragging(_:)), for: [.touchUpInside, .touchUpOutside])
+        
+        self.backgroundColor = UIColor.black.withAlphaComponent(0.3)
+        self.layer.cornerRadius = 10
+        self.clipsToBounds = true
     }
     
     func updateWithTime(elapsedTime: CMTime) {
