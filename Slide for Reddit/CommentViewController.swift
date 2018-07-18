@@ -267,7 +267,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         tableView.beginUpdates()
         tableView.endUpdates()
         var index = 0
-        for comment in self.comments {
+        /*for comment in self.comments {
             if (comment.contains(getMenuShown()!)) {
                     let indexPath = IndexPath.init(row: index, section: 0)
                     self.tableView.scrollToRow(at: indexPath,
@@ -276,7 +276,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             } else {
                 index += 1
             }
-        }
+        }*/
     }
 
     func hide(_ cell: LinkCellView) {
@@ -1714,7 +1714,7 @@ override func scrollViewDidScroll(_ scrollView: UIScrollView) {
 
     func hideUI(inHeader: Bool) {
         isHiding = true
-        self.tableView.endEditing(true)
+        //self.tableView.endEditing(true)
         (navigationController)?.setNavigationBarHidden(true, animated: true)
         (self.navigationController)?.setToolbarHidden(true, animated: true)
         self.isToolbarHidden = true

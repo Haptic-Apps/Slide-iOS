@@ -259,20 +259,16 @@ public class TextDisplayStackView: UIStackView {
                 label.accessibilityIdentifier = "cite"
                 let text = createAttributedChunk(baseHTML: block)
                 label.delegate = delegate
-                let activeLinkAttributes = NSMutableDictionary(dictionary: label.activeLinkAttributes)
-                activeLinkAttributes[NSForegroundColorAttributeName] = tColor
-                label.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
-                label.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
                 label.numberOfLines = 0
                 label.setText(text)
                 label.setBorder(border: .left, weight: 2, color: tColor)
                 let framesetterB = CTFramesetterCreateWithAttributedString(text)
                 let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth - 8, height: CGFloat.greatestFiniteMagnitude), nil)
-                estimatedHeight += textSizeB.height + 4
+                estimatedHeight += textSizeB.height
                 label.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
                 overflow.addArrangedSubview(label)
                 label.horizontalAnchors == overflow.horizontalAnchors + CGFloat(4)
-                label.heightAnchor == textSizeB.height + CGFloat(4)
+                label.heightAnchor == textSizeB.height
             } else {
                 let label = TTTAttributedLabel.init(frame: CGRect.zero)
                 label.accessibilityIdentifier = "New text"
@@ -300,6 +296,20 @@ public class TextDisplayStackView: UIStackView {
         let htmlBase = TextStackEstimator.addSpoilers(baseHTML)
         let baseHtml = DTHTMLAttributedStringBuilder.init(html: htmlBase.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor : ColorUtil.fontColor, DTDefaultFontFamily: font.familyName,DTDefaultFontSize: font.pointSize,  DTDefaultFontName: font.fontName], documentAttributes: nil).generatedAttributedString()!
         let html = NSMutableAttributedString(attributedString: baseHtml)
+        
+        while html.mutableString.contains("\t•\t") {
+            let rangeOfStringToBeReplaced = html.mutableString.range(of: "\t•\t")
+            html.replaceCharacters(in: rangeOfStringToBeReplaced, with: " • ")
+        }
+        while html.mutableString.contains("\t◦\t") {
+            let rangeOfStringToBeReplaced = html.mutableString.range(of: "\t◦\t")
+            html.replaceCharacters(in: rangeOfStringToBeReplaced, with: "  ◦ ")
+        }
+        while html.mutableString.contains("\t▪\t") {
+            let rangeOfStringToBeReplaced = html.mutableString.range(of: "\t▪\t")
+            html.replaceCharacters(in: rangeOfStringToBeReplaced, with: "   ▪ ")
+        }
+        
         html.enumerateAttribute(NSStrikethroughStyleAttributeName, in: NSRange(location:0, length: html.length), options: [], using: { (value: Any?, range: NSRange, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
             if(value != nil && value is NSNumber && (value as! NSNumber) == 1){
                 html.addAttributes([kCTForegroundColorAttributeName as String: ColorUtil.fontColor, NSBaselineOffsetAttributeName:NSNumber(floatLiteral: 0),"TTTStrikeOutAttribute": 1, NSStrikethroughStyleAttributeName:NSNumber(value:1)], range: range)
@@ -312,8 +322,22 @@ public class TextDisplayStackView: UIStackView {
     public static func createAttributedChunk(baseHTML: String, fontSize: CGFloat, submission: Bool, accentColor: UIColor) -> NSAttributedString {
         let font = FontGenerator.fontOfSize(size: fontSize, submission: submission)
         let htmlBase = TextStackEstimator.addSpoilers(baseHTML)
-        let baseHtml = DTHTMLAttributedStringBuilder.init(html: htmlBase.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor : ColorUtil.fontColor, DTDefaultFontFamily: font.familyName,DTDefaultFontSize: font.pointSize,  DTDefaultFontName: font.fontName], documentAttributes: nil).generatedAttributedString()!
+        let baseHtml = DTHTMLAttributedStringBuilder.init(html: htmlBase.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor : ColorUtil.fontColor, DTDefaultFontFamily: font.familyName, DTDefaultFontSize: font.pointSize,  DTDefaultFontName: font.fontName], documentAttributes: nil).generatedAttributedString()!
         let html = NSMutableAttributedString(attributedString: baseHtml)
+        
+        while html.mutableString.contains("\t•\t") {
+            let rangeOfStringToBeReplaced = html.mutableString.range(of: "\t•\t")
+            html.replaceCharacters(in: rangeOfStringToBeReplaced, with: " • ")
+        }
+        while html.mutableString.contains("\t◦\t") {
+            let rangeOfStringToBeReplaced = html.mutableString.range(of: "\t◦\t")
+            html.replaceCharacters(in: rangeOfStringToBeReplaced, with: "\t\t◦ ")
+        }
+        while html.mutableString.contains("\t▪\t") {
+            let rangeOfStringToBeReplaced = html.mutableString.range(of: "\t▪\t")
+            html.replaceCharacters(in: rangeOfStringToBeReplaced, with: "\t\t\t▪ ")
+        }
+
         html.enumerateAttribute(NSStrikethroughStyleAttributeName, in: NSRange(location:0, length: html.length), options: [], using: { (value: Any?, range: NSRange, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
             if(value != nil && value is NSNumber && (value as! NSNumber) == 1){
                 html.addAttributes([kCTForegroundColorAttributeName as String: ColorUtil.fontColor, NSBaselineOffsetAttributeName:NSNumber(floatLiteral: 0),"TTTStrikeOutAttribute": 1, NSStrikethroughStyleAttributeName:NSNumber(value:1)], range: range)

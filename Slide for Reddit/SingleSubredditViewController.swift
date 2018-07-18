@@ -151,11 +151,10 @@ class SingleSubredditViewController: MediaViewController {
 
         navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
 
-        if (single || !SettingValues.viewType) {
-            navigationController?.setNavigationBarHidden(false, animated: true)
-            self.navigationController?.navigationBar.shadowImage = UIImage()
-            navigationController?.navigationBar.isTranslucent = false
-        }
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        navigationController?.navigationBar.isTranslucent = false
+
+        showUI()
 
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub)
 
@@ -221,7 +220,7 @@ class SingleSubredditViewController: MediaViewController {
         if (single) {
             UIApplication.shared.statusBarView?.backgroundColor = .clear
         }
-        if(!SingleSubredditViewController.ignoreFab){
+        if(SingleSubredditViewController.fab != nil){
             UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
                 SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
             }, completion: { finished in

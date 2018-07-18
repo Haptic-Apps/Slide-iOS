@@ -44,8 +44,7 @@ public class BannerUtil {
         if(UIScreen.main.bounds.width > 350){
             xmargin += (UIScreen.main.bounds.width - 350) / 2
         }
-        let frame = CGRect.init(x: xmargin, y: top ? topmargin : UIScreen.main.bounds.height - bottommargin, width: UIScreen.main.bounds.width - (xmargin * 2), height: 48)
-        print(frame)
+        let frame = CGRect.init(x: xmargin, y: top ? topmargin : UIScreen.main.bounds.height - bottommargin, width: UIScreen.main.bounds.width - (xmargin * 2), height: 48 + ((text.contains("\n")) ? 24 : 0))
         popup = UILabel.init(frame: frame)
         popup.backgroundColor = color
         popup.textAlignment = .center

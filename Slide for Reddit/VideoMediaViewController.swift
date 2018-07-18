@@ -558,7 +558,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
 extension VideoMediaViewController {
 
     func loadYoutube(url urlS: String) {
-        var millis = 0
+        var seconds = 0
         var video = ""
         var playlist = ""
         
@@ -570,9 +570,9 @@ extension VideoMediaViewController {
         let i = URL(string: url)
         if let dictionary = i?.queryDictionary {
             if let t = dictionary["t"] {
-                millis = getTimeFromString(t);
+                seconds = getTimeFromString(t);
             } else if let start = dictionary["start"] {
-                millis = getTimeFromString(start);
+                seconds = getTimeFromString(start);
             }
 
             if let list = dictionary["list"] {
@@ -602,13 +602,13 @@ extension VideoMediaViewController {
             let vars = [
                 "controls": 0, // Disable controls
                 "playsinline": 1,
-                "start": millis,
+                "start": seconds,
                 "fs": 0, // Turn off fullscreen button
                 "rel": 0, // Turn off suggested content at end
                 "showinfo": 0, // Hide video title uploader
                 "loop": 1,
                 "modestbranding": 1, // Remove youtube logo on bottom right
-                "autohide": 1,
+                "autohide": 1
                 ]
             if (!playlist.isEmpty) {
                 strongSelf.youtubeView.load(withPlaylistId: playlist, playerVars: vars)
@@ -812,7 +812,7 @@ extension VideoMediaViewController {
             timeAdd += Int(time)!;
         }
 
-        return timeAdd * 1000;
+        return timeAdd;
 
     }
     func showTitle(_ sender: AnyObject) {
