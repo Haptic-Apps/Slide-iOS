@@ -46,6 +46,7 @@ class VideoScrubberView: UIView {
     var delegate: VideoScrubberViewDelegate?
     var totalDuration: CMTime = CMTime()
     private var elapsedDuration: CMTime = CMTime()
+    private let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
 
     var slider: ThickSlider = ThickSlider()
     var timeElapsedLabel = UILabel()
@@ -119,6 +120,11 @@ class VideoScrubberView: UIView {
         self.backgroundColor = UIColor.black.withAlphaComponent(0.3)
         self.layer.cornerRadius = 10
         self.clipsToBounds = true
+        
+        let blurView = UIVisualEffectView(frame: UIScreen.main.bounds)
+        blurEffect.setValue(3, forKeyPath: "blurRadius")
+        blurView.effect = blurEffect
+        self.insertSubview(blurView, at: 0)
     }
     
     func updateWithTime(elapsedTime: CMTime) {

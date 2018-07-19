@@ -42,10 +42,9 @@ class ModalMediaViewController: UIViewController {
         connectGestures()
         
         let blurView = UIVisualEffectView(frame: UIScreen.main.bounds)
-        blurEffect.setValue(2, forKeyPath: "blurRadius")
+        blurEffect.setValue(3, forKeyPath: "blurRadius")
         blurView.effect = blurEffect
         view.insertSubview(blurView, at: 0)
-
     }
 
     override func viewWillAppear(_ animated: Bool) {
