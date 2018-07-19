@@ -445,6 +445,8 @@ class SingleSubredditViewController: MediaViewController {
         self.present(actionSheetController, animated: true, completion: nil)
     }
 
+    var lastVersion = 0
+    
     func reloadNeedingColor() {
         tableView.backgroundColor = ColorUtil.backgroundColor
 
@@ -460,6 +462,7 @@ class SingleSubredditViewController: MediaViewController {
         self.tableView.register(BannerLinkCellView.classForCoder(), forCellWithReuseIdentifier: "banner\(SingleSubredditViewController.cellVersion)")
         self.tableView.register(ThumbnailLinkCellView.classForCoder(), forCellWithReuseIdentifier: "thumb\(SingleSubredditViewController.cellVersion)")
         self.tableView.register(TextLinkCellView.classForCoder(), forCellWithReuseIdentifier: "text\(SingleSubredditViewController.cellVersion)")
+        lastVersion = SingleSubredditViewController.cellVersion
 
         var top = 20
         if #available(iOS 11.0, *) {
@@ -1495,6 +1498,12 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
         let submission = self.links[(indexPath as NSIndexPath).row]
 
         var cell: LinkCellView!
+        
+        if(lastVersion != SingleSubredditViewController.cellVersion){
+            self.tableView.register(BannerLinkCellView.classForCoder(), forCellWithReuseIdentifier: "banner\(SingleSubredditViewController.cellVersion)")
+            self.tableView.register(ThumbnailLinkCellView.classForCoder(), forCellWithReuseIdentifier: "thumb\(SingleSubredditViewController.cellVersion)")
+            self.tableView.register(TextLinkCellView.classForCoder(), forCellWithReuseIdentifier: "text\(SingleSubredditViewController.cellVersion)")
+        }
 
         switch cellType(forSubmission: submission) {
         case .thumb:

@@ -158,6 +158,7 @@ class SettingsWelcome: UIViewController {
         UserDefaults.standard.synchronize()
         ColorUtil.doInit()
         parentVC.hardReset()
+        SubredditReorderViewController.changed = true
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -172,6 +173,7 @@ class SettingsWelcome: UIViewController {
         UserDefaults.standard.synchronize()
         ColorUtil.doInit()
         parentVC.hardReset()
+        SubredditReorderViewController.changed = true
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -187,6 +189,7 @@ class SettingsWelcome: UIViewController {
         UserDefaults.standard.synchronize()
         ColorUtil.doInit()
         parentVC.hardReset()
+        SubredditReorderViewController.changed = true
         self.dismiss(animated: true, completion: nil)
     }
     
