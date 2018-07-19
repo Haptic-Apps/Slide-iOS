@@ -23,6 +23,16 @@ Below are the steps to getting started:
     3. Terminal: cd Downloads/Slide-iOS-Master/
     4. Terminal: pod install
     5. Open "Slide for Reddit.xcworkspace" through finder
+    
+### If you are having trouble building on XCode 10 or MacOS Mojave
+
+Try running "chmod 666 Pods/Realm/include/RLMPlatform.h" from terminal in the project root directory
+
+### If you don't have a paid Apple Developer account and you get warnings about iCloud entitlements
+
+Select "none" for your team, go to the "Capabilities" section of the project build settings, and disable iCloud and IAP support. Then, add yourself back as the team and build!
+
+If you still run into problems, feel free to shoot me a message on Reddit or Discord (above)
 
 ### What needs to be done
 Slide is in beta, and there are issues that need to be resolved and some feature additions that need to be integrated before the public version 1 release. Any issues are fair game, but any issue with the "Help Wanted" tag is an issue that I have not started on or that should be straightforward to implement with a single PR! If you have any questions or want to be pointed in the right direction, feel free to send me a PM on Reddit to /u/ccrama, or join us on Discord (top banner)!
