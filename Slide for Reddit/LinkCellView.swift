@@ -280,6 +280,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         self.textView = TextDisplayStackView.init(fontSize: 16, submission: true, color: ColorUtil.baseAccent, delegate: self, width: 100).then {
             $0.accessibilityIdentifier = "Self Text View"
             $0.backgroundColor = ColorUtil.foregroundColor
+            $0.isHidden = true
         }
 
         self.score = UILabel().then {
@@ -386,7 +387,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             addTouch = true
         }
 
-        contentView.addSubviews(bannerImage, thumbImageContainer, title, textView, infoContainer, tagbody)
+        if(self is FullLinkCellView){
+            contentView.addSubviews(bannerImage, thumbImageContainer, title, textView, infoContainer, tagbody)
+        } else {
+            contentView.addSubviews(bannerImage, thumbImageContainer, title, infoContainer, tagbody)
+        }
         contentView.layer.masksToBounds = true
         
         if(SettingValues.actionBarMode == .FULL || full){
@@ -521,7 +526,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         // Remove all constraints previously applied by this method
         NSLayoutConstraint.deactivate(constraintsForContent)
         constraintsForContent = []
-
+        
         // Deriving classes will populate constraintsForContent in the override for this method.
     }
     
@@ -590,6 +595,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
     func showBody(width: CGFloat) {
         full = true
+        textView.isHidden = false
         let link = self.link!
         let color = ColorUtil.accentColorForSub(sub: ((link).subreddit))
         self.textView.setColor(color)
