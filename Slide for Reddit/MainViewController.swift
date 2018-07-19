@@ -18,9 +18,17 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     public static var vCs: [UIViewController] = []
     public static var current: String = ""
     public static var needsRestart = false
+    
+    override func didMove(toParentViewController parent: UIViewController?) {
+        self.viewWillAppearActions()
+    }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.viewWillAppearActions()
+    }
+    
+    public func viewWillAppearActions(){
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
         
@@ -29,7 +37,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             hardReset()
             return
         }
-
+        
         if (SubredditReorderViewController.changed || ColorUtil.shouldBeNight()) {
             var subChanged = false
             if(finalSubs.count != Subscriptions.subreddits.count){
@@ -48,22 +56,22 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                 doButtons()
             }
         }
-
+        
         self.navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.isTranslucent = false
-
+        
         navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
-
+        
         if(!SettingValues.bottomBarHidden || SettingValues.viewType){
             navigationController?.setToolbarHidden(false, animated: false)
         } else {
             navigationController?.setToolbarHidden(true, animated: false)
         }
-
+        
         if(SettingValues.viewType){
             navigationController?.setNavigationBarHidden(true, animated: true)
         }
-
+        
         menuNav?.header.doColors()
         if (menuNav?.tableView != nil) {
             menuNav?.tableView.reloadData()
