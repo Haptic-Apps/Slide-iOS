@@ -388,7 +388,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 finalWidth = width
             }
         } else {
-            if(canMod || (toReplyTo as! RSubmission).canMod){
+            if(canMod || (toReplyTo != nil && (toReplyTo as! RSubmission).canMod)){
                 finalWidth = CGFloat(8*2) + width + widthI + widthS
             } else {
                 sticky!.isHidden = true
