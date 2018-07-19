@@ -83,8 +83,8 @@ class VideoScrubberView: UIView {
 
         self.addSubview(playButton)
         self.addSubview(timeTotalLabel)
-        slider.verticalAnchors == self.verticalAnchors
         slider.leftAnchor == playButton.rightAnchor + 8
+        slider.topAnchor == self.topAnchor
         slider.bottomAnchor == self.bottomAnchor - 8
         slider.rightAnchor == timeTotalLabel.leftAnchor - 8
         
