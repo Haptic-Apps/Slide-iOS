@@ -26,11 +26,6 @@ class ImageMediaViewController: EmbeddableMediaViewController {
 
     var forceHD = false
 
-    var imageViewTopConstraint : NSLayoutConstraint?
-    var imageViewBottomConstraint : NSLayoutConstraint?
-    var imageViewLeadingConstraint : NSLayoutConstraint?
-    var imageViewTrailingConstraint : NSLayoutConstraint?
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -40,8 +35,9 @@ class ImageMediaViewController: EmbeddableMediaViewController {
         loadContent()
     }
 
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        updateConstraintsForSize(view.bounds.size)
         updateMinZoomScaleForSize(view.bounds.size)
     }
 
@@ -121,14 +117,8 @@ class ImageMediaViewController: EmbeddableMediaViewController {
     func configureLayout() {
         scrollView.edgeAnchors == view.edgeAnchors
 
-        imageViewTopConstraint = imageView.topAnchor == scrollView.topAnchor
-        imageViewBottomConstraint = imageView.bottomAnchor == scrollView.bottomAnchor
-        imageViewLeadingConstraint = imageView.leadingAnchor == scrollView.leadingAnchor
-        imageViewTrailingConstraint = imageView.trailingAnchor == scrollView.trailingAnchor
-
         bottomButtons.horizontalAnchors == view.safeHorizontalAnchors + CGFloat(8)
         bottomButtons.bottomAnchor == view.safeBottomAnchor - CGFloat(8)
-
     }
     
     func fullscreen(_ sender: AnyObject){
@@ -177,7 +167,9 @@ class ImageMediaViewController: EmbeddableMediaViewController {
         loadImage(imageURL: imageURL) { [weak self] (image) in
             if let strongSelf = self {
                 strongSelf.imageView.image = image
-                strongSelf.view.layoutIfNeeded()
+                strongSelf.imageView.sizeToFit()
+                strongSelf.scrollView.contentSize = image.size
+                strongSelf.view.setNeedsLayout()
 
                 // Update UI
                 strongSelf.setProgressViewVisible(false)
@@ -338,7 +330,6 @@ extension ImageMediaViewController: UIScrollViewDelegate {
         let widthScale = size.width / imageView.bounds.width
         let heightScale = size.height / imageView.bounds.height
         let minScale = min(widthScale, heightScale)
-
         scrollView.minimumZoomScale = minScale
         scrollView.zoomScale = minScale
     }
@@ -348,16 +339,11 @@ extension ImageMediaViewController: UIScrollViewDelegate {
     }
 
     func updateConstraintsForSize(_ size: CGSize) {
-
-        let yOffset = max(0, (size.height - imageView.frame.height) / 2)
-        imageViewTopConstraint?.constant = yOffset
-        imageViewBottomConstraint?.constant = yOffset
-
-        let xOffset = max(0, (size.width - imageView.frame.width) / 2)
-        imageViewLeadingConstraint?.constant = xOffset
-        imageViewTrailingConstraint?.constant = xOffset
-
-        view.layoutIfNeeded()
+        let imageViewSize = imageView.frame.size
+        let scrollViewSize = scrollView.bounds.size
+        let verticalInset = imageViewSize.height < scrollViewSize.height ? (scrollViewSize.height - imageViewSize.height) / 2 : 0
+        let horizontalInset = imageViewSize.width < scrollViewSize.width ? (scrollViewSize.width - imageViewSize.width) / 2 : 0
+        scrollView.contentInset = UIEdgeInsets(top: verticalInset, left: horizontalInset, bottom: verticalInset, right: horizontalInset)
     }
 
     func zoomRectForScale(scale: CGFloat, center: CGPoint) -> CGRect {
