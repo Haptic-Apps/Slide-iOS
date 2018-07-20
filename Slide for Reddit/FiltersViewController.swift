@@ -134,24 +134,19 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
         if searchBar == domainEnter {
             PostFilter.domains.append(domainEnter.text! as NSString)
             domainEnter.text = ""
-        }
-        else if searchBar == selftextEnter {
+        } else if searchBar == selftextEnter {
             PostFilter.selftext.append(selftextEnter.text! as NSString)
             selftextEnter.text = ""
-        }
-        else if searchBar == titleEnter {
+        } else if searchBar == titleEnter {
             PostFilter.titles.append(titleEnter.text! as NSString)
             titleEnter.text = ""
-        }
-        else if searchBar == profileEnter {
+        } else if searchBar == profileEnter {
             PostFilter.profiles.append(profileEnter.text! as NSString)
             profileEnter.text = ""
-        }
-        else if searchBar == subredditEnter {
+        } else if searchBar == subredditEnter {
             PostFilter.subreddits.append(subredditEnter.text! as NSString)
             subredditEnter.text = ""
-        }
-        else if searchBar == flairEnter {
+        } else if searchBar == flairEnter {
             PostFilter.flairs.append(flairEnter.text! as NSString)
             flairEnter.text = ""
         }

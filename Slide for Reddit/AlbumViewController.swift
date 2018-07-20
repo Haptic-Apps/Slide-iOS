@@ -40,8 +40,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
     func cutEnds(s: String) -> String {
         if s.endsWith("/") {
             return s.substring(0, length: s.length - 1)
-        }
-        else {
+        } else {
             return s
         }
     }
@@ -53,8 +52,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         URLSession.shared.dataTask(with: url!) { (data, _, error) in
             if error != nil {
                 print(error ?? "Error loading album...")
-            }
-            else {
+            } else {
                 do {
                     if(NSString(data: data!, encoding: String.Encoding.utf8.rawValue)?.contains("[]"))! {
                         //single album image
@@ -71,8 +69,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                                                 direction: .forward,
                                                 animated: true,
                                                 completion: nil)
-                    }
-                    else {
+                    } else {
                         guard let json = try JSONSerialization.jsonObject(with: data!, options: []) as? NSDictionary else {
                             return
                         }
@@ -99,8 +96,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                             
                         }
                     }
-                }
-                catch let error as NSError {
+                } catch let error as NSError {
                     print(error)
                 }
             }
@@ -121,8 +117,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         }
         if next.length < 5 {
             return getHash(sS: s.replacingOccurrences(of: next, with: ""))
-        }
-        else {
+        } else {
             return next
         }
         

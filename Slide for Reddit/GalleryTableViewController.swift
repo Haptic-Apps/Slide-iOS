@@ -74,8 +74,7 @@ class GalleryTableViewController: MediaTableViewController {
         if panGesture.state == .began {
             originalPosition = view.center
             currentPositionTouched = panGesture.location(in: view)
-        }
-        else if panGesture.state == .changed {
+        } else if panGesture.state == .changed {
             view.frame.origin = CGPoint(
                 x: 0,
                 y: translation.y
@@ -83,8 +82,7 @@ class GalleryTableViewController: MediaTableViewController {
             let progress = translation.y / (self.view.frame.size.height / 2)
             background!.alpha = 1 - (abs(progress) * 0.9)
             
-        }
-        else if panGesture.state == .ended {
+        } else if panGesture.state == .ended {
             let velocity = panGesture.velocity(in: view)
             
             let down = panGesture.velocity(in: view).y > 0
@@ -102,8 +100,7 @@ class GalleryTableViewController: MediaTableViewController {
                         self.dismiss(animated: false, completion: nil)
                     }
                 })
-            }
-            else {
+            } else {
                 UIView.animate(withDuration: 0.2, animations: {
                     self.view.center = self.originalPosition!
                     self.background!.alpha = 1

@@ -27,8 +27,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
     public func colorPickerView(_ colorPickerView: ColorPickerView, didSelectItemAt indexPath: IndexPath) {
         if isAccent {
             accentChosen = colorPickerView.colors[indexPath.row]
-        }
-        else {
+        } else {
             self.navigationController?.navigationBar.barTintColor = colorPickerView.colors[indexPath.row]
         }
     }
@@ -217,8 +216,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         if changed == tintOutsideSwitch {
             SettingValues.onlyTintOutside = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_onlyTintOutside)
-        }
-        else {
+        } else {
             SettingValues.nightModeEnabled = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_nightMode)
             ColorUtil.doInit()
@@ -277,17 +275,13 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         if indexPath.section == 0 && indexPath.row == 0 {
             pickTheme()
-        }
-        else if indexPath.section == 0 && indexPath.row == 1 {
+        } else if indexPath.section == 0 && indexPath.row == 1 {
             pickAccent()
-        }
-        else if indexPath.section == 0 && indexPath.row == 2 {
+        } else if indexPath.section == 0 && indexPath.row == 2 {
             showBaseTheme()
-        }
-        else if indexPath.section == 1 && indexPath.row == 0 {
+        } else if indexPath.section == 1 && indexPath.row == 0 {
             //tintmode
-        }
-        else if indexPath.section == 0 && indexPath.row == 3 {
+        } else if indexPath.section == 0 && indexPath.row == 3 {
             if !VCPresenter.proDialogShown(feature: false, self) {
                 showNightTheme()
             }
@@ -448,8 +442,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
                 actionSheetController.addAction(image: UIImage.init(named: "support")?.menuIcon().getCopy(withColor: GMColor.red500Color()), title: theme.rawValue + " (pro)", color: GMColor.red500Color(), style: .default, isEnabled: true) { (_) in
                     VCPresenter.proDialogShown(feature: false, self)
                 }
-            }
-            else {
+            } else {
                 let saveActionButton: UIAlertAction = UIAlertAction(title: theme.rawValue, style: .default) { _ -> Void in
                     UserDefaults.standard.set(theme.rawValue, forKey: "theme")
                     UserDefaults.standard.synchronize()

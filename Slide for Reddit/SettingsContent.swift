@@ -44,12 +44,10 @@ class SettingsContent: UITableViewController {
         if changed == showNSFWContent {
             SettingValues.nsfwEnabled = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_nsfwEnabled)
-        }
-        else if changed == showNSFWPreviews {
+        } else if changed == showNSFWPreviews {
             SettingValues.nsfwPreviews = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_nsfwPreviews)
-        }
-        else if changed == hideCollectionViews {
+        } else if changed == hideCollectionViews {
             SettingValues.hideNSFWCollection = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_hideNSFWCollection)
         }
@@ -116,8 +114,7 @@ class SettingsContent: UITableViewController {
             if !SettingValues.nsfwPreviews {
                 hideCollectionViews.isEnabled = false
             }
-        }
-        else {
+        } else {
             showNSFWPreviews.isEnabled = false
             hideCollectionViews.isEnabled = false
         }
@@ -128,8 +125,7 @@ class SettingsContent: UITableViewController {
             let url = URL.init(string: "https://www.reddit.com/prefs")!
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
-            }
-            else {
+            } else {
                 UIApplication.shared.openURL(url)
             }
         }

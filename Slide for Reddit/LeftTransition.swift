@@ -37,8 +37,7 @@ class LeftTransition: NSObject, UIViewControllerAnimatedTransitioning {
                 fromVC.view.removeFromSuperview()
                 transitionContext.completeTransition(true )
             })
-        }
-        else {
+        } else {
             toVC.view.frame = originRect
             UIView.animate(withDuration: transitionDuration(using: transitionContext), animations: { () -> Void in
                 toVC.view.center = containerView.center

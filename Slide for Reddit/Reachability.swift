@@ -79,12 +79,10 @@ extension ReachabilityStatus {
         if !connectionRequired && isReachable {
             if isWWAN {
                 self = .Online(.WWAN)
-            }
-            else {
+            } else {
                 self = .Online(.WiFi)
             }
-        }
-        else {
+        } else {
             self =  .Offline
         }
     }

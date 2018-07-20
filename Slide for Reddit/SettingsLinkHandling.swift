@@ -65,20 +65,16 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         if changed == internalImage {
             SettingValues.internalImageView = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_internalImageView)
-        }
-        else if changed == internalGif {
+        } else if changed == internalGif {
             SettingValues.internalGifView = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_internalGifView)
-        }
-        else if changed == internalAlbum {
+        } else if changed == internalAlbum {
             SettingValues.internalAlbumView = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_internalAlbumView)
-        }
-        else if changed == internalYouTube {
+        } else if changed == internalYouTube {
             SettingValues.internalYouTube = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_internalYouTube)
-        }
-        else if changed == useSafariVC {
+        } else if changed == useSafariVC {
             SettingValues.safariVC = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_safariVC)
         }

@@ -111,8 +111,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
             
             decisionHandler(WKNavigationActionPolicy.allow)
             
-            }
-            else {
+            } else {
             
             decisionHandler(WKNavigationActionPolicy.cancel)
         }
@@ -156,8 +155,7 @@ extension WKWebView {
                 if result != nil {
                     resultString = "\(error.debugDescription)"
                 }
-            }
-            else {
+            } else {
             }
             finished = true
         })

@@ -167,8 +167,7 @@ class SingleSubredditViewController: MediaViewController {
 
         if savedIndex != nil {
             tableView.reloadItems(at: [savedIndex!])
-        }
-        else {
+        } else {
             tableView.reloadData()
         }
 
@@ -188,12 +187,10 @@ class SingleSubredditViewController: MediaViewController {
             self.isToolbarHidden = false
             if SingleSubredditViewController.fab == nil {
                 setupFab()
-            }
-            else {
+            } else {
                 show(true)
             }
-        }
-        else {
+        } else {
             navigationController?.setToolbarHidden(true, animated: false)
         }
 
@@ -257,8 +254,7 @@ class SingleSubredditViewController: MediaViewController {
                 if navigationController != nil && !isHiding && !isToolbarHidden && !(scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height)) {
                     hideUI(inHeader: true)
                 }
-            }
-            else if (currentY < lastYUsed + 20) && !isHiding && navigationController != nil && (isToolbarHidden) {
+            } else if (currentY < lastYUsed + 20) && !isHiding && navigationController != nil && (isToolbarHidden) {
                 showUI()
             }
         }
@@ -315,8 +311,7 @@ class SingleSubredditViewController: MediaViewController {
                     }
                     self.isToolbarHidden = false
                 })
-        }
-        else {
+        } else {
             SingleSubredditViewController.fab?.isHidden = false
 
             UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
@@ -339,8 +334,7 @@ class SingleSubredditViewController: MediaViewController {
                 UIView.animate(withDuration: 0.3, animations: { () -> Void in
                     SingleSubredditViewController.fab!.alpha = 1
                 })
-            }
-            else {
+            } else {
                 SingleSubredditViewController.fab!.isHidden = false
             }
         }
@@ -354,8 +348,7 @@ class SingleSubredditViewController: MediaViewController {
                 }, completion: { _ in
                     SingleSubredditViewController.fab!.isHidden = true
                 })
-            }
-            else {
+            } else {
                 SingleSubredditViewController.fab!.isHidden = true
             }
         }
@@ -371,8 +364,7 @@ class SingleSubredditViewController: MediaViewController {
                     SingleSubredditViewController.fab = nil
                     self.addNewFab()
                 })
-            }
-            else {
+            } else {
                 if SingleSubredditViewController.fab != nil {
                     SingleSubredditViewController.fab!.removeFromSuperview()
                     SingleSubredditViewController.fab = nil
@@ -469,8 +461,7 @@ class SingleSubredditViewController: MediaViewController {
         var top = 20
         if #available(iOS 11.0, *) {
             top = 0
-        }
-        else {
+        } else {
             top = 64
         }
 
@@ -504,8 +495,7 @@ class SingleSubredditViewController: MediaViewController {
                 let moreB = UIBarButtonItem.init(customView: more)
                 
                 navigationItem.rightBarButtonItems = [moreB, sortB]
-            }
-            else {
+            } else {
                 more = UIButton.init(type: .custom)
                 more.setImage(UIImage.init(named: "moreh")?.menuIcon(), for: UIControlState.normal)
                 more.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControlEvents.touchUpInside)
@@ -527,8 +517,7 @@ class SingleSubredditViewController: MediaViewController {
                         DispatchQueue.main.async {
                             if self.sub == ("all") || self.sub == ("frontpage") || self.sub.hasPrefix("/m/") || self.sub.contains("+") {
                                 self.load(reset: true)
-                            }
-                            else {
+                            } else {
                                 DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
                                     let alert = UIAlertController.init(title: "Subreddit not found", message: "r/\(self.sub) could not be found, is it spelled correctly?", preferredStyle: .alert)
                                     alert.addAction(UIAlertAction.init(title: "Close", style: .default, handler: { (_) in
@@ -553,14 +542,12 @@ class SingleSubredditViewController: MediaViewController {
                                     }))
                                     self.present(alert, animated: true, completion: nil)
                                 }
-                            }
-                            else {
+                            } else {
                                 if self.sub != ("all") && self.sub != ("frontpage") && !self.sub.hasPrefix("/m/") {
                                     if SettingValues.saveHistory {
                                         if SettingValues.saveNSFWHistory && self.subInfo!.over18 {
                                             Subscriptions.addHistorySub(name: AccountController.currentName, sub: self.subInfo!.displayName)
-                                        }
-                                        else if !self.subInfo!.over18 {
+                                        } else if !self.subInfo!.over18 {
                                             Subscriptions.addHistorySub(name: AccountController.currentName, sub: self.subInfo!.displayName)
                                         }
                                     }
@@ -572,8 +559,7 @@ class SingleSubredditViewController: MediaViewController {
                         }
                     }
                 })
-            }
-            catch {
+            } catch {
             }
         }
     }
@@ -620,8 +606,7 @@ class SingleSubredditViewController: MediaViewController {
             subChanged = false
             BannerUtil.makeBanner(text: "Unsubscribed", color: ColorUtil.accentColorForSub(sub: sub), seconds: 3, context: self, top: true)
             subb.setImage(UIImage.init(named: "addcircle")?.getCopy(withColor: ColorUtil.fontColor), for: UIControlState.normal)
-        }
-        else {
+        } else {
             let alrController = UIAlertController.init(title: "Subscribe to \(sub)", message: nil, preferredStyle: .actionSheet)
             if AccountController.isLoggedIn {
                 let somethingAction = UIAlertAction(title: "Add to sub list and subscribe", style: UIAlertActionStyle.default, handler: { (_: UIAlertAction!) in
@@ -673,8 +658,7 @@ class SingleSubredditViewController: MediaViewController {
                 }
 
             })
-        }
-        catch {
+        } catch {
         }
     }
 
@@ -688,8 +672,7 @@ class SingleSubredditViewController: MediaViewController {
             if History.getSeen(s: submission) {
                 indexPaths.append(IndexPath(row: count, section: 0))
                 links.remove(at: index)
-            }
-            else {
+            } else {
                 index += 1
             }
             count += 1
@@ -862,8 +845,7 @@ class SingleSubredditViewController: MediaViewController {
             sort = s
             refresh()
             return
-        }
-        else {
+        } else {
             let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
 
             let cancelActionButton: UIAlertAction = UIAlertAction(title: "Close", style: .cancel) { _ -> Void in
@@ -909,14 +891,12 @@ class SingleSubredditViewController: MediaViewController {
                 DispatchQueue.main.async {
                     if self.navigationController!.modalPresentationStyle == .formSheet {
                         self.navigationController!.dismiss(animated: true)
-                    }
-                    else {
+                    } else {
                         self.navigationController!.popViewController(animated: true)
                     }
                 }
             })
-        }
-        catch {
+        } catch {
 
         }
     }
@@ -984,12 +964,10 @@ class SingleSubredditViewController: MediaViewController {
                                         
                                         if self.links.isEmpty {
                                             BannerUtil.makeBanner(text: "No offline content found! You can set up subreddit caching in Settings > Auto Cache", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 5, context: self)
-                                        }
-                                        else {
+                                        } else {
                                             BannerUtil.makeBanner(text: "Showing offline content (\(DateFormatter().timeSince(from: updated, numericDates: true)))", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 3, context: self)
                                         }
-                                    }
-                                    catch {
+                                    } catch {
                                         
                                     }
 
@@ -1030,8 +1008,7 @@ class SingleSubredditViewController: MediaViewController {
                             }
                             realm.create(type(of: self.realmListing!), value: self.realmListing!, update: true)
                             try realm.commitWrite()
-                        }
-                        catch {
+                        } catch {
 
                         }
                         self.preloadImages(values)
@@ -1049,12 +1026,10 @@ class SingleSubredditViewController: MediaViewController {
                                 }
                                 if listing.children.isEmpty {
                                     BannerUtil.makeBanner(text: "No posts found!\nMake sure this sub exists and you have permission to view it", color: GMColor.red500Color(), seconds: 5, context: self)
-                                }
-                                else {
+                                } else {
                                     BannerUtil.makeBanner(text: "No posts found!\nCheck your filter settings", color: GMColor.red500Color(), seconds: 5, context: self)
                                 }
-                            }
-                            else {
+                            } else {
                                 var paths = [IndexPath]()
                                 for i in before...(self.links.count - 1) {
                                     paths.append(IndexPath.init(item: i, section: 0))
@@ -1072,8 +1047,7 @@ class SingleSubredditViewController: MediaViewController {
                                     }
                                 
                                     self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + (-1 * ((SettingValues.viewType && !self.single) ?    (52 ) : (self.navigationController?.navigationBar.frame.size.height ?? 64))) - top)
-                                }
-                                else {
+                                } else {
                                     self.tableView.insertItems(at: paths)
                                     self.flowLayout.reset()
                                 }
@@ -1090,8 +1064,7 @@ class SingleSubredditViewController: MediaViewController {
                         }
                     }
                 })
-            }
-            catch {
+            } catch {
                 print(error)
             }
 
@@ -1120,8 +1093,7 @@ class SingleSubredditViewController: MediaViewController {
             if !fullImage && height < 50 {
                 big = false
                 thumb = true
-            }
-            else if big && (SettingValues.postImageMode == .CROPPED_IMAGE) {
+            } else if big && (SettingValues.postImageMode == .CROPPED_IMAGE) {
                 height = 200
             }
 
@@ -1152,10 +1124,8 @@ class SingleSubredditViewController: MediaViewController {
 
             if thumb && !big {
                 if submission.thumbnailUrl == "nsfw" {
-                }
-                else if submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty {
-                }
-                else {
+                } else if submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty {
+                } else {
                     if let url = URL.init(string: submission.thumbnailUrl) {
                         urls.append(url)
                     }
@@ -1168,8 +1138,7 @@ class SingleSubredditViewController: MediaViewController {
                         urls.append(url)
                     }
 
-                }
-                else {
+                } else {
                     if let url = URL.init(string: submission.bannerUrl) {
                         urls.append(url)
                     }
@@ -1245,11 +1214,9 @@ class SingleSubredditViewController: MediaViewController {
 
         if thumb && !big {
             target = .thumb
-        }
-        else if big {
+        } else if big {
             target = .banner
-        }
-        else {
+        } else {
             target = .text
         }
 
@@ -1450,8 +1417,7 @@ extension SingleSubredditViewController {
             alertController.addAction(Action(ActionData(title: "Manage multireddit", image: UIImage(named: "info")!.menuIcon()), style: .default, handler: { _ in
                 self.displayMultiredditSidebar()
             }))
-        }
-        else {
+        } else {
             alertController.addAction(Action(ActionData(title: "Sidebar", image: UIImage(named: "info")!.menuIcon()), style: .default, handler: { _ in
                 self.doDisplaySidebar()
             }))
@@ -1473,8 +1439,7 @@ extension SingleSubredditViewController {
             if parentVC != nil {
                 let p = (parentVC!)
                 self.pickTheme(sender: sender, parent: p)
-            }
-            else {
+            } else {
                 self.pickTheme(sender: sender, parent: nil)
             }
         }))
@@ -1578,8 +1543,7 @@ extension SingleSubredditViewController: LinkCellViewDelegate {
             let comment = CommentViewController.init(submission: newLinks[0])
             let nav = UINavigationController.init(rootViewController: comment)
             self.splitViewController?.showDetailViewController(nav, sender: self)
-        }
-        else {
+        } else {
             let comment = PagingCommentViewController.init(submissions: newLinks)
             VCPresenter.showVC(viewController: comment, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
         }
@@ -1592,8 +1556,7 @@ extension SingleSubredditViewController: ColorPickerViewDelegate {
         if isAccent {
             accentChosen = colorPickerView.colors[indexPath.row]
             SingleSubredditViewController.fab?.backgroundColor = accentChosen
-        }
-        else {
+        } else {
             let c = colorPickerView.colors[indexPath.row]
             self.navigationController?.navigationBar.barTintColor = c
             sideView.backgroundColor = c
@@ -1634,16 +1597,13 @@ extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
             if !fullImage && submissionHeight < 50 {
                 big = false
                 thumb = true
-            }
-            else if big && (( SettingValues.postImageMode == .CROPPED_IMAGE)) {
+            } else if big && (( SettingValues.postImageMode == .CROPPED_IMAGE)) {
                 submissionHeight = 200
-            }
-            else if big {
+            } else if big {
                 let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: CGFloat(submission.width), viewWidth: itemWidth - ((SettingValues.postViewMode != .CARD) ? CGFloat(5) : CGFloat(0)))
                 if h == 0 {
                     submissionHeight = 200
-                }
-                else {
+                } else {
                     submissionHeight = h
                 }
             }
@@ -1730,35 +1690,29 @@ extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
                 if SettingValues.actionBarMode == .FULL {
                     innerPadding += 18 - (SettingValues.postViewMode == .COMPACT ? 4 : 0) //between label and bottom box
                     innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
-                }
-                else {
+                } else {
                     innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between thumbnail and bottom
                 }
-            }
-            else if big {
+            } else if big {
                 if SettingValues.postViewMode == .CENTER {
                     innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 16) //between label
                     if SettingValues.actionBarMode == .FULL {
                         innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between banner and box
-                    }
-                    else {
+                    } else {
                         innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between buttons and bottom
                     }
-                }
-                else {
+                } else {
                     innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between banner and label
                     if SettingValues.actionBarMode == .FULL {
                         innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between label and box
-                    }
-                    else {
+                    } else {
                         innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between buttons and bottom
                     }
                 }
                 if SettingValues.actionBarMode == .FULL {
                     innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
                 }
-            }
-            else {
+            } else {
                 if !submission.body.trimmed().isEmpty() && SettingValues.showFirstParagraph {
                     innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8)
                 }
@@ -1774,15 +1728,13 @@ extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
                 estimatedUsableWidth -= thumbheight //is the same as the width
                 estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb
                 estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between thumb and label
-            }
-            else {
+            } else {
                 estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //12 padding on either side
             }
 
             if SettingValues.postImageMode == .CROPPED_IMAGE {
                 submissionHeight = 200
-            }
-            else {
+            } else {
                 submissionHeight = getHeightFromAspectRatio(imageHeight: submissionHeight == 200 ? CGFloat(200) : CGFloat(submission.height), imageWidth: CGFloat(submission.width), viewWidth: estimatedUsableWidth)
             }
             var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
@@ -1819,8 +1771,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
             ActionStates.setSaved(s: cell.link!, saved: !ActionStates.isSaved(s: cell.link!))
             History.addSeen(s: cell.link!)
             cell.refresh()
-        }
-        catch {
+        } catch {
 
         }
     }
@@ -1833,8 +1784,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
             ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up)
             History.addSeen(s: cell.link!)
             cell.refresh()
-        }
-        catch {
+        } catch {
 
         }
     }
@@ -1847,8 +1797,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
             ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down)
             History.addSeen(s: cell.link!)
             cell.refresh()
-        }
-        catch {
+        } catch {
 
         }
     }
@@ -1876,8 +1825,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
                     self.tableView.insertItems(at: [IndexPath.init(item: location, section: 0)])
                     do {
                         try self.session?.setHide(false, name: cell.link!.getId(), completion: { (_) in })
-                    }
-                    catch {
+                    } catch {
 
                     }
                 })
@@ -1885,8 +1833,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
                 self.flowLayout.reset()
             }, completion: nil)
 
-        }
-        catch {
+        } catch {
 
         }
     }

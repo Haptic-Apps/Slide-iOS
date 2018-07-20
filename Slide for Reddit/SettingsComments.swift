@@ -58,36 +58,28 @@ class SettingsComments: UITableViewController {
         if changed == disableNavigationBar {
             SettingValues.disableNavigationBar = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_disableNavigationBar)
-        }
-        else if changed == disableColor {
+        } else if changed == disableColor {
             SettingValues.disableColor = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_disableColor)
-        }
-        else if changed == lockBottom {
+        } else if changed == lockBottom {
             SettingValues.lockCommentBars = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_lockCommentBottomBar)
-        }
-        else if changed == wideIndicator {
+        } else if changed == wideIndicator {
             SettingValues.wideIndicators = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_widerIndicators)
-        }
-        else if changed == collapseDefault {
+        } else if changed == collapseDefault {
             SettingValues.collapseDefault = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_collapseDefault)
-        }
-        else if changed == swapLongPress {
+        } else if changed == swapLongPress {
             SettingValues.swapLongPress = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_swapLongPress)
-        }
-        else if changed == collapseFully {
+        } else if changed == collapseFully {
             SettingValues.collapseFully = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_collapseFully)
-        }
-        else if changed == fullscreenImage {
+        } else if changed == fullscreenImage {
             SettingValues.commentFullScreen = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_commentFullScreen)
-        }
-        else if changed == highlightOp {
+        } else if changed == highlightOp {
             SettingValues.highlightOp = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_highlightOp)
         }

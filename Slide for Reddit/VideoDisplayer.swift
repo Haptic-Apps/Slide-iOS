@@ -36,8 +36,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
         if let dictionary = i?.queryDictionary {
             if let t = dictionary["t"] {
                 millis = getTimeFromString(t)
-            }
-            else if let start = dictionary["start"] {
+            } else if let start = dictionary["start"] {
                 millis = getTimeFromString(start)
             }
 
@@ -47,11 +46,9 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
 
             if let v = dictionary["v"] {
                 video = v
-            }
-            else if let w = dictionary["w"] {
+            } else if let w = dictionary["w"] {
                 video = w
-            }
-            else if url.lowercased().contains("youtu.be") {
+            } else if url.lowercased().contains("youtu.be") {
                 video = getLastPathSegment(url)
             }
 
@@ -63,8 +60,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
         self.ytPlayer.delegate = self
         if !playlist.isEmpty {
             ytPlayer.load(withPlaylistId: playlist)
-        }
-        else {
+        } else {
             ytPlayer.load(withVideoId: video, playerVars: ["controls": 1, "playsinline": 1, "start": millis, "fs": 0])
         }
     }
@@ -117,8 +113,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
 
         if FileManager.default.fileExists(atPath: SDImageCache.shared().makeDiskCachePath(key) + ".mp4") {
             display(URL.init(fileURLWithPath: SDImageCache.shared().makeDiskCachePath(key) + ".mp4"))
-        }
-        else {
+        } else {
             let finalUrl = URL.init(fileURLWithPath: SDImageCache.shared().makeDiskCachePath(key) + ".mp4")
             let localUrlV = URL.init(fileURLWithPath: SDImageCache.shared().makeDiskCachePath(key + "video.mp4"))
             let localUrlAudio = URL.init(fileURLWithPath: SDImageCache.shared().makeDiskCachePath(key + "audio.mp4"))
@@ -140,8 +135,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
                     .responseData { response in
                         if let error = response.error {
                             print(error)
-                        }
-                        else { //no errors
+                        } else { //no errors
                             print("Downloaded")
                             self.request = Alamofire.download(toLoadAudio, method: .get, to: { (_, _) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
                                         return (localUrlAudio, [.removePreviousFile, .createIntermediateDirectories])
@@ -156,12 +150,10 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
                                             do {
                                                 try FileManager.init().copyItem(at: localUrlV, to: finalUrl)
                                                 self.display(finalUrl)
-                                            }
-                                            catch {
+                                            } catch {
                                                 self.display(localUrlV)
                                             }
-                                        }
-                                        else { //no errors
+                                        } else { //no errors
                                             print(response2.request!.url!.absoluteString)
                                             self.mergeFilesWithUrl(videoUrl: localUrlV, audioUrl: localUrlAudio, savePathUrl: finalUrl) {
                                                 self.display(finalUrl)
@@ -190,8 +182,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
         }
         if FileManager.default.fileExists(atPath: SDImageCache.shared().makeDiskCachePath(key)) {
             display(URL.init(fileURLWithPath: SDImageCache.shared().makeDiskCachePath(key)))
-        }
-        else {
+        } else {
             let localUrl = URL.init(fileURLWithPath: SDImageCache.shared().makeDiskCachePath(key))
             print(localUrl)
             progressView?.setHidden(false, animated: true, completion: nil)
@@ -212,8 +203,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
                     .responseData { response in
                         if let error = response.error {
                             print(error)
-                        }
-                        else { //no errors
+                        } else { //no errors
                             self.display(localUrl)
                             print("File downloaded successfully: \(localUrl)")
                         }
@@ -251,11 +241,9 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
             if !s.isEmpty {
                 if time.contains(s + "s") {
                     timeAdd += Int(s)!
-                }
-                else if time.contains(s + "m") {
+                } else if time.contains(s + "m") {
                     timeAdd += 60 * Int(s)!
-                }
-                else if time.contains(s + "h") {
+                } else if time.contains(s + "h") {
                     timeAdd += 3600 * Int(s)!
                 }
             }
@@ -273,8 +261,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
         URLSession.shared.dataTask(with: url!) { (data, _, error) in
             if error != nil {
                 print(error ?? "Error loading gif...")
-            }
-            else {
+            } else {
                 do {
                     guard let json = try JSONSerialization.jsonObject(with: data!, options: []) as? NSDictionary else {
                         return
@@ -285,8 +272,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
                     DispatchQueue.main.async {
                         self.loadVideo(urlString: (gif?.gfyItem?.mp4Url)!)
                     }
-                }
-                catch let error as NSError {
+                } catch let error as NSError {
                     print(error)
                 }
             }
@@ -299,8 +285,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
         URLSession.shared.dataTask(with: url!) { (data, _, error) in
             if error != nil {
                 print(error ?? "Error loading gif...")
-            }
-            else {
+            } else {
                 do {
                     guard let json = try JSONSerialization.jsonObject(with: data!, options: []) as? NSDictionary else {
                         return
@@ -312,8 +297,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
                         var video = ""
                         if let url = gif?.files?.mp4mobile?.url {
                             video = url
-                        }
-                        else {
+                        } else {
                             video = (gif?.files?.mp4?.url!)!
                         }
                         if video.hasPrefix("//") {
@@ -321,8 +305,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
                         }
                         self.loadVideo(urlString: video)
                     }
-                }
-                catch let error as NSError {
+                } catch let error as NSError {
                     print(error)
                 }
             }
@@ -335,8 +318,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
         URLSession.shared.dataTask(with: url!) { (data, _, error) in
             if error != nil {
                 print(error ?? "Error loading gif...")
-            }
-            else {
+            } else {
                 do {
                     guard let json = try JSONSerialization.jsonObject(with: data!, options: []) as? NSDictionary else {
                         return
@@ -347,8 +329,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
                     DispatchQueue.main.async {
                         self.loadVideo(urlString: (gif?.video?.complete_url)!)
                     }
-                }
-                catch let error as NSError {
+                } catch let error as NSError {
                     print(error)
                 }
             }
@@ -380,13 +361,11 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
             if self.sharedPlayer && MediaDisplayViewController.videoPlayer == nil {
                 MediaDisplayViewController.videoPlayer = AVPlayer.init(playerItem: AVPlayerItem.init(url: file))
                 self.player = MediaDisplayViewController.videoPlayer!
-            }
-            else {
+            } else {
                 if self.sharedPlayer {
                     MediaDisplayViewController.videoPlayer!.replaceCurrentItem(with: AVPlayerItem.init(url: file))
                     self.player = MediaDisplayViewController.videoPlayer!
-                }
-                else {
+                } else {
                     self.player = AVPlayer.init(playerItem: AVPlayerItem.init(url: file))
                 }
             }
@@ -404,15 +383,13 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
             self.playerVC.showsPlaybackControls = false
             do {
                 try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
-            }
-            catch let error as NSError {
+            } catch let error as NSError {
                 print(error)
             }
             
             do {
                 try AVAudioSession.sharedInstance().setActive(true)
-            }
-            catch let error as NSError {
+            } catch let error as NSError {
                 print(error)
             }
 
@@ -471,8 +448,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
             UIView.animate(withDuration: 0.15) {
                 block()
             }
-        }
-        else {
+        } else {
             block()
         }
 
@@ -498,8 +474,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
         var s = sS
         if s.hasSuffix("v") && !s.contains("streamable.com") {
             s = s.substring(0, length: s.length - 1)
-        }
-        else if s.contains("gfycat") && (!s.contains("mp4") && !s.contains("webm")) {
+        } else if s.contains("gfycat") && (!s.contains("mp4") && !s.contains("webm")) {
             if s.contains("-size_restricted") {
                 s = s.replacingOccurrences(of: "-size_restricted", with: "")
             }
@@ -589,8 +564,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
 
             //            try mutableCompositionAudioTrack[0].insertTimeRange(CMTimeRangeMake(kCMTimeZero, aVideoAssetTrack.timeRange.duration), ofTrack: aAudioAssetTrack, atTime: kCMTimeZero)
 
-        }
-        catch {
+        } catch {
             print(error.localizedDescription)
         }
 
@@ -609,8 +583,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
 
         do {
             try  FileManager.default.removeItem(at: savePathUrl)
-        }
-        catch {
+        } catch {
             print(error.localizedDescription)
         }
 

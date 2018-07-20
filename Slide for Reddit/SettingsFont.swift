@@ -55,8 +55,7 @@ class SettingsFont: UITableViewController {
         if changed == enlarge {
             SettingValues.enlargeLinks = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_enlargeLinks)
-        }
-        else if changed == type {
+        } else if changed == type {
             SettingValues.showLinkContentType = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_showLinkContentType)
         }
@@ -492,8 +491,7 @@ class SettingsFont: UITableViewController {
             default:
                 fatalError("Unknown row in section 1")
             }
-        }
-        else if indexPath.section == 2 {
+        } else if indexPath.section == 2 {
             switch indexPath.row {
             case 0:
                 UserDefaults.standard.set(FontGenerator.Font.HELVETICA.rawValue, forKey: "commentfont")

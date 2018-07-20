@@ -48,8 +48,7 @@ class GMPalette {
         for color in colors {
             if i < 3 {
                 i += 1
-            }
-            else {
+            } else {
                 toReturn.append(color.cgColor)
             }
         }

@@ -45,8 +45,7 @@ class RealmDataWrapper {
             w = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["width"] as? Int)!
             if w < 200 {
                 big = false
-            }
-            else {
+            } else {
                 h = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["height"] as? Int)!
                 big = true
             }
@@ -72,19 +71,15 @@ class RealmDataWrapper {
                 if submission.url != nil && ContentType.isImgurImage(uri: submission.url!) {
                     lqUrl = (submission.url?.absoluteString)!
                     lqUrl = lqUrl.substring(0, length: lqUrl.lastIndexOf(".")!) + (SettingValues.lqLow ? "m" : "l") + lqUrl.substring(lqUrl.lastIndexOf(".")!, length: lqUrl.length - lqUrl.lastIndexOf(".")!)
-                }
-                else {
+                } else {
                     let length = previews?.count
                     if SettingValues.lqLow && length! >= 3 {
                         lqUrl = ((previews?[1] as? [String: Any])?["url"] as? String)!
-                    }
-                    else if length! >= 4 {
+                    } else if length! >= 4 {
                         lqUrl = ((previews?[2] as? [String: Any])?["url"] as? String)!
-                    }
-                    else if length! >= 5 {
+                    } else if length! >= 5 {
                         lqUrl = ((previews?[length! - 1] as? [String: Any])?["url"] as? String)!
-                    }
-                    else {
+                    } else {
                         lqUrl = preview!
                     }
                     lowq = true
@@ -194,8 +189,7 @@ class RealmDataWrapper {
             w = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["width"] as? Int)!
             if w < 200 {
                 big = false
-            }
-            else {
+            } else {
                 h = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["height"] as? Int)!
                 big = true
             }
@@ -221,19 +215,15 @@ class RealmDataWrapper {
                 if submission.url != nil && ContentType.isImgurImage(uri: submission.url!) {
                     lqUrl = (submission.url?.absoluteString)!
                     lqUrl = lqUrl.substring(0, length: lqUrl.lastIndexOf(".")!) + (SettingValues.lqLow ? "m" : "l") + lqUrl.substring(lqUrl.lastIndexOf(".")!, length: lqUrl.length - lqUrl.lastIndexOf(".")!)
-                }
-                else {
+                } else {
                     let length = previews?.count
                     if SettingValues.lqLow && length! >= 3 {
                         lqUrl = ((previews?[1] as? [String: Any])?["url"] as? String)!
-                    }
-                    else if length! >= 4 {
+                    } else if length! >= 4 {
                         lqUrl = ((previews?[2] as? [String: Any])?["url"] as? String)!
-                    }
-                    else if length! >= 5 {
+                    } else if length! >= 5 {
                         lqUrl = ((previews?[length! - 1] as? [String: Any])?["url"] as? String)!
-                    }
-                    else {
+                    } else {
                         lqUrl = preview!
                     }
                     lowq = true
@@ -300,8 +290,7 @@ class RealmDataWrapper {
     static func commentToRealm(comment: Thing, depth: Int) -> Object {
         if comment is Comment {
             return commentToRComment(comment: comment as! Comment, depth: depth)
-        }
-        else {
+        } else {
             return moreToRMore(more: comment as! More)
         }
     }
@@ -380,8 +369,7 @@ class RealmDataWrapper {
         let rMore = RMore()
         if more.getId().endsWith("_") {
             rMore.id = "more_\(NSUUID().uuidString)"
-        }
-        else {
+        } else {
             rMore.id = more.getId()
         }
         rMore.name = more.name
@@ -440,8 +428,7 @@ class RSubmission: Object {
         }
         if url != nil {
             return ContentType.getContentType(baseUrl: url)
-        }
-        else {
+        } else {
             return .NONE
         }
     }
@@ -490,8 +477,7 @@ class RSubmission: Object {
         if voted {
             if vote {
                 return .up
-            }
-            else {
+            } else {
                 return .down
             }
         }
@@ -569,8 +555,7 @@ class RComment: Object {
         if voted {
             if vote {
                 return .up
-            }
-            else {
+            } else {
                 return .down
             }
         }
@@ -631,8 +616,7 @@ extension String {
         do {
             let attributedString = try NSAttributedString(data: encodedData, options: attributedOptions, documentAttributes: nil)
             self = attributedString.string
-        }
-        catch {
+        } catch {
             print("Error: \(error)")
             self = htmlEncodedString
         }

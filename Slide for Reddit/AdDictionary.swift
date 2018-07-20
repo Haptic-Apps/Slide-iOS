@@ -16,8 +16,7 @@ class AdDictionary {
             let text = try String(contentsOfFile: path!, encoding: String.Encoding.utf8)
             hosts = text.components(separatedBy: ",")
             print(hosts.count)
-        }
-        catch {
+        } catch {
             print(error)
         }
     }

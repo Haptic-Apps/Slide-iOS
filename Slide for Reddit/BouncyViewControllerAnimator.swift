@@ -33,8 +33,7 @@ class BouncyViewControllerAnimator: NSObject, UIViewControllerAnimatedTransition
             center = toView!.center
             toView!.center = CGPoint.init(x: center!.x, y: toView!.bounds.size.height)
             transitionContext.containerView.addSubview(toView!)
-        }
-        else {
+        } else {
             center = CGPoint.init(x: toView!.center.x, y: toView!.bounds.size.height + fromView!.bounds.size.height)
         }
         
@@ -44,8 +43,7 @@ class BouncyViewControllerAnimator: NSObject, UIViewControllerAnimatedTransition
                                     if self.isPresenting {
                                         toView!.center = center!
                                         fromView!.transform = CGAffineTransform.identity.scaledBy(x: 0.92, y: 0.92)
-                                    }
-                                    else {
+                                    } else {
                                         fromView!.center = center!
                                         toView!.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
                                     }

@@ -262,8 +262,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
                 UserDefaults.standard.set(true, forKey: SettingValues.pref_pro)
                 UserDefaults.standard.synchronize()
                 SettingsPro.changed = true
-            }
-            else {
+            } else {
                 let alertView = UIAlertController(title: "", message: "Slide Pro purchase not found. Make sure you are signed in with the same Apple ID as you purchased Slide Pro with originally.\nIf this issue persists, feel free to send me an email!", preferredStyle: .alert)
                 let action = UIAlertAction(title: "Close", style: .cancel, handler: { (_) in
                 })

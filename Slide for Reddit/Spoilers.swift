@@ -54,8 +54,7 @@ public class WrapSpoilers: NSObject {
             }
 
             return base
-        }
-        catch {
+        } catch {
             print(error.localizedDescription)
             return text
         }
@@ -71,8 +70,7 @@ extension String {
         var regex: NSRegularExpression
         do {
             regex = try NSRegularExpression(pattern: pattern, options: [NSRegularExpression.Options.dotMatchesLineSeparators])
-        }
-        catch {
+        } catch {
             return results
         }
 

@@ -60,16 +60,14 @@ class Subscriptions {
         if let accounts = UserDefaults.standard.array(forKey: "subs" + name) {
             print("Count is \(accounts.count)")
             accountSubs = accounts as! [String]
-        }
-        else {
+        } else {
             accountSubs = defaultSubs
         }
         
         if let accounts = UserDefaults.standard.array(forKey: "historysubs" + name) {
             print("Count is \(accounts.count)")
             historySubs = accounts as! [String]
-        }
-        else {
+        } else {
             historySubs = []
         }
         
@@ -123,8 +121,7 @@ class Subscriptions {
                 try session.setSubscribeSubreddit(Subreddit.init(subreddit: name), subscribe: true, completion: { (_) in
                     
                 })
-            }
-            catch {
+            } catch {
                 
             }
         }
@@ -145,8 +142,7 @@ class Subscriptions {
                         break
                     }
                 })
-            }
-            catch {
+            } catch {
             }
         }
     }
@@ -168,14 +164,12 @@ class Subscriptions {
                         print("Size is \(toReturn.count) and hasmore is \(paginator.hasMore())")
                         if paginator.hasMore() {
                             getSubscriptionsUntilCompletion(session: session, p: paginator, tR: toReturn, mR: toReturnMultis, multis: false, completion: completion)
-                        }
-                        else {
+                        } else {
                             getSubscriptionsUntilCompletion(session: session, p: paginator, tR: toReturn, mR: toReturnMultis, multis: true, completion: completion)
                         }
                     }
                 })
-            }
-            else {
+            } else {
                 try session.getMineMultireddit({ (result) in
                     switch result {
                     case .failure:
@@ -187,8 +181,7 @@ class Subscriptions {
                     }
                 })
             }
-        }
-        catch {
+        } catch {
             completion(toReturn, toReturnMultis)
         }
         

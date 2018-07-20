@@ -178,8 +178,7 @@ extension VideoScrubberView {
         if let delegate = delegate {
             if delegate.toggleReturnPlaying() {
                 setPauseButton()
-            }
-            else {
+            } else {
                 setPlayButton()
             }
         }

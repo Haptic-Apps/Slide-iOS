@@ -55,8 +55,7 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
         if !cell.profile.isEmpty() {
             let user = cell.profile
             parentController?.goToUser(profile: user)
-        }
-        else {
+        } else {
             let sub = cell.subreddit
             parentController?.goToSubreddit(subreddit: sub)
         }
@@ -76,8 +75,7 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
         if textSearched.length != 0 {
             isSearching = true
             searchTableList()
-        }
-        else {
+        } else {
             isSearching = false
         }
         tableView.reloadData()
@@ -180,12 +178,10 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
         if section == 0 {
             if isSearching {
                 return filteredContent.count + (filteredContent.contains(searchBar!.text!) ? 0 : 1) + 1
-            }
-            else {
+            } else {
                 return Subscriptions.subreddits.count
             }
-        }
-        else {
+        } else {
             return suggestions.count
         }
     }
@@ -193,8 +189,7 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if section == 1 {
             return 40
-        }
-        else {
+        } else {
             return 0
         }
     }
@@ -223,27 +218,23 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
                 let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
                 c.setSubreddit(subreddit: thing, nav: parentController!, exists: false)
                 cell = c
-            }
-            else if isSearching && indexPath.row == filteredContent.count + 1 {
+            } else if isSearching && indexPath.row == filteredContent.count + 1 {
                 let thing = searchBar!.text!
                 let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
                 c.setProfile(profile: thing, nav: parentController!)
                 cell = c
-            }
-            else {
+            } else {
                 var thing = ""
                 if isSearching {
                     thing = filteredContent[indexPath.row]
-                }
-                else {
+                } else {
                     thing = Subscriptions.subreddits[indexPath.row]
                 }
                 let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
                 c.setSubreddit(subreddit: thing, nav: parentController!, exists: true)
                 cell = c
             }
-        }
-        else {
+        } else {
             let thing = suggestions[indexPath.row]
             let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
             c.setSubreddit(subreddit: thing, nav: parentController!, exists: false)

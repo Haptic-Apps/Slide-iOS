@@ -80,8 +80,7 @@ class NavigationHeaderView: UIView {
         if AccountController.isLoggedIn {
             let yTap = UITapGestureRecognizer(target: self, action: #selector(self.you(_:)))
             title.addGestureRecognizer(yTap)
-        }
-        else {
+        } else {
             let yTap = UITapGestureRecognizer(target: self, action: #selector(self.switchAccounts(_:)))
             title.addGestureRecognizer(yTap)
         }
@@ -147,16 +146,14 @@ class NavigationHeaderView: UIView {
             let titleT = NSMutableAttributedString.init(string: "\t\t", attributes: [NSFontAttributeName: titleFont])
             if AccountController.formatUsername(input: AccountController.currentName, small: true).length > 15 {
                 titleFont = UIFont.systemFont(ofSize: 15)
-            }
-            else {
+            } else {
                 titleFont = UIFont.systemFont(ofSize: 25)
             }
             titleT.append(NSMutableAttributedString.init(string: AccountController.formatUsername(input: AccountController.currentName, small: true), attributes: [NSFontAttributeName: titleFont.bold()]))
             title.adjustsFontSizeToFitWidth = true
             title.attributedText = titleT
             inbox.isHidden = false
-        }
-        else {
+        } else {
             inbox.isHidden = true
             let titleT = NSMutableAttributedString.init(string: "\t\tGuest\n", attributes: [NSFontAttributeName: titleFont])
             titleFont = UIFont.systemFont(ofSize: 20)
@@ -236,8 +233,7 @@ extension NavigationHeaderView {
                 VCPresenter.showVC(viewController: profile, popupIfPossible: true, parentNavigationController: (self.parentController as! NavigationSidebarViewController).parentController?.navigationController, parentViewController: (self.parentController as! NavigationSidebarViewController).parentController)
                 
             }
-        }
-        else {
+        } else {
             self.switchAccounts(sender)
         }
     }
@@ -360,12 +356,10 @@ extension NavigationHeaderView {
                     if !UserDefaults.standard.bool(forKey: "done" + s) {
                         do {
                             try (self.parentController as! NavigationSidebarViewController).parentController?.addAccount(token: OAuth2TokenRepository.token(of: s))
-                        }
-                        catch {
+                        } catch {
                             (self.parentController as! NavigationSidebarViewController).parentController?.addAccount()
                         }
-                    }
-                    else {
+                    } else {
                         Subscriptions.sync(name: s, completion: {
                             (self.parentController as! NavigationSidebarViewController).parentController?.restartVC()
                             (self.parentController as! NavigationSidebarViewController).parentController?.doCurrentPage(0)

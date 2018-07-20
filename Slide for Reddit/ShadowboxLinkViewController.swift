@@ -64,8 +64,7 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
         if image.size.width > image.size.height {
             self.scrollView.contentSize = CGSize.init(width: self.view.frame.size.width, height: getHeightFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width))
             imageView = UIImageView.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: getHeightFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width)))
-        }
-        else {
+        } else {
             self.scrollView.contentSize = CGSize.init(width: getWidthFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width), height: self.view.frame.size.height * 0.60)
             imageView = UIImageView.init(frame: CGRect.init(x: 0, y: 0, width: getWidthFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width), height: self.view.frame.size.height))
         }
@@ -92,8 +91,7 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
                 self.displayImage(baseImage: image)
             }
 
-        }
-        else {
+        } else {
             self.progressView?.setHidden(false, animated: true, completion: nil)
             SDWebImageDownloader.shared().downloadImage(with: imageURL, options: .allowInvalidSSLCertificates, progress: { (current: NSInteger, total: NSInteger) in
                 self.progressView?.progress = Float(current / total)
@@ -281,8 +279,7 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
             ActionStates.setVoteDirection(s: submission, direction: ActionStates.getVoteDirection(s: submission) == .up ? .none : .up)
             History.addSeen(s: submission)
             doVoteImages()
-        }
-        catch {
+        } catch {
             
         }
     }
@@ -295,8 +292,7 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
             ActionStates.setVoteDirection(s: submission, direction: ActionStates.getVoteDirection(s: submission) == .down ? .none : .down)
             History.addSeen(s: submission)
             doVoteImages()
-        }
-        catch {
+        } catch {
             
         }
     }
@@ -326,8 +322,7 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
             first = false
             if type == .GIF || type == .STREAMABLE || type == .VID_ME {
                 getGif(urlS: videoUrl)
-            }
-            else if (type == .VIDEO) {
+            } else if (type == .VIDEO) {
                 let he = getYTHeight()
                 ytPlayer = YTPlayerView.init(frame: CGRect.init(x: 0, y: (self.scrollView.frame.size.height - he) / 2, width: self.scrollView.frame.size.width, height: he))
                 ytPlayer.isHidden = true
@@ -347,8 +342,7 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
         let type = ContentType.getContentType(submission: submission)
         if (ContentType.displayImage(t: type) && type != .SELF) || type == .LINK || type == .EXTERNAL || type == .EMBEDDED {
             loadImage(imageURLB: URL.init(string: submission.bannerUrl))
-        }
-        else if ContentType.mediaType(t: type) {
+        } else if ContentType.mediaType(t: type) {
             if let url = URL(string: submission.thumbnailUrl) {
                 if SDWebImageManager.shared().cachedImageExists(for: url) {
                     DispatchQueue.main.async {
@@ -362,8 +356,7 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
                             }
                         }
                     }
-                }
-                else {
+                } else {
                     SDWebImageDownloader.shared().downloadImage(with: url, options: .allowInvalidSSLCertificates, progress: { (_: NSInteger, _: NSInteger) in
                     }, completed: { (img, _, _, _) in
                         SDWebImageManager.shared().saveImage(toCache: img, for: url)
@@ -381,8 +374,7 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
                 }
             }
 
-        }
-        else {
+        } else {
             let color = ColorUtil.accentColorForSub(sub: (submission.subreddit))
             if !submission.htmlBody.isEmpty {
                 let html = submission.htmlBody.trimmed()
@@ -396,8 +388,7 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
                 body.widthAnchor == body.estimatedWidth
                 body.bottomAnchor == scrollView.bottomAnchor
                 self.scrollView.contentSize = CGSize.init(width: body.estimatedWidth, height: body.estimatedHeight)
-            }
-            else {
+            } else {
 
             }
 
@@ -430,8 +421,7 @@ extension UIImage {
 
             // Render to bitmap.
             context.render(outputImage, toBitmap: &bitmap, rowBytes: 4, bounds: CGRect(x: 0, y: 0, width: 1, height: 1), format: kCIFormatRGBA8, colorSpace: CGColorSpaceCreateDeviceRGB())
-        }
-        else {
+        } else {
             // Create 1x1 context that interpolates pixels when drawing to it.
             let context = CGContext(data: &bitmap, width: 1, height: 1, bitsPerComponent: 8, bytesPerRow: 4, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
             let inputImage = cgImage ?? CIContext().createCGImage(ciImage!, from: ciImage!.extent)

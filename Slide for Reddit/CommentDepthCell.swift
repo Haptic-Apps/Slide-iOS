@@ -181,16 +181,13 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 //todo this is probably wrong
                 if comment != nil && comment! is RComment && self.delegate!.isMenuShown() && self.delegate!.getMenuShown() != comment!.getIdentifier() {
                     self.showMenu(nil)
-                }
-                else {
+                } else {
                     self.pushedSingleTap(nil)
                 }
-            }
-            else {
+            } else {
                 if comment != nil && comment! is RComment {
                     self.showMenu(nil)
-                }
-                else {
+                } else {
                     self.pushedSingleTap(nil)
                 }
             }
@@ -218,8 +215,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     func handleShortPress(_ sender: UIGestureRecognizer) {
         if SettingValues.swapLongPress || (self.delegate!.isMenuShown() && delegate!.getMenuShown() == (content as! RComment).getId()) {
             self.showMenu(sender)
-        }
-        else {
+        } else {
             self.pushedSingleTap(sender)
         }
     }
@@ -238,8 +234,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         if let del = self.delegate {
             if del.isMenuShown() && del.getMenuShown() == (content as! RComment).getId() {
                 hideMenuAnimated()
-            }
-            else {
+            } else {
                 showMenuAnimated()
             }
         }
@@ -303,8 +298,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         
         if UIDevice.current.userInterfaceIdiom == .pad && !UIApplication.shared.isSplitOrSlideOver {
             menu.addArrangedSubviews(flexSpace(), flexSpace(), flexSpace(), editButton, deleteButton, upvoteButton, downvoteButton, replyButton, moreButton, modButton)
-        }
-        else {
+        } else {
             menu.addArrangedSubviews(editButton, deleteButton, upvoteButton, downvoteButton, replyButton, moreButton, modButton)
         }
         if !AccountController.isLoggedIn || comment!.archived || parent!.np {
@@ -324,8 +318,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         reply.isHidden = true
         if depth == 1 {
             depth = 1
-        }
-        else {
+        } else {
             depth = 2
         }
         NSLayoutConstraint.deactivate(menuHeight)
@@ -404,8 +397,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 }
                 
             })
-        }
-        catch {
+        } catch {
             DispatchQueue.main.async {
                 self.toolbar?.saveDraft(self)
                 self.alertController?.dismiss(animated: false, completion: {
@@ -436,8 +428,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             try session?.editCommentOrLink(name, newBody: body.text!, completion: { (_) in
                 self.getCommentEdited(name)
             })
-        }
-        catch {
+        } catch {
             print((error as NSError).description)
         }
     }
@@ -485,8 +476,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                     }
                 }
             })
-        }
-        catch {
+        } catch {
             DispatchQueue.main.async {
                 self.toolbar?.saveDraft(self)
                 self.alertController?.dismiss(animated: false, completion: {
@@ -590,8 +580,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                     case .success: break
                     }
                 })
-            }
-            catch {
+            } catch {
                 print(error)
             }
             ActionStates.setVoteDirection(s: comment!, direction: direction)
@@ -620,8 +609,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                         }
                     }
                 })
-            }
-            catch {
+            } catch {
                 print(error)
             }
             refresh(comment: content as! RComment, submissionAuthor: savedAuthor, text: cellContent!)
@@ -644,8 +632,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                         }
                     }
                 })
-            }
-            catch {
+            } catch {
                 print(error)
             }
             refresh(comment: content as! RComment, submissionAuthor: savedAuthor, text: cellContent!)
@@ -668,8 +655,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                         }
                     }
                 })
-            }
-            catch {
+            } catch {
                 print(error)
             }
             refresh(comment: content as! RComment, submissionAuthor: savedAuthor, text: cellContent!)
@@ -698,8 +684,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 }
             })
             
-            }
-            catch {
+            } catch {
                 print(error)
             }
             refresh(comment: content as! RComment, submissionAuthor: savedAuthor, text: cellContent!)
@@ -723,8 +708,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                     }
 
                 })
-            }
-            catch {
+            } catch {
                 print(error)
             }
             refresh(comment: content as! RComment, submissionAuthor: savedAuthor, text: cellContent!)
@@ -812,8 +796,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 alertController.addAction(Action(ActionData(title: "Un-pin", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { _ in
                     self.modSticky(sticky: false)
                 }))
-            }
-            else {
+            } else {
                 alertController.addAction(Action(ActionData(title: "Pin and distinguish", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { _ in
                     self.modSticky(sticky: true)
                 }))
@@ -927,39 +910,29 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             if SettingValues.disableColor {
                 if i22 % 5 == 0 {
                     sideView.backgroundColor = GMColor.grey100Color()
-                }
-                else if i22 % 4 == 0 {
+                } else if i22 % 4 == 0 {
                     sideView.backgroundColor = GMColor.grey200Color()
-                }
-                else if i22 % 3 == 0 {
+                } else if i22 % 3 == 0 {
                     sideView.backgroundColor = GMColor.grey300Color()
-                }
-                else if i22 % 2 == 0 {
+                } else if i22 % 2 == 0 {
                     sideView.backgroundColor = GMColor.grey400Color()
-                }
-                else {
+                } else {
                     sideView.backgroundColor = GMColor.grey500Color()
                 }
-            }
-            else {
+            } else {
                 if i22 % 5 == 0 {
                     sideView.backgroundColor = GMColor.blue500Color()
-                }
-                else if i22 % 4 == 0 {
+                } else if i22 % 4 == 0 {
                     sideView.backgroundColor = GMColor.green500Color()
-                }
-                else if i22 % 3 == 0 {
+                } else if i22 % 3 == 0 {
                     sideView.backgroundColor = GMColor.yellow500Color()
-                }
-                else if i22 % 2 == 0 {
+                } else if i22 % 2 == 0 {
                     sideView.backgroundColor = GMColor.orange500Color()
-                }
-                else {
+                } else {
                     sideView.backgroundColor = GMColor.red500Color()
                 }
             }
-        }
-        else {
+        } else {
             marginTop = 8
             sideWidth = 0
         }
@@ -973,8 +946,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         var attr = NSMutableAttributedString()
         if more.children.isEmpty {
             attr = NSMutableAttributedString(string: "Continue this thread", attributes: [NSFontAttributeName: font])
-        }
-        else {
+        } else {
             attr = NSMutableAttributedString(string: "Load \(more.count) more", attributes: [NSFontAttributeName: font])
         }
         let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: .white)
@@ -1025,8 +997,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         if hiddenCount > 0 {
             childrenCount.alpha = 1
             childrenCountLabel.text = "+\(hiddenCount)"
-        }
-        else {
+        } else {
             childrenCount.alpha = 0
         }
 
@@ -1039,42 +1010,32 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             if SettingValues.disableColor {
                 if i22 % 5 == 0 {
                     sideView.backgroundColor = GMColor.grey100Color()
-                }
-                else if i22 % 4 == 0 {
+                } else if i22 % 4 == 0 {
                     sideView.backgroundColor = GMColor.grey200Color()
-                }
-                else if i22 % 3 == 0 {
+                } else if i22 % 3 == 0 {
                     sideView.backgroundColor = GMColor.grey300Color()
-                }
-                else if i22 % 2 == 0 {
+                } else if i22 % 2 == 0 {
                     sideView.backgroundColor = GMColor.grey400Color()
-                }
-                else {
+                } else {
                     sideView.backgroundColor = GMColor.grey500Color()
                 }
-            }
-            else {
+            } else {
                 if i22 % 5 == 0 {
                     sideView.backgroundColor = GMColor.blue500Color()
-                }
-                else if i22 % 4 == 0 {
+                } else if i22 % 4 == 0 {
                     sideView.backgroundColor = GMColor.green500Color()
-                }
-                else if i22 % 3 == 0 {
+                } else if i22 % 3 == 0 {
                     sideView.backgroundColor = GMColor.yellow500Color()
-                }
-                else if i22 % 2 == 0 {
+                } else if i22 % 2 == 0 {
                     sideView.backgroundColor = GMColor.orange500Color()
-                }
-                else {
+                } else {
                     sideView.backgroundColor = GMColor.red500Color()
                 }
             }
             if SettingValues.highlightOp && parentOP == comment.author {
                 sideView.backgroundColor = GMColor.purple500Color()
             }
-        }
-        else {
+        } else {
             marginTop = 8
             sideWidth = 0
         }
@@ -1091,8 +1052,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
         if parent.getMenuShown() ?? "" == comment.getIdentifier() {
             showCommentMenu()
-        }
-        else {
+        } else {
             hideCommentMenu()
         }
         
@@ -1151,31 +1111,24 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         var authorSmall = false
         if comment.distinguished == "admin" {
           authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#E57373"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-        }
-        else if comment.distinguished == "special" {
+        } else if comment.distinguished == "special" {
             authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#F44336"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-        }
-        else if comment.distinguished == "moderator" {
+        } else if comment.distinguished == "moderator" {
             authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#81C784"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-        }
-        else if AccountController.currentName == comment.author {
+        } else if AccountController.currentName == comment.author {
             authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#FFB74D"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-        }
-        else if submissionAuthor != nil && comment.author == submissionAuthor {
+        } else if submissionAuthor != nil && comment.author == submissionAuthor {
             authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#64B5F6"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-        }
-        else if userColor != ColorUtil.baseColor {
+        } else if userColor != ColorUtil.baseColor {
             authorString.addAttributes([kTTTBackgroundFillColorAttributeName: userColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-        }
-        else {
+        } else {
             authorSmall = true
         }
 
         let infoString = NSMutableAttributedString(string: "")
         if authorSmall {
             infoString.append(authorStringNoFlair)
-        }
-        else {
+        } else {
             infoString.append(authorString)
         }
 
@@ -1214,12 +1167,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             infoString.append(spacer)
             if comment.removedBy == "true" {
                 infoString.append(NSMutableAttributedString.init(string: "Removed by Reddit\(!comment.removalReason.isEmpty() ? ":\(comment.removalReason)" : "")", attributes: attrs))
-            }
-            else {
+            } else {
                 infoString.append(NSMutableAttributedString.init(string: "Removed\(!comment.removedBy.isEmpty() ? " by \(comment.removedBy)":"")\(!comment.removalReason.isEmpty() ? " for \(comment.removalReason)" : "")\(!comment.removalNote.isEmpty() ? " \(comment.removalNote)" : "")", attributes: attrs))
             }
-        }
-        else if parent!.approved.contains(comment.id) || (!comment.approvedBy.isEmpty() && !parent!.removed.contains(comment.id)) {
+        } else if parent!.approved.contains(comment.id) || (!comment.approvedBy.isEmpty() && !parent!.removed.contains(comment.id)) {
             let attrs = [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: GMColor.green500Color()] as [String: Any]
             infoString.append(spacer)
             infoString.append(NSMutableAttributedString.init(string: "Approved\(!comment.approvedBy.isEmpty() ? " by \(comment.approvedBy)":"")", attributes: attrs))
@@ -1228,8 +1179,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         title.tColor = ColorUtil.accentColorForSub(sub: comment.subreddit)
         if !isCollapsed || !SettingValues.collapseFully {
             title.setTextWithTitleHTML(infoString, text, htmlString: comment.htmlText)
-        }
-        else {
+        } else {
             title.setAttributedString(infoString)
         }
     }
@@ -1337,8 +1287,7 @@ extension CommentDepthCell: TTTAttributedLabelDelegate {
                 UIAlertAction(title: "Open in Safari", style: .default) { (_) in
                     if #available(iOS 10.0, *) {
                         UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                    }
-                    else {
+                    } else {
                         UIApplication.shared.openURL(url)
                     }
                     sheet.dismiss(animated: true, completion: nil)
@@ -1372,8 +1321,7 @@ extension CommentDepthCell: TTTAttributedLabelDelegate {
         let textClicked = label.attributedText.attributedSubstring(from: result.range).string
         if textClicked.contains("[[s[") {
             parent?.showSpoiler(textClicked)
-        }
-        else {
+        } else {
             let urlClicked = result.url!
             parent?.doShow(url: urlClicked)
         }

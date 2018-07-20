@@ -105,8 +105,7 @@ class SubredditCellView: UITableViewCell {
                     navController!.dismiss(animated: true) {
                         VCPresenter.showVC(viewController: vc, popupIfPossible: true, parentNavigationController: self.navController!.navigationController, parentViewController: self.navController!)
                     }
-                }
-                else {
+                } else {
                     let vc = ProfileViewController.init(name: self.profile)
                     navController!.dismiss(animated: true) {
                         VCPresenter.showVC(viewController: vc, popupIfPossible: true, parentNavigationController: self.navController!.navigationController, parentViewController: self.navController!)
@@ -125,8 +124,7 @@ class SubredditCellView: UITableViewCell {
         self.icon.isHidden = true
         if !exists {
             title.text = "Go to r/\(subreddit)"
-        }
-        else {
+        } else {
             title.text = subreddit
         }
         self.profile = ""

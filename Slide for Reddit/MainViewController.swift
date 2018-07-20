@@ -42,8 +42,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             var subChanged = false
             if finalSubs.count != Subscriptions.subreddits.count {
                 subChanged = true
-            }
-            else {
+            } else {
                 for i in 0...finalSubs.count - 1 {
                     if finalSubs[i] != Subscriptions.subreddits[i] {
                         subChanged = true
@@ -53,8 +52,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             }
             if ColorUtil.doInit() || subChanged {
                 restartVC()
-            }
-            else if SubredditReorderViewController.changed {
+            } else if SubredditReorderViewController.changed {
                 doButtons()
             }
         }
@@ -66,8 +64,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         
         if !SettingValues.bottomBarHidden || SettingValues.viewType {
             navigationController?.setToolbarHidden(false, animated: false)
-        }
-        else {
+        } else {
             navigationController?.setToolbarHidden(true, animated: false)
         }
         
@@ -92,8 +89,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             alert.addAction(UIAlertAction.init(title: "Open GitHub", style: .default, handler: { (_) in
                 if #available(iOS 10.0, *) {
                     UIApplication.shared.open(URL.init(string: "https://github.com/ccrama/Slide-iOS")!, options: [:], completionHandler: nil)
-                }
-                else {
+                } else {
                     UIApplication.shared.openURL(URL.init(string: "https://github.com/ccrama/Slide-iOS")!)
                 }
             }))
@@ -126,8 +122,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             UserDefaults.standard.set(0, forKey: "appOpens")
             UserDefaults.standard.set(getVersion(), forKey: "lastReviewed")
             UserDefaults.standard.synchronize()
-        }
-        else {
+        } else {
             print("SKStoreReviewController not available")
         }
     }
@@ -178,8 +173,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                         }
                     }
                 })
-            }
-            catch {
+            } catch {
                 
             }
         }
@@ -230,8 +224,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                 self.navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: subreddit)
                 self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
                 self.tabBar.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
-            }
-            else {
+            } else {
                 //todo better sanitation
                 VCPresenter.openRedditLink("/r/" + subreddit.replacingOccurrences(of: " ", with: ""), self.navigationController, self)
             }
@@ -296,15 +289,13 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                         try (UIApplication.shared.delegate as! AppDelegate).session!.setSubscribeSubreddit(Subreddit.init(subreddit: "slide_ios"), subscribe: true, completion: { (_) in
                             
                         })
-                    }
-                    catch {
+                    } catch {
                         
                     }
                 }))
                 self.present(alert, animated: true, completion: nil)
             })
-        }
-        else {
+        } else {
             self.alertController?.dismiss(animated: true, completion: {
                 self.finalizeSetup(subs)
             })
@@ -327,8 +318,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
         if SettingValues.viewType {
             self.dataSource = self
-        }
-        else {
+        } else {
             self.dataSource = nil
         }
         self.delegate = self
@@ -362,16 +352,14 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                     finalSubs.append(subname)
                 }
             }
-            }
-            catch {
+            } catch {
                 
             }
             for subname in finalSubs {
                 MainViewController.vCs.append(SingleSubredditViewController(subName: subname, parent: self))
             }
 
-        }
-        else {
+        } else {
             finalSubs = Subscriptions.subreddits
             MainViewController.isOffline = false
             var subs = [UIMutableApplicationShortcutItem]()
@@ -478,8 +466,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         (UIApplication.shared.delegate as! AppDelegate).login = self
         if token == nil {
             AccountController.addAccount()
-        }
-        else {
+        } else {
             setToken(token: token!)
         }
     }
@@ -528,8 +515,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
         if SettingValues.bottomBarHidden && !SettingValues.viewType {
             self.navigationItem.leftBarButtonItems = [menuB, leftItem]
-        }
-        else {
+        } else {
             self.navigationItem.leftBarButtonItems = [leftItem]
         }
 
@@ -544,8 +530,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             if !tabBar.items.isEmpty {
                 tabBar.setSelectedItem(tabBar.items[page!], animated: true)
             }
-        }
-        else {
+        } else {
             selected = false
         }
     }
@@ -556,8 +541,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         if toInterfaceOrientation.isLandscape && isPhone {
             tabBar.frame = CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: 84)
             tabBar.sizeToFit()
-        }
-        else if isPhone {
+        } else if isPhone {
             tabBar.frame = CGRect.init(x: 0, y: UIApplication.shared.statusBarView?.frame.size.height ?? 20, width: self.view.frame.size.width, height: 84)
             tabBar.sizeToFit()
         }
@@ -740,8 +724,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
                 navigationItem.leftBarButtonItem = menuB
                 navigationItem.rightBarButtonItems = [moreB, sortB]
-            }
-            else {
+            } else {
                 let more = UIButton.init(type: .custom)
                 more.setImage(UIImage.init(named: "moreh")?.toolbarIcon(), for: UIControlState.normal)
                 more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
@@ -757,12 +740,10 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                 toolbarItems = [menuB, flexButton, moreB]
                 navigationItem.rightBarButtonItem = sortB
             }
-        }
-        else {
+        } else {
             if SettingValues.bottomBarHidden && !SettingValues.viewType {
                 navigationItem.rightBarButtonItems = [settingsB, offlineB]
-            }
-            else {
+            } else {
                 toolbarItems = [settingsB, flexButton, offlineB]
             }
         }
@@ -789,8 +770,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                         if first.stickied && first.title.contains(Bundle.main.releaseVersionNumber!) {
                             storedTitle = first.title
                             storedLink = first.permalink
-                        }
-                        else if second.stickied && second.title.contains(Bundle.main.releaseVersionNumber!) {
+                        } else if second.stickied && second.title.contains(Bundle.main.releaseVersionNumber!) {
                             storedTitle = second.title
                             storedLink = second.permalink
                         }
@@ -803,8 +783,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                         }
                     }
                 })
-            }
-            catch {
+            } catch {
             }
         }
     }

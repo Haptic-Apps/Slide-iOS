@@ -58,8 +58,7 @@ public class BannerUtil {
             let secondPart = NSMutableAttributedString.init(string: "\n" + textParts[1], attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: UIFont.systemFont(ofSize: 12)])
             firstPart.append(secondPart)
             finalText = firstPart
-        }
-        else {
+        } else {
             finalText = NSMutableAttributedString.init(string: text, attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 14)])
         }
         popup.attributedText = finalText

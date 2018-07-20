@@ -46,8 +46,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
             let xstart = (parent is AlbumViewController) ? CGFloat(61) : 0
             if image.size.height > image.size.width || UIApplication.shared.statusBarOrientation != .portrait {
                 self.scrollView.contentSize = CGSize.init(width: min(self.view.frame.size.width, getWidthFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width)), height: self.view.frame.size.height - (xstart * 2) + 8)
-            }
-            else {
+            } else {
                 self.scrollView.contentSize = CGSize.init(width: self.view.frame.size.width, height: min(self.view.frame.size.height, getHeightFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width)) - (xstart * 2) + 8)
             }
             self.scrollView.delegate = self
@@ -114,16 +113,13 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
             if playButton != nil && !playButton!.isHidden {
                 self.playButton!.isHidden = true
                 self.playbackSlider.isHidden = true
-            }
-            else {
+            } else {
                 unFullscreen(imageView)
             }
-        }
-        else {
+        } else {
             if playButton != nil && playButton!.isHidden {
                 showControls()
-            }
-            else {
+            } else {
                 fullscreen(imageView)
             }
         }
@@ -168,8 +164,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
     @IBAction func handleDoubleTapScrollView(recognizer: UITapGestureRecognizer) {
         if scrollView.zoomScale == 1 {
             scrollView.zoom(to: zoomRectForScale(scale: 2.5, center: recognizer.location(in: recognizer.view)), animated: true)
-        }
-        else {
+        } else {
             scrollView.setZoomScale(1, animated: true)
         }
     }
@@ -198,8 +193,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
                 self.displayImage(baseImage: image)
             }
 
-        }
-        else {
+        } else {
             SDWebImageDownloader.shared().downloadImage(with: imageURL, options: .allowInvalidSSLCertificates, progress: { (current: NSInteger, total: NSInteger) in
                 var average: Float = 0
                 average = (Float(current) / Float(total))
@@ -249,8 +243,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
         (parent as? SwipeDownModalVC)?.background?.backgroundColor = UIColor.black.withAlphaComponent(0.7)
         if #available(iOS 11.0, *) {
             toolbar = UIToolbar.init(frame: CGRect.init(x: 0, y: self.view.frame.size.height - 45 - ((UIApplication.shared.keyWindow?.safeAreaInsets.bottom) ?? 0), width: self.view.frame.size.width, height: 45))
-        }
-        else {
+        } else {
             toolbar = UIToolbar.init(frame: CGRect.init(x: 0, y: self.view.frame.size.height - 45, width: self.view.frame.size.width, height: 45))
         }
         let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
@@ -349,8 +342,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
             if imageView.image != nil {
                 CustomAlbum.shared.save(image: imageView.image!, parent: self)
             }
-        }
-        else {
+        } else {
             if displayedVideo != nil {
                 CustomAlbum.shared.saveMovieToLibrary(movieURL: displayedVideo!, parent: self)
             }
@@ -371,8 +363,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
                 UIAlertAction(title: "Open in Safari", style: .default) { (_) in
                     if #available(iOS 10.0, *) {
                         UIApplication.shared.open(self.baseURL!, options: [:], completionHandler: nil)
-                    }
-                    else {
+                    } else {
                         UIApplication.shared.openURL(self.baseURL!)
                     }
                 }
@@ -384,8 +375,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
                     let window = UIApplication.shared.keyWindow!
                     if let modalVC = window.rootViewController?.presentedViewController {
                         modalVC.present(activityViewController, animated: true, completion: nil)
-                    }
-                    else {
+                    } else {
                         window.rootViewController!.present(activityViewController, animated: true, completion: nil)
                     }
                 }
@@ -397,8 +387,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
                     let window = UIApplication.shared.keyWindow!
                     if let modalVC = window.rootViewController?.presentedViewController {
                         modalVC.present(activityViewController, animated: true, completion: nil)
-                    }
-                    else {
+                    } else {
                         window.rootViewController!.present(activityViewController, animated: true, completion: nil)
                     }
                 }
@@ -417,8 +406,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
 
         if let modalVC = window.rootViewController?.presentedViewController {
             modalVC.present(alert, animated: true, completion: nil)
-        }
-        else {
+        } else {
             window.rootViewController!.present(alert, animated: true, completion: nil)
         }
     }
@@ -439,18 +427,14 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
             if lqURL != nil && !SettingValues.loadContentHQ && shouldShowLq {
                 loadImage(imageURL: lqURL!)
                 showHQ = true
-            }
-            else {
+            } else {
                 loadImage(imageURL: baseURL!)
             }
-        }
-        else if type == .GIF || type == .STREAMABLE || type == .VID_ME {
+        } else if type == .GIF || type == .STREAMABLE || type == .VID_ME {
             getGif(urlS: baseURL!.absoluteString)
-        }
-        else if (type == .IMGUR) {
+        } else if (type == .IMGUR) {
             loadImage(imageURL: URL.init(string: baseURL!.absoluteString + ".png")!)
-        }
-        else if type == .VIDEO {
+        } else if type == .VIDEO {
             toolbar.isHidden = true
             let he = getYTHeight()
             ytPlayer = YTPlayerView()
@@ -545,8 +529,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
             self.playbackSlider.isHidden = true
 
             playButton!.setImage(UIImage(named: "pause"), for: .normal)
-        }
-        else {
+        } else {
             player.pause()
             ignore = true
             playButton!.setImage(UIImage(named: "play"), for: .normal)

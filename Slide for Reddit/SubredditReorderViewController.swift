@@ -205,8 +205,7 @@ class SubredditReorderViewController: UITableViewController {
             for i in rows {
                 if !pinned.contains(self.subs[i.row]) {
                     pinned2.append(self.subs[i.row])
-                }
-                else {
+                } else {
                     pinned3.append(self.subs[i.row])
                 }
             }
@@ -217,8 +216,7 @@ class SubredditReorderViewController: UITableViewController {
                 })
                 tableView.reloadData()
                 //todo saved pin
-            }
-            else {
+            } else {
                 //Need to pin remaining and move to top
                 pinned.append(contentsOf: pinned2)
                 self.subs = self.subs.filter({ (input) -> Bool in
@@ -295,8 +293,7 @@ class SubredditReorderViewController: UITableViewController {
                             try (UIApplication.shared.delegate as! AppDelegate).session?.setSubscribeSubreddit(Subreddit.init(subreddit: sub), subscribe: false, completion: { (_) in
                                 
                             })
-                        }
-                        catch {
+                        } catch {
                             
                         }
                     }
@@ -333,8 +330,7 @@ class SubredditReorderViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         if tableView.indexPathsForSelectedRows != nil && !tableView.indexPathsForSelectedRows!.isEmpty {
             self.navigationItem.setRightBarButtonItems(editItems, animated: true)
-        }
-        else {
+        } else {
             self.navigationItem.setRightBarButtonItems(normalItems, animated: true)
         }
     }
@@ -343,8 +339,7 @@ class SubredditReorderViewController: UITableViewController {
         if !tableView.indexPathsForSelectedRows!.isEmpty {
             print(tableView.indexPathsForSelectedRows!.count)
             self.navigationItem.setRightBarButtonItems(editItems, animated: true)
-        }
-        else {
+        } else {
             self.navigationItem.setRightBarButtonItems(normalItems, animated: true)
         }
     }

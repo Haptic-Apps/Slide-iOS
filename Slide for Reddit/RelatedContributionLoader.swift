@@ -53,8 +53,7 @@ class RelatedContributionLoader: ContributionLoader {
                         for item in baseContent {
                             if item is Comment {
                                 self.content.append(RealmDataWrapper.commentToRComment(comment: item as! Comment, depth: 0))
-                            }
-                            else {
+                            } else {
                                 self.content.append(RealmDataWrapper.linkToRSubmission(submission: item as! Link))
                             }
                         }
@@ -65,8 +64,7 @@ class RelatedContributionLoader: ContributionLoader {
                         }
                     }
                 })
-            }
-            catch {
+            } catch {
                 print(error)
             }
             

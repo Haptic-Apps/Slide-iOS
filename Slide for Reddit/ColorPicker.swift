@@ -40,11 +40,9 @@ class ColorPicker: UIView {
         didSet {
                 if Int(self.value * CGFloat(allColors.count)) > allColors.count - 1 {
                     self.value -= 1
-                }
-                else if self.value < 0 {
+                } else if self.value < 0 {
                     self.value += 1
-                }
-                else {
+                } else {
                     setNeedsDisplay()
                 }
            // delegate?.valueChanged(self.value, accent: accent)
@@ -58,11 +56,9 @@ class ColorPicker: UIView {
         for val in i...(i + 4) {
             if val < 0 {
                 index = val + (allColors.count - 1)
-            }
-            else if val > (allColors.count - 1) {
+            } else if val > (allColors.count - 1) {
                 index = val - (allColors.count - 1)
-            }
-            else {
+            } else {
                 index = val
             }
             result.append(allColors[index])
@@ -73,14 +69,12 @@ class ColorPicker: UIView {
     @objc private func handlePan(_ gesture: UIPanGestureRecognizer) {
         if gesture.state == .began {
             lastTouchLocation = gesture.location(in: self)
-        }
-        else if gesture.state == .changed {
+        } else if gesture.state == .changed {
             if let location = lastTouchLocation {
                 value += ((gesture.location(in: self).x - location.x) / frame.width) * 0.1
             }
             lastTouchLocation = gesture.location(in: self)
-        }
-        else if gesture.state == .ended || gesture.state == .cancelled {
+        } else if gesture.state == .ended || gesture.state == .cancelled {
             decelerationSpeed = gesture.velocity(in: self).x
         }
     }

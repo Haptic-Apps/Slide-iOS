@@ -312,8 +312,7 @@ class ContentType {
         
         if let type = ThumbnailType(rawValue: thumbnail) {
             return type
-        }
-        else {
+        } else {
             return ThumbnailType.URL
         }
         

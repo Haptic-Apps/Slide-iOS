@@ -138,8 +138,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
                     })
                 })
 
-            }
-            else {
+            } else {
                 Subscriptions.getSubscriptionsFully(session: (UIApplication.shared.delegate as! AppDelegate).session!, completion: { (subs, multis) in
                     for sub in subs {
                         if !sub.keyColor.isEmpty() {
@@ -171,8 +170,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
                     })
                 })
             }
-        }
-        catch {
+        } catch {
             print(error)
             self.complete()
         }
@@ -270,8 +268,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
     public func colorPickerView(_ colorPickerView: ColorPickerView, didSelectItemAt indexPath: IndexPath) {
         if isAccent {
             accentChosen = colorPickerView.colors[indexPath.row]
-        }
-        else {
+        } else {
             colorChosen = colorPickerView.colors[indexPath.row]
         }
     }
@@ -472,8 +469,7 @@ public extension UIView {
     private var queue: NSMutableArray {
         if let queue = objc_getAssociatedObject(self, &ToastKeys.Queue) as? NSMutableArray {
             return queue
-        }
-        else {
+        } else {
             let queue = NSMutableArray()
             objc_setAssociatedObject(self, &ToastKeys.Queue, queue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             return queue
@@ -566,11 +562,9 @@ public extension UIView {
         do {
             let toast = try self.toastViewForMessage(message, title: title, image: image, style: toastStyle)
             self.showToast(toast, duration: duration, position: position, completion: completion)
-        }
-        catch ToastError.insufficientData {
+        } catch ToastError.insufficientData {
             print("Error: message, title, and image are all nil")
-        }
-        catch {
+        } catch {
         }
     }
 
@@ -598,11 +592,9 @@ public extension UIView {
         do {
             let toast = try self.toastViewForMessage(message, title: title, image: image, style: toastStyle)
             self.showToast(toast, duration: duration, position: position, completion: completion)
-        }
-        catch ToastError.insufficientData {
+        } catch ToastError.insufficientData {
             print("Error: message, title, and image cannot all be nil")
-        }
-        catch {
+        } catch {
         }
     }
 
@@ -652,8 +644,7 @@ public extension UIView {
             objc_setAssociatedObject(toast, &ToastKeys.Position, NSValue(cgPoint: position), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
 
             self.queue.add(toast)
-        }
-        else {
+        } else {
             self.showToast(toast, duration: duration, position: position)
         }
     }

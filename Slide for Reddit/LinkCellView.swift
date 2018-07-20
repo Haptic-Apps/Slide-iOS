@@ -137,8 +137,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 alertController.addAction(image: UIImage.init(named: "Open in Safari"), title: "nav", color: ColorUtil.fontColor, style: .default, isEnabled: true) { (_) in
                     if #available(iOS 10.0, *) {
                         UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                    }
-                    else {
+                    } else {
                         UIApplication.shared.openURL(url)
                     }
                 }
@@ -387,8 +386,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
         if self is FullLinkCellView {
             contentView.addSubviews(bannerImage, thumbImageContainer, title, textView, infoContainer, tagbody)
-        }
-        else {
+        } else {
             contentView.addSubviews(bannerImage, thumbImageContainer, title, infoContainer, tagbody)
         }
         contentView.layer.masksToBounds = true
@@ -488,12 +486,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 buttons.rightAnchor == contentView.rightAnchor - ctwelve
                 buttons.bottomAnchor == contentView.bottomAnchor - ceight
                 buttons.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
-            }
-            else if SettingValues.actionBarMode.isSide() {
+            } else if SettingValues.actionBarMode.isSide() {
                 if SettingValues.actionBarMode == .SIDE_RIGHT {
                     sideButtons.rightAnchor == contentView.rightAnchor - ceight
-                }
-                else {
+                } else {
                     sideButtons.leftAnchor == contentView.leftAnchor + ceight
                 }
                 sideScore.widthAnchor == CGFloat(36)
@@ -674,8 +670,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             self.contentView.backgroundColor = ColorUtil.foregroundColor
             comments.textColor = ColorUtil.fontColor
             title.textColor = ColorUtil.fontColor
-        }
-        else {
+        } else {
             self.contentView.backgroundColor = ColorUtil.getColorForSubBackground(sub: submission.subreddit)
             comments.textColor = .white
             title.textColor = .white
@@ -701,15 +696,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
         if !SettingValues.hideButton {
             hide.isHidden = true
-        }
-        else {
+        } else {
             hide.isHidden = false
         }
         mod.isHidden = true
         if !SettingValues.saveButton {
             save.isHidden = true
-        }
-        else {
+        } else {
             save.isHidden = false
         }
         if submission.archived || !AccountController.isLoggedIn || !LinkCellView.checkInternet() {
@@ -720,8 +713,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             edit.isHidden = true
             sideUpvote.isHidden = true
             sideDownvote.isHidden = true
-        }
-        else {
+        } else {
             upvote.isHidden = false
             downvote.isHidden = false
             sideUpvote.isHidden = false
@@ -731,8 +723,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 mod.isHidden = false
                 if !submission.reports.isEmpty {
                     mod.image = LinkCellImageCache.modTinted
-                }
-                else {
+                } else {
                     mod.image = LinkCellImageCache.mod
                 }
             }
@@ -770,16 +761,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if !fullImage && submissionHeight < 50 {
             big = false
             thumb = true
-        }
-        else if big && ((!full && SettingValues.postImageMode == .CROPPED_IMAGE) || (full && !SettingValues.commentFullScreen)) {
+        } else if big && ((!full && SettingValues.postImageMode == .CROPPED_IMAGE) || (full && !SettingValues.commentFullScreen)) {
             submissionHeight = test ? 150 : 200
-        }
-        else if big {
+        } else if big {
             let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: submission.width)
             if h == 0 {
                 submissionHeight = test ? 150 : 200
-            }
-            else {
+            } else {
                 submissionHeight = h
             }
         }
@@ -832,22 +820,18 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if !big && !thumb && submission.type != .SELF && submission.type != .NONE { //If a submission has a link but no images, still show the web thumbnail
             thumb = true
             thumbImage.image = UIImage.init(named: "web")
-        }
-        else if thumb && !big {
+        } else if thumb && !big {
             if submission.nsfw {
                 thumbImage.image = UIImage.init(named: "nsfw")
-            }
-            else if submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty {
+            } else if submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty {
                 thumbImage.image = UIImage.init(named: "web")
-            }
-            else {
+            } else {
                 let thumbURL = submission.thumbnailUrl
                 DispatchQueue.global(qos: .userInteractive).async {
                     self.thumbImage.sd_setImage(with: URL.init(string: thumbURL), placeholderImage: UIImage.init(named: "web"))
                 }
             }
-        }
-        else {
+        } else {
             thumbImage.sd_setImage(with: URL.init(string: ""))
             self.thumbImage.frame.size.width = 0
         }
@@ -880,14 +864,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                             UIView.animate(withDuration: 0.3, animations: {
                                 self.bannerImage.alpha = 1
                             })
-                        }
-                        else {
+                        } else {
                             self.bannerImage.alpha = 1
                         }
                     })
                 }
-            }
-            else {
+            } else {
                 loadedImage = URL.init(string: submission.bannerUrl)
                 let bannerURL = submission.bannerUrl
                 DispatchQueue.global(qos: .userInteractive).async {
@@ -896,15 +878,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                             UIView.animate(withDuration: 0.3, animations: {
                                 self.bannerImage.alpha = 1
                             })
-                        }
-                        else {
+                        } else {
                             self.bannerImage.alpha = 1
                         }
                     })
                 }
             }
-        }
-        else {
+        } else {
             bannerImage.sd_setImage(with: URL.init(string: ""))
         }
 
@@ -958,8 +938,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 infoContainer.isHidden = true
                 tagbody.isHidden = false
                 taglabel.text = " \(text.uppercased()) "
-            }
-            else {
+            } else {
                 tagbody.isHidden = true
                 if submission.isCrosspost && full {
                     let colorF = UIColor.white
@@ -974,8 +953,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     let userColor = ColorUtil.getColorForUser(name: submission.crosspostAuthor)
                     if AccountController.currentName == submission.author {
                         authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#FFB74D"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-                    }
-                    else if userColor != ColorUtil.baseColor {
+                    } else if userColor != ColorUtil.baseColor {
                         authorString.addAttributes([kTTTBackgroundFillColorAttributeName: userColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
                     }
 
@@ -999,16 +977,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     }
                     info.attributedText = finalText
 
-                }
-                else {
+                } else {
                     let finalText = NSMutableAttributedString.init(string: text, attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 14, submission: true)])
                     finalText.append(NSAttributedString.init(string: "\n\(submission.domain)"))
                     info.attributedText = finalText
                 }
             }
 
-        }
-        else {
+        } else {
             infoContainer.isHidden = true
             tagbody.isHidden = true
         }
@@ -1164,8 +1140,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     }
                 }
             })
-        }
-        catch {
+        } catch {
         }
     }
 
@@ -1205,8 +1180,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             //todo make this work on ipad
             parentViewController?.present(alert, animated: true, completion: nil)
 
-        }
-        else {
+        } else {
             submitFlairChange(flair)
         }
     }
@@ -1230,8 +1204,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                         self.showBody(width: self.contentView.frame.size.width - 24)
                     }
             }}
-        }
-        catch {
+        } catch {
         }
     }
 
@@ -1268,22 +1241,17 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 if numb <= 0.5 {
                     if numb <= 0.1 {
                         attrsNew = [NSForegroundColorAttributeName: GMColor.blue500Color()]
-                    }
-                    else if numb <= 0.3 {
+                    } else if numb <= 0.3 {
                         attrsNew = [NSForegroundColorAttributeName: GMColor.blue400Color()]
-                    }
-                    else {
+                    } else {
                         attrsNew = [NSForegroundColorAttributeName: GMColor.blue300Color()]
                     }
-                }
-                else {
+                } else {
                     if numb >= 0.9 {
                         attrsNew = [NSForegroundColorAttributeName: GMColor.orange500Color()]
-                    }
-                    else if numb >= 0.7 {
+                    } else if numb >= 0.7 {
                         attrsNew = [NSForegroundColorAttributeName: GMColor.orange400Color()]
-                    }
-                    else {
+                    } else {
                         attrsNew = [NSForegroundColorAttributeName: GMColor.orange300Color()]
                     }
                 }
@@ -1293,8 +1261,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
             subScore.append(scoreRatio)
             score.attributedText = subScore
-        }
-        else {
+        } else {
             score.text = (link.score >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(link.score) / Double(1000))) : " \(link.score)"
             sideScore.text = score.text
         }
@@ -1304,8 +1271,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
         if History.getSeen(s: link) && !full {
             self.title.alpha = 0.7
-        }
-        else {
+        } else {
             self.title.alpha = 1
         }
     }
@@ -1345,8 +1311,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     return controller
                 }
             }
-        }
-        else {
+        } else {
             if let controller = parentViewController?.getControllerForUrl(baseUrl: (link?.url)!) {
                 return controller
             }
@@ -1383,20 +1348,17 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between top and thumbnail
                 innerPadding += 18 - (SettingValues.postViewMode == .COMPACT ? 4 : 0) //between label and bottom box
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
-            }
-            else if big {
+            } else if big {
                 if SettingValues.postViewMode == .CENTER || full {
                     innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 16) //between label
                     innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between banner and box
-                }
-                else {
+                } else {
                     innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between banner and label
                     innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between label and box
                 }
 
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
-            }
-            else {
+            } else {
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8)
                 innerPadding += 5 //between label and body
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between body and box
@@ -1411,18 +1373,15 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     estimatedUsableWidth -= thumbheight //is the same as the width
                     estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb
                     estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between thumb and label
-                }
-                else {
+                } else {
                     estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //12 padding on either side
                 }
-            }
-            else {
+            } else {
                 fullHeightExtras += 12
                 estimatedUsableWidth -= (24) //12 padding on either side
                 if thumb {
                     fullHeightExtras += 45 + 12 + 12
-                }
-                else {
+                } else {
                     fullHeightExtras += imageHeight
                 }
             }
@@ -1451,8 +1410,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
         if viewControllerToCommit is WebsiteViewController || viewControllerToCommit is SFHideSafariViewController || viewControllerToCommit is SingleSubredditViewController || viewControllerToCommit is UINavigationController || viewControllerToCommit is CommentViewController {
             parentViewController?.show(viewControllerToCommit, sender: nil)
-        }
-        else {
+        } else {
             parentViewController?.present(viewControllerToCommit, animated: true)
         }
     }
@@ -1492,8 +1450,7 @@ extension UILabel {
             strLabelText.append(attachmentString)
 
             self.attributedText = strLabelText
-        }
-        else {
+        } else {
             let strLabelText: NSMutableAttributedString = NSMutableAttributedString.init(attributedString: self.attributedText!)
             let mutableAttachmentString: NSMutableAttributedString = NSMutableAttributedString(attributedString: attachmentString)
             mutableAttachmentString.append(strLabelText)
@@ -1509,8 +1466,7 @@ extension UILabel {
         let image = LinkCellView.imageDictionary.object(forKey: imageName)
         if image != nil {
             textAttachment.image = image as? UIImage
-        }
-        else {
+        } else {
 
             let img = UIImage(named: imageName)?.getCopy(withSize: .square(size: self.font.pointSize), withColor: ColorUtil.fontColor)
             textAttachment.image = img

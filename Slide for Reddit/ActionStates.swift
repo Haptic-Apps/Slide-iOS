@@ -20,14 +20,11 @@ class ActionStates {
     static func getVoteDirection(s: Thing) -> VoteDirection {
         if upVotedFullnames.contains(s.getId()) {
             return .up
-        }
-        else if downVotedFullnames.contains(s.getId()) {
+        } else if downVotedFullnames.contains(s.getId()) {
             return .down
-        }
-        else if unvotedFullnames.contains(s.getId()) {
+        } else if unvotedFullnames.contains(s.getId()) {
             return .none
-        }
-        else {
+        } else {
             return ((s is Comment) ? (s as! Comment).likes : (s as! Link).likes)
         }
     }
@@ -63,11 +60,9 @@ class ActionStates {
     static func isRead(s: RMessage) -> Bool {
         if savedFullnames.contains(s.getId()) {
             return true
-        }
-        else if unSavedFullnames.contains(s.getId()) {
+        } else if unSavedFullnames.contains(s.getId()) {
             return false
-        }
-        else {
+        } else {
             return !s.isNew
         }
     }
@@ -80,8 +75,7 @@ class ActionStates {
         
         if read {
             savedFullnames.append(fullname)
-        }
-        else {
+        } else {
             unSavedFullnames.append(fullname)
         }
     }
@@ -89,11 +83,9 @@ class ActionStates {
     static func isSaved(s: Thing) -> Bool {
         if savedFullnames.contains(s.getId()) {
             return true
-        }
-        else if unSavedFullnames.contains(s.getId()) {
+        } else if unSavedFullnames.contains(s.getId()) {
             return false
-        }
-        else {
+        } else {
             return ((s is Comment) ? (s as! Comment).saved : (s as! Link).saved)
         }
     }
@@ -109,8 +101,7 @@ class ActionStates {
         
         if saved {
             savedFullnames.append(fullname)
-        }
-        else {
+        } else {
             unSavedFullnames.append(fullname)
         }
     }
@@ -119,14 +110,11 @@ class ActionStates {
     static func getVoteDirection(s: RSubmission) -> VoteDirection {
         if upVotedFullnames.contains(s.getId()) {
             return .up
-        }
-        else if downVotedFullnames.contains(s.getId()) {
+        } else if downVotedFullnames.contains(s.getId()) {
             return .down
-        }
-        else if unvotedFullnames.contains(s.getId()) {
+        } else if unvotedFullnames.contains(s.getId()) {
             return .none
-        }
-        else {
+        } else {
             return s.likes
         }
     }
@@ -162,11 +150,9 @@ class ActionStates {
     static func isSaved(s: RSubmission) -> Bool {
         if savedFullnames.contains(s.getId()) {
             return true
-        }
-        else if unSavedFullnames.contains(s.getId()) {
+        } else if unSavedFullnames.contains(s.getId()) {
             return false
-        }
-        else {
+        } else {
             return s.saved
         }
     }
@@ -182,8 +168,7 @@ class ActionStates {
         
         if saved {
             savedFullnames.append(fullname)
-        }
-        else {
+        } else {
             unSavedFullnames.append(fullname)
         }
     }
@@ -192,14 +177,11 @@ class ActionStates {
     static func getVoteDirection(s: RComment) -> VoteDirection {
         if upVotedFullnames.contains(s.getId()) {
             return .up
-        }
-        else if downVotedFullnames.contains(s.getId()) {
+        } else if downVotedFullnames.contains(s.getId()) {
             return .down
-        }
-        else if unvotedFullnames.contains(s.getId()) {
+        } else if unvotedFullnames.contains(s.getId()) {
             return .none
-        }
-        else {
+        } else {
             return (s.likes)
         }
     }
@@ -235,11 +217,9 @@ class ActionStates {
     static func isSaved(s: RComment) -> Bool {
         if savedFullnames.contains(s.getId()) {
             return true
-        }
-        else if unSavedFullnames.contains(s.getId()) {
+        } else if unSavedFullnames.contains(s.getId()) {
             return false
-        }
-        else {
+        } else {
             return s.saved
         }
     }
@@ -255,8 +235,7 @@ class ActionStates {
         
         if saved {
             savedFullnames.append(fullname)
-        }
-        else {
+        } else {
             unSavedFullnames.append(fullname)
         }
     }

@@ -182,8 +182,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAt
                     textView.setText(content)
                     textView.frame.size.height = textSizeB.height
                     hasText = true
-                }
-                catch {
+                } catch {
                 }
             }
         }
@@ -207,8 +206,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAt
                     let h = getHeightFromAspectRatio(imageHeight: height, imageWidth: width)
                     if h == 0 {
                         imageHeight = 200
-                    }
-                    else {
+                    } else {
                         imageHeight = h
                     }
 
@@ -220,8 +218,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAt
                         UIView.animate(withDuration: 0.3, animations: {
                             self.image.alpha = 1
                         })
-                    }
-                    else {
+                    } else {
                         self.image.alpha = 1
                     }
                 })

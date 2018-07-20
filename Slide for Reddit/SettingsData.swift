@@ -49,20 +49,16 @@ class SettingsData: UITableViewController {
         if changed == enableDataSaving {
             SettingValues.dataSavingEnabled = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_dataSavingEnabled)
-        }
-        else if changed == disableOnWifi {
+        } else if changed == disableOnWifi {
             SettingValues.dataSavingDisableWiFi = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_dataSavingDisableWifi)
-        }
-        else if changed == loadHQViewer {
+        } else if changed == loadHQViewer {
             SettingValues.loadContentHQ = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_loadContentHQ)
-        }
-        else if changed == lowerQualityMode {
+        } else if changed == lowerQualityMode {
             SettingValues.lqLow = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_lqLow)
-        }
-        else if changed == dontLoadImagePreviews {
+        } else if changed == dontLoadImagePreviews {
             SettingValues.noImages = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_noImg)
         }
@@ -125,8 +121,7 @@ class SettingsData: UITableViewController {
             loadHQViewer.isEnabled = true
             lowerQualityMode.isEnabled = true
             dontLoadImagePreviews.isEnabled = false
-        }
-        else {
+        } else {
             loadHQViewer.isEnabled = false
             disableOnWifi.isEnabled = false
             loadHQViewer.isEnabled = false

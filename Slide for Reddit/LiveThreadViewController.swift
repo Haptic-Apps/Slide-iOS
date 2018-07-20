@@ -91,12 +91,10 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
                     let font = FontGenerator.fontOfSize(size: 16, submission: false)
                     let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: .white)
                     content = LinkParser.parse(attr2, .white)
-                }
-                catch {
+                } catch {
                     content = NSAttributedString()
                 }
-            }
-            else {
+            } else {
                 content = NSAttributedString()
             }
             var imageHeight = 0
@@ -115,8 +113,7 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
                 let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: itemWidth - 16, height: CGFloat.greatestFiniteMagnitude), nil)
                 
                 estimatedHeights[id] = CGFloat(34 + textSizeT.height + textSizeB.height + CGFloat(imageHeight))
-            }
-            else {
+            } else {
                 estimatedHeights[id] = CGFloat(34 + textSizeT.height + CGFloat(imageHeight))
             }
         }
@@ -139,8 +136,7 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
                     }
                 }
             })
-        }
-        catch {
+        } catch {
             print(error)
         }
     }
@@ -176,8 +172,7 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
                     self.doneLoading()
                 }
             })
-        }
-        catch {
+        } catch {
             
         }
     }
@@ -207,8 +202,7 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
                         }
                     }
                 }
-            }
-            catch {
+            } catch {
                 
             }
         }

@@ -42,8 +42,7 @@ public class AutoCache: NSObject {
                 }
                 realm.create(type(of: realmListing), value: realmListing, update: true)
                 try realm.commitWrite()
-            }
-            catch {
+            } catch {
                 print(error)
             }
             DispatchQueue.main.async {
@@ -92,8 +91,7 @@ public class AutoCache: NSObject {
                             }
                             realm.create(type(of: link), value: link, update: true)
                             try realm.commitWrite()
-                        }
-                        catch {
+                        } catch {
 
                         }
                     }
@@ -105,8 +103,7 @@ public class AutoCache: NSObject {
                     }
                 }
             })
-        }
-        catch {
+        } catch {
             print(error)
         }
 
@@ -158,8 +155,7 @@ public class AutoCache: NSObject {
                     }
                 }
             })
-        }
-        catch {
+        } catch {
             print(error)
         }
     }
@@ -187,8 +183,7 @@ public class AutoCache: NSObject {
             if !fullImage && height < 50 {
                 big = false
                 thumb = true
-            }
-            else if big && (SettingValues.postImageMode == .CROPPED_IMAGE) {
+            } else if big && (SettingValues.postImageMode == .CROPPED_IMAGE) {
                 height = 200
             }
 
@@ -219,10 +214,8 @@ public class AutoCache: NSObject {
 
             if thumb && !big {
                 if submission.thumbnailUrl == "nsfw" {
-                }
-                else if submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty {
-                }
-                else {
+                } else if submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty {
+                } else {
                     if let url = URL.init(string: submission.thumbnailUrl) {
                         urls.append(url)
                     }
@@ -235,8 +228,7 @@ public class AutoCache: NSObject {
                         urls.append(url)
                     }
 
-                }
-                else {
+                } else {
                     if let url = URL.init(string: submission.bannerUrl) {
                         urls.append(url)
                     }
@@ -304,8 +296,7 @@ public class AutoCache: NSObject {
             for obj in comment.replies.children {
                 buf.append(contentsOf: extendKeepMore(in: obj, current: depth + 1))
             }
-        }
-        else if let more = comment as? More {
+        } else if let more = comment as? More {
             buf.append((more, depth))
         }
         return buf
@@ -327,8 +318,7 @@ public class AutoCache: NSObject {
                     }
                     buf.append((comment, depth + relativeDepth))
                     buf.append(contentsOf: extendForMore(parentId: comment.getId(), comments: comments, current: depth + relativeDepth + 1))
-                }
-                else if let more = thing as? More {
+                } else if let more = thing as? More {
                     var relativeDepth = 0
                     for parent in buf {
                         let parentId = parent.0 is Comment ? (parent.0 as! Comment).parentId : (parent.0 as! More).parentId

@@ -19,8 +19,7 @@ class RemovalReasons {
     public static func initialize() {
         if let reasons = UserDefaults.standard.array(forKey: "reasons") as! [NSString]? {
             RemovalReasons.reasons = reasons
-        }
-        else {
+        } else {
             addReason(s: "Spam")
             addReason(s: "Test")
             addReason(s: "Custom reason")

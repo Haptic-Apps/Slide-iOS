@@ -32,8 +32,7 @@ class GfycatVideoSource: VideoSource {
         URLSession.shared.dataTask(with: finalURL) { (data, _, error) in
             if error != nil {
                 print(error ?? "Error loading gif...")
-            }
-            else {
+            } else {
                 do {
                     guard let json = try JSONSerialization.jsonObject(with: data!, options: []) as? NSDictionary else {
                         return
@@ -44,8 +43,7 @@ class GfycatVideoSource: VideoSource {
                     DispatchQueue.main.async {
                         completion((gif?.gfyItem?.mp4Url)!)
                     }
-                }
-                catch let error as NSError {
+                } catch let error as NSError {
                     print(error)
                 }
             }
@@ -70,8 +68,7 @@ class StreamableVideoSource: VideoSource {
         URLSession.shared.dataTask(with: finalURL) { (data, _, error) in
             if error != nil {
                 print(error ?? "Error loading gif...")
-            }
-            else {
+            } else {
                 do {
                     guard let json = try JSONSerialization.jsonObject(with: data!, options: []) as? NSDictionary else {
                         return
@@ -83,8 +80,7 @@ class StreamableVideoSource: VideoSource {
                         var video = ""
                         if let url = gif?.files?.mp4mobile?.url {
                             video = url
-                        }
-                        else {
+                        } else {
                             video = (gif?.files?.mp4?.url!)!
                         }
                         if video.hasPrefix("//") {
@@ -92,8 +88,7 @@ class StreamableVideoSource: VideoSource {
                         }
                         completion(video)
                     }
-                }
-                catch let error as NSError {
+                } catch let error as NSError {
                     print(error)
                 }
             }
@@ -108,8 +103,7 @@ class VidMeVideoSource: VideoSource {
         URLSession.shared.dataTask(with: finalURL) { (data, _, error) in
             if error != nil {
                 print(error ?? "Error loading gif...")
-            }
-            else {
+            } else {
                 do {
                     guard let json = try JSONSerialization.jsonObject(with: data!, options: []) as? NSDictionary else {
                         return
@@ -120,8 +114,7 @@ class VidMeVideoSource: VideoSource {
                     DispatchQueue.main.async {
                         completion((gif?.video?.complete_url)!)
                     }
-                }
-                catch let error as NSError {
+                } catch let error as NSError {
                     print(error)
                 }
             }

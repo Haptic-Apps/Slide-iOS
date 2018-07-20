@@ -34,8 +34,7 @@ public extension String {
             //            let cammel = String(format: "%@", strip)
             let rest = String(cammel.dropFirst())
             return "\(first)\(rest)"
-        }
-        else {
+        } else {
             let first = source[self.startIndex...self.index(after: startIndex)].lowercased()
             let rest = String(source.dropFirst())
             return "\(first)\(rest)"
@@ -54,8 +53,7 @@ public extension String {
         if let prefixRange = range(of: prefix) {
             if prefixRange.upperBound >= endIndex {
                 return self[startIndex..<prefixRange.lowerBound]
-            }
-            else {
+            } else {
                 return self[prefixRange.upperBound..<endIndex]
             }
         }
@@ -66,8 +64,7 @@ public extension String {
         if let suffixRange = range(of: suffix, options: .backwards) {
             if suffixRange.upperBound >= endIndex {
                 return self[startIndex..<suffixRange.lowerBound]
-            }
-            else {
+            } else {
                 return self[suffixRange.upperBound..<endIndex]
             }
         }
@@ -98,8 +95,7 @@ public extension String {
     func ensureLeft(_ prefix: String) -> String {
         if startsWith(prefix) {
             return self
-        }
-        else {
+        } else {
             return "\(prefix)\(self)"
         }
     }
@@ -107,8 +103,7 @@ public extension String {
     func ensureRight(_ suffix: String) -> String {
         if endsWith(suffix) {
             return self
-        }
-        else {
+        } else {
             return "\(self)\(suffix)"
         }
     }

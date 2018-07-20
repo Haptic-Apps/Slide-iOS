@@ -77,11 +77,9 @@ extension RSubmission {
 
         if thumb && !big {
             target = .thumb
-        }
-        else if big {
+        } else if big {
             target = .banner
-        }
-        else {
+        } else {
             target = .text
         }
 
@@ -92,11 +90,9 @@ extension RSubmission {
         var cell: LinkCellView!
         if target == .thumb {
             cell = ThumbnailLinkCellView()
-        }
-        else if target == .banner {
+        } else if target == .banner {
             cell = BannerLinkCellView()
-        }
-        else {
+        } else {
             cell = TextLinkCellView()
         }
 

@@ -284,11 +284,9 @@ public extension String {
     fileprivate func decode(_ entity: String) -> Character? {
         if entity.hasPrefix("&#x") || entity.hasPrefix("&#X") {
             return decodeNumeric(entity.substring(from: entity.index(entity.startIndex, offsetBy: 3)), base: 16)
-        }
-        else if entity.hasPrefix("&#") {
+        } else if entity.hasPrefix("&#") {
             return decodeNumeric(entity.substring(from: entity.index(entity.startIndex, offsetBy: 2)), base: 10)
-        }
-        else {
+        } else {
             return HTMLEntities.characterEntities[entity]
         }
     }
@@ -313,13 +311,11 @@ public extension String {
                 if let decoded = decode(entity) {
                     // Replace by decoded character:
                     result.append(decoded)
-                }
-                else {
+                } else {
                     // Invalid entity, copy verbatim:
                     result.append(entity)
                 }
-            }
-            else {
+            } else {
                 // No matching ';'.
                 break
             }

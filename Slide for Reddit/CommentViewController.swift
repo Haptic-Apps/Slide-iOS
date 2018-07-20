@@ -128,8 +128,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 self.tableView.reloadData()
 
             })
-        }
-        else if comment != nil && cell == nil {
+        } else if comment != nil && cell == nil {
             DispatchQueue.main.async(execute: { () -> Void in
                 let startDepth = 0
 
@@ -227,8 +226,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             ActionStates.setSaved(s: cell.link!, saved: !ActionStates.isSaved(s: cell.link!))
             History.addSeen(s: cell.link!)
             cell.refresh()
-        }
-        catch {
+        } catch {
         }
     }
 
@@ -253,8 +251,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 }
             })
             ActionStates.setSaved(s: comment, saved: !ActionStates.isSaved(s: comment))
-        }
-        catch {
+        } catch {
 
         }
     }
@@ -300,8 +297,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up)
             History.addSeen(s: cell.link!)
             cell.refresh()
-        }
-        catch {
+        } catch {
 
         }
     }
@@ -313,14 +309,12 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                     DispatchQueue.main.async {
                         if self.navigationController!.modalPresentationStyle == .formSheet {
                             self.navigationController!.dismiss(animated: true)
-                        }
-                        else {
+                        } else {
                             self.navigationController!.popViewController(animated: true)
                         }
                     }
                 })
-            }
-            catch {
+            } catch {
 
             }
         }
@@ -334,8 +328,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down)
             History.addSeen(s: cell.link!)
             cell.refresh()
-        }
-        catch {
+        } catch {
 
         }
     }
@@ -391,8 +384,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         }
         tableView.contentInset = UIEdgeInsets(top: top, left: 0, bottom: bottom, right: 0)
         if #available(iOS 10.0, *) {
-        }
-        else {
+        } else {
             tableView.addSubview(refreshControl!)
         }
         refreshControl?.beginRefreshing()
@@ -476,15 +468,13 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                                         }
                                         if self.comments.isEmpty {
                                             BannerUtil.makeBanner(text: "No cached comments found!\nYou can set up auto-cache in Settings > Auto Cache", color: ColorUtil.accentColorForSub(sub: self.subreddit), seconds: 5, context: self)
-                                        }
-                                        else {
+                                        } else {
                                             BannerUtil.makeBanner(text: "Showing cached comments", color: ColorUtil.accentColorForSub(sub: self.subreddit), seconds: 5, context: self)
                                         }
 
                                     })
                                 }
-                            }
-                            catch {
+                            } catch {
                                 BannerUtil.makeBanner(text: "No cached comments found!\nYou can set up auto-cache in Settings > Auto Cache", color: ColorUtil.accentColorForSub(sub: self.subreddit), seconds: 5, context: self)
                             }
                         }
@@ -500,8 +490,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                         self.loaded = true
                         if self.submission == nil {
                             self.submission = RealmDataWrapper.linkToRSubmission(submission: tuple.0.children[0] as! Link)
-                        }
-                        else {
+                        } else {
                             RealmDataWrapper.updateSubmission(self.submission!, tuple.0.children[0] as! Link)
                         }
 
@@ -549,8 +538,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                                 }
                                 realm.create(type(of: self.submission!), value: self.submission!, update: true)
                                 try realm.commitWrite()
-                            }
-                            catch {
+                            } catch {
 
                             }
                         }
@@ -588,8 +576,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                                 self.navigationItem.title = self.submission!.subreddit
                                 self.navigationItem.backBarButtonItem?.title = ""
                                 self.setBarColors(color: ColorUtil.getColorForSub(sub: self.navigationItem.title!))
-                            }
-                            else {
+                            } else {
                                 self.headerCell?.refreshLink(self.submission!)
                                 self.headerCell?.showBody(width: self.view.frame.size.width - 24)
                             }
@@ -610,27 +597,23 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                                             self.goToCell(i: index)
                                         }
                                         break
-                                    }
-                                    else {
+                                    } else {
                                         index += 1
                                     }
                                 }
                                 if !loaded {
                                     self.tableView.reloadData()
                                 }
-                            }
-                            else if SettingValues.collapseDefault {
+                            } else if SettingValues.collapseDefault {
                                 self.tableView.reloadData()
                                 self.collapseAll()
-                            }
-                            else {
+                            } else {
                                 self.tableView.reloadData()
                             }
                         })
                     }
                 })
-            }
-            catch {
+            } catch {
                 print(error)
             }
         }
@@ -645,8 +628,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     override var navigationItem: UINavigationItem {
         if parent != nil && parent! is PagingCommentViewController {
             return parent!.navigationItem
-        }
-        else {
+        } else {
             return super.navigationItem
         }
     }
@@ -658,8 +640,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         }
         if link.archived {
             text = "This is an archived post. You won't be able to vote or comment."
-        }
-        else if link.locked {
+        } else if link.locked {
             text = "This is a locked post. You won't be able to comment."
         }
 
@@ -691,8 +672,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 popup.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
             }, completion: nil)
 
-        }
-        else {
+        } else {
             var top = CGFloat(64)
             var bottom = CGFloat(45)
             if #available(iOS 11.0, *) {
@@ -948,11 +928,9 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     func close(_ sender: AnyObject) {
         if self.navigationController?.viewControllers.count == 1 && self.navigationController?.navigationController == nil {
             self.navigationController?.dismiss(animated: true, completion: nil)
-        }
-        else if self.navigationController is TapBehindModalViewController {
+        } else if self.navigationController is TapBehindModalViewController {
             self.navigationController?.popViewController(animated: true)
-        }
-        else {
+        } else {
             self.navigationController?.navigationController?.popToRootViewController(animated: true)
         }
     }
@@ -1008,8 +986,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             for obj in comment.replies.children {
                 buf.append(contentsOf: extendKeepMore(in: obj, current: depth + 1))
             }
-        }
-        else if let more = comment as? More {
+        } else if let more = comment as? More {
             buf.append((more, depth))
         }
         return buf
@@ -1031,8 +1008,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                     }
                     buf.append((comment, depth + relativeDepth))
                     buf.append(contentsOf: extendForMore(parentId: comment.getId(), comments: comments, current: depth + relativeDepth + 1))
-                }
-                else if let more = thing as? More {
+                } else if let more = thing as? More {
                     var relativeDepth = 0
                     for parent in buf {
                         let parentId = parent.0 is Comment ? (parent.0 as! Comment).parentId : (parent.0 as! More).parentId
@@ -1057,8 +1033,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             if let comment = thing.0 as? Comment {
                 var html = comment.bodyHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
                 self.text[comment.getId()] = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: color)
-            }
-            else {
+            } else {
                 let attr = NSMutableAttributedString(string: "more")
                 let font = FontGenerator.fontOfSize(size: 16, submission: false)
                 let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
@@ -1075,8 +1050,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             if let comment = thing as? RComment {
                 let html = comment.htmlText
                 self.text[comment.getIdentifier()] = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: color)
-            }
-            else {
+            } else {
                 let attr = NSMutableAttributedString(string: "more")
                 let font = FontGenerator.fontOfSize(size: 16, submission: false)
                 let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
@@ -1100,13 +1074,11 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 substring.addAttribute(NSForegroundColorAttributeName, value: ColorUtil.getColorForSub(sub: comment.subreddit), range: NSRange(location: 0, length: substring.string.length))
                 
                 regex.replaceMatches(in: attributed.mutableString, options: NSRegularExpression.MatchingOptions.anchored, range: NSRange.init(location: 0, length: attributed.length), withTemplate: substring.string)
-            }
-            catch {
+            } catch {
                 print(error)
             }
             return attributed
-        }
-        else {
+        } else {
             let attr = NSMutableAttributedString(string: "more")
             let font = FontGenerator.fontOfSize(size: 16, submission: false)
             let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
@@ -1125,8 +1097,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                         print(check)
                     }
                 })
-            }
-            catch {
+            } catch {
                 print(error)
             }
         }
@@ -1265,8 +1236,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         if topCell <= 0 && lastMoved != 0 {
             goToCellTop(i: 0)
             lastMoved = 0
-        }
-        else {
+        } else {
             var contents = content[dataArray[topCell]]
             while (contents is RMore || (contents as! RComment).depth > 1) && dataArray.count > topCell {
                 topCell += 1
@@ -1288,36 +1258,31 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         case .PARENTS:
             if cDepth[comment.getIdentifier()]! == 1 {
                 return true
-            }
-            else {
+            } else {
                 return false
             }
         case .GILDED:
             if comment.gilded > 0 {
                 return true
-            }
-            else {
+            } else {
                 return false
             }
         case .OP:
             if comment.author == submission?.author {
                 return true
-            }
-            else {
+            } else {
                 return false
             }
         case .LINK:
             if comment.htmlText.contains("<a") {
                 return true
-            }
-            else {
+            } else {
                 return false
             }
         case .YOU:
             if AccountController.isLoggedIn && comment.author == AccountController.currentName {
                 return true
-            }
-            else {
+            } else {
                 return false
             }
         }
@@ -1334,8 +1299,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             items.append(space)
             items.append(UIBarButtonItem.init(title: "Load full thread", style: .plain, target: self, action: #selector(CommentViewController.loadAll(_:))))
             items.append(space)
-        }
-        else {
+        } else {
 
             let up = UIButton.init(type: .custom)
             up.setImage(UIImage.init(named: "up")?.toolbarIcon(), for: UIControlState.normal)
@@ -1377,8 +1341,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             parent?.toolbarItems = items
             parent?.navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
             parent?.navigationController?.toolbar.tintColor = ColorUtil.fontColor
-        }
-        else {
+        } else {
             toolbarItems = items
             navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
             navigationController?.toolbar.tintColor = ColorUtil.fontColor
@@ -1405,8 +1368,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             if let text = self.tagText {
                 ColorUtil.setTagForUser(name: name, tag: text)
                 self.tableView.reloadData()
-            }
-            else {
+            } else {
                 // user did not fill field
             }
         }
@@ -1520,8 +1482,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         var n: String = ""
         if comment is RComment {
             n = (comment as! RComment).parentId
-        }
-        else {
+        } else {
             n = (comment as! RMore).parentId
         }
         return hiddenPersons.contains(n) || hidden.contains(n)
@@ -1535,8 +1496,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             for obj in stride(from: bounds, to: comments.count, by: 1) {
                 if (cDepth[comments[obj]] as! Int) > parentDepth {
                     toReturn.append(comments[obj])
-                }
-                else {
+                } else {
                     return toReturn
                 }
             }
@@ -1553,8 +1513,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 let depth = (cDepth[comments[obj]] as! Int)
                 if depth == 1 + parentDepth {
                     toReturn.append(comments[obj])
-                }
-                else if depth == parentDepth {
+                } else if depth == parentDepth {
                     return toReturn
                 }
             }
@@ -1574,8 +1533,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                     if currentDepth == parentDepth + 1 {
                         toReturn.append(contentsOf: walkTreeFully(n: comments[obj]))
                     }
-                }
-                else {
+                } else {
                     return toReturn
                 }
             }
@@ -1607,8 +1565,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                     print(check)
                 }
             })
-        }
-        catch {
+        } catch {
             print(error)
         }
         ActionStates.setVoteDirection(s: comment, direction: direction)
@@ -1641,8 +1598,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                         self.tableView.reloadData()
                     }
                 })
-            }
-            catch {
+            } catch {
 
             }
         }))
@@ -1708,8 +1664,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             leftInset = self.tableView.safeAreaInsets.left
             rightInset = self.tableView.safeAreaInsets.right
             frame.origin.x = leftInset
-        }
-        else {
+        } else {
             // Fallback on earlier versions
         }
 
@@ -1737,8 +1692,7 @@ override func scrollViewDidScroll(_ scrollView: UIScrollView) {
                 if navigationController != nil && !isHiding && !goingToCell && !isToolbarHidden && !(scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height)) {
                     hideUI(inHeader: true)
                 }
-            }
-            else if (currentY < lastYUsed + 20) && !isHiding && navigationController != nil && (isToolbarHidden) {
+            } else if (currentY < lastYUsed + 20) && !isHiding && navigationController != nil && (isToolbarHidden) {
                 showUI()
                 goingToCell = false
             }
@@ -1785,8 +1739,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
                 }
 
                 cell.setComment(comment: content[thing] as! RComment, depth: cDepth[thing]!, parent: self, hiddenCount: count, date: lastSeen, author: submission?.author, text: t, isCollapsed: hiddenP, parentOP: parentOP ?? "")
-            }
-            else {
+            } else {
                 cell.setMore(more: (content[thing] as! RMore), depth: cDepth[thing]!)
             }
             cell.content = content[thing]
@@ -1825,8 +1778,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
 
             return config
 
-        }
-        else {
+        } else {
             return UISwipeActionsConfiguration.init()
         }
     }
@@ -1855,8 +1807,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
         if (contents as! RComment).depth == 1 {
             //collapse self
             id = baseCell.comment!.getIdentifier()
-        }
-        else {
+        } else {
             while (contents is RMore || (contents as! RComment).depth > 1) && dataArray.count > topCell {
                 topCell -= 1
                 contents = content[dataArray[topCell]]
@@ -1872,20 +1823,16 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
             let cell = c as! CommentDepthCell
             if childNumber == 0 {
                 if !SettingValues.collapseFully {
-                }
-                else if cell.isCollapsed {
-                }
-                else {
+                } else if cell.isCollapsed {
+                } else {
                     self.tableView.beginUpdates()
                     cell.collapse(childNumber: 0)
                     self.tableView.endUpdates()
                 }
-            }
-            else {
+            } else {
                 cell.collapse(childNumber: childNumber)
                 if hiddenPersons.contains((id)) && childNumber > 0 {
-                }
-                else {
+                } else {
                     if childNumber > 0 {
                         hideAll(comment: id, i: topCell + 1)
                         if !hiddenPersons.contains(id) {
@@ -1918,8 +1865,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
         if textSearched.length != 0 {
             isSearching = true
             searchTableList()
-        }
-        else {
+        } else {
             isSearching = false
         }
         tableView.reloadData()
@@ -1953,15 +1899,13 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
                         if comment is RComment && (comment as! RComment).getIdentifier().contains(self.context) {
                             self.goToCell(i: index)
                             break
-                        }
-                        else {
+                        } else {
                             index += 1
                         }
                     }
                 }
 
-            }
-            else {
+            } else {
                 if let comment = cell.content as? RComment {
                     let row = tableView.indexPath(for: cell)?.row
                     let id = comment.getIdentifier()
@@ -1969,26 +1913,22 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
                     if childNumber == 0 {
                         if !SettingValues.collapseFully {
                             cell.showMenu(nil)
-                        }
-                        else if cell.isCollapsed {
+                        } else if cell.isCollapsed {
                             self.tableView.beginUpdates()
                             cell.expandSingle()
                             self.tableView.endUpdates()
-                        }
-                        else {
+                        } else {
                             self.tableView.beginUpdates()
                             cell.collapse(childNumber: 0)
                             self.tableView.endUpdates()
                         }
-                    }
-                    else {
+                    } else {
                         if hiddenPersons.contains((id)) && childNumber > 0 {
                             hiddenPersons.remove(at: hiddenPersons.index(of: id)!)
                             unhideAll(comment: comment.getId(), i: row!)
                             cell.expand()
                             //todo hide child number
-                        }
-                        else {
+                        } else {
                             if childNumber > 0 {
                                 hideAll(comment: comment.getIdentifier(), i: row! + 1)
                                 if !hiddenPersons.contains(id) {
@@ -2000,14 +1940,12 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
                             }
                         }
                     }
-                }
-                else {
+                } else {
                     let datasetPosition = tableView.indexPath(for: cell)!.row
                     if let more = content[dataArray[datasetPosition]] as? RMore, let link = self.submission {
                         if more.children.isEmpty {
                             VCPresenter.openRedditLink("https://www.reddit.com" + submission!.permalink + more.parentId.substring(3, length: more.parentId.length - 3), self.navigationController, self)
-                        }
-                        else {
+                        } else {
                             do {
                                 var strings: [String] = []
                                 for c in more.children {
@@ -2061,8 +1999,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
                                                 self.tableView.insertRows(at: paths, with: .left)
                                                 self.tableView.endUpdates()
 
-                                            }
-                                            else {
+                                            } else {
                                                 self.doArrays()
                                                 self.tableView.reloadData()
                                             }
@@ -2072,8 +2009,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
 
                                 })
 
-                            }
-                            catch {
+                            } catch {
                                 print(error)
                             }
                         }

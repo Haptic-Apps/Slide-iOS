@@ -69,8 +69,7 @@ open class CachingPlayerItem: AVPlayerItem {
 
                 // Nothing to load.
 
-            }
-            else if session == nil {
+            } else if session == nil {
 
                 // If we're playing from a url, we need to download the file.
                 // We start loading the file on first request only.

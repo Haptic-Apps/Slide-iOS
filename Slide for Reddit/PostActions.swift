@@ -114,8 +114,7 @@ class PostActions: NSObject {
         alertController.addAction(Action(ActionData(title: "Open in Safari", image: UIImage(named: "world")!.menuIcon()), style: .default, handler: { _ in
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(link.url!, options: [:], completionHandler: nil)
-            }
-            else {
+            } else {
                 UIApplication.shared.openURL(link.url!)
             }
         }))
@@ -173,8 +172,7 @@ class PostActions: NSObject {
             })
             action.enabled = false
             alertController.addAction(action)
-        }
-        else {
+        } else {
             alertController.addAction(Action(ActionData(title: "Approve", image: UIImage(named: "approve")!.menuIcon()), style: .default, handler: { _ in
                 self.modApprove(cell)
             }))
@@ -185,8 +183,7 @@ class PostActions: NSObject {
             })
             action.enabled = false
             alertController.addAction(action)
-        }
-        else {
+        } else {
             alertController.addAction(Action(ActionData(title: "Remove", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { _ in
                 self.modRemove(cell)
             }))
@@ -204,8 +201,7 @@ class PostActions: NSObject {
             alertController.addAction(Action(ActionData(title: "Mark as NSFW", image: UIImage(named: "hide")!.menuIcon()), style: .default, handler: { _ in
                 self.modNSFW(cell, true)
             }))
-        }
-        else {
+        } else {
             alertController.addAction(Action(ActionData(title: "Unmark as NSFW", image: UIImage(named: "hide")!.menuIcon()), style: .default, handler: { _ in
                 self.modNSFW(cell, false)
             }))
@@ -215,8 +211,7 @@ class PostActions: NSObject {
             alertController.addAction(Action(ActionData(title: "Mark as spoiler", image: UIImage(named: "reports")!.menuIcon()), style: .default, handler: { _ in
                 self.modSpoiler(cell, true)
             }))
-        }
-        else {
+        } else {
             alertController.addAction(Action(ActionData(title: "Unmark as spoiler", image: UIImage(named: "reports")!.menuIcon()), style: .default, handler: { _ in
                 self.modSpoiler(cell, false)
             }))
@@ -226,8 +221,7 @@ class PostActions: NSObject {
             alertController.addAction(Action(ActionData(title: "Unlock thread", image: UIImage(named: "lock")!.menuIcon()), style: .default, handler: { _ in
                 self.modLock(cell, false)
             }))
-        }
-        else {
+        } else {
             alertController.addAction(Action(ActionData(title: "Lock thread", image: UIImage(named: "lock")!.menuIcon()), style: .default, handler: { _ in
                 self.modLock(cell, true)
             }))
@@ -244,8 +238,7 @@ class PostActions: NSObject {
                 alertController.addAction(Action(ActionData(title: "Un-sticky", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { _ in
                     self.modSticky(cell, sticky: false)
                 }))
-            }
-            else {
+            } else {
                 alertController.addAction(Action(ActionData(title: "Sticky and distinguish", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { _ in
                     self.modSticky(cell, sticky: true)
                 }))
@@ -286,8 +279,7 @@ class PostActions: NSObject {
                     }
                 }
             })
-        }
-        catch {
+        } catch {
             print(error)
         }
     }
@@ -314,8 +306,7 @@ class PostActions: NSObject {
                     }
                 }
             })
-        }
-        catch {
+        } catch {
             print(error)
         }
     }
@@ -342,8 +333,7 @@ class PostActions: NSObject {
                     }
                 }
             })
-        }
-        catch {
+        } catch {
             print(error)
         }
     }
@@ -369,8 +359,7 @@ class PostActions: NSObject {
                     }
                 }
             })
-        }
-        catch {
+        } catch {
             print(error)
         }
     }
@@ -393,8 +382,7 @@ class PostActions: NSObject {
                     }
                 }
             })
-        }
-        catch {
+        } catch {
             print(error)
         }
     }
@@ -417,8 +405,7 @@ class PostActions: NSObject {
                     }
                 }
             })
-        }
-        catch {
+        } catch {
             print(error)
         }
     }
@@ -437,8 +424,7 @@ class PostActions: NSObject {
                     }
                 }
             })
-        }
-        catch {
+        } catch {
             showRemovalReasons(cell, rules: [RuleTemplate](), spam: spam)
         }
     }
@@ -452,14 +438,11 @@ class PostActions: NSObject {
             //todo this
             if index == 0 {
                 modRemoveReason(cell, reason: "")
-            }
-            else if index == 1 {
+            } else if index == 1 {
                 removeNoReason(cell)
-            }
-            else if index == 2 {
+            } else if index == 2 {
                 removeNoReason(cell, spam: true)
-            }
-            else {
+            } else {
                 modRemoveReason(cell, reason: reasons[index])
             }
         }, cancel: { (_) in
@@ -493,8 +476,7 @@ class PostActions: NSObject {
                 }
             })
             
-        }
-        catch {
+        } catch {
             print(error)
         }
     }
@@ -519,8 +501,7 @@ class PostActions: NSObject {
                         VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(submission: cell.link!, sub: cell.link!.subreddit, modMessage: reason, completion: { (link) in
                             if let link = link {
                                 BannerUtil.makeBanner(text: "Removal reason posted!", color: ColorUtil.accentColorForSub(sub: cell.link!.subreddit), seconds: 3, context: cell.parentViewController)
-                            }
-                            else {
+                            } else {
                                 BannerUtil.makeBanner(text: "Removal reason not posted!", color: GMColor.red500Color(), seconds: 3, context: cell.parentViewController)
                             }
                         })), parentVC: cell.parentViewController!)
@@ -528,8 +509,7 @@ class PostActions: NSObject {
                 }
             })
             
-        }
-        catch {
+        } catch {
             print(error)
         }
     }
@@ -550,8 +530,7 @@ class PostActions: NSObject {
                     }
                 }
             })
-        }
-        catch {
+        } catch {
             print(error)
         }
     }
@@ -616,12 +595,10 @@ class PostActions: NSObject {
             if subField.isEmpty || titleField.isEmpty {
                 if subField.isEmpty {
                     self.crosspost(thing, parent, titleField, subField, "Subreddit must not be empty!")
-                }
-                else {
+                } else {
                     self.crosspost(thing, parent, titleField, subField, "Title must not be empty!")
                 }
-            }
-            else {
+            } else {
                 do {
                     try (UIApplication.shared.delegate as! AppDelegate).session?.crosspost(Link.init(id: thing.id), subreddit: subField, newTitle: titleField) { result in
                         switch result {
@@ -635,8 +612,7 @@ class PostActions: NSObject {
                                 DispatchQueue.main.async {
                                     self.crosspost(thing, parent, titleField, subField, error)
                                 }
-                            }
-                            else {
+                            } else {
                                 let string = self.getIDString(submission).value!
                                 print("Got \(string)")
                                 DispatchQueue.main.async {
@@ -648,8 +624,7 @@ class PostActions: NSObject {
                         }
                     }
                     
-                }
-                catch {
+                } catch {
                     
                 }
             }
@@ -694,8 +669,7 @@ class PostActions: NSObject {
                         BannerUtil.makeBanner(text: "Report sent!", color: GMColor.green500Color(), seconds: 3, context: parent)
                     }
                 })
-            }
-            catch {
+            } catch {
                 DispatchQueue.main.async {
                     BannerUtil.makeBanner(text: "Error sending report, try again later", color: GMColor.red500Color(), seconds: 3, context: parent)
                 }

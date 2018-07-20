@@ -29,12 +29,10 @@ class History {
        if let time = seenTimes.object(forKey: fullname) {
         if time is NSNumber {
             return Double(time as! NSNumber)
-        }
-        else {
+        } else {
             return 0
         }
-       }
-       else {
+       } else {
         return 0
         }
     }
@@ -49,8 +47,7 @@ class History {
         currentVisits.append(s.getId())
         if !SettingValues.saveNSFWHistory && s.nsfw {
             
-        }
-        else if SettingValues.saveHistory {
+        } else if SettingValues.saveHistory {
         let fullname = s.getId()
         seenTimes.setValue(NSNumber(value: NSDate().timeIntervalSince1970), forKey: fullname)
         }
@@ -68,12 +65,10 @@ class History {
         if let time = seenTimes.object(forKey: "inbox") {
             if time is NSNumber {
                 return Double(time as! NSNumber)
-            }
-            else {
+            } else {
                 return 0
             }
-        }
-        else {
+        } else {
             return 0
         }
     }
@@ -82,8 +77,7 @@ class History {
     public static func commentsSince(s: RSubmission) -> Int {
         if let comments = commentCounts.object(forKey: s.getId()) {
             return s.commentCount - (comments as! Int)
-        }
-        else {
+        } else {
             return 0
         }
     }

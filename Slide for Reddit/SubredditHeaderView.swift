@@ -71,8 +71,7 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
                     }
                 }
             })
-        }
-        catch {
+        } catch {
         }
     }
 
@@ -169,8 +168,7 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
             Subscriptions.unsubscribe(subreddit!.displayName, session: (UIApplication.shared.delegate as! AppDelegate).session!)
             BannerUtil.makeBanner(text: "Unsubscribed from r/\(subreddit!.displayName)", color: ColorUtil.accentColorForSub(sub: subreddit!.displayName), seconds: 3, context: parentController, top: true)
 
-        }
-        else {
+        } else {
             let alrController = UIAlertController.init(title: "Subscribe to \(subreddit!.displayName)", message: nil, preferredStyle: .actionSheet)
             if AccountController.isLoggedIn {
                 let somethingAction = UIAlertAction(title: "Add to sub list and subscribe", style: UIAlertActionStyle.default, handler: { (_: UIAlertAction!) in
@@ -241,8 +239,7 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
             UserDefaults.standard.set(TimeFilterWithin.day.param, forKey: self.subreddit!.displayName.lowercased() + "Time")
             UserDefaults.standard.synchronize()
             return
-        }
-        else {
+        } else {
             let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
 
             let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in

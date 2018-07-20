@@ -142,20 +142,17 @@ public class TextDisplayStackView: UIStackView {
             if blocks.count > 1 {
                 if startIndex == 0 {
                     setViews(blocks)
-                }
-                else {
+                } else {
                     blocks.remove(at: 0)
                     setViews(blocks)
                 }
             }
-        }
-        else {
+        } else {
             let newTitle = NSMutableAttributedString(attributedString: title)
             if body != nil {
                 newTitle.append(NSAttributedString.init(string: "\n\n", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 5)]))
                 newTitle.append(body!)
-            }
-            else if !htmlString.isEmpty() {
+            } else if !htmlString.isEmpty() {
                 newTitle.append(NSAttributedString.init(string: "\n\n", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 5)]))
                 newTitle.append(createAttributedChunk(baseHTML: htmlString))
             }
@@ -211,8 +208,7 @@ public class TextDisplayStackView: UIStackView {
         if blocks.count > 1 {
             if startIndex == 0 {
                 setViews(blocks)
-            }
-            else {
+            } else {
                 blocks.remove(at: 0)
                 setViews(blocks)
             }
@@ -240,16 +236,14 @@ public class TextDisplayStackView: UIStackView {
                 table.contentOffset = CGPoint.init(x: -8, y: 0)
                 estimatedHeight += table.globalHeight
                 tableCount += 1
-            }
-            else if block.startsWith("<hr/>") {
+            } else if block.startsWith("<hr/>") {
                 let line = UIView()
                 line.backgroundColor = ColorUtil.fontColor
                 overflow.addArrangedSubview(line)
                 estimatedHeight += 1
                 line.heightAnchor == CGFloat(1)
                 line.horizontalAnchors == overflow.horizontalAnchors
-            }
-            else if block.startsWith("<code>") {
+            } else if block.startsWith("<code>") {
                 let body = CodeDisplayView.init(baseHtml: block, color: baseFontColor)
                 body.accessibilityIdentifier = "Code block"
                 overflow.addArrangedSubview(body)
@@ -260,8 +254,7 @@ public class TextDisplayStackView: UIStackView {
                 estimatedHeight += body.globalHeight
                 body.layer.cornerRadius = 10
                 body.contentOffset = CGPoint.init(x: -8, y: -8)
-            }
-            else if block.startsWith("<cite>") {
+            } else if block.startsWith("<cite>") {
                 let label = TTTAttributedLabel.init(frame: CGRect.zero)
                 label.accessibilityIdentifier = "cite"
                 let text = createAttributedChunk(baseHTML: block)
@@ -276,8 +269,7 @@ public class TextDisplayStackView: UIStackView {
                 overflow.addArrangedSubview(label)
                 label.horizontalAnchors == overflow.horizontalAnchors + CGFloat(4)
                 label.heightAnchor == textSizeB.height
-            }
-            else {
+            } else {
                 let label = TTTAttributedLabel.init(frame: CGRect.zero)
                 label.accessibilityIdentifier = "New text"
                 let text = createAttributedChunk(baseHTML: block)
@@ -367,8 +359,7 @@ public class TextDisplayStackView: UIStackView {
                 if let link = (view as! TTTAttributedLabel).link(at: withTouch.location(in: view)) {
                     return link
                 }
-            }
-            else if view is TableDisplayView {
+            } else if view is TableDisplayView {
                 //Dont pass any touches through Table
                 if view.bounds.contains( withTouch.location(in: view)) {
                     return TTTAttributedLabelLink.init()
@@ -392,8 +383,7 @@ public class TextDisplayStackView: UIStackView {
         
         if html.contains("<table") {
             return parseTableTags(codeBlockSeperated)
-        }
-        else {
+        } else {
             return codeBlockSeperated
         }
     }
@@ -513,8 +503,7 @@ public class TextDisplayStackView: UIStackView {
                     newBlocks.append(HR_TAG)
                 }
                 newBlocks.remove(at: newBlocks.count - 1)
-            }
-            else {
+            } else {
                 newBlocks.append(block)
             }
         }
@@ -566,8 +555,7 @@ public class TextDisplayStackView: UIStackView {
                         newBlocks.append(split[1])
                     }
                 }
-            }
-            else {
+            } else {
                 newBlocks.append(block)
             }
         }

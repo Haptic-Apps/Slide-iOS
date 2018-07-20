@@ -67,14 +67,12 @@ open class OpenInChromeController {
                 }
                 UIApplication.shared.openURL(URL(string: chromeURLString)!)
             }
-        }
-        else if UIApplication.shared.canOpenURL(chromeSimpleURL) {
+        } else if UIApplication.shared.canOpenURL(chromeSimpleURL) {
             let scheme = url.scheme?.lowercased()
             var chromeScheme: String? = nil
             if scheme == "http" {
                 chromeScheme = googleChromeHTTPScheme
-            }
-            else if scheme == "https" {
+            } else if scheme == "https" {
                 chromeScheme = googleChromeHTTPSScheme
             }
             if let chromeScheme = chromeScheme {

@@ -121,20 +121,16 @@ class CacheSettings: UITableViewController {
             if !VCPresenter.proDialogShown(feature: true, self) {
                 SettingValues.autoCache = changed.isOn
                 UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_autoCache)
-            }
-            else {
+            } else {
                 changed.isOn = false
             }
-        }
-        else if changed == cacheContentSwitch {
+        } else if changed == cacheContentSwitch {
             //todo this setting
-        }
-        else if !changed.isOn {
+        } else if !changed.isOn {
             selected.remove(at: selected.index(of: changed.accessibilityIdentifier!)!)
             Subscriptions.setOffline(subs: selected) {
             }
-        }
-        else {
+        } else {
             selected.append(changed.accessibilityIdentifier!)
             Subscriptions.setOffline(subs: selected) {
             }
@@ -147,12 +143,10 @@ class CacheSettings: UITableViewController {
         if indexPath.section == 0 {
             if indexPath.row == 0 {
                 return autoCache
-            }
-            else {
+            } else {
                 return cacheContent
             }
-        }
-        else {
+        } else {
             let thing = subs[indexPath.row]
             var cell: SubredditCellView?
             let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView

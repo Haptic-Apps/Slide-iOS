@@ -52,8 +52,7 @@ class CodeDisplayView: UIScrollView {
                 attr.addAttribute(NSForegroundColorAttributeName, value: baseColor, range: NSRange.init(location: 0, length: attr.length))
                 var cell = LinkParser.parse(attr, baseColor)
                 baseData.append(cell)
-            }
-            catch {
+            } catch {
                 print(error.localizedDescription)
             }
         }

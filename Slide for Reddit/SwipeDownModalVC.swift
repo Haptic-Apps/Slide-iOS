@@ -49,8 +49,7 @@ class SwipeDownModalVC: ColorMuxPagingViewController {
             originalPosition = view.center
             currentPositionTouched = panGesture.location(in: view)
             didStartPan(true)
-        }
-        else if panGesture.state == .changed {
+        } else if panGesture.state == .changed {
             view.frame.origin = CGPoint(
                     x: 0,
                     y: translation.y
@@ -58,8 +57,7 @@ class SwipeDownModalVC: ColorMuxPagingViewController {
             let progress = translation.y / (self.view.frame.size.height / 2)
             self.view.alpha = 1 - (abs(progress) * 1.3)
 
-        }
-        else if panGesture.state == .ended {
+        } else if panGesture.state == .ended {
             let velocity = panGesture.velocity(in: view)
 
             let down = panGesture.velocity(in: view).y > 0
@@ -77,8 +75,7 @@ class SwipeDownModalVC: ColorMuxPagingViewController {
                         self.dismiss(animated: false, completion: nil)
                     }
                 })
-            }
-            else {
+            } else {
                 UIView.animate(withDuration: 0.2, animations: {
                     self.view.center = self.originalPosition!
                     self.view.alpha = 1
@@ -107,8 +104,7 @@ extension SwipeDownModalVC: UIGestureRecognizerDelegate {
         // Reject the touch if it lands in a UIControl.
         if let view = touch.view {
             return !view.hasParentOfClass(UIControl.self)
-        }
-        else {
+        } else {
             return true
         }
 

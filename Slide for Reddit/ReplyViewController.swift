@@ -81,8 +81,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                         alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
                         self.present(alert, animated: true, completion: nil)
                     })
-                }
-                else {
+                } else {
                     self.alertController?.dismiss(animated: false, completion: {
                         self.dismiss(animated: true, completion: nil)
                         completion("")
@@ -113,8 +112,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                                 completion("")
                             })
                         })
-                    }
-                    else {
+                    } else {
                         self.toolbar?.saveDraft(self)
                         self.alertController?.dismiss(animated: false, completion: {
                             let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your message has not been sent, please try again\n\nError:\(error!.localizedDescription)", preferredStyle: .alert)
@@ -122,8 +120,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                             self.present(alert, animated: true, completion: nil)
                         })
                     }
-                }
-                else {
+                } else {
                     self.alertController?.dismiss(animated: false, completion: {
                         self.dismiss(animated: true, completion: {
                             completion("")
@@ -151,16 +148,14 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                         self.present(alert, animated: true, completion: nil)
                     })
 
-                }
-                else if error != nil {
+                } else if error != nil {
                     self.toolbar?.saveDraft(self)
                     self.alertController?.dismiss(animated: false, completion: {
                         let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your submission has not been edited (but has been saved as a draft), please try again\n\nError:\(error!.localizedDescription)", preferredStyle: .alert)
                         alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
                         self.present(alert, animated: true, completion: nil)
                     })
-                }
-                else {
+                } else {
                     self.alertController?.dismiss(animated: false, completion: {
                         self.dismiss(animated: true, completion: {
                             completion(link)
@@ -188,8 +183,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                         alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
                         self.present(alert, animated: true, completion: nil)
                     })
-                }
-                else {
+                } else {
                     self.alertController?.dismiss(animated: false, completion: {
                         self.dismiss(animated: true, completion: {
                             delegate.replySent(comment: comment, cell: nil)
@@ -218,16 +212,14 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                         self.present(alert, animated: true, completion: nil)
                     })
                     
-                }
-                else if error != nil {
+                } else if error != nil {
                     self.toolbar?.saveDraft(self)
                     self.alertController?.dismiss(animated: false, completion: {
                         let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your submission has not been edited (but has been saved as a draft), please try again\n\nError:\(error!.localizedDescription)", preferredStyle: .alert)
                         alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
                         self.present(alert, animated: true, completion: nil)
                     })
-                }
-                else {
+                } else {
                     self.alertController?.dismiss(animated: false, completion: {
                         self.dismiss(animated: true, completion: {
                             completion(comment)
@@ -250,16 +242,14 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                         self.present(alert, animated: true, completion: nil)
                     })
                     
-                }
-                else if error != nil {
+                } else if error != nil {
                     self.toolbar?.saveDraft(self)
                     self.alertController?.dismiss(animated: false, completion: {
                         let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your post has not been created, please try again\n\nError:\(error!.localizedDescription)", preferredStyle: .alert)
                         alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
                         self.present(alert, animated: true, completion: nil)
                     })
-                }
-                else {
+                } else {
                     self.alertController?.dismiss(animated: false, completion: {
                         self.dismiss(animated: true, completion: {
                             completion(link)
@@ -393,17 +383,14 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             info!.isHidden = true
             if canMod {
                 finalWidth = CGFloat(8) + width + widthS
-            }
-            else {
+            } else {
                 sticky!.isHidden = true
                 finalWidth = width
             }
-        }
-        else {
+        } else {
             if canMod || (toReplyTo != nil && (toReplyTo as! RSubmission).canMod) {
                 finalWidth = CGFloat(8 * 2) + width + widthI + widthS
-            }
-            else {
+            } else {
                 sticky!.isHidden = true
                 finalWidth = CGFloat(8) + width + widthI
             }
@@ -465,8 +452,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: ColorUtil.baseAccent)
                     let content = LinkParser.parse(attr2, ColorUtil.accentColorForSub(sub: ""))
                     text1.attributedText = content
-                }
-                catch {
+                } catch {
                     
                 }
 
@@ -496,8 +482,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 
                 text = [text1, text3]
                 toolbar = ToolbarTextView.init(textView: text3, parent: self)
-            }
-            else {
+            } else {
                 //three
                 let text1 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.isEditable = true
@@ -562,8 +547,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 text = [text1, text2, text3]
                 toolbar = ToolbarTextView.init(textView: text3, parent: self)
             }
-        }
-        else if type.isSubmission() {
+        } else if type.isSubmission() {
             //three
             let text1 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                 $0.isEditable = true
@@ -635,8 +619,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 stack.addArrangedSubviews(text1, text2, replyButtons!, text3)
                 replyButtons!.heightAnchor == CGFloat(30)
                 replyButtons!.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
-            }
-            else {
+            } else {
                 stack.addArrangedSubviews(text1, text2, text3)
             }
 
@@ -654,8 +637,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
 
             text = [text1, text2, text3]
             toolbar = ToolbarTextView.init(textView: text3, parent: self)
-        }
-        else if type.isComment() {
+        } else if type.isComment() {
             if (toReplyTo as! RSubmission).type == .SELF {
                 //two
                 let text1 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
@@ -677,8 +659,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: ColorUtil.baseAccent)
                     let content = LinkParser.parse(attr2, ColorUtil.accentColorForSub(sub: ""))
                     text1.attributedText = content
-                }
-                catch {
+                } catch {
                     
                 }
                 
@@ -716,8 +697,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 
                 text = [text1, text3]
                 toolbar = ToolbarTextView.init(textView: text3, parent: self)
-            }
-            else {
+            } else {
                 //one
                 let text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.isEditable = true
@@ -752,8 +732,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 toolbar = ToolbarTextView.init(textView: text3, parent: self)
             }
     
-        }
-        else if type.isEdit() {
+        } else if type.isEdit() {
             //two
             let text1 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                 $0.isEditable = true
@@ -819,15 +798,12 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 let author = (toReplyTo is RMessage) ? ((toReplyTo as! RMessage).author) : ((toReplyTo as! RSubmission).author)
                 title = "Reply to \(author)"
             }
-        }
-        else {
+        } else {
             if type == .EDIT_SELFTEXT {
                 title = "Editing"
-            }
-            else if type.isComment() {
+            } else if type.isComment() {
                 title = "Replying to \((toReplyTo as! RSubmission).author)"
-            }
-            else {
+            } else {
                 title = "New submission"
             }
         }
@@ -869,12 +845,10 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     try self.session?.sticky("t3_\(name)", sticky: true, completion: { (_) in
                         self.completeGetSubmission(name)
                     })
-                }
-                catch {
+                } catch {
                     self.completeGetSubmission(name)
                 }
-            }
-            else {
+            } else {
                 self.completeGetSubmission(name)
             }
         }
@@ -903,8 +877,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 }
                 
             })
-        }
-        catch {
+        } catch {
             //todo success but null child
             self.submissionCallback(nil, error)
         }
@@ -950,13 +923,11 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 try self.session?.editCommentOrLink(name, newBody: body.text, completion: { (_) in
                     self.getSubmissionEdited(name)
                 })
-            }
-            catch {
+            } catch {
                 print((error as NSError).description)
             }
 
-        }
-        else {
+        } else {
             alertController = UIAlertController(title: nil, message: "Posting submission...\n\n", preferredStyle: .alert)
 
             let spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
@@ -979,16 +950,14 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                         case .success(let submission):
                             if let string = self.getIDString(submission).value {
                                 self.getSubmissionEdited(string)
-                            }
-                            else {
+                            } else {
                                 self.errorText = self.getError(submission)
                                 self.submissionCallback(nil, nil)
                             }
                         }
                     })
 
-                }
-                else {
+                } else {
                     try self.session?.submitLink(Subreddit.init(subreddit: subreddit.text), title: title.text, URL: body.text, sendReplies: replies!.isSelected, captcha: "", captchaIden: "", completion: { (result) -> Void in
                         switch result {
                         case .failure(let error):
@@ -997,8 +966,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                         case .success(let submission):
                             if let string = self.getIDString(submission).value {
                                 self.getSubmissionEdited(string)
-                            }
-                            else {
+                            } else {
                                 self.errorText = self.getError(submission)
                                 self.submissionCallback(nil, nil)
                             }
@@ -1006,8 +974,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     })
 
                 }
-            }
-            catch {
+            } catch {
                 print((error as NSError).description)
             }
         }
@@ -1056,12 +1023,10 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     }
 
                 })
-            }
-            catch {
+            } catch {
                 print((error as NSError).description)
             }
-        }
-        else {
+        } else {
             do {
                 let name = toReplyTo!.getIdentifier()
                 try self.session?.replyMessage(body.text, parentName: name, completion: { (result) -> Void in
@@ -1073,8 +1038,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                         self.messageCallback(comment, nil)
                     }
                 })
-            }
-            catch {
+            } catch {
                 print((error as NSError).description)
             }
         }
@@ -1110,8 +1074,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     self.checkSticky(comment)
                 }
             })
-        }
-        catch {
+        } catch {
             print((error as NSError).description)
         }
     }
@@ -1126,12 +1089,10 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                         newComment.distinguished = "mod"
                         self.checkReplies(newComment)
                     })
-                }
-                catch {
+                } catch {
                     self.checkReplies(comment)
                 }
-            }
-            else {
+            } else {
                 self.checkReplies(comment)
             }
         }
@@ -1144,12 +1105,10 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     try self.session?.setReplies(false, name: comment.getId(), completion: { (_) in
                         self.commentReplyCallback(comment, nil)
                     })
-                }
-                catch {
+                } catch {
                     self.commentReplyCallback(comment, nil)
                 }
-            }
-            else {
+            } else {
                 self.commentReplyCallback(comment, nil)
             }
         }
@@ -1194,8 +1153,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     if let iden = data[0] as? JSONArray {
                         if  iden.count >= 2 {
                             return "\(iden[0]): \(iden[1])"
-                        }
-                        else {
+                        } else {
                             return "\(iden[0])"
                         }
                     }
@@ -1247,8 +1205,7 @@ extension UITextView: UITextViewDelegate {
             if placeHolderLabel == nil {
                 // Add placeholder label to text view
                 self.addPlaceholderLabel(placeholderText: newValue!)
-            }
-            else {
+            } else {
                 placeHolderLabel?.text = newValue
                 placeHolderLabel?.sizeToFit()
             }

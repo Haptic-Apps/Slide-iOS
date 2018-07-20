@@ -76,16 +76,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 _ = NSMutableDictionary(contentsOfFile: bundlePath)
                 do {
                     try fileManager.copyItem(atPath: bundlePath, toPath: seenFile!)
-                }
-                catch {
+                } catch {
                     print("copy failure.")
                 }
-            }
-            else {
+            } else {
                 print("file myData.plist not found.")
             }
-        }
-        else {
+        } else {
             print("file myData.plist already exits at path.")
         }
 
@@ -94,16 +91,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 _ = NSMutableDictionary(contentsOfFile: bundlePath)
                 do {
                     try fileManager.copyItem(atPath: bundlePath, toPath: commentsFile!)
-                }
-                catch {
+                } catch {
                     print("copy failure.")
                 }
-            }
-            else {
+            } else {
                 print("file myData.plist not found.")
             }
-        }
-        else {
+        } else {
             print("file myData.plist already exits at path.")
         }
 
@@ -131,8 +125,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
             }
             UIApplication.shared.registerForRemoteNotifications()
-        }
-        else {
+        } else {
             // Fallback on earlier versions
         }
         if !UserDefaults.standard.bool(forKey: "sc" + name) {
@@ -229,28 +222,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                             print(error)
                                             completionHandler(.failed)
                                         }
-                                    }
-                                    catch {
+                                    } catch {
 
                                     }
-                                }
-                                else {
+                                } else {
                                     completionHandler(.failed)
                                 }
-                            }
-                            else {
+                            } else {
                                 completionHandler(.failed)
                             }
                         })
                 self.fetcher = fetcher
                 fetcher.resume()
-            }
-            catch {
+            } catch {
                 print(error.localizedDescription)
                 completionHandler(.failed)
             }
-        }
-        else {
+        } else {
             completionHandler(.failed)
         }
     }
@@ -263,8 +251,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             content.categoryIdentifier = "SlideMail"
             if author.isEmpty() {
                 content.title = "New messages!"
-            }
-            else {
+            } else {
                 content.title = "New message from \(author)"
             }
             content.body = message
@@ -279,8 +266,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     // Something went wrong
                 }
             })
-        }
-        else {
+        } else {
             // Fallback on earlier versions
         }
     }
@@ -317,8 +303,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     }
                 })
 
-            }
-            else {
+            } else {
                 Subscriptions.getSubscriptionsFully(session: session!, completion: { (subs, multis) in
                     for sub in subs {
                         toReturn.append(sub.displayName)
@@ -353,8 +338,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
                 })
             }
-        }
-        catch {
+        } catch {
             print(error)
             if subredditController != nil {
                 DispatchQueue.main.async(execute: { () -> Void in
@@ -388,8 +372,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         try OAuth2TokenRepository.save(token: token, of: token.name)
                         self.login?.setToken(token: token)
                         NotificationCenter.default.post(name: OAuth2TokenRepositoryDidSaveTokenName, object: nil, userInfo: nil)
-                    }
-                    catch {
+                    } catch {
                         NotificationCenter.default.post(name: OAuth2TokenRepositoryDidFailToSaveTokenName, object: nil, userInfo: nil)
                         print(error)
                     }
@@ -469,8 +452,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     })
                 }
             })
-        }
-        catch {
+        } catch {
             print(error)
         }
     }
@@ -483,12 +465,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 let token = try OAuth2TokenRepository.token(of: currentName)
                 self.session = Session(token: token)
                 self.refreshSession()
-            }
-            catch {
+            } catch {
                 print(error)
             }
-        }
-        else {
+        } else {
             self.session = Session()
         }
 

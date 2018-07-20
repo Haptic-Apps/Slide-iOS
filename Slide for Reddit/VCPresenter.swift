@@ -37,8 +37,7 @@ public class VCPresenter {
             if small {
                 newParent.modalPresentationStyle = .pageSheet
                 newParent.modalTransitionStyle = .crossDissolve
-            }
-            else {
+            } else {
                 newParent.modalPresentationStyle = .fullScreen
                 newParent.modalTransitionStyle = .crossDissolve
             }
@@ -49,8 +48,7 @@ public class VCPresenter {
             if viewController is SFHideSafariViewController {
                 newParent.setNavigationBarHidden(true, animated: false)
             }
-        }
-        else {
+        } else {
             let button = UIButtonWithContext.init(type: .custom)
             button.parentController = parentNavigationController!
             button.imageView?.contentMode = UIViewContentMode.scaleAspectFit
@@ -92,8 +90,7 @@ public class VCPresenter {
                 newParent.transitioningDelegate = parentViewController as! MediaVCDelegate
                 newParent.view.layer.cornerRadius = 15
                 newParent.view.clipsToBounds = true
-            }
-            else {
+            } else {
                 newParent.modalPresentationStyle = .formSheet
                 newParent.modalTransitionStyle = .crossDissolve
             }
@@ -118,8 +115,7 @@ public class VCPresenter {
 
         do {
             try parentVC.present(alertController, animated: true, completion: nil)
-        }
-        catch {
+        } catch {
             print("Error presenting alert controller \(alertController)")
         }
     }

@@ -209,8 +209,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
             if scrubber.alpha == 0 {
                 self.handleShowUI()
                 self.startTimerToHide()
-            }
-            else {
+            } else {
                 self.handleHideUI()
             }
         }
@@ -229,13 +228,11 @@ class VideoMediaViewController: EmbeddableMediaViewController {
                     
                     if newTime < maxTime {
                         youtubeView.seek(toSeconds: newTime, allowSeekAhead: true)
-                    }
-                    else {
+                    } else {
                         youtubeView.seek(toSeconds: 0, allowSeekAhead: true)
                     }
                     youtubeView.playVideo()
-                }
-                else {
+                } else {
                     if let player = self.videoView.player {
                         let playerCurrentTime = CMTimeGetSeconds(player.currentTime())
                         let maxTime = CMTimeGetSeconds(player.currentItem!.duration)
@@ -245,15 +242,13 @@ class VideoMediaViewController: EmbeddableMediaViewController {
                         if newTime < maxTime {
                             let time2: CMTime = CMTimeMake(Int64(newTime * 1000 as Float64), 1000)
                             player.seek(to: time2)
-                        }
-                        else {
+                        } else {
                             player.seek(to: kCMTimeZero)
                         }
                         player.play()
                     }
                 }
-            }
-            else {
+            } else {
                 //skip back
                 if isYoutubeView {
                     let playerCurrentTime = scrubber.slider.value
@@ -263,13 +258,11 @@ class VideoMediaViewController: EmbeddableMediaViewController {
                     
                     if newTime > 0 {
                         youtubeView.seek(toSeconds: newTime, allowSeekAhead: true)
-                    }
-                    else {
+                    } else {
                         youtubeView.seek(toSeconds: 0, allowSeekAhead: true)
                     }
                     youtubeView.playVideo()
-                }
-                else {
+                } else {
                     if let player = self.videoView.player {
                         let playerCurrentTime = CMTimeGetSeconds(player.currentTime())
                         let maxTime = CMTimeGetSeconds(player.currentItem!.duration)
@@ -279,8 +272,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
                         if newTime > 0 {
                             let time2: CMTime = CMTimeMake(Int64(newTime * 1000 as Float64), 1000)
                             player.seek(to: time2)
-                        }
-                        else {
+                        } else {
                             player.seek(to: kCMTimeZero)
                         }
                         player.play()
@@ -328,8 +320,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
 
         if !forcedFullscreen {
             enableForcedFullscreen()
-        }
-        else {
+        } else {
             disableForcedFullscreen()
         }
     }
@@ -344,8 +335,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
             oldOrientation = currentOrientation
             AppDelegate.AppUtility.lockOrientation(UIInterfaceOrientationMask.landscapeRight, andRotateTo: UIInterfaceOrientation.landscapeRight)
             forcedFullscreen = true
-        }
-        else {
+        } else {
             print("Can't force landscape when the app is already landscape!")
         }
     }
@@ -363,15 +353,13 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         // Prevent video from stopping system background audio
         do {
             try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
-        }
-        catch let error as NSError {
+        } catch let error as NSError {
             print(error)
         }
 
         do {
             try AVAudioSession.sharedInstance().setActive(true)
-        }
-        catch let error as NSError {
+        } catch let error as NSError {
             print(error)
         }
 
@@ -381,8 +369,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
             progressView.isHidden = true
             loadYoutube(url: data.baseURL!.absoluteString)
             return
-        }
-        else {
+        } else {
             youtubeView.isHidden = true
         }
 
@@ -398,8 +385,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     func getVideo(_ toLoad: String) {
         if FileManager.default.fileExists(atPath: getKeyFromURL()) {
             playVideo()
-        }
-        else {
+        } else {
             request = Alamofire.download(toLoad, method: .get, to: { (_, _) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
                 return (URL(fileURLWithPath: self.videoType == .REDDIT ? self.getKeyFromURL().replacingOccurrences(of: ".mp4", with: "video.mp4") : self.getKeyFromURL()), [.createIntermediateDirectories])
             }).downloadProgress() { progress in
@@ -414,12 +400,10 @@ class VideoMediaViewController: EmbeddableMediaViewController {
                 }.responseData { response in
                     if let error = response.error {
                         print(error)
-                    }
-                    else { //no errors
+                    } else { //no errors
                         if self.videoType == .REDDIT {
                             self.downloadRedditAudio()
-                        }
-                        else {
+                        } else {
                             DispatchQueue.main.async {
                                 self.playVideo()
                             }
@@ -453,14 +437,12 @@ class VideoMediaViewController: EmbeddableMediaViewController {
                         DispatchQueue.main.async {
                             self.playVideo()
                         }
-                    }
-                    catch {
+                    } catch {
                         DispatchQueue.main.async {
                             self.playVideo()
                         }
                     }
-                }
-                else { //no errors
+                } else { //no errors
                     self.mergeFilesWithUrl(videoUrl: localUrlV, audioUrl: localUrlAudio, savePathUrl: finalUrl) {
                         DispatchQueue.main.async {
                             self.playVideo()
@@ -492,8 +474,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         var s = sS
         if s.hasSuffix("v") && !s.contains("streamable.com") {
             s = s.substring(0, length: s.length - 1)
-        }
-        else if s.contains("gfycat") && (!s.contains("mp4") && !s.contains("webm")) {
+        } else if s.contains("gfycat") && (!s.contains("mp4") && !s.contains("webm")) {
             if s.contains("-size_restricted") {
                 s = s.replacingOccurrences(of: "-size_restricted", with: "")
             }
@@ -584,8 +565,7 @@ extension VideoMediaViewController {
         if let dictionary = i?.queryDictionary {
             if let t = dictionary["t"] {
                 seconds = getTimeFromString(t)
-            }
-            else if let start = dictionary["start"] {
+            } else if let start = dictionary["start"] {
                 seconds = getTimeFromString(start)
             }
 
@@ -595,11 +575,9 @@ extension VideoMediaViewController {
 
             if let v = dictionary["v"] {
                 video = v
-            }
-            else if let w = dictionary["w"] {
+            } else if let w = dictionary["w"] {
                 video = w
-            }
-            else if url.lowercased().contains("youtu.be") {
+            } else if url.lowercased().contains("youtu.be") {
                 video = getLastPathSegment(url)
             }
 
@@ -628,8 +606,7 @@ extension VideoMediaViewController {
                 ]
             if !playlist.isEmpty {
                 strongSelf.youtubeView.load(withPlaylistId: playlist, playerVars: vars)
-            }
-            else {
+            } else {
                 // https://developers.google.com/youtube/player_parameters
                 strongSelf.youtubeView.load(withVideoId: video, playerVars: vars)
             }
@@ -748,8 +725,7 @@ extension VideoMediaViewController {
                 if !sliderBeingUsed {
                     self.scrubber.updateWithTime(elapsedTime: CMTime(seconds: Double(youtubeView.currentTime()), preferredTimescale: 1000000))
                 }
-            }
-            else {
+            } else {
                 if let player = videoView.player {
                     scrubber.updateWithTime(elapsedTime: player.currentTime())
                 }
@@ -818,11 +794,9 @@ extension VideoMediaViewController {
             if !s.isEmpty {
                 if time.contains(s + "s") {
                     timeAdd += Int(s)!
-                }
-                else if time.contains(s + "m") {
+                } else if time.contains(s + "m") {
                     timeAdd += 60 * Int(s)!
-                }
-                else if time.contains(s + "h") {
+                } else if time.contains(s + "h") {
                     timeAdd += 3600 * Int(s)!
                 }
             }
@@ -858,8 +832,7 @@ extension VideoMediaViewController {
             UIAlertAction(title: "Open in Safari", style: .default) { (_) in
                 if #available(iOS 10.0, *) {
                     UIApplication.shared.open(baseURL, options: [:], completionHandler: nil)
-                }
-                else {
+                } else {
                     UIApplication.shared.openURL(baseURL)
                 }
             }
@@ -871,8 +844,7 @@ extension VideoMediaViewController {
                 let window = UIApplication.shared.keyWindow!
                 if let modalVC = window.rootViewController?.presentedViewController {
                     modalVC.present(activityViewController, animated: true, completion: nil)
-                }
-                else {
+                } else {
                     window.rootViewController!.present(activityViewController, animated: true, completion: nil)
                 }
             }
@@ -896,8 +868,7 @@ extension VideoMediaViewController {
         
         if let modalVC = window.rootViewController?.presentedViewController {
             modalVC.present(alert, animated: true, completion: nil)
-        }
-        else {
+        } else {
             window.rootViewController!.present(alert, animated: true, completion: nil)
         }
     }
@@ -917,8 +888,7 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
 
         if isYoutubeView {
             self.youtubeView.seek(toSeconds: toSeconds, allowSeekAhead: true) // Disable seekahead until the user lets go
-        }
-        else {
+        } else {
             self.videoView.player?.seek(to: targetTime)
         }
     }
@@ -927,8 +897,7 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
         if isYoutubeView {
             wasPlayingWhenPaused = youtubeView.playerState() == .playing
             youtubeView.pauseVideo()
-        }
-        else {
+        } else {
             if let player = videoView.player {
                 wasPlayingWhenPaused = player.rate != 0
                 player.pause()
@@ -942,8 +911,7 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
         if wasPlayingWhenPaused {
             if isYoutubeView {
                 youtubeView.playVideo()
-            }
-            else {
+            } else {
                 self.videoView.player?.play()
             }
         }
@@ -957,8 +925,7 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
             if player.rate != 0 {
                 player.pause()
                 return false
-            }
-            else {
+            } else {
                 player.play()
                 self.startTimerToHide()
                 return true
@@ -969,8 +936,7 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
             if youtubeView.playerState() == .playing {
                 youtubeView.pauseVideo()
                 return false
-            }
-            else {
+            } else {
                 youtubeView.playVideo()
                 self.startTimerToHide()
                 return true
@@ -1005,8 +971,7 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
             
             //Use this instead above line if your audiofile and video file's playing durations are same
             //            try mutableCompositionAudioTrack[0].insertTimeRange(CMTimeRangeMake(kCMTimeZero, aVideoAssetTrack.timeRange.duration), ofTrack: aAudioAssetTrack, atTime: kCMTimeZero)
-        }
-        catch {
+        } catch {
             print(error.localizedDescription)
         }
         
@@ -1024,8 +989,7 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
         //        AVPlayerVC.player = player
         do {
             try  FileManager.default.removeItem(at: savePathUrl)
-        }
-        catch {
+        } catch {
             print(error.localizedDescription)
         }
         

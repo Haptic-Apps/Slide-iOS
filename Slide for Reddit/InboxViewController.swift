@@ -94,8 +94,7 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
                     break
                 }
             })
-        }
-        catch {
+        } catch {
 
         }
     }
@@ -180,8 +179,7 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
 
         if !selected {
             tabBar.setSelectedItem(tabBar.items[page! ], animated: true)
-        }
-        else {
+        } else {
             selected = false
         }
         currentIndex = page!
@@ -198,8 +196,7 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
             scrollView.contentOffset.x = scrollView.frame.width
             return
 
-        }
-        else if currentIndex == 0 && lastPosition < scrollView.frame.width {
+        } else if currentIndex == 0 && lastPosition < scrollView.frame.width {
             scrollView.contentOffset.x = scrollView.frame.width
             return
         }

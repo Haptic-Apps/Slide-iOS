@@ -42,8 +42,7 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate {
                     UIAlertAction(title: "Open in Safari", style: .default) { (_) in
                         if #available(iOS 10.0, *) {
                             UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                        }
-                        else {
+                        } else {
                             UIApplication.shared.openURL(url)
                         }
                         sheet.dismiss(animated: true, completion: nil)
@@ -88,8 +87,7 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate {
                     break
                 }
             })
-        }
-        catch {
+        } catch {
         }
     }
 
@@ -107,8 +105,7 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate {
             Subscriptions.unsubscribe(sub.displayName, session: (UIApplication.shared.delegate as! AppDelegate).session!)
             parent!.subChanged = false
             BannerUtil.makeBanner(text: "Unsubscribed", seconds: 5, context: self.parent, top: true)
-        }
-        else {
+        } else {
             let alrController = UIAlertController.init(title: "Subscribe to \(sub.displayName)", message: nil, preferredStyle: .actionSheet)
             if AccountController.isLoggedIn {
                 let somethingAction = UIAlertAction(title: "Add to sub list and subscribe", style: UIAlertActionStyle.default, handler: {(_: UIAlertAction!) in

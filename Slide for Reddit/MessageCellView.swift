@@ -95,15 +95,13 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
         }
         if message.wasComment {
             title.text = message.linkTitle
-        }
-        else {
+        } else {
             title.text = message.subject
         }
         self.message = message
         if !ActionStates.isRead(s: message) {
             title.textColor = GMColor.red500Color()
-        }
-        else {
+        } else {
             title.textColor = ColorUtil.fontColor
         }
         title.sizeToFit()
@@ -150,8 +148,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
 
             textView.frame.size.height = textSizeB.height
             hasText = true
-        }
-        catch {
+        } catch {
         }
 
         let metrics = ["height": textView.frame.size.height] as [String: Any]
@@ -176,8 +173,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
                     metrics: metrics,
                     views: views))
 
-        }
-        else {
+        } else {
             lsC.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[label]-8-|",
                     options: NSLayoutFormatOptions(rawValue: 0),
                     metrics: metrics,
@@ -232,15 +228,13 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
                                 print(result.error!.description)
                             }
                         })
-                    }
-                    catch {
+                    } catch {
 
                     }
                     self.title.textColor = GMColor.red500Color()
                     ActionStates.setRead(s: self.message!, read: false)
 
-                }
-                else {
+                } else {
                     let session = (UIApplication.shared.delegate as! AppDelegate).session
                     do {
                         try session?.markMessagesAsRead([(self.message?.name.contains("_"))! ? (self.message?.name)! : ((self.message?.wasComment)! ? "t1_" : "t4_") + (self.message?.name)!], completion: { (result) in
@@ -248,8 +242,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
                                 print(result.error!.description)
                             }
                         })
-                    }
-                    catch {
+                    } catch {
 
                     }
                     self.title.textColor = ColorUtil.fontColor
@@ -304,20 +297,17 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
                         print(result.error!.description)
                     }
                 })
-            }
-            catch {
+            } catch {
 
             }
             title.textColor = ColorUtil.fontColor
             ActionStates.setRead(s: message!, read: true)
-        }
-        else {
+        } else {
             if (message?.wasComment)! {
                 let url = "https://www.reddit.com\(message!.context)"
                 let vc = RedditLink.getViewControllerForURL(urlS: URL.init(string: url)!)
                 VCPresenter.showVC(viewController: vc, popupIfPossible: true, parentNavigationController: parentViewController?.navigationController, parentViewController: parentViewController)
-            }
-            else {
+            } else {
                 VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(message: message, completion: {(_) in
                     DispatchQueue.main.async(execute: { () -> Void in
                         BannerUtil.makeBanner(text: "Message sent!", seconds: 3, context: self.parentViewController)

@@ -72,8 +72,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         let confirmAction = UIAlertAction(title: "Set", style: .default) { (_) in
             if let text = self.tagText {
                 ColorUtil.setTagForUser(name: self.name, tag: text)
-            }
-            else {
+            } else {
                 // user did not fill field
             }
         }
@@ -129,12 +128,10 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
             }) as String? {
             if name == n {
                 self.content = UserContent.cases
-            }
-            else {
+            } else {
                 self.content = ProfileViewController.doDefault()
             }
-        }
-        else {
+        } else {
             self.content = ProfileViewController.doDefault()
         }
         
@@ -225,15 +222,13 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
                         scrollView.contentSize = CGSize.init(width: i * 75, height: 70)
                         if trophies.count == 0 {
                             alrController.title = ""
-                        }
-                        else {
+                        } else {
                             alrController.title = "\n\n\n\n\n"
                         }
                     }
                 }
             })
-        }
-        catch {
+        } catch {
             
         }
         scrollView.delaysContentTouches = false
@@ -251,13 +246,11 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
                                 BannerUtil.makeBanner(text: "Unfriended u/\(user.name)", seconds: 3, context: self)
                             }
                         })
-                    }
-                    catch {
+                    } catch {
                         
                     }
                 }))
-            }
-            else {
+            } else {
                 alrController.addAction(UIAlertAction.init(title: "Friend", style: .default, handler: { (_) in
                     do {
                         try self.session?.friend(user.name, completion: { (result) in
@@ -268,8 +261,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
                                 BannerUtil.makeBanner(text: "Friended u/\(user.name)", seconds: 3, context: self)
                             }
                         })
-                    }
-                    catch {
+                    } catch {
                         
                     }
                 }))
@@ -437,8 +429,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
                     self.showMenu(sender: sender, user: account)
                 }
             })
-        }
-        catch {
+        } catch {
             
         }
     }
@@ -450,8 +441,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
 
         if !selected {
             tabBar.setSelectedItem(tabBar.items[page! ], animated: true)
-        }
-        else {
+        } else {
             selected = false
         }
         currentVc = self.viewControllers!.first!
@@ -469,8 +459,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
             scrollView.contentOffset.x = scrollView.frame.width
             return
 
-        }
-        else if currentIndex == 0 && lastPosition < scrollView.frame.width {
+        } else if currentIndex == 0 && lastPosition < scrollView.frame.width {
             scrollView.contentOffset.x = scrollView.frame.width
             return
         }

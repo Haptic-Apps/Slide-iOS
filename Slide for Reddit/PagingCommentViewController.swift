@@ -22,8 +22,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         for sub in submissions {
             if first && PagingCommentViewController.savedComment != nil && PagingCommentViewController.savedComment!.submission!.getId() == sub.getId() {
                 self.vCs.append(PagingCommentViewController.savedComment!)
-            }
-            else {
+            } else {
                 let comment = CommentViewController.init(submission: sub, single: false)
                 self.vCs.append(comment)
             }
@@ -92,8 +91,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if currentIndex == 0 && scrollView.contentOffset.x < scrollView.bounds.size.width {
             scrollView.contentOffset = CGPoint(x: scrollView.bounds.size.width, y: 0)
-        }
-        else if currentIndex == submissions.count - 1 && scrollView.contentOffset.x > scrollView.bounds.size.width {
+        } else if currentIndex == submissions.count - 1 && scrollView.contentOffset.x > scrollView.bounds.size.width {
             scrollView.contentOffset = CGPoint(x: scrollView.bounds.size.width, y: 0)
         }
     }
@@ -102,8 +100,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         if currentIndex == 0 && scrollView.contentOffset.x <= scrollView.bounds.size.width {
             targetContentOffset.pointee = CGPoint(x: scrollView.bounds.size.width, y: 0)
-        }
-        else if currentIndex == submissions.count - 1 && scrollView.contentOffset.x >= scrollView.bounds.size.width {
+        } else if currentIndex == submissions.count - 1 && scrollView.contentOffset.x >= scrollView.bounds.size.width {
             targetContentOffset.pointee = CGPoint(x: scrollView.bounds.size.width, y: 0)
         }
     }

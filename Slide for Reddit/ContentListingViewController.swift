@@ -175,22 +175,18 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
 
             if thumb && !big {
                 target = .thumb
-            }
-            else if big {
+            } else if big {
                 target = .banner
-            }
-            else {
+            } else {
                 target = .text
             }
 
             var c: LinkCellView?
             if target == .thumb {
                 c = tableView.dequeueReusableCell(withReuseIdentifier: "thumb", for: indexPath) as! ThumbnailLinkCellView
-            }
-            else if target == .banner {
+            } else if target == .banner {
                 c = tableView.dequeueReusableCell(withReuseIdentifier: "banner", for: indexPath) as! BannerLinkCellView
-            }
-            else {
+            } else {
                 c = tableView.dequeueReusableCell(withReuseIdentifier: "text", for: indexPath) as! TextLinkCellView
             }
 
@@ -202,15 +198,13 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             c?.layer.shouldRasterize = true
             c?.layer.rasterizationScale = UIScreen.main.scale
             cell = c
-        }
-        else if thing is RComment {
+        } else if thing is RComment {
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "comment", for: indexPath) as! CommentCellView
             c.setComment(comment: (thing as! RComment), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
             c.layer.shouldRasterize = true
             c.layer.rasterizationScale = UIScreen.main.scale
             cell = c
-        }
-        else {
+        } else {
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "message", for: indexPath) as! MessageCellView
             c.setMessage(message: (thing as! RMessage), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
             c.layer.shouldRasterize = true
@@ -253,19 +247,16 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     if !fullImage && submissionHeight < 50 {
                         big = false
                         thumb = true
-                    }
-                    else if big && (SettingValues.postImageMode == .CROPPED_IMAGE) {
+                    } else if big && (SettingValues.postImageMode == .CROPPED_IMAGE) {
                         submissionHeight = 200
-                    }
-                    else if big {
+                    } else if big {
                         let ratio = Double(submissionHeight) / Double(submission.width)
                         let width = Double(itemWidth)
 
                         let h = width * ratio
                         if h == 0 {
                             submissionHeight = 200
-                        }
-                        else {
+                        } else {
                             submissionHeight = Int(h)
                         }
                     }
@@ -329,20 +320,17 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                         innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between top and thumbnail
                         innerPadding += 18 - (SettingValues.postViewMode == .COMPACT ? 4 : 0) //between label and bottom box
                         innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
-                    }
-                    else if big {
+                    } else if big {
                         if SettingValues.postViewMode == .CENTER {
                             innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 16) //between label
                             innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between banner and box
-                        }
-                        else {
+                        } else {
                             innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between banner and label
                             innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between label and box
                         }
                         
                         innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
-                    }
-                    else {
+                    } else {
                         innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8)
                         innerPadding += 5 //between label and body
                         innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between body and box
@@ -354,8 +342,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                         estimatedUsableWidth -= thumbheight //is the same as the width
                         estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb
                         estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between thumb and label
-                    }
-                    else {
+                    } else {
                         estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //12 padding on either side
                     }
                     
@@ -367,8 +354,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     estimatedHeights[submission.id] = totalHeight
                 }
                 return CGSize(width: itemWidth, height: estimatedHeights[submission.id]!)
-            }
-            else if thing is RComment {
+            } else if thing is RComment {
                 let comment = thing as! RComment
                 if estimatedHeights[comment.id] == nil {
                     let attrs = [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false)] as [String: Any]
@@ -396,15 +382,13 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     estimatedHeights[comment.id] = height.estimatedHeight + 20
                 }
                 return CGSize(width: itemWidth, height: estimatedHeights[comment.id]!)
-            }
-            else {
+            } else {
                 let message = thing as! RMessage
                 if estimatedHeights[message.id] == nil {
                     var title: NSMutableAttributedString = NSMutableAttributedString()
                     if message.wasComment {
                         title = NSMutableAttributedString.init(string: message.linkTitle, attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 18, submission: true)])
-                    }
-                    else {
+                    } else {
                         title = NSMutableAttributedString.init(string: message.subject, attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 18, submission: true)])
                     }
 
@@ -431,8 +415,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                             let font = FontGenerator.fontOfSize(size: 16, submission: false)
                             let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: .white)
                             content = LinkParser.parse(attr2, .white)
-                        }
-                        catch {
+                        } catch {
                         }
                     }
                     
@@ -445,8 +428,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                         let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: itemWidth - 16 - (message.subject.hasPrefix("re:") ? 22 : 0), height: CGFloat.greatestFiniteMagnitude), nil)
 
                         estimatedHeights[message.id] = CGFloat(32 + textSizeT.height + textSizeI.height + textSizeB.height)
-                    }
-                    else {
+                    } else {
                         estimatedHeights[message.id] = CGFloat(32 + textSizeT.height + textSizeI.height)
                     }
                 }
@@ -497,8 +479,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             sort = s
             refresh()
             return
-        }
-        else {
+        } else {
             let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
 
             let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
@@ -581,8 +562,7 @@ extension ContentListingViewController: LinkCellViewDelegate {
             ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up)
             History.addSeen(s: cell.link!)
             cell.refresh()
-        }
-        catch {
+        } catch {
 
         }
     }
@@ -595,8 +575,7 @@ extension ContentListingViewController: LinkCellViewDelegate {
             ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down)
             History.addSeen(s: cell.link!)
             cell.refresh()
-        }
-        catch {
+        } catch {
 
         }
     }
@@ -609,8 +588,7 @@ extension ContentListingViewController: LinkCellViewDelegate {
             ActionStates.setSaved(s: cell.link!, saved: !ActionStates.isSaved(s: cell.link!))
             History.addSeen(s: cell.link!)
             cell.refresh()
-        }
-        catch {
+        } catch {
 
         }
     }

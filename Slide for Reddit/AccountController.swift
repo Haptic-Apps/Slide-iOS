@@ -37,8 +37,7 @@ class AccountController {
             UserDefaults.standard.set(name, forKey: "GUEST")
             UserDefaults.standard.synchronize()
 
-        }
-        catch {
+        } catch {
             print(error)
         }
     }
@@ -55,8 +54,7 @@ class AccountController {
                 AccountController.isLoggedIn = false
                 AccountController.currentName = name
                 (UIApplication.shared.delegate as! AppDelegate).session = Session()
-            }
-            else {
+            } else {
                 do {
                     AccountController.isLoggedIn = true
                     AccountController.currentName = name
@@ -64,15 +62,13 @@ class AccountController {
                     (UIApplication.shared.delegate as! AppDelegate).session = Session(token: token)
                     UserDefaults.standard.set(name, forKey: "name")
                     UserDefaults.standard.synchronize()
-                }
-                catch {
+                } catch {
                     print(error)
                     (UIApplication.shared.delegate as! AppDelegate).session = Session()
                     AccountController.isLoggedIn = false
                 }
             }
-        }
-        else {
+        } else {
             (UIApplication.shared.delegate as! AppDelegate).session = Session()
             AccountController.isLoggedIn = false
         }
@@ -98,8 +94,7 @@ class AccountController {
     public static func formatUsername(input: String, small: Bool) -> String {
         if SettingValues.nameScrubbing && input == AccountController.currentName {
             return "you"
-        }
-        else {
+        } else {
             if small {
                 return input
             }
@@ -110,8 +105,7 @@ class AccountController {
     public static func formatUsernamePosessive(input: String, small: Bool) -> String {
         if SettingValues.nameScrubbing && input == AccountController.currentName {
             return "Your"
-        }
-        else {
+        } else {
             if small {
                 return input
             }
@@ -133,14 +127,12 @@ class AccountController {
                     paginator = listing.paginator
                     if paginator.hasMore() {
                         getSubscriptionsUntilCompletion(session: session, p: paginator, tR: toReturn, completion: completion)
-                    }
-                    else {
+                    } else {
                         completion(toReturn)
                     }
                 }
             })
-        }
-        catch {
+        } catch {
             completion(toReturn)
         }
 

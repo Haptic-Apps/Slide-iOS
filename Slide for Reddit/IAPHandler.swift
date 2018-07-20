@@ -49,8 +49,7 @@ class IAPHandler: NSObject {
             
             print("PRODUCT TO PURCHASE: \(product.productIdentifier)")
             productID = product.productIdentifier
-        }
-        else {
+        } else {
             purchaseStatusBlock?(.disabled)
         }
     }

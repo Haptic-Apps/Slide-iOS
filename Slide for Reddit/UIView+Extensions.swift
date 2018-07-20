@@ -69,8 +69,7 @@ extension UIView {
     var safeTopAnchor: NSLayoutYAxisAnchor {
         if #available(iOS 11.0, *) {
             return safeAreaLayoutGuide.topAnchor
-        }
-        else {
+        } else {
             return topAnchor
         }
     }
@@ -78,8 +77,7 @@ extension UIView {
     var safeBottomAnchor: NSLayoutYAxisAnchor {
         if #available(iOS 11.0, *) {
             return safeAreaLayoutGuide.bottomAnchor
-        }
-        else {
+        } else {
             return bottomAnchor
         }
     }
@@ -87,8 +85,7 @@ extension UIView {
     var safeLeadingAnchor: NSLayoutXAxisAnchor {
         if #available(iOS 11.0, *) {
             return safeAreaLayoutGuide.leadingAnchor
-        }
-        else {
+        } else {
             return leadingAnchor
         }
     }
@@ -96,8 +93,7 @@ extension UIView {
     var safeTrailingAnchor: NSLayoutXAxisAnchor {
         if #available(iOS 11.0, *) {
             return safeAreaLayoutGuide.trailingAnchor
-        }
-        else {
+        } else {
             return trailingAnchor
         }
     }
@@ -105,8 +101,7 @@ extension UIView {
     var safeCenterXAnchor: NSLayoutXAxisAnchor {
         if #available(iOS 11.0, *) {
             return safeAreaLayoutGuide.centerXAnchor
-        }
-        else {
+        } else {
             return centerXAnchor
         }
     }
@@ -114,8 +109,7 @@ extension UIView {
     var safeCenterYAnchor: NSLayoutYAxisAnchor {
         if #available(iOS 11.0, *) {
             return safeAreaLayoutGuide.centerYAnchor
-        }
-        else {
+        } else {
             return centerYAnchor
         }
     }
@@ -123,8 +117,7 @@ extension UIView {
     var safeCenterAnchors: AnchorPair<NSLayoutXAxisAnchor, NSLayoutYAxisAnchor> {
         if #available(iOS 11.0, *) {
             return AnchorPair(first: safeAreaLayoutGuide.centerXAnchor, second: safeAreaLayoutGuide.centerYAnchor)
-        }
-        else {
+        } else {
             return centerAnchors
         }
     }
@@ -132,8 +125,7 @@ extension UIView {
     var safeHorizontalAnchors: AnchorPair<NSLayoutXAxisAnchor, NSLayoutXAxisAnchor> {
         if #available(iOS 11.0, *) {
             return AnchorPair(first: safeAreaLayoutGuide.leadingAnchor, second: safeAreaLayoutGuide.trailingAnchor)
-        }
-        else {
+        } else {
             return horizontalAnchors
         }
     }

@@ -44,8 +44,7 @@ final class FullLinkCellView: LinkCellView {
                 infoContainer.leftAnchor == bannerImage.leftAnchor
                 infoContainer.bottomAnchor == bannerImage.bottomAnchor
                 infoContainer.rightAnchor == bannerImage.rightAnchor
-            }
-            else if thumb {
+            } else if thumb {
                 thumbImageContainer.isHidden = false
                 infoContainer.backgroundColor = .clear
                 info.textColor = ColorUtil.fontColor

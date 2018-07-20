@@ -277,13 +277,11 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         if changed == multiColumn {
             SettingValues.multiColumn = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_multiColumn)
-        }
-        else if changed == lock {
+        } else if changed == lock {
             if !VCPresenter.proDialogShown(feature: true, self) {
                 SettingValues.biometrics = changed.isOn
                 UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_biometrics)
-            }
-            else {
+            } else {
                 changed.isOn = false
             }
         }
@@ -321,8 +319,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
 
             default: fatalError("Unknown row in section 0")
             }
-        }
-        else {
+        } else {
             switch indexPath.row {
             case 0: return self.general
             case 1: return self.manageSubs
@@ -405,66 +402,48 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         var ch: UIViewController?
         if indexPath.section == 0 && indexPath.row == 1 {
             ch = SubredditReorderViewController()
-        }
-        else if indexPath.section == 0 && indexPath.row == 0 {
+        } else if indexPath.section == 0 && indexPath.row == 0 {
             ch = SettingsGeneral()
-        }
-        else if indexPath.section == 0 && indexPath.row == 2 {
+        } else if indexPath.section == 0 && indexPath.row == 2 {
             if !SettingValues.isPro {
                 ch = SettingsPro()
-            }
-            else {
+            } else {
                 showMultiColumn()
             }
-        }
-        else if indexPath.section == 0 && indexPath.row == 3 {
+        } else if indexPath.section == 0 && indexPath.row == 3 {
             if !SettingValues.isPro {
                 showMultiColumn()
             }
-        }
-        else if indexPath.section == 2 && indexPath.row == 4 {
+        } else if indexPath.section == 2 && indexPath.row == 4 {
             ch = FiltersViewController()
-        }
-        else if indexPath.section == 1 && indexPath.row == 2 {
+        } else if indexPath.section == 1 && indexPath.row == 2 {
             ch = SubredditThemeViewController()
-        }
-        else if indexPath.section == 1 && indexPath.row == 0 {
+        } else if indexPath.section == 1 && indexPath.row == 0 {
             ch = SettingsTheme()
             (ch as! SettingsTheme).tochange = self
-        }
-        else if indexPath.section == 1 && indexPath.row == 3 {
+        } else if indexPath.section == 1 && indexPath.row == 3 {
             ch = SettingsFont()
-        }
-        else if indexPath.section == 1 && indexPath.row == 1 {
+        } else if indexPath.section == 1 && indexPath.row == 1 {
             ch = SettingsLayout()
-        }
-        else if indexPath.section == 2 && indexPath.row == 2 {
+        } else if indexPath.section == 2 && indexPath.row == 2 {
             ch = SettingsData()
-        }
-        else if indexPath.section == 2 && indexPath.row == 3 {
+        } else if indexPath.section == 2 && indexPath.row == 3 {
             ch = SettingsContent()
-        }
-        else if indexPath.section == 1 && indexPath.row == 4 {
+        } else if indexPath.section == 1 && indexPath.row == 4 {
             ch = SettingsComments()
-        }
-        else if indexPath.section == 2 && indexPath.row == 0 {
+        } else if indexPath.section == 2 && indexPath.row == 0 {
             ch = SettingsLinkHandling()
-        }
-        else if indexPath.section == 2 && indexPath.row == 1 {
+        } else if indexPath.section == 2 && indexPath.row == 1 {
             ch = SettingsHistory()
-        }
-        else if indexPath.section == 0 && indexPath.row == (SettingValues.isPro ? 4 : 5) {
+        } else if indexPath.section == 0 && indexPath.row == (SettingValues.isPro ? 4 : 5) {
             ch = SettingsGestures()
-        }
-        else if indexPath.section == 2 && indexPath.row == 7 {
+        } else if indexPath.section == 2 && indexPath.row == 7 {
             if !SettingValues.isPro {
                 ch = SettingsPro()
-            }
-            else {
+            } else {
                 ch = SettingsBackup()
             }
-        }
-        else if indexPath.section == 2 && indexPath.row == 6 {
+        } else if indexPath.section == 2 && indexPath.row == 6 {
             let realm = try! Realm()
             try! realm.write {
                 realm.deleteAll()
@@ -476,26 +455,20 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
             SDWebImageManager.shared().imageCache.clearDisk()
             
             BannerUtil.makeBanner(text: "All caches cleared!", color: GMColor.green500Color(), seconds: 3, context: self)
-        }
-        else if indexPath.section == 3 && indexPath.row == 0 {
+        } else if indexPath.section == 3 && indexPath.row == 0 {
             //todo Show changlog?
-        }
-        else if indexPath.section == 3 && indexPath.row == 1 {
+        } else if indexPath.section == 3 && indexPath.row == 1 {
             ch = SingleSubredditViewController.init(subName: "slide_ios", single: true)
-        }
-        else if indexPath.section == 2 && indexPath.row == 5 {
+        } else if indexPath.section == 2 && indexPath.row == 5 {
             ch = CacheSettings()
-        }
-        else if indexPath.section == 3 && indexPath.row == 2 {
+        } else if indexPath.section == 3 && indexPath.row == 2 {
             let url = URL.init(string: "https://github.com/ccrama/Slide-ios")!
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
-            }
-            else {
+            } else {
                 UIApplication.shared.openURL(url)
             }
-        }
-        else if indexPath.section == 3 && indexPath.row == 3 {
+        } else if indexPath.section == 3 && indexPath.row == 3 {
             ch = LicensesViewController()
             let file = Bundle.main.path(forResource: "Credits", ofType: "plist")!
             (ch as! LicensesViewController).loadPlist(NSDictionary(contentsOfFile: file)!)

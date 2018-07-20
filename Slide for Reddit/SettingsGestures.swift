@@ -67,14 +67,11 @@ class SettingsGestures: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
         if indexPath.row == 1 {
             showAction(cell: rightActionCell)
-        }
-        else if indexPath.row == 2 {
+        } else if indexPath.row == 2 {
             showAction(cell: leftActionCell)
-        }
-        else if indexPath.row == 3 {
+        } else if indexPath.row == 3 {
             showAction(cell: doubleTapActionCell)
-        }
-        else if indexPath.row == 0 && indexPath.section == 1 {
+        } else if indexPath.row == 0 && indexPath.section == 1 {
             showAction(cell: doubleTapSubActionCell)
         }
     }
@@ -86,14 +83,11 @@ class SettingsGestures: UITableViewController {
                 UserDefaults.standard.set(action.rawValue, forKey: cell == self.rightActionCell ? SettingValues.pref_commentActionRight : (cell == self.leftActionCell ? SettingValues.pref_commentActionLeft : (cell == self.doubleTapSubActionCell ? SettingValues.pref_submissionActionDoubleTap :  SettingValues.pref_commentActionDoubleTap)))
                 if cell == self.rightActionCell {
                     SettingValues.commentActionRight = action
-                }
-                else if cell == self.leftActionCell {
+                } else if cell == self.leftActionCell {
                     SettingValues.commentActionLeft = action
-                }
-                else if cell == self.doubleTapActionCell {
+                } else if cell == self.doubleTapActionCell {
                     SettingValues.commentActionDoubleTap = action
-                }
-                else {
+                } else {
                     SettingValues.submissionActionDoubleTap = action
                     SubredditReorderViewController.changed = true
                 }
@@ -168,8 +162,7 @@ class SettingsGestures: UITableViewController {
             self.rightActionCell.alpha = 0.5
             self.leftActionCell.isUserInteractionEnabled = false
             self.leftActionCell.alpha = 0.5
-        }
-        else {
+        } else {
             self.rightActionCell.isUserInteractionEnabled = true
             self.rightActionCell.alpha = 1
             self.leftActionCell.isUserInteractionEnabled = true

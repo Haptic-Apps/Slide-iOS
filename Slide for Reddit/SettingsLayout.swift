@@ -76,44 +76,34 @@ class SettingsLayout: UITableViewController {
         if changed == smalltag {
             SettingValues.smallerTag = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_smallTag)
-        }
-        else if changed == selftext {
+        } else if changed == selftext {
             SettingValues.showFirstParagraph = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_showFirstParagraph)
-        }
-        else if changed == largerThumbnail {
+        } else if changed == largerThumbnail {
             SettingValues.largerThumbnail = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_largerThumbnail)
-        }
-        else if changed == abbreviateScore {
+        } else if changed == abbreviateScore {
             SettingValues.abbreviateScores = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_abbreviateScores)
-        }
-        else if changed == scoreTitle {
+        } else if changed == scoreTitle {
             SettingValues.scoreInTitle = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_scoreInTitle)
-        }
-        else if changed == thumbLink {
+        } else if changed == thumbLink {
             SettingValues.linkAlwaysThumbnail = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_linkAlwaysThumbnail)
-        }
-        else if changed == domainInfo {
+        } else if changed == domainInfo {
             SettingValues.domainInInfo = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_domainInInfo)
-        }
-        else if changed == leftThumb {
+        } else if changed == leftThumb {
             SettingValues.leftThumbnail = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_leftThumbnail)
-        }
-        else if changed == hide {
+        } else if changed == hide {
             SettingValues.hideButton = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_hideButton)
-        }
-        else if changed == save {
+        } else if changed == save {
             SettingValues.saveButton = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_saveButton)
-        }
-        else if changed == flatMode {
+        } else if changed == flatMode {
             SettingValues.flatMode = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_flatMode)
             SingleSubredditViewController.cellVersion += 1
@@ -129,8 +119,7 @@ class SettingsLayout: UITableViewController {
         link.contentView.removeFromSuperview()
         if SettingValues.postImageMode == .THUMBNAIL || SettingValues.linkAlwaysThumbnail {
             link = ThumbnailLinkCellView.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 500))
-        }
-        else {
+        } else {
             link = BannerLinkCellView.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 500))
         }
         
@@ -285,8 +274,7 @@ class SettingsLayout: UITableViewController {
             
             VCPresenter.presentAlert(alertController, parentVC: self)
             
-        }
-        else if indexPath.section == 1 && indexPath.row == 1 {
+        } else if indexPath.section == 1 && indexPath.row == 1 {
             let alertController: BottomSheetActionController = BottomSheetActionController()
             alertController.addAction(Action(ActionData(title: "Full image", image: UIImage(named: "full")!.menuIcon()), style: .default, handler: { _ in
                 UserDefaults.standard.set("full", forKey: SettingValues.pref_postImageMode)
@@ -322,8 +310,7 @@ class SettingsLayout: UITableViewController {
             }))
             
             VCPresenter.presentAlert(alertController, parentVC: self)
-        }
-        else if indexPath.section == 2 && indexPath.row == 0 {
+        } else if indexPath.section == 2 && indexPath.row == 0 {
             let alertController: BottomSheetActionController = BottomSheetActionController()
             alertController.addAction(Action(ActionData(title: "Full action bar", image: UIImage(named: "code")!.menuIcon()), style: .default, handler: { _ in
                 UserDefaults.standard.set("full", forKey: SettingValues.pref_actionbarMode)
@@ -439,15 +426,13 @@ class SettingsLayout: UITableViewController {
         if SettingValues.actionBarMode != .FULL {
             hide.isEnabled = false
             save.isEnabled = false
-        }
-        else {
+        } else {
             hide.isEnabled = true
             save.isEnabled = true
         }
         if SettingValues.postImageMode == .THUMBNAIL {
             thumbLink.isEnabled = false
-        }
-        else {
+        } else {
             thumbLink.isEnabled = true
         }
     }

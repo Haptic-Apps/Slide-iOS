@@ -27,13 +27,11 @@ final class BannerLinkCellView: LinkCellView {
                     sideButtons.topAnchor == contentView.topAnchor + ctwelve
                     title.rightAnchor == sideButtons.leftAnchor - ceight
                     title.leftAnchor == contentView.leftAnchor + ctwelve
-                }
-                else if SettingValues.actionBarMode == .SIDE {
+                } else if SettingValues.actionBarMode == .SIDE {
                     sideButtons.topAnchor == contentView.topAnchor + ctwelve
                     title.leftAnchor == sideButtons.rightAnchor + ceight
                     title.rightAnchor == contentView.rightAnchor - ctwelve
-                }
-                else {
+                } else {
                     title.horizontalAnchors == contentView.horizontalAnchors + ctwelve
                 }
                 title.bottomAnchor == bannerImage.topAnchor - ceight
@@ -42,29 +40,24 @@ final class BannerLinkCellView: LinkCellView {
                 
                 if SettingValues.actionBarMode == .FULL {
                     bannerImage.bottomAnchor == box.topAnchor - ctwelve
-                }
-                else {
+                } else {
                     bannerImage.bottomAnchor == contentView.bottomAnchor - ctwelve
                 }
-            }
-            else {
+            } else {
                 // Image goes above title
                 if SettingValues.actionBarMode == .SIDE_RIGHT {
                     title.rightAnchor == sideButtons.leftAnchor - ceight
                     title.leftAnchor == contentView.leftAnchor + ctwelve
-                }
-                else if SettingValues.actionBarMode == .SIDE {
+                } else if SettingValues.actionBarMode == .SIDE {
                     title.leftAnchor == sideButtons.rightAnchor + ceight
                     title.rightAnchor == contentView.rightAnchor - ctwelve
-                }
-                else {
+                } else {
                     title.horizontalAnchors == contentView.horizontalAnchors + ctwelve
                 }
                 
                 if SettingValues.actionBarMode != .FULL {
                     title.bottomAnchor == contentView.bottomAnchor - ceight
-                }
-                else {
+                } else {
                     title.bottomAnchor == box.topAnchor - ceight
                 }
                 
@@ -83,8 +76,7 @@ final class BannerLinkCellView: LinkCellView {
                 infoContainer.leftAnchor == bannerImage.leftAnchor
                 infoContainer.bottomAnchor == bannerImage.bottomAnchor
                 infoContainer.rightAnchor == bannerImage.rightAnchor 
-            }
-            else {
+            } else {
                 tagbody.bottomAnchor == bannerImage.bottomAnchor - 8
                 tagbody.rightAnchor == bannerImage.rightAnchor - 8
             }

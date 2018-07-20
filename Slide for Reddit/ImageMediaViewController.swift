@@ -124,8 +124,7 @@ class ImageMediaViewController: EmbeddableMediaViewController {
     func fullscreen(_ sender: AnyObject) {
         if (parent as! ModalMediaViewController).fullscreen {
             (parent as! ModalMediaViewController).unFullscreen(self)
-        }
-        else {
+        } else {
             (parent as! ModalMediaViewController).fullscreen(self)
         }
     }
@@ -153,13 +152,11 @@ class ImageMediaViewController: EmbeddableMediaViewController {
         if let lqURL = data.lqURL, !SettingValues.loadContentHQ && shouldShowLq && !forceHD {
             imageURL = lqURL
             viewInHDButton.isHidden = false
-        }
-        else {
+        } else {
             if ContentType.isImgurLink(uri: data.baseURL!) {
                 let urlString = "\(data.baseURL!).png"
                 imageURL = URL.init(string: urlString)!
-            }
-            else {
+            } else {
                 imageURL = data.baseURL!
             }
             viewInHDButton.isHidden = true
@@ -192,8 +189,7 @@ class ImageMediaViewController: EmbeddableMediaViewController {
                     completion(image)
                 }
             }
-        }
-        else {
+        } else {
             SDWebImageDownloader.shared().downloadImage(with: imageURL, options: .allowInvalidSSLCertificates, progress: { (current: NSInteger, total: NSInteger) in
 
                 var average: Float = 0
@@ -231,8 +227,7 @@ extension ImageMediaViewController {
             let zoomRect = zoomRectForScale(scale: scrollView.minimumZoomScale, center: recognizer.location(in: recognizer.view))
             scrollView.zoom(to: zoomRect, animated: true)
 //            scrollView.setZoomScale(scrollView.minimumZoomScale, animated: true)
-        }
-        else {
+        } else {
             let zoomRect = zoomRectForScale(scale: scrollView.maximumZoomScale, center: recognizer.location(in: recognizer.view))
             scrollView.zoom(to: zoomRect, animated: true)
         }
@@ -241,8 +236,7 @@ extension ImageMediaViewController {
     func downloadImageToLibrary(_ sender: AnyObject) {
         if let image = imageView.image {
             CustomAlbum.shared.save(image: image, parent: self)
-        }
-        else {
+        } else {
             print("No image exists to be downloaded!")
         }
     }
@@ -277,8 +271,7 @@ extension ImageMediaViewController {
             UIAlertAction(title: "Open in Safari", style: .default) { (_) in
                 if #available(iOS 10.0, *) {
                     UIApplication.shared.open(baseURL, options: [:], completionHandler: nil)
-                }
-                else {
+                } else {
                     UIApplication.shared.openURL(baseURL)
                 }
             }
@@ -290,8 +283,7 @@ extension ImageMediaViewController {
                 let window = UIApplication.shared.keyWindow!
                 if let modalVC = window.rootViewController?.presentedViewController {
                     modalVC.present(activityViewController, animated: true, completion: nil)
-                }
-                else {
+                } else {
                     window.rootViewController!.present(activityViewController, animated: true, completion: nil)
                 }
             }
@@ -303,8 +295,7 @@ extension ImageMediaViewController {
                 let window = UIApplication.shared.keyWindow!
                 if let modalVC = window.rootViewController?.presentedViewController {
                     modalVC.present(activityViewController, animated: true, completion: nil)
-                }
-                else {
+                } else {
                     window.rootViewController!.present(activityViewController, animated: true, completion: nil)
                 }
             }
@@ -323,8 +314,7 @@ extension ImageMediaViewController {
 
         if let modalVC = window.rootViewController?.presentedViewController {
             modalVC.present(alert, animated: true, completion: nil)
-        }
-        else {
+        } else {
             window.rootViewController!.present(alert, animated: true, completion: nil)
         }
     }

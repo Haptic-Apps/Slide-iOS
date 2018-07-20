@@ -77,38 +77,28 @@ class TableDisplayView: UIScrollView {
             }
             //print(current)
             if current == tableStart {
-            }
-            else if current == tableHeadStart {
-            }
-            else if current == tableRowStart {
+            } else if current == tableHeadStart {
+            } else if current == tableRowStart {
                 currentRow = []
-            }
-            else if current == tableRowEnd {
+            } else if current == tableRowEnd {
                 isHeader = false
                 baseData.append(currentRow)
-            }
-            else if current == tableEnd {
-            }
-            else if current == tableHeadEnd {
-            }
-            else if !columnStarted
+            } else if current == tableEnd {
+            } else if current == tableHeadEnd {
+            } else if !columnStarted
                 && (current == tableColumnStart || current == tableHeaderStart) {
                 columnStarted = true
                 //todo maybe gravity = Gravity.START;
-            }
-            else if !columnStarted && (current == tableColumnStartRight || current == tableHeaderStartRight) {
+            } else if !columnStarted && (current == tableColumnStartRight || current == tableHeaderStartRight) {
                 columnStarted = true
                 //todo maybe gravity = Gravity.END;
-            }
-            else if !columnStarted && (current == tableColumnStartCenter || current == tableHeaderStartCenter) {
+            } else if !columnStarted && (current == tableColumnStartCenter || current == tableHeaderStartCenter) {
                 columnStarted = true
                 //todo maybe gravity = Gravity.CENTER;
-            }
-            else if !columnStarted && (current == tableColumnStartLeft || current == tableHeaderStartLeft) {
+            } else if !columnStarted && (current == tableColumnStartLeft || current == tableHeaderStartLeft) {
                 columnStarted = true
                 //todo maybe gravity = Gravity.START;
-            }
-            else if current == tableColumnEnd || current == tableHeaderEnd {
+            } else if current == tableColumnEnd || current == tableHeaderEnd {
                 if currentString.startsWith("<td") {
                     let index = currentString.indexOf(">")
                     currentString = currentString.substring(index! + 1, length: currentString.length - index! - 1)
@@ -116,8 +106,7 @@ class TableDisplayView: UIScrollView {
                 columnStarted = false
                 currentRow.append(TextDisplayStackView.createAttributedChunk(baseHTML: currentString.trimmed(), fontSize: CGFloat((isHeader ? 3 : 0) + 16 ), submission: false, accentColor: tColor))
                 currentString = ""
-            }
-            else {
+            } else {
                 currentString.append(current)
             }
         }
@@ -250,45 +239,34 @@ class TableDisplayView: UIScrollView {
             }
             //print(current)
             if current == tableStart {
-            }
-            else if current == tableHeadStart {
-            }
-            else if current == tableRowStart {
-            }
-            else if current == tableRowEnd {
+            } else if current == tableHeadStart {
+            } else if current == tableRowStart {
+            } else if current == tableRowEnd {
                 isHeader = false
                 estHeight += 30
-            }
-            else if current == tableEnd {
-            }
-            else if current == tableHeadEnd {
-            }
-            else if !columnStarted
+            } else if current == tableEnd {
+            } else if current == tableHeadEnd {
+            } else if !columnStarted
                 && (current == tableColumnStart || current == tableHeaderStart) {
                 columnStarted = true
                 //todo maybe gravity = Gravity.START;
-            }
-            else if !columnStarted && (current == tableColumnStartRight || current == tableHeaderStartRight) {
+            } else if !columnStarted && (current == tableColumnStartRight || current == tableHeaderStartRight) {
                 columnStarted = true
                 //todo maybe gravity = Gravity.END;
-            }
-            else if !columnStarted && (current == tableColumnStartCenter || current == tableHeaderStartCenter) {
+            } else if !columnStarted && (current == tableColumnStartCenter || current == tableHeaderStartCenter) {
                 columnStarted = true
                 //todo maybe gravity = Gravity.CENTER;
-            }
-            else if !columnStarted && (current == tableColumnStartLeft || current == tableHeaderStartLeft) {
+            } else if !columnStarted && (current == tableColumnStartLeft || current == tableHeaderStartLeft) {
                 columnStarted = true
                 //todo maybe gravity = Gravity.START;
-            }
-            else if current == tableColumnEnd || current == tableHeaderEnd {
+            } else if current == tableColumnEnd || current == tableHeaderEnd {
                 if currentString.startsWith("<td") {
                     let index = currentString.indexOf(">")
                     currentString = currentString.substring(index! + 1, length: currentString.length - index! - 1)
                 }
                 columnStarted = false
                 currentString = ""
-            }
-            else {
+            } else {
                 currentString.append(current)
             }
         }

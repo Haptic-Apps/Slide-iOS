@@ -56,16 +56,13 @@ class WrappingFlowLayout: UICollectionViewLayout {
             if UIApplication.shared.statusBarOrientation.isPortrait || !SettingValues.isPro {
                 if UIScreen.main.traitCollection.userInterfaceIdiom != .pad || !SettingValues.isPro {
                     numberOfColumns = 1
-                }
-                else {
+                } else {
                     numberOfColumns = portraitCount
                 }
-            }
-            else {
+            } else {
                 numberOfColumns = SettingValues.multiColumnCount
             }
-        }
-        else {
+        } else {
             numberOfColumns = 1
         }
         
@@ -114,8 +111,7 @@ class WrappingFlowLayout: UICollectionViewLayout {
                 let col = column >= (numberOfColumns - 1)
                 if col {
                     column = 0
-                }
-                else {
+                } else {
                     column += 1
                 }
             }

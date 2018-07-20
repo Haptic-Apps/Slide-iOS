@@ -47,12 +47,10 @@ class SettingsHistory: UITableViewController {
         if changed == saveHistory {
             SettingValues.saveHistory = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_saveHistory)
-        }
-        else if changed == saveNSFWHistory {
+        } else if changed == saveNSFWHistory {
             SettingValues.saveNSFWHistory = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_saveNSFWHistory)
-        }
-        else if changed == readOnScroll {
+        } else if changed == readOnScroll {
             SettingValues.markReadOnScroll = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_markReadOnScroll)
         }
@@ -122,8 +120,7 @@ class SettingsHistory: UITableViewController {
             if indexPath.row == 0 {
                 History.clearHistory()
                 BannerUtil.makeBanner(text: "Submission history cleared!", color: GMColor.green500Color(), seconds: 5, context: self)
-            }
-            else {
+            } else {
                 Subscriptions.clearSubHistory()
                 BannerUtil.makeBanner(text: "Subreddit history cleared!", color: GMColor.green500Color(), seconds: 5, context: self)
             }
@@ -135,8 +132,7 @@ class SettingsHistory: UITableViewController {
         if SettingValues.saveHistory {
             saveNSFWHistory.isEnabled = true
             readOnScroll.isEnabled = true
-        }
-        else {
+        } else {
             saveNSFWHistory.isEnabled = false
             readOnScroll.isEnabled = false
         }

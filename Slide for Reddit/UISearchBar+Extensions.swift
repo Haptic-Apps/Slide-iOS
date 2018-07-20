@@ -14,8 +14,7 @@ extension UISearchBar {
         get {
             if let textField = self.value(forKey: "searchField") as? UITextField {
                 return textField.textColor
-            }
-            else {
+            } else {
                 return nil
             }
         }

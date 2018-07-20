@@ -66,8 +66,7 @@ class InboxContributionLoader: ContributionLoader {
                         }
                     }
                 })
-            }
-            catch {
+            } catch {
                 print(error)
             }
             

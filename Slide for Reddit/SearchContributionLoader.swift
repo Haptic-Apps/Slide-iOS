@@ -53,8 +53,7 @@ class SearchContributionLoader: ContributionLoader {
                         for item in listing.children.flatMap({ $0 }) {
                             if item is Comment {
                                 self.content.append(RealmDataWrapper.commentToRComment(comment: item as! Comment, depth: 0))
-                            }
-                            else {
+                            } else {
                                 self.content.append(RealmDataWrapper.linkToRSubmission(submission: item as! Link))
                             }
                         }
@@ -65,8 +64,7 @@ class SearchContributionLoader: ContributionLoader {
                         }
                     }
                 })
-            }
-            catch {
+            } catch {
                 print(error)
             }
             

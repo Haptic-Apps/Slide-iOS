@@ -61,20 +61,17 @@ public class TextStackEstimator: NSObject {
             if blocks.count > 1 {
                 if startIndex == 0 {
                     setViews(blocks)
-                }
-                else {
+                } else {
                     blocks.remove(at: 0)
                     setViews(blocks)
                 }
             }
-        }
-        else {
+        } else {
             let newTitle = title
             if body != nil {
                 newTitle.append(NSAttributedString.init(string: "\n\n", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 5)]))
                 newTitle.append(body!)
-            }
-            else {
+            } else {
                 newTitle.append(NSAttributedString.init(string: "\n\n", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 5)]))
                 newTitle.append(createAttributedChunk(baseHTML: htmlString))
             }
@@ -103,8 +100,7 @@ public class TextStackEstimator: NSObject {
         if blocks.count > 1 {
             if startIndex == 0 {
                 setViews(blocks)
-            }
-            else {
+            } else {
                 blocks.remove(at: 0)
                 setViews(blocks)
             }
@@ -117,15 +113,12 @@ public class TextStackEstimator: NSObject {
             if block.startsWith("<table>") {
                 let table = TableDisplayView.getEstimatedHeight(baseHtml: block)
                 estimatedHeight += table
-            }
-            else if block.startsWith("<hr/>") {
+            } else if block.startsWith("<hr/>") {
                 estimatedHeight += 1
-            }
-            else if block.startsWith("<code>") {
+            } else if block.startsWith("<code>") {
                 let body = CodeDisplayView.init(baseHtml: block, color: ColorUtil.fontColor)
                 estimatedHeight += body.globalHeight
-            }
-            else {
+            } else {
                 let text = createAttributedChunk(baseHTML: block)
                 let framesetterB = CTFramesetterCreateWithAttributedString(text)
                 let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
@@ -152,8 +145,7 @@ public class TextStackEstimator: NSObject {
         
         if html.contains("<table") {
             return parseTableTags(codeBlockSeperated)
-        }
-        else {
+        } else {
             return codeBlockSeperated
         }
     }
@@ -273,8 +265,7 @@ public class TextStackEstimator: NSObject {
                     newBlocks.append(HR_TAG)
                 }
                 newBlocks.remove(at: newBlocks.count - 1)
-            }
-            else {
+            } else {
                 newBlocks.append(block)
             }
         }
@@ -295,8 +286,7 @@ public class TextStackEstimator: NSObject {
                         newBlocks.append(split[1])
                     }
                 }
-            }
-            else {
+            } else {
                 newBlocks.append(block)
             }
         }

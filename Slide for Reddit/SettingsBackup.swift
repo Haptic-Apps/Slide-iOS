@@ -95,8 +95,7 @@ class SettingsBackup: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
         if indexPath.row == 0 {
             doBackup()
-        }
-        else {
+        } else {
             doRestore()
         }
     }

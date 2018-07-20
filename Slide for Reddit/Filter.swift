@@ -67,23 +67,17 @@ class Filter: UITableViewController {
     func switchIsChanged(_ changed: UISwitch) {
         if changed == imageSwitch {
             enabled[0] = changed.isOn
-        }
-        else if changed == albumSwitch {
+        } else if changed == albumSwitch {
             enabled[1] = changed.isOn
-        }
-        else if changed == gifSwitch {
+        } else if changed == gifSwitch {
             enabled[2] = changed.isOn
-        }
-        else if changed == videoSwitch {
+        } else if changed == videoSwitch {
             enabled[3] = changed.isOn
-        }
-        else if changed == linkSwitch {
+        } else if changed == linkSwitch {
             enabled[4] = changed.isOn
-        }
-        else if changed == selftextSwitch {
+        } else if changed == selftextSwitch {
             enabled[5] = changed.isOn
-        }
-        else if changed == nsfwSwitch {
+        } else if changed == nsfwSwitch {
             enabled[6] = changed.isOn
         }
         UserDefaults.standard.synchronize()

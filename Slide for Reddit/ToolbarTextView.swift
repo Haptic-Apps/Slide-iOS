@@ -52,8 +52,7 @@ public class ToolbarTextView: NSObject {
         text!.inputAccessoryView = scrollView
         if !(parent is ReplyViewController) {
             text!.tintColor = .white
-        }
-        else {
+        } else {
             text!.tintColor = ColorUtil.fontColor
         }
         if ColorUtil.theme != .LIGHT {
@@ -90,8 +89,7 @@ public class ToolbarTextView: NSObject {
         print("Opening drafts")
         if Drafts.drafts.isEmpty {
             parent.view.makeToast("No drafts found", duration: 4, position: .top)
-        }
-        else {
+        } else {
             picker = ActionSheetStringPicker(title: "Choose a draft", rows: Drafts.drafts, initialSelection: 0, doneBlock: { (_, index, _) in
                 self.text!.insertText(Drafts.drafts[index] as String)
             }, cancel: { (_) in
@@ -173,8 +171,7 @@ public class ToolbarTextView: NSObject {
                                         if last != "Failure" {
                                             if self.parent is ReplyViewController && (self.parent as! ReplyViewController).type == .SUBMIT_IMAGE {
                                                 (self.parent as! ReplyViewController).text![2].text = url
-                                            }
-                                            else {
+                                            } else {
                                                 let alert = UIAlertController(title: "Link text", message: url, preferredStyle: .alert)
 
                                                 let config: TextField.Config = { textField in
@@ -201,8 +198,7 @@ public class ToolbarTextView: NSObject {
                                                     let text = self.insertText ?? ""
                                                     if text.isEmpty() {
                                                         self.text!.insertText("\(url)")
-                                                    }
-                                                    else {
+                                                    } else {
                                                         self.text!.insertText("[\(text)](\(url))")
                                                     }
                                                 }))
@@ -210,8 +206,7 @@ public class ToolbarTextView: NSObject {
                                                 alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
                                                 self.parent.present(alert, animated: true, completion: nil)
                                             }
-                                        }
-                                        else {
+                                        } else {
                                             let alert = UIAlertController(title: "Uploading failed", message: "Uh oh, something went wrong while uploading to Imgur. Please try again in a few minutes", preferredStyle: .alert)
                                             alert.addAction(UIAlertAction.init(title: "Ok", style: .cancel, handler: nil))
                                             self.parent.present(alert, animated: true, completion: nil)
@@ -223,16 +218,14 @@ public class ToolbarTextView: NSObject {
 
                     }
 
-        }
-        else {
+        } else {
             uploadImages(assets, album: "", completion: { (link) in
                 DispatchQueue.main.async {
                     self.alertView!.dismiss(animated: true, completion: {
                         if link != "Failure" {
                             if self.parent is ReplyViewController && (self.parent as! ReplyViewController).type == .SUBMIT_IMAGE {
                                 (self.parent as! ReplyViewController).text![2].text = link
-                            }
-                            else {
+                            } else {
                                 let alert = UIAlertController(title: "Link text", message: link, preferredStyle: .alert)
 
                                 let config: TextField.Config = { textField in
@@ -264,8 +257,7 @@ public class ToolbarTextView: NSObject {
                                 alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
                                 self.parent.present(alert, animated: true, completion: nil)
                             }
-                        }
-                        else {
+                        } else {
                             let alert = UIAlertController(title: "Uploading failed", message: "Uh oh, something went wrong while uploading to Imgur. Please try again in a few minutes", preferredStyle: .alert)
                             alert.addAction(UIAlertAction.init(title: "Ok", style: .cancel, handler: nil))
                             self.parent.present(alert, animated: true, completion: nil)

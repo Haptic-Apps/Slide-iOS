@@ -80,8 +80,7 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
         let color = ColorUtil.getColorForSub(sub: comment.subreddit)
         if color != ColorUtil.baseColor {
             subString.addAttribute(NSForegroundColorAttributeName, value: color, range: NSRange.init(location: 0, length: subString.length))
-        }
-        else {
+        } else {
             subString.addAttribute(NSForegroundColorAttributeName, value: ColorUtil.fontColor, range: NSRange.init(location: 0, length: subString.length))
         }
         

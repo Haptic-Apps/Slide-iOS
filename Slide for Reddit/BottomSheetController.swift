@@ -77,8 +77,7 @@ open class BottomSheetCell: ActionCell {
                     me.animatableBackgroundView.frame = CGRect(x: 0, y: 0, width: me.frame.width, height: me.frame.height)
                     me.animatableBackgroundView.backgroundColor = UIColor.black.withAlphaComponent(0.08)
                 }
-            }
-            else {
+            } else {
                 animatableBackgroundView.backgroundColor = animatableBackgroundView.backgroundColor?.withAlphaComponent(0.0)
             }
         }
@@ -230,8 +229,7 @@ open class BottomSheetActionController: ActionController<BottomSheetCell, Action
             if corners == .allCorners {
                 cell.layer.mask = nil
                 cell.layer.cornerRadius = 15.0
-            }
-            else {
+            } else {
                 let borderMask = CAShapeLayer()
                 borderMask.frame = cell.bounds
                 borderMask.path = UIBezierPath(roundedRect: cell.bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: 15.0, height: 8.0)).cgPath

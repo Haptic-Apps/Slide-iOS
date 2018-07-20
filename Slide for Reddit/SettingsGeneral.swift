@@ -50,32 +50,26 @@ class SettingsGeneral: UITableViewController {
             SettingValues.viewType = changed.isOn
             bottomBarSwitch.isEnabled = !changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_viewType)
-        }
-        else if changed == bottomBarSwitch {
+        } else if changed == bottomBarSwitch {
             MainViewController.needsRestart = true
             SettingValues.bottomBarHidden = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_bottomBarHidden)
-        }
-        else if changed == hideFABSwitch {
+        } else if changed == hideFABSwitch {
             SettingValues.hiddenFAB = !changed.isOn
             UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_hiddenFAB)
             SubredditReorderViewController.changed = true
-        }
-        else if changed == hapticFeedback {
+        } else if changed == hapticFeedback {
             SettingValues.hapticFeedback = !changed.isOn
             UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_hapticFeedback)
-        }
-        else if changed == pinToolbarSwitch {
+        } else if changed == pinToolbarSwitch {
             SettingValues.pinToolbar = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_pinToolbar)
             SubredditReorderViewController.changed = true
-        }
-        else if changed == scrubUsernameSwitch {
+        } else if changed == scrubUsernameSwitch {
             if !VCPresenter.proDialogShown(feature: false, self) {
                 SettingValues.nameScrubbing = changed.isOn
                 UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_nameScrubbing)
-            }
-            else {
+            } else {
                 changed.isOn = false
             }
         }
@@ -261,8 +255,7 @@ class SettingsGeneral: UITableViewController {
             UserDefaults.standard.synchronize()
             self.postSorting.detailTextLabel?.text = SettingValues.defaultSorting.description
             return
-        }
-        else {
+        } else {
             let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
 
             let cancelActionButton: UIAlertAction = UIAlertAction(title: "Close", style: .cancel) { _ -> Void in
@@ -305,8 +298,7 @@ class SettingsGeneral: UITableViewController {
 
         if indexPath.section == 2 && indexPath.row == 0 {
             showMenu(tableView.cellForRow(at: indexPath))
-        }
-        else if indexPath.section == 2 && indexPath.row == 1 {
+        } else if indexPath.section == 2 && indexPath.row == 1 {
             showMenuComments(tableView.cellForRow(at: indexPath))
         }
 

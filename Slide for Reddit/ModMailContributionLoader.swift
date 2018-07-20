@@ -66,8 +66,7 @@ class ModMailContributionLoader: ContributionLoader {
                         }
                     }
                 })
-            }
-            catch {
+            } catch {
                 print(error)
             }
             

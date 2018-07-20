@@ -55,15 +55,13 @@ class ColorUtil {
                 LinkCellImageCache.initialize()
                 SingleSubredditViewController.cellVersion += 1
                 toReturn = true
-            }
-            else if !shouldBeNight() && theme != defaultTheme {
+            } else if !shouldBeNight() && theme != defaultTheme {
                 theme = defaultTheme
                 CachedTitle.titles.removeAll()
                 LinkCellImageCache.initialize()
                 SingleSubredditViewController.cellVersion += 1
                 toReturn = true
-            }
-            else if defaultTheme == SettingValues.nightTheme && theme != defaultTheme {
+            } else if defaultTheme == SettingValues.nightTheme && theme != defaultTheme {
                 theme = defaultTheme
                 CachedTitle.titles.removeAll()
                 LinkCellImageCache.initialize()
@@ -121,8 +119,7 @@ class ColorUtil {
         let color = UserDefaults.standard.colorForKey(key: "color+" + sub)
         if color == nil || color!.hexString == UIColor.black.hexString {
             return baseColor
-        }
-        else {
+        } else {
             return color!
         }
     }
@@ -131,8 +128,7 @@ class ColorUtil {
         let color = UserDefaults.standard.colorForKey(key: "color+" + sub)
         if color == nil {
             return foregroundColor
-        }
-        else {
+        } else {
             return color!
         }
     }
@@ -141,8 +137,7 @@ class ColorUtil {
         let color = UserDefaults.standard.colorForKey(key: "user+" + name)
         if color == nil {
             return baseColor
-        }
-        else {
+        } else {
             return color!
         }
     }
@@ -180,8 +175,7 @@ class ColorUtil {
         let color = UserDefaults.standard.colorForKey(key: "accent+" + sub)
         if color == nil {
             return baseAccent
-        }
-        else {
+        } else {
             return color!
         }
     }
