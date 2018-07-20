@@ -7,49 +7,50 @@
 //
 
 import Foundation
-import TTTAttributedLabel
-import reddift
 import MaterialComponents.MaterialBottomSheet
+import reddift
+import TTTAttributedLabel
 
-class Sidebar: NSObject, TTTAttributedLabelDelegate  {
+class Sidebar: NSObject, TTTAttributedLabelDelegate {
     
     var parent: UIViewController & MediaVCDelegate?
     var subname = ""
     
-    init(parent: UIViewController & MediaVCDelegate, subname: String){
+    init(parent: UIViewController & MediaVCDelegate, subname: String) {
         self.parent = parent
         self.subname = subname
     }
 
     func attributedLabel(_ label: TTTAttributedLabel!, didLongPressLinkWith url: URL!, at point: CGPoint) {
-        if (url) != nil{
-            if parent != nil{
+        if (url) != nil {
+            if parent != nil {
                 let sheet = UIAlertController(title: url.absoluteString, message: nil, preferredStyle: .actionSheet)
                 sheet.addAction(
-                    UIAlertAction(title: "Close", style: .cancel) { (action) in
+                    UIAlertAction(title: "Close", style: .cancel) { (_) in
                         sheet.dismiss(animated: true, completion: nil)
                     }
                 )
                 let open = OpenInChromeController.init()
-                if(open.isChromeInstalled()){
+                if(open.isChromeInstalled()) {
                     sheet.addAction(
-                        UIAlertAction(title: "Open in Chrome", style: .default) { (action) in
+                        UIAlertAction(title: "Open in Chrome", style: .default) { (_) in
                             open.openInChrome(url, callbackURL: nil, createNewTab: true)
                         }
                     )
                 }
                 sheet.addAction(
-                    UIAlertAction(title: "Open in Safari", style: .default) { (action) in
+                    UIAlertAction(title: "Open in Safari", style: .default) { (_) in
                         if #available(iOS 10.0, *) {
                             UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                        } else {
+                        }
+                        else {
                             UIApplication.shared.openURL(url)
                         }
                         sheet.dismiss(animated: true, completion: nil)
                     }
                 )
                 sheet.addAction(
-                    UIAlertAction(title: "Open", style: .default) { (action) in
+                    UIAlertAction(title: "Open", style: .default) { (_) in
                         /* let controller = WebViewController(nibName: nil, bundle: nil)
                          controller.url = url
                          let nav = UINavigationController(rootViewController: controller)
@@ -57,7 +58,7 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate  {
                     }
                 )
                 sheet.addAction(
-                    UIAlertAction(title: "Copy URL", style: .default) { (action) in
+                    UIAlertAction(title: "Copy URL", style: .default) { (_) in
                         UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
                         sheet.dismiss(animated: true, completion: nil)
                     }
@@ -71,7 +72,7 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate  {
     var inner: UIViewController & MediaVCDelegate?
     var subInfo: Subreddit?
 
-    func displaySidebar(){
+    func displaySidebar() {
         do {
             try (UIApplication.shared.delegate as! AppDelegate).session?.about(subname, completion: { (result) in
                 switch result {
@@ -81,34 +82,36 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate  {
                         self.doDisplaySidebar(r)
                     }
                 default:
-                    DispatchQueue.main.async{
+                    DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Subreddit sidebar not found", seconds: 3, context: self.parent)
                     }
                     break
                 }
             })
-        } catch {
+        }
+        catch {
         }
     }
 
     var alrController = UIAlertController()
 
-    func doDisplaySidebar(_ sub: Subreddit){
+    func doDisplaySidebar(_ sub: Subreddit) {
         inner = SubSidebarViewController(sub: sub, parent: parent!)
         let bottomSheet: MDCBottomSheetController = MDCBottomSheetController(contentViewController: inner!)
         parent?.present(bottomSheet, animated: true, completion: nil)
     }
 
-    func subscribe(_ sub: Subreddit){
-        if(parent!.subChanged && !sub.userIsSubscriber || sub.userIsSubscriber){
+    func subscribe(_ sub: Subreddit) {
+        if(parent!.subChanged && !sub.userIsSubscriber || sub.userIsSubscriber) {
             //was not subscriber, changed, and unsubscribing again
             Subscriptions.unsubscribe(sub.displayName, session: (UIApplication.shared.delegate as! AppDelegate).session!)
             parent!.subChanged = false
             BannerUtil.makeBanner(text: "Unsubscribed", seconds: 5, context: self.parent, top: true)
-        } else {
+        }
+        else {
             let alrController = UIAlertController.init(title: "Subscribe to \(sub.displayName)", message: nil, preferredStyle: .actionSheet)
-            if(AccountController.isLoggedIn){
-                let somethingAction = UIAlertAction(title: "Add to sub list and subscribe", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in
+            if(AccountController.isLoggedIn) {
+                let somethingAction = UIAlertAction(title: "Add to sub list and subscribe", style: UIAlertActionStyle.default, handler: {(_: UIAlertAction!) in
                     Subscriptions.subscribe(sub.displayName, true, session: (UIApplication.shared.delegate as! AppDelegate).session!)
                     self.parent!.subChanged = true
                     BannerUtil.makeBanner(text: "Subscribed", seconds: 5, context: self.parent, top: true)
@@ -116,14 +119,14 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate  {
                 alrController.addAction(somethingAction)
             }
             
-            let somethingAction = UIAlertAction(title: "Add to sub list", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in
+            let somethingAction = UIAlertAction(title: "Add to sub list", style: UIAlertActionStyle.default, handler: {(_: UIAlertAction!) in
                 Subscriptions.subscribe(sub.displayName, false, session: (UIApplication.shared.delegate as! AppDelegate).session!)
                 self.parent!.subChanged = true
                 BannerUtil.makeBanner(text: "Added to subscription list", seconds: 5, context: self.parent, top: true)
             })
             alrController.addAction(somethingAction)
             
-            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: {(alert: UIAlertAction!) in print("cancel")})
+            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: { (_: UIAlertAction!) in print("cancel") })
             
             alrController.addAction(cancelAction)
             alrController.modalPresentationStyle = .popover
@@ -132,7 +135,7 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate  {
                 presenter.sourceRect = parent!.view.bounds
             }
 
-            parent?.present(alrController, animated: true, completion:{})
+            parent?.present(alrController, animated: true, completion: {})
             
         }
     }

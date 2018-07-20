@@ -17,7 +17,7 @@ class CacheSettings: UITableViewController {
     var autoCacheSwitch = UISwitch()
     var cacheContentSwitch = UISwitch()
 
-    public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String){
+    public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
         cell.textLabel?.textColor = ColorUtil.fontColor
         cell.backgroundColor = ColorUtil.foregroundColor
@@ -70,7 +70,6 @@ class CacheSettings: UITableViewController {
         save(nil)
     }
 
-
     func save(_ selector: AnyObject?) {
         /* todo this
         SubredditReorderViewController.changed = true
@@ -88,11 +87,8 @@ class CacheSettings: UITableViewController {
 
         switch (section) {
         case 0: label.text = "Caching settings"
-            break
         case 1: label.text = "Subreddits to Cache"
-            break
         default: label.text = ""
-            break
         }
         return toReturn
     }
@@ -120,22 +116,25 @@ class CacheSettings: UITableViewController {
         return section == 0 ? 2 : subs.count
     }
 
-
     func switchIsChanged(_ changed: UISwitch) {
-        if(changed == autoCacheSwitch){
-            if(!VCPresenter.proDialogShown(feature: true, self)){
+        if(changed == autoCacheSwitch) {
+            if(!VCPresenter.proDialogShown(feature: true, self)) {
                 SettingValues.autoCache = changed.isOn
                 UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_autoCache)
-            } else {
+            }
+            else {
                 changed.isOn = false
             }
-        } else if(changed == cacheContentSwitch){
+        }
+        else if(changed == cacheContentSwitch) {
             //todo this setting
-        } else if(!changed.isOn){
+        }
+        else if(!changed.isOn) {
             selected.remove(at: selected.index(of: changed.accessibilityIdentifier!)!)
             Subscriptions.setOffline(subs: selected) {
             }
-        } else {
+        }
+        else {
             selected.append(changed.accessibilityIdentifier!)
             Subscriptions.setOffline(subs: selected) {
             }
@@ -145,13 +144,15 @@ class CacheSettings: UITableViewController {
     var selected = [String]()
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if(indexPath.section == 0){
-            if(indexPath.row == 0){
+        if(indexPath.section == 0) {
+            if(indexPath.row == 0) {
                 return autoCache
-            } else {
+            }
+            else {
                 return cacheContent
             }
-        } else {
+        }
+        else {
             let thing = subs[indexPath.row]
             var cell: SubredditCellView?
             let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
@@ -159,7 +160,7 @@ class CacheSettings: UITableViewController {
             cell = c
             cell?.backgroundColor = ColorUtil.foregroundColor
             var aSwitch = UISwitch()
-            if(selected.contains(thing)){
+            if(selected.contains(thing)) {
                 aSwitch.isOn = true
             }
             aSwitch.accessibilityIdentifier = thing

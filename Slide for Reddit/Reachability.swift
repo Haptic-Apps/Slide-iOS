@@ -1,8 +1,8 @@
 import Foundation
 import SystemConfiguration
 
-import UIKit
 import SystemConfiguration.CaptiveNetwork
+import UIKit
 
 public let ReachabilityStatusChangedNotification = "ReachabilityStatusChangedNotification"
 
@@ -18,7 +18,7 @@ public enum ReachabilityType: CustomStringConvertible {
     }
 }
 
-public enum ReachabilityStatus: CustomStringConvertible  {
+public enum ReachabilityStatus: CustomStringConvertible {
     case Offline
     case Online(ReachabilityType)
     case Unknown
@@ -47,7 +47,7 @@ public class Reachability {
             return .Unknown
         }
         
-        var flags : SCNetworkReachabilityFlags = []
+        var flags: SCNetworkReachabilityFlags = []
         if !SCNetworkReachabilityGetFlags(defaultRouteReachability, &flags) {
             return .Unknown
         }
@@ -79,10 +79,12 @@ extension ReachabilityStatus {
         if !connectionRequired && isReachable {
             if isWWAN {
                 self = .Online(.WWAN)
-            } else {
+            }
+            else {
                 self = .Online(.WiFi)
             }
-        } else {
+        }
+        else {
             self =  .Offline
         }
     }

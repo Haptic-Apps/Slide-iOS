@@ -13,7 +13,7 @@ import Foundation
 /* For support, please feel free to contact me at https://www.linkedin.com/in/syedabsar */
 
 public class Watchers {
-	public var total : Int?
+	public var total: Int?
 
 /**
     Returns an array of models based on given dictionary.
@@ -25,11 +25,9 @@ public class Watchers {
 
     - returns: Array of Watchers Instances.
 */
-    public class func modelsFromDictionaryArray(array:NSArray) -> [Watchers]
-    {
-        var models:[Watchers] = []
-        for item in array
-        {
+    public class func modelsFromDictionaryArray(array: NSArray) -> [Watchers] {
+        var models: [Watchers] = []
+        for item in array {
             models.append(Watchers(dictionary: item as! NSDictionary)!)
         }
         return models
@@ -49,7 +47,6 @@ public class Watchers {
 
 		total = dictionary["total"] as? Int
 	}
-
 		
 /**
     Returns the dictionary representation for the current instance.

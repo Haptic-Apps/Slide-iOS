@@ -6,8 +6,8 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
-import UIKit
 import reddift
+import UIKit
 
 class SettingsContent: UITableViewController {
     
@@ -22,7 +22,6 @@ class SettingsContent: UITableViewController {
     
    //for future var dontLoadImagePreviewsCell: UITableViewCell = UITableViewCell()
    // var dontLoadImagePreviews = UISwitch()
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,13 +41,15 @@ class SettingsContent: UITableViewController {
     }
     
     func switchIsChanged(_ changed: UISwitch) {
-        if(changed == showNSFWContent){
+        if(changed == showNSFWContent) {
             SettingValues.nsfwEnabled = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_nsfwEnabled)
-        } else if(changed == showNSFWPreviews){
+        }
+        else if(changed == showNSFWPreviews) {
             SettingValues.nsfwPreviews = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_nsfwPreviews)
-        } else if(changed == hideCollectionViews){
+        }
+        else if(changed == hideCollectionViews) {
             SettingValues.hideNSFWCollection = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_hideNSFWCollection)
         }
@@ -58,22 +59,20 @@ class SettingsContent: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let label : UILabel = UILabel()
+        let label: UILabel = UILabel()
         label.textColor = ColorUtil.baseAccent
         label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
         toReturn.backgroundColor = ColorUtil.backgroundColor
         
         switch(section) {
-        case 0: label.text  = ""
-            break
-        default: label.text  = ""
-            break
+        case 0: label.text = ""
+        default: label.text = ""
         }
         return toReturn
     }
     
-    public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String){
+    public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
         cell.textLabel?.textColor = ColorUtil.fontColor
         cell.backgroundColor = ColorUtil.foregroundColor
@@ -110,14 +109,15 @@ class SettingsContent: UITableViewController {
 
     }
     
-    func doDisables(){
-        if(SettingValues.nsfwEnabled){
+    func doDisables() {
+        if(SettingValues.nsfwEnabled) {
             showNSFWPreviews.isEnabled = true
             hideCollectionViews.isEnabled = true
-            if(!SettingValues.nsfwPreviews){
+            if(!SettingValues.nsfwPreviews) {
                 hideCollectionViews.isEnabled = false
             }
-        } else {
+        }
+        else {
             showNSFWPreviews.isEnabled = false
             hideCollectionViews.isEnabled = false
         }
@@ -128,7 +128,8 @@ class SettingsContent: UITableViewController {
             let url = URL.init(string: "https://www.reddit.com/prefs")!
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
-            } else {
+            }
+            else {
                 UIApplication.shared.openURL(url)
             }
         }
@@ -143,7 +144,6 @@ class SettingsContent: UITableViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return indexPath.row == 0 ? 80 : 60
     }
-    
     
     func tableView(tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
     }
@@ -160,7 +160,6 @@ class SettingsContent: UITableViewController {
         default: fatalError("Unknown section")
         }
     }
-    
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch(section) {

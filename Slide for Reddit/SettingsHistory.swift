@@ -26,7 +26,6 @@ class SettingsHistory: UITableViewController {
     //for future var dontLoadImagePreviewsCell: UITableViewCell = UITableViewCell()
     // var dontLoadImagePreviews = UISwitch()
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -45,13 +44,15 @@ class SettingsHistory: UITableViewController {
     }
     
     func switchIsChanged(_ changed: UISwitch) {
-        if(changed == saveHistory){
+        if(changed == saveHistory) {
             SettingValues.saveHistory = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_saveHistory)
-        } else if(changed == saveNSFWHistory){
+        }
+        else if(changed == saveNSFWHistory) {
             SettingValues.saveNSFWHistory = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_saveNSFWHistory)
-        } else if(changed == readOnScroll){
+        }
+        else if(changed == readOnScroll) {
             SettingValues.markReadOnScroll = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_markReadOnScroll)
         }
@@ -61,23 +62,21 @@ class SettingsHistory: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let label : UILabel = UILabel()
+        let label: UILabel = UILabel()
         label.textColor = ColorUtil.baseAccent
         label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
         toReturn.backgroundColor = ColorUtil.backgroundColor
         
         switch(section) {
-        case 0: label.text  = "Settings"
-            break
+        case 0: label.text = "Settings"
         case 1: label.text = "Clear History"
-        default: label.text  = ""
-            break
+        default: label.text = ""
         }
         return toReturn
     }
     
-    public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String){
+    public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
         cell.textLabel?.textColor = ColorUtil.fontColor
         cell.backgroundColor = ColorUtil.foregroundColor
@@ -119,11 +118,12 @@ class SettingsHistory: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if(indexPath.section == 1){
-            if(indexPath.row == 0){
+        if(indexPath.section == 1) {
+            if(indexPath.row == 0) {
                 History.clearHistory()
                 BannerUtil.makeBanner(text: "Submission history cleared!", color: GMColor.green500Color(), seconds: 5, context: self)
-            } else {
+            }
+            else {
                 Subscriptions.clearSubHistory()
                 BannerUtil.makeBanner(text: "Subreddit history cleared!", color: GMColor.green500Color(), seconds: 5, context: self)
             }
@@ -131,11 +131,12 @@ class SettingsHistory: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
-    func doDisables(){
-        if(SettingValues.saveHistory){
+    func doDisables() {
+        if(SettingValues.saveHistory) {
             saveNSFWHistory.isEnabled = true
             readOnScroll.isEnabled = true
-        } else {
+        }
+        else {
             saveNSFWHistory.isEnabled = false
             readOnScroll.isEnabled = false
         }
@@ -150,7 +151,6 @@ class SettingsHistory: UITableViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 60
     }
-    
     
     func tableView(tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
     }
@@ -174,7 +174,6 @@ class SettingsHistory: UITableViewController {
         default: fatalError("Unknown section")
         }
     }
-    
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch(section) {

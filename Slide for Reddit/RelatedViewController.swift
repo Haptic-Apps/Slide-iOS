@@ -6,12 +6,12 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
-import UIKit
 import reddift
+import UIKit
 
 class RelatedViewController: ContentListingViewController {
     
-    init(thing: RSubmission){
+    init(thing: RSubmission) {
         super.init(dataSource: RelatedContributionLoader.init(thing: thing, sub: thing.subreddit))
         baseData.delegate = self
         self.title = "Other discussions"

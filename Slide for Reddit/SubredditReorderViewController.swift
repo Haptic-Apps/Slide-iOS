@@ -6,8 +6,8 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
-import UIKit
 import reddift
+import UIKit
 
 class SubredditReorderViewController: UITableViewController {
 
@@ -86,7 +86,6 @@ class SubredditReorderViewController: UITableViewController {
         return UITableViewAutomaticDimension
     }
 
-
     func save(_ selector: AnyObject?) {
         SubredditReorderViewController.changed = true
         Subscriptions.set(name: AccountController.currentName, subs: subs, completion: {
@@ -159,7 +158,6 @@ class SubredditReorderViewController: UITableViewController {
         return cell!
     }
 
-
     override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
         return .delete
     }
@@ -207,7 +205,8 @@ class SubredditReorderViewController: UITableViewController {
             for i in rows {
                 if (!pinned.contains(self.subs[i.row])) {
                     pinned2.append(self.subs[i.row])
-                } else {
+                }
+                else {
                     pinned3.append(self.subs[i.row])
                 }
             }
@@ -218,7 +217,8 @@ class SubredditReorderViewController: UITableViewController {
                 })
                 tableView.reloadData()
                 //todo saved pin
-            } else {
+            }
+            else {
                 //Need to pin remaining and move to top
                 pinned.append(contentsOf: pinned2)
                 self.subs = self.subs.filter({ (input) -> Bool in
@@ -248,15 +248,15 @@ class SubredditReorderViewController: UITableViewController {
             $0.localizedCaseInsensitiveCompare($1) == ComparisonResult.orderedAscending
         }
         self.subs.insert(contentsOf: pinned, at: 0)
-        if(self.subs.contains("all")){
+        if(self.subs.contains("all")) {
             self.subs.remove(at: self.subs.index(of: "all")!)
             self.subs.insert("all", at: 0)
         }
-        if(self.subs.contains("popular")){
+        if(self.subs.contains("popular")) {
             self.subs.remove(at: self.subs.index(of: "popular")!)
             self.subs.insert("popular", at: 0)
         }
-        if(self.subs.contains("frontpage")){
+        if(self.subs.contains("frontpage")) {
             self.subs.remove(at: self.subs.index(of: "frontpage")!)
             self.subs.insert("frontpage", at: 0)
         }
@@ -272,13 +272,13 @@ class SubredditReorderViewController: UITableViewController {
 
             let actionSheetController: UIAlertController = UIAlertController(title: "Remove subscriptions", message: "", preferredStyle: .alert)
 
-            var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
+            var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
                 print("Cancel")
             }
             actionSheetController.addAction(cancelActionButton)
 
-            if(AccountController.isLoggedIn){
-                cancelActionButton = UIAlertAction(title: "Remove and unsubscribe", style: .default) { action -> Void in
+            if(AccountController.isLoggedIn) {
+                cancelActionButton = UIAlertAction(title: "Remove and unsubscribe", style: .default) { _ -> Void in
                     //todo unsub
                     var top: [String] = []
                     for i in rows {
@@ -292,10 +292,11 @@ class SubredditReorderViewController: UITableViewController {
                     
                     for sub in top {
                         do {
-                            try (UIApplication.shared.delegate as! AppDelegate).session?.setSubscribeSubreddit(Subreddit.init(subreddit: sub), subscribe: false, completion: { (result) in
+                            try (UIApplication.shared.delegate as! AppDelegate).session?.setSubscribeSubreddit(Subreddit.init(subreddit: sub), subscribe: false, completion: { (_) in
                                 
                             })
-                        } catch {
+                        }
+                        catch {
                             
                         }
                     }
@@ -303,7 +304,7 @@ class SubredditReorderViewController: UITableViewController {
                 actionSheetController.addAction(cancelActionButton)
             }
 
-            cancelActionButton = UIAlertAction(title: "Just remove", style: .default) { action -> Void in
+            cancelActionButton = UIAlertAction(title: "Just remove", style: .default) { _ -> Void in
                 var top: [String] = []
                 for i in rows {
                     top.append(self.subs[i.row])
@@ -332,7 +333,8 @@ class SubredditReorderViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         if (tableView.indexPathsForSelectedRows != nil && !tableView.indexPathsForSelectedRows!.isEmpty) {
             self.navigationItem.setRightBarButtonItems(editItems, animated: true)
-        } else {
+        }
+        else {
             self.navigationItem.setRightBarButtonItems(normalItems, animated: true)
         }
     }
@@ -341,7 +343,8 @@ class SubredditReorderViewController: UITableViewController {
         if (!tableView.indexPathsForSelectedRows!.isEmpty) {
             print(tableView.indexPathsForSelectedRows!.count)
             self.navigationItem.setRightBarButtonItems(editItems, animated: true)
-        } else {
+        }
+        else {
             self.navigationItem.setRightBarButtonItems(normalItems, animated: true)
         }
     }

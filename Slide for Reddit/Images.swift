@@ -13,17 +13,17 @@ import Foundation
 /* For support, please feel free to contact me at https://www.linkedin.com/in/syedabsar */
 
 public class Images {
-	public var hash : String?
-	public var title : String?
-	public var description : String?
-	public var width : Int?
-	public var height : Int?
-	public var size : Int?
-	public var ext : String?
-	public var animated : String?
-	public var prefer_video : String?
-	public var looping : String?
-	public var datetime : String?
+	public var hash: String?
+	public var title: String?
+	public var description: String?
+	public var width: Int?
+	public var height: Int?
+	public var size: Int?
+	public var ext: String?
+	public var animated: String?
+	public var prefer_video: String?
+	public var looping: String?
+	public var datetime: String?
 
 /**
     Returns an array of models based on given dictionary.
@@ -35,11 +35,9 @@ public class Images {
 
     - returns: Array of Images Instances.
 */
-    public class func modelsFromDictionaryArray(array:NSArray) -> [Images]
-    {
-        var models:[Images] = []
-        for item in array
-        {
+    public class func modelsFromDictionaryArray(array: NSArray) -> [Images] {
+        var models: [Images] = []
+        for item in array {
             models.append(Images(dictionary: item as! NSDictionary)!)
         }
         return models
@@ -69,7 +67,6 @@ public class Images {
 		looping = dictionary["looping"] as? String
 		datetime = dictionary["datetime"] as? String
 	}
-
 		
 /**
     Returns the dictionary representation for the current instance.

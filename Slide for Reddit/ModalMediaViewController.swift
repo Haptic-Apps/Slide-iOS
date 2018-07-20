@@ -6,9 +6,9 @@
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
-import UIKit
-import Then
 import Anchorage
+import Then
+import UIKit
 
 class ModalMediaViewController: UIViewController {
 
@@ -18,7 +18,7 @@ class ModalMediaViewController: UIViewController {
     var fullscreen = false
     private let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
 
-    private var savedColor : UIColor?
+    private var savedColor: UIColor?
 
     init(model: EmbeddableMediaDataModel) {
         super.init(nibName: nil, bundle: nil)
@@ -114,7 +114,7 @@ extension ModalMediaViewController {
             (self.parent as? SwipeDownModalVC)?.background?.alpha = 1
             self.embeddedVC.bottomButtons.alpha = 0
             self.embeddedVC.progressView.alpha = 0
-        }, completion: {finished in
+        }, completion: {_ in
             self.embeddedVC.bottomButtons.isHidden = true
             self.embeddedVC.progressView.isHidden = true
         })
@@ -132,7 +132,7 @@ extension ModalMediaViewController {
             self.embeddedVC.bottomButtons.alpha = 1
             self.embeddedVC.progressView.alpha = self.embeddedVC.progressView.progress > 0.9 ? 0 : 1
 
-        }, completion: {finished in
+        }, completion: {_ in
         })
     }
     

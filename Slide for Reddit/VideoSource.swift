@@ -29,10 +29,11 @@ class GfycatVideoSource: VideoSource {
         let name = url.substring(url.lastIndexOf("/")!, length: url.length - url.lastIndexOf("/")!)
 
         let finalURL = URL(string: "https://gfycat.com/cajax/get" + name)!
-        URLSession.shared.dataTask(with: finalURL) { (data, response, error) in
+        URLSession.shared.dataTask(with: finalURL) { (data, _, error) in
             if error != nil {
                 print(error ?? "Error loading gif...")
-            } else {
+            }
+            else {
                 do {
                     guard let json = try JSONSerialization.jsonObject(with: data!, options: []) as? NSDictionary else {
                         return
@@ -43,7 +44,8 @@ class GfycatVideoSource: VideoSource {
                     DispatchQueue.main.async {
                         completion((gif?.gfyItem?.mp4Url)!)
                     }
-                } catch let error as NSError {
+                }
+                catch let error as NSError {
                     print(error)
                 }
             }
@@ -65,10 +67,11 @@ class StreamableVideoSource: VideoSource {
         let hash = url.substring(url.lastIndexOf("/")! + 1, length: url.length - (url.lastIndexOf("/")! + 1))
 
         let finalURL = URL(string: "https://api.streamable.com/videos/" + hash)!
-        URLSession.shared.dataTask(with: finalURL) { (data, response, error) in
+        URLSession.shared.dataTask(with: finalURL) { (data, _, error) in
             if error != nil {
                 print(error ?? "Error loading gif...")
-            } else {
+            }
+            else {
                 do {
                     guard let json = try JSONSerialization.jsonObject(with: data!, options: []) as? NSDictionary else {
                         return
@@ -80,7 +83,8 @@ class StreamableVideoSource: VideoSource {
                         var video = ""
                         if let url = gif?.files?.mp4mobile?.url {
                             video = url
-                        } else {
+                        }
+                        else {
                             video = (gif?.files?.mp4?.url!)!
                         }
                         if (video.hasPrefix("//")) {
@@ -88,7 +92,8 @@ class StreamableVideoSource: VideoSource {
                         }
                         completion(video)
                     }
-                } catch let error as NSError {
+                }
+                catch let error as NSError {
                     print(error)
                 }
             }
@@ -100,10 +105,11 @@ class StreamableVideoSource: VideoSource {
 class VidMeVideoSource: VideoSource {
     func load(url: String, completion: @escaping (String) -> Void) {
         let finalURL = URL(string: "https://api.vid.me/videoByUrl?url=" + url)!
-        URLSession.shared.dataTask(with: finalURL) { (data, response, error) in
+        URLSession.shared.dataTask(with: finalURL) { (data, _, error) in
             if error != nil {
                 print(error ?? "Error loading gif...")
-            } else {
+            }
+            else {
                 do {
                     guard let json = try JSONSerialization.jsonObject(with: data!, options: []) as? NSDictionary else {
                         return
@@ -114,7 +120,8 @@ class VidMeVideoSource: VideoSource {
                     DispatchQueue.main.async {
                         completion((gif?.video?.complete_url)!)
                     }
-                } catch let error as NSError {
+                }
+                catch let error as NSError {
                     print(error)
                 }
             }

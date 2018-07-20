@@ -13,14 +13,14 @@ import Foundation
 /* For support, please feel free to contact me at https://www.linkedin.com/in/syedabsar */
 
 public class StreamableJSONBase {
-	public var status : Int?
-	public var files : Files?
-	public var thumbnail_url : String?
-	public var source : String?
-	public var title : String?
-	public var url : String?
-	public var message : String?
-	public var percent : Int?
+	public var status: Int?
+	public var files: Files?
+	public var thumbnail_url: String?
+	public var source: String?
+	public var title: String?
+	public var url: String?
+	public var message: String?
+	public var percent: Int?
 
 /**
     Returns an array of models based on given dictionary.
@@ -32,11 +32,9 @@ public class StreamableJSONBase {
 
     - returns: Array of Json4Swift_Base Instances.
 */
-    public class func modelsFromDictionaryArray(array:NSArray) -> [StreamableJSONBase]
-    {
-        var models:[StreamableJSONBase] = []
-        for item in array
-        {
+    public class func modelsFromDictionaryArray(array: NSArray) -> [StreamableJSONBase] {
+        var models: [StreamableJSONBase] = []
+        for item in array {
             models.append(StreamableJSONBase(dictionary: item as! NSDictionary)!)
         }
         return models
@@ -63,7 +61,6 @@ public class StreamableJSONBase {
 		message = dictionary["message"] as? String
 		percent = dictionary["percent"] as? Int
 	}
-
 		
 /**
     Returns the dictionary representation for the current instance.

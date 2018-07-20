@@ -7,27 +7,25 @@
 //
 
 import Foundation
-import reddift
 import RealmSwift
+import reddift
 
 class InboxContributionLoader: ContributionLoader {
     func reset() {
         content = []
     }
-    
 
     var color: UIColor = .black
     
     var messages: MessageWhere
     var canGetMore = true
     
-    init(whereContent: MessageWhere){
+    init(whereContent: MessageWhere) {
         paginator = Paginator()
         content = []
         color = ColorUtil.getColorForSub(sub: "")
         messages = whereContent
     }
-    
     
     var paginator: Paginator
     var content: [Object]
@@ -35,9 +33,9 @@ class InboxContributionLoader: ContributionLoader {
     var paging = true
     
     func getData(reload: Bool) {
-        if(delegate != nil){
+        if(delegate != nil) {
             do {
-                if(reload){
+                if(reload) {
                     paginator = Paginator()
                 }
                 try delegate?.session?.getMessage(messages, completion: { (result) in
@@ -45,10 +43,10 @@ class InboxContributionLoader: ContributionLoader {
                     case .failure(let error):
                         print(error)
                     case .success(let listing):
-                        if(reload){
+                        if(reload) {
                             self.content = []
                         }
-                        for message in listing.children.flatMap({$0}){
+                        for message in listing.children.flatMap({ $0 }) {
                             self.content.append(RealmDataWrapper.messageToRMessage(message: message as! Message))
                             if((message as! Message).baseJson["replies"] != nil) {
                                 let json = (message as! Message).baseJson as JSONDictionary
@@ -63,12 +61,13 @@ class InboxContributionLoader: ContributionLoader {
                         
                         self.paginator = listing.paginator
                         self.canGetMore = !self.paginator.hasMore()
-                        DispatchQueue.main.async{
+                        DispatchQueue.main.async {
                             self.delegate?.doneLoading()
                         }
                     }
                 })
-            } catch {
+            }
+            catch {
                 print(error)
             }
             

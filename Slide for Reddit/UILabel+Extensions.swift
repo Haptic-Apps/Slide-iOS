@@ -23,7 +23,8 @@ extension UILabel {
             let checkSize: CGSize = bounds.size
             if checkSize.height < constrainedSize.height && checkSize.width < constrainedSize.width {
                 minFontSize = midFontSize
-            } else {
+            }
+            else {
                 maxFontSize = midFontSize
             }
         }

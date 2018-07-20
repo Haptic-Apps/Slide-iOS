@@ -69,7 +69,8 @@ extension UIImage {
             posY = 0
             cgwidth = contextSize.height
             cgheight = contextSize.height
-        } else {
+        }
+        else {
             posX = 0
             posY = ((contextSize.height - contextSize.width) / 2)
             cgwidth = contextSize.width

@@ -29,10 +29,12 @@ class CachedTitle {
             if (!full) {
                 titles[submission.getId()] = titleForSubmission(submission: submission, full: full, white: white)
                 return titles[submission.getId()]!
-            } else {
+            }
+            else {
                 return titleForSubmission(submission: submission, full: full, white: white)
             }
-        } else {
+        }
+        else {
             return title!
         }
     }
@@ -101,17 +103,20 @@ class CachedTitle {
 
         let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.author, small: false))\u{00A0}", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: colorF])
 
-
         let userColor = ColorUtil.getColorForUser(name: submission.author)
         if (submission.distinguished == "admin") {
             authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#E57373"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-        } else if (submission.distinguished == "special") {
+        }
+        else if (submission.distinguished == "special") {
             authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#F44336"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-        } else if (submission.distinguished == "moderator") {
+        }
+        else if (submission.distinguished == "moderator") {
             authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#81C784"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-        } else if (AccountController.currentName == submission.author) {
+        }
+        else if (AccountController.currentName == submission.author) {
             authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#FFB74D"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-        } else if (userColor != ColorUtil.baseColor) {
+        }
+        else if (userColor != ColorUtil.baseColor) {
             authorString.addAttributes([kTTTBackgroundFillColorAttributeName: userColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
         }
 
@@ -146,21 +151,24 @@ class CachedTitle {
             if (SettingValues.abbreviateScores) {
                 let text = (submission.score >= 10000 && SettingValues.abbreviateScores) ? String(format: "%0.1fk ", (Double(submission.score) / Double(1000))) : " \(submission.score)"
                 scoreString = NSMutableAttributedString(string: "\(text)pts \(submission.commentCount)cmts", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: colorF])
-            } else {
+            }
+            else {
                 scoreString = NSMutableAttributedString(string: "\(submission.score)pts \(submission.commentCount)cmts", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: colorF])
             }
             infoString.append(scoreString)
         }
         
-        if(removed.contains(submission.id) || (!submission.removedBy.isEmpty() && !approved.contains(submission.id))){
+        if(removed.contains(submission.id) || (!submission.removedBy.isEmpty() && !approved.contains(submission.id))) {
             let attrs = [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: GMColor.red500Color()] as [String: Any]
             infoString.append(spacer)
-            if(submission.removedBy == "true"){
+            if(submission.removedBy == "true") {
                 infoString.append(NSMutableAttributedString.init(string: "Removed by Reddit\(!submission.removalReason.isEmpty() ? ":\(submission.removalReason)" : "")", attributes: attrs))
-            } else {
+            }
+            else {
                 infoString.append(NSMutableAttributedString.init(string: "Removed\(!submission.removedBy.isEmpty() ? "by \(submission.removedBy)" : "")\(!submission.removalReason.isEmpty() ? " for \(submission.removalReason)" : "")\(!submission.removalNote.isEmpty() ? " \(submission.removalNote)" : "")", attributes: attrs))
             }
-        } else if(approved.contains(submission.id) || (!submission.approvedBy.isEmpty() && !removed.contains(submission.id))){
+        }
+        else if(approved.contains(submission.id) || (!submission.approvedBy.isEmpty() && !removed.contains(submission.id))) {
             let attrs = [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: GMColor.green500Color()] as [String: Any]
             infoString.append(spacer)
             infoString.append(NSMutableAttributedString.init(string: "Approved\(!submission.approvedBy.isEmpty() ? " by \(submission.approvedBy)":"")", attributes: attrs))
@@ -183,11 +191,11 @@ class CachedTitle {
 
             let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.author, small: false))\u{00A0}", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: colorF])
 
-
             let userColor = ColorUtil.getColorForUser(name: submission.crosspostAuthor)
             if (AccountController.currentName == submission.author) {
                 authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#FFB74D"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-            } else if (userColor != ColorUtil.baseColor) {
+            }
+            else if (userColor != ColorUtil.baseColor) {
                 authorString.addAttributes([kTTTBackgroundFillColorAttributeName: userColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
             }
 
@@ -203,7 +211,6 @@ class CachedTitle {
             infoString.append(endString)
         }
 
-
         if (SettingValues.showFirstParagraph && submission.isSelf && !full && !submission.htmlBody.trimmed().isEmpty) {
             infoString.append(NSAttributedString.init(string: "\n\n"))
             var length = submission.htmlBody.indexOf("\n") ?? submission.htmlBody.length
@@ -211,7 +218,6 @@ class CachedTitle {
             let attr = TextDisplayStackView.createAttributedChunk(baseHTML: text, fontSize: 14, submission: false, accentColor: ColorUtil.accentColorForSub(sub: submission.subreddit))
             infoString.append(attr)
         }
-
 
         return infoString
     }

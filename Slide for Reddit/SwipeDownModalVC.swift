@@ -16,7 +16,7 @@ class SwipeDownModalVC: ColorMuxPagingViewController {
     var originalPosition: CGPoint?
     var currentPositionTouched: CGPoint?
     
-    var didStartPan : (_ panStart: Bool)->() = { result in}
+    var didStartPan : (_ panStart: Bool) -> Void = { result in }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,7 +35,7 @@ class SwipeDownModalVC: ColorMuxPagingViewController {
         background!.autoresizingMask = [.flexibleHeight, .flexibleWidth]
         background!.backgroundColor = .black
         
-        if(!(self is ShadowboxViewController)){
+        if(!(self is ShadowboxViewController)) {
             background!.alpha = 0.6
         }
 
@@ -49,7 +49,8 @@ class SwipeDownModalVC: ColorMuxPagingViewController {
             originalPosition = view.center
             currentPositionTouched = panGesture.location(in: view)
             didStartPan(true)
-        } else if panGesture.state == .changed {
+        }
+        else if panGesture.state == .changed {
             view.frame.origin = CGPoint(
                     x: 0,
                     y: translation.y
@@ -57,14 +58,14 @@ class SwipeDownModalVC: ColorMuxPagingViewController {
             let progress = translation.y / (self.view.frame.size.height / 2)
             self.view.alpha = 1 - (abs(progress) * 1.3)
 
-        } else if panGesture.state == .ended {
+        }
+        else if panGesture.state == .ended {
             let velocity = panGesture.velocity(in: view)
 
             let down = panGesture.velocity(in: view).y > 0
-            if abs(velocity.y) >= 1000 || abs(self.view.frame.origin.y) > self.view.frame.size.height / 2{
+            if abs(velocity.y) >= 1000 || abs(self.view.frame.origin.y) > self.view.frame.size.height / 2 {
 
-                UIView.animate(withDuration: 0.2
-                        , animations: {
+                UIView.animate(withDuration: 0.2, animations: {
                     self.view.frame.origin = CGPoint(
                             x: self.view.frame.origin.x,
                             y: self.view.frame.size.height * (down ? 1 : -1) )
@@ -76,7 +77,8 @@ class SwipeDownModalVC: ColorMuxPagingViewController {
                         self.dismiss(animated: false, completion: nil)
                     }
                 })
-            } else {
+            }
+            else {
                 UIView.animate(withDuration: 0.2, animations: {
                     self.view.center = self.originalPosition!
                     self.view.alpha = 1

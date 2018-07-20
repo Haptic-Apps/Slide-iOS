@@ -6,14 +6,14 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
-import UIKit
-import reddift
 import MaterialComponents.MaterialTabs
+import reddift
+import UIKit
 
 class InboxViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIToolbarDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate {
     var content: [MessageWhere] = []
     var isReload = false
-    var session: Session? = nil
+    var session: Session?
 
     var vCs: [UIViewController] = []
 
@@ -68,7 +68,7 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
     }
 
     func new(_ sender: AnyObject) {
-        VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(completion: {(message) in
+        VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(completion: {(_) in
             DispatchQueue.main.async(execute: { () -> Void in
                 BannerUtil.makeBanner(text: "Message sent!", seconds: 3, context: self)
             })
@@ -86,16 +86,16 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
         do {
             try session?.markAllMessagesAsRead(completion: { (result) in
                 switch (result) {
-                case .success(_):
+                case .success:
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "All messages marked as read", seconds: 5, context: self)
                     }
+                default:
                     break
-                default: break
-
                 }
             })
-        } catch {
+        }
+        catch {
 
         }
     }
@@ -105,8 +105,6 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
     func close() {
         self.navigationController?.popViewController(animated: true)
     }
-
-
 
     var tabBar = MDCTabBar()
 
@@ -137,7 +135,6 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
 
         self.view.addSubview(tabBar)
 
-
         time = History.getInboxSeen()
         History.inboxSeen()
         view.backgroundColor = ColorUtil.backgroundColor
@@ -157,19 +154,14 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
             }
         }
 
-
-        if (self.navigationController?.interactivePopGestureRecognizer != nil)
-        {
+        if (self.navigationController?.interactivePopGestureRecognizer != nil) {
             print("Not nil")
-            for view in view.subviews
-            {
-                if let scrollView = view as? UIScrollView
-                {
-                    scrollView.panGestureRecognizer.require(toFail: self.navigationController!.interactivePopGestureRecognizer!);
+            for view in view.subviews {
+                if let scrollView = view as? UIScrollView {
+                    scrollView.panGestureRecognizer.require(toFail: self.navigationController!.interactivePopGestureRecognizer!)
                 }
             }
         }
-
 
         setViewControllers([firstViewController],
                 direction: .forward,
@@ -188,7 +180,8 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
 
         if (!selected) {
             tabBar.setSelectedItem(tabBar.items[page! ], animated: true)
-        } else {
+        }
+        else {
             selected = false
         }
         currentIndex = page!
@@ -205,7 +198,8 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
             scrollView.contentOffset.x = scrollView.frame.width
             return
 
-        } else if currentIndex == 0 && lastPosition < scrollView.frame.width {
+        }
+        else if currentIndex == 0 && lastPosition < scrollView.frame.width {
             scrollView.contentOffset.x = scrollView.frame.width
             return
         }
@@ -235,7 +229,6 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
         guard let viewControllerIndex = vCs.index(of: viewController) else {
             return nil
         }
-
 
         let nextIndex = viewControllerIndex + 1
         let orderedViewControllersCount = vCs.count

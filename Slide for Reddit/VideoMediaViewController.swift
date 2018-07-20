@@ -6,11 +6,11 @@
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
-import UIKit
-import Anchorage
-import Then
 import Alamofire
+import Anchorage
 import SDWebImage
+import Then
+import UIKit
 
 import AVFoundation
 
@@ -168,7 +168,6 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         goToCommentsButton.addTarget(self, action: #selector(openComments(_:)), for: .touchUpInside)
         showTitleButton.addTarget(self, action: #selector(showTitle(_:)), for: .touchUpInside)
         
-        
         dTap = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTap(_:)))
         dTap?.numberOfTapsRequired = 2
         self.view.addGestureRecognizer(dTap!)
@@ -176,7 +175,6 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         tap = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
         tap?.require(toFail: dTap!)
         self.view.addGestureRecognizer(tap!)
-
         
         let dTap2 = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTap(_:)))
         dTap2.numberOfTapsRequired = 2
@@ -189,7 +187,6 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(toggleForcedLandscapeFullscreen))
         self.view.addGestureRecognizer(longPress)
     }
-
     
     func configureLayout() {
         videoView.edgeAnchors == view.edgeAnchors
@@ -209,10 +206,11 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     
     func handleTap(_ sender: UITapGestureRecognizer) {
         if (sender.state == UIGestureRecognizerState.ended) {
-            if(scrubber.alpha == 0){
+            if(scrubber.alpha == 0) {
                 self.handleShowUI()
                 self.startTimerToHide()
-            } else {
+            }
+            else {
                 self.handleHideUI()
             }
         }
@@ -221,7 +219,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     func handleDoubleTap(_ sender: UITapGestureRecognizer) {
         if (sender.state == UIGestureRecognizerState.ended) {
             let x = sender.location(in: self.view).x
-            if(x > UIScreen.main.bounds.size.width / 2){
+            if(x > UIScreen.main.bounds.size.width / 2) {
                 //skip forward
                 if isYoutubeView {
                     let playerCurrentTime = scrubber.slider.value
@@ -231,11 +229,13 @@ class VideoMediaViewController: EmbeddableMediaViewController {
                     
                     if newTime < maxTime {
                         youtubeView.seek(toSeconds: newTime, allowSeekAhead: true)
-                    } else {
+                    }
+                    else {
                         youtubeView.seek(toSeconds: 0, allowSeekAhead: true)
                     }
                     youtubeView.playVideo()
-                } else {
+                }
+                else {
                     if let player = self.videoView.player {
                         let playerCurrentTime = CMTimeGetSeconds(player.currentTime())
                         let maxTime = CMTimeGetSeconds(player.currentItem!.duration)
@@ -245,13 +245,15 @@ class VideoMediaViewController: EmbeddableMediaViewController {
                         if newTime < maxTime {
                             let time2: CMTime = CMTimeMake(Int64(newTime * 1000 as Float64), 1000)
                             player.seek(to: time2)
-                        } else {
+                        }
+                        else {
                             player.seek(to: kCMTimeZero)
                         }
                         player.play()
                     }
                 }
-            } else {
+            }
+            else {
                 //skip back
                 if isYoutubeView {
                     let playerCurrentTime = scrubber.slider.value
@@ -261,11 +263,13 @@ class VideoMediaViewController: EmbeddableMediaViewController {
                     
                     if newTime > 0 {
                         youtubeView.seek(toSeconds: newTime, allowSeekAhead: true)
-                    } else {
+                    }
+                    else {
                         youtubeView.seek(toSeconds: 0, allowSeekAhead: true)
                     }
                     youtubeView.playVideo()
-                } else {
+                }
+                else {
                     if let player = self.videoView.player {
                         let playerCurrentTime = CMTimeGetSeconds(player.currentTime())
                         let maxTime = CMTimeGetSeconds(player.currentItem!.duration)
@@ -275,7 +279,8 @@ class VideoMediaViewController: EmbeddableMediaViewController {
                         if newTime > 0 {
                             let time2: CMTime = CMTimeMake(Int64(newTime * 1000 as Float64), 1000)
                             player.seek(to: time2)
-                        } else {
+                        }
+                        else {
                             player.seek(to: kCMTimeZero)
                         }
                         player.play()
@@ -284,9 +289,8 @@ class VideoMediaViewController: EmbeddableMediaViewController {
             }
         }
     }
-
     
-    func startTimerToHide(_ duration: Double = 5){
+    func startTimerToHide(_ duration: Double = 5) {
         cancelled = false
         timer?.invalidate()
         timer = Timer.scheduledTimer(timeInterval: duration,
@@ -296,19 +300,19 @@ class VideoMediaViewController: EmbeddableMediaViewController {
                                      repeats: false)
     }
     
-    func handleHideUI(){
-        if(!self.scrubber.isHidden){
+    func handleHideUI() {
+        if(!self.scrubber.isHidden) {
             UIView.animate(withDuration: 0.2, animations: {
                 self.scrubber.alpha = 0
-            }, completion: { (isDone) in
+            }, completion: { (_) in
                 self.scrubber.isHidden = true
             })
         }
     }
     
-    func handleShowUI(){
+    func handleShowUI() {
         timer?.invalidate()
-        if(self.scrubber.isHidden){
+        if(self.scrubber.isHidden) {
             self.scrubber.isHidden = false
             UIView.animate(withDuration: 0.2, animations: {
                 self.scrubber.alpha = 1
@@ -359,13 +363,15 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         // Prevent video from stopping system background audio
         do {
             try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
-        } catch let error as NSError {
+        }
+        catch let error as NSError {
             print(error)
         }
 
         do {
             try AVAudioSession.sharedInstance().setActive(true)
-        } catch let error as NSError {
+        }
+        catch let error as NSError {
             print(error)
         }
 
@@ -375,7 +381,8 @@ class VideoMediaViewController: EmbeddableMediaViewController {
             progressView.isHidden = true
             loadYoutube(url: data.baseURL!.absoluteString)
             return
-        } else {
+        }
+        else {
             youtubeView.isHidden = true
         }
 
@@ -391,8 +398,9 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     func getVideo(_ toLoad: String) {
         if (FileManager.default.fileExists(atPath: getKeyFromURL())) {
             playVideo()
-        } else {
-            request = Alamofire.download(toLoad, method: .get, to: { (url, response) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
+        }
+        else {
+            request = Alamofire.download(toLoad, method: .get, to: { (_, _) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
                 return (URL(fileURLWithPath: self.videoType == .REDDIT ? self.getKeyFromURL().replacingOccurrences(of: ".mp4", with: "video.mp4") : self.getKeyFromURL()), [.createIntermediateDirectories])
             }).downloadProgress() { progress in
                 DispatchQueue.main.async {
@@ -406,10 +414,12 @@ class VideoMediaViewController: EmbeddableMediaViewController {
                 }.responseData { response in
                     if let error = response.error {
                         print(error)
-                    } else { //no errors
-                        if(self.videoType == .REDDIT){
+                    }
+                    else { //no errors
+                        if(self.videoType == .REDDIT) {
                             self.downloadRedditAudio()
-                        } else {
+                        }
+                        else {
                             DispatchQueue.main.async {
                                 self.playVideo()
                             }
@@ -419,16 +429,16 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         }
     }
     
-    func downloadRedditAudio(){
+    func downloadRedditAudio() {
         let key = getKeyFromURL()
         var toLoadAudio = self.data.baseURL!.absoluteString
         toLoadAudio = toLoadAudio.substring(0, length: toLoadAudio.lastIndexOf("DASH_")!)
-        toLoadAudio = toLoadAudio + "audio"
-        let finalUrl = URL.init(fileURLWithPath:key)
-        let localUrlV = URL.init(fileURLWithPath:key.replacingOccurrences(of: ".mp4", with: "video.mp4"))
-        let localUrlAudio = URL.init(fileURLWithPath:key.replacingOccurrences(of: ".mp4", with: "audio.mp4"))
+        toLoadAudio += "audio"
+        let finalUrl = URL.init(fileURLWithPath: key)
+        let localUrlV = URL.init(fileURLWithPath: key.replacingOccurrences(of: ".mp4", with: "video.mp4"))
+        let localUrlAudio = URL.init(fileURLWithPath: key.replacingOccurrences(of: ".mp4", with: "audio.mp4"))
 
-        self.request = Alamofire.download(toLoadAudio, method: .get, to: { (url, response) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
+        self.request = Alamofire.download(toLoadAudio, method: .get, to: { (_, _) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
             return (localUrlAudio, [.removePreviousFile, .createIntermediateDirectories])
         }).downloadProgress() { progress in
             DispatchQueue.main.async {
@@ -443,12 +453,14 @@ class VideoMediaViewController: EmbeddableMediaViewController {
                         DispatchQueue.main.async {
                             self.playVideo()
                         }
-                    } catch {
+                    }
+                    catch {
                         DispatchQueue.main.async {
                             self.playVideo()
                         }
                     }
-                } else { //no errors
+                }
+                else { //no errors
                     self.mergeFilesWithUrl(videoUrl: localUrlV, audioUrl: localUrlAudio, savePathUrl: finalUrl) {
                         DispatchQueue.main.async {
                             self.playVideo()
@@ -457,7 +469,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
                 }
         }
     }
-    func playVideo(){
+    func playVideo() {
         self.progressView.alpha = 0
         self.progressView.progress = 1
         self.size.isHidden = true
@@ -471,7 +483,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(playerItemDidreachEnd), name: .AVPlayerItemDidPlayToEndTime, object: playerItem)
     }
     
-    func playerItemDidreachEnd(){
+    func playerItemDidreachEnd() {
         self.videoView.player!.seek(to: kCMTimeZero)
         self.videoView.player!.play()
     }
@@ -479,17 +491,18 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     func formatUrl(sS: String) -> String {
         var s = sS
         if (s.hasSuffix("v") && !s.contains("streamable.com")) {
-            s = s.substring(0, length: s.length - 1);
-        } else if (s.contains("gfycat") && (!s.contains("mp4") && !s.contains("webm"))) {
+            s = s.substring(0, length: s.length - 1)
+        }
+        else if (s.contains("gfycat") && (!s.contains("mp4") && !s.contains("webm"))) {
             if (s.contains("-size_restricted")) {
                 s = s.replacingOccurrences(of: "-size_restricted", with: "")
             }
         }
         if ((s.contains(".webm") || s.contains(".gif")) && !s.contains(".gifv") && s.contains(
             "imgur.com")) {
-            s = s.replacingOccurrences(of: ".gifv", with: ".mp4");
-            s = s.replacingOccurrences(of: ".gif", with: ".mp4");
-            s = s.replacingOccurrences(of: ".webm", with: ".mp4");
+            s = s.replacingOccurrences(of: ".gifv", with: ".mp4")
+            s = s.replacingOccurrences(of: ".gif", with: ".mp4")
+            s = s.replacingOccurrences(of: ".webm", with: ".mp4")
         }
         if (s.endsWith("/")) {
             s = s.substring(0, length: s.length - 1)
@@ -498,9 +511,9 @@ class VideoMediaViewController: EmbeddableMediaViewController {
             if (s.endsWith("/")) {
                 s = s.substring(0, length: s.length - 2)
             }
-            s = s + "/DASH_9_6_M";
+            s += "/DASH_9_6_M"
         }
-        return s;
+        return s
     }
 
     enum VideoType {
@@ -570,9 +583,10 @@ extension VideoMediaViewController {
         let i = URL(string: url)
         if let dictionary = i?.queryDictionary {
             if let t = dictionary["t"] {
-                seconds = getTimeFromString(t);
-            } else if let start = dictionary["start"] {
-                seconds = getTimeFromString(start);
+                seconds = getTimeFromString(t)
+            }
+            else if let start = dictionary["start"] {
+                seconds = getTimeFromString(start)
             }
 
             if let list = dictionary["list"] {
@@ -581,15 +595,17 @@ extension VideoMediaViewController {
 
             if let v = dictionary["v"] {
                 video = v
-            } else if let w = dictionary["w"] {
+            }
+            else if let w = dictionary["w"] {
                 video = w
-            } else if url.lowercased().contains("youtu.be") {
+            }
+            else if url.lowercased().contains("youtu.be") {
                 video = getLastPathSegment(url)
             }
 
             if let u = dictionary["u"] {
                 let param = u
-                video = param.substring(param.indexOf("=")! + 1, length: param.contains("&") ? param.indexOf("&")! : param.length);
+                video = param.substring(param.indexOf("=")! + 1, length: param.contains("&") ? param.indexOf("&")! : param.length)
             }
         }
 
@@ -608,11 +624,12 @@ extension VideoMediaViewController {
                 "showinfo": 0, // Hide video title uploader
                 "loop": 1,
                 "modestbranding": 1, // Remove youtube logo on bottom right
-                "autohide": 1
+                "autohide": 1,
                 ]
             if (!playlist.isEmpty) {
                 strongSelf.youtubeView.load(withPlaylistId: playlist, playerVars: vars)
-            } else {
+            }
+            else {
                 // https://developers.google.com/youtube/player_parameters
                 strongSelf.youtubeView.load(withVideoId: video, playerVars: vars)
             }
@@ -629,8 +646,8 @@ extension VideoMediaViewController {
         }
         
         //fetching the data from the url
-        URLSession.shared.dataTask(with: metaURL, completionHandler: { (data, response, error) -> Void in
-            if let _ = error {
+        URLSession.shared.dataTask(with: metaURL, completionHandler: { (data, _, error) -> Void in
+            if error != nil {
                 failureBlock()
                 return
             }
@@ -795,24 +812,26 @@ extension VideoMediaViewController {
     }
 
     func getTimeFromString(_ time: String) -> Int {
-        var timeAdd = 0;
+        var timeAdd = 0
         for s in time.components(separatedBy: CharacterSet(charactersIn: "hms")) {
             print(s)
             if (!s.isEmpty) {
                 if (time.contains(s + "s")) {
-                    timeAdd += Int(s)!;
-                } else if (time.contains(s + "m")) {
-                    timeAdd += 60 * Int(s)!;
-                } else if (time.contains(s + "h")) {
-                    timeAdd += 3600 * Int(s)!;
+                    timeAdd += Int(s)!
+                }
+                else if (time.contains(s + "m")) {
+                    timeAdd += 60 * Int(s)!
+                }
+                else if (time.contains(s + "h")) {
+                    timeAdd += 3600 * Int(s)!
                 }
             }
         }
         if (timeAdd == 0 && Int(time) != nil) {
-            timeAdd += Int(time)!;
+            timeAdd += Int(time)!
         }
 
-        return timeAdd;
+        return timeAdd
 
     }
     func showTitle(_ sender: AnyObject) {
@@ -830,39 +849,41 @@ extension VideoMediaViewController {
         let open = OpenInChromeController()
         if open.isChromeInstalled() {
             alert.addAction(
-                UIAlertAction(title: "Open in Chrome", style: .default) { (action) in
+                UIAlertAction(title: "Open in Chrome", style: .default) { (_) in
                     open.openInChrome(baseURL, callbackURL: nil, createNewTab: true)
                 }
             )
         }
         alert.addAction(
-            UIAlertAction(title: "Open in Safari", style: .default) { (action) in
+            UIAlertAction(title: "Open in Safari", style: .default) { (_) in
                 if #available(iOS 10.0, *) {
                     UIApplication.shared.open(baseURL, options: [:], completionHandler: nil)
-                } else {
+                }
+                else {
                     UIApplication.shared.openURL(baseURL)
                 }
             }
         )
         alert.addAction(
-            UIAlertAction(title: "Share URL", style: .default) { (action) in
+            UIAlertAction(title: "Share URL", style: .default) { (_) in
                 let shareItems: Array = [baseURL]
                 let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
                 let window = UIApplication.shared.keyWindow!
                 if let modalVC = window.rootViewController?.presentedViewController {
                     modalVC.present(activityViewController, animated: true, completion: nil)
-                } else {
+                }
+                else {
                     window.rootViewController!.present(activityViewController, animated: true, completion: nil)
                 }
             }
         )
         alert.addAction(
-            UIAlertAction(title: "Share Video", style: .default) { (action) in
+            UIAlertAction(title: "Share Video", style: .default) { (_) in
                 //TODO THIS
             }
         )
         alert.addAction(
-            UIAlertAction(title: "Cancel", style: .cancel) { (action) in
+            UIAlertAction(title: "Cancel", style: .cancel) { (_) in
             }
         )
         let window = UIApplication.shared.keyWindow!
@@ -873,10 +894,10 @@ extension VideoMediaViewController {
             presenter.sourceRect = sender.bounds
         }
         
-        
         if let modalVC = window.rootViewController?.presentedViewController {
             modalVC.present(alert, animated: true, completion: nil)
-        } else {
+        }
+        else {
             window.rootViewController!.present(alert, animated: true, completion: nil)
         }
     }
@@ -936,7 +957,8 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
             if player.rate != 0 {
                 player.pause()
                 return false
-            } else {
+            }
+            else {
                 player.play()
                 self.startTimerToHide()
                 return true
@@ -964,7 +986,6 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
         var mutableCompositionAudioTrack: [AVMutableCompositionTrack] = []
         let totalVideoCompositionInstruction: AVMutableVideoCompositionInstruction = AVMutableVideoCompositionInstruction()
         
-        
         //start merge
         let aVideoAsset: AVAsset = AVAsset(url: videoUrl)
         let aAudioAsset: AVAsset = AVAsset(url: audioUrl)
@@ -975,7 +996,6 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
         let aVideoAssetTrack: AVAssetTrack = aVideoAsset.tracks(withMediaType: AVMediaTypeVideo)[0]
         let aAudioAssetTrack: AVAssetTrack = aAudioAsset.tracks(withMediaType: AVMediaTypeAudio)[0]
         
-        
         do {
             try mutableCompositionVideoTrack[0].insertTimeRange(CMTimeRangeMake(kCMTimeZero, aVideoAssetTrack.timeRange.duration), of: aVideoAssetTrack, at: kCMTimeZero)
             
@@ -985,7 +1005,8 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
             
             //Use this instead above line if your audiofile and video file's playing durations are same
             //            try mutableCompositionAudioTrack[0].insertTimeRange(CMTimeRangeMake(kCMTimeZero, aVideoAssetTrack.timeRange.duration), ofTrack: aAudioAssetTrack, atTime: kCMTimeZero)
-        } catch {
+        }
+        catch {
             print(error.localizedDescription)
         }
         
@@ -1003,7 +1024,8 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
         //        AVPlayerVC.player = player
         do {
             try  FileManager.default.removeItem(at: savePathUrl)
-        } catch {
+        }
+        catch {
             print(error.localizedDescription)
         }
         
@@ -1027,6 +1049,3 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
         }
     }
 }
-
-
-

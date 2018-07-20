@@ -13,7 +13,7 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
 
     var vCs: [UIViewController] = []
     var baseSubmissions: [RSubmission] = []
-    var subreddit : String
+    var subreddit: String
 
     func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
         color2 = (pendingViewControllers[0] as! ShadowboxLinkViewController).color
@@ -38,7 +38,6 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
                 animated: true,
                 completion: nil)
     }
-
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -130,7 +129,6 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         guard orderedViewControllersCount != nextIndex else {
             return nil
         }
-
 
         guard orderedViewControllersCount > nextIndex else {
             return nil
@@ -245,7 +243,7 @@ fileprivate extension CGPoint {
         }
     }
 
-    static func -(lhs: CGPoint, rhs: CGPoint) -> CGPoint {
+    static func - (lhs: CGPoint, rhs: CGPoint) -> CGPoint {
         return CGPoint(x: lhs.x - rhs.x, y: lhs.y - rhs.y)
     }
 }

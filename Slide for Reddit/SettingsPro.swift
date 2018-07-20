@@ -6,13 +6,13 @@
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
-import UIKit
 import BiometricAuthentication
 import LicensesViewController
-import SDWebImage
+import MessageUI
 import RealmSwift
 import RLBAlertsPickers
-import MessageUI
+import SDWebImage
+import UIKit
 
 class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
     
@@ -105,9 +105,8 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.restore.imageView?.tintColor = GMColor.lightGreen300Color()
         self.restore.detailTextLabel?.textColor = GMColor.lightGreen300Color()
         self.restore.detailTextLabel?.text = "Restore your purchase!"
-
         
-        var about = PaddingLabel(frame: CGRect.init(x:  0, y: 200, width: self.tableView.frame.size.width, height: 30))
+        let about = PaddingLabel(frame: CGRect.init(x: 0, y: 200, width: self.tableView.frame.size.width, height: 30))
         about.font = UIFont.systemFont(ofSize: 16)
         about.backgroundColor = ColorUtil.foregroundColor
         about.textColor = ColorUtil.fontColor
@@ -116,7 +115,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         about.textAlignment = .center
         about.lineBreakMode = .byClipping
         about.sizeToFit()
-        three = UILabel(frame: CGRect.init(x:  (self.tableView.frame.size.width / 4) - 50, y: 160, width: 100, height: 45))
+        three = UILabel(frame: CGRect.init(x: (self.tableView.frame.size.width / 4) - 50, y: 160, width: 100, height: 45))
 
         three.text = "$4.99"
         three.backgroundColor = GMColor.lightGreen300Color()
@@ -128,8 +127,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         three.font = UIFont.boldSystemFont(ofSize: 20)
         three.textAlignment = .center
         
-        
-        six = UILabel(frame: CGRect.init(x:  (self.tableView.frame.size.width / 4) - 50, y: 160, width: 100, height: 45))
+        six = UILabel(frame: CGRect.init(x: (self.tableView.frame.size.width / 4) - 50, y: 160, width: 100, height: 45))
         six.text = "$7.99"
         six.backgroundColor = GMColor.lightBlue300Color()
         six.layer.cornerRadius = 22.5
@@ -139,7 +137,6 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         six.lineBreakMode = .byWordWrapping
         six.font = UIFont.boldSystemFont(ofSize: 20)
         six.textAlignment = .center
-
         
         self.shadowbox.textLabel?.text = "Shadowbox mode"
         self.shadowbox.detailTextLabel?.text = "View your favorite subreddits distraction free"
@@ -181,7 +178,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.autocache.imageView?.tintColor = ColorUtil.fontColor
         self.autocache.detailTextLabel?.textColor = ColorUtil.fontColor
         
-        purchasePro = UILabel(frame: CGRect.init(x:  0, y: -30, width: (self.view.frame.size.width / 2), height: 200))
+        purchasePro = UILabel(frame: CGRect.init(x: 0, y: -30, width: (self.view.frame.size.width / 2), height: 200))
         purchasePro.backgroundColor = ColorUtil.foregroundColor
         purchasePro.text = "Purchase\nPro"
         purchasePro.textAlignment = .center
@@ -191,7 +188,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         purchasePro.addSubview(three)
         purchasePro.isUserInteractionEnabled = true
         
-        purchaseBundle = UILabel(frame: CGRect.init(x:  (self.view.frame.size.width / 2), y: -30, width: (self.view.frame.size.width / 2), height: 200))
+        purchaseBundle = UILabel(frame: CGRect.init(x: (self.view.frame.size.width / 2), y: -30, width: (self.view.frame.size.width / 2), height: 200))
         purchaseBundle.backgroundColor = ColorUtil.foregroundColor
         purchaseBundle.text = "Purchase Pro\nWith $3 Donation"
         purchaseBundle.textAlignment = .center
@@ -209,7 +206,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
             IAPHandler.shared.purchaseMyProduct(index: 1)
         }
 
-        about.frame.size.height = about.frame.size.height + 200
+        about.frame.size.height += 200
         about.addSubview(purchasePro)
         about.addSubview(purchaseBundle)
         tableView.tableHeaderView = about
@@ -227,7 +224,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
             numberFormatter.locale = items[0].priceLocale
             let price1Str = numberFormatter.string(from: items[0].price)
             let price2Str = numberFormatter.string(from: items[1].price)
-            if(self.three.text! != price1Str!){
+            if(self.three.text! != price1Str!) {
                 //Is a sale
                 
                 let crossedString = NSMutableAttributedString.init(string: "$4.99\n", attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSStrikethroughStyleAttributeName: NSNumber(value: NSUnderlineStyle.styleSingle.rawValue)])
@@ -236,8 +233,8 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
                 let newString = NSMutableAttributedString.init(string: price1Str!, attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 18)])
                 let newString2 = NSMutableAttributedString.init(string: price2Str!, attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 18)])
                 
-                var finalString = NSMutableAttributedString()
-                var finalString2 = NSMutableAttributedString()
+                let finalString = NSMutableAttributedString()
+                let finalString2 = NSMutableAttributedString()
                 
                 finalString.append(crossedString)
                 finalString.append(newString)
@@ -248,15 +245,15 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
                 self.three.attributedText = finalString
                 self.six.attributedText = finalString2
                 
-                self.three.frame = CGRect.init(x:  (self.tableView.frame.size.width / 4) - 50, y: 150, width: 100, height: 80)
-                self.six.frame = CGRect.init(x:  (self.tableView.frame.size.width / 4) - 50, y: 150, width: 100, height: 80)
+                self.three.frame = CGRect.init(x: (self.tableView.frame.size.width / 4) - 50, y: 150, width: 100, height: 80)
+                self.six.frame = CGRect.init(x: (self.tableView.frame.size.width / 4) - 50, y: 150, width: 100, height: 80)
             }
         }
         IAPHandler.shared.purchaseStatusBlock = {[weak self] (type) in
-            guard let strongSelf = self else{ return }
-            if type == .purchased  || type == .restored {
+            guard let strongSelf = self else { return }
+            if type == .purchased || type == .restored {
                 let alertView = UIAlertController(title: "", message: type.message(), preferredStyle: .alert)
-                let action = UIAlertAction(title: "Close", style: .cancel, handler: { (alert) in
+                let action = UIAlertAction(title: "Close", style: .cancel, handler: { (_) in
                     strongSelf.navigationController?.dismiss(animated: true)
                 })
                 alertView.addAction(action)
@@ -265,12 +262,13 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
                 UserDefaults.standard.set(true, forKey: SettingValues.pref_pro)
                 UserDefaults.standard.synchronize()
                 SettingsPro.changed = true
-            } else {
+            }
+            else {
                 let alertView = UIAlertController(title: "", message: "Slide Pro purchase not found. Make sure you are signed in with the same Apple ID as you purchased Slide Pro with originally.\nIf this issue persists, feel free to send me an email!", preferredStyle: .alert)
-                let action = UIAlertAction(title: "Close", style: .cancel, handler: { (alert) in
+                let action = UIAlertAction(title: "Close", style: .cancel, handler: { (_) in
                 })
                 alertView.addAction(action)
-                alertView.addAction(UIAlertAction.init(title: "Message me", style: .default, handler: { (alert) in
+                alertView.addAction(UIAlertAction.init(title: "Message me", style: .default, handler: { (_) in
                     if MFMailComposeViewController.canSendMail() {
                         let mail = MFMailComposeViewController()
                         mail.mailComposeDelegate = strongSelf
@@ -299,7 +297,6 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         return 60
     }
 
-
     func tableView(tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
     }
 
@@ -327,7 +324,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        if(indexPath.row == 0){
+        if(indexPath.row == 0) {
             IAPHandler.shared.restorePurchase()
         }
     }
@@ -345,15 +342,11 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
 
         switch (section) {
         case 0: label.text = "General"
-            break
         case 1: label.text = "Already a Slide supporter?"
-            break
         default: label.text = ""
-            break
         }
         return toReturn
     }
-
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch (section) {

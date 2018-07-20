@@ -41,7 +41,7 @@ public class BannerUtil {
         }
 
         var xmargin = CGFloat(12)
-        if(UIScreen.main.bounds.width > 350){
+        if(UIScreen.main.bounds.width > 350) {
             xmargin += (UIScreen.main.bounds.width - 350) / 2
         }
         let frame = CGRect.init(x: xmargin, y: top ? topmargin : UIScreen.main.bounds.height - bottommargin, width: UIScreen.main.bounds.width - (xmargin * 2), height: 48 + ((text.contains("\n")) ? 24 : 0))
@@ -53,12 +53,13 @@ public class BannerUtil {
         let textParts = text.components(separatedBy: "\n")
         
         let finalText: NSMutableAttributedString!
-        if(textParts.count > 1){
+        if(textParts.count > 1) {
             let firstPart = NSMutableAttributedString.init(string: textParts[0], attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 14)])
             let secondPart = NSMutableAttributedString.init(string: "\n" + textParts[1], attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: UIFont.systemFont(ofSize: 12)])
             firstPart.append(secondPart)
             finalText = firstPart
-        } else {
+        }
+        else {
             finalText = NSMutableAttributedString.init(string: text, attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 14)])
         }
         popup.attributedText = finalText
@@ -71,7 +72,7 @@ public class BannerUtil {
         context.view.superview?.addSubview(popup)
         UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
             self.popup.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
-        }) { (done) in
+        }) { (_) in
             if let callback = callback {
                 self.popup.addTapGestureRecognizer {
                     callback()
@@ -85,7 +86,7 @@ public class BannerUtil {
                 if (!self.cancelled) {
                     self.popup.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
                 }
-            }) { (done) in
+            }) { (_) in
                 if (!self.cancelled) {
                     self.popup.removeFromSuperview()
                     BannerUtil.banner = nil

@@ -7,18 +7,18 @@
 //
 
 import Foundation
-import reddift
 import RealmSwift
+import reddift
 
 protocol ContributionLoader {
     
-    var paginator: Paginator {get}
-    var delegate: ContentListingViewController? {get set}
+    var paginator: Paginator { get }
+    var delegate: ContentListingViewController? { get set }
     func getData(reload: Bool)
-    var content: [Object] {get}
-    var color: UIColor {get set}
-    var paging: Bool {get}
-    var canGetMore: Bool {get}
+    var content: [Object] { get }
+    var color: UIColor { get set }
+    var paging: Bool { get }
+    var canGetMore: Bool { get }
     
     func reset()
     

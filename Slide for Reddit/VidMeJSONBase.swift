@@ -13,11 +13,11 @@ import Foundation
 /* For support, please feel free to contact me at https://www.linkedin.com/in/syedabsar */
 
 public class VidMeJSONBase {
-	public var status : String?
-	public var video : Video?
-	public var progress : Progress?
-	public var watchers : Watchers?
-	public var isFeatured : String?
+	public var status: String?
+	public var video: Video?
+	public var progress: Progress?
+	public var watchers: Watchers?
+	public var isFeatured: String?
 
 /**
     Returns an array of models based on given dictionary.
@@ -29,11 +29,9 @@ public class VidMeJSONBase {
 
     - returns: Array of Json4Swift_Base Instances.
 */
-    public class func modelsFromDictionaryArray(array:NSArray) -> [VidMeJSONBase]
-    {
-        var models:[VidMeJSONBase] = []
-        for item in array
-        {
+    public class func modelsFromDictionaryArray(array: NSArray) -> [VidMeJSONBase] {
+        var models: [VidMeJSONBase] = []
+        for item in array {
             models.append(VidMeJSONBase(dictionary: item as! NSDictionary)!)
         }
         return models
@@ -57,7 +55,6 @@ public class VidMeJSONBase {
 		if (dictionary["watchers"] != nil) { watchers = Watchers(dictionary: dictionary["watchers"] as! NSDictionary) }
 		isFeatured = dictionary["isFeatured"] as? String
 	}
-
 		
 /**
     Returns the dictionary representation for the current instance.

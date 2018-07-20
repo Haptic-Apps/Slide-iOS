@@ -25,24 +25,28 @@ final class ThumbnailLinkCellView: LinkCellView {
             thumbImageContainer.isHidden = false
             let ceight = SettingValues.postViewMode == .COMPACT ? CGFloat(4) : CGFloat(8)
             let ctwelve = SettingValues.postViewMode == .COMPACT ? CGFloat(8) : CGFloat(12)
-            if(SettingValues.actionBarMode != .FULL){
+            if(SettingValues.actionBarMode != .FULL) {
                 thumbImageContainer.bottomAnchor <= contentView.bottomAnchor - ceight
-            } else {
+            }
+            else {
                 thumbImageContainer.bottomAnchor <= box.topAnchor - ceight
             }
 
             // Thumbnail sizing
             thumbImageContainer.topAnchor == contentView.topAnchor + ctwelve
             if SettingValues.leftThumbnail {
-                if(SettingValues.actionBarMode == .SIDE){
+                if(SettingValues.actionBarMode == .SIDE) {
                     thumbImageContainer.leftAnchor == sideButtons.rightAnchor + ceight
-                } else {
+                }
+                else {
                     thumbImageContainer.leftAnchor == contentView.leftAnchor + ctwelve
                 }
-            } else {
-                if(SettingValues.actionBarMode == .SIDE_RIGHT){
+            }
+            else {
+                if(SettingValues.actionBarMode == .SIDE_RIGHT) {
                     thumbImageContainer.rightAnchor == sideButtons.leftAnchor - ceight
-                } else {
+                }
+                else {
                     thumbImageContainer.rightAnchor == contentView.rightAnchor - ctwelve
                 }
             }
@@ -50,22 +54,25 @@ final class ThumbnailLinkCellView: LinkCellView {
             let thumbSize: CGFloat = (SettingValues.largerThumbnail ? 75 : 50) - (SettingValues.postViewMode == .COMPACT ? 15 : 0)
             thumbImageContainer.widthAnchor == thumbSize
             thumbImageContainer.heightAnchor == thumbSize
-            if(SettingValues.actionBarMode == .SIDE){
+            if(SettingValues.actionBarMode == .SIDE) {
                 sideButtons.topAnchor == contentView.topAnchor + ctwelve
                 title.leftAnchor == (SettingValues.leftThumbnail ? thumbImageContainer.rightAnchor + ceight : sideButtons.rightAnchor + ceight)
                 title.rightAnchor == (SettingValues.leftThumbnail ? contentView.rightAnchor - ctwelve : thumbImageContainer.leftAnchor - ceight)
-            } else if(SettingValues.actionBarMode == .SIDE_RIGHT){
+            }
+            else if(SettingValues.actionBarMode == .SIDE_RIGHT) {
                 sideButtons.topAnchor == contentView.topAnchor + ctwelve
                 title.leftAnchor == (SettingValues.leftThumbnail ? thumbImageContainer.rightAnchor + ceight : contentView.leftAnchor + ceight)
                 title.rightAnchor == (SettingValues.leftThumbnail ? sideButtons.leftAnchor - ceight : thumbImageContainer.leftAnchor - ceight)
-            } else {
+            }
+            else {
                 title.leftAnchor == (SettingValues.leftThumbnail ? thumbImageContainer.rightAnchor + ceight : contentView.leftAnchor + ctwelve)
                 title.rightAnchor == (SettingValues.leftThumbnail ? contentView.rightAnchor - ctwelve : thumbImageContainer.leftAnchor - ceight)
             }
             title.topAnchor == contentView.topAnchor + ctwelve
-            if(SettingValues.actionBarMode != .FULL){
+            if(SettingValues.actionBarMode != .FULL) {
                 title.bottomAnchor <= contentView.bottomAnchor - ceight
-            } else {
+            }
+            else {
                 title.bottomAnchor <= box.topAnchor - ceight
             }
         }

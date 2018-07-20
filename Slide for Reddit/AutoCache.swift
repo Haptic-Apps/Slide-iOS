@@ -3,11 +3,11 @@
 // Copyright (c) 2018 Haptic Apps. All rights reserved.
 //
 
-import UIKit
 import MaterialComponents.MDCProgressView
+import RealmSwift
 import reddift
 import SDWebImage
-import RealmSwift
+import UIKit
 
 public class AutoCache: NSObject {
     static var progressView: UILabel?
@@ -24,11 +24,11 @@ public class AutoCache: NSObject {
         }
     }
 
-    static func doCache(subs: [String], progress: @escaping (String, Int, Int, Int) -> (), completion: @escaping () -> Void) {
+    static func doCache(subs: [String], progress: @escaping (String, Int, Int, Int) -> Void, completion: @escaping () -> Void) {
         cacheSub(0, progress: progress, completion: completion)
     }
 
-    static func cacheComments(_ index: Int, commentIndex: Int, currentLinks: [RSubmission], realmListing: RListing, done: Int, failed: Int, progress: @escaping (String, Int, Int, Int) -> (), completion: @escaping () -> Void) {
+    static func cacheComments(_ index: Int, commentIndex: Int, currentLinks: [RSubmission], realmListing: RListing, done: Int, failed: Int, progress: @escaping (String, Int, Int, Int) -> Void, completion: @escaping () -> Void) {
         if (cancel) {
             return
         }
@@ -42,7 +42,8 @@ public class AutoCache: NSObject {
                 }
                 realm.create(type(of: realmListing), value: realmListing, update: true)
                 try realm.commitWrite()
-            } catch {
+            }
+            catch {
                 print(error)
             }
             DispatchQueue.main.async {
@@ -61,14 +62,13 @@ public class AutoCache: NSObject {
                     failed += 1
                     print(error)
                     progress(subs[index], done, currentLinks.count, failed)
-                    break
                 case .success(let tuple):
                     done += 1
                     progress(subs[index], done, currentLinks.count, failed)
                     let startDepth = 1
                     var allIncoming: [(Thing, Int)] = []
                     var comments = [String]()
-                    var content: Dictionary = Dictionary<String, Object>()
+                    var content: Dictionary = [String: Object]()
 
                     for child in tuple.1.children {
                         let incoming = AutoCache.extendKeepMore(in: child, current: startDepth)
@@ -92,7 +92,8 @@ public class AutoCache: NSObject {
                             }
                             realm.create(type(of: link), value: link, update: true)
                             try realm.commitWrite()
-                        } catch {
+                        }
+                        catch {
 
                         }
                     }
@@ -104,13 +105,14 @@ public class AutoCache: NSObject {
                     }
                 }
             })
-        } catch {
+        }
+        catch {
             print(error)
         }
 
     }
 
-    static func cacheSub(_ index: Int, progress: @escaping (String, Int, Int, Int) -> (), completion: @escaping () -> Void) {
+    static func cacheSub(_ index: Int, progress: @escaping (String, Int, Int, Int) -> Void, completion: @escaping () -> Void) {
         if (cancel) {
             return
         }
@@ -135,7 +137,6 @@ public class AutoCache: NSObject {
                     DispatchQueue.main.async {
                         AutoCache.cacheSub(index + 1, progress: progress, completion: completion)
                     }
-                    break
                 case .success(let listing):
                     if (cancel) {
                         return
@@ -157,7 +158,8 @@ public class AutoCache: NSObject {
                     }
                 }
             })
-        } catch {
+        }
+        catch {
             print(error)
         }
     }
@@ -185,7 +187,8 @@ public class AutoCache: NSObject {
             if (!fullImage && height < 50) {
                 big = false
                 thumb = true
-            } else if (big && (SettingValues.postImageMode == .CROPPED_IMAGE)) {
+            }
+            else if (big && (SettingValues.postImageMode == .CROPPED_IMAGE)) {
                 height = 200
             }
 
@@ -216,8 +219,10 @@ public class AutoCache: NSObject {
 
             if (thumb && !big) {
                 if (submission.thumbnailUrl == "nsfw") {
-                } else if (submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty) {
-                } else {
+                }
+                else if (submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty) {
+                }
+                else {
                     if let url = URL.init(string: submission.thumbnailUrl) {
                         urls.append(url)
                     }
@@ -230,7 +235,8 @@ public class AutoCache: NSObject {
                         urls.append(url)
                     }
 
-                } else {
+                }
+                else {
                     if let url = URL.init(string: submission.bannerUrl) {
                         urls.append(url)
                     }
@@ -240,7 +246,6 @@ public class AutoCache: NSObject {
         }
         SDWebImagePrefetcher.init().prefetchURLs(urls)
     }
-
 
     func setupProgressView(_ base: MainViewController) {
         AutoCache.progressView = UILabel.init(frame: CGRect.init(x: 12, y: base.view.frame.size.height - 120, width: base.view.frame.size.width - 24, height: 48))
@@ -299,7 +304,8 @@ public class AutoCache: NSObject {
             for obj in comment.replies.children {
                 buf.append(contentsOf: extendKeepMore(in: obj, current: depth + 1))
             }
-        } else if let more = comment as? More {
+        }
+        else if let more = comment as? More {
             buf.append((more, depth))
         }
         return buf
@@ -321,7 +327,8 @@ public class AutoCache: NSObject {
                     }
                     buf.append((comment, depth + relativeDepth))
                     buf.append(contentsOf: extendForMore(parentId: comment.getId(), comments: comments, current: depth + relativeDepth + 1))
-                } else if let more = thing as? More {
+                }
+                else if let more = thing as? More {
                     var relativeDepth = 0
                     for parent in buf {
                         let parentId = parent.0 is Comment ? (parent.0 as! Comment).parentId : (parent.0 as! More).parentId
@@ -337,13 +344,12 @@ public class AutoCache: NSObject {
         return buf
     }
 
-
     static func cancelAutocache() {
         print("Cancelling")
         cancel = true
         UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
             AutoCache.progressView!.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
-        }, completion: { b in
+        }, completion: { _ in
             AutoCache.progressView!.removeFromSuperview()
             AutoCache.progressView = nil
         })

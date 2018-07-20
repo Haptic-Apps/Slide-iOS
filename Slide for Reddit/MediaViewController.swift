@@ -6,12 +6,12 @@
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
-import UIKit
-import reddift
-import SDWebImage
 import MaterialComponents.MaterialProgressView
-import SafariServices
 import MaterialComponents.MDCBottomSheetController
+import reddift
+import SafariServices
+import SDWebImage
+import UIKit
 
 class MediaViewController: UIViewController, MediaVCDelegate, UIViewControllerTransitioningDelegate {
 
@@ -38,22 +38,28 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIViewControllerTr
         if (type == .EXTERNAL) {
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(lnk.url!, options: [:], completionHandler: nil)
-            } else {
+            }
+            else {
                 UIApplication.shared.openURL(lnk.url!)
             }
-        } else {
+        }
+        else {
             if (ContentType.isGif(uri: url)) {
                 if (!link!.videoPreview.isEmpty()) {
                     doShow(url: URL.init(string: link!.videoPreview)!)
-                } else {
+                }
+                else {
                     doShow(url: url)
                 }
-            } else {
+            }
+            else {
                 if (lq && shownURL != nil) {
                     doShow(url: url, lq: shownURL)
-                } else if (shownURL != nil && ContentType.imageType(t: type)) {
+                }
+                else if (shownURL != nil && ContentType.imageType(t: type)) {
                     doShow(url: shownURL!)
-                } else {
+                }
+                else {
                     doShow(url: url)
                 }
             }
@@ -66,21 +72,23 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIViewControllerTr
         var url = contentUrl?.absoluteString
         if (shouldTruncate(url: contentUrl!)) {
             let content = contentUrl?.absoluteString
-            contentUrl = URL.init(string: (content?.substring(to: (content?.characters.index(of: "."))!))!)
+            contentUrl = URL.init(string: (content?.substring(to: (content?.index(of: "."))!))!)
         }
         let type = ContentType.getContentType(baseUrl: contentUrl)
 
         if (type == ContentType.CType.ALBUM && SettingValues.internalAlbumView) {
             print("Showing album")
             return AlbumViewController.init(urlB: contentUrl!)
-        } else if (contentUrl != nil && ContentType.displayImage(t: type) && SettingValues.internalImageView || (type == .GIF && SettingValues.internalGifView) || type == .STREAMABLE || type == .VID_ME || (type == ContentType.CType.VIDEO && SettingValues.internalYouTube)) {
+        }
+        else if (contentUrl != nil && ContentType.displayImage(t: type) && SettingValues.internalImageView || (type == .GIF && SettingValues.internalGifView) || type == .STREAMABLE || type == .VID_ME || (type == ContentType.CType.VIDEO && SettingValues.internalYouTube)) {
             if (!ContentType.isGifLoadInstantly(uri: baseUrl) && type == .GIF) {
                 if (SettingValues.safariVC) {
                     let safariVC = SFHideSafariViewController(url: baseUrl)
                     if #available(iOS 10.0, *) {
                         safariVC.preferredBarTintColor = ColorUtil.backgroundColor
                         safariVC.preferredControlTintColor = ColorUtil.fontColor
-                    } else {
+                    }
+                    else {
                         // Fallback on earlier versions
                     }
                     return safariVC
@@ -88,20 +96,23 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIViewControllerTr
                 return WebsiteViewController(url: baseUrl, subreddit: link == nil ? "" : link.subreddit)
             }
             return SingleContentViewController.init(url: contentUrl!, lq: lq, commentCallback)
-        } else if (type == ContentType.CType.LINK || type == ContentType.CType.NONE) {
+        }
+        else if (type == ContentType.CType.LINK || type == ContentType.CType.NONE) {
             if (SettingValues.safariVC) {
                 let safariVC = SFHideSafariViewController(url: baseUrl)
                 if #available(iOS 10.0, *) {
                     safariVC.preferredBarTintColor = ColorUtil.backgroundColor
                     safariVC.preferredControlTintColor = ColorUtil.fontColor
-                } else {
+                }
+                else {
                     // Fallback on earlier versions
                 }
                 return safariVC
             }
             let web = WebsiteViewController(url: baseUrl, subreddit: link == nil ? "" : link.subreddit)
             return web
-        } else if (type == ContentType.CType.REDDIT) {
+        }
+        else if (type == ContentType.CType.REDDIT) {
             return RedditLink.getViewControllerForURL(urlS: contentUrl!)
         }
         if (SettingValues.safariVC) {
@@ -109,7 +120,8 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIViewControllerTr
             if #available(iOS 10.0, *) {
                 safariVC.preferredBarTintColor = ColorUtil.backgroundColor
                 safariVC.preferredControlTintColor = ColorUtil.fontColor
-            } else {
+            }
+            else {
                 // Fallback on earlier versions
             }
             return safariVC
@@ -121,7 +133,7 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIViewControllerTr
 
     public func shouldTruncate(url: URL) -> Bool {
         let path = url.path
-        return !ContentType.isGif(uri: url) && !ContentType.isImage(uri: url) && path.contains(".");
+        return !ContentType.isGif(uri: url) && !ContentType.isImage(uri: url) && path.contains(".")
     }
 
     func showSpoiler(_ string: String) {
@@ -139,10 +151,12 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIViewControllerTr
         if (ContentType.isExternal(url)) {
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
-            } else {
+            }
+            else {
                 UIApplication.shared.openURL(url)
             }
-        } else {
+        }
+        else {
             contentUrl = URL.init(string: String.init(htmlEncodedString: url.absoluteString))!
             if (ContentType.isTable(uri: url)) {
 //                let controller = TableDisplayViewController.init(baseHtml: url.absoluteString, color: navigationController?.navigationBar.barTintColor ?? ColorUtil.getColorForSub(sub: ""))
@@ -156,18 +170,22 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIViewControllerTr
 //
 //                present(MDCBottomSheetController.init(contentViewController: newParent), animated: true, completion: nil)
 
-            } else if (ContentType.isSpoiler(uri: url)) {
+            }
+            else if (ContentType.isSpoiler(uri: url)) {
                 let controller = UIAlertController.init(title: "Spoiler", message: url.absoluteString, preferredStyle: .alert)
                 present(controller, animated: true, completion: nil)
-            } else {
+            }
+            else {
                 let controller = getControllerForUrl(baseUrl: url, lq: lq)!
                 if (controller is AlbumViewController) {
                     controller.modalPresentationStyle = .overFullScreen
                     present(controller, animated: true, completion: nil)
-                } else if (controller is SingleContentViewController) {
+                }
+                else if (controller is SingleContentViewController) {
                     controller.modalPresentationStyle = .overFullScreen
                     present(controller, animated: true, completion: nil)
-                } else {
+                }
+                else {
                     VCPresenter.showVC(viewController: controller, popupIfPossible: true, parentNavigationController: navigationController, parentViewController: self)
                 }
             }

@@ -6,9 +6,9 @@
 //  Copyright © 2016 Haptic Apps. All rights reserved.
 //
 
-import UIKit
 import reddift
 import SDWebImage
+import UIKit
 import XLActionController
 
 class ContentListingViewController: MediaViewController, UICollectionViewDelegate, WrappingFlowLayoutDelegate, UICollectionViewDataSource, SubmissionMoreDelegate {
@@ -18,7 +18,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     }
 
     var baseData: ContributionLoader
-    var session: Session? = nil
+    var session: Session?
     var tableView: UICollectionView!
 
     init(dataSource: ContributionLoader) {
@@ -31,7 +31,6 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
 
     func failed(error: Error) {
         print(error)
@@ -157,7 +156,6 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                 thumb = false
             }
 
-
             if (!big && !thumb && submission.type != .SELF && submission.type != .NONE) { //If a submission has a link but no images, still show the web thumbnail
                 thumb = true
             }
@@ -177,18 +175,22 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
 
             if (thumb && !big) {
                 target = .thumb
-            } else if (big) {
+            }
+            else if (big) {
                 target = .banner
-            } else {
+            }
+            else {
                 target = .text
             }
 
             var c: LinkCellView?
             if (target == .thumb) {
                 c = tableView.dequeueReusableCell(withReuseIdentifier: "thumb", for: indexPath) as! ThumbnailLinkCellView
-            } else if (target == .banner) {
+            }
+            else if (target == .banner) {
                 c = tableView.dequeueReusableCell(withReuseIdentifier: "banner", for: indexPath) as! BannerLinkCellView
-            } else {
+            }
+            else {
                 c = tableView.dequeueReusableCell(withReuseIdentifier: "text", for: indexPath) as! TextLinkCellView
             }
 
@@ -200,13 +202,15 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             c?.layer.shouldRasterize = true
             c?.layer.rasterizationScale = UIScreen.main.scale
             cell = c
-        } else if thing is RComment {
+        }
+        else if thing is RComment {
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "comment", for: indexPath) as! CommentCellView
             c.setComment(comment: (thing as! RComment), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
             c.layer.shouldRasterize = true
             c.layer.rasterizationScale = UIScreen.main.scale
             cell = c
-        } else {
+        }
+        else {
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "message", for: indexPath) as! MessageCellView
             c.setMessage(message: (thing as! RMessage), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
             c.layer.shouldRasterize = true
@@ -221,9 +225,8 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         return cell!
     }
 
-
     func collectionView(_ collectionView: UICollectionView, width: CGFloat, indexPath: IndexPath) -> CGSize {
-        var itemWidth = width
+        let itemWidth = width
 
         if (indexPath.row < baseData.content.count) {
             let thing = baseData.content[indexPath.row]
@@ -250,20 +253,22 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     if (!fullImage && submissionHeight < 50) {
                         big = false
                         thumb = true
-                    } else if (big && (SettingValues.postImageMode == .CROPPED_IMAGE)) {
+                    }
+                    else if (big && (SettingValues.postImageMode == .CROPPED_IMAGE)) {
                         submissionHeight = 200
-                    } else if (big) {
+                    }
+                    else if (big) {
                         let ratio = Double(submissionHeight) / Double(submission.width)
-                        let width = Double(itemWidth);
+                        let width = Double(itemWidth)
 
                         let h = width * ratio
                         if (h == 0) {
                             submissionHeight = 200
-                        } else {
+                        }
+                        else {
                             submissionHeight = Int(h)
                         }
                     }
-
 
                     if (type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big) {
                         big = false
@@ -275,11 +280,9 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                         big = false
                     }
 
-
                     if (big || !submission.thumbnail) {
                         thumb = false
                     }
-
 
                     if (!big && !thumb && submission.type != .SELF && submission.type != .NONE) { //If a submission has a link but no images, still show the web thumbnail
                         thumb = true
@@ -294,7 +297,6 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                         big = false
                         thumb = true
                     }
-
 
                     if (SettingValues.noImages) {
                         big = false
@@ -327,17 +329,20 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                         innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between top and thumbnail
                         innerPadding += 18 - (SettingValues.postViewMode == .COMPACT ? 4 : 0) //between label and bottom box
                         innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
-                    } else if (big) {
+                    }
+                    else if (big) {
                         if (SettingValues.postViewMode == .CENTER) {
                             innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 16) //between label
                             innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between banner and box
-                        } else {
+                        }
+                        else {
                             innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between banner and label
                             innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between label and box
                         }
                         
                         innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
-                    } else {
+                    }
+                    else {
                         innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8)
                         innerPadding += 5 //between label and body
                         innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between body and box
@@ -349,7 +354,8 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                         estimatedUsableWidth -= thumbheight //is the same as the width
                         estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb
                         estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between thumb and label
-                    } else {
+                    }
+                    else {
                         estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //12 padding on either side
                     }
                     
@@ -361,7 +367,8 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     estimatedHeights[submission.id] = totalHeight
                 }
                 return CGSize(width: itemWidth, height: estimatedHeights[submission.id]!)
-            } else if (thing is RComment) {
+            }
+            else if (thing is RComment) {
                 let comment = thing as! RComment
                 if (estimatedHeights[comment.id] == nil) {
                     let attrs = [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false)] as [String: Any]
@@ -389,13 +396,15 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     estimatedHeights[comment.id] = height.estimatedHeight + 20
                 }
                 return CGSize(width: itemWidth, height: estimatedHeights[comment.id]!)
-            } else {
+            }
+            else {
                 let message = thing as! RMessage
                 if (estimatedHeights[message.id] == nil) {
                     var title: NSMutableAttributedString = NSMutableAttributedString()
                     if (message.wasComment) {
                         title = NSMutableAttributedString.init(string: message.linkTitle, attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 18, submission: true)])
-                    } else {
+                    }
+                    else {
                         title = NSMutableAttributedString.init(string: message.subject, attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 18, submission: true)])
                     }
 
@@ -421,8 +430,9 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                             let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
                             let font = FontGenerator.fontOfSize(size: 16, submission: false)
                             let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: .white)
-                            content =  LinkParser.parse(attr2, .white)
-                        } catch {
+                            content = LinkParser.parse(attr2, .white)
+                        }
+                        catch {
                         }
                     }
                     
@@ -435,7 +445,8 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                         let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: itemWidth - 16 - (message.subject.hasPrefix("re:") ? 22 : 0), height: CGFloat.greatestFiniteMagnitude), nil)
 
                         estimatedHeights[message.id] = CGFloat(32 + textSizeT.height + textSizeI.height + textSizeB.height)
-                    } else {
+                    }
+                    else {
                         estimatedHeights[message.id] = CGFloat(32 + textSizeT.height + textSizeI.height)
                     }
                 }
@@ -460,13 +471,13 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     func showMenu(sender: UIButton?) {
         let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
 
-        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
+        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
             print("Cancel")
         }
         actionSheetController.addAction(cancelActionButton)
 
         for link in LinkSortType.cases {
-            let saveActionButton: UIAlertAction = UIAlertAction(title: link.description, style: .default) { action -> Void in
+            let saveActionButton: UIAlertAction = UIAlertAction(title: link.description, style: .default) { _ -> Void in
                 self.showTimeMenu(s: link, selector: sender)
             }
             actionSheetController.addAction(saveActionButton)
@@ -486,16 +497,17 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             sort = s
             refresh()
             return
-        } else {
+        }
+        else {
             let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
 
-            let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
+            let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
                 print("Cancel")
             }
             actionSheetController.addAction(cancelActionButton)
 
             for t in TimeFilterWithin.cases {
-                let saveActionButton: UIAlertAction = UIAlertAction(title: t.param, style: .default) { action -> Void in
+                let saveActionButton: UIAlertAction = UIAlertAction(title: t.param, style: .default) { _ -> Void in
                     self.sort = s
                     self.time = t
                     self.refresh()
@@ -532,7 +544,6 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         baseData.getData(reload: false)
     }
 
-
     var loading: Bool = false
 
     func doneLoading() {
@@ -564,39 +575,42 @@ extension ContentListingViewController: LinkCellViewDelegate {
 
     func upvote(_ cell: LinkCellView) {
         do {
-            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up, name: (cell.link?.getId())!, completion: { (result) in
+            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up, name: (cell.link?.getId())!, completion: { (_) in
 
             })
             ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up)
             History.addSeen(s: cell.link!)
             cell.refresh()
-        } catch {
+        }
+        catch {
 
         }
     }
 
     func downvote(_ cell: LinkCellView) {
         do {
-            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down, name: (cell.link?.getId())!, completion: { (result) in
+            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down, name: (cell.link?.getId())!, completion: { (_) in
 
             })
             ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down)
             History.addSeen(s: cell.link!)
             cell.refresh()
-        } catch {
+        }
+        catch {
 
         }
     }
 
     func save(_ cell: LinkCellView) {
         do {
-            try session?.setSave(!ActionStates.isSaved(s: cell.link!), name: (cell.link?.getId())!, completion: { (result) in
+            try session?.setSave(!ActionStates.isSaved(s: cell.link!), name: (cell.link?.getId())!, completion: { (_) in
 
             })
             ActionStates.setSaved(s: cell.link!, saved: !ActionStates.isSaved(s: cell.link!))
             History.addSeen(s: cell.link!)
             cell.refresh()
-        } catch {
+        }
+        catch {
 
         }
     }

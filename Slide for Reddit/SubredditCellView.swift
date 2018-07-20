@@ -6,10 +6,10 @@
 //  Copyright © 2016 Haptic Apps. All rights reserved.
 //
 
-import UIKit
-import AudioToolbox
 import Anchorage
+import AudioToolbox
 import Then
+import UIKit
 
 class SubredditCellView: UITableViewCell {
 
@@ -23,7 +23,6 @@ class SubredditCellView: UITableViewCell {
     var icon = UIImageView()
     var title: UILabel = UILabel()
     var navController: UIViewController?
-
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -52,13 +51,13 @@ class SubredditCellView: UITableViewCell {
         }
 
         self.pin = UIImageView().then {
-            $0.frame = CGRect(x: 0, y:0, width: 10, height: 10)
+            $0.frame = CGRect(x: 0, y: 0, width: 10, height: 10)
             $0.image = UIImage.init(named: "lock")!.menuIcon() // TODO: Should cache this image
             $0.isHidden = true
         }
         
         self.icon = UIImageView().then {
-            $0.frame = CGRect(x: 0, y:0, width: 16, height: 16)
+            $0.frame = CGRect(x: 0, y: 0, width: 16, height: 16)
             $0.image = UIImage.init(named: "profile")!.menuIcon() // TODO: Should cache this image
             $0.isHidden = true
         }
@@ -92,7 +91,7 @@ class SubredditCellView: UITableViewCell {
         self.contentView.addGestureRecognizer(longPress)
     }
 
-    func showPin(_ shouldShow: Bool){
+    func showPin(_ shouldShow: Bool) {
         pin.isHidden = !shouldShow
     }
 
@@ -101,12 +100,13 @@ class SubredditCellView: UITableViewCell {
         if (navController != nil) {
             AudioServicesPlaySystemSound(1519)
             if (!self.cancelled) {
-                if(profile.isEmpty()){
+                if(profile.isEmpty()) {
                     let vc = SingleSubredditViewController.init(subName: self.subreddit, single: true)
                     navController!.dismiss(animated: true) {
                         VCPresenter.showVC(viewController: vc, popupIfPossible: true, parentNavigationController: self.navController!.navigationController, parentViewController: self.navController!)
                     }
-                } else {
+                }
+                else {
                     let vc = ProfileViewController.init(name: self.profile)
                     navController!.dismiss(animated: true) {
                         VCPresenter.showVC(viewController: vc, popupIfPossible: true, parentNavigationController: self.navController!.navigationController, parentViewController: self.navController!)
@@ -123,9 +123,10 @@ class SubredditCellView: UITableViewCell {
         self.subreddit = subreddit
         self.sideView.isHidden = false
         self.icon.isHidden = true
-        if(!exists){
+        if(!exists) {
             title.text = "Go to r/\(subreddit)"
-        } else {
+        }
+        else {
             title.text = subreddit
         }
         self.profile = ""
@@ -163,7 +164,6 @@ extension SubredditCellView {
                                          selector: #selector(self.openFull(_:)),
                                          userInfo: nil,
                                          repeats: false)
-
 
         }
         if (sender.state == UIGestureRecognizerState.ended) {

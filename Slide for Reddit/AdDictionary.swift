@@ -7,16 +7,17 @@
 //
 
 import Foundation
-class AdDictionary{
-    static var hosts:[String] = []
+class AdDictionary {
+    static var hosts: [String] = []
     
-    static func doInit(){
+    static func doInit() {
         let path = Bundle.main.path(forResource: "adsources", ofType: "txt")
-        do{
+        do {
             let text = try String(contentsOfFile: path!, encoding: String.Encoding.utf8)
             hosts = text.components(separatedBy: ",")
             print(hosts.count)
-        } catch {
+        }
+        catch {
             print(error)
         }
     }

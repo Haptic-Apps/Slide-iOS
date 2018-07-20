@@ -13,9 +13,9 @@ import Foundation
 /* For support, please feel free to contact me at https://www.linkedin.com/in/syedabsar */
 
 public class AlbumJSONBase {
-	public var data : AlbumData?
-	public var success : String?
-	public var status : Int?
+	public var data: AlbumData?
+	public var success: String?
+	public var status: Int?
 
 /**
     Returns an array of models based on given dictionary.
@@ -27,11 +27,9 @@ public class AlbumJSONBase {
 
     - returns: Array of Json4Swift_Base Instances.
 */
-    public class func modelsFromDictionaryArray(array:NSArray) -> [AlbumJSONBase]
-    {
-        var models:[AlbumJSONBase] = []
-        for item in array
-        {
+    public class func modelsFromDictionaryArray(array: NSArray) -> [AlbumJSONBase] {
+        var models: [AlbumJSONBase] = []
+        for item in array {
             models.append(AlbumJSONBase(dictionary: item as! NSDictionary)!)
         }
         return models
@@ -53,7 +51,6 @@ public class AlbumJSONBase {
 		success = dictionary["success"] as? String
 		status = dictionary["status"] as? Int
 	}
-
 		
 /**
     Returns the dictionary representation for the current instance.

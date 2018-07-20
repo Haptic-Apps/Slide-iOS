@@ -15,7 +15,7 @@
 //
 import UIKit
 
-class BouncyViewControllerAnimator : NSObject, UIViewControllerAnimatedTransitioning {
+class BouncyViewControllerAnimator: NSObject, UIViewControllerAnimatedTransitioning {
     var isPresenting: Bool = false
     
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
@@ -27,13 +27,14 @@ class BouncyViewControllerAnimator : NSObject, UIViewControllerAnimatedTransitio
         let fromView = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.from)?.view
         let toView = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.to)?.view
         
-        var center:CGPoint?
+        var center: CGPoint?
         
         if isPresenting {
             center = toView!.center
             toView!.center = CGPoint.init(x: center!.x, y: toView!.bounds.size.height)
             transitionContext.containerView.addSubview(toView!)
-        } else {
+        }
+        else {
             center = CGPoint.init(x: toView!.center.x, y: toView!.bounds.size.height + fromView!.bounds.size.height)
         }
         
@@ -43,12 +44,12 @@ class BouncyViewControllerAnimator : NSObject, UIViewControllerAnimatedTransitio
                                     if self.isPresenting {
                                         toView!.center = center!
                                         fromView!.transform = CGAffineTransform.identity.scaledBy(x: 0.92, y: 0.92)
-                                    } else {
+                                    }
+                                    else {
                                         fromView!.center = center!
                                         toView!.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
                                     }
-        }, completion: {
-            _ in
+        }, completion: { _ in
             
             if !self.isPresenting {
                 fromView!.removeFromSuperview()

@@ -6,14 +6,14 @@
 //  Copyright © 2016 Haptic Apps. All rights reserved.
 //
 
-import UIKit
-import reddift
-import RLBAlertsPickers
-import XLActionController
+import Anchorage
 import BadgeSwift
 import MaterialComponents.MaterialProgressView
-import Anchorage
+import reddift
+import RLBAlertsPickers
 import Then
+import UIKit
+import XLActionController
 
 class NavigationHeaderView: UIView {
 
@@ -30,7 +30,6 @@ class NavigationHeaderView: UIView {
     var inbox = UIButton()
     var more = UIButton()
     var search: UISearchBar = UISearchBar()
-
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -81,7 +80,8 @@ class NavigationHeaderView: UIView {
         if (AccountController.isLoggedIn) {
             let yTap = UITapGestureRecognizer(target: self, action: #selector(self.you(_:)))
             title.addGestureRecognizer(yTap)
-        } else {
+        }
+        else {
             let yTap = UITapGestureRecognizer(target: self, action: #selector(self.switchAccounts(_:)))
             title.addGestureRecognizer(yTap)
         }
@@ -120,7 +120,7 @@ class NavigationHeaderView: UIView {
             inbox.centerYAnchor == title.centerYAnchor
 
             // TODO: Determine if we still need this
-            if #available(iOS 11.0, *){
+            if #available(iOS 11.0, *) {
                 account.heightAnchor == 90
                 inbox.heightAnchor == 90
                 more.heightAnchor == 90
@@ -145,16 +145,18 @@ class NavigationHeaderView: UIView {
 
         if (AccountController.isLoggedIn) {
             let titleT = NSMutableAttributedString.init(string: "\t\t", attributes: [NSFontAttributeName: titleFont])
-            if(AccountController.formatUsername(input: AccountController.currentName, small: true).length > 15){
+            if(AccountController.formatUsername(input: AccountController.currentName, small: true).length > 15) {
                 titleFont = UIFont.systemFont(ofSize: 15)
-            } else {
+            }
+            else {
                 titleFont = UIFont.systemFont(ofSize: 25)
             }
             titleT.append(NSMutableAttributedString.init(string: AccountController.formatUsername(input: AccountController.currentName, small: true), attributes: [NSFontAttributeName: titleFont.bold()]))
             title.adjustsFontSizeToFitWidth = true
             title.attributedText = titleT
             inbox.isHidden = false
-        } else {
+        }
+        else {
             inbox.isHidden = true
             let titleT = NSMutableAttributedString.init(string: "\t\tGuest\n", attributes: [NSFontAttributeName: titleFont])
             titleFont = UIFont.systemFont(ofSize: 20)
@@ -228,13 +230,14 @@ class NavigationHeaderView: UIView {
 // MARK: Actions
 extension NavigationHeaderView {
     func you(_ sender: AnyObject) {
-        if(AccountController.isLoggedIn){
+        if(AccountController.isLoggedIn) {
             self.parentController?.dismiss(animated: true) {
                 let profile = ProfileViewController.init(name: AccountController.currentName)
                 VCPresenter.showVC(viewController: profile, popupIfPossible: true, parentNavigationController: (self.parentController as! NavigationSidebarViewController).parentController?.navigationController, parentViewController: (self.parentController as! NavigationSidebarViewController).parentController)
                 
             }
-        } else {
+        }
+        else {
             self.switchAccounts(sender)
         }
     }
@@ -251,8 +254,7 @@ extension NavigationHeaderView {
         let alertController: BottomSheetActionController = BottomSheetActionController()
         alertController.headerData = "Navigate"
 
-
-        alertController.addAction(Action(ActionData(title: "Settings", image: UIImage(named: "settings")!.menuIcon()), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Settings", image: UIImage(named: "settings")!.menuIcon()), style: .default, handler: { _ in
             self.settings(self.inbox)
         }))
 
@@ -260,25 +262,24 @@ extension NavigationHeaderView {
          SettingValues.isPro = !SettingValues.isPro
          }))*/
 
-        if(mod){
-            alertController.addAction(Action(ActionData(title: "Moderation", image: UIImage(named: "mod")!.menuIcon()), style: .default, handler: { action in
+        if(mod) {
+            alertController.addAction(Action(ActionData(title: "Moderation", image: UIImage(named: "mod")!.menuIcon()), style: .default, handler: { _ in
                 self.mod(self.inbox)
             }))
         }
 
-        alertController.addAction(Action(ActionData(title: "Offline cache now", image: UIImage(named: "download")!.menuIcon()), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Offline cache now", image: UIImage(named: "download")!.menuIcon()), style: .default, handler: { _ in
             self.parentController!.dismiss(animated: true) {
                 _ = AutoCache.init(baseController: (self.parentController as! NavigationSidebarViewController).parentController!)
             }
         }))
 
-        alertController.addAction(Action(ActionData(title: "Go to a profile", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Go to a profile", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { _ in
             self.showProfileDialog(self.inbox)
         }))
 
-
-        if(AccountController.isLoggedIn){
-            alertController.addAction(Action(ActionData(title: "Saved submissions", image: UIImage(named: "save")!.menuIcon()), style: .default, handler: { action in
+        if(AccountController.isLoggedIn) {
+            alertController.addAction(Action(ActionData(title: "Saved submissions", image: UIImage(named: "save")!.menuIcon()), style: .default, handler: { _ in
                 self.parentController!.dismiss(animated: true) {
                     let profile = ProfileViewController.init(name: AccountController.currentName)
                     profile.openTo = 6
@@ -286,7 +287,7 @@ extension NavigationHeaderView {
                 }
             }))
 
-            alertController.addAction(Action(ActionData(title: "Upvoted submissions", image: UIImage(named: "upvote")!.menuIcon()), style: .default, handler: { action in
+            alertController.addAction(Action(ActionData(title: "Upvoted submissions", image: UIImage(named: "upvote")!.menuIcon()), style: .default, handler: { _ in
                 self.parentController!.dismiss(animated: true) {
                     let profile = ProfileViewController.init(name: AccountController.currentName)
                     profile.openTo = 3
@@ -354,16 +355,17 @@ extension NavigationHeaderView {
 
         for s in AccountController.names {
             if (s != AccountController.currentName) {
-                let add = UIAlertAction(title: s, style: .default, handler: {
-                    (alert: UIAlertAction!) -> Void in
+                let add = UIAlertAction(title: s, style: .default, handler: { (_: UIAlertAction!) -> Void in
                     AccountController.switchAccount(name: s)
                     if !UserDefaults.standard.bool(forKey: "done" + s) {
                         do {
                             try (self.parentController as! NavigationSidebarViewController).parentController?.addAccount(token: OAuth2TokenRepository.token(of: s))
-                        } catch {
+                        }
+                        catch {
                             (self.parentController as! NavigationSidebarViewController).parentController?.addAccount()
                         }
-                    } else {
+                    }
+                    else {
                         Subscriptions.sync(name: s, completion: {
                             (self.parentController as! NavigationSidebarViewController).parentController?.restartVC()
                             (self.parentController as! NavigationSidebarViewController).parentController?.doCurrentPage(0)
@@ -375,8 +377,7 @@ extension NavigationHeaderView {
         }
 
         if (AccountController.isLoggedIn) {
-            let guest = UIAlertAction(title: "Guest", style: .default, handler: {
-                (alert: UIAlertAction!) -> Void in
+            let guest = UIAlertAction(title: "Guest", style: .default, handler: { (_: UIAlertAction!) -> Void in
                 AccountController.switchAccount(name: "GUEST")
                 Subscriptions.sync(name: "GUEST", completion: {
                     (self.parentController as! NavigationSidebarViewController).parentController?.restartVC()
@@ -384,22 +385,19 @@ extension NavigationHeaderView {
             })
             optionMenu.addAction(guest)
 
-            let deleteAction = UIAlertAction(title: "Log out", style: .destructive, handler: {
-                (alert: UIAlertAction!) -> Void in
+            let deleteAction = UIAlertAction(title: "Log out", style: .destructive, handler: { (_: UIAlertAction!) -> Void in
                 AccountController.delete(name: AccountController.currentName)
             })
             optionMenu.addAction(deleteAction)
 
         }
 
-        let add = UIAlertAction(title: "Add account", style: .default, handler: {
-            (alert: UIAlertAction!) -> Void in
+        let add = UIAlertAction(title: "Add account", style: .default, handler: { (_: UIAlertAction!) -> Void in
             (self.parentController as! NavigationSidebarViewController).parentController?.addAccount()
         })
         optionMenu.addAction(add)
 
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: {
-            (alert: UIAlertAction!) -> Void in
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { (_: UIAlertAction!) -> Void in
         })
         optionMenu.addAction(cancelAction)
 

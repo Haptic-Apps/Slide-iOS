@@ -6,12 +6,12 @@
 //  Copyright © 2016 Haptic Apps. All rights reserved.
 //
 
-import UIKit
-import reddift
-import UserNotifications
-import RealmSwift
-import SDWebImage
 import BiometricAuthentication
+import RealmSwift
+import reddift
+import SDWebImage
+import UIKit
+import UserNotifications
 
 /// Posted when the OAuth2TokenRepository object succeed in saving a token successfully into Keychain.
 public let OAuth2TokenRepositoryDidSaveTokenName = Notification.Name(rawValue: "OAuth2TokenRepositoryDidSaveToken")
@@ -24,8 +24,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     let name = "reddittoken"
-    var session: Session? = nil
-    var fetcher: BackgroundFetch? = nil
+    var session: Session?
+    var fetcher: BackgroundFetch?
     var subreddits: [Subreddit] = []
     var paginator = Paginator()
     var login: MainViewController?
@@ -47,7 +47,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
 
-        static func lockOrientation(_ orientation: UIInterfaceOrientationMask, andRotateTo rotateOrientation:UIInterfaceOrientation) {
+        static func lockOrientation(_ orientation: UIInterfaceOrientationMask, andRotateTo rotateOrientation: UIInterfaceOrientation) {
             self.lockOrientation(orientation)
             UIDevice.current.setValue(rotateOrientation.rawValue, forKey: "orientation")
         }
@@ -64,7 +64,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         let config = Realm.Configuration(
                 schemaVersion: 11,
-                migrationBlock: { migration, oldSchemaVersion in
+                migrationBlock: { _, oldSchemaVersion in
                     if (oldSchemaVersion < 11) {
                     }
                 })
@@ -76,13 +76,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 _ = NSMutableDictionary(contentsOfFile: bundlePath)
                 do {
                     try fileManager.copyItem(atPath: bundlePath, toPath: seenFile!)
-                } catch {
+                }
+                catch {
                     print("copy failure.")
                 }
-            } else {
+            }
+            else {
                 print("file myData.plist not found.")
             }
-        } else {
+        }
+        else {
             print("file myData.plist already exits at path.")
         }
 
@@ -91,13 +94,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 _ = NSMutableDictionary(contentsOfFile: bundlePath)
                 do {
                     try fileManager.copyItem(atPath: bundlePath, toPath: commentsFile!)
-                } catch {
+                }
+                catch {
                     print("copy failure.")
                 }
-            } else {
+            }
+            else {
                 print("file myData.plist not found.")
             }
-        } else {
+        }
+        else {
             print("file myData.plist already exits at path.")
         }
 
@@ -114,20 +120,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         RemovalReasons.initialize()
         Subscriptions.sync(name: AccountController.currentName, completion: nil)
         if #available(iOS 10.0, *) {
-            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
-                (granted, error) in
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (_, error) in
                 if ((error) != nil) {
                     print(error!.localizedDescription)
                 }
             }
-            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
-                (granted, error) in
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (_, error) in
                 if ((error) != nil) {
                     print(error!.localizedDescription)
                 }
             }
             UIApplication.shared.registerForRemoteNotifications()
-        } else {
+        }
+        else {
             // Fallback on earlier versions
         }
         if !UserDefaults.standard.bool(forKey: "sc" + name) {
@@ -148,14 +153,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
     
-    
-    public func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) {
+    public func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
         print("Recived: \(userInfo)")
 
     }
 
     var statusBar = UIView()
-    
 
     func doBios() {
         if (SettingValues.biometrics && BioMetricAuthenticator.canAuthenticate()) {
@@ -171,7 +174,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
                 BioMetricAuthenticator.authenticateWithPasscode(reason: "Enter your password", cancelTitle: "Exit", success: {
                     self?.backView!.isHidden = true
-                }, failure: { [weak self] (error) in
+                }, failure: { [weak self] (_) in
                     exit(0)
                 })
             })
@@ -179,7 +182,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        getData(completionHandler);
+        getData(completionHandler)
     }
     
     func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
@@ -188,7 +191,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func getData(_ completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        
 
         if let session = session {
             do {
@@ -204,12 +206,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                         let result = messagesInResult(from: data, response: response)
                                         switch result {
                                         case .success(let listing):
-                                            var new : [Message] = []
+                                            var new: [Message] = []
                                             var children = listing.children
                                             children.reverse()
-                                            for m in children.flatMap({$0}){
+                                            for m in children.flatMap({ $0 }) {
                                                 let message = (m as! Message)
-                                                if(Double(message.createdUtc) > (UserDefaults.standard.object(forKey: "lastMessageUpdate") == nil ? NSDate().timeIntervalSince1970 : UserDefaults.standard.double(forKey: "lastMessageUpdate"))){
+                                                if(Double(message.createdUtc) > (UserDefaults.standard.object(forKey: "lastMessageUpdate") == nil ? NSDate().timeIntervalSince1970 : UserDefaults.standard.double(forKey: "lastMessageUpdate"))) {
                                                     new.append(message)
                                                     self.postLocalNotification(message.body, message.author, message.id)
                                                 }
@@ -227,36 +229,42 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                             print(error)
                                             completionHandler(.failed)
                                         }
-                                    } catch {
+                                    }
+                                    catch {
 
                                     }
-                                } else {
+                                }
+                                else {
                                     completionHandler(.failed)
                                 }
-                            } else {
+                            }
+                            else {
                                 completionHandler(.failed)
                             }
                         })
                 self.fetcher = fetcher
                 fetcher.resume()
-            } catch {
+            }
+            catch {
                 print(error.localizedDescription)
                 completionHandler(.failed)
             }
-        } else {
+        }
+        else {
             completionHandler(.failed)
         }
     }
 
-    func postLocalNotification(_ message: String, _ author: String = "",  _ id: String = "") {
+    func postLocalNotification(_ message: String, _ author: String = "", _ id: String = "") {
         if #available(iOS 10.0, *) {
             let center = UNUserNotificationCenter.current()
 
             let content = UNMutableNotificationContent()
             content.categoryIdentifier = "SlideMail"
-            if(author.isEmpty()){
+            if(author.isEmpty()) {
                 content.title = "New messages!"
-            } else {
+            }
+            else {
                 content.title = "New message from \(author)"
             }
             content.body = message
@@ -271,11 +279,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     // Something went wrong
                 }
             })
-        } else {
+        }
+        else {
             // Fallback on earlier versions
         }
     }
-
 
     func syncColors(subredditController: MainViewController?) {
         let defaults = UserDefaults.standard
@@ -294,7 +302,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         for sub in self.subreddits {
                             toReturn.append(sub.displayName)
                             if (!sub.keyColor.isEmpty) {
-                                let color = ColorUtil.getClosestColor(hex:  sub.keyColor)
+                                let color = ColorUtil.getClosestColor(hex: sub.keyColor)
                                 if (defaults.object(forKey: "color" + sub.displayName) == nil) {
                                     defaults.setColor(color: color, forKey: "color+" + sub.displayName)
                                 }
@@ -309,12 +317,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     }
                 })
 
-            } else {
+            }
+            else {
                 Subscriptions.getSubscriptionsFully(session: session!, completion: { (subs, multis) in
                     for sub in subs {
                         toReturn.append(sub.displayName)
                         if (!sub.keyColor.isEmpty) {
-                            let color = ColorUtil.getClosestColor(hex:  sub.keyColor)
+                            let color = ColorUtil.getClosestColor(hex: sub.keyColor)
                             if (defaults.object(forKey: "color" + sub.displayName) == nil) {
                                 defaults.setColor(color: color, forKey: "color+" + sub.displayName)
                             }
@@ -331,7 +340,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         }
                     }
 
-
                     toReturn = toReturn.sorted {
                         $0.localizedCaseInsensitiveCompare($1) == ComparisonResult.orderedAscending
                     }
@@ -345,7 +353,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
                 })
             }
-        } catch {
+        }
+        catch {
             print(error)
             if (subredditController != nil) {
                 DispatchQueue.main.async(execute: { () -> Void in
@@ -362,7 +371,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         if let code = parameters["code"], let state = parameters["state"] {
             print(state)
-            if code.characters.count > 0 {
+            if code.count > 0 {
                 print(code)
             }
         }
@@ -379,7 +388,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         try OAuth2TokenRepository.save(token: token, of: token.name)
                         self.login?.setToken(token: token)
                         NotificationCenter.default.post(name: OAuth2TokenRepositoryDidSaveTokenName, object: nil, userInfo: nil)
-                    } catch {
+                    }
+                    catch {
                         NotificationCenter.default.post(name: OAuth2TokenRepositoryDidFailToSaveTokenName, object: nil, userInfo: nil)
                         print(error)
                     }
@@ -397,10 +407,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 
-    var backView : UIView?
+    var backView: UIView?
     func applicationWillResignActive(_ application: UIApplication) {
         if (SettingValues.biometrics) {
-            if(backView == nil){
+            if(backView == nil) {
                 backView = UIView.init(frame: self.window!.frame)
                 backView?.backgroundColor = ColorUtil.backgroundColor
                 self.window?.addSubview(backView!)
@@ -429,7 +439,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationDidBecomeActive(_ application: UIApplication) {
         if (!totalBackground) {
-            if(backView == nil){
+            if(backView == nil) {
                 backView = UIView.init(frame: self.window!.frame)
                 backView?.backgroundColor = ColorUtil.backgroundColor
                 self.window?.addSubview(backView!)
@@ -445,7 +455,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 
-
     func refreshSession() {
         // refresh current session token
         do {
@@ -460,7 +469,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     })
                 }
             })
-        } catch {
+        }
+        catch {
             print(error)
         }
     }
@@ -473,10 +483,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 let token = try OAuth2TokenRepository.token(of: currentName)
                 self.session = Session(token: token)
                 self.refreshSession()
-            } catch {
+            }
+            catch {
                 print(error)
             }
-        } else {
+        }
+        else {
             self.session = Session()
         }
 
@@ -502,7 +514,7 @@ extension UIApplication {
 }
 
 extension URL {
-    func getKeyVals() -> Dictionary<String, String>? {
+    func getKeyVals() -> [String: String]? {
         var results = [String: String]()
         let keyValues = self.query?.components(separatedBy: "&")
         if (keyValues?.count)! > 0 {
@@ -517,5 +529,3 @@ extension URL {
         return results
     }
 }
-
-

@@ -16,7 +16,6 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
     var profileEnter = UISearchBar()
     var subredditEnter = UISearchBar()
     var flairEnter = UISearchBar()
-
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,36 +32,28 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
         return .delete
     }
     
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath)
-    {
-        if editingStyle == .delete
-        {
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
             switch(indexPath.section) {
             case 0:
                 PostFilter.domains.remove(at: indexPath.row)
-                break
             case 1:
                 PostFilter.selftext.remove(at: indexPath.row)
-                break
             case 2:
                 PostFilter.titles.remove(at: indexPath.row)
-                break
             case 3:
                 PostFilter.profiles.remove(at: indexPath.row)
-                break
             case 4:
                 PostFilter.subreddits.remove(at: indexPath.row)
-                break
             case 5:
                 PostFilter.flairs.remove(at: indexPath.row)
-                break
-            default: fatalError("Unknown section")
+            default:
+                fatalError("Unknown section")
             }
             tableView.deleteRows(at: [indexPath], with: .fade)
             PostFilter.saveAndUpdate()
         }
     }
-
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -139,25 +130,28 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
         doEnter(searchBar)
     }
     
-
-    
-    func doEnter(_ searchBar: UISearchBar){
-        if(searchBar == domainEnter){
+    func doEnter(_ searchBar: UISearchBar) {
+        if(searchBar == domainEnter) {
             PostFilter.domains.append(domainEnter.text! as NSString)
             domainEnter.text = ""
-        } else if(searchBar == selftextEnter){
+        }
+        else if(searchBar == selftextEnter) {
             PostFilter.selftext.append(selftextEnter.text! as NSString)
             selftextEnter.text = ""
-        } else if(searchBar == titleEnter){
+        }
+        else if(searchBar == titleEnter) {
             PostFilter.titles.append(titleEnter.text! as NSString)
             titleEnter.text = ""
-        } else if(searchBar == profileEnter){
+        }
+        else if(searchBar == profileEnter) {
             PostFilter.profiles.append(profileEnter.text! as NSString)
             profileEnter.text = ""
-        } else if(searchBar == subredditEnter){
+        }
+        else if(searchBar == subredditEnter) {
             PostFilter.subreddits.append(subredditEnter.text! as NSString)
             subredditEnter.text = ""
-        } else if(searchBar == flairEnter){
+        }
+        else if(searchBar == flairEnter) {
             PostFilter.flairs.append(flairEnter.text! as NSString)
             flairEnter.text = ""
         }
@@ -179,12 +173,10 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
     override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         return 70
     }
-
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 60
     }
-    
     
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         switch(section) {
@@ -208,27 +200,21 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
         switch(indexPath.section) {
         case 0:
             cell.textLabel?.text = PostFilter.domains[indexPath.row] as String
-            break
         case 1:
             cell.textLabel?.text = PostFilter.selftext[indexPath.row] as String
-            break
         case 2:
             cell.textLabel?.text = PostFilter.titles[indexPath.row] as String
-            break
         case 3:
             cell.textLabel?.text = PostFilter.profiles[indexPath.row] as String
-            break
         case 4:
             cell.textLabel?.text = PostFilter.subreddits[indexPath.row] as String
-            break
         case 5:
             cell.textLabel?.text = PostFilter.flairs[indexPath.row] as String
-            break
-        default: fatalError("Unknown section")
+        default:
+            fatalError("Unknown section")
         }
         return cell
     }
-    
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
@@ -278,26 +264,19 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
      }*/
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let label : UILabel = UILabel()
+        let label: UILabel = UILabel()
         label.textColor = ColorUtil.baseAccent
         label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
         toReturn.backgroundColor = ColorUtil.backgroundColor
         switch(section) {
         case 0: label.text = "Domain filters"
-            break
         case 1: label.text =  "Selftext filters"
-            break
         case 2: label.text = "Title filters"
-            break
         case 3: label.text = "Profile filters"
-            break
         case 4: label.text = "Subreddit filters"
-            break
         case 5: label.text = "Flair filters"
-            break
         default: label.text  = ""
-            break
         }
         return toReturn
     }

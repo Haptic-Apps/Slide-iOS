@@ -6,10 +6,9 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
-
-import UIKit
 import reddift
 import TTTAttributedLabel
+import UIKit
 
 class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAttributedLabelDelegate {
     
@@ -18,20 +17,19 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAt
     var info = UILabel()
     var image = UIImageView()
     
-    
     func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
         parentViewController?.doShow(url: url)
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        var topmargin = 5
-        var bottommargin = 5
-        var leftmargin = 5
-        var rightmargin = 5
+        let topmargin = 5
+        let bottommargin = 5
+        let leftmargin = 5
+        let rightmargin = 5
         
         let f = self.contentView.frame
-        let fr = UIEdgeInsetsInsetRect(f, UIEdgeInsetsMake(CGFloat(topmargin), CGFloat(leftmargin), CGFloat(bottommargin), CGFloat(rightmargin)))
+        let fr = UIEdgeInsetsInsetRect(f, UIEdgeInsets(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin)))
         self.contentView.frame = fr
     }
     
@@ -41,12 +39,12 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAt
     var full = false
     var estimatedHeight = CGFloat(0)
     
-    func estimateHeight() ->CGFloat {
-        if(estimatedHeight == 0){
+    func estimateHeight() -> CGFloat {
+        if estimatedHeight == 0 {
             let framesetterB = CTFramesetterCreateWithAttributedString(content!)
             let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: width - 12, height: CGFloat.greatestFiniteMagnitude), nil)
 
-            estimatedHeight =  CGFloat(24) + CGFloat(!hasText ? 0 : textSizeB.height)
+            estimatedHeight = CGFloat(24) + CGFloat(!hasText ? 0 : textSizeB.height)
         }
         return estimatedHeight
     }
@@ -55,7 +53,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAt
         super.init(frame: frame)
         self.contentView.layoutMargins = UIEdgeInsets.init(top: 2, left: 0, bottom: 0, right: 0)
         
-        self.title = UILabel(frame: CGRect(x: 0, y: 0, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude));
+        self.title = UILabel(frame: CGRect(x: 0, y: 0, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
         title.numberOfLines = 0
         title.lineBreakMode = NSLineBreakMode.byWordWrapping
         title.font = FontGenerator.fontOfSize(size: 14, submission: true)
@@ -67,7 +65,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAt
         self.textView.isUserInteractionEnabled = true
         self.textView.backgroundColor = .clear
         
-        self.info = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
+        self.info = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
         info.numberOfLines = 0
         info.font = FontGenerator.fontOfSize(size: 12, submission: false)
         info.textColor = ColorUtil.fontColor
@@ -92,7 +90,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAt
         self.updateConstraints()
         
     }
-    var bigConstraint : NSLayoutConstraint?
+    var bigConstraint: NSLayoutConstraint?
     
     override func updateConstraints() {
         super.updateConstraints()
@@ -101,9 +99,15 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAt
         self.contentView.layer.cornerRadius = 15
         self.contentView.clipsToBounds = true
 
-        let metrics=["horizontalMargin":75,"top":0,"bottom":0,"separationBetweenLabels":0,"bh":imageHeight,
-                     "labelMinHeight":75]
-        let views=["label":title, "body": textView, "banner": image, "info": info] as [String : Any]
+        let metrics=[
+            "horizontalMargin": 75,
+            "top": 0,
+            "bottom": 0,
+            "separationBetweenLabels": 0,
+            "bh": imageHeight,
+            "labelMinHeight": 75,
+            ]
+        let views=["label": title, "body": textView, "banner": image, "info": info] as [String: Any]
         
         self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[label]-8-|",
                                                                        options: NSLayoutFormatOptions(rawValue: 0),
@@ -124,7 +128,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAt
                                                                        metrics: metrics,
                                                                        views: views))
 
-        if(!lsC.isEmpty){
+        if !lsC.isEmpty {
             self.contentView.removeConstraints(lsC)
         }
         
@@ -135,17 +139,16 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAt
                                                               views: views))
         self.contentView.addConstraints(lsC)
         
-        
     }
     
     var lsC: [NSLayoutConstraint] = []
     var url = ""
     var imageHeight = 0
     
-    func setUpdate(rawJson: JSONAny, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, width: CGFloat){
+    func setUpdate(rawJson: JSONAny, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, width: CGFloat) {
         let json = rawJson as! JSONDictionary
         parentViewController = parent
-        if(navViewController == nil && nav != nil){
+        if navViewController == nil && nav != nil {
             navViewController = nav
         }
         title.text = "u/\(json["author"] as! String) \(DateFormatter().timeSince(from: NSDate(timeIntervalSince1970: TimeInterval(json["created_utc"] as! Int)), numericDates: true))"
@@ -163,13 +166,13 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAt
         
         let accent = ColorUtil.accentColorForSub(sub: "")
         if let body = json["body_html"] as? String {
-            if(!body.isEmpty()){
+            if !body.isEmpty() {
                 var html = body.gtm_stringByUnescapingFromHTML()!
                 do {
                     html = html.trimmed()
                     html = WrapSpoilers.addSpoilers(html)
                     html = WrapSpoilers.addTables(html)
-                    let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType], documentAttributes: nil)
+                    let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
                     let font = FontGenerator.fontOfSize(size: 16, submission: false)
                     let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: accent)
                     content = LinkParser.parse(attr2, accent)
@@ -179,44 +182,46 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAt
                     textView.setText(content)
                     textView.frame.size.height = textSizeB.height
                     hasText = true
-                } catch {
+                }
+                catch {
                 }
             }
         }
         
-        if(bigConstraint != nil){
+        if bigConstraint != nil {
             removeConstraint(bigConstraint!)
         }
         imageHeight = 0
         image.alpha = 0
 
-        if(json["mobile_embeds"] != nil && !(json["mobile_embeds"] as? JSONArray)!.isEmpty){
+        if json["mobile_embeds"] != nil && !(json["mobile_embeds"] as? JSONArray)!.isEmpty {
             if let embedsB = json["mobile_embeds"] as? JSONArray, let embeds = embedsB[0] as? JSONDictionary, let height = embeds["height"] as? Int, let width = embeds["width"] as? Int, let url = embeds["url"] as? String {
                 image.alpha = 0
-                let imageSize = CGSize.init(width: width, height: height);
+                let imageSize = CGSize.init(width: width, height: height)
                 var aspect = imageSize.width / imageSize.height
-                if (aspect == 0 || aspect > 10000 || aspect.isNaN) {
+                if aspect == 0 || aspect > 10000 || aspect.isNaN {
                     aspect = 1
                 }
                 bigConstraint = NSLayoutConstraint(item: image, attribute: NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: image, attribute: NSLayoutAttribute.height, multiplier: aspect, constant: 0.0)
                 
                     let h = getHeightFromAspectRatio(imageHeight: height, imageWidth: width)
-                    if (h == 0) {
+                    if h == 0 {
                         imageHeight = 200
-                    } else {
+                    }
+                    else {
                         imageHeight = h
                     }
-                
 
                 addConstraint(bigConstraint!)
                 image.isUserInteractionEnabled = true
-                image.sd_setImage(with: URL.init(string: url), completed: { (image, error, cache, url) in
+                image.sd_setImage(with: URL.init(string: url), completed: { (image, _, cache, _) in
                     self.image.contentMode = .scaleAspectFill
-                    if (cache == .none) {
+                    if cache == .none {
                         UIView.animate(withDuration: 0.3, animations: {
                             self.image.alpha = 1
                         })
-                    } else {
+                    }
+                    else {
                         self.image.alpha = 1
                     }
                 })
@@ -227,7 +232,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAt
     
     func getHeightFromAspectRatio(imageHeight: Int, imageWidth: Int) -> Int {
         let ratio = Double(imageHeight) / Double(imageWidth)
-        let width = Double(contentView.frame.size.width - 16);
+        let width = Double(contentView.frame.size.width - 16)
         return Int(width * ratio)
         
     }
@@ -238,11 +243,11 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAt
         fatalError("init(coder:) has not been implemented")
     }
     
-    var comment : RComment?
+    var comment: RComment?
     public var parentViewController: UIViewController & MediaVCDelegate?
     public var navViewController: UIViewController?
     
-    func openContent(sender: UITapGestureRecognizer? = nil){
+    func openContent(sender: UITapGestureRecognizer? = nil) {
         parentViewController?.doShow(url: URL.init(string: url)!)
     }
 }

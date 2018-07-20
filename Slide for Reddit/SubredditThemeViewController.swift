@@ -6,9 +6,9 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
-import UIKit
-import reddift
 import MKColorPicker
+import reddift
+import UIKit
 
 class SubredditThemeViewController: UITableViewController, ColorPickerViewDelegate {
 
@@ -25,7 +25,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
         self.tableView.allowsSelectionDuringEditing = true
         self.tableView.allowsMultipleSelectionDuringEditing = true
         for sub in Subscriptions.subreddits {
-            if(UserDefaults.standard.colorForKey(key: "color+" + sub) != nil || UserDefaults.standard.colorForKey(key: "accent+" + sub) != nil){
+            if(UserDefaults.standard.colorForKey(key: "color+" + sub) != nil || UserDefaults.standard.colorForKey(key: "accent+" + sub) != nil) {
                 subs.append(sub)
             }
         }
@@ -61,7 +61,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
 
     public func add(_ selector: AnyObject) {
         var selected: [String] = []
-        if(tableView.indexPathsForSelectedRows != nil){
+        if(tableView.indexPathsForSelectedRows != nil) {
             for i in tableView.indexPathsForSelectedRows! {
                 selected.append(subs[i.row])
             }
@@ -122,9 +122,9 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
                     case .success(let listing):
                         let subs = listing.children.flatMap({ $0 as? Subreddit })
                         for sub in subs {
-                            if(!sub.keyColor.isEmpty()){
+                            if(!sub.keyColor.isEmpty()) {
                                 toReturn.append(sub.displayName)
-                                let color = ColorUtil.getClosestColor(hex:  sub.keyColor)
+                                let color = ColorUtil.getClosestColor(hex: sub.keyColor)
                                 if (UserDefaults.standard.colorForKey(key: "color+" + sub.displayName) == nil && color != .black) {
                                     defaults.setColor(color: color, forKey: "color+" + sub.displayName)
                                     self.count += 1
@@ -138,13 +138,14 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
                     })
                 })
 
-            } else {
+            }
+            else {
                 Subscriptions.getSubscriptionsFully(session: (UIApplication.shared.delegate as! AppDelegate).session!, completion: { (subs, multis) in
                     for sub in subs {
-                        if(!sub.keyColor.isEmpty()){
+                        if(!sub.keyColor.isEmpty()) {
                             print("Coloring \(sub.displayName)")
                             toReturn.append(sub.displayName)
-                            let color = ColorUtil.getClosestColor(hex:  sub.keyColor)
+                            let color = ColorUtil.getClosestColor(hex: sub.keyColor)
                             if (UserDefaults.standard.colorForKey(key: "color+" + sub.displayName) == nil && color.hexString != "#000000") {
                                 defaults.setColor(color: color, forKey: "color+" + sub.displayName)
                                 self.count += 1
@@ -160,7 +161,6 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
                         }
                     }
 
-
                     toReturn = toReturn.sorted {
                         $0.localizedCaseInsensitiveCompare($1) == ComparisonResult.orderedAscending
                     }
@@ -171,7 +171,8 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
                     })
                 })
             }
-        } catch {
+        }
+        catch {
             print(error)
             self.complete()
         }
@@ -184,7 +185,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
         count = 0
         subs.removeAll()
         for sub in Subscriptions.subreddits {
-            if(UserDefaults.standard.colorForKey(key: "color+" + sub) != nil || UserDefaults.standard.colorForKey(key: "accent+" + sub) != nil){
+            if(UserDefaults.standard.colorForKey(key: "color+" + sub) != nil || UserDefaults.standard.colorForKey(key: "accent+" + sub) != nil) {
                 subs.append(sub)
             }
         }
@@ -220,7 +221,6 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
         return cell!
     }
 
-
     override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
         return .delete
     }
@@ -240,17 +240,17 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
         let item = subs[indexPath.row]
         let actionSheetController: UIAlertController = UIAlertController(title: item, message: "", preferredStyle: .actionSheet)
 
-        var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
+        var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
             print("Cancel")
         }
         actionSheetController.addAction(cancelActionButton)
 
-        cancelActionButton = UIAlertAction(title: "Edit", style: .default) { action -> Void in
+        cancelActionButton = UIAlertAction(title: "Edit", style: .default) { _ -> Void in
             // self.edit(item)
         }
         actionSheetController.addAction(cancelActionButton)
 
-        cancelActionButton = UIAlertAction(title: "Delete", style: .default) { action -> Void in
+        cancelActionButton = UIAlertAction(title: "Delete", style: .default) { _ -> Void in
             self.doDelete(item)
         }
         actionSheetController.addAction(cancelActionButton)
@@ -268,9 +268,10 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
     var editSubs: [String] = []
 
     public func colorPickerView(_ colorPickerView: ColorPickerView, didSelectItemAt indexPath: IndexPath) {
-        if(isAccent){
+        if(isAccent) {
             accentChosen = colorPickerView.colors[indexPath.row]
-        } else {
+        }
+        else {
             colorChosen = colorPickerView.colors[indexPath.row]
         }
     }
@@ -293,7 +294,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
 
         alertController.view.addSubview(MKColorPicker)
 
-        alertController.addAction(image: UIImage(named: "colors"), title: "Accent color", color: ColorUtil.baseAccent, style: .default) { action in
+        alertController.addAction(image: UIImage(named: "colors"), title: "Accent color", color: ColorUtil.baseAccent, style: .default) { _ in
             if (self.colorChosen != nil) {
                 for sub in self.editSubs {
                     ColorUtil.setColorForSub(sub: sub, color: self.colorChosen!)
@@ -303,7 +304,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
             self.tableView.reloadData()
         }
 
-        alertController.addAction(image: nil, title: "Save", color: ColorUtil.baseAccent, style: .default) { action in
+        alertController.addAction(image: nil, title: "Save", color: ColorUtil.baseAccent, style: .default) { _ in
             if (self.colorChosen != nil) {
                 for sub in self.editSubs {
                     ColorUtil.setColorForSub(sub: sub, color: self.colorChosen!)
@@ -312,8 +313,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
             self.tableView.reloadData()
         }
 
-
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { (alert: UIAlertAction!) in
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { (_: UIAlertAction!) in
         })
 
         alertController.addAction(cancelAction)
@@ -331,7 +331,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
         isAccent = true
         let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
 
-        let margin:CGFloat = 10.0
+        let margin: CGFloat = 10.0
         let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
         let MKColorPicker = ColorPickerView.init(frame: rect)
         MKColorPicker.delegate = self
@@ -345,7 +345,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
 
         alertController.view.addSubview(MKColorPicker)
 
-        alertController.addAction(image: UIImage(named: "palette"), title: "Primary color", color: ColorUtil.baseAccent, style: .default) { action in
+        alertController.addAction(image: UIImage(named: "palette"), title: "Primary color", color: ColorUtil.baseAccent, style: .default) { _ in
             if self.accentChosen != nil {
                 for sub in self.editSubs {
                     ColorUtil.setAccentColorForSub(sub: sub, color: self.accentChosen!)
@@ -355,7 +355,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
             self.tableView.reloadData()
         }
 
-        alertController.addAction(image: nil, title: "Save", color: ColorUtil.baseAccent, style: .default) { action in
+        alertController.addAction(image: nil, title: "Save", color: ColorUtil.baseAccent, style: .default) { _ in
             if self.accentChosen != nil {
                 for sub in self.editSubs {
                     ColorUtil.setAccentColorForSub(sub: sub, color: self.accentChosen!)
@@ -369,7 +369,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
             presenter.sourceRect = savedView.bounds
         }
 
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { (alert: UIAlertAction!) in
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { (_: UIAlertAction!) in
         })
 
         alertController.addAction(cancelAction)
@@ -393,7 +393,6 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
             doDelete(subs[indexPath.row])
         }
     }
-
 
 }
 
@@ -471,14 +470,13 @@ public extension UIView {
     }
 
     private var queue: NSMutableArray {
-        get {
-            if let queue = objc_getAssociatedObject(self, &ToastKeys.Queue) as? NSMutableArray {
-                return queue
-            } else {
-                let queue = NSMutableArray()
-                objc_setAssociatedObject(self, &ToastKeys.Queue, queue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-                return queue
-            }
+        if let queue = objc_getAssociatedObject(self, &ToastKeys.Queue) as? NSMutableArray {
+            return queue
+        }
+        else {
+            let queue = NSMutableArray()
+            objc_setAssociatedObject(self, &ToastKeys.Queue, queue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            return queue
         }
     }
 
@@ -568,9 +566,11 @@ public extension UIView {
         do {
             let toast = try self.toastViewForMessage(message, title: title, image: image, style: toastStyle)
             self.showToast(toast, duration: duration, position: position, completion: completion)
-        } catch ToastError.insufficientData {
+        }
+        catch ToastError.insufficientData {
             print("Error: message, title, and image are all nil")
-        } catch {
+        }
+        catch {
         }
     }
 
@@ -598,9 +598,11 @@ public extension UIView {
         do {
             let toast = try self.toastViewForMessage(message, title: title, image: image, style: toastStyle)
             self.showToast(toast, duration: duration, position: position, completion: completion)
-        } catch ToastError.insufficientData {
+        }
+        catch ToastError.insufficientData {
             print("Error: message, title, and image cannot all be nil")
-        } catch {
+        }
+        catch {
         }
     }
 
@@ -643,14 +645,15 @@ public extension UIView {
      didTap will be `true` if the toast view was dismissed from a tap.
      */
     public func showToast(_ toast: UIView, duration: TimeInterval, position: CGPoint, completion: ((_ didTap: Bool) -> Void)?) {
-        objc_setAssociatedObject(toast, &ToastKeys.Completion, ToastCompletionWrapper(completion), .OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        objc_setAssociatedObject(toast, &ToastKeys.Completion, ToastCompletionWrapper(completion), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
 
         if let _ = objc_getAssociatedObject(self, &ToastKeys.ActiveToast) as? UIView, ToastManager.shared.queueEnabled {
-            objc_setAssociatedObject(toast, &ToastKeys.Duration, NSNumber(value: duration), .OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-            objc_setAssociatedObject(toast, &ToastKeys.Position, NSValue(cgPoint: position), .OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+            objc_setAssociatedObject(toast, &ToastKeys.Duration, NSNumber(value: duration), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            objc_setAssociatedObject(toast, &ToastKeys.Position, NSValue(cgPoint: position), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
 
             self.queue.add(toast)
-        } else {
+        }
+        else {
             self.showToast(toast, duration: duration, position: position)
         }
     }
@@ -709,7 +712,7 @@ public extension UIView {
         if let toast = objc_getAssociatedObject(self, &ToastKeys.ActivityView) as? UIView {
             UIView.animate(withDuration: ToastManager.shared.style.fadeDuration, delay: 0.0, options: [.curveEaseIn, .beginFromCurrentState], animations: { () -> Void in
                 toast.alpha = 0.0
-            }, completion: { (finished: Bool) -> Void in
+            }, completion: { (_: Bool) -> Void in
                 toast.removeFromSuperview()
                 objc_setAssociatedObject(self, &ToastKeys.ActivityView, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             })
@@ -767,13 +770,13 @@ public extension UIView {
             toast.isExclusiveTouch = true
         }
 
-        objc_setAssociatedObject(self, &ToastKeys.ActiveToast, toast, .OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        objc_setAssociatedObject(self, &ToastKeys.ActiveToast, toast, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
 
         self.addSubview(toast)
 
         UIView.animate(withDuration: ToastManager.shared.style.fadeDuration, delay: 0.0, options: [.curveEaseOut, .allowUserInteraction], animations: { () -> Void in
             toast.alpha = 1.0
-        }) { (finished) -> Void in
+        }) { (_) -> Void in
             let timer = Timer(timeInterval: duration, target: self, selector: #selector(UIView.toastTimerDidFinish(_:)), userInfo: toast, repeats: false)
             RunLoop.main.add(timer, forMode: RunLoopMode.commonModes)
             objc_setAssociatedObject(toast, &ToastKeys.Timer, timer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
@@ -788,10 +791,10 @@ public extension UIView {
 
         UIView.animate(withDuration: ToastManager.shared.style.fadeDuration, delay: 0.0, options: [.curveEaseIn, .beginFromCurrentState], animations: { () -> Void in
             toast.alpha = 0.0
-        }) { (didFinish: Bool) -> Void in
+        }) { (_: Bool) -> Void in
             toast.removeFromSuperview()
 
-            objc_setAssociatedObject(self, &ToastKeys.ActiveToast, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+            objc_setAssociatedObject(self, &ToastKeys.ActiveToast, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
 
             if let wrapper = objc_getAssociatedObject(toast, &ToastKeys.Completion) as? ToastCompletionWrapper, let completion = wrapper.completion {
                 completion(fromTap)
@@ -882,7 +885,7 @@ public extension UIView {
             titleLabel?.lineBreakMode = .byTruncatingTail
             titleLabel?.textColor = style.titleColor
             titleLabel?.backgroundColor = UIColor.clear
-            titleLabel?.text = title;
+            titleLabel?.text = title
 
             //     let maxTitleSize = CGSize(width: (self.bounds.size.width * style.maxWidthPercentage) - imageRect.size.width, height: self.bounds.size.height * style.maxHeightPercentage)
             //  let titleSize = titleLabel?.sizeThatFits(maxTitleSize)
@@ -897,7 +900,7 @@ public extension UIView {
             messageLabel?.numberOfLines = style.messageNumberOfLines
             messageLabel?.font = style.messageFont
             messageLabel?.textAlignment = style.messageAlignment
-            messageLabel?.lineBreakMode = .byTruncatingTail;
+            messageLabel?.lineBreakMode = .byTruncatingTail
             messageLabel?.textColor = style.messageColor
             messageLabel?.backgroundColor = UIColor.clear
 
@@ -1034,7 +1037,7 @@ public struct ToastStyle {
     /**
      The corner radius. Default is 10.0.
      */
-    public var cornerRadius: CGFloat = 10.0;
+    public var cornerRadius: CGFloat = 10.0
 
     /**
      The title font. Default is `UIFont.boldSystemFontOfSize(16.0)`.
@@ -1161,4 +1164,3 @@ public class ToastManager {
     public var position = ToastPosition.bottom
 
 }
-

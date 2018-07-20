@@ -13,49 +13,49 @@ import Foundation
 /* For support, please feel free to contact me at https://www.linkedin.com/in/syedabsar */
 
 public class Video {
-	public var video_id : Int?
-	public var url : String?
-	public var full_url : String?
-	public var embed_url : String?
-	public var user_id : String?
-	public var complete : String?
-	public var complete_url : String?
-	public var state : String?
-	public var title : String?
-	public var description : String?
-	public var duration : Double?
-	public var height : Int?
-	public var width : Int?
-	public var date_created : String?
-	public var date_stored : String?
-	public var date_completed : String?
-	public var comment_count : Int?
-	public var view_count : Int?
-	public var share_count : Int?
-	public var version : Int?
-	public var nsfw : String?
-	public var thumbnail : String?
-	public var thumbnail_url : String?
-	public var thumbnail_gif : String?
-	public var thumbnail_gif_url : String?
-	public var storyboard : String?
-	public var score : Int?
-	public var likes_count : Int?
-	public var channel_id : Int?
-	public var source : String?
-	public var priv : String?
-	public var latitude : Int?
-	public var longitude : Int?
-	public var place_id : String?
-	public var place_name : String?
-	public var colors : String?
-	public var reddit_link : String?
-	public var youtube_override_source : String?
-	public var is_featured : String?
-	public var date_featured : String?
-	public var score_modifier : Int?
-	public var channel : Channel?
-	public var formats : Array<Formats>?
+	public var video_id: Int?
+	public var url: String?
+	public var full_url: String?
+	public var embed_url: String?
+	public var user_id: String?
+	public var complete: String?
+	public var complete_url: String?
+	public var state: String?
+	public var title: String?
+	public var description: String?
+	public var duration: Double?
+	public var height: Int?
+	public var width: Int?
+	public var date_created: String?
+	public var date_stored: String?
+	public var date_completed: String?
+	public var comment_count: Int?
+	public var view_count: Int?
+	public var share_count: Int?
+	public var version: Int?
+	public var nsfw: String?
+	public var thumbnail: String?
+	public var thumbnail_url: String?
+	public var thumbnail_gif: String?
+	public var thumbnail_gif_url: String?
+	public var storyboard: String?
+	public var score: Int?
+	public var likes_count: Int?
+	public var channel_id: Int?
+	public var source: String?
+	public var priv: String?
+	public var latitude: Int?
+	public var longitude: Int?
+	public var place_id: String?
+	public var place_name: String?
+	public var colors: String?
+	public var reddit_link: String?
+	public var youtube_override_source: String?
+	public var is_featured: String?
+	public var date_featured: String?
+	public var score_modifier: Int?
+	public var channel: Channel?
+	public var formats: [Formats]?
 
 /**
     Returns an array of models based on given dictionary.
@@ -67,11 +67,9 @@ public class Video {
 
     - returns: Array of Video Instances.
 */
-    public class func modelsFromDictionaryArray(array:NSArray) -> [Video]
-    {
-        var models:[Video] = []
-        for item in array
-        {
+    public class func modelsFromDictionaryArray(array: NSArray) -> [Video] {
+        var models: [Video] = []
+        for item in array {
             models.append(Video(dictionary: item as! NSDictionary)!)
         }
         return models
@@ -133,7 +131,6 @@ public class Video {
 		if (dictionary["channel"] != nil) { channel = Channel(dictionary: dictionary["channel"] as! NSDictionary) }
 		if (dictionary["formats"] != nil) { formats = Formats.modelsFromDictionaryArray(array: dictionary["formats"] as! NSArray) }
 	}
-
 		
 /**
     Returns the dictionary representation for the current instance.

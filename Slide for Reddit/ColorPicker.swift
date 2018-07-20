@@ -10,7 +10,7 @@ class ColorPicker: UIView {
     
     var accent = false
     
-    func setAccent(accent: Bool){
+    func setAccent(accent: Bool) {
         self.accent = true
     }
     
@@ -55,12 +55,14 @@ class ColorPicker: UIView {
         var result = [CGColor]()
         let i = value - 2
         var index = 0
-        for val in i...(i + 4){
-            if(val < 0){
+        for val in i...(i + 4) {
+            if(val < 0) {
                 index = val + (allColors.count - 1)
-            } else if(val > (allColors.count - 1)){
+            }
+            else if(val > (allColors.count - 1)) {
                 index = val - (allColors.count - 1)
-            } else {
+            }
+            else {
                 index = val
             }
             result.append(allColors[index])

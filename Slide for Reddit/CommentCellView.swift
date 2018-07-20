@@ -6,11 +6,10 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
-
-import UIKit
+import Anchorage
 import reddift
 import TTTAttributedLabel
-import Anchorage
+import UIKit
 
 class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAttributedLabelDelegate {
     
@@ -23,13 +22,13 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        var topmargin = 0
-        var bottommargin = 2
-        var leftmargin = 0
-        var rightmargin = 0
+        let topmargin = 0
+        let bottommargin = 2
+        let leftmargin = 0
+        let rightmargin = 0
         
         let f = self.contentView.frame
-        let fr = UIEdgeInsetsInsetRect(f, UIEdgeInsetsMake(CGFloat(topmargin), CGFloat(leftmargin), CGFloat(bottommargin), CGFloat(rightmargin)))
+        let fr = UIEdgeInsetsInsetRect(f, UIEdgeInsets(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin)))
         self.contentView.frame = fr
     }
 
@@ -48,44 +47,41 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
         self.contentView.backgroundColor = ColorUtil.foregroundColor
     }
     
-    func setComment(comment: RComment, parent: MediaViewController, nav: UIViewController?, width: CGFloat){
+    func setComment(comment: RComment, parent: MediaViewController, nav: UIViewController?, width: CGFloat) {
         parentViewController = parent
-        if(navViewController == nil && nav != nil){
+        if(navViewController == nil && nav != nil) {
             navViewController = nav
         }
-        let titleText = NSMutableAttributedString.init(string: comment.submissionTitle, attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 18, submission: false)
-            , NSForegroundColorAttributeName : ColorUtil.fontColor])
+        let titleText = NSMutableAttributedString.init(string: comment.submissionTitle, attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 18, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
         self.comment = comment
        
         let commentClick = UITapGestureRecognizer(target: self, action: #selector(CommentCellView.openComment(sender:)))
         commentClick.delegate = self
         self.addGestureRecognizer(commentClick)
         
-        var uC : UIColor
-        switch(ActionStates.getVoteDirection(s: comment)){
+        var uC: UIColor
+        switch(ActionStates.getVoteDirection(s: comment)) {
         case .down:
             uC = ColorUtil.downvoteColor
-            break
         case .up:
             uC = ColorUtil.upvoteColor
-            break
         default:
             uC = ColorUtil.fontColor
-            break
         }
         
-        let attrs = [NSFontAttributeName : FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: uC] as [String : Any]
+        let attrs = [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: uC] as [String: Any]
         
-        let attrs2 = [NSFontAttributeName : FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor] as [String : Any]
+        let attrs2 = [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor] as [String: Any]
 
-        let endString = NSMutableAttributedString(string:"  •  \(DateFormatter().timeSince(from: comment.created, numericDates: true))  •  ", attributes: attrs2)
+        let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: comment.created, numericDates: true))  •  ", attributes: attrs2)
         
-        let boldString = NSMutableAttributedString(string: "\(comment.score)pts", attributes:attrs)
+        let boldString = NSMutableAttributedString(string: "\(comment.score)pts", attributes: attrs)
         let subString = NSMutableAttributedString(string: "r/\(comment.subreddit)")
         let color = ColorUtil.getColorForSub(sub: comment.subreddit)
-        if(color != ColorUtil.baseColor){
+        if(color != ColorUtil.baseColor) {
             subString.addAttribute(NSForegroundColorAttributeName, value: color, range: NSRange.init(location: 0, length: subString.length))
-        } else {
+        }
+        else {
             subString.addAttribute(NSForegroundColorAttributeName, value: ColorUtil.fontColor, range: NSRange.init(location: 0, length: subString.length))
         }
         
@@ -107,12 +103,12 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
         fatalError("init(coder:) has not been implemented")
     }
     
-    var comment : RComment?
+    var comment: RComment?
     public var parentViewController: UIViewController & MediaVCDelegate?
     public var navViewController: UIViewController?
     
-    func openComment(sender: UITapGestureRecognizer? = nil){
-        let comment = CommentViewController.init(submission: (self.comment?.linkid.substring(3, length: (self.comment?.linkid.length)! - 3))! , comment: self.comment!.id, context: 3, subreddit: (self.comment?.subreddit)!)
+    func openComment(sender: UITapGestureRecognizer? = nil) {
+        let comment = CommentViewController.init(submission: (self.comment?.linkid.substring(3, length: (self.comment?.linkid.length)! - 3))!, comment: self.comment!.id, context: 3, subreddit: (self.comment?.subreddit)!)
         VCPresenter.showVC(viewController: comment, popupIfPossible: true, parentNavigationController: parentViewController?.navigationController, parentViewController: parentViewController)
     }
 }

@@ -230,7 +230,7 @@ class SettingValues {
         SettingValues.multiColumn = settings.object(forKey: SettingValues.pref_multiColumn) == nil ? false : settings.bool(forKey: SettingValues.pref_multiColumn)
         
         var columns = Int(round(UIApplication.shared.statusBarView!.frame.size.width / CGFloat(320)))
-        if(columns == 0){
+        if(columns == 0) {
             columns = 1
         }
         SettingValues.multiColumnCount = settings.object(forKey: SettingValues.pref_multiColumnCount) == nil ? columns : settings.integer(forKey: SettingValues.pref_multiColumnCount)
@@ -238,7 +238,7 @@ class SettingValues {
 
         var basePath = settings.string(forKey: SettingValues.pref_defaultSorting)
         for sort in LinkSortType.cases {
-            if(sort.path == basePath){
+            if(sort.path == basePath) {
                 SettingValues.defaultSorting = sort
                 break
             }
@@ -248,7 +248,7 @@ class SettingValues {
 
         basePath = settings.string(forKey: SettingValues.pref_defaultTimePeriod)
         for time in TimeFilterWithin.cases {
-            if(time.param == basePath){
+            if(time.param == basePath) {
                 SettingValues.defaultTimePeriod = time
                 break
             }
@@ -357,7 +357,7 @@ class SettingValues {
         return settings.object(forKey: Bundle.main.releaseVersionNumber!) != nil
     }
 
-    public static func showVersionDialog(_ title: String, _ permalink: String, parentVC: UIViewController){
+    public static func showVersionDialog(_ title: String, _ permalink: String, parentVC: UIViewController) {
         let settings = UserDefaults.standard
         settings.set(true, forKey: Bundle.main.releaseVersionNumber!)
         settings.set(title, forKey: "vtitle")
@@ -381,7 +381,7 @@ class SettingValues {
         case NONE = "none"
         
         func getTitle() -> String {
-            switch(self){
+            switch(self) {
             case .COLLAPSE :
                 return "Collapse parent"
             case .UPVOTE:
@@ -458,7 +458,7 @@ class SettingValues {
         }
 
         func getTitle() -> String {
-            switch (self){
+            switch (self) {
             case .HIDE_READ:
                 return "Hide read"
             case .NEW_POST:

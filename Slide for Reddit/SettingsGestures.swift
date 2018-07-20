@@ -40,7 +40,7 @@ class SettingsGestures: UITableViewController {
     }
     
     func switchIsChanged(_ changed: UISwitch) {
-        if(changed == doubleSwipe){
+        if(changed == doubleSwipe) {
             SettingValues.commentTwoSwipe = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_commentTwoSwipe)
         }
@@ -49,48 +49,51 @@ class SettingsGestures: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let label : UILabel = UILabel()
+        let label: UILabel = UILabel()
         label.textColor = ColorUtil.baseAccent
         label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
         toReturn.backgroundColor = ColorUtil.backgroundColor
         
         switch(section) {
-        case 0: label.text  = "Comments"
-            break
-        case 1: label.text  = "Submissions"
-            break
-        default: label.text  = ""
-            break
+        case 0: label.text = "Comments"
+        case 1: label.text = "Submissions"
+        default: label.text = ""
         }
         return toReturn
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        if(indexPath.row == 1){
+        if(indexPath.row == 1) {
             showAction(cell: rightActionCell)
-        } else if(indexPath.row == 2){
+        }
+        else if(indexPath.row == 2) {
             showAction(cell: leftActionCell)
-        } else if(indexPath.row == 3){
+        }
+        else if(indexPath.row == 3) {
             showAction(cell: doubleTapActionCell)
-        } else if(indexPath.row == 0 && indexPath.section == 1){
+        }
+        else if(indexPath.row == 0 && indexPath.section == 1) {
             showAction(cell: doubleTapSubActionCell)
         }
     }
     
-    func showAction(cell: UITableViewCell){
+    func showAction(cell: UITableViewCell) {
         let alertController: BottomSheetActionController = BottomSheetActionController()
-        for action in SettingValues.CommentAction.cases{
-            alertController.addAction(Action(ActionData(title: action.getTitle(), image: UIImage(named: action.getPhoto())!.menuIcon()), style: .default, handler: { action2 in
+        for action in SettingValues.CommentAction.cases {
+            alertController.addAction(Action(ActionData(title: action.getTitle(), image: UIImage(named: action.getPhoto())!.menuIcon()), style: .default, handler: { _ in
                 UserDefaults.standard.set(action.rawValue, forKey: cell == self.rightActionCell ? SettingValues.pref_commentActionRight : (cell == self.leftActionCell ? SettingValues.pref_commentActionLeft : (cell == self.doubleTapSubActionCell ? SettingValues.pref_submissionActionDoubleTap :  SettingValues.pref_commentActionDoubleTap)))
-                if(cell == self.rightActionCell){
+                if(cell == self.rightActionCell) {
                     SettingValues.commentActionRight = action
-                } else if(cell == self.leftActionCell){
+                }
+                else if(cell == self.leftActionCell) {
                     SettingValues.commentActionLeft = action
-                } else if (cell == self.doubleTapActionCell){
+                }
+                else if (cell == self.doubleTapActionCell) {
                     SettingValues.commentActionDoubleTap = action
-                } else {
+                }
+                else {
                     SettingValues.submissionActionDoubleTap = action
                     SubredditReorderViewController.changed = true
                 }
@@ -101,7 +104,7 @@ class SettingsGestures: UITableViewController {
         VCPresenter.presentAlert(alertController, parentVC: self)
     }
     
-    public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String){
+    public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
         cell.textLabel?.textColor = ColorUtil.fontColor
         cell.backgroundColor = ColorUtil.foregroundColor
@@ -131,7 +134,7 @@ class SettingsGestures: UITableViewController {
         self.tableView.tableFooterView = UIView()
     }
     
-    func updateCells(){
+    func updateCells() {
         createCell(rightActionCell, nil, isOn: false, text: "First right slide button (also triggered by a long slide)")
         createCell(leftActionCell, nil, isOn: false, text: "Second right slide button")
         createCell(doubleTapActionCell, nil, isOn: false, text: "Double tap comment action")
@@ -160,12 +163,13 @@ class SettingsGestures: UITableViewController {
         self.doubleTapActionCell.detailTextLabel?.text = SettingValues.commentActionDoubleTap.getTitle()
         self.doubleTapActionCell.imageView?.layer.cornerRadius = 5
 
-        if(!SettingValues.commentTwoSwipe){
+        if(!SettingValues.commentTwoSwipe) {
             self.rightActionCell.isUserInteractionEnabled = false
             self.rightActionCell.alpha = 0.5
             self.leftActionCell.isUserInteractionEnabled = false
             self.leftActionCell.alpha = 0.5
-        } else {
+        }
+        else {
             self.rightActionCell.isUserInteractionEnabled = true
             self.rightActionCell.alpha = 1
             self.leftActionCell.isUserInteractionEnabled = true
@@ -179,7 +183,6 @@ class SettingsGestures: UITableViewController {
         self.doubleTapSubActionCell.detailTextLabel?.text = SettingValues.submissionActionDoubleTap.getTitle()
         self.doubleTapSubActionCell.imageView?.layer.cornerRadius = 5
 
-
     }
     
     func createLeftView(cell: UITableViewCell, image: String, color: UIColor) {
@@ -191,7 +194,7 @@ class SettingsGestures: UITableViewController {
         return 2
     }
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if(section == 0){
+        if(section == 0) {
             return 0
         }
         return 70
@@ -200,7 +203,6 @@ class SettingsGestures: UITableViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return indexPath.row == 0 && indexPath.section == 0 ? 120 : 70
     }
-    
     
     func tableView(tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
     }
@@ -225,7 +227,6 @@ class SettingsGestures: UITableViewController {
         
     }
     
-    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch(section) {
         case 0: return 4
@@ -233,6 +234,5 @@ class SettingsGestures: UITableViewController {
         default: fatalError("Unknown number of sections")
         }
     }
-    
     
 }

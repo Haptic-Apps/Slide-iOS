@@ -6,15 +6,15 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
-import UIKit
 import reddift
+import UIKit
 
 class Filter: UITableViewController {
 
     var sub: String
-    var enabled : [Bool]
+    var enabled: [Bool]
     var oldEnabled: [Bool]
-    var parentVC : SingleSubredditViewController
+    var parentVC: SingleSubredditViewController
     
     var image: UITableViewCell = UITableViewCell()
     var imageSwitch = UISwitch()
@@ -31,8 +31,7 @@ class Filter: UITableViewController {
     var nsfw: UITableViewCell = UITableViewCell()
     var nsfwSwitch = UISwitch()
     
-    
-    public init(subreddit: String, parent: SingleSubredditViewController){
+    public init(subreddit: String, parent: SingleSubredditViewController) {
         self.sub = subreddit
         enabled = PostFilter.enabledArray(sub)
         oldEnabled = enabled
@@ -44,12 +43,12 @@ class Filter: UITableViewController {
         super.viewWillDisappear(animated)
         var changed = false
         for i in 0...6 {
-            if(enabled[i] != oldEnabled[i]){
+            if(enabled[i] != oldEnabled[i]) {
                 changed = true
                 break
             }
         }
-        if(changed){
+        if(changed) {
             PostFilter.setEnabledArray(sub, enabled)
             parentVC.refresh()
         }
@@ -68,17 +67,23 @@ class Filter: UITableViewController {
     func switchIsChanged(_ changed: UISwitch) {
         if (changed == imageSwitch) {
             enabled[0] = changed.isOn
-        } else if (changed == albumSwitch) {
+        }
+        else if (changed == albumSwitch) {
             enabled[1] = changed.isOn
-        } else if (changed == gifSwitch) {
+        }
+        else if (changed == gifSwitch) {
             enabled[2] = changed.isOn
-        } else if (changed == videoSwitch) {
+        }
+        else if (changed == videoSwitch) {
             enabled[3] = changed.isOn
-        } else if (changed == linkSwitch) {
+        }
+        else if (changed == linkSwitch) {
             enabled[4] = changed.isOn
-        } else if (changed == selftextSwitch) {
+        }
+        else if (changed == selftextSwitch) {
             enabled[5] = changed.isOn
-        } else if (changed == nsfwSwitch) {
+        }
+        else if (changed == nsfwSwitch) {
             enabled[6] = changed.isOn
         }
         UserDefaults.standard.synchronize()
@@ -156,7 +161,6 @@ class Filter: UITableViewController {
         return 50
     }
 
-
     func tableView(tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
     }
 
@@ -184,6 +188,5 @@ class Filter: UITableViewController {
         default: fatalError("Unknown number of sections")
         }
     }
-
 
 }

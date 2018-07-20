@@ -6,8 +6,8 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
-import UIKit
 import TTTAttributedLabel
+import UIKit
 
 public class WrapSpoilers: NSObject {
 
@@ -22,7 +22,7 @@ public class WrapSpoilers: NSObject {
             let spoilerTeaser = match[2]
             // Remove the last </a> tag, but keep the < for parsing.
             if (!tag.contains("<a href=\"http")) {
-                base = base.replacingOccurrences(of: tag, with: tag.substring(0, length: tag.length - 4) + (spoilerTeaser.isEmpty() ? "spoiler" : "") + " [[s[ \(spoilerText)]s]]</a> ");
+                base = base.replacingOccurrences(of: tag, with: tag.substring(0, length: tag.length - 4) + (spoilerTeaser.isEmpty() ? "spoiler" : "") + " [[s[ \(spoilerText)]s]]</a> ")
             }
         }
 
@@ -49,12 +49,13 @@ public class WrapSpoilers: NSObject {
             for match in base.capturedGroups(withRegex: "<table>(.*?)</table>") {
                 let newPiece = match[0]
                 let tableEscaped = newPiece.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)!
-                let inner = "\n<h1><a href=\"http://view.table/\(tableEscaped)\">View table</a></h1>\n";
-                base = base.replacingOccurrences(of: match[0], with: inner);
+                let inner = "\n<h1><a href=\"http://view.table/\(tableEscaped)\">View table</a></h1>\n"
+                base = base.replacingOccurrences(of: match[0], with: inner)
             }
 
             return base
-        } catch {
+        }
+        catch {
             print(error.localizedDescription)
             return text
         }
@@ -70,11 +71,12 @@ extension String {
         var regex: NSRegularExpression
         do {
             regex = try NSRegularExpression(pattern: pattern, options: [NSRegularExpression.Options.dotMatchesLineSeparators])
-        } catch {
+        }
+        catch {
             return results
         }
 
-        let matches = regex.matches(in: self, options: [], range: NSRange(location: 0, length: self.characters.count))
+        let matches = regex.matches(in: self, options: [], range: NSRange(location: 0, length: self.count))
 
         for match in matches.reversed() {
             let lastRangeIndex = match.numberOfRanges - 1

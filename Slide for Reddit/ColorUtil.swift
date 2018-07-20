@@ -16,7 +16,7 @@ extension UIColor {
         var int = UInt32()
         Scanner(string: hex).scanHexInt32(&int)
         let a, r, g, b: UInt32
-        switch hex.characters.count {
+        switch hex.count {
         case 3: // RGB (12-bit)
             (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
         case 6: // RGB (24-bit)
@@ -49,19 +49,21 @@ class ColorUtil {
         }
         var toReturn = false
         if(theme != defaultTheme || (shouldBeNight() || (!shouldBeNight() && theme == SettingValues.nightTheme)) || (defaultTheme == SettingValues.nightTheme && theme != defaultTheme)) {
-            if(shouldBeNight() && theme != SettingValues.nightTheme && SettingValues.nightTheme != defaultTheme){
+            if(shouldBeNight() && theme != SettingValues.nightTheme && SettingValues.nightTheme != defaultTheme) {
                 theme = SettingValues.nightTheme
                 CachedTitle.titles.removeAll()
                 LinkCellImageCache.initialize()
                 SingleSubredditViewController.cellVersion += 1
                 toReturn = true
-            } else if(!shouldBeNight() && theme != defaultTheme){
+            }
+            else if(!shouldBeNight() && theme != defaultTheme) {
                 theme = defaultTheme
                 CachedTitle.titles.removeAll()
                 LinkCellImageCache.initialize()
                 SingleSubredditViewController.cellVersion += 1
                 toReturn = true
-            } else if(defaultTheme == SettingValues.nightTheme && theme != defaultTheme){
+            }
+            else if(defaultTheme == SettingValues.nightTheme && theme != defaultTheme) {
                 theme = defaultTheme
                 CachedTitle.titles.removeAll()
                 LinkCellImageCache.initialize()
@@ -70,7 +72,7 @@ class ColorUtil {
             }
         }
         
-        if(!setOnce){
+        if(!setOnce) {
             LinkCellImageCache.initialize()
             setOnce = true
         }
@@ -119,7 +121,8 @@ class ColorUtil {
         let color = UserDefaults.standard.colorForKey(key: "color+" + sub)
         if (color == nil || color!.hexString == UIColor.black.hexString) {
             return baseColor
-        } else {
+        }
+        else {
             return color!
         }
     }
@@ -128,7 +131,8 @@ class ColorUtil {
         let color = UserDefaults.standard.colorForKey(key: "color+" + sub)
         if (color == nil) {
             return foregroundColor
-        } else {
+        }
+        else {
             return color!
         }
     }
@@ -137,7 +141,8 @@ class ColorUtil {
         let color = UserDefaults.standard.colorForKey(key: "user+" + name)
         if (color == nil) {
             return baseColor
-        } else {
+        }
+        else {
             return color!
         }
     }
@@ -161,28 +166,25 @@ class ColorUtil {
         UserDefaults.standard.synchronize()
     }
 
-
     public static func setColorForUser(name: String, color: UIColor) {
         UserDefaults.standard.setColor(color: color, forKey: "user+" + name)
         UserDefaults.standard.synchronize()
     }
-
 
     public static func setAccentColorForSub(sub: String, color: UIColor) {
         UserDefaults.standard.setColor(color: color, forKey: "accent+" + sub)
         UserDefaults.standard.synchronize()
     }
 
-
     public static func accentColorForSub(sub: String) -> UIColor {
         let color = UserDefaults.standard.colorForKey(key: "accent+" + sub)
         if (color == nil) {
             return baseAccent
-        } else {
+        }
+        else {
             return color!
         }
     }
-
 
     enum Theme: String {
         case LIGHT = "light"
@@ -288,4 +290,3 @@ extension UserDefaults {
     }
 
 }
-

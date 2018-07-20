@@ -6,14 +6,14 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
-import UIKit
-import reddift
 import MaterialComponents.MaterialTabs
+import reddift
+import UIKit
 
 class ModerationViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIToolbarDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate {
     var content: [String] = ["Mod Mail", "Mod Mail Unread"]
     var isReload = false
-    var session: Session? = nil
+    var session: Session?
 
     var vCs: [UIViewController] = []
 
@@ -86,7 +86,6 @@ class ModerationViewController: UIPageViewController, UIPageViewControllerDataSo
 
         self.view.addSubview(tabBar)
 
-
         time = History.getInboxSeen()
         History.inboxSeen()
         view.backgroundColor = ColorUtil.backgroundColor
@@ -106,19 +105,14 @@ class ModerationViewController: UIPageViewController, UIPageViewControllerDataSo
             }
         }
 
-
-        if (self.navigationController?.interactivePopGestureRecognizer != nil)
-        {
+        if (self.navigationController?.interactivePopGestureRecognizer != nil) {
             print("Not nil")
-            for view in view.subviews
-            {
-                if let scrollView = view as? UIScrollView
-                {
-                    scrollView.panGestureRecognizer.require(toFail: self.navigationController!.interactivePopGestureRecognizer!);
+            for view in view.subviews {
+                if let scrollView = view as? UIScrollView {
+                    scrollView.panGestureRecognizer.require(toFail: self.navigationController!.interactivePopGestureRecognizer!)
                 }
             }
         }
-
 
         setViewControllers([firstViewController],
                 direction: .forward,
@@ -137,7 +131,8 @@ class ModerationViewController: UIPageViewController, UIPageViewControllerDataSo
 
         if (!selected) {
             tabBar.setSelectedItem(tabBar.items[page! ], animated: true)
-        } else {
+        }
+        else {
             selected = false
         }
         currentIndex = page!
@@ -154,7 +149,8 @@ class ModerationViewController: UIPageViewController, UIPageViewControllerDataSo
             scrollView.contentOffset.x = scrollView.frame.width
             return
 
-        } else if currentIndex == 0 && lastPosition < scrollView.frame.width {
+        }
+        else if currentIndex == 0 && lastPosition < scrollView.frame.width {
             scrollView.contentOffset.x = scrollView.frame.width
             return
         }
@@ -184,7 +180,6 @@ class ModerationViewController: UIPageViewController, UIPageViewControllerDataSo
         guard let viewControllerIndex = vCs.index(of: viewController) else {
             return nil
         }
-
 
         let nextIndex = viewControllerIndex + 1
         let orderedViewControllersCount = vCs.count

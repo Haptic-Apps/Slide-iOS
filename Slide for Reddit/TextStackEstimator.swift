@@ -6,10 +6,10 @@
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
-import UIKit
-import TTTAttributedLabel
 import Anchorage
 import DTCoreText
+import TTTAttributedLabel
+import UIKit
 
 public class TextStackEstimator: NSObject {
     let TABLE_START_TAG = "<table>"
@@ -34,20 +34,20 @@ public class TextStackEstimator: NSObject {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public func setAttributedString(_ string: NSAttributedString){
+    public func setAttributedString(_ string: NSAttributedString) {
         let framesetterB = CTFramesetterCreateWithAttributedString(string)
         let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
         estimatedHeight += textSizeB.height
     }
     
-    public func setTextWithTitleHTML(_ title: NSMutableAttributedString, _ body: NSAttributedString? = nil, htmlString: String){
+    public func setTextWithTitleHTML(_ title: NSMutableAttributedString, _ body: NSAttributedString? = nil, htmlString: String) {
         
         if(htmlString.contains("<table") || htmlString.contains("<code")) {
             var blocks = getBlocks(htmlString)
             
             var startIndex = 0
             
-            var newTitle = title
+            let newTitle = title
             
             if (!blocks[0].startsWith("<table>") && !blocks[0].startsWith("<code>")) {
                 newTitle.append(NSAttributedString.init(string: "\n\n", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 5)]))
@@ -61,17 +61,20 @@ public class TextStackEstimator: NSObject {
             if (blocks.count > 1) {
                 if (startIndex == 0) {
                     setViews(blocks)
-                } else {
+                }
+                else {
                     blocks.remove(at: 0)
                     setViews(blocks)
                 }
             }
-        } else {
-            var newTitle = title
-            if(body != nil){
+        }
+        else {
+            let newTitle = title
+            if(body != nil) {
                 newTitle.append(NSAttributedString.init(string: "\n\n", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 5)]))
                 newTitle.append(body!)
-            } else {
+            }
+            else {
                 newTitle.append(NSAttributedString.init(string: "\n\n", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 5)]))
                 newTitle.append(createAttributedChunk(baseHTML: htmlString))
             }
@@ -82,7 +85,7 @@ public class TextStackEstimator: NSObject {
         
     }
     
-    public func setData(htmlString: String){
+    public func setData(htmlString: String) {
         
         //Start HTML parse
         var blocks = getBlocks(htmlString)
@@ -100,25 +103,29 @@ public class TextStackEstimator: NSObject {
         if (blocks.count > 1) {
             if (startIndex == 0) {
                 setViews(blocks)
-            } else {
+            }
+            else {
                 blocks.remove(at: 0)
                 setViews(blocks)
             }
         }
     }
     
-    func setViews(_ blocks: [String]){
+    func setViews(_ blocks: [String]) {
         for block in blocks {
             estimatedHeight += 8
             if(block.startsWith("<table>")) {
                 let table = TableDisplayView.getEstimatedHeight(baseHtml: block)
                 estimatedHeight += table
-            } else if(block.startsWith("<hr/>")){
+            }
+            else if(block.startsWith("<hr/>")) {
                 estimatedHeight += 1
-            } else if(block.startsWith("<code>")){
+            }
+            else if(block.startsWith("<code>")) {
                 let body = CodeDisplayView.init(baseHtml: block, color: ColorUtil.fontColor)
                 estimatedHeight += body.globalHeight
-            } else {
+            }
+            else {
                 let text = createAttributedChunk(baseHTML: block)
                 let framesetterB = CTFramesetterCreateWithAttributedString(text)
                 let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
@@ -130,7 +137,7 @@ public class TextStackEstimator: NSObject {
     public func createAttributedChunk(baseHTML: String) -> NSAttributedString {
         let font = FontGenerator.fontOfSize(size: fontSize, submission: submission)
         let htmlBase = TextStackEstimator.addSpoilers(baseHTML)
-        let html = DTHTMLAttributedStringBuilder.init(html: htmlBase.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor : ColorUtil.fontColor, DTDefaultFontFamily: font.familyName,DTDefaultFontSize: font.pointSize,  DTDefaultFontName: font.fontName], documentAttributes: nil).generatedAttributedString()!
+        let html = DTHTMLAttributedStringBuilder.init(html: htmlBase.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor: ColorUtil.fontColor, DTDefaultFontFamily: font.familyName, DTDefaultFontSize: font.pointSize, DTDefaultFontName: font.fontName], documentAttributes: nil).generatedAttributedString()!
         
         return LinkParser.parse(html, .white)
     }
@@ -145,7 +152,8 @@ public class TextStackEstimator: NSObject {
         
         if (html.contains("<table")) {
             return parseTableTags(codeBlockSeperated)
-        } else {
+        }
+        else {
             return codeBlockSeperated
         }
     }
@@ -240,7 +248,7 @@ public class TextStackEstimator: NSObject {
         var split = [String]()
         
         preSeperated.append(startSeperated[0])
-        if(startSeperated.count > 1){
+        if(startSeperated.count > 1) {
             for i in 1...startSeperated.count - 1 {
                 text = startSeperated[i]
                 split = text.components(separatedBy: endTag)
@@ -260,12 +268,13 @@ public class TextStackEstimator: NSObject {
         var newBlocks = [String]()
         for block in blocks {
             if (block.contains(HR_TAG)) {
-                for s in block.components(separatedBy: HR_TAG){
+                for s in block.components(separatedBy: HR_TAG) {
                     newBlocks.append(s)
                     newBlocks.append(HR_TAG)
                 }
                 newBlocks.remove(at: newBlocks.count - 1)
-            } else {
+            }
+            else {
                 newBlocks.append(block)
             }
         }
@@ -286,7 +295,8 @@ public class TextStackEstimator: NSObject {
                         newBlocks.append(split[1])
                     }
                 }
-            } else {
+            }
+            else {
                 newBlocks.append(block)
             }
         }
@@ -305,7 +315,7 @@ public class TextStackEstimator: NSObject {
             let spoilerTeaser = match[2]
             // Remove the last </a> tag, but keep the < for parsing.
             if (!tag.contains("<a href=\"http")) {
-                base = base.replacingOccurrences(of: tag, with: tag.substring(0, length: tag.length - 4) + (spoilerTeaser.isEmpty() ? "spoiler" : "") + " [[s[ \(spoilerText)]s]]</a> ");
+                base = base.replacingOccurrences(of: tag, with: tag.substring(0, length: tag.length - 4) + (spoilerTeaser.isEmpty() ? "spoiler" : "") + " [[s[ \(spoilerText)]s]]</a> ")
             }
         }
         

@@ -13,14 +13,14 @@ import Foundation
 /* For support, please feel free to contact me at https://www.linkedin.com/in/syedabsar */
 
 public class StremableMp4 {
-	public var status : Int?
-	public var width : Int?
-	public var url : String?
-	public var bitrate : Int?
-	public var duration : Double?
-	public var size : Int?
-	public var framerate : Int?
-	public var height : Int?
+	public var status: Int?
+	public var width: Int?
+	public var url: String?
+	public var bitrate: Int?
+	public var duration: Double?
+	public var size: Int?
+	public var framerate: Int?
+	public var height: Int?
 
 /**
     Returns an array of models based on given dictionary.
@@ -32,11 +32,9 @@ public class StremableMp4 {
 
     - returns: Array of Mp4 Instances.
 */
-    public class func modelsFromDictionaryArray(array:NSArray) -> [StremableMp4]
-    {
-        var models:[StremableMp4] = []
-        for item in array
-        {
+    public class func modelsFromDictionaryArray(array: NSArray) -> [StremableMp4] {
+        var models: [StremableMp4] = []
+        for item in array {
             models.append(StremableMp4(dictionary: item as! NSDictionary)!)
         }
         return models
@@ -63,7 +61,6 @@ public class StremableMp4 {
 		framerate = dictionary["framerate"] as? Int
 		height = dictionary["height"] as? Int
 	}
-
 		
 /**
     Returns the dictionary representation for the current instance.

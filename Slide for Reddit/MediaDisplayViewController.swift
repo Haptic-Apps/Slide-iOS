@@ -6,11 +6,11 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
-import UIKit
-import MaterialComponents.MaterialProgressView
-import SDWebImage
 import CoreMedia
+import MaterialComponents.MaterialProgressView
 import RLBAlertsPickers
+import SDWebImage
+import UIKit
 
 class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestureRecognizerDelegate {
 
@@ -33,7 +33,6 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
         type = ContentType.getContentType(baseUrl: url)
     }
 
-
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -44,10 +43,11 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
         }
         if let image = baseImage {
             self.imageLoaded = true
-            var xstart = (parent is AlbumViewController) ? CGFloat(61) : 0
-            if (image.size.height > image.size.width ||  UIApplication.shared.statusBarOrientation != .portrait) {
+            let xstart = (parent is AlbumViewController) ? CGFloat(61) : 0
+            if (image.size.height > image.size.width || UIApplication.shared.statusBarOrientation != .portrait) {
                 self.scrollView.contentSize = CGSize.init(width: min(self.view.frame.size.width, getWidthFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width)), height: self.view.frame.size.height - (xstart * 2) + 8)
-            } else {
+            }
+            else {
                 self.scrollView.contentSize = CGSize.init(width: self.view.frame.size.width, height: min(self.view.frame.size.height, getHeightFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width)) - (xstart * 2) + 8)
             }
             self.scrollView.delegate = self
@@ -77,7 +77,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
                     let textB = UIBarButtonItem(image: UIImage(named: "size")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.showTitle(_:)))
                     items.append(textB)
                 }
-                if(commentCallback != nil){
+                if(commentCallback != nil) {
                     let textB = UIBarButtonItem(image: UIImage(named: "comments")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.openComments(_:)))
                     items.append(textB)
                 }
@@ -89,15 +89,14 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
                 menuB = UIBarButtonItem(image: UIImage(named: "moreh")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.showImageMenu(_:)))
                 items.append(menuB!)
 
-
                 toolbar.items = items
 
             }
         }
     }
     
-    func openComments(_ sender: AnyObject){
-        if(commentCallback != nil){
+    func openComments(_ sender: AnyObject) {
+        if(commentCallback != nil) {
             self.dismiss(animated: true) {
                 self.commentCallback!()
             }
@@ -111,29 +110,32 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
     var ignore = false
     
     func handleTap(recognizer: UITapGestureRecognizer?) {
-        if(fullscreen){
-            if(playButton != nil && !playButton!.isHidden){
+        if(fullscreen) {
+            if(playButton != nil && !playButton!.isHidden) {
                 self.playButton!.isHidden = true
                 self.playbackSlider.isHidden = true
-            } else {
+            }
+            else {
                 unFullscreen(imageView)
             }
-        } else {
-            if(playButton != nil && playButton!.isHidden){
+        }
+        else {
+            if(playButton != nil && playButton!.isHidden) {
                 showControls()
-            } else {
+            }
+            else {
                 fullscreen(imageView)
             }
         }
     }
     
-    func showControls(){
+    func showControls() {
         self.ignore = true
         playButton!.isHidden = false
         playbackSlider.isHidden = false
         let deadlineTime = DispatchTime.now() + .seconds(2)
         DispatchQueue.main.asyncAfter(deadline: deadlineTime, execute: {
-            if(!self.ignore){
+            if(!self.ignore) {
                 self.playButton!.isHidden = true
                 self.playbackSlider.isHidden = true
             }
@@ -147,7 +149,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
             let textB = UIBarButtonItem(image: UIImage(named: "size")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.showTitle(_:)))
             items.append(textB)
         }
-        if(commentCallback != nil){
+        if(commentCallback != nil) {
             let textB = UIBarButtonItem(image: UIImage(named: "comments")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.openComments(_:)))
             items.append(textB)
         }
@@ -166,7 +168,8 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
     @IBAction func handleDoubleTapScrollView(recognizer: UITapGestureRecognizer) {
         if scrollView.zoomScale == 1 {
             scrollView.zoom(to: zoomRectForScale(scale: 2.5, center: recognizer.location(in: recognizer.view)), animated: true)
-        } else {
+        }
+        else {
             scrollView.setZoomScale(1, animated: true)
         }
     }
@@ -180,7 +183,6 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
         zoomRect.origin.y = newCenter.y - (zoomRect.size.height / 2.0)
         return zoomRect
     }
-
 
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return imageView
@@ -196,7 +198,8 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
                 self.displayImage(baseImage: image)
             }
 
-        } else {
+        }
+        else {
             SDWebImageDownloader.shared().downloadImage(with: imageURL, options: .allowInvalidSSLCertificates, progress: { (current: NSInteger, total: NSInteger) in
                 var average: Float = 0
                 average = (Float(current) / Float(total))
@@ -206,7 +209,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
                 let fileSize = countBytes.string(fromByteCount: Int64(total))
                 self.sizeLabel!.text = fileSize
                 self.progressView!.progress = average
-            }, completed: { (image, _, error, _) in
+            }, completed: { (image, _, _, _) in
                 SDWebImageManager.shared().saveImage(toCache: image, for: imageURL)
                 DispatchQueue.main.async {
                     self.progressView?.setHidden(true, animated: true)
@@ -219,22 +222,21 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
 
     func getHeightFromAspectRatio(imageHeight: CGFloat, imageWidth: CGFloat) -> CGFloat {
         let ratio = Double(imageHeight) / Double(imageWidth)
-        let width = Double(view.frame.size.width);
+        let width = Double(view.frame.size.width)
         return CGFloat(width * ratio)
     }
 
     func getWidthFromAspectRatio(imageHeight: CGFloat, imageWidth: CGFloat) -> CGFloat {
         let ratio = Double(imageWidth) / Double(imageHeight)
-        let height = Double(view.frame.size.height);
+        let height = Double(view.frame.size.height)
         return CGFloat(height * ratio)
     }
 
     var toolbar = UIToolbar()
 
-
     override func viewDidLoad() {
         super.viewDidLoad()
-        var xstart = (parent is AlbumViewController) ? CGFloat(61) : 0
+        let xstart = (parent is AlbumViewController) ? CGFloat(61) : 0
         self.scrollView = UIScrollView.init(frame: CGRect.init(x: 0, y: xstart, width: self.view.frame.size.width, height: self.view.frame.size.height - (xstart * 2) + 8))
         self.scrollView.contentSize = CGSize.init(width: self.view.frame.width, height: self.view.frame.height - (xstart * 2) + 8)
         self.scrollView.delegate = self
@@ -244,21 +246,21 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
         self.view.addSubview(scrollView)
         self.scrollView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
 
-
         (parent as? SwipeDownModalVC)?.background?.backgroundColor = UIColor.black.withAlphaComponent(0.7)
         if #available(iOS 11.0, *) {
             toolbar = UIToolbar.init(frame: CGRect.init(x: 0, y: self.view.frame.size.height - 45 - ((UIApplication.shared.keyWindow?.safeAreaInsets.bottom) ?? 0), width: self.view.frame.size.width, height: 45))
-        } else {
+        }
+        else {
             toolbar = UIToolbar.init(frame: CGRect.init(x: 0, y: self.view.frame.size.height - 45, width: self.view.frame.size.width, height: 45))
         }
         let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         var items: [UIBarButtonItem] = []
         if (text != nil && !(text!.isEmpty)) {
-            var textB = UIBarButtonItem(image: UIImage(named: "size")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.showTitle(_:)))
+            let textB = UIBarButtonItem(image: UIImage(named: "size")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.showTitle(_:)))
             items.append(textB)
         }
         
-        if(commentCallback != nil){
+        if(commentCallback != nil) {
             let textB = UIBarButtonItem(image: UIImage(named: "comments")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.openComments(_:)))
             items.append(textB)
         }
@@ -322,7 +324,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
             (self.parent as? SwipeDownModalVC)?.background?.backgroundColor = UIColor.black
             self.toolbar.alpha = 0
 
-        }, completion: {finished in
+        }, completion: {_ in
             self.toolbar.isHidden = true
 
         })
@@ -338,17 +340,18 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
             (self.parent as? SwipeDownModalVC)?.background?.backgroundColor = UIColor.black.withAlphaComponent(0.7)
             self.toolbar.alpha = 1
             
-        }, completion: {finished in
+        }, completion: {_ in
         })
     }
 
     func download(_ sender: AnyObject) {
-        if(imageLoaded){
-            if(imageView.image != nil){
+        if(imageLoaded) {
+            if(imageView.image != nil) {
                 CustomAlbum.shared.save(image: imageView.image!, parent: self)
             }
-        } else {
-            if(displayedVideo != nil){
+        }
+        else {
+            if(displayedVideo != nil) {
                 CustomAlbum.shared.saveMovieToLibrary(movieURL: displayedVideo!, parent: self)
             }
         }
@@ -359,46 +362,49 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
         let open = OpenInChromeController.init()
         if (open.isChromeInstalled()) {
             alert.addAction(
-                    UIAlertAction(title: "Open in Chrome", style: .default) { (action) in
+                    UIAlertAction(title: "Open in Chrome", style: .default) { (_) in
                         open.openInChrome(self.baseURL!, callbackURL: nil, createNewTab: true)
                     }
             )
         }
         alert.addAction(
-                UIAlertAction(title: "Open in Safari", style: .default) { (action) in
+                UIAlertAction(title: "Open in Safari", style: .default) { (_) in
                     if #available(iOS 10.0, *) {
                         UIApplication.shared.open(self.baseURL!, options: [:], completionHandler: nil)
-                    } else {
+                    }
+                    else {
                         UIApplication.shared.openURL(self.baseURL!)
                     }
                 }
         )
         alert.addAction(
-                UIAlertAction(title: "Share URL", style: .default) { (action) in
+                UIAlertAction(title: "Share URL", style: .default) { (_) in
                     let shareItems: Array = [self.baseURL!]
                     let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
                     let window = UIApplication.shared.keyWindow!
                     if let modalVC = window.rootViewController?.presentedViewController {
                         modalVC.present(activityViewController, animated: true, completion: nil)
-                    } else {
+                    }
+                    else {
                         window.rootViewController!.present(activityViewController, animated: true, completion: nil)
                     }
                 }
         )
         alert.addAction(
-                UIAlertAction(title: "Share Image", style: .default) { (action) in
+                UIAlertAction(title: "Share Image", style: .default) { (_) in
                     let shareItems: Array = [self.imageView.image!]
                     let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
                     let window = UIApplication.shared.keyWindow!
                     if let modalVC = window.rootViewController?.presentedViewController {
                         modalVC.present(activityViewController, animated: true, completion: nil)
-                    } else {
+                    }
+                    else {
                         window.rootViewController!.present(activityViewController, animated: true, completion: nil)
                     }
                 }
         )
         alert.addAction(
-                UIAlertAction(title: "Cancel", style: .cancel) { (action) in
+                UIAlertAction(title: "Cancel", style: .cancel) { (_) in
                 }
         )
         let window = UIApplication.shared.keyWindow!
@@ -409,17 +415,17 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
             presenter.sourceRect = (menuB!.value(forKey: "view") as! UIView).bounds
         }
 
-
         if let modalVC = window.rootViewController?.presentedViewController {
             modalVC.present(alert, animated: true, completion: nil)
-        } else {
+        }
+        else {
             window.rootViewController!.present(alert, animated: true, completion: nil)
         }
     }
 
     var showHQ = false
     var imageLoaded = false
-    var savedColor : UIColor?
+    var savedColor: UIColor?
 
     override func viewWillAppear(_ animated: Bool) {
         savedColor = UIApplication.shared.statusBarView?.backgroundColor
@@ -433,14 +439,18 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
             if (lqURL != nil && !SettingValues.loadContentHQ && shouldShowLq) {
                 loadImage(imageURL: lqURL!)
                 showHQ = true
-            } else {
+            }
+            else {
                 loadImage(imageURL: baseURL!)
             }
-        } else if (type == .GIF || type == .STREAMABLE || type == .VID_ME) {
+        }
+        else if (type == .GIF || type == .STREAMABLE || type == .VID_ME) {
             getGif(urlS: baseURL!.absoluteString)
-        } else if (type == .IMGUR) {
+        }
+        else if (type == .IMGUR) {
             loadImage(imageURL: URL.init(string: baseURL!.absoluteString + ".png")!)
-        } else if (type == .VIDEO) {
+        }
+        else if (type == .VIDEO) {
             toolbar.isHidden = true
             let he = getYTHeight()
             ytPlayer = YTPlayerView()
@@ -459,10 +469,10 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
     var playbackSlider = UISlider()
     
     //from http://swiftdeveloperblog.com/code-examples/add-playback-slider-to-avplayer-example-in-swift/
-    func doControls(){
+    func doControls() {
         playButton = UIButton.init(type: .system)
         
-        playButton!.frame = CGRect(x: scrollView.center.x - 37.5, y: scrollView.center.y - 37.5, width: 75, height:75)
+        playButton!.frame = CGRect(x: scrollView.center.x - 37.5, y: scrollView.center.y - 37.5, width: 75, height: 75)
         playButton!.setImage(UIImage.init(named: "pause"), for: .normal)
         playButton!.isHidden = true
         playButton!.tintColor = UIColor.white
@@ -470,11 +480,11 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
         
         self.view.addSubview(playButton!)
         
-        playbackSlider = UISlider(frame:CGRect(x:12, y: scrollView.frame.size.height - 60, width:scrollView.frame.size.width - 24, height:20))
+        playbackSlider = UISlider(frame: CGRect(x: 12, y: scrollView.frame.size.height - 60, width: scrollView.frame.size.width - 24, height: 20))
         playbackSlider.minimumValue = 0
         
         let duration = self.player.currentItem!.asset.duration
-        let seconds : Float64 = CMTimeGetSeconds(duration)
+        let seconds: Float64 = CMTimeGetSeconds(duration)
         
         playbackSlider.maximumValue = Float(seconds)
         playbackSlider.isContinuous = true
@@ -506,38 +516,37 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
         }
     }
 
-    func playbackSliderValueChanged(_ playbackSlider:UISlider) {
+    func playbackSliderValueChanged(_ playbackSlider: UISlider) {
         
         ignore = true
-        let seconds : Int64 = Int64(playbackSlider.value)
-        let targetTime:CMTime = CMTimeMake(seconds, 1)
+        let seconds: Int64 = Int64(playbackSlider.value)
+        let targetTime: CMTime = CMTimeMake(seconds, 1)
         
         self.player.seek(to: targetTime)
         
-        if player.rate == 0
-        {
+        if player.rate == 0 {
             player.play()
             ignore = false
             playButton!.setImage(UIImage(named: "pause"), for: .normal)
         }
         let deadlineTime = DispatchTime.now() + .seconds(1)
         DispatchQueue.main.asyncAfter(deadline: deadlineTime, execute: {
-            if(!self.ignore){
+            if(!self.ignore) {
                 self.playButton!.isHidden = true
                 self.playbackSlider.isHidden = true
             }
         })
     }
     
-    func playButtonTapped(_ sender:UIButton) {
-        if player.rate == 0
-        {
+    func playButtonTapped(_ sender: UIButton) {
+        if player.rate == 0 {
             player.play()
             self.playButton!.isHidden = true
             self.playbackSlider.isHidden = true
 
             playButton!.setImage(UIImage(named: "pause"), for: .normal)
-        } else {
+        }
+        else {
             player.pause()
             ignore = true
             playButton!.setImage(UIImage(named: "play"), for: .normal)
@@ -548,10 +557,9 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
         super.viewWillDisappear(animated)
 
         UIApplication.shared.statusBarView?.isHidden = false
-        if(savedColor != nil){
+        if(savedColor != nil) {
             UIApplication.shared.statusBarView?.backgroundColor = savedColor
         }
-
 
         if (MediaDisplayViewController.videoPlayer != nil) {
             MediaDisplayViewController.videoPlayer!.pause()

@@ -4,15 +4,15 @@
 //  Created by Dejan Atanasov on 13/07/2017.
 //  Copyright © 2017 Dejan Atanasov. All rights reserved.
 //
-import UIKit
 import StoreKit
+import UIKit
 
-enum IAPHandlerAlertType{
+enum IAPHandlerAlertType {
     case disabled
     case restored
     case purchased
     
-    func message() -> String{
+    func message() -> String {
         switch self {
         case .disabled: return "Purchases are disabled on your device!"
         case .restored: return "You've successfully restored your purchase, thank you for supporting Slide!"
@@ -20,7 +20,6 @@ enum IAPHandlerAlertType{
         }
     }
 }
-
 
 class IAPHandler: NSObject {
     static let shared = IAPHandler()
@@ -36,9 +35,9 @@ class IAPHandler: NSObject {
     var getItemsBlock: (([SKProduct]) -> Void)?
 
     // MARK: - MAKE PURCHASE OF A PRODUCT
-    func canMakePurchases() -> Bool {  return SKPaymentQueue.canMakePayments()  }
+    func canMakePurchases() -> Bool { return SKPaymentQueue.canMakePayments() }
     
-    func purchaseMyProduct(index: Int){
+    func purchaseMyProduct(index: Int) {
         print("Purchasing")
         if iapProducts.count == 0 { return }
         
@@ -50,20 +49,20 @@ class IAPHandler: NSObject {
             
             print("PRODUCT TO PURCHASE: \(product.productIdentifier)")
             productID = product.productIdentifier
-        } else {
+        }
+        else {
             purchaseStatusBlock?(.disabled)
         }
     }
     
     // MARK: - RESTORE PURCHASE
-    func restorePurchase(){
+    func restorePurchase() {
         SKPaymentQueue.default().add(self)
         SKPaymentQueue.default().restoreCompletedTransactions()
     }
     
-    
     // MARK: - FETCH AVAILABLE IAP PRODUCTS
-    func fetchAvailableProducts(){
+    func fetchAvailableProducts() {
         
         // Put here your IAP Products ID's
         let productIdentifiers = NSSet(objects: PRO, PRO_DONATE)
@@ -74,13 +73,13 @@ class IAPHandler: NSObject {
     }
 }
 
-extension IAPHandler: SKProductsRequestDelegate, SKPaymentTransactionObserver{
+extension IAPHandler: SKProductsRequestDelegate, SKPaymentTransactionObserver {
     // MARK: - REQUEST IAP PRODUCTS
-    func productsRequest (_ request:SKProductsRequest, didReceive response:SKProductsResponse) {
+    func productsRequest (_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
         getItemsBlock?(response.products)
         if (response.products.count > 0) {
             iapProducts = response.products
-            for product in iapProducts{
+            for product in iapProducts {
                 let numberFormatter = NumberFormatter()
                 numberFormatter.formatterBehavior = .behavior10_4
                 numberFormatter.numberStyle = .currency
@@ -95,27 +94,26 @@ extension IAPHandler: SKProductsRequestDelegate, SKPaymentTransactionObserver{
         purchaseStatusBlock?(.restored)
     }
     
-    // MARK:- IAP PAYMENT QUEUE
+    // MARK: - IAP PAYMENT QUEUE
     func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
-        for transaction:AnyObject in transactions {
+        for transaction: AnyObject in transactions {
             if let trans = transaction as? SKPaymentTransaction {
                 switch trans.transactionState {
                 case .purchased:
                     print("purchased")
                     SKPaymentQueue.default().finishTransaction(transaction as! SKPaymentTransaction)
                     purchaseStatusBlock?(.purchased)
-                    break
                     
                 case .failed:
                     print("failed")
                     SKPaymentQueue.default().finishTransaction(transaction as! SKPaymentTransaction)
-                    break
+
                 case .restored:
                     print("restored")
                     SKPaymentQueue.default().finishTransaction(transaction as! SKPaymentTransaction)
-                    break
                     
-                default: break
+                default:
+                    break
                 }}}
     }
 }

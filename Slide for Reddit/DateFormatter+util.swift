@@ -27,39 +27,52 @@ extension DateFormatter {
         
         if components.year! >= 2 {
             result = "\(components.year!)y"
-        } else if components.year! >= 1 {
+        }
+        else if components.year! >= 1 {
             if numericDates {
                 result = "1y"
-            } else {
+            }
+            else {
                 result = "Last year"
             }
-        } else if components.day! >= 2 {
+        }
+        else if components.day! >= 2 {
             result = "\(components.day!)d"
-        } else if components.day! >= 1 {
+        }
+        else if components.day! >= 1 {
             if numericDates {
                 result = "1d"
-            } else {
+            }
+            else {
                 result = "Yesterday"
             }
-        } else if components.hour! >= 2 {
+        }
+        else if components.hour! >= 2 {
             result = "\(components.hour!)h"
-        } else if components.hour! >= 1 {
+        }
+        else if components.hour! >= 1 {
             if numericDates {
                 result = "1h"
-            } else {
+            }
+            else {
                 result = "An hour ago"
             }
-        } else if components.minute! >= 2 {
+        }
+        else if components.minute! >= 2 {
             result = "\(components.minute!)m"
-        } else if components.minute! >= 1 {
+        }
+        else if components.minute! >= 1 {
             if numericDates {
                 result = "1m"
-            } else {
+            }
+            else {
                 result = "A minute ago"
             }
-        } else if components.second! >= 3 {
+        }
+        else if components.second! >= 3 {
             result = "\(components.second!)s"
-        } else {
+        }
+        else {
             result = "Just now"
         }
         

@@ -39,7 +39,7 @@ public class LinkCellImageCache {
     }
 
     // TODO: Call this whenever the theme changes.
-    public static func initialize(){
+    public static func initialize() {
         upvote = UIImage(named: "upvote")!.menuIcon()
         upvoteTinted = upvote.getCopy(withColor: ColorUtil.upvoteColor)
 

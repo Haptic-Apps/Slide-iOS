@@ -6,8 +6,8 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
-import UIKit
 import reddift
+import UIKit
 
 class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
 
@@ -31,7 +31,6 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
     //for future var dontLoadImagePreviewsCell: UITableViewCell = UITableViewCell()
     // var dontLoadImagePreviews = UISwitch()
 
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -49,14 +48,13 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         navigationController?.navigationBar.tintColor = UIColor.white
     }
 
-
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             switch (indexPath.section) {
             case 1:
                 PostFilter.openExternally.remove(at: indexPath.row)
-                break
-            default: fatalError("Unknown section")
+            default:
+                fatalError("Unknown section")
             }
             tableView.deleteRows(at: [indexPath], with: .fade)
             PostFilter.saveAndUpdate()
@@ -67,16 +65,20 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         if (changed == internalImage) {
             SettingValues.internalImageView = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_internalImageView)
-        } else if (changed == internalGif) {
+        }
+        else if (changed == internalGif) {
             SettingValues.internalGifView = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_internalGifView)
-        } else if (changed == internalAlbum) {
+        }
+        else if (changed == internalAlbum) {
             SettingValues.internalAlbumView = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_internalAlbumView)
-        } else if (changed == internalYouTube) {
+        }
+        else if (changed == internalYouTube) {
             SettingValues.internalYouTube = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_internalYouTube)
-        } else if (changed == useSafariVC) {
+        }
+        else if (changed == useSafariVC) {
             SettingValues.safariVC = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_safariVC)
         }
@@ -84,7 +86,7 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         tableView.reloadData()
     }
 
-    public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String){
+    public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
         cell.textLabel?.textColor = ColorUtil.fontColor
         cell.backgroundColor = ColorUtil.foregroundColor
@@ -132,7 +134,6 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 60
     }
-
 
     func tableView(tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
     }
@@ -183,29 +184,24 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         return 70
     }
 
-
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let label : UILabel = UILabel()
+        let label: UILabel = UILabel()
         label.textColor = ColorUtil.baseAccent
         label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
         toReturn.backgroundColor = ColorUtil.backgroundColor
         switch(section) {
         case 0: label.text = "Content Settings"
-            break
-        case 1: label.text =  "Open External Link Matching"
-            break
-        default: label.text  = ""
-            break
+        case 1: label.text = "Open External Link Matching"
+        default: label.text = ""
         }
         return toReturn
     }
 
-
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch (section) {
         case 0: return 5   // section 0 has 2 rows
-                case 1: return PostFilter.openExternally.count
+        case 1: return PostFilter.openExternally.count
         default: fatalError("Unknown number of sections")
         }
     }

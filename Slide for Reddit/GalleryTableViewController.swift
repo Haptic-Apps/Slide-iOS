@@ -6,8 +6,8 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
-import UIKit
 import reddift
+import UIKit
 
 class GalleryTableViewController: MediaTableViewController {
     var panGestureRecognizer: UIPanGestureRecognizer?
@@ -17,7 +17,7 @@ class GalleryTableViewController: MediaTableViewController {
     
     var items: [RSubmission] = []
     
-    func setLinks(links: [RSubmission]){
+    func setLinks(links: [RSubmission]) {
         self.items = links
         tableView.reloadData()
     }
@@ -74,7 +74,8 @@ class GalleryTableViewController: MediaTableViewController {
         if panGesture.state == .began {
             originalPosition = view.center
             currentPositionTouched = panGesture.location(in: view)
-        } else if panGesture.state == .changed {
+        }
+        else if panGesture.state == .changed {
             view.frame.origin = CGPoint(
                 x: 0,
                 y: translation.y
@@ -82,14 +83,14 @@ class GalleryTableViewController: MediaTableViewController {
             let progress = translation.y / (self.view.frame.size.height / 2)
             background!.alpha = 1 - (abs(progress) * 0.9)
             
-        } else if panGesture.state == .ended {
+        }
+        else if panGesture.state == .ended {
             let velocity = panGesture.velocity(in: view)
             
             let down = panGesture.velocity(in: view).y > 0
-            if abs(velocity.y) >= 1000 || abs(self.view.frame.origin.y) > self.view.frame.size.height / 2{
+            if abs(velocity.y) >= 1000 || abs(self.view.frame.origin.y) > self.view.frame.size.height / 2 {
                 
-                UIView.animate(withDuration: 0.2
-                    , animations: {
+                UIView.animate(withDuration: 0.2, animations: {
                         self.view.frame.origin = CGPoint(
                             x: self.view.frame.origin.x,
                             y: self.view.frame.size.height * (down ? 1 : -1) )
@@ -101,7 +102,8 @@ class GalleryTableViewController: MediaTableViewController {
                         self.dismiss(animated: false, completion: nil)
                     }
                 })
-            } else {
+            }
+            else {
                 UIView.animate(withDuration: 0.2, animations: {
                     self.view.center = self.originalPosition!
                     self.background!.alpha = 1
@@ -111,11 +113,9 @@ class GalleryTableViewController: MediaTableViewController {
         }
     }
 
-
     func exit() {
         self.dismiss(animated: true, completion: nil)
     }
-
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -134,13 +134,12 @@ class GalleryTableViewController: MediaTableViewController {
         let w = link.width
         let h = link.height
         return CGFloat(getHeightFromAspectRatio(imageHeight: h, imageWidth: w))
-
         
     }
     
-    func getHeightFromAspectRatio(imageHeight:Int, imageWidth: Int) -> Int {
-        let ratio = Double(imageHeight)/Double(imageWidth)
-        let width = Double(tableView.frame.size.width);
+    func getHeightFromAspectRatio(imageHeight: Int, imageWidth: Int) -> Int {
+        let ratio = Double(imageHeight) / Double(imageWidth)
+        let width = Double(tableView.frame.size.width)
         return Int(width * ratio)
     }
 
@@ -151,7 +150,7 @@ class GalleryTableViewController: MediaTableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! GalleryCellView
-        cell.setLink(self.items[indexPath.row],  parent: self)
+        cell.setLink(self.items[indexPath.row], parent: self)
         // Configure the cell...
 
         return cell

@@ -13,13 +13,13 @@ import Foundation
 /* For support, please feel free to contact me at https://www.linkedin.com/in/syedabsar */
 
 public class GfycatCheck {
-	public var urlKnown : String?
-	public var gfyUrl : String?
-	public var webmUrl : String?
-	public var mp4Url : String?
-	public var gifUrl : String?
-	public var frameRate : Int?
-	public var gfyName : String?
+	public var urlKnown: String?
+	public var gfyUrl: String?
+	public var webmUrl: String?
+	public var mp4Url: String?
+	public var gifUrl: String?
+	public var frameRate: Int?
+	public var gfyName: String?
 
 /**
     Returns an array of models based on given dictionary.
@@ -31,11 +31,9 @@ public class GfycatCheck {
 
     - returns: Array of Json4Swift_Base Instances.
 */
-    public class func modelsFromDictionaryArray(array:NSArray) -> [GfycatCheck]
-    {
-        var models:[GfycatCheck] = []
-        for item in array
-        {
+    public class func modelsFromDictionaryArray(array: NSArray) -> [GfycatCheck] {
+        var models: [GfycatCheck] = []
+        for item in array {
             models.append(GfycatCheck(dictionary: item as! NSDictionary)!)
         }
         return models
@@ -61,7 +59,6 @@ public class GfycatCheck {
 		frameRate = dictionary["frameRate"] as? Int
 		gfyName = dictionary["gfyName"] as? String
 	}
-
 		
 /**
     Returns the dictionary representation for the current instance.

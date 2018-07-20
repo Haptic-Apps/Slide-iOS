@@ -6,12 +6,12 @@
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
+import ActionSheetPicker_3_0
+import RealmSwift
+import reddift
+import RLBAlertsPickers
 import UIKit
 import XLActionController
-import RLBAlertsPickers
-import reddift
-import RealmSwift
-import ActionSheetPicker_3_0
 
 protocol SubmissionMoreDelegate: class {
     func save(_ cell: LinkCellView)
@@ -19,26 +19,25 @@ protocol SubmissionMoreDelegate: class {
     func showFilterMenu(_ cell: LinkCellView)
 }
 
-class PostActions : NSObject {
+class PostActions: NSObject {
     
-    public static func showPostMenu(_ parent: UIViewController, sub: String){
+    public static func showPostMenu(_ parent: UIViewController, sub: String) {
         let alertController: BottomSheetActionController = BottomSheetActionController()
         alertController.headerData = "New post"
         
-        
-        alertController.addAction(Action(ActionData(title: "Image", image: UIImage(named: "camera")!.menuIcon()), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Image", image: UIImage(named: "camera")!.menuIcon()), style: .default, handler: { _ in
             VCPresenter.showVC(viewController: ReplyViewController.init(subreddit: sub, type: ReplyViewController.ReplyType.SUBMIT_IMAGE, completion: { (submission) in
                 VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: parent.navigationController, parentViewController: parent)
             }), popupIfPossible: true, parentNavigationController: nil, parentViewController: parent)
         }))
         
-        alertController.addAction(Action(ActionData(title: "Link", image: UIImage(named: "link")!.menuIcon()), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Link", image: UIImage(named: "link")!.menuIcon()), style: .default, handler: { _ in
             VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(subreddit: sub, type: ReplyViewController.ReplyType.SUBMIT_LINK, completion: { (submission) in
                 VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: parent.navigationController, parentViewController: parent)
             })), parentVC: parent)
         }))
         
-        alertController.addAction(Action(ActionData(title: "Selftext", image: UIImage(named: "size")!.menuIcon()), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Selftext", image: UIImage(named: "size")!.menuIcon()), style: .default, handler: { _ in
             VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(subreddit: sub, type: ReplyViewController.ReplyType.SUBMIT_TEXT, completion: { (submission) in
                 VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: parent.navigationController, parentViewController: parent)
             })), parentVC: parent)
@@ -47,99 +46,99 @@ class PostActions : NSObject {
 
     }
     
-    public static func showMoreMenu(cell: LinkCellView, parent: UIViewController, nav: UINavigationController, mutableList: Bool, delegate: SubmissionMoreDelegate){
+    public static func showMoreMenu(cell: LinkCellView, parent: UIViewController, nav: UINavigationController, mutableList: Bool, delegate: SubmissionMoreDelegate) {
         let link = cell.link!
         
         let alertController: BottomSheetActionController = BottomSheetActionController()
         alertController.headerData = "Post by \(AccountController.formatUsername(input: link.author, small: true))"
         
-        
-        alertController.addAction(Action(ActionData(title: "\(AccountController.formatUsernamePosessive(input: link.author, small: false)) profile", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "\(AccountController.formatUsernamePosessive(input: link.author, small: false)) profile", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { _ in
             
             let prof = ProfileViewController.init(name: link.author)
             VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: nav, parentViewController: parent)
         }))
-        alertController.addAction(Action(ActionData(title: "r/\(link.subreddit)", image: UIImage(named: "subs")!.menuIcon()), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "r/\(link.subreddit)", image: UIImage(named: "subs")!.menuIcon()), style: .default, handler: { _ in
             
             let sub = SingleSubredditViewController.init(subName: link.subreddit, single: true)
-            VCPresenter.showVC(viewController: sub, popupIfPossible: true, parentNavigationController:nav, parentViewController: parent)
+            VCPresenter.showVC(viewController: sub, popupIfPossible: true, parentNavigationController: nav, parentViewController: parent)
             
         }))
         
         if (AccountController.isLoggedIn) {
-            if(SettingValues.actionBarMode != .FULL &&  AccountController.modSubs.contains(link.subreddit)){
-                alertController.addAction(Action(ActionData(title: "Moderate", image: UIImage(named: "mod")!.menuIcon()), style: .default, handler: { action in
+            if(SettingValues.actionBarMode != .FULL && AccountController.modSubs.contains(link.subreddit)) {
+                alertController.addAction(Action(ActionData(title: "Moderate", image: UIImage(named: "mod")!.menuIcon()), style: .default, handler: { _ in
                     PostActions.showModMenu(cell, parent: parent)
                 }))
             }
             
-            if(SettingValues.actionBarMode == .NONE){
-                alertController.addAction(Action(ActionData(title: "Upvote", image: UIImage(named: "upvote")!.menuIcon().getCopy(withColor: ColorUtil.upvoteColor)), style: .default, handler: { action in
+            if(SettingValues.actionBarMode == .NONE) {
+                alertController.addAction(Action(ActionData(title: "Upvote", image: UIImage(named: "upvote")!.menuIcon().getCopy(withColor: ColorUtil.upvoteColor)), style: .default, handler: { _ in
                     cell.upvote()
                 }))
-                alertController.addAction(Action(ActionData(title: "Downvote", image: UIImage(named: "downvote")!.menuIcon().getCopy(withColor: ColorUtil.downvoteColor)), style: .default, handler: { action in
+                alertController.addAction(Action(ActionData(title: "Downvote", image: UIImage(named: "downvote")!.menuIcon().getCopy(withColor: ColorUtil.downvoteColor)), style: .default, handler: { _ in
                     cell.downvote()
                 }))
             }
             
-            alertController.addAction(Action(ActionData(title: "Save", image: UIImage(named: "save")!.menuIcon()), style: .default, handler: { action in
+            alertController.addAction(Action(ActionData(title: "Save", image: UIImage(named: "save")!.menuIcon()), style: .default, handler: { _ in
                 delegate.save(cell)
             }))
             
-            alertController.addAction(Action(ActionData(title: "Crosspost", image: UIImage(named: "crosspost")!.menuIcon()), style: .default, handler: { action in
+            alertController.addAction(Action(ActionData(title: "Crosspost", image: UIImage(named: "crosspost")!.menuIcon()), style: .default, handler: { _ in
                 PostActions.crosspost(cell.link!, parent)
             }))
             
-            alertController.addAction(Action(ActionData(title: "Report", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { action in
+            alertController.addAction(Action(ActionData(title: "Report", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { _ in
                 PostActions.report(cell.link!, parent: parent)
             }))
         }
         
-        alertController.addAction(Action(ActionData(title: "Share content", image: UIImage(named: "share")!.menuIcon()), style: .default, handler: { action in
-            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [link.url!], applicationActivities: nil);
+        alertController.addAction(Action(ActionData(title: "Share content", image: UIImage(named: "share")!.menuIcon()), style: .default, handler: { _ in
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [link.url!], applicationActivities: nil)
             let currentViewController: UIViewController = UIApplication.shared.keyWindow!.rootViewController!
-            currentViewController.present(activityViewController, animated: true, completion: nil);
+            currentViewController.present(activityViewController, animated: true, completion: nil)
         }))
-        alertController.addAction(Action(ActionData(title: "Share comments", image: UIImage(named: "comments")!.menuIcon()), style: .default, handler: { action in
-            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [URL.init(string: "https://reddit.com" + link.permalink)!], applicationActivities: nil);
+        alertController.addAction(Action(ActionData(title: "Share comments", image: UIImage(named: "comments")!.menuIcon()), style: .default, handler: { _ in
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [URL.init(string: "https://reddit.com" + link.permalink)!], applicationActivities: nil)
             let currentViewController: UIViewController = UIApplication.shared.keyWindow!.rootViewController!
-            currentViewController.present(activityViewController, animated: true, completion: nil);
+            currentViewController.present(activityViewController, animated: true, completion: nil)
         }))
         
         let open = OpenInChromeController.init()
         if (open.isChromeInstalled()) {
             
-            alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "link")!.menuIcon()), style: .default, handler: { action in
+            alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "link")!.menuIcon()), style: .default, handler: { _ in
                 open.openInChrome(link.url!, callbackURL: nil, createNewTab: true)
             }))
         }
-        alertController.addAction(Action(ActionData(title: "Open in Safari", image: UIImage(named: "world")!.menuIcon()), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Open in Safari", image: UIImage(named: "world")!.menuIcon()), style: .default, handler: { _ in
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(link.url!, options: [:], completionHandler: nil)
-            } else {
+            }
+            else {
                 UIApplication.shared.openURL(link.url!)
             }
         }))
-        if(link.isSelf){
+        if(link.isSelf) {
             alertController.addAction(Action(ActionData(title: "Copy text", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { action in
                 let alert = UIAlertController.init(title: "Copy text", message: "", preferredStyle: .alert)
                 alert.addTextViewer(text: .text(cell.link!.body))
-                alert.addAction(UIAlertAction.init(title: "Copy all", style: .default, handler: { (action) in
+                alert.addAction(UIAlertAction.init(title: "Copy all", style: .default, handler: { (_) in
                     UIPasteboard.general.string = cell.link!.body
                 }))
-                alert.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: { (action) in
+                alert.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: { (_) in
                     
                 }))
                 let currentViewController: UIViewController = UIApplication.shared.keyWindow!.rootViewController!
-                currentViewController.present(alert, animated: true, completion: nil);
+                currentViewController.present(alert, animated: true, completion: nil)
             }))
         }
         
-        if(mutableList){
-            alertController.addAction(Action(ActionData(title: "Filter this content", image: UIImage(named: "filter")!.menuIcon()), style: .default, handler: { action in
+        if(mutableList) {
+            alertController.addAction(Action(ActionData(title: "Filter this content", image: UIImage(named: "filter")!.menuIcon()), style: .default, handler: { _ in
                 delegate.showFilterMenu(cell)
             }))
-            alertController.addAction(Action(ActionData(title: "Hide", image: UIImage(named: "hide")!.menuIcon()), style: .default, handler: { action in
+            alertController.addAction(Action(ActionData(title: "Hide", image: UIImage(named: "hide")!.menuIcon()), style: .default, handler: { _ in
                 delegate.hide(cell)
             }))
         }
@@ -147,15 +146,15 @@ class PostActions : NSObject {
         VCPresenter.presentAlert(alertController, parentVC: parent)
     }
     
-    static func showModMenu(_ cell: LinkCellView, parent: UIViewController){
+    static func showModMenu(_ cell: LinkCellView, parent: UIViewController) {
         //todo remove with reason, new icons
         let alertController: BottomSheetActionController = BottomSheetActionController()
         alertController.headerData = "Submission by u/\(cell.link!.author)"
         
-        alertController.addAction(Action(ActionData(title: "\(cell.link!.reports.count) reports", image: UIImage(named: "reports")!.menuIcon()), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "\(cell.link!.reports.count) reports", image: UIImage(named: "reports")!.menuIcon()), style: .default, handler: { _ in
             var reports = ""
             for report in cell.link!.reports {
-                reports = reports + report + "\n"
+                reports += report + "\n"
             }
             let alert = UIAlertController(title: "Reports",
                                           message: reports,
@@ -169,92 +168,97 @@ class PostActions : NSObject {
             
         }))
         
-        if(cell.link!.approved){
-            var action = Action(ActionData(title: "Approved by u/\(cell.link!.approvedBy)", image: UIImage(named: "approve")!.menuIcon()), style: .default, handler: { action in
+        if(cell.link!.approved) {
+            var action = Action(ActionData(title: "Approved by u/\(cell.link!.approvedBy)", image: UIImage(named: "approve")!.menuIcon()), style: .default, handler: { _ in
             })
             action.enabled = false
             alertController.addAction(action)
-        } else {
-            alertController.addAction(Action(ActionData(title: "Approve", image: UIImage(named: "approve")!.menuIcon()), style: .default, handler: { action in
+        }
+        else {
+            alertController.addAction(Action(ActionData(title: "Approve", image: UIImage(named: "approve")!.menuIcon()), style: .default, handler: { _ in
                 self.modApprove(cell)
             }))
         }
         
-        if(cell.link!.removed){
-            var action = Action(ActionData(title: "Removed by u/\(cell.link!.removedBy)", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { action in
+        if(cell.link!.removed) {
+            var action = Action(ActionData(title: "Removed by u/\(cell.link!.removedBy)", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { _ in
             })
             action.enabled = false
             alertController.addAction(action)
-        } else {
-            alertController.addAction(Action(ActionData(title: "Remove", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { action in
+        }
+        else {
+            alertController.addAction(Action(ActionData(title: "Remove", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { _ in
                 self.modRemove(cell)
             }))
         }
 
-        alertController.addAction(Action(ActionData(title: "Ban user", image: UIImage(named: "ban")!.menuIcon()), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Ban user", image: UIImage(named: "ban")!.menuIcon()), style: .default, handler: { _ in
             //todo show dialog for this
         }))
         
-        alertController.addAction(Action(ActionData(title: "Set flair", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Set flair", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { _ in
             cell.flairSelf()
         }))
         
-        if(!cell.link!.nsfw){
-            alertController.addAction(Action(ActionData(title: "Mark as NSFW", image: UIImage(named: "hide")!.menuIcon()), style: .default, handler: { action in
+        if(!cell.link!.nsfw) {
+            alertController.addAction(Action(ActionData(title: "Mark as NSFW", image: UIImage(named: "hide")!.menuIcon()), style: .default, handler: { _ in
                 self.modNSFW(cell, true)
             }))
-        } else {
-            alertController.addAction(Action(ActionData(title: "Unmark as NSFW", image: UIImage(named: "hide")!.menuIcon()), style: .default, handler: { action in
+        }
+        else {
+            alertController.addAction(Action(ActionData(title: "Unmark as NSFW", image: UIImage(named: "hide")!.menuIcon()), style: .default, handler: { _ in
                 self.modNSFW(cell, false)
             }))
         }
         
-        if(!cell.link!.spoiler){
-            alertController.addAction(Action(ActionData(title: "Mark as spoiler", image: UIImage(named: "reports")!.menuIcon()), style: .default, handler: { action in
+        if(!cell.link!.spoiler) {
+            alertController.addAction(Action(ActionData(title: "Mark as spoiler", image: UIImage(named: "reports")!.menuIcon()), style: .default, handler: { _ in
                 self.modSpoiler(cell, true)
             }))
-        } else {
-            alertController.addAction(Action(ActionData(title: "Unmark as spoiler", image: UIImage(named: "reports")!.menuIcon()), style: .default, handler: { action in
+        }
+        else {
+            alertController.addAction(Action(ActionData(title: "Unmark as spoiler", image: UIImage(named: "reports")!.menuIcon()), style: .default, handler: { _ in
                 self.modSpoiler(cell, false)
             }))
         }
         
-        if(cell.link!.locked){
-            alertController.addAction(Action(ActionData(title: "Unlock thread", image: UIImage(named: "lock")!.menuIcon()), style: .default, handler: { action in
+        if(cell.link!.locked) {
+            alertController.addAction(Action(ActionData(title: "Unlock thread", image: UIImage(named: "lock")!.menuIcon()), style: .default, handler: { _ in
                 self.modLock(cell, false)
             }))
-        } else {
-            alertController.addAction(Action(ActionData(title: "Lock thread", image: UIImage(named: "lock")!.menuIcon()), style: .default, handler: { action in
+        }
+        else {
+            alertController.addAction(Action(ActionData(title: "Lock thread", image: UIImage(named: "lock")!.menuIcon()), style: .default, handler: { _ in
                 self.modLock(cell, true)
             }))
         }
         
         if (cell.link!.author == AccountController.currentName) {
-            alertController.addAction(Action(ActionData(title: "Distinguish", image: UIImage(named: "save")!.menuIcon()), style: .default, handler: { action in
+            alertController.addAction(Action(ActionData(title: "Distinguish", image: UIImage(named: "save")!.menuIcon()), style: .default, handler: { _ in
                 self.modDistinguish(cell)
             }))
         }
         
         if (cell.link!.author == AccountController.currentName) {
             if (cell.link!.stickied) {
-                alertController.addAction(Action(ActionData(title: "Un-sticky", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { action in
+                alertController.addAction(Action(ActionData(title: "Un-sticky", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { _ in
                     self.modSticky(cell, sticky: false)
                 }))
-            } else {
-                alertController.addAction(Action(ActionData(title: "Sticky and distinguish", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { action in
+            }
+            else {
+                alertController.addAction(Action(ActionData(title: "Sticky and distinguish", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { _ in
                     self.modSticky(cell, sticky: true)
                 }))
             }
         }
         
-        
-        alertController.addAction(Action(ActionData(title: "Mark as spam", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Mark as spam", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { _ in
             self.modRemove(cell, spam: true)
         }))
         
-        alertController.addAction(Action(ActionData(title: "User profile", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "User profile", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { _ in
             let prof = ProfileViewController.init(name: cell.link!.author)
-            VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: parent.navigationController, parentViewController: parent);
+            VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: parent.navigationController, parentViewController: parent)
         }))
         
         VCPresenter.presentAlert(alertController, parentVC: parent)
@@ -270,8 +274,7 @@ class PostActions : NSObject {
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Locking submission failed!", color: GMColor.red500Color(), seconds: 3, context: cell.parentViewController)
                     }
-                    break
-                case .success(_):
+                case .success:
                     CachedTitle.approved.append(id)
                     if (CachedTitle.removed.contains(id)) {
                         CachedTitle.removed.remove(at: CachedTitle.removed.index(of: id)!)
@@ -281,10 +284,10 @@ class PostActions : NSObject {
                         cell.link!.locked = set
                         cell.refreshLink(cell.link!)
                     }
-                    break
                 }
             })
-        } catch {
+        }
+        catch {
             print(error)
         }
     }
@@ -299,8 +302,7 @@ class PostActions : NSObject {
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Request failed!", color: GMColor.red500Color(), seconds: 3, context: cell.parentViewController)
                     }
-                    break
-                case .success(_):
+                case .success:
                     CachedTitle.approved.append(id)
                     if (CachedTitle.removed.contains(id)) {
                         CachedTitle.removed.remove(at: CachedTitle.removed.index(of: id)!)
@@ -310,10 +312,10 @@ class PostActions : NSObject {
                         cell.link!.spoiler = set
                         cell.refreshLink(cell.link!)
                     }
-                    break
                 }
             })
-        } catch {
+        }
+        catch {
             print(error)
         }
     }
@@ -328,8 +330,7 @@ class PostActions : NSObject {
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Request failed!", color: GMColor.red500Color(), seconds: 3, context: cell.parentViewController)
                     }
-                    break
-                case .success(_):
+                case .success:
                     CachedTitle.approved.append(id)
                     if (CachedTitle.removed.contains(id)) {
                         CachedTitle.removed.remove(at: CachedTitle.removed.index(of: id)!)
@@ -339,10 +340,10 @@ class PostActions : NSObject {
                         cell.link!.nsfw = set
                         cell.refreshLink(cell.link!)
                     }
-                    break
                 }
             })
-        } catch {
+        }
+        catch {
             print(error)
         }
     }
@@ -357,8 +358,7 @@ class PostActions : NSObject {
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Approving submission failed!", color: GMColor.red500Color(), seconds: 3, context: cell.parentViewController)
                     }
-                    break
-                case .success(_):
+                case .success:
                     CachedTitle.approved.append(id)
                     if (CachedTitle.removed.contains(id)) {
                         CachedTitle.removed.remove(at: CachedTitle.removed.index(of: id)!)
@@ -367,10 +367,10 @@ class PostActions : NSObject {
                         cell.refreshLink(cell.link!)
                         BannerUtil.makeBanner(text: "Submission approved!", color: ColorUtil.accentColorForSub(sub: cell.link!.subreddit), seconds: 3, context: cell.parentViewController)
                     }
-                    break
                 }
             })
-        } catch {
+        }
+        catch {
             print(error)
         }
     }
@@ -385,17 +385,16 @@ class PostActions : NSObject {
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Distinguishing submission failed!", color: GMColor.red500Color(), seconds: 3, context: cell.parentViewController)
                     }
-                    break
-                case .success(_):
+                case .success:
                     DispatchQueue.main.async {
                         cell.link!.distinguished = "mod"
                         cell.refreshLink(cell.link!)
                         BannerUtil.makeBanner(text: "Submission distinguished!", color: ColorUtil.accentColorForSub(sub: cell.link!.subreddit), seconds: 3, context: cell.parentViewController)
                     }
-                    break
                 }
             })
-        } catch {
+        }
+        catch {
             print(error)
         }
     }
@@ -410,17 +409,16 @@ class PostActions : NSObject {
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Couldn't \(sticky ? "" : "un-")sticky submission!", color: GMColor.red500Color(), seconds: 3, context: cell.parentViewController)
                     }
-                    break
-                case .success(_):
+                case .success:
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Submission \(sticky ? "" : "un-")stickied!", color: ColorUtil.accentColorForSub(sub: cell.link!.subreddit), seconds: 3, context: cell.parentViewController)
                         cell.link!.stickied = sticky
                         cell.refreshLink(cell.link!)
                     }
-                    break
                 }
             })
-        } catch {
+        }
+        catch {
             print(error)
         }
     }
@@ -428,40 +426,43 @@ class PostActions : NSObject {
     static func modRemove(_ cell: LinkCellView, spam: Bool = false) {
         do {
             try (UIApplication.shared.delegate as! AppDelegate).session?.ruleList(cell.link!.subreddit, completion: { (result) in
-                switch(result){
+                switch(result) {
                 case .success(let rules):
                     DispatchQueue.main.async {
                         showRemovalReasons(cell, rules: rules, spam: spam)
                     }
-                    break
                 case .failure(let error):
                     DispatchQueue.main.async {
                         showRemovalReasons(cell, rules: [RuleTemplate](), spam: spam)
                     }
                 }
             })
-        } catch {
+        }
+        catch {
             showRemovalReasons(cell, rules: [RuleTemplate](), spam: spam)
         }
     }
     
-    static func showRemovalReasons(_ cell: LinkCellView, rules: [RuleTemplate], spam: Bool = false){
-        var reasons : [String] = ["Custom reason", "Spam", "Removal not spam"]
+    static func showRemovalReasons(_ cell: LinkCellView, rules: [RuleTemplate], spam: Bool = false) {
+        var reasons: [String] = ["Custom reason", "Spam", "Removal not spam"]
         for rule in rules {
             reasons.append(rule.violatonReason + "\n" + rule.description)
         }
-        var picker = ActionSheetStringPicker(title: "Choose a removal reason", rows: reasons, initialSelection: 0, doneBlock: { (picker, index, value) in
+        var picker = ActionSheetStringPicker(title: "Choose a removal reason", rows: reasons, initialSelection: 0, doneBlock: { (picker, index, _) in
             //todo this
-            if(index == 0){
+            if(index == 0) {
                 modRemoveReason(cell, reason: "")
-            } else if(index == 1){
+            }
+            else if(index == 1) {
                 removeNoReason(cell)
-            } else if(index == 2){
+            }
+            else if(index == 2) {
                 removeNoReason(cell, spam: true)
-            } else {
+            }
+            else {
                 modRemoveReason(cell, reason: reasons[index])
             }
-        }, cancel: { (picker) in
+        }, cancel: { (_) in
             return
         }, origin: cell.contentView)
         
@@ -471,7 +472,7 @@ class PostActions : NSObject {
 
     }
     
-    static func removeNoReason(_ cell: LinkCellView, spam: Bool = false){
+    static func removeNoReason(_ cell: LinkCellView, spam: Bool = false) {
         let id = cell.link!.id
         do {
             try (UIApplication.shared.delegate as! AppDelegate).session?.remove(id, spam: spam, completion: { (result) -> Void in
@@ -481,8 +482,7 @@ class PostActions : NSObject {
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Removing submission failed!", color: GMColor.red500Color(), seconds: 3, context: cell.parentViewController)
                     }
-                    break
-                case .success(_):
+                case .success:
                     CachedTitle.removed.append(id)
                     if (CachedTitle.approved.contains(id)) {
                         CachedTitle.approved.remove(at: CachedTitle.approved.index(of: id)!)
@@ -490,11 +490,11 @@ class PostActions : NSObject {
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Submission removed!", color: ColorUtil.accentColorForSub(sub: cell.link!.subreddit), seconds: 3, context: cell.parentViewController)
                     }
-                    break
                 }
             })
             
-        } catch {
+        }
+        catch {
             print(error)
         }
     }
@@ -509,8 +509,7 @@ class PostActions : NSObject {
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Removing submission failed!", color: GMColor.red500Color(), seconds: 3, context: cell.parentViewController)
                     }
-                    break
-                case .success(_):
+                case .success:
                     CachedTitle.removed.append(id)
                     if (CachedTitle.approved.contains(id)) {
                         CachedTitle.approved.remove(at: CachedTitle.approved.index(of: id)!)
@@ -520,16 +519,17 @@ class PostActions : NSObject {
                         VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(submission: cell.link!, sub: cell.link!.subreddit, modMessage: reason, completion: { (link) in
                             if let link = link {
                                 BannerUtil.makeBanner(text: "Removal reason posted!", color: ColorUtil.accentColorForSub(sub: cell.link!.subreddit), seconds: 3, context: cell.parentViewController)
-                            } else {
+                            }
+                            else {
                                 BannerUtil.makeBanner(text: "Removal reason not posted!", color: GMColor.red500Color(), seconds: 3, context: cell.parentViewController)
                             }
                         })), parentVC: cell.parentViewController!)
                     }
-                    break
                 }
             })
             
-        } catch {
+        }
+        catch {
             print(error)
         }
     }
@@ -544,22 +544,20 @@ class PostActions : NSObject {
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Banning user failed!", color: GMColor.red500Color(), seconds: 3, context: cell.parentViewController)
                     }
-                    break
-                case .success(_):
+                case .success:
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "u/\(cell.link!.author) banned!", color: ColorUtil.accentColorForSub(sub: cell.link!.subreddit), seconds: 3, context: cell.parentViewController)
                     }
-                    break
                 }
             })
-        } catch {
+        }
+        catch {
             print(error)
         }
     }
     
-    
-    static var subText : String?
-    static var titleText : String?
+    static var subText: String?
+    static var titleText: String?
     
     static func crosspost(_ thing: RSubmission, _ parent: UIViewController, _ title: String? = nil, _ subreddit: String? = nil, _ error: String? = "") {
         
@@ -579,7 +577,7 @@ class PostActions : NSObject {
             textField.keyboardType = .default
             textField.leftViewPadding = 16
             textField.returnKeyType = .done
-            if(subreddit != nil){
+            if(subreddit != nil) {
                 textField.text = subreddit
             }
             textField.action { textField in
@@ -601,7 +599,7 @@ class PostActions : NSObject {
             textField.returnKeyType = .done
             textField.text = thing.title
             textField.clearButtonMode = .whileEditing
-            if(title != nil){
+            if(title != nil) {
                 textField.text = title
             }
             textField.action { textField in
@@ -618,10 +616,12 @@ class PostActions : NSObject {
             if (subField.isEmpty || titleField.isEmpty) {
                 if (subField.isEmpty) {
                     self.crosspost(thing, parent, titleField, subField, "Subreddit must not be empty!")
-                } else {
+                }
+                else {
                     self.crosspost(thing, parent, titleField, subField, "Title must not be empty!")
                 }
-            } else {
+            }
+            else {
                 do {
                     try (UIApplication.shared.delegate as! AppDelegate).session?.crosspost(Link.init(id: thing.id), subreddit: subField, newTitle: titleField) { result in
                         switch result {
@@ -630,13 +630,13 @@ class PostActions : NSObject {
                             DispatchQueue.main.async {
                                 self.crosspost(thing, parent, titleField, subField, error.localizedDescription)
                             }
-                            break
                         case .success(let submission):
                             if let error = self.getError(submission) {
                                 DispatchQueue.main.async {
                                     self.crosspost(thing, parent, titleField, subField, error)
                                 }
-                            } else {
+                            }
+                            else {
                                 let string = self.getIDString(submission).value!
                                 print("Got \(string)")
                                 DispatchQueue.main.async {
@@ -648,7 +648,8 @@ class PostActions : NSObject {
                         }
                     }
                     
-                } catch {
+                }
+                catch {
                     
                 }
             }
@@ -659,7 +660,7 @@ class PostActions : NSObject {
         parent.present(alert, animated: true, completion: nil)
     }
     
-    static var reportText : String?
+    static var reportText: String?
     
     static func report(_ thing: Object, parent: UIViewController) {
         let alert = UIAlertController(title: "Report this content", message: "", preferredStyle: .alert)
@@ -688,12 +689,13 @@ class PostActions : NSObject {
             let text = self.reportText ?? ""
             do {
                 let name = (thing is RComment) ? (thing as! RComment).id : (thing as! RSubmission).id
-                try (UIApplication.shared.delegate as! AppDelegate).session?.report(name, reason: text, otherReason: "", completion: { (result) in
+                try (UIApplication.shared.delegate as! AppDelegate).session?.report(name, reason: text, otherReason: "", completion: { (_) in
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Report sent!", color: GMColor.green500Color(), seconds: 3, context: parent)
                     }
                 })
-            } catch {
+            }
+            catch {
                 DispatchQueue.main.async {
                     BannerUtil.makeBanner(text: "Error sending report, try again later", color: GMColor.red500Color(), seconds: 3, context: parent)
                 }

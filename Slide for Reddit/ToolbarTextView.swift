@@ -3,20 +3,20 @@
 // Copyright (c) 2018 Haptic Apps. All rights reserved.
 //
 
-import UIKit
-import Alamofire
-import SwiftyJSON
-import Photos
-import MobileCoreServices
-import RLBAlertsPickers
 import ActionSheetPicker_3_0
+import Alamofire
+import MobileCoreServices
+import Photos
+import RLBAlertsPickers
+import SwiftyJSON
+import UIKit
 
 public class ToolbarTextView: NSObject {
 
     var text: UITextView?
     var parent: UIViewController
 
-    init(textView: UITextView, parent: UIViewController){
+    init(textView: UITextView, parent: UIViewController) {
         self.text = textView
         self.parent = parent
         super.init()
@@ -40,7 +40,8 @@ public class ToolbarTextView: NSObject {
             generateButtons(image: "list", action: #selector(ToolbarTextView.list(_:))),
             generateButtons(image: "list_number", action: #selector(ToolbarTextView.numberedList(_:))),
             generateButtons(image: "size", action: #selector(ToolbarTextView.size(_:))),
-            generateButtons(image: "strikethrough", action: #selector(ToolbarTextView.strike(_:)))]) {
+            generateButtons(image: "strikethrough", action: #selector(ToolbarTextView.strike(_:))),
+            ]) {
             button.0.frame = CGRect.init(x: i * 50, y: 0, width: 50, height: 50)
             button.0.isUserInteractionEnabled = true
             button.0.addTarget(self, action: button.1, for: UIControlEvents.touchUpInside)
@@ -49,12 +50,13 @@ public class ToolbarTextView: NSObject {
         }
         scrollView.delaysContentTouches = false
         text!.inputAccessoryView = scrollView
-        if(!(parent is ReplyViewController)){
+        if(!(parent is ReplyViewController)) {
             text!.tintColor = .white
-        } else {
+        }
+        else {
             text!.tintColor = ColorUtil.fontColor
         }
-        if(ColorUtil.theme != .LIGHT){
+        if(ColorUtil.theme != .LIGHT) {
             text!.keyboardAppearance = .dark
         }
     }
@@ -73,7 +75,6 @@ public class ToolbarTextView: NSObject {
         text!.replace(text!.selectedTextRange!, withText: with + text!.text(in: text!.selectedTextRange!)!.replacingOccurrences(of: value, with: with))
     }
 
-
     func saveDraft(_ sender: AnyObject) {
         if let toSave = text!.text {
             if (!toSave.isEmpty()) {
@@ -89,10 +90,11 @@ public class ToolbarTextView: NSObject {
         print("Opening drafts")
         if (Drafts.drafts.isEmpty) {
             parent.view.makeToast("No drafts found", duration: 4, position: .top)
-        } else {
-            picker = ActionSheetStringPicker(title: "Choose a draft", rows: Drafts.drafts, initialSelection: 0, doneBlock: { (picker, index, value) in
+        }
+        else {
+            picker = ActionSheetStringPicker(title: "Choose a draft", rows: Drafts.drafts, initialSelection: 0, doneBlock: { (_, index, _) in
                 self.text!.insertText(Drafts.drafts[index] as String)
-            }, cancel: { (picker) in
+            }, cancel: { (_) in
                 return
             }, origin: text!)
 
@@ -115,10 +117,10 @@ public class ToolbarTextView: NSObject {
                 flow: .vertical,
                 paging: true,
                 selection: .multiple(action: { images in
-                    if(!images.isEmpty){
+                    if(!images.isEmpty) {
                         let alert = UIAlertController.init(title: "Confirm upload", message: "Would you like to upload \(images.count) image\(images.count > 1 ? "s" : "") anonymously to Imgur.com? This cannot be undone", preferredStyle: .alert)
                         alert.addAction(UIAlertAction.init(title: "No", style: .destructive, handler: nil))
-                        alert.addAction(UIAlertAction.init(title: "Yes", style: .default) { action in
+                        alert.addAction(UIAlertAction.init(title: "Yes", style: .default) { _ in
                             self.uploadAsync(images)
                         })
                         self.parent.present(alert, animated: true, completion: nil)
@@ -131,8 +133,7 @@ public class ToolbarTextView: NSObject {
     var progressBar = UIProgressView()
     var alertView: UIAlertController?
 
-
-    var insertText : String?
+    var insertText: String?
 
     func uploadAsync(_ assets: [PHAsset]) {
         alertView = UIAlertController(title: "Uploading...", message: "Your images are uploading to Imgur", preferredStyle: .alert)
@@ -172,7 +173,8 @@ public class ToolbarTextView: NSObject {
                                         if last != "Failure" {
                                             if (self.parent is ReplyViewController && (self.parent as! ReplyViewController).type == .SUBMIT_IMAGE) {
                                                 (self.parent as! ReplyViewController).text![2].text = url
-                                            } else {
+                                            }
+                                            else {
                                                 let alert = UIAlertController(title: "Link text", message: url, preferredStyle: .alert)
 
                                                 let config: TextField.Config = { textField in
@@ -195,11 +197,12 @@ public class ToolbarTextView: NSObject {
 
                                                 alert.addOneTextField(configuration: config)
 
-                                                alert.addAction(UIAlertAction(title: "Insert", style: .default, handler: { (action) in
+                                                alert.addAction(UIAlertAction(title: "Insert", style: .default, handler: { (_) in
                                                     let text = self.insertText ?? ""
-                                                    if(text.isEmpty()){
+                                                    if(text.isEmpty()) {
                                                         self.text!.insertText("\(url)")
-                                                    } else {
+                                                    }
+                                                    else {
                                                         self.text!.insertText("[\(text)](\(url))")
                                                     }
                                                 }))
@@ -207,7 +210,8 @@ public class ToolbarTextView: NSObject {
                                                 alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
                                                 self.parent.present(alert, animated: true, completion: nil)
                                             }
-                                        } else {
+                                        }
+                                        else {
                                             let alert = UIAlertController(title: "Uploading failed", message: "Uh oh, something went wrong while uploading to Imgur. Please try again in a few minutes", preferredStyle: .alert)
                                             alert.addAction(UIAlertAction.init(title: "Ok", style: .cancel, handler: nil))
                                             self.parent.present(alert, animated: true, completion: nil)
@@ -219,14 +223,16 @@ public class ToolbarTextView: NSObject {
 
                     }
 
-        } else {
+        }
+        else {
             uploadImages(assets, album: "", completion: { (link) in
                 DispatchQueue.main.async {
                     self.alertView!.dismiss(animated: true, completion: {
                         if link != "Failure" {
                             if (self.parent is ReplyViewController && (self.parent as! ReplyViewController).type == .SUBMIT_IMAGE) {
                                 (self.parent as! ReplyViewController).text![2].text = link
-                            } else {
+                            }
+                            else {
                                 let alert = UIAlertController(title: "Link text", message: link, preferredStyle: .alert)
 
                                 let config: TextField.Config = { textField in
@@ -249,7 +255,7 @@ public class ToolbarTextView: NSObject {
 
                                 alert.addOneTextField(configuration: config)
 
-                                alert.addAction(UIAlertAction(title: "Insert", style: .default, handler: { (action) in
+                                alert.addAction(UIAlertAction(title: "Insert", style: .default, handler: { (_) in
                                     let text = self.insertText ?? ""
                                     self.text!.insertText("[\(text)](\(link))")
 
@@ -258,7 +264,8 @@ public class ToolbarTextView: NSObject {
                                 alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
                                 self.parent.present(alert, animated: true, completion: nil)
                             }
-                        } else {
+                        }
+                        else {
                             let alert = UIAlertController(title: "Uploading failed", message: "Uh oh, something went wrong while uploading to Imgur. Please try again in a few minutes", preferredStyle: .alert)
                             alert.addAction(UIAlertAction.init(title: "Ok", style: .cancel, handler: nil))
                             self.parent.present(alert, animated: true, completion: nil)
@@ -318,7 +325,6 @@ public class ToolbarTextView: NSObject {
 
     }
 
-
     func draw(_ sender: UIButton!) {
 
     }
@@ -364,10 +370,9 @@ public class ToolbarTextView: NSObject {
             }
         }
 
-
         alert.addTwoTextFields(height: CGFloat(58), hInset: CGFloat(10), vInset: CGFloat(0), textFieldOne: configU, textFieldTwo: configT)
 
-        alert.addAction(UIAlertAction(title: "Insert", style: .default, handler: { (action) in
+        alert.addAction(UIAlertAction(title: "Insert", style: .default, handler: { (_) in
             let text = self.insertText ?? ""
             let link = self.insertLink ?? ""
             self.text!.insertText("[\(text)](\(link))")

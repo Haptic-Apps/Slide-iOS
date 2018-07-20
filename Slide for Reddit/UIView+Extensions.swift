@@ -54,7 +54,7 @@ extension UIView {
     func blink(color: UIColor) {
         UIView.animate(withDuration: 0.25, delay: 0.0, options: [.curveLinear], animations: {
             self.backgroundColor = color
-        }, completion: {finished in
+        }, completion: {_ in
             UIView.animate(withDuration: 0.25, delay: 0.0, options: [.curveLinear], animations: {
                 self.backgroundColor = ColorUtil.foregroundColor
             }, completion: nil)

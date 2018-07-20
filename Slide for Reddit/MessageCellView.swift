@@ -6,11 +6,10 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
-
-import UIKit
+import AudioToolbox
 import reddift
 import TTTAttributedLabel
-import AudioToolbox
+import UIKit
 import XLActionController
 
 class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAttributedLabelDelegate {
@@ -26,13 +25,13 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        var topmargin = 0
-        var bottommargin = 2
-        var leftmargin = 0
-        var rightmargin = 0
+        let topmargin = 0
+        let bottommargin = 2
+        let leftmargin = 0
+        let rightmargin = 0
         
         let f = self.contentView.frame
-        let fr = UIEdgeInsetsInsetRect(f, UIEdgeInsetsMake(CGFloat(topmargin), CGFloat(leftmargin), CGFloat(bottommargin), CGFloat(rightmargin)))
+        let fr = UIEdgeInsetsInsetRect(f, UIEdgeInsets(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin)))
         self.contentView.frame = fr
     }
 
@@ -55,7 +54,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
         super.init(frame: frame)
 
         self.contentView.layoutMargins = UIEdgeInsets.init(top: 2, left: 0, bottom: 0, right: 0)
-        self.title = UILabel(frame: CGRect(x: 0, y: 0, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude));
+        self.title = UILabel(frame: CGRect(x: 0, y: 0, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
         title.numberOfLines = 0
         title.lineBreakMode = NSLineBreakMode.byWordWrapping
         title.font = FontGenerator.fontOfSize(size: 18, submission: true)
@@ -67,7 +66,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
         self.textView.numberOfLines = 0
         self.textView.backgroundColor = .clear
 
-        self.info = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
+        self.info = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
         info.numberOfLines = 0
         info.font = FontGenerator.fontOfSize(size: 12, submission: true)
         info.textColor = ColorUtil.fontColor
@@ -96,13 +95,15 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
         }
         if (message.wasComment) {
             title.text = message.linkTitle
-        } else {
+        }
+        else {
             title.text = message.subject
         }
         self.message = message
         if (!ActionStates.isRead(s: message)) {
             title.textColor = GMColor.red500Color()
-        } else {
+        }
+        else {
             title.textColor = ColorUtil.fontColor
         }
         title.sizeToFit()
@@ -149,13 +150,13 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
 
             textView.frame.size.height = textSizeB.height
             hasText = true
-        } catch {
         }
-
+        catch {
+        }
 
         let metrics = ["height": textView.frame.size.height] as [String: Any]
         let views = ["label": title, "body": textView, "info": info] as [String: Any]
-        if(!lsC.isEmpty){
+        if(!lsC.isEmpty) {
             self.contentView.removeConstraints(lsC)
         }
         lsC = []
@@ -175,7 +176,8 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
                     metrics: metrics,
                     views: views))
 
-        } else {
+        }
+        else {
             lsC.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[label]-8-|",
                     options: NSLayoutFormatOptions(rawValue: 0),
                     metrics: metrics,
@@ -212,17 +214,16 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
             let alertController: BottomSheetActionController = BottomSheetActionController()
             alertController.headerData = "Message from u/\(self.message!.author)"
 
-
-            alertController.addAction(Action(ActionData(title: "\(AccountController.formatUsernamePosessive(input: self.message!.author, small: false)) profile", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { action in
+            alertController.addAction(Action(ActionData(title: "\(AccountController.formatUsernamePosessive(input: self.message!.author, small: false)) profile", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { _ in
 
                 let prof = ProfileViewController.init(name: self.message!.author)
-                VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController);
+                VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController)
             }))
 
-            alertController.addAction(Action(ActionData(title: "Reply", image: UIImage(named: "reply")!.menuIcon()), style: .default, handler: { action in
+            alertController.addAction(Action(ActionData(title: "Reply", image: UIImage(named: "reply")!.menuIcon()), style: .default, handler: { _ in
                 self.doReply()
             }))
-            alertController.addAction(Action(ActionData(title: ActionStates.isRead(s: self.message!) ? "Mark unread" : "Mark read", image: UIImage(named: "seen")!.menuIcon()), style: .default, handler: { action in
+            alertController.addAction(Action(ActionData(title: ActionStates.isRead(s: self.message!) ? "Mark unread" : "Mark read", image: UIImage(named: "seen")!.menuIcon()), style: .default, handler: { _ in
                 if (ActionStates.isRead(s: self.message!)) {
                     let session = (UIApplication.shared.delegate as! AppDelegate).session
                     do {
@@ -231,13 +232,15 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
                                 print(result.error!.description)
                             }
                         })
-                    } catch {
+                    }
+                    catch {
 
                     }
                     self.title.textColor = GMColor.red500Color()
                     ActionStates.setRead(s: self.message!, read: false)
 
-                } else {
+                }
+                else {
                     let session = (UIApplication.shared.delegate as! AppDelegate).session
                     do {
                         try session?.markMessagesAsRead([(self.message?.name.contains("_"))! ? (self.message?.name)! : ((self.message?.wasComment)! ? "t1_" : "t4_") + (self.message?.name)!], completion: { (result) in
@@ -245,7 +248,8 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
                                 print(result.error!.description)
                             }
                         })
-                    } catch {
+                    }
+                    catch {
 
                     }
                     self.title.textColor = ColorUtil.fontColor
@@ -254,7 +258,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
                 }
             }))
             if (self.message!.wasComment) {
-                alertController.addAction(Action(ActionData(title: "Full thead", image: UIImage(named: "comments")!.menuIcon()), style: .default, handler: { action in
+                alertController.addAction(Action(ActionData(title: "Full thead", image: UIImage(named: "comments")!.menuIcon()), style: .default, handler: { _ in
                     let url = "https://www.reddit.com\(self.message!.context)"
                     VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: url)!), popupIfPossible: true, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController)
                 }))
@@ -300,18 +304,21 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
                         print(result.error!.description)
                     }
                 })
-            } catch {
+            }
+            catch {
 
             }
             title.textColor = ColorUtil.fontColor
             ActionStates.setRead(s: message!, read: true)
-        } else {
+        }
+        else {
             if (message?.wasComment)! {
                 let url = "https://www.reddit.com\(message!.context)"
                 let vc = RedditLink.getViewControllerForURL(urlS: URL.init(string: url)!)
                 VCPresenter.showVC(viewController: vc, popupIfPossible: true, parentNavigationController: parentViewController?.navigationController, parentViewController: parentViewController)
-            } else {
-                VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(message: message, completion: {(message) in
+            }
+            else {
+                VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(message: message, completion: {(_) in
                     DispatchQueue.main.async(execute: { () -> Void in
                         BannerUtil.makeBanner(text: "Message sent!", seconds: 3, context: self.parentViewController)
                     })

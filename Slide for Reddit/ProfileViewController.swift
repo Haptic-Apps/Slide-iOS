@@ -6,27 +6,27 @@
 //  Copyright © 2016 Haptic Apps. All rights reserved.
 //
 
-import UIKit
-import reddift
-import MKColorPicker
-import RLBAlertsPickers
 import MaterialComponents.MDCTabBar
+import MKColorPicker
+import reddift
+import RLBAlertsPickers
+import UIKit
 
-class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, ColorPickerViewDelegate, UIToolbarDelegate, UIScrollViewDelegate {
-    var content : [UserContent] = []
+class ProfileViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, ColorPickerViewDelegate, UIToolbarDelegate, UIScrollViewDelegate {
+    var content: [UserContent] = []
     var name: String = ""
     var isReload = false
-    var session: Session? = nil
-    var vCs : [UIViewController] = []
+    var session: Session?
+    var vCs: [UIViewController] = []
     var openTo = 0
 
     public func colorPickerView(_ colorPickerView: ColorPickerView, didSelectItemAt indexPath: IndexPath) {
         self.navigationController?.navigationBar.barTintColor = colorPickerView.colors[indexPath.row]
     }
 
-    func pickColor(sender: AnyObject){
+    func pickColor(sender: AnyObject) {
         let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
-        let margin:CGFloat = 10.0
+        let margin: CGFloat = 10.0
         let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
         let MKColorPicker = ColorPickerView.init(frame: rect)
         MKColorPicker.delegate = self
@@ -39,11 +39,11 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
 
         alertController.view.addSubview(MKColorPicker)
         
-        let somethingAction = UIAlertAction(title: "Save", style: .default, handler: {(alert: UIAlertAction!) in
+        let somethingAction = UIAlertAction(title: "Save", style: .default, handler: {(_: UIAlertAction!) in
             ColorUtil.setColorForUser(name: self.name, color: (self.navigationController?.navigationBar.barTintColor)!)
         })
         
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: {(alert: UIAlertAction!) in
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: {(_: UIAlertAction!) in
             self.navigationController?.navigationBar.barTintColor = ColorUtil.getColorForUser(name: self.name)
         })
         
@@ -65,19 +65,20 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
         present(alertController, animated: true, completion: nil)
     }
 
-    var tagText : String?
+    var tagText: String?
 
-    func tagUser(){
+    func tagUser() {
         let alertController = UIAlertController(title: "Tag \(AccountController.formatUsernamePosessive(input: name, small: true)) profile", message: nil, preferredStyle: UIAlertControllerStyle.alert)
         let confirmAction = UIAlertAction(title: "Set", style: .default) { (_) in
             if let text = self.tagText {
                 ColorUtil.setTagForUser(name: self.name, tag: text)
-            } else {
+            }
+            else {
                 // user did not fill field
             }
         }
         
-        if(!ColorUtil.getTagForUser(name: name).isEmpty){
+        if(!ColorUtil.getTagForUser(name: name).isEmpty) {
         let removeAction = UIAlertAction(title: "Remove tag", style: .default) { (_) in
             ColorUtil.removeTagForUser(name: self.name)
         }
@@ -120,18 +121,20 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
 
     }
 
-    init(name: String){
+    init(name: String) {
         self.name = name
         self.session = (UIApplication.shared.delegate as! AppDelegate).session
         if let n = (session?.token.flatMap { (token) -> String? in
             return token.name
             }) as String? {
-            if(name == n){
+            if(name == n) {
                 self.content = UserContent.cases
-            } else {
+            }
+            else {
                 self.content = ProfileViewController.doDefault()
             }
-        } else {
+        }
+        else {
             self.content = ProfileViewController.doDefault()
         }
         
@@ -146,7 +149,7 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
         fatalError("init(coder:) has not been implemented")
     }
     
-    static func doDefault() -> [UserContent]{
+    static func doDefault() -> [UserContent] {
         return [UserContent.overview, UserContent.comments, UserContent.submitted, UserContent.gilded]
     }
     
@@ -164,7 +167,7 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
         navigationController?.navigationBar.isTranslucent = false
         self.navigationController?.setNavigationBarHidden(false, animated: true)
         
-        if(navigationController != nil){
+        if(navigationController != nil) {
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForUser(name: name)
         }
         let sort = UIButton.init(type: .custom)
@@ -179,21 +182,21 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
         more.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
          moreB = UIBarButtonItem.init(customView: more)
         
-        if(navigationController != nil){
+        if(navigationController != nil) {
             navigationItem.rightBarButtonItems = [ moreB!, sortB!]
             self.navigationController?.navigationBar.shadowImage = UIImage()
         }
 
     }
     
-    func showMenu(sender: AnyObject, user: Account){
-        var date = Date(timeIntervalSince1970: TimeInterval(user.createdUtc))
+    func showMenu(sender: AnyObject, user: Account) {
+        let date = Date(timeIntervalSince1970: TimeInterval(user.createdUtc))
         let df = DateFormatter()
         df.dateFormat = "MM/dd/yyyy"
-        let alrController = UIAlertController(title:"", message: "\(user.linkKarma) post karma\n\(user.commentKarma) comment karma\nRedditor since \(df.string(from: date))", preferredStyle: UIAlertControllerStyle.actionSheet)
+        let alrController = UIAlertController(title: "", message: "\(user.linkKarma) post karma\n\(user.commentKarma) comment karma\nRedditor since \(df.string(from: date))", preferredStyle: UIAlertControllerStyle.actionSheet)
         
-        let margin:CGFloat = 8.0
-        let rect = CGRect.init(x: margin, y: margin + 23, width: alrController.view.bounds.size.width - margin * 4.0, height:75)
+        let margin: CGFloat = 8.0
+        let rect = CGRect.init(x: margin, y: margin + 23, width: alrController.view.bounds.size.width - margin * 4.0, height: 75)
         let scrollView = UIScrollView(frame: rect)
         scrollView.backgroundColor = UIColor.clear
         
@@ -211,7 +214,7 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
                             let b = self.generateButtons(trophy: trophy)
                             b.frame = CGRect.init(x: i * 75, y: 0, width: 70, height: 70)
                             b.addTapGestureRecognizer(action: {
-                                if(trophy.url != nil){
+                                if(trophy.url != nil) {
                                     self.dismiss(animated: true)
                                     VCPresenter.showVC(viewController: WebsiteViewController(url: trophy.url!, subreddit: ""), popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
                                 }
@@ -220,62 +223,67 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
                             i += 1
                         }
                         scrollView.contentSize = CGSize.init(width: i * 75, height: 70)
-                        if(trophies.count == 0){
+                        if(trophies.count == 0) {
                             alrController.title = ""
-                        } else {
+                        }
+                        else {
                             alrController.title = "\n\n\n\n\n"
                         }
                     }
                 }
             })
-        } catch {
+        }
+        catch {
             
         }
         scrollView.delaysContentTouches = false
     
         alrController.view.addSubview(scrollView)
-        if(AccountController.isLoggedIn){
-            alrController.addAction(UIAlertAction.init(title: "Private message", style: .default, handler: { (action) in
-                VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(name: user.name, completion: {(message) in })), parentVC: self)
+        if(AccountController.isLoggedIn) {
+            alrController.addAction(UIAlertAction.init(title: "Private message", style: .default, handler: { (_) in
+                VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(name: user.name, completion: { (_) in })), parentVC: self)
             }))
-            if(user.isFriend){
-                alrController.addAction(UIAlertAction.init(title: "Unfriend", style: .default, handler: { (action) in
+            if(user.isFriend) {
+                alrController.addAction(UIAlertAction.init(title: "Unfriend", style: .default, handler: { (_) in
                     do {
-                        try self.session?.unfriend(user.name, completion: { (result) in
+                        try self.session?.unfriend(user.name, completion: { (_) in
                             DispatchQueue.main.async {
                                 BannerUtil.makeBanner(text: "Unfriended u/\(user.name)", seconds: 3, context: self)
                             }
                         })
-                    } catch {
+                    }
+                    catch {
                         
                     }
                 }))
-            } else {
-                alrController.addAction(UIAlertAction.init(title: "Friend", style: .default, handler: { (action) in
+            }
+            else {
+                alrController.addAction(UIAlertAction.init(title: "Friend", style: .default, handler: { (_) in
                     do {
                         try self.session?.friend(user.name, completion: { (result) in
-                            if(result.error != nil){
+                            if(result.error != nil) {
                                 print(result.error!)
                             }
                             DispatchQueue.main.async {
                                 BannerUtil.makeBanner(text: "Friended u/\(user.name)", seconds: 3, context: self)
                             }
                         })
-                    } catch {
+                    }
+                    catch {
                         
                     }
                 }))
             }
         }
-        alrController.addAction(UIAlertAction.init(title: "Change color", style: .default, handler: { (action) in
+        alrController.addAction(UIAlertAction.init(title: "Change color", style: .default, handler: { (_) in
             self.pickColor(sender: sender)
         }))
         let tag = ColorUtil.getTagForUser(name: name)
-        alrController.addAction(UIAlertAction.init(title: "Tag user\((!(tag.isEmpty)) ? " (currently \(tag))" : "")", style: .default, handler: { (action) in
+        alrController.addAction(UIAlertAction.init(title: "Tag user\((!(tag.isEmpty)) ? " (currently \(tag))" : "")", style: .default, handler: { (_) in
             self.tagUser()
         }))
         
-        alrController.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: { (action) in
+        alrController.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: { (_) in
         }))
 
         alrController.modalPresentationStyle = .popover
@@ -290,14 +298,13 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
             presenter.sourceRect = (sender as! UIButton).bounds
         }
         
-        self.present(alrController, animated: true, completion:{})
+        self.present(alrController, animated: true, completion: {})
         
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
     }
-
     
     func generateButtons(trophy: Trophy) -> UIImageView {
         let more = UIImageView.init(frame: CGRect.init(x: 0, y: 0, width: 70, height: 70))
@@ -311,10 +318,10 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
         return more
     }
 
-    func trophyTapped(_ sender: AnyObject){
+    func trophyTapped(_ sender: AnyObject) {
     }
     
-    func close(){
+    func close() {
         navigationController?.popViewController(animated: true)
     }
     
@@ -349,7 +356,6 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
         self.view.addSubview(tabBar)
         self.edgesForExtendedLayout = []
         
-        
         self.dataSource = self
         self.delegate = self
         
@@ -357,23 +363,19 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
         let firstViewController = vCs[openTo]
         for view in view.subviews {
             if view is UIScrollView {
-                (view as! UIScrollView).delegate =  self
+                (view as! UIScrollView).delegate = self
 
                 break
             }
         }
 
-        if (self.navigationController?.interactivePopGestureRecognizer != nil)
-        {
-            for view in view.subviews
-            {
-                if let scrollView = view as? UIScrollView
-                {
-                    scrollView.panGestureRecognizer.require(toFail: self.navigationController!.interactivePopGestureRecognizer!);
+        if (self.navigationController?.interactivePopGestureRecognizer != nil) {
+            for view in view.subviews {
+                if let scrollView = view as? UIScrollView {
+                    scrollView.panGestureRecognizer.require(toFail: self.navigationController!.interactivePopGestureRecognizer!)
                 }
             }
         }
-
 
         setViewControllers([firstViewController],
                            direction: .forward,
@@ -383,7 +385,7 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
 
     var currentVc = UIViewController()
     
-    func showSortMenu(_ sender: UIButton?){
+    func showSortMenu(_ sender: UIButton?) {
         (self.currentVc as? SingleSubredditViewController)?.showSortMenu(sender)
     }
     func pageViewController(_ pageViewController: UIPageViewController,
@@ -405,14 +407,11 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
         return vCs[previousIndex]
     }
     
-
-    
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerAfter viewController: UIViewController) -> UIViewController? {
         guard let viewControllerIndex = vCs.index(of: viewController) else {
             return nil
         }
-        
         
         let nextIndex = viewControllerIndex + 1
         let orderedViewControllersCount = vCs.count
@@ -428,7 +427,7 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
         return vCs[nextIndex]
     }
 
-    func showMenu(_ sender: AnyObject){
+    func showMenu(_ sender: AnyObject) {
         do {
             try session?.getUserProfile(self.name, completion: { (result) in
                 switch result {
@@ -438,7 +437,8 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
                     self.showMenu(sender: sender, user: account)
                 }
             })
-        } catch {
+        }
+        catch {
             
         }
     }
@@ -448,18 +448,19 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
         guard completed else { return }
         let page = vCs.index(of: self.viewControllers!.first!)
 
-        if(!selected){
+        if(!selected) {
             tabBar.setSelectedItem(tabBar.items[page! ], animated: true)
-        } else {
+        }
+        else {
             selected = false
         }
-        currentVc =  self.viewControllers!.first!
+        currentVc = self.viewControllers!.first!
         currentIndex = page!
 
     }
 
     var currentIndex = 0
-    var lastPosition : CGFloat = 0
+    var lastPosition: CGFloat = 0
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         self.lastPosition = scrollView.contentOffset.x
@@ -468,7 +469,8 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
             scrollView.contentOffset.x = scrollView.frame.width
             return
 
-        } else if currentIndex == 0 && lastPosition < scrollView.frame.width {
+        }
+        else if currentIndex == 0 && lastPosition < scrollView.frame.width {
             scrollView.contentOffset.x = scrollView.frame.width
             return
         }

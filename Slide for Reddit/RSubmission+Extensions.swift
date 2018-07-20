@@ -57,7 +57,6 @@ extension RSubmission {
             thumb = false
         }
 
-
         if (!big && !thumb && submission.type != .SELF && submission.type != .NONE) { //If a submission has a link but no images, still show the web thumbnail
             thumb = true
         }
@@ -78,22 +77,26 @@ extension RSubmission {
 
         if (thumb && !big) {
             target = .thumb
-        } else if (big) {
+        }
+        else if (big) {
             target = .banner
-        } else {
+        }
+        else {
             target = .text
         }
 
-        if(type == .LINK && SettingValues.linkAlwaysThumbnail){
+        if(type == .LINK && SettingValues.linkAlwaysThumbnail) {
             target == .thumb
         }
 
         var cell: LinkCellView!
         if (target == .thumb) {
             cell = ThumbnailLinkCellView()
-        } else if (target == .banner) {
+        }
+        else if (target == .banner) {
             cell = BannerLinkCellView()
-        } else {
+        }
+        else {
             cell = TextLinkCellView()
         }
 
@@ -101,5 +104,3 @@ extension RSubmission {
 
     }
 }
-
-
