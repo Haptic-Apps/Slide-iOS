@@ -31,7 +31,7 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate {
                     }
                 )
                 let open = OpenInChromeController.init()
-                if(open.isChromeInstalled()) {
+                if open.isChromeInstalled() {
                     sheet.addAction(
                         UIAlertAction(title: "Open in Chrome", style: .default) { (_) in
                             open.openInChrome(url, callbackURL: nil, createNewTab: true)
@@ -102,7 +102,7 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate {
     }
 
     func subscribe(_ sub: Subreddit) {
-        if(parent!.subChanged && !sub.userIsSubscriber || sub.userIsSubscriber) {
+        if parent!.subChanged && !sub.userIsSubscriber || sub.userIsSubscriber {
             //was not subscriber, changed, and unsubscribing again
             Subscriptions.unsubscribe(sub.displayName, session: (UIApplication.shared.delegate as! AppDelegate).session!)
             parent!.subChanged = false
@@ -110,7 +110,7 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate {
         }
         else {
             let alrController = UIAlertController.init(title: "Subscribe to \(sub.displayName)", message: nil, preferredStyle: .actionSheet)
-            if(AccountController.isLoggedIn) {
+            if AccountController.isLoggedIn {
                 let somethingAction = UIAlertAction(title: "Add to sub list and subscribe", style: UIAlertActionStyle.default, handler: {(_: UIAlertAction!) in
                     Subscriptions.subscribe(sub.displayName, true, session: (UIApplication.shared.delegate as! AppDelegate).session!)
                     self.parent!.subChanged = true

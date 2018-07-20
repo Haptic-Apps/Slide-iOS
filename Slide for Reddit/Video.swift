@@ -128,8 +128,8 @@ public class Video {
 		is_featured = dictionary["is_featured"] as? String
 		date_featured = dictionary["date_featured"] as? String
 		score_modifier = dictionary["score_modifier"] as? Int
-		if (dictionary["channel"] != nil) { channel = Channel(dictionary: dictionary["channel"] as! NSDictionary) }
-		if (dictionary["formats"] != nil) { formats = Formats.modelsFromDictionaryArray(array: dictionary["formats"] as! NSArray) }
+		if dictionary["channel"] != nil { channel = Channel(dictionary: dictionary["channel"] as! NSDictionary) }
+		if dictionary["formats"] != nil { formats = Formats.modelsFromDictionaryArray(array: dictionary["formats"] as! NSArray) }
 	}
 		
 /**

@@ -77,11 +77,11 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
         let data = content[indexPath.row]
         let itemWidth = width - 10
         let id = data["id"] as! String
-        if (estimatedHeights[id] == nil) {
+        if estimatedHeights[id] == nil {
             let titleString = NSMutableAttributedString.init(string: data["author"] as! String, attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 14, submission: true)])
             
             var content: NSAttributedString?
-            if (!(data["body_html"] as? String ?? "").isEmpty()) {
+            if !(data["body_html"] as? String ?? "").isEmpty() {
                 var html = (data["body_html"] as! String).gtm_stringByUnescapingFromHTML()!
                 html = html.trimmed()
                 do {
@@ -100,7 +100,7 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
                 content = NSAttributedString()
             }
             var imageHeight = 0
-            if(data["mobile_embeds"] != nil && !(data["mobile_embeds"] as? JSONArray)!.isEmpty) {
+            if data["mobile_embeds"] != nil && !(data["mobile_embeds"] as? JSONArray)!.isEmpty {
                 if let embedsB = data["mobile_embeds"] as? JSONArray, let embeds = embedsB[0] as? JSONDictionary, let height = embeds["height"] as? Int, let width = embeds["width"] as? Int, let url = embeds["original_url"] as? String {
                     let ratio = Double(height) / Double(width)
                     let width = Double(itemWidth)
@@ -110,7 +110,7 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
 
             let framesetterT = CTFramesetterCreateWithAttributedString(titleString)
             let textSizeT = CTFramesetterSuggestFrameSizeWithConstraints(framesetterT, CFRange(), nil, CGSize.init(width: itemWidth - 16, height: CGFloat.greatestFiniteMagnitude), nil)
-            if (content != nil) {
+            if content != nil {
                 let framesetterB = CTFramesetterCreateWithAttributedString(content!)
                 let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: itemWidth - 16, height: CGFloat.greatestFiniteMagnitude), nil)
                 
@@ -128,13 +128,13 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
     func refresh() {
         do {
             try session?.getLiveThreadDetails(id, completion: { (result) in
-                switch(result) {
+                switch result {
                 case .failure(let error):
                     print(error)
                 case .success(let rawdetails):
                     self.getOldThreads()
                     self.doInfo(((rawdetails as! JSONDictionary)["data"] as! JSONDictionary))
-                    if(!(((rawdetails as! JSONDictionary)["data"] as! JSONDictionary)["websocket_url"] is NSNull)) {
+                    if !(((rawdetails as! JSONDictionary)["data"] as! JSONDictionary)["websocket_url"] is NSNull) {
                         self.setupWatcher(websocketUrl: ((rawdetails as! JSONDictionary)["data"] as! JSONDictionary)["websocket_url"] as! String)
                     }
                 }
@@ -166,7 +166,7 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
     func getOldThreads() {
         do {
             try session?.getCurrentThreads(id, completion: { (result) in
-                switch(result) {
+                switch result {
                 case .failure(let error):
                     print(error)
                 case .success(let rawupdates):
@@ -198,7 +198,7 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
             print("got some text: \(text)")
             do {
                 let text = try JSONSerialization.jsonObject(with: text.data(using: .utf8)!, options: [])
-                if((text as! JSONDictionary)["type"] as! String == "update") {
+                if (text as! JSONDictionary)["type"] as! String == "update" {
                     if let payload = (text as! JSONDictionary)["payload"] as? JSONDictionary, let data = payload["data"] as? JSONDictionary {
                         DispatchQueue.main.async {
                             self.content.insert(data, at: 0)

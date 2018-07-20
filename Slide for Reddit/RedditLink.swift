@@ -17,8 +17,8 @@ class RedditLink {
         
         var url = formatRedditUrl(urlS: urlS)
         var np = false
-        if (url.isEmpty()) {
-            if(SettingValues.safariVC) {
+        if url.isEmpty() {
+            if SettingValues.safariVC {
                 let safariVC = SFHideSafariViewController(url: oldUrl)
                 if #available(iOS 10.0, *) {
                     safariVC.preferredBarTintColor = ColorUtil.backgroundColor
@@ -31,7 +31,7 @@ class RedditLink {
             }
             return WebsiteViewController.init(url: oldUrl, subreddit: "")
         }
-        else if (url.hasPrefix("np")) {
+        else if url.hasPrefix("np") {
             np = true
             url = url.substring(2, length: url.length - 2)
         }
@@ -40,14 +40,14 @@ class RedditLink {
         
         var parts = url.split("/")
         var endParameters = ""
-        if (parts[parts.count - 1].startsWith("?")) {
+        if parts[parts.count - 1].startsWith("?") {
             endParameters = parts[parts.count - 1]
             parts.remove(at: parts.count - 1)
         }
         
         print(type)
         
-        switch (type) {
+        switch type {
         case .SHORTENED:
             return CommentViewController.init(submission: parts[1], subreddit: nil, np: np)
         case .LIVE:
@@ -63,23 +63,23 @@ class RedditLink {
         case .COMMENT_PERMALINK:
             var comment = ""
             var contextNumber = 3
-            if (parts.count >= 7) {
+            if parts.count >= 7 {
                 var end = parts[6]
                 var endCopy = end
-                if (end.contains("?")) { end = end.substring(0, length: end.indexOf("?")!) }
+                if end.contains("?") { end = end.substring(0, length: end.indexOf("?")!) }
                 
-                if (end.length >= 3) {
+                if end.length >= 3 {
                     comment = end
                 }
-                if (endCopy.contains("?context=") ) {
-                    if (!endParameters.isEmpty()) {
+                if endCopy.contains("?context=") {
+                    if !endParameters.isEmpty() {
                         endCopy = endParameters
                     }
                     let index = endCopy.indexOf("?context=")! + 9
                     contextNumber = Int(endCopy.substring(index, length: endCopy.length - index))!
                 }
             }
-            if(contextNumber == 0) {
+            if contextNumber == 0 {
                 contextNumber = 3
             }
             return CommentViewController.init(submission: parts[4], comment: comment, context: contextNumber, subreddit: parts[2], np: np)
@@ -102,7 +102,7 @@ class RedditLink {
             break
             
         }
-        if(SettingValues.safariVC) {
+        if SettingValues.safariVC {
             let safariVC = SFHideSafariViewController(url: oldUrl)
             if #available(iOS 10.0, *) {
                 safariVC.preferredBarTintColor = ColorUtil.backgroundColor
@@ -124,14 +124,14 @@ class RedditLink {
      */
     static func formatRedditUrl(urlS: URL) -> String {
         var url = urlS.absoluteString
-        if(url.hasPrefix("applewebdata:")) {
+        if url.hasPrefix("applewebdata:") {
             url = urlS.path
         }
         
         // Strip unused prefixes that don't require special handling
         url.stringByRemovingRegexMatches(pattern: "(?i)^(https?://)?(www\\.)?((ssl|pay|amp)\\.)?")
         
-        if (url.matches(regex: "(?i)[a-z0-9-_]+\\.reddit\\.com.*")) { // tests for subdomain
+        if url.matches(regex: "(?i)[a-z0-9-_]+\\.reddit\\.com.*") { // tests for subdomain
             let subdomain = urlS.host
             let domainRegex = "(?i)" + subdomain! + "\\.reddit\\.com"
             if (subdomain?.hasPrefix("np"))! {
@@ -155,11 +155,11 @@ class RedditLink {
             }
         }
         
-        if (url.hasPrefix("/")) { url = "reddit.com" + url }
-        if (url.hasSuffix("/")) { url = url.substring(0, length: url.length - 1) }
+        if url.hasPrefix("/") { url = "reddit.com" + url }
+        if url.hasSuffix("/") { url = url.substring(0, length: url.length - 1) }
         
         // Converts links such as reddit.com/help to reddit.com/r/reddit.com/wiki
-        if (url.matches(regex: "(?i)[^/]++/(?>wiki|help)(?>$|/.*)")) {
+        if url.matches(regex: "(?i)[^/]++/(?>wiki|help)(?>$|/.*)") {
             url.stringByRemovingRegexMatches(pattern: "(?i)/(?>wiki|help)", replaceWith: "/r/reddit.com/wiki")
         }
         
@@ -174,45 +174,45 @@ class RedditLink {
      */
     static func getRedditLinkType(urlBase: URL) -> RedditLinkType {
         let url = urlBase.absoluteString
-        if (url.matches(regex: "(?i)redd\\.it/\\w+")) {
+        if url.matches(regex: "(?i)redd\\.it/\\w+") {
             // Redd.it link. Format: redd.it/post_id
             return RedditLinkType.SHORTENED
         }
-        else if (url.matches(regex: "(?i)reddit\\.com/live/[^/]*")) {
+        else if url.matches(regex: "(?i)reddit\\.com/live/[^/]*") {
             return RedditLinkType.LIVE
         }
-        else if (url.matches(regex: "(?i)reddit\\.com/message/compose.*")) {
+        else if url.matches(regex: "(?i)reddit\\.com/message/compose.*") {
             return RedditLinkType.MESSAGE
         }
-        else if (url.matches(regex: "(?i)reddit\\.com(?:/r/[a-z0-9-_.]+)?/(?:wiki|help).*")) {
+        else if url.matches(regex: "(?i)reddit\\.com(?:/r/[a-z0-9-_.]+)?/(?:wiki|help).*") {
             // Wiki link. Format: reddit.com/r/$subreddit/wiki/$page [optional]
             return RedditLinkType.WIKI
         }
-        else if (url.matches(regex: "(?i)reddit\\.com/r/[a-z0-9-_.]+/about.*")) {
+        else if url.matches(regex: "(?i)reddit\\.com/r/[a-z0-9-_.]+/about.*") {
             // Unhandled link. Format: reddit.com/r/$subreddit/about/$page [optional]
             return RedditLinkType.OTHER
         }
-        else if (url.matches(regex: "(?i)reddit\\.com/r/[a-z0-9-_.]+/search.*")) {
+        else if url.matches(regex: "(?i)reddit\\.com/r/[a-z0-9-_.]+/search.*") {
             // Wiki link. Format: reddit.com/r/$subreddit/search?q= [optional]
             return RedditLinkType.SEARCH
         }
-        else if (url.matches(regex: "(?i)reddit\\.com/r/[a-z0-9-_.]+/comments/\\w+/\\w*/.*")) {
+        else if url.matches(regex: "(?i)reddit\\.com/r/[a-z0-9-_.]+/comments/\\w+/\\w*/.*") {
             // Permalink to comments. Format: reddit.com/r/$subreddit/comments/$post_id/$post_title [can be empty]/$comment_id
             return RedditLinkType.COMMENT_PERMALINK
         }
-        else if (url.matches(regex: "(?i)reddit\\.com/r/[a-z0-9-_.]+/comments/\\w+.*")) {
+        else if url.matches(regex: "(?i)reddit\\.com/r/[a-z0-9-_.]+/comments/\\w+.*") {
             // Submission. Format: reddit.com/r/$subreddit/comments/$post_id/$post_title [optional]
             return RedditLinkType.SUBMISSION
         }
-        else if (url.matches(regex: "(?i)reddit\\.com/comments/\\w+.*")) {
+        else if url.matches(regex: "(?i)reddit\\.com/comments/\\w+.*") {
             // Submission without a given subreddit. Format: reddit.com/comments/$post_id/$post_title [optional]
             return RedditLinkType.SUBMISSION_WITHOUT_SUB
         }
-        else if (url.matches(regex: "(?i)reddit\\.com/r/[a-z0-9-_.]+.*")) {
+        else if url.matches(regex: "(?i)reddit\\.com/r/[a-z0-9-_.]+.*") {
             // Subreddit. Format: reddit.com/r/$subreddit/$sort [optional]
             return RedditLinkType.SUBREDDIT
         }
-        else if (url.matches(regex: "(?i)reddit\\.com/u(?:ser)?/[a-z0-9-_]+.*")) {
+        else if url.matches(regex: "(?i)reddit\\.com/u(?:ser)?/[a-z0-9-_]+.*") {
             // User. Format: reddit.com/u [or user]/$username/$page [optional]
             return RedditLinkType.USER
         }

@@ -72,44 +72,44 @@ class TableDisplayView: UIScrollView {
         var currentString = ""
         for string in text.trimmed().components(separatedBy: "<") {
             let current = "<\(string)".trimmed()
-            if(current == "<") {
+            if current == "<" {
                 continue
             }
             //print(current)
-            if (current == tableStart) {
+            if current == tableStart {
             }
-            else if (current == tableHeadStart) {
+            else if current == tableHeadStart {
             }
-            else if (current == tableRowStart) {
+            else if current == tableRowStart {
                 currentRow = []
             }
-            else if (current == tableRowEnd) {
+            else if current == tableRowEnd {
                 isHeader = false
                 baseData.append(currentRow)
             }
-            else if (current == tableEnd) {
+            else if current == tableEnd {
             }
-            else if (current == tableHeadEnd) {
+            else if current == tableHeadEnd {
             }
-            else if (!columnStarted
-                && (current == tableColumnStart || current == tableHeaderStart)) {
+            else if !columnStarted
+                && (current == tableColumnStart || current == tableHeaderStart) {
                 columnStarted = true
                 //todo maybe gravity = Gravity.START;
             }
-            else if (!columnStarted && (current == tableColumnStartRight || current == tableHeaderStartRight)) {
+            else if !columnStarted && (current == tableColumnStartRight || current == tableHeaderStartRight) {
                 columnStarted = true
                 //todo maybe gravity = Gravity.END;
             }
-            else if (!columnStarted && (current == tableColumnStartCenter || current == tableHeaderStartCenter)) {
+            else if !columnStarted && (current == tableColumnStartCenter || current == tableHeaderStartCenter) {
                 columnStarted = true
                 //todo maybe gravity = Gravity.CENTER;
             }
-            else if (!columnStarted && (current == tableColumnStartLeft || current == tableHeaderStartLeft)) {
+            else if !columnStarted && (current == tableColumnStartLeft || current == tableHeaderStartLeft) {
                 columnStarted = true
                 //todo maybe gravity = Gravity.START;
             }
-            else if (current == tableColumnEnd || current == tableHeaderEnd) {
-                if(currentString.startsWith("<td")) {
+            else if current == tableColumnEnd || current == tableHeaderEnd {
+                if currentString.startsWith("<td") {
                     let index = currentString.indexOf(">")
                     currentString = currentString.substring(index! + 1, length: currentString.length - index! - 1)
                 }
@@ -201,7 +201,7 @@ class TableDisplayView: UIScrollView {
     func getWidestCell(column: Int) -> CGFloat {
         var widest = CGFloat(0)
         for row in widths {
-            if(column < row.count && row[column] > widest) {
+            if column < row.count && row[column] > widest {
                 widest = row[column]
             }
         }
@@ -245,43 +245,43 @@ class TableDisplayView: UIScrollView {
         var estHeight = CGFloat(0)
         for string in baseHtml.trimmed().components(separatedBy: "<") {
             let current = "<\(string)".trimmed()
-            if(current == "<") {
+            if current == "<" {
                 continue
             }
             //print(current)
-            if (current == tableStart) {
+            if current == tableStart {
             }
-            else if (current == tableHeadStart) {
+            else if current == tableHeadStart {
             }
-            else if (current == tableRowStart) {
+            else if current == tableRowStart {
             }
-            else if (current == tableRowEnd) {
+            else if current == tableRowEnd {
                 isHeader = false
                 estHeight += 30
             }
-            else if (current == tableEnd) {
+            else if current == tableEnd {
             }
-            else if (current == tableHeadEnd) {
+            else if current == tableHeadEnd {
             }
-            else if (!columnStarted
-                && (current == tableColumnStart || current == tableHeaderStart)) {
+            else if !columnStarted
+                && (current == tableColumnStart || current == tableHeaderStart) {
                 columnStarted = true
                 //todo maybe gravity = Gravity.START;
             }
-            else if (!columnStarted && (current == tableColumnStartRight || current == tableHeaderStartRight)) {
+            else if !columnStarted && (current == tableColumnStartRight || current == tableHeaderStartRight) {
                 columnStarted = true
                 //todo maybe gravity = Gravity.END;
             }
-            else if (!columnStarted && (current == tableColumnStartCenter || current == tableHeaderStartCenter)) {
+            else if !columnStarted && (current == tableColumnStartCenter || current == tableHeaderStartCenter) {
                 columnStarted = true
                 //todo maybe gravity = Gravity.CENTER;
             }
-            else if (!columnStarted && (current == tableColumnStartLeft || current == tableHeaderStartLeft)) {
+            else if !columnStarted && (current == tableColumnStartLeft || current == tableHeaderStartLeft) {
                 columnStarted = true
                 //todo maybe gravity = Gravity.START;
             }
-            else if (current == tableColumnEnd || current == tableHeaderEnd) {
-                if(currentString.startsWith("<td")) {
+            else if current == tableColumnEnd || current == tableHeaderEnd {
+                if currentString.startsWith("<td") {
                     let index = currentString.indexOf(">")
                     currentString = currentString.substring(index! + 1, length: currentString.length - index! - 1)
                 }

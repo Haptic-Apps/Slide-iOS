@@ -224,7 +224,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
             numberFormatter.locale = items[0].priceLocale
             let price1Str = numberFormatter.string(from: items[0].price)
             let price2Str = numberFormatter.string(from: items[1].price)
-            if(self.three.text! != price1Str!) {
+            if self.three.text! != price1Str! {
                 //Is a sale
                 
                 let crossedString = NSMutableAttributedString.init(string: "$4.99\n", attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSStrikethroughStyleAttributeName: NSNumber(value: NSUnderlineStyle.styleSingle.rawValue)])
@@ -301,9 +301,9 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch (indexPath.section) {
+        switch indexPath.section {
         case 0:
-            switch (indexPath.row) {
+            switch indexPath.row {
             case 0: return self.restore
             case 1: return self.multicolumn
             case 2: return self.shadowbox
@@ -324,7 +324,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        if(indexPath.row == 0) {
+        if indexPath.row == 0 {
             IAPHandler.shared.restorePurchase()
         }
     }
@@ -340,7 +340,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
         toReturn.backgroundColor = ColorUtil.backgroundColor
 
-        switch (section) {
+        switch section {
         case 0: label.text = "General"
         case 1: label.text = "Already a Slide supporter?"
         default: label.text = ""
@@ -349,7 +349,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch (section) {
+        switch section {
         case 0: return 10
         default: fatalError("Unknown number of sections")
         }

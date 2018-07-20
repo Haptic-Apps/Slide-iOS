@@ -56,10 +56,10 @@ class ColorPicker: UIView {
         let i = value - 2
         var index = 0
         for val in i...(i + 4) {
-            if(val < 0) {
+            if val < 0 {
                 index = val + (allColors.count - 1)
             }
-            else if(val > (allColors.count - 1)) {
+            else if val > (allColors.count - 1) {
                 index = val - (allColors.count - 1)
             }
             else {

@@ -27,7 +27,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         super.viewWillAppear(animated)
         self.view.backgroundColor = .white
 
-        if(navigationController != nil) {
+        if navigationController != nil {
             let sort = UIButton.init(type: .custom)
             sort.setImage(UIImage.init(named: "size")?.getCopy(withSize: .square(size: 25)), for: UIControlState.normal)
             sort.addTarget(self, action: #selector(self.readerMode(_:)), for: UIControlEvents.touchUpInside)
@@ -40,7 +40,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     
     func exit() {
         self.navigationController?.popViewController(animated: true)
-        if(navigationController!.modalPresentationStyle == .pageSheet) {
+        if navigationController!.modalPresentationStyle == .pageSheet {
             self.navigationController?.dismiss(animated: true, completion: nil)
         }
     }
@@ -130,7 +130,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     }
     
     func hostMatches(host: String) -> Bool {
-        if(AdDictionary.hosts.isEmpty) {
+        if AdDictionary.hosts.isEmpty {
            AdDictionary.doInit()
         }
         let firstPeriod = host.indexOf(".")

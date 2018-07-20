@@ -49,7 +49,7 @@ class SingleContentViewController: SwipeDownModalVC, UIPageViewControllerDataSou
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating: Bool, previousViewControllers: [UIViewController], transitionCompleted: Bool) {
-        if(pageViewController.viewControllers?.first == vCs[0]) {
+        if pageViewController.viewControllers?.first == vCs[0] {
             self.dismiss(animated: true, completion: nil)
         }
     }

@@ -122,7 +122,7 @@ class ImageMediaViewController: EmbeddableMediaViewController {
     }
     
     func fullscreen(_ sender: AnyObject) {
-        if((parent as! ModalMediaViewController).fullscreen) {
+        if (parent as! ModalMediaViewController).fullscreen {
             (parent as! ModalMediaViewController).unFullscreen(self)
         }
         else {
@@ -134,7 +134,7 @@ class ImageMediaViewController: EmbeddableMediaViewController {
         let dtap = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTapScrollView(recognizer:)))
         dtap.numberOfTapsRequired = 2
         scrollView.addGestureRecognizer(dtap)
-        if(parent is ModalMediaViewController) {
+        if parent is ModalMediaViewController {
             let tap = UITapGestureRecognizer(target: self, action: #selector(fullscreen(_:)))
             tap.require(toFail: dtap)
             view.addGestureRecognizer(tap)
@@ -155,7 +155,7 @@ class ImageMediaViewController: EmbeddableMediaViewController {
             viewInHDButton.isHidden = false
         }
         else {
-            if(ContentType.isImgurLink(uri: data.baseURL!)) {
+            if ContentType.isImgurLink(uri: data.baseURL!) {
                 let urlString = "\(data.baseURL!).png"
                 imageURL = URL.init(string: urlString)!
             }
@@ -186,7 +186,7 @@ class ImageMediaViewController: EmbeddableMediaViewController {
 
     func loadImage(imageURL: URL, completion: @escaping ((UIImage) -> Void) ) {
 
-        if (SDWebImageManager.shared().cachedImageExists(for: imageURL)) {
+        if SDWebImageManager.shared().cachedImageExists(for: imageURL) {
             DispatchQueue.main.async {
                 if let image = SDWebImageManager.shared().imageCache.imageFromDiskCache(forKey: imageURL.absoluteString) {
                     completion(image)
@@ -202,7 +202,7 @@ class ImageMediaViewController: EmbeddableMediaViewController {
                 countBytes.allowedUnits = [.useMB]
                 countBytes.countStyle = .file
                 let fileSize = countBytes.string(fromByteCount: Int64(total))
-                if(average > 0) {
+                if average > 0 {
                     self.size.text = fileSize
                 }
                 self.progressView.progress = average

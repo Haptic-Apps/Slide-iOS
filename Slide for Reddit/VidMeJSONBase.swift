@@ -50,9 +50,9 @@ public class VidMeJSONBase {
 	required public init?(dictionary: NSDictionary) {
 
 		status = dictionary["status"] as? String
-		if (dictionary["video"] != nil) { video = Video(dictionary: dictionary["video"] as! NSDictionary) }
-		if (dictionary["progress"] != nil) { progress = Progress(dictionary: dictionary["progress"] as! NSDictionary) }
-		if (dictionary["watchers"] != nil) { watchers = Watchers(dictionary: dictionary["watchers"] as! NSDictionary) }
+		if dictionary["video"] != nil { video = Video(dictionary: dictionary["video"] as! NSDictionary) }
+		if dictionary["progress"] != nil { progress = Progress(dictionary: dictionary["progress"] as! NSDictionary) }
+		if dictionary["watchers"] != nil { watchers = Watchers(dictionary: dictionary["watchers"] as! NSDictionary) }
 		isFeatured = dictionary["isFeatured"] as? String
 	}
 		

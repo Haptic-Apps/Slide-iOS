@@ -13,7 +13,7 @@ class AVControlsPlayer: AVPlayerViewController {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         // TODO:
-        if(parent is MediaDisplayViewController) {
+        if parent is MediaDisplayViewController {
             (parent as! MediaDisplayViewController).handleTap(recognizer: nil)
         }
         super.touchesBegan(touches, with: event)

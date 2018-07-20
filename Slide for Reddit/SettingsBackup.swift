@@ -80,9 +80,9 @@ class SettingsBackup: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch (indexPath.section) {
+        switch indexPath.section {
         case 0:
-            switch (indexPath.row) {
+            switch indexPath.row {
             case 0: return self.backup
             case 1: return self.restore
             default: fatalError("Unknown row in section 0")
@@ -93,7 +93,7 @@ class SettingsBackup: UITableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        if(indexPath.row == 0) {
+        if indexPath.row == 0 {
             doBackup()
         }
         else {
@@ -156,7 +156,7 @@ class SettingsBackup: UITableViewController {
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
         toReturn.backgroundColor = ColorUtil.backgroundColor
 
-        switch (section) {
+        switch section {
         case 0: label.text = "General"
             break
         case 1: label.text = "Already a Slide supporter?"
@@ -168,7 +168,7 @@ class SettingsBackup: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch (section) {
+        switch section {
         case 0: return 2
         default: fatalError("Unknown number of sections")
         }

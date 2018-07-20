@@ -64,7 +64,7 @@ class SearchViewController: ContentListingViewController {
                 (self.baseData as! SearchContributionLoader).time = t
                 self.refresh()
             }
-            if ((baseData as! SearchContributionLoader).time == t) {
+            if (baseData as! SearchContributionLoader).time == t {
                 saveActionButton.setValue(selected, forKey: "image")
             }
             
@@ -93,7 +93,7 @@ class SearchViewController: ContentListingViewController {
                 (self.baseData as! SearchContributionLoader).sorting = t
                 self.refresh()
             }
-            if ((baseData as! SearchContributionLoader).sorting == t) {
+            if (baseData as! SearchContributionLoader).sorting == t {
                 saveActionButton.setValue(selected, forKey: "image")
             }
             

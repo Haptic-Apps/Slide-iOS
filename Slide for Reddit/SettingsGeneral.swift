@@ -45,33 +45,33 @@ class SettingsGeneral: UITableViewController {
     }
 
     func switchIsChanged(_ changed: UISwitch) {
-        if (changed == viewTypeSwitch) {
+        if changed == viewTypeSwitch {
             MainViewController.needsRestart = true
             SettingValues.viewType = changed.isOn
             bottomBarSwitch.isEnabled = !changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_viewType)
         }
-        else if (changed == bottomBarSwitch) {
+        else if changed == bottomBarSwitch {
             MainViewController.needsRestart = true
             SettingValues.bottomBarHidden = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_bottomBarHidden)
         }
-        else if (changed == hideFABSwitch) {
+        else if changed == hideFABSwitch {
             SettingValues.hiddenFAB = !changed.isOn
             UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_hiddenFAB)
             SubredditReorderViewController.changed = true
         }
-        else if (changed == hapticFeedback) {
+        else if changed == hapticFeedback {
             SettingValues.hapticFeedback = !changed.isOn
             UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_hapticFeedback)
         }
-        else if (changed == pinToolbarSwitch) {
+        else if changed == pinToolbarSwitch {
             SettingValues.pinToolbar = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_pinToolbar)
             SubredditReorderViewController.changed = true
         }
-        else if (changed == scrubUsernameSwitch) {
-            if(!VCPresenter.proDialogShown(feature: false, self)) {
+        else if changed == scrubUsernameSwitch {
+            if !VCPresenter.proDialogShown(feature: false, self) {
                 SettingValues.nameScrubbing = changed.isOn
                 UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_nameScrubbing)
             }
@@ -89,7 +89,7 @@ class SettingsGeneral: UITableViewController {
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
         toReturn.backgroundColor = ColorUtil.backgroundColor
 
-        switch (section) {
+        switch section {
         case 0: label.text = "Display"
         case 1: label.text = "Notifications"
         case 2: label.text = "Sorting"
@@ -166,9 +166,9 @@ class SettingsGeneral: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch (indexPath.section) {
+        switch indexPath.section {
         case 0:
-            switch (indexPath.row) {
+            switch indexPath.row {
             case 0: return self.viewType
             case 1: return self.hideFAB
             case 2: return self.bottomBarHidden
@@ -178,12 +178,12 @@ class SettingsGeneral: UITableViewController {
             default: fatalError("Unknown row in section 0")
             }
         case 1:
-            switch (indexPath.row) {
+            switch indexPath.row {
             case 0: return self.notifications
             default: fatalError("Unknown row in section 1")
             }
         case 2:
-            switch (indexPath.row) {
+            switch indexPath.row {
             case 0: return self.postSorting
             case 1: return self.commentSorting
             default: fatalError("Unknown row in section 2")
@@ -210,7 +210,7 @@ class SettingsGeneral: UITableViewController {
                 UserDefaults.standard.synchronize()
                 self.commentSorting.detailTextLabel?.text = SettingValues.defaultCommentSorting.description
             }
-            if(SettingValues.defaultCommentSorting == link) {
+            if SettingValues.defaultCommentSorting == link {
                 saveActionButton.setValue(selected, forKey: "image")
             }
             actionSheetController.addAction(saveActionButton)
@@ -239,7 +239,7 @@ class SettingsGeneral: UITableViewController {
             let saveActionButton: UIAlertAction = UIAlertAction(title: link.description, style: .default) { _ -> Void in
                 self.showTimeMenu(s: link, selector: selector)
             }
-            if(SettingValues.defaultSorting == link) {
+            if SettingValues.defaultSorting == link {
                 saveActionButton.setValue(selected, forKey: "image")
             }
             actionSheetController.addAction(saveActionButton)
@@ -255,7 +255,7 @@ class SettingsGeneral: UITableViewController {
     }
 
     func showTimeMenu(s: LinkSortType, selector: UIView?) {
-        if (s == .hot || s == .new) {
+        if s == .hot || s == .new {
             SettingValues.defaultSorting = s
             UserDefaults.standard.set(s.path, forKey: SettingValues.pref_defaultSorting)
             UserDefaults.standard.synchronize()
@@ -281,7 +281,7 @@ class SettingsGeneral: UITableViewController {
                     UserDefaults.standard.synchronize()
                     self.postSorting.detailTextLabel?.text = SettingValues.defaultSorting.description
                 }
-                if(SettingValues.defaultTimePeriod == t) {
+                if SettingValues.defaultTimePeriod == t {
                     saveActionButton.setValue(selected, forKey: "image")
                 }
 
@@ -303,17 +303,17 @@ class SettingsGeneral: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
         self.timeMenuView = self.tableView.cellForRow(at: indexPath)!.contentView
 
-        if (indexPath.section == 2 && indexPath.row == 0) {
+        if indexPath.section == 2 && indexPath.row == 0 {
             showMenu(tableView.cellForRow(at: indexPath))
         }
-        else if (indexPath.section == 2 && indexPath.row == 1) {
+        else if indexPath.section == 2 && indexPath.row == 1 {
             showMenuComments(tableView.cellForRow(at: indexPath))
         }
 
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch (section) {
+        switch section {
         case 0: return 6
         case 1: return 1
         case 2: return 2

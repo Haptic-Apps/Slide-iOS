@@ -32,9 +32,9 @@ class ModQueueContributionLoader: ContributionLoader {
     var paging = true
     
     func getData(reload: Bool) {
-        if(delegate != nil) {
+        if delegate != nil {
             do {
-                if(reload) {
+                if reload {
                     paginator = Paginator()
                 }
                 try delegate?.session?.getModQueue(paginator, subreddit: Subreddit.init(subreddit: subreddit), completion: { (result) in
@@ -43,12 +43,12 @@ class ModQueueContributionLoader: ContributionLoader {
                         self.delegate?.failed(error: result.error!)
                     case .success(let listing):
 
-                        if(reload) {
+                        if reload {
                             self.content = []
                         }
                         let baseContent = listing.children.flatMap({ $0 })
                         for item in baseContent {
-                            if(item is Comment) {
+                            if item is Comment {
                                 self.content.append(RealmDataWrapper.commentToRComment(comment: item as! Comment, depth: 0))
                             }
                             else {

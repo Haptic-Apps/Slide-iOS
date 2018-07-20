@@ -46,23 +46,23 @@ class SettingsData: UITableViewController {
     }
     
     func switchIsChanged(_ changed: UISwitch) {
-        if(changed == enableDataSaving) {
+        if changed == enableDataSaving {
             SettingValues.dataSavingEnabled = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_dataSavingEnabled)
         }
-        else if(changed == disableOnWifi) {
+        else if changed == disableOnWifi {
             SettingValues.dataSavingDisableWiFi = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_dataSavingDisableWifi)
         }
-        else if(changed == loadHQViewer) {
+        else if changed == loadHQViewer {
             SettingValues.loadContentHQ = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_loadContentHQ)
         }
-        else if(changed == lowerQualityMode) {
+        else if changed == lowerQualityMode {
             SettingValues.lqLow = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_lqLow)
         }
-        else if(changed == dontLoadImagePreviews) {
+        else if changed == dontLoadImagePreviews {
             SettingValues.noImages = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_noImg)
         }
@@ -78,7 +78,7 @@ class SettingsData: UITableViewController {
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
         toReturn.backgroundColor = ColorUtil.backgroundColor
         
-        switch(section) {
+        switch section {
         case 0:
             label.text = ""
         default:
@@ -120,7 +120,7 @@ class SettingsData: UITableViewController {
     }
     
     func doDisables() {
-        if(SettingValues.dataSavingEnabled) {
+        if SettingValues.dataSavingEnabled {
             disableOnWifi.isEnabled = true
             loadHQViewer.isEnabled = true
             lowerQualityMode.isEnabled = true
@@ -133,7 +133,7 @@ class SettingsData: UITableViewController {
             lowerQualityMode.isEnabled = false
             dontLoadImagePreviews.isEnabled = true
         }
-        if(SettingValues.noImages) {
+        if SettingValues.noImages {
             enableDataSaving.isEnabled = false
             dontLoadImagePreviews.isEnabled = true
         }
@@ -153,9 +153,9 @@ class SettingsData: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch(indexPath.section) {
+        switch indexPath.section {
         case 0:
-            switch(indexPath.row) {
+            switch indexPath.row {
             case 0: return self.dontLoadImagePreviewsCell
             case 1: return self.enableDataSavingCell
             case 2: return self.disableOnWifiCell
@@ -168,7 +168,7 @@ class SettingsData: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch(section) {
+        switch section {
         case 0: return 5    // section 0 has 2 rows
         default: fatalError("Unknown number of sections")
         }

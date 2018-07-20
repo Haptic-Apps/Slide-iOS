@@ -77,7 +77,7 @@ class NavigationHeaderView: UIView {
     }
 
     func configureActions() {
-        if (AccountController.isLoggedIn) {
+        if AccountController.isLoggedIn {
             let yTap = UITapGestureRecognizer(target: self, action: #selector(self.you(_:)))
             title.addGestureRecognizer(yTap)
         }
@@ -143,9 +143,9 @@ class NavigationHeaderView: UIView {
         title.lineBreakMode = .byWordWrapping
         title.textColor = .white
 
-        if (AccountController.isLoggedIn) {
+        if AccountController.isLoggedIn {
             let titleT = NSMutableAttributedString.init(string: "\t\t", attributes: [NSFontAttributeName: titleFont])
-            if(AccountController.formatUsername(input: AccountController.currentName, small: true).length > 15) {
+            if AccountController.formatUsername(input: AccountController.currentName, small: true).length > 15 {
                 titleFont = UIFont.systemFont(ofSize: 15)
             }
             else {
@@ -230,7 +230,7 @@ class NavigationHeaderView: UIView {
 // MARK: Actions
 extension NavigationHeaderView {
     func you(_ sender: AnyObject) {
-        if(AccountController.isLoggedIn) {
+        if AccountController.isLoggedIn {
             self.parentController?.dismiss(animated: true) {
                 let profile = ProfileViewController.init(name: AccountController.currentName)
                 VCPresenter.showVC(viewController: profile, popupIfPossible: true, parentNavigationController: (self.parentController as! NavigationSidebarViewController).parentController?.navigationController, parentViewController: (self.parentController as! NavigationSidebarViewController).parentController)
@@ -262,7 +262,7 @@ extension NavigationHeaderView {
          SettingValues.isPro = !SettingValues.isPro
          }))*/
 
-        if(mod) {
+        if mod {
             alertController.addAction(Action(ActionData(title: "Moderation", image: UIImage(named: "mod")!.menuIcon()), style: .default, handler: { _ in
                 self.mod(self.inbox)
             }))
@@ -278,7 +278,7 @@ extension NavigationHeaderView {
             self.showProfileDialog(self.inbox)
         }))
 
-        if(AccountController.isLoggedIn) {
+        if AccountController.isLoggedIn {
             alertController.addAction(Action(ActionData(title: "Saved submissions", image: UIImage(named: "save")!.menuIcon()), style: .default, handler: { _ in
                 self.parentController!.dismiss(animated: true) {
                     let profile = ProfileViewController.init(name: AccountController.currentName)
@@ -354,7 +354,7 @@ extension NavigationHeaderView {
         let optionMenu = UIAlertController(title: nil, message: "Choose Option", preferredStyle: .actionSheet)
 
         for s in AccountController.names {
-            if (s != AccountController.currentName) {
+            if s != AccountController.currentName {
                 let add = UIAlertAction(title: s, style: .default, handler: { (_: UIAlertAction!) -> Void in
                     AccountController.switchAccount(name: s)
                     if !UserDefaults.standard.bool(forKey: "done" + s) {
@@ -376,7 +376,7 @@ extension NavigationHeaderView {
             }
         }
 
-        if (AccountController.isLoggedIn) {
+        if AccountController.isLoggedIn {
             let guest = UIAlertAction(title: "Guest", style: .default, handler: { (_: UIAlertAction!) -> Void in
                 AccountController.switchAccount(name: "GUEST")
                 Subscriptions.sync(name: "GUEST", completion: {

@@ -34,7 +34,7 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            switch(indexPath.section) {
+            switch indexPath.section {
             case 0:
                 PostFilter.domains.remove(at: indexPath.row)
             case 1:
@@ -131,27 +131,27 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
     }
     
     func doEnter(_ searchBar: UISearchBar) {
-        if(searchBar == domainEnter) {
+        if searchBar == domainEnter {
             PostFilter.domains.append(domainEnter.text! as NSString)
             domainEnter.text = ""
         }
-        else if(searchBar == selftextEnter) {
+        else if searchBar == selftextEnter {
             PostFilter.selftext.append(selftextEnter.text! as NSString)
             selftextEnter.text = ""
         }
-        else if(searchBar == titleEnter) {
+        else if searchBar == titleEnter {
             PostFilter.titles.append(titleEnter.text! as NSString)
             titleEnter.text = ""
         }
-        else if(searchBar == profileEnter) {
+        else if searchBar == profileEnter {
             PostFilter.profiles.append(profileEnter.text! as NSString)
             profileEnter.text = ""
         }
-        else if(searchBar == subredditEnter) {
+        else if searchBar == subredditEnter {
             PostFilter.subreddits.append(subredditEnter.text! as NSString)
             subredditEnter.text = ""
         }
-        else if(searchBar == flairEnter) {
+        else if searchBar == flairEnter {
             PostFilter.flairs.append(flairEnter.text! as NSString)
             flairEnter.text = ""
         }
@@ -179,7 +179,7 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
     }
     
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        switch(section) {
+        switch section {
         case 0: return domainEnter
         case 1: return selftextEnter
         case 2: return titleEnter
@@ -197,7 +197,7 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
         cell.backgroundColor = ColorUtil.foregroundColor
         cell.textLabel?.textColor = ColorUtil.fontColor
 
-        switch(indexPath.section) {
+        switch indexPath.section {
         case 0:
             cell.textLabel?.text = PostFilter.domains[indexPath.row] as String
         case 1:
@@ -269,7 +269,7 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
         label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
         toReturn.backgroundColor = ColorUtil.backgroundColor
-        switch(section) {
+        switch section {
         case 0: label.text = "Domain filters"
         case 1: label.text =  "Selftext filters"
         case 2: label.text = "Title filters"
@@ -282,7 +282,7 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch(section) {
+        switch section {
         case 0: return PostFilter.domains.count    // section 0 has 2 rows
         case 1: return PostFilter.selftext.count    // section 1 has 1 row
         case 2: return PostFilter.titles.count

@@ -56,7 +56,7 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
                             }
 
                             let color = ColorUtil.getColorForUser(name: user.name)
-                            if (color != ColorUtil.baseColor) {
+                            if color != ColorUtil.baseColor {
                                 somethingAction.setValue(color, forKey: "titleTextColor")
 
                             }
@@ -165,14 +165,14 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
     }
     
     func doSub(_ changed: UISwitch) {
-        if (!changed.isOn) {
+        if !changed.isOn {
             Subscriptions.unsubscribe(subreddit!.displayName, session: (UIApplication.shared.delegate as! AppDelegate).session!)
             BannerUtil.makeBanner(text: "Unsubscribed from r/\(subreddit!.displayName)", color: ColorUtil.accentColorForSub(sub: subreddit!.displayName), seconds: 3, context: parentController, top: true)
 
         }
         else {
             let alrController = UIAlertController.init(title: "Subscribe to \(subreddit!.displayName)", message: nil, preferredStyle: .actionSheet)
-            if (AccountController.isLoggedIn) {
+            if AccountController.isLoggedIn {
                 let somethingAction = UIAlertAction(title: "Add to sub list and subscribe", style: UIAlertActionStyle.default, handler: { (_: UIAlertAction!) in
                     Subscriptions.subscribe(self.subreddit!.displayName, true, session: (UIApplication.shared.delegate as! AppDelegate).session!)
                     BannerUtil.makeBanner(text: "Subscribed", color: ColorUtil.accentColorForSub(sub: self.subreddit!.displayName), seconds: 3, context: self.parentController, top: true)
@@ -219,7 +219,7 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
                 self.showTimeMenu(s: link, selector: selector)
             }
             
-            if(SettingValues.getLinkSorting(forSubreddit: self.subreddit!.displayName) == link) {
+            if SettingValues.getLinkSorting(forSubreddit: self.subreddit!.displayName) == link {
                 saveActionButton.setValue(selected, forKey: "image")
             }
 
@@ -236,7 +236,7 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
     }
 
     func showTimeMenu(s: LinkSortType, selector: UITableViewCell) {
-        if (s == .hot || s == .new) {
+        if s == .hot || s == .new {
             UserDefaults.standard.set(s.path, forKey: self.subreddit!.displayName.lowercased() + "Sorting")
             UserDefaults.standard.set(TimeFilterWithin.day.param, forKey: self.subreddit!.displayName.lowercased() + "Time")
             UserDefaults.standard.synchronize()
@@ -258,7 +258,7 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
                     UserDefaults.standard.synchronize()
                 }
                 
-                if(SettingValues.getTimePeriod(forSubreddit: self.subreddit!.displayName) == t) {
+                if SettingValues.getTimePeriod(forSubreddit: self.subreddit!.displayName) == t {
                     saveActionButton.setValue(selected, forKey: "image")
                 }
 
@@ -336,7 +336,7 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
         here.attributedText = attributedString
 
         info.estimatedWidth = width - 24
-        if (!subreddit.descriptionHtml.isEmpty()) {
+        if !subreddit.descriptionHtml.isEmpty() {
             info.tColor = ColorUtil.accentColorForSub(sub: subreddit.displayName)
             info.setTextWithTitleHTML(NSMutableAttributedString(), htmlString: subreddit.descriptionHtml)
             descHeight = info.estimatedHeight

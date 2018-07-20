@@ -44,15 +44,15 @@ class SettingsHistory: UITableViewController {
     }
     
     func switchIsChanged(_ changed: UISwitch) {
-        if(changed == saveHistory) {
+        if changed == saveHistory {
             SettingValues.saveHistory = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_saveHistory)
         }
-        else if(changed == saveNSFWHistory) {
+        else if changed == saveNSFWHistory {
             SettingValues.saveNSFWHistory = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_saveNSFWHistory)
         }
-        else if(changed == readOnScroll) {
+        else if changed == readOnScroll {
             SettingValues.markReadOnScroll = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_markReadOnScroll)
         }
@@ -68,7 +68,7 @@ class SettingsHistory: UITableViewController {
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
         toReturn.backgroundColor = ColorUtil.backgroundColor
         
-        switch(section) {
+        switch section {
         case 0: label.text = "Settings"
         case 1: label.text = "Clear History"
         default: label.text = ""
@@ -118,8 +118,8 @@ class SettingsHistory: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if(indexPath.section == 1) {
-            if(indexPath.row == 0) {
+        if indexPath.section == 1 {
+            if indexPath.row == 0 {
                 History.clearHistory()
                 BannerUtil.makeBanner(text: "Submission history cleared!", color: GMColor.green500Color(), seconds: 5, context: self)
             }
@@ -132,7 +132,7 @@ class SettingsHistory: UITableViewController {
     }
     
     func doDisables() {
-        if(SettingValues.saveHistory) {
+        if SettingValues.saveHistory {
             saveNSFWHistory.isEnabled = true
             readOnScroll.isEnabled = true
         }
@@ -156,16 +156,16 @@ class SettingsHistory: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch(indexPath.section) {
+        switch indexPath.section {
         case 0:
-            switch(indexPath.row) {
+            switch indexPath.row {
             case 0: return self.saveHistoryCell
             case 1: return self.saveNSFWHistoryCell
             case 2: return self.readOnScrollCell
             default: fatalError("Unknown row in section 0")
             }
         case 1:
-            switch(indexPath.row) {
+            switch indexPath.row {
             case 0: return self.clearHistory
             case 1: return self.clearSubs
             default: fatalError("Unknown row in section 0")
@@ -176,7 +176,7 @@ class SettingsHistory: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch(section) {
+        switch section {
         case 0: return 3   // section 0 has 2 rows
         case 1: return 2
         default: fatalError("Unknown number of sections")

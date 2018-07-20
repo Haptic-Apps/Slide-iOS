@@ -46,7 +46,7 @@ class GMPalette {
         var toReturn: [CGColor] = []
         var i = 0
         for color in colors {
-            if (i < 3) {
+            if i < 3 {
                 i += 1
             }
             else {

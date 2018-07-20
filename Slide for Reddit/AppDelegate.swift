@@ -65,13 +65,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let config = Realm.Configuration(
                 schemaVersion: 11,
                 migrationBlock: { _, oldSchemaVersion in
-                    if (oldSchemaVersion < 11) {
+                    if oldSchemaVersion < 11 {
                     }
                 })
 
         Realm.Configuration.defaultConfiguration = config
         let fileManager = FileManager.default
-        if (!fileManager.fileExists(atPath: seenFile!)) {
+        if !fileManager.fileExists(atPath: seenFile!) {
             if let bundlePath = Bundle.main.path(forResource: "seen", ofType: "plist") {
                 _ = NSMutableDictionary(contentsOfFile: bundlePath)
                 do {
@@ -89,7 +89,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("file myData.plist already exits at path.")
         }
 
-        if (!fileManager.fileExists(atPath: commentsFile!)) {
+        if !fileManager.fileExists(atPath: commentsFile!) {
             if let bundlePath = Bundle.main.path(forResource: "comments", ofType: "plist") {
                 _ = NSMutableDictionary(contentsOfFile: bundlePath)
                 do {
@@ -121,12 +121,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Subscriptions.sync(name: AccountController.currentName, completion: nil)
         if #available(iOS 10.0, *) {
             UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (_, error) in
-                if ((error) != nil) {
+                if (error) != nil {
                     print(error!.localizedDescription)
                 }
             }
             UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (_, error) in
-                if ((error) != nil) {
+                if (error) != nil {
                     print(error!.localizedDescription)
                 }
             }
@@ -161,7 +161,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var statusBar = UIView()
 
     func doBios() {
-        if (SettingValues.biometrics && BioMetricAuthenticator.canAuthenticate()) {
+        if SettingValues.biometrics && BioMetricAuthenticator.canAuthenticate() {
             BioMetricAuthenticator.authenticateWithBioMetrics(reason: "", success: {
                 self.backView!.isHidden = true
             }, failure: { [weak self] (error) in
@@ -211,7 +211,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                             children.reverse()
                                             for m in children.flatMap({ $0 }) {
                                                 let message = (m as! Message)
-                                                if(Double(message.createdUtc) > (UserDefaults.standard.object(forKey: "lastMessageUpdate") == nil ? NSDate().timeIntervalSince1970 : UserDefaults.standard.double(forKey: "lastMessageUpdate"))) {
+                                                if Double(message.createdUtc) > (UserDefaults.standard.object(forKey: "lastMessageUpdate") == nil ? NSDate().timeIntervalSince1970 : UserDefaults.standard.double(forKey: "lastMessageUpdate")) {
                                                     new.append(message)
                                                     self.postLocalNotification(message.body, message.author, message.id)
                                                 }
@@ -261,7 +261,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
             let content = UNMutableNotificationContent()
             content.categoryIdentifier = "SlideMail"
-            if(author.isEmpty()) {
+            if author.isEmpty() {
                 content.title = "New messages!"
             }
             else {
@@ -291,7 +291,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         defaults.set(true, forKey: "sc" + name)
         defaults.synchronize()
         do {
-            if (!AccountController.isLoggedIn) {
+            if !AccountController.isLoggedIn {
                 try session?.getSubreddit(.default, paginator: paginator, completion: { (result) -> Void in
                     switch result {
                     case .failure:
@@ -301,16 +301,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         self.paginator = listing.paginator
                         for sub in self.subreddits {
                             toReturn.append(sub.displayName)
-                            if (!sub.keyColor.isEmpty) {
+                            if !sub.keyColor.isEmpty {
                                 let color = ColorUtil.getClosestColor(hex: sub.keyColor)
-                                if (defaults.object(forKey: "color" + sub.displayName) == nil) {
+                                if defaults.object(forKey: "color" + sub.displayName) == nil {
                                     defaults.setColor(color: color, forKey: "color+" + sub.displayName)
                                 }
                             }
                         }
 
                     }
-                    if (subredditController != nil) {
+                    if subredditController != nil {
                         DispatchQueue.main.async(execute: { () -> Void in
                             subredditController?.complete(subs: toReturn)
                         })
@@ -322,19 +322,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 Subscriptions.getSubscriptionsFully(session: session!, completion: { (subs, multis) in
                     for sub in subs {
                         toReturn.append(sub.displayName)
-                        if (!sub.keyColor.isEmpty) {
+                        if !sub.keyColor.isEmpty {
                             let color = ColorUtil.getClosestColor(hex: sub.keyColor)
-                            if (defaults.object(forKey: "color" + sub.displayName) == nil) {
+                            if defaults.object(forKey: "color" + sub.displayName) == nil {
                                 defaults.setColor(color: color, forKey: "color+" + sub.displayName)
                             }
                         }
                     }
                     for m in multis {
                         toReturn.append("/m/" + m.displayName)
-                        if (!m.keyColor.isEmpty) {
+                        if !m.keyColor.isEmpty {
 
                             let color = (UIColor.init(hexString: m.keyColor))
-                            if (defaults.object(forKey: "color" + m.displayName) == nil) {
+                            if defaults.object(forKey: "color" + m.displayName) == nil {
                                 defaults.setColor(color: color, forKey: "color+" + m.displayName)
                             }
                         }
@@ -345,7 +345,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     }
                     toReturn.insert("all", at: 0)
                     toReturn.insert("frontpage", at: 0)
-                    if (subredditController != nil) {
+                    if subredditController != nil {
                         DispatchQueue.main.async(execute: { () -> Void in
                             subredditController?.complete(subs: toReturn)
                         })
@@ -356,7 +356,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         catch {
             print(error)
-            if (subredditController != nil) {
+            if subredditController != nil {
                 DispatchQueue.main.async(execute: { () -> Void in
                     subredditController?.complete(subs: toReturn)
                 })
@@ -409,8 +409,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var backView: UIView?
     func applicationWillResignActive(_ application: UIApplication) {
-        if (SettingValues.biometrics) {
-            if(backView == nil) {
+        if SettingValues.biometrics {
+            if backView == nil {
                 backView = UIView.init(frame: self.window!.frame)
                 backView?.backgroundColor = ColorUtil.backgroundColor
                 self.window?.addSubview(backView!)
@@ -438,8 +438,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
-        if (!totalBackground) {
-            if(backView == nil) {
+        if !totalBackground {
+            if backView == nil {
                 backView = UIView.init(frame: self.window!.frame)
                 backView?.backgroundColor = ColorUtil.backgroundColor
                 self.window?.addSubview(backView!)

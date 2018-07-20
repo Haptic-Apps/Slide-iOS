@@ -51,7 +51,7 @@ public class HapticUtility {
     
     @available(iOS 10.0, *)
     public static func hapticActionStrong() {
-        if(SettingValues.hapticFeedback) {
+        if SettingValues.hapticFeedback {
             // Play haptic signal
             if let feedbackSupportLevel = UIDevice.current.value(forKey: "_feedbackSupportLevel") as? Int {
                 switch feedbackSupportLevel {
@@ -74,7 +74,7 @@ public class HapticUtility {
     
     @available(iOS 10.0, *)
     public static func hapticActionWeak() {
-        if(SettingValues.hapticFeedback) {
+        if SettingValues.hapticFeedback {
             // Play haptic signal
             if let feedbackSupportLevel = UIDevice.current.value(forKey: "_feedbackSupportLevel") as? Int {
                 switch feedbackSupportLevel {

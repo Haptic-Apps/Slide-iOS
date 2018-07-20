@@ -41,20 +41,20 @@ class WrappingFlowLayout: UICollectionViewLayout {
         cache = []
         prepare()
         var portraitCount = SettingValues.multiColumnCount / 2
-        if(portraitCount == 0) {
+        if portraitCount == 0 {
             portraitCount = 1
         }
         
         let pad = UIScreen.main.traitCollection.userInterfaceIdiom == .pad
-        if(portraitCount == 1 && pad) {
+        if portraitCount == 1 && pad {
             portraitCount = 2
         }
-        if(pad && UIApplication.shared.keyWindow?.frame != UIScreen.main.bounds) {
+        if pad && UIApplication.shared.keyWindow?.frame != UIScreen.main.bounds {
             numberOfColumns = 1
         }
-        if(SettingValues.multiColumn) {
-            if(UIApplication.shared.statusBarOrientation.isPortrait || !SettingValues.isPro) {
-                if(UIScreen.main.traitCollection.userInterfaceIdiom != .pad || !SettingValues.isPro) {
+        if SettingValues.multiColumn {
+            if UIApplication.shared.statusBarOrientation.isPortrait || !SettingValues.isPro {
+                if UIScreen.main.traitCollection.userInterfaceIdiom != .pad || !SettingValues.isPro {
                     numberOfColumns = 1
                 }
                 else {
@@ -95,7 +95,7 @@ class WrappingFlowLayout: UICollectionViewLayout {
                 let height1 = delegate.collectionView(collectionView!, width: width, indexPath: indexPath).height
                 let height = cellPadding + height1 + cellPadding
 
-                if((yOffset[(column >= (numberOfColumns - 1)) ? 0 : column + 1] + (0.75 * height)) < yOffset[column]) {
+                if (yOffset[(column >= (numberOfColumns - 1)) ? 0 : column + 1] + (0.75 * height)) < yOffset[column] {
                     column = (column >= (numberOfColumns - 1)) ? 0 : column + 1
                 }
 
@@ -112,7 +112,7 @@ class WrappingFlowLayout: UICollectionViewLayout {
 
                 yOffset[column] = yOffset[column] + height
                 let col = column >= (numberOfColumns - 1)
-                if(col) {
+                if col {
                     column = 0
                 }
                 else {

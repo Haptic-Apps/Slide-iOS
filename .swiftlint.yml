@@ -17,7 +17,6 @@ disabled_rules:
 - force_cast
 - type_name
 - force_try
-- control_statement
 - weak_delegate
 
 opt_in_rules:
@@ -28,6 +27,9 @@ opt_in_rules:
   - operator_usage_whitespace
   - sorted_first_last
   - sorted_imports
+
+control_statement:
+  severity: error
 
 type_name:
   min_length: 2

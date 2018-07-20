@@ -87,7 +87,7 @@ class StreamableVideoSource: VideoSource {
                         else {
                             video = (gif?.files?.mp4?.url!)!
                         }
-                        if (video.hasPrefix("//")) {
+                        if video.hasPrefix("//") {
                             video = "https:" + video
                         }
                         completion(video)

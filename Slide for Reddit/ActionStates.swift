@@ -18,13 +18,13 @@ class ActionStates {
     static var unSavedFullnames: [String] = []
     
     static func getVoteDirection(s: Thing) -> VoteDirection {
-        if(upVotedFullnames.contains(s.getId())) {
+        if upVotedFullnames.contains(s.getId()) {
             return .up
         }
-        else if(downVotedFullnames.contains(s.getId())) {
+        else if downVotedFullnames.contains(s.getId()) {
             return .down
         }
-        else if(unvotedFullnames.contains(s.getId())) {
+        else if unvotedFullnames.contains(s.getId()) {
             return .none
         }
         else {
@@ -50,7 +50,7 @@ class ActionStates {
             unvotedFullnames.remove(at: index)
         }
         
-        switch(direction) {
+        switch direction {
         case .up:
             upVotedFullnames.append(fullname)
         case .down:
@@ -61,10 +61,10 @@ class ActionStates {
     }
     
     static func isRead(s: RMessage) -> Bool {
-        if(savedFullnames.contains(s.getId())) {
+        if savedFullnames.contains(s.getId()) {
             return true
         }
-        else if(unSavedFullnames.contains(s.getId())) {
+        else if unSavedFullnames.contains(s.getId()) {
             return false
         }
         else {
@@ -78,7 +78,7 @@ class ActionStates {
             savedFullnames.remove(at: index)
         }
         
-        if(read) {
+        if read {
             savedFullnames.append(fullname)
         }
         else {
@@ -87,10 +87,10 @@ class ActionStates {
     }
 
     static func isSaved(s: Thing) -> Bool {
-        if(savedFullnames.contains(s.getId())) {
+        if savedFullnames.contains(s.getId()) {
             return true
         }
-        else if(unSavedFullnames.contains(s.getId())) {
+        else if unSavedFullnames.contains(s.getId()) {
             return false
         }
         else {
@@ -107,7 +107,7 @@ class ActionStates {
             savedFullnames.remove(at: index)
         }
         
-        if(saved) {
+        if saved {
             savedFullnames.append(fullname)
         }
         else {
@@ -117,13 +117,13 @@ class ActionStates {
     
     //Realm
     static func getVoteDirection(s: RSubmission) -> VoteDirection {
-        if(upVotedFullnames.contains(s.getId())) {
+        if upVotedFullnames.contains(s.getId()) {
             return .up
         }
-        else if(downVotedFullnames.contains(s.getId())) {
+        else if downVotedFullnames.contains(s.getId()) {
             return .down
         }
-        else if(unvotedFullnames.contains(s.getId())) {
+        else if unvotedFullnames.contains(s.getId()) {
             return .none
         }
         else {
@@ -149,7 +149,7 @@ class ActionStates {
             unvotedFullnames.remove(at: index)
         }
         
-        switch(direction) {
+        switch direction {
         case .up:
             upVotedFullnames.append(fullname)
         case .down:
@@ -160,10 +160,10 @@ class ActionStates {
     }
     
     static func isSaved(s: RSubmission) -> Bool {
-        if(savedFullnames.contains(s.getId())) {
+        if savedFullnames.contains(s.getId()) {
             return true
         }
-        else if(unSavedFullnames.contains(s.getId())) {
+        else if unSavedFullnames.contains(s.getId()) {
             return false
         }
         else {
@@ -180,7 +180,7 @@ class ActionStates {
             savedFullnames.remove(at: index)
         }
         
-        if(saved) {
+        if saved {
             savedFullnames.append(fullname)
         }
         else {
@@ -190,13 +190,13 @@ class ActionStates {
     
     //Realm comments
     static func getVoteDirection(s: RComment) -> VoteDirection {
-        if(upVotedFullnames.contains(s.getId())) {
+        if upVotedFullnames.contains(s.getId()) {
             return .up
         }
-        else if(downVotedFullnames.contains(s.getId())) {
+        else if downVotedFullnames.contains(s.getId()) {
             return .down
         }
-        else if(unvotedFullnames.contains(s.getId())) {
+        else if unvotedFullnames.contains(s.getId()) {
             return .none
         }
         else {
@@ -222,7 +222,7 @@ class ActionStates {
             unvotedFullnames.remove(at: index)
         }
         
-        switch(direction) {
+        switch direction {
         case .up:
             upVotedFullnames.append(fullname)
         case .down:
@@ -233,10 +233,10 @@ class ActionStates {
     }
     
     static func isSaved(s: RComment) -> Bool {
-        if(savedFullnames.contains(s.getId())) {
+        if savedFullnames.contains(s.getId()) {
             return true
         }
-        else if(unSavedFullnames.contains(s.getId())) {
+        else if unSavedFullnames.contains(s.getId()) {
             return false
         }
         else {
@@ -253,7 +253,7 @@ class ActionStates {
             savedFullnames.remove(at: index)
         }
         
-        if(saved) {
+        if saved {
             savedFullnames.append(fullname)
         }
         else {

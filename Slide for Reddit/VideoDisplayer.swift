@@ -28,7 +28,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
 
     func getYouTube(_ ytPlayer: YTPlayerView, urlS: String) {
         var url = urlS
-        if (url.contains("#t=")) {
+        if url.contains("#t=") {
             url = url.replacingOccurrences(of: "#t=", with: url.contains("?") ? "&t=" : "?t=")
         }
 
@@ -61,7 +61,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
             }
         }
         self.ytPlayer.delegate = self
-        if (!playlist.isEmpty) {
+        if !playlist.isEmpty {
             ytPlayer.load(withPlaylistId: playlist)
         }
         else {
@@ -79,7 +79,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
         let url = formatUrl(sS: urlS)
         let videoType = getVideoType(url: url)
 
-        switch (videoType) {
+        switch videoType {
         case .GFYCAT:
             let name = url.substring(url.lastIndexOf("/")!, length: url.length - url.lastIndexOf("/")!)
             let gfycatUrl = "https://gfycat.com/cajax/get" + name
@@ -108,14 +108,14 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
         key = key.replacingOccurrences(of: "/", with: "")
         key = key.replacingOccurrences(of: ".", with: "")
         print(key)
-        if (key.length > 200) {
+        if key.length > 200 {
             key = key.substring(0, length: 200)
         }
         var toLoadAudio = toLoad
         toLoadAudio = toLoad.substring(0, length: toLoad.lastIndexOf("DASH_")!)
         toLoadAudio += "audio"
 
-        if (FileManager.default.fileExists(atPath: SDImageCache.shared().makeDiskCachePath(key) + ".mp4")) {
+        if FileManager.default.fileExists(atPath: SDImageCache.shared().makeDiskCachePath(key) + ".mp4") {
             display(URL.init(fileURLWithPath: SDImageCache.shared().makeDiskCachePath(key) + ".mp4"))
         }
         else {
@@ -152,7 +152,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
                                     }
                                     .responseData { response2 in
                                         print(response2.response!.statusCode)
-                                        if (response2.response!.statusCode != 200) {
+                                        if response2.response!.statusCode != 200 {
                                             do {
                                                 try FileManager.init().copyItem(at: localUrlV, to: finalUrl)
                                                 self.display(finalUrl)
@@ -185,10 +185,10 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
         key = key.replacingOccurrences(of: ".", with: "")
         key += ".mp4"
         print(key)
-        if (key.length > 200) {
+        if key.length > 200 {
             key = key.substring(0, length: 200)
         }
-        if (FileManager.default.fileExists(atPath: SDImageCache.shared().makeDiskCachePath(key))) {
+        if FileManager.default.fileExists(atPath: SDImageCache.shared().makeDiskCachePath(key)) {
             display(URL.init(fileURLWithPath: SDImageCache.shared().makeDiskCachePath(key)))
         }
         else {
@@ -231,7 +231,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
 
     func getLastPathSegment(_ path: String) -> String {
         var inv = path
-        if (inv.endsWith("/")) {
+        if inv.endsWith("/") {
             inv = inv.substring(0, length: inv.length - 1)
         }
         let slashindex = inv.lastIndexOf("/")!
@@ -248,19 +248,19 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
         var timeAdd = 0
         for s in time.components(separatedBy: CharacterSet.init(charactersIn: "hms")) {
             print(s)
-            if (!s.isEmpty) {
-                if (time.contains(s + "s")) {
+            if !s.isEmpty {
+                if time.contains(s + "s") {
                     timeAdd += Int(s)!
                 }
-                else if (time.contains(s + "m")) {
+                else if time.contains(s + "m") {
                     timeAdd += 60 * Int(s)!
                 }
-                else if (time.contains(s + "h")) {
+                else if time.contains(s + "h") {
                     timeAdd += 3600 * Int(s)!
                 }
             }
         }
-        if (timeAdd == 0 && Int(time) != nil) {
+        if timeAdd == 0 && Int(time) != nil {
             timeAdd += Int(time)!
         }
 
@@ -316,7 +316,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
                         else {
                             video = (gif?.files?.mp4?.url!)!
                         }
-                        if (video.hasPrefix("//")) {
+                        if video.hasPrefix("//") {
                             video = "https:" + video
                         }
                         self.loadVideo(urlString: video)
@@ -362,7 +362,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
         gfyUrl = gfyUrl.replacingOccurrences(of: "giant", with: "thumbs")
         gfyUrl = gfyUrl.replacingOccurrences(of: "zippy", with: "thumbs")
 
-        if (!gfyUrl.endsWith("-mobile.mp4")) {
+        if !gfyUrl.endsWith("-mobile.mp4") {
             gfyUrl = gfyUrl.replacingOccurrences(of: "\\.mp4", with: "-mobile.mp4")
         }
         return gfyUrl
@@ -377,12 +377,12 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
             print("Displayed \(file.absoluteString)")
             self.progressView?.setHidden(true, animated: true)
             self.sizeLabel?.isHidden = true
-            if (self.sharedPlayer && MediaDisplayViewController.videoPlayer == nil) {
+            if self.sharedPlayer && MediaDisplayViewController.videoPlayer == nil {
                 MediaDisplayViewController.videoPlayer = AVPlayer.init(playerItem: AVPlayerItem.init(url: file))
                 self.player = MediaDisplayViewController.videoPlayer!
             }
             else {
-                if (self.sharedPlayer) {
+                if self.sharedPlayer {
                     MediaDisplayViewController.videoPlayer!.replaceCurrentItem(with: AVPlayerItem.init(url: file))
                     self.player = MediaDisplayViewController.videoPlayer!
                 }
@@ -424,7 +424,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
 
             self.scrollView.isUserInteractionEnabled = true
             self.player.play()
-            if(self is MediaDisplayViewController) {
+            if self is MediaDisplayViewController {
                 (self as! MediaDisplayViewController).doControls()
             }
         }
@@ -496,24 +496,24 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
 
     func formatUrl(sS: String) -> String {
         var s = sS
-        if (s.hasSuffix("v") && !s.contains("streamable.com")) {
+        if s.hasSuffix("v") && !s.contains("streamable.com") {
             s = s.substring(0, length: s.length - 1)
         }
-        else if (s.contains("gfycat") && (!s.contains("mp4") && !s.contains("webm"))) {
-            if (s.contains("-size_restricted")) {
+        else if s.contains("gfycat") && (!s.contains("mp4") && !s.contains("webm")) {
+            if s.contains("-size_restricted") {
                 s = s.replacingOccurrences(of: "-size_restricted", with: "")
             }
         }
-        if ((s.contains(".webm") || s.contains(".gif")) && !s.contains(".gifv") && s.contains(
-                "imgur.com")) {
+        if (s.contains(".webm") || s.contains(".gif")) && !s.contains(".gifv") && s.contains(
+                "imgur.com") {
             s = s.replacingOccurrences(of: ".gif", with: ".mp4")
             s = s.replacingOccurrences(of: ".webm", with: ".mp4")
         }
-        if (s.endsWith("/")) {
+        if s.endsWith("/") {
             s = s.substring(0, length: s.length - 1)
         }
-        if (s.contains("v.redd.it") && !s.contains("DASH")) {
-            if (s.endsWith("/")) {
+        if s.contains("v.redd.it") && !s.contains("DASH") {
+            if s.endsWith("/") {
                 s = s.substring(0, length: s.length - 2)
             }
             s += "/DASH_9_6_M"
@@ -522,22 +522,22 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
     }
 
     func getVideoType(url: String) -> VideoType {
-        if (url.contains(".mp4") || url.contains("webm") || url.contains("redditmedia.com")) {
+        if url.contains(".mp4") || url.contains("webm") || url.contains("redditmedia.com") {
             return VideoType.DIRECT
         }
-        if (url.contains("gfycat") && !url.contains("mp4")) {
+        if url.contains("gfycat") && !url.contains("mp4") {
             return VideoType.GFYCAT
         }
-        if (url.contains("v.redd.it")) {
+        if url.contains("v.redd.it") {
             return VideoType.REDDIT
         }
-        if (url.contains("imgur.com")) {
+        if url.contains("imgur.com") {
             return VideoType.IMGUR
         }
-        if (url.contains("vid.me")) {
+        if url.contains("vid.me") {
             return VideoType.VID_ME
         }
-        if (url.contains("streamable.com")) {
+        if url.contains("streamable.com") {
             return VideoType.STREAMABLE
         }
         return VideoType.OTHER

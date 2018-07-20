@@ -71,7 +71,7 @@ class EmbeddableMediaViewController: UIViewController {
 extension EmbeddableMediaViewController {
     
     func openComments(_ sender: AnyObject) {
-        if(commentCallback != nil) {
+        if commentCallback != nil {
             self.dismiss(animated: true) {
                 self.commentCallback!()
             }

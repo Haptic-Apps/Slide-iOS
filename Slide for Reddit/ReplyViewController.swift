@@ -74,7 +74,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         super.init(nibName: nil, bundle: nil)
         self.messageCallback = { (message, error) in
             DispatchQueue.main.async {
-                if (error != nil) {
+                if error != nil {
                     self.toolbar?.saveDraft(self)
                     self.alertController?.dismiss(animated: false, completion: {
                         let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your message has not been sent, please try again\n\nError:\(error!.localizedDescription)", preferredStyle: .alert)
@@ -106,8 +106,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         setBarColors(color: ColorUtil.getColorForUser(name: message!.author))
         self.messageCallback = { (message, error) in
             DispatchQueue.main.async {
-                if (error != nil) {
-                    if (error!.localizedDescription.contains("25")) {
+                if error != nil {
+                    if error!.localizedDescription.contains("25") {
                         self.alertController?.dismiss(animated: false, completion: {
                             self.dismiss(animated: true, completion: {
                                 completion("")
@@ -144,7 +144,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         setBarColors(color: ColorUtil.getColorForSub(sub: sub))
         self.submissionCallback = { (link, error) in
             DispatchQueue.main.async {
-                if(error == nil && link == nil) {
+                if error == nil && link == nil {
                     self.alertController?.dismiss(animated: false, completion: {
                         let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Reddit did not allow this post to be made.\nError message: \(self.errorText)", preferredStyle: .alert)
                         alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
@@ -152,7 +152,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     })
 
                 }
-                else if (error != nil) {
+                else if error != nil {
                     self.toolbar?.saveDraft(self)
                     self.alertController?.dismiss(animated: false, completion: {
                         let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your submission has not been edited (but has been saved as a draft), please try again\n\nError:\(error!.localizedDescription)", preferredStyle: .alert)
@@ -181,7 +181,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         setBarColors(color: ColorUtil.getColorForSub(sub: sub))
         self.commentReplyCallback = { (comment, error) in
             DispatchQueue.main.async {
-                if (error != nil) {
+                if error != nil {
                     self.toolbar?.saveDraft(self)
                     self.alertController?.dismiss(animated: false, completion: {
                         let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your comment has not been posted (but has been saved as a draft), please try again\n\nError:\(error!.localizedDescription)", preferredStyle: .alert)
@@ -211,7 +211,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         setBarColors(color: ColorUtil.getColorForSub(sub: sub))
         self.commentReplyCallback = { (comment, error) in
             DispatchQueue.main.async {
-                if(error == nil && comment == nil) {
+                if error == nil && comment == nil {
                     self.alertController?.dismiss(animated: false, completion: {
                         let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Reddit did not allow this post to be made.\nError message: \(self.errorText)", preferredStyle: .alert)
                         alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
@@ -219,7 +219,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     })
                     
                 }
-                else if (error != nil) {
+                else if error != nil {
                     self.toolbar?.saveDraft(self)
                     self.alertController?.dismiss(animated: false, completion: {
                         let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your submission has not been edited (but has been saved as a draft), please try again\n\nError:\(error!.localizedDescription)", preferredStyle: .alert)
@@ -243,7 +243,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         super.init(nibName: nil, bundle: nil)
         self.submissionCallback = { (link, error) in
             DispatchQueue.main.async {
-                if(error == nil && link == nil) {
+                if error == nil && link == nil {
                     self.alertController?.dismiss(animated: false, completion: {
                         let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Reddit did not allow this post to be made.\nError message: \(self.errorText)", preferredStyle: .alert)
                         alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
@@ -251,7 +251,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     })
                     
                 }
-                else if (error != nil) {
+                else if error != nil {
                     self.toolbar?.saveDraft(self)
                     self.alertController?.dismiss(animated: false, completion: {
                         let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your post has not been created, please try again\n\nError:\(error!.localizedDescription)", preferredStyle: .alert)
@@ -277,7 +277,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             height += CGFloat(8)
             height += textView.frame.size.height
         }
-        if(replyButtons != nil) {
+        if replyButtons != nil {
             height += CGFloat(46)
         }
         scrollView.contentSize = CGSize.init(width: scrollView.frame.size.width, height: height)
@@ -389,9 +389,9 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         buttonBase.addArrangedSubviews(info!, replies!, sticky!)
         
         var finalWidth = CGFloat(0)
-        if(type == .REPLY_SUBMISSION) {
+        if type == .REPLY_SUBMISSION {
             info!.isHidden = true
-            if(canMod) {
+            if canMod {
                 finalWidth = CGFloat(8) + width + widthS
             }
             else {
@@ -400,7 +400,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             }
         }
         else {
-            if(canMod || (toReplyTo != nil && (toReplyTo as! RSubmission).canMod)) {
+            if canMod || (toReplyTo != nil && (toReplyTo as! RSubmission).canMod) {
                 finalWidth = CGFloat(8 * 2) + width + widthI + widthS
             }
             else {
@@ -441,8 +441,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             $0.spacing = 8
         }
         
-        if (type.isMessage()) {
-            if(type == .REPLY_MESSAGE) {
+        if type.isMessage() {
+            if type == .REPLY_MESSAGE {
                 //two
                 let text1 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.isEditable = true
@@ -525,7 +525,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 8, right: 8)
                 })
                 
-                if (toReplyTo != nil) {
+                if toReplyTo != nil {
                     text1.text = "re: \((toReplyTo as! RMessage).subject)"
                     text1.isEditable = false
                     text2.text = ((toReplyTo as! RMessage).author)
@@ -563,7 +563,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 toolbar = ToolbarTextView.init(textView: text3, parent: self)
             }
         }
-        else if (type.isSubmission()) {
+        else if type.isSubmission() {
             //three
             let text1 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                 $0.isEditable = true
@@ -591,7 +591,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 8, right: 8)
             })
 
-            if (toReplyTo != nil) {
+            if toReplyTo != nil {
                 text1.text = "\((toReplyTo as! RSubmission).title)"
                 text1.isEditable = false
                 text2.text = ((toReplyTo as! RSubmission).subreddit)
@@ -601,7 +601,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             text1.placeholder = "Title"
             text2.placeholder = "Subreddit"
             
-            if(!subreddit.isEmpty()) {
+            if !subreddit.isEmpty() {
                 text2.text = subreddit
                 text2.isEditable = false
             }
@@ -618,11 +618,11 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 $0.delegate = self
             })
             
-            if(type != .SUBMIT_TEXT) {
+            if type != .SUBMIT_TEXT {
                 text3.placeholder = "Link"
                 text3.textContainer.maximumNumberOfLines = 1
                 
-                if(type == .SUBMIT_IMAGE) {
+                if type == .SUBMIT_IMAGE {
                     text3.addTapGestureRecognizer {
                         self.toolbar?.uploadImage(UIButton())
                     }
@@ -630,7 +630,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 }
             }
 
-            if(type != .EDIT_SELFTEXT) {
+            if type != .EDIT_SELFTEXT {
                 doButtons()
                 stack.addArrangedSubviews(text1, text2, replyButtons!, text3)
                 replyButtons!.heightAnchor == CGFloat(30)
@@ -655,8 +655,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             text = [text1, text2, text3]
             toolbar = ToolbarTextView.init(textView: text3, parent: self)
         }
-        else if (type.isComment()) {
-            if((toReplyTo as! RSubmission).type == .SELF) {
+        else if type.isComment() {
+            if (toReplyTo as! RSubmission).type == .SELF {
                 //two
                 let text1 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.isEditable = true
@@ -695,7 +695,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     $0.delegate = self
                 })
                 
-                if(modText != nil) {
+                if modText != nil {
                     text3.text = "Hi u/\((toReplyTo as! RSubmission).author),\n\nYour submission has been removed for the following reason:\n\n\(modText!.replacingOccurrences(of: "\n", with: "\n\n"))\n\n"
                 }
                 doButtons()
@@ -732,7 +732,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     $0.delegate = self
                 })
                 
-                if(modText != nil) {
+                if modText != nil {
                     text3.text = "Hi u/\((toReplyTo as! RSubmission).author),\n\nYour submission has been removed for the following reason:\n\n\(modText!.replacingOccurrences(of: "\n", with: "\n\n"))\n\n"
                 }
 
@@ -753,7 +753,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             }
     
         }
-        else if (type.isEdit()) {
+        else if type.isEdit() {
             //two
             let text1 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                 $0.isEditable = true
@@ -767,7 +767,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 $0.delegate = self
             })
 
-            if (toReplyTo != nil) {
+            if toReplyTo != nil {
                 text1.text = "\((toReplyTo as! RSubmission).title)"
                 text1.isEditable = false
             }
@@ -803,7 +803,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             toolbar = ToolbarTextView.init(textView: text3, parent: self)
         }
         for textField in text! {
-            if(textField.isEditable) {
+            if textField.isEditable {
                 textField.becomeFirstResponder()
                 break
             }
@@ -813,18 +813,18 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        if (type.isMessage()) {
+        if type.isMessage() {
             title = "New message"
-            if (type == ReplyType.REPLY_MESSAGE) {
+            if type == ReplyType.REPLY_MESSAGE {
                 let author = (toReplyTo is RMessage) ? ((toReplyTo as! RMessage).author) : ((toReplyTo as! RSubmission).author)
                 title = "Reply to \(author)"
             }
         }
         else {
-            if (type == .EDIT_SELFTEXT) {
+            if type == .EDIT_SELFTEXT {
                 title = "Editing"
             }
-            else if (type.isComment()) {
+            else if type.isComment() {
                 title = "Replying to \((toReplyTo as! RSubmission).author)"
             }
             else {
@@ -864,7 +864,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
 
     func getSubmissionEdited(_ name: String) {
         DispatchQueue.main.async {
-            if((self.type == .SUBMIT_LINK || self.type == .SUBMIT_IMAGE || self.type == .SUBMIT_TEXT) && self.sticky != nil && self.sticky!.isSelected) {
+            if (self.type == .SUBMIT_LINK || self.type == .SUBMIT_IMAGE || self.type == .SUBMIT_TEXT) && self.sticky != nil && self.sticky!.isSelected {
                 do {
                     try self.session?.sticky("t3_\(name)", sticky: true, completion: { (_) in
                         self.completeGetSubmission(name)
@@ -882,7 +882,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if(type == .SUBMIT_IMAGE) {
+        if type == .SUBMIT_IMAGE {
             toolbar?.uploadImage(UIButton())
         }
     }
@@ -917,22 +917,22 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         let subreddit = text![1]
         let body = text![2]
 
-        if (title.text.isEmpty()) {
+        if title.text.isEmpty() {
             BannerUtil.makeBanner(text: "Title cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
             return
         }
 
-        if (subreddit.text.isEmpty()) {
+        if subreddit.text.isEmpty() {
             BannerUtil.makeBanner(text: "Subreddit cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
             return
         }
 
-        if (body.text.isEmpty()) {
+        if body.text.isEmpty() {
             BannerUtil.makeBanner(text: (type == .SUBMIT_LINK || type == .SUBMIT_IMAGE) ? "Link cannot be empty" : "Body cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
             return
         }
 
-        if (type == .EDIT_SELFTEXT) {
+        if type == .EDIT_SELFTEXT {
             alertController = UIAlertController(title: nil, message: "Editing submission...\n\n", preferredStyle: .alert)
 
             let spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
@@ -970,7 +970,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             session = (UIApplication.shared.delegate as! AppDelegate).session
 
             do {
-                if (type == .SUBMIT_TEXT) {
+                if type == .SUBMIT_TEXT {
                     try self.session?.submitText(Subreddit.init(subreddit: subreddit.text), title: title.text, text: body.text, sendReplies: replies!.isSelected, captcha: "", captchaIden: "", completion: { (result) -> Void in
                         switch result {
                         case .failure(let error):
@@ -1018,17 +1018,17 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         let user = text![1]
         let body = text![2]
 
-        if (title.text.isEmpty()) {
+        if title.text.isEmpty() {
             BannerUtil.makeBanner(text: "Title cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
             return
         }
 
-        if (user.text.isEmpty()) {
+        if user.text.isEmpty() {
             BannerUtil.makeBanner(text: "Recipient cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
             return
         }
 
-        if (body.text.isEmpty()) {
+        if body.text.isEmpty() {
             BannerUtil.makeBanner(text: "Body cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
             return
         }
@@ -1044,7 +1044,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
 
         session = (UIApplication.shared.delegate as! AppDelegate).session
 
-        if (type == .NEW_MESSAGE) {
+        if type == .NEW_MESSAGE {
             do {
                 try self.session?.composeMessage(user.text, subject: title.text, text: body.text, completion: { (result) in
                     switch result {
@@ -1083,7 +1083,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     func submitComment() {
         let body = text!.last!
 
-        if (body.text.isEmpty()) {
+        if body.text.isEmpty() {
             BannerUtil.makeBanner(text: "Body cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
             return
         }
@@ -1118,7 +1118,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     
     func checkSticky(_ comment: Comment) {
         DispatchQueue.main.async {
-            if(self.sticky != nil && self.sticky!.isSelected) {
+            if self.sticky != nil && self.sticky!.isSelected {
                 do {
                     try self.session?.distinguish(comment.getId(), how: "yes", sticky: true, completion: { (_) -> Void in
                         var newComment = comment
@@ -1139,7 +1139,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     
     func checkReplies(_ comment: Comment) {
         DispatchQueue.main.async {
-            if(self.replies != nil && self.replies!.isSelected) {
+            if self.replies != nil && self.replies!.isSelected {
                 do {
                     try self.session?.setReplies(false, name: comment.getId(), completion: { (_) in
                         self.commentReplyCallback(comment, nil)
@@ -1156,7 +1156,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     }
 
     func send(_ sender: AnyObject) {
-        switch (type) {
+        switch type {
         case .SUBMIT_IMAGE:
             fallthrough
         case .SUBMIT_LINK:
@@ -1192,7 +1192,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             if let j = json["json"] as? JSONDictionary {
                 if let data = j["errors"] as? JSONArray {
                     if let iden = data[0] as? JSONArray {
-                        if( iden.count >= 2) {
+                        if  iden.count >= 2 {
                             return "\(iden[0]): \(iden[1])"
                         }
                         else {
@@ -1281,7 +1281,7 @@ extension UITextView: UITextViewDelegate {
         let placeholderLabel = UILabel()
         let placeholderImage = placeholderText.startsWith("[") ? placeholderText.substring(1, length: placeholderText.indexOf("]")! - 1) : ""
         var text = placeholderText
-        if (!placeholderImage.isEmpty) {
+        if !placeholderImage.isEmpty {
             text = text.substring(placeholderText.indexOf("]")! + 1, length: text.length - placeholderText.indexOf("]")! - 1)
         }
 
@@ -1289,7 +1289,7 @@ extension UITextView: UITextViewDelegate {
         placeholderLabel.font = UIFont.systemFont(ofSize: 14)
         placeholderLabel.textColor = ColorUtil.accentColorForSub(sub: "").withAlphaComponent(0.8)
         placeholderLabel.tag = 100
-        if (!placeholderImage.isEmpty) {
+        if !placeholderImage.isEmpty {
             placeholderLabel.addImage(imageName: placeholderImage)
         }
         placeholderLabel.sizeToFit()

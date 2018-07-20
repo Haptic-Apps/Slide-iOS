@@ -140,7 +140,7 @@ class SingleSubredditViewController: MediaViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        if (SubredditReorderViewController.changed) {
+        if SubredditReorderViewController.changed {
             self.reloadNeedingColor()
             flowLayout.reset()
             CachedTitle.titles.removeAll()
@@ -165,14 +165,14 @@ class SingleSubredditViewController: MediaViewController {
         first = false
         tableView.delegate = self
 
-        if (savedIndex != nil) {
+        if savedIndex != nil {
             tableView.reloadItems(at: [savedIndex!])
         }
         else {
             tableView.reloadData()
         }
 
-        if (single && navigationController != nil && navigationController!.modalPresentationStyle != .pageSheet) {
+        if single && navigationController != nil && navigationController!.modalPresentationStyle != .pageSheet {
             // let swiper = SloppySwiper.init(navigationController: self.navigationController!)
             // self.navigationController!.delegate = swiper!
         }
@@ -183,10 +183,10 @@ class SingleSubredditViewController: MediaViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        if(!SettingValues.bottomBarHidden || SettingValues.viewType) {
+        if !SettingValues.bottomBarHidden || SettingValues.viewType {
             navigationController?.setToolbarHidden(false, animated: false)
             self.isToolbarHidden = false
-            if(SingleSubredditViewController.fab == nil) {
+            if SingleSubredditViewController.fab == nil {
                 setupFab()
             }
             else {
@@ -204,7 +204,7 @@ class SingleSubredditViewController: MediaViewController {
 
         tableView.frame = self.view.bounds
 
-        if (self.view.bounds.width != oldsize) {
+        if self.view.bounds.width != oldsize {
             oldsize = self.view.bounds.width
             flowLayout.reset()
             tableView.reloadData()
@@ -214,16 +214,16 @@ class SingleSubredditViewController: MediaViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
-        if (single || !SettingValues.viewType) {
+        if single || !SettingValues.viewType {
             self.navigationController?.setNavigationBarHidden(false, animated: true)
         }
 
         UIApplication.shared.statusBarStyle = .lightContent
 
-        if (single) {
+        if single {
             UIApplication.shared.statusBarView?.backgroundColor = .clear
         }
-        if(SingleSubredditViewController.fab != nil) {
+        if SingleSubredditViewController.fab != nil {
             UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
                 SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
             }, completion: { _ in
@@ -235,7 +235,7 @@ class SingleSubredditViewController: MediaViewController {
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
 
-        if(self.viewIfLoaded?.window != nil ) {
+        if self.viewIfLoaded?.window != nil {
             tableView.reloadData()
             setupFab()
         }
@@ -252,13 +252,13 @@ class SingleSubredditViewController: MediaViewController {
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let currentY = scrollView.contentOffset.y
-        if(!SettingValues.pinToolbar) {
-            if (currentY > lastYUsed && currentY > 60) {
-                if (navigationController != nil && !isHiding && !isToolbarHidden && !(scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height))) {
+        if !SettingValues.pinToolbar {
+            if currentY > lastYUsed && currentY > 60 {
+                if navigationController != nil && !isHiding && !isToolbarHidden && !(scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height)) {
                     hideUI(inHeader: true)
                 }
             }
-            else if ((currentY < lastYUsed + 20) && !isHiding && navigationController != nil && (isToolbarHidden)) {
+            else if (currentY < lastYUsed + 20) && !isHiding && navigationController != nil && (isToolbarHidden) {
                 showUI()
             }
         }
@@ -268,7 +268,7 @@ class SingleSubredditViewController: MediaViewController {
 
     func hideUI(inHeader: Bool) {
         isHiding = true
-        if (single || !SettingValues.viewType) {
+        if single || !SettingValues.viewType {
             (navigationController)?.setNavigationBarHidden(true, animated: true)
         }
         
@@ -279,13 +279,13 @@ class SingleSubredditViewController: MediaViewController {
             self.isHiding = false
         })
         
-        if(!SettingValues.bottomBarHidden || SettingValues.viewType) {
+        if !SettingValues.bottomBarHidden || SettingValues.viewType {
             (self.navigationController)?.setToolbarHidden(true, animated: true)
         }
         self.isToolbarHidden = true
 
-        if(!single) {
-            if(AutoCache.progressView != nil) {
+        if !single {
+            if AutoCache.progressView != nil {
                 oldY = AutoCache.progressView!.frame.origin.y
                 UIView.animate(withDuration: 0.25, delay: 0.0, options: UIViewAnimationOptions.curveEaseInOut, animations: {
                     AutoCache.progressView!.frame.origin.y = self.view.frame.size.height - 56
@@ -295,11 +295,11 @@ class SingleSubredditViewController: MediaViewController {
     }
 
     func showUI() {
-        if (single || !SettingValues.viewType) {
+        if single || !SettingValues.viewType {
             (navigationController)?.setNavigationBarHidden(false, animated: true)
         }
 
-        if(!single && AutoCache.progressView != nil) {
+        if !single && AutoCache.progressView != nil {
                 UIView.animate(withDuration: 0.25, delay: 0.0, options: UIViewAnimationOptions.curveEaseInOut, animations: {
                     AutoCache.progressView!.frame.origin.y = self.oldY
                 }, completion: { _ in
@@ -310,7 +310,7 @@ class SingleSubredditViewController: MediaViewController {
                     }, completion: { _ in
                     })
 
-                    if(!SettingValues.bottomBarHidden || SettingValues.viewType) {
+                    if !SettingValues.bottomBarHidden || SettingValues.viewType {
                         (self.navigationController)?.setToolbarHidden(false, animated: true)
                     }
                     self.isToolbarHidden = false
@@ -325,7 +325,7 @@ class SingleSubredditViewController: MediaViewController {
 
             })
 
-            if(!SettingValues.bottomBarHidden || SettingValues.viewType) {
+            if !SettingValues.bottomBarHidden || SettingValues.viewType {
                 (navigationController)?.setToolbarHidden(false, animated: true)
             }
             self.isToolbarHidden = false
@@ -333,7 +333,7 @@ class SingleSubredditViewController: MediaViewController {
     }
 
     func show(_ animated: Bool = true) {
-        if (SingleSubredditViewController.fab != nil && SingleSubredditViewController.fab!.isHidden) {
+        if SingleSubredditViewController.fab != nil && SingleSubredditViewController.fab!.isHidden {
             if animated == true {
                 SingleSubredditViewController.fab!.isHidden = false
                 UIView.animate(withDuration: 0.3, animations: { () -> Void in
@@ -347,7 +347,7 @@ class SingleSubredditViewController: MediaViewController {
     }
 
     func hideFab(_ animated: Bool = true) {
-        if (SingleSubredditViewController.fab != nil) {
+        if SingleSubredditViewController.fab != nil {
             if animated == true {
                 UIView.animate(withDuration: 0.3, animations: { () -> Void in
                     SingleSubredditViewController.fab!.alpha = 0
@@ -362,8 +362,8 @@ class SingleSubredditViewController: MediaViewController {
     }
 
     func setupFab() {
-        if(!SettingValues.bottomBarHidden || SettingValues.viewType) {
-            if (SingleSubredditViewController.fab != nil && !SingleSubredditViewController.fab!.isHidden) {
+        if !SettingValues.bottomBarHidden || SettingValues.viewType {
+            if SingleSubredditViewController.fab != nil && !SingleSubredditViewController.fab!.isHidden {
                 UIView.animate(withDuration: 0.15, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
                     SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
                 }, completion: { _ in
@@ -373,7 +373,7 @@ class SingleSubredditViewController: MediaViewController {
                 })
             }
             else {
-                if(SingleSubredditViewController.fab != nil) {
+                if SingleSubredditViewController.fab != nil {
                     SingleSubredditViewController.fab!.removeFromSuperview()
                     SingleSubredditViewController.fab = nil
                 }
@@ -384,7 +384,7 @@ class SingleSubredditViewController: MediaViewController {
     
     func addNewFab() {
         SingleSubredditViewController.ignoreFab = false
-        if (!MainViewController.isOffline && !SettingValues.hiddenFAB) {
+        if !MainViewController.isOffline && !SettingValues.hiddenFAB {
             SingleSubredditViewController.fab = UIButton(frame: CGRect.init(x: (UIScreen.main.bounds.width / 2) - 70, y: -20, width: 140, height: 45))
             SingleSubredditViewController.fab!.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
             SingleSubredditViewController.fab!.layer.cornerRadius = 22.5
@@ -403,7 +403,7 @@ class SingleSubredditViewController: MediaViewController {
             navigationController?.toolbar.addSubview(SingleSubredditViewController.fab!)
             
             SingleSubredditViewController.fab!.addTapGestureRecognizer {
-                switch (SettingValues.fabType) {
+                switch SettingValues.fabType {
                 case .SIDEBAR:
                     self.doDisplaySidebar()
                 case .NEW_POST:
@@ -488,7 +488,7 @@ class SingleSubredditViewController: MediaViewController {
         self.sort = SettingValues.getLinkSorting(forSubreddit: self.sub)
         self.time = SettingValues.getTimePeriod(forSubreddit: self.sub)
 
-        if (single) {
+        if single {
 
             let sort = UIButton.init(type: .custom)
             sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControlState.normal)
@@ -496,7 +496,7 @@ class SingleSubredditViewController: MediaViewController {
             sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let sortB = UIBarButtonItem.init(customView: sort)
 
-            if(!SettingValues.bottomBarHidden || SettingValues.viewType) {
+            if !SettingValues.bottomBarHidden || SettingValues.viewType {
                 more = UIButton.init(type: .custom)
                 more.setImage(UIImage.init(named: "moreh")?.navIcon(), for: UIControlState.normal)
                 more.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControlEvents.touchUpInside)
@@ -525,7 +525,7 @@ class SingleSubredditViewController: MediaViewController {
                     case .failure:
                         print(result.error!.description)
                         DispatchQueue.main.async {
-                            if (self.sub == ("all") || self.sub == ("frontpage") || self.sub.hasPrefix("/m/") || self.sub.contains("+")) {
+                            if self.sub == ("all") || self.sub == ("frontpage") || self.sub.hasPrefix("/m/") || self.sub.contains("+") {
                                 self.load(reset: true)
                             }
                             else {
@@ -544,7 +544,7 @@ class SingleSubredditViewController: MediaViewController {
                     case .success(let r):
                         self.subInfo = r
                         DispatchQueue.main.async {
-                            if (self.subInfo!.over18 && !SettingValues.nsfwEnabled) {
+                            if self.subInfo!.over18 && !SettingValues.nsfwEnabled {
                                 DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
                                     let alert = UIAlertController.init(title: "r/\(self.sub) is NSFW", message: "If you are 18 and willing to see adult content, enable NSFW content in Settings > Content", preferredStyle: .alert)
                                     alert.addAction(UIAlertAction.init(title: "Close", style: .default, handler: { (_) in
@@ -555,12 +555,12 @@ class SingleSubredditViewController: MediaViewController {
                                 }
                             }
                             else {
-                                if (self.sub != ("all") && self.sub != ("frontpage") && !self.sub.hasPrefix("/m/")) {
-                                    if (SettingValues.saveHistory) {
-                                        if (SettingValues.saveNSFWHistory && self.subInfo!.over18) {
+                                if self.sub != ("all") && self.sub != ("frontpage") && !self.sub.hasPrefix("/m/") {
+                                    if SettingValues.saveHistory {
+                                        if SettingValues.saveNSFWHistory && self.subInfo!.over18 {
                                             Subscriptions.addHistorySub(name: AccountController.currentName, sub: self.subInfo!.displayName)
                                         }
-                                        else if (!self.subInfo!.over18) {
+                                        else if !self.subInfo!.over18 {
                                             Subscriptions.addHistorySub(name: AccountController.currentName, sub: self.subInfo!.displayName)
                                         }
                                     }
@@ -580,7 +580,7 @@ class SingleSubredditViewController: MediaViewController {
 
     func exit() {
         self.navigationController?.popViewController(animated: true)
-        if (self.navigationController!.modalPresentationStyle == .pageSheet) {
+        if self.navigationController!.modalPresentationStyle == .pageSheet {
             self.navigationController!.dismiss(animated: true, completion: nil)
         }
     }
@@ -592,7 +592,7 @@ class SingleSubredditViewController: MediaViewController {
                 VCPresenter.showVC(viewController: SingleSubredditViewController.init(subName: s, single: true), popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
             })
             let color = ColorUtil.getColorForSub(sub: s)
-            if (color != ColorUtil.baseColor) {
+            if color != ColorUtil.baseColor {
                 somethingAction.setValue(color, forKey: "titleTextColor")
 
             }
@@ -614,7 +614,7 @@ class SingleSubredditViewController: MediaViewController {
     }
 
     func subscribeSingle(_ selector: AnyObject) {
-        if (subChanged && !Subscriptions.isSubscriber(sub) || Subscriptions.isSubscriber(sub)) {
+        if subChanged && !Subscriptions.isSubscriber(sub) || Subscriptions.isSubscriber(sub) {
             //was not subscriber, changed, and unsubscribing again
             Subscriptions.unsubscribe(sub, session: session!)
             subChanged = false
@@ -623,7 +623,7 @@ class SingleSubredditViewController: MediaViewController {
         }
         else {
             let alrController = UIAlertController.init(title: "Subscribe to \(sub)", message: nil, preferredStyle: .actionSheet)
-            if (AccountController.isLoggedIn) {
+            if AccountController.isLoggedIn {
                 let somethingAction = UIAlertAction(title: "Add to sub list and subscribe", style: UIAlertActionStyle.default, handler: { (_: UIAlertAction!) in
                     Subscriptions.subscribe(self.sub, true, session: self.session!)
                     self.subChanged = true
@@ -685,7 +685,7 @@ class SingleSubredditViewController: MediaViewController {
         var index = 0
         var count = 0
         for submission in links {
-            if (History.getSeen(s: submission)) {
+            if History.getSeen(s: submission) {
                 indexPaths.append(IndexPath(row: count, section: 0))
                 links.remove(at: index)
             }
@@ -697,7 +697,7 @@ class SingleSubredditViewController: MediaViewController {
 
         //todo save realm
         DispatchQueue.main.async {
-            if(!indexPaths.isEmpty) {
+            if !indexPaths.isEmpty {
                 self.tableView.performBatchUpdates({
                     self.tableView.deleteItems(at: indexPaths)
                     self.flowLayout.reset()
@@ -711,7 +711,7 @@ class SingleSubredditViewController: MediaViewController {
         inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarView?.frame.size.height ?? 20)))
         self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: sub)
         
-        if(!(navigationController is TapBehindModalViewController)) {
+        if !(navigationController is TapBehindModalViewController) {
             self.view.addSubview(inHeadView)
         }
     }
@@ -719,7 +719,7 @@ class SingleSubredditViewController: MediaViewController {
     func resetColors() {
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub)
         setupFab()
-        if (parentController != nil) {
+        if parentController != nil {
             parentController?.colorChanged(ColorUtil.getColorForSub(sub: sub))
         }
     }
@@ -760,7 +760,7 @@ class SingleSubredditViewController: MediaViewController {
             VCPresenter.showVC(viewController: search, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
         }))
 
-        if (sub != "all" && sub != "frontpage" && sub != "friends" && !sub.startsWith("/m/")) {
+        if sub != "all" && sub != "frontpage" && sub != "friends" && !sub.startsWith("/m/") {
             alert.addAction(UIAlertAction(title: "Search \(sub)", style: .default, handler: { [weak alert] (_) in
                 let text = self.searchText ?? ""
                 let search = SearchViewController.init(subreddit: self.sub, searchFor: text)
@@ -789,7 +789,7 @@ class SingleSubredditViewController: MediaViewController {
     }
 
     func galleryMode() {
-        if(!VCPresenter.proDialogShown(feature: true, self)) {
+        if !VCPresenter.proDialogShown(feature: true, self) {
             let controller = GalleryTableViewController()
             var gLinks: [RSubmission] = []
             for l in links {
@@ -804,7 +804,7 @@ class SingleSubredditViewController: MediaViewController {
     }
 
     func shadowboxMode() {
-        if(!VCPresenter.proDialogShown(feature: true, self) && !links.isEmpty) {
+        if !VCPresenter.proDialogShown(feature: true, self) && !links.isEmpty {
             let controller = ShadowboxViewController.init(submissions: links, subreddit: sub)
             controller.modalPresentationStyle = .overFullScreen
             present(controller, animated: true, completion: nil)
@@ -817,7 +817,7 @@ class SingleSubredditViewController: MediaViewController {
     }
 
     func loadMore() {
-        if (!showing) {
+        if !showing {
             showLoader()
         }
         load(reset: false)
@@ -842,7 +842,7 @@ class SingleSubredditViewController: MediaViewController {
             let saveActionButton: UIAlertAction = UIAlertAction(title: link.description, style: .default) { _ -> Void in
                 self.showTimeMenu(s: link, selector: selector)
             }
-            if (sort == link) {
+            if sort == link {
                 saveActionButton.setValue(selected, forKey: "image")
             }
             actionSheetController.addAction(saveActionButton)
@@ -858,7 +858,7 @@ class SingleSubredditViewController: MediaViewController {
     }
 
     func showTimeMenu(s: LinkSortType, selector: UIView?) {
-        if (s == .hot || s == .new) {
+        if s == .hot || s == .new {
             sort = s
             refresh()
             return
@@ -879,7 +879,7 @@ class SingleSubredditViewController: MediaViewController {
                     self.time = t
                     self.refresh()
                 }
-                if (time == t) {
+                if time == t {
                     saveActionButton.setValue(selected, forKey: "image")
                 }
 
@@ -907,7 +907,7 @@ class SingleSubredditViewController: MediaViewController {
         do {
             try session?.deleteCommentOrLink(cell.link!.getId(), completion: { (_) in
                 DispatchQueue.main.async {
-                    if (self.navigationController!.modalPresentationStyle == .formSheet) {
+                    if self.navigationController!.modalPresentationStyle == .formSheet {
                         self.navigationController!.dismiss(animated: true)
                     }
                     else {
@@ -922,9 +922,9 @@ class SingleSubredditViewController: MediaViewController {
     }
 
     func load(reset: Bool) {
-        if (!loading) {
-            if (!loaded) {
-                if (indicator == nil) {
+        if !loading {
+            if !loaded {
+                if indicator == nil {
                     indicator = MDCActivityIndicator.init(frame: CGRect.init(x: CGFloat(0), y: CGFloat(0), width: CGFloat(80), height: CGFloat(80)))
                     indicator?.strokeWidth = 5
                     indicator?.radius = 15
@@ -940,12 +940,12 @@ class SingleSubredditViewController: MediaViewController {
 
             do {
                 loading = true
-                if (reset) {
+                if reset {
                     paginator = Paginator()
                 }
                 var subreddit: SubredditURLPath = Subreddit.init(subreddit: sub)
 
-                if (sub.hasPrefix("/m/")) {
+                if sub.hasPrefix("/m/") {
                     subreddit = Multireddit.init(name: sub.substring(3, length: sub.length - 3), user: AccountController.currentName)
                 }
 
@@ -982,7 +982,7 @@ class SingleSubredditViewController: MediaViewController {
                                         self.loading = false
                                         self.nomore = true
                                         
-                                        if (self.links.isEmpty) {
+                                        if self.links.isEmpty {
                                             BannerUtil.makeBanner(text: "No offline content found! You can set up subreddit caching in Settings > Auto Cache", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 5, context: self)
                                         }
                                         else {
@@ -996,16 +996,16 @@ class SingleSubredditViewController: MediaViewController {
                                 }
                     case .success(let listing):
 
-                        if (reset) {
+                        if reset {
                             self.links = []
                         }
                         let before = self.links.count
-                        if (self.realmListing == nil) {
+                        if self.realmListing == nil {
                             self.realmListing = RListing()
                             self.realmListing!.subreddit = self.sub
                             self.realmListing!.updated = NSDate()
                         }
-                        if (reset && self.realmListing!.links.count > 0) {
+                        if reset && self.realmListing!.links.count > 0 {
                             self.realmListing!.links.removeAll()
                         }
 
@@ -1036,18 +1036,18 @@ class SingleSubredditViewController: MediaViewController {
                         }
                         self.preloadImages(values)
                         DispatchQueue.main.async {
-                            if(self.links.isEmpty) {
+                            if self.links.isEmpty {
                                 self.flowLayout.reset()
                                 self.tableView.reloadData()
                                 
                                 self.refreshControl.endRefreshing()
                                 self.indicator?.stopAnimating()
                                 self.loading = false
-                                if(MainViewController.first) {
+                                if MainViewController.first {
                                     MainViewController.first = false
                                     self.parentController?.checkForMail()
                                 }
-                                if(listing.children.isEmpty) {
+                                if listing.children.isEmpty {
                                     BannerUtil.makeBanner(text: "No posts found!\nMake sure this sub exists and you have permission to view it", color: GMColor.red500Color(), seconds: 5, context: self)
                                 }
                                 else {
@@ -1060,13 +1060,13 @@ class SingleSubredditViewController: MediaViewController {
                                     paths.append(IndexPath.init(item: i, section: 0))
                                 }
 
-                                if (before == 0) {
+                                if before == 0 {
                                     self.flowLayout.reset()
                                     self.tableView.reloadData()
                                     var top = CGFloat(0)
                                     if #available(iOS 11, *) {
                                         top += 22
-                                        if((!SettingValues.viewType)) {
+                                        if !SettingValues.viewType {
                                             top += 4
                                         }
                                     }
@@ -1081,7 +1081,7 @@ class SingleSubredditViewController: MediaViewController {
                                 self.refreshControl.endRefreshing()
                                 self.indicator?.stopAnimating()
                                 self.loading = false
-                                if(MainViewController.first) {
+                                if MainViewController.first {
                                     MainViewController.first = false
                                     self.parentController?.checkForMail()
                                 }
@@ -1100,60 +1100,60 @@ class SingleSubredditViewController: MediaViewController {
 
     func preloadImages(_ values: [RSubmission]) {
         var urls: [URL] = []
-        if(!SettingValues.noImages) {
+        if !SettingValues.noImages {
         for submission in values {
             var thumb = submission.thumbnail
             var big = submission.banner
             var height = submission.height
-            if(submission.url != nil) {
+            if submission.url != nil {
             var type = ContentType.getContentType(baseUrl: submission.url)
-            if (submission.isSelf) {
+            if submission.isSelf {
                 type = .SELF
             }
 
-            if (thumb && type == .SELF) {
+            if thumb && type == .SELF {
                 thumb = false
             }
 
             let fullImage = ContentType.fullImage(t: type)
 
-            if (!fullImage && height < 50) {
+            if !fullImage && height < 50 {
                 big = false
                 thumb = true
             }
-            else if (big && (SettingValues.postImageMode == .CROPPED_IMAGE)) {
+            else if big && (SettingValues.postImageMode == .CROPPED_IMAGE) {
                 height = 200
             }
 
-            if (type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big || type == .SELF) {
+            if type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big || type == .SELF {
                 big = false
                 thumb = false
             }
 
-            if (height < 50) {
+            if height < 50 {
                 thumb = true
                 big = false
             }
 
             let shouldShowLq = SettingValues.dataSavingEnabled && submission.lQ && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi())
-            if (type == ContentType.CType.SELF && SettingValues.hideImageSelftext
-                    || SettingValues.noImages && submission.isSelf) {
+            if type == ContentType.CType.SELF && SettingValues.hideImageSelftext
+                    || SettingValues.noImages && submission.isSelf {
                 big = false
                 thumb = false
             }
 
-            if (big || !submission.thumbnail) {
+            if big || !submission.thumbnail {
                 thumb = false
             }
 
-            if (!big && !thumb && submission.type != .SELF && submission.type != .NONE) {
+            if !big && !thumb && submission.type != .SELF && submission.type != .NONE {
                 thumb = true
             }
 
-            if (thumb && !big) {
-                if (submission.thumbnailUrl == "nsfw") {
+            if thumb && !big {
+                if submission.thumbnailUrl == "nsfw" {
                 }
-                else if (submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty) {
+                else if submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty {
                 }
                 else {
                     if let url = URL.init(string: submission.thumbnailUrl) {
@@ -1162,8 +1162,8 @@ class SingleSubredditViewController: MediaViewController {
                 }
             }
 
-            if (big) {
-                if (shouldShowLq) {
+            if big {
+                if shouldShowLq {
                     if let url = URL.init(string: submission.lqUrl) {
                         urls.append(url)
                     }
@@ -1190,70 +1190,70 @@ class SingleSubredditViewController: MediaViewController {
         let height = submission.height
 
         var type = ContentType.getContentType(baseUrl: submission.url)
-        if (submission.isSelf) {
+        if submission.isSelf {
             type = .SELF
         }
 
-        if (SettingValues.postImageMode == .THUMBNAIL) {
+        if SettingValues.postImageMode == .THUMBNAIL {
             big = false
             thumb = true
         }
 
         let fullImage = ContentType.fullImage(t: type)
 
-        if (!fullImage && height < 50) {
+        if !fullImage && height < 50 {
             big = false
             thumb = true
         }
 
-        if (type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big) {
+        if type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big {
             big = false
             thumb = false
         }
 
-        if (height < 50) {
+        if height < 50 {
             thumb = true
             big = false
         }
 
-        if (type == ContentType.CType.SELF && SettingValues.hideImageSelftext
-            || SettingValues.noImages && submission.isSelf) {
+        if type == ContentType.CType.SELF && SettingValues.hideImageSelftext
+            || SettingValues.noImages && submission.isSelf {
             big = false
             thumb = false
         }
 
-        if (big || !submission.thumbnail) {
+        if big || !submission.thumbnail {
             thumb = false
         }
 
-        if (!big && !thumb && submission.type != .SELF && submission.type != .NONE) { //If a submission has a link but no images, still show the web thumbnail
+        if !big && !thumb && submission.type != .SELF && submission.type != .NONE { //If a submission has a link but no images, still show the web thumbnail
             thumb = true
         }
 
-        if (submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && (sub == "all" || sub == "frontpage" || sub.contains("/m/") || sub.contains("+") || sub == "popular"))) {
+        if submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && (sub == "all" || sub == "frontpage" || sub.contains("/m/") || sub.contains("+") || sub == "popular")) {
             big = false
             thumb = true
         }
 
-        if (SettingValues.noImages) {
+        if SettingValues.noImages {
             big = false
             thumb = false
         }
-        if (thumb && type == .SELF) {
+        if thumb && type == .SELF {
             thumb = false
         }
 
-        if (thumb && !big) {
+        if thumb && !big {
             target = .thumb
         }
-        else if (big) {
+        else if big {
             target = .banner
         }
         else {
             target = .text
         }
 
-        if(type == .LINK && SettingValues.linkAlwaysThumbnail) {
+        if type == .LINK && SettingValues.linkAlwaysThumbnail {
             target = .thumb
         }
 
@@ -1281,7 +1281,7 @@ extension SingleSubredditViewController {
 
     func hideAll(_ sender: AnyObject) {
         for submission in links {
-            if (History.getSeen(s: submission)) {
+            if History.getSeen(s: submission) {
                 let index = links.index(of: submission)!
                 links.remove(at: index)
             }
@@ -1308,7 +1308,7 @@ extension SingleSubredditViewController {
         let baseColor = ColorUtil.getColorForSub(sub: sub).toHexString()
         var index = 0
         for color in GMPalette.allColor() {
-            if (color.toHexString() == baseColor) {
+            if color.toHexString() == baseColor {
                 break
             }
             index += 1
@@ -1350,7 +1350,7 @@ extension SingleSubredditViewController {
         alertController.addAction(image: nil, title: "Save", color: ColorUtil.accentColorForSub(sub: sub), style: .default) { _ in
             ColorUtil.setColorForSub(sub: self.sub, color: (self.navigationController?.navigationBar.barTintColor)!)
             self.reloadDataReset()
-            if (self.parentController != nil) {
+            if self.parentController != nil {
                 self.parentController?.colorChanged(ColorUtil.getColorForSub(sub: self.sub))
             }
         }
@@ -1388,7 +1388,7 @@ extension SingleSubredditViewController {
         let baseColor = ColorUtil.accentColorForSub(sub: sub).toHexString()
         var index = 0
         for color in GMPalette.allColorAccent() {
-            if (color.toHexString() == baseColor) {
+            if color.toHexString() == baseColor {
                 break
             }
             index += 1
@@ -1407,7 +1407,7 @@ extension SingleSubredditViewController {
         alertController.addAction(image: nil, title: "Save", color: ColorUtil.accentColorForSub(sub: sub), style: .default) { _ in
             ColorUtil.setAccentColorForSub(sub: self.sub, color: self.accentChosen!)
             self.reloadDataReset()
-            if (self.parentController != nil) {
+            if self.parentController != nil {
                 self.parentController?.colorChanged(ColorUtil.getColorForSub(sub: self.sub))
             }
         }
@@ -1440,13 +1440,13 @@ extension SingleSubredditViewController {
             self.search()
         }))
 
-        if(!single && SettingValues.viewType) {
+        if !single && SettingValues.viewType {
             alertController.addAction(Action(ActionData(title: "Sort (currently \(sort.path))", image: UIImage(named: "filter")!.menuIcon()), style: .default, handler: { _ in
                 self.showSortMenu(self.more)
             }))
         }
 
-        if (sub.contains("/m/")) {
+        if sub.contains("/m/") {
             alertController.addAction(Action(ActionData(title: "Manage multireddit", image: UIImage(named: "info")!.menuIcon()), style: .default, handler: { _ in
                 self.displayMultiredditSidebar()
             }))
@@ -1470,7 +1470,7 @@ extension SingleSubredditViewController {
         }))
 
         alertController.addAction(Action(ActionData(title: "Subreddit theme", image: UIImage(named: "colors")!.menuIcon()), style: .default, handler: { _ in
-            if (parentVC != nil) {
+            if parentVC != nil {
                 let p = (parentVC!)
                 self.pickTheme(sender: sender, parent: p)
             }
@@ -1479,14 +1479,14 @@ extension SingleSubredditViewController {
             }
         }))
 
-        if ((sub != "all" && sub != "frontpage" && !sub.contains("+") && !sub.contains("/m/"))) {
+        if sub != "all" && sub != "frontpage" && !sub.contains("+") && !sub.contains("/m/") {
             alertController.addAction(Action(ActionData(title: "Submit", image: UIImage(named: "edit")!.menuIcon()), style: .default, handler: { _ in
                 self.newPost(sender)
             }))
         }
 
         alertController.addAction(Action(ActionData(title: "Filter content", image: UIImage(named: "filter")!.menuIcon()), style: .default, handler: { _ in
-            if(!self.links.isEmpty || self.loaded) {
+            if !self.links.isEmpty || self.loaded {
                 self.filterContent()
             }
         }))
@@ -1501,7 +1501,7 @@ extension SingleSubredditViewController {
 extension SingleSubredditViewController: UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        if (SettingValues.markReadOnScroll) {
+        if SettingValues.markReadOnScroll {
             History.addSeen(s: links[indexPath.row])
         }
     }
@@ -1520,7 +1520,7 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
 
         var cell: LinkCellView!
         
-        if(lastVersion != SingleSubredditViewController.cellVersion) {
+        if lastVersion != SingleSubredditViewController.cellVersion {
             self.tableView.register(BannerLinkCellView.classForCoder(), forCellWithReuseIdentifier: "banner\(SingleSubredditViewController.cellVersion)")
             self.tableView.register(ThumbnailLinkCellView.classForCoder(), forCellWithReuseIdentifier: "thumb\(SingleSubredditViewController.cellVersion)")
             self.tableView.register(TextLinkCellView.classForCoder(), forCellWithReuseIdentifier: "text\(SingleSubredditViewController.cellVersion)")
@@ -1564,7 +1564,7 @@ extension SingleSubredditViewController: LinkCellViewDelegate {
     func openComments(id: String, subreddit: String?) {
         var index = 0
         for s in links {
-            if (s.getId() == id) {
+            if s.getId() == id {
                 break
             }
             index += 1
@@ -1574,7 +1574,7 @@ extension SingleSubredditViewController: LinkCellViewDelegate {
             newLinks.append(links[i])
         }
 
-        if (self.splitViewController != nil && UIScreen.main.traitCollection.userInterfaceIdiom == .pad && !SettingValues.multiColumn) {
+        if self.splitViewController != nil && UIScreen.main.traitCollection.userInterfaceIdiom == .pad && !SettingValues.multiColumn {
             let comment = CommentViewController.init(submission: newLinks[0])
             let nav = UINavigationController.init(rootViewController: comment)
             self.splitViewController?.showDetailViewController(nav, sender: self)
@@ -1589,7 +1589,7 @@ extension SingleSubredditViewController: LinkCellViewDelegate {
 // MARK: - Color Picker View Delegate
 extension SingleSubredditViewController: ColorPickerViewDelegate {
     public func colorPickerView(_ colorPickerView: ColorPickerView, didSelectItemAt indexPath: IndexPath) {
-        if (isAccent) {
+        if isAccent {
             accentChosen = colorPickerView.colors[indexPath.row]
             SingleSubredditViewController.fab?.backgroundColor = accentChosen
         }
@@ -1600,7 +1600,7 @@ extension SingleSubredditViewController: ColorPickerViewDelegate {
             add.backgroundColor = c
             sideView.backgroundColor = c
             inHeadView.backgroundColor = c
-            if (parentController != nil) {
+            if parentController != nil {
                 parentController?.colorChanged(c)
             }
         }
@@ -1611,7 +1611,7 @@ extension SingleSubredditViewController: ColorPickerViewDelegate {
 extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
     func collectionView(_ collectionView: UICollectionView, width: CGFloat, indexPath: IndexPath) -> CGSize {
         let itemWidth = width
-        if (indexPath.row < links.count) {
+        if indexPath.row < links.count {
             let submission = links[indexPath.row]
 
             var thumb = submission.thumbnail
@@ -1620,27 +1620,27 @@ extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
             var submissionHeight = CGFloat(submission.height)
 
             var type = ContentType.getContentType(baseUrl: submission.url)
-            if (submission.isSelf) {
+            if submission.isSelf {
                 type = .SELF
             }
 
-            if (SettingValues.postImageMode == .THUMBNAIL) {
+            if SettingValues.postImageMode == .THUMBNAIL {
                 big = false
                 thumb = true
             }
 
             let fullImage = ContentType.fullImage(t: type)
 
-            if (!fullImage && submissionHeight < 50) {
+            if !fullImage && submissionHeight < 50 {
                 big = false
                 thumb = true
             }
-            else if (big && (( SettingValues.postImageMode == .CROPPED_IMAGE))) {
+            else if big && (( SettingValues.postImageMode == .CROPPED_IMAGE)) {
                 submissionHeight = 200
             }
-            else if (big) {
+            else if big {
                 let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: CGFloat(submission.width), viewWidth: itemWidth - ((SettingValues.postViewMode != .CARD) ? CGFloat(5) : CGFloat(0)))
-                if (h == 0) {
+                if h == 0 {
                     submissionHeight = 200
                 }
                 else {
@@ -1648,60 +1648,60 @@ extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
                 }
             }
 
-            if (type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big) {
+            if type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big {
                 big = false
                 thumb = false
             }
 
-            if (submissionHeight < 50) {
+            if submissionHeight < 50 {
                 thumb = true
                 big = false
             }
 
             let shouldShowLq = SettingValues.dataSavingEnabled && submission.lQ && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi())
-            if (type == ContentType.CType.SELF && SettingValues.hideImageSelftext
-                || SettingValues.noImages && submission.isSelf) {
+            if type == ContentType.CType.SELF && SettingValues.hideImageSelftext
+                || SettingValues.noImages && submission.isSelf {
                 big = false
                 thumb = false
             }
 
-            if (big || !submission.thumbnail) {
+            if big || !submission.thumbnail {
                 thumb = false
             }
 
-            if (submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && (sub == "all" || sub == "frontpage" || sub.contains("/m/") || sub.contains("+") || sub == "popular"))) {
+            if submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && (sub == "all" || sub == "frontpage" || sub.contains("/m/") || sub.contains("+") || sub == "popular")) {
                 big = false
                 thumb = true
             }
 
-            if (SettingValues.noImages) {
+            if SettingValues.noImages {
                 big = false
                 thumb = false
             }
 
-            if (thumb && type == .SELF) {
+            if thumb && type == .SELF {
                 thumb = false
             }
 
-            if (!big && !thumb && submission.type != .SELF && submission.type != .NONE) { //If a submission has a link but no images, still show the web thumbnail
+            if !big && !thumb && submission.type != .SELF && submission.type != .NONE { //If a submission has a link but no images, still show the web thumbnail
                 thumb = true
             }
 
-            if(type == .LINK && SettingValues.linkAlwaysThumbnail) {
+            if type == .LINK && SettingValues.linkAlwaysThumbnail {
                 thumb = true
                 big = false
             }
 
-            if (big) {
+            if big {
                 let imageSize = CGSize.init(width: submission.width, height: ((SettingValues.postImageMode == .CROPPED_IMAGE)) ? 200 : submission.height)
 
                 var aspect = imageSize.width / imageSize.height
-                if (aspect == 0 || aspect > 10000 || aspect.isNaN) {
+                if aspect == 0 || aspect > 10000 || aspect.isNaN {
                     aspect = 1
                 }
-                if ((SettingValues.postImageMode == .CROPPED_IMAGE)) {
+                if SettingValues.postImageMode == .CROPPED_IMAGE {
                     aspect = width / 200
-                    if (aspect == 0 || aspect > 10000 || aspect.isNaN) {
+                    if aspect == 0 || aspect > 10000 || aspect.isNaN {
                         aspect = 1
                     }
 
@@ -1713,7 +1713,7 @@ extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
             var paddingLeft = CGFloat(0)
             var paddingRight = CGFloat(0)
             var innerPadding = CGFloat(0)
-            if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) {
+            if SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER {
                 paddingTop = 5
                 paddingBottom = 5
                 paddingLeft = 5
@@ -1725,9 +1725,9 @@ extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
             let thumbheight = (SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50)) - (SettingValues.postViewMode == .COMPACT ? 15 : 0)
             let textHeight = CGFloat(submission.isSelf ? 5 : 0)
 
-            if (thumb) {
+            if thumb {
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between top and thumbnail
-                if(SettingValues.actionBarMode == .FULL) {
+                if SettingValues.actionBarMode == .FULL {
                     innerPadding += 18 - (SettingValues.postViewMode == .COMPACT ? 4 : 0) //between label and bottom box
                     innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
                 }
@@ -1735,10 +1735,10 @@ extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
                     innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between thumbnail and bottom
                 }
             }
-            else if (big) {
-                if (SettingValues.postViewMode == .CENTER) {
+            else if big {
+                if SettingValues.postViewMode == .CENTER {
                     innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 16) //between label
-                    if(SettingValues.actionBarMode == .FULL) {
+                    if SettingValues.actionBarMode == .FULL {
                         innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between banner and box
                     }
                     else {
@@ -1747,30 +1747,30 @@ extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
                 }
                 else {
                     innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between banner and label
-                    if(SettingValues.actionBarMode == .FULL) {
+                    if SettingValues.actionBarMode == .FULL {
                         innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between label and box
                     }
                     else {
                         innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between buttons and bottom
                     }
                 }
-                if(SettingValues.actionBarMode == .FULL) {
+                if SettingValues.actionBarMode == .FULL {
                     innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
                 }
             }
             else {
-                if(!submission.body.trimmed().isEmpty() && SettingValues.showFirstParagraph) {
+                if !submission.body.trimmed().isEmpty() && SettingValues.showFirstParagraph {
                     innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8)
                 }
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between top and title
-                if(SettingValues.actionBarMode == .FULL) {
+                if SettingValues.actionBarMode == .FULL {
                     innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between body and box
                     innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
                 }
             }
 
             var estimatedUsableWidth = itemWidth - paddingLeft - paddingRight
-            if (thumb) {
+            if thumb {
                 estimatedUsableWidth -= thumbheight //is the same as the width
                 estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb
                 estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between thumb and label
@@ -1779,7 +1779,7 @@ extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
                 estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //12 padding on either side
             }
 
-            if(SettingValues.postImageMode == .CROPPED_IMAGE) {
+            if SettingValues.postImageMode == .CROPPED_IMAGE {
                 submissionHeight = 200
             }
             else {
@@ -1787,11 +1787,11 @@ extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
             }
             var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
 
-            if(thumb) {
+            if thumb {
                 imageHeight = thumbheight
             }
 
-            if(SettingValues.actionBarMode.isSide()) {
+            if SettingValues.actionBarMode.isSide() {
                 estimatedUsableWidth -= 36
                 estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 12 : 20) //buttons horizontal margins
             }
@@ -1860,7 +1860,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
             var location = 0
             var item = links[0]
             for submission in links {
-                if (submission.getId() == id) {
+                if submission.getId() == id {
                     item = links[location]
                     print("Removing link")
                     links.remove(at: location)

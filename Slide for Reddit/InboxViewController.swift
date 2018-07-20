@@ -85,7 +85,7 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
     func read(_ sender: AnyObject) {
         do {
             try session?.markAllMessagesAsRead(completion: { (result) in
-                switch (result) {
+                switch result {
                 case .success:
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "All messages marked as read", seconds: 5, context: self)
@@ -154,7 +154,7 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
             }
         }
 
-        if (self.navigationController?.interactivePopGestureRecognizer != nil) {
+        if self.navigationController?.interactivePopGestureRecognizer != nil {
             print("Not nil")
             for view in view.subviews {
                 if let scrollView = view as? UIScrollView {
@@ -178,7 +178,7 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
         }
         let page = vCs.index(of: self.viewControllers!.first!)
 
-        if (!selected) {
+        if !selected {
             tabBar.setSelectedItem(tabBar.items[page! ], animated: true)
         }
         else {

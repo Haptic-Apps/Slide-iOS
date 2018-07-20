@@ -35,7 +35,7 @@ class SwipeDownModalVC: ColorMuxPagingViewController {
         background!.autoresizingMask = [.flexibleHeight, .flexibleWidth]
         background!.backgroundColor = .black
         
-        if(!(self is ShadowboxViewController)) {
+        if !(self is ShadowboxViewController) {
             background!.alpha = 0.6
         }
 

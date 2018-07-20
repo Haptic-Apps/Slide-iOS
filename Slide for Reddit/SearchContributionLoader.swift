@@ -36,9 +36,9 @@ class SearchContributionLoader: ContributionLoader {
     var paging = false
     
     func getData(reload: Bool) {
-        if(delegate != nil && canGetMore) {
+        if delegate != nil && canGetMore {
             do {
-                if(reload) {
+                if reload {
                     paginator = Paginator()
                 }
                 try delegate?.session?.getSearch(Subreddit.init(subreddit: sub), query: query, paginator: paginator, sort: sorting, time: time, completion: { (result) in
@@ -47,11 +47,11 @@ class SearchContributionLoader: ContributionLoader {
                         print(result.error!)
                         self.delegate?.failed(error: result.error!)
                     case .success(let listing):
-                        if(reload) {
+                        if reload {
                             self.content = []
                         }
                         for item in listing.children.flatMap({ $0 }) {
-                            if(item is Comment) {
+                            if item is Comment {
                                 self.content.append(RealmDataWrapper.commentToRComment(comment: item as! Comment, depth: 0))
                             }
                             else {

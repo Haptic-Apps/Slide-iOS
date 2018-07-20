@@ -23,7 +23,7 @@ class Subscriptions {
                                       ]
     
     public static var subreddits: [String] {
-        if(accountSubs.isEmpty) {
+        if accountSubs.isEmpty {
             return defaultSubs
         }
         return accountSubs
@@ -45,7 +45,7 @@ class Subscriptions {
 
     public static func isSubscriber(_ sub: String) -> Bool {
         for s in subreddits {
-            if(s.lowercased() == sub.lowercased()) {
+            if s.lowercased() == sub.lowercased() {
                 return true
             }
         }
@@ -73,14 +73,14 @@ class Subscriptions {
             historySubs = []
         }
         
-        if((completion) != nil) {
+        if (completion) != nil {
             completion!()
         }
     }
     
     public static func addHistorySub(name: String, sub: String) {
         for string in historySubs {
-            if(string.lowercased() == sub.lowercased()) {
+            if string.lowercased() == sub.lowercased() {
                 return
             }
         }
@@ -118,7 +118,7 @@ class Subscriptions {
         var sub = Subscriptions.subreddits
         sub.append(name)
         set(name: AccountController.currentName, subs: sub) { () in }
-        if(subscribe && AccountController.isLoggedIn) {
+        if subscribe && AccountController.isLoggedIn {
             do {
                 try session.setSubscribeSubreddit(Subreddit.init(subreddit: name), subscribe: true, completion: { (_) in
                     
@@ -135,7 +135,7 @@ class Subscriptions {
         subs = subs.filter { $0 != name }
         
         set(name: AccountController.currentName, subs: subs) { () in }
-        if(AccountController.isLoggedIn) {
+        if AccountController.isLoggedIn {
             do {
                 try session.setSubscribeSubreddit(Subreddit.init(subreddit: name), subscribe: false, completion: { (result) in
                     switch result {
@@ -156,7 +156,7 @@ class Subscriptions {
         var toReturnMultis = mR
         var paginator = p
         do {
-            if(!multis) {
+            if !multis {
                 try session.getUserRelatedSubreddit(.subscriber, paginator: paginator, completion: { (result) -> Void in
                     switch result {
                     case .failure:
@@ -166,7 +166,7 @@ class Subscriptions {
                         toReturn += listing.children.flatMap({ $0 as? Subreddit })
                         paginator = listing.paginator
                         print("Size is \(toReturn.count) and hasmore is \(paginator.hasMore())")
-                        if(paginator.hasMore()) {
+                        if paginator.hasMore() {
                             getSubscriptionsUntilCompletion(session: session, p: paginator, tR: toReturn, mR: toReturnMultis, multis: false, completion: completion)
                         }
                         else {

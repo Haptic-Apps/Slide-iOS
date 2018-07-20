@@ -38,13 +38,13 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
     }
 
     func displayImage(baseImage: UIImage?) {
-        if (baseImage == nil) {
+        if baseImage == nil {
 
         }
         if let image = baseImage {
             self.imageLoaded = true
             let xstart = (parent is AlbumViewController) ? CGFloat(61) : 0
-            if (image.size.height > image.size.width || UIApplication.shared.statusBarOrientation != .portrait) {
+            if image.size.height > image.size.width || UIApplication.shared.statusBarOrientation != .portrait {
                 self.scrollView.contentSize = CGSize.init(width: min(self.view.frame.size.width, getWidthFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width)), height: self.view.frame.size.height - (xstart * 2) + 8)
             }
             else {
@@ -56,7 +56,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
             dtap.numberOfTapsRequired = 2
             self.scrollView.addGestureRecognizer(dtap)
 
-            if (!inAlbum) {
+            if !inAlbum {
                 let tap = UITapGestureRecognizer.init(target: self, action: #selector(handleTap(recognizer:)))
                 tap.require(toFail: dtap)
                 self.scrollView.addGestureRecognizer(tap)
@@ -71,13 +71,13 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
             self.scrollView.addSubview(imageView)
             imageView.image = image
 
-            if (showHQ) {
+            if showHQ {
                 var items: [UIBarButtonItem] = []
-                if (text != nil && !(text!.isEmpty)) {
+                if text != nil && !(text!.isEmpty) {
                     let textB = UIBarButtonItem(image: UIImage(named: "size")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.showTitle(_:)))
                     items.append(textB)
                 }
-                if(commentCallback != nil) {
+                if commentCallback != nil {
                     let textB = UIBarButtonItem(image: UIImage(named: "comments")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.openComments(_:)))
                     items.append(textB)
                 }
@@ -96,7 +96,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
     }
     
     func openComments(_ sender: AnyObject) {
-        if(commentCallback != nil) {
+        if commentCallback != nil {
             self.dismiss(animated: true) {
                 self.commentCallback!()
             }
@@ -110,8 +110,8 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
     var ignore = false
     
     func handleTap(recognizer: UITapGestureRecognizer?) {
-        if(fullscreen) {
-            if(playButton != nil && !playButton!.isHidden) {
+        if fullscreen {
+            if playButton != nil && !playButton!.isHidden {
                 self.playButton!.isHidden = true
                 self.playbackSlider.isHidden = true
             }
@@ -120,7 +120,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
             }
         }
         else {
-            if(playButton != nil && playButton!.isHidden) {
+            if playButton != nil && playButton!.isHidden {
                 showControls()
             }
             else {
@@ -135,7 +135,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
         playbackSlider.isHidden = false
         let deadlineTime = DispatchTime.now() + .seconds(2)
         DispatchQueue.main.asyncAfter(deadline: deadlineTime, execute: {
-            if(!self.ignore) {
+            if !self.ignore {
                 self.playButton!.isHidden = true
                 self.playbackSlider.isHidden = true
             }
@@ -145,11 +145,11 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
     func hd(_ sender: AnyObject) {
         sizeLabel?.isHidden = false
         var items: [UIBarButtonItem] = []
-        if (text != nil && !(text!.isEmpty)) {
+        if text != nil && !(text!.isEmpty) {
             let textB = UIBarButtonItem(image: UIImage(named: "size")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.showTitle(_:)))
             items.append(textB)
         }
-        if(commentCallback != nil) {
+        if commentCallback != nil {
             let textB = UIBarButtonItem(image: UIImage(named: "comments")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.openComments(_:)))
             items.append(textB)
         }
@@ -190,7 +190,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
 
     func loadImage(imageURL: URL) {
         loadedURL = imageURL
-        if (SDWebImageManager.shared().cachedImageExists(for: imageURL)) {
+        if SDWebImageManager.shared().cachedImageExists(for: imageURL) {
             DispatchQueue.main.async {
                 let image = SDWebImageManager.shared().imageCache.imageFromDiskCache(forKey: imageURL.absoluteString)
                 self.progressView?.setHidden(true, animated: true)
@@ -255,12 +255,12 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
         }
         let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         var items: [UIBarButtonItem] = []
-        if (text != nil && !(text!.isEmpty)) {
+        if text != nil && !(text!.isEmpty) {
             let textB = UIBarButtonItem(image: UIImage(named: "size")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.showTitle(_:)))
             items.append(textB)
         }
         
-        if(commentCallback != nil) {
+        if commentCallback != nil {
             let textB = UIBarButtonItem(image: UIImage(named: "comments")?.navIcon(), style: .plain, target: self, action: #selector(MediaDisplayViewController.openComments(_:)))
             items.append(textB)
         }
@@ -345,13 +345,13 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
     }
 
     func download(_ sender: AnyObject) {
-        if(imageLoaded) {
-            if(imageView.image != nil) {
+        if imageLoaded {
+            if imageView.image != nil {
                 CustomAlbum.shared.save(image: imageView.image!, parent: self)
             }
         }
         else {
-            if(displayedVideo != nil) {
+            if displayedVideo != nil {
                 CustomAlbum.shared.saveMovieToLibrary(movieURL: displayedVideo!, parent: self)
             }
         }
@@ -360,7 +360,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
     func showImageMenu(_ sender: AnyObject) {
         let alert = UIAlertController.init(title: baseURL?.absoluteString, message: "", preferredStyle: .actionSheet)
         let open = OpenInChromeController.init()
-        if (open.isChromeInstalled()) {
+        if open.isChromeInstalled() {
             alert.addAction(
                     UIAlertAction(title: "Open in Chrome", style: .default) { (_) in
                         open.openInChrome(self.baseURL!, callbackURL: nil, createNewTab: true)
@@ -434,9 +434,9 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
     }
 
     func startDisplay() {
-        if (type == .IMAGE) {
+        if type == .IMAGE {
             let shouldShowLq = SettingValues.dataSavingEnabled && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi())
-            if (lqURL != nil && !SettingValues.loadContentHQ && shouldShowLq) {
+            if lqURL != nil && !SettingValues.loadContentHQ && shouldShowLq {
                 loadImage(imageURL: lqURL!)
                 showHQ = true
             }
@@ -444,13 +444,13 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
                 loadImage(imageURL: baseURL!)
             }
         }
-        else if (type == .GIF || type == .STREAMABLE || type == .VID_ME) {
+        else if type == .GIF || type == .STREAMABLE || type == .VID_ME {
             getGif(urlS: baseURL!.absoluteString)
         }
         else if (type == .IMGUR) {
             loadImage(imageURL: URL.init(string: baseURL!.absoluteString + ".png")!)
         }
-        else if (type == .VIDEO) {
+        else if type == .VIDEO {
             toolbar.isHidden = true
             let he = getYTHeight()
             ytPlayer = YTPlayerView()
@@ -531,7 +531,7 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
         }
         let deadlineTime = DispatchTime.now() + .seconds(1)
         DispatchQueue.main.asyncAfter(deadline: deadlineTime, execute: {
-            if(!self.ignore) {
+            if !self.ignore {
                 self.playButton!.isHidden = true
                 self.playbackSlider.isHidden = true
             }
@@ -557,11 +557,11 @@ class MediaDisplayViewController: VideoDisplayer, UIScrollViewDelegate, UIGestur
         super.viewWillDisappear(animated)
 
         UIApplication.shared.statusBarView?.isHidden = false
-        if(savedColor != nil) {
+        if savedColor != nil {
             UIApplication.shared.statusBarView?.backgroundColor = savedColor
         }
 
-        if (MediaDisplayViewController.videoPlayer != nil) {
+        if MediaDisplayViewController.videoPlayer != nil {
             MediaDisplayViewController.videoPlayer!.pause()
         }
 

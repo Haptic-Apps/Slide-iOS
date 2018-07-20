@@ -64,14 +64,14 @@ class PostActions: NSObject {
             
         }))
         
-        if (AccountController.isLoggedIn) {
-            if(SettingValues.actionBarMode != .FULL && AccountController.modSubs.contains(link.subreddit)) {
+        if AccountController.isLoggedIn {
+            if SettingValues.actionBarMode != .FULL && AccountController.modSubs.contains(link.subreddit) {
                 alertController.addAction(Action(ActionData(title: "Moderate", image: UIImage(named: "mod")!.menuIcon()), style: .default, handler: { _ in
                     PostActions.showModMenu(cell, parent: parent)
                 }))
             }
             
-            if(SettingValues.actionBarMode == .NONE) {
+            if SettingValues.actionBarMode == .NONE {
                 alertController.addAction(Action(ActionData(title: "Upvote", image: UIImage(named: "upvote")!.menuIcon().getCopy(withColor: ColorUtil.upvoteColor)), style: .default, handler: { _ in
                     cell.upvote()
                 }))
@@ -105,7 +105,7 @@ class PostActions: NSObject {
         }))
         
         let open = OpenInChromeController.init()
-        if (open.isChromeInstalled()) {
+        if open.isChromeInstalled() {
             
             alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "link")!.menuIcon()), style: .default, handler: { _ in
                 open.openInChrome(link.url!, callbackURL: nil, createNewTab: true)
@@ -119,8 +119,8 @@ class PostActions: NSObject {
                 UIApplication.shared.openURL(link.url!)
             }
         }))
-        if(link.isSelf) {
-            alertController.addAction(Action(ActionData(title: "Copy text", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { action in
+        if link.isSelf {
+            alertController.addAction(Action(ActionData(title: "Copy text", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { _ in
                 let alert = UIAlertController.init(title: "Copy text", message: "", preferredStyle: .alert)
                 alert.addTextViewer(text: .text(cell.link!.body))
                 alert.addAction(UIAlertAction.init(title: "Copy all", style: .default, handler: { (_) in
@@ -134,7 +134,7 @@ class PostActions: NSObject {
             }))
         }
         
-        if(mutableList) {
+        if mutableList {
             alertController.addAction(Action(ActionData(title: "Filter this content", image: UIImage(named: "filter")!.menuIcon()), style: .default, handler: { _ in
                 delegate.showFilterMenu(cell)
             }))
@@ -168,7 +168,7 @@ class PostActions: NSObject {
             
         }))
         
-        if(cell.link!.approved) {
+        if cell.link!.approved {
             var action = Action(ActionData(title: "Approved by u/\(cell.link!.approvedBy)", image: UIImage(named: "approve")!.menuIcon()), style: .default, handler: { _ in
             })
             action.enabled = false
@@ -180,7 +180,7 @@ class PostActions: NSObject {
             }))
         }
         
-        if(cell.link!.removed) {
+        if cell.link!.removed {
             var action = Action(ActionData(title: "Removed by u/\(cell.link!.removedBy)", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { _ in
             })
             action.enabled = false
@@ -200,7 +200,7 @@ class PostActions: NSObject {
             cell.flairSelf()
         }))
         
-        if(!cell.link!.nsfw) {
+        if !cell.link!.nsfw {
             alertController.addAction(Action(ActionData(title: "Mark as NSFW", image: UIImage(named: "hide")!.menuIcon()), style: .default, handler: { _ in
                 self.modNSFW(cell, true)
             }))
@@ -211,7 +211,7 @@ class PostActions: NSObject {
             }))
         }
         
-        if(!cell.link!.spoiler) {
+        if !cell.link!.spoiler {
             alertController.addAction(Action(ActionData(title: "Mark as spoiler", image: UIImage(named: "reports")!.menuIcon()), style: .default, handler: { _ in
                 self.modSpoiler(cell, true)
             }))
@@ -222,7 +222,7 @@ class PostActions: NSObject {
             }))
         }
         
-        if(cell.link!.locked) {
+        if cell.link!.locked {
             alertController.addAction(Action(ActionData(title: "Unlock thread", image: UIImage(named: "lock")!.menuIcon()), style: .default, handler: { _ in
                 self.modLock(cell, false)
             }))
@@ -233,14 +233,14 @@ class PostActions: NSObject {
             }))
         }
         
-        if (cell.link!.author == AccountController.currentName) {
+        if cell.link!.author == AccountController.currentName {
             alertController.addAction(Action(ActionData(title: "Distinguish", image: UIImage(named: "save")!.menuIcon()), style: .default, handler: { _ in
                 self.modDistinguish(cell)
             }))
         }
         
-        if (cell.link!.author == AccountController.currentName) {
-            if (cell.link!.stickied) {
+        if cell.link!.author == AccountController.currentName {
+            if cell.link!.stickied {
                 alertController.addAction(Action(ActionData(title: "Un-sticky", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { _ in
                     self.modSticky(cell, sticky: false)
                 }))
@@ -276,7 +276,7 @@ class PostActions: NSObject {
                     }
                 case .success:
                     CachedTitle.approved.append(id)
-                    if (CachedTitle.removed.contains(id)) {
+                    if CachedTitle.removed.contains(id) {
                         CachedTitle.removed.remove(at: CachedTitle.removed.index(of: id)!)
                     }
                     DispatchQueue.main.async {
@@ -304,7 +304,7 @@ class PostActions: NSObject {
                     }
                 case .success:
                     CachedTitle.approved.append(id)
-                    if (CachedTitle.removed.contains(id)) {
+                    if CachedTitle.removed.contains(id) {
                         CachedTitle.removed.remove(at: CachedTitle.removed.index(of: id)!)
                     }
                     DispatchQueue.main.async {
@@ -332,7 +332,7 @@ class PostActions: NSObject {
                     }
                 case .success:
                     CachedTitle.approved.append(id)
-                    if (CachedTitle.removed.contains(id)) {
+                    if CachedTitle.removed.contains(id) {
                         CachedTitle.removed.remove(at: CachedTitle.removed.index(of: id)!)
                     }
                     DispatchQueue.main.async {
@@ -360,7 +360,7 @@ class PostActions: NSObject {
                     }
                 case .success:
                     CachedTitle.approved.append(id)
-                    if (CachedTitle.removed.contains(id)) {
+                    if CachedTitle.removed.contains(id) {
                         CachedTitle.removed.remove(at: CachedTitle.removed.index(of: id)!)
                     }
                     DispatchQueue.main.async {
@@ -426,7 +426,7 @@ class PostActions: NSObject {
     static func modRemove(_ cell: LinkCellView, spam: Bool = false) {
         do {
             try (UIApplication.shared.delegate as! AppDelegate).session?.ruleList(cell.link!.subreddit, completion: { (result) in
-                switch(result) {
+                switch result {
                 case .success(let rules):
                     DispatchQueue.main.async {
                         showRemovalReasons(cell, rules: rules, spam: spam)
@@ -448,15 +448,15 @@ class PostActions: NSObject {
         for rule in rules {
             reasons.append(rule.violatonReason + "\n" + rule.description)
         }
-        var picker = ActionSheetStringPicker(title: "Choose a removal reason", rows: reasons, initialSelection: 0, doneBlock: { (picker, index, _) in
+        var picker = ActionSheetStringPicker(title: "Choose a removal reason", rows: reasons, initialSelection: 0, doneBlock: { (_, index, _) in
             //todo this
-            if(index == 0) {
+            if index == 0 {
                 modRemoveReason(cell, reason: "")
             }
-            else if(index == 1) {
+            else if index == 1 {
                 removeNoReason(cell)
             }
-            else if(index == 2) {
+            else if index == 2 {
                 removeNoReason(cell, spam: true)
             }
             else {
@@ -484,7 +484,7 @@ class PostActions: NSObject {
                     }
                 case .success:
                     CachedTitle.removed.append(id)
-                    if (CachedTitle.approved.contains(id)) {
+                    if CachedTitle.approved.contains(id) {
                         CachedTitle.approved.remove(at: CachedTitle.approved.index(of: id)!)
                     }
                     DispatchQueue.main.async {
@@ -511,7 +511,7 @@ class PostActions: NSObject {
                     }
                 case .success:
                     CachedTitle.removed.append(id)
-                    if (CachedTitle.approved.contains(id)) {
+                    if CachedTitle.approved.contains(id) {
                         CachedTitle.approved.remove(at: CachedTitle.approved.index(of: id)!)
                     }
                     DispatchQueue.main.async {
@@ -577,7 +577,7 @@ class PostActions: NSObject {
             textField.keyboardType = .default
             textField.leftViewPadding = 16
             textField.returnKeyType = .done
-            if(subreddit != nil) {
+            if subreddit != nil {
                 textField.text = subreddit
             }
             textField.action { textField in
@@ -599,7 +599,7 @@ class PostActions: NSObject {
             textField.returnKeyType = .done
             textField.text = thing.title
             textField.clearButtonMode = .whileEditing
-            if(title != nil) {
+            if title != nil {
                 textField.text = title
             }
             textField.action { textField in
@@ -613,8 +613,8 @@ class PostActions: NSObject {
             let subField = self.subText ?? ""
             let titleField = self.titleText ?? ""
             
-            if (subField.isEmpty || titleField.isEmpty) {
-                if (subField.isEmpty) {
+            if subField.isEmpty || titleField.isEmpty {
+                if subField.isEmpty {
                     self.crosspost(thing, parent, titleField, subField, "Subreddit must not be empty!")
                 }
                 else {

@@ -53,7 +53,7 @@ public class StreamableJSONBase {
 	required public init?(dictionary: NSDictionary) {
 
 		status = dictionary["status"] as? Int
-		if (dictionary["files"] != nil) { files = Files(dictionary: dictionary["files"] as! NSDictionary) }
+		if dictionary["files"] != nil { files = Files(dictionary: dictionary["files"] as! NSDictionary) }
 		thumbnail_url = dictionary["thumbnail_url"] as? String
 		source = dictionary["source"] as? String
 		title = dictionary["title"] as? String

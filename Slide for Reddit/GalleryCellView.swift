@@ -55,7 +55,7 @@ class GalleryCellView: UITableViewCell {
         estimatedHeight = CGFloat(getHeightFromAspectRatio(imageHeight: h, imageWidth: w))
         bannerImage.sd_setImage(with: URL.init(string: preview))
         
-        switch(ContentType.getContentType(submission: link)) {
+        switch ContentType.getContentType(submission: link) {
         case .ALBUM:
             typeImage.image = UIImage.init(named: "image")?.navIcon()
         case .EXTERNAL, .LINK, .REDDIT:

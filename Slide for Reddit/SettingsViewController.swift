@@ -58,7 +58,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: "")
         navigationController?.navigationBar.tintColor = UIColor.white
         navigationController?.setToolbarHidden(true, animated: false)
-        if(SettingsPro.changed) {
+        if SettingsPro.changed {
             loadView()
         }
     }
@@ -66,7 +66,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
     override func loadView() {
         super.loadView()
         doCells()
-        if(SettingValues.isPro) {
+        if SettingValues.isPro {
             let menuB = UIBarButtonItem(image: UIImage.init(named: "support")?.toolbarIcon().getCopy(withColor: GMColor.red500Color()), style: .plain, target: self, action: #selector(SettingsViewController.didPro(_:)))
             navigationItem.rightBarButtonItem = menuB
         }
@@ -268,18 +268,18 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         self.lockCell.imageView?.image = UIImage.init(named: "lockapp")?.toolbarIcon()
         self.lockCell.imageView?.tintColor = ColorUtil.fontColor
 
-        if (reset) {
+        if reset {
             self.tableView.reloadData(with: .fade)
         }
     }
 
     func switchIsChanged(_ changed: UISwitch) {
-        if (changed == multiColumn) {
+        if changed == multiColumn {
             SettingValues.multiColumn = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_multiColumn)
         }
-        else if (changed == lock) {
-            if(!VCPresenter.proDialogShown(feature: true, self)) {
+        else if changed == lock {
+            if !VCPresenter.proDialogShown(feature: true, self) {
                 SettingValues.biometrics = changed.isOn
                 UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_biometrics)
             }
@@ -309,10 +309,10 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch (indexPath.section) {
+        switch indexPath.section {
         case 0:
-        if(SettingValues.isPro) {
-            switch (indexPath.row) {
+        if SettingValues.isPro {
+            switch indexPath.row {
             case 0: return self.general
             case 1: return self.manageSubs
             case 2: return self.multiColumnCell
@@ -323,7 +323,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
             }
         }
         else {
-            switch (indexPath.row) {
+            switch indexPath.row {
             case 0: return self.general
             case 1: return self.manageSubs
             case 2: return self.goPro
@@ -335,7 +335,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
             }
         }
         case 1:
-            switch (indexPath.row) {
+            switch indexPath.row {
             case 0: return self.mainTheme
             case 1: return self.postLayout
             case 2: return self.subThemes
@@ -344,7 +344,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
             default: fatalError("Unknown row in section 1")
             }
         case 2:
-            switch (indexPath.row) {
+            switch indexPath.row {
             case 0: return self.linkHandling
             case 1: return self.history
             case 2: return self.dataSaving
@@ -356,7 +356,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
             default: fatalError("Unknown row in section 2")
             }
         case 3:
-            switch (indexPath.row) {
+            switch indexPath.row {
             case 0: return self.aboutCell
             case 1: return self.subCell
             case 2: return self.githubCell
@@ -369,7 +369,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
     }
     
     func showMultiColumn() {
-        if(!VCPresenter.proDialogShown(feature: true, self)) {
+        if !VCPresenter.proDialogShown(feature: true, self) {
             let actionSheetController: UIAlertController = UIAlertController(title: "Multi Column Mode", message: "", preferredStyle: .actionSheet)
             
             let cancelActionButton: UIAlertAction = UIAlertAction(title: "Close", style: .cancel) { _ -> Void in
@@ -403,68 +403,68 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         var ch: UIViewController?
-        if (indexPath.section == 0 && indexPath.row == 1) {
+        if indexPath.section == 0 && indexPath.row == 1 {
             ch = SubredditReorderViewController()
         }
-        else if (indexPath.section == 0 && indexPath.row == 0) {
+        else if indexPath.section == 0 && indexPath.row == 0 {
             ch = SettingsGeneral()
         }
-        else if (indexPath.section == 0 && indexPath.row == 2) {
-            if(!SettingValues.isPro) {
+        else if indexPath.section == 0 && indexPath.row == 2 {
+            if !SettingValues.isPro {
                 ch = SettingsPro()
             }
             else {
                 showMultiColumn()
             }
         }
-        else if (indexPath.section == 0 && indexPath.row == 3) {
-            if(!SettingValues.isPro) {
+        else if indexPath.section == 0 && indexPath.row == 3 {
+            if !SettingValues.isPro {
                 showMultiColumn()
             }
         }
-        else if (indexPath.section == 2 && indexPath.row == 4) {
+        else if indexPath.section == 2 && indexPath.row == 4 {
             ch = FiltersViewController()
         }
-        else if (indexPath.section == 1 && indexPath.row == 2) {
+        else if indexPath.section == 1 && indexPath.row == 2 {
             ch = SubredditThemeViewController()
         }
-        else if (indexPath.section == 1 && indexPath.row == 0) {
+        else if indexPath.section == 1 && indexPath.row == 0 {
             ch = SettingsTheme()
             (ch as! SettingsTheme).tochange = self
         }
-        else if (indexPath.section == 1 && indexPath.row == 3) {
+        else if indexPath.section == 1 && indexPath.row == 3 {
             ch = SettingsFont()
         }
-        else if (indexPath.section == 1 && indexPath.row == 1) {
+        else if indexPath.section == 1 && indexPath.row == 1 {
             ch = SettingsLayout()
         }
-        else if (indexPath.section == 2 && indexPath.row == 2) {
+        else if indexPath.section == 2 && indexPath.row == 2 {
             ch = SettingsData()
         }
-        else if (indexPath.section == 2 && indexPath.row == 3) {
+        else if indexPath.section == 2 && indexPath.row == 3 {
             ch = SettingsContent()
         }
-        else if (indexPath.section == 1 && indexPath.row == 4) {
+        else if indexPath.section == 1 && indexPath.row == 4 {
             ch = SettingsComments()
         }
-        else if (indexPath.section == 2 && indexPath.row == 0) {
+        else if indexPath.section == 2 && indexPath.row == 0 {
             ch = SettingsLinkHandling()
         }
-        else if (indexPath.section == 2 && indexPath.row == 1) {
+        else if indexPath.section == 2 && indexPath.row == 1 {
             ch = SettingsHistory()
         }
-        else if (indexPath.section == 0 && indexPath.row == (SettingValues.isPro ? 4 : 5)) {
+        else if indexPath.section == 0 && indexPath.row == (SettingValues.isPro ? 4 : 5) {
             ch = SettingsGestures()
         }
-        else if (indexPath.section == 2 && indexPath.row == 7) {
-            if(!SettingValues.isPro) {
+        else if indexPath.section == 2 && indexPath.row == 7 {
+            if !SettingValues.isPro {
                 ch = SettingsPro()
             }
             else {
                 ch = SettingsBackup()
             }
         }
-        else if (indexPath.section == 2 && indexPath.row == 6) {
+        else if indexPath.section == 2 && indexPath.row == 6 {
             let realm = try! Realm()
             try! realm.write {
                 realm.deleteAll()
@@ -477,16 +477,16 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
             
             BannerUtil.makeBanner(text: "All caches cleared!", color: GMColor.green500Color(), seconds: 3, context: self)
         }
-        else if (indexPath.section == 3 && indexPath.row == 0) {
+        else if indexPath.section == 3 && indexPath.row == 0 {
             //todo Show changlog?
         }
-        else if (indexPath.section == 3 && indexPath.row == 1) {
+        else if indexPath.section == 3 && indexPath.row == 1 {
             ch = SingleSubredditViewController.init(subName: "slide_ios", single: true)
         }
-        else if (indexPath.section == 2 && indexPath.row == 5) {
+        else if indexPath.section == 2 && indexPath.row == 5 {
             ch = CacheSettings()
         }
-        else if (indexPath.section == 3 && indexPath.row == 2) {
+        else if indexPath.section == 3 && indexPath.row == 2 {
             let url = URL.init(string: "https://github.com/ccrama/Slide-ios")!
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
@@ -495,7 +495,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
                 UIApplication.shared.openURL(url)
             }
         }
-        else if (indexPath.section == 3 && indexPath.row == 3) {
+        else if indexPath.section == 3 && indexPath.row == 3 {
             ch = LicensesViewController()
             let file = Bundle.main.path(forResource: "Credits", ofType: "plist")!
             (ch as! LicensesViewController).loadPlist(NSDictionary(contentsOfFile: file)!)
@@ -512,7 +512,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
         toReturn.backgroundColor = ColorUtil.backgroundColor
 
-        switch (section) {
+        switch section {
         case 0: label.text = "General"
         case 1: label.text = "Appearance"
         case 2: label.text = "Content"
@@ -523,7 +523,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch (section) {
+        switch section {
         case 0: return (SettingValues.isPro) ? 5 : 6
         case 1: return 5
         case 2: return 8

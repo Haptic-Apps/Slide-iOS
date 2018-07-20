@@ -21,7 +21,7 @@ extension RSubmission {
         let height = submission.height
 
         var type = ContentType.getContentType(baseUrl: submission.url)
-        if (submission.isSelf) {
+        if submission.isSelf {
             type = .SELF
         }
 
@@ -32,68 +32,68 @@ extension RSubmission {
 
         let fullImage = ContentType.fullImage(t: type)
 
-        if (!fullImage && height < 50) {
+        if !fullImage && height < 50 {
             big = false
             thumb = true
         }
 
-        if (type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big) {
+        if type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big {
             big = false
             thumb = false
         }
 
-        if (height < 50) {
+        if height < 50 {
             thumb = true
             big = false
         }
 
-        if (type == ContentType.CType.SELF && SettingValues.hideImageSelftext
-            || SettingValues.noImages && submission.isSelf) {
+        if type == ContentType.CType.SELF && SettingValues.hideImageSelftext
+            || SettingValues.noImages && submission.isSelf {
             big = false
             thumb = false
         }
 
-        if (big || !submission.thumbnail) {
+        if big || !submission.thumbnail {
             thumb = false
         }
 
-        if (!big && !thumb && submission.type != .SELF && submission.type != .NONE) { //If a submission has a link but no images, still show the web thumbnail
+        if !big && !thumb && submission.type != .SELF && submission.type != .NONE { //If a submission has a link but no images, still show the web thumbnail
             thumb = true
         }
 
         let sub = submission.subreddit
-        if (submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && (sub == "all" || sub == "frontpage" || sub.contains("/m/") || sub.contains("+") || sub == "popular"))) {
+        if submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && (sub == "all" || sub == "frontpage" || sub.contains("/m/") || sub.contains("+") || sub == "popular")) {
             big = false
             thumb = true
         }
 
-        if (SettingValues.noImages) {
+        if SettingValues.noImages {
             big = false
             thumb = false
         }
-        if (thumb && type == .SELF) {
+        if thumb && type == .SELF {
             thumb = false
         }
 
-        if (thumb && !big) {
+        if thumb && !big {
             target = .thumb
         }
-        else if (big) {
+        else if big {
             target = .banner
         }
         else {
             target = .text
         }
 
-        if(type == .LINK && SettingValues.linkAlwaysThumbnail) {
+        if type == .LINK && SettingValues.linkAlwaysThumbnail {
             target == .thumb
         }
 
         var cell: LinkCellView!
-        if (target == .thumb) {
+        if target == .thumb {
             cell = ThumbnailLinkCellView()
         }
-        else if (target == .banner) {
+        else if target == .banner {
             cell = BannerLinkCellView()
         }
         else {

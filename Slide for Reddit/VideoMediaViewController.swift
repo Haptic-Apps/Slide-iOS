@@ -205,8 +205,8 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     }
     
     func handleTap(_ sender: UITapGestureRecognizer) {
-        if (sender.state == UIGestureRecognizerState.ended) {
-            if(scrubber.alpha == 0) {
+        if sender.state == UIGestureRecognizerState.ended {
+            if scrubber.alpha == 0 {
                 self.handleShowUI()
                 self.startTimerToHide()
             }
@@ -217,9 +217,9 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     }
     
     func handleDoubleTap(_ sender: UITapGestureRecognizer) {
-        if (sender.state == UIGestureRecognizerState.ended) {
+        if sender.state == UIGestureRecognizerState.ended {
             let x = sender.location(in: self.view).x
-            if(x > UIScreen.main.bounds.size.width / 2) {
+            if x > UIScreen.main.bounds.size.width / 2 {
                 //skip forward
                 if isYoutubeView {
                     let playerCurrentTime = scrubber.slider.value
@@ -301,7 +301,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     }
     
     func handleHideUI() {
-        if(!self.scrubber.isHidden) {
+        if !self.scrubber.isHidden {
             UIView.animate(withDuration: 0.2, animations: {
                 self.scrubber.alpha = 0
             }, completion: { (_) in
@@ -312,7 +312,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     
     func handleShowUI() {
         timer?.invalidate()
-        if(self.scrubber.isHidden) {
+        if self.scrubber.isHidden {
             self.scrubber.isHidden = false
             UIView.animate(withDuration: 0.2, animations: {
                 self.scrubber.alpha = 1
@@ -396,7 +396,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     }
     
     func getVideo(_ toLoad: String) {
-        if (FileManager.default.fileExists(atPath: getKeyFromURL())) {
+        if FileManager.default.fileExists(atPath: getKeyFromURL()) {
             playVideo()
         }
         else {
@@ -416,7 +416,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
                         print(error)
                     }
                     else { //no errors
-                        if(self.videoType == .REDDIT) {
+                        if self.videoType == .REDDIT {
                             self.downloadRedditAudio()
                         }
                         else {
@@ -447,7 +447,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
             }
             .responseData { response2 in
                 print(response2.response!.statusCode)
-                if (response2.response!.statusCode != 200) {
+                if response2.response!.statusCode != 200 {
                     do {
                         try FileManager.init().copyItem(at: localUrlV, to: finalUrl)
                         DispatchQueue.main.async {
@@ -490,25 +490,25 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     
     func formatUrl(sS: String) -> String {
         var s = sS
-        if (s.hasSuffix("v") && !s.contains("streamable.com")) {
+        if s.hasSuffix("v") && !s.contains("streamable.com") {
             s = s.substring(0, length: s.length - 1)
         }
-        else if (s.contains("gfycat") && (!s.contains("mp4") && !s.contains("webm"))) {
-            if (s.contains("-size_restricted")) {
+        else if s.contains("gfycat") && (!s.contains("mp4") && !s.contains("webm")) {
+            if s.contains("-size_restricted") {
                 s = s.replacingOccurrences(of: "-size_restricted", with: "")
             }
         }
-        if ((s.contains(".webm") || s.contains(".gif")) && !s.contains(".gifv") && s.contains(
-            "imgur.com")) {
+        if (s.contains(".webm") || s.contains(".gif")) && !s.contains(".gifv") && s.contains(
+            "imgur.com") {
             s = s.replacingOccurrences(of: ".gifv", with: ".mp4")
             s = s.replacingOccurrences(of: ".gif", with: ".mp4")
             s = s.replacingOccurrences(of: ".webm", with: ".mp4")
         }
-        if (s.endsWith("/")) {
+        if s.endsWith("/") {
             s = s.substring(0, length: s.length - 1)
         }
-        if (s.contains("v.redd.it") && !s.contains("DASH")) {
-            if (s.endsWith("/")) {
+        if s.contains("v.redd.it") && !s.contains("DASH") {
+            if s.endsWith("/") {
                 s = s.substring(0, length: s.length - 2)
             }
             s += "/DASH_9_6_M"
@@ -526,29 +526,29 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         case OTHER
 
         static func fromPath(_ url: String) -> VideoType {
-            if (url.contains(".mp4") || url.contains("webm") || url.contains("redditmedia.com")) {
+            if url.contains(".mp4") || url.contains("webm") || url.contains("redditmedia.com") {
                 return VideoType.DIRECT
             }
-            if (url.contains("gfycat") && !url.contains("mp4")) {
+            if url.contains("gfycat") && !url.contains("mp4") {
                 return VideoType.GFYCAT
             }
-            if (url.contains("v.redd.it")) {
+            if url.contains("v.redd.it") {
                 return VideoType.REDDIT
             }
-            if (url.contains("imgur.com")) {
+            if url.contains("imgur.com") {
                 return VideoType.IMGUR
             }
-            if (url.contains("vid.me")) {
+            if url.contains("vid.me") {
                 return VideoType.VID_ME
             }
-            if (url.contains("streamable.com")) {
+            if url.contains("streamable.com") {
                 return VideoType.STREAMABLE
             }
             return VideoType.OTHER
         }
 
         func getSourceObject() -> VideoSource {
-            switch (self) {
+            switch self {
             case .GFYCAT:
                 return GfycatVideoSource()
             case .REDDIT:
@@ -576,7 +576,7 @@ extension VideoMediaViewController {
         var playlist = ""
         
         var url = urlS
-        if (url.contains("#t=")) {
+        if url.contains("#t=") {
             url = url.replacingOccurrences(of: "#t=", with: url.contains("?") ? "&t=" : "?t=")
         }
 
@@ -626,7 +626,7 @@ extension VideoMediaViewController {
                 "modestbranding": 1, // Remove youtube logo on bottom right
                 "autohide": 1,
                 ]
-            if (!playlist.isEmpty) {
+            if !playlist.isEmpty {
                 strongSelf.youtubeView.load(withPlaylistId: playlist, playerVars: vars)
             }
             else {
@@ -676,7 +676,7 @@ extension VideoMediaViewController {
         key = key.replacingOccurrences(of: ".gifv", with: ".mp4")
         key = key.replacingOccurrences(of: ".gif", with: ".mp4")
         key = key.replacingOccurrences(of: ".", with: "")
-        if (key.length > 200) {
+        if key.length > 200 {
             key = key.substring(0, length: 200)
         }
         
@@ -802,7 +802,7 @@ extension VideoMediaViewController: YTPlayerViewDelegate {
 extension VideoMediaViewController {
     func getLastPathSegment(_ path: String) -> String {
         var inv = path
-        if (inv.endsWith("/")) {
+        if inv.endsWith("/") {
             inv = inv.substring(0, length: inv.length - 1)
         }
         let slashindex = inv.lastIndexOf("/")!
@@ -815,19 +815,19 @@ extension VideoMediaViewController {
         var timeAdd = 0
         for s in time.components(separatedBy: CharacterSet(charactersIn: "hms")) {
             print(s)
-            if (!s.isEmpty) {
-                if (time.contains(s + "s")) {
+            if !s.isEmpty {
+                if time.contains(s + "s") {
                     timeAdd += Int(s)!
                 }
-                else if (time.contains(s + "m")) {
+                else if time.contains(s + "m") {
                     timeAdd += 60 * Int(s)!
                 }
-                else if (time.contains(s + "h")) {
+                else if time.contains(s + "h") {
                     timeAdd += 3600 * Int(s)!
                 }
             }
         }
-        if (timeAdd == 0 && Int(time) != nil) {
+        if timeAdd == 0 && Int(time) != nil {
             timeAdd += Int(time)!
         }
 

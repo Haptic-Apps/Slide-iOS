@@ -73,47 +73,47 @@ class SettingsLayout: UITableViewController {
     }
     
     func switchIsChanged(_ changed: UISwitch) {
-        if(changed == smalltag) {
+        if changed == smalltag {
             SettingValues.smallerTag = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_smallTag)
         }
-        else if(changed == selftext) {
+        else if changed == selftext {
             SettingValues.showFirstParagraph = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_showFirstParagraph)
         }
-        else if(changed == largerThumbnail) {
+        else if changed == largerThumbnail {
             SettingValues.largerThumbnail = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_largerThumbnail)
         }
-        else if(changed == abbreviateScore) {
+        else if changed == abbreviateScore {
             SettingValues.abbreviateScores = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_abbreviateScores)
         }
-        else if(changed == scoreTitle) {
+        else if changed == scoreTitle {
             SettingValues.scoreInTitle = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_scoreInTitle)
         }
-        else if(changed == thumbLink) {
+        else if changed == thumbLink {
             SettingValues.linkAlwaysThumbnail = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_linkAlwaysThumbnail)
         }
-        else if(changed == domainInfo) {
+        else if changed == domainInfo {
             SettingValues.domainInInfo = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_domainInInfo)
         }
-        else if(changed == leftThumb) {
+        else if changed == leftThumb {
             SettingValues.leftThumbnail = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_leftThumbnail)
         }
-        else if(changed == hide) {
+        else if changed == hide {
             SettingValues.hideButton = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_hideButton)
         }
-        else if(changed == save) {
+        else if changed == save {
             SettingValues.saveButton = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_saveButton)
         }
-        else if(changed == flatMode) {
+        else if changed == flatMode {
             SettingValues.flatMode = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_flatMode)
             SingleSubredditViewController.cellVersion += 1
@@ -127,7 +127,7 @@ class SettingsLayout: UITableViewController {
     
     func doLink() {
         link.contentView.removeFromSuperview()
-        if(SettingValues.postImageMode == .THUMBNAIL || SettingValues.linkAlwaysThumbnail) {
+        if SettingValues.postImageMode == .THUMBNAIL || SettingValues.linkAlwaysThumbnail {
             link = ThumbnailLinkCellView.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 500))
         }
         else {
@@ -183,7 +183,7 @@ class SettingsLayout: UITableViewController {
         linkCell.contentView.addSubview(link.contentView)
         linkCell.frame = CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: link.estimateHeight(false, true))
         
-        switch(SettingValues.postViewMode) {
+        switch SettingValues.postViewMode {
         case .CARD:
             cardModeCell.imageView?.image = UIImage.init(named: "card")?.toolbarIcon()
         case .CENTER:
@@ -194,7 +194,7 @@ class SettingsLayout: UITableViewController {
             cardModeCell.imageView?.image = UIImage.init(named: "list")?.toolbarIcon()
         }
         
-        switch(SettingValues.postImageMode) {
+        switch SettingValues.postImageMode {
         case .CROPPED_IMAGE:
             imageCell.imageView?.image = UIImage.init(named: "crop")?.toolbarIcon()
         case .FULL_IMAGE:
@@ -203,7 +203,7 @@ class SettingsLayout: UITableViewController {
             imageCell.imageView?.image = UIImage.init(named: "thumb")?.toolbarIcon()
         }
         
-        switch(SettingValues.actionBarMode) {
+        switch SettingValues.actionBarMode {
         case .FULL:
             actionBarCell.imageView?.image = UIImage.init(named: "code")?.toolbarIcon()
         case .NONE:
@@ -222,7 +222,7 @@ class SettingsLayout: UITableViewController {
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
         toReturn.backgroundColor = ColorUtil.backgroundColor
         
-        switch(section) {
+        switch section {
         case 0: label.text = "Preview"
         case 1: label.text = "Display"
         case 2: label.text = "Actionbar"
@@ -233,7 +233,7 @@ class SettingsLayout: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        if(indexPath.section == 1 && indexPath.row == 0) {
+        if indexPath.section == 1 && indexPath.row == 0 {
             let alertController: BottomSheetActionController = BottomSheetActionController()
             alertController.addAction(Action(ActionData(title: "List view", image: UIImage(named: "list")!.menuIcon()), style: .default, handler: { _ in
                 UserDefaults.standard.set("list", forKey: SettingValues.pref_postViewMode)
@@ -286,7 +286,7 @@ class SettingsLayout: UITableViewController {
             VCPresenter.presentAlert(alertController, parentVC: self)
             
         }
-        else if(indexPath.section == 1 && indexPath.row == 1) {
+        else if indexPath.section == 1 && indexPath.row == 1 {
             let alertController: BottomSheetActionController = BottomSheetActionController()
             alertController.addAction(Action(ActionData(title: "Full image", image: UIImage(named: "full")!.menuIcon()), style: .default, handler: { _ in
                 UserDefaults.standard.set("full", forKey: SettingValues.pref_postImageMode)
@@ -323,7 +323,7 @@ class SettingsLayout: UITableViewController {
             
             VCPresenter.presentAlert(alertController, parentVC: self)
         }
-        else if(indexPath.section == 2 && indexPath.row == 0) {
+        else if indexPath.section == 2 && indexPath.row == 0 {
             let alertController: BottomSheetActionController = BottomSheetActionController()
             alertController.addAction(Action(ActionData(title: "Full action bar", image: UIImage(named: "code")!.menuIcon()), style: .default, handler: { _ in
                 UserDefaults.standard.set("full", forKey: SettingValues.pref_actionbarMode)
@@ -436,7 +436,7 @@ class SettingsLayout: UITableViewController {
     }
     
     func doDisables() {
-        if(SettingValues.actionBarMode != .FULL) {
+        if SettingValues.actionBarMode != .FULL {
             hide.isEnabled = false
             save.isEnabled = false
         }
@@ -444,7 +444,7 @@ class SettingsLayout: UITableViewController {
             hide.isEnabled = true
             save.isEnabled = true
         }
-        if(SettingValues.postImageMode == .THUMBNAIL) {
+        if SettingValues.postImageMode == .THUMBNAIL {
             thumbLink.isEnabled = false
         }
         else {
@@ -456,14 +456,14 @@ class SettingsLayout: UITableViewController {
         return 3
     }
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if(section == 0) {
+        if section == 0 {
             return 0
         }
         return 70
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if(indexPath.section == 0) {
+        if indexPath.section == 0 {
             return link.estimateHeight(false)
         }
         return 60
@@ -473,11 +473,11 @@ class SettingsLayout: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch(indexPath.section) {
+        switch indexPath.section {
         case 0:
             return linkCell
         case 1:
-            switch(indexPath.row) {
+            switch indexPath.row {
             case 0: return self.cardModeCell
             case 1: return self.imageCell
             case 2: return self.largerThumbnailCell
@@ -490,7 +490,7 @@ class SettingsLayout: UITableViewController {
             default: fatalError("Unknown row in section 1")
             }
         case 2:
-            switch(indexPath.row) {
+            switch indexPath.row {
             case 0: return self.actionBarCell
             case 1: return self.scoreTitleCell
             case 2: return self.abbreviateScoreCell
@@ -505,7 +505,7 @@ class SettingsLayout: UITableViewController {
         
     }
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch(section) {
+        switch section {
         case 0: return 1
         case 1: return 8
         case 2: return 6

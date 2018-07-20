@@ -46,8 +46,8 @@ public class Files {
 */
 	required public init?(dictionary: NSDictionary) {
 
-		if (dictionary["mp4"] != nil) { mp4 = StremableMp4(dictionary: dictionary["mp4"] as! NSDictionary) }
-		if (dictionary["mp4-mobile"] != nil) { mp4mobile = StremableMp4Mobile(dictionary: dictionary["mp4-mobile"] as! NSDictionary) }
+		if dictionary["mp4"] != nil { mp4 = StremableMp4(dictionary: dictionary["mp4"] as! NSDictionary) }
+		if dictionary["mp4-mobile"] != nil { mp4mobile = StremableMp4Mobile(dictionary: dictionary["mp4-mobile"] as! NSDictionary) }
 	}
 		
 /**

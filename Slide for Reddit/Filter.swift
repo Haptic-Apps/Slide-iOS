@@ -43,12 +43,12 @@ class Filter: UITableViewController {
         super.viewWillDisappear(animated)
         var changed = false
         for i in 0...6 {
-            if(enabled[i] != oldEnabled[i]) {
+            if enabled[i] != oldEnabled[i] {
                 changed = true
                 break
             }
         }
-        if(changed) {
+        if changed {
             PostFilter.setEnabledArray(sub, enabled)
             parentVC.refresh()
         }
@@ -65,25 +65,25 @@ class Filter: UITableViewController {
     }
 
     func switchIsChanged(_ changed: UISwitch) {
-        if (changed == imageSwitch) {
+        if changed == imageSwitch {
             enabled[0] = changed.isOn
         }
-        else if (changed == albumSwitch) {
+        else if changed == albumSwitch {
             enabled[1] = changed.isOn
         }
-        else if (changed == gifSwitch) {
+        else if changed == gifSwitch {
             enabled[2] = changed.isOn
         }
-        else if (changed == videoSwitch) {
+        else if changed == videoSwitch {
             enabled[3] = changed.isOn
         }
-        else if (changed == linkSwitch) {
+        else if changed == linkSwitch {
             enabled[4] = changed.isOn
         }
-        else if (changed == selftextSwitch) {
+        else if changed == selftextSwitch {
             enabled[5] = changed.isOn
         }
-        else if (changed == nsfwSwitch) {
+        else if changed == nsfwSwitch {
             enabled[6] = changed.isOn
         }
         UserDefaults.standard.synchronize()
@@ -165,9 +165,9 @@ class Filter: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch (indexPath.section) {
+        switch indexPath.section {
         case 0:
-            switch (indexPath.row) {
+            switch indexPath.row {
             case 0: return self.image
             case 1: return self.album
             case 2: return self.gif
@@ -183,7 +183,7 @@ class Filter: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch (section) {
+        switch section {
         case 0: return 7
         default: fatalError("Unknown number of sections")
         }

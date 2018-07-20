@@ -115,14 +115,14 @@ public class TextDisplayStackView: UIStackView {
         removedSubviews.forEach({ $0.removeFromSuperview() })
         overflow.isHidden = true
         
-        if(htmlString.contains("<table") || htmlString.contains("<code") || htmlString.contains("<cite")) {
+        if htmlString.contains("<table") || htmlString.contains("<code") || htmlString.contains("<cite") {
             var blocks = getBlocks(htmlString)
             
             var startIndex = 0
             
             let newTitle = NSMutableAttributedString(attributedString: title)
             
-            if (!blocks[0].startsWith("<table>") && !blocks[0].startsWith("<cite>") && !blocks[0].startsWith("<code>")) {
+            if !blocks[0].startsWith("<table>") && !blocks[0].startsWith("<cite>") && !blocks[0].startsWith("<code>") {
                 newTitle.append(NSAttributedString.init(string: "\n\n", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 5)]))
                 newTitle.append(createAttributedChunk(baseHTML: blocks[0]))
                 startIndex = 1
@@ -139,8 +139,8 @@ public class TextDisplayStackView: UIStackView {
             let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
             estimatedHeight += textSizeB.height
             
-            if (blocks.count > 1) {
-                if (startIndex == 0) {
+            if blocks.count > 1 {
+                if startIndex == 0 {
                     setViews(blocks)
                 }
                 else {
@@ -151,11 +151,11 @@ public class TextDisplayStackView: UIStackView {
         }
         else {
             let newTitle = NSMutableAttributedString(attributedString: title)
-            if(body != nil) {
+            if body != nil {
                 newTitle.append(NSAttributedString.init(string: "\n\n", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 5)]))
                 newTitle.append(body!)
             }
-            else if(!htmlString.isEmpty()) {
+            else if !htmlString.isEmpty() {
                 newTitle.append(NSAttributedString.init(string: "\n\n", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 5)]))
                 newTitle.append(createAttributedChunk(baseHTML: htmlString))
             }
@@ -192,7 +192,7 @@ public class TextDisplayStackView: UIStackView {
         
         var startIndex = 0
         
-        if (!blocks[0].startsWith("<table>") && !blocks[0].startsWith("<cite>") && !blocks[0].startsWith("<code>")) {
+        if !blocks[0].startsWith("<table>") && !blocks[0].startsWith("<cite>") && !blocks[0].startsWith("<code>") {
             let text = createAttributedChunk(baseHTML: blocks[0])
             
             let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.activeLinkAttributes)
@@ -208,8 +208,8 @@ public class TextDisplayStackView: UIStackView {
             startIndex = 1
         }
         
-        if (blocks.count > 1) {
-            if (startIndex == 0) {
+        if blocks.count > 1 {
+            if startIndex == 0 {
                 setViews(blocks)
             }
             else {
@@ -220,14 +220,14 @@ public class TextDisplayStackView: UIStackView {
     }
     
     func setViews(_ blocks: [String]) {
-        if (!blocks.isEmpty) {
+        if !blocks.isEmpty {
             overflow.isHidden = false
         }
         
         for block in blocks {
             print("Block is \(block)")
             estimatedHeight += 8
-            if(block.startsWith("<table>")) {
+            if block.startsWith("<table>") {
                 let table = TableDisplayView.init(baseHtml: block, color: baseFontColor, accentColor: tColor, delegate: delegate!)
                 table.accessibilityIdentifier = "Table"
                 overflow.addArrangedSubview(table)
@@ -241,7 +241,7 @@ public class TextDisplayStackView: UIStackView {
                 estimatedHeight += table.globalHeight
                 tableCount += 1
             }
-            else if(block.startsWith("<hr/>")) {
+            else if block.startsWith("<hr/>") {
                 let line = UIView()
                 line.backgroundColor = ColorUtil.fontColor
                 overflow.addArrangedSubview(line)
@@ -249,7 +249,7 @@ public class TextDisplayStackView: UIStackView {
                 line.heightAnchor == CGFloat(1)
                 line.horizontalAnchors == overflow.horizontalAnchors
             }
-            else if(block.startsWith("<code>")) {
+            else if block.startsWith("<code>") {
                 let body = CodeDisplayView.init(baseHtml: block, color: baseFontColor)
                 body.accessibilityIdentifier = "Code block"
                 overflow.addArrangedSubview(body)
@@ -261,7 +261,7 @@ public class TextDisplayStackView: UIStackView {
                 body.layer.cornerRadius = 10
                 body.contentOffset = CGPoint.init(x: -8, y: -8)
             }
-            else if(block.startsWith("<cite>")) {
+            else if block.startsWith("<cite>") {
                 let label = TTTAttributedLabel.init(frame: CGRect.zero)
                 label.accessibilityIdentifier = "cite"
                 let text = createAttributedChunk(baseHTML: block)
@@ -319,7 +319,7 @@ public class TextDisplayStackView: UIStackView {
         }
         
         html.enumerateAttribute(NSStrikethroughStyleAttributeName, in: NSRange(location: 0, length: html.length), options: [], using: { (value: Any?, range: NSRange, _: UnsafeMutablePointer<ObjCBool>) -> Void in
-            if(value != nil && value is NSNumber && (value as! NSNumber) == 1) {
+            if value != nil && value is NSNumber && (value as! NSNumber) == 1 {
                 html.addAttributes([kCTForegroundColorAttributeName as String: ColorUtil.fontColor, NSBaselineOffsetAttributeName: NSNumber(floatLiteral: 0), "TTTStrikeOutAttribute": 1, NSStrikethroughStyleAttributeName: NSNumber(value: 1)], range: range)
             }
         })
@@ -347,7 +347,7 @@ public class TextDisplayStackView: UIStackView {
         }
 
         html.enumerateAttribute(NSStrikethroughStyleAttributeName, in: NSRange(location: 0, length: html.length), options: [], using: { (value: Any?, range: NSRange, _: UnsafeMutablePointer<ObjCBool>) -> Void in
-            if(value != nil && value is NSNumber && (value as! NSNumber) == 1) {
+            if value != nil && value is NSNumber && (value as! NSNumber) == 1 {
                 html.addAttributes([kCTForegroundColorAttributeName as String: ColorUtil.fontColor, NSBaselineOffsetAttributeName: NSNumber(floatLiteral: 0), "TTTStrikeOutAttribute": 1, NSStrikethroughStyleAttributeName: NSNumber(value: 1)], range: range)
             }
         })
@@ -358,19 +358,19 @@ public class TextDisplayStackView: UIStackView {
         if let link = firstTextView.link(at: at) {
             return link
         }
-        if(overflow.isHidden) {
+        if overflow.isHidden {
             return nil
         }
         
         for view in self.overflow.subviews {
-            if(view is TTTAttributedLabel) {
+            if view is TTTAttributedLabel {
                 if let link = (view as! TTTAttributedLabel).link(at: withTouch.location(in: view)) {
                     return link
                 }
             }
-            else if(view is TableDisplayView) {
+            else if view is TableDisplayView {
                 //Dont pass any touches through Table
-                if(view.bounds.contains( withTouch.location(in: view))) {
+                if view.bounds.contains( withTouch.location(in: view)) {
                     return TTTAttributedLabelLink.init()
                 }
             }
@@ -382,15 +382,15 @@ public class TextDisplayStackView: UIStackView {
         
         var codeBlockSeperated = parseCodeTags(html)
         
-        if (html.contains(HR_TAG)) {
+        if html.contains(HR_TAG) {
             codeBlockSeperated = parseHR(codeBlockSeperated)
         }
         
-        if (html.contains("<cite>")) {
+        if html.contains("<cite>") {
             codeBlockSeperated = parseBlockquote(codeBlockSeperated)
         }
         
-        if (html.contains("<table")) {
+        if html.contains("<table") {
             return parseTableTags(codeBlockSeperated)
         }
         else {
@@ -488,14 +488,14 @@ public class TextDisplayStackView: UIStackView {
         var split = [String]()
         
         preSeperated.append(startSeperated[0])
-        if(startSeperated.count > 1) {
+        if startSeperated.count > 1 {
             for i in 1...startSeperated.count - 1 {
                 text = startSeperated[i]
                 split = text.components(separatedBy: endTag)
                 code = split[0]
                 
                 preSeperated.append(startTag + code + endTag)
-                if (split.count > 1) {
+                if split.count > 1 {
                     preSeperated.append(split[1])
                 }
             }
@@ -507,7 +507,7 @@ public class TextDisplayStackView: UIStackView {
     public func parseHR(_ blocks: [String]) -> [String] {
         var newBlocks = [String]()
         for block in blocks {
-            if (block.contains(HR_TAG)) {
+            if block.contains(HR_TAG) {
                 for s in block.components(separatedBy: HR_TAG) {
                     newBlocks.append(s)
                     newBlocks.append(HR_TAG)
@@ -535,14 +535,14 @@ public class TextDisplayStackView: UIStackView {
             var split = [String]()
             
             preSeperated.append(startSeperated[0])
-            if(startSeperated.count > 1) {
+            if startSeperated.count > 1 {
                 for i in 1...startSeperated.count - 1 {
                     text = startSeperated[i]
                     split = text.components(separatedBy: endTag)
                     code = split[0]
                     
                     preSeperated.append(startTag + code + endTag)
-                    if (split.count > 1) {
+                    if split.count > 1 {
                         preSeperated.append(split[1])
                     }
                 }
@@ -555,14 +555,14 @@ public class TextDisplayStackView: UIStackView {
     public func parseTableTags(_ blocks: [String]) -> [String] {
         var newBlocks = [String]()
         for block in blocks {
-            if (block.contains(TABLE_START_TAG)) {
+            if block.contains(TABLE_START_TAG) {
                 var startSeperated = block.components(separatedBy: TABLE_START_TAG)
                 newBlocks.append(startSeperated[0].trimmed())
                 for i in 1...startSeperated.count - 1 {
                     var split = startSeperated[i].components(separatedBy: TABLE_END_TAG)
                     let table = "<table>" + split[0] + "</table>"
                     newBlocks.append(table)
-                    if (split.count > 1) {
+                    if split.count > 1 {
                         newBlocks.append(split[1])
                     }
                 }
@@ -585,7 +585,7 @@ public class TextDisplayStackView: UIStackView {
             let spoilerText = match[1]
             let spoilerTeaser = match[2]
             // Remove the last </a> tag, but keep the < for parsing.
-            if (!tag.contains("<a href=\"http")) {
+            if !tag.contains("<a href=\"http") {
                 base = base.replacingOccurrences(of: tag, with: tag.substring(0, length: tag.length - 4) + (spoilerTeaser.isEmpty() ? "spoiler" : "") + " [[s[ \(spoilerText)]s]]</a> ")
             }
         }

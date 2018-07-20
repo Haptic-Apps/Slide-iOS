@@ -41,7 +41,8 @@ class CodeDisplayView: UIScrollView {
     //Algorighm from https://github.com/ccrama/Slide/blob/master/app/src/main/java/me/ccrama/redditslide/Views/CommentOverflow.java
     func parseText(_ text: String) {
         for string in text.split("\n") {
-            if(string.trimmed().isEmpty()) {
+            if string.trimmed()
+                .isEmpty() {
                 continue
             }
             do {
@@ -97,7 +98,7 @@ class CodeDisplayView: UIScrollView {
     func getWidestCell() -> CGFloat {
         var widest = CGFloat(0)
         for row in widths {
-            if(row > widest) {
+            if row > widest {
                 widest = row
             }
         }

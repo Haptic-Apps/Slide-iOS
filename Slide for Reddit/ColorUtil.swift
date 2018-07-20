@@ -48,22 +48,22 @@ class ColorUtil {
             }
         }
         var toReturn = false
-        if(theme != defaultTheme || (shouldBeNight() || (!shouldBeNight() && theme == SettingValues.nightTheme)) || (defaultTheme == SettingValues.nightTheme && theme != defaultTheme)) {
-            if(shouldBeNight() && theme != SettingValues.nightTheme && SettingValues.nightTheme != defaultTheme) {
+        if theme != defaultTheme || (shouldBeNight() || (!shouldBeNight() && theme == SettingValues.nightTheme)) || (defaultTheme == SettingValues.nightTheme && theme != defaultTheme) {
+            if shouldBeNight() && theme != SettingValues.nightTheme && SettingValues.nightTheme != defaultTheme {
                 theme = SettingValues.nightTheme
                 CachedTitle.titles.removeAll()
                 LinkCellImageCache.initialize()
                 SingleSubredditViewController.cellVersion += 1
                 toReturn = true
             }
-            else if(!shouldBeNight() && theme != defaultTheme) {
+            else if !shouldBeNight() && theme != defaultTheme {
                 theme = defaultTheme
                 CachedTitle.titles.removeAll()
                 LinkCellImageCache.initialize()
                 SingleSubredditViewController.cellVersion += 1
                 toReturn = true
             }
-            else if(defaultTheme == SettingValues.nightTheme && theme != defaultTheme) {
+            else if defaultTheme == SettingValues.nightTheme && theme != defaultTheme {
                 theme = defaultTheme
                 CachedTitle.titles.removeAll()
                 LinkCellImageCache.initialize()
@@ -72,7 +72,7 @@ class ColorUtil {
             }
         }
         
-        if(!setOnce) {
+        if !setOnce {
             LinkCellImageCache.initialize()
             setOnce = true
         }
@@ -80,11 +80,11 @@ class ColorUtil {
         backgroundColor = theme.backgroundColor
         fontColor = theme.fontColor
         let color = UserDefaults.standard.colorForKey(key: "basecolor")
-        if (color != nil) {
+        if color != nil {
             baseColor = color!
         }
         let accent = UserDefaults.standard.colorForKey(key: "accentcolor")
-        if (accent != nil) {
+        if accent != nil {
             baseAccent = accent!
         }
         return toReturn
@@ -99,7 +99,7 @@ class ColorUtil {
     }
 
     public static func setBackgroundToolbar(toolbar: UINavigationBar?) {
-        if (toolbar != nil) {
+        if toolbar != nil {
             toolbar?.barTintColor = backgroundColor
         }
     }
@@ -119,7 +119,7 @@ class ColorUtil {
 
     public static func getColorForSub(sub: String) -> UIColor {
         let color = UserDefaults.standard.colorForKey(key: "color+" + sub)
-        if (color == nil || color!.hexString == UIColor.black.hexString) {
+        if color == nil || color!.hexString == UIColor.black.hexString {
             return baseColor
         }
         else {
@@ -129,7 +129,7 @@ class ColorUtil {
 
     public static func getColorForSubBackground(sub: String) -> UIColor {
         let color = UserDefaults.standard.colorForKey(key: "color+" + sub)
-        if (color == nil) {
+        if color == nil {
             return foregroundColor
         }
         else {
@@ -139,7 +139,7 @@ class ColorUtil {
 
     public static func getColorForUser(name: String) -> UIColor {
         let color = UserDefaults.standard.colorForKey(key: "user+" + name)
-        if (color == nil) {
+        if color == nil {
             return baseColor
         }
         else {
@@ -178,7 +178,7 @@ class ColorUtil {
 
     public static func accentColorForSub(sub: String) -> UIColor {
         let color = UserDefaults.standard.colorForKey(key: "accent+" + sub)
-        if (color == nil) {
+        if color == nil {
             return baseAccent
         }
         else {

@@ -17,18 +17,18 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
 
         self.baseURL = urlB
         var url = urlB.absoluteString
-        if(url.contains("/layout/")) {
+        if url.contains("/layout/") {
             url = url.substring(0, length: (url.indexOf("/layout")!))
         }
         var rawDat = cutEnds(s: url)
         
-        if (rawDat.endsWith("/")) {
+        if rawDat.endsWith("/") {
             rawDat = rawDat.substring(0, length: rawDat.length - 1)
         }
-        if (rawDat.contains("/") && (rawDat.length - (rawDat.lastIndexOf("/")!+1)) < 4) {
+        if rawDat.contains("/") && (rawDat.length - (rawDat.lastIndexOf("/")!+1)) < 4 {
             rawDat = rawDat.replacingOccurrences(of: rawDat.substring(rawDat.lastIndexOf("/")!, length: rawDat.length - (rawDat.lastIndexOf("/")!+1)), with: "")
         }
-        if (rawDat.contains("?")) {
+        if rawDat.contains("?") {
             rawDat = rawDat.substring(0, length: rawDat.length - rawDat.indexOf("?")!)
         }
         
@@ -38,7 +38,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         
     }
     func cutEnds(s: String) -> String {
-        if (s.endsWith("/")) {
+        if s.endsWith("/") {
             return s.substring(0, length: s.length - 1)
         }
         else {
@@ -109,17 +109,17 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
     }
     func getHash(sS: String) -> String {
         var s = sS
-        if(s.contains("/comment/")) {
+        if s.contains("/comment/") {
             s = s.substring(0, length: s.indexOf("/comment")!)
         }
         var next = s.substring(s.lastIndexOf("/")!, length: s.length - s.lastIndexOf("/")!)
-        if (next.contains(".")) {
+        if next.contains(".") {
             next = next.substring(0, length: next.indexOf(".")!)
         }
-        if (next.startsWith("/")) {
+        if next.startsWith("/") {
             next = next.substring(1, length: next.length - 1)
         }
-        if (next.length < 5) {
+        if next.length < 5 {
             return getHash(sS: s.replacingOccurrences(of: next, with: ""))
         }
         else {
@@ -179,7 +179,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating: Bool, previousViewControllers: [UIViewController], transitionCompleted: Bool) {
-        if(pageViewController.viewControllers?.first == vCs[0]) {
+        if pageViewController.viewControllers?.first == vCs[0] {
             self.dismiss(animated: true, completion: nil)
         }
         navItem?.title = "\(vCs.index(of: viewControllers!.first!)!)/\(vCs.count - 1)"

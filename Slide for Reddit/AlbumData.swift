@@ -47,7 +47,7 @@ public class AlbumData {
 	required public init?(dictionary: NSDictionary) {
 
 		count = dictionary["count"] as? Int
-		if (dictionary["images"] != nil) { images = Images.modelsFromDictionaryArray(array: dictionary["images"] as! NSArray) }
+		if dictionary["images"] != nil { images = Images.modelsFromDictionaryArray(array: dictionary["images"] as! NSArray) }
 	}
 		
 /**

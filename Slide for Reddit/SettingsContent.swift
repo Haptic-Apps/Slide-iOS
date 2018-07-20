@@ -41,15 +41,15 @@ class SettingsContent: UITableViewController {
     }
     
     func switchIsChanged(_ changed: UISwitch) {
-        if(changed == showNSFWContent) {
+        if changed == showNSFWContent {
             SettingValues.nsfwEnabled = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_nsfwEnabled)
         }
-        else if(changed == showNSFWPreviews) {
+        else if changed == showNSFWPreviews {
             SettingValues.nsfwPreviews = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_nsfwPreviews)
         }
-        else if(changed == hideCollectionViews) {
+        else if changed == hideCollectionViews {
             SettingValues.hideNSFWCollection = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_hideNSFWCollection)
         }
@@ -65,7 +65,7 @@ class SettingsContent: UITableViewController {
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
         toReturn.backgroundColor = ColorUtil.backgroundColor
         
-        switch(section) {
+        switch section {
         case 0: label.text = ""
         default: label.text = ""
         }
@@ -110,10 +110,10 @@ class SettingsContent: UITableViewController {
     }
     
     func doDisables() {
-        if(SettingValues.nsfwEnabled) {
+        if SettingValues.nsfwEnabled {
             showNSFWPreviews.isEnabled = true
             hideCollectionViews.isEnabled = true
-            if(!SettingValues.nsfwPreviews) {
+            if !SettingValues.nsfwPreviews {
                 hideCollectionViews.isEnabled = false
             }
         }
@@ -124,7 +124,7 @@ class SettingsContent: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if(indexPath.row == 0) {
+        if indexPath.row == 0 {
             let url = URL.init(string: "https://www.reddit.com/prefs")!
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
@@ -149,9 +149,9 @@ class SettingsContent: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch(indexPath.section) {
+        switch indexPath.section {
         case 0:
-            switch(indexPath.row) {
+            switch indexPath.row {
             case 0: return self.showNSFWContentCell
             case 1: return self.showNSFWPreviewsCell
             case 2: return self.hideCollectionViewsCell
@@ -162,7 +162,7 @@ class SettingsContent: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch(section) {
+        switch section {
         case 0: return 3   // section 0 has 2 rows
         default: fatalError("Unknown number of sections")
         }

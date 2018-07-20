@@ -15,7 +15,7 @@ class TapBehindModalViewController: UINavigationController, UIGestureRecognizerD
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        if(self.tapOutsideRecognizer == nil && (modalPresentationStyle == .pageSheet || modalPresentationStyle == .formSheet)) {
+        if self.tapOutsideRecognizer == nil && (modalPresentationStyle == .pageSheet || modalPresentationStyle == .formSheet) {
             self.tapOutsideRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.handleTapBehind))
             self.tapOutsideRecognizer.numberOfTapsRequired = 1
             self.tapOutsideRecognizer.cancelsTouchesInView = false
@@ -27,7 +27,7 @@ class TapBehindModalViewController: UINavigationController, UIGestureRecognizerD
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        if(self.tapOutsideRecognizer != nil) {
+        if self.tapOutsideRecognizer != nil {
             self.view.window?.removeGestureRecognizer(self.tapOutsideRecognizer)
             self.tapOutsideRecognizer = nil
         }
@@ -39,10 +39,10 @@ class TapBehindModalViewController: UINavigationController, UIGestureRecognizerD
     
     // MARK: - Gesture methods to dismiss this with tap outside
     func handleTapBehind(sender: UITapGestureRecognizer) {
-        if (sender.state == UIGestureRecognizerState.ended) {
+        if sender.state == UIGestureRecognizerState.ended {
             let location: CGPoint = sender.location(in: self.view)
             
-            if (!self.view.point(inside: location, with: nil)) {
+            if !self.view.point(inside: location, with: nil) {
                 self.view.window?.removeGestureRecognizer(sender)
                 self.close(sender: sender)
             }

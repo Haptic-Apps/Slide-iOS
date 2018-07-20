@@ -97,10 +97,10 @@ class SubredditCellView: UITableViewCell {
 
     func openFull(_ sender: AnyObject) {
         timer!.invalidate()
-        if (navController != nil) {
+        if navController != nil {
             AudioServicesPlaySystemSound(1519)
-            if (!self.cancelled) {
-                if(profile.isEmpty()) {
+            if !self.cancelled {
+                if profile.isEmpty() {
                     let vc = SingleSubredditViewController.init(subName: self.subreddit, single: true)
                     navController!.dismiss(animated: true) {
                         VCPresenter.showVC(viewController: vc, popupIfPossible: true, parentNavigationController: self.navController!.navigationController, parentViewController: self.navController!)
@@ -123,7 +123,7 @@ class SubredditCellView: UITableViewCell {
         self.subreddit = subreddit
         self.sideView.isHidden = false
         self.icon.isHidden = true
-        if(!exists) {
+        if !exists {
             title.text = "Go to r/\(subreddit)"
         }
         else {
@@ -157,7 +157,7 @@ class SubredditCellView: UITableViewCell {
 extension SubredditCellView {
 
     func handleLongPress(_ sender: UILongPressGestureRecognizer) {
-        if (sender.state == UIGestureRecognizerState.began) {
+        if sender.state == UIGestureRecognizerState.began {
             cancelled = false
             timer = Timer.scheduledTimer(timeInterval: 0.25,
                                          target: self,
@@ -166,7 +166,7 @@ extension SubredditCellView {
                                          repeats: false)
 
         }
-        if (sender.state == UIGestureRecognizerState.ended) {
+        if sender.state == UIGestureRecognizerState.ended {
             timer!.invalidate()
             cancelled = true
         }

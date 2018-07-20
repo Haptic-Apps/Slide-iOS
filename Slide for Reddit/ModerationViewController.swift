@@ -105,7 +105,7 @@ class ModerationViewController: UIPageViewController, UIPageViewControllerDataSo
             }
         }
 
-        if (self.navigationController?.interactivePopGestureRecognizer != nil) {
+        if self.navigationController?.interactivePopGestureRecognizer != nil {
             print("Not nil")
             for view in view.subviews {
                 if let scrollView = view as? UIScrollView {
@@ -129,7 +129,7 @@ class ModerationViewController: UIPageViewController, UIPageViewControllerDataSo
         }
         let page = vCs.index(of: self.viewControllers!.first!)
 
-        if (!selected) {
+        if !selected {
             tabBar.setSelectedItem(tabBar.items[page! ], animated: true)
         }
         else {

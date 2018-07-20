@@ -30,14 +30,14 @@ final class FullLinkCellView: LinkCellView {
             title.topAnchor == contentView.topAnchor + ctwelve
             title.horizontalAnchors == contentView.horizontalAnchors + ctwelve
 
-            if(big) {
+            if big {
                 bannerImage.isHidden = false
                 // Image goes between title and buttons
                 title.bottomAnchor <= bannerImage.topAnchor - ceight
                 
                 bannerImage.horizontalAnchors == contentView.horizontalAnchors + bannerPadding
                 bannerImage.bottomAnchor == box.topAnchor - ctwelve
-                if(type != ContentType.CType.IMAGE) {
+                if type != ContentType.CType.IMAGE {
                     infoContainer.isHidden = false
                 }
                 infoContainer.heightAnchor == CGFloat(45)
@@ -45,7 +45,7 @@ final class FullLinkCellView: LinkCellView {
                 infoContainer.bottomAnchor == bannerImage.bottomAnchor
                 infoContainer.rightAnchor == bannerImage.rightAnchor
             }
-            else if(thumb) {
+            else if thumb {
                 thumbImageContainer.isHidden = false
                 infoContainer.backgroundColor = .clear
                 info.textColor = ColorUtil.fontColor

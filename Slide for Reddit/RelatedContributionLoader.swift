@@ -34,9 +34,9 @@ class RelatedContributionLoader: ContributionLoader {
     var canGetMore = false
     
     func getData(reload: Bool) {
-        if(delegate != nil) {
+        if delegate != nil {
             do {
-                if(reload) {
+                if reload {
                     paginator = Paginator()
                 }
                 let id = thing.name
@@ -46,12 +46,12 @@ class RelatedContributionLoader: ContributionLoader {
                         self.delegate?.failed(error: result.error!)
                     case .success(let listing):
                         
-                        if(reload) {
+                        if reload {
                             self.content = []
                         }
                         let baseContent = listing.1.children.flatMap({ $0 })
                         for item in baseContent {
-                            if(item is Comment) {
+                            if item is Comment {
                                 self.content.append(RealmDataWrapper.commentToRComment(comment: item as! Comment, depth: 0))
                             }
                             else {

@@ -51,7 +51,7 @@ class AccountController {
         NotificationCenter.default.addObserver(self, selector: #selector(AccountController.didSaveToken(_:)), name: OAuth2TokenRepositoryDidSaveTokenName, object: nil)
         if let name = UserDefaults.standard.string(forKey: "name") {
             print("Name is \(name)")
-            if (name == "GUEST") {
+            if name == "GUEST" {
                 AccountController.isLoggedIn = false
                 AccountController.currentName = name
                 (UIApplication.shared.delegate as! AppDelegate).session = Session()
@@ -96,11 +96,11 @@ class AccountController {
     }
     
     public static func formatUsername(input: String, small: Bool) -> String {
-        if(SettingValues.nameScrubbing && input == AccountController.currentName) {
+        if SettingValues.nameScrubbing && input == AccountController.currentName {
             return "you"
         }
         else {
-            if(small) {
+            if small {
                 return input
             }
             return "u/\(input)"
@@ -108,11 +108,11 @@ class AccountController {
     }
     
     public static func formatUsernamePosessive(input: String, small: Bool) -> String {
-        if(SettingValues.nameScrubbing && input == AccountController.currentName) {
+        if SettingValues.nameScrubbing && input == AccountController.currentName {
             return "Your"
         }
         else {
-            if(small) {
+            if small {
                 return input
             }
             return "u/\(input)'s"
@@ -131,7 +131,7 @@ class AccountController {
                 case .success(let listing):
                     toReturn += listing.children.flatMap({ $0 as? Subreddit })
                     paginator = listing.paginator
-                    if (paginator.hasMore()) {
+                    if paginator.hasMore() {
                         getSubscriptionsUntilCompletion(session: session, p: paginator, tR: toReturn, completion: completion)
                     }
                     else {

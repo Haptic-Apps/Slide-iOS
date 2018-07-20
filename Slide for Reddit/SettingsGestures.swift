@@ -40,7 +40,7 @@ class SettingsGestures: UITableViewController {
     }
     
     func switchIsChanged(_ changed: UISwitch) {
-        if(changed == doubleSwipe) {
+        if changed == doubleSwipe {
             SettingValues.commentTwoSwipe = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_commentTwoSwipe)
         }
@@ -55,7 +55,7 @@ class SettingsGestures: UITableViewController {
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
         toReturn.backgroundColor = ColorUtil.backgroundColor
         
-        switch(section) {
+        switch section {
         case 0: label.text = "Comments"
         case 1: label.text = "Submissions"
         default: label.text = ""
@@ -65,16 +65,16 @@ class SettingsGestures: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        if(indexPath.row == 1) {
+        if indexPath.row == 1 {
             showAction(cell: rightActionCell)
         }
-        else if(indexPath.row == 2) {
+        else if indexPath.row == 2 {
             showAction(cell: leftActionCell)
         }
-        else if(indexPath.row == 3) {
+        else if indexPath.row == 3 {
             showAction(cell: doubleTapActionCell)
         }
-        else if(indexPath.row == 0 && indexPath.section == 1) {
+        else if indexPath.row == 0 && indexPath.section == 1 {
             showAction(cell: doubleTapSubActionCell)
         }
     }
@@ -84,13 +84,13 @@ class SettingsGestures: UITableViewController {
         for action in SettingValues.CommentAction.cases {
             alertController.addAction(Action(ActionData(title: action.getTitle(), image: UIImage(named: action.getPhoto())!.menuIcon()), style: .default, handler: { _ in
                 UserDefaults.standard.set(action.rawValue, forKey: cell == self.rightActionCell ? SettingValues.pref_commentActionRight : (cell == self.leftActionCell ? SettingValues.pref_commentActionLeft : (cell == self.doubleTapSubActionCell ? SettingValues.pref_submissionActionDoubleTap :  SettingValues.pref_commentActionDoubleTap)))
-                if(cell == self.rightActionCell) {
+                if cell == self.rightActionCell {
                     SettingValues.commentActionRight = action
                 }
-                else if(cell == self.leftActionCell) {
+                else if cell == self.leftActionCell {
                     SettingValues.commentActionLeft = action
                 }
-                else if (cell == self.doubleTapActionCell) {
+                else if cell == self.doubleTapActionCell {
                     SettingValues.commentActionDoubleTap = action
                 }
                 else {
@@ -163,7 +163,7 @@ class SettingsGestures: UITableViewController {
         self.doubleTapActionCell.detailTextLabel?.text = SettingValues.commentActionDoubleTap.getTitle()
         self.doubleTapActionCell.imageView?.layer.cornerRadius = 5
 
-        if(!SettingValues.commentTwoSwipe) {
+        if !SettingValues.commentTwoSwipe {
             self.rightActionCell.isUserInteractionEnabled = false
             self.rightActionCell.alpha = 0.5
             self.leftActionCell.isUserInteractionEnabled = false
@@ -194,7 +194,7 @@ class SettingsGestures: UITableViewController {
         return 2
     }
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if(section == 0) {
+        if section == 0 {
             return 0
         }
         return 70
@@ -208,9 +208,9 @@ class SettingsGestures: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch(indexPath.section) {
+        switch indexPath.section {
         case 0:
-            switch(indexPath.row) {
+            switch indexPath.row {
             case 0: return self.doubleSwipeCell
             case 1: return self.rightActionCell
             case 2: return self.leftActionCell
@@ -218,7 +218,7 @@ class SettingsGestures: UITableViewController {
             default: fatalError("Unknown row in section 0")
             }
         case 1:
-            switch(indexPath.row) {
+            switch indexPath.row {
             case 0: return self.doubleTapSubActionCell
             default: fatalError("Unknown row in section 0")
             }
@@ -228,7 +228,7 @@ class SettingsGestures: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch(section) {
+        switch section {
         case 0: return 4
         case 1: return 1
         default: fatalError("Unknown number of sections")

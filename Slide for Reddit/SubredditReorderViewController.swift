@@ -112,12 +112,12 @@ class SubredditReorderViewController: UITableViewController {
         Subscriptions.getSubscriptionsFully(session: (UIApplication.shared.delegate as! AppDelegate).session!, completion: { (newSubs, newMultis) in
             let end = self.subs.count
             for s in newSubs {
-                if (!self.subs.contains(s.displayName)) {
+                if !self.subs.contains(s.displayName) {
                     self.subs.append(s.displayName)
                 }
             }
             for m in newMultis {
-                if (!self.subs.contains("/m/" + m.displayName)) {
+                if !self.subs.contains("/m/" + m.displayName) {
                     self.subs.append("/m/" + m.displayName)
                 }
             }
@@ -203,14 +203,14 @@ class SubredditReorderViewController: UITableViewController {
             var pinned2: [String] = []
             var pinned3: [String] = []
             for i in rows {
-                if (!pinned.contains(self.subs[i.row])) {
+                if !pinned.contains(self.subs[i.row]) {
                     pinned2.append(self.subs[i.row])
                 }
                 else {
                     pinned3.append(self.subs[i.row])
                 }
             }
-            if (pinned2.isEmpty) {
+            if pinned2.isEmpty {
                 //Are all pinned, need to unpin
                 self.pinned = self.subs.filter({ (input) -> Bool in
                     return !pinned3.contains(input)
@@ -248,15 +248,15 @@ class SubredditReorderViewController: UITableViewController {
             $0.localizedCaseInsensitiveCompare($1) == ComparisonResult.orderedAscending
         }
         self.subs.insert(contentsOf: pinned, at: 0)
-        if(self.subs.contains("all")) {
+        if self.subs.contains("all") {
             self.subs.remove(at: self.subs.index(of: "all")!)
             self.subs.insert("all", at: 0)
         }
-        if(self.subs.contains("popular")) {
+        if self.subs.contains("popular") {
             self.subs.remove(at: self.subs.index(of: "popular")!)
             self.subs.insert("popular", at: 0)
         }
-        if(self.subs.contains("frontpage")) {
+        if self.subs.contains("frontpage") {
             self.subs.remove(at: self.subs.index(of: "frontpage")!)
             self.subs.insert("frontpage", at: 0)
         }
@@ -277,7 +277,7 @@ class SubredditReorderViewController: UITableViewController {
             }
             actionSheetController.addAction(cancelActionButton)
 
-            if(AccountController.isLoggedIn) {
+            if AccountController.isLoggedIn {
                 cancelActionButton = UIAlertAction(title: "Remove and unsubscribe", style: .default) { _ -> Void in
                     //todo unsub
                     var top: [String] = []
@@ -331,7 +331,7 @@ class SubredditReorderViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        if (tableView.indexPathsForSelectedRows != nil && !tableView.indexPathsForSelectedRows!.isEmpty) {
+        if tableView.indexPathsForSelectedRows != nil && !tableView.indexPathsForSelectedRows!.isEmpty {
             self.navigationItem.setRightBarButtonItems(editItems, animated: true)
         }
         else {
@@ -340,7 +340,7 @@ class SubredditReorderViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if (!tableView.indexPathsForSelectedRows!.isEmpty) {
+        if !tableView.indexPathsForSelectedRows!.isEmpty {
             print(tableView.indexPathsForSelectedRows!.count)
             self.navigationItem.setRightBarButtonItems(editItems, animated: true)
         }

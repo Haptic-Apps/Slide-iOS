@@ -49,7 +49,7 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
     
     func setComment(comment: RComment, parent: MediaViewController, nav: UIViewController?, width: CGFloat) {
         parentViewController = parent
-        if(navViewController == nil && nav != nil) {
+        if navViewController == nil && nav != nil {
             navViewController = nav
         }
         let titleText = NSMutableAttributedString.init(string: comment.submissionTitle, attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 18, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
@@ -60,7 +60,7 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
         self.addGestureRecognizer(commentClick)
         
         var uC: UIColor
-        switch(ActionStates.getVoteDirection(s: comment)) {
+        switch ActionStates.getVoteDirection(s: comment) {
         case .down:
             uC = ColorUtil.downvoteColor
         case .up:
@@ -78,7 +78,7 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
         let boldString = NSMutableAttributedString(string: "\(comment.score)pts", attributes: attrs)
         let subString = NSMutableAttributedString(string: "r/\(comment.subreddit)")
         let color = ColorUtil.getColorForSub(sub: comment.subreddit)
-        if(color != ColorUtil.baseColor) {
+        if color != ColorUtil.baseColor {
             subString.addAttribute(NSForegroundColorAttributeName, value: color, range: NSRange.init(location: 0, length: subString.length))
         }
         else {

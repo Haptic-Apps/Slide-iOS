@@ -20,7 +20,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         var first = true
         
         for sub in submissions {
-            if(first && PagingCommentViewController.savedComment != nil && PagingCommentViewController.savedComment!.submission!.getId() == sub.getId()) {
+            if first && PagingCommentViewController.savedComment != nil && PagingCommentViewController.savedComment!.submission!.getId() == sub.getId() {
                 self.vCs.append(PagingCommentViewController.savedComment!)
             }
             else {
@@ -64,11 +64,11 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         swiper = SloppySwiper.init(navigationController: self.navigationController!)
         self.navigationController!.delegate = swiper!
         for view in view.subviews {
-            if (view is UIScrollView) {
+            if view is UIScrollView {
                 let scrollView = view as! UIScrollView
                 //swiper!.panRecognizer.require(toFail:scrollView.panGestureRecognizer)
                 scrollView.delegate = self
-                if(scrollView.isPagingEnabled && SettingValues.commentTwoSwipe) {
+                if scrollView.isPagingEnabled && SettingValues.commentTwoSwipe {
                     scrollView.panGestureRecognizer.minimumNumberOfTouches = 2
                 }
                 scrollView.panGestureRecognizer.require(toFail: swiper!.panRecognizer)
@@ -76,7 +76,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
             }
         }
         
-        if(!(firstViewController as! CommentViewController).loaded) {
+        if !(firstViewController as! CommentViewController).loaded {
             PagingCommentViewController.savedComment = firstViewController as? CommentViewController
             (firstViewController as! CommentViewController).forceLoad = true
         }
@@ -90,20 +90,20 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
     
     //From https://stackoverflow.com/a/25167681/3697225
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if (currentIndex == 0 && scrollView.contentOffset.x < scrollView.bounds.size.width) {
+        if currentIndex == 0 && scrollView.contentOffset.x < scrollView.bounds.size.width {
             scrollView.contentOffset = CGPoint(x: scrollView.bounds.size.width, y: 0)
         }
-        else if (currentIndex == submissions.count - 1 && scrollView.contentOffset.x > scrollView.bounds.size.width) {
+        else if currentIndex == submissions.count - 1 && scrollView.contentOffset.x > scrollView.bounds.size.width {
             scrollView.contentOffset = CGPoint(x: scrollView.bounds.size.width, y: 0)
         }
     }
     
     //From https://stackoverflow.com/a/25167681/3697225
     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        if (currentIndex == 0 && scrollView.contentOffset.x <= scrollView.bounds.size.width) {
+        if currentIndex == 0 && scrollView.contentOffset.x <= scrollView.bounds.size.width {
             targetContentOffset.pointee = CGPoint(x: scrollView.bounds.size.width, y: 0)
         }
-        else if (currentIndex == submissions.count - 1 && scrollView.contentOffset.x >= scrollView.bounds.size.width) {
+        else if currentIndex == submissions.count - 1 && scrollView.contentOffset.x >= scrollView.bounds.size.width {
             targetContentOffset.pointee = CGPoint(x: scrollView.bounds.size.width, y: 0)
         }
     }
@@ -113,7 +113,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating: Bool, previousViewControllers: [UIViewController], transitionCompleted: Bool) {
         guard transitionCompleted else { return }
-        if(!(self.viewControllers!.first! is ClearVC)) {
+        if !(self.viewControllers!.first! is ClearVC) {
             PagingCommentViewController.savedComment = self.viewControllers!.first as! CommentViewController
         }
             currentIndex = vCs.index(of: PagingCommentViewController.savedComment!)!
@@ -145,7 +145,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
             return nil
         }
         
-        if(!(viewController as! CommentViewController).loaded) {
+        if !(viewController as! CommentViewController).loaded {
             (viewController as! CommentViewController).refresh(viewController)
         }
         

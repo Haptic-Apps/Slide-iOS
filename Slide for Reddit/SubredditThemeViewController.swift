@@ -25,7 +25,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
         self.tableView.allowsSelectionDuringEditing = true
         self.tableView.allowsMultipleSelectionDuringEditing = true
         for sub in Subscriptions.subreddits {
-            if(UserDefaults.standard.colorForKey(key: "color+" + sub) != nil || UserDefaults.standard.colorForKey(key: "accent+" + sub) != nil) {
+            if UserDefaults.standard.colorForKey(key: "color+" + sub) != nil || UserDefaults.standard.colorForKey(key: "accent+" + sub) != nil {
                 subs.append(sub)
             }
         }
@@ -61,7 +61,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
 
     public func add(_ selector: AnyObject) {
         var selected: [String] = []
-        if(tableView.indexPathsForSelectedRows != nil) {
+        if tableView.indexPathsForSelectedRows != nil {
             for i in tableView.indexPathsForSelectedRows! {
                 selected.append(subs[i.row])
             }
@@ -70,7 +70,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
     }
 
     public func remove(_ selector: AnyObject) {
-        if(tableView.indexPathsForSelectedRows != nil) {
+        if tableView.indexPathsForSelectedRows != nil {
             for i in tableView.indexPathsForSelectedRows! {
                 doDelete(subs[i.row])
             }
@@ -114,7 +114,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
         defaults.set(true, forKey: "sc" + AccountController.currentName)
         defaults.synchronize()
         do {
-            if (!AccountController.isLoggedIn) {
+            if !AccountController.isLoggedIn {
                 try (UIApplication.shared.delegate as! AppDelegate).session!.getSubreddit(.default, paginator: Paginator(), completion: { (result) -> Void in
                     switch result {
                     case .failure:
@@ -122,10 +122,10 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
                     case .success(let listing):
                         let subs = listing.children.flatMap({ $0 as? Subreddit })
                         for sub in subs {
-                            if(!sub.keyColor.isEmpty()) {
+                            if !sub.keyColor.isEmpty() {
                                 toReturn.append(sub.displayName)
                                 let color = ColorUtil.getClosestColor(hex: sub.keyColor)
-                                if (UserDefaults.standard.colorForKey(key: "color+" + sub.displayName) == nil && color != .black) {
+                                if UserDefaults.standard.colorForKey(key: "color+" + sub.displayName) == nil && color != .black {
                                     defaults.setColor(color: color, forKey: "color+" + sub.displayName)
                                     self.count += 1
                                 }
@@ -142,11 +142,11 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
             else {
                 Subscriptions.getSubscriptionsFully(session: (UIApplication.shared.delegate as! AppDelegate).session!, completion: { (subs, multis) in
                     for sub in subs {
-                        if(!sub.keyColor.isEmpty()) {
+                        if !sub.keyColor.isEmpty() {
                             print("Coloring \(sub.displayName)")
                             toReturn.append(sub.displayName)
                             let color = ColorUtil.getClosestColor(hex: sub.keyColor)
-                            if (UserDefaults.standard.colorForKey(key: "color+" + sub.displayName) == nil && color.hexString != "#000000") {
+                            if UserDefaults.standard.colorForKey(key: "color+" + sub.displayName) == nil && color.hexString != "#000000" {
                                 defaults.setColor(color: color, forKey: "color+" + sub.displayName)
                                 self.count += 1
                             }
@@ -155,7 +155,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
                     for m in multis {
                         toReturn.append("/m/" + m.displayName)
                         let color = (UIColor.init(hexString: m.keyColor))
-                        if (UserDefaults.standard.colorForKey(key: "color+" + m.displayName) == nil && color.hexString != "#000000") {
+                        if UserDefaults.standard.colorForKey(key: "color+" + m.displayName) == nil && color.hexString != "#000000" {
                             defaults.setColor(color: color, forKey: "color+" + m.displayName)
                             self.count += 1
                         }
@@ -185,7 +185,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
         count = 0
         subs.removeAll()
         for sub in Subscriptions.subreddits {
-            if(UserDefaults.standard.colorForKey(key: "color+" + sub) != nil || UserDefaults.standard.colorForKey(key: "accent+" + sub) != nil) {
+            if UserDefaults.standard.colorForKey(key: "color+" + sub) != nil || UserDefaults.standard.colorForKey(key: "accent+" + sub) != nil {
                 subs.append(sub)
             }
         }
@@ -268,7 +268,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
     var editSubs: [String] = []
 
     public func colorPickerView(_ colorPickerView: ColorPickerView, didSelectItemAt indexPath: IndexPath) {
-        if(isAccent) {
+        if isAccent {
             accentChosen = colorPickerView.colors[indexPath.row]
         }
         else {
@@ -295,7 +295,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
         alertController.view.addSubview(MKColorPicker)
 
         alertController.addAction(image: UIImage(named: "colors"), title: "Accent color", color: ColorUtil.baseAccent, style: .default) { _ in
-            if (self.colorChosen != nil) {
+            if self.colorChosen != nil {
                 for sub in self.editSubs {
                     ColorUtil.setColorForSub(sub: sub, color: self.colorChosen!)
                 }
@@ -305,7 +305,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
         }
 
         alertController.addAction(image: nil, title: "Save", color: ColorUtil.baseAccent, style: .default) { _ in
-            if (self.colorChosen != nil) {
+            if self.colorChosen != nil {
                 for sub in self.editSubs {
                     ColorUtil.setColorForSub(sub: sub, color: self.colorChosen!)
                 }
@@ -959,7 +959,7 @@ public extension UIView {
     private func centerPointForPosition(_ position: ToastPosition, toast: UIView) -> CGPoint {
         let padding: CGFloat = ToastManager.shared.style.verticalPadding
 
-        switch (position) {
+        switch position {
         case .top:
             return CGPoint(x: self.bounds.size.width / 2.0, y: (toast.frame.size.height / 2.0) + padding)
         case .center:

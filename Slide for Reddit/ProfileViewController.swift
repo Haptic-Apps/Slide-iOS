@@ -78,7 +78,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
             }
         }
         
-        if(!ColorUtil.getTagForUser(name: name).isEmpty) {
+        if !ColorUtil.getTagForUser(name: name).isEmpty {
         let removeAction = UIAlertAction(title: "Remove tag", style: .default) { (_) in
             ColorUtil.removeTagForUser(name: self.name)
         }
@@ -127,7 +127,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         if let n = (session?.token.flatMap { (token) -> String? in
             return token.name
             }) as String? {
-            if(name == n) {
+            if name == n {
                 self.content = UserContent.cases
             }
             else {
@@ -167,7 +167,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         navigationController?.navigationBar.isTranslucent = false
         self.navigationController?.setNavigationBarHidden(false, animated: true)
         
-        if(navigationController != nil) {
+        if navigationController != nil {
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForUser(name: name)
         }
         let sort = UIButton.init(type: .custom)
@@ -182,7 +182,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         more.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
          moreB = UIBarButtonItem.init(customView: more)
         
-        if(navigationController != nil) {
+        if navigationController != nil {
             navigationItem.rightBarButtonItems = [ moreB!, sortB!]
             self.navigationController?.navigationBar.shadowImage = UIImage()
         }
@@ -214,7 +214,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
                             let b = self.generateButtons(trophy: trophy)
                             b.frame = CGRect.init(x: i * 75, y: 0, width: 70, height: 70)
                             b.addTapGestureRecognizer(action: {
-                                if(trophy.url != nil) {
+                                if trophy.url != nil {
                                     self.dismiss(animated: true)
                                     VCPresenter.showVC(viewController: WebsiteViewController(url: trophy.url!, subreddit: ""), popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
                                 }
@@ -223,7 +223,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
                             i += 1
                         }
                         scrollView.contentSize = CGSize.init(width: i * 75, height: 70)
-                        if(trophies.count == 0) {
+                        if trophies.count == 0 {
                             alrController.title = ""
                         }
                         else {
@@ -239,11 +239,11 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         scrollView.delaysContentTouches = false
     
         alrController.view.addSubview(scrollView)
-        if(AccountController.isLoggedIn) {
+        if AccountController.isLoggedIn {
             alrController.addAction(UIAlertAction.init(title: "Private message", style: .default, handler: { (_) in
                 VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(name: user.name, completion: { (_) in })), parentVC: self)
             }))
-            if(user.isFriend) {
+            if user.isFriend {
                 alrController.addAction(UIAlertAction.init(title: "Unfriend", style: .default, handler: { (_) in
                     do {
                         try self.session?.unfriend(user.name, completion: { (_) in
@@ -261,7 +261,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
                 alrController.addAction(UIAlertAction.init(title: "Friend", style: .default, handler: { (_) in
                     do {
                         try self.session?.friend(user.name, completion: { (result) in
-                            if(result.error != nil) {
+                            if result.error != nil {
                                 print(result.error!)
                             }
                             DispatchQueue.main.async {
@@ -369,7 +369,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
             }
         }
 
-        if (self.navigationController?.interactivePopGestureRecognizer != nil) {
+        if self.navigationController?.interactivePopGestureRecognizer != nil {
             for view in view.subviews {
                 if let scrollView = view as? UIScrollView {
                     scrollView.panGestureRecognizer.require(toFail: self.navigationController!.interactivePopGestureRecognizer!)
@@ -448,7 +448,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         guard completed else { return }
         let page = vCs.index(of: self.viewControllers!.first!)
 
-        if(!selected) {
+        if !selected {
             tabBar.setSelectedItem(tabBar.items[page! ], animated: true)
         }
         else {

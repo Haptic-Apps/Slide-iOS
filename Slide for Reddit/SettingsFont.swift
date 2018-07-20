@@ -52,11 +52,11 @@ class SettingsFont: UITableViewController {
     }
     
     func switchIsChanged(_ changed: UISwitch) {
-        if(changed == enlarge) {
+        if changed == enlarge {
             SettingValues.enlargeLinks = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_enlargeLinks)
         }
-        else if(changed == type) {
+        else if changed == type {
             SettingValues.showLinkContentType = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_showLinkContentType)
         }
@@ -70,7 +70,7 @@ class SettingsFont: UITableViewController {
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
         toReturn.backgroundColor = ColorUtil.backgroundColor
         
-        switch(section) {
+        switch section {
         case 0: label.text = "Links"
         case 1: label.text = "Submissions"
         case 2: label.text = "Comments"
@@ -109,7 +109,7 @@ class SettingsFont: UITableViewController {
         cancelActionButton = UIAlertAction(title: "Extra Large", style: .default) { _ -> Void in
             self.setSizeComment(size: 8)
         }
-        if(currentCommentSize == 8) {
+        if currentCommentSize == 8 {
             cancelActionButton.setValue(selected, forKey: "image")
         }
         actionSheetController.addAction(cancelActionButton)
@@ -117,7 +117,7 @@ class SettingsFont: UITableViewController {
         cancelActionButton = UIAlertAction(title: "Very Large", style: .default) { _ -> Void in
             self.setSizeComment(size: 4)
         }
-        if(currentCommentSize == 4) {
+        if currentCommentSize == 4 {
             cancelActionButton.setValue(selected, forKey: "image")
         }
 
@@ -126,7 +126,7 @@ class SettingsFont: UITableViewController {
         cancelActionButton = UIAlertAction(title: "Large", style: .default) { _ -> Void in
             self.setSizeComment(size: 2)
         }
-        if(currentCommentSize == 2) {
+        if currentCommentSize == 2 {
             cancelActionButton.setValue(selected, forKey: "image")
         }
         actionSheetController.addAction(cancelActionButton)
@@ -134,7 +134,7 @@ class SettingsFont: UITableViewController {
         cancelActionButton = UIAlertAction(title: "Normal", style: .default) { _ -> Void in
             self.setSizeComment(size: 0)
         }
-        if(currentCommentSize == 0) {
+        if currentCommentSize == 0 {
             cancelActionButton.setValue(selected, forKey: "image")
         }
 
@@ -143,7 +143,7 @@ class SettingsFont: UITableViewController {
         cancelActionButton = UIAlertAction(title: "Small", style: .default) { _ -> Void in
             self.setSizeComment(size: -2)
         }
-        if(currentCommentSize == -2) {
+        if currentCommentSize == -2 {
             cancelActionButton.setValue(selected, forKey: "image")
         }
 
@@ -152,7 +152,7 @@ class SettingsFont: UITableViewController {
         cancelActionButton = UIAlertAction(title: "Very Small", style: .default) { _ -> Void in
             self.setSizeComment(size: -4)
         }
-        if(currentCommentSize == -4) {
+        if currentCommentSize == -4 {
             cancelActionButton.setValue(selected, forKey: "image")
         }
 
@@ -186,7 +186,7 @@ class SettingsFont: UITableViewController {
         cancelActionButton = UIAlertAction(title: "Extra Large", style: .default) { _ -> Void in
             self.setSizeSubmission(size: 8)
         }
-        if(currentLinkSize == 8) {
+        if currentLinkSize == 8 {
             cancelActionButton.setValue(selected, forKey: "image")
         }
         actionSheetController.addAction(cancelActionButton)
@@ -194,7 +194,7 @@ class SettingsFont: UITableViewController {
         cancelActionButton = UIAlertAction(title: "Very Large", style: .default) { _ -> Void in
             self.setSizeSubmission(size: 4)
         }
-        if(currentLinkSize == 4) {
+        if currentLinkSize == 4 {
             cancelActionButton.setValue(selected, forKey: "image")
         }
         actionSheetController.addAction(cancelActionButton)
@@ -202,7 +202,7 @@ class SettingsFont: UITableViewController {
         cancelActionButton = UIAlertAction(title: "Large", style: .default) { _ -> Void in
             self.setSizeSubmission(size: 2)
         }
-        if(currentLinkSize == 2) {
+        if currentLinkSize == 2 {
             cancelActionButton.setValue(selected, forKey: "image")
         }
         actionSheetController.addAction(cancelActionButton)
@@ -210,7 +210,7 @@ class SettingsFont: UITableViewController {
         cancelActionButton = UIAlertAction(title: "Normal", style: .default) { _ -> Void in
             self.setSizeSubmission(size: 0)
         }
-        if(currentLinkSize == 0) {
+        if currentLinkSize == 0 {
             cancelActionButton.setValue(selected, forKey: "image")
         }
         actionSheetController.addAction(cancelActionButton)
@@ -218,7 +218,7 @@ class SettingsFont: UITableViewController {
         cancelActionButton = UIAlertAction(title: "Small", style: .default) { _ -> Void in
             self.setSizeSubmission(size: -2)
         }
-        if(currentLinkSize == -2) {
+        if currentLinkSize == -2 {
             cancelActionButton.setValue(selected, forKey: "image")
         }
         actionSheetController.addAction(cancelActionButton)
@@ -226,7 +226,7 @@ class SettingsFont: UITableViewController {
         cancelActionButton = UIAlertAction(title: "Very Small", style: .default) { _ -> Void in
             self.setSizeSubmission(size: -4)
         }
-        if(currentLinkSize == -4) {
+        if currentLinkSize == -4 {
             cancelActionButton.setValue(selected, forKey: "image")
         }
         actionSheetController.addAction(cancelActionButton)
@@ -234,7 +234,7 @@ class SettingsFont: UITableViewController {
         cancelActionButton = UIAlertAction(title: "Smallest", style: .default) { _ -> Void in
             self.setSizeSubmission(size: -6)
         }
-        if(currentLinkSize == -6) {
+        if currentLinkSize == -6 {
             cancelActionButton.setValue(selected, forKey: "image")
         }
         actionSheetController.addAction(cancelActionButton)
@@ -434,9 +434,9 @@ class SettingsFont: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch(indexPath.section) {
+        switch indexPath.section {
         case 0:
-            switch(indexPath.row) {
+            switch indexPath.row {
             case 0: return self.enlargeCell
             case 1: return self.typeCell
             case 2: return self.submissionSize
@@ -444,7 +444,7 @@ class SettingsFont: UITableViewController {
             default: fatalError("Unknown row in section 0")
             }
         case 1:
-            switch(indexPath.row) {
+            switch indexPath.row {
             case 0: return self.submissionHelvetica
             case 1: return self.submissionRCR
             case 2: return self.submissionRCB
@@ -455,7 +455,7 @@ class SettingsFont: UITableViewController {
             default: fatalError("Unknown row in section 1")
             }
         case 2:
-            switch(indexPath.row) {
+            switch indexPath.row {
             case 0: return self.commentHelvetica
             case 1: return self.commentRCR
             case 2: return self.commentRCB
@@ -472,8 +472,8 @@ class SettingsFont: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        if(indexPath.section == 1) {
-            switch(indexPath.row) {
+        if indexPath.section == 1 {
+            switch indexPath.row {
             case 0:
                 UserDefaults.standard.set(FontGenerator.Font.HELVETICA.rawValue, forKey: "postfont")
             case 1:
@@ -493,8 +493,8 @@ class SettingsFont: UITableViewController {
                 fatalError("Unknown row in section 1")
             }
         }
-        else if(indexPath.section == 2) {
-            switch(indexPath.row) {
+        else if indexPath.section == 2 {
+            switch indexPath.row {
             case 0:
                 UserDefaults.standard.set(FontGenerator.Font.HELVETICA.rawValue, forKey: "commentfont")
             case 1:
@@ -520,7 +520,7 @@ class SettingsFont: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch(section) {
+        switch section {
         case 0: return 4    // section 0 has 2 rows
         case 1: return 7    // section 1 has 1 row
         case 2: return 7    // section 1 has 1 row

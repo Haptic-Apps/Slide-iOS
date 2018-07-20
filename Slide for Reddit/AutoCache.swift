@@ -19,7 +19,7 @@ public class AutoCache: NSObject {
         AutoCache.progressView = UILabel()
         super.init()
         AutoCache.subs.append(contentsOf: Subscriptions.offline)
-        if (!AutoCache.subs.isEmpty) {
+        if !AutoCache.subs.isEmpty {
             setupProgressView(baseController)
         }
     }
@@ -29,11 +29,11 @@ public class AutoCache: NSObject {
     }
 
     static func cacheComments(_ index: Int, commentIndex: Int, currentLinks: [RSubmission], realmListing: RListing, done: Int, failed: Int, progress: @escaping (String, Int, Int, Int) -> Void, completion: @escaping () -> Void) {
-        if (cancel) {
+        if cancel {
             return
         }
 
-        if (commentIndex >= currentLinks.count) {
+        if commentIndex >= currentLinks.count {
             do {
                 let realm = try! Realm()
                 realm.beginWrite()
@@ -80,13 +80,13 @@ public class AutoCache: NSObject {
                         }
                     }
 
-                    if (!comments.isEmpty) {
+                    if !comments.isEmpty {
                         do {
                             let realm = try! Realm()
                             realm.beginWrite()
                             for comment in comments {
                                 realm.create(type(of: content[comment]!), value: content[comment]!, update: true)
-                                if (content[comment]! is RComment) {
+                                if content[comment]! is RComment {
                                     link.comments.append(content[comment] as! RComment)
                                 }
                             }
@@ -113,11 +113,11 @@ public class AutoCache: NSObject {
     }
 
     static func cacheSub(_ index: Int, progress: @escaping (String, Int, Int, Int) -> Void, completion: @escaping () -> Void) {
-        if (cancel) {
+        if cancel {
             return
         }
 
-        if (index >= subs.count) {
+        if index >= subs.count {
             completion()
             return
         }
@@ -126,7 +126,7 @@ public class AutoCache: NSObject {
         print("Caching \(sub)")
         do {
             var subreddit: SubredditURLPath = Subreddit.init(subreddit: sub)
-            if (sub.hasPrefix("/m/")) {
+            if sub.hasPrefix("/m/") {
                 subreddit = Multireddit.init(name: sub.substring(3, length: sub.length - 3), user: AccountController.currentName)
             }
             try (UIApplication.shared.delegate as! AppDelegate).session?.getList(Paginator.init(), subreddit: subreddit, sort: SettingValues.defaultSorting, timeFilterWithin: SettingValues.defaultTimePeriod, completion: { (result) in
@@ -138,7 +138,7 @@ public class AutoCache: NSObject {
                         AutoCache.cacheSub(index + 1, progress: progress, completion: completion)
                     }
                 case .success(let listing):
-                    if (cancel) {
+                    if cancel {
                         return
                     }
                     let realmListing = RListing()
@@ -167,60 +167,60 @@ public class AutoCache: NSObject {
     static func preloadImages(_ values: [RSubmission]) {
         var urls: [URL] = []
         for submission in values {
-            if (cancel) {
+            if cancel {
                 return
             }
             var thumb = submission.thumbnail
             var big = submission.banner
             var height = submission.height
             var type = ContentType.getContentType(baseUrl: submission.url)
-            if (submission.isSelf) {
+            if submission.isSelf {
                 type = .SELF
             }
 
-            if (thumb && type == .SELF) {
+            if thumb && type == .SELF {
                 thumb = false
             }
 
             let fullImage = ContentType.fullImage(t: type)
 
-            if (!fullImage && height < 50) {
+            if !fullImage && height < 50 {
                 big = false
                 thumb = true
             }
-            else if (big && (SettingValues.postImageMode == .CROPPED_IMAGE)) {
+            else if big && (SettingValues.postImageMode == .CROPPED_IMAGE) {
                 height = 200
             }
 
-            if (type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big || type == .SELF) {
+            if type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big || type == .SELF {
                 big = false
                 thumb = false
             }
 
-            if (height < 50) {
+            if height < 50 {
                 thumb = true
                 big = false
             }
 
             let shouldShowLq = SettingValues.dataSavingEnabled && submission.lQ && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi())
-            if (type == ContentType.CType.SELF && SettingValues.hideImageSelftext
-                    || SettingValues.noImages && submission.isSelf) {
+            if type == ContentType.CType.SELF && SettingValues.hideImageSelftext
+                    || SettingValues.noImages && submission.isSelf {
                 big = false
                 thumb = false
             }
 
-            if (big || !submission.thumbnail) {
+            if big || !submission.thumbnail {
                 thumb = false
             }
 
-            if (!big && !thumb && submission.type != .SELF && submission.type != .NONE) {
+            if !big && !thumb && submission.type != .SELF && submission.type != .NONE {
                 thumb = true
             }
 
-            if (thumb && !big) {
-                if (submission.thumbnailUrl == "nsfw") {
+            if thumb && !big {
+                if submission.thumbnailUrl == "nsfw" {
                 }
-                else if (submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty) {
+                else if submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty {
                 }
                 else {
                     if let url = URL.init(string: submission.thumbnailUrl) {
@@ -229,8 +229,8 @@ public class AutoCache: NSObject {
                 }
             }
 
-            if (big) {
-                if (shouldShowLq) {
+            if big {
+                if shouldShowLq {
                     if let url = URL.init(string: submission.lqUrl) {
                         urls.append(url)
                     }
@@ -316,11 +316,11 @@ public class AutoCache: NSObject {
 
         for thing in comments {
             let pId = thing is Comment ? (thing as! Comment).parentId : (thing as! More).parentId
-            if (pId == parentId) {
+            if pId == parentId {
                 if let comment = thing as? Comment {
                     var relativeDepth = 0
                     for parent in buf {
-                        if (comment.parentId == parentId) {
+                        if comment.parentId == parentId {
                             relativeDepth = parent.1 - depth
                             break
                         }
@@ -332,7 +332,7 @@ public class AutoCache: NSObject {
                     var relativeDepth = 0
                     for parent in buf {
                         let parentId = parent.0 is Comment ? (parent.0 as! Comment).parentId : (parent.0 as! More).parentId
-                        if (more.parentId == parentId) {
+                        if more.parentId == parentId {
                             relativeDepth = parent.1 - depth
                             break
                         }

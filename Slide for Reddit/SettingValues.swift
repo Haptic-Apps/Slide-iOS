@@ -198,7 +198,7 @@ class SettingValues {
     public static func getLinkSorting(forSubreddit: String) -> LinkSortType {
         if let sorting = UserDefaults.standard.string(forKey: forSubreddit.lowercased() + "Sorting") {
             for s in LinkSortType.cases {
-                if (s.path == sorting) {
+                if s.path == sorting {
                     return s
                 }
             }
@@ -209,7 +209,7 @@ class SettingValues {
     public static func getTimePeriod(forSubreddit: String) -> TimeFilterWithin {
         if let time = UserDefaults.standard.string(forKey: forSubreddit.lowercased() + "Time") {
             for t in TimeFilterWithin.cases {
-                if (t.param == time) {
+                if t.param == time {
                     return t
                 }
             }
@@ -230,7 +230,7 @@ class SettingValues {
         SettingValues.multiColumn = settings.object(forKey: SettingValues.pref_multiColumn) == nil ? false : settings.bool(forKey: SettingValues.pref_multiColumn)
         
         var columns = Int(round(UIApplication.shared.statusBarView!.frame.size.width / CGFloat(320)))
-        if(columns == 0) {
+        if columns == 0 {
             columns = 1
         }
         SettingValues.multiColumnCount = settings.object(forKey: SettingValues.pref_multiColumnCount) == nil ? columns : settings.integer(forKey: SettingValues.pref_multiColumnCount)
@@ -238,7 +238,7 @@ class SettingValues {
 
         var basePath = settings.string(forKey: SettingValues.pref_defaultSorting)
         for sort in LinkSortType.cases {
-            if(sort.path == basePath) {
+            if sort.path == basePath {
                 SettingValues.defaultSorting = sort
                 break
             }
@@ -248,7 +248,7 @@ class SettingValues {
 
         basePath = settings.string(forKey: SettingValues.pref_defaultTimePeriod)
         for time in TimeFilterWithin.cases {
-            if(time.param == basePath) {
+            if time.param == basePath {
                 SettingValues.defaultTimePeriod = time
                 break
             }
@@ -259,7 +259,7 @@ class SettingValues {
 
         if let time = UserDefaults.standard.string(forKey: pref_defaultTimePeriod) {
             for t in TimeFilterWithin.cases {
-                if (t.param == time) {
+                if t.param == time {
                     defaultTimePeriod = t
                     break
                 }
@@ -268,7 +268,7 @@ class SettingValues {
 
         if let sort = UserDefaults.standard.string(forKey: pref_defaultTimePeriod) {
             for t in LinkSortType.cases {
-                if (t.path == sort) {
+                if t.path == sort {
                     defaultSorting = t
                     break
                 }
@@ -277,7 +277,7 @@ class SettingValues {
 
         if let sort = UserDefaults.standard.string(forKey: pref_defaultCommentSorting) {
             for t in CommentSort.cases {
-                if (t.path == sort) {
+                if t.path == sort {
                     defaultCommentSorting = t
                     break
                 }
@@ -381,7 +381,7 @@ class SettingValues {
         case NONE = "none"
         
         func getTitle() -> String {
-            switch(self) {
+            switch self {
             case .COLLAPSE :
                 return "Collapse parent"
             case .UPVOTE:
@@ -398,7 +398,7 @@ class SettingValues {
         }
         
         func getPhoto() -> String {
-            switch (self) {
+            switch self {
             case .COLLAPSE :
                 return "down"
             case .UPVOTE:
@@ -415,7 +415,7 @@ class SettingValues {
         }
         
         func getColor() -> UIColor {
-            switch (self) {
+            switch self {
             case .COLLAPSE :
                 return ColorUtil.backgroundColor
             case .UPVOTE:
@@ -443,7 +443,7 @@ class SettingValues {
         case GALLERY = "gallery"
 
         func getPhoto() -> String {
-            switch (self) {
+            switch self {
             case .HIDE_READ:
                 return "hide"
             case .NEW_POST:
@@ -458,7 +458,7 @@ class SettingValues {
         }
 
         func getTitle() -> String {
-            switch (self) {
+            switch self {
             case .HIDE_READ:
                 return "Hide read"
             case .NEW_POST:

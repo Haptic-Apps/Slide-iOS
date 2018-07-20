@@ -44,7 +44,7 @@ class PostFilter {
 
     public static func contains(_ array: [NSString], value: String) -> Bool {
         for text in array {
-            if (text.localizedCaseInsensitiveContains(value)) {
+            if text.localizedCaseInsensitiveContains(value) {
                 return true
             }
         }
@@ -65,37 +65,37 @@ class PostFilter {
         var contentMatch = false
 
         if (link.nsfw) {
-            if (!SettingValues.nsfwEnabled) {
+            if !SettingValues.nsfwEnabled {
                 contentMatch = true
             }
-            if (nsfw) {
+            if nsfw {
                 contentMatch = true
             }
         }
 
-        switch (ContentType.getContentType(submission: link)) {
+        switch ContentType.getContentType(submission: link) {
         case .REDDIT, .EMBEDDED, .LINK:
-            if (urls) {
+            if urls {
                 contentMatch = true
             }
         case .SELF, .NONE:
-            if (selftext) {
+            if selftext {
                 contentMatch = true
             }
         case .ALBUM:
-            if (albums) {
+            if albums {
                 contentMatch = true
             }
         case .IMAGE, .DEVIANTART, .IMGUR, .XKCD:
-            if (images) {
+            if images {
                 contentMatch = true
             }
         case .GIF:
-            if (gifs) {
+            if gifs {
                 contentMatch = true
             }
         case .VID_ME, .VIDEO, .STREAMABLE:
-            if (videos) {
+            if videos {
                 contentMatch = true
             }
         default:
@@ -124,7 +124,7 @@ class PostFilter {
     public static func filter(_ input: [RSubmission], previous: [RSubmission]?, baseSubreddit: String) -> [RSubmission] {
         var ids: [String] = []
         var toReturn: [RSubmission] = []
-        if (previous != nil) {
+        if previous != nil {
             for p in previous! {
                 ids.append(p.getId())
             }
@@ -181,7 +181,7 @@ class PostFilter {
 
 public extension NSString {
     func containedIn(base: String?) -> Bool {
-        if (base == nil) {
+        if base == nil {
             return false
         }
         return base!.range(of: String(self), options: .caseInsensitive) != nil

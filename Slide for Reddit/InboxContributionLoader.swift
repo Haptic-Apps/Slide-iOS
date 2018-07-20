@@ -33,9 +33,9 @@ class InboxContributionLoader: ContributionLoader {
     var paging = true
     
     func getData(reload: Bool) {
-        if(delegate != nil) {
+        if delegate != nil {
             do {
-                if(reload) {
+                if reload {
                     paginator = Paginator()
                 }
                 try delegate?.session?.getMessage(messages, completion: { (result) in
@@ -43,12 +43,12 @@ class InboxContributionLoader: ContributionLoader {
                     case .failure(let error):
                         print(error)
                     case .success(let listing):
-                        if(reload) {
+                        if reload {
                             self.content = []
                         }
                         for message in listing.children.flatMap({ $0 }) {
                             self.content.append(RealmDataWrapper.messageToRMessage(message: message as! Message))
-                            if((message as! Message).baseJson["replies"] != nil) {
+                            if (message as! Message).baseJson["replies"] != nil {
                                 let json = (message as! Message).baseJson as JSONDictionary
                                 if let j = json["replies"] as? JSONDictionary, let data = j["data"] as? JSONDictionary, let things = data["children"] as? JSONArray {
                                     for thing in things {

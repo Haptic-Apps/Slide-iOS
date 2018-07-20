@@ -21,7 +21,7 @@ public class WrapSpoilers: NSObject {
             let spoilerText = match[1]
             let spoilerTeaser = match[2]
             // Remove the last </a> tag, but keep the < for parsing.
-            if (!tag.contains("<a href=\"http")) {
+            if !tag.contains("<a href=\"http") {
                 base = base.replacingOccurrences(of: tag, with: tag.substring(0, length: tag.length - 4) + (spoilerTeaser.isEmpty() ? "spoiler" : "") + " [[s[ \(spoilerText)]s]]</a> ")
             }
         }

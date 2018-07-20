@@ -50,13 +50,13 @@ public class ToolbarTextView: NSObject {
         }
         scrollView.delaysContentTouches = false
         text!.inputAccessoryView = scrollView
-        if(!(parent is ReplyViewController)) {
+        if !(parent is ReplyViewController) {
             text!.tintColor = .white
         }
         else {
             text!.tintColor = ColorUtil.fontColor
         }
-        if(ColorUtil.theme != .LIGHT) {
+        if ColorUtil.theme != .LIGHT {
             text!.keyboardAppearance = .dark
         }
     }
@@ -77,7 +77,7 @@ public class ToolbarTextView: NSObject {
 
     func saveDraft(_ sender: AnyObject) {
         if let toSave = text!.text {
-            if (!toSave.isEmpty()) {
+            if !toSave.isEmpty() {
                 Drafts.addDraft(s: text!.text)
                 BannerUtil.makeBanner(text: "Draft saved!", seconds: 3, context: parent, top: true)
             }
@@ -88,7 +88,7 @@ public class ToolbarTextView: NSObject {
 
     func openDrafts(_ sender: AnyObject) {
         print("Opening drafts")
-        if (Drafts.drafts.isEmpty) {
+        if Drafts.drafts.isEmpty {
             parent.view.makeToast("No drafts found", duration: 4, position: .top)
         }
         else {
@@ -117,7 +117,7 @@ public class ToolbarTextView: NSObject {
                 flow: .vertical,
                 paging: true,
                 selection: .multiple(action: { images in
-                    if(!images.isEmpty) {
+                    if !images.isEmpty {
                         let alert = UIAlertController.init(title: "Confirm upload", message: "Would you like to upload \(images.count) image\(images.count > 1 ? "s" : "") anonymously to Imgur.com? This cannot be undone", preferredStyle: .alert)
                         alert.addAction(UIAlertAction.init(title: "No", style: .destructive, handler: nil))
                         alert.addAction(UIAlertAction.init(title: "Yes", style: .default) { _ in
@@ -154,7 +154,7 @@ public class ToolbarTextView: NSObject {
                     .responseJSON { response in
                         print(response)
                         if let status = response.response?.statusCode {
-                            switch (status) {
+                            switch status {
                             case 201:
                                 print("example success")
                             default:
@@ -171,7 +171,7 @@ public class ToolbarTextView: NSObject {
                                 DispatchQueue.main.async {
                                     self.alertView!.dismiss(animated: true, completion: {
                                         if last != "Failure" {
-                                            if (self.parent is ReplyViewController && (self.parent as! ReplyViewController).type == .SUBMIT_IMAGE) {
+                                            if self.parent is ReplyViewController && (self.parent as! ReplyViewController).type == .SUBMIT_IMAGE {
                                                 (self.parent as! ReplyViewController).text![2].text = url
                                             }
                                             else {
@@ -199,7 +199,7 @@ public class ToolbarTextView: NSObject {
 
                                                 alert.addAction(UIAlertAction(title: "Insert", style: .default, handler: { (_) in
                                                     let text = self.insertText ?? ""
-                                                    if(text.isEmpty()) {
+                                                    if text.isEmpty() {
                                                         self.text!.insertText("\(url)")
                                                     }
                                                     else {
@@ -229,7 +229,7 @@ public class ToolbarTextView: NSObject {
                 DispatchQueue.main.async {
                     self.alertView!.dismiss(animated: true, completion: {
                         if link != "Failure" {
-                            if (self.parent is ReplyViewController && (self.parent as! ReplyViewController).type == .SUBMIT_IMAGE) {
+                            if self.parent is ReplyViewController && (self.parent as! ReplyViewController).type == .SUBMIT_IMAGE {
                                 (self.parent as! ReplyViewController).text![2].text = link
                             }
                             else {
@@ -294,7 +294,7 @@ public class ToolbarTextView: NSObject {
                     for (key, value) in parameters {
                         multipartFormData.append((value.data(using: .utf8))!, withName: key)
                     }
-                    if (!album.isEmpty) {
+                    if !album.isEmpty {
                         multipartFormData.append(album.data(using: .utf8)!, withName: "album")
                     }
                 }, to: "https://api.imgur.com/3/image", method: .post, headers: ["Authorization": "Client-ID bef87913eb202e9"], encodingCompletion: { (encodingResult) in
@@ -311,7 +311,7 @@ public class ToolbarTextView: NSObject {
                             debugPrint(response)
                             let link = JSON(response.value!)["data"]["link"].stringValue
                             print("Link is \(link)")
-                            if (count == assets.count) {
+                            if count == assets.count {
                                 completion(link)
                             }
                         }

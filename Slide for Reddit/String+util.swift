@@ -142,7 +142,7 @@ public extension String {
     
     func isAlpha() -> Bool {
         for chr in self {
-            if (!(chr >= "a" && chr <= "z") && !(chr >= "A" && chr <= "Z") ) {
+            if !(chr >= "a" && chr <= "z") && !(chr >= "A" && chr <= "Z") {
                 return false
             }
         }
