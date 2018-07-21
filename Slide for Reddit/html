@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<div id="html">
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Slide Subreddit Shortcut</title>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+<meta content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no;" name="viewport" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta content="r/{{subname}}" name="apple-mobile-web-app-title" />
+<link rel="icon" type="image/png" href="data:image/png;base64,{{subicon}}" />
+<link rel="apple-touch-icon" href="data:image/png;base64,{{subicon}}" />
+<link rel="apple-touch-startup-image" href="data:image/png;base64,{{subicon}}" />
+<style>
+#toolbar {
+width: 100%;
+height: 10%;
+background-color: #000000;
+padding: 20px;
+color: #fff;
+}
+
+img#imageIcon {
+border-radius: 25%;
+box-shadow: 0px 9px 17px #1312127a;
+}
+
+object {
+width: 100%;
+height: 100vh;
+min-height: 100%;
+object-fit: fill;
+}
+
+img#imageIcon {
+height: 100px;
+width: 100px;
+}
+
+#shareicon {
+height: 28px;
+width: 20px;
+margin: 5px;
+margin-left: 11px;
+margin-bottom: -3px !important;
+filter: brightness(0) invert(1);
+}
+
+#reader,
+#safari {
+height: 30px;
+width: 30px;
+position: absolute;
+right: 30px;
+top: 20px;
+}
+
+body {
+background-color: {{subcolor}};
+font-family: Helvetica;
+color: #fff;
+margin-top: 45px;
+}
+
+#safari {
+right: 90px !important;
+}
+
+#html {
+overflow-y: scroll;
+overflow-x: hidden;
+height: 100%;
+}
+
+html {
+height: 100%;
+margin: 0;
+padding: 0;
+}
+</style>
+</head>
+
+<body id="container">
+
+<div id="inner">
+<a id="redirectURL" href="slide:///r/{{subname}}" name="redirectURL"></a>
+<h1>/r/{{subname}}</h1>
+</div>
+</body>
+<script>
+if (!window.navigator.standalone) {
+document.getElementById('inner').remove();
+document.write("<body><center><h1>Add r/{{subname}} to your homescreen</h1><img id=\"imageIcon\" src=\"data:image/png;base64,{{subicon}}\"/>
+<h2> Click  <img id=\"shareicon\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACYAAAA1CAYAAAAtf5mbAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyhpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTM4IDc5LjE1OTgyNCwgMjAxNi8wOS8xNC0wMTowOTowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTcgKE1hY2ludG9zaCkiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NTZCQTRBN0Q2OTdDMTFFNzhCMEZDMTIwMUI0RkQzNjEiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NTZCQTRBN0U2OTdDMTFFNzhCMEZDMTIwMUI0RkQzNjEiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo1NkJBNEE3QjY5N0MxMUU3OEIwRkMxMjAxQjRGRDM2MSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo1NkJBNEE3QzY5N0MxMUU3OEIwRkMxMjAxQjRGRDM2MSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pn8R4UYAAAELSURBVHja7NhLCsIwFAXQRLoQF6SORMGB4BYEQXDgwIEgFJfhxJE7ElfhN75AAg9N2gT7o94LF0VJOKZJKQqllPA1Mil1LopKQbC9nsp00RQYR9ku64ZZ1JWhXuZ1VReMo3oMNqM+zPt11bBPlGAwnSnDbaqCcVSfT8VgOhOG25YN86FcMJ0x9W4+35UF46iBayoHTGdIvZnv0lBXEvEbzgY1op4ixh2pT+qBeinrUnazpvKsWMjYr8is0yeljNoVdlgRN/6OaGgAi43M2bB5Y0P2mGrViiXstiF/PJWhKxt0urH5AQMMMMAAAwwwwBryoFjDAyEuJWCAAQYYYIABBlhL/4P9zxV7CzAARnAcTBPSXp8AAAAASUVORK5CYII=\"/> and \"Add to Homescreen\" </h2></center></body>");
+} else {
+window.location = "slide:///r/{{subname}}";
+}
+</script>
+
+</html>
+</div>
+
+<script type="text/javascript">
+function back() {
+window.history.back();
+}
+var html = document.getElementById('html').innerHTML;
+html = html.replace(/\s{2,}/g, '')
+.replace(/%/g, '%25')
+.replace(/&/g, '%26')
+.replace(/#/g, '%23')
+.replace(/"/g, '%22')
+.replace(/'/g, '%27');
+var dataURI = 'data:text/html;charset=UTF-8,' + html;
+window.location.href = dataURI
+</script>
+
+</html>

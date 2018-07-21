@@ -357,35 +357,40 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey: Any] = [:]) -> Bool {
-        print("Returning \(url.absoluteString)")
-        var parameters: [String: String] = url.getKeyVals()!
-
-        if let code = parameters["code"], let state = parameters["state"] {
-            print(state)
-            if code.characters.count > 0 {
-                print(code)
+        if(url.absoluteString.contains("/r/")){
+            VCPresenter.openRedditLink(url.absoluteString.replacingOccurrences(of: "slide://", with: ""), nil, window?.rootViewController)
+            return true
+        } else {
+            print("Returning \(url.absoluteString)")
+            var parameters: [String: String] = url.getKeyVals()!
+            
+            if let code = parameters["code"], let state = parameters["state"] {
+                print(state)
+                if code.characters.count > 0 {
+                    print(code)
+                }
             }
+            
+            return OAuth2Authorizer.sharedInstance.receiveRedirect(url, completion: { (result) -> Void in
+                print(result)
+                switch result {
+                    
+                case .failure(let error):
+                    print(error)
+                case .success(let token):
+                    DispatchQueue.main.async(execute: { () -> Void in
+                        do {
+                            try OAuth2TokenRepository.save(token: token, of: token.name)
+                            self.login?.setToken(token: token)
+                            NotificationCenter.default.post(name: OAuth2TokenRepositoryDidSaveTokenName, object: nil, userInfo: nil)
+                        } catch {
+                            NotificationCenter.default.post(name: OAuth2TokenRepositoryDidFailToSaveTokenName, object: nil, userInfo: nil)
+                            print(error)
+                        }
+                    })
+                }
+            })
         }
-
-        return OAuth2Authorizer.sharedInstance.receiveRedirect(url, completion: { (result) -> Void in
-            print(result)
-            switch result {
-
-            case .failure(let error):
-                print(error)
-            case .success(let token):
-                DispatchQueue.main.async(execute: { () -> Void in
-                    do {
-                        try OAuth2TokenRepository.save(token: token, of: token.name)
-                        self.login?.setToken(token: token)
-                        NotificationCenter.default.post(name: OAuth2TokenRepositoryDidSaveTokenName, object: nil, userInfo: nil)
-                    } catch {
-                        NotificationCenter.default.post(name: OAuth2TokenRepositoryDidFailToSaveTokenName, object: nil, userInfo: nil)
-                        print(error)
-                    }
-                })
-            }
-        })
     }
 
     func killAndReturn() {

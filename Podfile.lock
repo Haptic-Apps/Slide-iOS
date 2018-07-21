@@ -21,6 +21,7 @@ PODS:
     - DTFoundation/Core
   - DTFoundation/UIKit (1.7.13):
     - DTFoundation/Core
+  - Embassy (4.0.5)
   - LicensesViewController (0.6.5)
   - MaterialComponents/ActivityIndicator (56.0.0):
     - MaterialComponents/Palettes
@@ -111,6 +112,7 @@ DEPENDENCIES:
   - BadgeSwift (~> 5.0)
   - BiometricAuthentication
   - DTCoreText (from `https://github.com/Cocoanetics/DTCoreText`)
+  - Embassy (~> 4.0)
   - LicensesViewController (~> 0.6.5)
   - MaterialComponents/ActivityIndicator
   - MaterialComponents/AnimationTiming
@@ -179,6 +181,7 @@ SPEC CHECKSUMS:
   BiometricAuthentication: fce6c7537fba0192a395834657e75ccb4d89d9f0
   DTCoreText: e5d688cffc9f6a61eddd1a4f94e2046851230de3
   DTFoundation: f03be9fd786f11e505bb8fc44e2a3732bf0917df
+  Embassy: 1b2b74099b752b94edb1c93abe6036099b7c64ca
   LicensesViewController: 1f2982b1bab8402d3f88e23197957038e8abb907
   MaterialComponents: e4edce947dba33f9c4dd14c34024602999afcbed
   MDFInternationalization: e355b0cebecf53d60233bd267084e49366c82513
@@ -201,6 +204,6 @@ SPEC CHECKSUMS:
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   XLActionController: 007868251c0eed70d649d06c1625259b73b3a600
 
-PODFILE CHECKSUM: 1cdd763e932f750104bf1e58f8d224f80b252593
+PODFILE CHECKSUM: c4ca6de61c3d5fb5d37921de56753285f61b95fa
 
 COCOAPODS: 1.4.0

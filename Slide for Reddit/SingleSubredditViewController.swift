@@ -18,6 +18,7 @@ import SloppySwiper
 import XLActionController
 import MKColorPicker
 import RLBAlertsPickers
+import Embassy
 
 // MARK: - Base
 class SingleSubredditViewController: MediaViewController {
@@ -210,6 +211,9 @@ class SingleSubredditViewController: MediaViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        
+        server?.stop()
+        loop?.stop()
 
         if (single || !SettingValues.viewType) {
             self.navigationController?.setNavigationBarHidden(false, animated: true)
@@ -1080,7 +1084,6 @@ class SingleSubredditViewController: MediaViewController {
         }
     }
 
-
     func preloadImages(_ values: [RSubmission]) {
         var urls: [URL] = []
         if(!SettingValues.noImages){
@@ -1237,7 +1240,57 @@ class SingleSubredditViewController: MediaViewController {
 
         return target
     }
+    
+    var loop: SelectorEventLoop?
+    var server: DefaultHTTPServer?
+    
+    func addToHomescreen(){
+        DispatchQueue.main.async { () -> Void in
+            self.loop = try! SelectorEventLoop(selector: try! KqueueSelector())
+            self.server = DefaultHTTPServer(eventLoop: self.loop!, port: 8080) {
+                (
+                environ: [String: Any],
+                startResponse: ((String, [(String, String)]) -> Void),
+                sendBody: ((Data) -> Void)
+                ) in
+                // Start HTTP response
+                startResponse("200 OK", [])
+                
+                let sub = ColorUtil.getColorForSub(sub: self.sub)
+                let lighterSub = sub.add(overlay: UIColor.white.withAlphaComponent(0.4))
+                var coloredIcon = UIImage.convertGradientToImage(colors: [lighterSub, sub], frame: CGSize.square(size: 150))
+                coloredIcon = coloredIcon.overlayWith(image: UIImage(named: "slideoverlay")!.getCopy(withSize: CGSize.square(size: 150)), posX: 0, posY: 0)
+                let imageData:Data =  UIImagePNGRepresentation(coloredIcon)! 
+                let base64String = imageData.base64EncodedString()
 
+                let pathInfo = environ["PATH_INFO"]! as! String
+                // send EOF
+                let baseHTML = Bundle.main.url(forResource: "html", withExtension: nil)!
+                var htmlString = try! String.init(contentsOf: baseHTML, encoding: String.Encoding.utf8)
+                htmlString = htmlString.replacingOccurrences(of: "{{subname}}", with: self.sub)
+                htmlString = htmlString.replacingOccurrences(of: "{{subcolor}}", with: ColorUtil.getColorForSub(sub: self.sub).toHexString())
+                htmlString = htmlString.replacingOccurrences(of: "{{subicon}}", with: base64String)
+
+                print(htmlString)
+                let bodyString = htmlString.toBase64()
+                sendBody(Data.init(base64Encoded: bodyString!)!)
+                sendBody(Data())
+            }
+            
+            // Start HTTP server to listen on the port
+            try! self.server?.start()
+            
+            // Run event loop
+            self.loop?.runForever()
+            
+        }
+        if #available(iOS 10.0, *) {
+            UIApplication.shared.open(URL.init(string: "http://[::1]:8080/foo-bar")!)
+        } else {
+            // Fallback on earlier versions
+            UIApplication.shared.openURL(URL.init(string: "http://[::1]:8080/foo-bar")!)
+        }
+    }
 }
 
 // MARK: - Actions
@@ -1348,7 +1401,7 @@ extension SingleSubredditViewController {
 
         present(alertController, animated: true, completion: nil)
     }
-
+    
     func pickAccent(sender: AnyObject?, parent: MainViewController?) {
         parentController = parent
         let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
@@ -1440,7 +1493,7 @@ extension SingleSubredditViewController {
         alertController.addAction(Action(ActionData(title: "Refresh", image: UIImage(named: "sync")!.menuIcon()), style: .default, handler: { action in
             self.refresh()
         }))
-
+        
         alertController.addAction(Action(ActionData(title: "Gallery", image: UIImage(named: "image")!.menuIcon()), style: .default, handler: { action in
             self.galleryMode()
         }))
@@ -1468,6 +1521,11 @@ extension SingleSubredditViewController {
             if(!self.links.isEmpty || self.loaded){
                 self.filterContent()
             }
+        }))
+        
+        alertController.addAction(Action(ActionData(title: "Add to homescreen", image: UIImage(named: "add_homescreen")!.menuIcon()), style: .default, handler: {
+            action in
+            self.addToHomescreen()
         }))
 
         VCPresenter.presentAlert(alertController, parentVC: self)

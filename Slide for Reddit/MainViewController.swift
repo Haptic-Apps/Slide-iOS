@@ -371,7 +371,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                 if(subs.count < 3 && !subname.contains("/")){
                     subs.append(UIMutableApplicationShortcutItem.init(type: "me.ccrama.redditslide.subreddit", localizedTitle: subname, localizedSubtitle: nil, icon: UIApplicationShortcutIcon.init(templateImageName: "subs"), userInfo: [ "sub": "\(subname)" ]))
                 }
-                
                 subs.reverse()
             }
             UIApplication.shared.shortcutItems = subs

@@ -86,4 +86,66 @@ extension UIImage {
 
         return image
     }
+    
+    public convenience init?(color: UIColor, size: CGSize = CGSize(width: 1, height: 1)) {
+        let rect = CGRect(origin: .zero, size: size)
+        UIGraphicsBeginImageContextWithOptions(rect.size, false, 0.0)
+        color.setFill()
+        UIRectFill(rect)
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        guard let cgImage = image?.cgImage else { return nil }
+        self.init(cgImage: cgImage)
+    }
+
+    func overlayWith(image: UIImage, posX: CGFloat, posY: CGFloat) -> UIImage {
+        let newWidth = size.width < posX + image.size.width ? posX + image.size.width : size.width
+        let newHeight = size.height < posY + image.size.height ? posY + image.size.height : size.height
+        let newSize = CGSize(width: newWidth, height: newHeight)
+        
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 0.0)
+        draw(in: CGRect(origin: CGPoint.zero, size: size))
+        image.draw(in: CGRect(origin: CGPoint(x: posX, y: posY), size: image.size))
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()!
+        UIGraphicsEndImageContext()
+        
+        return newImage
+    }
+    
+    class func convertGradientToImage(colors: [UIColor], frame: CGSize) -> UIImage {
+        let rect = CGRect.init(x: 0, y: 0, width: frame.width, height: frame.height)
+        // start with a CAGradientLayer
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.frame = rect
+        
+        // add colors as CGCologRef to a new array and calculate the distances
+        var colorsRef = [CGColor]()
+        var locations = [NSNumber]()
+        
+        for i in 0 ... colors.count-1 {
+            colorsRef.append(colors[i].cgColor as CGColor)
+            locations.append(NSNumber(value: Float(i)/Float(colors.count-1)))
+        }
+        
+        gradientLayer.colors = colorsRef
+
+        let x: Double! = 45 / 360.0
+        let a = pow(sinf(Float(2.0 * .pi * ((x + 0.75) / 2.0))),2.0);
+        let b = pow(sinf(Float(2 * .pi*((x+0.0)/2))),2);
+        let c = pow(sinf(Float(2 * .pi*((x+0.25)/2))),2);
+        let d = pow(sinf(Float(2 * .pi*((x+0.5)/2))),2);
+        
+        gradientLayer.endPoint = CGPoint(x: CGFloat(c),y: CGFloat(d))
+        gradientLayer.startPoint = CGPoint(x: CGFloat(a),y:CGFloat(b))
+
+        // now build a UIImage from the gradient
+        UIGraphicsBeginImageContext(gradientLayer.bounds.size)
+        gradientLayer.render(in: UIGraphicsGetCurrentContext()!)
+        let gradientImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        // return the gradient image
+        return gradientImage!
+    }
 }

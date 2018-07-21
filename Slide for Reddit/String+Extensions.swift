@@ -25,5 +25,12 @@ extension String {
         let size = self.size(attributes: fontAttribute)  // for Single Line
         return size;
     }
-
+    
+    func toBase64() -> String? {
+        guard let data = self.data(using: String.Encoding.utf8) else {
+            return nil
+        }
+        
+        return data.base64EncodedString(options: Data.Base64EncodingOptions(rawValue: 0))
+    }
 }
