@@ -30,7 +30,7 @@ class CodeDisplayView: UIScrollView {
         baseLabel = UILabel()
         baseLabel.numberOfLines = 0
         super.init(frame: CGRect.zero)
-        parseText(baseHtml.removingPercentEncoding!)
+        parseText(baseHtml.removingPercentEncoding ?? baseHtml)
         self.bounces = true
         self.isUserInteractionEnabled = true
         self.isScrollEnabled = true

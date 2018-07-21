@@ -227,11 +227,14 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
             numberFormatter.locale = items[0].priceLocale
             let price1Str = numberFormatter.string(from: items[0].price)
             let price2Str = numberFormatter.string(from: items[1].price)
-            if(self.three.text! != price1Str!){
+            
+            let priceOldStr = numberFormatter.string(from: NSDecimalNumber(value: 4.99))
+            let priceOldStr2 = numberFormatter.string(from: NSDecimalNumber(value: 7.99))
+            if(priceOldStr != price1Str!){
                 //Is a sale
                 
-                let crossedString = NSMutableAttributedString.init(string: "$4.99\n", attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSStrikethroughStyleAttributeName: NSNumber(value: NSUnderlineStyle.styleSingle.rawValue)])
-                let crossedString2 = NSMutableAttributedString.init(string: "$7.99\n", attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSStrikethroughStyleAttributeName: NSNumber(value: NSUnderlineStyle.styleSingle.rawValue)])
+                let crossedString = NSMutableAttributedString.init(string: "\(priceOldStr)\n", attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSStrikethroughStyleAttributeName: NSNumber(value: NSUnderlineStyle.styleSingle.rawValue)])
+                let crossedString2 = NSMutableAttributedString.init(string: "\(priceOldStr2)\n", attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSStrikethroughStyleAttributeName: NSNumber(value: NSUnderlineStyle.styleSingle.rawValue)])
 
                 let newString = NSMutableAttributedString.init(string: price1Str!, attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 18)])
                 let newString2 = NSMutableAttributedString.init(string: price2Str!, attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 18)])
@@ -250,6 +253,9 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
                 
                 self.three.frame = CGRect.init(x:  (self.tableView.frame.size.width / 4) - 50, y: 150, width: 100, height: 80)
                 self.six.frame = CGRect.init(x:  (self.tableView.frame.size.width / 4) - 50, y: 150, width: 100, height: 80)
+            } else {
+                self.three.text = priceOldStr
+                self.six.text = priceOldStr2
             }
         }
         IAPHandler.shared.purchaseStatusBlock = {[weak self] (type) in

@@ -201,13 +201,19 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         self.lastPosition = scrollView.contentOffset.x
 
-        if (currentIndex == vCs.count - 1) && (lastPosition > scrollView.frame.width) {
-            scrollView.contentOffset.x = scrollView.frame.width
-            return
+        if (currentIndex == 0 && scrollView.contentOffset.x < scrollView.bounds.size.width) {
+            scrollView.contentOffset = CGPoint(x: scrollView.bounds.size.width, y: 0);
+        } else if (currentIndex == vCs.count - 1 && scrollView.contentOffset.x > scrollView.bounds.size.width) {
+            scrollView.contentOffset = CGPoint(x: scrollView.bounds.size.width, y: 0);
+        }
+    }
 
-        } else if currentIndex == 0 && lastPosition < scrollView.frame.width {
-            scrollView.contentOffset.x = scrollView.frame.width
-            return
+    //From https://stackoverflow.com/a/25167681/3697225
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        if (currentIndex == 0 && scrollView.contentOffset.x <= scrollView.bounds.size.width) {
+            targetContentOffset.pointee = CGPoint(x: scrollView.bounds.size.width, y: 0);
+        } else if (currentIndex == vCs.count - 1 && scrollView.contentOffset.x >= scrollView.bounds.size.width) {
+            targetContentOffset.pointee = CGPoint(x: scrollView.bounds.size.width, y: 0);
         }
     }
 

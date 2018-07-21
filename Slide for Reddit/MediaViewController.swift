@@ -43,7 +43,7 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIViewControllerTr
             }
         } else {
             if (ContentType.isGif(uri: url)) {
-                if (!link!.videoPreview.isEmpty()) {
+                if (!link!.videoPreview.isEmpty() && !ContentType.isGfycat(uri: url)) {
                     doShow(url: URL.init(string: link!.videoPreview)!)
                 } else {
                     doShow(url: url)

@@ -141,6 +141,9 @@ class SingleSubredditViewController: MediaViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
+        server?.stop()
+        loop?.stop()
+
         if (SubredditReorderViewController.changed) {
             self.reloadNeedingColor()
             flowLayout.reset()
@@ -218,6 +221,7 @@ class SingleSubredditViewController: MediaViewController {
         if (single || !SettingValues.viewType) {
             self.navigationController?.setNavigationBarHidden(false, animated: true)
         }
+        self.navigationController?.setToolbarHidden(true, animated: false)
 
         UIApplication.shared.statusBarStyle = .lightContent
 

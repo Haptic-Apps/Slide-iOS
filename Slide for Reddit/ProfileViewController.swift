@@ -370,6 +370,7 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
                 if let scrollView = view as? UIScrollView
                 {
                     scrollView.panGestureRecognizer.require(toFail: self.navigationController!.interactivePopGestureRecognizer!);
+                    scrollView.delegate = self
                 }
             }
         }
@@ -463,14 +464,21 @@ class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSour
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         self.lastPosition = scrollView.contentOffset.x
+        
+        if (currentIndex == 0 && scrollView.contentOffset.x < scrollView.bounds.size.width) {
+            scrollView.contentOffset = CGPoint(x: scrollView.bounds.size.width, y: 0);
+        } else if (currentIndex == vCs.count - 1 && scrollView.contentOffset.x > scrollView.bounds.size.width) {
+            scrollView.contentOffset = CGPoint(x: scrollView.bounds.size.width, y: 0);
+        }
 
-        if (currentIndex == vCs.count - 1) && (lastPosition > scrollView.frame.width) {
-            scrollView.contentOffset.x = scrollView.frame.width
-            return
-
-        } else if currentIndex == 0 && lastPosition < scrollView.frame.width {
-            scrollView.contentOffset.x = scrollView.frame.width
-            return
+    }
+    
+    //From https://stackoverflow.com/a/25167681/3697225
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        if (currentIndex == 0 && scrollView.contentOffset.x <= scrollView.bounds.size.width) {
+            targetContentOffset.pointee = CGPoint(x: scrollView.bounds.size.width, y: 0);
+        } else if (currentIndex == vCs.count - 1 && scrollView.contentOffset.x >= scrollView.bounds.size.width) {
+            targetContentOffset.pointee = CGPoint(x: scrollView.bounds.size.width, y: 0);
         }
     }
 

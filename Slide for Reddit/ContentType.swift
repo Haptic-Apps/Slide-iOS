@@ -81,6 +81,13 @@ class ContentType {
             ".gifv") || path.hasSuffix(".webm") || path.hasSuffix(".mp4");
     }
     
+    public static func isGfycat(uri: URL) -> Bool {
+        let host = uri.host?.lowercased()
+        let path = uri.path.lowercased()
+        
+        return hostContains(host: host, bases: ["gfycat.com"])
+    }
+    
     public static func isImage(uri: URL) -> Bool {
         let host = uri.host?.lowercased()
         let path = uri.path.lowercased()
