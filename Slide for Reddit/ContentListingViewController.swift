@@ -47,6 +47,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
         self.navigationController?.setToolbarHidden(true, animated: false)
+        self.navigationController?.setNavigationBarHidden(false, animated: false)
     }
 
     var flowLayout: WrappingFlowLayout = WrappingFlowLayout.init()
@@ -434,9 +435,9 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                         let framesetterB = CTFramesetterCreateWithAttributedString(content!)
                         let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: itemWidth - 16 - (message.subject.hasPrefix("re:") ? 22 : 0), height: CGFloat.greatestFiniteMagnitude), nil)
 
-                        estimatedHeights[message.id] = CGFloat(32 + textSizeT.height + textSizeI.height + textSizeB.height)
+                        estimatedHeights[message.id] = CGFloat(36 + textSizeT.height + textSizeI.height + textSizeB.height)
                     } else {
-                        estimatedHeights[message.id] = CGFloat(32 + textSizeT.height + textSizeI.height)
+                        estimatedHeights[message.id] = CGFloat(36 + textSizeT.height + textSizeI.height)
                     }
                 }
                 return CGSize(width: itemWidth, height: estimatedHeights[message.id]!)

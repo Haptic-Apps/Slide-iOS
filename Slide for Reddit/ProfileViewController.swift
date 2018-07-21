@@ -12,7 +12,7 @@ import MKColorPicker
 import RLBAlertsPickers
 import MaterialComponents.MDCTabBar
 
-class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, ColorPickerViewDelegate, UIToolbarDelegate, UIScrollViewDelegate {
+class ProfileViewController:  UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, ColorPickerViewDelegate, UIScrollViewDelegate {
     var content : [UserContent] = []
     var name: String = ""
     var isReload = false

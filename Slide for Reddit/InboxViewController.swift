@@ -10,7 +10,7 @@ import UIKit
 import reddift
 import MaterialComponents.MaterialTabs
 
-class InboxViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIToolbarDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate {
+class InboxViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate {
     var content: [MessageWhere] = []
     var isReload = false
     var session: Session? = nil

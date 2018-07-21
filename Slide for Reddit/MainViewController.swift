@@ -20,7 +20,9 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     public static var needsRestart = false
     
     override func didMove(toParentViewController parent: UIViewController?) {
-        self.viewWillAppearActions()
+        if(parent is UISplitViewController){
+            self.viewWillAppearActions()
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -806,8 +808,9 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         UIApplication.shared.statusBarView?.backgroundColor = .clear
 
         if (navigationController?.isNavigationBarHidden ?? false) {
-            navigationController?.setNavigationBarHidden(false, animated: true)
+            navigationController?.setNavigationBarHidden(false, animated: false)
         }
+        navigationController?.setToolbarHidden(true, animated: false)
     }
 
     func showSortMenu(_ sender: UIButton?) {
