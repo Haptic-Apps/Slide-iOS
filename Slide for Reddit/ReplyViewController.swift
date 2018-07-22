@@ -437,8 +437,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     $0.backgroundColor = ColorUtil.foregroundColor
                     $0.layer.masksToBounds = false
                     $0.layer.cornerRadius = 10
-                    $0.textContainer.maximumNumberOfLines = 1
-                    $0.textContainer.lineBreakMode = .byTruncatingTail
+                    $0.delegate = self
                     $0.font = UIFont.systemFont(ofSize: 16)
                     $0.isScrollEnabled = false
                     $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 0, right: 8)
@@ -491,8 +490,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     $0.backgroundColor = ColorUtil.foregroundColor
                     $0.layer.masksToBounds = false
                     $0.layer.cornerRadius = 10
-                    $0.textContainer.maximumNumberOfLines = 1
-                    $0.textContainer.lineBreakMode = .byTruncatingTail
+                    $0.delegate = self
                     $0.font = UIFont.systemFont(ofSize: 16)
                     $0.isScrollEnabled = false
                     $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 8, right: 8)
@@ -505,7 +503,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     $0.layer.masksToBounds = false
                     $0.layer.cornerRadius = 10
                     $0.font = UIFont.systemFont(ofSize: 16)
-                    $0.textContainer.maximumNumberOfLines = 1
+                    $0.textContainer.maximumNumberOfLines = 0
+                    $0.delegate = self
                     $0.textContainer.lineBreakMode = .byTruncatingTail
                     $0.isScrollEnabled = false
                     $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 8, right: 8)
@@ -537,7 +536,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 
                 stack.addArrangedSubviews(text1, text2, text3)
                 text1.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
-                text1.heightAnchor == CGFloat(70)
+                text1.heightAnchor >= CGFloat(70)
                 text2.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
                 text2.heightAnchor == CGFloat(70)
                 text3.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
@@ -557,8 +556,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 $0.backgroundColor = ColorUtil.foregroundColor
                 $0.layer.masksToBounds = false
                 $0.layer.cornerRadius = 10
-                $0.textContainer.maximumNumberOfLines = 1
-                $0.textContainer.lineBreakMode = .byTruncatingTail
+                $0.delegate = self
                 $0.font = UIFont.systemFont(ofSize: 16)
                 $0.isScrollEnabled = false
                 $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 8, right: 8)
@@ -604,7 +602,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 $0.delegate = self
             })
             
-            if(type != .SUBMIT_TEXT){
+            if(type != .SUBMIT_TEXT && type != .EDIT_SELFTEXT){
                 text3.placeholder = "Link"
                 text3.textContainer.maximumNumberOfLines = 1
                 
@@ -623,10 +621,11 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 replyButtons!.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
             } else {
                 stack.addArrangedSubviews(text1, text2, text3)
+                text3.text = (toReplyTo as! RSubmission).body
             }
 
             text1.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
-            text1.heightAnchor == CGFloat(70)
+            text1.heightAnchor >= CGFloat(70)
             text2.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
             text2.heightAnchor == CGFloat(70)
             text3.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
@@ -643,13 +642,13 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             if((toReplyTo as! RSubmission).type == .SELF){
                 //two
                 var text1 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
-                    $0.isEditable = true
                     $0.textColor = ColorUtil.fontColor
                     $0.backgroundColor = ColorUtil.foregroundColor
                     $0.layer.masksToBounds = false
                     $0.layer.cornerRadius = 10
                     $0.font = UIFont.systemFont(ofSize: 16)
                     $0.isScrollEnabled = false
+                    $0.delegate = self
                     $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 0, right: 8)
                     $0.isEditable = false
                 })
@@ -743,10 +742,10 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 $0.backgroundColor = ColorUtil.foregroundColor
                 $0.layer.masksToBounds = false
                 $0.layer.cornerRadius = 10
+                $0.delegate = self
                 $0.font = UIFont.systemFont(ofSize: 16)
                 $0.isScrollEnabled = false
                 $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 8, right: 8)
-                $0.delegate = self
             })
 
 
@@ -773,7 +772,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
 
             stack.addArrangedSubviews(text1, text3)
             text1.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
-            text1.heightAnchor == CGFloat(70)
+            text1.heightAnchor >= CGFloat(70)
             text3.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
 
             text3.heightAnchor >= CGFloat(70)
