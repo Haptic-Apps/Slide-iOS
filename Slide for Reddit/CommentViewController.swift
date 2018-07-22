@@ -381,7 +381,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         var bottom = CGFloat(45)
         if #available(iOS 11.0, *) {
             top = 0
-            bottom = 0
         }
         tableView.contentInset = UIEdgeInsetsMake(top, 0, bottom, 0)
         if #available(iOS 10.0, *) {
@@ -679,7 +678,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             var bottom = CGFloat(45)
             if #available(iOS 11.0, *) {
                 top = 0
-                bottom = 0
             }
             normalInsets = UIEdgeInsets.init(top: top, left: 0, bottom: bottom, right: 0)
         }
@@ -815,7 +813,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     }
 
 
-    var normalInsets = UIEdgeInsetsMake(0, 0, 0, 0)
+    var normalInsets = UIEdgeInsetsMake(0, 0, 45, 0)
 
     func keyboardWillHide(_ notification: Notification) {
         tableView.contentInset = normalInsets

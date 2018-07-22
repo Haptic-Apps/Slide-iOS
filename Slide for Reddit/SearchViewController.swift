@@ -136,7 +136,7 @@ class SearchViewController: ContentListingViewController {
 
         alert.addAction(UIAlertAction(title: "Search again", style: .default, handler: { [weak alert] (_) in
             let text = self.searchText ?? ""
-            let search = SearchViewController.init(subreddit: "all", searchFor: text)
+            let search = SearchViewController.init(subreddit: self.sub, searchFor: text)
             self.navigationController?.popViewController(animated: true)
             VCPresenter.showVC(viewController: search, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
         }))

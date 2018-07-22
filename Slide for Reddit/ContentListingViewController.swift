@@ -428,12 +428,12 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     }
                     
                     let framesetterT = CTFramesetterCreateWithAttributedString(title)
-                    let textSizeT = CTFramesetterSuggestFrameSizeWithConstraints(framesetterT, CFRange(), nil, CGSize.init(width: itemWidth - 16 - (message.subject.hasPrefix("re:") ? 22 : 0), height: CGFloat.greatestFiniteMagnitude), nil)
+                    let textSizeT = CTFramesetterSuggestFrameSizeWithConstraints(framesetterT, CFRange(), nil, CGSize.init(width: itemWidth - 16 - (message.subject.hasPrefix("re:") ? 30 : 0), height: CGFloat.greatestFiniteMagnitude), nil)
                     let framesetterI = CTFramesetterCreateWithAttributedString(infoString)
-                    let textSizeI = CTFramesetterSuggestFrameSizeWithConstraints(framesetterI, CFRange(), nil, CGSize.init(width: itemWidth - 16 - (message.subject.hasPrefix("re:") ? 22 : 0), height: CGFloat.greatestFiniteMagnitude), nil)
+                    let textSizeI = CTFramesetterSuggestFrameSizeWithConstraints(framesetterI, CFRange(), nil, CGSize.init(width: itemWidth - 16 - (message.subject.hasPrefix("re:") ? 30 : 0), height: CGFloat.greatestFiniteMagnitude), nil)
                     if (content != nil) {
                         let framesetterB = CTFramesetterCreateWithAttributedString(content!)
-                        let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: itemWidth - 16 - (message.subject.hasPrefix("re:") ? 22 : 0), height: CGFloat.greatestFiniteMagnitude), nil)
+                        let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: itemWidth - 16 - (message.subject.hasPrefix("re:") ? 30 : 0), height: CGFloat.greatestFiniteMagnitude), nil)
 
                         estimatedHeights[message.id] = CGFloat(36 + textSizeT.height + textSizeI.height + textSizeB.height)
                     } else {

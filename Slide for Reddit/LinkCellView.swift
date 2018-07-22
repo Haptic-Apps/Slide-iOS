@@ -1367,35 +1367,32 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             }
 
             let actionbar = CGFloat(!full && SettingValues.actionBarMode != .FULL ? 0 : 24)
-            let ctwelve = CGFloat(SettingValues.postViewMode == .COMPACT ? 8 : 12)
 
             var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
             let thumbheight = (full || SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50))  - (!full && SettingValues.postViewMode == .COMPACT ? 15 : 0)
             
-            var height = CGFloat(0)
-
             let textHeight = (!hasText || !full) ? CGFloat(0) : textView.estimatedHeight
 
             if(thumb){
                 imageHeight = thumbheight
-                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between top and thumbnail
-                innerPadding += 18 - (SettingValues.postViewMode == .COMPACT ? 4 : 0) //between label and bottom box
-                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
+                innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between top and thumbnail
+                innerPadding += 18 - (SettingValues.postViewMode == .COMPACT && !full ? 4 : 0) //between label and bottom box
+                innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between box and end
             } else if(big){
                 if (SettingValues.postViewMode == .CENTER || full) {
-                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 16) //between label
-                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between banner and box
+                    innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 16) //between label
+                    innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 12) //between banner and box
                 } else {
-                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between banner and label
-                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between label and box
+                    innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between banner and label
+                    innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 12) //between label and box
                 }
 
-                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
+                innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between box and end
             } else {
-                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8)
+                innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8)
                 innerPadding += 5 //between label and body
-                innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between body and box
-                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
+                innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 12) //between body and box
+                innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between box and end
             }
 
             var estimatedUsableWidth = aspectWidth - paddingLeft - paddingRight
@@ -1404,10 +1401,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             if(!full){
                 if(thumb){
                     estimatedUsableWidth -= thumbheight //is the same as the width
-                    estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb
-                    estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between thumb and label
+                    estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 24) //between edge and thumb
+                    estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between thumb and label
                 } else {
-                    estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //12 padding on either side
+                    estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 24) //12 padding on either side
                 }
             } else {
                 fullHeightExtras += 12
@@ -1421,7 +1418,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
             if(SettingValues.actionBarMode.isSide() && !full){
                 estimatedUsableWidth -= 36
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //buttons horizontal margins
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 24) //buttons horizontal margins
             }
             
             let framesetter = CTFramesetterCreateWithAttributedString(title.attributedText)
