@@ -877,6 +877,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         if (navigationController != nil) {
             self.updateToolbar()
         }
+        
         navigationItem.title = submission == nil ? subreddit : submission?.subreddit
         self.navigationItem.backBarButtonItem?.title = ""
 
@@ -915,10 +916,8 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         if (UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.view.bounds.width / CGFloat(320))) > 1 && false) {
             self.navigationController!.view.backgroundColor = .clear
         }
-        if (!SettingValues.disableNavigationBar) {
-            navigationController?.setToolbarHidden(false, animated: true)
-            self.isToolbarHidden = false
-        }
+        navigationController?.setToolbarHidden(false, animated: true)
+        self.isToolbarHidden = false
     }
 
     func gestureRecognizer(_ sender: UIGestureRecognizer,

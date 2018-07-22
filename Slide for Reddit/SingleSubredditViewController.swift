@@ -26,6 +26,21 @@ class SingleSubredditViewController: MediaViewController {
     override var keyCommands: [UIKeyCommand]? {
         return [UIKeyCommand(input: " ", modifierFlags: [], action: #selector(spacePressed))]
     }
+    
+    static var nextSingle = false
+    
+    var navbarEnabled: Bool {
+        get {
+            return single || !SettingValues.viewType
+        }
+    }
+
+    var toolbarEnabled: Bool {
+        get {
+            return !SettingValues.bottomBarHidden || SettingValues.viewType
+        }
+    }
+    
 
     let maxHeaderHeight: CGFloat = 120;
     let minHeaderHeight: CGFloat = 56;
@@ -108,6 +123,7 @@ class SingleSubredditViewController: MediaViewController {
     init(subName: String, single: Bool) {
         sub = subName
         self.single = true
+        SingleSubredditViewController.nextSingle = true
         super.init(nibName: nil, bundle: nil)
         // setBarColors(color: ColorUtil.getColorForSub(sub: subName))
     }
@@ -124,7 +140,6 @@ class SingleSubredditViewController: MediaViewController {
         super.viewDidLoad()
 
         flowLayout.delegate = self
-        let frame = self.view.bounds
         self.tableView = UICollectionView(frame: CGRect.zero, collectionViewLayout: flowLayout)
         self.view = UIView.init(frame: CGRect.zero)
 
@@ -186,10 +201,10 @@ class SingleSubredditViewController: MediaViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        if(!SettingValues.bottomBarHidden || SettingValues.viewType){
+        if(toolbarEnabled){
             navigationController?.setToolbarHidden(false, animated: false)
             self.isToolbarHidden = false
-            if(SingleSubredditViewController.fab == nil){
+            if(SingleSubredditViewController.fab == nil || SingleSubredditViewController.fab!.accessibilityHint! != sub){
                 setupFab()
             } else {
                 show(true)
@@ -197,7 +212,7 @@ class SingleSubredditViewController: MediaViewController {
         } else {
             navigationController?.setToolbarHidden(true, animated: false)
         }
-
+        SingleSubredditViewController.nextSingle = self.single
     }
 
     override func viewWillLayoutSubviews() {
@@ -218,22 +233,19 @@ class SingleSubredditViewController: MediaViewController {
         server?.stop()
         loop?.stop()
 
-        if (single || !SettingValues.viewType) {
-            self.navigationController?.setNavigationBarHidden(false, animated: true)
-        }
-        self.navigationController?.setToolbarHidden(true, animated: false)
-
         UIApplication.shared.statusBarStyle = .lightContent
 
         if (single) {
             UIApplication.shared.statusBarView?.backgroundColor = .clear
         }
-        if(SingleSubredditViewController.fab != nil){
+        if(SingleSubredditViewController.fab != nil && !SingleSubredditViewController.nextSingle){
             UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
                 SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
             }, completion: { finished in
                 SingleSubredditViewController.fab?.isHidden = true
             })
+        } else if(SingleSubredditViewController.fab != nil){
+            SingleSubredditViewController.fab?.removeFromSuperview()
         }
     }
 
@@ -272,7 +284,7 @@ class SingleSubredditViewController: MediaViewController {
 
     func hideUI(inHeader: Bool) {
         isHiding = true
-        if (single || !SettingValues.viewType) {
+        if (navbarEnabled) {
             (navigationController)?.setNavigationBarHidden(true, animated: true)
         }
         
@@ -299,7 +311,7 @@ class SingleSubredditViewController: MediaViewController {
     }
 
     func showUI() {
-        if (single || !SettingValues.viewType) {
+        if (navbarEnabled) {
             (navigationController)?.setNavigationBarHidden(false, animated: true)
         }
 
@@ -337,10 +349,10 @@ class SingleSubredditViewController: MediaViewController {
 
     func show(_ animated: Bool = true) {
         if (SingleSubredditViewController.fab != nil && SingleSubredditViewController.fab!.isHidden) {
-            if animated == true {
+            if animated {
                 SingleSubredditViewController.fab!.isHidden = false
                 UIView.animate(withDuration: 0.3, animations: { () -> Void in
-                    SingleSubredditViewController.fab!.alpha = 1
+                    SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 1, y: 1)
                 })
             } else {
                 SingleSubredditViewController.fab!.isHidden = false
@@ -350,7 +362,7 @@ class SingleSubredditViewController: MediaViewController {
 
     func hideFab(_ animated: Bool = true) {
         if (SingleSubredditViewController.fab != nil) {
-            if animated == true {
+            if animated {
                 UIView.animate(withDuration: 0.3, animations: { () -> Void in
                     SingleSubredditViewController.fab!.alpha = 0
                 }, completion: { finished in
@@ -387,16 +399,17 @@ class SingleSubredditViewController: MediaViewController {
         if (!MainViewController.isOffline && !SettingValues.hiddenFAB) {
             SingleSubredditViewController.fab = UIButton(frame: CGRect.init(x: (UIScreen.main.bounds.width / 2) - 70, y: -20, width: 140, height: 45))
             SingleSubredditViewController.fab!.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
+            SingleSubredditViewController.fab!.accessibilityHint = sub
             SingleSubredditViewController.fab!.layer.cornerRadius = 22.5
             SingleSubredditViewController.fab!.clipsToBounds = true
-            var title = "  " + SettingValues.fabType.getTitle();
+            let title = "  " + SettingValues.fabType.getTitle()
             SingleSubredditViewController.fab!.setTitle(title, for: .normal)
             SingleSubredditViewController.fab!.leftImage(image: (UIImage.init(named: SettingValues.fabType.getPhoto())?.navIcon())!, renderMode: UIImageRenderingMode.alwaysOriginal)
             SingleSubredditViewController.fab!.elevate(elevation: 2)
             SingleSubredditViewController.fab!.titleLabel?.textAlignment = .center
             SingleSubredditViewController.fab!.titleLabel?.font = UIFont.systemFont(ofSize: 14)
             
-            var width = title.size(with: SingleSubredditViewController.fab!.titleLabel!.font).width + CGFloat(65)
+            let width = title.size(with: SingleSubredditViewController.fab!.titleLabel!.font).width + CGFloat(65)
             SingleSubredditViewController.fab!.frame = CGRect.init(x: (UIScreen.main.bounds.width / 2) - (width / 2), y: -20, width: width, height: CGFloat(45))
             
             SingleSubredditViewController.fab!.titleEdgeInsets = UIEdgeInsets.init(top: 0, left: 20, bottom: 0, right: 20)

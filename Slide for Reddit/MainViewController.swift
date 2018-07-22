@@ -64,12 +64,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         
         navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
         
-        if(!SettingValues.bottomBarHidden || SettingValues.viewType){
-            navigationController?.setToolbarHidden(false, animated: false)
-        } else {
-            navigationController?.setToolbarHidden(true, animated: false)
-        }
-        
         if(SettingValues.viewType){
             navigationController?.setNavigationBarHidden(true, animated: true)
         }
@@ -810,7 +804,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         if (navigationController?.isNavigationBarHidden ?? false) {
             navigationController?.setNavigationBarHidden(false, animated: false)
         }
-        navigationController?.setToolbarHidden(true, animated: false)
     }
 
     func showSortMenu(_ sender: UIButton?) {

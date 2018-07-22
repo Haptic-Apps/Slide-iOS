@@ -31,9 +31,7 @@ protocol MediaVCDelegate: UIViewControllerTransitioningDelegate {
     static func handleCloseNav(controller: UIButtonWithContext)
 
     func doShow(url: URL, lq: URL?)
-
     var color: UIColor? {get set}
-
     func setBarColors(color: UIColor)
     func setNavColors()
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController?
