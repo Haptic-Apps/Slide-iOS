@@ -778,7 +778,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         searchBar.textColor = .white
         searchBar.showsCancelButton = true
 
-        tableView.estimatedRowHeight = 200
+        tableView.estimatedRowHeight = UITableViewAutomaticDimension
         tableView.rowHeight = UITableViewAutomaticDimension
 
         self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "Cell")

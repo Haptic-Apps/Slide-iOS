@@ -272,12 +272,10 @@ public class TextDisplayStackView: UIStackView {
                 overflow.addArrangedSubview(baseView)
 
                 baseView.horizontalAnchors == overflow.horizontalAnchors
-                baseView.heightAnchor == textSizeB.height
                 label.leftAnchor == baseView.leftAnchor + CGFloat(8)
                 label.rightAnchor == baseView.rightAnchor - CGFloat(4)
                 label.verticalAnchors == baseView.verticalAnchors
-                
-
+                label.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
             } else {
                 let label = TTTAttributedLabel.init(frame: CGRect.zero)
                 label.accessibilityIdentifier = "New text"
