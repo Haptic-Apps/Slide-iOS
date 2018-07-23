@@ -1224,7 +1224,15 @@ class SingleSubredditViewController: MediaViewController {
         if (big || !submission.thumbnail) {
             thumb = false
         }
-
+        
+        if (SettingValues.noImages) {
+            big = false
+            thumb = false
+        }
+        
+        if (thumb && type == .SELF) {
+            thumb = false
+        }
 
         if (!big && !thumb && submission.type != .SELF && submission.type != .NONE) { //If a submission has a link but no images, still show the web thumbnail
             thumb = true
@@ -1233,14 +1241,6 @@ class SingleSubredditViewController: MediaViewController {
         if (submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && (sub == "all" || sub == "frontpage" || sub.contains("/m/") || sub.contains("+") || sub == "popular"))) {
             big = false
             thumb = true
-        }
-
-        if (SettingValues.noImages) {
-            big = false
-            thumb = false
-        }
-        if (thumb && type == .SELF) {
-            thumb = false
         }
 
         if (thumb && !big) {

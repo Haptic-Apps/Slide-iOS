@@ -824,16 +824,20 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
         if (!big && !thumb && submission.type != .SELF && submission.type != .NONE) { //If a submission has a link but no images, still show the web thumbnail
             thumb = true
-            thumbImage.image = UIImage.init(named: "web")
+            if (submission.nsfw) {
+                thumbImage.image = LinkCellImageCache.nsfw
+            } else {
+                thumbImage.image = LinkCellImageCache.web
+            }
         } else if (thumb && !big) {
             if (submission.nsfw) {
-                thumbImage.image = UIImage.init(named: "nsfw")
+                thumbImage.image = LinkCellImageCache.nsfw
             } else if (submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty) {
-                thumbImage.image = UIImage.init(named: "web")
+                thumbImage.image = LinkCellImageCache.web
             } else {
                 let thumbURL = submission.thumbnailUrl
                 DispatchQueue.global(qos: .userInteractive).async {
-                    self.thumbImage.sd_setImage(with: URL.init(string: thumbURL), placeholderImage: UIImage.init(named: "web"))
+                    self.thumbImage.sd_setImage(with: URL.init(string: thumbURL), placeholderImage: LinkCellImageCache.web)
                 }
             }
         } else {

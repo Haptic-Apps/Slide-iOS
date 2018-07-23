@@ -130,7 +130,7 @@ extension UIImage {
         
         gradientLayer.colors = colorsRef
 
-        let x: Double! = 45 / 360.0
+        let x: Double! = 135 / 360.0
         let a = pow(sinf(Float(2.0 * .pi * ((x + 0.75) / 2.0))),2.0);
         let b = pow(sinf(Float(2 * .pi*((x+0.0)/2))),2);
         let c = pow(sinf(Float(2 * .pi*((x+0.25)/2))),2);
