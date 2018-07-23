@@ -1834,13 +1834,18 @@ extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
 
             if(SettingValues.actionBarMode.isSide()){
                 estimatedUsableWidth -= 36
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 12 : 20) //buttons horizontal margins
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 8 : 16) //buttons horizontal margins
+                if(thumb){
+                    estimatedUsableWidth += (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb no longer exists
+                    //estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 8 : 16) //buttons buttons and thumb
+                }
             }
 
             let framesetter = CTFramesetterCreateWithAttributedString(CachedTitle.getTitle(submission: submission, full: false, false))
             let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude), nil)
-            let totalHeight = paddingTop + paddingBottom + (thumb ? max((SettingValues.actionBarMode.isSide() ? max(ceil(textSize.height), 60) : ceil(textSize.height)), imageHeight) : (SettingValues.actionBarMode.isSide() ? max(ceil(textSize.height), 60) : ceil(textSize.height)) + imageHeight) + innerPadding + actionbar + textHeight
+            let totalHeight = paddingTop + paddingBottom + (thumb ? max(SettingValues.actionBarMode.isSide() ? 60 : 0, ceil(textSize.height), imageHeight) : max(SettingValues.actionBarMode.isSide() ? 60 : 0, ceil(textSize.height)) + imageHeight) + innerPadding + actionbar + textHeight
             return CGSize(width: itemWidth, height: totalHeight)
+            
         }
         return CGSize(width: itemWidth, height: 0)
     }

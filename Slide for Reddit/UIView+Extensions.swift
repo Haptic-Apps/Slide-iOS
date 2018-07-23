@@ -154,7 +154,7 @@ extension UIView {
         switch border {
             
         case .left:
-            lineView.leftAnchor == leftAnchor - 4
+            lineView.leftAnchor == leftAnchor - 8
             lineView.topAnchor.constraint(equalTo: topAnchor).isActive = true
             lineView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
             lineView.widthAnchor.constraint(equalToConstant: weight).isActive = true

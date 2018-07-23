@@ -415,7 +415,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             self.contentView.addSubview(buttons)
         }
         
-        if(SettingValues.actionBarMode.isSide() || full){
+        if(SettingValues.actionBarMode.isSide() && !full){
             self.sideButtons = UIStackView().then {
                 $0.accessibilityIdentifier = "Button Stack Vertical"
                 $0.axis = .vertical

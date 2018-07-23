@@ -221,7 +221,6 @@ public class TextDisplayStackView: UIStackView {
         }
         
         for block in blocks {
-            print("Block is \(block)")
             estimatedHeight += 8
             if(block.startsWith("<table>")) {
                 let table = TableDisplayView.init(baseHtml: block, color: baseFontColor, accentColor: tColor, delegate: delegate!)
@@ -256,19 +255,29 @@ public class TextDisplayStackView: UIStackView {
                 body.contentOffset = CGPoint.init(x: -8, y: -8)
             } else if(block.startsWith("<cite>")){
                 let label = TTTAttributedLabel.init(frame: CGRect.zero)
-                label.accessibilityIdentifier = "cite"
+                label.accessibilityIdentifier = "Quote"
                 let text = createAttributedChunk(baseHTML: block)
                 label.delegate = delegate
+                label.alpha = 0.7
                 label.numberOfLines = 0
                 label.setText(text)
+                
+                let baseView = UIView()
+                baseView.accessibilityIdentifier = "Quote box view"
                 label.setBorder(border: .left, weight: 2, color: tColor)
                 let framesetterB = CTFramesetterCreateWithAttributedString(text)
-                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth - 8, height: CGFloat.greatestFiniteMagnitude), nil)
+                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth - 12, height: CGFloat.greatestFiniteMagnitude), nil)
                 estimatedHeight += textSizeB.height
-                label.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
-                overflow.addArrangedSubview(label)
-                label.horizontalAnchors == overflow.horizontalAnchors + CGFloat(4)
-                label.heightAnchor == textSizeB.height
+                baseView.addSubview(label)
+                overflow.addArrangedSubview(baseView)
+
+                baseView.horizontalAnchors == overflow.horizontalAnchors
+                baseView.heightAnchor == textSizeB.height
+                label.leftAnchor == baseView.leftAnchor + CGFloat(8)
+                label.rightAnchor == baseView.rightAnchor - CGFloat(4)
+                label.verticalAnchors == baseView.verticalAnchors
+                
+
             } else {
                 let label = TTTAttributedLabel.init(frame: CGRect.zero)
                 label.accessibilityIdentifier = "New text"
