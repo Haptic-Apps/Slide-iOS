@@ -38,7 +38,10 @@ class ImageMediaViewController: EmbeddableMediaViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         updateConstraintsForSize(view.bounds.size)
-        updateMinZoomScaleForSize(view.bounds.size)
+        let height = view.bounds.size.height
+        let width = view.bounds.size.width
+        let size = CGSize(width: width, height: height - bottomButtons.bounds.size.height)
+        updateMinZoomScaleForSize(size)
     }
 
 //    override func didReceiveMemoryWarning() {
@@ -327,8 +330,8 @@ extension ImageMediaViewController: UIScrollViewDelegate {
     }
 
     func updateMinZoomScaleForSize(_ size: CGSize) {
-        let widthScale = size.width / imageView.bounds.width
-        let heightScale = size.height / imageView.bounds.height
+        let widthScale = size.width / (imageView.image?.size.width ?? imageView.bounds.width)
+        let heightScale = size.height / (imageView.image?.size.height ?? imageView.bounds.height)
         let minScale = min(widthScale, heightScale)
         scrollView.minimumZoomScale = minScale
         scrollView.zoomScale = minScale

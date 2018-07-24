@@ -35,6 +35,7 @@ public class LinkCellImageCache {
     
     static var web = UIImage()
     static var nsfw = UIImage()
+    static var reddit = UIImage()
 
     private struct sizes {
         static let small = CGSize(width: 12, height: 12)
@@ -73,6 +74,9 @@ public class LinkCellImageCache {
 
         web = UIImage.convertGradientToImage(colors: [topColor, nextColor], frame: CGSize.square(size: 150))
         web = web.overlayWith(image: UIImage(named: "nav")!.getCopy(withSize: CGSize.square(size: 75)), posX: (75/2), posY: (75/2))
+
+        reddit = UIImage.convertGradientToImage(colors: [topColor, nextColor], frame: CGSize.square(size: 150))
+        reddit = reddit.overlayWith(image: UIImage(named: "reddit")!.getCopy(withSize: CGSize.init(width: 90, height: 75)), posX: 30, posY: (75/2))
 
         topColor = GMColor.red400Color()
         nextColor = GMColor.red600Color()

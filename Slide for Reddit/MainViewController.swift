@@ -135,8 +135,35 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         navigationController?.pushViewController(MainViewController.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil), animated: false)
     }
     
+    var checkedClipboardOnce = false
     func checkForMail() {
         DispatchQueue.main.async {
+            if(!self.checkedClipboardOnce){
+                var clipUrl : URL?
+                if let url = UIPasteboard.general.url {
+                    if(ContentType.getContentType(baseUrl: url) == .REDDIT){
+                        clipUrl = url
+                    }
+                }
+                if clipUrl == nil {
+                    if let urlS = UIPasteboard.general.string {
+                        if let url = URL.init(string: urlS){
+                            if(ContentType.getContentType(baseUrl: url) == .REDDIT){
+                                clipUrl = url
+                            }
+                        }
+                    }
+                }
+                
+                if(clipUrl != nil){
+                    self.checkedClipboardOnce = true
+                    BannerUtil.makeBanner(text: "Open link from clipboard", color: GMColor.green500Color(), seconds: 5, context: self, top: true, callback: {
+                        () in
+                        VCPresenter.openRedditLink(clipUrl!.absoluteString, self.navigationController, self)
+                    })
+                }
+            }
+
             let lastMail = UserDefaults.standard.integer(forKey: "mail")
             let session = (UIApplication.shared.delegate as! AppDelegate).session
             
