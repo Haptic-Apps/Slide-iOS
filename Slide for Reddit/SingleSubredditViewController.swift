@@ -1837,7 +1837,7 @@ extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
                 estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 8 : 16) //buttons horizontal margins
                 if(thumb){
                     estimatedUsableWidth += (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb no longer exists
-                    //estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 8 : 16) //buttons buttons and thumb
+                    estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //buttons buttons and thumb
                 }
             }
 
