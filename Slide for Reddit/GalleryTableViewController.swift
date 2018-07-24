@@ -59,8 +59,8 @@ class GalleryTableViewController: MediaTableViewController {
         
         panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panGestureAction(_:)))
         panGestureRecognizer!.direction = .vertical
-        
         view.addGestureRecognizer(panGestureRecognizer!)
+        panGestureRecognizer?.require(toFail: tableView.panGestureRecognizer)
         background = UIView()
         background!.frame = self.view.frame
         background!.autoresizingMask = [.flexibleHeight, .flexibleWidth]

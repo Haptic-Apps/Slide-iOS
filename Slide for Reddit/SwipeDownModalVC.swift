@@ -17,6 +17,7 @@ class SwipeDownModalVC: ColorMuxPagingViewController {
     var currentPositionTouched: CGPoint?
     
     var didStartPan : (_ panStart: Bool)->() = { result in}
+    private let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,6 +41,10 @@ class SwipeDownModalVC: ColorMuxPagingViewController {
         }
 
         self.view.insertSubview(background!, at: 0)
+        let blurView = UIVisualEffectView(frame: UIScreen.main.bounds)
+        blurEffect.setValue(3, forKeyPath: "blurRadius")
+        blurView.effect = blurEffect
+        view.insertSubview(blurView, at: 0)
     }
     
     func panGestureAction(_ panGesture: UIPanGestureRecognizer) {

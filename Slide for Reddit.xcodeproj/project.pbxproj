@@ -93,6 +93,8 @@
 		BE3521801E3D3BDD00C30B8D /* LinkParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE35217F1E3D3BDD00C30B8D /* LinkParser.swift */; };
 		BE36886220E5709300987320 /* FullLinkCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE36886120E5709300987320 /* FullLinkCellView.swift */; };
 		BE3B7435210135BD00658DE9 /* html in Resources */ = {isa = PBXBuildFile; fileRef = BE3B7434210135BD00658DE9 /* html */; };
+		BE3B74372107A5F400658DE9 /* AsyncAlertImagePickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3B74362107A5F400658DE9 /* AsyncAlertImagePickerViewController.swift */; };
+		BE3B74392107AA1200658DE9 /* UIAlertController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3B74382107AA1200658DE9 /* UIAlertController+Extensions.swift */; };
 		BE3E5C0C1E160D7000749C0C /* ColorUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3E5C0B1E160D7000749C0C /* ColorUtil.swift */; };
 		BE3E5C131E16BA2200749C0C /* AlbumData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3E5C101E16BA2200749C0C /* AlbumData.swift */; };
 		BE3E5C141E16BA2200749C0C /* Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3E5C111E16BA2200749C0C /* Images.swift */; };
@@ -331,6 +333,8 @@
 		BE35217F1E3D3BDD00C30B8D /* LinkParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkParser.swift; sourceTree = "<group>"; };
 		BE36886120E5709300987320 /* FullLinkCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullLinkCellView.swift; sourceTree = "<group>"; };
 		BE3B7434210135BD00658DE9 /* html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = html; sourceTree = "<group>"; };
+		BE3B74362107A5F400658DE9 /* AsyncAlertImagePickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncAlertImagePickerViewController.swift; sourceTree = "<group>"; };
+		BE3B74382107AA1200658DE9 /* UIAlertController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+Extensions.swift"; sourceTree = "<group>"; };
 		BE3E5C0B1E160D7000749C0C /* ColorUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorUtil.swift; sourceTree = "<group>"; };
 		BE3E5C101E16BA2200749C0C /* AlbumData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlbumData.swift; sourceTree = "<group>"; };
 		BE3E5C111E16BA2200749C0C /* Images.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Images.swift; sourceTree = "<group>"; };
@@ -509,6 +513,8 @@
 				098B5A4C20EFC6E200FE201B /* UIViewController+Extensions.swift */,
 				B776B6C1FAE60A1FD45C11A0 /* MediaTableViewController.swift */,
 				B776BC65995FE8D1EE75E2AB /* MediaViewController.swift */,
+				BE3B74362107A5F400658DE9 /* AsyncAlertImagePickerViewController.swift */,
+				BE3B74382107AA1200658DE9 /* UIAlertController+Extensions.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -1304,6 +1310,7 @@
 				0965261120E2AA5400EA53BE /* String+Extensions.swift in Sources */,
 				BE7BFB421F128F9B009CA2E1 /* Sidebar.swift in Sources */,
 				BE3E5C131E16BA2200749C0C /* AlbumData.swift in Sources */,
+				BE3B74372107A5F400658DE9 /* AsyncAlertImagePickerViewController.swift in Sources */,
 				BE6EA6C41E1C1DCE00E9E709 /* GfycatJSONBase.swift in Sources */,
 				0965260920E2982A00EA53BE /* UIImage+Extensions.swift in Sources */,
 				BE6EA6D91E1C1FC700E9E709 /* Video.swift in Sources */,
@@ -1354,6 +1361,7 @@
 				0965260F20E298BB00EA53BE /* Object+Extensions.swift in Sources */,
 				BED7B6BA1F2258E700E31A82 /* CachedTitle.swift in Sources */,
 				BE2DEAB41E2693C100FBF0B5 /* SubredditHeaderView.swift in Sources */,
+				BE3B74392107AA1200658DE9 /* UIAlertController+Extensions.swift in Sources */,
 				BE2B8A0B1E2602CD0053D493 /* SubredditReorderViewController.swift in Sources */,
 				098B5A4320EFC5B600FE201B /* UIButton+Extensions.swift in Sources */,
 				BEE206F61F1CF7D3008BB5F1 /* SettingsLinkHandling.swift in Sources */,
