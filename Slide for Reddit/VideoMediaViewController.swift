@@ -354,6 +354,8 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         forcedFullscreen = false
     }
     
+    var spinnerIndicator = UIActivityIndicatorView()
+    
     func loadContent() {
 
         // Prevent video from stopping system background audio
@@ -371,6 +373,12 @@ class VideoMediaViewController: EmbeddableMediaViewController {
 
         // Load Youtube View
         if isYoutubeView {
+            spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+            spinnerIndicator.center = self.view.center
+            spinnerIndicator.color = UIColor.white
+            self.view.addSubview(spinnerIndicator)
+            spinnerIndicator.startAnimating()
+
             youtubeView.isHidden = false
             progressView.isHidden = true
             loadYoutube(url: data.baseURL!.absoluteString)
@@ -747,6 +755,8 @@ extension VideoMediaViewController: YTPlayerViewDelegate {
     func playerViewDidBecomeReady(_ playerView: YTPlayerView) {
         youtubeView.playVideo()
         scrubber.totalDuration = CMTime(seconds: playerView.duration(), preferredTimescale: 1000000)
+        spinnerIndicator.stopAnimating()
+        spinnerIndicator.isHidden = true
     }
 
     func playerView(_ playerView: YTPlayerView, didPlayTime playTime: Float) {
