@@ -55,31 +55,31 @@ class SettingsComments: UITableViewController {
     }
     
     func switchIsChanged(_ changed: UISwitch) {
-        if(changed == disableNavigationBar){
+        if changed == disableNavigationBar {
             SettingValues.disableNavigationBar = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_disableNavigationBar)
-        } else if(changed == disableColor){
+        } else if changed == disableColor {
             SettingValues.disableColor = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_disableColor)
-        } else if(changed == lockBottom){
+        } else if changed == lockBottom {
             SettingValues.lockCommentBars = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_lockCommentBottomBar)
-        } else if(changed == wideIndicator){
+        } else if changed == wideIndicator {
             SettingValues.wideIndicators = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_widerIndicators)
-        } else if(changed == collapseDefault){
+        } else if changed == collapseDefault {
             SettingValues.collapseDefault = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_collapseDefault)
-        } else if(changed == swapLongPress){
+        } else if changed == swapLongPress {
             SettingValues.swapLongPress = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_swapLongPress)
-        } else if(changed == collapseFully){
+        } else if changed == collapseFully {
             SettingValues.collapseFully = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_collapseFully)
-        } else if(changed == fullscreenImage){
+        } else if changed == fullscreenImage {
             SettingValues.commentFullScreen = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_commentFullScreen)
-        } else if(changed == highlightOp){
+        } else if changed == highlightOp {
             SettingValues.highlightOp = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_highlightOp)
         }
@@ -87,13 +87,13 @@ class SettingsComments: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let label : UILabel = UILabel()
+        let label: UILabel = UILabel()
         label.textColor = ColorUtil.baseAccent
         label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
         toReturn.backgroundColor = ColorUtil.backgroundColor
         
-        switch(section) {
+        switch section {
         case 0: label.text  = "Submission"
             break
         case 1: label.text  = "Comments"
@@ -110,7 +110,7 @@ class SettingsComments: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
-    public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String){
+    public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
         cell.textLabel?.textColor = ColorUtil.fontColor
         cell.backgroundColor = ColorUtil.foregroundColor
@@ -155,16 +155,15 @@ class SettingsComments: UITableViewController {
         return 60
     }
     
-    
     func tableView(tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch(indexPath.section) {
+        switch indexPath.section {
         case 0:
             return self.fullscreenImageCell
         case 1:
-            switch(indexPath.row) {
+            switch indexPath.row {
             case 0: return self.collapseDefaultCell
             case 1: return self.collapseFullyCell
             case 2: return self.disableColorCell
@@ -179,14 +178,12 @@ class SettingsComments: UITableViewController {
         
     }
     
-    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch(section) {
+        switch section {
         case 0: return 1
         case 1: return 7    // section 1 has 1 row
         default: fatalError("Unknown number of sections")
         }
     }
-    
     
 }

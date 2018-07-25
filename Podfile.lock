@@ -97,6 +97,7 @@ PODS:
   - SideMenu (4.0.0)
   - SloppySwiper (0.6)
   - Starscream (3.0.5)
+  - SwiftLint (0.26.0)
   - SwiftSpreadsheet (1.2.0)
   - SwiftyJSON (4.1.0)
   - Then (2.3.0)
@@ -133,11 +134,39 @@ DEPENDENCIES:
   - SideMenu
   - SloppySwiper (from `https://github.com/fastred/sloppySwiper`)
   - Starscream (~> 3.0.2)
+  - SwiftLint
   - SwiftSpreadsheet
   - SwiftyJSON
   - Then
   - TTTAttributedLabel
   - XLActionController (from `https://github.com/ccrama/XLActionController`)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - Alamofire
+    - Anchorage
+    - BadgeSwift
+    - BiometricAuthentication
+    - DTFoundation
+    - Embassy
+    - LicensesViewController
+    - MaterialComponents
+    - MDFInternationalization
+    - MDFTextAccessibility
+    - MKColorPicker
+    - MotionAnimator
+    - MotionInterchange
+    - MTColorDistance
+    - Realm
+    - RealmSwift
+    - SDWebImage
+    - SideMenu
+    - Starscream
+    - SwiftLint
+    - SwiftSpreadsheet
+    - SwiftyJSON
+    - Then
+    - TTTAttributedLabel
 
 EXTERNAL SOURCES:
   ActionSheetPicker-3.0:
@@ -198,12 +227,13 @@ SPEC CHECKSUMS:
   SideMenu: 70ee5657df63ec3382660ec4ef470bf1cf5db07d
   SloppySwiper: 37e38f6da8df5c805914c6f32ec6ec8da63abe7c
   Starscream: faf918b2f2eff7d5dd21180646bf015a669673bd
+  SwiftLint: f6b83e8d95ee1e91e11932d843af4fdcbf3fc764
   SwiftSpreadsheet: fa241abcd0c2e0bdfa641494413c3613d67efbca
   SwiftyJSON: c29297daf073d2aa016295d5809cdd68045c39b3
   Then: ee21c97b85ff6062b9b0080c9abb1eea46743345
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   XLActionController: 007868251c0eed70d649d06c1625259b73b3a600
 
-PODFILE CHECKSUM: c4ca6de61c3d5fb5d37921de56753285f61b95fa
+PODFILE CHECKSUM: ad10fb4f99a8b27f2241741ca4bfda54632221ce
 
-COCOAPODS: 1.4.0
+COCOAPODS: 1.5.3

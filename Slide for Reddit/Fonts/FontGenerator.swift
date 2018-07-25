@@ -21,15 +21,15 @@ class FontGenerator {
     public static var postFont = Font.ROBOTO_MEDIUM
     public static var commentFont = Font.ROBOTOCONDENSED_REGULAR
 
-    public static func initialize(){
-        if let name = UserDefaults.standard.string(forKey: "postfont"){
-            if let t = Font(rawValue: name){
+    public static func initialize() {
+        if let name = UserDefaults.standard.string(forKey: "postfont") {
+            if let t = Font(rawValue: name) {
                 postFont = t
             }
         }
         
-        if let name = UserDefaults.standard.string(forKey: "commentfont"){
-            if let t = Font(rawValue: name){
+        if let name = UserDefaults.standard.string(forKey: "commentfont") {
+            if let t = Font(rawValue: name) {
                 commentFont = t
             }
         }
@@ -45,7 +45,7 @@ class FontGenerator {
         case ROBOTO_MEDIUM = "rmed"
         case SYSTEM = "system"
 
-        public static var cases: [Font]{
+        public static var cases: [Font] {
             return [.HELVETICA, .ROBOTOCONDENSED_REGULAR, .ROBOTOCONDENSED_BOLD, .ROBOTO_LIGHT, .ROBOTO_BOLD, .ROBOTO_MEDIUM, .SYSTEM]
         }
         
@@ -86,7 +86,6 @@ class FontGenerator {
                 return UIFont.systemFont(ofSize: 16)
             }
         }
-        
         
     }
 }

@@ -7,27 +7,25 @@
 //
 
 import Foundation
-import reddift
 import RealmSwift
+import reddift
 
 class ModMailContributionLoader: ContributionLoader {
     func reset() {
         content = []
     }
-    
 
     var color: UIColor
     
     var unread = false
     var canGetMore = true
     
-    init(_ unread: Bool){
+    init(_ unread: Bool) {
         self.unread = unread
         paginator = Paginator()
         content = []
         color = ColorUtil.getColorForSub(sub: "")
     }
-    
     
     var paginator: Paginator
     var content: [Object]
@@ -35,9 +33,9 @@ class ModMailContributionLoader: ContributionLoader {
     var paging = true
     
     func getData(reload: Bool) {
-        if(delegate != nil){
+        if delegate != nil {
             do {
-                if(reload){
+                if reload {
                     paginator = Paginator()
                 }
                 try delegate?.session?.getModMail(unread, completion: { (result) in
@@ -45,12 +43,12 @@ class ModMailContributionLoader: ContributionLoader {
                     case .failure(let error):
                         print(error)
                     case .success(let listing):
-                        if(reload){
+                        if reload {
                             self.content = []
                         }
-                        for message in listing.children.flatMap({$0}){
+                        for message in listing.children.flatMap({ $0 }) {
                             self.content.append(RealmDataWrapper.messageToRMessage(message: message as! Message))
-                            if((message as! Message).baseJson["replies"] != nil) {
+                            if (message as! Message).baseJson["replies"] != nil {
                                 let json = (message as! Message).baseJson as JSONDictionary
                                 if let j = json["replies"] as? JSONDictionary, let data = j["data"] as? JSONDictionary, let things = data["children"] as? JSONArray {
                                     for thing in things {
@@ -63,7 +61,7 @@ class ModMailContributionLoader: ContributionLoader {
                         
                         self.paginator = listing.paginator
                         self.canGetMore = !self.paginator.hasMore()
-                        DispatchQueue.main.async{
+                        DispatchQueue.main.async {
                             self.delegate?.doneLoading()
                         }
                     }

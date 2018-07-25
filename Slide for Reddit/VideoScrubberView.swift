@@ -6,9 +6,9 @@
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
-import UIKit
-import CoreMedia
 import Anchorage
+import CoreMedia
+import UIKit
 
 protocol VideoScrubberViewDelegate {
     func sliderValueChanged(toSeconds: Float)
@@ -27,7 +27,7 @@ protocol VideoScrubberViewDelegate {
 
 extension UIImage {
     class func image(with color: UIColor) -> UIImage {
-        let rect = CGRect(origin: CGPoint(x: 0, y:0), size: CGSize(width: 1, height: 1))
+        let rect = CGRect(origin: CGPoint(x: 0, y: 0), size: CGSize(width: 1, height: 1))
         UIGraphicsBeginImageContext(rect.size)
         let context = UIGraphicsGetCurrentContext()!
 
@@ -185,7 +185,7 @@ extension VideoScrubberView {
     }
 }
 
-public class ThickSlider : UISlider {
+public class ThickSlider: UISlider {
     override public func trackRect(forBounds bounds: CGRect) -> CGRect {
         var result = super.trackRect(forBounds: bounds)
         result.size.height = 8

@@ -6,8 +6,8 @@
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
-import UIKit
 import Social
+import UIKit
 
 class ShareViewController: SLComposeServiceViewController {
 

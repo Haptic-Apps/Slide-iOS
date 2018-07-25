@@ -6,10 +6,10 @@
 //  Copyright © 2016 Haptic Apps. All rights reserved.
 //
 
-import UIKit
 import reddift
 import SDWebImage
 import SideMenu
+import UIKit
 
 class SubSidebarViewController: MediaViewController, UIGestureRecognizerDelegate {
     weak var scrollView: UIScrollView!
@@ -68,6 +68,5 @@ class SubSidebarViewController: MediaViewController, UIGestureRecognizerDelegate
     }
 
     var loaded = false
-
 
 }

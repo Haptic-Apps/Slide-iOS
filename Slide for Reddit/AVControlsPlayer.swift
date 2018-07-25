@@ -6,14 +6,14 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
-import Foundation
 import AVKit
+import Foundation
 
-class AVControlsPlayer : AVPlayerViewController {
+class AVControlsPlayer: AVPlayerViewController {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         // TODO:
-        if(parent is MediaDisplayViewController){
+        if parent is MediaDisplayViewController {
             (parent as! MediaDisplayViewController).handleTap(recognizer: nil)
         }
         super.touchesBegan(touches, with: event)

@@ -6,23 +6,23 @@
 //  Copyright © 2016 Haptic Apps. All rights reserved.
 //
 
-import UIKit
-import reddift
-import SDWebImage
 import MaterialComponents.MaterialProgressView
-import SafariServices
 import MaterialComponents.MDCBottomSheetController
+import reddift
+import SafariServices
+import SDWebImage
+import UIKit
 
 protocol MediaVCDelegate: UIViewControllerTransitioningDelegate {
 
-    var subChanged: Bool {get set}
-    var link: RSubmission! {get set}
-    var commentCallback: (() -> Void)? {get set}
+    var subChanged: Bool { get set }
+    var link: RSubmission! { get set }
+    var commentCallback: (() -> Void)? { get set }
 
     func setLink(lnk: RSubmission, shownURL: URL?, lq: Bool, saveHistory: Bool)
 
     func getControllerForUrl(baseUrl: URL, lq: URL?) -> UIViewController?
-    var contentUrl: URL? {get set}
+    var contentUrl: URL? { get set }
 
     func shouldTruncate(url: URL) -> Bool
 
@@ -31,7 +31,7 @@ protocol MediaVCDelegate: UIViewControllerTransitioningDelegate {
     static func handleCloseNav(controller: UIButtonWithContext)
 
     func doShow(url: URL, lq: URL?)
-    var color: UIColor? {get set}
+    var color: UIColor? { get set }
     func setBarColors(color: UIColor)
     func setNavColors()
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController?

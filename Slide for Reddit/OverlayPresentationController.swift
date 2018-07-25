@@ -32,22 +32,22 @@ class OverlayPresentationController: UIPresentationController {
         containerView?.insertSubview(dimmingView, at: 0)
         
         presentedViewController.transitionCoordinator?.animate(alongsideTransition: {
-            context in
+            _ in
             self.dimmingView.alpha = 1.0
         }, completion: nil)
     }
     
     override func dismissalTransitionWillBegin() {
         presentedViewController.transitionCoordinator?.animate(alongsideTransition: {
-            context in
+            _ in
             self.dimmingView.alpha = 0.0
         }, completion: {
-            context in
+            _ in
             self.dimmingView.removeFromSuperview()
         })
     }
     
-    override var frameOfPresentedViewInContainerView : CGRect {
+    override var frameOfPresentedViewInContainerView: CGRect {
         let boundHeight = containerView?.bounds.height
         let boundWidth = containerView?.bounds.width
         let bound = CGRect.init(x: 0, y: 40, width: boundWidth!, height: boundHeight! - 40.0)

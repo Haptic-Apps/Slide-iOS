@@ -16,7 +16,7 @@ class SwipeDownModalVC: ColorMuxPagingViewController {
     var originalPosition: CGPoint?
     var currentPositionTouched: CGPoint?
     
-    var didStartPan : (_ panStart: Bool)->() = { result in}
+    var didStartPan : (_ panStart: Bool) -> Void = { result in }
     private let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
 
     override func viewDidLoad() {
@@ -36,7 +36,7 @@ class SwipeDownModalVC: ColorMuxPagingViewController {
         background!.autoresizingMask = [.flexibleHeight, .flexibleWidth]
         background!.backgroundColor = .black
         
-        if(!(self is ShadowboxViewController)){
+        if !(self is ShadowboxViewController) {
             background!.alpha = 0.6
         }
 
@@ -66,10 +66,9 @@ class SwipeDownModalVC: ColorMuxPagingViewController {
             let velocity = panGesture.velocity(in: view)
 
             let down = panGesture.velocity(in: view).y > 0
-            if abs(velocity.y) >= 1000 || abs(self.view.frame.origin.y) > self.view.frame.size.height / 2{
+            if abs(velocity.y) >= 1000 || abs(self.view.frame.origin.y) > self.view.frame.size.height / 2 {
 
-                UIView.animate(withDuration: 0.2
-                        , animations: {
+                UIView.animate(withDuration: 0.2, animations: {
                     self.view.frame.origin = CGPoint(
                             x: self.view.frame.origin.x,
                             y: self.view.frame.size.height * (down ? 1 : -1) )
@@ -110,8 +109,7 @@ extension SwipeDownModalVC: UIGestureRecognizerDelegate {
         // Reject the touch if it lands in a UIControl.
         if let view = touch.view {
             return !view.hasParentOfClass(UIControl.self)
-        }
-        else {
+        } else {
             return true
         }
 

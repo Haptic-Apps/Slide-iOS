@@ -3,19 +3,19 @@
 // Copyright (c) 2018 Haptic Apps. All rights reserved.
 //
 
-import UIKit
-import AVFoundation
 import Alamofire
 import Anchorage
+import AVFoundation
 import AVKit
-import SDWebImage
 import MaterialComponents.MaterialProgressView
+import SDWebImage
+import UIKit
 
 class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
     var videoView = UIView()
     var ytPlayer = YTPlayerView()
     var playerVC = AVPlayerViewController()
-    static var videoPlayer: AVPlayer? = nil
+    static var videoPlayer: AVPlayer?
     var progressView: MDCProgressView?
     var sizeLabel: UILabel?
     var scrollView = UIScrollView()
@@ -28,16 +28,16 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
 
     func getYouTube(_ ytPlayer: YTPlayerView, urlS: String) {
         var url = urlS
-        if (url.contains("#t=")) {
+        if url.contains("#t=") {
             url = url.replacingOccurrences(of: "#t=", with: url.contains("?") ? "&t=" : "?t=")
         }
 
         let i = URL.init(string: url)
         if let dictionary = i?.queryDictionary {
             if let t = dictionary["t"] {
-                millis = getTimeFromString(t);
+                millis = getTimeFromString(t)
             } else if let start = dictionary["start"] {
-                millis = getTimeFromString(start);
+                millis = getTimeFromString(start)
             }
 
             if let list = dictionary["list"] {
@@ -54,11 +54,11 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
 
             if let u = dictionary["u"] {
                 let param = u
-                video = param.substring(param.indexOf("=")! + 1, length: param.contains("&") ? param.indexOf("&")! : param.length);
+                video = param.substring(param.indexOf("=")! + 1, length: param.contains("&") ? param.indexOf("&")! : param.length)
             }
         }
         self.ytPlayer.delegate = self
-        if (!playlist.isEmpty) {
+        if !playlist.isEmpty {
             ytPlayer.load(withPlaylistId: playlist)
         } else {
             ytPlayer.load(withVideoId: video, playerVars: ["controls": 1, "playsinline": 1, "start": millis, "fs": 0])
@@ -75,10 +75,10 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
         let url = formatUrl(sS: urlS)
         let videoType = getVideoType(url: url)
 
-        switch (videoType) {
+        switch videoType {
         case .GFYCAT:
             let name = url.substring(url.lastIndexOf("/")!, length: url.length - url.lastIndexOf("/")!)
-            let gfycatUrl = "https://gfycat.com/cajax/get" + name;
+            let gfycatUrl = "https://gfycat.com/cajax/get" + name
             loadGfycat(urlString: gfycatUrl)
             break
         case .REDDIT:
@@ -88,12 +88,12 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
             self.loadVideo(urlString: url)
             break
         case .STREAMABLE:
-            let hash = url.substring(url.lastIndexOf("/")! + 1, length: url.length - (url.lastIndexOf("/")! + 1));
-            let streamableUrl = "https://api.streamable.com/videos/" + hash;
+            let hash = url.substring(url.lastIndexOf("/")! + 1, length: url.length - (url.lastIndexOf("/")! + 1))
+            let streamableUrl = "https://api.streamable.com/videos/" + hash
             getStreamableObject(urlString: streamableUrl)
             break
         case .VID_ME:
-            let vidmeUrl = "https://api.vid.me/videoByUrl?url=" + url;
+            let vidmeUrl = "https://api.vid.me/videoByUrl?url=" + url
             getVidMeObject(urlString: vidmeUrl)
             break
         case .OTHER:
@@ -109,22 +109,22 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
         key = key.replacingOccurrences(of: "/", with: "")
         key = key.replacingOccurrences(of: ".", with: "")
         print(key)
-        if (key.length > 200) {
+        if key.length > 200 {
             key = key.substring(0, length: 200)
         }
         var toLoadAudio = toLoad
         toLoadAudio = toLoad.substring(0, length: toLoad.lastIndexOf("DASH_")!)
         toLoadAudio = toLoadAudio + "audio"
 
-        if (FileManager.default.fileExists(atPath:SDImageCache.shared().makeDiskCachePath(key) + ".mp4")) {
-            display(URL.init(fileURLWithPath:SDImageCache.shared().makeDiskCachePath(key) + ".mp4"))
+        if FileManager.default.fileExists(atPath: SDImageCache.shared().makeDiskCachePath(key) + ".mp4") {
+            display(URL.init(fileURLWithPath: SDImageCache.shared().makeDiskCachePath(key) + ".mp4"))
         } else {
-            let finalUrl = URL.init(fileURLWithPath:SDImageCache.shared().makeDiskCachePath(key) + ".mp4")
-            let localUrlV = URL.init(fileURLWithPath:SDImageCache.shared().makeDiskCachePath(key + "video.mp4"))
-            let localUrlAudio = URL.init(fileURLWithPath:SDImageCache.shared().makeDiskCachePath(key + "audio.mp4"))
+            let finalUrl = URL.init(fileURLWithPath: SDImageCache.shared().makeDiskCachePath(key) + ".mp4")
+            let localUrlV = URL.init(fileURLWithPath: SDImageCache.shared().makeDiskCachePath(key + "video.mp4"))
+            let localUrlAudio = URL.init(fileURLWithPath: SDImageCache.shared().makeDiskCachePath(key + "audio.mp4"))
             progressView?.setHidden(false, animated: true, completion: nil)
 
-            request = Alamofire.download(toLoad, method: .get, to: { (url, response) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
+            request = Alamofire.download(toLoad, method: .get, to: { (_, _) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
                         return (localUrlV, [.removePreviousFile, .createIntermediateDirectories])
                     }).downloadProgress() { progress in
                         DispatchQueue.main.async {
@@ -142,7 +142,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
                             print(error)
                         } else { //no errors
                             print("Downloaded")
-                            self.request = Alamofire.download(toLoadAudio, method: .get, to: { (url, response) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
+                            self.request = Alamofire.download(toLoadAudio, method: .get, to: { (_, _) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
                                         return (localUrlAudio, [.removePreviousFile, .createIntermediateDirectories])
                                     }).downloadProgress() { progress in
                                         DispatchQueue.main.async {
@@ -151,7 +151,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
                                     }
                                     .responseData { response2 in
                                         print(response2.response!.statusCode)
-                                        if (response2.response!.statusCode != 200) {
+                                        if response2.response!.statusCode != 200 {
                                             do {
                                                 try FileManager.init().copyItem(at: localUrlV, to: finalUrl)
                                                 self.display(finalUrl)
@@ -182,16 +182,16 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
         key = key.replacingOccurrences(of: ".", with: "")
         key = key + ".mp4"
         print(key)
-        if (key.length > 200) {
+        if key.length > 200 {
             key = key.substring(0, length: 200)
         }
-        if (FileManager.default.fileExists(atPath:SDImageCache.shared().makeDiskCachePath(key))) {
-            display(URL.init(fileURLWithPath:SDImageCache.shared().makeDiskCachePath(key)))
+        if FileManager.default.fileExists(atPath: SDImageCache.shared().makeDiskCachePath(key)) {
+            display(URL.init(fileURLWithPath: SDImageCache.shared().makeDiskCachePath(key)))
         } else {
-            let localUrl = URL.init(fileURLWithPath:SDImageCache.shared().makeDiskCachePath(key))
+            let localUrl = URL.init(fileURLWithPath: SDImageCache.shared().makeDiskCachePath(key))
             print(localUrl)
             progressView?.setHidden(false, animated: true, completion: nil)
-            request = Alamofire.download(toLoad, method: .get, to: { (url, response) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
+            request = Alamofire.download(toLoad, method: .get, to: { (_, _) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
                         return (localUrl, [.createIntermediateDirectories])
 
                     }).downloadProgress() { progress in
@@ -217,7 +217,6 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
         }
     }
 
-
     var request: DownloadRequest?
 
     func getYTHeight() -> CGFloat {
@@ -225,10 +224,9 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
         return height
     }
 
-
     func getLastPathSegment(_ path: String) -> String {
         var inv = path
-        if (inv.endsWith("/")) {
+        if inv.endsWith("/") {
             inv = inv.substring(0, length: inv.length - 1)
         }
         let slashindex = inv.lastIndexOf("/")!
@@ -242,30 +240,30 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
     var playlist = ""
 
     func getTimeFromString(_ time: String) -> Int {
-        var timeAdd = 0;
+        var timeAdd = 0
         for s in time.components(separatedBy: CharacterSet.init(charactersIn: "hms")) {
             print(s)
-            if (!s.isEmpty) {
-                if (time.contains(s + "s")) {
-                    timeAdd += Int(s)!;
-                } else if (time.contains(s + "m")) {
-                    timeAdd += 60 * Int(s)!;
-                } else if (time.contains(s + "h")) {
-                    timeAdd += 3600 * Int(s)!;
+            if !s.isEmpty {
+                if time.contains(s + "s") {
+                    timeAdd += Int(s)!
+                } else if time.contains(s + "m") {
+                    timeAdd += 60 * Int(s)!
+                } else if time.contains(s + "h") {
+                    timeAdd += 3600 * Int(s)!
                 }
             }
         }
-        if (timeAdd == 0 && Int(time) != nil) {
-            timeAdd += Int(time)!;
+        if timeAdd == 0 && Int(time) != nil {
+            timeAdd += Int(time)!
         }
 
-        return timeAdd * 1000;
+        return timeAdd * 1000
 
     }
 
     func loadGfycat(urlString: String) {
         let url = URL(string: urlString)
-        URLSession.shared.dataTask(with: url!) { (data, response, error) in
+        URLSession.shared.dataTask(with: url!) { (data, _, error) in
             if error != nil {
                 print(error ?? "Error loading gif...")
             } else {
@@ -289,7 +287,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
 
     func getStreamableObject(urlString: String) {
         let url = URL(string: urlString)
-        URLSession.shared.dataTask(with: url!) { (data, response, error) in
+        URLSession.shared.dataTask(with: url!) { (data, _, error) in
             if error != nil {
                 print(error ?? "Error loading gif...")
             } else {
@@ -307,7 +305,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
                         } else {
                             video = (gif?.files?.mp4?.url!)!
                         }
-                        if (video.hasPrefix("//")) {
+                        if video.hasPrefix("//") {
                             video = "https:" + video
                         }
                         self.loadVideo(urlString: video)
@@ -322,7 +320,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
 
     func getVidMeObject(urlString: String) {
         let url = URL(string: urlString)
-        URLSession.shared.dataTask(with: url!) { (data, response, error) in
+        URLSession.shared.dataTask(with: url!) { (data, _, error) in
             if error != nil {
                 print(error ?? "Error loading gif...")
             } else {
@@ -350,14 +348,14 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
         gfyUrl = gfyUrl.replacingOccurrences(of: "giant", with: "thumbs")
         gfyUrl = gfyUrl.replacingOccurrences(of: "zippy", with: "thumbs")
 
-        if (!gfyUrl.endsWith("-mobile.mp4")) {
+        if !gfyUrl.endsWith("-mobile.mp4") {
             gfyUrl = gfyUrl.replacingOccurrences(of: "\\.mp4", with: "-mobile.mp4")
         }
-        return gfyUrl;
+        return gfyUrl
     }
 
     var player = AVPlayer()
-    var displayedVideo: URL? = nil
+    var displayedVideo: URL?
 
     func display(_ file: URL) {
         DispatchQueue.main.async {
@@ -365,11 +363,11 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
             print("Displayed \(file.absoluteString)")
             self.progressView?.setHidden(true, animated: true)
             self.sizeLabel?.isHidden = true
-            if (self.sharedPlayer && MediaDisplayViewController.videoPlayer == nil) {
+            if self.sharedPlayer && MediaDisplayViewController.videoPlayer == nil {
                 MediaDisplayViewController.videoPlayer = AVPlayer.init(playerItem: AVPlayerItem.init(url: file))
                 self.player = MediaDisplayViewController.videoPlayer!
             } else {
-                if (self.sharedPlayer) {
+                if self.sharedPlayer {
                     MediaDisplayViewController.videoPlayer!.replaceCurrentItem(with: AVPlayerItem.init(url: file))
                     self.player = MediaDisplayViewController.videoPlayer!
                 } else {
@@ -408,7 +406,7 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
 
             self.scrollView.isUserInteractionEnabled = true
             self.player.play()
-            if(self is MediaDisplayViewController){
+            if self is MediaDisplayViewController {
                 (self as! MediaDisplayViewController).doControls()
             }
         }
@@ -475,55 +473,54 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
 //            self.ytPlayer.frame = UIScreen.main.bounds
 //        }
 
-
     }
 
     func formatUrl(sS: String) -> String {
         var s = sS
-        if (s.hasSuffix("v") && !s.contains("streamable.com")) {
-            s = s.substring(0, length: s.length - 1);
-        } else if (s.contains("gfycat") && (!s.contains("mp4") && !s.contains("webm"))) {
-            if (s.contains("-size_restricted")) {
+        if s.hasSuffix("v") && !s.contains("streamable.com") {
+            s = s.substring(0, length: s.length - 1)
+        } else if s.contains("gfycat") && (!s.contains("mp4") && !s.contains("webm")) {
+            if s.contains("-size_restricted") {
                 s = s.replacingOccurrences(of: "-size_restricted", with: "")
             }
         }
-        if ((s.contains(".webm") || s.contains(".gif")) && !s.contains(".gifv") && s.contains(
-                "imgur.com")) {
-            s = s.replacingOccurrences(of: ".gif", with: ".mp4");
-            s = s.replacingOccurrences(of: ".webm", with: ".mp4");
+        if (s.contains(".webm") || s.contains(".gif")) && !s.contains(".gifv") && s.contains(
+                "imgur.com") {
+            s = s.replacingOccurrences(of: ".gif", with: ".mp4")
+            s = s.replacingOccurrences(of: ".webm", with: ".mp4")
         }
-        if (s.endsWith("/")) {
+        if s.endsWith("/") {
             s = s.substring(0, length: s.length - 1)
         }
-        if (s.contains("v.redd.it") && !s.contains("DASH")) {
-            if (s.endsWith("/")) {
+        if s.contains("v.redd.it") && !s.contains("DASH") {
+            if s.endsWith("/") {
                 s = s.substring(0, length: s.length - 2)
             }
-            s = s + "/DASH_9_6_M";
+            s = s + "/DASH_9_6_M"
         }
-        return s;
+        return s
     }
 
     func getVideoType(url: String) -> VideoType {
-        if (url.contains(".mp4") || url.contains("webm") || url.contains("redditmedia.com")) {
+        if url.contains(".mp4") || url.contains("webm") || url.contains("redditmedia.com") {
             return VideoType.DIRECT
         }
-        if (url.contains("gfycat") && !url.contains("mp4")) {
+        if url.contains("gfycat") && !url.contains("mp4") {
             return VideoType.GFYCAT
         }
-        if (url.contains("v.redd.it")) {
+        if url.contains("v.redd.it") {
             return VideoType.REDDIT
         }
-        if (url.contains("imgur.com")) {
+        if url.contains("imgur.com") {
             return VideoType.IMGUR
         }
-        if (url.contains("vid.me")) {
+        if url.contains("vid.me") {
             return VideoType.VID_ME
         }
-        if (url.contains("streamable.com")) {
+        if url.contains("streamable.com") {
             return VideoType.STREAMABLE
         }
-        return VideoType.OTHER;
+        return VideoType.OTHER
     }
 
     enum VideoType {
@@ -542,14 +539,12 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
         }
     }
 
-
     //From https://stackoverflow.com/a/39100999/3697225
     func mergeFilesWithUrl(videoUrl: URL, audioUrl: URL, savePathUrl: URL, completion: @escaping () -> Void) {
         let mixComposition: AVMutableComposition = AVMutableComposition()
         var mutableCompositionVideoTrack: [AVMutableCompositionTrack] = []
         var mutableCompositionAudioTrack: [AVMutableCompositionTrack] = []
         let totalVideoCompositionInstruction: AVMutableVideoCompositionInstruction = AVMutableVideoCompositionInstruction()
-
 
         //start merge
 
@@ -561,7 +556,6 @@ class VideoDisplayer: MediaViewController, YTPlayerViewDelegate {
 
         let aVideoAssetTrack: AVAssetTrack = aVideoAsset.tracks(withMediaType: AVMediaTypeVideo)[0]
         let aAudioAssetTrack: AVAssetTrack = aAudioAsset.tracks(withMediaType: AVMediaTypeAudio)[0]
-
 
         do {
             try mutableCompositionVideoTrack[0].insertTimeRange(CMTimeRangeMake(kCMTimeZero, aVideoAssetTrack.timeRange.duration), of: aVideoAssetTrack, at: kCMTimeZero)

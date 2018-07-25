@@ -6,8 +6,8 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
-import UIKit
 import reddift
+import UIKit
 
 class PostFilter {
     static var domains: [NSString] = []
@@ -17,7 +17,7 @@ class PostFilter {
     static var subreddits: [NSString] = []
     static var flairs: [NSString] = []
     static var openExternally: [NSString] = []
-    static var filters : UserDefaults? = nil
+    static var filters: UserDefaults?
 
     public static func initialize() {
         PostFilter.domains = UserDefaults.standard.array(forKey: "domainfilters") as! [NSString]? ?? []
@@ -42,10 +42,9 @@ class PostFilter {
         initialize()
     }
 
-
     public static func contains(_ array: [NSString], value: String) -> Bool {
         for text in array {
-            if (text.localizedCaseInsensitiveContains(value)) {
+            if text.localizedCaseInsensitiveContains(value) {
                 return true
             }
         }
@@ -55,54 +54,53 @@ class PostFilter {
     public static func matches(_ link: RSubmission, baseSubreddit: String) -> Bool {
         let mainMatch = (PostFilter.domains.contains(where: { $0.containedIn(base: link.domain) })) || PostFilter.profiles.contains(where: { $0.caseInsensitiveCompare(link.author) == .orderedSame }) || PostFilter.subreddits.contains(where: { $0.caseInsensitiveCompare(link.subreddit) == .orderedSame }) || contains(PostFilter.flairs, value: link.flair) || contains(PostFilter.selftext, value: link.htmlBody) || contains(PostFilter.titles, value: link.title) || (link.nsfw && !SettingValues.nsfwEnabled)
 
-
-        let gifs = isGif(baseSubreddit);
-        let images = isImage(baseSubreddit);
-        let nsfw = isNsfw(baseSubreddit);
-        let albums = isAlbum(baseSubreddit);
-        let urls = isUrl(baseSubreddit);
-        let selftext = isSelftext(baseSubreddit);
-        let videos = isVideo(baseSubreddit);
+        let gifs = isGif(baseSubreddit)
+        let images = isImage(baseSubreddit)
+        let nsfw = isNsfw(baseSubreddit)
+        let albums = isAlbum(baseSubreddit)
+        let urls = isUrl(baseSubreddit)
+        let selftext = isSelftext(baseSubreddit)
+        let videos = isVideo(baseSubreddit)
 
         var contentMatch = false
 
         if (link.nsfw) {
-            if (!SettingValues.nsfwEnabled) {
+            if !SettingValues.nsfwEnabled {
                 contentMatch = true
             }
-            if (nsfw) {
+            if nsfw {
                 contentMatch = true
             }
         }
 
-        switch (ContentType.getContentType(submission: link)) {
+        switch ContentType.getContentType(submission: link) {
         case .REDDIT, .EMBEDDED, .LINK:
-            if (urls) {
+            if urls {
                 contentMatch = true
             }
             break
         case .SELF, .NONE:
-            if (selftext) {
+            if selftext {
                 contentMatch = true
             }
             break
         case .ALBUM:
-            if (albums) {
+            if albums {
                 contentMatch = true
             }
             break
         case .IMAGE, .DEVIANTART, .IMGUR, .XKCD:
-            if (images) {
+            if images {
                 contentMatch = true
             }
             break
         case .GIF:
-            if (gifs) {
+            if gifs {
                 contentMatch = true
             }
             break
         case .VID_ME, .VIDEO, .STREAMABLE:
-            if (videos) {
+            if videos {
                 contentMatch = true
             }
             break
@@ -129,11 +127,10 @@ class PostFilter {
         return [isImage(sub), isAlbum(sub), isGif(sub), isVideo(sub), isUrl(sub), isSelftext(sub), isNsfw(sub)]
     }
 
-
     public static func filter(_ input: [RSubmission], previous: [RSubmission]?, baseSubreddit: String) -> [RSubmission] {
         var ids: [String] = []
         var toReturn: [RSubmission] = []
-        if (previous != nil) {
+        if previous != nil {
             for p in previous! {
                 ids.append(p.getId())
             }
@@ -146,7 +143,6 @@ class PostFilter {
         }
         return toReturn
     }
-
 
     public static func setEnabledArray(_ sub: String, _ enabled: [Bool]) {
         filters!.set(enabled[0], forKey: "\(sub)_imageFilter")
@@ -191,7 +187,7 @@ class PostFilter {
 
 public extension NSString {
     func containedIn(base: String?) -> Bool {
-        if (base == nil) {
+        if base == nil {
             return false
         }
         return base!.range(of: String(self), options: .caseInsensitive) != nil

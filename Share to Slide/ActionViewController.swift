@@ -6,8 +6,8 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
-import UIKit
 import MobileCoreServices
+import UIKit
 
 class ActionViewController: UIViewController {
 
@@ -26,7 +26,7 @@ class ActionViewController: UIViewController {
                 if provider.hasItemConformingToTypeIdentifier(kUTTypeImage as String) {
                     // This is an image. We'll load it, then place it in our image view.
                     weak var weakImageView = self.imageView
-                    provider.loadItem(forTypeIdentifier: kUTTypeImage as String, options: nil, completionHandler: { (imageURL, error) in
+                    provider.loadItem(forTypeIdentifier: kUTTypeImage as String, options: nil, completionHandler: { (imageURL, _) in
                         OperationQueue.main.addOperation {
                             if let strongImageView = weakImageView {
                                 if let imageURL = imageURL as? URL {
@@ -41,7 +41,7 @@ class ActionViewController: UIViewController {
                 }
             }
             
-            if (imageFound) {
+            if imageFound {
                 // We only handle one image, so stop looking for more.
                 break
             }

@@ -3,7 +3,6 @@
 // Copyright (c) 2018 Haptic Apps. All rights reserved.
 //
 
-
 // Derived from https://stackoverflow.com/a/49843358/3697225
 import Foundation
 import Photos
@@ -25,11 +24,10 @@ class CustomAlbum: NSObject {
 
     private func checkAuthorizationWithHandler(completion: @escaping ((_ success: Bool) -> Void)) {
         if PHPhotoLibrary.authorizationStatus() == .notDetermined {
-            PHPhotoLibrary.requestAuthorization({ (status) in
+            PHPhotoLibrary.requestAuthorization({ (_) in
                 self.checkAuthorizationWithHandler(completion: completion)
             })
-        }
-        else if PHPhotoLibrary.authorizationStatus() == .authorized {
+        } else if PHPhotoLibrary.authorizationStatus() == .authorized {
             self.createAlbumIfNeeded { (success) in
                 if success {
                     completion(true)
@@ -39,8 +37,7 @@ class CustomAlbum: NSObject {
 
             }
 
-        }
-        else {
+        } else {
             completion(false)
         }
     }
@@ -53,7 +50,7 @@ class CustomAlbum: NSObject {
         } else {
             PHPhotoLibrary.shared().performChanges({
                 PHAssetCollectionChangeRequest.creationRequestForAssetCollection(withTitle: CustomAlbum.albumName)   // create an asset collection with the album name
-            }) { success, error in
+            }) { success, _ in
                 if success {
                     self.assetCollection = self.fetchAssetCollectionForAlbum()
                     completion(true)
@@ -87,7 +84,7 @@ class CustomAlbum: NSObject {
                         albumChangeRequest.addAssets(enumeration)
                     }
 
-                }, completionHandler: { (success, error) in
+                }, completionHandler: { (success, _) in
                     DispatchQueue.main.async {
                         if success {
                             BannerUtil.makeBanner(text: "Image saved to gallery!", color: .black, seconds: 3, context: parent)
@@ -117,7 +114,7 @@ class CustomAlbum: NSObject {
 
                     }
 
-                }, completionHandler:  { (success, error) in
+                }, completionHandler: { (success, error) in
                     DispatchQueue.main.async {
                         if success {
                             BannerUtil.makeBanner(text: "Video saved to gallery!", color: .black, seconds: 3, context: parent)
@@ -127,7 +124,6 @@ class CustomAlbum: NSObject {
                         }
                     }
                 })
-
 
             }
         }

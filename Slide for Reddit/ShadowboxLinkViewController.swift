@@ -6,13 +6,13 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
-import UIKit
-import MaterialComponents.MaterialProgressView
-import SDWebImage
+import Anchorage
 import AVFoundation
 import AVKit
+import MaterialComponents.MaterialProgressView
+import SDWebImage
 import TTTAttributedLabel
-import Anchorage
+import UIKit
 
 class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestureRecognizerDelegate, TTTAttributedLabelDelegate {
 
@@ -44,25 +44,24 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
         color = .black
     }
 
-
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
     func displayImage(baseImage: UIImage?) {
-        if (baseImage == nil) {
+        if baseImage == nil {
 
         }
         let image = baseImage!
         color = image.areaAverage()
-        if (((parent as! ShadowboxViewController).currentVc as! ShadowboxLinkViewController).submission.id == self.submission.id) {
+        if ((parent as! ShadowboxViewController).currentVc as! ShadowboxLinkViewController).submission.id == self.submission.id {
             UIView.animate(withDuration: 0.10) {
                 (self.parent as! ShadowboxViewController).background!.backgroundColor = self.color
                 (self.parent as! ShadowboxViewController).background!.layoutIfNeeded()
             }
         }
 
-        if (image.size.width > image.size.height) {
+        if image.size.width > image.size.height {
             self.scrollView.contentSize = CGSize.init(width: self.view.frame.size.width, height: getHeightFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width))
             imageView = UIImageView.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: getHeightFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width)))
         } else {
@@ -82,11 +81,11 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
     }
 
     func loadImage(imageURLB: URL?) {
-        if (imageURLB == nil) {
+        if imageURLB == nil {
             return
         }
         let imageURL = imageURLB!
-        if (SDWebImageManager.shared().cachedImageExists(for: imageURL)) {
+        if SDWebImageManager.shared().cachedImageExists(for: imageURL) {
             DispatchQueue.main.async {
                 let image = SDWebImageManager.shared().imageCache.imageFromDiskCache(forKey: imageURL.absoluteString)
                 self.displayImage(baseImage: image)
@@ -96,7 +95,7 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
             self.progressView?.setHidden(false, animated: true, completion: nil)
             SDWebImageDownloader.shared().downloadImage(with: imageURL, options: .allowInvalidSSLCertificates, progress: { (current: NSInteger, total: NSInteger) in
                 self.progressView?.progress = Float(current / total)
-            }, completed: { (image, _, error, _) in
+            }, completed: { (image, _, _, _) in
                 self.progressView?.setHidden(true, animated: true, completion: nil)
                 SDWebImageManager.shared().saveImage(toCache: image, for: imageURL)
                 DispatchQueue.main.async {
@@ -246,23 +245,23 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
         toolbar.addSubview(upvote)
         toolbar.addSubview(downvote)
 
-        toolbar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-24-[commentView]-12-[voteView]", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["commentView": comments, "voteView": votes, "upvote":upvote, "downvote":downvote, "menu":comment]))
-        toolbar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "[menu(24)]-16-[upvote(24)]-16-[downvote(24)]-24-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["commentView": comments, "voteView": votes, "upvote":upvote, "downvote":downvote, "menu":comment]))
+        toolbar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-24-[commentView]-12-[voteView]", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["commentView": comments, "voteView": votes, "upvote": upvote, "downvote": downvote, "menu": comment]))
+        toolbar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "[menu(24)]-16-[upvote(24)]-16-[downvote(24)]-24-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["commentView": comments, "voteView": votes, "upvote": upvote, "downvote": downvote, "menu": comment]))
         
-        toolbar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[menu(24)]-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["commentView": comments, "voteView": votes, "upvote":upvote, "downvote":downvote, "menu":comment]))
-        toolbar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[upvote(24)]-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["commentView": comments, "voteView": votes, "upvote":upvote, "downvote":downvote, "menu":comment]))
-        toolbar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[downvote(24)]-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["commentView": comments, "voteView": votes, "upvote":upvote, "downvote":downvote, "menu":comment]))
-        toolbar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[commentView(24)]-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["commentView": comments, "voteView": votes, "upvote":upvote, "downvote":downvote, "menu":comment]))
-        toolbar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[voteView(24)]-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["commentView": comments, "voteView": votes, "upvote":upvote, "downvote":downvote, "menu":comment]))
+        toolbar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[menu(24)]-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["commentView": comments, "voteView": votes, "upvote": upvote, "downvote": downvote, "menu": comment]))
+        toolbar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[upvote(24)]-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["commentView": comments, "voteView": votes, "upvote": upvote, "downvote": downvote, "menu": comment]))
+        toolbar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[downvote(24)]-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["commentView": comments, "voteView": votes, "upvote": upvote, "downvote": downvote, "menu": comment]))
+        toolbar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[commentView(24)]-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["commentView": comments, "voteView": votes, "upvote": upvote, "downvote": downvote, "menu": comment]))
+        toolbar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[voteView(24)]-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["commentView": comments, "voteView": votes, "upvote": upvote, "downvote": downvote, "menu": comment]))
 
         toolbar.tintColor = UIColor.white
         toolbar.isUserInteractionEnabled = true
     }
     
-    func doVoteImages(){
+    func doVoteImages() {
         upvote.image = UIImage.init(named: "upvote")?.menuIcon().getCopy(withColor: .white)
         downvote.image = UIImage.init(named: "downvote")?.menuIcon().getCopy(withColor: .white)
-        switch (ActionStates.getVoteDirection(s: submission)) {
+        switch ActionStates.getVoteDirection(s: submission) {
         case .down:
             downvote.image = UIImage.init(named: "downvote")?.getCopy(withSize: .square(size: 20), withColor: ColorUtil.downvoteColor)
         case .up:
@@ -275,7 +274,7 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
 
     func upvote(_ sender: AnyObject) {
         do {
-            try (UIApplication.shared.delegate as! AppDelegate).session?.setVote(ActionStates.getVoteDirection(s: submission) == .up ? .none : .up, name: submission.getId(), completion: { (result) in
+            try (UIApplication.shared.delegate as! AppDelegate).session?.setVote(ActionStates.getVoteDirection(s: submission) == .up ? .none : .up, name: submission.getId(), completion: { (_) in
                 
             })
             ActionStates.setVoteDirection(s: submission, direction: ActionStates.getVoteDirection(s: submission) == .up ? .none : .up)
@@ -288,7 +287,7 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
 
     func downvote(_ sender: AnyObject) {
         do {
-            try (UIApplication.shared.delegate as! AppDelegate).session?.setVote(ActionStates.getVoteDirection(s: submission) == .down ? .none : .down, name: submission.getId(), completion: { (result) in
+            try (UIApplication.shared.delegate as! AppDelegate).session?.setVote(ActionStates.getVoteDirection(s: submission) == .down ? .none : .down, name: submission.getId(), completion: { (_) in
                 
             })
             ActionStates.setVoteDirection(s: submission, direction: ActionStates.getVoteDirection(s: submission) == .down ? .none : .down)
@@ -317,12 +316,12 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
         super.viewDidAppear(animated)
         self.player.play()
         var videoUrl = submission.videoPreview
-        if (videoUrl.isEmpty) {
+        if videoUrl.isEmpty {
             videoUrl = submission.url!.absoluteString
         }
-        if (first && !ContentType.displayImage(t: type) && ContentType.mediaType(t: type) || type == .VIDEO) {
+        if first && !ContentType.displayImage(t: type) && ContentType.mediaType(t: type) || type == .VIDEO {
             first = false
-            if (type == .GIF || type == .STREAMABLE || type == .VID_ME) {
+            if type == .GIF || type == .STREAMABLE || type == .VID_ME {
                 getGif(urlS: videoUrl)
             } else if (type == .VIDEO) {
                 let he = getYTHeight()
@@ -340,17 +339,17 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
     }
 
     func startDisplay() {
-        self.view.layoutMargins = UIEdgeInsetsMake(8, 8, 8, 8)
+        self.view.layoutMargins = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         let type = ContentType.getContentType(submission: submission)
-        if ((ContentType.displayImage(t: type) && type != .SELF) || type == .LINK || type == .EXTERNAL || type == .EMBEDDED) {
+        if (ContentType.displayImage(t: type) && type != .SELF) || type == .LINK || type == .EXTERNAL || type == .EMBEDDED {
             loadImage(imageURLB: URL.init(string: submission.bannerUrl))
-        } else if (ContentType.mediaType(t: type)) {
+        } else if ContentType.mediaType(t: type) {
             if let url = URL(string: submission.thumbnailUrl) {
-                if (SDWebImageManager.shared().cachedImageExists(for: url)) {
+                if SDWebImageManager.shared().cachedImageExists(for: url) {
                     DispatchQueue.main.async {
                         if let image = SDWebImageManager.shared().imageCache.imageFromDiskCache(forKey: self.submission.thumbnailUrl) {
                             self.color = image.areaAverage()
-                            if (((self.parent as! ShadowboxViewController).currentVc as! ShadowboxLinkViewController).submission.id == self.submission.id) {
+                            if ((self.parent as! ShadowboxViewController).currentVc as! ShadowboxLinkViewController).submission.id == self.submission.id {
                                 UIView.animate(withDuration: 0.10) {
                                     (self.parent as! ShadowboxViewController).background!.backgroundColor = self.color
                                     (self.parent as! ShadowboxViewController).background!.layoutIfNeeded()
@@ -359,13 +358,13 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
                         }
                     }
                 } else {
-                    SDWebImageDownloader.shared().downloadImage(with: url, options: .allowInvalidSSLCertificates, progress: { (current: NSInteger, total: NSInteger) in
-                    }, completed: { (img, _, error, _) in
+                    SDWebImageDownloader.shared().downloadImage(with: url, options: .allowInvalidSSLCertificates, progress: { (_: NSInteger, _: NSInteger) in
+                    }, completed: { (img, _, _, _) in
                         SDWebImageManager.shared().saveImage(toCache: img, for: url)
                         if let image = img {
                             DispatchQueue.main.async {
                                 self.color = image.areaAverage()
-                                if (((self.parent as! ShadowboxViewController).currentVc as! ShadowboxLinkViewController).submission.id == self.submission.id) {
+                                if ((self.parent as! ShadowboxViewController).currentVc as! ShadowboxLinkViewController).submission.id == self.submission.id {
                                     UIView.animate(withDuration: 0.5) {
                                         (self.parent as! ShadowboxViewController).background!.backgroundColor = self.color
                                     }
@@ -378,7 +377,7 @@ class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestu
 
         } else {
             let color = ColorUtil.accentColorForSub(sub: (submission.subreddit))
-            if (!submission.htmlBody.isEmpty) {
+            if !submission.htmlBody.isEmpty {
                 var html = submission.htmlBody.trimmed()
                 print(html)
                 body = TextDisplayStackView.init(fontSize: 16, submission: false, color: color, delegate: self, width: self.view.frame.size.width - 16, baseFontColor: .white)

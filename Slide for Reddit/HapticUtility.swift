@@ -6,11 +6,11 @@
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
-import UIKit
 import AudioToolbox.AudioServices
+import UIKit
 
 //https://medium.com/@sdrzn/make-your-ios-app-feel-better-a-comprehensive-guide-over-taptic-engine-and-haptic-feedback-724dec425f10
-public class HapticUtility{
+public class HapticUtility {
     
     static let peek = SystemSoundID(1519)
     static let pop = SystemSoundID(1520)
@@ -29,7 +29,7 @@ public class HapticUtility{
     )
 
     @available(iOS 10.0, *)
-    public static func hapticActionComplete(){
+    public static func hapticActionComplete() {
         
         // Play haptic signal
         if let feedbackSupportLevel = UIDevice.current.value(forKey: "_feedbackSupportLevel") as? Int {
@@ -52,8 +52,8 @@ public class HapticUtility{
     }
     
     @available(iOS 10.0, *)
-    public static func hapticActionStrong(){
-        if(SettingValues.hapticFeedback){
+    public static func hapticActionStrong() {
+        if SettingValues.hapticFeedback {
             // Play haptic signal
             if let feedbackSupportLevel = UIDevice.current.value(forKey: "_feedbackSupportLevel") as? Int {
                 switch feedbackSupportLevel {
@@ -76,8 +76,8 @@ public class HapticUtility{
     }
     
     @available(iOS 10.0, *)
-    public static func hapticActionWeak(){
-        if(SettingValues.hapticFeedback){
+    public static func hapticActionWeak() {
+        if SettingValues.hapticFeedback {
             // Play haptic signal
             if let feedbackSupportLevel = UIDevice.current.value(forKey: "_feedbackSupportLevel") as? Int {
                 switch feedbackSupportLevel {
@@ -98,9 +98,8 @@ public class HapticUtility{
             }
         }
     }
-
     
-    public static func hapticError(){
+    public static func hapticError() {
         let vibrate = SystemSoundID(kSystemSoundID_Vibrate)
         AudioServicesPlaySystemSound(vibrate)
     }

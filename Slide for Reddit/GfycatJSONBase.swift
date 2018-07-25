@@ -13,7 +13,7 @@ import Foundation
 /* For support, please feel free to contact me at https://www.linkedin.com/in/syedabsar */
 
 public class GfycatJSONBase {
-	public var gfyItem : GfyItem?
+	public var gfyItem: GfyItem?
 
 /**
     Returns an array of models based on given dictionary.
@@ -25,11 +25,9 @@ public class GfycatJSONBase {
 
     - returns: Array of Json4Swift_Base Instances.
 */
-    public class func modelsFromDictionaryArray(array:NSArray) -> [GfycatJSONBase]
-    {
-        var models:[GfycatJSONBase] = []
-        for item in array
-        {
+    public class func modelsFromDictionaryArray(array: NSArray) -> [GfycatJSONBase] {
+        var models: [GfycatJSONBase] = []
+        for item in array {
             models.append(GfycatJSONBase(dictionary: item as! NSDictionary)!)
         }
         return models
@@ -47,9 +45,8 @@ public class GfycatJSONBase {
 */
 	required public init?(dictionary: NSDictionary) {
 
-		if (dictionary["gfyItem"] != nil) { gfyItem = GfyItem(dictionary: dictionary["gfyItem"] as! NSDictionary) }
+		if dictionary["gfyItem"] != nil { gfyItem = GfyItem(dictionary: dictionary["gfyItem"] as! NSDictionary) }
 	}
-
 		
 /**
     Returns the dictionary representation for the current instance.

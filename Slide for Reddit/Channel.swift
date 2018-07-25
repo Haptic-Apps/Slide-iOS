@@ -13,20 +13,20 @@ import Foundation
 /* For support, please feel free to contact me at https://www.linkedin.com/in/syedabsar */
 
 public class Channel {
-	public var channel_id : Int?
-	public var url : String?
-	public var title : String?
-	public var description : String?
-	public var date_created : String?
-	public var is_default : String?
-	public var hide_suggest : String?
-	public var show_unmoderated : String?
-	public var nsfw : String?
-	public var follower_count : Int?
-	public var video_count : Int?
-	public var full_url : String?
-	public var avatar_url : String?
-	public var cover_url : String?
+	public var channel_id: Int?
+	public var url: String?
+	public var title: String?
+	public var description: String?
+	public var date_created: String?
+	public var is_default: String?
+	public var hide_suggest: String?
+	public var show_unmoderated: String?
+	public var nsfw: String?
+	public var follower_count: Int?
+	public var video_count: Int?
+	public var full_url: String?
+	public var avatar_url: String?
+	public var cover_url: String?
 
 /**
     Returns an array of models based on given dictionary.
@@ -38,11 +38,9 @@ public class Channel {
 
     - returns: Array of Channel Instances.
 */
-    public class func modelsFromDictionaryArray(array:NSArray) -> [Channel]
-    {
-        var models:[Channel] = []
-        for item in array
-        {
+    public class func modelsFromDictionaryArray(array: NSArray) -> [Channel] {
+        var models: [Channel] = []
+        for item in array {
             models.append(Channel(dictionary: item as! NSDictionary)!)
         }
         return models
@@ -75,7 +73,6 @@ public class Channel {
 		avatar_url = dictionary["avatar_url"] as? String
 		cover_url = dictionary["cover_url"] as? String
 	}
-
 		
 /**
     Returns the dictionary representation for the current instance.
