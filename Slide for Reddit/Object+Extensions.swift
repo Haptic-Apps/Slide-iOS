@@ -12,11 +12,11 @@ import reddift
 
 extension Object {
     func getIdentifier() -> String {
-        if (self is RComment) {
+        if self is RComment {
             return (self as! RComment).getId()
-        } else if (self is RMore) {
+        } else if self is RMore {
             return (self as! RMore).getId()
-        } else if (self is RSubmission) {
+        } else if self is RSubmission {
             return (self as! RSubmission).getId()
         } else {
             return (self as! RMessage).getId()

@@ -5,8 +5,8 @@
 
 import Foundation
 
-public class ColorMuxPagingViewController : UIPageViewController, UIScrollViewDelegate {
-    public var color1, color2 : UIColor?
+public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDelegate {
+    public var color1, color2: UIColor?
     public var viewToMux: UIView?
     public var navToMux: UINavigationBar?
 
@@ -22,19 +22,19 @@ public class ColorMuxPagingViewController : UIPageViewController, UIScrollViewDe
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         var point = scrollView.contentOffset
 
-        var percentComplete: CGFloat;
-        percentComplete = fabs(point.x - self.view.frame.size.width)/self.view.frame.size.width;
+        var percentComplete: CGFloat
+        percentComplete = fabs(point.x - self.view.frame.size.width) / self.view.frame.size.width
 
-        if(viewToMux != nil && color1 != nil  && color2 != nil){
+        if viewToMux != nil && color1 != nil && color2 != nil {
             let color = fadeFromColor(fromColor: color1!, toColor: color2!, withPercentage: percentComplete)
-            if(percentComplete > 0.1 && percentComplete != 1){
+            if percentComplete > 0.1 && percentComplete != 1 {
                 viewToMux!.backgroundColor = color
             }
         }
 
-        if(navToMux != nil){
+        if navToMux != nil {
             let color = fadeFromColor(fromColor: color1!, toColor: color2!, withPercentage: percentComplete)
-            if(!color.cgColor.__equalTo(color1!.cgColor)){
+            if !color.cgColor.__equalTo(color1!.cgColor) {
                 navToMux!.barTintColor = color
             }
         }
@@ -68,15 +68,15 @@ public class ColorMuxPagingViewController : UIPageViewController, UIScrollViewDe
 }
 extension UIColor {
     func toHexString() -> String {
-        var r:CGFloat = 0
-        var g:CGFloat = 0
-        var b:CGFloat = 0
-        var a:CGFloat = 0
+        var r: CGFloat = 0
+        var g: CGFloat = 0
+        var b: CGFloat = 0
+        var a: CGFloat = 0
 
         getRed(&r, green: &g, blue: &b, alpha: &a)
 
-        let rgb:Int = (Int)(r*255)<<16 | (Int)(g*255)<<8 | (Int)(b*255)<<0
+        let rgb: Int = (Int)(r * 255) << 16 | (Int)(g * 255) << 8 | (Int)(b * 255) << 0
 
-        return String(format:"#%06x", rgb)
+        return String(format: "#%06x", rgb)
     }
 }

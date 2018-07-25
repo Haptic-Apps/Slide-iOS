@@ -6,10 +6,10 @@
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
-import UIKit
-import Then
 import Anchorage
 import MaterialComponents.MaterialProgressView
+import Then
+import UIKit
 
 struct EmbeddableMediaDataModel {
     var baseURL: URL?
@@ -70,8 +70,8 @@ class EmbeddableMediaViewController: UIViewController {
 // MARK: - Actions
 extension EmbeddableMediaViewController {
     
-    func openComments(_ sender: AnyObject){
-        if(commentCallback != nil){
+    func openComments(_ sender: AnyObject) {
+        if commentCallback != nil {
             self.dismiss(animated: true) {
                 self.commentCallback!()
             }

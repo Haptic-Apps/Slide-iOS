@@ -6,8 +6,8 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
-import UIKit
 import reddift
+import UIKit
 
 class History {
     public static var seenTimes = NSMutableDictionary()
@@ -16,18 +16,18 @@ class History {
     public static var currentVisits = [String]()
 
     //mark Submissions
-    public static func getSeen(s: RSubmission)-> Bool {
+    public static func getSeen(s: RSubmission) -> Bool {
         let fullname = s.getId()
-        if seenTimes.object(forKey: fullname) != nil{
+        if seenTimes.object(forKey: fullname) != nil {
             return true
         }
         return (s.visited || s.likes != .none)
     }
 
-    public static func getSeenTime(s: RSubmission)-> Double{
+    public static func getSeenTime(s: RSubmission) -> Double {
     let fullname = s.getId()
        if let time = seenTimes.object(forKey: fullname) {
-        if(time is NSNumber){
+        if time is NSNumber {
             return Double(time as! NSNumber)
         } else {
             return 0
@@ -37,33 +37,33 @@ class History {
         }
     }
     
-    public static func publishSeen(){
-        if(SettingValues.saveHistory && false){
+    public static func publishSeen() {
+        if SettingValues.saveHistory && false {
             //Possibly do this, although it's only available as an API endpoint if the user has Reddit gold
         }
     }
 
-    public static func addSeen(s: RSubmission){
+    public static func addSeen(s: RSubmission) {
         currentVisits.append(s.getId())
-        if(!SettingValues.saveNSFWHistory && s.nsfw){
+        if !SettingValues.saveNSFWHistory && s.nsfw {
             
-        } else if(SettingValues.saveHistory){
+        } else if SettingValues.saveHistory {
         let fullname = s.getId()
         seenTimes.setValue(NSNumber(value: NSDate().timeIntervalSince1970), forKey: fullname)
         }
     }
     
-    public static func clearHistory(){
+    public static func clearHistory() {
         seenTimes.removeAllObjects()
     }
     
-    public static func inboxSeen(){
+    public static func inboxSeen() {
         seenTimes.setValue(NSNumber(value: NSDate().timeIntervalSince1970), forKey: "inbox")
     }
 
-    public static func getInboxSeen()-> Double{
+    public static func getInboxSeen() -> Double {
         if let time = seenTimes.object(forKey: "inbox") {
-            if(time is NSNumber){
+            if time is NSNumber {
                 return Double(time as! NSNumber)
             } else {
                 return 0
@@ -74,15 +74,15 @@ class History {
     }
     
     //mark Comments
-    public static func commentsSince(s: RSubmission) -> Int{
-        if let comments = commentCounts.object(forKey: s.getId()){
+    public static func commentsSince(s: RSubmission) -> Int {
+        if let comments = commentCounts.object(forKey: s.getId()) {
             return s.commentCount - (comments as! Int)
         } else {
             return 0
         }
     }
     
-    public static func setComments(s: RSubmission){
+    public static func setComments(s: RSubmission) {
         commentCounts.setValue(NSNumber(value: s.commentCount), forKey: s.getId())
     }
 }

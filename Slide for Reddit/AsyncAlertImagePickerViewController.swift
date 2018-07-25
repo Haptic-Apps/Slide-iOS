@@ -6,9 +6,9 @@
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
-import UIKit
 import RLBAlertsPickers
 import SDWebImage
+import UIKit
 
 extension UIAlertController {
     
@@ -84,7 +84,6 @@ final class AsyncImagePickerViewController: UIViewController {
             return $0
         }(UICollectionViewFlowLayout())))
     
-    
     fileprivate var selection: SelectionType?
     fileprivate var images: [URL] = []
     fileprivate var selectedImages: [Int] = []
@@ -99,8 +98,8 @@ final class AsyncImagePickerViewController: UIViewController {
         collectionView.isPagingEnabled = paging
         
         switch selection {
-        case .single(_)?: collectionView.allowsSelection = true
-        case .multiple(_)?: collectionView.allowsMultipleSelection = true
+        case .single?: collectionView.allowsSelection = true
+        case .multiple?: collectionView.allowsMultipleSelection = true
         case .none: break }
     }
     

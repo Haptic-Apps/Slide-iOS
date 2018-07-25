@@ -13,11 +13,11 @@ import Foundation
 /* For support, please feel free to contact me at https://www.linkedin.com/in/syedabsar */
 
 public class Formats {
-	public var type : String?
-	public var uri : String?
-	public var width : Int?
-	public var height : Int?
-	public var version : Int?
+	public var type: String?
+	public var uri: String?
+	public var width: Int?
+	public var height: Int?
+	public var version: Int?
 
 /**
     Returns an array of models based on given dictionary.
@@ -29,11 +29,9 @@ public class Formats {
 
     - returns: Array of Formats Instances.
 */
-    public class func modelsFromDictionaryArray(array:NSArray) -> [Formats]
-    {
-        var models:[Formats] = []
-        for item in array
-        {
+    public class func modelsFromDictionaryArray(array: NSArray) -> [Formats] {
+        var models: [Formats] = []
+        for item in array {
             models.append(Formats(dictionary: item as! NSDictionary)!)
         }
         return models
@@ -57,7 +55,6 @@ public class Formats {
 		height = dictionary["height"] as? Int
 		version = dictionary["version"] as? Int
 	}
-
 		
 /**
     Returns the dictionary representation for the current instance.

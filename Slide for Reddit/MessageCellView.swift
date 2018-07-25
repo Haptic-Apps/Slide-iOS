@@ -6,11 +6,10 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
-
-import UIKit
+import AudioToolbox
 import reddift
 import TTTAttributedLabel
-import AudioToolbox
+import UIKit
 import XLActionController
 
 class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAttributedLabelDelegate {
@@ -32,7 +31,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
         var rightmargin = 0
         
         let f = self.contentView.frame
-        let fr = UIEdgeInsetsInsetRect(f, UIEdgeInsetsMake(CGFloat(topmargin), CGFloat(leftmargin), CGFloat(bottommargin), CGFloat(rightmargin)))
+        let fr = UIEdgeInsetsInsetRect(f, UIEdgeInsets(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin)))
         self.contentView.frame = fr
     }
 
@@ -43,7 +42,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
     var estimatedHeight = CGFloat(0)
 
     func estimateHeight() -> CGFloat {
-        if (estimatedHeight == 0) {
+        if estimatedHeight == 0 {
             let framesetterB = CTFramesetterCreateWithAttributedString(content!)
             let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: width - 16 - (message!.subject.hasPrefix("re:") ? 22 : 0), height: CGFloat.greatestFiniteMagnitude), nil)
             estimatedHeight = CGFloat(24) + CGFloat(!hasText ? 0 : textSizeB.height)
@@ -55,7 +54,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
         super.init(frame: frame)
 
         self.contentView.layoutMargins = UIEdgeInsets.init(top: 2, left: 0, bottom: 0, right: 0)
-        self.title = UILabel(frame: CGRect(x: 0, y: 0, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude));
+        self.title = UILabel(frame: CGRect(x: 0, y: 0, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
         title.numberOfLines = 0
         title.lineBreakMode = NSLineBreakMode.byWordWrapping
         title.font = FontGenerator.fontOfSize(size: 18, submission: true)
@@ -67,7 +66,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
         self.textView.numberOfLines = 0
         self.textView.backgroundColor = .clear
 
-        self.info = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
+        self.info = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
         info.numberOfLines = 0
         info.font = FontGenerator.fontOfSize(size: 12, submission: true)
         info.textColor = ColorUtil.fontColor
@@ -91,23 +90,23 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
 
     func setMessage(message: RMessage, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, width: CGFloat) {
         parentViewController = parent
-        if (navViewController == nil && nav != nil) {
+        if navViewController == nil && nav != nil {
             navViewController = nav
         }
-        if (message.wasComment) {
+        if message.wasComment {
             title.text = message.linkTitle
         } else {
             title.text = message.subject
         }
         self.message = message
-        if (!ActionStates.isRead(s: message)) {
+        if !ActionStates.isRead(s: message) {
             title.textColor = GMColor.red500Color()
         } else {
             title.textColor = ColorUtil.fontColor
         }
         title.sizeToFit()
 
-        if (!lsC.isEmpty) {
+        if !lsC.isEmpty {
             self.contentView.removeConstraints(lsC)
         }
 
@@ -123,13 +122,13 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
 
         let subString = NSMutableAttributedString(string: "r/\(message.subreddit)")
         let color = ColorUtil.getColorForSub(sub: message.subreddit)
-        if (color != ColorUtil.baseColor) {
+        if color != ColorUtil.baseColor {
             subString.addAttribute(NSForegroundColorAttributeName, value: color, range: NSRange.init(location: 0, length: subString.length))
         }
 
         let infoString = NSMutableAttributedString()
         infoString.append(endString)
-        if (!message.subreddit.isEmpty) {
+        if !message.subreddit.isEmpty {
             infoString.append(NSAttributedString.init(string: "  •  "))
             infoString.append(subString)
         }
@@ -152,14 +151,13 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
         } catch {
         }
 
-
         let metrics = ["height": textView.frame.size.height] as [String: Any]
         let views = ["label": title, "body": textView, "info": info] as [String: Any]
-        if(!lsC.isEmpty){
+        if !lsC.isEmpty {
             self.contentView.removeConstraints(lsC)
         }
         lsC = []
-        if (message.subject.hasPrefix("re:")) {
+        if message.subject.hasPrefix("re:") {
             lsC.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-38-[label]-8-|",
                     options: NSLayoutFormatOptions(rawValue: 0),
                     metrics: metrics,
@@ -205,29 +203,28 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
     func showLongMenu() {
         timer!.invalidate()
         AudioServicesPlaySystemSound(1519)
-        if (!self.cancelled) {
+        if !self.cancelled {
             //todo show menu
             //read reply full thread
 
             let alertController: BottomSheetActionController = BottomSheetActionController()
             alertController.headerData = "Message from u/\(self.message!.author)"
 
-
-            alertController.addAction(Action(ActionData(title: "\(AccountController.formatUsernamePosessive(input: self.message!.author, small: false)) profile", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { action in
+            alertController.addAction(Action(ActionData(title: "\(AccountController.formatUsernamePosessive(input: self.message!.author, small: false)) profile", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { _ in
 
                 let prof = ProfileViewController.init(name: self.message!.author)
-                VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController);
+                VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController)
             }))
 
-            alertController.addAction(Action(ActionData(title: "Reply", image: UIImage(named: "reply")!.menuIcon()), style: .default, handler: { action in
+            alertController.addAction(Action(ActionData(title: "Reply", image: UIImage(named: "reply")!.menuIcon()), style: .default, handler: { _ in
                 self.doReply()
             }))
-            alertController.addAction(Action(ActionData(title: ActionStates.isRead(s: self.message!) ? "Mark unread" : "Mark read", image: UIImage(named: "seen")!.menuIcon()), style: .default, handler: { action in
-                if (ActionStates.isRead(s: self.message!)) {
+            alertController.addAction(Action(ActionData(title: ActionStates.isRead(s: self.message!) ? "Mark unread" : "Mark read", image: UIImage(named: "seen")!.menuIcon()), style: .default, handler: { _ in
+                if ActionStates.isRead(s: self.message!) {
                     let session = (UIApplication.shared.delegate as! AppDelegate).session
                     do {
                         try session?.markMessagesAsUnread([(self.message?.name.contains("_"))! ? (self.message?.name)! : ((self.message?.wasComment)! ? "t1_" : "t4_") + (self.message?.name)!], completion: { (result) in
-                            if (result.error != nil) {
+                            if result.error != nil {
                                 print(result.error!.description)
                             }
                         })
@@ -241,7 +238,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
                     let session = (UIApplication.shared.delegate as! AppDelegate).session
                     do {
                         try session?.markMessagesAsRead([(self.message?.name.contains("_"))! ? (self.message?.name)! : ((self.message?.wasComment)! ? "t1_" : "t4_") + (self.message?.name)!], completion: { (result) in
-                            if (result.error != nil) {
+                            if result.error != nil {
                                 print(result.error!.description)
                             }
                         })
@@ -253,8 +250,8 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
 
                 }
             }))
-            if (self.message!.wasComment) {
-                alertController.addAction(Action(ActionData(title: "Full thead", image: UIImage(named: "comments")!.menuIcon()), style: .default, handler: { action in
+            if self.message!.wasComment {
+                alertController.addAction(Action(ActionData(title: "Full thead", image: UIImage(named: "comments")!.menuIcon()), style: .default, handler: { _ in
                     let url = "https://www.reddit.com\(self.message!.context)"
                     VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: url)!), popupIfPossible: true, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController)
                 }))
@@ -266,7 +263,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
     }
 
     func showMenu(_ sender: UILongPressGestureRecognizer) {
-        if (sender.state == UIGestureRecognizerState.began) {
+        if sender.state == UIGestureRecognizerState.began {
             cancelled = false
             timer = Timer.scheduledTimer(timeInterval: 0.25,
                     target: self,
@@ -274,7 +271,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
                     userInfo: nil,
                     repeats: false)
         }
-        if (sender.state == UIGestureRecognizerState.ended) {
+        if sender.state == UIGestureRecognizerState.ended {
             timer!.invalidate()
             cancelled = true
         }
@@ -292,11 +289,11 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
     public var navViewController: UIViewController?
 
     func doReply(sender: UITapGestureRecognizer? = nil) {
-        if (!ActionStates.isRead(s: message!)) {
+        if !ActionStates.isRead(s: message!) {
             let session = (UIApplication.shared.delegate as! AppDelegate).session
             do {
                 try session?.markMessagesAsRead([(message?.name.contains("_"))! ? (message?.name)! : ((message?.wasComment)! ? "t1_" : "t4_") + (message?.name)!], completion: { (result) in
-                    if (result.error != nil) {
+                    if result.error != nil {
                         print(result.error!.description)
                     }
                 })
@@ -311,7 +308,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
                 let vc = RedditLink.getViewControllerForURL(urlS: URL.init(string: url)!)
                 VCPresenter.showVC(viewController: vc, popupIfPossible: true, parentNavigationController: parentViewController?.navigationController, parentViewController: parentViewController)
             } else {
-                VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(message: message, completion: {(message) in
+                VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(message: message, completion: {(_) in
                     DispatchQueue.main.async(execute: { () -> Void in
                         BannerUtil.makeBanner(text: "Message sent!", seconds: 3, context: self.parentViewController)
                     })

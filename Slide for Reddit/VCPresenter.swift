@@ -13,12 +13,12 @@ public class VCPresenter {
 
     public static func showVC(viewController: UIViewController, popupIfPossible: Bool, parentNavigationController: UINavigationController?, parentViewController: UIViewController?) {
 
-        if (viewController is SFHideSafariViewController) {
+        if viewController is SFHideSafariViewController {
             parentViewController?.present(viewController, animated: true)
             return
         }
-        if (((parentNavigationController != nil && parentNavigationController!.modalPresentationStyle != .pageSheet) && !(parentViewController is SubSidebarViewController) && popupIfPossible && UIApplication.shared.statusBarOrientation.isLandscape) || parentNavigationController == nil) {
-            var newParent = TapBehindModalViewController.init(rootViewController: viewController);
+        if ((parentNavigationController != nil && parentNavigationController!.modalPresentationStyle != .pageSheet) && !(parentViewController is SubSidebarViewController) && popupIfPossible && UIApplication.shared.statusBarOrientation.isLandscape) || parentNavigationController == nil {
+            var newParent = TapBehindModalViewController.init(rootViewController: viewController)
             newParent.navigationBar.shadowImage = UIImage()
             newParent.navigationBar.isTranslucent = false
 
@@ -34,7 +34,7 @@ public class VCPresenter {
             //Let's figure out how to present it
             var small: Bool = popupIfPossible && UIScreen.main.traitCollection.userInterfaceIdiom == .pad && UIApplication.shared.statusBarOrientation != .portrait
 
-            if (small) {
+            if small {
                 newParent.modalPresentationStyle = .pageSheet
                 newParent.modalTransitionStyle = .crossDissolve
             } else {
@@ -45,7 +45,7 @@ public class VCPresenter {
             viewController.navigationItem.leftBarButtonItems = [barButton]
 
             parentViewController!.present(newParent, animated: true, completion: nil)
-            if (viewController is SFHideSafariViewController) {
+            if viewController is SFHideSafariViewController {
                 newParent.setNavigationBarHidden(true, animated: false)
             }
         } else {
@@ -69,9 +69,9 @@ public class VCPresenter {
     }
 
     public static func proDialogShown(feature: Bool, _ parentViewController: UIViewController) -> Bool {
-        if((feature && !SettingValues.isPro) || (!feature && !SettingValues.isPro)){
+        if (feature && !SettingValues.isPro) || (!feature && !SettingValues.isPro) {
             let viewController = SettingsPro()
-            var newParent = TapBehindModalViewController.init(rootViewController: viewController);
+            var newParent = TapBehindModalViewController.init(rootViewController: viewController)
             newParent.navigationBar.shadowImage = UIImage()
             newParent.navigationBar.isTranslucent = false
             
@@ -84,7 +84,7 @@ public class VCPresenter {
             
             let barButton = UIBarButtonItem.init(customView: button)
             
-            if(parentViewController is MediaVCDelegate && false){
+            if parentViewController is MediaVCDelegate && false {
                 newParent.modalPresentationStyle = .custom
                 newParent.modalTransitionStyle = .crossDissolve
                 newParent.transitioningDelegate = parentViewController as! MediaVCDelegate
@@ -103,20 +103,18 @@ public class VCPresenter {
         return false
     }
 
-
     @objc public static func handleBackButton(controller: UIButtonWithContext) {
-        controller.parentController!.popViewController(animated: true);
+        controller.parentController!.popViewController(animated: true)
     }
 
     @objc public static func handleCloseNav(controller: UIButtonWithContext) {
         controller.parentController!.dismiss(animated: true)
     }
 
-
     public static func presentAlert(_ alertController: UIViewController, parentVC: UIViewController) {
 
         do {
-            try parentVC.present(alertController, animated: true, completion: nil);
+            try parentVC.present(alertController, animated: true, completion: nil)
         } catch {
             print("Error presenting alert controller \(alertController)")
         }
@@ -136,7 +134,6 @@ public class DefaultGestureDelegate: NSObject, UIGestureRecognizerDelegate {
 
 }
 
-
 public class UIButtonWithContext: UIButton {
-    public var parentController: UINavigationController?;
+    public var parentController: UINavigationController?
 }

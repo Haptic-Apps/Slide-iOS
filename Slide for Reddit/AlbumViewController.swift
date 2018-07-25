@@ -6,34 +6,34 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
-import UIKit
-import SDWebImage
 import RLBAlertsPickers
+import SDWebImage
+import UIKit
 
-class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIPageViewControllerDelegate  {
+class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     
     var vCs: [UIViewController] = []
     var baseURL: URL?
     var bottomScroll = UIScrollView()
     
-    public init(urlB: URL){
+    public init(urlB: URL) {
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
 
         self.baseURL = urlB
         var url = urlB.absoluteString
-        if(url.contains("/layout/")){
-            url = url.substring(0, length: (url.indexOf("/layout")!));
+        if url.contains("/layout/") {
+            url = url.substring(0, length: (url.indexOf("/layout")!))
         }
         var rawDat = cutEnds(s: url)
         
-        if (rawDat.endsWith("/")) {
-            rawDat = rawDat.substring(0, length: rawDat.length - 1);
+        if rawDat.endsWith("/") {
+            rawDat = rawDat.substring(0, length: rawDat.length - 1)
         }
-        if (rawDat.contains("/") && (rawDat.length - (rawDat.lastIndexOf("/")!+1)) < 4) {
-            rawDat = rawDat.replacingOccurrences(of: rawDat.substring(rawDat.lastIndexOf("/")!, length: rawDat.length - (rawDat.lastIndexOf("/")!+1)), with: "");
+        if rawDat.contains("/") && (rawDat.length - (rawDat.lastIndexOf("/")!+1)) < 4 {
+            rawDat = rawDat.replacingOccurrences(of: rawDat.substring(rawDat.lastIndexOf("/")!, length: rawDat.length - (rawDat.lastIndexOf("/")!+1)), with: "")
         }
-        if (rawDat.contains("?")) {
-            rawDat = rawDat.substring(0, length: rawDat.length - rawDat.indexOf("?")!);
+        if rawDat.contains("?") {
+            rawDat = rawDat.substring(0, length: rawDat.length - rawDat.indexOf("?")!)
         }
         
         let hash = getHash(sS: rawDat)
@@ -41,18 +41,18 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         getAlbum(hash: hash)
         
     }
-    func cutEnds(s:String) -> String {
-        if (s.endsWith("/")) {
-            return s.substring(0, length: s.length - 1);
+    func cutEnds(s: String) -> String {
+        if s.endsWith("/") {
+            return s.substring(0, length: s.length - 1)
         } else {
-            return s;
+            return s
         }
     }
     
-    func getAlbum(hash: String){
+    func getAlbum(hash: String) {
         let urlString = "http://imgur.com/ajaxalbums/getimages/\(hash)/hit.json?all=true"
         let url = URL(string: urlString)!
-        if(FileManager.default.fileExists(atPath: getKeyFromURL(url))){
+        if FileManager.default.fileExists(atPath: getKeyFromURL(url)) {
             do {
                 if let data = try String(contentsOf: URL(fileURLWithPath: getKeyFromURL(url)), encoding: String.Encoding.utf8).data(using: String.Encoding.utf8) {
                     self.parseData(data)
@@ -62,8 +62,8 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                 print(error)
             }
         }
-        URLSession.shared.dataTask(with:url) { (data, response, error) in
-            if error != nil || data == nil{
+        URLSession.shared.dataTask(with: url) { (data, _, error) in
+            if error != nil || data == nil {
                 print(error ?? "Error loading album...")
                 //todo error
             } else {
@@ -80,12 +80,12 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
     
     var thumbs = [URL]()
     
-    func parseData(_ data: Data){
+    func parseData(_ data: Data) {
         DispatchQueue.main.async {
             self.spinnerIndicator.stopAnimating()
             self.spinnerIndicator.isHidden = true
         }
-        if(NSString(data: data, encoding: String.Encoding.utf8.rawValue)?.contains("[]"))!{
+        if(NSString(data: data, encoding: String.Encoding.utf8.rawValue)?.contains("[]"))! {
             //single album image
             let media = ModalMediaViewController(model: EmbeddableMediaDataModel(
                 baseURL: URL(string: "https://imgur.com/\(hash).png")!,
@@ -107,7 +107,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                 }
                 
                 let album = AlbumJSONBase.init(dictionary: json)
-                DispatchQueue.main.async{
+                DispatchQueue.main.async {
                     for image in (album?.data?.images)! {
                         self.thumbs.append(URL(string: "https://imgur.com/\(image.hash!)s.jpg")!)
                         let media = ModalMediaViewController(model: EmbeddableMediaDataModel(
@@ -136,22 +136,22 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         }
     }
     
-    func getHash(sS:String) -> String {
+    func getHash(sS: String) -> String {
         var s = sS
-        if(s.contains("/comment/")){
-            s = s.substring(0, length: s.indexOf("/comment")!);
+        if s.contains("/comment/") {
+            s = s.substring(0, length: s.indexOf("/comment")!)
         }
-        var next = s.substring(s.lastIndexOf("/")!, length: s.length - s.lastIndexOf("/")!);
-        if (next.contains(".")) {
-            next = next.substring(0, length: next.indexOf(".")!);
+        var next = s.substring(s.lastIndexOf("/")!, length: s.length - s.lastIndexOf("/")!)
+        if next.contains(".") {
+            next = next.substring(0, length: next.indexOf(".")!)
         }
-        if (next.startsWith("/")) {
-            next = next.substring(1, length: next.length - 1);
+        if next.startsWith("/") {
+            next = next.substring(1, length: next.length - 1)
         }
-        if (next.length < 5) {
-            return getHash(sS: s.replacingOccurrences(of: next, with: ""));
+        if next.length < 5 {
+            return getHash(sS: s.replacingOccurrences(of: next, with: ""))
         } else {
-            return next;
+            return next
         }
         
     }
@@ -171,11 +171,11 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
     var navItem: UINavigationItem?
     var spinnerIndicator = UIActivityIndicatorView()
     
-    func exit(){
+    func exit() {
         self.dismiss(animated: true, completion: nil)
     }
     
-    override func viewDidLoad(){
+    override func viewDidLoad() {
         super.viewDidLoad()
         self.dataSource = self
         self.delegate = self
@@ -200,7 +200,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         self.view.addSubview(spinnerIndicator)
         spinnerIndicator.startAnimating()
         
-        var gridB = UIBarButtonItem(image: UIImage(named: "grid")?.navIcon().withRenderingMode(.alwaysOriginal), style:.plain, target: self, action: #selector(overview(_:)))
+        var gridB = UIBarButtonItem(image: UIImage(named: "grid")?.navIcon().withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(overview(_:)))
 
         navItem?.rightBarButtonItem = gridB
 
@@ -209,7 +209,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         
     }
     
-    func overview(_ sender: AnyObject){
+    func overview(_ sender: AnyObject) {
         let alert = UIAlertController(style: .actionSheet)
         alert.addAsyncImagePicker(
             flow: .vertical,
@@ -228,7 +228,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         alert.showWindowless()
     }
     
-    func pageViewController(_ pageViewController : UIPageViewController, didFinishAnimating: Bool, previousViewControllers: [UIViewController], transitionCompleted: Bool) {
+    func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating: Bool, previousViewControllers: [UIViewController], transitionCompleted: Bool) {
         navItem?.title = "\(vCs.index(of: viewControllers!.first!)! + 1)/\(vCs.count)"
     }
     
@@ -277,7 +277,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         key = key.replacingOccurrences(of: ":", with: "")
         key = key.replacingOccurrences(of: "/", with: "")
         key = key.replacingOccurrences(of: ".", with: "")
-        if (key.length > 200) {
+        if key.length > 200 {
             key = key.substring(0, length: 200)
         }
         

@@ -9,18 +9,18 @@
 import Foundation
 import SloppySwiper
 
-class PagingCommentViewController : ColorMuxPagingViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
+class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     var submissions: [RSubmission] = []
-    static weak var savedComment : CommentViewController?
+    static weak var savedComment: CommentViewController?
     var vCs: [UIViewController] = []
     var swiper: SloppySwiper?
 
-    public init(submissions: [RSubmission]){
+    public init(submissions: [RSubmission]) {
         self.submissions = submissions
         var first = true
         
         for sub in submissions {
-            if(first && PagingCommentViewController.savedComment != nil && PagingCommentViewController.savedComment!.submission!.getId() == sub.getId()){
+            if first && PagingCommentViewController.savedComment != nil && PagingCommentViewController.savedComment!.submission!.getId() == sub.getId() {
                 self.vCs.append(PagingCommentViewController.savedComment!)
             } else {
                 let comment = CommentViewController.init(submission: sub, single: false)
@@ -31,7 +31,7 @@ class PagingCommentViewController : ColorMuxPagingViewController, UIPageViewCont
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
     }
     
-    public init(comments: [CommentViewController]){
+    public init(comments: [CommentViewController]) {
         for c in comments {
             vCs.append(c)
         }
@@ -39,13 +39,10 @@ class PagingCommentViewController : ColorMuxPagingViewController, UIPageViewCont
     }
     
     var firstPage = true
-
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
-
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -56,22 +53,21 @@ class PagingCommentViewController : ColorMuxPagingViewController, UIPageViewCont
         self.navigationController?.view.backgroundColor = .clear
     }
     
-    override func viewDidLoad(){
+    override func viewDidLoad() {
         super.viewDidLoad()
         self.dataSource = self
         self.delegate = self
         self.navigationController?.view.backgroundColor = UIColor.clear
          let firstViewController = vCs[0]
-        
 
         swiper = SloppySwiper.init(navigationController: self.navigationController!)
         self.navigationController!.delegate = swiper!
         for view in view.subviews {
-            if (view is UIScrollView){
+            if view is UIScrollView {
                 var scrollView = view as! UIScrollView
                 //swiper!.panRecognizer.require(toFail:scrollView.panGestureRecognizer)
                 scrollView.delegate = self
-                if(scrollView.isPagingEnabled && SettingValues.commentTwoSwipe){
+                if scrollView.isPagingEnabled && SettingValues.commentTwoSwipe {
                     scrollView.panGestureRecognizer.minimumNumberOfTouches = 2
                 }
                 scrollView.panGestureRecognizer.require(toFail: swiper!.panRecognizer)
@@ -79,12 +75,10 @@ class PagingCommentViewController : ColorMuxPagingViewController, UIPageViewCont
             }
         }
         
-        
-        if(!(firstViewController as! CommentViewController).loaded){
+        if !(firstViewController as! CommentViewController).loaded {
             PagingCommentViewController.savedComment = firstViewController as? CommentViewController
             (firstViewController as! CommentViewController).forceLoad = true
         }
-
 
         setViewControllers([firstViewController],
                            direction: .forward,
@@ -95,35 +89,33 @@ class PagingCommentViewController : ColorMuxPagingViewController, UIPageViewCont
     
     //From https://stackoverflow.com/a/25167681/3697225
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if (currentIndex == 0 && scrollView.contentOffset.x < scrollView.bounds.size.width) {
-            scrollView.contentOffset = CGPoint(x: scrollView.bounds.size.width, y: 0);
-        } else if (currentIndex == submissions.count - 1 && scrollView.contentOffset.x > scrollView.bounds.size.width) {
-            scrollView.contentOffset = CGPoint(x: scrollView.bounds.size.width, y: 0);
+        if currentIndex == 0 && scrollView.contentOffset.x < scrollView.bounds.size.width {
+            scrollView.contentOffset = CGPoint(x: scrollView.bounds.size.width, y: 0)
+        } else if currentIndex == submissions.count - 1 && scrollView.contentOffset.x > scrollView.bounds.size.width {
+            scrollView.contentOffset = CGPoint(x: scrollView.bounds.size.width, y: 0)
         }
     }
     
     //From https://stackoverflow.com/a/25167681/3697225
     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        if (currentIndex == 0 && scrollView.contentOffset.x <= scrollView.bounds.size.width) {
-            targetContentOffset.pointee = CGPoint(x: scrollView.bounds.size.width, y: 0);
-        } else if (currentIndex == submissions.count - 1 && scrollView.contentOffset.x >= scrollView.bounds.size.width) {
-            targetContentOffset.pointee = CGPoint(x: scrollView.bounds.size.width, y: 0);
+        if currentIndex == 0 && scrollView.contentOffset.x <= scrollView.bounds.size.width {
+            targetContentOffset.pointee = CGPoint(x: scrollView.bounds.size.width, y: 0)
+        } else if currentIndex == submissions.count - 1 && scrollView.contentOffset.x >= scrollView.bounds.size.width {
+            targetContentOffset.pointee = CGPoint(x: scrollView.bounds.size.width, y: 0)
         }
     }
 
-
     var currentIndex = 0
-    var lastPosition : CGFloat = 0
+    var lastPosition: CGFloat = 0
         
-    func pageViewController(_ pageViewController : UIPageViewController, didFinishAnimating: Bool, previousViewControllers: [UIViewController], transitionCompleted: Bool) {
+    func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating: Bool, previousViewControllers: [UIViewController], transitionCompleted: Bool) {
         guard transitionCompleted else { return }
-        if(!(self.viewControllers!.first! is ClearVC)){
+        if !(self.viewControllers!.first! is ClearVC) {
             PagingCommentViewController.savedComment = self.viewControllers!.first as! CommentViewController
         }
             currentIndex = vCs.index(of: PagingCommentViewController.savedComment!)!
 
     }
-
 
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerBefore viewController: UIViewController) -> UIViewController? {
@@ -150,7 +142,7 @@ class PagingCommentViewController : ColorMuxPagingViewController, UIPageViewCont
             return nil
         }
         
-        if(!(viewController as! CommentViewController).loaded){
+        if !(viewController as! CommentViewController).loaded {
             (viewController as! CommentViewController).refresh(viewController)
         }
         
@@ -168,10 +160,9 @@ class PagingCommentViewController : ColorMuxPagingViewController, UIPageViewCont
         return vCs[nextIndex]
     }
     
-    
 }
 
-class ClearVC : UIViewController {
+class ClearVC: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         self.view.backgroundColor = .clear

@@ -15,8 +15,8 @@
 
 /* THIS FILE IS CURRENTLY UNUSED */
 
-import Foundation
 import AVFoundation
+import Foundation
 
 fileprivate extension URL {
 
@@ -113,7 +113,6 @@ open class CachingPlayerItem: AVPlayerItem {
             session = URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
             session?.dataTask(with: url).resume()
         }
-
         
         func resourceLoader(_ resourceLoader: AVAssetResourceLoader, didCancel loadingRequest: AVAssetResourceLoadingRequest) {
             pendingRequests.remove(loadingRequest)
@@ -243,7 +242,7 @@ open class CachingPlayerItem: AVPlayerItem {
 
         addObserver(self, forKeyPath: "status", options: NSKeyValueObservingOptions.new, context: nil)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(playbackStalledHandler), name:NSNotification.Name.AVPlayerItemPlaybackStalled, object: self)
+        NotificationCenter.default.addObserver(self, selector: #selector(playbackStalledHandler), name: NSNotification.Name.AVPlayerItemPlaybackStalled, object: self)
 
         NotificationCenter.default.addObserver(self, selector: #selector(didEndHandler), name: .AVPlayerItemDidPlayToEndTime, object: self)
 
@@ -259,12 +258,11 @@ open class CachingPlayerItem: AVPlayerItem {
         
         addObserver(self, forKeyPath: "status", options: NSKeyValueObservingOptions.new, context: nil)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(playbackStalledHandler), name:NSNotification.Name.AVPlayerItemPlaybackStalled, object: self)
+        NotificationCenter.default.addObserver(self, selector: #selector(playbackStalledHandler), name: NSNotification.Name.AVPlayerItemPlaybackStalled, object: self)
 
         NotificationCenter.default.addObserver(self, selector: #selector(didEndHandler), name: .AVPlayerItemDidPlayToEndTime, object: self)
         
     }
-
 
     /// Is used for playing from Data.
     init(data: Data, mimeType: String, fileExtension: String) {
@@ -287,17 +285,15 @@ open class CachingPlayerItem: AVPlayerItem {
 
         addObserver(self, forKeyPath: "status", options: NSKeyValueObservingOptions.new, context: nil)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(playbackStalledHandler), name:NSNotification.Name.AVPlayerItemPlaybackStalled, object: self)
+        NotificationCenter.default.addObserver(self, selector: #selector(playbackStalledHandler), name: NSNotification.Name.AVPlayerItemPlaybackStalled, object: self)
 
         NotificationCenter.default.addObserver(self, selector: #selector(didEndHandler), name: .AVPlayerItemDidPlayToEndTime, object: self)
 
     }
 
     // MARK: KVO
-    
-    
 
-    override open func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+    override open func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
         delegate?.playerItemReadyToPlay?(self)
     }
 
@@ -310,7 +306,6 @@ open class CachingPlayerItem: AVPlayerItem {
     @objc func didEndHandler() {
         delegate?.didReachEnd?(self)
     }
-
 
     // MARK: -
 

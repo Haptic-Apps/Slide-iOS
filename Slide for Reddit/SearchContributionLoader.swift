@@ -7,14 +7,13 @@
 //
 
 import Foundation
-import reddift
 import RealmSwift
+import reddift
 
 class SearchContributionLoader: ContributionLoader {
     func reset() {
         content = []
     }
-    
 
     var query: String
     var sub: String
@@ -23,7 +22,7 @@ class SearchContributionLoader: ContributionLoader {
     var sorting: SearchSortBy = .relevance
     var time: SearchTimePeriod = .all
 
-    init(query: String, sub: String){
+    init(query: String, sub: String) {
         self.query = query
         self.sub = sub
         color = ColorUtil.getColorForUser(name: sub)
@@ -31,16 +30,15 @@ class SearchContributionLoader: ContributionLoader {
         content = []
     }
     
-    
     var paginator: Paginator
     var content: [Object]
     var delegate: ContentListingViewController?
     var paging = false
     
     func getData(reload: Bool) {
-        if(delegate != nil && canGetMore){
+        if delegate != nil && canGetMore {
             do {
-                if(reload){
+                if reload {
                     paginator = Paginator()
                 }
                 try delegate?.session?.getSearch(Subreddit.init(subreddit: sub), query: query, paginator: paginator, sort: sorting, time: time, completion: { (result) in
@@ -49,11 +47,11 @@ class SearchContributionLoader: ContributionLoader {
                         print(result.error!)
                         self.delegate?.failed(error: result.error!)
                     case .success(let listing):
-                        if(reload){
+                        if reload {
                             self.content = []
                         }
-                        for item in listing.children.flatMap({$0}) {
-                            if(item is Comment){
+                        for item in listing.children.flatMap({ $0 }) {
+                            if item is Comment {
                                 self.content.append(RealmDataWrapper.commentToRComment(comment: item as! Comment, depth: 0))
                             } else {
                                 self.content.append(RealmDataWrapper.linkToRSubmission(submission: item as! Link))
@@ -61,7 +59,7 @@ class SearchContributionLoader: ContributionLoader {
                         }
                         self.paginator = listing.paginator
                         self.canGetMore = listing.paginator.hasMore()
-                        DispatchQueue.main.async{
+                        DispatchQueue.main.async {
                             self.delegate?.doneLoading()
                         }
                     }

@@ -13,7 +13,7 @@ import Foundation
 /* For support, please feel free to contact me at https://www.linkedin.com/in/syedabsar */
 
 public class Progress {
-	public var progress : Int?
+	public var progress: Int?
 
 /**
     Returns an array of models based on given dictionary.
@@ -25,11 +25,9 @@ public class Progress {
 
     - returns: Array of Progress Instances.
 */
-    public class func modelsFromDictionaryArray(array:NSArray) -> [Progress]
-    {
-        var models:[Progress] = []
-        for item in array
-        {
+    public class func modelsFromDictionaryArray(array: NSArray) -> [Progress] {
+        var models: [Progress] = []
+        for item in array {
             models.append(Progress(dictionary: item as! NSDictionary)!)
         }
         return models
@@ -49,7 +47,6 @@ public class Progress {
 
 		progress = dictionary["progress"] as? Int
 	}
-
 		
 /**
     Returns the dictionary representation for the current instance.

@@ -13,8 +13,8 @@ import Foundation
 /* For support, please feel free to contact me at https://www.linkedin.com/in/syedabsar */
 
 public class Files {
-	public var mp4 : StremableMp4?
-	public var mp4mobile : StremableMp4Mobile?
+	public var mp4: StremableMp4?
+	public var mp4mobile: StremableMp4Mobile?
 
 /**
     Returns an array of models based on given dictionary.
@@ -26,11 +26,9 @@ public class Files {
 
     - returns: Array of Files Instances.
 */
-    public class func modelsFromDictionaryArray(array:NSArray) -> [Files]
-    {
-        var models:[Files] = []
-        for item in array
-        {
+    public class func modelsFromDictionaryArray(array: NSArray) -> [Files] {
+        var models: [Files] = []
+        for item in array {
             models.append(Files(dictionary: item as! NSDictionary)!)
         }
         return models
@@ -48,10 +46,9 @@ public class Files {
 */
 	required public init?(dictionary: NSDictionary) {
 
-		if (dictionary["mp4"] != nil) { mp4 = StremableMp4(dictionary: dictionary["mp4"] as! NSDictionary) }
-		if (dictionary["mp4-mobile"] != nil) { mp4mobile = StremableMp4Mobile(dictionary: dictionary["mp4-mobile"] as! NSDictionary) }
+		if dictionary["mp4"] != nil { mp4 = StremableMp4(dictionary: dictionary["mp4"] as! NSDictionary) }
+		if dictionary["mp4-mobile"] != nil { mp4mobile = StremableMp4Mobile(dictionary: dictionary["mp4-mobile"] as! NSDictionary) }
 	}
-
 		
 /**
     Returns the dictionary representation for the current instance.

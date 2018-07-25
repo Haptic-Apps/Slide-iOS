@@ -6,12 +6,12 @@
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
-import UIKit
-import reddift
-import SDWebImage
 import MaterialComponents.MaterialProgressView
-import SafariServices
 import MaterialComponents.MDCBottomSheetController
+import reddift
+import SafariServices
+import SDWebImage
+import UIKit
 
 class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewControllerTransitioningDelegate {
 
@@ -21,7 +21,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
     var commentCallback: (() -> Void)?
 
     public func setLink(lnk: RSubmission, shownURL: URL?, lq: Bool, saveHistory: Bool) { //lq is should load lq and did load lq
-        if (saveHistory) {
+        if saveHistory {
             History.addSeen(s: lnk)
         }
         self.link = lnk
@@ -35,23 +35,23 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
 
         let type = ContentType.getContentType(submission: lnk)
 
-        if (type == .EXTERNAL) {
+        if type == .EXTERNAL {
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(lnk.url!, options: [:], completionHandler: nil)
             } else {
                 UIApplication.shared.openURL(lnk.url!)
             }
         } else {
-            if (ContentType.isGif(uri: url)) {
-                if (!link!.videoPreview.isEmpty()) {
+            if ContentType.isGif(uri: url) {
+                if !link!.videoPreview.isEmpty() {
                     doShow(url: URL.init(string: link!.videoPreview)!)
                 } else {
                     doShow(url: url)
                 }
             } else {
-                if (lq && shownURL != nil) {
+                if lq && shownURL != nil {
                     doShow(url: url, lq: shownURL)
-                } else if (shownURL != nil && ContentType.imageType(t: type)) {
+                } else if shownURL != nil && ContentType.imageType(t: type) {
                     doShow(url: shownURL!)
                 } else {
                     doShow(url: url)
@@ -64,18 +64,18 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
         print(baseUrl)
         contentUrl = baseUrl
         var url = contentUrl?.absoluteString
-        if (shouldTruncate(url: contentUrl!)) {
+        if shouldTruncate(url: contentUrl!) {
             let content = contentUrl?.absoluteString
             contentUrl = URL.init(string: (content?.substring(to: (content?.characters.index(of: "."))!))!)
         }
         let type = ContentType.getContentType(baseUrl: contentUrl)
 
-        if (type == ContentType.CType.ALBUM && SettingValues.internalAlbumView) {
+        if type == ContentType.CType.ALBUM && SettingValues.internalAlbumView {
             print("Showing album")
             return AlbumViewController.init(urlB: contentUrl!)
-        } else if (contentUrl != nil && ContentType.displayImage(t: type) && SettingValues.internalImageView || (type == .GIF && SettingValues.internalGifView) || type == .STREAMABLE || type == .VID_ME || (type == ContentType.CType.VIDEO && SettingValues.internalYouTube)) {
-            if (!ContentType.isGifLoadInstantly(uri: baseUrl) && type == .GIF) {
-                if (SettingValues.safariVC) {
+        } else if contentUrl != nil && ContentType.displayImage(t: type) && SettingValues.internalImageView || (type == .GIF && SettingValues.internalGifView) || type == .STREAMABLE || type == .VID_ME || (type == ContentType.CType.VIDEO && SettingValues.internalYouTube) {
+            if !ContentType.isGifLoadInstantly(uri: baseUrl) && type == .GIF {
+                if SettingValues.safariVC {
                     let safariVC = SFHideSafariViewController(url: baseUrl)
                     if #available(iOS 10.0, *) {
                         safariVC.preferredBarTintColor = ColorUtil.backgroundColor
@@ -88,8 +88,8 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
                 return WebsiteViewController(url: baseUrl, subreddit: link == nil ? "" : link.subreddit)
             }
             return SingleContentViewController.init(url: contentUrl!, lq: lq, commentCallback)
-        } else if (type == ContentType.CType.LINK || type == ContentType.CType.NONE) {
-            if (SettingValues.safariVC) {
+        } else if type == ContentType.CType.LINK || type == ContentType.CType.NONE {
+            if SettingValues.safariVC {
                 let safariVC = SFHideSafariViewController(url: baseUrl)
                 if #available(iOS 10.0, *) {
                     safariVC.preferredBarTintColor = ColorUtil.backgroundColor
@@ -101,10 +101,10 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
             }
             let web = WebsiteViewController(url: baseUrl, subreddit: link == nil ? "" : link.subreddit)
             return web
-        } else if (type == ContentType.CType.REDDIT) {
+        } else if type == ContentType.CType.REDDIT {
             return RedditLink.getViewControllerForURL(urlS: contentUrl!)
         }
-        if (SettingValues.safariVC) {
+        if SettingValues.safariVC {
             let safariVC = SFHideSafariViewController(url: baseUrl)
             if #available(iOS 10.0, *) {
                 safariVC.preferredBarTintColor = ColorUtil.backgroundColor
@@ -121,7 +121,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
 
     public func shouldTruncate(url: URL) -> Bool {
         let path = url.path
-        return !ContentType.isGif(uri: url) && !ContentType.isImage(uri: url) && path.contains(".");
+        return !ContentType.isGif(uri: url) && !ContentType.isImage(uri: url) && path.contains(".")
     }
 
     func showSpoiler(_ string: String) {
@@ -136,7 +136,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
     }
 
     func doShow(url: URL, lq: URL? = nil) {
-        if (ContentType.isExternal(url)) {
+        if ContentType.isExternal(url) {
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
             } else {
@@ -144,7 +144,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
             }
         } else {
             contentUrl = URL.init(string: String.init(htmlEncodedString: url.absoluteString))!
-            if (ContentType.isTable(uri: url)) {
+            if ContentType.isTable(uri: url) {
 //                let controller = TableDisplayViewController.init(baseHtml: url.absoluteString, color: navigationController?.navigationBar.barTintColor ?? ColorUtil.getColorForSub(sub: ""))
 //
 //                let newParent = TapBehindModalViewController.init(rootViewController: controller)
@@ -156,15 +156,15 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
 //
 //                present(MDCBottomSheetController.init(contentViewController: newParent), animated: true, completion: nil)
 
-            } else if (ContentType.isSpoiler(uri: url)) {
+            } else if ContentType.isSpoiler(uri: url) {
                 let controller = UIAlertController.init(title: "Spoiler", message: url.absoluteString, preferredStyle: .alert)
                 present(controller, animated: true, completion: nil)
             } else {
                 let controller = getControllerForUrl(baseUrl: url, lq: lq)!
-                if (controller is AlbumViewController) {
+                if controller is AlbumViewController {
                     controller.modalPresentationStyle = .overFullScreen
                     present(controller, animated: true, completion: nil)
-                } else if (controller is SingleContentViewController) {
+                } else if controller is SingleContentViewController {
                     controller.modalPresentationStyle = .overFullScreen
                     present(controller, animated: true, completion: nil)
                 } else {
@@ -182,7 +182,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
     }
 
     func setNavColors() {
-        if (navigationController != nil) {
+        if navigationController != nil {
             self.navigationController?.navigationBar.shadowImage = UIImage()
             navigationController?.navigationBar.barTintColor = color
         }

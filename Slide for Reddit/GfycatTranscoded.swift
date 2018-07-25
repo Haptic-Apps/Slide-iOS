@@ -13,16 +13,16 @@ import Foundation
 /* For support, please feel free to contact me at https://www.linkedin.com/in/syedabsar */
 
 public class GfycatTranscoded {
-	public var gfyname : String?
-	public var gfyName : String?
-	public var gfysize : Int?
-	public var gifSize : Int?
-	public var gifWidth : Int?
-	public var mp4Url : String?
-    public var mobileUrl : String?
-	public var webmUrl : String?
-	public var frameRate : Int?
-	public var gifUrl : String?
+	public var gfyname: String?
+	public var gfyName: String?
+	public var gfysize: Int?
+	public var gifSize: Int?
+	public var gifWidth: Int?
+	public var mp4Url: String?
+    public var mobileUrl: String?
+	public var webmUrl: String?
+	public var frameRate: Int?
+	public var gifUrl: String?
 
 /**
     Returns an array of models based on given dictionary.
@@ -34,11 +34,9 @@ public class GfycatTranscoded {
 
     - returns: Array of Json4Swift_Base Instances.
 */
-    public class func modelsFromDictionaryArray(array:NSArray) -> [GfycatTranscoded]
-    {
-        var models:[GfycatTranscoded] = []
-        for item in array
-        {
+    public class func modelsFromDictionaryArray(array: NSArray) -> [GfycatTranscoded] {
+        var models: [GfycatTranscoded] = []
+        for item in array {
             models.append(GfycatTranscoded(dictionary: item as! NSDictionary)!)
         }
         return models
@@ -67,7 +65,6 @@ public class GfycatTranscoded {
 		frameRate = dictionary["frameRate"] as? Int
 		gifUrl = dictionary["gifUrl"] as? String
 	}
-
 		
 /**
     Returns the dictionary representation for the current instance.

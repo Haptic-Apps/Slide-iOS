@@ -29,7 +29,7 @@ class GfycatVideoSource: VideoSource {
         let name = url.substring(url.lastIndexOf("/")!, length: url.length - url.lastIndexOf("/")!)
 
         let finalURL = URL(string: "https://gfycat.com/cajax/get" + name)!
-        URLSession.shared.dataTask(with: finalURL) { (data, response, error) in
+        URLSession.shared.dataTask(with: finalURL) { (data, _, error) in
             if error != nil {
                 print(error ?? "Error loading gif...")
             } else {
@@ -65,7 +65,7 @@ class StreamableVideoSource: VideoSource {
         let hash = url.substring(url.lastIndexOf("/")! + 1, length: url.length - (url.lastIndexOf("/")! + 1))
 
         let finalURL = URL(string: "https://api.streamable.com/videos/" + hash)!
-        URLSession.shared.dataTask(with: finalURL) { (data, response, error) in
+        URLSession.shared.dataTask(with: finalURL) { (data, _, error) in
             if error != nil {
                 print(error ?? "Error loading gif...")
             } else {
@@ -83,7 +83,7 @@ class StreamableVideoSource: VideoSource {
                         } else {
                             video = (gif?.files?.mp4?.url!)!
                         }
-                        if (video.hasPrefix("//")) {
+                        if video.hasPrefix("//") {
                             video = "https:" + video
                         }
                         completion(video)
@@ -100,7 +100,7 @@ class StreamableVideoSource: VideoSource {
 class VidMeVideoSource: VideoSource {
     func load(url: String, completion: @escaping (String) -> Void) {
         let finalURL = URL(string: "https://api.vid.me/videoByUrl?url=" + url)!
-        URLSession.shared.dataTask(with: finalURL) { (data, response, error) in
+        URLSession.shared.dataTask(with: finalURL) { (data, _, error) in
             if error != nil {
                 print(error ?? "Error loading gif...")
             } else {

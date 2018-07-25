@@ -15,7 +15,7 @@
 //
 import UIKit
 
-class BouncyViewControllerAnimator : NSObject, UIViewControllerAnimatedTransitioning {
+class BouncyViewControllerAnimator: NSObject, UIViewControllerAnimatedTransitioning {
     var isPresenting: Bool = false
     
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
@@ -27,7 +27,7 @@ class BouncyViewControllerAnimator : NSObject, UIViewControllerAnimatedTransitio
         let fromView = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.from)?.view
         let toView = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.to)?.view
         
-        var center:CGPoint?
+        var center: CGPoint?
         
         if isPresenting {
             center = toView!.center

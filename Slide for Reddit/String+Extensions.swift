@@ -23,7 +23,7 @@ extension String {
     func size(with: UIFont) -> CGSize {
         let fontAttribute = [NSFontAttributeName: with]
         let size = self.size(attributes: fontAttribute)  // for Single Line
-        return size;
+        return size
     }
     
     func toBase64() -> String? {

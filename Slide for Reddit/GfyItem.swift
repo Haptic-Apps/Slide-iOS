@@ -13,55 +13,55 @@ import Foundation
 /* For support, please feel free to contact me at https://www.linkedin.com/in/syedabsar */
 
 public class GfyItem {
-	public var gfyId : String?
-	public var gfyName : String?
-	public var gfyNumber : Int?
-	public var userName : String?
-	public var width : Int?
-	public var height : Int?
-	public var frameRate : Int?
-	public var numFrames : Int?
-	public var mp4Url : String?
-	public var webmUrl : String?
-	public var webpUrl : String?
-	public var mobileUrl : String?
-	public var mobilePosterUrl : String?
-	public var posterUrl : String?
-	public var thumb360Url : String?
-	public var thumb360PosterUrl : String?
-	public var thumb100PosterUrl : String?
-	public var max5mbGif : String?
-	public var max2mbGif : String?
-	public var mjpgUrl : String?
-	public var gifUrl : String?
-	public var gifSize : Int?
-	public var mp4Size : Int?
-	public var webmSize : Int?
-	public var createDate : Int?
-	public var views : Int?
-	public var viewsNewEpoch : String?
-	public var title : String?
-	public var extraLemmas : String?
-	public var md5 : String?
-	public var tags : Array<String>?
-	public var userTags : Array<String>?
-	public var nsfw : Int?
-	public var sar : String?
-	public var url : String?
-	public var source : Int?
-	public var dynamo : String?
-	public var subreddit : String?
-	public var redditId : String?
-	public var redditIdText : String?
-	public var likes : String?
-	public var dislikes : String?
-	public var published : String?
-	public var description : String?
-	public var copyrightClaimaint : String?
-	public var languageText : String?
-	public var fullDomainWhitelist : Array<String>?
-	public var fullGeoWhitelist : Array<String>?
-	public var iframeProfileImageVisible : String?
+	public var gfyId: String?
+	public var gfyName: String?
+	public var gfyNumber: Int?
+	public var userName: String?
+	public var width: Int?
+	public var height: Int?
+	public var frameRate: Int?
+	public var numFrames: Int?
+	public var mp4Url: String?
+	public var webmUrl: String?
+	public var webpUrl: String?
+	public var mobileUrl: String?
+	public var mobilePosterUrl: String?
+	public var posterUrl: String?
+	public var thumb360Url: String?
+	public var thumb360PosterUrl: String?
+	public var thumb100PosterUrl: String?
+	public var max5mbGif: String?
+	public var max2mbGif: String?
+	public var mjpgUrl: String?
+	public var gifUrl: String?
+	public var gifSize: Int?
+	public var mp4Size: Int?
+	public var webmSize: Int?
+	public var createDate: Int?
+	public var views: Int?
+	public var viewsNewEpoch: String?
+	public var title: String?
+	public var extraLemmas: String?
+	public var md5: String?
+	public var tags: Array<String>?
+	public var userTags: Array<String>?
+	public var nsfw: Int?
+	public var sar: String?
+	public var url: String?
+	public var source: Int?
+	public var dynamo: String?
+	public var subreddit: String?
+	public var redditId: String?
+	public var redditIdText: String?
+	public var likes: String?
+	public var dislikes: String?
+	public var published: String?
+	public var description: String?
+	public var copyrightClaimaint: String?
+	public var languageText: String?
+	public var fullDomainWhitelist: Array<String>?
+	public var fullGeoWhitelist: Array<String>?
+	public var iframeProfileImageVisible: String?
 
 /**
     Returns an array of models based on given dictionary.
@@ -73,11 +73,9 @@ public class GfyItem {
 
     - returns: Array of GfyItem Instances.
 */
-    public class func modelsFromDictionaryArray(array:NSArray) -> [GfyItem]
-    {
-        var models:[GfyItem] = []
-        for item in array
-        {
+    public class func modelsFromDictionaryArray(array: NSArray) -> [GfyItem] {
+        var models: [GfyItem] = []
+        for item in array {
             models.append(GfyItem(dictionary: item as! NSDictionary)!)
         }
         return models
@@ -141,7 +139,6 @@ public class GfyItem {
 		languageText = dictionary["languageText"] as? String
 		iframeProfileImageVisible = dictionary["iframeProfileImageVisible"] as? String
 	}
-
 		
 /**
     Returns the dictionary representation for the current instance.

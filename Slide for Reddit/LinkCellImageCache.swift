@@ -43,7 +43,7 @@ public class LinkCellImageCache {
     }
 
     // TODO: Call this whenever the theme changes.
-    public static func initialize(){
+    public static func initialize() {
         upvote = UIImage(named: "upvote")!.menuIcon()
         upvoteTinted = upvote.getCopy(withColor: ColorUtil.upvoteColor)
 
@@ -73,16 +73,16 @@ public class LinkCellImageCache {
         var nextColor = ColorUtil.fontColor.add(overlay: ColorUtil.foregroundColor.withAlphaComponent(0.8))
 
         web = UIImage.convertGradientToImage(colors: [topColor, nextColor], frame: CGSize.square(size: 150))
-        web = web.overlayWith(image: UIImage(named: "nav")!.getCopy(withSize: CGSize.square(size: 75)), posX: (75/2), posY: (75/2))
+        web = web.overlayWith(image: UIImage(named: "nav")!.getCopy(withSize: CGSize.square(size: 75)), posX: (75 / 2), posY: (75 / 2))
 
         reddit = UIImage.convertGradientToImage(colors: [topColor, nextColor], frame: CGSize.square(size: 150))
-        reddit = reddit.overlayWith(image: UIImage(named: "reddit")!.getCopy(withSize: CGSize.init(width: 90, height: 75)), posX: 30, posY: (75/2))
+        reddit = reddit.overlayWith(image: UIImage(named: "reddit")!.getCopy(withSize: CGSize.init(width: 90, height: 75)), posX: 30, posY: (75 / 2))
 
         topColor = GMColor.red400Color()
         nextColor = GMColor.red600Color()
         
         nsfw = UIImage.convertGradientToImage(colors: [topColor, nextColor], frame: CGSize.square(size: 150))
-        nsfw = nsfw.overlayWith(image: UIImage(named: "hide")!.getCopy(withSize: CGSize.square(size: 75)), posX: (75/2), posY: (75/2))
+        nsfw = nsfw.overlayWith(image: UIImage(named: "hide")!.getCopy(withSize: CGSize.square(size: 75)), posX: (75 / 2), posY: (75 / 2))
 
     }
 

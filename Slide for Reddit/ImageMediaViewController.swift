@@ -6,10 +6,10 @@
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
-import UIKit
 import Anchorage
-import Then
 import SDWebImage
+import Then
+import UIKit
 
 class ImageMediaViewController: EmbeddableMediaViewController {
 
@@ -124,8 +124,8 @@ class ImageMediaViewController: EmbeddableMediaViewController {
         bottomButtons.bottomAnchor == view.safeBottomAnchor - CGFloat(8)
     }
     
-    func fullscreen(_ sender: AnyObject){
-        if((parent as! ModalMediaViewController).fullscreen){
+    func fullscreen(_ sender: AnyObject) {
+        if (parent as! ModalMediaViewController).fullscreen {
             (parent as! ModalMediaViewController).unFullscreen(self)
         } else {
             (parent as! ModalMediaViewController).fullscreen(self)
@@ -136,7 +136,7 @@ class ImageMediaViewController: EmbeddableMediaViewController {
         let dtap = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTapScrollView(recognizer:)))
         dtap.numberOfTapsRequired = 2
         scrollView.addGestureRecognizer(dtap)
-        if(parent is ModalMediaViewController){
+        if parent is ModalMediaViewController {
             let tap = UITapGestureRecognizer(target: self, action: #selector(fullscreen(_:)))
             tap.require(toFail: dtap)
             view.addGestureRecognizer(tap)
@@ -156,7 +156,7 @@ class ImageMediaViewController: EmbeddableMediaViewController {
             imageURL = lqURL
             viewInHDButton.isHidden = false
         } else {
-            if(ContentType.isImgurLink(uri: data.baseURL!)){
+            if ContentType.isImgurLink(uri: data.baseURL!) {
                 let urlString = "\(data.baseURL!).png"
                 imageURL = URL.init(string: urlString)!
             } else {
@@ -186,7 +186,7 @@ class ImageMediaViewController: EmbeddableMediaViewController {
 
     func loadImage(imageURL: URL, completion: @escaping ((UIImage) -> Void) ) {
 
-        if (SDWebImageManager.shared().cachedImageExists(for: imageURL)) {
+        if SDWebImageManager.shared().cachedImageExists(for: imageURL) {
             DispatchQueue.main.async {
                 if let image = SDWebImageManager.shared().imageCache.imageFromDiskCache(forKey: imageURL.absoluteString) {
                     completion(image)
@@ -201,12 +201,12 @@ class ImageMediaViewController: EmbeddableMediaViewController {
                 countBytes.allowedUnits = [.useMB]
                 countBytes.countStyle = .file
                 let fileSize = countBytes.string(fromByteCount: Int64(total))
-                if(average > 0){
+                if average > 0 {
                     self.size.text = fileSize
                 }
                 self.progressView.progress = average
 
-            }, completed: { (image, _, error, _) in
+            }, completed: { (image, _, _, _) in
 
                 SDWebImageManager.shared().saveImage(toCache: image, for: imageURL)
                 DispatchQueue.main.async {
@@ -265,13 +265,13 @@ extension ImageMediaViewController {
         let open = OpenInChromeController.init()
         if open.isChromeInstalled() {
             alert.addAction(
-                UIAlertAction(title: "Open in Chrome", style: .default) { (action) in
+                UIAlertAction(title: "Open in Chrome", style: .default) { (_) in
                     open.openInChrome(baseURL, callbackURL: nil, createNewTab: true)
                 }
             )
         }
         alert.addAction(
-            UIAlertAction(title: "Open in Safari", style: .default) { (action) in
+            UIAlertAction(title: "Open in Safari", style: .default) { (_) in
                 if #available(iOS 10.0, *) {
                     UIApplication.shared.open(baseURL, options: [:], completionHandler: nil)
                 } else {
@@ -280,7 +280,7 @@ extension ImageMediaViewController {
             }
         )
         alert.addAction(
-            UIAlertAction(title: "Share URL", style: .default) { (action) in
+            UIAlertAction(title: "Share URL", style: .default) { (_) in
                 let shareItems: Array = [baseURL]
                 let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
                 let window = UIApplication.shared.keyWindow!
@@ -292,7 +292,7 @@ extension ImageMediaViewController {
             }
         )
         alert.addAction(
-            UIAlertAction(title: "Share Image", style: .default) { (action) in
+            UIAlertAction(title: "Share Image", style: .default) { (_) in
                 let shareItems: Array = [self.imageView.image!]
                 let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
                 let window = UIApplication.shared.keyWindow!
@@ -304,7 +304,7 @@ extension ImageMediaViewController {
             }
         )
         alert.addAction(
-            UIAlertAction(title: "Cancel", style: .cancel) { (action) in
+            UIAlertAction(title: "Cancel", style: .cancel) { (_) in
             }
         )
         let window = UIApplication.shared.keyWindow!
@@ -314,7 +314,6 @@ extension ImageMediaViewController {
             presenter.sourceView = sender
             presenter.sourceRect = sender.bounds
         }
-
 
         if let modalVC = window.rootViewController?.presentedViewController {
             modalVC.present(alert, animated: true, completion: nil)

@@ -13,7 +13,7 @@ class SingleContentViewController: SwipeDownModalVC, UIPageViewControllerDataSou
     var vCs: [UIViewController] = [ClearVC()]
     var baseURL: URL?
     var lqURL: URL?
-    public init(url: URL, lq: URL?, _ commentCallback: (() -> Void)?){
+    public init(url: URL, lq: URL?, _ commentCallback: (() -> Void)?) {
         self.baseURL = url
         self.lqURL = lq
         let media = ModalMediaViewController(model: EmbeddableMediaDataModel(baseURL: baseURL, lqURL: lq, text: nil, inAlbum: false))
@@ -34,7 +34,7 @@ class SingleContentViewController: SwipeDownModalVC, UIPageViewControllerDataSou
         self.extendedLayoutIncludesOpaqueBars = true
     }
     
-    override func viewDidLoad(){
+    override func viewDidLoad() {
         super.viewDidLoad()
         self.delegate = self
         
@@ -48,8 +48,8 @@ class SingleContentViewController: SwipeDownModalVC, UIPageViewControllerDataSou
         
     }
     
-    func pageViewController(_ pageViewController : UIPageViewController, didFinishAnimating: Bool, previousViewControllers: [UIViewController], transitionCompleted: Bool) {
-        if(pageViewController.viewControllers?.first == vCs[0]){
+    func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating: Bool, previousViewControllers: [UIViewController], transitionCompleted: Bool) {
+        if pageViewController.viewControllers?.first == vCs[0] {
             self.dismiss(animated: true, completion: nil)
         }
     }
