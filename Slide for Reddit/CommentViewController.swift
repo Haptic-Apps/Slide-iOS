@@ -635,12 +635,12 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     func doBanner(_ link: RSubmission) {
         var text = ""
         if np {
-            text = "This is a no participation link. Please don't vote or comment."
+            text = "This is a no participation link.\nPlease don't vote or comment"
         }
         if link.archived {
-            text = "This is an archived post. You won't be able to vote or comment."
+            text = "This is an archived post.\nYou won't be able to vote or comment"
         } else if link.locked {
-            text = "This is a locked post. You won't be able to comment."
+            text = "This is a locked post.\nYou won't be able to comment"
         }
 
         if !text.isEmpty {
@@ -653,20 +653,41 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             bottom += 64
             normalInsets = UIEdgeInsets.init(top: top, left: 0, bottom: bottom, right: 0)
 
-            let popup = UILabel.init(frame: CGRect.init(x: 12, y: self.view.frame.size.height - 105, width: self.view.frame.size.width - 24, height: 48))
+            var width = UIScreen.main.bounds.width - 24
+            if width > 375 {
+                width = 375
+            }
+            let popup = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: width, height: 48))
             popup.backgroundColor = ColorUtil.accentColorForSub(sub: link.subreddit)
             popup.textAlignment = .center
             popup.isUserInteractionEnabled = true
-            popup.text = text
+
+            let textParts = text.components(separatedBy: "\n")
+
+            let finalText: NSMutableAttributedString!
+            if textParts.count > 1 {
+                let firstPart = NSMutableAttributedString.init(string: textParts[0], attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 14)])
+                let secondPart = NSMutableAttributedString.init(string: "\n" + textParts[1], attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: UIFont.systemFont(ofSize: 12)])
+                firstPart.append(secondPart)
+                finalText = firstPart
+            } else {
+                finalText = NSMutableAttributedString.init(string: text, attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 14)])
+            }
+            popup.attributedText = finalText
+
             popup.numberOfLines = 0
-            popup.font = UIFont.systemFont(ofSize: 15)
-            popup.textColor = .white
 
             popup.elevate(elevation: 2)
             popup.layer.cornerRadius = 5
             popup.clipsToBounds = true
             popup.transform = CGAffineTransform.init(scaleX: 0.001, y: 0.001)
+            
             self.view.superview?.addSubview(popup)
+            popup.bottomAnchor == self.view.superview!.safeBottomAnchor - 8
+            popup.widthAnchor == width
+            popup.heightAnchor == 48
+            popup.centerXAnchor == self.view.superview!.centerXAnchor
+
             UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
                 popup.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
             }, completion: nil)
