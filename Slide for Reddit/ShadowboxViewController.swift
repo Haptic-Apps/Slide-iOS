@@ -22,8 +22,8 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
     
     func getURLToLoad(_ submission: RSubmission) -> URL {
         let url = submission.url!
-        if (ContentType.isGif(uri: url)) {
-            if (!submission.videoPreview.isEmpty() && !ContentType.isGfycat(uri: url)) {
+        if ContentType.isGif(uri: url) {
+            if !submission.videoPreview.isEmpty() && !ContentType.isGfycat(uri: url) {
                 return URL.init(string: submission.videoPreview)!
             } else {
                 return url

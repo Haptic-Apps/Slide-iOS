@@ -69,7 +69,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         self.content = content
         self.backgroundColor = .black
         super.init(nibName: nil, bundle: nil)
-        if(content is RSubmission){
+        if content is RSubmission {
             type = ContentType.getContentType(submission: content as? RSubmission)
         } else {
             type = ContentType.getContentType(baseUrl: baseURL)
@@ -225,7 +225,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             upvote.image = LinkCellImageCache.upvote
             downvote.image = LinkCellImageCache.downvote
             var attrs: [String: Any] = [:]
-            switch (ActionStates.getVoteDirection(s: link)) {
+            switch  ActionStates.getVoteDirection(s: link) {
             case .down:
                 downvote.image = LinkCellImageCache.downvoteTinted
                 attrs = ([NSForegroundColorAttributeName: ColorUtil.downvoteColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
@@ -239,7 +239,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
                 break
             }
             
-            score.text = (link.score >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(link.score) / Double(1000))) : " \(link.score)"
+            score.attributedText = NSAttributedString(string: (link.score >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(link.score) / Double(1000))) : " \(link.score)", attributes: attrs)
             
             comments.text = "\(link.commentCount)"
             
@@ -249,7 +249,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             upvote.image = LinkCellImageCache.upvote
             downvote.image = LinkCellImageCache.downvote
             var attrs: [String: Any] = [:]
-            switch (ActionStates.getVoteDirection(s: link)) {
+            switch ActionStates.getVoteDirection(s: link) {
             case .down:
                 downvote.image = LinkCellImageCache.downvoteTinted
                 attrs = ([NSForegroundColorAttributeName: ColorUtil.downvoteColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
@@ -268,7 +268,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             //todo what to do here titleLabel.setText(CachedTitle.getTitle(submission: link, full: false, false, true))
         }
         
-        if(archived || !AccountController.isLoggedIn){
+        if archived || !AccountController.isLoggedIn {
             upvote.isHidden = true
             downvote.isHidden = true
         }
@@ -302,7 +302,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         self.downvote.addTapGestureRecognizer {
             self.downvote(self.downvote)
         }
-        if(type == .SELF){
+        if type == .SELF {
             topBody.addSubview(bodyScrollView)
             bodyScrollView.horizontalAnchors == topBody.horizontalAnchors + 12
             bodyScrollView.verticalAnchors == topBody.verticalAnchors + 12
@@ -316,9 +316,9 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             bodyScrollView.contentSize = CGSize(width: bodyScrollView.bounds.width, height: textView.estimatedHeight + 100)
             parentVC.panGestureRecognizer?.require(toFail: bodyScrollView.panGestureRecognizer)
             parentVC.panGestureRecognizer2?.require(toFail: bodyScrollView.panGestureRecognizer)
-        } else if(ContentType.displayImage(t: type) || ContentType.displayVideo(t: type)){
+        } else if type != .ALBUM && (ContentType.displayImage(t: type) || ContentType.displayVideo(t: type)) {
             let embed = ModalMediaViewController.getVCForContent(ofType: type, withModel: EmbeddableMediaDataModel(baseURL: baseURL, lqURL: nil, text: nil, inAlbum: false))
-            if(embed != nil){
+            if embed != nil {
                 self.embeddedVC = embed
                 self.addChildViewController(embed!)
                 embed!.didMove(toParentViewController: self)
@@ -330,7 +330,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             } else {
                 //Shouldn't be here
             }
-        } else if(type == .LINK || type == .NONE || type == .ALBUM){
+        } else if type == .LINK || type == .NONE || type == .ALBUM {
             topBody.addSubviews(thumbImageContainer, infoContainer)
             thumbImageContainer.centerAnchors == topBody.centerAnchors
             infoContainer.horizontalAnchors == topBody.horizontalAnchors
@@ -340,7 +340,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             thumbImageContainer.heightAnchor == thumbSize
 
                 var text = ""
-                switch (type) {
+                switch type {
                 case .ALBUM:
                     text = ("Album")
                     break
@@ -387,8 +387,8 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             info.attributedText = finalText
             if content is RSubmission {
                 let submission = content as! RSubmission
-                if (submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty) {
-                    if(type == .REDDIT){
+                if submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty  {
+                    if type == .REDDIT {
                         thumbImage.image = LinkCellImageCache.reddit
                     } else {
                         thumbImage.image = LinkCellImageCache.web
@@ -400,13 +400,13 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
                     }
                 }
             } else {
-                if(type == .REDDIT){
+                if type == .REDDIT {
                     thumbImage.image = LinkCellImageCache.reddit
                 } else {
                     thumbImage.image = LinkCellImageCache.web
                 }
             }
-        } else if(type == .ALBUM){
+        } else if type == .ALBUM {
             //We captured it above. Possible implementation in the future?
         } else {
             //Nothing
@@ -458,7 +458,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if(!populated){
+        if !populated {
             populateContent()
             populated = true
         }

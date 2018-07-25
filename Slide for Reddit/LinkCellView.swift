@@ -1294,8 +1294,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             subScore.append(scoreRatio)
             score.attributedText = subScore
         } else {
-            score.text = (link.score >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(link.score) / Double(1000))) : " \(link.score)"
-            sideScore.text = score.text
+            let scoreString = NSAttributedString(string: (link.score >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(link.score) / Double(1000))) : " \(link.score)", attributes: attrs)
+            score.attributedText = scoreString
+            sideScore.attributedText = scoreString
         }
 
         if ActionStates.isSaved(s: link) {

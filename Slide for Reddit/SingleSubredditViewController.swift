@@ -512,7 +512,7 @@ class SingleSubredditViewController: MediaViewController {
             sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let sortB = UIBarButtonItem.init(customView: sort)
 
-            if !SettingValues.bottomBarHidden || SettingValues.viewType {
+            if SettingValues.bottomBarHidden || SettingValues.viewType {
                 more = UIButton.init(type: .custom)
                 more.setImage(UIImage.init(named: "moreh")?.navIcon(), for: UIControlState.normal)
                 more.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControlEvents.touchUpInside)
