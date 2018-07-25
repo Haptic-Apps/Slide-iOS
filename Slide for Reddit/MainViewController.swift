@@ -512,7 +512,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
     func doCurrentPage(_ page: Int) {
         self.currentPage = page
-        let vc = MainViewController.vCs[page] as! SingleSubredditViewController
+        let vc = (MainViewController.vCs[page] as? SingleSubredditViewController) ?? MainViewController.vCs[0] as! SingleSubredditViewController
         vc.doHeadView()
         MainViewController.current = vc.sub
         self.tintColor = ColorUtil.getColorForSub(sub: MainViewController.current)
@@ -567,6 +567,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             tabBar.frame = CGRect.init(x: 0, y: UIApplication.shared.statusBarView?.frame.size.height ?? 20, width: size.height, height: 84)
             tabBar.sizeToFit()
         }
+        drawerButton.frame = CGRect(x: 8, y: size.height - 48, width: 40, height: 40)
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
@@ -702,10 +703,24 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             }
         }
         requestReviewIfAppropriate()
+        
+        drawerButton = UIImageView.init(frame: CGRect(x: 8, y: UIScreen.main.bounds.height - 48, width: 40, height: 40))
+        drawerButton.backgroundColor = ColorUtil.foregroundColor
+        drawerButton.clipsToBounds = true
+        drawerButton.contentMode = .center
+        drawerButton.layer.cornerRadius = 20
+        drawerButton.image = UIImage(named: "menu")?.getCopy(withSize: CGSize.square(size: 25), withColor: ColorUtil.fontColor)
+        self.view.addSubview(drawerButton)
+        drawerButton.addTapGestureRecognizer {
+            self.showDrawer(self.drawerButton)
+        }
+        drawerButton.isHidden = true
+        drawerButton.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
     }
     
     public static var isOffline = false
     var menuB = UIBarButtonItem()
+    var drawerButton = UIImageView()
 
     func doButtons() {
         let sort = UIButton.init(type: .custom)

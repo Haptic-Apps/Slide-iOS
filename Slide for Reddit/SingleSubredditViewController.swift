@@ -296,6 +296,14 @@ class SingleSubredditViewController: MediaViewController {
         
         if !SettingValues.bottomBarHidden || SettingValues.viewType {
             (self.navigationController)?.setToolbarHidden(true, animated: true)
+            if !single && parentController != nil {
+                parentController!.drawerButton.isHidden = false
+                UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+                    self.parentController!.drawerButton.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
+                }, completion: { _ in
+                    
+                })
+            }
         }
         self.isToolbarHidden = true
 
@@ -341,6 +349,13 @@ class SingleSubredditViewController: MediaViewController {
 
             if !SettingValues.bottomBarHidden || SettingValues.viewType {
                 (navigationController)?.setToolbarHidden(false, animated: true)
+                if !single && parentController != nil {
+                    UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+                        self.parentController!.drawerButton.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
+                    }, completion: { _ in
+                        self.parentController!.drawerButton.isHidden = true
+                    })
+                }
             }
             self.isToolbarHidden = false
         }
