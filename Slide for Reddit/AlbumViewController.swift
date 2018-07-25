@@ -54,6 +54,8 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                                 animated: true,
                                 completion: nil)
         self.navItem?.title = "1/\(self.vCs.count)"
+        let gridB = UIBarButtonItem(image: UIImage(named: "grid")?.navIcon().withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(overview(_:)))
+        navItem?.rightBarButtonItem = gridB
     }
     
     func getAlbum(hash: String) {
@@ -94,19 +96,22 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         }
         if(NSString(data: data, encoding: String.Encoding.utf8.rawValue)?.contains("[]"))! {
             //single album image
-            let media = ModalMediaViewController(model: EmbeddableMediaDataModel(
-                baseURL: URL(string: "https://imgur.com/\(hash).png")!,
-                lqURL: URL(string: "https://imgur.com/\(hash)m.png"),
-                text: nil,
-                inAlbum: false
-            ))
-            self.vCs.append(media)
-            let firstViewController = self.vCs[0]
-            
-            self.setViewControllers([firstViewController],
-                                    direction: .forward,
-                                    animated: true,
-                                    completion: nil)
+            DispatchQueue.main.async {
+                let media = ModalMediaViewController(model: EmbeddableMediaDataModel(
+                    baseURL: URL(string: "https://imgur.com/\(self.hash).png")!,
+                    lqURL: URL(string: "https://imgur.com/\(self.hash)m.png"),
+                    text: nil,
+                    inAlbum: false
+                ))
+                self.vCs.append(media)
+                let firstViewController = self.vCs[0]
+                
+                self.setViewControllers([firstViewController],
+                                        direction: .forward,
+                                        animated: true,
+                                        completion: nil)
+                self.navItem?.title = ""
+            }
         } else {
             do {
                 guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary else {
@@ -132,6 +137,9 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                                             animated: true,
                                             completion: nil)
                     self.navItem?.title = "\(self.vCs.index(of: self.viewControllers!.first!)! + 1)/\(self.vCs.count)"
+                    let gridB = UIBarButtonItem(image: UIImage(named: "grid")?.navIcon().withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(self.overview(_:)))
+                    
+                    self.navItem?.rightBarButtonItem = gridB
                 }
                 let prefetcher = SDWebImagePrefetcher.shared()
                 prefetcher?.prefetchURLs(thumbs)
@@ -206,10 +214,6 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         self.view.addSubview(spinnerIndicator)
         spinnerIndicator.startAnimating()
         
-        let gridB = UIBarButtonItem(image: UIImage(named: "grid")?.navIcon().withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(overview(_:)))
-
-        navItem?.rightBarButtonItem = gridB
-
         navigationBar.setItems([navItem!], animated: false)
         self.view.addSubview(navigationBar)
         
