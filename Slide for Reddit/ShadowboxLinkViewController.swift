@@ -12,428 +12,475 @@ import AVKit
 import MaterialComponents.MaterialProgressView
 import SDWebImage
 import TTTAttributedLabel
-import UIKit
+import Anchorage
+import RealmSwift
 
-class ShadowboxLinkViewController: VideoDisplayer, UIScrollViewDelegate, UIGestureRecognizerDelegate, TTTAttributedLabelDelegate {
+class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UIGestureRecognizerDelegate, TTTAttributedLabelDelegate {
 
-    var submission: RSubmission
-    var baseURL: URL?
     var type: ContentType.CType = ContentType.CType.UNKNOWN
-    var body = TextDisplayStackView()
-    var titleString = UILabel()
+    
+    var textView = TextDisplayStackView()
+    var bodyScrollView = UIScrollView()
+    var embeddedVC: EmbeddableMediaViewController!
+    
+    var content: Object?
+    var baseURL: URL?
 
-    var imageView = UIImageView()
-    var textB = TTTAttributedLabel.init(frame: CGRect.zero)
+    var titleLabel = TTTAttributedLabel.init(frame: CGRect.zero)
 
     var comment = UIImageView()
     var upvote = UIImageView()
     var downvote = UIImageView()
-    
+    var more = UIImageView()
+    var baseBody = UIView()
+    var thumbImageContainer = UIView()
+    var thumbImage = UIImageView()
+    var commenticon = UIImageView()
+    var submissionicon = UIImageView()
+    var score = UILabel()
+    var box = UIStackView()
+    var buttons = UIStackView()
+    var comments = UILabel()
+    var infoContainer = UIView()
+    var info = UILabel()
+    var topBody = UIView()
+
     var parentVC: ShadowboxViewController
+    
+    var backgroundColor: UIColor {
+        didSet {
+            if parent is SwipeDownModalVC && parentVC.currentVc == self {
+                DispatchQueue.main.async {
+                    UIView.animate(withDuration: 0.25) {
+                        (self.parent as! SwipeDownModalVC).background!.backgroundColor = self.backgroundColor
+                    }
+                }
+            }
+        }
+    }
 
     func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
         doShow(url: url)
     }
 
-    init(submission: RSubmission, parent: ShadowboxViewController) {
+    init(url: URL?, content: Object?, parent: ShadowboxViewController) {
         self.parentVC = parent
-        self.submission = submission
-        self.baseURL = submission.url
+        self.baseURL = url
+        self.content = content
+        self.backgroundColor = .black
         super.init(nibName: nil, bundle: nil)
-        type = ContentType.getContentType(baseUrl: baseURL)
-        color = .black
+        if(content is RSubmission){
+            type = ContentType.getContentType(submission: content as? RSubmission)
+        } else {
+            type = ContentType.getContentType(baseUrl: baseURL)
+        }
+        configureView()
+        configureLayout()
+        
+        populateData()
+        doBackground()
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func displayImage(baseImage: UIImage?) {
-        if baseImage == nil {
-
+    func configureView(){
+        self.titleLabel = TTTAttributedLabel(frame: CGRect(x: 75, y: 8, width: 0, height: 0)).then {
+            $0.accessibilityIdentifier = "Title"
+            $0.numberOfLines = 0
+            $0.lineBreakMode = .byWordWrapping
+            $0.font = FontGenerator.fontOfSize(size: 18, submission: true)
+            $0.isOpaque = false
         }
-        let image = baseImage!
-        color = image.areaAverage()
-        if ((parent as! ShadowboxViewController).currentVc as! ShadowboxLinkViewController).submission.id == self.submission.id {
-            UIView.animate(withDuration: 0.10) {
-                (self.parent as! ShadowboxViewController).background!.backgroundColor = self.color
-                (self.parent as! ShadowboxViewController).background!.layoutIfNeeded()
-            }
-        }
-
-        if image.size.width > image.size.height {
-            self.scrollView.contentSize = CGSize.init(width: self.view.frame.size.width, height: getHeightFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width))
-            imageView = UIImageView.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: getHeightFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width)))
-        } else {
-            self.scrollView.contentSize = CGSize.init(width: getWidthFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width), height: self.view.frame.size.height * 0.60)
-            imageView = UIImageView.init(frame: CGRect.init(x: 0, y: 0, width: getWidthFromAspectRatio(imageHeight: image.size.height, imageWidth: image.size.width), height: self.view.frame.size.height))
-        }
-
-        imageView.center.x = scrollView.frame.width / 2
-        imageView.center.y = scrollView.frame.height / 2
-
-        self.scrollView.delegate = self
-        self.scrollView.isScrollEnabled = false
-
-        imageView.contentMode = .scaleAspectFit
-        self.scrollView.addSubview(imageView)
-        imageView.image = image
-    }
-
-    func loadImage(imageURLB: URL?) {
-        if imageURLB == nil {
-            return
-        }
-        let imageURL = imageURLB!
-        if SDWebImageManager.shared().cachedImageExists(for: imageURL) {
-            DispatchQueue.main.async {
-                let image = SDWebImageManager.shared().imageCache.imageFromDiskCache(forKey: imageURL.absoluteString)
-                self.displayImage(baseImage: image)
-            }
-
-        } else {
-            self.progressView?.setHidden(false, animated: true, completion: nil)
-            SDWebImageDownloader.shared().downloadImage(with: imageURL, options: .allowInvalidSSLCertificates, progress: { (current: NSInteger, total: NSInteger) in
-                self.progressView?.progress = Float(current / total)
-            }, completed: { (image, _, _, _) in
-                self.progressView?.setHidden(true, animated: true, completion: nil)
-                SDWebImageManager.shared().saveImage(toCache: image, for: imageURL)
-                DispatchQueue.main.async {
-                    self.displayImage(baseImage: image)
-                }
-            })
-        }
-    }
-
-    func getHeightFromAspectRatio(imageHeight: CGFloat, imageWidth: CGFloat) -> CGFloat {
-        let ratio = Double(imageHeight) / Double(imageWidth)
-        let width = Double(view.frame.size.width)
-        return CGFloat(width * ratio)
-    }
-
-    func getWidthFromAspectRatio(imageHeight: CGFloat, imageWidth: CGFloat) -> CGFloat {
-        let ratio = Double(imageWidth) / Double(imageHeight)
-        let height = Double(view.frame.size.height * 0.60)
-        return CGFloat(height * ratio)
-    }
-
-    var toolbar = UIView()
-    var baseView = UIView()
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        sharedPlayer = false
-
-        self.scrollView = UIScrollView.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height - 50))
-
-        self.scrollView.minimumZoomScale = 1
-        self.scrollView.maximumZoomScale = 1
-        self.scrollView.backgroundColor = .clear
-        toolbar = UIView()
-        self.view.addSubview(toolbar)
-        self.view.addSubview(scrollView)
-        toolbar.bottomAnchor == self.view.safeBottomAnchor - CGFloat(12)
-        toolbar.heightAnchor == CGFloat(24)
-        scrollView.addTapGestureRecognizer(action: {
-            if let u = self.submission.url {
-                self.doShow(url: u, lq: nil)
-            }
-        })
         
-        progressView = MDCProgressView()
-        view.addSubview(progressView!)
-
-        progressView!.progress = 0
-        progressView!.heightAnchor == CGFloat(5)
-        progressView!.topAnchor == self.view.safeTopAnchor + CGFloat(5)
-        progressView?.setHidden(true, animated: false, completion: nil)
-        self.scrollView.topAnchor == self.view.safeTopAnchor + CGFloat(20)
-        self.scrollView.horizontalAnchors == self.view.horizontalAnchors
-        doButtons()
-        var text = CachedTitle.getTitle(submission: submission, full: true, false, true)
-        textB = TTTAttributedLabel.init(frame: CGRect.init(x: 24, y: self.view.frame.size.height - estHeight - 64, width: self.view.frame.size.width - 48, height: estHeight + 20))
-        textB.numberOfLines = 0
-        textB.setText(text)
-        
-        textB.isUserInteractionEnabled = true
-        textB.addTapGestureRecognizer {
-            self.comments(self.textB)
+        self.upvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 24)).then {
+            $0.accessibilityIdentifier = "Upvote Button"
+            $0.contentMode = .center
+            $0.isOpaque = false
         }
-        view.addSubview(textB)
         
-        let framesetter = CTFramesetterCreateWithAttributedString(text)
-        let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: self.view.frame.size.width - 48, height: CGFloat.greatestFiniteMagnitude), nil)
+        self.bodyScrollView = UIScrollView().then {
+            $0.accessibilityIdentifier = "Body scroll view"
+        }
+        
+        self.downvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 20)).then {
+            $0.accessibilityIdentifier = "Downvote Button"
+            $0.contentMode = .center
+            $0.isOpaque = false
+        }
 
-        textB.heightAnchor == textSize.height
-        textB.horizontalAnchors == self.view.horizontalAnchors + CGFloat(24)
-        textB.bottomAnchor == self.toolbar.topAnchor - CGFloat(8)
-        estHeight = textSize.height
-        self.scrollView.bottomAnchor == textB.topAnchor - CGFloat(8)
+        self.commenticon = UIImageView(frame: CGRect(x: 0, y: 0, width: 10, height: 10)).then {
+            $0.accessibilityIdentifier = "Comment Count Icon"
+            $0.image = LinkCellImageCache.commentsIcon
+            $0.contentMode = .scaleAspectFit
+            $0.isOpaque = false
+        }
+        
+        self.submissionicon = UIImageView(frame: CGRect(x: 0, y: 0, width: 10, height: 10)).then {
+            $0.accessibilityIdentifier = "Score Icon"
+            $0.image = LinkCellImageCache.votesIcon
+            $0.contentMode = .scaleAspectFit
+            $0.isOpaque = false
+        }
+        self.score = UILabel().then {
+            $0.accessibilityIdentifier = "Score Label"
+            $0.numberOfLines = 1
+            $0.font = FontGenerator.fontOfSize(size: 12, submission: true)
+            $0.textColor = ColorUtil.fontColor
+            $0.isOpaque = false
+        }
 
-        startDisplay()
+        self.comments = UILabel().then {
+            $0.accessibilityIdentifier = "Comment Count Label"
+            $0.numberOfLines = 1
+            $0.font = FontGenerator.fontOfSize(size: 12, submission: true)
+            $0.textColor = ColorUtil.fontColor
+            $0.isOpaque = false
+        }
 
-        let gradient = CAGradientLayer()
-        var frame = view.bounds
-        frame.size.height = view.bounds.size.height * 0.25
-        frame.origin.y = view.bounds.size.height * 0.75
-        gradient.frame = frame
-        gradient.colors = [UIColor.clear.cgColor, UIColor.black.withAlphaComponent(0.65).cgColor]
+        self.thumbImageContainer = UIView().then {
+            $0.accessibilityIdentifier = "Thumbnail Image Container"
+            $0.frame = CGRect(x: 0, y: 0, width: 85, height: 85)
+            $0.elevate(elevation: 2.0)
+        }
+        
+        self.textView = TextDisplayStackView.init(fontSize: 16, submission: true, color: ColorUtil.baseAccent, delegate: self, width: 100).then {
+            $0.accessibilityIdentifier = "Self Text View"
+        }
 
-        view.layer.insertSublayer(gradient, at: 0)
+        self.thumbImage = UIImageView().then {
+            $0.accessibilityIdentifier = "Thumbnail Image"
+            $0.backgroundColor = UIColor.white
+            $0.layer.cornerRadius = 10
+            $0.contentMode = .scaleAspectFill
+            $0.clipsToBounds = true
+        }
+        
+        self.info = UILabel().then {
+            $0.accessibilityIdentifier = "Banner Info"
+            $0.numberOfLines = 2
+            $0.font = FontGenerator.fontOfSize(size: 12, submission: true)
+            $0.textColor = .white
+        }
 
-        let gradient2 = CAGradientLayer()
-        frame.size.height = view.bounds.size.height * 0.25
-        frame.origin.y = 0
-        gradient2.frame = frame
-        gradient2.colors = [UIColor.black.withAlphaComponent(0.65).cgColor, UIColor.clear.cgColor]
+        self.infoContainer = info.withPadding(padding: UIEdgeInsets.init(top: 4, left: 10, bottom: 4, right: 10)).then {
+            $0.accessibilityIdentifier = "Banner Info Container"
+            $0.clipsToBounds = true
+        }
 
-        view.layer.insertSublayer(gradient2, at: 0)
+        self.box = UIStackView().then {
+            $0.accessibilityIdentifier = "Count Info Stack Horizontal"
+            $0.axis = .horizontal
+            $0.alignment = .center
+        }
+        self.thumbImageContainer.addSubview(self.thumbImage)
+        self.thumbImage.edgeAnchors == self.thumbImageContainer.edgeAnchors
+
+        baseBody.addSubviews(titleLabel)
+
+        box.addArrangedSubviews(submissionicon, horizontalSpace(2), score, horizontalSpace(8), commenticon, horizontalSpace(2), comments)
+        self.baseBody.addSubview(box)
+        
+        self.buttons = UIStackView().then {
+            $0.accessibilityIdentifier = "Button Stack Horizontal"
+            $0.axis = .horizontal
+            $0.alignment = .center
+            $0.distribution = .fill
+            $0.spacing = 16
+        }
+        buttons.addArrangedSubviews( upvote, downvote)
+        self.baseBody.addSubview(buttons)
+        //todo add gestures here
+        self.view.addSubview(baseBody)
+        self.view.addSubview(topBody)
+        baseBody.horizontalAnchors == self.view.horizontalAnchors + 12
+        baseBody.bottomAnchor == self.view.bottomAnchor - 12
+        topBody.horizontalAnchors == self.view.horizontalAnchors
+        topBody.bottomAnchor == baseBody.topAnchor
+        topBody.topAnchor == self.view.topAnchor
     }
-
-    var estHeight = CGFloat(0)
-
-    func doButtons() {
-        let attrs: [String: Any] = [NSForegroundColorAttributeName: UIColor.white]
-
-        let subScore = NSMutableAttributedString(string: (submission.score >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(submission.score) / Double(1000))) : " \(submission.score)", attributes: attrs)
-
-        var _: [String: Any] = [:]
-        
-        let votes = UILabel(frame: CGRect.init(x: 20, y: 0, width: 40, height: 30))
-        votes.attributedText = subScore
-        votes.font = UIFont.boldSystemFont(ofSize: 12)
-        votes.addImage(imageName: "upvote")
-
-        let comments = UILabel(frame: CGRect.init(x: 20, y: 0, width: 40, height: 24))
-        let commentNumber = NSAttributedString.init(string: " \(submission.commentCount)", attributes: attrs)
-        comments.attributedText = commentNumber
-        comments.font = UIFont.boldSystemFont(ofSize: 12)
-        comments.addImage(imageName: "comments")
-        
-        toolbar.isUserInteractionEnabled = true
     
-        self.comment = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20))
-        comment.image = UIImage.init(named: "comments")?.menuIcon().getCopy(withColor: .white)
+    func configureLayout(){
+        baseBody.layoutMargins = UIEdgeInsets(top: 8, left: 16, bottom: 16, right: 16)
+        box.leftAnchor == baseBody.leftAnchor + 12
+        box.bottomAnchor == baseBody.bottomAnchor - 8
+        box.centerYAnchor == buttons.centerYAnchor // Align vertically with buttons
+        box.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+        box.heightAnchor == CGFloat(24)
+        buttons.heightAnchor == CGFloat(24)
+        buttons.rightAnchor == baseBody.rightAnchor - 12
+        buttons.bottomAnchor == baseBody.bottomAnchor - 8
+        buttons.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+        titleLabel.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+        titleLabel.topAnchor == baseBody.topAnchor
+        titleLabel.horizontalAnchors == baseBody.horizontalAnchors + 12
+        titleLabel.bottomAnchor == box.topAnchor - 8
+    }
 
-        self.upvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20))
-        upvote.image = UIImage.init(named: "upvote")?.menuIcon().getCopy(withColor: .white)
-
-        self.downvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 34, height: 20))
-        downvote.image = UIImage.init(named: "downvote")?.menuIcon().getCopy(withColor: .white)
-
-        doVoteImages()
-        
-        votes.translatesAutoresizingMaskIntoConstraints = false
-        comments.translatesAutoresizingMaskIntoConstraints = false
-        comment.translatesAutoresizingMaskIntoConstraints = false
-        upvote.translatesAutoresizingMaskIntoConstraints = false
-        downvote.translatesAutoresizingMaskIntoConstraints = false
-        
-        comment.addTapGestureRecognizer {
-            self.comments(self.comment)
+    func populateData(){
+        var archived = false
+        if let link = content as! RSubmission? {
+            archived = link.archived
+            upvote.image = LinkCellImageCache.upvote
+            downvote.image = LinkCellImageCache.downvote
+            var attrs: [String: Any] = [:]
+            switch (ActionStates.getVoteDirection(s: link)) {
+            case .down:
+                downvote.image = LinkCellImageCache.downvoteTinted
+                attrs = ([NSForegroundColorAttributeName: ColorUtil.downvoteColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
+                break
+            case .up:
+                upvote.image = LinkCellImageCache.upvoteTinted
+                attrs = ([NSForegroundColorAttributeName: ColorUtil.upvoteColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
+                break
+            default:
+                attrs = ([NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true)])
+                break
+            }
+            
+            score.text = (link.score >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(link.score) / Double(1000))) : " \(link.score)"
+            
+            comments.text = "\(link.commentCount)"
+            
+            titleLabel.setText(CachedTitle.getTitle(submission: link, full: true, false, true))
+        } else if let link = content as! RComment? {
+            archived = link.archived
+            upvote.image = LinkCellImageCache.upvote
+            downvote.image = LinkCellImageCache.downvote
+            var attrs: [String: Any] = [:]
+            switch (ActionStates.getVoteDirection(s: link)) {
+            case .down:
+                downvote.image = LinkCellImageCache.downvoteTinted
+                attrs = ([NSForegroundColorAttributeName: ColorUtil.downvoteColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
+                break
+            case .up:
+                upvote.image = LinkCellImageCache.upvoteTinted
+                attrs = ([NSForegroundColorAttributeName: ColorUtil.upvoteColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
+                break
+            default:
+                attrs = ([NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true)])
+                break
+            }
+            
+            score.attributedText = NSAttributedString.init(string: (link.score >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(link.score) / Double(1000))) : " \(link.score)", attributes: attrs)
+            
+            //todo what to do here titleLabel.setText(CachedTitle.getTitle(submission: link, full: false, false, true))
         }
-        downvote.addTapGestureRecognizer {
-            self.downvote(self.downvote)
+        
+        if(archived || !AccountController.isLoggedIn){
+            upvote.isHidden = true
+            downvote.isHidden = true
         }
-        upvote.addTapGestureRecognizer {
+    }
+    
+    func doBackground(){
+        if content is RSubmission {
+            let thumbnail = (content as! RSubmission).thumbnailUrl
+            if let url = URL(string: thumbnail) {
+                SDWebImageDownloader.shared().downloadImage(with: url, options: .allowInvalidSSLCertificates, progress: { (c, t) in
+                    
+                }) { (image, data, error, complete) in
+                    if image != nil {
+                        self.backgroundColor = image!.areaAverage()
+                    }
+                }
+            }
+        }
+    }
+    
+    func populateContent(){
+        self.baseBody.addTapGestureRecognizer {
+            self.comments(self.view)
+        }
+        self.topBody.addTapGestureRecognizer {
+            self.content(self.view)
+        }
+        self.upvote.addTapGestureRecognizer {
             self.upvote(self.upvote)
         }
+        self.downvote.addTapGestureRecognizer {
+            self.downvote(self.downvote)
+        }
+        if(type == .SELF){
+            topBody.addSubview(bodyScrollView)
+            bodyScrollView.horizontalAnchors == topBody.horizontalAnchors + 12
+            bodyScrollView.verticalAnchors == topBody.verticalAnchors + 12
+            textView.estimatedWidth = UIScreen.main.bounds.width - 24
+            textView.setTextWithTitleHTML(NSMutableAttributedString(), htmlString: (content as! RSubmission).htmlBody)
+            bodyScrollView.addSubview(textView)
+            textView.leftAnchor == bodyScrollView.leftAnchor
+            textView.widthAnchor == textView.estimatedWidth
+            textView.topAnchor == bodyScrollView.topAnchor + 50
+            textView.heightAnchor == textView.estimatedHeight + 50
+            bodyScrollView.contentSize = CGSize(width: bodyScrollView.bounds.width, height: textView.estimatedHeight + 100)
+            parentVC.panGestureRecognizer?.require(toFail: bodyScrollView.panGestureRecognizer)
+            parentVC.panGestureRecognizer2?.require(toFail: bodyScrollView.panGestureRecognizer)
+        } else if(ContentType.displayImage(t: type) || ContentType.displayVideo(t: type)){
+            let embed = ModalMediaViewController.getVCForContent(ofType: type, withModel: EmbeddableMediaDataModel(baseURL: baseURL, lqURL: nil, text: nil, inAlbum: false))
+            if(embed != nil){
+                self.embeddedVC = embed
+                self.addChildViewController(embed!)
+                embed!.didMove(toParentViewController: self)
+                self.topBody.addSubview(embed!.view)
+                embed!.view.horizontalAnchors == topBody.horizontalAnchors
+                embed!.view.topAnchor == topBody.safeTopAnchor
+                embed!.view.bottomAnchor == topBody.bottomAnchor
+                embed!.bottomButtons.isHidden = true
+            } else {
+                //Shouldn't be here
+            }
+        } else if(type == .LINK || type == .NONE || type == .ALBUM){
+            topBody.addSubviews(thumbImageContainer, infoContainer)
+            thumbImageContainer.centerAnchors == topBody.centerAnchors
+            infoContainer.horizontalAnchors == topBody.horizontalAnchors
+            infoContainer.topAnchor == thumbImageContainer.bottomAnchor + 8
+            let thumbSize: CGFloat = 85
+            thumbImageContainer.widthAnchor == thumbSize
+            thumbImageContainer.heightAnchor == thumbSize
 
-        toolbar.addSubview(votes)
-        toolbar.addSubview(comments)
-        toolbar.addSubview(comment)
-        toolbar.addSubview(upvote)
-        toolbar.addSubview(downvote)
-
-        toolbar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-24-[commentView]-12-[voteView]", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["commentView": comments, "voteView": votes, "upvote": upvote, "downvote": downvote, "menu": comment]))
-        toolbar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "[menu(24)]-16-[upvote(24)]-16-[downvote(24)]-24-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["commentView": comments, "voteView": votes, "upvote": upvote, "downvote": downvote, "menu": comment]))
-        
-        toolbar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[menu(24)]-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["commentView": comments, "voteView": votes, "upvote": upvote, "downvote": downvote, "menu": comment]))
-        toolbar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[upvote(24)]-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["commentView": comments, "voteView": votes, "upvote": upvote, "downvote": downvote, "menu": comment]))
-        toolbar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[downvote(24)]-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["commentView": comments, "voteView": votes, "upvote": upvote, "downvote": downvote, "menu": comment]))
-        toolbar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[commentView(24)]-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["commentView": comments, "voteView": votes, "upvote": upvote, "downvote": downvote, "menu": comment]))
-        toolbar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[voteView(24)]-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["commentView": comments, "voteView": votes, "upvote": upvote, "downvote": downvote, "menu": comment]))
-
-        toolbar.tintColor = UIColor.white
-        toolbar.isUserInteractionEnabled = true
-    }
-    
-    func doVoteImages() {
-        upvote.image = UIImage.init(named: "upvote")?.menuIcon().getCopy(withColor: .white)
-        downvote.image = UIImage.init(named: "downvote")?.menuIcon().getCopy(withColor: .white)
-        switch ActionStates.getVoteDirection(s: submission) {
-        case .down:
-            downvote.image = UIImage.init(named: "downvote")?.getCopy(withSize: .square(size: 20), withColor: ColorUtil.downvoteColor)
-        case .up:
-            upvote.image = UIImage.init(named: "upvote")?.getCopy(withSize: .square(size: 20), withColor: ColorUtil.upvoteColor)
-            break
-        default:
-            break
+                var text = ""
+                switch (type) {
+                case .ALBUM:
+                    text = ("Album")
+                    break
+                case .EXTERNAL:
+                    text = "External Link"
+                    break
+                case .LINK, .EMBEDDED, .NONE:
+                    text = "Link"
+                    break
+                case .DEVIANTART:
+                    text = "Deviantart"
+                    break
+                case .TUMBLR:
+                    text = "Tumblr"
+                    break
+                case .XKCD:
+                    text = ("XKCD")
+                    break
+                case .GIF:
+                    text = ("GIF")
+                    break
+                case .IMGUR:
+                    text = ("Imgur")
+                    break
+                case .VIDEO:
+                    text = "YouTube"
+                    break
+                case .STREAMABLE:
+                    text = "Streamable"
+                    break
+                case .VID_ME:
+                    text = ("Vid.me")
+                    break
+                case .REDDIT:
+                    text = ("Reddit content")
+                    break
+                default:
+                    text = "Link"
+                    break
+                }
+            let finalText = NSMutableAttributedString.init(string: text, attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 16, submission: true)])
+            finalText.append(NSAttributedString.init(string: "\n\(baseURL!.host ?? baseURL!.absoluteString)"))
+            info.textAlignment = .center
+            info.attributedText = finalText
+            if content is RSubmission {
+                let submission = content as! RSubmission
+                if (submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty) {
+                    if(type == .REDDIT){
+                        thumbImage.image = LinkCellImageCache.reddit
+                    } else {
+                        thumbImage.image = LinkCellImageCache.web
+                    }
+                } else {
+                    let thumbURL = submission.thumbnailUrl
+                    DispatchQueue.global(qos: .userInteractive).async {
+                        self.thumbImage.sd_setImage(with: URL.init(string: thumbURL), placeholderImage: LinkCellImageCache.web)
+                    }
+                }
+            } else {
+                if(type == .REDDIT){
+                    thumbImage.image = LinkCellImageCache.reddit
+                } else {
+                    thumbImage.image = LinkCellImageCache.web
+                }
+            }
+        } else if(type == .ALBUM){
+            //We captured it above. Possible implementation in the future?
+        } else {
+            //Nothing
         }
     }
-
-    func upvote(_ sender: AnyObject) {
-        do {
-            try (UIApplication.shared.delegate as! AppDelegate).session?.setVote(ActionStates.getVoteDirection(s: submission) == .up ? .none : .up, name: submission.getId(), completion: { (_) in
+    
+    
+      func upvote(_ sender: AnyObject) {
+        if content is RSubmission {
+            let submission = content as! RSubmission
+            do {
+                try (UIApplication.shared.delegate as! AppDelegate).session?.setVote(ActionStates.getVoteDirection(s: submission) == .up ? .none : .up, name: submission.getId(), completion: { (result) in
+                })
+                ActionStates.setVoteDirection(s: submission, direction: ActionStates.getVoteDirection(s: submission) == .up ? .none : .up)
+                History.addSeen(s: submission)
+                populateData()
+            } catch {
                 
-            })
-            ActionStates.setVoteDirection(s: submission, direction: ActionStates.getVoteDirection(s: submission) == .up ? .none : .up)
-            History.addSeen(s: submission)
-            doVoteImages()
-        } catch {
-            
+            }
         }
     }
 
     func downvote(_ sender: AnyObject) {
-        do {
-            try (UIApplication.shared.delegate as! AppDelegate).session?.setVote(ActionStates.getVoteDirection(s: submission) == .down ? .none : .down, name: submission.getId(), completion: { (_) in
+        if content is RSubmission {
+            let submission = content as! RSubmission
+            do {
+                try (UIApplication.shared.delegate as! AppDelegate).session?.setVote(ActionStates.getVoteDirection(s: submission) == .down ? .none : .down, name: submission.getId(), completion: { (result) in
+                })
+                ActionStates.setVoteDirection(s: submission, direction: ActionStates.getVoteDirection(s: submission) == .down ? .none : .down)
+                History.addSeen(s: submission)
+                populateData()
+            } catch {
                 
-            })
-            ActionStates.setVoteDirection(s: submission, direction: ActionStates.getVoteDirection(s: submission) == .down ? .none : .down)
-            History.addSeen(s: submission)
-            doVoteImages()
-        } catch {
-            
+            }
         }
     }
 
     func comments(_ sender: AnyObject) {
-        self.doShow(url: URL.init(string: submission.permalink)!)
+        if content is RSubmission {
+            VCPresenter.openRedditLink((content as! RSubmission).permalink, nil, self)
+        } else if content is RComment {
+            VCPresenter.openRedditLink((content as! RComment).permalink, nil, self)
+        }
     }
 
-    func showMenu(_ sender: AnyObject) {
+    func content(_ sender: AnyObject) {
+        doShow(url: baseURL!)
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.baseView.backgroundColor = .clear
+        if(!populated){
+            populateContent()
+            populated = true
+        }
+        doBackground()
+        //self.baseView.backgroundColor = .clear
     }
 
     var first = true
+    var populated = false
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        self.player.play()
-        var videoUrl = submission.videoPreview
-        if videoUrl.isEmpty {
-            videoUrl = submission.url!.absoluteString
-        }
-        if first && !ContentType.displayImage(t: type) && ContentType.mediaType(t: type) || type == .VIDEO {
-            first = false
-            if type == .GIF || type == .STREAMABLE || type == .VID_ME {
-                getGif(urlS: videoUrl)
-            } else if (type == .VIDEO) {
-                let he = getYTHeight()
-                ytPlayer = YTPlayerView.init(frame: CGRect.init(x: 0, y: (self.scrollView.frame.size.height - he) / 2, width: self.scrollView.frame.size.width, height: he))
-                ytPlayer.isHidden = true
-                self.scrollView.addSubview(ytPlayer)
-                getYouTube(ytPlayer, urlS: baseURL!.absoluteString)
-            }
-        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        self.player.pause()
+        //todo pause if is video
     }
-
-    func startDisplay() {
-        self.view.layoutMargins = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
-        let type = ContentType.getContentType(submission: submission)
-        if (ContentType.displayImage(t: type) && type != .SELF) || type == .LINK || type == .EXTERNAL || type == .EMBEDDED {
-            loadImage(imageURLB: URL.init(string: submission.bannerUrl))
-        } else if ContentType.mediaType(t: type) {
-            if let url = URL(string: submission.thumbnailUrl) {
-                if SDWebImageManager.shared().cachedImageExists(for: url) {
-                    DispatchQueue.main.async {
-                        if let image = SDWebImageManager.shared().imageCache.imageFromDiskCache(forKey: self.submission.thumbnailUrl) {
-                            self.color = image.areaAverage()
-                            if ((self.parent as! ShadowboxViewController).currentVc as! ShadowboxLinkViewController).submission.id == self.submission.id {
-                                UIView.animate(withDuration: 0.10) {
-                                    (self.parent as! ShadowboxViewController).background!.backgroundColor = self.color
-                                    (self.parent as! ShadowboxViewController).background!.layoutIfNeeded()
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    SDWebImageDownloader.shared().downloadImage(with: url, options: .allowInvalidSSLCertificates, progress: { (_: NSInteger, _: NSInteger) in
-                    }, completed: { (img, _, _, _) in
-                        SDWebImageManager.shared().saveImage(toCache: img, for: url)
-                        if let image = img {
-                            DispatchQueue.main.async {
-                                self.color = image.areaAverage()
-                                if ((self.parent as! ShadowboxViewController).currentVc as! ShadowboxLinkViewController).submission.id == self.submission.id {
-                                    UIView.animate(withDuration: 0.5) {
-                                        (self.parent as! ShadowboxViewController).background!.backgroundColor = self.color
-                                    }
-                                }
-                            }
-                        }
-                    })
-                }
-            }
-
-        } else {
-            let color = ColorUtil.accentColorForSub(sub: (submission.subreddit))
-            if !submission.htmlBody.isEmpty {
-                var html = submission.htmlBody.trimmed()
-                print(html)
-                body = TextDisplayStackView.init(fontSize: 16, submission: false, color: color, delegate: self, width: self.view.frame.size.width - 16, baseFontColor: .white)
-                body.setTextWithTitleHTML(NSMutableAttributedString(), htmlString: html)
-                scrollView.addSubview(body)
-                body.horizontalAnchors == scrollView.horizontalAnchors + CGFloat(8)
-                body.topAnchor == scrollView.topAnchor + CGFloat(20)
-                body.heightAnchor == body.estimatedHeight
-                body.widthAnchor == body.estimatedWidth
-                body.bottomAnchor == scrollView.bottomAnchor
-                self.scrollView.contentSize = CGSize.init(width: body.estimatedWidth, height: body.estimatedHeight)
-            } else {
-
-            }
-
+    func horizontalSpace(_ space: CGFloat) -> UIView {
+        return UIView().then {
+            $0.widthAnchor == space
         }
-    }
-
-}
-
-extension UIBarButtonItem {
-    func addTargetForAction(target: AnyObject, action: Selector) {
-        self.target = target
-        self.action = action
-    }
-}
-
-extension UIImage {
-    func areaAverage() -> UIColor {
-        var bitmap = [UInt8](repeating: 0, count: 4)
-
-        if #available(iOS 9.0, *) {
-            // Get average color.
-            let context = CIContext()
-            let inputImage: CIImage = ciImage ?? CoreImage.CIImage(cgImage: cgImage!)
-            let extent = inputImage.extent
-            let inputExtent = CIVector(x: extent.origin.x, y: extent.origin.y, z: extent.size.width, w: extent.size.height)
-            let filter = CIFilter(name: "CIAreaAverage", withInputParameters: [kCIInputImageKey: inputImage, kCIInputExtentKey: inputExtent])!
-            let outputImage = filter.outputImage!
-            let outputExtent = outputImage.extent
-            assert(outputExtent.size.width == 1 && outputExtent.size.height == 1)
-
-            // Render to bitmap.
-            context.render(outputImage, toBitmap: &bitmap, rowBytes: 4, bounds: CGRect(x: 0, y: 0, width: 1, height: 1), format: kCIFormatRGBA8, colorSpace: CGColorSpaceCreateDeviceRGB())
-        } else {
-            // Create 1x1 context that interpolates pixels when drawing to it.
-            let context = CGContext(data: &bitmap, width: 1, height: 1, bitsPerComponent: 8, bytesPerRow: 4, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
-            let inputImage = cgImage ?? CIContext().createCGImage(ciImage!, from: ciImage!.extent)
-
-            // Render to bitmap.
-            context.draw(inputImage!, in: CGRect(x: 0, y: 0, width: 1, height: 1))
-        }
-
-        // Compute result.
-        let result = UIColor(red: CGFloat(bitmap[0]) / 255.0, green: CGFloat(bitmap[1]) / 255.0, blue: CGFloat(bitmap[2]) / 255.0, alpha: CGFloat(bitmap[3]) / 255.0)
-        return result
     }
 
 }

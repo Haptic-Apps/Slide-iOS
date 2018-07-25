@@ -24,3 +24,9 @@ extension UIButton {
         self.imageView?.contentMode = .scaleAspectFit
     }
 }
+extension UIBarButtonItem {
+    func addTargetForAction(target: AnyObject, action: Selector) {
+        self.target = target
+        self.action = action
+    }
+}

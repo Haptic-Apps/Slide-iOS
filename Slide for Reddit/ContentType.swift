@@ -257,6 +257,15 @@ class ContentType {
         }
     }
     
+    public static func displayVideo(t: CType) -> Bool {
+        switch t {
+        case CType.STREAMABLE, CType.VID_ME, CType.VIDEO, CType.GIF:
+            return true
+        default:
+            return false
+        }
+    }
+    
     public static func imageType(t: CType) -> Bool {
         return (t == .IMAGE || t == .IMGUR)
     }

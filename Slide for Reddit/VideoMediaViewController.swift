@@ -74,6 +74,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         displayLink?.isPaused = false
+        videoView.player?.play()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -424,11 +425,11 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     func downloadRedditAudio() {
         let key = getKeyFromURL()
         var toLoadAudio = self.data.baseURL!.absoluteString
-        toLoadAudio = toLoadAudio.substring(0, length: toLoadAudio.lastIndexOf("DASH_")!)
-        toLoadAudio = toLoadAudio + "audio"
-        let finalUrl = URL.init(fileURLWithPath: key)
-        let localUrlV = URL.init(fileURLWithPath: key.replacingOccurrences(of: ".mp4", with: "video.mp4"))
-        let localUrlAudio = URL.init(fileURLWithPath: key.replacingOccurrences(of: ".mp4", with: "audio.mp4"))
+        toLoadAudio = toLoadAudio.substring(0, length: toLoadAudio.lastIndexOf("/DASH_") ?? toLoadAudio.length)
+        toLoadAudio = toLoadAudio + "/audio"
+        let finalUrl = URL.init(fileURLWithPath:key)
+        let localUrlV = URL.init(fileURLWithPath:key.replacingOccurrences(of: ".mp4", with: "video.mp4"))
+        let localUrlAudio = URL.init(fileURLWithPath:key.replacingOccurrences(of: ".mp4", with: "audio.mp4"))
 
         self.request = Alamofire.download(toLoadAudio, method: .get, to: { (_, _) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
             return (localUrlAudio, [.removePreviousFile, .createIntermediateDirectories])
