@@ -6,8 +6,8 @@
 //  Copyright © 2016 Haptic Apps. All rights reserved.
 //
 
-import XCTest
 @testable import Slide_for_Reddit
+import XCTest
 
 class Slide_for_RedditTests: XCTestCase {
     

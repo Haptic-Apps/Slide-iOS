@@ -17,7 +17,7 @@ public extension String {
     ///  - returns: The string between the two bookends, or nil if the bookends cannot be found, the bookends are the same or appear contiguously.
     func between(_ left: String, _ right: String) -> String? {
         guard
-            let leftRange = range(of:left), let rightRange = range(of: right, options: .backwards),
+            let leftRange = range(of: left), let rightRange = range(of: right, options: .backwards),
             left != right && leftRange.upperBound != rightRange.lowerBound
             else { return nil }
         
@@ -85,7 +85,7 @@ public extension String {
     }
     
     func count(_ substring: String) -> Int {
-        return components(separatedBy: substring).count-1
+        return components(separatedBy: substring).count - 1
     }
     
     func endsWith(_ suffix: String) -> Bool {
@@ -126,18 +126,18 @@ public extension String {
 
     func initials() -> String {
         let words = self.components(separatedBy: " ")
-        return words.reduce(""){$0 + $1[startIndex...startIndex]}
+        return words.reduce("") { $0 + $1[startIndex...startIndex] }
         //		return words.reduce(""){$0 + $1[0...0]}
     }
     
     func initialsFirstAndLast() -> String {
         let words = self.components(separatedBy: " ")
-        return words.reduce("") { ($0 == "" ? "" : $0[startIndex...startIndex]) + $1[startIndex...startIndex]}
+        return words.reduce("") { ($0 == "" ? "" : $0[startIndex...startIndex]) + $1[startIndex...startIndex] }
     }
     
     func isAlpha() -> Bool {
         for chr in characters {
-            if (!(chr >= "a" && chr <= "z") && !(chr >= "A" && chr <= "Z") ) {
+            if !(chr >= "a" && chr <= "z") && !(chr >= "A" && chr <= "Z") {
                 return false
             }
         }
@@ -146,7 +146,7 @@ public extension String {
     
     func isAlphaNumeric() -> Bool {
         let alphaNumeric = NSCharacterSet.alphanumerics
-        let output = self.unicodeScalars.split { !alphaNumeric.contains($0)}.map(String.init)
+        let output = self.unicodeScalars.split { !alphaNumeric.contains($0) }.map(String.init)
         if output.count == 1 {
             if output[0] != self {
                 return false
@@ -168,7 +168,7 @@ public extension String {
     }
     
     private func join<S: Sequence>(_ elements: S) -> String {
-        return elements.map{String(describing: $0)}.joined(separator: self)
+        return elements.map { String(describing: $0) }.joined(separator: self)
     }
     
     func latinize() -> String {
@@ -213,7 +213,7 @@ public extension String {
     }
     
     func split(_ separator: Character = " ") -> [String] {
-        return characters.split{$0 == separator}.map(String.init)
+        return characters.split { $0 == separator }.map(String.init)
     }
     
     func startsWith(_ prefix: String) -> Bool {
@@ -309,7 +309,6 @@ public extension String {
         return substring(with: start..<end)
     }
 
-
     subscript(i: Int) -> Character {
         get {
             let index = self.index(self.startIndex, offsetBy: i)
@@ -400,7 +399,7 @@ public extension String {
         #else
             let regex = try? NSRegularExpression(pattern: "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$", options: .caseInsensitive)
         #endif
-        return regex?.firstMatch(in: self, options: [], range: NSMakeRange(0, self.characters.count)) != nil
+        return regex?.firstMatch(in: self, options: [], range: NSRange(location: 0, length: self.characters.count)) != nil
     }
     
 }

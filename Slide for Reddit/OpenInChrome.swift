@@ -44,7 +44,7 @@ open class OpenInChromeController {
     open func isChromeInstalled() -> Bool {
         let simpleURL = URL(string: googleChromeHTTPScheme)!
         let callbackURL = URL(string: googleChromeCallbackScheme)!
-        return UIApplication.shared.canOpenURL(simpleURL) || UIApplication.shared.canOpenURL(callbackURL);
+        return UIApplication.shared.canOpenURL(simpleURL) || UIApplication.shared.canOpenURL(callbackURL)
     }
     
     open func openInChrome(_ url: URL, callbackURL: URL? = nil, createNewTab: Bool = false) {
@@ -69,7 +69,7 @@ open class OpenInChromeController {
             }
         } else if UIApplication.shared.canOpenURL(chromeSimpleURL) {
             let scheme = url.scheme?.lowercased()
-            var chromeScheme: String? = nil
+            var chromeScheme: String?
             if scheme == "http" {
                 chromeScheme = googleChromeHTTPScheme
             } else if scheme == "https" {

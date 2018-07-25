@@ -6,9 +6,9 @@
 //  Copyright © 2016 Haptic Apps. All rights reserved.
 //
 
-import UIKit
 import reddift
 import SDWebImage
+import UIKit
 import XLActionController
 
 class ContentListingViewController: MediaViewController, UICollectionViewDelegate, WrappingFlowLayoutDelegate, UICollectionViewDataSource, SubmissionMoreDelegate {
@@ -18,7 +18,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     }
 
     var baseData: ContributionLoader
-    var session: Session? = nil
+    var session: Session?
     var tableView: UICollectionView!
 
     init(dataSource: ContributionLoader) {
@@ -31,7 +31,6 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
 
     func failed(error: Error) {
         print(error)
@@ -78,7 +77,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.tableView.register(MessageCellView.classForCoder(), forCellWithReuseIdentifier: "message")
         tableView.backgroundColor = ColorUtil.backgroundColor
 
-        if (baseData is ProfileContributionLoader || baseData is InboxContributionLoader || baseData is ModQueueContributionLoader || baseData is ModMailContributionLoader) {
+        if baseData is ProfileContributionLoader || baseData is InboxContributionLoader || baseData is ModQueueContributionLoader || baseData is ModMailContributionLoader {
             self.tableView.contentInset = UIEdgeInsets.init(top: 45, left: 0, bottom: 0, right: 0)
         }
         session = (UIApplication.shared.delegate as! AppDelegate).session
@@ -91,7 +90,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         tableView.frame = self.view.bounds
-        if (self.view.bounds.width != oldsize) {
+        if self.view.bounds.width != oldsize {
             oldsize = self.view.bounds.width
             flowLayout.reset()
             tableView.reloadData()
@@ -113,7 +112,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     func collectionView(_ tableView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let thing = baseData.content[indexPath.row]
         var cell: UICollectionViewCell?
-        if (thing is RSubmission) {
+        if thing is RSubmission {
             var target = CurrentType.none
             let submission = thing as! RSubmission
 
@@ -122,72 +121,71 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             let height = submission.height
 
             var type = ContentType.getContentType(baseUrl: submission.url)
-            if (submission.isSelf) {
+            if submission.isSelf {
                 type = .SELF
             }
 
-            if (SettingValues.postImageMode == .THUMBNAIL) {
+            if SettingValues.postImageMode == .THUMBNAIL {
                 big = false
                 thumb = true
             }
 
             let fullImage = ContentType.fullImage(t: type)
 
-            if (!fullImage && height < 50) {
+            if !fullImage && height < 50 {
                 big = false
                 thumb = true
             }
 
-            if (type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big) {
+            if type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big {
                 big = false
                 thumb = false
             }
 
-            if (height < 50) {
+            if height < 50 {
                 thumb = true
                 big = false
             }
 
-            if (type == ContentType.CType.SELF && SettingValues.hideImageSelftext
-                    || SettingValues.noImages && submission.isSelf) {
+            if type == ContentType.CType.SELF && SettingValues.hideImageSelftext
+                    || SettingValues.noImages && submission.isSelf {
                 big = false
                 thumb = false
             }
 
-            if (big || !submission.thumbnail) {
+            if big || !submission.thumbnail {
                 thumb = false
             }
 
-
-            if (!big && !thumb && submission.type != .SELF && submission.type != .NONE) { //If a submission has a link but no images, still show the web thumbnail
+            if !big && !thumb && submission.type != .SELF && submission.type != .NONE { //If a submission has a link but no images, still show the web thumbnail
                 thumb = true
             }
 
-            if (submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection)) {
+            if submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection) {
                 big = false
                 thumb = true
             }
 
-            if (SettingValues.noImages) {
+            if SettingValues.noImages {
                 big = false
                 thumb = false
             }
-            if (thumb && type == .SELF) {
+            if thumb && type == .SELF {
                 thumb = false
             }
 
-            if (thumb && !big) {
+            if thumb && !big {
                 target = .thumb
-            } else if (big) {
+            } else if big {
                 target = .banner
             } else {
                 target = .text
             }
 
             var c: LinkCellView?
-            if (target == .thumb) {
+            if target == .thumb {
                 c = tableView.dequeueReusableCell(withReuseIdentifier: "thumb", for: indexPath) as! ThumbnailLinkCellView
-            } else if (target == .banner) {
+            } else if target == .banner {
                 c = tableView.dequeueReusableCell(withReuseIdentifier: "banner", for: indexPath) as! BannerLinkCellView
             } else {
                 c = tableView.dequeueReusableCell(withReuseIdentifier: "text", for: indexPath) as! TextLinkCellView
@@ -222,25 +220,24 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         return cell!
     }
 
-
     func collectionView(_ collectionView: UICollectionView, width: CGFloat, indexPath: IndexPath) -> CGSize {
         var itemWidth = width
 
-        if (indexPath.row < baseData.content.count) {
+        if indexPath.row < baseData.content.count {
             let thing = baseData.content[indexPath.row]
 
-            if (thing is RSubmission) {
+            if thing is RSubmission {
                 let submission = thing as! RSubmission
-                if (estimatedHeights[submission.id] == nil) {
+                if estimatedHeights[submission.id] == nil {
                     var thumb = submission.thumbnail
                     var big = submission.banner
 
                     var type = ContentType.getContentType(baseUrl: submission.url)
-                    if (submission.isSelf) {
+                    if submission.isSelf {
                         type = .SELF
                     }
 
-                    if (SettingValues.postImageMode == .THUMBNAIL) {
+                    if SettingValues.postImageMode == .THUMBNAIL {
                         big = false
                         thumb = true
                     }
@@ -248,60 +245,56 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     let fullImage = ContentType.fullImage(t: type)
                     var submissionHeight = submission.height
 
-                    if (!fullImage && submissionHeight < 50) {
+                    if !fullImage && submissionHeight < 50 {
                         big = false
                         thumb = true
-                    } else if (big && (SettingValues.postImageMode == .CROPPED_IMAGE)) {
+                    } else if big && (SettingValues.postImageMode == .CROPPED_IMAGE) {
                         submissionHeight = 200
-                    } else if (big) {
+                    } else if big {
                         let ratio = Double(submissionHeight) / Double(submission.width)
-                        let width = Double(itemWidth);
+                        let width = Double(itemWidth)
 
                         let h = width * ratio
-                        if (h == 0) {
+                        if h == 0 {
                             submissionHeight = 200
                         } else {
                             submissionHeight = Int(h)
                         }
                     }
 
-
-                    if (type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big) {
+                    if type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big {
                         big = false
                         thumb = false
                     }
 
-                    if (submissionHeight < 50) {
+                    if submissionHeight < 50 {
                         thumb = true
                         big = false
                     }
 
-
-                    if (big || !submission.thumbnail) {
+                    if big || !submission.thumbnail {
                         thumb = false
                     }
 
-
-                    if (!big && !thumb && submission.type != .SELF && submission.type != .NONE) { //If a submission has a link but no images, still show the web thumbnail
+                    if !big && !thumb && submission.type != .SELF && submission.type != .NONE { //If a submission has a link but no images, still show the web thumbnail
                         thumb = true
                     }
 
-                    if (submission.nsfw && !SettingValues.nsfwPreviews) {
+                    if submission.nsfw && !SettingValues.nsfwPreviews {
                         big = false
                         thumb = true
                     }
 
-                    if (submission.nsfw && SettingValues.hideNSFWCollection) {
+                    if submission.nsfw && SettingValues.hideNSFWCollection {
                         big = false
                         thumb = true
                     }
 
-
-                    if (SettingValues.noImages) {
+                    if SettingValues.noImages {
                         big = false
                         thumb = false
                     }
-                    if (thumb && type == .SELF) {
+                    if thumb && type == .SELF {
                         thumb = false
                     }
 
@@ -310,7 +303,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     var paddingLeft = CGFloat(0)
                     var paddingRight = CGFloat(0)
                     var innerPadding = CGFloat(0)
-                    if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) {
+                    if SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER {
                         paddingTop = 5
                         paddingBottom = 5
                         paddingLeft = 5
@@ -323,13 +316,13 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     let thumbheight = (SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50)) - (SettingValues.postViewMode == .COMPACT ? 15 : 0)
                     let textHeight = CGFloat(submission.isSelf ? 5 : 0)
                     
-                    if (thumb) {
+                    if thumb {
                         imageHeight = thumbheight
                         innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between top and thumbnail
                         innerPadding += 18 - (SettingValues.postViewMode == .COMPACT ? 4 : 0) //between label and bottom box
                         innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
-                    } else if (big) {
-                        if (SettingValues.postViewMode == .CENTER) {
+                    } else if big {
+                        if SettingValues.postViewMode == .CENTER {
                             innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 16) //between label
                             innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between banner and box
                         } else {
@@ -346,7 +339,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     }
                     
                     var estimatedUsableWidth = itemWidth - paddingLeft - paddingRight
-                    if (thumb) {
+                    if thumb {
                         estimatedUsableWidth -= thumbheight //is the same as the width
                         estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb
                         estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between thumb and label
@@ -362,16 +355,16 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     estimatedHeights[submission.id] = totalHeight
                 }
                 return CGSize(width: itemWidth, height: estimatedHeights[submission.id]!)
-            } else if (thing is RComment) {
+            } else if thing is RComment {
                 let comment = thing as! RComment
-                if (estimatedHeights[comment.id] == nil) {
+                if estimatedHeights[comment.id] == nil {
                     let attrs = [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false)] as [String: Any]
                     let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: comment.created, numericDates: true))  •  ")
 
                     let boldString = NSMutableAttributedString(string: "\(comment.score)pts", attributes: attrs)
                     let subString = NSMutableAttributedString(string: "r/\(comment.subreddit)")
                     let color = ColorUtil.getColorForSub(sub: comment.subreddit)
-                    if (color != ColorUtil.baseColor) {
+                    if color != ColorUtil.baseColor {
                         subString.addAttribute(NSForegroundColorAttributeName, value: color, range: NSRange.init(location: 0, length: subString.length))
                     }
 
@@ -392,9 +385,9 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                 return CGSize(width: itemWidth, height: estimatedHeights[comment.id]!)
             } else {
                 let message = thing as! RMessage
-                if (estimatedHeights[message.id] == nil) {
+                if estimatedHeights[message.id] == nil {
                     var title: NSMutableAttributedString = NSMutableAttributedString()
-                    if (message.wasComment) {
+                    if message.wasComment {
                         title = NSMutableAttributedString.init(string: message.linkTitle, attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 18, submission: true)])
                     } else {
                         title = NSMutableAttributedString.init(string: message.subject, attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 18, submission: true)])
@@ -404,25 +397,25 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
 
                     let subString = NSMutableAttributedString(string: "r/\(message.subreddit)")
                     let color = ColorUtil.getColorForSub(sub: message.subreddit)
-                    if (color != ColorUtil.baseColor) {
+                    if color != ColorUtil.baseColor {
                         subString.addAttribute(NSForegroundColorAttributeName, value: color, range: NSRange.init(location: 0, length: subString.length))
                     }
 
                     let infoString = NSMutableAttributedString.init(string: "", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true)])
                     infoString.append(endString)
-                    if (!message.subreddit.isEmpty) {
+                    if !message.subreddit.isEmpty {
                         infoString.append(NSAttributedString.init(string: "  •  "))
                         infoString.append(subString)
                     }
 
                     let html = message.htmlBody
                     var content: NSMutableAttributedString?
-                    if (!html.isEmpty()) {
+                    if !html.isEmpty() {
                         do {
                             let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
                             let font = FontGenerator.fontOfSize(size: 16, submission: false)
                             let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: .white)
-                            content =  LinkParser.parse(attr2, .white)
+                            content = LinkParser.parse(attr2, .white)
                         } catch {
                         }
                     }
@@ -431,7 +424,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     let textSizeT = CTFramesetterSuggestFrameSizeWithConstraints(framesetterT, CFRange(), nil, CGSize.init(width: itemWidth - 16 - (message.subject.hasPrefix("re:") ? 30 : 0), height: CGFloat.greatestFiniteMagnitude), nil)
                     let framesetterI = CTFramesetterCreateWithAttributedString(infoString)
                     let textSizeI = CTFramesetterSuggestFrameSizeWithConstraints(framesetterI, CFRange(), nil, CGSize.init(width: itemWidth - 16 - (message.subject.hasPrefix("re:") ? 30 : 0), height: CGFloat.greatestFiniteMagnitude), nil)
-                    if (content != nil) {
+                    if content != nil {
                         let framesetterB = CTFramesetterCreateWithAttributedString(content!)
                         let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: itemWidth - 16 - (message.subject.hasPrefix("re:") ? 30 : 0), height: CGFloat.greatestFiniteMagnitude), nil)
 
@@ -461,13 +454,13 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     func showMenu(sender: UIButton?) {
         let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
 
-        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
+        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
             print("Cancel")
         }
         actionSheetController.addAction(cancelActionButton)
 
         for link in LinkSortType.cases {
-            let saveActionButton: UIAlertAction = UIAlertAction(title: link.description, style: .default) { action -> Void in
+            let saveActionButton: UIAlertAction = UIAlertAction(title: link.description, style: .default) { _ -> Void in
                 self.showTimeMenu(s: link, selector: sender)
             }
             actionSheetController.addAction(saveActionButton)
@@ -483,20 +476,20 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     }
 
     func showTimeMenu(s: LinkSortType, selector: UIButton?) {
-        if (s == .hot || s == .new) {
+        if s == .hot || s == .new {
             sort = s
             refresh()
             return
         } else {
             let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
 
-            let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
+            let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
                 print("Cancel")
             }
             actionSheetController.addAction(cancelActionButton)
 
             for t in TimeFilterWithin.cases {
-                let saveActionButton: UIAlertAction = UIAlertAction(title: t.param, style: .default) { action -> Void in
+                let saveActionButton: UIAlertAction = UIAlertAction(title: t.param, style: .default) { _ -> Void in
                     self.sort = s
                     self.time = t
                     self.refresh()
@@ -526,13 +519,12 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     }
 
     func loadMore() {
-        if (!showing) {
+        if !showing {
             showLoader()
         }
         loading = true
         baseData.getData(reload: false)
     }
-
 
     var loading: Bool = false
 
@@ -542,7 +534,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             self.tableView.reloadData()
             self.flowLayout.reset()
             self.loading = false
-            if (self.baseData.content.count == 0) {
+            if self.baseData.content.count == 0 {
                 BannerUtil.makeBanner(text: "No content found!", seconds: 5, context: self)
             }
         }
@@ -565,7 +557,7 @@ extension ContentListingViewController: LinkCellViewDelegate {
 
     func upvote(_ cell: LinkCellView) {
         do {
-            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up, name: (cell.link?.getId())!, completion: { (result) in
+            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up, name: (cell.link?.getId())!, completion: { (_) in
 
             })
             ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up)
@@ -578,7 +570,7 @@ extension ContentListingViewController: LinkCellViewDelegate {
 
     func downvote(_ cell: LinkCellView) {
         do {
-            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down, name: (cell.link?.getId())!, completion: { (result) in
+            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down, name: (cell.link?.getId())!, completion: { (_) in
 
             })
             ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down)
@@ -591,7 +583,7 @@ extension ContentListingViewController: LinkCellViewDelegate {
 
     func save(_ cell: LinkCellView) {
         do {
-            try session?.setSave(!ActionStates.isSaved(s: cell.link!), name: (cell.link?.getId())!, completion: { (result) in
+            try session?.setSave(!ActionStates.isSaved(s: cell.link!), name: (cell.link?.getId())!, completion: { (_) in
 
             })
             ActionStates.setSaved(s: cell.link!, saved: !ActionStates.isSaved(s: cell.link!))

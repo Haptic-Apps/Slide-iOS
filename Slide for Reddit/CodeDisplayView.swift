@@ -6,14 +6,14 @@
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
-import UIKit
+import Anchorage
 import reddift
 import SDWebImage
-import XLActionController
-import TTTAttributedLabel
 import SwiftSpreadsheet
-import Anchorage
 import Then
+import TTTAttributedLabel
+import UIKit
+import XLActionController
 
 class CodeDisplayView: UIScrollView {
     
@@ -41,12 +41,12 @@ class CodeDisplayView: UIScrollView {
     //Algorighm from https://github.com/ccrama/Slide/blob/master/app/src/main/java/me/ccrama/redditslide/Views/CommentOverflow.java
     func parseText(_ text: String) {
         for string in text.split("\n") {
-            if(string.trimmed().isEmpty()){
+            if string.trimmed().isEmpty() {
                 continue
             }
             do {
                 let attr = try NSMutableAttributedString(data: string.data(using: .unicode)!, options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
-                let font = UIFont(name: "Courier", size:  16 + CGFloat(SettingValues.commentFontOffset)) ?? UIFont.systemFont(ofSize: 16)
+                let font = UIFont(name: "Courier", size: 16 + CGFloat(SettingValues.commentFontOffset)) ?? UIFont.systemFont(ofSize: 16)
                 attr.addAttribute(NSFontAttributeName, value: font, range: NSRange.init(location: 0, length: attr.length))
                 attr.addAttribute(NSForegroundColorAttributeName, value: baseColor, range: NSRange.init(location: 0, length: attr.length))
                 var cell = LinkParser.parse(attr, baseColor)
@@ -57,9 +57,9 @@ class CodeDisplayView: UIScrollView {
         }
     }
     
-    func doData(){
+    func doData() {
         widths.removeAll()
-        for row in baseData{
+        for row in baseData {
             let framesetter = CTFramesetterCreateWithAttributedString(row)
             let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: CGFloat.greatestFiniteMagnitude, height: CGFloat(40)), nil)
             let length = textSize.width + 25
@@ -68,7 +68,7 @@ class CodeDisplayView: UIScrollView {
         addSubviews()
     }
     
-    func addSubviews(){
+    func addSubviews() {
         var finalString = NSMutableAttributedString.init()
         for row in baseData {
             finalString.append(row)
@@ -93,10 +93,10 @@ class CodeDisplayView: UIScrollView {
         contentSize = CGSize.init(width: getWidestCell() + 16, height: textSizeB.height - 16)
     }
     
-    func getWidestCell() -> CGFloat{
+    func getWidestCell() -> CGFloat {
         var widest = CGFloat(0)
         for row in widths {
-            if(row > widest){
+            if row > widest {
                 widest = row
             }
         }

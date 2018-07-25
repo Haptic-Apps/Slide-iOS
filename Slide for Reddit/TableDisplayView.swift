@@ -6,15 +6,15 @@
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
-import UIKit
+import Anchorage
+import DTCoreText
 import reddift
 import SDWebImage
-import XLActionController
-import TTTAttributedLabel
 import SwiftSpreadsheet
-import Anchorage
 import Then
-import DTCoreText
+import TTTAttributedLabel
+import UIKit
+import XLActionController
 
 class TableDisplayView: UIScrollView {
 
@@ -68,38 +68,38 @@ class TableDisplayView: UIScrollView {
         var isHeader = true
 
         var currentRow = [NSAttributedString]()
-        let font =  FontGenerator.fontOfSize(size: 16, submission: false)
+        let font = FontGenerator.fontOfSize(size: 16, submission: false)
         var currentString = ""
-        for string in text.trimmed().components(separatedBy: "<"){
+        for string in text.trimmed().components(separatedBy: "<") {
             let current = "<\(string)".trimmed()
-            if(current == "<"){
+            if current == "<" {
                 continue
             }
             //print(current)
-            if (current == tableStart) {
-            } else if (current == tableHeadStart) {
-            } else if (current == tableRowStart) {
+            if current == tableStart {
+            } else if current == tableHeadStart {
+            } else if current == tableRowStart {
                 currentRow = []
-            } else if (current == tableRowEnd) {
+            } else if current == tableRowEnd {
                 isHeader = false
                 baseData.append(currentRow)
-            } else if (current == tableEnd) {
-            } else if (current == tableHeadEnd) {
-            } else if (!columnStarted
-                && (current == tableColumnStart || current == tableHeaderStart)) {
+            } else if current == tableEnd {
+            } else if current == tableHeadEnd {
+            } else if !columnStarted
+                && (current == tableColumnStart || current == tableHeaderStart) {
                 columnStarted = true
                 //todo maybe gravity = Gravity.START;
-            } else if (!columnStarted && (current == tableColumnStartRight || current == tableHeaderStartRight)) {
+            } else if !columnStarted && (current == tableColumnStartRight || current == tableHeaderStartRight) {
                 columnStarted = true
                 //todo maybe gravity = Gravity.END;
-            } else if (!columnStarted && (current == tableColumnStartCenter || current == tableHeaderStartCenter)) {
+            } else if !columnStarted && (current == tableColumnStartCenter || current == tableHeaderStartCenter) {
                 columnStarted = true
                 //todo maybe gravity = Gravity.CENTER;
-            } else if (!columnStarted && (current == tableColumnStartLeft || current == tableHeaderStartLeft)) {
+            } else if !columnStarted && (current == tableColumnStartLeft || current == tableHeaderStartLeft) {
                 columnStarted = true
                 //todo maybe gravity = Gravity.START;
-            }  else if (current == tableColumnEnd || current == tableHeaderEnd) {
-                if(currentString.startsWith("<td")){
+            } else if current == tableColumnEnd || current == tableHeaderEnd {
+                if currentString.startsWith("<td") {
                     let index = currentString.indexOf(">")
                     currentString = currentString.substring(index! + 1, length: currentString.length - index! - 1)
                 }
@@ -125,11 +125,11 @@ class TableDisplayView: UIScrollView {
         backupData = baseData*/
     }
 
-    func doData(){
+    func doData() {
 
         widths.removeAll()
         var currentWidths = [CGFloat]()
-        for row in baseData{
+        for row in baseData {
             currentWidths = []
             for cell in row {
                 let framesetter = CTFramesetterCreateWithAttributedString(cell)
@@ -142,7 +142,7 @@ class TableDisplayView: UIScrollView {
         addSubviews()
     }
     
-    func addSubviews(){
+    func addSubviews() {
         let activeLinkAttributes = [NSForegroundColorAttributeName: tColor]
         for row in baseData {
             let rowStack = UIStackView().then({
@@ -187,10 +187,10 @@ class TableDisplayView: UIScrollView {
     var globalHeight = CGFloat(0)
     var globalWidth = CGFloat(0)
 
-    func getWidestCell(column: Int) -> CGFloat{
+    func getWidestCell(column: Int) -> CGFloat {
         var widest = CGFloat(0)
         for row in widths {
-            if(column < row.count && row[column] > widest){
+            if column < row.count && row[column] > widest {
                 widest = row[column]
             }
         }
@@ -203,7 +203,7 @@ class TableDisplayView: UIScrollView {
 
     var list = true
 
-    func doList(){
+    func doList() {
         list = !list
         doData()
     }
@@ -229,38 +229,38 @@ class TableDisplayView: UIScrollView {
         var columnStarted = false
         var isHeader = true
         
-        let font =  FontGenerator.fontOfSize(size: 16, submission: false)
+        let font = FontGenerator.fontOfSize(size: 16, submission: false)
         var currentString = ""
         var estHeight = CGFloat(0)
-        for string in baseHtml.trimmed().components(separatedBy: "<"){
+        for string in baseHtml.trimmed().components(separatedBy: "<") {
             let current = "<\(string)".trimmed()
-            if(current == "<"){
+            if current == "<" {
                 continue
             }
             //print(current)
-            if (current == tableStart) {
-            } else if (current == tableHeadStart) {
-            } else if (current == tableRowStart) {
-            } else if (current == tableRowEnd) {
+            if current == tableStart {
+            } else if current == tableHeadStart {
+            } else if current == tableRowStart {
+            } else if current == tableRowEnd {
                 isHeader = false
                 estHeight += 30
-            } else if (current == tableEnd) {
-            } else if (current == tableHeadEnd) {
-            } else if (!columnStarted
-                && (current == tableColumnStart || current == tableHeaderStart)) {
+            } else if current == tableEnd {
+            } else if current == tableHeadEnd {
+            } else if !columnStarted
+                && (current == tableColumnStart || current == tableHeaderStart) {
                 columnStarted = true
                 //todo maybe gravity = Gravity.START;
-            } else if (!columnStarted && (current == tableColumnStartRight || current == tableHeaderStartRight)) {
+            } else if !columnStarted && (current == tableColumnStartRight || current == tableHeaderStartRight) {
                 columnStarted = true
                 //todo maybe gravity = Gravity.END;
-            } else if (!columnStarted && (current == tableColumnStartCenter || current == tableHeaderStartCenter)) {
+            } else if !columnStarted && (current == tableColumnStartCenter || current == tableHeaderStartCenter) {
                 columnStarted = true
                 //todo maybe gravity = Gravity.CENTER;
-            } else if (!columnStarted && (current == tableColumnStartLeft || current == tableHeaderStartLeft)) {
+            } else if !columnStarted && (current == tableColumnStartLeft || current == tableHeaderStartLeft) {
                 columnStarted = true
                 //todo maybe gravity = Gravity.START;
-            }  else if (current == tableColumnEnd || current == tableHeaderEnd) {
-                if(currentString.startsWith("<td")){
+            } else if current == tableColumnEnd || current == tableHeaderEnd {
+                if currentString.startsWith("<td") {
                     let index = currentString.indexOf(">")
                     currentString = currentString.substring(index! + 1, length: currentString.length - index! - 1)
                 }

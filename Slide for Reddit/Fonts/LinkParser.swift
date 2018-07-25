@@ -6,33 +6,33 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
-import UIKit
-import TTTAttributedLabel
 import DTCoreText
+import TTTAttributedLabel
+import UIKit
 
 class LinkParser {
     public static func parse(_ attributedString: NSAttributedString, _ color: UIColor) -> NSMutableAttributedString {
         var string = NSMutableAttributedString.init(attributedString: attributedString)
         string.removeAttribute(kCTForegroundColorFromContextAttributeName as String, range: NSRange.init(location: 0, length: string.length))
-        if (string.length > 0) {
-            string.enumerateAttributes(in: NSRange.init(location: 0, length: string.length), options: .longestEffectiveRangeNotRequired, using: { (attrs, range, pointer) in
+        if string.length > 0 {
+            string.enumerateAttributes(in: NSRange.init(location: 0, length: string.length), options: .longestEffectiveRangeNotRequired, using: { (attrs, range, _) in
                 for attr in attrs {
                     if let url = attr.value as? URL {
-                        if (SettingValues.enlargeLinks) {
+                        if SettingValues.enlargeLinks {
                             string.addAttribute(NSFontAttributeName, value: FontGenerator.boldFontOfSize(size: 18, submission: false), range: range)
                         }
                         string.addAttribute(NSForegroundColorAttributeName, value: color, range: range)
                         string.addAttribute(kCTUnderlineColorAttributeName as String, value: UIColor.clear, range: range)
                         let type = ContentType.getContentType(baseUrl: url)
 
-                        if (type == .SPOILER) {
+                        if type == .SPOILER {
                             string.highlightTarget(color: color)
                         }
 
-                        if (SettingValues.showLinkContentType) {
+                        if SettingValues.showLinkContentType {
 
                             let typeString = NSMutableAttributedString.init(string: "", attributes: [:])
-                            switch (type) {
+                            switch type {
                             case .ALBUM:
                                 typeString.mutableString.setString("(Album)")
                                 break
@@ -43,7 +43,7 @@ class LinkParser {
                                 typeString.mutableString.setString("(External link)")
                                 break
                             case .LINK, .EMBEDDED, .NONE:
-                                if (url.absoluteString != string.mutableString.substring(with: range)) {
+                                if url.absoluteString != string.mutableString.substring(with: range) {
                                     typeString.mutableString.setString("(\(url.host ?? url.absoluteString))")
                                 }
                                 break
@@ -66,7 +66,7 @@ class LinkParser {
                                 typeString.mutableString.setString("(Spoiler)")
                                 break
                             default:
-                                if (url.absoluteString != string.mutableString.substring(with: range)) {
+                                if url.absoluteString != string.mutableString.substring(with: range) {
                                     typeString.mutableString.setString("(\(url.host!))")
                                 }
                                 break

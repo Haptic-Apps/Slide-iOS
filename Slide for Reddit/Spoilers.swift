@@ -6,8 +6,8 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
-import UIKit
 import TTTAttributedLabel
+import UIKit
 
 public class WrapSpoilers: NSObject {
 
@@ -21,8 +21,8 @@ public class WrapSpoilers: NSObject {
             let spoilerText = match[1]
             let spoilerTeaser = match[2]
             // Remove the last </a> tag, but keep the < for parsing.
-            if (!tag.contains("<a href=\"http")) {
-                base = base.replacingOccurrences(of: tag, with: tag.substring(0, length: tag.length - 4) + (spoilerTeaser.isEmpty() ? "spoiler" : "") + " [[s[ \(spoilerText)]s]]</a> ");
+            if !tag.contains("<a href=\"http") {
+                base = base.replacingOccurrences(of: tag, with: tag.substring(0, length: tag.length - 4) + (spoilerTeaser.isEmpty() ? "spoiler" : "") + " [[s[ \(spoilerText)]s]]</a> ")
             }
         }
 
@@ -49,8 +49,8 @@ public class WrapSpoilers: NSObject {
             for match in base.capturedGroups(withRegex: "<table>(.*?)</table>") {
                 let newPiece = match[0]
                 let tableEscaped = newPiece.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)!
-                let inner = "\n<h1><a href=\"http://view.table/\(tableEscaped)\">View table</a></h1>\n";
-                base = base.replacingOccurrences(of: match[0], with: inner);
+                let inner = "\n<h1><a href=\"http://view.table/\(tableEscaped)\">View table</a></h1>\n"
+                base = base.replacingOccurrences(of: match[0], with: inner)
             }
 
             return base

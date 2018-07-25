@@ -6,14 +6,14 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
-import UIKit
-import reddift
 import MaterialComponents.MaterialTabs
+import reddift
+import UIKit
 
 class InboxViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate {
     var content: [MessageWhere] = []
     var isReload = false
-    var session: Session? = nil
+    var session: Session?
 
     var vCs: [UIViewController] = []
 
@@ -68,7 +68,7 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
     }
 
     func new(_ sender: AnyObject) {
-        VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(completion: {(message) in
+        VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(completion: {(_) in
             DispatchQueue.main.async(execute: { () -> Void in
                 BannerUtil.makeBanner(text: "Message sent!", seconds: 3, context: self)
             })
@@ -85,8 +85,8 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
     func read(_ sender: AnyObject) {
         do {
             try session?.markAllMessagesAsRead(completion: { (result) in
-                switch (result) {
-                case .success(_):
+                switch result {
+                case .success:
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "All messages marked as read", seconds: 5, context: self)
                     }
@@ -105,8 +105,6 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
     func close() {
         self.navigationController?.popViewController(animated: true)
     }
-
-
 
     var tabBar = MDCTabBar()
 
@@ -137,7 +135,6 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
 
         self.view.addSubview(tabBar)
 
-
         time = History.getInboxSeen()
         History.inboxSeen()
         view.backgroundColor = ColorUtil.backgroundColor
@@ -157,19 +154,14 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
             }
         }
 
-
-        if (self.navigationController?.interactivePopGestureRecognizer != nil)
-        {
+        if self.navigationController?.interactivePopGestureRecognizer != nil {
             print("Not nil")
-            for view in view.subviews
-            {
-                if let scrollView = view as? UIScrollView
-                {
-                    scrollView.panGestureRecognizer.require(toFail: self.navigationController!.interactivePopGestureRecognizer!);
+            for view in view.subviews {
+                if let scrollView = view as? UIScrollView {
+                    scrollView.panGestureRecognizer.require(toFail: self.navigationController!.interactivePopGestureRecognizer!)
                 }
             }
         }
-
 
         setViewControllers([firstViewController],
                 direction: .forward,
@@ -186,7 +178,7 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
         }
         let page = vCs.index(of: self.viewControllers!.first!)
 
-        if (!selected) {
+        if !selected {
             tabBar.setSelectedItem(tabBar.items[page! ], animated: true)
         } else {
             selected = false
@@ -201,19 +193,19 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         self.lastPosition = scrollView.contentOffset.x
 
-        if (currentIndex == 0 && scrollView.contentOffset.x < scrollView.bounds.size.width) {
-            scrollView.contentOffset = CGPoint(x: scrollView.bounds.size.width, y: 0);
-        } else if (currentIndex == vCs.count - 1 && scrollView.contentOffset.x > scrollView.bounds.size.width) {
-            scrollView.contentOffset = CGPoint(x: scrollView.bounds.size.width, y: 0);
+        if currentIndex == 0 && scrollView.contentOffset.x < scrollView.bounds.size.width {
+            scrollView.contentOffset = CGPoint(x: scrollView.bounds.size.width, y: 0)
+        } else if currentIndex == vCs.count - 1 && scrollView.contentOffset.x > scrollView.bounds.size.width {
+            scrollView.contentOffset = CGPoint(x: scrollView.bounds.size.width, y: 0)
         }
     }
 
     //From https://stackoverflow.com/a/25167681/3697225
     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        if (currentIndex == 0 && scrollView.contentOffset.x <= scrollView.bounds.size.width) {
-            targetContentOffset.pointee = CGPoint(x: scrollView.bounds.size.width, y: 0);
-        } else if (currentIndex == vCs.count - 1 && scrollView.contentOffset.x >= scrollView.bounds.size.width) {
-            targetContentOffset.pointee = CGPoint(x: scrollView.bounds.size.width, y: 0);
+        if currentIndex == 0 && scrollView.contentOffset.x <= scrollView.bounds.size.width {
+            targetContentOffset.pointee = CGPoint(x: scrollView.bounds.size.width, y: 0)
+        } else if currentIndex == vCs.count - 1 && scrollView.contentOffset.x >= scrollView.bounds.size.width {
+            targetContentOffset.pointee = CGPoint(x: scrollView.bounds.size.width, y: 0)
         }
     }
 
@@ -241,7 +233,6 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
         guard let viewControllerIndex = vCs.index(of: viewController) else {
             return nil
         }
-
 
         let nextIndex = viewControllerIndex + 1
         let orderedViewControllersCount = vCs.count

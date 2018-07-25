@@ -14,10 +14,10 @@ class RealmDataWrapper {
 
     //Takes a Link from reddift and turns it into a Realm model
     static func linkToRSubmission(submission: Link) -> RSubmission {
-        let flair = submission.linkFlairText.isEmpty ? submission.linkFlairCssClass : submission.linkFlairText;
+        let flair = submission.linkFlairText.isEmpty ? submission.linkFlairCssClass : submission.linkFlairText
         let bodyHtml = submission.selftextHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
 
-        var json: JSONDictionary? = nil
+        var json: JSONDictionary?
         json = submission.baseJson
 
         var w: Int = 0
@@ -33,17 +33,17 @@ class RealmDataWrapper {
         let preview = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["url"] as? String)
 
         var videoPreview = (((((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["variants"] as? [String: Any])?["mp4"] as? [String: Any])?["source"] as? [String: Any])?["url"] as? String)
-        if (videoPreview != nil && videoPreview!.isEmpty || videoPreview == nil) {
+        if videoPreview != nil && videoPreview!.isEmpty || videoPreview == nil {
             videoPreview = (((json?["media"] as? [String: Any])?["reddit_video"] as? [String: Any])?["fallback_url"] as? String)
         }
-        if ((videoPreview != nil && videoPreview!.isEmpty || videoPreview == nil) && json?["crosspost_parent_list"] != nil) {
+        if (videoPreview != nil && videoPreview!.isEmpty || videoPreview == nil) && json?["crosspost_parent_list"] != nil {
             videoPreview = (((((json?["crosspost_parent_list"] as? [Any])?.first as? [String: Any])?["media"] as? [String: Any])?["reddit_video"] as? [String: Any])?["fallback_url"] as? String)
         }
 
-        if (preview != nil && !(preview?.isEmpty())!) {
+        if preview != nil && !(preview?.isEmpty())! {
             burl = (preview!.replacingOccurrences(of: "&amp;", with: "&"))
             w = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["width"] as? Int)!
-            if(w < 200){
+            if w < 200 {
                 big = false
             } else {
                 h = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["height"] as? Int)!
@@ -52,7 +52,7 @@ class RealmDataWrapper {
         }
 
         let thumbnailType = ContentType.getThumbnailType(submission: submission)
-        switch (thumbnailType) {
+        switch thumbnailType {
         case .NSFW:
             thumb = true
             turl = "nsfw"
@@ -70,18 +70,18 @@ class RealmDataWrapper {
             break
         }
 
-        if (big) { //check for low quality image
-            if (previews != nil && !(previews?.isEmpty)!) {
-                if (submission.url != nil && ContentType.isImgurImage(uri: submission.url!)) {
+        if big { //check for low quality image
+            if previews != nil && !(previews?.isEmpty)! {
+                if submission.url != nil && ContentType.isImgurImage(uri: submission.url!) {
                     lqUrl = (submission.url?.absoluteString)!
                     lqUrl = lqUrl.substring(0, length: lqUrl.lastIndexOf(".")!) + (SettingValues.lqLow ? "m" : "l") + lqUrl.substring(lqUrl.lastIndexOf(".")!, length: lqUrl.length - lqUrl.lastIndexOf(".")!)
                 } else {
                     let length = previews?.count
-                    if (SettingValues.lqLow && length! >= 3) {
+                    if SettingValues.lqLow && length! >= 3 {
                         lqUrl = ((previews?[1] as? [String: Any])?["url"] as? String)!
-                    } else if (length! >= 4) {
+                    } else if length! >= 4 {
                         lqUrl = ((previews?[2] as? [String: Any])?["url"] as? String)!
-                    } else if (length! >= 5) {
+                    } else if length! >= 5 {
                         lqUrl = ((previews?[length! - 1] as? [String: Any])?["url"] as? String)!
                     } else {
                         lqUrl = preview!
@@ -148,8 +148,7 @@ class RealmDataWrapper {
         rSubmission.approvedBy = submission.baseJson["approved_by"] as? String ?? ""
         rSubmission.approved = !rSubmission.approvedBy.isEmpty()
 
-
-        if (json?["crosspost_parent_list"] != nil) {
+        if json?["crosspost_parent_list"] != nil {
             rSubmission.isCrosspost = true
             var sub = ((json?["crosspost_parent_list"] as? [Any])?.first as? [String: Any])?["subreddit"] as? String ?? ""
             var author = ((json?["crosspost_parent_list"] as? [Any])?.first as? [String: Any])?["author"] as? String ?? ""
@@ -163,10 +162,10 @@ class RealmDataWrapper {
 
     //Takes a Link from reddift and turns it into a Realm model
     static func updateSubmission(_ rSubmission: RSubmission, _ submission: Link) {
-        let flair = submission.linkFlairText.isEmpty ? submission.linkFlairCssClass : submission.linkFlairText;
+        let flair = submission.linkFlairText.isEmpty ? submission.linkFlairCssClass : submission.linkFlairText
         let bodyHtml = submission.selftextHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
 
-        var json: JSONDictionary? = nil
+        var json: JSONDictionary?
         json = submission.baseJson
 
         var w: Int = 0
@@ -182,17 +181,17 @@ class RealmDataWrapper {
         let preview = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["url"] as? String)
 
         var videoPreview = (((((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["variants"] as? [String: Any])?["mp4"] as? [String: Any])?["source"] as? [String: Any])?["url"] as? String)
-        if (videoPreview != nil && videoPreview!.isEmpty || videoPreview == nil) {
+        if videoPreview != nil && videoPreview!.isEmpty || videoPreview == nil {
             videoPreview = (((json?["media"] as? [String: Any])?["reddit_video"] as? [String: Any])?["fallback_url"] as? String)
         }
-        if ((videoPreview != nil && videoPreview!.isEmpty || videoPreview == nil) && json?["crosspost_parent_list"] != nil) {
+        if (videoPreview != nil && videoPreview!.isEmpty || videoPreview == nil) && json?["crosspost_parent_list"] != nil {
             videoPreview = (((((json?["crosspost_parent_list"] as? [Any])?.first as? [String: Any])?["media"] as? [String: Any])?["reddit_video"] as? [String: Any])?["fallback_url"] as? String)
         }
 
-        if (preview != nil && !(preview?.isEmpty())!) {
+        if preview != nil && !(preview?.isEmpty())! {
             burl = (preview!.replacingOccurrences(of: "&amp;", with: "&"))
             w = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["width"] as? Int)!
-            if(w < 200){
+            if w < 200 {
                 big = false
             } else {
                 h = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["height"] as? Int)!
@@ -201,7 +200,7 @@ class RealmDataWrapper {
         }
 
         let thumbnailType = ContentType.getThumbnailType(submission: submission)
-        switch (thumbnailType) {
+        switch thumbnailType {
         case .NSFW:
             thumb = true
             turl = "nsfw"
@@ -219,18 +218,18 @@ class RealmDataWrapper {
             break
         }
 
-        if (big) { //check for low quality image
-            if (previews != nil && !(previews?.isEmpty)!) {
-                if (submission.url != nil && ContentType.isImgurImage(uri: submission.url!)) {
+        if big { //check for low quality image
+            if previews != nil && !(previews?.isEmpty)! {
+                if submission.url != nil && ContentType.isImgurImage(uri: submission.url!) {
                     lqUrl = (submission.url?.absoluteString)!
                     lqUrl = lqUrl.substring(0, length: lqUrl.lastIndexOf(".")!) + (SettingValues.lqLow ? "m" : "l") + lqUrl.substring(lqUrl.lastIndexOf(".")!, length: lqUrl.length - lqUrl.lastIndexOf(".")!)
                 } else {
                     let length = previews?.count
-                    if (SettingValues.lqLow && length! >= 3) {
+                    if SettingValues.lqLow && length! >= 3 {
                         lqUrl = ((previews?[1] as? [String: Any])?["url"] as? String)!
-                    } else if (length! >= 4) {
+                    } else if length! >= 4 {
                         lqUrl = ((previews?[2] as? [String: Any])?["url"] as? String)!
-                    } else if (length! >= 5) {
+                    } else if length! >= 5 {
                         lqUrl = ((previews?[length! - 1] as? [String: Any])?["url"] as? String)!
                     } else {
                         lqUrl = preview!
@@ -296,9 +295,8 @@ class RealmDataWrapper {
 
     }
 
-
     static func commentToRealm(comment: Thing, depth: Int) -> Object {
-        if (comment is Comment) {
+        if comment is Comment {
             return commentToRComment(comment: comment as! Comment, depth: depth)
         } else {
             return moreToRMore(more: comment as! More)
@@ -307,7 +305,7 @@ class RealmDataWrapper {
 
     //Takes a Comment from reddift and turns it into a Realm model
     static func commentToRComment(comment: Comment, depth: Int) -> RComment {
-        let flair = comment.authorFlairCssClass.isEmpty ? comment.authorFlairCssClass : comment.authorFlairText;
+        let flair = comment.authorFlairCssClass.isEmpty ? comment.authorFlairCssClass : comment.authorFlairText
         let bodyHtml = comment.bodyHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
         let rComment = RComment()
         rComment.id = comment.getId()
@@ -377,7 +375,7 @@ class RealmDataWrapper {
     //Takes a More from reddift and turns it into a Realm model
     static func moreToRMore(more: More) -> RMore {
         let rMore = RMore()
-        if(more.getId().endsWith("_")){
+        if more.getId().endsWith("_") {
             rMore.id = "more_\(NSUUID().uuidString)"
         } else {
             rMore.id = more.getId()
@@ -392,7 +390,6 @@ class RealmDataWrapper {
         }
         return rMore
     }
-
 
 }
 
@@ -434,7 +431,7 @@ class RSubmission: Object {
     dynamic var crosspostPermalink = ""
 
     var type: ContentType.CType {
-        if (isSelf) {
+        if isSelf {
             return .SELF
         }
         if url != nil {
@@ -485,8 +482,8 @@ class RSubmission: Object {
     }
 
     var likes: VoteDirection {
-        if (voted) {
-            if (vote) {
+        if voted {
+            if vote {
                 return .up
             } else {
                 return .down
@@ -517,7 +514,6 @@ class RMessage: Object {
         return id
     }
 }
-
 
 class RComment: Object {
     override static func primaryKey() -> String? {
@@ -564,8 +560,8 @@ class RComment: Object {
     dynamic var saved = false
 
     var likes: VoteDirection {
-        if (voted) {
-            if (vote) {
+        if voted {
+            if vote {
                 return .up
             } else {
                 return .down
@@ -622,7 +618,7 @@ extension String {
 
         let attributedOptions: [String: Any] = [
             NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType,
-            NSCharacterEncodingDocumentAttribute: String.Encoding.utf8.rawValue
+            NSCharacterEncodingDocumentAttribute: String.Encoding.utf8.rawValue,
         ]
 
         do {
@@ -634,5 +630,3 @@ extension String {
         }
     }
 }
-
-

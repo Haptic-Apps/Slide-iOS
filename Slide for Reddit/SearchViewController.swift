@@ -6,15 +6,15 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
-import UIKit
-import RLBAlertsPickers
 import reddift
+import RLBAlertsPickers
+import UIKit
 
 class SearchViewController: ContentListingViewController {
 
     var search = ""
     var sub = ""
-    init(subreddit: String, searchFor: String){
+    init(subreddit: String, searchFor: String) {
         super.init(dataSource: SearchContributionLoader.init(query: searchFor, sub: subreddit))
         baseData.delegate = self
         self.title = searchFor
@@ -50,21 +50,21 @@ class SearchViewController: ContentListingViewController {
     var filterB = UIBarButtonItem.init()
     var timeB = UIBarButtonItem.init()
     
-    func time(_ sender: UIView){
+    func time(_ sender: UIView) {
         let actionSheetController: UIAlertController = UIAlertController(title: "Time period", message: "", preferredStyle: .actionSheet)
         
-        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Close", style: .cancel) { action -> Void in
+        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Close", style: .cancel) { _ -> Void in
         }
         actionSheetController.addAction(cancelActionButton)
         
         let selected = UIImage(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
 
         for t in SearchTimePeriod.cases {
-            let saveActionButton: UIAlertAction = UIAlertAction(title: t.path.firstUppercased, style: .default) { action -> Void in
+            let saveActionButton: UIAlertAction = UIAlertAction(title: t.path.firstUppercased, style: .default) { _ -> Void in
                 (self.baseData as! SearchContributionLoader).time = t
                 self.refresh()
             }
-            if ((baseData as! SearchContributionLoader).time == t) {
+            if (baseData as! SearchContributionLoader).time == t {
                 saveActionButton.setValue(selected, forKey: "image")
             }
             
@@ -79,21 +79,21 @@ class SearchViewController: ContentListingViewController {
         self.present(actionSheetController, animated: true, completion: nil)
     }
     
-    func filter(_ sender: UIView){
+    func filter(_ sender: UIView) {
         let actionSheetController: UIAlertController = UIAlertController(title: "Search sort", message: "", preferredStyle: .actionSheet)
         
-        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Close", style: .cancel) { action -> Void in
+        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Close", style: .cancel) { _ -> Void in
         }
         actionSheetController.addAction(cancelActionButton)
         
         let selected = UIImage(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
         
         for t in SearchSortBy.cases {
-            let saveActionButton: UIAlertAction = UIAlertAction(title: t.path.firstUppercased, style: .default) { action -> Void in
+            let saveActionButton: UIAlertAction = UIAlertAction(title: t.path.firstUppercased, style: .default) { _ -> Void in
                 (self.baseData as! SearchContributionLoader).sorting = t
                 self.refresh()
             }
-            if ((baseData as! SearchContributionLoader).sorting == t) {
+            if (baseData as! SearchContributionLoader).sorting == t {
                 saveActionButton.setValue(selected, forKey: "image")
             }
             
@@ -108,7 +108,7 @@ class SearchViewController: ContentListingViewController {
         self.present(actionSheetController, animated: true, completion: nil)
     }
 
-    var searchText : String?
+    var searchText: String?
 
     func edit(_ sender: AnyObject) {
         let alert = UIAlertController(title: "Edit search", message: "", preferredStyle: .actionSheet)

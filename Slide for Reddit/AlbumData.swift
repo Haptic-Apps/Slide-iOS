@@ -13,8 +13,8 @@ import Foundation
 /* For support, please feel free to contact me at https://www.linkedin.com/in/syedabsar */
 
 public class AlbumData {
-	public var count : Int?
-	public var images : Array<Images>?
+	public var count: Int?
+	public var images: Array<Images>?
 
 /**
     Returns an array of models based on given dictionary.
@@ -26,11 +26,9 @@ public class AlbumData {
 
     - returns: Array of Data Instances.
 */
-    public class func modelsFromDictionaryArray(array:NSArray) -> [AlbumData]
-    {
-        var models:[AlbumData] = []
-        for item in array
-        {
+    public class func modelsFromDictionaryArray(array: NSArray) -> [AlbumData] {
+        var models: [AlbumData] = []
+        for item in array {
             models.append(AlbumData(dictionary: item as! NSDictionary)!)
         }
         return models
@@ -49,9 +47,8 @@ public class AlbumData {
 	required public init?(dictionary: NSDictionary) {
 
 		count = dictionary["count"] as? Int
-		if (dictionary["images"] != nil) { images = Images.modelsFromDictionaryArray(array: dictionary["images"] as! NSArray) }
+		if dictionary["images"] != nil { images = Images.modelsFromDictionaryArray(array: dictionary["images"] as! NSArray) }
 	}
-
 		
 /**
     Returns the dictionary representation for the current instance.

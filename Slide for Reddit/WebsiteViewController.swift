@@ -6,9 +6,9 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
+import SafariServices
 import UIKit
 import WebKit
-import SafariServices
 
 class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     var url: URL?
@@ -16,7 +16,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     var myProgressView: UIProgressView = UIProgressView()
     var sub: String
     
-    init(url: URL, subreddit: String){
+    init(url: URL, subreddit: String) {
         self.url = url
         self.sub = subreddit
         super.init(nibName: nil, bundle: nil)
@@ -27,7 +27,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         super.viewWillAppear(animated)
         self.view.backgroundColor = .white
 
-        if(navigationController != nil){
+        if navigationController != nil {
             let sort = UIButton.init(type: .custom)
             sort.setImage(UIImage.init(named: "size")?.getCopy(withSize: .square(size: 25)), for: UIControlState.normal)
             sort.addTarget(self, action: #selector(self.readerMode(_:)), for: UIControlEvents.touchUpInside)
@@ -38,14 +38,14 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
 
     }
     
-    func exit(){
+    func exit() {
         self.navigationController?.popViewController(animated: true)
-        if(navigationController!.modalPresentationStyle == .pageSheet){
+        if navigationController!.modalPresentationStyle == .pageSheet {
             self.navigationController?.dismiss(animated: true, completion: nil)
         }
     }
     
-    func readerMode(_ sender: AnyObject){
+    func readerMode(_ sender: AnyObject) {
         let safariVC = SFHideSafariViewController(url: webView.url!, entersReaderIfAvailable: true)
         present(safariVC, animated: true, completion: nil)
     }
@@ -69,14 +69,13 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         webView.allowsBackForwardNavigationGestures = true
 
         self.view.addSubview(webView)
-        myProgressView = UIProgressView(frame: CGRect(x:0, y:0, width: self.view.frame.size.width, height:10))
+        myProgressView = UIProgressView(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: 10))
         myProgressView.progressTintColor = ColorUtil.accentColorForSub(sub: sub)
         self.view.addSubview(myProgressView)
 
         self.webView.scrollView.frame = self.view.frame
         self.webView.scrollView.setZoomScale(1, animated: false)
         loadUrl()
-
 
     }
     
@@ -87,16 +86,15 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
 
     }
     
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == "estimatedProgress" {
             myProgressView.progress = Float(webView.estimatedProgress)
         }
     }
-
     
-    func loadUrl(){
+    func loadUrl() {
         print(url!.absoluteString)
-        let myURLRequest:URLRequest = URLRequest(url: url!)
+        let myURLRequest: URLRequest = URLRequest(url: url!)
         webView.load(myURLRequest)
         self.title = url!.host
     }
@@ -106,7 +104,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     }
     
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-        var request = navigationAction.request;
+        var request = navigationAction.request
         let url = request.url
         
         if url == nil || !(isAd(url: url!)) {
@@ -124,14 +122,14 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         return request.url == nil || !(isAd(url: request.url!))
     }
 
-    func isAd(url: URL) -> Bool{
+    func isAd(url: URL) -> Bool {
       let host = url.host
         print(host ?? "nil")
        return host != nil && !host!.isEmpty && hostMatches(host: host!)
     }
     
-    func hostMatches(host: String) -> Bool{
-        if(AdDictionary.hosts.isEmpty){
+    func hostMatches(host: String) -> Bool {
+        if AdDictionary.hosts.isEmpty {
            AdDictionary.doInit()
         }
         let firstPeriod = host.indexOf(".")
@@ -147,19 +145,17 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         // Dispose of any resources that can be recreated.
     }
     
-    
 }
 extension WKWebView {
     func stringByEvaluatingJavaScriptFromString(script: String) -> String {
-        var resultString: String? = nil
+        var resultString: String?
         var finished: Bool = false
         self.evaluateJavaScript(script, completionHandler: {(result: Any?, error: Error?) -> Void in
             if error == nil {
                 if result != nil {
                     resultString = "\(error.debugDescription)"
                 }
-            }
-            else {
+            } else {
             }
             finished = true
         })

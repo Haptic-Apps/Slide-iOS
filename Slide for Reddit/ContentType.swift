@@ -24,18 +24,18 @@ class ContentType {
      * @return If {@code host} contains any of {@code bases}
      */
     public static func hostContains(host: String?, bases: [String]?) -> Bool {
-        if (host == nil || (host?.isEmpty)!){
+        if host == nil || (host?.isEmpty)! {
             return false
         }
                 
         for b in bases! {
-            if b.isEmpty{
+            if b.isEmpty {
                 continue
             }
-            if ((host?.hasSuffix("." + b))! || (host == b)) {return true}
+            if (host?.hasSuffix("." + b))! || (host == b) { return true }
         }
         
-        return false;
+        return false
     }
 
     public static func isExternal(_ uri: URL) -> Bool {
@@ -44,14 +44,14 @@ class ContentType {
 
     public static func isSpoiler(uri: URL) -> Bool {
         var urlString = uri.absoluteString
-        if (!urlString.hasPrefix("//") && ((urlString.hasPrefix("/") && urlString.characters.count < 4)
+        if !urlString.hasPrefix("//") && ((urlString.hasPrefix("/") && urlString.characters.count < 4)
             || urlString.hasPrefix("#spoil")
             || urlString.hasPrefix("/spoil")
             || urlString.hasPrefix("#s-")
             || urlString == ("#s")
             || urlString == ("#ln")
             || urlString == ("#b")
-            || urlString == ("#sp"))) {
+            || urlString == ("#sp")) {
             return true
         }
         return false
@@ -59,7 +59,7 @@ class ContentType {
 
     public static func isTable(uri: URL) -> Bool {
         var urlString = uri.absoluteString
-        if (urlString.contains("http://view.table/")) {
+        if urlString.contains("http://view.table/") {
             return true
         }
         return false
@@ -78,7 +78,7 @@ class ContentType {
         let path = uri.path.lowercased()
 
         return hostContains(host: host, bases: ["gfycat.com", "v.redd.it"]) || path.hasSuffix(".gif") || path.hasSuffix(
-            ".gifv") || path.hasSuffix(".webm") || path.hasSuffix(".mp4");
+            ".gifv") || path.hasSuffix(".webm") || path.hasSuffix(".mp4")
     }
     
     public static func isGfycat(uri: URL) -> Bool {
@@ -93,7 +93,7 @@ class ContentType {
         let path = uri.path.lowercased()
         
         return host == ("i.reddituploads.com") || path.hasSuffix(".png") || path.hasSuffix(
-            ".jpg") || path.hasSuffix(".jpeg");
+            ".jpg") || path.hasSuffix(".jpeg")
         
     }
     public static func isImgurImage(uri: URL) -> Bool {
@@ -101,7 +101,7 @@ class ContentType {
         let path = uri.path.lowercased()
         
         return (host!.contains("imgur.com") || host!.contains("bildgur.de")) && ((path.hasSuffix(
-            ".png") || path.hasSuffix(".jpg") || path.hasSuffix(".jpeg")));
+            ".png") || path.hasSuffix(".jpg") || path.hasSuffix(".jpeg")))
         
     }
     
@@ -110,10 +110,9 @@ class ContentType {
         let path = uri.path.lowercased()
         
         return (host!.contains("imgur.com")) && (!(path.hasSuffix(".png") && !path.hasSuffix(
-            ".jpg") && !path.hasSuffix(".jpeg")));
+            ".jpg") && !path.hasSuffix(".jpeg")))
         
     }
-    
     
     public static func isAlbum(uri: URL) -> Bool {
         let host = uri.host?.lowercased()
@@ -122,7 +121,7 @@ class ContentType {
         return hostContains(host: host, bases: ["imgur.com", "bildgur.de"]) && (path.hasPrefix("/a/")
             || path.hasPrefix("/gallery/")
             || path.hasPrefix("/g/")
-            || path.contains(","));
+            || path.contains(","))
         
     }
     
@@ -130,7 +129,7 @@ class ContentType {
         let host = uri.host?.lowercased()
         let path = uri.path.lowercased()
         
-        return hostContains(host: host, bases: ["youtu.be", "youtube.com", "youtube.co.uk"]) && !path.contains("/user/") && !path.contains("/channel/");
+        return hostContains(host: host, bases: ["youtu.be", "youtube.com", "youtube.co.uk"]) && !path.contains("/user/") && !path.contains("/channel/")
     }
     
     public static func isImgurLink(uri: URL) -> Bool {
@@ -145,78 +144,78 @@ class ContentType {
      * @return ContentType of the URL
      */
     public static func getContentType(baseUrl: URL?) -> CType {
-        if(baseUrl == nil || baseUrl!.absoluteString.isEmpty()){
+        if baseUrl == nil || baseUrl!.absoluteString.isEmpty() {
             return CType.NONE
         }
         var urlString = baseUrl!.absoluteString
-        if(urlString.hasPrefix("applewebdata:")){
+        if urlString.hasPrefix("applewebdata:") {
             urlString = baseUrl!.path
         }
-        if (!urlString.hasPrefix("//") && ((urlString.hasPrefix("/") && urlString.length < 4)
+        if !urlString.hasPrefix("//") && ((urlString.hasPrefix("/") && urlString.length < 4)
             || urlString.hasPrefix("#spoil")
             || urlString.hasPrefix("/spoil")
             || urlString.hasPrefix("#s-")
             || urlString == ("#s")
             || urlString == ("#ln")
             || urlString == ("#b")
-            || urlString == ("#sp"))) {
-            return CType.SPOILER;
+            || urlString == ("#sp")) {
+            return CType.SPOILER
         }
 
-        if(urlString.contains("http://view.table/")){
+        if urlString.contains("http://view.table/") {
             return CType.TABLE
         }
         
-        if (urlString.hasPrefix("//")) {urlString = "https:" + urlString}
-        if (urlString.hasPrefix("/")) {urlString = "reddit.com" + urlString}
-        if (!urlString.contains("://")) {urlString = "http://" + urlString}
+        if urlString.hasPrefix("//") { urlString = "https:" + urlString }
+        if urlString.hasPrefix("/") { urlString = "reddit.com" + urlString }
+        if !urlString.contains("://") { urlString = "http://" + urlString }
         
         let url = URL.init(string: urlString)
         let host = url?.host?.lowercased()
         let scheme = url?.scheme?.lowercased()
 
-        if(ContentType.isExternal(url!)){
+        if ContentType.isExternal(url!) {
             return .EXTERNAL
         }
 
-        if (host == nil || scheme == nil || !(scheme == ("http") || scheme == ("https"))) {
-            return CType.EXTERNAL;
+        if host == nil || scheme == nil || !(scheme == ("http") || scheme == ("https")) {
+            return CType.EXTERNAL
         }
-        if (isVideo(uri: url!)) {
-            return CType.VIDEO;
+        if isVideo(uri: url!) {
+            return CType.VIDEO
         }
-        if (isGif(uri: url!)) {
-            return CType.GIF;
+        if isGif(uri: url!) {
+            return CType.GIF
         }
-        if (isImage(uri: url!)) {
-            return CType.IMAGE;
+        if isImage(uri: url!) {
+            return CType.IMAGE
         }
-        if (isAlbum(uri: url!)) {
-            return CType.ALBUM;
+        if isAlbum(uri: url!) {
+            return CType.ALBUM
         }
-        if (hostContains(host: host, bases: ["imgur.com", "bildgur.de"])) {
-            return CType.IMGUR;
+        if hostContains(host: host, bases: ["imgur.com", "bildgur.de"]) {
+            return CType.IMGUR
         }
-        if (hostContains(host: host, bases: ["xkcd.com"]) && !(host == ("imgs.xkcd.com")) && !(host == ("what-if.xkcd.com"))) {
-            return CType.XKCD;
+        if hostContains(host: host, bases: ["xkcd.com"]) && !(host == ("imgs.xkcd.com")) && !(host == ("what-if.xkcd.com")) {
+            return CType.XKCD
         }
-        if (hostContains(host: host, bases: ["tumblr.com"]) && (url?.path.contains("post"))!) {
-            return CType.TUMBLR;
+        if hostContains(host: host, bases: ["tumblr.com"]) && (url?.path.contains("post"))! {
+            return CType.TUMBLR
         }
-        if (hostContains(host: host, bases: ["reddit.com", "redd.it"])) {
-            return CType.REDDIT;
+        if hostContains(host: host, bases: ["reddit.com", "redd.it"]) {
+            return CType.REDDIT
         }
-        if (hostContains(host: host, bases: ["vid.me"])) {
-            return CType.VID_ME;
+        if hostContains(host: host, bases: ["vid.me"]) {
+            return CType.VID_ME
         }
-        if (hostContains(host: host, bases: ["deviantart.com"])) {
-            return CType.DEVIANTART;
+        if hostContains(host: host, bases: ["deviantart.com"]) {
+            return CType.DEVIANTART
         }
-        if (hostContains(host: host, bases: ["streamable.com"])) {
-            return CType.STREAMABLE;
+        if hostContains(host: host, bases: ["streamable.com"]) {
+            return CType.STREAMABLE
         }
         
-        return CType.LINK;
+        return CType.LINK
     }
     /**
      * Attempts to determine the content of a submission, mostly based on the URL
@@ -226,35 +225,35 @@ class ContentType {
      * @see #getContentType(String)
      */
     public static func getContentType(submission: RSubmission?) -> CType {
-        if (submission == nil) {
+        if submission == nil {
             return CType.SELF; //hopefully shouldn't be null, but catch it in case
         }
         
         let url = submission?.url
-        if(url == nil){
+        if url == nil {
             return .NONE
         }
 
         let basicType = getContentType(baseUrl: url)
         
         if (submission?.isSelf)! {
-            return CType.SELF;
+            return CType.SELF
         }
         // TODO: Decide whether internal youtube links should be EMBEDDED or LINK
         /* todo this if (basicType == (CType.LINK) && submission?.mediaEmbed != nil && !submission?.mediaEmbed!.content.isEmpty{
          return CType.EMBEDDED;
          }*/
         
-        return basicType;
+        return basicType
     }
     
     public static func displayImage(t: CType) -> Bool {
-        switch (t) {
+        switch t {
             
         case CType.ALBUM, CType.DEVIANTART, CType.IMAGE, CType.XKCD, CType.TUMBLR, CType.IMGUR, CType.SELF:
-            return true;
+            return true
         default:
-            return false;
+            return false
         }
     }
     
@@ -263,7 +262,7 @@ class ContentType {
     }
     
     public static func fullImage(t: CType) -> Bool {
-        switch (t) {
+        switch t {
             
         case CType.ALBUM, CType.DEVIANTART, CType.GIF, CType.IMAGE, CType.IMGUR, CType.STREAMABLE, CType.TUMBLR, CType.XKCD, CType.VIDEO, CType.SELF, CType.VID_ME:
             return true
@@ -273,14 +272,13 @@ class ContentType {
         }
     }
     
-    
     public static func mediaType(t: CType) -> Bool {
-        switch (t) {
+        switch t {
             
         case CType.ALBUM, CType.DEVIANTART, CType.GIF, CType.IMAGE, CType.TUMBLR, CType.XKCD, CType.IMGUR, CType.STREAMABLE, CType.VID_ME:
-            return true;
+            return true
         default:
-            return false;
+            return false
         }
     }
     
@@ -312,14 +310,14 @@ class ContentType {
         case TABLE
     }
     
-    static func getThumbnailType(submission: Link) -> ThumbnailType{
+    static func getThumbnailType(submission: Link) -> ThumbnailType {
         let thumbnail = submission.thumbnail
         
-        if(thumbnail.isEmpty()){
+        if thumbnail.isEmpty() {
             return ThumbnailType.NONE
         }
         
-        if let type = ThumbnailType(rawValue: thumbnail){
+        if let type = ThumbnailType(rawValue: thumbnail) {
             return type
         } else {
             return ThumbnailType.URL

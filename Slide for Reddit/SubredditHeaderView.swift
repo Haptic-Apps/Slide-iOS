@@ -6,10 +6,10 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
-import UIKit
+import Anchorage
 import reddift
 import TTTAttributedLabel
-import Anchorage
+import UIKit
 
 class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
 
@@ -39,25 +39,25 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
                     DispatchQueue.main.async {
                         let sheet = UIAlertController(title: "r/\(self.subreddit!.displayName) mods", message: nil, preferredStyle: .actionSheet)
                         sheet.addAction(
-                                UIAlertAction(title: "Close", style: .cancel) { (action) in
+                                UIAlertAction(title: "Close", style: .cancel) { (_) in
                                     sheet.dismiss(animated: true, completion: nil)
                                 }
                         )
                         sheet.addAction(
-                                UIAlertAction(title: "Message r/\(self.subreddit!.displayName) moderators", style: .default) { (action) in
+                                UIAlertAction(title: "Message r/\(self.subreddit!.displayName) moderators", style: .default) { (_) in
                                     sheet.dismiss(animated: true, completion: nil)
                                     //todo this
                                 }
                         )
 
                         for user in users {
-                            let somethingAction = UIAlertAction(title: "u/\(user.name)", style: .default) { (action) in
+                            let somethingAction = UIAlertAction(title: "u/\(user.name)", style: .default) { (_) in
                                 sheet.dismiss(animated: true, completion: nil)
                                 VCPresenter.showVC(viewController: ProfileViewController.init(name: user.name), popupIfPossible: false, parentNavigationController: self.parentController?.navigationController, parentViewController: self.parentController)
                             }
 
                             let color = ColorUtil.getColorForUser(name: user.name)
-                            if (color != ColorUtil.baseColor) {
+                            if color != ColorUtil.baseColor {
                                 somethingAction.setValue(color, forKey: "titleTextColor")
 
                             }
@@ -88,7 +88,6 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
         if sorting.bounds.contains(pointForTargetViewsort) {
             return sorting
         }
-
 
         let pointForTargetViewsubmit: CGPoint = submit.convert(point, from: self)
         if submit.bounds.contains(pointForTargetViewsubmit) {
@@ -128,14 +127,14 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
         self.mods.layer.cornerRadius = 5
         self.mods.clipsToBounds = true
 
-        self.info = TextDisplayStackView.init(fontSize: 16, submission: false, color: .blue, delegate: self, width: width  - 24)
+        self.info = TextDisplayStackView.init(fontSize: 16, submission: false, color: .blue, delegate: self, width: width - 24)
         
         self.subscribers = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
         subscribers.numberOfLines = 1
         subscribers.font = UIFont.systemFont(ofSize: 16)
         subscribers.textColor = UIColor.white
 
-        self.here = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude));
+        self.here = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
         here.numberOfLines = 1
         here.font = UIFont.systemFont(ofSize: 16)
         here.textColor = UIColor.white
@@ -167,27 +166,27 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
     }
     
     func doSub(_ changed: UISwitch) {
-        if (!changed.isOn) {
+        if !changed.isOn {
             Subscriptions.unsubscribe(subreddit!.displayName, session: (UIApplication.shared.delegate as! AppDelegate).session!)
             BannerUtil.makeBanner(text: "Unsubscribed from r/\(subreddit!.displayName)", color: ColorUtil.accentColorForSub(sub: subreddit!.displayName), seconds: 3, context: parentController, top: true)
 
         } else {
             let alrController = UIAlertController.init(title: "Subscribe to \(subreddit!.displayName)", message: nil, preferredStyle: .actionSheet)
-            if (AccountController.isLoggedIn) {
-                let somethingAction = UIAlertAction(title: "Add to sub list and subscribe", style: UIAlertActionStyle.default, handler: { (alert: UIAlertAction!) in
+            if AccountController.isLoggedIn {
+                let somethingAction = UIAlertAction(title: "Add to sub list and subscribe", style: UIAlertActionStyle.default, handler: { (_: UIAlertAction!) in
                     Subscriptions.subscribe(self.subreddit!.displayName, true, session: (UIApplication.shared.delegate as! AppDelegate).session!)
                     BannerUtil.makeBanner(text: "Subscribed", color: ColorUtil.accentColorForSub(sub: self.subreddit!.displayName), seconds: 3, context: self.parentController, top: true)
                 })
                 alrController.addAction(somethingAction)
             }
             
-            let somethingAction = UIAlertAction(title: "Just add to sub list", style: UIAlertActionStyle.default, handler: { (alert: UIAlertAction!) in
+            let somethingAction = UIAlertAction(title: "Just add to sub list", style: UIAlertActionStyle.default, handler: { (_: UIAlertAction!) in
                 Subscriptions.subscribe(self.subreddit!.displayName, false, session: (UIApplication.shared.delegate as! AppDelegate).session!)
                 BannerUtil.makeBanner(text: "Added to subreddit list", color: ColorUtil.accentColorForSub(sub: self.subreddit!.displayName), seconds: 3, context: self.parentController, top: true)
             })
             alrController.addAction(somethingAction)
             
-            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: { (alert: UIAlertAction!) in print("cancel") })
+            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: { (_: UIAlertAction!) in print("cancel") })
             
             alrController.addAction(cancelAction)
             
@@ -209,18 +208,18 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
     func sort(_ selector: UITableViewCell) {
         let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
 
-        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
+        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
             print("Cancel")
         }
         actionSheetController.addAction(cancelActionButton)
         let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
 
         for link in LinkSortType.cases {
-            let saveActionButton: UIAlertAction = UIAlertAction(title: link.description, style: .default) { action -> Void in
+            let saveActionButton: UIAlertAction = UIAlertAction(title: link.description, style: .default) { _ -> Void in
                 self.showTimeMenu(s: link, selector: selector)
             }
             
-            if(SettingValues.getLinkSorting(forSubreddit: self.subreddit!.displayName) == link){
+            if SettingValues.getLinkSorting(forSubreddit: self.subreddit!.displayName) == link {
                 saveActionButton.setValue(selected, forKey: "image")
             }
 
@@ -237,7 +236,7 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
     }
 
     func showTimeMenu(s: LinkSortType, selector: UITableViewCell) {
-        if (s == .hot || s == .new) {
+        if s == .hot || s == .new {
             UserDefaults.standard.set(s.path, forKey: self.subreddit!.displayName.lowercased() + "Sorting")
             UserDefaults.standard.set(TimeFilterWithin.day.param, forKey: self.subreddit!.displayName.lowercased() + "Time")
             UserDefaults.standard.synchronize()
@@ -245,20 +244,20 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
         } else {
             let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
 
-            let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
+            let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
                 print("Cancel")
             }
             actionSheetController.addAction(cancelActionButton)
             let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
 
             for t in TimeFilterWithin.cases {
-                let saveActionButton: UIAlertAction = UIAlertAction(title: t.param, style: .default) { action -> Void in
+                let saveActionButton: UIAlertAction = UIAlertAction(title: t.param, style: .default) { _ -> Void in
                     UserDefaults.standard.set(s.path, forKey: self.subreddit!.displayName.lowercased() + "Sorting")
                     UserDefaults.standard.set(t.param, forKey: self.subreddit!.displayName.lowercased() + "Time")
                     UserDefaults.standard.synchronize()
                 }
                 
-                if(SettingValues.getTimePeriod(forSubreddit: self.subreddit!.displayName) == t){
+                if SettingValues.getTimePeriod(forSubreddit: self.subreddit!.displayName) == t {
                     saveActionButton.setValue(selected, forKey: "image")
                 }
 
@@ -293,7 +292,6 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
 
     }
 
-
     var content: NSAttributedString?
     var textHeight: CGFloat = 0
     var descHeight: CGFloat = 0
@@ -324,21 +322,20 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
         subscribers.textAlignment = .center
         here.textColor = ColorUtil.fontColor
         subscribers.textColor = ColorUtil.fontColor
-        
 
-        let attrs = [NSFontAttributeName : FontGenerator.boldFontOfSize(size: 20, submission: true)]
-        var attributedString = NSMutableAttributedString(string: "\(subreddit.subscribers.delimiter)", attributes:attrs)
+        let attrs = [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 20, submission: true)]
+        var attributedString = NSMutableAttributedString(string: "\(subreddit.subscribers.delimiter)", attributes: attrs)
         var subt = NSMutableAttributedString(string: "\nSUBSCRIBERS")
         attributedString.append(subt)
         subscribers.attributedText = attributedString
         
-        attributedString = NSMutableAttributedString(string: "\(subreddit.accountsActive.delimiter)", attributes:attrs)
+        attributedString = NSMutableAttributedString(string: "\(subreddit.accountsActive.delimiter)", attributes: attrs)
         subt = NSMutableAttributedString(string: "\nHERE")
         attributedString.append(subt)
         here.attributedText = attributedString
 
         info.estimatedWidth = width - 24
-        if (!subreddit.descriptionHtml.isEmpty()) {
+        if !subreddit.descriptionHtml.isEmpty() {
             info.tColor = ColorUtil.accentColorForSub(sub: subreddit.displayName)
             info.setTextWithTitleHTML(NSMutableAttributedString(), htmlString: subreddit.descriptionHtml)
             descHeight = info.estimatedHeight
@@ -388,21 +385,20 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
 extension UIImage {
 
     func addImagePadding(x: CGFloat, y: CGFloat) -> UIImage {
-        let width: CGFloat = self.size.width + x;
-        let height: CGFloat = self.size.width + y;
-        UIGraphicsBeginImageContextWithOptions(CGSize(width: width, height: height), false, 0);
-        let context: CGContext = UIGraphicsGetCurrentContext()!;
-        UIGraphicsPushContext(context);
-        let origin: CGPoint = CGPoint(x: (width - self.size.width) / 2, y: (height - self.size.height) / 2);
+        let width: CGFloat = self.size.width + x
+        let height: CGFloat = self.size.width + y
+        UIGraphicsBeginImageContextWithOptions(CGSize(width: width, height: height), false, 0)
+        let context: CGContext = UIGraphicsGetCurrentContext()!
+        UIGraphicsPushContext(context)
+        let origin: CGPoint = CGPoint(x: (width - self.size.width) / 2, y: (height - self.size.height) / 2)
         self.draw(at: origin)
-        UIGraphicsPopContext();
-        let imageWithPadding = UIGraphicsGetImageFromCurrentImageContext();
-        UIGraphicsEndImageContext();
+        UIGraphicsPopContext()
+        let imageWithPadding = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
 
         return imageWithPadding!
     }
 }
-
 
 //https://medium.com/@sdrzn/adding-gesture-recognizers-with-closures-instead-of-selectors-9fb3e09a8f0b
 extension UIView {
@@ -444,7 +440,6 @@ extension UIView {
         }
     }
 
-
     // This is the meat of the sauce, here we create the tap gesture recognizer and
     // store the closure the user passed to us in the associated object we declared above
     public func addTapGestureRecognizer(action: (() -> Void)?) {
@@ -460,7 +455,6 @@ extension UIView {
         let tapGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongTapGesture))
         self.addGestureRecognizer(tapGestureRecognizer)
     }
-
 
     // Every time the user taps on the UIImageView, this function gets called,
     // which triggers the closure we stored
@@ -488,4 +482,3 @@ extension Int {
         return Int.numberFormatter.string(from: NSNumber(value: self)) ?? ""
     }
 }
-

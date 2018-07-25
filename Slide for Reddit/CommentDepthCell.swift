@@ -6,14 +6,14 @@
 //  Copyright © 2016 Haptic Apps. All rights reserved.
 //
 
-import UIKit
-import reddift
-import TTTAttributedLabel
-import RealmSwift
-import AudioToolbox
-import XLActionController
-import RLBAlertsPickers
 import Anchorage
+import AudioToolbox
+import RealmSwift
+import reddift
+import RLBAlertsPickers
+import TTTAttributedLabel
+import UIKit
+import XLActionController
 
 protocol TTTAttributedCellDelegate: class {
     func pushedSingleTap(_ cell: CommentDepthCell)
@@ -61,15 +61,15 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var sendB = UIButton()
     var discardB = UIButton()
     var edit = false
-    var toolbar : ToolbarTextView?
+    var toolbar: ToolbarTextView?
 
     var childrenCount: UIView = UIView()
     var childrenCountLabel: UILabel = UILabel()
     var comment: RComment?
     var depth: Int = 0
     
-    var delegate: TTTAttributedCellDelegate? = nil
-    var content: Object? = nil
+    var delegate: TTTAttributedCellDelegate?
+    var content: Object?
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -105,7 +105,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
         self.contentView.addSubviews(sideView, sideViewSpace, topViewSpace, title, childrenCount)
         
-        if(dtap == nil && SettingValues.commentActionDoubleTap != .NONE){
+        if dtap == nil && SettingValues.commentActionDoubleTap != .NONE {
             dtap = UIShortTapGestureRecognizer.init(target: self, action: #selector(self.doDTap(_:)))
             dtap!.numberOfTapsRequired = 2
             self.contentView.addGestureRecognizer(dtap!)
@@ -114,7 +114,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         let tapGestureRecognizer = UITapGestureRecognizer.init(target: self, action: #selector(self.handleShortPress(_:)))
         tapGestureRecognizer.cancelsTouchesInView = false
         tapGestureRecognizer.delegate = self
-        if(dtap != nil){
+        if dtap != nil {
             tapGestureRecognizer.require(toFail: dtap!)
         }
         self.title.addGestureRecognizer(tapGestureRecognizer)
@@ -130,7 +130,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
         self.clipsToBounds = true
         
-        
         self.menu = UIStackView().then {
             $0.accessibilityIdentifier = "Comment menu"
             $0.axis = .horizontal
@@ -144,7 +143,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         menu.addSubview(menuBack)
 
         self.contentView.addSubview(menu)
-        
         
         self.reply = UIView().then {
             $0.accessibilityIdentifier = "Reply menu"
@@ -178,16 +176,16 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     func doLongClick() {
         timer!.invalidate()
         AudioServicesPlaySystemSound(1519)
-        if (!self.cancelled) {
-            if (SettingValues.swapLongPress) {
+        if !self.cancelled {
+            if SettingValues.swapLongPress {
                 //todo this is probably wrong
-                if (comment != nil && comment! is RComment && self.delegate!.isMenuShown() && self.delegate!.getMenuShown() != comment!.getIdentifier()) {
+                if comment != nil && comment! is RComment && self.delegate!.isMenuShown() && self.delegate!.getMenuShown() != comment!.getIdentifier() {
                     self.showMenu(nil)
                 } else {
                     self.pushedSingleTap(nil)
                 }
             } else {
-                if(comment != nil && comment! is RComment){
+                if comment != nil && comment! is RComment {
                     self.showMenu(nil)
                 } else {
                     self.pushedSingleTap(nil)
@@ -200,7 +198,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var cancelled = false
 
     func handleLongPress(_ sender: UILongPressGestureRecognizer) {
-        if (sender.state == UIGestureRecognizerState.began) {
+        if sender.state == UIGestureRecognizerState.began {
             cancelled = false
             timer = Timer.scheduledTimer(timeInterval: 0.25,
                     target: self,
@@ -208,14 +206,14 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                     userInfo: nil,
                     repeats: false)
         }
-        if (sender.state == UIGestureRecognizerState.ended) {
+        if sender.state == UIGestureRecognizerState.ended {
             timer!.invalidate()
             cancelled = true
         }
     }
 
     func handleShortPress(_ sender: UIGestureRecognizer) {
-        if (SettingValues.swapLongPress || (self.delegate!.isMenuShown() && delegate!.getMenuShown() == (content as! RComment).getId())) {
+        if SettingValues.swapLongPress || (self.delegate!.isMenuShown() && delegate!.getMenuShown() == (content as! RComment).getId()) {
             self.showMenu(sender)
         } else {
             self.pushedSingleTap(sender)
@@ -223,7 +221,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
 
     override func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        if (gestureRecognizer.view == self.title) {
+        if gestureRecognizer.view == self.title {
             let link = self.title.link(at: touch.location(in: self.title), withTouch: touch)
             return link == nil
         }
@@ -234,7 +232,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
     func showMenu(_ sender: AnyObject?) {
         if let del = self.delegate {
-            if (del.isMenuShown() && del.getMenuShown() == (content as! RComment).getId()) {
+            if del.isMenuShown() && del.getMenuShown() == (content as! RComment).getId() {
                 hideMenuAnimated()
             } else {
                 showMenuAnimated()
@@ -242,15 +240,15 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
     }
     
-    func hideMenuAnimated(){
+    func hideMenuAnimated() {
         parent!.menuCell = nil
         parent!.menuId = nil
         self.hideCommentMenu()
         parent!.reloadHeights()
     }
     
-    func showMenuAnimated(){
-        if(parent!.menuCell != nil){
+    func showMenuAnimated() {
+        if parent!.menuCell != nil {
             parent!.menuCell!.hideCommentMenu()
             parent!.reloadHeights()
         }
@@ -259,7 +257,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         parent!.reloadHeights()
     }
     
-    func showCommentMenu(){
+    func showCommentMenu() {
         upvoteButton = UIButton.init(type: .custom).then({
             $0.setImage(UIImage.init(named: "upvote")?.navIcon(), for: .normal)
             $0.addTarget(self, action: #selector(self.upvote(_:)), for: UIControlEvents.touchUpInside)
@@ -298,27 +296,27 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         
         removedSubviews.forEach({ $0.removeFromSuperview() })
         
-        if(UIDevice.current.userInterfaceIdiom == .pad && !UIApplication.shared.isSplitOrSlideOver){
+        if UIDevice.current.userInterfaceIdiom == .pad && !UIApplication.shared.isSplitOrSlideOver {
             menu.addArrangedSubviews(flexSpace(), flexSpace(), flexSpace(), editButton, deleteButton, upvoteButton, downvoteButton, replyButton, moreButton, modButton)
         } else {
             menu.addArrangedSubviews(editButton, deleteButton, upvoteButton, downvoteButton, replyButton, moreButton, modButton)
         }
-        if(!AccountController.isLoggedIn || comment!.archived || parent!.np){
+        if !AccountController.isLoggedIn || comment!.archived || parent!.np {
             upvoteButton.isHidden = true
             downvoteButton.isHidden = true
             replyButton.isHidden = true
         }
-        if(!comment!.canMod){
+        if !comment!.canMod {
             modButton.isHidden = true
         }
-        if(comment!.author != AccountController.currentName){
+        if comment!.author != AccountController.currentName {
             editButton.isHidden = true
             deleteButton.isHidden = true
         }
         parent!.menuCell = self
         menu.isHidden = false
         reply.isHidden = true
-        if (depth == 1) {
+        if depth == 1 {
             depth = 1
         } else {
             depth = 2
@@ -338,7 +336,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         menuBack.backgroundColor = ColorUtil.getColorForSub(sub: comment!.subreddit)
     }
     
-    func hideCommentMenu(){
+    func hideCommentMenu() {
         depth = oldDepth
         menu.isHidden = true
         reply.isHidden = true
@@ -411,7 +409,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             }
         }
     }
-
     
     func doEdit(_ sender: AnyObject) {
         alertController = UIAlertController(title: nil, message: "Editing comment...\n\n", preferredStyle: .alert)
@@ -428,7 +425,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         
         do {
             let name = comment!.getIdentifier()
-            try session?.editCommentOrLink(name, newBody: body.text!, completion: { (result) in
+            try session?.editCommentOrLink(name, newBody: body.text!, completion: { (_) in
                 self.getCommentEdited(name)
             })
         } catch {
@@ -436,10 +433,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
     }
     
-    func send(_ sender: AnyObject){
+    func send(_ sender: AnyObject) {
         self.endEditing(true)
         
-        if (edit) {
+        if edit {
             doEdit(sender)
             return
         }
@@ -492,12 +489,12 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
     }
 
-    func edit(_ sender: AnyObject){
+    func edit(_ sender: AnyObject) {
         edit = true
         self.reply(sender)
     }
     
-    var replyDelegate : ReplyDelegate?
+    var replyDelegate: ReplyDelegate?
     func reply(_ s: AnyObject) {
         menu.isHidden = true
         reply.isHidden = false
@@ -526,7 +523,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         body.delegate = self
         self.replyDelegate = parent!
 
-        if (edit) {
+        if edit {
             body.text = comment!.body
         }
 
@@ -559,18 +556,18 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
     
     func vote() {
-        if (content is RComment) {
+        if content is RComment {
             let current = ActionStates.getVoteDirection(s: comment!)
             let dir = (current == VoteDirection.none) ? VoteDirection.up : VoteDirection.none
             var direction = dir
-            switch (ActionStates.getVoteDirection(s: comment!)) {
+            switch ActionStates.getVoteDirection(s: comment!) {
             case .up:
-                if (dir == .up) {
+                if dir == .up {
                     direction = .none
                 }
                 break
             case .down:
-                if (dir == .down) {
+                if dir == .down {
                     direction = .none
                 }
                 break
@@ -582,7 +579,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                     switch result {
                     case .failure(let error):
                         print(error.description)
-                    case .success(_): break
+                    case .success: break
                     }
                 })
             } catch {
@@ -594,24 +591,24 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
 
     func modApprove() {
-        if (content is RComment) {
+        if content is RComment {
             do {
                 try parent?.session?.approve(comment!.id, completion: { (result) -> Void in
                     switch result {
                     case .failure(let error):
                         print(error.description)
                         DispatchQueue.main.async {
-                            BannerUtil.makeBanner(text: "Approving comment failed!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit) ,seconds: 3, context: self.parent!)
+                            BannerUtil.makeBanner(text: "Approving comment failed!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit), seconds: 3, context: self.parent!)
                         }
                         break
-                    case .success(_):
+                    case .success:
                         self.parent!.approved.append(self.comment!.id)
-                        if(self.parent!.removed.contains(self.comment!.id)){
+                        if self.parent!.removed.contains(self.comment!.id) {
                             self.parent!.removed.remove(at: self.parent!.removed.index(of: self.comment!.id)!)
                         }
                         DispatchQueue.main.async {
                             self.parent!.tableView.reloadData()
-                            BannerUtil.makeBanner(text: "Comment approved!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit) ,seconds: 3, context: self.parent!)
+                            BannerUtil.makeBanner(text: "Comment approved!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit), seconds: 3, context: self.parent!)
                         }
                         break
                     }
@@ -624,19 +621,19 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
     
     func modDistinguish() {
-        if (content is RComment) {
+        if content is RComment {
             do {
                 try parent?.session?.distinguish(comment!.id, how: "yes", completion: { (result) -> Void in
                     switch result {
                     case .failure(let error):
                         print(error.description)
                         DispatchQueue.main.async {
-                            BannerUtil.makeBanner(text: "Distinguishing comment failed!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit) ,seconds: 3, context: self.parent!)
+                            BannerUtil.makeBanner(text: "Distinguishing comment failed!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit), seconds: 3, context: self.parent!)
                         }
                         break
-                    case .success(_):
+                    case .success:
                         DispatchQueue.main.async {
-                            BannerUtil.makeBanner(text: "Comment distinguished!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit) ,seconds: 3, context: self.parent!)
+                            BannerUtil.makeBanner(text: "Comment distinguished!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit), seconds: 3, context: self.parent!)
                         }
                         break
                     }
@@ -649,19 +646,19 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
 
     func modSticky(sticky: Bool) {
-        if (content is RComment) {
+        if content is RComment {
             do {
                 try parent?.session?.distinguish(comment!.id, how: "yes", sticky: sticky, completion: { (result) -> Void in
                     switch result {
                     case .failure(let error):
                         print(error.description)
                         DispatchQueue.main.async {
-                            BannerUtil.makeBanner(text: "Couldn't \(sticky ? "" : "un-")pin comment!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit) ,seconds: 3, context: self.parent!)
+                            BannerUtil.makeBanner(text: "Couldn't \(sticky ? "" : "un-")pin comment!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit), seconds: 3, context: self.parent!)
                         }
                         break
-                    case .success(_):
+                    case .success:
                         DispatchQueue.main.async {
-                            BannerUtil.makeBanner(text: "Comment \(sticky ? "" : "un-")pinned!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit) ,seconds: 3, context: self.parent!)
+                            BannerUtil.makeBanner(text: "Comment \(sticky ? "" : "un-")pinned!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit), seconds: 3, context: self.parent!)
                         }
                         break
                     }
@@ -674,24 +671,24 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
     
     func modRemove(_ spam: Bool = false) {
-        if (content is RComment) {
+        if content is RComment {
             do {
                 try parent?.session?.remove(comment!.id, spam: spam, completion: { (result) -> Void in
                     switch result {
                     case .failure(let error):
                     print(error.description)
                     DispatchQueue.main.async {
-                        BannerUtil.makeBanner(text: "Removing comment failed!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit) ,seconds: 3, context: self.parent!)
+                        BannerUtil.makeBanner(text: "Removing comment failed!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit), seconds: 3, context: self.parent!)
                         }
                         break
-                    case .success(_):
+                    case .success:
                         self.parent!.removed.append(self.comment!.id)
-                        if(self.parent!.approved.contains(self.comment!.id)){
+                        if self.parent!.approved.contains(self.comment!.id) {
                             self.parent!.approved.remove(at: self.parent!.approved.index(of: self.comment!.id)!)
                         }
                         DispatchQueue.main.async {
                             self.parent!.tableView.reloadData()
-                            BannerUtil.makeBanner(text: "Comment removed!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit) ,seconds: 3, context: self.parent!)
+                            BannerUtil.makeBanner(text: "Comment removed!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit), seconds: 3, context: self.parent!)
                         }
                         break
                 }
@@ -705,19 +702,19 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
 
     func modBan(why: String, duration: Int?) {
-        if (content is RComment) {
+        if content is RComment {
             do {
                 try parent?.session?.ban(comment!.author, banReason: why, duration: duration == nil ? 999 /*forever*/ : duration!, completion: { (result) -> Void in
                     switch result {
                     case .failure(let error):
                         print(error.description)
                         DispatchQueue.main.async {
-                            BannerUtil.makeBanner(text: "Banning user failed!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit) ,seconds: 3, context: self.parent!)
+                            BannerUtil.makeBanner(text: "Banning user failed!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit), seconds: 3, context: self.parent!)
                         }
                         break
-                    case .success(_):
+                    case .success:
                         DispatchQueue.main.async {
-                            BannerUtil.makeBanner(text: "u/\(self.comment!.author) banned!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit) ,seconds: 3, context: self.parent!)
+                            BannerUtil.makeBanner(text: "u/\(self.comment!.author) banned!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit), seconds: 3, context: self.parent!)
                         }
                         break
                     }
@@ -730,42 +727,40 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
     }
 
-
     func more(_ par: CommentViewController) {
 
         let alertController: BottomSheetActionController = BottomSheetActionController()
         alertController.headerData = "Comment by u/\(comment!.author)"
 
-
-        alertController.addAction(Action(ActionData(title: "\(AccountController.formatUsernamePosessive(input: comment!.author, small: false)) profile", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "\(AccountController.formatUsernamePosessive(input: comment!.author, small: false)) profile", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { _ in
 
             let prof = ProfileViewController.init(name: self.comment!.author)
-            VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: nil, parentViewController: par);
+            VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: nil, parentViewController: par)
         }))
-        alertController.addAction(Action(ActionData(title: "Share comment permalink", image: UIImage(named: "link")!.menuIcon()), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Share comment permalink", image: UIImage(named: "link")!.menuIcon()), style: .default, handler: { _ in
             let activityViewController = UIActivityViewController(activityItems: [self.comment!.permalink], applicationActivities: nil)
             par.present(activityViewController, animated: true, completion: {})
         }))
-        if (AccountController.isLoggedIn) {
-            alertController.addAction(Action(ActionData(title: ActionStates.isSaved(s: comment!) ? "Unsave" : "Save", image: UIImage(named: "save")!.menuIcon()), style: .default, handler: { action in
+        if AccountController.isLoggedIn {
+            alertController.addAction(Action(ActionData(title: ActionStates.isSaved(s: comment!) ? "Unsave" : "Save", image: UIImage(named: "save")!.menuIcon()), style: .default, handler: { _ in
                 par.saveComment(self.comment!)
             }))
         }
-        alertController.addAction(Action(ActionData(title: "Report", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Report", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { _ in
             PostActions.report(self.comment!, parent: par)
         }))
         
-        alertController.addAction(Action(ActionData(title: "Tag user", image: UIImage(named: "subs")!.menuIcon()), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Tag user", image: UIImage(named: "subs")!.menuIcon()), style: .default, handler: { _ in
             par.tagUser(name: self.comment!.author)
         }))
 
-        alertController.addAction(Action(ActionData(title: "Copy text", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Copy text", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { _ in
             let alert = UIAlertController.init(title: "Copy text", message: "", preferredStyle: .alert)
             alert.addTextViewer(text: .text(self.comment!.body))
-            alert.addAction(UIAlertAction.init(title: "Copy all", style: .default, handler: { (action) in
+            alert.addAction(UIAlertAction.init(title: "Copy all", style: .default, handler: { (_) in
                 UIPasteboard.general.string = self.comment!.body
             }))
-            alert.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: { (action) in
+            alert.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: { (_) in
                 
             }))
             par.present(alert, animated: true)
@@ -778,8 +773,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         let alertController: BottomSheetActionController = BottomSheetActionController()
         alertController.headerData = "Comment by u/\(comment!.author)"
 
-
-        alertController.addAction(Action(ActionData(title: "\(comment!.reports.count) reports", image: UIImage(named: "reports")!.menuIcon()), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "\(comment!.reports.count) reports", image: UIImage(named: "reports")!.menuIcon()), style: .default, handler: { _ in
             var reports = ""
             for report in self.comment!.reports {
                 reports = reports + report + "\n"
@@ -795,43 +789,43 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             self.parent?.present(alert, animated: true, completion: nil)
 
         }))
-        alertController.addAction(Action(ActionData(title: "Approve", image: UIImage(named: "approve")!.menuIcon()), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Approve", image: UIImage(named: "approve")!.menuIcon()), style: .default, handler: { _ in
             self.modApprove()
         }))
 
-        alertController.addAction(Action(ActionData(title: "Ban user", image: UIImage(named: "ban")!.menuIcon()), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Ban user", image: UIImage(named: "ban")!.menuIcon()), style: .default, handler: { _ in
             //todo show dialog for this
         }))
         
-        if(comment!.author == AccountController.currentName){
-            alertController.addAction(Action(ActionData(title: "Distinguish", image: UIImage(named: "save")!.menuIcon()), style: .default, handler: { action in
+        if comment!.author == AccountController.currentName {
+            alertController.addAction(Action(ActionData(title: "Distinguish", image: UIImage(named: "save")!.menuIcon()), style: .default, handler: { _ in
                 self.modDistinguish()
             }))
         }
 
-        if(comment!.author == AccountController.currentName && comment!.depth == 1){
-            if(comment!.sticky){
-                alertController.addAction(Action(ActionData(title: "Un-pin", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { action in
+        if comment!.author == AccountController.currentName && comment!.depth == 1 {
+            if comment!.sticky {
+                alertController.addAction(Action(ActionData(title: "Un-pin", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { _ in
                     self.modSticky(sticky: false)
                 }))
             } else {
-                alertController.addAction(Action(ActionData(title: "Pin and distinguish", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { action in
+                alertController.addAction(Action(ActionData(title: "Pin and distinguish", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { _ in
                     self.modSticky(sticky: true)
                 }))
             }
         }
 
-        alertController.addAction(Action(ActionData(title: "Remove", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Remove", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { _ in
             self.modRemove()
         }))
 
-        alertController.addAction(Action(ActionData(title: "Mark as spam", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "Mark as spam", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { _ in
             self.modRemove(true)
         }))
 
-        alertController.addAction(Action(ActionData(title: "User profile", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { action in
+        alertController.addAction(Action(ActionData(title: "User profile", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { _ in
             let prof = ProfileViewController.init(name: self.comment!.author)
-            VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: nil, parentViewController: par);
+            VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: nil, parentViewController: par)
         }))
 
         VCPresenter.presentAlert(alertController, parentVC: par.parent!)
@@ -844,16 +838,16 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var sideConstraints: [NSLayoutConstraint] = []
 
     func collapse(childNumber: Int) {
-        if(childNumber != 0){
+        if childNumber != 0 {
             childrenCountLabel.text = "+\(childNumber)"
             UIView.animate(withDuration: 0.4, delay: 0.0, options:
                 UIViewAnimationOptions.curveEaseOut, animations: {
                     self.childrenCount.alpha = 1
-            }, completion: { finished in
+            }, completion: { _ in
             })
         }
         isCollapsed = true
-        if (SettingValues.collapseFully) {
+        if SettingValues.collapseFully {
             refresh(comment: comment!, submissionAuthor: parent!.submission!.author, text: cellContent!)
         }
     }
@@ -867,10 +861,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         UIView.animate(withDuration: 0.4, delay: 0.0, options:
         UIViewAnimationOptions.curveEaseOut, animations: {
             self.childrenCount.alpha = 0
-        }, completion: { finished in
+        }, completion: { _ in
         })
         isCollapsed = false
-        if (SettingValues.collapseFully) {
+        if SettingValues.collapseFully {
             refresh(comment: comment!, submissionAuthor: parent!.submission!.author, text: cellContent!)
         }
     }
@@ -900,7 +894,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
     }
     
-    func updateDepth(){
+    func updateDepth() {
         NSLayoutConstraint.deactivate(sideConstraints)
         sideConstraints = batch {
             sideViewSpace.leftAnchor == contentView.leftAnchor - CGFloat(8)
@@ -912,7 +906,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
     var sideWidth: Int = 0
     var marginTop: Int = 0
-    var menuHeight : [NSLayoutConstraint] = []
+    var menuHeight: [NSLayoutConstraint] = []
     var topMargin: [NSLayoutConstraint] = []
 
     func setMore(more: RMore, depth: Int) {
@@ -921,30 +915,30 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         loading = false
         childrenCount.alpha = 0
         self.contentView.backgroundColor = ColorUtil.foregroundColor
-        if (depth - 1 > 0) {
+        if depth - 1 > 0 {
             sideWidth = (SettingValues.wideIndicators ? 8 : 4)
             marginTop = 1
-            let i22 = depth - 2;
-            if (SettingValues.disableColor) {
-                if (i22 % 5 == 0) {
+            let i22 = depth - 2
+            if SettingValues.disableColor {
+                if i22 % 5 == 0 {
                     sideView.backgroundColor = GMColor.grey100Color()
-                } else if (i22 % 4 == 0) {
+                } else if i22 % 4 == 0 {
                     sideView.backgroundColor = GMColor.grey200Color()
-                } else if (i22 % 3 == 0) {
+                } else if i22 % 3 == 0 {
                     sideView.backgroundColor = GMColor.grey300Color()
-                } else if (i22 % 2 == 0) {
+                } else if i22 % 2 == 0 {
                     sideView.backgroundColor = GMColor.grey400Color()
                 } else {
                     sideView.backgroundColor = GMColor.grey500Color()
                 }
             } else {
-                if (i22 % 5 == 0) {
+                if i22 % 5 == 0 {
                     sideView.backgroundColor = GMColor.blue500Color()
-                } else if (i22 % 4 == 0) {
+                } else if i22 % 4 == 0 {
                     sideView.backgroundColor = GMColor.green500Color()
-                } else if (i22 % 3 == 0) {
+                } else if i22 % 3 == 0 {
                     sideView.backgroundColor = GMColor.yellow500Color()
-                } else if (i22 % 2 == 0) {
+                } else if i22 % 2 == 0 {
                     sideView.backgroundColor = GMColor.orange500Color()
                 } else {
                     sideView.backgroundColor = GMColor.red500Color()
@@ -955,14 +949,14 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             sideWidth = 0
         }
         
-        if(depth == 1){
+        if depth == 1 {
             marginTop = 8
         }
 
         let font = FontGenerator.fontOfSize(size: 14, submission: false)
         
         var attr = NSMutableAttributedString()
-        if (more.children.isEmpty) {
+        if more.children.isEmpty {
             attr = NSMutableAttributedString(string: "Continue this thread", attributes: [NSFontAttributeName: font])
         } else {
             attr = NSMutableAttributedString(string: "Load \(more.count) more", attributes: [NSFontAttributeName: font])
@@ -995,24 +989,24 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
 
     public var isCollapsed = false
-    var dtap : UIShortTapGestureRecognizer?
+    var dtap: UIShortTapGestureRecognizer?
 
     func setComment(comment: RComment, depth: Int, parent: CommentViewController, hiddenCount: Int, date: Double, author: String?, text: NSAttributedString, isCollapsed: Bool, parentOP: String) {
         self.comment = comment
         self.cellContent = text
         self.contentView.backgroundColor = ColorUtil.foregroundColor
         loading = false
-        if (self.parent == nil) {
+        if self.parent == nil {
             self.parent = parent
         }
 
         self.isCollapsed = isCollapsed
 
-        if (date != 0 && date < Double(comment.created.timeIntervalSince1970)) {
+        if date != 0 && date < Double(comment.created.timeIntervalSince1970) {
             setIsNew(sub: comment.subreddit)
         }
         
-        if (hiddenCount > 0) {
+        if hiddenCount > 0 {
             childrenCount.alpha = 1
             childrenCountLabel.text = "+\(hiddenCount)"
         } else {
@@ -1021,36 +1015,36 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
         self.depth = depth
         self.oldDepth = depth
-        if (depth - 1 > 0) {
+        if depth - 1 > 0 {
             sideWidth = SettingValues.wideIndicators ? 8 : 4 
             marginTop = 1
-            let i22 = depth - 2;
-            if (SettingValues.disableColor) {
-                if (i22 % 5 == 0) {
+            let i22 = depth - 2
+            if SettingValues.disableColor {
+                if i22 % 5 == 0 {
                     sideView.backgroundColor = GMColor.grey100Color()
-                } else if (i22 % 4 == 0) {
+                } else if i22 % 4 == 0 {
                     sideView.backgroundColor = GMColor.grey200Color()
-                } else if (i22 % 3 == 0) {
+                } else if i22 % 3 == 0 {
                     sideView.backgroundColor = GMColor.grey300Color()
-                } else if (i22 % 2 == 0) {
+                } else if i22 % 2 == 0 {
                     sideView.backgroundColor = GMColor.grey400Color()
                 } else {
                     sideView.backgroundColor = GMColor.grey500Color()
                 }
             } else {
-                if (i22 % 5 == 0) {
+                if i22 % 5 == 0 {
                     sideView.backgroundColor = GMColor.blue500Color()
-                } else if (i22 % 4 == 0) {
+                } else if i22 % 4 == 0 {
                     sideView.backgroundColor = GMColor.green500Color()
-                } else if (i22 % 3 == 0) {
+                } else if i22 % 3 == 0 {
                     sideView.backgroundColor = GMColor.yellow500Color()
-                } else if (i22 % 2 == 0) {
+                } else if i22 % 2 == 0 {
                     sideView.backgroundColor = GMColor.orange500Color()
                 } else {
                     sideView.backgroundColor = GMColor.red500Color()
                 }
             }
-            if (SettingValues.highlightOp && parentOP == comment.author) {
+            if SettingValues.highlightOp && parentOP == comment.author {
                 sideView.backgroundColor = GMColor.purple500Color()
             }
         } else {
@@ -1058,17 +1052,17 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             sideWidth = 0
         }
         
-        if(depth == 1){
+        if depth == 1 {
             marginTop = 8
         }
 
         refresh(comment: comment, submissionAuthor: author, text: text)
 
-        if (!registered) {
+        if !registered {
             parent.registerForPreviewing(with: self, sourceView: title)
             registered = true
         }
-        if(parent.getMenuShown() ?? "" == comment.getIdentifier()) {
+        if parent.getMenuShown() ?? "" == comment.getIdentifier() {
             showCommentMenu()
         } else {
             hideCommentMenu()
@@ -1080,8 +1074,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
     }
     
-    func doDTap(_ sender: AnyObject){
-        switch(SettingValues.commentActionDoubleTap){
+    func doDTap(_ sender: AnyObject) {
+        switch SettingValues.commentActionDoubleTap {
         case .UPVOTE:
             self.upvote(self)
             break
@@ -1108,7 +1102,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
         savedAuthor = submissionAuthor!
 
-        switch (ActionStates.getVoteDirection(s: comment)) {
+        switch ActionStates.getVoteDirection(s: comment) {
         case .down:
             color = ColorUtil.downvoteColor
             break
@@ -1124,7 +1118,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
         let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: comment.created, numericDates: true))" + (comment.isEdited ? ("(edit \(DateFormatter().timeSince(from: comment.edited, numericDates: true)))") : ""), attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor])
 
-
         let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: comment.author, small: true))\u{00A0}", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
         let authorStringNoFlair = NSMutableAttributedString(string: "\(AccountController.formatUsername(input: comment.author, small: true))\u{00A0}", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
 
@@ -1135,31 +1128,31 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         let spacer = NSMutableAttributedString.init(string: "  ")
         let userColor = ColorUtil.getColorForUser(name: comment.author)
         var authorSmall = false
-        if (comment.distinguished == "admin") {
+        if comment.distinguished == "admin" {
           authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#E57373"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-        } else if (comment.distinguished == "special") {
+        } else if comment.distinguished == "special" {
             authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#F44336"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-        } else if (comment.distinguished == "moderator") {
+        } else if comment.distinguished == "moderator" {
             authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#81C784"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-        } else if (AccountController.currentName == comment.author) {
+        } else if AccountController.currentName == comment.author {
             authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#FFB74D"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-        } else if (submissionAuthor != nil && comment.author == submissionAuthor) {
+        } else if submissionAuthor != nil && comment.author == submissionAuthor {
             authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#64B5F6"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
-        } else if (userColor != ColorUtil.baseColor) {
+        } else if userColor != ColorUtil.baseColor {
             authorString.addAttributes([kTTTBackgroundFillColorAttributeName: userColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
         } else {
             authorSmall = true
         }
 
         let infoString = NSMutableAttributedString(string: "")
-        if(authorSmall){
+        if authorSmall {
             infoString.append(authorStringNoFlair)
         } else {
             infoString.append(authorString)
         }
 
         let tag = ColorUtil.getTagForUser(name: comment.author)
-        if (!tag.isEmpty) {
+        if !tag.isEmpty {
             let tagString = NSMutableAttributedString(string: "\u{00A0}\(tag)\u{00A0}", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
             tagString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor(rgb: 0x2196f3), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: tagString.length))
             infoString.append(spacer)
@@ -1170,40 +1163,40 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         infoString.append(scoreString)
         infoString.append(endString)
 
-        if (!comment.flair.isEmpty) {
+        if !comment.flair.isEmpty {
             infoString.append(spacer)
             infoString.append(flairTitle)
         }
 
-        if (comment.sticky) {
+        if comment.sticky {
             infoString.append(spacer)
             infoString.append(pinned)
         }
-        if (comment.gilded > 0) {
+        if comment.gilded > 0 {
             infoString.append(spacer)
             let gild = NSMutableAttributedString.init(string: "G", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.amber500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
             infoString.append(gild)
-            if (comment.gilded > 1) {
+            if comment.gilded > 1 {
                 infoString.append(gilded)
             }
         }
         
-        if(parent!.removed.contains(comment.id) || (!comment.removedBy.isEmpty() && !parent!.approved.contains(comment.id))){
+        if parent!.removed.contains(comment.id) || (!comment.removedBy.isEmpty() && !parent!.approved.contains(comment.id)) {
             let attrs = [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: GMColor.red500Color()] as [String: Any]
             infoString.append(spacer)
-            if(comment.removedBy == "true"){
+            if comment.removedBy == "true" {
                 infoString.append(NSMutableAttributedString.init(string: "Removed by Reddit\(!comment.removalReason.isEmpty() ? ":\(comment.removalReason)" : "")", attributes: attrs))
             } else {
                 infoString.append(NSMutableAttributedString.init(string: "Removed\(!comment.removedBy.isEmpty() ? " by \(comment.removedBy)":"")\(!comment.removalReason.isEmpty() ? " for \(comment.removalReason)" : "")\(!comment.removalNote.isEmpty() ? " \(comment.removalNote)" : "")", attributes: attrs))
             }
-        } else if(parent!.approved.contains(comment.id) || (!comment.approvedBy.isEmpty() && !parent!.removed.contains(comment.id))){
+        } else if parent!.approved.contains(comment.id) || (!comment.approvedBy.isEmpty() && !parent!.removed.contains(comment.id)) {
             let attrs = [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: GMColor.green500Color()] as [String: Any]
             infoString.append(spacer)
             infoString.append(NSMutableAttributedString.init(string: "Approved\(!comment.approvedBy.isEmpty() ? " by \(comment.approvedBy)":"")", attributes: attrs))
         }
 
         title.tColor = ColorUtil.accentColorForSub(sub: comment.subreddit)
-        if (!isCollapsed || !SettingValues.collapseFully) {
+        if !isCollapsed || !SettingValues.collapseFully {
             title.setTextWithTitleHTML(infoString, text, htmlString: comment.htmlText)
         } else {
             title.setAttributedString(infoString)
@@ -1220,28 +1213,27 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         self.contentView.backgroundColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.getColorForSub(sub: sub).withAlphaComponent(0.25))
     }
 
-
     func getScoreText(comment: RComment) -> Int {
         var submissionScore = comment.score
-        switch (ActionStates.getVoteDirection(s: comment)) {
+        switch ActionStates.getVoteDirection(s: comment) {
         case .up:
-            if (comment.likes != .up) {
-                if (comment.likes == .down) {
+            if comment.likes != .up {
+                if comment.likes == .down {
                     submissionScore += 1
                 }
                 submissionScore += 1
             }
             break
         case .down:
-            if (comment.likes != .down) {
-                if (comment.likes == .up) {
+            if comment.likes != .down {
+                if comment.likes == .up {
                     submissionScore -= 1
                 }
                 submissionScore -= 1
             }
             break
         case .none:
-            if (comment.likes == .up && comment.author == AccountController.currentName) {
+            if comment.likes == .up && comment.author == AccountController.currentName {
                 submissionScore -= 1
             }
         }
@@ -1291,29 +1283,29 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
 
     class func margin() -> UIEdgeInsets {
-        return UIEdgeInsetsMake(4, 0, 2, 0)
+        return UIEdgeInsets(top: 4, left: 0, bottom: 2, right: 0)
     }
 }
 
-extension CommentDepthCell : TTTAttributedLabelDelegate {
+extension CommentDepthCell: TTTAttributedLabelDelegate {
     func attributedLabel(_ label: TTTAttributedLabel!, didLongPressLinkWith url: URL!, at point: CGPoint) {
         if parent != nil {
             let sheet = UIAlertController(title: url.absoluteString, message: nil, preferredStyle: .actionSheet)
             sheet.addAction(
-                UIAlertAction(title: "Close", style: .cancel) { (action) in
+                UIAlertAction(title: "Close", style: .cancel) { (_) in
                     sheet.dismiss(animated: true, completion: nil)
                 }
             )
             let open = OpenInChromeController.init()
-            if (open.isChromeInstalled()) {
+            if open.isChromeInstalled() {
                 sheet.addAction(
-                    UIAlertAction(title: "Open in Chrome", style: .default) { (action) in
+                    UIAlertAction(title: "Open in Chrome", style: .default) { (_) in
                         _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
                     }
                 )
             }
             sheet.addAction(
-                UIAlertAction(title: "Open in Safari", style: .default) { (action) in
+                UIAlertAction(title: "Open in Safari", style: .default) { (_) in
                     if #available(iOS 10.0, *) {
                         UIApplication.shared.open(url, options: [:], completionHandler: nil)
                     } else {
@@ -1323,7 +1315,7 @@ extension CommentDepthCell : TTTAttributedLabelDelegate {
                 }
             )
             sheet.addAction(
-                UIAlertAction(title: "Open", style: .default) { (action) in
+                UIAlertAction(title: "Open", style: .default) { (_) in
                     /* let controller = WebViewController(nibName: nil, bundle: nil)
                      controller.url = url
                      let nav = UINavigationController(rootViewController: controller)
@@ -1331,7 +1323,7 @@ extension CommentDepthCell : TTTAttributedLabelDelegate {
                 }
             )
             sheet.addAction(
-                UIAlertAction(title: "Copy URL", style: .default) { (action) in
+                UIAlertAction(title: "Copy URL", style: .default) { (_) in
                     UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
                     sheet.dismiss(animated: true, completion: nil)
                 }
@@ -1346,10 +1338,9 @@ extension CommentDepthCell : TTTAttributedLabelDelegate {
         }
     }
     
-    
     func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith result: NSTextCheckingResult!) {
         var textClicked = label.attributedText.attributedSubstring(from: result.range).string
-        if (textClicked.contains("[[s[")) {
+        if textClicked.contains("[[s[") {
             parent?.showSpoiler(textClicked)
         } else {
             var urlClicked = result.url!
@@ -1399,9 +1390,8 @@ class UIShortTapGestureRecognizer: UITapGestureRecognizer {
 extension UITextView {
     func sizeToFitHeight() {
         let size: CGSize = self.sizeThatFits(CGSize.init(width: self.frame.size.width, height: CGFloat.greatestFiniteMagnitude))
-        var frame:CGRect = self.frame
+        var frame: CGRect = self.frame
         frame.size.height = size.height
         self.frame = frame
     }
 }
-

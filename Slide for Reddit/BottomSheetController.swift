@@ -27,10 +27,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import Foundation
-import XLActionController
-import Then
 import Anchorage
+import Foundation
+import Then
+import XLActionController
 
 open class BottomSheetCell: ActionCell {
     
@@ -133,18 +133,18 @@ class ButtonsHeader: UIStackView {
         
         let upvote = UIButton(frame: CGRect(x: 0, y: 0, width: 100, height: 52)).then {
             $0.contentMode = .center
-            $0.setImage(UIImage.init(named:"upvote")?.menuIcon(), for: .normal)
+            $0.setImage(UIImage.init(named: "upvote")?.menuIcon(), for: .normal)
             $0.backgroundColor = ColorUtil.upvoteColor
         }
         let downvote = UIButton(frame: CGRect(x: 0, y: 0, width: 100, height: 52)).then {
             $0.contentMode = .center
-            $0.setImage(UIImage.init(named:"downvote")?.menuIcon(), for: .normal)
+            $0.setImage(UIImage.init(named: "downvote")?.menuIcon(), for: .normal)
             $0.backgroundColor = ColorUtil.downvoteColor
         }
 
         let save = UIButton(frame: CGRect(x: 0, y: 0, width: 100, height: 52)).then {
             $0.contentMode = .center
-            $0.setImage(UIImage.init(named:"save")?.menuIcon(), for: .normal)
+            $0.setImage(UIImage.init(named: "save")?.menuIcon(), for: .normal)
             $0.backgroundColor = GMColor.yellow500Color()
         }
 
@@ -161,7 +161,6 @@ class ButtonsHeader: UIStackView {
         fatalError("init(coder:) has not been implemented")
     }
 }
-
 
 open class BottomSheetActionController: ActionController<BottomSheetCell, ActionData, ActionControllerHeader, String, UICollectionReusableView, Void> {
     
@@ -186,7 +185,7 @@ open class BottomSheetActionController: ActionController<BottomSheetCell, Action
         
         settings.animation.dismiss.options = .curveLinear
         
-        if (UIScreen.main.traitCollection.userInterfaceIdiom == .pad && !UIApplication.shared.isSplitOrSlideOver) {
+        if UIScreen.main.traitCollection.userInterfaceIdiom == .pad && !UIApplication.shared.isSplitOrSlideOver {
             settings.collectionView.lateralMargin = 250
         }
         
@@ -210,7 +209,7 @@ open class BottomSheetActionController: ActionController<BottomSheetCell, Action
             self.collectionView.layer.cornerRadius = 15
             self.collectionView.clipsToBounds = true
             
-            if(!doneOnce && false){ //todo this later maybe
+            if !doneOnce && false { //todo this later maybe
                // self.header!.bottomAnchor == self.collectionView.topAnchor - CGFloat(12)
                // self.header!.widthAnchor == self.collectionView.widthAnchor
                // self.header!.heightAnchor == CGFloat(52)
@@ -227,7 +226,7 @@ open class BottomSheetActionController: ActionController<BottomSheetCell, Action
                 cell.contentView.layoutMargins = UIEdgeInsets.init(top: 0, left: 12, bottom: 20, right: 12)
             }
 
-            if corners == .allCorners  {
+            if corners == .allCorners {
                 cell.layer.mask = nil
                 cell.layer.cornerRadius = 15.0
             } else {
@@ -240,8 +239,8 @@ open class BottomSheetActionController: ActionController<BottomSheetCell, Action
     }
         
     //Swift 4 messes up this method for some reason...
-    @objc(collectionView:layout:insetForSectionAtIndex:)  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets{
-        if (UIScreen.main.traitCollection.userInterfaceIdiom == .pad && !UIApplication.shared.isSplitOrSlideOver) {
+    @objc(collectionView:layout:insetForSectionAtIndex:)  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        if UIScreen.main.traitCollection.userInterfaceIdiom == .pad && !UIApplication.shared.isSplitOrSlideOver {
             return UIEdgeInsets.init(top: 0, left: 250, bottom: 0, right: 250)
         }
         return UIEdgeInsets.zero

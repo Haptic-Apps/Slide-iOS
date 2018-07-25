@@ -6,8 +6,8 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
-import UIKit
 import reddift
+import UIKit
 
 class SettingsData: UITableViewController {
     
@@ -28,7 +28,6 @@ class SettingsData: UITableViewController {
     var dontLoadImagePreviewsCell: UITableViewCell = UITableViewCell()
     var dontLoadImagePreviews = UISwitch()
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -47,19 +46,19 @@ class SettingsData: UITableViewController {
     }
     
     func switchIsChanged(_ changed: UISwitch) {
-        if(changed == enableDataSaving){
+        if changed == enableDataSaving {
             SettingValues.dataSavingEnabled = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_dataSavingEnabled)
-        } else if(changed == disableOnWifi){
+        } else if changed == disableOnWifi {
             SettingValues.dataSavingDisableWiFi = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_dataSavingDisableWifi)
-        } else if(changed == loadHQViewer){
+        } else if changed == loadHQViewer {
             SettingValues.loadContentHQ = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_loadContentHQ)
-        } else if(changed == lowerQualityMode){
+        } else if changed == lowerQualityMode {
             SettingValues.lqLow = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_lqLow)
-        } else if(changed == dontLoadImagePreviews){
+        } else if changed == dontLoadImagePreviews {
             SettingValues.noImages = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_noImg)
         }
@@ -69,13 +68,13 @@ class SettingsData: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let label : UILabel = UILabel()
+        let label: UILabel = UILabel()
         label.textColor = ColorUtil.baseAccent
         label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
         toReturn.backgroundColor = ColorUtil.backgroundColor
         
-        switch(section) {
+        switch section {
         case 0: label.text  = ""
             break
         default: label.text  = ""
@@ -84,7 +83,7 @@ class SettingsData: UITableViewController {
         return toReturn
     }
     
-    public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String){
+    public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
         cell.textLabel?.textColor = ColorUtil.fontColor
         cell.backgroundColor = ColorUtil.foregroundColor
@@ -116,8 +115,8 @@ class SettingsData: UITableViewController {
         self.tableView.tableFooterView = UIView()
     }
     
-    func doDisables(){
-        if(SettingValues.dataSavingEnabled){
+    func doDisables() {
+        if SettingValues.dataSavingEnabled {
             disableOnWifi.isEnabled = true
             loadHQViewer.isEnabled = true
             lowerQualityMode.isEnabled = true
@@ -129,7 +128,7 @@ class SettingsData: UITableViewController {
             lowerQualityMode.isEnabled = false
             dontLoadImagePreviews.isEnabled = true
         }
-        if(SettingValues.noImages){
+        if SettingValues.noImages {
             enableDataSaving.isEnabled = false
             dontLoadImagePreviews.isEnabled = true
         }
@@ -145,14 +144,13 @@ class SettingsData: UITableViewController {
         return 60
     }
     
-    
     func tableView(tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch(indexPath.section) {
+        switch indexPath.section {
         case 0:
-            switch(indexPath.row) {
+            switch indexPath.row {
             case 0: return self.dontLoadImagePreviewsCell
             case 1: return self.enableDataSavingCell
             case 2: return self.disableOnWifiCell
@@ -164,13 +162,11 @@ class SettingsData: UITableViewController {
         }
     }
     
-    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch(section) {
+        switch section {
         case 0: return 5    // section 0 has 2 rows
         default: fatalError("Unknown number of sections")
         }
     }
-    
     
 }

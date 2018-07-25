@@ -123,21 +123,21 @@ extension UIImage {
         var colorsRef = [CGColor]()
         var locations = [NSNumber]()
         
-        for i in 0 ... colors.count-1 {
+        for i in 0 ... colors.count - 1 {
             colorsRef.append(colors[i].cgColor as CGColor)
-            locations.append(NSNumber(value: Float(i)/Float(colors.count-1)))
+            locations.append(NSNumber(value: Float(i) / Float(colors.count - 1)))
         }
         
         gradientLayer.colors = colorsRef
 
         let x: Double! = 135 / 360.0
-        let a = pow(sinf(Float(2.0 * .pi * ((x + 0.75) / 2.0))),2.0);
-        let b = pow(sinf(Float(2 * .pi*((x+0.0)/2))),2);
-        let c = pow(sinf(Float(2 * .pi*((x+0.25)/2))),2);
-        let d = pow(sinf(Float(2 * .pi*((x+0.5)/2))),2);
+        let a = pow(sinf(Float(2.0 * .pi * ((x + 0.75) / 2.0))), 2.0)
+        let b = pow(sinf(Float(2 * .pi * ((x + 0.0) / 2))), 2)
+        let c = pow(sinf(Float(2 * .pi * ((x + 0.25) / 2))), 2)
+        let d = pow(sinf(Float(2 * .pi * ((x + 0.5) / 2))), 2)
         
-        gradientLayer.endPoint = CGPoint(x: CGFloat(c),y: CGFloat(d))
-        gradientLayer.startPoint = CGPoint(x: CGFloat(a),y:CGFloat(b))
+        gradientLayer.endPoint = CGPoint(x: CGFloat(c), y: CGFloat(d))
+        gradientLayer.startPoint = CGPoint(x: CGFloat(a), y: CGFloat(b))
 
         // now build a UIImage from the gradient
         UIGraphicsBeginImageContext(gradientLayer.bounds.size)

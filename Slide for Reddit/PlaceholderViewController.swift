@@ -8,7 +8,7 @@
 
 import UIKit
 
-class PlaceholderViewController : UIViewController {
+class PlaceholderViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         
         self.view.backgroundColor = ColorUtil.backgroundColor
@@ -36,6 +36,6 @@ extension UIImage {
         filter.setDefaults()
         filter.setValue(CoreImage.CIImage(image: self)!, forKey: kCIInputImageKey)
 
-        return UIImage(cgImage:CIContext(options: nil).createCGImage(filter.outputImage!, from: filter.outputImage!.extent)!)
+        return UIImage(cgImage: CIContext(options: nil).createCGImage(filter.outputImage!, from: filter.outputImage!.extent)!)
     }
 }

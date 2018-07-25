@@ -41,7 +41,7 @@ class SettingsWelcome: UIViewController {
     
     var parentVC: MainViewController
     
-    init(parent: MainViewController){
+    init(parent: MainViewController) {
         self.parentVC = parent
         super.init(nibName: nil, bundle: nil)
     }
@@ -54,7 +54,7 @@ class SettingsWelcome: UIViewController {
     var blue = UIButton()
     var dark = UIButton()
     
-    func skip(_ sender: AnyObject){
+    func skip(_ sender: AnyObject) {
         UserDefaults.standard.set(true, forKey: "firstOpen")
         UserDefaults.standard.synchronize()
 
@@ -141,12 +141,11 @@ class SettingsWelcome: UIViewController {
             self.blue.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
         }, completion: nil)
 
-
         self.view.backgroundColor = ColorUtil.backgroundColor
         self.navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
     }
     
-    func setiOS(){
+    func setiOS() {
         UserDefaults.standard.set(ColorUtil.Theme.LIGHT.rawValue, forKey: "theme")
         UserDefaults.standard.setColor(color: GMColor.blue500Color(), forKey: "basecolor")
         UserDefaults.standard.setColor(color: GMColor.lightBlueA400Color(), forKey: "accentcolor")
@@ -162,7 +161,7 @@ class SettingsWelcome: UIViewController {
         self.dismiss(animated: true, completion: nil)
     }
     
-    func setDark(){
+    func setDark() {
         UserDefaults.standard.set(ColorUtil.Theme.DARK.rawValue, forKey: "theme")
         UserDefaults.standard.set(FontGenerator.Font.ROBOTO_BOLD.rawValue, forKey: "postfont")
         UserDefaults.standard.set(FontGenerator.Font.ROBOTO_MEDIUM.rawValue, forKey: "commentfont")
@@ -177,7 +176,7 @@ class SettingsWelcome: UIViewController {
         self.dismiss(animated: true, completion: nil)
     }
     
-    func setBlue(){
+    func setBlue() {
         UserDefaults.standard.set(ColorUtil.Theme.BLUE.rawValue, forKey: "theme")
         UserDefaults.standard.set(FontGenerator.Font.HELVETICA.rawValue, forKey: "postfont")
         UserDefaults.standard.set(FontGenerator.Font.HELVETICA.rawValue, forKey: "commentfont")
@@ -197,6 +196,5 @@ class SettingsWelcome: UIViewController {
         super.viewDidLoad()
         doCells()
     }
-    
     
 }

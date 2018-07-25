@@ -1,0 +1,54 @@
+disabled_rules:
+- cyclomatic_complexity
+- empty_parentheses_with_trailing_closure
+- file_length
+- function_body_length
+- function_parameter_count
+- identifier_name
+- line_length
+- nesting
+- todo
+- type_body_length
+- large_tuple
+- for_where
+- no_fallthrough_only
+# Re-enable the next few over time
+- trailing_whitespace
+- force_cast
+- type_name
+- force_try
+- weak_delegate
+
+opt_in_rules:
+  - array_init
+  - closure_spacing
+  - contains_over_first_not_nil
+  - fatal_error_message
+  - operator_usage_whitespace
+  - sorted_first_last
+  - sorted_imports
+
+control_statement:
+  severity: error
+
+shorthand_operator:
+  severity: warning
+
+type_name:
+  min_length: 2
+
+trailing_comma:
+  mandatory_comma: true
+
+custom_rules:
+  straight_quotes:
+    included: "Localized.swift"
+    name: "Straight Quotes"
+    regex: "'|\""
+    match_kinds:
+      - docComment
+    message: "Quotes and apostrophes in localized strings should be curly: “” ‘’"
+    severity: warning
+
+excluded:
+- Pods
