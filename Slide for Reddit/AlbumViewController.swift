@@ -20,33 +20,40 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
 
         self.baseURL = urlB
-        var url = urlB.absoluteString
-        if url.contains("/layout/") {
-            url = url.substring(0, length: (url.indexOf("/layout")!))
-        }
-        var rawDat = cutEnds(s: url)
-        
-        if rawDat.endsWith("/") {
-            rawDat = rawDat.substring(0, length: rawDat.length - 1)
-        }
-        if rawDat.contains("/") && (rawDat.length - (rawDat.lastIndexOf("/")!+1)) < 4 {
-            rawDat = rawDat.replacingOccurrences(of: rawDat.substring(rawDat.lastIndexOf("/")!, length: rawDat.length - (rawDat.lastIndexOf("/")!+1)), with: "")
-        }
-        if rawDat.contains("?") {
-            rawDat = rawDat.substring(0, length: rawDat.length - rawDat.indexOf("?")!)
-        }
-        
-        let hash = getHash(sS: rawDat)
-        
-        getAlbum(hash: hash)
-        
     }
+    
     func cutEnds(s: String) -> String {
         if s.endsWith("/") {
             return s.substring(0, length: s.length - 1)
         } else {
             return s
         }
+    }
+    
+    func splitHashes(_ raw: String) {
+        print("Raw is \(raw)")
+        self.spinnerIndicator.stopAnimating()
+        self.spinnerIndicator.isHidden = true
+        for hash in raw.split(",") {
+            self.thumbs.append(URL(string: "https://imgur.com/\(hash)s.jpg")!)
+            let media = ModalMediaViewController(model: EmbeddableMediaDataModel(
+                baseURL: URL.init(string: "https://imgur.com/\(hash).png")!,
+                lqURL: URL.init(string: "https://imgur.com/\(hash)m.png"),
+                text: nil,
+                inAlbum: true
+            ))
+            self.vCs.append(media)
+        }
+        let prefetcher = SDWebImagePrefetcher.shared()
+        prefetcher?.prefetchURLs(thumbs)
+
+        let firstViewController = self.vCs[0]
+        
+        self.setViewControllers([firstViewController],
+                                direction: .forward,
+                                animated: true,
+                                completion: nil)
+        self.navItem?.title = "1/\(self.vCs.count)"
     }
     
     func getAlbum(hash: String) {
@@ -128,7 +135,6 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                 }
                 let prefetcher = SDWebImagePrefetcher.shared()
                 prefetcher?.prefetchURLs(thumbs)
-
             } catch {
                 print(error)
                 //todo fallback
@@ -207,6 +213,30 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         navigationBar.setItems([navItem!], animated: false)
         self.view.addSubview(navigationBar)
         
+        var url = baseURL!.absoluteString
+        if url.contains("/layout/") {
+            url = url.substring(0, length: (url.indexOf("/layout")!))
+        }
+        var rawDat = cutEnds(s: url)
+        
+        if rawDat.endsWith("/") {
+            rawDat = rawDat.substring(0, length: rawDat.length - 1)
+        }
+        if rawDat.contains("/") && (rawDat.length - (rawDat.lastIndexOf("/")!+1)) < 4 {
+            rawDat = rawDat.replacingOccurrences(of: rawDat.substring(rawDat.lastIndexOf("/")!, length: rawDat.length - (rawDat.lastIndexOf("/")!+1)), with: "")
+        }
+        if rawDat.contains("?") {
+            rawDat = rawDat.substring(0, length: rawDat.length - rawDat.indexOf("?")!)
+        }
+        
+        if rawDat.contains(",") {
+            let index = rawDat.lastIndexOf("/") ?? -1
+            let split = rawDat.substring(index + 1, length: rawDat.length - index - 1)
+            splitHashes(split)
+        } else {
+            let hash = getHash(sS: rawDat)
+            getAlbum(hash: hash)
+        }
     }
     
     func overview(_ sender: AnyObject) {
