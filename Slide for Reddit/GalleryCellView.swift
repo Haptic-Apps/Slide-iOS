@@ -58,19 +58,14 @@ class GalleryCellView: UITableViewCell {
         switch ContentType.getContentType(submission: link) {
         case .ALBUM:
             typeImage.image = UIImage.init(named: "image")?.navIcon()
-            break
         case .EXTERNAL, .LINK, .REDDIT:
             typeImage.image = UIImage.init(named: "world")?.navIcon()
-            break
         case .SELF:
             typeImage.image = UIImage.init(named: "size")?.navIcon()
-            break
         case .EMBEDDED, .GIF, .STREAMABLE, .VIDEO, .VID_ME:
             typeImage.image = UIImage.init(named: "play")?.navIcon()
-            break
         default:
             typeImage.image = UIImage()
-            break
 
         }
     }
@@ -90,7 +85,7 @@ class GalleryCellView: UITableViewCell {
         view.addGestureRecognizer(tap)
     }
     
-    var parentViewController: UIViewController & MediaVCDelegate?
+    var parentViewController: (UIViewController & MediaVCDelegate)?
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

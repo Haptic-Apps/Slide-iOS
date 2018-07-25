@@ -122,7 +122,6 @@ class AccountController {
                 case .failure:
                     print(result.error!.localizedDescription)
                     completion(toReturn)
-                    break
                 case .success(let listing):
                     toReturn += listing.children.flatMap({ $0 as? Subreddit })
                     paginator = listing.paginator

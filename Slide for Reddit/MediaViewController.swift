@@ -63,7 +63,6 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIViewControllerTr
     func getControllerForUrl(baseUrl: URL, lq: URL? = nil) -> UIViewController? {
         print(baseUrl)
         contentUrl = baseUrl
-        var url = contentUrl?.absoluteString
         if shouldTruncate(url: contentUrl!) {
             let content = contentUrl?.absoluteString
             contentUrl = URL.init(string: (content?.substring(to: (content?.characters.index(of: "."))!))!)

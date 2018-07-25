@@ -351,8 +351,7 @@ extension NavigationHeaderView {
 
         for s in AccountController.names {
             if s != AccountController.currentName {
-                let add = UIAlertAction(title: s, style: .default, handler: {
-                    (_: UIAlertAction!) -> Void in
+                let add = UIAlertAction(title: s, style: .default, handler: { (_: UIAlertAction!) -> Void in
                     AccountController.switchAccount(name: s)
                     if !UserDefaults.standard.bool(forKey: "done" + s) {
                         do {
@@ -372,8 +371,7 @@ extension NavigationHeaderView {
         }
 
         if AccountController.isLoggedIn {
-            let guest = UIAlertAction(title: "Guest", style: .default, handler: {
-                (_: UIAlertAction!) -> Void in
+            let guest = UIAlertAction(title: "Guest", style: .default, handler: { (_: UIAlertAction!) -> Void in
                 AccountController.switchAccount(name: "GUEST")
                 Subscriptions.sync(name: "GUEST", completion: {
                     (self.parentController as! NavigationSidebarViewController).parentController?.restartVC()
@@ -381,22 +379,19 @@ extension NavigationHeaderView {
             })
             optionMenu.addAction(guest)
 
-            let deleteAction = UIAlertAction(title: "Log out", style: .destructive, handler: {
-                (_: UIAlertAction!) -> Void in
+            let deleteAction = UIAlertAction(title: "Log out", style: .destructive, handler: { (_: UIAlertAction!) -> Void in
                 AccountController.delete(name: AccountController.currentName)
             })
             optionMenu.addAction(deleteAction)
 
         }
 
-        let add = UIAlertAction(title: "Add account", style: .default, handler: {
-            (_: UIAlertAction!) -> Void in
+        let add = UIAlertAction(title: "Add account", style: .default, handler: { (_: UIAlertAction!) -> Void in
             (self.parentController as! NavigationSidebarViewController).parentController?.addAccount()
         })
         optionMenu.addAction(add)
 
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: {
-            (_: UIAlertAction!) -> Void in
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { (_: UIAlertAction!) -> Void in
         })
         optionMenu.addAction(cancelAction)
 

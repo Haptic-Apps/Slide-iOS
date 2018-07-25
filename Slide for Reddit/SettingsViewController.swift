@@ -487,14 +487,10 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
 
         switch section {
         case 0: label.text = "General"
-            break
         case 1: label.text = "Appearance"
-            break
         case 2: label.text = "Content"
-            break
         case 3: label.text = "About"
         default: label.text = ""
-            break
         }
         return toReturn
     }

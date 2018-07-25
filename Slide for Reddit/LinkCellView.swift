@@ -458,7 +458,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             var bottommargin = 2
             var leftmargin = 0
             var rightmargin = 0
-            var innerpadding = 0
             var radius = 0
 
             if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full {
@@ -466,7 +465,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 bottommargin = 5
                 leftmargin = 5
                 rightmargin = 5
-                innerpadding = 5
                 radius = 15
             }
 
@@ -920,43 +918,30 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             switch type {
             case .ALBUM:
                 text = ("Album")
-                break
             case .EXTERNAL:
                 text = "External Link"
-                break
             case .LINK, .EMBEDDED, .NONE:
                 text = "Link"
-                break
             case .DEVIANTART:
                 text = "Deviantart"
-                break
             case .TUMBLR:
                 text = "Tumblr"
-                break
             case .XKCD:
                 text = ("XKCD")
-                break
             case .GIF:
                 text = ("GIF")
-                break
             case .IMGUR:
                 text = ("Imgur")
-                break
             case .VIDEO:
                 text = "YouTube"
-                break
             case .STREAMABLE:
                 text = "Streamable"
-                break
             case .VID_ME:
                 text = ("Vid.me")
-                break
             case .REDDIT:
                 text = ("Reddit content")
-                break
             default:
                 text = "Link"
-                break
             }
 
             if SettingValues.smallerTag && !full {
@@ -966,7 +951,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             } else {
                 tagbody.isHidden = true
                 if submission.isCrosspost && full {
-                    var colorF = UIColor.white
+                    let colorF = UIColor.white
 
                     let finalText = NSMutableAttributedString.init(string: "Crosspost - " + submission.domain, attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 14, submission: true)])
 
@@ -1142,7 +1127,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "No subreddit flairs found", seconds: 3, context: self.parentViewController)
                     }
-                    break
                 case .success(let flairs):
                     list.append(contentsOf: flairs)
                     DispatchQueue.main.async {
@@ -1164,7 +1148,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
                         self.parentViewController?.present(sheet, animated: true)
                     }
-                    break
                 }
             })
         } catch {
@@ -1198,7 +1181,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
             alert.addOneTextField(configuration: config)
 
-            alert.addAction(UIAlertAction(title: "Set flair", style: .default, handler: { [weak alert] (_) in
+            alert.addAction(UIAlertAction(title: "Set flair", style: .default, handler: { (_) in
                 self.submitFlairChange(flair, text: self.flairText ?? "")
             }))
 
@@ -1221,17 +1204,15 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Flair not set", color: GMColor.red500Color(), seconds: 3, context: self.parentViewController)
                     }
-                    break
                 case .success(let success):
                     print(success)
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Flair set successfully!", seconds: 3, context: self.parentViewController)
                         self.link!.flair = (text != nil && !text!.isEmpty) ? text! : flair.text
-                        CachedTitle.getTitle(submission: self.link!, full: true, true, false)
+                        _ = CachedTitle.getTitle(submission: self.link!, full: true, true, false)
                         self.setLink(submission: self.link!, parent: self.parentViewController!, nav: self.navViewController!, baseSub: (self.link?.subreddit)!)
                         self.showBody(width: self.contentView.frame.size.width - 24)
                     }
-                break
             }}
         } catch {
         }
@@ -1250,15 +1231,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             downvote.image = LinkCellImageCache.downvoteTinted
             sideDownvote.image = LinkCellImageCache.downvoteTintedSmall
             attrs = ([NSForegroundColorAttributeName: ColorUtil.downvoteColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
-            break
         case .up:
             upvote.image = LinkCellImageCache.upvoteTinted
             sideUpvote.image = LinkCellImageCache.upvoteTintedSmall
             attrs = ([NSForegroundColorAttributeName: ColorUtil.upvoteColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
-            break
         default:
             attrs = ([NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true)])
-            break
         }
 
         if full {
@@ -1449,7 +1427,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         fatalError("init(coder:) has not been implemented")
     }
 
-    public var parentViewController: UIViewController & MediaVCDelegate?
+    public var parentViewController: (UIViewController & MediaVCDelegate)?
     public var navViewController: UIViewController?
 
     func openLink(sender: UITapGestureRecognizer? = nil) {

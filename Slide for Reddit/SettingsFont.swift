@@ -71,13 +71,9 @@ class SettingsFont: UITableViewController {
         
         switch section {
         case 0: label.text  = "Links"
-            break
         case 1: label.text  = "Submissions"
-            break
         case 2: label.text = "Comments"
-            break
         default: label.text  = ""
-            break
         }
         return toReturn
     }
@@ -382,25 +378,18 @@ class SettingsFont: UITableViewController {
         switch FontGenerator.postFont {
         case .HELVETICA:
             submissionHelvetica.accessoryType = .checkmark
-            break
         case .ROBOTOCONDENSED_REGULAR:
             submissionRCR.accessoryType = .checkmark
-            break
         case .ROBOTOCONDENSED_BOLD:
             submissionRCB.accessoryType = .checkmark
-            break
         case .ROBOTO_LIGHT:
             submissionRL.accessoryType = .checkmark
-            break
         case .ROBOTO_BOLD:
             submissionRB.accessoryType = .checkmark
-            break
         case .ROBOTO_MEDIUM:
             submissionRM.accessoryType = .checkmark
-            break
         case .SYSTEM:
             submissionSystem.accessoryType = .checkmark
-            break
         }
 
         commentHelvetica.accessoryType = .none
@@ -413,25 +402,18 @@ class SettingsFont: UITableViewController {
         switch FontGenerator.commentFont {
         case .HELVETICA:
             commentHelvetica.accessoryType = .checkmark
-            break
         case .ROBOTOCONDENSED_REGULAR:
             commentRCR.accessoryType = .checkmark
-            break
         case .ROBOTOCONDENSED_BOLD:
             commentRCB.accessoryType = .checkmark
-            break
         case .ROBOTO_LIGHT:
             commentRL.accessoryType = .checkmark
-            break
         case .ROBOTO_BOLD:
             commentRB.accessoryType = .checkmark
-            break
         case .ROBOTO_MEDIUM:
             commentRM.accessoryType = .checkmark
-            break
         case .SYSTEM:
             commentSystem.accessoryType = .checkmark
-            break
         }
 
     }
@@ -493,51 +475,37 @@ class SettingsFont: UITableViewController {
             switch indexPath.row {
             case 0:
                 UserDefaults.standard.set(FontGenerator.Font.HELVETICA.rawValue, forKey: "postfont")
-                break
             case 1:
                 UserDefaults.standard.set(FontGenerator.Font.ROBOTOCONDENSED_REGULAR.rawValue, forKey: "postfont")
-                break
             case 2:
                 UserDefaults.standard.set(FontGenerator.Font.ROBOTOCONDENSED_BOLD.rawValue, forKey: "postfont")
                 UserDefaults.standard.synchronize()
-                break
             case 3:
                 UserDefaults.standard.set(FontGenerator.Font.ROBOTO_LIGHT.rawValue, forKey: "postfont")
-                break
             case 4:
                 UserDefaults.standard.set(FontGenerator.Font.ROBOTO_BOLD.rawValue, forKey: "postfont")
-                break
             case 5:
                 UserDefaults.standard.set(FontGenerator.Font.ROBOTO_MEDIUM.rawValue, forKey: "postfont")
-                break
             case 6:
                 UserDefaults.standard.set(FontGenerator.Font.SYSTEM.rawValue, forKey: "postfont")
-                break
             default: fatalError("Unknown row in section 1")
             }
         } else if indexPath.section == 2 {
             switch indexPath.row {
             case 0:
                 UserDefaults.standard.set(FontGenerator.Font.HELVETICA.rawValue, forKey: "commentfont")
-                break
             case 1:
                 UserDefaults.standard.set(FontGenerator.Font.ROBOTOCONDENSED_REGULAR.rawValue, forKey: "commentfont")
-                break
             case 2:
                 UserDefaults.standard.set(FontGenerator.Font.ROBOTOCONDENSED_BOLD.rawValue, forKey: "commentfont")
-                break
             case 3:
                 UserDefaults.standard.set(FontGenerator.Font.ROBOTO_LIGHT.rawValue, forKey: "commentfont")
-                break
             case 4:
                 UserDefaults.standard.set(FontGenerator.Font.ROBOTO_BOLD.rawValue, forKey: "commentfont")
-                break
             case 5:
                 UserDefaults.standard.set(FontGenerator.Font.ROBOTO_MEDIUM.rawValue, forKey: "commentfont")
-                break
             case 6:
                 UserDefaults.standard.set(FontGenerator.Font.SYSTEM.rawValue, forKey: "commentfont")
-                break
             default: fatalError("Unknown row in section 1")
             }
         }

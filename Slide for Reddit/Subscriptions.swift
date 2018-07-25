@@ -157,7 +157,6 @@ class Subscriptions {
                     case .failure:
                         print(result.error!)
                         completion(toReturn, toReturnMultis)
-                        break
                     case .success(let listing):
                         toReturn += listing.children.flatMap({ $0 as? Subreddit })
                         paginator = listing.paginator
@@ -175,7 +174,6 @@ class Subscriptions {
                     case .failure:
                         print(result.error!)
                         completion(toReturn, toReturnMultis)
-                        break
                     case .success(let multireddits):
                         toReturnMultis.append(contentsOf: multireddits)
                         completion(toReturn, toReturnMultis)

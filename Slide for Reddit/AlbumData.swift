@@ -14,7 +14,7 @@ import Foundation
 
 public class AlbumData {
 	public var count: Int?
-	public var images: Array<Images>?
+	public var images: [Images]?
 
 /**
     Returns an array of models based on given dictionary.

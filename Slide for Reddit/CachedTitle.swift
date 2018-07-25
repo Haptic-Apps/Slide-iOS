@@ -203,8 +203,8 @@ class CachedTitle {
 
         if SettingValues.showFirstParagraph && submission.isSelf && !full && !submission.htmlBody.trimmed().isEmpty {
             infoString.append(NSAttributedString.init(string: "\n\n"))
-            var length = submission.htmlBody.indexOf("\n") ?? submission.htmlBody.length
-            var text = submission.htmlBody.substring(0, length: length)
+            let length = submission.htmlBody.indexOf("\n") ?? submission.htmlBody.length
+            let text = submission.htmlBody.substring(0, length: length)
             let attr = TextDisplayStackView.createAttributedChunk(baseHTML: text, fontSize: 14, submission: false, accentColor: ColorUtil.accentColorForSub(sub: submission.subreddit))
             infoString.append(attr)
         }

@@ -25,10 +25,10 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        var topmargin = 0
-        var bottommargin = 2
-        var leftmargin = 0
-        var rightmargin = 0
+        let topmargin = 0
+        let bottommargin = 2
+        let leftmargin = 0
+        let rightmargin = 0
         
         let f = self.contentView.frame
         let fr = UIEdgeInsetsInsetRect(f, UIEdgeInsets(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin)))
@@ -285,7 +285,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
     }
 
     var message: RMessage?
-    public var parentViewController: UIViewController & MediaVCDelegate?
+    public var parentViewController: (UIViewController & MediaVCDelegate)?
     public var navViewController: UIViewController?
 
     func doReply(sender: UITapGestureRecognizer? = nil) {

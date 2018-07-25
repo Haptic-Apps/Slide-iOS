@@ -90,9 +90,8 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "All messages marked as read", seconds: 5, context: self)
                     }
+                default:
                     break
-                default: break
-
                 }
             })
         } catch {

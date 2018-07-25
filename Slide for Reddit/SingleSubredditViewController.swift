@@ -418,19 +418,14 @@ class SingleSubredditViewController: MediaViewController {
                 switch SettingValues.fabType {
                 case .SIDEBAR:
                     self.doDisplaySidebar()
-                    break
                 case .NEW_POST:
                     self.newPost(SingleSubredditViewController.fab!)
-                    break
                 case .SHADOWBOX:
                     self.shadowboxMode()
-                    break
                 case .HIDE_READ:
                     self.hideReadPosts()
-                    break
                 case .GALLERY:
                     self.galleryMode()
-                    break
                 }
             }
             
@@ -490,7 +485,7 @@ class SingleSubredditViewController: MediaViewController {
             top = 64
         }
 
-        top = top + ((SettingValues.viewType && !single) ? 52 : 0)
+        top += ((SettingValues.viewType && !single) ? 52 : 0)
 
         self.tableView.contentInset = UIEdgeInsets.init(top: CGFloat(top), left: 0, bottom: 65, right: 0)
 
@@ -680,7 +675,6 @@ class SingleSubredditViewController: MediaViewController {
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Multireddit information not found", color: GMColor.red500Color(), seconds: 3, context: self)
                     }
-                    break
                 }
 
             })
@@ -690,7 +684,6 @@ class SingleSubredditViewController: MediaViewController {
 
     func hideReadPosts() {
         var indexPaths: [IndexPath] = []
-        var newLinks: [RSubmission] = []
 
         var index = 0
         var count = 0
@@ -763,14 +756,14 @@ class SingleSubredditViewController: MediaViewController {
 
         alert.addOneTextField(configuration: config)
 
-        alert.addAction(UIAlertAction(title: "Search All", style: .default, handler: { [weak alert] (_) in
+        alert.addAction(UIAlertAction(title: "Search All", style: .default, handler: { (_) in
             let text = self.searchText ?? ""
             let search = SearchViewController.init(subreddit: "all", searchFor: text)
             VCPresenter.showVC(viewController: search, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
         }))
 
         if sub != "all" && sub != "frontpage" && sub != "friends" && !sub.startsWith("/m/") {
-            alert.addAction(UIAlertAction(title: "Search \(sub)", style: .default, handler: { [weak alert] (_) in
+            alert.addAction(UIAlertAction(title: "Search \(sub)", style: .default, handler: { (_) in
                 let text = self.searchText ?? ""
                 let search = SearchViewController.init(subreddit: self.sub, searchFor: text)
                 VCPresenter.showVC(viewController: search, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
@@ -1260,11 +1253,7 @@ class SingleSubredditViewController: MediaViewController {
     func addToHomescreen() {
         DispatchQueue.main.async { () -> Void in
             self.loop = try! SelectorEventLoop(selector: try! KqueueSelector())
-            self.server = DefaultHTTPServer(eventLoop: self.loop!, port: 8080) {
-                (
-                environ: [String: Any],
-                startResponse: ((String, [(String, String)]) -> Void),
-                sendBody: ((Data) -> Void)
+            self.server = DefaultHTTPServer(eventLoop: self.loop!, port: 8080) { (_, startResponse: ((String, [(String, String)]) -> Void), sendBody: ((Data) -> Void)
                 ) in
                 // Start HTTP response
                 startResponse("200 OK", [])
@@ -1276,7 +1265,6 @@ class SingleSubredditViewController: MediaViewController {
                 let imageData: Data = UIImagePNGRepresentation(coloredIcon)! 
                 let base64String = imageData.base64EncodedString()
 
-                let pathInfo = environ["PATH_INFO"]! as! String
                 // send EOF
                 let baseHTML = Bundle.main.url(forResource: "html", withExtension: nil)!
                 var htmlString = try! String.init(contentsOf: baseHTML, encoding: String.Encoding.utf8)
@@ -1311,7 +1299,7 @@ extension SingleSubredditViewController {
 
     @objc func spacePressed() {
         UIView.animate(withDuration: 0.2, delay: 0, options: UIViewAnimationOptions.curveEaseOut, animations: {
-            self.tableView.contentOffset.y = self.tableView.contentOffset.y + 350
+            self.tableView.contentOffset.y += 350
         }, completion: nil)
     }
 
@@ -1349,7 +1337,7 @@ extension SingleSubredditViewController {
         MKColorPicker.scrollDirection = .vertical
         MKColorPicker.style = .circle
 
-        var baseColor = ColorUtil.getColorForSub(sub: sub).toHexString()
+        let baseColor = ColorUtil.getColorForSub(sub: sub).toHexString()
         var index = 0
         for color in GMPalette.allColor() {
             if color.toHexString() == baseColor {
@@ -1429,7 +1417,7 @@ extension SingleSubredditViewController {
         MKColorPicker.scrollDirection = .vertical
         MKColorPicker.style = .circle
 
-        var baseColor = ColorUtil.accentColorForSub(sub: sub).toHexString()
+        let baseColor = ColorUtil.accentColorForSub(sub: sub).toHexString()
         var index = 0
         for color in GMPalette.allColorAccent() {
             if color.toHexString() == baseColor {
@@ -1533,8 +1521,7 @@ extension SingleSubredditViewController {
             }
         }))
         
-        alertController.addAction(Action(ActionData(title: "Add to homescreen", image: UIImage(named: "add_homescreen")!.menuIcon()), style: .default, handler: {
-            _ in
+        alertController.addAction(Action(ActionData(title: "Add to homescreen", image: UIImage(named: "add_homescreen")!.menuIcon()), style: .default, handler: { _ in
             self.addToHomescreen()
         }))
 
@@ -1655,7 +1642,7 @@ extension SingleSubredditViewController: ColorPickerViewDelegate {
 // MARK: - Wrapping Flow Layout Delegate
 extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
     func collectionView(_ collectionView: UICollectionView, width: CGFloat, indexPath: IndexPath) -> CGSize {
-        var itemWidth = width
+        let itemWidth = width
         if indexPath.row < links.count {
             let submission = links[indexPath.row]
 
@@ -1700,7 +1687,6 @@ extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
                 big = false
             }
 
-            let shouldShowLq = SettingValues.dataSavingEnabled && submission.lQ && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi())
             if type == ContentType.CType.SELF && SettingValues.hideImageSelftext
                 || SettingValues.noImages && submission.isSelf {
                 big = false

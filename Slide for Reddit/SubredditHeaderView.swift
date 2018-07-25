@@ -29,11 +29,10 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
         do {
             try (UIApplication.shared.delegate as! AppDelegate).session?.about(subreddit!, aboutWhere: SubredditAbout.moderators, completion: { (result) in
                 switch result {
-                case .failure(let error):
+                case .failure:
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "No subreddit moderators found!", color: GMColor.red500Color(), seconds: 3, context: self.parentController)
                     }
-                    break
                 case .success(let users):
                     list.append(contentsOf: users)
                     DispatchQueue.main.async {
@@ -70,7 +69,6 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
 
                         self.parentController?.present(sheet, animated: true)
                     }
-                    break
                 }
             })
         } catch {
@@ -295,7 +293,7 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
     var content: NSAttributedString?
     var textHeight: CGFloat = 0
     var descHeight: CGFloat = 0
-    var parentController: UIViewController & MediaVCDelegate?
+    var parentController: (UIViewController & MediaVCDelegate)?
 
     func setSubreddit(subreddit: Subreddit, parent: MediaViewController, _ width: CGFloat) {
         self.subreddit = subreddit

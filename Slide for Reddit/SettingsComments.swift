@@ -95,13 +95,9 @@ class SettingsComments: UITableViewController {
         
         switch section {
         case 0: label.text  = "Submission"
-            break
         case 1: label.text  = "Comments"
-            break
         case 2: label.text = "Actionbar"
-            break
         default: label.text  = ""
-            break
         }
         return toReturn
     }

@@ -124,12 +124,10 @@ class ButtonsHeader: UIStackView {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        self.then {
-            $0.accessibilityIdentifier = "Post menu quick actions"
-            $0.axis = .horizontal
-            $0.alignment = .center
-            $0.backgroundColor = ColorUtil.backgroundColor
-        }
+        self.accessibilityIdentifier = "Post menu quick actions"
+        self.axis = .horizontal
+        self.alignment = .center
+        self.backgroundColor = ColorUtil.backgroundColor
         
         let upvote = UIButton(frame: CGRect(x: 0, y: 0, width: 100, height: 52)).then {
             $0.contentMode = .center

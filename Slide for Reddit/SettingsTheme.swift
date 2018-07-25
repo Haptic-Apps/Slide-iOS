@@ -42,7 +42,6 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         MKColorPicker.colors = GMPalette.allColor()
         MKColorPicker.selectionStyle = .check
         MKColorPicker.scrollDirection = .vertical
-        var index = 0
         let firstColor = ColorUtil.baseColor
         for i in 0...MKColorPicker.colors.count - 1 {
             if MKColorPicker.colors[i].cgColor.__equalTo(firstColor.cgColor) {
@@ -73,7 +72,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         let somethingAction = UIAlertAction(title: "Save", style: .default, handler: { (_: UIAlertAction!) in
             UserDefaults.standard.setColor(color: (self.navigationController?.navigationBar.barTintColor)!, forKey: "basecolor")
             UserDefaults.standard.synchronize()
-            ColorUtil.doInit()
+            _ = ColorUtil.doInit()
         })
 
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { (_: UIAlertAction!) in
@@ -105,7 +104,6 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
 
         self.isAccent = true
         MKColorPicker.scrollDirection = .vertical
-        var index = 0
         let firstColor = ColorUtil.baseColor
         for i in 0...MKColorPicker.colors.count - 1 {
             if MKColorPicker.colors[i].cgColor.__equalTo(firstColor.cgColor) {
@@ -122,7 +120,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
             if self.accentChosen != nil {
                 UserDefaults.standard.setColor(color: self.accentChosen!, forKey: "accentcolor")
                 UserDefaults.standard.synchronize()
-                ColorUtil.doInit()
+                _ = ColorUtil.doInit()
             }
         })
 
@@ -219,7 +217,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         } else {
             SettingValues.nightModeEnabled = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_nightMode)
-            ColorUtil.doInit()
+            _ = ColorUtil.doInit()
             self.loadView()
             self.tableView.reloadData(with: .automatic)
             self.tochange!.doCells()
@@ -303,7 +301,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         let alert = UIAlertController(style: .actionSheet, title: "Select night hours", message: "Select a PM time and an AM time")
 
         let cancelActionButton: UIAlertAction = UIAlertAction(title: "Close", style: .cancel) { _ -> Void in
-            ColorUtil.doInit()
+            _ = ColorUtil.doInit()
             self.loadView()
             self.tableView.reloadData(with: .automatic)
             self.tochange!.doCells()
@@ -337,22 +335,18 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
                 SettingValues.nightStart = index.row
                 UserDefaults.standard.set(SettingValues.nightStart, forKey: SettingValues.pref_nightStartH)
                 UserDefaults.standard.synchronize()
-                break
             case 1:
                 SettingValues.nightStartMin = index.row * 5
                 UserDefaults.standard.set(SettingValues.nightStartMin, forKey: SettingValues.pref_nightStartM)
                 UserDefaults.standard.synchronize()
-                break
             case 3:
                 SettingValues.nightEnd = index.row
                 UserDefaults.standard.set(SettingValues.nightEnd, forKey: SettingValues.pref_nightEndH)
                 UserDefaults.standard.synchronize()
-                break
             case 4:
                 SettingValues.nightEndMin = index.row * 5
                 UserDefaults.standard.set(SettingValues.nightEndMin, forKey: SettingValues.pref_nightEndM)
                 UserDefaults.standard.synchronize()
-                break
             default: break
             }
         }
@@ -381,7 +375,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
                     SettingValues.nightTheme = theme
                     UserDefaults.standard.set(theme.rawValue, forKey: SettingValues.pref_nightTheme)
                     UserDefaults.standard.synchronize()
-                    ColorUtil.doInit()
+                    _ = ColorUtil.doInit()
                     self.loadView()
                     self.tableView.reloadData(with: .automatic)
                     self.tochange!.doCells()
@@ -407,7 +401,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         }
         actionSheetController.addAction(cancelActionButton)
 
-        var enabled = UISwitch.init(frame: CGRect.init(x: 20, y: 20, width: 75, height: 50))
+        let enabled = UISwitch.init(frame: CGRect.init(x: 20, y: 20, width: 75, height: 50))
         enabled.isOn = SettingValues.nightModeEnabled
         enabled.addTarget(self, action: #selector(SettingsTheme.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
         actionSheetController.view.addSubview(enabled)
@@ -443,13 +437,13 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         for theme in ColorUtil.Theme.cases {
             if !SettingValues.isPro && (theme == ColorUtil.Theme.BLACK || theme == ColorUtil.Theme.SEPIA || theme == ColorUtil.Theme.DEEP) {
                 actionSheetController.addAction(image: UIImage.init(named: "support")?.menuIcon().getCopy(withColor: GMColor.red500Color()), title: theme.rawValue + " (pro)", color: GMColor.red500Color(), style: .default, isEnabled: true) { (_) in
-                    VCPresenter.proDialogShown(feature: false, self)
+                    _ = VCPresenter.proDialogShown(feature: false, self)
                 }
             } else {
                 let saveActionButton: UIAlertAction = UIAlertAction(title: theme.rawValue, style: .default) { _ -> Void in
                     UserDefaults.standard.set(theme.rawValue, forKey: "theme")
                     UserDefaults.standard.synchronize()
-                    ColorUtil.doInit()
+                    _ = ColorUtil.doInit()
                     SubredditReorderViewController.changed = true
                     self.loadView()
                     self.tableView.reloadData(with: .automatic)
@@ -477,11 +471,8 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
 
         switch section {
         case 0: label.text = "App theme"
-            break
         case 1: label.text = "Tinting"
-            break
         default: label.text = ""
-            break
         }
         return toReturn
     }

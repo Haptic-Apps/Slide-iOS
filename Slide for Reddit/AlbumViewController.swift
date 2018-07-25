@@ -200,7 +200,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         self.view.addSubview(spinnerIndicator)
         spinnerIndicator.startAnimating()
         
-        var gridB = UIBarButtonItem(image: UIImage(named: "grid")?.navIcon().withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(overview(_:)))
+        let gridB = UIBarButtonItem(image: UIImage(named: "grid")?.navIcon().withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(overview(_:)))
 
         navItem?.rightBarButtonItem = gridB
 

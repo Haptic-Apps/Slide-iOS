@@ -74,7 +74,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         }
         
         if !UserDefaults.standard.bool(forKey: "firstOpen") {
-            var vc = SettingsWelcome(parent: self)
+            let vc = SettingsWelcome(parent: self)
             vc.modalPresentationStyle = .fullScreen
             vc.modalTransitionStyle = .crossDissolve
             self.present(vc, animated: true, completion: nil)
@@ -194,8 +194,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                                 UserDefaults.standard.synchronize()
                             }
                         }
-                        break
-                        
                     }
                 })
             } catch {
@@ -337,9 +335,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     var finalSubs = [String]()
 
     func restartVC() {
-
         print("Restarting VC")
-        var saved = currentPage
+        let saved = currentPage
 
         if SettingValues.viewType {
             self.dataSource = self
@@ -558,15 +555,16 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             selected = false
         }
     }
-
-    override func willRotate(to toInterfaceOrientation: UIInterfaceOrientation, duration: TimeInterval) {
-        super.willRotate(to: toInterfaceOrientation, duration: duration)
-        var isPhone = UIScreen.main.traitCollection.userInterfaceIdiom != .pad
-        if toInterfaceOrientation.isLandscape && isPhone {
-            tabBar.frame = CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: 84)
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        let isPhone = UIScreen.main.traitCollection.userInterfaceIdiom != .pad
+        let landscape = size.width > size.height
+        if landscape && isPhone {
+            tabBar.frame = CGRect.init(x: 0, y: 0, width: size.width, height: 84)
             tabBar.sizeToFit()
         } else if isPhone {
-            tabBar.frame = CGRect.init(x: 0, y: UIApplication.shared.statusBarView?.frame.size.height ?? 20, width: self.view.frame.size.width, height: 84)
+            tabBar.frame = CGRect.init(x: 0, y: UIApplication.shared.statusBarView?.frame.size.height ?? 20, width: size.height, height: 84)
             tabBar.sizeToFit()
         }
     }
@@ -626,7 +624,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     @objc func spacePressed() {
         UIView.animate(withDuration: 0.2, delay: 0, options: UIViewAnimationOptions.curveEaseOut, animations: {
             let vc = (MainViewController.vCs[self.currentPage] as! SingleSubredditViewController)
-            vc.tableView.contentOffset.y = vc.tableView.contentOffset.y + 350
+            vc.tableView.contentOffset.y += 350
         }, completion: nil)
     }
 
@@ -699,7 +697,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     
         if SettingValues.autoCache {
             if UserDefaults.standard.string(forKey: "DAY_LAUNCH") != today {
-                AutoCache.init(baseController: self)
+                _ = AutoCache.init(baseController: self)
                 UserDefaults.standard.setValue(today, forKey: "DAY_LAUNCH")
             }
         }
@@ -805,8 +803,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                                 SettingValues.showVersionDialog(storedTitle, storedLink, parentVC: self)
                             }
                         }
-
-                        break
                     }
                 })
             } catch {
@@ -866,7 +862,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             let saveActionButton: UIAlertAction = UIAlertAction(title: theme.rawValue, style: .default) { _ -> Void in
                 UserDefaults.standard.set(theme.rawValue, forKey: "theme")
                 UserDefaults.standard.synchronize()
-                ColorUtil.doInit()
+                _ = ColorUtil.doInit()
                 self.restartVC()
             }
             actionSheetController.addAction(saveActionButton)

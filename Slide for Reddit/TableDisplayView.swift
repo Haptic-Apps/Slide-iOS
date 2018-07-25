@@ -28,7 +28,7 @@ class TableDisplayView: UIScrollView {
     var textDelegate: TTTAttributedLabelDelegate
 
     init(baseHtml: String, color: UIColor, accentColor: UIColor, delegate: TTTAttributedLabelDelegate) {
-        var newData = baseHtml.replacingOccurrences(of: "http://view.table/", with: "")
+        let newData = baseHtml.replacingOccurrences(of: "http://view.table/", with: "")
         self.baseColor = color
         self.tColor = accentColor
         self.textDelegate = delegate
@@ -68,7 +68,6 @@ class TableDisplayView: UIScrollView {
         var isHeader = true
 
         var currentRow = [NSAttributedString]()
-        let font = FontGenerator.fontOfSize(size: 16, submission: false)
         var currentString = ""
         for string in text.trimmed().components(separatedBy: "<") {
             let current = "<\(string)".trimmed()
@@ -227,9 +226,7 @@ class TableDisplayView: UIScrollView {
         let tableHeaderEnd = "</th>"
         
         var columnStarted = false
-        var isHeader = true
         
-        let font = FontGenerator.fontOfSize(size: 16, submission: false)
         var currentString = ""
         var estHeight = CGFloat(0)
         for string in baseHtml.trimmed().components(separatedBy: "<") {
@@ -242,7 +239,6 @@ class TableDisplayView: UIScrollView {
             } else if current == tableHeadStart {
             } else if current == tableRowStart {
             } else if current == tableRowEnd {
-                isHeader = false
                 estHeight += 30
             } else if current == tableEnd {
             } else if current == tableHeadEnd {

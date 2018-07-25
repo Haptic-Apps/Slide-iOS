@@ -37,22 +37,16 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
             switch indexPath.section {
             case 0:
                 PostFilter.domains.remove(at: indexPath.row)
-                break
             case 1:
                 PostFilter.selftext.remove(at: indexPath.row)
-                break
             case 2:
                 PostFilter.titles.remove(at: indexPath.row)
-                break
             case 3:
                 PostFilter.profiles.remove(at: indexPath.row)
-                break
             case 4:
                 PostFilter.subreddits.remove(at: indexPath.row)
-                break
             case 5:
                 PostFilter.flairs.remove(at: indexPath.row)
-                break
             default: fatalError("Unknown section")
             }
             tableView.deleteRows(at: [indexPath], with: .fade)
@@ -206,22 +200,16 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
         switch indexPath.section {
         case 0:
             cell.textLabel?.text = PostFilter.domains[indexPath.row] as String
-            break
         case 1:
             cell.textLabel?.text = PostFilter.selftext[indexPath.row] as String
-            break
         case 2:
             cell.textLabel?.text = PostFilter.titles[indexPath.row] as String
-            break
         case 3:
             cell.textLabel?.text = PostFilter.profiles[indexPath.row] as String
-            break
         case 4:
             cell.textLabel?.text = PostFilter.subreddits[indexPath.row] as String
-            break
         case 5:
             cell.textLabel?.text = PostFilter.flairs[indexPath.row] as String
-            break
         default: fatalError("Unknown section")
         }
         return cell
@@ -282,19 +270,12 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
         toReturn.backgroundColor = ColorUtil.backgroundColor
         switch section {
         case 0: label.text = "Domain filters"
-            break
         case 1: label.text =  "Selftext filters"
-            break
         case 2: label.text = "Title filters"
-            break
         case 3: label.text = "Profile filters"
-            break
         case 4: label.text = "Subreddit filters"
-            break
         case 5: label.text = "Flair filters"
-            break
         default: label.text  = ""
-            break
         }
         return toReturn
     }

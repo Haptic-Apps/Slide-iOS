@@ -61,14 +61,13 @@ public class AutoCache: NSObject {
                     failed += 1
                     print(error)
                     progress(subs[index], done, currentLinks.count, failed)
-                    break
                 case .success(let tuple):
                     done += 1
                     progress(subs[index], done, currentLinks.count, failed)
                     let startDepth = 1
                     var allIncoming: [(Thing, Int)] = []
                     var comments = [String]()
-                    var content: Dictionary = Dictionary<String, Object>()
+                    var content: Dictionary = [String: Object]()
 
                     for child in tuple.1.children {
                         let incoming = AutoCache.extendKeepMore(in: child, current: startDepth)
@@ -135,7 +134,6 @@ public class AutoCache: NSObject {
                     DispatchQueue.main.async {
                         AutoCache.cacheSub(index + 1, progress: progress, completion: completion)
                     }
-                    break
                 case .success(let listing):
                     if cancel {
                         return

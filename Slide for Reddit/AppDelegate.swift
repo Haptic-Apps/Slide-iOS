@@ -114,14 +114,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         RemovalReasons.initialize()
         Subscriptions.sync(name: AccountController.currentName, completion: nil)
         if #available(iOS 10.0, *) {
-            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
-                (_, error) in
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (_, error) in
                 if (error) != nil {
                     print(error!.localizedDescription)
                 }
             }
-            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
-                (_, error) in
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (_, error) in
                 if (error) != nil {
                     print(error!.localizedDescription)
                 }
@@ -134,7 +132,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             syncColors(subredditController: nil)
         }
 
-        ColorUtil.doInit()
+        _ = ColorUtil.doInit()
 
         let textAttributes = [NSForegroundColorAttributeName: UIColor.white]
         UINavigationBar.appearance().titleTextAttributes = textAttributes
@@ -169,7 +167,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
                 BioMetricAuthenticator.authenticateWithPasscode(reason: "Enter your password", cancelTitle: "Exit", success: {
                     self?.backView!.isHidden = true
-                }, failure: { [weak self] (_) in
+                }, failure: { (_) in
                     exit(0)
                 })
             })
@@ -361,7 +359,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             if let code = parameters["code"], let state = parameters["state"] {
                 print(state)
-                if code.characters.count > 0 {
+                if code.length > 0 {
                     print(code)
                 }
             }
@@ -501,7 +499,7 @@ extension UIApplication {
 }
 
 extension URL {
-    func getKeyVals() -> Dictionary<String, String>? {
+    func getKeyVals() -> [String: String]? {
         var results = [String: String]()
         let keyValues = self.query?.components(separatedBy: "&")
         if (keyValues?.count)! > 0 {

@@ -266,8 +266,8 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     func prepareReply() {
         tableView.beginUpdates()
         tableView.endUpdates()
-        var index = 0
-        /*for comment in self.comments {
+        /*var index = 0
+        for comment in self.comments {
             if (comment.contains(getMenuShown()!)) {
                     let indexPath = IndexPath.init(row: index, section: 0)
                     self.tableView.scrollToRow(at: indexPath,
@@ -341,7 +341,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     var submission: RSubmission?
     var session: Session?
-    var cDepth: Dictionary = Dictionary<String, Int>()
+    var cDepth: Dictionary = [String: Int]()
     var comments: [String] = []
     var hiddenPersons = Set<String>()
     var hidden: Set<String> = Set<String>()
@@ -353,7 +353,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     var dataArray: [String] = []
     var filteredData: [String] = []
-    var content: Dictionary = Dictionary<String, Object>()
+    var content: Dictionary = [String: Object]()
 
     func doArrays() {
         dataArray = comments.filter({ (s) -> Bool in
@@ -377,7 +377,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         refreshControl?.attributedTitle = NSAttributedString(string: "")
         refreshControl?.addTarget(self, action: #selector(CommentViewController.refresh(_:)), for: UIControlEvents.valueChanged)
         var top = CGFloat(64)
-        var bottom = CGFloat(45)
+        let bottom = CGFloat(45)
         if #available(iOS 11.0, *) {
             top = 0
         }
@@ -478,7 +478,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                             }
                         }
 
-                        break
                     case .success(let tuple):
                         let startDepth = 1
                         let listing = tuple.1
@@ -674,7 +673,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
         } else {
             var top = CGFloat(64)
-            var bottom = CGFloat(45)
+            let bottom = CGFloat(45)
             if #available(iOS 11.0, *) {
                 top = 0
             }
@@ -766,7 +765,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         super.viewDidLoad()
 
         if self.navigationController != nil && !(self.navigationController!.delegate is SloppySwiper) && (parent == nil || (parent != nil && !(parent! is PagingCommentViewController))) {
-            var swiper = SloppySwiper.init(navigationController: self.navigationController!)
+            let swiper = SloppySwiper.init(navigationController: self.navigationController!)
             self.navigationController!.delegate = swiper!
         }
 
@@ -1029,7 +1028,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 color = ColorUtil.accentColorForSub(sub: ((newComments[0].0 as! Comment).subreddit))
             }
             if let comment = thing.0 as? Comment {
-                var html = comment.bodyHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
+                let html = comment.bodyHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
                 self.text[comment.getId()] = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: color)
             } else {
                 let attr = NSMutableAttributedString(string: "more")
@@ -1059,7 +1058,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     }
 
     func updateStringSearch(_ thing: Thing) -> NSAttributedString {
-        let width = self.view.frame.size.width
         let color = ColorUtil.accentColorForSub(sub: (thing as! RComment).subreddit)
         if let comment = thing as? Comment {
             let html = comment.bodyHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
@@ -1490,9 +1488,9 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         var toReturn: [String] = []
         if content[n] is RComment {
             let bounds = comments.index(where: { ($0 == n) })! + 1
-            let parentDepth = (cDepth[n] as! Int)
+            let parentDepth = (cDepth[n] ?? 0)
             for obj in stride(from: bounds, to: comments.count, by: 1) {
-                if (cDepth[comments[obj]] as! Int) > parentDepth {
+                if (cDepth[comments[obj]] ?? 0) > parentDepth {
                     toReturn.append(comments[obj])
                 } else {
                     return toReturn
@@ -1506,9 +1504,9 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         var toReturn: [String] = []
         if content[n] is RComment {
             let bounds = comments.index(where: { ($0 == n) })! + 1
-            let parentDepth = (cDepth[n] as! Int)
+            let parentDepth = (cDepth[n] ?? 0)
             for obj in stride(from: bounds, to: comments.count, by: 1) {
-                let depth = (cDepth[comments[obj]] as! Int)
+                let depth = (cDepth[comments[obj]] ?? 0)
                 if depth == 1 + parentDepth {
                     toReturn.append(comments[obj])
                 } else if depth == parentDepth {
@@ -1524,9 +1522,9 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         toReturn.append(n)
         if content[n] is RComment {
             let bounds = comments.index(where: { $0 == n })! + 1
-            let parentDepth = (cDepth[n] as! Int)
+            let parentDepth = (cDepth[n] ?? 0)
             for obj in stride(from: bounds, to: comments.count, by: 1) {
-                let currentDepth = cDepth[comments[obj]] as! Int
+                let currentDepth = cDepth[comments[obj]] ?? 0
                 if currentDepth > parentDepth {
                     if currentDepth == parentDepth + 1 {
                         toReturn.append(contentsOf: walkTreeFully(n: comments[obj]))
@@ -1547,12 +1545,10 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             if dir == .up {
                 direction = .none
             }
-            break
         case .down:
             if dir == .down {
                 direction = .none
             }
-            break
         default:
             break
         }
@@ -1612,7 +1608,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     @objc func spacePressed() {
         UIView.animate(withDuration: 0.2, delay: 0, options: UIViewAnimationOptions.curveEaseOut, animations: {
-            self.tableView.contentOffset.y = self.tableView.contentOffset.y + 350
+            self.tableView.contentOffset.y += 350
         }, completion: nil)
     }
 
@@ -1653,13 +1649,12 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         return i
     }
 
-    override func willAnimateRotation(to toInterfaceOrientation: UIInterfaceOrientation, duration: TimeInterval) {
-        super.willAnimateRotation(to: toInterfaceOrientation, duration: duration)
-
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
         var frame = self.tableView.tableHeaderView!.frame
         var leftInset: CGFloat = 0
         var rightInset: CGFloat = 0
-
+        
         if #available(iOS 11.0, *) {
             leftInset = self.tableView.safeAreaInsets.left
             rightInset = self.tableView.safeAreaInsets.right
@@ -1667,17 +1662,17 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         } else {
             // Fallback on earlier versions
         }
-
+        
         self.headerCell!.aspectWidth = self.tableView.bounds.size.width - (leftInset + rightInset)
-
+        
         frame.size.width = self.tableView.bounds.size.width - (leftInset + rightInset)
         frame.size.height = self.headerCell!.estimateHeight(true, true)
-
+        
         self.headerCell!.contentView.frame = frame
         self.tableView.tableHeaderView!.frame = frame
         tableView.reloadData(with: .none)
     }
-
+    
     var lastYUsed = CGFloat(0)
     var isToolbarHidden = false
     var isHiding = false
@@ -1719,7 +1714,7 @@ override func scrollViewDidScroll(_ scrollView: UIScrollView) {
 override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell: UITableViewCell! = nil
 
-        var datasetPosition = (indexPath as NSIndexPath).row
+    let datasetPosition = (indexPath as NSIndexPath).row
 
         let thing = isSearching ? filteredData[datasetPosition] : dataArray[datasetPosition]
         let parentOP = parents[thing]
@@ -1787,19 +1782,14 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
         switch action {
         case .UPVOTE:
             cell.upvote(cell)
-            break
         case .DOWNVOTE:
             cell.downvote(cell)
-            break
         case .SAVE:
             cell.save()
-            break
         case .MENU:
             cell.menu(cell)
-            break
         case .COLLAPSE:
             collapseParent(indexPath, baseCell: cell)
-            break
         case .NONE:
             break
         }
@@ -1964,7 +1954,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
                                     case .success(let list):
 
                                         DispatchQueue.main.async(execute: { () -> Void in
-                                            let startDepth = self.cDepth[more.getIdentifier()] as! Int
+                                            let startDepth = self.cDepth[more.getIdentifier()] ?? 0
 
                                             var queue: [Object] = []
                                             for i in self.extendForMore(parentId: more.parentId, comments: list, current: startDepth) {

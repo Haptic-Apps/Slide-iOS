@@ -106,7 +106,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.restore.detailTextLabel?.textColor = GMColor.lightGreen300Color()
         self.restore.detailTextLabel?.text = "Restore your purchase!"
         
-        var about = PaddingLabel(frame: CGRect.init(x: 0, y: 200, width: self.tableView.frame.size.width, height: 30))
+        let about = PaddingLabel(frame: CGRect.init(x: 0, y: 200, width: self.tableView.frame.size.width, height: 30))
         about.font = UIFont.systemFont(ofSize: 16)
         about.backgroundColor = ColorUtil.foregroundColor
         about.textColor = ColorUtil.fontColor
@@ -206,7 +206,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
             IAPHandler.shared.purchaseMyProduct(index: 1)
         }
 
-        about.frame.size.height = about.frame.size.height + 200
+        about.frame.size.height += 200
         about.addSubview(purchasePro)
         about.addSubview(purchaseBundle)
         tableView.tableHeaderView = about
@@ -225,8 +225,8 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
             let price1Str = numberFormatter.string(from: items[0].price)
             let price2Str = numberFormatter.string(from: items[1].price)
             
-            let priceOldStr = numberFormatter.string(from: NSDecimalNumber(value: 4.99))
-            let priceOldStr2 = numberFormatter.string(from: NSDecimalNumber(value: 7.99))
+            let priceOldStr = numberFormatter.string(from: NSDecimalNumber(value: 4.99)) ?? "$4.99"
+            let priceOldStr2 = numberFormatter.string(from: NSDecimalNumber(value: 7.99)) ?? "$7.99"
             if priceOldStr != price1Str! {
                 //Is a sale
                 
@@ -236,8 +236,8 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
                 let newString = NSMutableAttributedString.init(string: price1Str!, attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 18)])
                 let newString2 = NSMutableAttributedString.init(string: price2Str!, attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 18)])
                 
-                var finalString = NSMutableAttributedString()
-                var finalString2 = NSMutableAttributedString()
+                let finalString = NSMutableAttributedString()
+                let finalString2 = NSMutableAttributedString()
                 
                 finalString.append(crossedString)
                 finalString.append(newString)
@@ -347,11 +347,8 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
 
         switch section {
         case 0: label.text = "General"
-            break
         case 1: label.text = "Already a Slide supporter?"
-            break
         default: label.text = ""
-            break
         }
         return toReturn
     }

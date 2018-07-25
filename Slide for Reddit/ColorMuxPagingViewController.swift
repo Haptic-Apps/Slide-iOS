@@ -20,7 +20,7 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
     }
 
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        var point = scrollView.contentOffset
+        let point = scrollView.contentOffset
 
         var percentComplete: CGFloat
         percentComplete = fabs(point.x - self.view.frame.size.width) / self.view.frame.size.width
@@ -56,10 +56,10 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
         toColor.getRed(&toRed, green: &toGreen, blue: &toBlue, alpha: &toAlpha)
 
         //calculate the actual RGBA values of the fade colour
-        var red = (toRed - fromRed) * withPercentage + fromRed
-        var green = (toGreen - fromGreen) * withPercentage + fromGreen
-        var blue = (toBlue - fromBlue) * withPercentage + fromBlue
-        var alpha = (toAlpha - fromAlpha) * withPercentage + fromAlpha
+        let red = (toRed - fromRed) * withPercentage + fromRed
+        let green = (toGreen - fromGreen) * withPercentage + fromGreen
+        let blue = (toBlue - fromBlue) * withPercentage + fromBlue
+        let alpha = (toAlpha - fromAlpha) * withPercentage + fromAlpha
 
         // return the fade colour
         return UIColor(red: red, green: green, blue: blue, alpha: alpha)

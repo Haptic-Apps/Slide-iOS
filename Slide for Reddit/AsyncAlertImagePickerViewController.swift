@@ -132,7 +132,6 @@ extension AsyncImagePickerViewController: UICollectionViewDelegate {
     }
     
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        let image = indexPath.row
         switch selection {
         case .multiple(let action)?:
             action?(selectedImages)

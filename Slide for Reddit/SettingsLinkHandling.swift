@@ -53,7 +53,6 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
             switch indexPath.section {
             case 1:
                 PostFilter.openExternally.remove(at: indexPath.row)
-                break
             default: fatalError("Unknown section")
             }
             tableView.deleteRows(at: [indexPath], with: .fade)
@@ -188,11 +187,8 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         toReturn.backgroundColor = ColorUtil.backgroundColor
         switch section {
         case 0: label.text = "Content Settings"
-            break
         case 1: label.text =  "Open External Link Matching"
-            break
         default: label.text  = ""
-            break
         }
         return toReturn
     }
@@ -200,7 +196,7 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0: return 5   // section 0 has 2 rows
-                case 1: return PostFilter.openExternally.count
+        case 1: return PostFilter.openExternally.count
         default: fatalError("Unknown number of sections")
         }
     }

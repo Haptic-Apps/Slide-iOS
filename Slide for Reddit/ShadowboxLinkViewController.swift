@@ -10,10 +10,9 @@ import Anchorage
 import AVFoundation
 import AVKit
 import MaterialComponents.MaterialProgressView
+import RealmSwift
 import SDWebImage
 import TTTAttributedLabel
-import Anchorage
-import RealmSwift
 
 class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UIGestureRecognizerDelegate, TTTAttributedLabelDelegate {
 
@@ -85,7 +84,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configureView(){
+    func configureView() {
         self.titleLabel = TTTAttributedLabel(frame: CGRect(x: 75, y: 8, width: 0, height: 0)).then {
             $0.accessibilityIdentifier = "Title"
             $0.numberOfLines = 0
@@ -201,7 +200,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         topBody.topAnchor == self.view.topAnchor
     }
     
-    func configureLayout(){
+    func configureLayout() {
         baseBody.layoutMargins = UIEdgeInsets(top: 8, left: 16, bottom: 16, right: 16)
         box.leftAnchor == baseBody.leftAnchor + 12
         box.bottomAnchor == baseBody.bottomAnchor - 8
@@ -218,7 +217,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         titleLabel.bottomAnchor == box.topAnchor - 8
     }
 
-    func populateData(){
+    func populateData() {
         var archived = false
         if let link = content as! RSubmission? {
             archived = link.archived
@@ -229,14 +228,11 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             case .down:
                 downvote.image = LinkCellImageCache.downvoteTinted
                 attrs = ([NSForegroundColorAttributeName: ColorUtil.downvoteColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
-                break
             case .up:
                 upvote.image = LinkCellImageCache.upvoteTinted
                 attrs = ([NSForegroundColorAttributeName: ColorUtil.upvoteColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
-                break
             default:
                 attrs = ([NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true)])
-                break
             }
             
             score.attributedText = NSAttributedString(string: (link.score >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(link.score) / Double(1000))) : " \(link.score)", attributes: attrs)
@@ -253,14 +249,11 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             case .down:
                 downvote.image = LinkCellImageCache.downvoteTinted
                 attrs = ([NSForegroundColorAttributeName: ColorUtil.downvoteColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
-                break
             case .up:
                 upvote.image = LinkCellImageCache.upvoteTinted
                 attrs = ([NSForegroundColorAttributeName: ColorUtil.upvoteColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
-                break
             default:
                 attrs = ([NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true)])
-                break
             }
             
             score.attributedText = NSAttributedString.init(string: (link.score >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(link.score) / Double(1000))) : " \(link.score)", attributes: attrs)
@@ -274,13 +267,13 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         }
     }
     
-    func doBackground(){
+    func doBackground() {
         if content is RSubmission {
             let thumbnail = (content as! RSubmission).thumbnailUrl
             if let url = URL(string: thumbnail) {
-                SDWebImageDownloader.shared().downloadImage(with: url, options: .allowInvalidSSLCertificates, progress: { (c, t) in
+                SDWebImageDownloader.shared().downloadImage(with: url, options: .allowInvalidSSLCertificates, progress: { (_, _) in
                     
-                }) { (image, data, error, complete) in
+                }) { (image, _, _, _) in
                     if image != nil {
                         self.backgroundColor = image!.areaAverage()
                     }
@@ -289,7 +282,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         }
     }
     
-    func populateContent(){
+    func populateContent() {
         self.baseBody.addTapGestureRecognizer {
             self.comments(self.view)
         }
@@ -343,43 +336,30 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
                 switch type {
                 case .ALBUM:
                     text = ("Album")
-                    break
                 case .EXTERNAL:
                     text = "External Link"
-                    break
                 case .LINK, .EMBEDDED, .NONE:
                     text = "Link"
-                    break
                 case .DEVIANTART:
                     text = "Deviantart"
-                    break
                 case .TUMBLR:
                     text = "Tumblr"
-                    break
                 case .XKCD:
                     text = ("XKCD")
-                    break
                 case .GIF:
                     text = ("GIF")
-                    break
                 case .IMGUR:
                     text = ("Imgur")
-                    break
                 case .VIDEO:
                     text = "YouTube"
-                    break
                 case .STREAMABLE:
                     text = "Streamable"
-                    break
                 case .VID_ME:
                     text = ("Vid.me")
-                    break
                 case .REDDIT:
                     text = ("Reddit content")
-                    break
                 default:
                     text = "Link"
-                    break
                 }
             let finalText = NSMutableAttributedString.init(string: text, attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 16, submission: true)])
             finalText.append(NSAttributedString.init(string: "\n\(baseURL!.host ?? baseURL!.absoluteString)"))
@@ -387,7 +367,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             info.attributedText = finalText
             if content is RSubmission {
                 let submission = content as! RSubmission
-                if submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty  {
+                if submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty {
                     if type == .REDDIT {
                         thumbImage.image = LinkCellImageCache.reddit
                     } else {
@@ -413,12 +393,11 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         }
     }
     
-    
       func upvote(_ sender: AnyObject) {
         if content is RSubmission {
             let submission = content as! RSubmission
             do {
-                try (UIApplication.shared.delegate as! AppDelegate).session?.setVote(ActionStates.getVoteDirection(s: submission) == .up ? .none : .up, name: submission.getId(), completion: { (result) in
+                try (UIApplication.shared.delegate as! AppDelegate).session?.setVote(ActionStates.getVoteDirection(s: submission) == .up ? .none : .up, name: submission.getId(), completion: { (_) in
                 })
                 ActionStates.setVoteDirection(s: submission, direction: ActionStates.getVoteDirection(s: submission) == .up ? .none : .up)
                 History.addSeen(s: submission)
@@ -433,7 +412,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         if content is RSubmission {
             let submission = content as! RSubmission
             do {
-                try (UIApplication.shared.delegate as! AppDelegate).session?.setVote(ActionStates.getVoteDirection(s: submission) == .down ? .none : .down, name: submission.getId(), completion: { (result) in
+                try (UIApplication.shared.delegate as! AppDelegate).session?.setVote(ActionStates.getVoteDirection(s: submission) == .down ? .none : .down, name: submission.getId(), completion: { (_) in
                 })
                 ActionStates.setVoteDirection(s: submission, direction: ActionStates.getVoteDirection(s: submission) == .down ? .none : .down)
                 History.addSeen(s: submission)

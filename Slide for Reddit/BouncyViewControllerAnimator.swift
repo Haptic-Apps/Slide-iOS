@@ -47,9 +47,7 @@ class BouncyViewControllerAnimator: NSObject, UIViewControllerAnimatedTransition
                                         fromView!.center = center!
                                         toView!.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
                                     }
-        }, completion: {
-            _ in
-            
+        }, completion: {_ in
             if !self.isPresenting {
                 fromView!.removeFromSuperview()
             }

@@ -157,11 +157,8 @@ class SettingsBackup: UITableViewController {
 
         switch section {
         case 0: label.text = "General"
-            break
         case 1: label.text = "Already a Slide supporter?"
-            break
         default: label.text = ""
-            break
         }
         return toReturn
     }

@@ -57,11 +57,8 @@ class SettingsGestures: UITableViewController {
         
         switch section {
         case 0: label.text  = "Comments"
-            break
         case 1: label.text  = "Submissions"
-            break
         default: label.text  = ""
-            break
         }
         return toReturn
     }

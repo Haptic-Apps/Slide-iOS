@@ -50,13 +50,10 @@ class ActionStates {
         switch direction {
         case .up:
             upVotedFullnames.append(fullname)
-            break
         case .down:
             downVotedFullnames.append(fullname)
-            break
         default:
             unvotedFullnames.append(fullname)
-            break
         }
     }
     
@@ -143,13 +140,10 @@ class ActionStates {
         switch direction {
         case .up:
             upVotedFullnames.append(fullname)
-            break
         case .down:
             downVotedFullnames.append(fullname)
-            break
         default:
             unvotedFullnames.append(fullname)
-            break
         }
     }
     
@@ -213,13 +207,10 @@ class ActionStates {
         switch direction {
         case .up:
             upVotedFullnames.append(fullname)
-            break
         case .down:
             downVotedFullnames.append(fullname)
-            break
         default:
             unvotedFullnames.append(fullname)
-            break
         }
     }
     

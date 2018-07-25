@@ -87,11 +87,8 @@ class CacheSettings: UITableViewController {
 
         switch section {
         case 0: label.text = "Caching settings"
-            break
         case 1: label.text = "Subreddits to Cache"
-            break
         default: label.text = ""
-            break
         }
         return toReturn
     }
@@ -156,7 +153,7 @@ class CacheSettings: UITableViewController {
             c.setSubreddit(subreddit: thing, nav: nil)
             cell = c
             cell?.backgroundColor = ColorUtil.foregroundColor
-            var aSwitch = UISwitch()
+            let aSwitch = UISwitch()
             if selected.contains(thing) {
                 aSwitch.isOn = true
             }

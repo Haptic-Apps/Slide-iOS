@@ -15,7 +15,7 @@ class SubSidebarViewController: MediaViewController, UIGestureRecognizerDelegate
     weak var scrollView: UIScrollView!
     var subreddit: Subreddit?
     var filteredContent: [String] = []
-    var parentController: UIViewController & MediaVCDelegate?
+    var parentController: (UIViewController & MediaVCDelegate)?
 
     init(sub: Subreddit, parent: UIViewController & MediaVCDelegate) {
         super.init(nibName: nil, bundle: nil)

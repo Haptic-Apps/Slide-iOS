@@ -33,7 +33,6 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         MKColorPicker.colors = GMPalette.allColor()
         MKColorPicker.selectionStyle = .check
         MKColorPicker.scrollDirection = .vertical
-        var index = 0
 
         MKColorPicker.style = .circle
 
@@ -187,7 +186,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
     }
     
     func showMenu(sender: AnyObject, user: Account) {
-        var date = Date(timeIntervalSince1970: TimeInterval(user.createdUtc))
+        let date = Date(timeIntervalSince1970: TimeInterval(user.createdUtc))
         let df = DateFormatter()
         df.dateFormat = "MM/dd/yyyy"
         let alrController = UIAlertController(title: "", message: "\(user.linkKarma) post karma\n\(user.commentKarma) comment karma\nRedditor since \(df.string(from: date))", preferredStyle: UIAlertControllerStyle.actionSheet)

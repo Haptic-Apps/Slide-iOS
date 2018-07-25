@@ -75,7 +75,7 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
 
     func collectionView(_ collectionView: UICollectionView, width: CGFloat, indexPath: IndexPath) -> CGSize {
         let data = content[indexPath.row]
-        var itemWidth = width - 10
+        let itemWidth = width - 10
         let id = data["id"] as! String
         if estimatedHeights[id] == nil {
             let titleString = NSMutableAttributedString.init(string: data["author"] as! String, attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 14, submission: true)])
@@ -99,7 +99,7 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
             }
             var imageHeight = 0
             if data["mobile_embeds"] != nil && !(data["mobile_embeds"] as? JSONArray)!.isEmpty {
-                if let embedsB = data["mobile_embeds"] as? JSONArray, let embeds = embedsB[0] as? JSONDictionary, let height = embeds["height"] as? Int, let width = embeds["width"] as? Int, let url = embeds["original_url"] as? String {
+                if let embedsB = data["mobile_embeds"] as? JSONArray, let embeds = embedsB[0] as? JSONDictionary, let height = embeds["height"] as? Int, let width = embeds["width"] as? Int {
                     let ratio = Double(height) / Double(width)
                     let width = Double(itemWidth)
                     imageHeight = Int(width * ratio)
@@ -128,7 +128,6 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
                 switch result {
                 case .failure(let error):
                     print(error)
-                    break
                 case .success(let rawdetails):
                     self.getOldThreads()
                     self.doInfo(((rawdetails as! JSONDictionary)["data"] as! JSONDictionary))
@@ -144,18 +143,18 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
     
     func doInfo(_ json: JSONDictionary) {
         self.baseData = json
-        self.title = json["title"] as! String
+        self.title = (json["title"] as? String) ?? ""
         let more = UIButton.init(type: .custom)
         more.setImage(UIImage.init(named: "info")?.navIcon(), for: UIControlState.normal)
         more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
         more.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
-        var moreB = UIBarButtonItem.init(customView: more)
+        let moreB = UIBarButtonItem.init(customView: more)
         navigationItem.rightBarButtonItem = moreB
     }
     
     var baseData: JSONDictionary?
     func showMenu(_ sender: AnyObject) {
-        let alert = UIAlertController.init(title: baseData!["title"] as! String, message: "\n\n\(baseData!["viewer_count"] as! Int) watching\n\n\n\(baseData!["description"] as! String)", preferredStyle: .alert)
+        let alert = UIAlertController.init(title: (baseData!["title"] as? String) ?? "", message: "\n\n\(baseData!["viewer_count"] as! Int) watching\n\n\n\(baseData!["description"] as! String)", preferredStyle: .alert)
         alert.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: nil))
         present(alert, animated: true)
     }
@@ -166,7 +165,6 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
                 switch result {
                 case .failure(let error):
                     print(error)
-                    break
                 case .success(let rawupdates):
                     for item in rawupdates {
                         self.content.append((item as! JSONDictionary)["data"] as! JSONDictionary)

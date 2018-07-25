@@ -221,7 +221,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     }
 
     func collectionView(_ collectionView: UICollectionView, width: CGFloat, indexPath: IndexPath) -> CGSize {
-        var itemWidth = width
+        let itemWidth = width
 
         if indexPath.row < baseData.content.count {
             let thing = baseData.content[indexPath.row]

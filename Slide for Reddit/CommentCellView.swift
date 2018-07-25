@@ -22,10 +22,10 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        var topmargin = 0
-        var bottommargin = 2
-        var leftmargin = 0
-        var rightmargin = 0
+        let topmargin = 0
+        let bottommargin = 2
+        let leftmargin = 0
+        let rightmargin = 0
         
         let f = self.contentView.frame
         let fr = UIEdgeInsetsInsetRect(f, UIEdgeInsets(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin)))
@@ -63,13 +63,10 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
         switch ActionStates.getVoteDirection(s: comment) {
         case .down:
             uC = ColorUtil.downvoteColor
-            break
         case .up:
             uC = ColorUtil.upvoteColor
-            break
         default:
             uC = ColorUtil.fontColor
-            break
         }
         
         let attrs = [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: uC] as [String: Any]
@@ -106,7 +103,7 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
     }
     
     var comment: RComment?
-    public var parentViewController: UIViewController & MediaVCDelegate?
+    public var parentViewController: (UIViewController & MediaVCDelegate)?
     public var navViewController: UIViewController?
     
     func openComment(sender: UITapGestureRecognizer? = nil) {

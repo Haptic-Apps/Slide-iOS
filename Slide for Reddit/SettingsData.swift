@@ -76,9 +76,7 @@ class SettingsData: UITableViewController {
         
         switch section {
         case 0: label.text  = ""
-            break
         default: label.text  = ""
-            break
         }
         return toReturn
     }

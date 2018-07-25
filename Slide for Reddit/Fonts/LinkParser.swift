@@ -12,7 +12,7 @@ import UIKit
 
 class LinkParser {
     public static func parse(_ attributedString: NSAttributedString, _ color: UIColor) -> NSMutableAttributedString {
-        var string = NSMutableAttributedString.init(attributedString: attributedString)
+        let string = NSMutableAttributedString.init(attributedString: attributedString)
         string.removeAttribute(kCTForegroundColorFromContextAttributeName as String, range: NSRange.init(location: 0, length: string.length))
         if string.length > 0 {
             string.enumerateAttributes(in: NSRange.init(location: 0, length: string.length), options: .longestEffectiveRangeNotRequired, using: { (attrs, range, _) in
@@ -35,41 +35,30 @@ class LinkParser {
                             switch type {
                             case .ALBUM:
                                 typeString.mutableString.setString("(Album)")
-                                break
                             case .TABLE:
                                 typeString.mutableString.setString("(Table)")
-                                break
                             case .EXTERNAL:
                                 typeString.mutableString.setString("(External link)")
-                                break
                             case .LINK, .EMBEDDED, .NONE:
                                 if url.absoluteString != string.mutableString.substring(with: range) {
                                     typeString.mutableString.setString("(\(url.host ?? url.absoluteString))")
                                 }
-                                break
                             case .DEVIANTART, .IMAGE, .TUMBLR, .XKCD:
                                 typeString.mutableString.setString("(Image)")
-                                break
                             case .GIF:
                                 typeString.mutableString.setString("(GIF)")
-                                break
                             case .IMGUR:
                                 typeString.mutableString.setString("(Imgur)")
-                                break
                             case .VIDEO, .STREAMABLE, .VID_ME:
                                 typeString.mutableString.setString("(Video)")
-                                break
                             case .REDDIT:
                                 typeString.mutableString.setString("(Reddit link)")
-                                break
                             case .SPOILER:
                                 typeString.mutableString.setString("(Spoiler)")
-                                break
                             default:
                                 if url.absoluteString != string.mutableString.substring(with: range) {
                                     typeString.mutableString.setString("(\(url.host!))")
                                 }
-                                break
                             }
                             string.insert(typeString, at: range.location + range.length)
                             string.addAttributes([NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor], range: NSRange.init(location: range.location + range.length, length: typeString.length))

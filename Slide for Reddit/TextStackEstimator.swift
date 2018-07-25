@@ -47,7 +47,7 @@ public class TextStackEstimator: NSObject {
             
             var startIndex = 0
             
-            var newTitle = title
+            let newTitle = title
             
             if !blocks[0].startsWith("<table>") && !blocks[0].startsWith("<code>") {
                 newTitle.append(NSAttributedString.init(string: "\n\n", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 5)]))
@@ -67,7 +67,7 @@ public class TextStackEstimator: NSObject {
                 }
             }
         } else {
-            var newTitle = title
+            let newTitle = title
             if body != nil {
                 newTitle.append(NSAttributedString.init(string: "\n\n", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 5)]))
                 newTitle.append(body!)
@@ -296,10 +296,8 @@ public class TextStackEstimator: NSObject {
     
     public static func addSpoilers(_ text: String) -> String {
         var base = text
-        var spoil = false
         
         for match in base.capturedGroups(withRegex: "<a[^>]*title=\"([^\"]*)\"[^>]*>([^<]*)</a>") {
-            spoil = true
             let tag = match[0]
             let spoilerText = match[1]
             let spoilerTeaser = match[2]

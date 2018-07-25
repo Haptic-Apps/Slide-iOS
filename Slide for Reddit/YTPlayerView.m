@@ -392,26 +392,6 @@ NSString static *const kYTPlayerSyndicationRegexPattern = @"^https://tpc.googles
     return levels;
 }
 
-- (BOOL)webView:(UIWebView *)webView
-shouldStartLoadWithRequest:(NSURLRequest *)request
- navigationType:(UIWebViewNavigationType)navigationType {
-    if ([request.URL.host isEqual: self.originURL.host]) {
-        return YES;
-    } else if ([request.URL.scheme isEqual:@"ytplayer"]) {
-        [self notifyDelegateOfYouTubeCallbackUrl:request.URL];
-        return NO;
-    } else if ([request.URL.scheme isEqual: @"http"] || [request.URL.scheme isEqual:@"https"]) {
-        return [self handleHttpNavigationToUrl:request.URL];
-    }
-    return YES;
-}
-
-- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
-    if (self.initialLoadingView) {
-        [self.initialLoadingView removeFromSuperview];
-    }
-}
-
 /**
  * Convert a quality value from NSString to the typed enum value.
  *
@@ -494,7 +474,7 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 /**
  * Convert a state value from the typed value to NSString.
  *
- * @param quality A |YTPlayerState| parameter.
+ * @param state A |YTPlayerState| parameter.
  * @return A string value to be used in the JavaScript bridge.
  */
 + (NSString *)stringForPlayerState:(YTPlayerState)state {
@@ -769,7 +749,6 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
  * @param index 0-index position of video to start playback on.
  * @param startSeconds Seconds after start of video to begin playback.
  * @param suggestedQuality Suggested YTPlaybackQuality to play the videos.
- * @return The result of cueing the playlist.
  */
 - (void)cuePlaylist:(NSString *)cueingString
               index:(int)index
@@ -792,7 +771,6 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
  * @param index 0-index position of video to start playback on.
  * @param startSeconds Seconds after start of video to begin playback.
  * @param suggestedQuality Suggested YTPlaybackQuality to play the videos.
- * @return The result of cueing the playlist.
  */
 - (void)loadPlaylist:(NSString *)cueingString
                index:(int)index

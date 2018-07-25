@@ -161,7 +161,7 @@ public extension String {
     }
     
     func isNumeric() -> Bool {
-        if let _ = defaultNumberFormatter().number(from: self) {
+        if defaultNumberFormatter().number(from: self) != nil {
             return true
         }
         return false

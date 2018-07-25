@@ -64,7 +64,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         self.navigationController!.delegate = swiper!
         for view in view.subviews {
             if view is UIScrollView {
-                var scrollView = view as! UIScrollView
+                let scrollView = view as! UIScrollView
                 //swiper!.panRecognizer.require(toFail:scrollView.panGestureRecognizer)
                 scrollView.delegate = self
                 if scrollView.isPagingEnabled && SettingValues.commentTwoSwipe {
@@ -111,7 +111,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating: Bool, previousViewControllers: [UIViewController], transitionCompleted: Bool) {
         guard transitionCompleted else { return }
         if !(self.viewControllers!.first! is ClearVC) {
-            PagingCommentViewController.savedComment = self.viewControllers!.first as! CommentViewController
+            PagingCommentViewController.savedComment = self.viewControllers!.first as? CommentViewController
         }
             currentIndex = vCs.index(of: PagingCommentViewController.savedComment!)!
 

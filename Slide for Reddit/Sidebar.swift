@@ -13,7 +13,7 @@ import TTTAttributedLabel
 
 class Sidebar: NSObject, TTTAttributedLabelDelegate {
     
-    var parent: UIViewController & MediaVCDelegate?
+    var parent: (UIViewController & MediaVCDelegate)?
     var subname = ""
     
     init(parent: UIViewController & MediaVCDelegate, subname: String) {
@@ -68,7 +68,7 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate {
         }
     }
 
-    var inner: UIViewController & MediaVCDelegate?
+    var inner: (UIViewController & MediaVCDelegate)?
     var subInfo: Subreddit?
 
     func displaySidebar() {
@@ -84,7 +84,6 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate {
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Subreddit sidebar not found", seconds: 3, context: self.parent)
                     }
-                    break
                 }
             })
         } catch {

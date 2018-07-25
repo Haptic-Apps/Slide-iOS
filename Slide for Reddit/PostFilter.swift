@@ -78,32 +78,26 @@ class PostFilter {
             if urls {
                 contentMatch = true
             }
-            break
         case .SELF, .NONE:
             if selftext {
                 contentMatch = true
             }
-            break
         case .ALBUM:
             if albums {
                 contentMatch = true
             }
-            break
         case .IMAGE, .DEVIANTART, .IMGUR, .XKCD:
             if images {
                 contentMatch = true
             }
-            break
         case .GIF:
             if gifs {
                 contentMatch = true
             }
-            break
         case .VID_ME, .VIDEO, .STREAMABLE:
             if videos {
                 contentMatch = true
             }
-            break
         default:
             break
         }

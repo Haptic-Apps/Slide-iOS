@@ -155,7 +155,7 @@ class SettingsWelcome: UIViewController {
         UserDefaults.standard.set(true, forKey: "firstOpen")
         UserDefaults.standard.set(false, forKey: SettingValues.pref_viewType)
         UserDefaults.standard.synchronize()
-        ColorUtil.doInit()
+        _ = ColorUtil.doInit()
         parentVC.hardReset()
         SubredditReorderViewController.changed = true
         self.dismiss(animated: true, completion: nil)
@@ -170,7 +170,7 @@ class SettingsWelcome: UIViewController {
         SettingValues.viewType = true
         UserDefaults.standard.set(true, forKey: SettingValues.pref_viewType)
         UserDefaults.standard.synchronize()
-        ColorUtil.doInit()
+        _ = ColorUtil.doInit()
         parentVC.hardReset()
         SubredditReorderViewController.changed = true
         self.dismiss(animated: true, completion: nil)
@@ -186,7 +186,7 @@ class SettingsWelcome: UIViewController {
         UserDefaults.standard.set(true, forKey: "firstOpen")
         UserDefaults.standard.set(false, forKey: SettingValues.pref_viewType)
         UserDefaults.standard.synchronize()
-        ColorUtil.doInit()
+        _ = ColorUtil.doInit()
         parentVC.hardReset()
         SubredditReorderViewController.changed = true
         self.dismiss(animated: true, completion: nil)

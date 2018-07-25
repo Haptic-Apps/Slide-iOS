@@ -120,7 +120,7 @@ public class TextDisplayStackView: UIStackView {
             
             var startIndex = 0
             
-            var newTitle = NSMutableAttributedString(attributedString: title)
+            let newTitle = NSMutableAttributedString(attributedString: title)
             
             if !blocks[0].startsWith("<table>") && !blocks[0].startsWith("<cite>") && !blocks[0].startsWith("<code>") {
                 newTitle.append(NSAttributedString.init(string: "\n\n", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 5)]))
@@ -148,7 +148,7 @@ public class TextDisplayStackView: UIStackView {
                 }
             }
         } else {
-            var newTitle = NSMutableAttributedString(attributedString: title)
+            let newTitle = NSMutableAttributedString(attributedString: title)
             if body != nil {
                 newTitle.append(NSAttributedString.init(string: "\n\n", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 5)]))
                 newTitle.append(body!)
@@ -572,10 +572,8 @@ public class TextDisplayStackView: UIStackView {
     
     public func addSpoilers(_ text: String) -> String {
         var base = text
-        var spoil = false
         
         for match in base.capturedGroups(withRegex: "<a[^>]*title=\"([^\"]*)\"[^>]*>([^<]*)</a>") {
-            spoil = true
             let tag = match[0]
             let spoilerText = match[1]
             let spoilerTeaser = match[2]

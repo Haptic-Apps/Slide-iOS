@@ -85,13 +85,9 @@ class SettingsGeneral: UITableViewController {
 
         switch section {
         case 0: label.text = "Display"
-            break
         case 1: label.text = "Notifications"
-            break
         case 2: label.text = "Sorting"
-            break
         default: label.text = ""
-            break
         }
         return toReturn
     }

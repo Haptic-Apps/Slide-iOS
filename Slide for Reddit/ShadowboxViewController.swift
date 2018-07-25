@@ -153,7 +153,7 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
     
 }
 
-public extension UIPanGestureRecognizer {
+extension UIPanGestureRecognizer {
     
     override open class func initialize() {
         super.initialize()

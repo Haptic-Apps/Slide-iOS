@@ -336,7 +336,6 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
         MKColorPicker.selectionStyle = .check
         self.isAccent = true
         MKColorPicker.scrollDirection = .vertical
-        var index = 0
 
         MKColorPicker.style = .circle
 
@@ -641,7 +640,7 @@ public extension UIView {
     public func showToast(_ toast: UIView, duration: TimeInterval, position: CGPoint, completion: ((_ didTap: Bool) -> Void)?) {
         objc_setAssociatedObject(toast, &ToastKeys.Completion, ToastCompletionWrapper(completion), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
 
-        if let _ = objc_getAssociatedObject(self, &ToastKeys.ActiveToast) as? UIView, ToastManager.shared.queueEnabled {
+        if objc_getAssociatedObject(self, &ToastKeys.ActiveToast) as? UIView != nil, ToastManager.shared.queueEnabled {
             objc_setAssociatedObject(toast, &ToastKeys.Duration, NSNumber(value: duration), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             objc_setAssociatedObject(toast, &ToastKeys.Position, NSValue(cgPoint: position), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
 
@@ -667,7 +666,7 @@ public extension UIView {
      */
     public func makeToastActivity(_ position: ToastPosition) {
         // sanity
-        if let _ = objc_getAssociatedObject(self, &ToastKeys.ActivityView) as? UIView {
+        if objc_getAssociatedObject(self, &ToastKeys.ActivityView) as? UIView != nil {
             return
         }
 
@@ -690,7 +689,7 @@ public extension UIView {
      */
     public func makeToastActivity(_ position: CGPoint) {
         // sanity
-        if let _ = objc_getAssociatedObject(self, &ToastKeys.ActivityView) as? UIView {
+        if objc_getAssociatedObject(self, &ToastKeys.ActivityView) as? UIView != nil {
             return
         }
 

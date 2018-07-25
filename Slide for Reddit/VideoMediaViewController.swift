@@ -81,10 +81,13 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         super.viewWillDisappear(animated)
         timer?.invalidate()
         request?.cancel()
-        NotificationCenter.default.removeObserver(self)
         videoView.player?.pause()
     }
 
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         // Re-enable screen dimming due to inactivity
@@ -253,7 +256,6 @@ class VideoMediaViewController: EmbeddableMediaViewController {
                 //skip back
                 if isYoutubeView {
                     let playerCurrentTime = scrubber.slider.value
-                    let maxTime = scrubber.slider.maximumValue
                     
                     let newTime = playerCurrentTime - 5
                     
@@ -426,10 +428,10 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         let key = getKeyFromURL()
         var toLoadAudio = self.data.baseURL!.absoluteString
         toLoadAudio = toLoadAudio.substring(0, length: toLoadAudio.lastIndexOf("/DASH_") ?? toLoadAudio.length)
-        toLoadAudio = toLoadAudio + "/audio"
-        let finalUrl = URL.init(fileURLWithPath:key)
-        let localUrlV = URL.init(fileURLWithPath:key.replacingOccurrences(of: ".mp4", with: "video.mp4"))
-        let localUrlAudio = URL.init(fileURLWithPath:key.replacingOccurrences(of: ".mp4", with: "audio.mp4"))
+        toLoadAudio += "/audio"
+        let finalUrl = URL.init(fileURLWithPath: key)
+        let localUrlV = URL.init(fileURLWithPath: key.replacingOccurrences(of: ".mp4", with: "video.mp4"))
+        let localUrlAudio = URL.init(fileURLWithPath: key.replacingOccurrences(of: ".mp4", with: "audio.mp4"))
 
         self.request = Alamofire.download(toLoadAudio, method: .get, to: { (_, _) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
             return (localUrlAudio, [.removePreviousFile, .createIntermediateDirectories])
@@ -501,7 +503,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
             if s.endsWith("/") {
                 s = s.substring(0, length: s.length - 2)
             }
-            s = s + "/DASH_9_6_M"
+            s += "/DASH_9_6_M"
         }
         return s
     }
@@ -633,7 +635,7 @@ extension VideoMediaViewController {
         
         //fetching the data from the url
         URLSession.shared.dataTask(with: metaURL, completionHandler: { (data, _, error) -> Void in
-            if let _ = error {
+            if error != nil {
                 failureBlock()
                 return
             }
@@ -1015,9 +1017,9 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
                 completion()
                 print("success")
             case AVAssetExportSessionStatus.failed:
-                print("failed \(assetExport.error)")
+                print("failed \(assetExport.error?.localizedDescription ?? "")")
             case AVAssetExportSessionStatus.cancelled:
-                print("cancelled \(assetExport.error)")
+                print("cancelled \(assetExport.error?.localizedDescription ?? "")")
             default:
                 print("complete")
             }

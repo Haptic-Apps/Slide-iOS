@@ -45,7 +45,7 @@ class WrappingFlowLayout: UICollectionViewLayout {
             portraitCount = 1
         }
         
-        var pad = UIScreen.main.traitCollection.userInterfaceIdiom == .pad
+        let pad = UIScreen.main.traitCollection.userInterfaceIdiom == .pad
         if portraitCount == 1 && pad {
             portraitCount = 2
         }

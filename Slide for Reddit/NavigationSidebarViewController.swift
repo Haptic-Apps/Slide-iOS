@@ -97,9 +97,8 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
                     DispatchQueue.main.async {
                         self.tableView.reloadData()
                     }
-                    break
-                case .failure:
-                    break
+                case .failure(let error):
+                    print(error)
                 }
             })
         }
@@ -204,9 +203,7 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
         
         switch section {
         case 0: label.text  = ""
-            break
         default: label.text  = "SUBREDDIT SUGGESTIONS"
-            break
         }
         return toReturn
     }
@@ -215,12 +212,12 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
         var cell: SubredditCellView?
         if indexPath.section == 0 {
             if indexPath.row == filteredContent.count && isSearching {
-                var thing = searchBar!.text!
+                let thing = searchBar!.text!
                 let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
                 c.setSubreddit(subreddit: thing, nav: parentController!, exists: false)
                 cell = c
             } else if isSearching && indexPath.row == filteredContent.count + 1 {
-                var thing = searchBar!.text!
+                let thing = searchBar!.text!
                 let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
                 c.setProfile(profile: thing, nav: parentController!)
                 cell = c
@@ -236,7 +233,7 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
                 cell = c
             }
         } else {
-            var thing = suggestions[indexPath.row]
+            let thing = suggestions[indexPath.row]
             let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
             c.setSubreddit(subreddit: thing, nav: parentController!, exists: false)
             cell = c

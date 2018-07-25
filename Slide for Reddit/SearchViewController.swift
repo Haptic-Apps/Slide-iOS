@@ -134,7 +134,7 @@ class SearchViewController: ContentListingViewController {
 
         alert.addOneTextField(configuration: config)
 
-        alert.addAction(UIAlertAction(title: "Search again", style: .default, handler: { [weak alert] (_) in
+        alert.addAction(UIAlertAction(title: "Search again", style: .default, handler: { (_) in
             let text = self.searchText ?? ""
             let search = SearchViewController.init(subreddit: self.sub, searchFor: text)
             self.navigationController?.popViewController(animated: true)

@@ -234,7 +234,7 @@ extension String {
     mutating func stringByRemovingRegexMatches(pattern: String, replaceWith: String = "") {
         do {
             let regex = try NSRegularExpression(pattern: pattern, options: NSRegularExpression.Options.caseInsensitive)
-            let range = NSRange(location: 0, length: self.characters.count)
+            let range = NSRange(location: 0, length: self.length)
             self = regex.stringByReplacingMatches(in: self, options: [], range: range, withTemplate: replaceWith)
         } catch {
             return

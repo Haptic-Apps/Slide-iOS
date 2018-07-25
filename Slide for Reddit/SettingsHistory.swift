@@ -68,10 +68,8 @@ class SettingsHistory: UITableViewController {
         
         switch section {
         case 0: label.text  = "Settings"
-            break
         case 1: label.text = "Clear History"
         default: label.text  = ""
-            break
         }
         return toReturn
     }

@@ -102,17 +102,12 @@ extension IAPHandler: SKProductsRequestDelegate, SKPaymentTransactionObserver {
                     print("purchased")
                     SKPaymentQueue.default().finishTransaction(transaction as! SKPaymentTransaction)
                     purchaseStatusBlock?(.purchased)
-                    break
-                    
                 case .failed:
                     print("failed")
                     SKPaymentQueue.default().finishTransaction(transaction as! SKPaymentTransaction)
-                    break
                 case .restored:
                     print("restored")
                     SKPaymentQueue.default().finishTransaction(transaction as! SKPaymentTransaction)
-                    break
-                    
                 default: break
                 }}}
     }

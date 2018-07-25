@@ -49,7 +49,7 @@ class CodeDisplayView: UIScrollView {
                 let font = UIFont(name: "Courier", size: 16 + CGFloat(SettingValues.commentFontOffset)) ?? UIFont.systemFont(ofSize: 16)
                 attr.addAttribute(NSFontAttributeName, value: font, range: NSRange.init(location: 0, length: attr.length))
                 attr.addAttribute(NSForegroundColorAttributeName, value: baseColor, range: NSRange.init(location: 0, length: attr.length))
-                var cell = LinkParser.parse(attr, baseColor)
+                let cell = LinkParser.parse(attr, baseColor)
                 baseData.append(cell)
             } catch {
                 print(error.localizedDescription)
@@ -69,7 +69,7 @@ class CodeDisplayView: UIScrollView {
     }
     
     func addSubviews() {
-        var finalString = NSMutableAttributedString.init()
+        let finalString = NSMutableAttributedString.init()
         for row in baseData {
             finalString.append(row)
             finalString.append(NSAttributedString.init(string: "\n"))

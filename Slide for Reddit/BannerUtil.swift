@@ -71,7 +71,8 @@ public class BannerUtil {
         context.view.superview?.addSubview(popup)
         UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
             self.popup.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
-        }) { (_) in
+        }) {
+            (_) in
             if let callback = callback {
                 self.popup.addTapGestureRecognizer {
                     callback()
@@ -85,7 +86,8 @@ public class BannerUtil {
                 if !self.cancelled {
                     self.popup.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
                 }
-            }) { (_) in
+            }) {
+                (_) in
                 if !self.cancelled {
                     self.popup.removeFromSuperview()
                     BannerUtil.banner = nil

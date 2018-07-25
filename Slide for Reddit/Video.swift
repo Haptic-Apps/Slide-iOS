@@ -55,7 +55,7 @@ public class Video {
 	public var date_featured: String?
 	public var score_modifier: Int?
 	public var channel: Channel?
-	public var formats: Array<Formats>?
+	public var formats: [Formats]?
 
 /**
     Returns an array of models based on given dictionary.

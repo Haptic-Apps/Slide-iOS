@@ -56,18 +56,14 @@ class RealmDataWrapper {
         case .NSFW:
             thumb = true
             turl = "nsfw"
-            break
         case .DEFAULT:
             thumb = true
             turl = "web"
-            break
         case .SELF, .NONE:
             thumb = false
-            break
         case .URL:
             thumb = true
             turl = submission.thumbnail
-            break
         }
 
         if big { //check for low quality image
@@ -138,11 +134,11 @@ class RealmDataWrapper {
         rSubmission.removed = !rSubmission.removedBy.isEmpty()
 
         for item in submission.baseJson["mod_reports"] as? [AnyObject] ?? [] {
-            let array = item as! Array<Any>
+            let array = item as! [Int]
             rSubmission.reports.append("\(array[0]): \(array[1])")
         }
         for item in submission.baseJson["user_reports"] as? [AnyObject] ?? [] {
-            let array = item as! Array<Any>
+            let array = item as! [Any]
             rSubmission.reports.append("\(array[0]): \(array[1])")
         }
         rSubmission.approvedBy = submission.baseJson["approved_by"] as? String ?? ""
@@ -150,9 +146,9 @@ class RealmDataWrapper {
 
         if json?["crosspost_parent_list"] != nil {
             rSubmission.isCrosspost = true
-            var sub = ((json?["crosspost_parent_list"] as? [Any])?.first as? [String: Any])?["subreddit"] as? String ?? ""
-            var author = ((json?["crosspost_parent_list"] as? [Any])?.first as? [String: Any])?["author"] as? String ?? ""
-            var permalink = ((json?["crosspost_parent_list"] as? [Any])?.first as? [String: Any])?["permalink"] as? String ?? ""
+            let sub = ((json?["crosspost_parent_list"] as? [Any])?.first as? [String: Any])?["subreddit"] as? String ?? ""
+            let author = ((json?["crosspost_parent_list"] as? [Any])?.first as? [String: Any])?["author"] as? String ?? ""
+            let permalink = ((json?["crosspost_parent_list"] as? [Any])?.first as? [String: Any])?["permalink"] as? String ?? ""
             rSubmission.crosspostSubreddit = sub
             rSubmission.crosspostAuthor = author
             rSubmission.crosspostPermalink = permalink
@@ -204,18 +200,14 @@ class RealmDataWrapper {
         case .NSFW:
             thumb = true
             turl = "nsfw"
-            break
         case .DEFAULT:
             thumb = true
             turl = "web"
-            break
         case .SELF, .NONE:
             thumb = false
-            break
         case .URL:
             thumb = true
             turl = submission.thumbnail
-            break
         }
 
         if big { //check for low quality image
@@ -283,11 +275,11 @@ class RealmDataWrapper {
         rSubmission.permalink = submission.permalink
 
         for item in submission.baseJson["mod_reports"] as? [AnyObject] ?? [] {
-            let array = item as! Array<Any>
+            let array = item as! [Any]
             rSubmission.reports.append("\(array[0]): \(array[1])")
         }
         for item in submission.baseJson["user_reports"] as? [AnyObject] ?? [] {
-            let array = item as! Array<Any>
+            let array = item as! [Any]
             rSubmission.reports.append("\(array[0]): \(array[1])")
         }
         rSubmission.approvedBy = submission.baseJson["approved_by"] as? String ?? ""
@@ -328,11 +320,11 @@ class RealmDataWrapper {
         rComment.sticky = comment.stickied
 
         for item in comment.modReports {
-            let array = item as! Array<Any>
+            let array = item as! [Any]
             rComment.reports.append("\(array[0]): \(array[1])")
         }
         for item in comment.userReports {
-            let array = item as! Array<Any>
+            let array = item as! [Any]
             rComment.reports.append("\(array[0]): \(array[1])")
         }
         //todo rComment.pinned = comment.pinned

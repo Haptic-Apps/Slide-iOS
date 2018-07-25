@@ -43,8 +43,8 @@ public class GfyItem {
 	public var title: String?
 	public var extraLemmas: String?
 	public var md5: String?
-	public var tags: Array<String>?
-	public var userTags: Array<String>?
+	public var tags: [String]?
+	public var userTags: [String]?
 	public var nsfw: Int?
 	public var sar: String?
 	public var url: String?
@@ -59,8 +59,8 @@ public class GfyItem {
 	public var description: String?
 	public var copyrightClaimaint: String?
 	public var languageText: String?
-	public var fullDomainWhitelist: Array<String>?
-	public var fullGeoWhitelist: Array<String>?
+	public var fullDomainWhitelist: [String]?
+	public var fullGeoWhitelist: [String]?
 	public var iframeProfileImageVisible: String?
 
 /**

@@ -179,13 +179,13 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         if !self.cancelled {
             if SettingValues.swapLongPress {
                 //todo this is probably wrong
-                if comment != nil && comment! is RComment && self.delegate!.isMenuShown() && self.delegate!.getMenuShown() != comment!.getIdentifier() {
+                if comment != nil && self.delegate!.isMenuShown() && self.delegate!.getMenuShown() != comment!.getIdentifier() {
                     self.showMenu(nil)
                 } else {
                     self.pushedSingleTap(nil)
                 }
             } else {
-                if comment != nil && comment! is RComment {
+                if comment != nil {
                     self.showMenu(nil)
                 } else {
                     self.pushedSingleTap(nil)
@@ -565,12 +565,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 if dir == .up {
                     direction = .none
                 }
-                break
             case .down:
                 if dir == .down {
                     direction = .none
                 }
-                break
             default:
                 break
             }
@@ -600,7 +598,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                         DispatchQueue.main.async {
                             BannerUtil.makeBanner(text: "Approving comment failed!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit), seconds: 3, context: self.parent!)
                         }
-                        break
                     case .success:
                         self.parent!.approved.append(self.comment!.id)
                         if self.parent!.removed.contains(self.comment!.id) {
@@ -610,7 +607,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                             self.parent!.tableView.reloadData()
                             BannerUtil.makeBanner(text: "Comment approved!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit), seconds: 3, context: self.parent!)
                         }
-                        break
                     }
                 })
             } catch {
@@ -630,12 +626,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                         DispatchQueue.main.async {
                             BannerUtil.makeBanner(text: "Distinguishing comment failed!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit), seconds: 3, context: self.parent!)
                         }
-                        break
                     case .success:
                         DispatchQueue.main.async {
                             BannerUtil.makeBanner(text: "Comment distinguished!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit), seconds: 3, context: self.parent!)
                         }
-                        break
                     }
                 })
             } catch {
@@ -655,12 +649,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                         DispatchQueue.main.async {
                             BannerUtil.makeBanner(text: "Couldn't \(sticky ? "" : "un-")pin comment!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit), seconds: 3, context: self.parent!)
                         }
-                        break
                     case .success:
                         DispatchQueue.main.async {
                             BannerUtil.makeBanner(text: "Comment \(sticky ? "" : "un-")pinned!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit), seconds: 3, context: self.parent!)
                         }
-                        break
                     }
                 })
             } catch {
@@ -680,7 +672,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Removing comment failed!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit), seconds: 3, context: self.parent!)
                         }
-                        break
                     case .success:
                         self.parent!.removed.append(self.comment!.id)
                         if self.parent!.approved.contains(self.comment!.id) {
@@ -690,7 +681,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                             self.parent!.tableView.reloadData()
                             BannerUtil.makeBanner(text: "Comment removed!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit), seconds: 3, context: self.parent!)
                         }
-                        break
                 }
             })
             
@@ -711,12 +701,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                         DispatchQueue.main.async {
                             BannerUtil.makeBanner(text: "Banning user failed!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit), seconds: 3, context: self.parent!)
                         }
-                        break
                     case .success:
                         DispatchQueue.main.async {
                             BannerUtil.makeBanner(text: "u/\(self.comment!.author) banned!", color: ColorUtil.accentColorForSub(sub: self.comment!.subreddit), seconds: 3, context: self.parent!)
                         }
-                        break
                     }
 
                 })
@@ -776,7 +764,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         alertController.addAction(Action(ActionData(title: "\(comment!.reports.count) reports", image: UIImage(named: "reports")!.menuIcon()), style: .default, handler: { _ in
             var reports = ""
             for report in self.comment!.reports {
-                reports = reports + report + "\n"
+                reports += report + "\n"
             }
             let alert = UIAlertController(title: "Reports",
                                           message: reports,
@@ -1078,16 +1066,12 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         switch SettingValues.commentActionDoubleTap {
         case .UPVOTE:
             self.upvote(self)
-            break
         case .DOWNVOTE:
             self.downvote(self)
-            break
         case .SAVE:
             self.save()
-            break
         case .MENU:
             self.menu(self)
-            break
         default:
             break
         }
@@ -1105,13 +1089,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         switch ActionStates.getVoteDirection(s: comment) {
         case .down:
             color = ColorUtil.downvoteColor
-            break
         case .up:
             color = ColorUtil.upvoteColor
-            break
         default:
             color = ColorUtil.fontColor
-            break
         }
 
         let scoreString = NSMutableAttributedString(string: ((comment.scoreHidden ? "[score hidden]" : "\(getScoreText(comment: comment))") + (comment.controversiality > 0 ? "†" : "")), attributes: [NSForegroundColorAttributeName: color])
@@ -1223,7 +1204,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 }
                 submissionScore += 1
             }
-            break
         case .down:
             if comment.likes != .down {
                 if comment.likes == .up {
@@ -1231,7 +1211,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 }
                 submissionScore -= 1
             }
-            break
         case .none:
             if comment.likes == .up && comment.author == AccountController.currentName {
                 submissionScore -= 1
@@ -1339,11 +1318,11 @@ extension CommentDepthCell: TTTAttributedLabelDelegate {
     }
     
     func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith result: NSTextCheckingResult!) {
-        var textClicked = label.attributedText.attributedSubstring(from: result.range).string
+        let textClicked = label.attributedText.attributedSubstring(from: result.range).string
         if textClicked.contains("[[s[") {
             parent?.showSpoiler(textClicked)
         } else {
-            var urlClicked = result.url!
+            let urlClicked = result.url!
             parent?.doShow(url: urlClicked)
         }
     }

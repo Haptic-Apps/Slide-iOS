@@ -18,7 +18,7 @@ public class VCPresenter {
             return
         }
         if ((parentNavigationController != nil && parentNavigationController!.modalPresentationStyle != .pageSheet) && !(parentViewController is SubSidebarViewController) && popupIfPossible && UIApplication.shared.statusBarOrientation.isLandscape) || parentNavigationController == nil {
-            var newParent = TapBehindModalViewController.init(rootViewController: viewController)
+            let newParent = TapBehindModalViewController.init(rootViewController: viewController)
             newParent.navigationBar.shadowImage = UIImage()
             newParent.navigationBar.isTranslucent = false
 
@@ -32,7 +32,7 @@ public class VCPresenter {
             let barButton = UIBarButtonItem.init(customView: button)
 
             //Let's figure out how to present it
-            var small: Bool = popupIfPossible && UIScreen.main.traitCollection.userInterfaceIdiom == .pad && UIApplication.shared.statusBarOrientation != .portrait
+            let small: Bool = popupIfPossible && UIScreen.main.traitCollection.userInterfaceIdiom == .pad && UIApplication.shared.statusBarOrientation != .portrait
 
             if small {
                 newParent.modalPresentationStyle = .pageSheet
@@ -71,7 +71,7 @@ public class VCPresenter {
     public static func proDialogShown(feature: Bool, _ parentViewController: UIViewController) -> Bool {
         if (feature && !SettingValues.isPro) || (!feature && !SettingValues.isPro) {
             let viewController = SettingsPro()
-            var newParent = TapBehindModalViewController.init(rootViewController: viewController)
+            let newParent = TapBehindModalViewController.init(rootViewController: viewController)
             newParent.navigationBar.shadowImage = UIImage()
             newParent.navigationBar.isTranslucent = false
             
@@ -112,12 +112,7 @@ public class VCPresenter {
     }
 
     public static func presentAlert(_ alertController: UIViewController, parentVC: UIViewController) {
-
-        do {
-            try parentVC.present(alertController, animated: true, completion: nil)
-        } catch {
-            print("Error presenting alert controller \(alertController)")
-        }
+        parentVC.present(alertController, animated: true, completion: nil)
     }
 
     public static func openRedditLink(_ link: String, _ parentNav: UINavigationController?, _ parentVC: UIViewController?) {

@@ -23,10 +23,10 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAt
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        var topmargin = 5
-        var bottommargin = 5
-        var leftmargin = 5
-        var rightmargin = 5
+        let topmargin = 5
+        let bottommargin = 5
+        let leftmargin = 5
+        let rightmargin = 5
         
         let f = self.contentView.frame
         let fr = UIEdgeInsetsInsetRect(f, UIEdgeInsets(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin)))
@@ -235,7 +235,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAt
     }
     
     var comment: RComment?
-    public var parentViewController: UIViewController & MediaVCDelegate?
+    public var parentViewController: (UIViewController & MediaVCDelegate)?
     public var navViewController: UIViewController?
     
     func openContent(sender: UITapGestureRecognizer? = nil) {

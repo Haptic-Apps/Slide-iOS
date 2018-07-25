@@ -84,7 +84,7 @@ extension RSubmission {
         }
 
         if type == .LINK && SettingValues.linkAlwaysThumbnail {
-            target == .thumb
+            target = .thumb
         }
 
         var cell: LinkCellView!

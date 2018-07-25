@@ -38,11 +38,9 @@ public class HapticUtility {
                 HapticUtility.impactFeedbackGenerator.medium.prepare()
                 // 2nd Generation Taptic Engine w/ Haptic Feedback (iPhone 7/7+)
                 HapticUtility.impactFeedbackGenerator.medium.impactOccurred()
-                break
             case 1:
                 // 1st Generation Taptic Engine (iPhone 6S/6S+)
                 AudioServicesPlaySystemSound(HapticUtility.peek)
-                break
             case 0:
                 // No Taptic Engine
                 break
@@ -61,11 +59,9 @@ public class HapticUtility {
                     HapticUtility.impactFeedbackGenerator.heavy.prepare()
                     // 2nd Generation Taptic Engine w/ Haptic Feedback (iPhone 7/7+)
                     HapticUtility.impactFeedbackGenerator.heavy.impactOccurred()
-                    break
                 case 1:
                     // 1st Generation Taptic Engine (iPhone 6S/6S+)
                     AudioServicesPlaySystemSound(HapticUtility.pop)
-                    break
                 case 0:
                     // No Taptic Engine
                     break
@@ -85,11 +81,9 @@ public class HapticUtility {
                     HapticUtility.impactFeedbackGenerator.light.prepare()
                     // 2nd Generation Taptic Engine w/ Haptic Feedback (iPhone 7/7+)
                     HapticUtility.impactFeedbackGenerator.light.impactOccurred()
-                    break
                 case 1:
                     // 1st Generation Taptic Engine (iPhone 6S/6S+)
                     AudioServicesPlaySystemSound(HapticUtility.peek)
-                    break
                 case 0:
                     // No Taptic Engine
                     break

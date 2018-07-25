@@ -153,7 +153,7 @@ class PostActions: NSObject {
         alertController.addAction(Action(ActionData(title: "\(cell.link!.reports.count) reports", image: UIImage(named: "reports")!.menuIcon()), style: .default, handler: { _ in
             var reports = ""
             for report in cell.link!.reports {
-                reports = reports + report + "\n"
+                reports += report + "\n"
             }
             let alert = UIAlertController(title: "Reports",
                                           message: reports,
@@ -267,7 +267,6 @@ class PostActions: NSObject {
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Locking submission failed!", color: GMColor.red500Color(), seconds: 3, context: cell.parentViewController)
                     }
-                    break
                 case .success:
                     CachedTitle.approved.append(id)
                     if CachedTitle.removed.contains(id) {
@@ -278,7 +277,6 @@ class PostActions: NSObject {
                         cell.link!.locked = set
                         cell.refreshLink(cell.link!)
                     }
-                    break
                 }
             })
         } catch {
@@ -296,7 +294,6 @@ class PostActions: NSObject {
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Request failed!", color: GMColor.red500Color(), seconds: 3, context: cell.parentViewController)
                     }
-                    break
                 case .success:
                     CachedTitle.approved.append(id)
                     if CachedTitle.removed.contains(id) {
@@ -307,7 +304,6 @@ class PostActions: NSObject {
                         cell.link!.spoiler = set
                         cell.refreshLink(cell.link!)
                     }
-                    break
                 }
             })
         } catch {
@@ -325,7 +321,6 @@ class PostActions: NSObject {
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Request failed!", color: GMColor.red500Color(), seconds: 3, context: cell.parentViewController)
                     }
-                    break
                 case .success:
                     CachedTitle.approved.append(id)
                     if CachedTitle.removed.contains(id) {
@@ -336,7 +331,6 @@ class PostActions: NSObject {
                         cell.link!.nsfw = set
                         cell.refreshLink(cell.link!)
                     }
-                    break
                 }
             })
         } catch {
@@ -354,7 +348,6 @@ class PostActions: NSObject {
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Approving submission failed!", color: GMColor.red500Color(), seconds: 3, context: cell.parentViewController)
                     }
-                    break
                 case .success:
                     CachedTitle.approved.append(id)
                     if CachedTitle.removed.contains(id) {
@@ -364,7 +357,6 @@ class PostActions: NSObject {
                         cell.refreshLink(cell.link!)
                         BannerUtil.makeBanner(text: "Submission approved!", color: ColorUtil.accentColorForSub(sub: cell.link!.subreddit), seconds: 3, context: cell.parentViewController)
                     }
-                    break
                 }
             })
         } catch {
@@ -382,14 +374,12 @@ class PostActions: NSObject {
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Distinguishing submission failed!", color: GMColor.red500Color(), seconds: 3, context: cell.parentViewController)
                     }
-                    break
                 case .success:
                     DispatchQueue.main.async {
                         cell.link!.distinguished = "mod"
                         cell.refreshLink(cell.link!)
                         BannerUtil.makeBanner(text: "Submission distinguished!", color: ColorUtil.accentColorForSub(sub: cell.link!.subreddit), seconds: 3, context: cell.parentViewController)
                     }
-                    break
                 }
             })
         } catch {
@@ -407,14 +397,12 @@ class PostActions: NSObject {
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Couldn't \(sticky ? "" : "un-")sticky submission!", color: GMColor.red500Color(), seconds: 3, context: cell.parentViewController)
                     }
-                    break
                 case .success:
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Submission \(sticky ? "" : "un-")stickied!", color: ColorUtil.accentColorForSub(sub: cell.link!.subreddit), seconds: 3, context: cell.parentViewController)
                         cell.link!.stickied = sticky
                         cell.refreshLink(cell.link!)
                     }
-                    break
                 }
             })
         } catch {
@@ -430,8 +418,8 @@ class PostActions: NSObject {
                     DispatchQueue.main.async {
                         showRemovalReasons(cell, rules: rules, spam: spam)
                     }
-                    break
                 case .failure(let error):
+                    print(error)
                     DispatchQueue.main.async {
                         showRemovalReasons(cell, rules: [RuleTemplate](), spam: spam)
                     }
@@ -447,7 +435,7 @@ class PostActions: NSObject {
         for rule in rules {
             reasons.append(rule.violatonReason + "\n" + rule.description)
         }
-        var picker = ActionSheetStringPicker(title: "Choose a removal reason", rows: reasons, initialSelection: 0, doneBlock: { (_, index, _) in
+        let picker = ActionSheetStringPicker(title: "Choose a removal reason", rows: reasons, initialSelection: 0, doneBlock: { (_, index, _) in
             //todo this
             if index == 0 {
                 modRemoveReason(cell, reason: "")
@@ -478,7 +466,6 @@ class PostActions: NSObject {
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Removing submission failed!", color: GMColor.red500Color(), seconds: 3, context: cell.parentViewController)
                     }
-                    break
                 case .success:
                     CachedTitle.removed.append(id)
                     if CachedTitle.approved.contains(id) {
@@ -487,7 +474,6 @@ class PostActions: NSObject {
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Submission removed!", color: ColorUtil.accentColorForSub(sub: cell.link!.subreddit), seconds: 3, context: cell.parentViewController)
                     }
-                    break
                 }
             })
             
@@ -506,7 +492,6 @@ class PostActions: NSObject {
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Removing submission failed!", color: GMColor.red500Color(), seconds: 3, context: cell.parentViewController)
                     }
-                    break
                 case .success:
                     CachedTitle.removed.append(id)
                     if CachedTitle.approved.contains(id) {
@@ -515,14 +500,13 @@ class PostActions: NSObject {
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Submission removed!", color: ColorUtil.accentColorForSub(sub: cell.link!.subreddit), seconds: 3, context: cell.parentViewController)
                         VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(submission: cell.link!, sub: cell.link!.subreddit, modMessage: reason, completion: { (link) in
-                            if let link = link {
+                            if link != nil {
                                 BannerUtil.makeBanner(text: "Removal reason posted!", color: ColorUtil.accentColorForSub(sub: cell.link!.subreddit), seconds: 3, context: cell.parentViewController)
                             } else {
                                 BannerUtil.makeBanner(text: "Removal reason not posted!", color: GMColor.red500Color(), seconds: 3, context: cell.parentViewController)
                             }
                         })), parentVC: cell.parentViewController!)
                     }
-                    break
                 }
             })
             
@@ -532,7 +516,6 @@ class PostActions: NSObject {
     }
     
     static func modBan(_ cell: LinkCellView, why: String, duration: Int?) {
-        let id = cell.link!.id
         do {
             try (UIApplication.shared.delegate as! AppDelegate).session?.ban(cell.link!.author, banReason: why, duration: duration == nil ? 999 /*forever*/ : duration!, completion: { (result) -> Void in
                 switch result {
@@ -541,12 +524,10 @@ class PostActions: NSObject {
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Banning user failed!", color: GMColor.red500Color(), seconds: 3, context: cell.parentViewController)
                     }
-                    break
                 case .success:
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "u/\(cell.link!.author) banned!", color: ColorUtil.accentColorForSub(sub: cell.link!.subreddit), seconds: 3, context: cell.parentViewController)
                     }
-                    break
                 }
             })
         } catch {
@@ -626,7 +607,6 @@ class PostActions: NSObject {
                             DispatchQueue.main.async {
                                 self.crosspost(thing, parent, titleField, subField, error.localizedDescription)
                             }
-                            break
                         case .success(let submission):
                             if let error = self.getError(submission) {
                                 DispatchQueue.main.async {
@@ -680,7 +660,7 @@ class PostActions: NSObject {
         
         alert.addOneTextField(configuration: config)
         
-        alert.addAction(UIAlertAction(title: "Report", style: .destructive, handler: { [weak alert] (_) in
+        alert.addAction(UIAlertAction(title: "Report", style: .destructive, handler: { (_) in
             let text = self.reportText ?? ""
             do {
                 let name = (thing is RComment) ? (thing as! RComment).id : (thing as! RSubmission).id
