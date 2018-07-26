@@ -8,6 +8,7 @@
 
 import UIKit
 import UIKit.UIGestureRecognizerSubclass
+import Anchorage
 
 class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     
@@ -80,7 +81,7 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         self.navigationController?.view.backgroundColor = UIColor.clear
         viewToMux = self.background
         
-        let navigationBar = UINavigationBar.init(frame: CGRect.init(x: 0, y: 30, width: self.view.frame.size.width, height: 56))
+        let navigationBar = UINavigationBar.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: 56))
         navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationBar.shadowImage = UIImage()
         navigationBar.isTranslucent = true
@@ -95,6 +96,8 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         navigationBar.setItems([navItem!], animated: false)
         self.view.addSubview(navigationBar)
         
+        navigationBar.topAnchor == self.view.safeTopAnchor
+        navigationBar.horizontalAnchors == self.view.horizontalAnchors
     }
     
     func overview(_ sender: AnyObject) {

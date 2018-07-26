@@ -16,6 +16,7 @@ class ModalMediaViewController: UIViewController {
 
     var embeddedVC: EmbeddableMediaViewController!
     var fullscreen = false
+    var navigationBar = UINavigationBar()
 
     private var savedColor: UIColor?
 
@@ -62,11 +63,31 @@ class ModalMediaViewController: UIViewController {
 //    }
 
     func configureViews() {
-
         self.addChildViewController(embeddedVC)
         embeddedVC.didMove(toParentViewController: self)
         self.view.addSubview(embeddedVC.view)
 
+        navigationBar = UINavigationBar.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: 56))
+        navigationBar.setBackgroundImage(UIImage(), for: .default)
+        navigationBar.shadowImage = UIImage()
+        navigationBar.isTranslucent = true
+        let navItem = UINavigationItem(title: "")
+        let close = UIButton.init(type: .custom)
+        close.setImage(UIImage.init(named: "close")?.navIcon(), for: UIControlState.normal)
+        close.addTarget(self, action: #selector(self.exit), for: UIControlEvents.touchUpInside)
+        close.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        let closeB = UIBarButtonItem.init(customView: close)
+        navItem.leftBarButtonItem = closeB
+        
+        navigationBar.setItems([navItem], animated: false)
+        self.view.addSubview(navigationBar)
+        
+        navigationBar.topAnchor == self.view.safeTopAnchor
+        navigationBar.horizontalAnchors == self.view.horizontalAnchors
+    }
+    
+    func exit() {
+        self.dismiss(animated: true, completion: nil)
     }
 
     func configureLayout() {
@@ -108,6 +129,7 @@ extension ModalMediaViewController {
             (self.parent as? SwipeDownModalVC)?.background?.alpha = 1
             self.embeddedVC.bottomButtons.alpha = 0
             self.embeddedVC.progressView.alpha = 0
+            self.navigationBar.alpha = 0.2
         }, completion: {_ in
             self.embeddedVC.bottomButtons.isHidden = true
             self.embeddedVC.progressView.isHidden = true
@@ -121,6 +143,7 @@ extension ModalMediaViewController {
         UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
             let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
             statusBar.isHidden = false
+            self.navigationBar.alpha = 1
 
             (self.parent as? SwipeDownModalVC)?.background?.alpha = 0.6
             self.embeddedVC.bottomButtons.alpha = 1
