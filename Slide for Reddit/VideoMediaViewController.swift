@@ -401,7 +401,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
                 return (URL(fileURLWithPath: self.videoType == .REDDIT ? self.getKeyFromURL().replacingOccurrences(of: ".mp4", with: "video.mp4") : self.getKeyFromURL()), [.createIntermediateDirectories])
             }).downloadProgress() { progress in
                 DispatchQueue.main.async {
-                    self.progressView.progress = Float(progress.fractionCompleted)
+                    self.updateProgress(CGFloat(progress.fractionCompleted))
                     let countBytes = ByteCountFormatter()
                     countBytes.allowedUnits = [.useMB]
                     countBytes.countStyle = .file
@@ -437,7 +437,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
             return (localUrlAudio, [.removePreviousFile, .createIntermediateDirectories])
         }).downloadProgress() { progress in
             DispatchQueue.main.async {
-                self.progressView.progress = Float(progress.fractionCompleted)
+                self.updateProgress(CGFloat(progress.fractionCompleted))
             }
             }
             .responseData { response2 in
@@ -463,8 +463,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         }
     }
     func playVideo() {
-        self.progressView.alpha = 0
-        self.progressView.progress = 1
+        self.setProgressViewVisible(false)
         self.size.isHidden = true
         self.downloadButton.isHidden = false
         let playerItem = AVPlayerItem(url: URL(fileURLWithPath: getKeyFromURL()))

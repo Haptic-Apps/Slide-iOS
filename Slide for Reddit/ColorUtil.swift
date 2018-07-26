@@ -141,6 +141,30 @@ class ColorUtil {
             return color!
         }
     }
+    
+    public static func getCommentNameColor(_ subreddit: String) -> UIColor {
+        if UserDefaults.standard.bool(forKey: "commentaccent") {
+            return ColorUtil.accentColorForSub(sub:subreddit)
+        }
+        let color = UserDefaults.standard.colorForKey(key: "commentcolor")
+        if color == nil {
+            return ColorUtil.fontColor
+        } else {
+            return color!
+        }
+    }
+    
+    public static func setCommentNameColor(color: UIColor?, accent: Bool = false) {
+        if color == nil {
+            UserDefaults.standard.removeObject(forKey: "commentcolor")
+        } else {
+            UserDefaults.standard.setColor(color: color!, forKey: "commentcolor")
+        }
+        
+        UserDefaults.standard.set(accent, forKey: "commentaccent")
+
+        UserDefaults.standard.synchronize()
+    }
 
     public static func setColorForSub(sub: String, color: UIColor) {
         UserDefaults.standard.setColor(color: color, forKey: "color+" + sub)

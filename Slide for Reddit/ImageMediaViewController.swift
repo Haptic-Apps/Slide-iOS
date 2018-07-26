@@ -176,7 +176,6 @@ class ImageMediaViewController: EmbeddableMediaViewController {
 
                 // Update UI
                 strongSelf.setProgressViewVisible(false)
-                strongSelf.progressView.isHidden = true
                 strongSelf.downloadButton.isHidden = false
                 strongSelf.size.isHidden = true
 
@@ -204,7 +203,7 @@ class ImageMediaViewController: EmbeddableMediaViewController {
                 if average > 0 {
                     self.size.text = fileSize
                 }
-                self.progressView.progress = average
+                self.updateProgress(CGFloat(average))
 
             }, completed: { (image, _, _, _) in
 

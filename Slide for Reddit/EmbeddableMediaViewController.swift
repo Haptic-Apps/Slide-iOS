@@ -22,7 +22,7 @@ class EmbeddableMediaViewController: UIViewController {
 
     var data: EmbeddableMediaDataModel!
     var contentType: ContentType.CType!
-    var progressView: MDCProgressView = MDCProgressView()
+    var progressView: UIView = UIView()
     var bottomButtons = UIStackView()
 
     var commentCallback: (() -> Void)?
@@ -41,23 +41,61 @@ class EmbeddableMediaViewController: UIViewController {
         super.viewDidLoad()
 
         // Configure views
-        progressView.progress = 0
-        progressView.trackTintColor = ColorUtil.accentColorForSub(sub: "").withAlphaComponent(0.3)
-        progressView.progressTintColor = ColorUtil.accentColorForSub(sub: "")
-//        progressView.frame = CGRect(x: 0, y: 5 + (UIApplication.shared.statusBarView?.frame.size.height ?? 20), width: 20, height: CGFloat(5))
+        progressView = UIView()
         self.view.addSubview(progressView)
-
-        progressView.topAnchor == view.safeTopAnchor
-        progressView.horizontalAnchors == view.safeHorizontalAnchors
-        progressView.heightAnchor == 5
-
+        progressView.widthAnchor == 60
+        progressView.heightAnchor == 60
+        progressView.centerAnchors == self.view.centerAnchors
+        progressView.layer.cornerRadius = 30
+        progressView.alpha = 0.5
+        progressView.isHidden = true
+        updateProgress(0)
         setProgressViewVisible(true)
+    }
+    
+    func updateProgress(_ percent: CGFloat) {
+        print("Updating to \(percent)")
+        let startAngle = -CGFloat.pi / 2
+
+        let center = CGPoint (x: 60 / 2, y: 60 / 2)
+        let radius = CGFloat(60 / 2)
+        let arc = CGFloat.pi * CGFloat(2) * percent
+        
+        let cPath = UIBezierPath()
+        cPath.move(to: center)
+        cPath.addLine(to: CGPoint(x: center.x + radius * cos(startAngle), y: center.y + radius * sin(startAngle)))
+        cPath.addArc(withCenter: center, radius: radius, startAngle: startAngle, endAngle: arc + startAngle, clockwise: true)
+        cPath.addLine(to: CGPoint(x: center.x, y: center.y))
+        
+        let circleShape = CAShapeLayer()
+        circleShape.path = cPath.cgPath
+        circleShape.strokeColor = UIColor.white.cgColor
+        circleShape.fillColor = UIColor.white.cgColor
+        circleShape.lineWidth = 1.5
+        // add sublayer
+        for layer in progressView.layer.sublayers ?? [CALayer]() {
+            layer.removeFromSuperlayer()
+        }
+        progressView.layer.addSublayer(circleShape)
     }
 
     func setProgressViewVisible(_ visible: Bool) {
         // Bring the loading indicator to the front
         self.view.bringSubview(toFront: progressView)
-        progressView.setHidden(!visible, animated: true, completion: nil)
+        if visible {
+            progressView.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
+            progressView.isHidden = false
+            UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+                self.progressView.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
+            })
+        } else {
+            UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+                self.progressView.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
+            }) {
+                (_) in
+                self.progressView.isHidden = true
+            }
+        }
     }
 
 //    override func didReceiveMemoryWarning() {

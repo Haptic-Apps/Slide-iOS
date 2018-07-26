@@ -7,12 +7,14 @@
 //
 
 import UIKit
+import MKColorPicker
 
-class SettingsComments: UITableViewController {
-    
+class SettingsComments: UITableViewController, ColorPickerViewDelegate {
     var disableNavigationBarCell: UITableViewCell = UITableViewCell()
     var disableNavigationBar = UISwitch()
     
+    var authorThemeCell: UITableViewCell = UITableViewCell()
+
     var disableColorCell: UITableViewCell = UITableViewCell()
     var disableColor = UISwitch()
     
@@ -95,15 +97,61 @@ class SettingsComments: UITableViewController {
         
         switch section {
         case 0: label.text  = "Submission"
-        case 1: label.text  = "Comments"
-        case 2: label.text = "Actionbar"
+        case 1: label.text  = "Display"
+        case 2: label.text = "Interaction"
         default: label.text  = ""
         }
         return toReturn
     }
     
+    func colorPickerView(_ colorPickerView: ColorPickerView, didSelectItemAt indexPath: IndexPath) {
+        ColorUtil.setCommentNameColor(color: colorPickerView.colors[indexPath.row])
+        self.updateThemeCell()
+    }
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        if indexPath.section == 1 && indexPath.row == 0 {
+            showAuthorChooser()
+        }
+    }
+    
+    func showAuthorChooser() {
+        let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
+        
+        let margin: CGFloat = 10.0
+        let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
+        let MKColorPicker = ColorPickerView.init(frame: rect)
+        MKColorPicker.delegate = self
+        MKColorPicker.colors = GMPalette.allColor()
+        MKColorPicker.selectionStyle = .check
+        MKColorPicker.scrollDirection = .vertical
+        
+        MKColorPicker.style = .circle
+        
+        alertController.view.addSubview(MKColorPicker)
+        
+        alertController.addAction(UIAlertAction(title: "Match theme font color", style: .default, handler: { (_) in
+            ColorUtil.setCommentNameColor(color: nil)
+            self.updateThemeCell()
+        }))
+        
+        alertController.addAction(UIAlertAction(title: "Match subreddit accent color", style: .default, handler: { (_) in
+            ColorUtil.setCommentNameColor(color: nil, accent: true)
+            self.updateThemeCell()
+        }))
+
+        let cancelAction = UIAlertAction(title: "Save", style: .cancel, handler: { (_: UIAlertAction!) in
+        })
+        
+        alertController.addAction(cancelAction)
+        alertController.modalPresentationStyle = .popover
+        if let presenter = alertController.popoverPresentationController {
+            presenter.sourceView = authorThemeCell.contentView
+            presenter.sourceRect = authorThemeCell.contentView.bounds
+        }
+        
+        present(alertController, animated: true, completion: nil)
     }
     
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
@@ -137,12 +185,28 @@ class SettingsComments: UITableViewController {
         createCell(wideIndicatorCell, wideIndicator, isOn: SettingValues.wideIndicators, text: "Make comment depth indicator wider")
         createCell(lockBottomCell, lockBottom, isOn: SettingValues.lockCommentBars, text: "Don't autohide toolbars in comments")
 
+        updateThemeCell()
+        
         self.tableView.tableFooterView = UIView()
     }
     
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+    public func updateThemeCell() {
+        authorThemeCell.textLabel?.text = "Author username color"
+        authorThemeCell.textLabel?.textColor = ColorUtil.fontColor
+        authorThemeCell.backgroundColor = ColorUtil.foregroundColor
+        authorThemeCell.textLabel?.numberOfLines = 0
+        authorThemeCell.textLabel?.lineBreakMode = .byWordWrapping
+        authorThemeCell.selectionStyle = UITableViewCellSelectionStyle.none
+        let circleView = UIView(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
+        circleView.layer.cornerRadius = 15
+        circleView.backgroundColor = ColorUtil.getCommentNameColor("NONE")
+        authorThemeCell.accessoryView = circleView
     }
+    
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        return 3
+    }
+    
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 70
     }
@@ -160,13 +224,18 @@ class SettingsComments: UITableViewController {
             return self.fullscreenImageCell
         case 1:
             switch indexPath.row {
+            case 0: return self.authorThemeCell
+            case 1: return self.disableColorCell
+            case 2: return self.wideIndicatorCell
+            default: fatalError("Unknown row in section 0")
+            }
+        case 2:
+            switch indexPath.row {
             case 0: return self.collapseDefaultCell
             case 1: return self.collapseFullyCell
-            case 2: return self.disableColorCell
-            case 3: return self.wideIndicatorCell
-            case 4: return self.swapLongPressCell
-            case 5: return self.highlightOpCell
-            case 6: return self.lockBottomCell
+            case 2: return self.swapLongPressCell
+            case 3: return self.highlightOpCell
+            case 4: return self.lockBottomCell
             default: fatalError("Unknown row in section 0")
             }
         default: fatalError("Unknown section")
@@ -177,7 +246,8 @@ class SettingsComments: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0: return 1
-        case 1: return 7    // section 1 has 1 row
+        case 1: return 3
+        case 2: return 5
         default: fatalError("Unknown number of sections")
         }
     }

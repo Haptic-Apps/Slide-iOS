@@ -86,6 +86,8 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     var removed: [String] = []
     var offline = false
     var np = false
+    
+    var authorColor: UIColor = ColorUtil.fontColor
 
     func replySent(comment: Comment?, cell: CommentDepthCell?) {
         if comment != nil && cell != nil {
@@ -888,7 +890,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         (navigationController)?.setNavigationBarHidden(false, animated: false)
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
-
+        
         if navigationController != nil {
             self.updateToolbar()
         }
@@ -899,6 +901,8 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         if submission != nil {
             self.setBarColors(color: ColorUtil.getColorForSub(sub: self.navigationItem.title!))
         }
+
+        self.authorColor = ColorUtil.getCommentNameColor(self.navigationItem.title!)
 
         if !loaded && (single || forceLoad) {
             refresh(self)
