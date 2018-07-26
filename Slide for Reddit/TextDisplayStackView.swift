@@ -262,7 +262,11 @@ public class TextDisplayStackView: UIStackView {
                 label.alpha = 0.7
                 label.numberOfLines = 0
                 label.setText(text)
-                
+                let activeLinkAttributes = NSMutableDictionary(dictionary: label.activeLinkAttributes)
+                activeLinkAttributes[NSForegroundColorAttributeName] = tColor
+                label.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+                label.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+
                 let baseView = UIView()
                 baseView.accessibilityIdentifier = "Quote box view"
                 label.setBorder(border: .left, weight: 2, color: tColor)
