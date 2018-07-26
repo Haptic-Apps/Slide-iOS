@@ -22,7 +22,7 @@ class EmbeddableMediaViewController: UIViewController {
 
     var data: EmbeddableMediaDataModel!
     var contentType: ContentType.CType!
-    var progressView: UIView = UIView()
+    var progressView: VerticalAlignedLabel = VerticalAlignedLabel()
     var bottomButtons = UIStackView()
 
     var commentCallback: (() -> Void)?
@@ -41,23 +41,26 @@ class EmbeddableMediaViewController: UIViewController {
         super.viewDidLoad()
 
         // Configure views
-        progressView = UIView()
+        progressView = VerticalAlignedLabel()
         self.view.addSubview(progressView)
-        progressView.widthAnchor == 60
-        progressView.heightAnchor == 60
+        progressView.widthAnchor == 90
+        progressView.heightAnchor == 80
         progressView.centerAnchors == self.view.centerAnchors
         progressView.layer.cornerRadius = 30
         progressView.alpha = 0.5
         progressView.isHidden = true
-        updateProgress(0)
+        updateProgress(0, "")
+        progressView.font = UIFont.boldSystemFont(ofSize: 12)
+        progressView.textColor = .white
         setProgressViewVisible(true)
+        progressView.textAlignment = .center
+        progressView.contentMode = .bottom
     }
     
-    func updateProgress(_ percent: CGFloat) {
-        print("Updating to \(percent)")
+    func updateProgress(_ percent: CGFloat, _ total: String) {
         let startAngle = -CGFloat.pi / 2
 
-        let center = CGPoint (x: 60 / 2, y: 60 / 2)
+        let center = CGPoint (x: 90 / 2, y: 60 / 2)
         let radius = CGFloat(60 / 2)
         let arc = CGFloat.pi * CGFloat(2) * percent
         
@@ -77,6 +80,9 @@ class EmbeddableMediaViewController: UIViewController {
             layer.removeFromSuperlayer()
         }
         progressView.layer.addSublayer(circleShape)
+        if !total.isEmpty {
+            progressView.text = total
+        }
     }
 
     func setProgressViewVisible(_ visible: Bool) {
@@ -115,5 +121,26 @@ extension EmbeddableMediaViewController {
             }
         }
     }
-
 }
+class VerticalAlignedLabel: UILabel {
+    
+    override func drawText(in rect: CGRect) {
+        var newRect = rect
+        switch contentMode {
+        case .top:
+            newRect.size.height = sizeThatFits(rect.size).height
+        case .bottom:
+            let size = sizeThatFits(rect.size)
+            let height = size.height
+            newRect.origin.y += rect.size.height - height
+            newRect.size.height = height
+            newRect.size.width = size.width
+            newRect.origin.x = (rect.size.width / 2) - (size.width / 2)
+        default:
+            ()
+        }
+        
+        super.drawText(in: newRect)
+    }
+}
+

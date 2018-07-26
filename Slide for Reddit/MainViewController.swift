@@ -560,12 +560,14 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         super.viewWillTransition(to: size, with: coordinator)
         let isPhone = UIScreen.main.traitCollection.userInterfaceIdiom != .pad
         let landscape = size.width > size.height
-        if landscape && isPhone {
-            tabBar.frame = CGRect.init(x: 0, y: 0, width: size.width, height: 84)
-            tabBar.sizeToFit()
-        } else if isPhone {
-            tabBar.frame = CGRect.init(x: 0, y: UIApplication.shared.statusBarView?.frame.size.height ?? 20, width: size.height, height: 84)
-            tabBar.sizeToFit()
+        if SettingValues.viewType {
+            if landscape && isPhone {
+                tabBar.frame = CGRect.init(x: 0, y: 0, width: size.width, height: 84)
+                tabBar.sizeToFit()
+            } else if isPhone {
+                tabBar.frame = CGRect.init(x: 0, y: UIApplication.shared.statusBarView?.frame.size.height ?? 20, width: size.height, height: 84)
+                tabBar.sizeToFit()
+            }
         }
         drawerButton.frame = CGRect(x: 8, y: size.height - 48, width: 40, height: 40)
     }

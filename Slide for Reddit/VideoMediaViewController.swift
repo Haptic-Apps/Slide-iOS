@@ -163,7 +163,6 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         }
 
         bottomButtons.addArrangedSubviews(showTitleButton, goToCommentsButton, size, UIView.flexSpace(), downloadButton, menuButton)
-        
     }
     
     func connectActions() {
@@ -297,6 +296,10 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     
     func handleHideUI() {
         if !self.scrubber.isHidden {
+            if parent is ModalMediaViewController {
+                (parent as! ModalMediaViewController).fullscreen(self)
+            }
+
             UIView.animate(withDuration: 0.2, animations: {
                 self.scrubber.alpha = 0
             }, completion: { (_) in
@@ -308,6 +311,9 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     func handleShowUI() {
         timer?.invalidate()
         if self.scrubber.isHidden {
+            if parent is ModalMediaViewController {
+                (parent as! ModalMediaViewController).unFullscreen(self)
+            }
             self.scrubber.isHidden = false
             UIView.animate(withDuration: 0.2, animations: {
                 self.scrubber.alpha = 1
@@ -401,11 +407,11 @@ class VideoMediaViewController: EmbeddableMediaViewController {
                 return (URL(fileURLWithPath: self.videoType == .REDDIT ? self.getKeyFromURL().replacingOccurrences(of: ".mp4", with: "video.mp4") : self.getKeyFromURL()), [.createIntermediateDirectories])
             }).downloadProgress() { progress in
                 DispatchQueue.main.async {
-                    self.updateProgress(CGFloat(progress.fractionCompleted))
                     let countBytes = ByteCountFormatter()
                     countBytes.allowedUnits = [.useMB]
                     countBytes.countStyle = .file
                     let fileSize = countBytes.string(fromByteCount: Int64(progress.totalUnitCount))
+                    self.updateProgress(CGFloat(progress.fractionCompleted), fileSize)
                     self.size.text = fileSize
                 }
                 }.responseData { response in
@@ -437,7 +443,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
             return (localUrlAudio, [.removePreviousFile, .createIntermediateDirectories])
         }).downloadProgress() { progress in
             DispatchQueue.main.async {
-                self.updateProgress(CGFloat(progress.fractionCompleted))
+                self.updateProgress(CGFloat(progress.fractionCompleted), "")
             }
             }
             .responseData { response2 in

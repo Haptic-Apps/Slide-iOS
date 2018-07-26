@@ -170,5 +170,4 @@ extension UIView {
             lineView.heightAnchor.constraint(equalToConstant: weight).isActive = true
         }
     }
-
 }

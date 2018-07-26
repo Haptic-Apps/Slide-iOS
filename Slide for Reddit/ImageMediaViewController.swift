@@ -203,7 +203,7 @@ class ImageMediaViewController: EmbeddableMediaViewController {
                 if average > 0 {
                     self.size.text = fileSize
                 }
-                self.updateProgress(CGFloat(average))
+                self.updateProgress(CGFloat(average), "")
 
             }, completed: { (image, _, _, _) in
 

@@ -1834,7 +1834,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
             }
             let indexPath = IndexPath.init(row: topCell, section: 0)
             self.tableView.scrollToRow(at: indexPath,
-                    at: UITableViewScrollPosition.none, animated: true)
+                    at: UITableViewScrollPosition.top, animated: true)
             id = (contents as! RComment).getIdentifier()
         }
         let childNumber = getChildNumber(n: id)

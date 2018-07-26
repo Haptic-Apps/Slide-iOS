@@ -29,6 +29,10 @@ class ModalMediaViewController: UIViewController {
             fatalError("embeddedVC should be populated!")
         }
     }
+    
+    override func prefersHomeIndicatorAutoHidden() -> Bool {
+        return true
+    }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -46,6 +50,13 @@ class ModalMediaViewController: UIViewController {
         savedColor = UIApplication.shared.statusBarView?.backgroundColor
         UIApplication.shared.statusBarView?.backgroundColor = .clear
         super.viewWillAppear(animated)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if #available(iOS 11.0, *) {
+            self.setNeedsUpdateOfHomeIndicatorAutoHidden()
+        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -128,17 +139,14 @@ extension ModalMediaViewController {
 
             (self.parent as? SwipeDownModalVC)?.background?.alpha = 1
             self.embeddedVC.bottomButtons.alpha = 0
-            self.embeddedVC.progressView.alpha = 0
             self.navigationBar.alpha = 0.2
         }, completion: {_ in
             self.embeddedVC.bottomButtons.isHidden = true
-            self.embeddedVC.progressView.isHidden = true
         })
     }
 
     func unFullscreen(_ sender: AnyObject) {
         fullscreen = false
-        //todo this self.embeddedVC.progressView.isHidden = self.embeddedVC.progressView.progress > 0.9 ? true : false
         self.embeddedVC.bottomButtons.isHidden = false
         UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
             let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
@@ -147,7 +155,7 @@ extension ModalMediaViewController {
 
             (self.parent as? SwipeDownModalVC)?.background?.alpha = 0.6
             self.embeddedVC.bottomButtons.alpha = 1
-            //todo this self.embeddedVC.progressView.alpha = self.embeddedVC.progressView.progress > 0.9 ? 0 : 1
+            self.embeddedVC.progressView.alpha = 1
 
         }, completion: {_ in
         })
