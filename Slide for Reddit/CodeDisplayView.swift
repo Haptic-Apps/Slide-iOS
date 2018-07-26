@@ -38,7 +38,6 @@ class CodeDisplayView: UIScrollView {
         doData()
     }
     
-    //Algorighm from https://github.com/ccrama/Slide/blob/master/app/src/main/java/me/ccrama/redditslide/Views/CommentOverflow.java
     func parseText(_ text: String) {
         for string in text.split("\n") {
             if string.trimmed().isEmpty() {
@@ -70,9 +69,13 @@ class CodeDisplayView: UIScrollView {
     
     func addSubviews() {
         let finalString = NSMutableAttributedString.init()
+        var index = 0
         for row in baseData {
             finalString.append(row)
-            finalString.append(NSAttributedString.init(string: "\n"))
+            if index != baseData.count - 1 {
+                finalString.append(NSAttributedString.init(string: "\n"))
+            }
+            index += 1
         }
         baseLabel.attributedText = finalString
         
@@ -82,15 +85,11 @@ class CodeDisplayView: UIScrollView {
         addSubview(baseLabel)
         contentInset = UIEdgeInsets.init(top: 8, left: 8, bottom: 0, right: 8)
         baseLabel.widthAnchor == getWidestCell()
-        globalHeight = textSizeB.height
+        globalHeight = textSizeB.height + 16
         baseLabel.heightAnchor == textSizeB.height
-        baseLabel.verticalAnchors == verticalAnchors
         baseLabel.leftAnchor == leftAnchor
-        baseLabel.leadingAnchor == leadingAnchor
-        baseLabel.trailingAnchor == trailingAnchor
         baseLabel.topAnchor == topAnchor
-        baseLabel.bottomAnchor == bottomAnchor
-        contentSize = CGSize.init(width: getWidestCell() + 16, height: textSizeB.height - 16)
+        contentSize = CGSize.init(width: getWidestCell() + 16, height: textSizeB.height)
     }
     
     func getWidestCell() -> CGFloat {

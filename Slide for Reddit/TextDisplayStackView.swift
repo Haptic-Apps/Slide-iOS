@@ -247,12 +247,13 @@ public class TextDisplayStackView: UIStackView {
                 body.accessibilityIdentifier = "Code block"
                 overflow.addArrangedSubview(body)
                 body.horizontalAnchors == overflow.horizontalAnchors
-                body.heightAnchor == body.globalHeight
+                body.heightAnchor >= body.globalHeight
                 body.backgroundColor = ColorUtil.backgroundColor.withAlphaComponent(0.5)
                 body.clipsToBounds = true
                 estimatedHeight += body.globalHeight
                 body.layer.cornerRadius = 10
                 body.contentOffset = CGPoint.init(x: -8, y: -8)
+                body.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
             } else if block.startsWith("<cite>") {
                 let label = TTTAttributedLabel.init(frame: CGRect.zero)
                 label.accessibilityIdentifier = "Quote"
