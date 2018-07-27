@@ -24,11 +24,8 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
         self.tableView.isEditing = true
         self.tableView.allowsSelectionDuringEditing = true
         self.tableView.allowsMultipleSelectionDuringEditing = true
-        for sub in Subscriptions.subreddits {
-            if UserDefaults.standard.colorForKey(key: "color+" + sub) != nil || UserDefaults.standard.colorForKey(key: "accent+" + sub) != nil {
-                subs.append(sub)
-            }
-        }
+        subs = Subscriptions.subreddits
+        
         self.subs = self.subs.sorted() {
             $0.localizedCaseInsensitiveCompare($1) == ComparisonResult.orderedAscending
         }

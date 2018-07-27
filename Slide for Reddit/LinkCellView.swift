@@ -706,7 +706,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if submission.archived || !AccountController.isLoggedIn || !LinkCellView.checkInternet() {
             upvote.isHidden = true
             downvote.isHidden = true
-            save.isHidden = true
+            if submission.archived && AccountController.isLoggedIn && LinkCellView.checkInternet() {
+                save.isHidden = false
+            } else {
+                save.isHidden = true
+            }
             reply.isHidden = true
             edit.isHidden = true
             sideUpvote.isHidden = true
