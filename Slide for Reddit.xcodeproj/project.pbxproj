@@ -288,9 +288,6 @@
 		BA9177B1039FF29FE7BFC503 /* Pods-Slide for RedditUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for RedditUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Slide for RedditUITests/Pods-Slide for RedditUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		BE0E8BBF1E26E91E004B56B1 /* BouncyViewControllerAnimator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BouncyViewControllerAnimator.swift; sourceTree = "<group>"; };
 		BE0EF7C31F43C9510058D572 /* Spoilers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Spoilers.swift; sourceTree = "<group>"; };
-		BE0EF7CB1F43F9C30058D572 /* ActionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionViewController.swift; sourceTree = "<group>"; };
-		BE0EF7CE1F43F9C30058D572 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
-		BE0EF7D01F43F9C30058D572 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BE1CD01220F43E51007746B6 /* TextDisplayStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextDisplayStackView.swift; sourceTree = "<group>"; };
 		BE1CD01420F51C37007746B6 /* RemovalReasons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemovalReasons.swift; sourceTree = "<group>"; };
 		BE1CD01620F586E9007746B6 /* CodeDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeDisplayView.swift; sourceTree = "<group>"; };
@@ -545,16 +542,6 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		BE0EF7CA1F43F9C30058D572 /* Share to Slide */ = {
-			isa = PBXGroup;
-			children = (
-				BE0EF7CB1F43F9C30058D572 /* ActionViewController.swift */,
-				BE0EF7CD1F43F9C30058D572 /* MainInterface.storyboard */,
-				BE0EF7D01F43F9C30058D572 /* Info.plist */,
-			);
-			path = "Share to Slide";
-			sourceTree = "<group>";
-		};
 		BE1DA3991E26D52500EC0A04 /* ContentViewControllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -722,7 +709,6 @@
 				298777278D5F06761FD8FF4B /* Frameworks */,
 				CA62E6258F89232082F52D05 /* Pods */,
 				BE8FCA051E0C46090063B8EF /* Products */,
-				BE0EF7CA1F43F9C30058D572 /* Share to Slide */,
 				BE8FCA061E0C46090063B8EF /* Slide for Reddit */,
 				BE8FCA1B1E0C46090063B8EF /* Slide for RedditTests */,
 				BE8FCA261E0C46090063B8EF /* Slide for RedditUITests */,
@@ -1490,14 +1476,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		BE0EF7CD1F43F9C30058D572 /* MainInterface.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				BE0EF7CE1F43F9C30058D572 /* Base */,
-			);
-			name = MainInterface.storyboard;
-			sourceTree = "<group>";
-		};
 		BE8FCA101E0C46090063B8EF /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
