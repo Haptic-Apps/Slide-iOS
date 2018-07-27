@@ -708,16 +708,14 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
     [self addSubview:self.webView];
     
     NSError *error = nil;
-    NSString *path = [[NSBundle bundleForClass:[YTPlayerView class]] pathForResource:@"YTPlayerView-iframe-player"
-                                                                              ofType:@"html"
-                                                                         inDirectory:@"Assets"];
+    NSString *path = [[NSBundle bundleForClass:[YTPlayerView class]] pathForResource:@"YTPlayer"
+                                                                              ofType:@"html"];
     
     // in case of using Swift and embedded frameworks, resources included not in main bundle,
     // but in framework bundle
     if (!path) {
-        path = [[[self class] frameworkBundle] pathForResource:@"YTPlayerView-iframe-player"
-                                                        ofType:@"html"
-                                                   inDirectory:@"Assets"];
+        path = [[[self class] frameworkBundle] pathForResource:@"YTPlayer"
+                                                        ofType:@"html"];
     }
     
     NSString *embedHTMLTemplate =
@@ -855,14 +853,8 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
     webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
     webView.scrollView.scrollEnabled = NO;
     webView.scrollView.bounces = NO;
-    
-    if ([self.delegate respondsToSelector:@selector(playerViewPreferredWebViewBackgroundColor:)]) {
-        webView.backgroundColor = [self.delegate playerViewPreferredWebViewBackgroundColor:self];
-        if (webView.backgroundColor == [UIColor clearColor]) {
-            webView.opaque = NO;
-        }
-    }
-    
+    webView.backgroundColor = [UIColor clearColor];
+    webView.opaque = NO;
     return webView;
 }
 
