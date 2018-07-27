@@ -392,6 +392,26 @@ NSString static *const kYTPlayerSyndicationRegexPattern = @"^https://tpc.googles
     return levels;
 }
 
+- (BOOL)webView:(UIWebView *)webView
+shouldStartLoadWithRequest:(NSURLRequest *)request
+ navigationType:(UIWebViewNavigationType)navigationType {
+    if ([request.URL.host isEqual: self.originURL.host]) {
+        return YES;
+    } else if ([request.URL.scheme isEqual:@"ytplayer"]) {
+        [self notifyDelegateOfYouTubeCallbackUrl:request.URL];
+        return NO;
+    } else if ([request.URL.scheme isEqual: @"http"] || [request.URL.scheme isEqual:@"https"]) {
+        return [self handleHttpNavigationToUrl:request.URL];
+    }
+    return YES;
+}
+
+- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
+    if (self.initialLoadingView) {
+        [self.initialLoadingView removeFromSuperview];
+    }
+}
+
 /**
  * Convert a quality value from NSString to the typed enum value.
  *
@@ -474,7 +494,7 @@ NSString static *const kYTPlayerSyndicationRegexPattern = @"^https://tpc.googles
 /**
  * Convert a state value from the typed value to NSString.
  *
- * @param state A |YTPlayerState| parameter.
+ * @param quality A |YTPlayerState| parameter.
  * @return A string value to be used in the JavaScript bridge.
  */
 + (NSString *)stringForPlayerState:(YTPlayerState)state {
@@ -688,14 +708,16 @@ NSString static *const kYTPlayerSyndicationRegexPattern = @"^https://tpc.googles
     [self addSubview:self.webView];
     
     NSError *error = nil;
-    NSString *path = [[NSBundle bundleForClass:[YTPlayerView class]] pathForResource:@"YTPlayer"
-                                                                              ofType:@"html"];
+    NSString *path = [[NSBundle bundleForClass:[YTPlayerView class]] pathForResource:@"YTPlayerView-iframe-player"
+                                                                              ofType:@"html"
+                                                                         inDirectory:@"Assets"];
     
     // in case of using Swift and embedded frameworks, resources included not in main bundle,
     // but in framework bundle
     if (!path) {
-        path = [[[self class] frameworkBundle] pathForResource:@"YTPlayer"
-                                                        ofType:@"html"];
+        path = [[[self class] frameworkBundle] pathForResource:@"YTPlayerView-iframe-player"
+                                                        ofType:@"html"
+                                                   inDirectory:@"Assets"];
     }
     
     NSString *embedHTMLTemplate =
@@ -749,6 +771,7 @@ NSString static *const kYTPlayerSyndicationRegexPattern = @"^https://tpc.googles
  * @param index 0-index position of video to start playback on.
  * @param startSeconds Seconds after start of video to begin playback.
  * @param suggestedQuality Suggested YTPlaybackQuality to play the videos.
+ * @return The result of cueing the playlist.
  */
 - (void)cuePlaylist:(NSString *)cueingString
               index:(int)index
@@ -771,6 +794,7 @@ NSString static *const kYTPlayerSyndicationRegexPattern = @"^https://tpc.googles
  * @param index 0-index position of video to start playback on.
  * @param startSeconds Seconds after start of video to begin playback.
  * @param suggestedQuality Suggested YTPlaybackQuality to play the videos.
+ * @return The result of cueing the playlist.
  */
 - (void)loadPlaylist:(NSString *)cueingString
                index:(int)index
@@ -832,8 +856,12 @@ NSString static *const kYTPlayerSyndicationRegexPattern = @"^https://tpc.googles
     webView.scrollView.scrollEnabled = NO;
     webView.scrollView.bounces = NO;
     
-    webView.backgroundColor = [UIColor clearColor];
-    webView.opaque = NO;
+    if ([self.delegate respondsToSelector:@selector(playerViewPreferredWebViewBackgroundColor:)]) {
+        webView.backgroundColor = [self.delegate playerViewPreferredWebViewBackgroundColor:self];
+        if (webView.backgroundColor == [UIColor clearColor]) {
+            webView.opaque = NO;
+        }
+    }
     
     return webView;
 }
