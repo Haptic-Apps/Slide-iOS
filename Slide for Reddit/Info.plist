@@ -40,6 +40,7 @@
 		<string>googlechrome</string>
 		<string>googlechrome-x-callback</string>
 		<string>googlechromes</string>
+		<string>youtube</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<false/>

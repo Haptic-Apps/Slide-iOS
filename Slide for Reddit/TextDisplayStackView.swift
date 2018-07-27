@@ -301,6 +301,7 @@ public class TextDisplayStackView: UIStackView {
                 label.heightAnchor == textSizeB.height
             }
         }
+        overflow.setNeedsLayout()
     }
     
     public func createAttributedChunk(baseHTML: String) -> NSAttributedString {

@@ -29,7 +29,9 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     
     var menuButton = UIButton()
     var downloadButton = UIButton()
+    var ytButton = UIButton()
     var request: DownloadRequest?
+    var youtubeURL: URL?
 
     var goToCommentsButton = UIButton()
     var showTitleButton = UIButton()
@@ -141,6 +143,13 @@ class VideoMediaViewController: EmbeddableMediaViewController {
             $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         }
         
+        ytButton = UIButton().then {
+            $0.accessibilityIdentifier = "Open in YouTube"
+            $0.setImage(UIImage(named: "youtube")?.navIcon(), for: [])
+            $0.isHidden = true // The button will be unhidden once the content has loaded.
+            $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        }
+        
         goToCommentsButton = UIButton().then {
             $0.accessibilityIdentifier = "Go to Comments Button"
             $0.setImage(UIImage(named: "comments")?.navIcon(), for: [])
@@ -162,7 +171,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
             $0.textColor = .white
         }
 
-        bottomButtons.addArrangedSubviews(showTitleButton, goToCommentsButton, size, UIView.flexSpace(), downloadButton, menuButton)
+        bottomButtons.addArrangedSubviews(showTitleButton, goToCommentsButton, size, UIView.flexSpace(), ytButton, downloadButton, menuButton)
     }
     
     func connectActions() {
@@ -170,7 +179,8 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         downloadButton.addTarget(self, action: #selector(downloadVideoToLibrary(_:)), for: .touchUpInside)
         goToCommentsButton.addTarget(self, action: #selector(openComments(_:)), for: .touchUpInside)
         showTitleButton.addTarget(self, action: #selector(showTitle(_:)), for: .touchUpInside)
-        
+        ytButton.addTarget(self, action: #selector(openInYoutube(_:)), for: .touchUpInside)
+
         dTap = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTap(_:)))
         dTap?.numberOfTapsRequired = 2
         self.view.addGestureRecognizer(dTap!)
@@ -381,7 +391,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
             spinnerIndicator.color = UIColor.white
             self.view.addSubview(spinnerIndicator)
             spinnerIndicator.startAnimating()
-
+            
             youtubeView.isHidden = false
             progressView.isHidden = true
             loadYoutube(url: data.baseURL!.absoluteString)
@@ -620,6 +630,12 @@ extension VideoMediaViewController {
                 "modestbranding": 1, // Remove youtube logo on bottom right
                 "autohide": 1,
                 ]
+            
+            strongSelf.youtubeURL = URL(string: "youtube://\(playlist.isEmpty() ? video : playlist)")!
+            if strongSelf.youtubeURL != nil && UIApplication.shared.canOpenURL(strongSelf.youtubeURL!) {
+                strongSelf.ytButton.isHidden = false
+            }
+            
             if !playlist.isEmpty {
                 strongSelf.youtubeView.load(withPlaylistId: playlist, playerVars: vars)
             } else {
@@ -752,19 +768,18 @@ extension VideoMediaViewController {
 }
 
 extension VideoMediaViewController: YTPlayerViewDelegate {
-
+    
     func playerViewDidBecomeReady(_ playerView: YTPlayerView) {
         youtubeView.playVideo()
         scrubber.totalDuration = CMTime(seconds: playerView.duration(), preferredTimescale: 1000000)
         spinnerIndicator.stopAnimating()
         spinnerIndicator.isHidden = true
     }
-
+    
     func playerView(_ playerView: YTPlayerView, didPlayTime playTime: Float) {
 //        if !sliderBeingUsed {
 //            self.scrubber.updateWithTime(elapsedTime: CMTime(seconds: Double(playTime), preferredTimescale: 1000000))
 //        }
-
     }
 
     func playerView(_ playerView: YTPlayerView, didChangeTo state: YTPlayerState) {
@@ -893,6 +908,12 @@ extension VideoMediaViewController {
     
     func downloadVideoToLibrary(_ sender: AnyObject) {
         CustomAlbum.shared.saveMovieToLibrary(movieURL: URL(fileURLWithPath: getKeyFromURL()), parent: self)
+    }
+    
+    func openInYoutube(_ sender: AnyObject) {
+        if let url = youtubeURL {
+            UIApplication.shared.openURL(url)
+        }
     }
     
 }
