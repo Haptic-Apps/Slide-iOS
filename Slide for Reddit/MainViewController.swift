@@ -72,14 +72,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         if menuNav?.tableView != nil {
             menuNav?.tableView.reloadData()
         }
-        
-        if !UserDefaults.standard.bool(forKey: "firstOpen") {
-            let vc = SettingsWelcome(parent: self)
-            vc.modalPresentationStyle = .fullScreen
-            vc.modalTransitionStyle = .crossDissolve
-            self.present(vc, animated: true, completion: nil)
-        }
-        
+                
         if !UserDefaults.standard.bool(forKey: "beta") {
             let alert = UIAlertController.init(title: "Welcome to Slide Beta testing!", message: "\nBy clicking agree, you signify your understanding that you are testing Beta software that may contain bugs or incomplete features.\n\nBy using this Beta, you agree to report bugs and feature requests to either GitHub or the slide_ios subreddit. Please do not send reports through the TestFlight feedback system.", preferredStyle: .alert)
             alert.addAction(UIAlertAction.init(title: "Open GitHub", style: .default, handler: { (_) in

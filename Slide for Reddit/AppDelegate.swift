@@ -142,6 +142,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         SDWebImageManager.shared().imageCache.maxCacheSize = 250 * 1024 * 1024
 
         UIApplication.shared.applicationIconBadgeNumber = 0
+        
+        self.window = UIWindow(frame: UIScreen.main.bounds)
+        if let window = self.window {
+            let rootController: UINavigationController!
+            if !UserDefaults.standard.bool(forKey: "firstOpen") {
+                rootController = UINavigationController(rootViewController: SettingsWelcome())
+            } else {
+                rootController = UINavigationController(rootViewController: MainViewController())
+            }
+            
+            let split = UISplitViewController()
+            split.viewControllers = [rootController]
+            window.rootViewController = split
+            
+            window.makeKeyAndVisible()
+        }
 
         return true
     }
