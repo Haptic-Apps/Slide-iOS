@@ -149,7 +149,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             if !UserDefaults.standard.bool(forKey: "firstOpen") {
                 rootController = UINavigationController(rootViewController: SettingsWelcome())
             } else {
-                rootController = UINavigationController(rootViewController: MainViewController())
+                rootController = UINavigationController(rootViewController: MainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil))
             }
             
             let split = UISplitViewController()

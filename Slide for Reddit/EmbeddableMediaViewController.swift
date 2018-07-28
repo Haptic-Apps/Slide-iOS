@@ -24,6 +24,7 @@ class EmbeddableMediaViewController: UIViewController {
     var contentType: ContentType.CType!
     var progressView: VerticalAlignedLabel = VerticalAlignedLabel()
     var bottomButtons = UIStackView()
+    var navigationBar = UINavigationBar()
 
     var commentCallback: (() -> Void)?
 

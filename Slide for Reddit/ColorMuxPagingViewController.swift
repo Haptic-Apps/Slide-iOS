@@ -9,7 +9,7 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
     public var color1, color2: UIColor?
     public var viewToMux: UIView?
     public var navToMux: UINavigationBar?
-
+    
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         for view in self.view.subviews {

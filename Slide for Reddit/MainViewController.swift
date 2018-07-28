@@ -627,7 +627,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     var inHeadView = UIView()
 
     override func viewDidLoad() {
-
         self.navToMux = self.navigationController!.navigationBar
         self.color1 = ColorUtil.backgroundColor
         self.color2 = ColorUtil.backgroundColor

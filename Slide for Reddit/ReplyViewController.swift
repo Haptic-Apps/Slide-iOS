@@ -57,6 +57,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     var subreddit = ""
     var canMod = false
     var scrollView = UIScrollView()
+    var username: String?
 
     //Callbacks
     var messageCallback: (Any?, Error?) -> Void = { (comment, error) in
@@ -94,6 +95,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     //New message with sub colors
     convenience init(name: String, completion: @escaping(String?) -> Void) {
         self.init(completion: completion)
+        self.username = name
         setBarColors(color: ColorUtil.getColorForUser(name: name))
     }
 
@@ -518,6 +520,11 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 
                 text1.placeholder = "Subject"
                 text2.placeholder = "User"
+                
+                if username != nil {
+                    text2.text = username!
+                    text2.isEditable = false
+                }
                 
                 let text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.isEditable = true

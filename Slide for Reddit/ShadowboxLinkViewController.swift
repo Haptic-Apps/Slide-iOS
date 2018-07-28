@@ -111,14 +111,14 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
 
         self.commenticon = UIImageView(frame: CGRect(x: 0, y: 0, width: 10, height: 10)).then {
             $0.accessibilityIdentifier = "Comment Count Icon"
-            $0.image = LinkCellImageCache.commentsIcon
+            $0.image = LinkCellImageCache.commentsIcon.getCopy(withColor: .white)
             $0.contentMode = .scaleAspectFit
             $0.isOpaque = false
         }
         
         self.submissionicon = UIImageView(frame: CGRect(x: 0, y: 0, width: 10, height: 10)).then {
             $0.accessibilityIdentifier = "Score Icon"
-            $0.image = LinkCellImageCache.votesIcon
+            $0.image = LinkCellImageCache.votesIcon.getCopy(withColor: .white)
             $0.contentMode = .scaleAspectFit
             $0.isOpaque = false
         }
@@ -126,7 +126,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             $0.accessibilityIdentifier = "Score Label"
             $0.numberOfLines = 1
             $0.font = FontGenerator.fontOfSize(size: 12, submission: true)
-            $0.textColor = ColorUtil.fontColor
+            $0.textColor = .white
             $0.isOpaque = false
         }
 
@@ -134,7 +134,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             $0.accessibilityIdentifier = "Comment Count Label"
             $0.numberOfLines = 1
             $0.font = FontGenerator.fontOfSize(size: 12, submission: true)
-            $0.textColor = ColorUtil.fontColor
+            $0.textColor = .white
             $0.isOpaque = false
         }
 
@@ -221,8 +221,8 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         var archived = false
         if let link = content as! RSubmission? {
             archived = link.archived
-            upvote.image = LinkCellImageCache.upvote
-            downvote.image = LinkCellImageCache.downvote
+            upvote.image = LinkCellImageCache.upvote.getCopy(withColor: .white)
+            downvote.image = LinkCellImageCache.downvote.getCopy(withColor: .white)
             var attrs: [String: Any] = [:]
             switch  ActionStates.getVoteDirection(s: link) {
             case .down:
@@ -232,7 +232,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
                 upvote.image = LinkCellImageCache.upvoteTinted
                 attrs = ([NSForegroundColorAttributeName: ColorUtil.upvoteColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
             default:
-                attrs = ([NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true)])
+                attrs = ([NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true)])
             }
             
             score.attributedText = NSAttributedString(string: (link.score >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(link.score) / Double(1000))) : " \(link.score)", attributes: attrs)
@@ -253,7 +253,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
                 upvote.image = LinkCellImageCache.upvoteTinted
                 attrs = ([NSForegroundColorAttributeName: ColorUtil.upvoteColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
             default:
-                attrs = ([NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true)])
+                attrs = ([NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true)])
             }
             
             score.attributedText = NSAttributedString.init(string: (link.score >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(link.score) / Double(1000))) : " \(link.score)", attributes: attrs)
