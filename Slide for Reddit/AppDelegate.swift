@@ -153,6 +153,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
             
             let split = UISplitViewController()
+            split.preferredDisplayMode = UISplitViewControllerDisplayMode.allVisible
+            split.maximumPrimaryColumnWidth = 10000
+            split.preferredPrimaryColumnWidthFraction = 1
             split.viewControllers = [rootController]
             window.rootViewController = split
             

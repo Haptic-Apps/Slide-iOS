@@ -79,7 +79,6 @@ class SettingsWelcome: UIPageViewController, UIPageViewControllerDataSource, UIP
 
         self.navigationController?.popViewController(animated: false)
         self.navigationController?.pushViewController(MainViewController(), animated: false)
-        self.dismiss(animated: false, completion: nil)
     }
     
     var current = 0
@@ -471,8 +470,6 @@ class SettingsWelcomeLayout: UIViewController {
     func setList() {
         UserDefaults.standard.set("list", forKey: SettingValues.pref_postViewMode)
         SettingValues.postViewMode = .LIST
-        UserDefaults.standard.set("thumbnail", forKey: SettingValues.pref_postImageMode)
-        SettingValues.postImageMode = .THUMBNAIL
         UserDefaults.standard.synchronize()
         SingleSubredditViewController.cellVersion += 1
         doCells()
@@ -481,15 +478,34 @@ class SettingsWelcomeLayout: UIViewController {
     func setCompact() {
         UserDefaults.standard.set("compact", forKey: SettingValues.pref_postViewMode)
         SettingValues.postViewMode = .COMPACT
-        UserDefaults.standard.set("thumbnail", forKey: SettingValues.pref_postImageMode)
-        SettingValues.postImageMode = .THUMBNAIL
-        UserDefaults.standard.set("right", forKey: SettingValues.pref_actionbarMode)
-        SettingValues.actionBarMode = .SIDE_RIGHT
         UserDefaults.standard.synchronize()
         SingleSubredditViewController.cellVersion += 1
         doCells()
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        switch SettingValues.postViewMode {
+        case .LIST:
+            UserDefaults.standard.set("thumbnail", forKey: SettingValues.pref_postImageMode)
+            SettingValues.postImageMode = .THUMBNAIL
+            SettingValues.abbreviateScores = true
+            UserDefaults.standard.set(true, forKey: SettingValues.pref_abbreviateScores)
+            UserDefaults.standard.synchronize()
+        case .COMPACT:
+            UserDefaults.standard.set("thumbnail", forKey: SettingValues.pref_postImageMode)
+            SettingValues.postImageMode = .THUMBNAIL
+            UserDefaults.standard.set("right", forKey: SettingValues.pref_actionbarMode)
+            SettingValues.actionBarMode = .SIDE_RIGHT
+            SettingValues.abbreviateScores = true
+            UserDefaults.standard.set(true, forKey: SettingValues.pref_abbreviateScores)
+            UserDefaults.standard.synchronize()
+        default:
+            break
+        }
+        
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         doCells()
