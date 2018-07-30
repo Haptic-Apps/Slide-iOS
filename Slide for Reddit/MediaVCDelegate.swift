@@ -34,7 +34,6 @@ protocol MediaVCDelegate: UIViewControllerTransitioningDelegate {
     var color: UIColor? { get set }
     func setBarColors(color: UIColor)
     func setNavColors()
-    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController?
 }
 
 extension MediaVCDelegate {

@@ -1247,7 +1247,15 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
 
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
-        parent?.show(viewControllerToCommit, sender: parent)
+        if viewControllerToCommit is AlbumViewController {
+            viewControllerToCommit.modalPresentationStyle = .overFullScreen
+            parent?.present(viewControllerToCommit, animated: true, completion: nil)
+        } else if viewControllerToCommit is SingleContentViewController {
+            viewControllerToCommit.modalPresentationStyle = .overFullScreen
+            parent?.present(viewControllerToCommit, animated: true, completion: nil)
+        } else {
+            VCPresenter.showVC(viewController: viewControllerToCommit, popupIfPossible: true, parentNavigationController: parent?.navigationController, parentViewController: parent)
+        }
     }
 
     func longPressed(_ sender: AnyObject?) {

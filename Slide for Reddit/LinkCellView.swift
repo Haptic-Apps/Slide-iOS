@@ -1420,10 +1420,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     }
 
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
-        if viewControllerToCommit is WebsiteViewController || viewControllerToCommit is SFHideSafariViewController || viewControllerToCommit is SingleSubredditViewController || viewControllerToCommit is UINavigationController || viewControllerToCommit is CommentViewController {
-            parentViewController?.show(viewControllerToCommit, sender: nil)
+        if viewControllerToCommit is AlbumViewController {
+            viewControllerToCommit.modalPresentationStyle = .overFullScreen
+            parentViewController?.present(viewControllerToCommit, animated: true, completion: nil)
+        } else if viewControllerToCommit is SingleContentViewController {
+            viewControllerToCommit.modalPresentationStyle = .overFullScreen
+            parentViewController?.present(viewControllerToCommit, animated: true, completion: nil)
         } else {
-            parentViewController?.present(viewControllerToCommit, animated: true)
+            VCPresenter.showVC(viewController: viewControllerToCommit, popupIfPossible: true, parentNavigationController: parentViewController?.navigationController, parentViewController: parentViewController)
         }
     }
 

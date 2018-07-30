@@ -13,7 +13,7 @@ import SafariServices
 import SDWebImage
 import UIKit
 
-class MediaViewController: UIViewController, MediaVCDelegate, UIViewControllerTransitioningDelegate {
+class MediaViewController: UIViewController, MediaVCDelegate {
 
     var subChanged = false
 
@@ -191,10 +191,5 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIViewControllerTr
         super.viewWillAppear(animated)
         navigationController?.navigationBar.shadowImage = UIImage()
         setNavColors()
-    }
-
-    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
-        return SmallerPresentationController(presentedViewController: presented,
-                                             presenting: presenting)
     }
 }
