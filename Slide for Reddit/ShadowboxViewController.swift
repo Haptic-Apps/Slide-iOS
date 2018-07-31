@@ -6,9 +6,9 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
+import Anchorage
 import UIKit
 import UIKit.UIGestureRecognizerSubclass
-import Anchorage
 
 class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     
@@ -257,7 +257,7 @@ fileprivate extension CGPoint {
         }
     }
     
-    static func -(lhs: CGPoint, rhs: CGPoint) -> CGPoint {
+    static func - (lhs: CGPoint, rhs: CGPoint) -> CGPoint {
         return CGPoint(x: lhs.x - rhs.x, y: lhs.y - rhs.y)
     }
 }

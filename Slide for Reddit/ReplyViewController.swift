@@ -590,7 +590,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             text1.placeholder = "Title"
             text2.placeholder = "Subreddit"
             
-            if !subreddit.isEmpty() && subreddit != "all" && subreddit != "frontpage" && subreddit != "popular" && subreddit != "friends" && subreddit != "mod" && !subreddit.contains("m/"){
+            if !subreddit.isEmpty() && subreddit != "all" && subreddit != "frontpage" && subreddit != "popular" && subreddit != "friends" && subreddit != "mod" && !subreddit.contains("m/") {
                 text2.text = subreddit
                 text2.isEditable = false
             }

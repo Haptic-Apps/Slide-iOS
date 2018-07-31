@@ -44,7 +44,7 @@ class ContentType {
 
     public static func isSpoiler(uri: URL) -> Bool {
         var urlString = uri.absoluteString
-        if !urlString.hasPrefix("//") && ((urlString.hasPrefix("/") && urlString.characters.count < 4)
+        if !urlString.hasPrefix("//") && ((urlString.hasPrefix("/") && urlString.length < 4)
             || urlString.hasPrefix("#spoil")
             || urlString.hasPrefix("/spoil")
             || urlString.hasPrefix("#s-")
@@ -58,7 +58,7 @@ class ContentType {
     }
 
     public static func isTable(uri: URL) -> Bool {
-        var urlString = uri.absoluteString
+        let urlString = uri.absoluteString
         if urlString.contains("http://view.table/") {
             return true
         }
@@ -83,7 +83,6 @@ class ContentType {
     
     public static func isGfycat(uri: URL) -> Bool {
         let host = uri.host?.lowercased()
-        let path = uri.path.lowercased()
         
         return hostContains(host: host, bases: ["gfycat.com"])
     }

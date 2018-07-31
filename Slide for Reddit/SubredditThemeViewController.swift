@@ -780,7 +780,8 @@ public extension UIView {
 
         UIView.animate(withDuration: ToastManager.shared.style.fadeDuration, delay: 0.0, options: [.curveEaseIn, .beginFromCurrentState], animations: { () -> Void in
             toast.alpha = 0.0
-        }) { (_: Bool) -> Void in
+        }) {
+            (_: Bool) -> Void in
             toast.removeFromSuperview()
 
             objc_setAssociatedObject(self, &ToastKeys.ActiveToast, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)

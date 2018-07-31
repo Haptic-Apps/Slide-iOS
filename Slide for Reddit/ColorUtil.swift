@@ -144,7 +144,7 @@ class ColorUtil {
     
     public static func getCommentNameColor(_ subreddit: String) -> UIColor {
         if UserDefaults.standard.bool(forKey: "commentaccent") {
-            return ColorUtil.accentColorForSub(sub:subreddit)
+            return ColorUtil.accentColorForSub(sub: subreddit)
         }
         let color = UserDefaults.standard.colorForKey(key: "commentcolor")
         if color == nil {

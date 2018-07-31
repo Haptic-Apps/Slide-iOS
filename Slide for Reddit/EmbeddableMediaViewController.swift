@@ -98,8 +98,7 @@ class EmbeddableMediaViewController: UIViewController {
         } else {
             UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
                 self.progressView.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
-            }) {
-                (_) in
+            }) { (_) in
                 self.progressView.isHidden = true
             }
         }
@@ -144,4 +143,3 @@ class VerticalAlignedLabel: UILabel {
         super.drawText(in: newRect)
     }
 }
-

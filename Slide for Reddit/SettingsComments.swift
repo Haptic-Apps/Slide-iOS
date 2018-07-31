@@ -6,8 +6,8 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
-import UIKit
 import MKColorPicker
+import UIKit
 
 class SettingsComments: UITableViewController, ColorPickerViewDelegate {
     var disableNavigationBarCell: UITableViewCell = UITableViewCell()

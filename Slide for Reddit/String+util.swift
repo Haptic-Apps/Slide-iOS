@@ -28,15 +28,15 @@ public extension String {
     // https://gist.github.com/stevenschobert/540dd33e828461916c11
     func camelize() -> String {
         let source = clean(with: " ", allOf: "-", "_")
-        if source.characters.contains(" ") {
+        if source.contains(" ") {
             let first = self[self.startIndex...self.index(after: startIndex)] //source.substringToIndex(source.index(after: startIndex))
             let cammel = source.capitalized.replacingOccurrences(of: " ", with: "")
             //            let cammel = String(format: "%@", strip)
-            let rest = String(cammel.characters.dropFirst())
+            let rest = String(cammel.dropFirst())
             return "\(first)\(rest)"
         } else {
             let first = source[self.startIndex...self.index(after: startIndex)].lowercased()
-            let rest = String(source.characters.dropFirst())
+            let rest = String(source.dropFirst())
             return "\(first)\(rest)"
         }
     }
@@ -182,7 +182,7 @@ public extension String {
     
     var length: Int {
         get {
-            return self.characters.count
+            return self.length
         }
     }
     
@@ -213,7 +213,7 @@ public extension String {
     }
     
     func split(_ separator: Character = " ") -> [String] {
-        return characters.split { $0 == separator }.map(String.init)
+        return self.split { $0 == separator }.map(String.init)
     }
     
     func startsWith(_ prefix: String) -> Bool {
@@ -399,7 +399,7 @@ public extension String {
         #else
             let regex = try? NSRegularExpression(pattern: "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$", options: .caseInsensitive)
         #endif
-        return regex?.firstMatch(in: self, options: [], range: NSRange(location: 0, length: self.characters.count)) != nil
+        return regex?.firstMatch(in: self, options: [], range: NSRange(location: 0, length: self.length)) != nil
     }
     
 }
