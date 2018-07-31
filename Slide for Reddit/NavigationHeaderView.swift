@@ -347,11 +347,12 @@ extension NavigationHeaderView {
     }
 
     func switchAccounts(_ sender: AnyObject) {
-        let optionMenu = UIAlertController(title: nil, message: "Choose Option", preferredStyle: .actionSheet)
+        let optionMenu = BottomSheetActionController()
+        optionMenu.headerData = "Switch accounts"
 
         for s in AccountController.names {
             if s != AccountController.currentName {
-                let add = UIAlertAction(title: s, style: .default, handler: { (_: UIAlertAction!) -> Void in
+                optionMenu.addAction(Action(ActionData(title: "\(s)", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { _ in
                     AccountController.switchAccount(name: s)
                     if !UserDefaults.standard.bool(forKey: "done" + s) {
                         do {
@@ -365,42 +366,32 @@ extension NavigationHeaderView {
                             (self.parentController as! NavigationSidebarViewController).parentController?.doCurrentPage(0)
                         })
                     }
+                }))
+            } else {
+                var action = Action(ActionData(title: "\(s) (current)", image: UIImage(named: "selected")!.menuIcon().getCopy(withColor: GMColor.green500Color())), style: .default, handler: { _ in
                 })
-                optionMenu.addAction(add)
+                action.enabled = false
+                optionMenu.addAction(action)
             }
         }
 
         if AccountController.isLoggedIn {
-            let guest = UIAlertAction(title: "Guest", style: .default, handler: { (_: UIAlertAction!) -> Void in
+            optionMenu.addAction(Action(ActionData(title: "Browse as guest", image: UIImage(named: "hide")!.menuIcon()), style: .default, handler: { _ in
                 AccountController.switchAccount(name: "GUEST")
                 Subscriptions.sync(name: "GUEST", completion: {
                     (self.parentController as! NavigationSidebarViewController).parentController?.restartVC()
                 })
-            })
-            optionMenu.addAction(guest)
+            }))
 
-            let deleteAction = UIAlertAction(title: "Log out", style: .destructive, handler: { (_: UIAlertAction!) -> Void in
+            optionMenu.addAction(Action(ActionData(title: "Log out", image: UIImage(named: "delete")!.menuIcon().getCopy(withColor: GMColor.red500Color())), style: .default, handler: { _ in
                 AccountController.delete(name: AccountController.currentName)
-            })
-            optionMenu.addAction(deleteAction)
+            }))
 
         }
 
-        let add = UIAlertAction(title: "Add account", style: .default, handler: { (_: UIAlertAction!) -> Void in
+        optionMenu.addAction(Action(ActionData(title: "Add a new account", image: UIImage(named: "add")!.menuIcon().getCopy(withColor: ColorUtil.baseColor)), style: .default, handler: { _ in
             (self.parentController as! NavigationSidebarViewController).parentController?.addAccount()
-        })
-        optionMenu.addAction(add)
-
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { (_: UIAlertAction!) -> Void in
-        })
-        optionMenu.addAction(cancelAction)
-
-        optionMenu.modalPresentationStyle = .overFullScreen
-        if let presenter = optionMenu.popoverPresentationController {
-            presenter.sourceView = self
-            presenter.sourceRect = self.bounds
-        }
-
+        }))
         //todo better location checking
         parentController?.present(optionMenu, animated: true, completion: nil)
     }
