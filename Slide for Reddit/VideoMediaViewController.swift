@@ -207,7 +207,6 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         youtubeView.centerYAnchor == view.centerYAnchor
         youtubeView.leadingAnchor == view.safeLeadingAnchor
         youtubeView.trailingAnchor == view.safeTrailingAnchor
-        youtubeHeightConstraint = youtubeView.heightAnchor == youtubeView.widthAnchor * CGFloat(9.0 / 16.0)  // Hardcoded 16:9 aspect ratio
 
         bottomButtons.horizontalAnchors == view.safeHorizontalAnchors + CGFloat(8)
         bottomButtons.bottomAnchor == view.safeBottomAnchor - CGFloat(8)
@@ -612,12 +611,17 @@ extension VideoMediaViewController {
                 video = param.substring(param.indexOf("=")! + 1, length: param.contains("&") ? param.indexOf("&")! : param.length)
             }
         }
+        
+        if video.contains("?") {
+            video = video.substring(0, length: video.indexOf("?")!)
+        }
 
         getRemoteAspectRatio(videoId: video) { [weak self] (aspect) in
             guard let strongSelf = self else {
                 return
             }
-
+            
+            print("Aspect is \(aspect)")
             strongSelf.youtubeHeightConstraint = strongSelf.youtubeView.heightAnchor == strongSelf.youtubeView.widthAnchor * aspect
             let vars = [
                 "controls": 0, // Disable controls
@@ -648,6 +652,7 @@ extension VideoMediaViewController {
     func getRemoteAspectRatio(videoId: String, completion: @escaping (CGFloat) -> Void) {
         let metaURL = URL(string: "https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=\(videoId)&format=json")!
 
+        print(metaURL)
         func failureBlock() {
             OperationQueue.main.addOperation({
                 completion(CGFloat(9 / 16))
@@ -667,10 +672,11 @@ extension VideoMediaViewController {
                 return
             }
 
-            let height = dict.value(forKey: "height") as! Int
-            let width = dict.value(forKey: "width") as! Int
+            let height = dict.value(forKey: "height") as! CGFloat
+            let width = dict.value(forKey: "width") as! CGFloat
 
             OperationQueue.main.addOperation({
+                print("Is \(CGFloat(height / width)) with \(height) and \(width)")
                 completion(CGFloat(height / width))
             })
 
