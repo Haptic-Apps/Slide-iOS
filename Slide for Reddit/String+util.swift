@@ -182,7 +182,7 @@ public extension String {
     
     var length: Int {
         get {
-            return self.length
+            return self.count
         }
     }
     
