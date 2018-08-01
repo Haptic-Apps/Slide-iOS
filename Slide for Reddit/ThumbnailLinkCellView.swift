@@ -56,7 +56,7 @@ final class ThumbnailLinkCellView: LinkCellView {
                 title.rightAnchor == (SettingValues.leftThumbnail ? contentView.rightAnchor - ctwelve : thumbImageContainer.leftAnchor - ceight)
             } else if SettingValues.actionBarMode == .SIDE_RIGHT {
                 sideButtons.topAnchor == contentView.topAnchor + ctwelve
-                title.leftAnchor == (SettingValues.leftThumbnail ? thumbImageContainer.rightAnchor + ceight : contentView.leftAnchor + ceight)
+                title.leftAnchor == (SettingValues.leftThumbnail ? thumbImageContainer.rightAnchor + ceight : contentView.leftAnchor + ctwelve)
                 title.rightAnchor == (SettingValues.leftThumbnail ? sideButtons.leftAnchor - ceight : thumbImageContainer.leftAnchor - ceight)
             } else {
                 title.leftAnchor == (SettingValues.leftThumbnail ? thumbImageContainer.rightAnchor + ceight : contentView.leftAnchor + ctwelve)
