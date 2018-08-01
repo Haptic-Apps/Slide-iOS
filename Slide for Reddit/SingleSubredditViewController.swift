@@ -886,7 +886,7 @@ class SingleSubredditViewController: MediaViewController {
     }
 
     func showTimeMenu(s: LinkSortType, selector: UIView?) {
-        if s == .hot || s == .new {
+        if s == .hot || s == .new || s == .rising {
             sort = s
             refresh()
             return
