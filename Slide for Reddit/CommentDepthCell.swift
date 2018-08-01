@@ -35,36 +35,36 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         parent!.reloadHeights()
     }
     
-    var sideView: UIView = UIView()
-    var menu = UIStackView()
-    var menuBack = UIView()
-    var reply = UIView()
+    var sideView: UIView!
+    var menu: UIStackView!
+    var menuBack: UIView!
+    var reply: UIView!
     
-    var sideViewSpace: UIView = UIView()
-    var topViewSpace: UIView = UIView()
-    var title = TextDisplayStackView()
+    var sideViewSpace: UIView!
+    var topViewSpace: UIView!
+    var title : TextDisplayStackView!
     
     //Buttons for comment menu
-    var upvoteButton = UIButton()
-    var downvoteButton = UIButton()
-    var replyButton = UIButton()
-    var moreButton = UIButton()
-    var editButton = UIButton()
-    var deleteButton = UIButton()
-    var modButton = UIButton()
+    var upvoteButton: UIButton!
+    var downvoteButton: UIButton!
+    var replyButton: UIButton!
+    var moreButton: UIButton!
+    var editButton: UIButton!
+    var deleteButton: UIButton!
+    var modButton: UIButton!
     var editShown = false
     var archived = false
     var modShown = false
     
     //Buttons for reply
-    var body: UITextView = UITextView()
-    var sendB = UIButton()
-    var discardB = UIButton()
+    var body: UITextView!
+    var sendB: UIButton!
+    var discardB: UIButton!
     var edit = false
     var toolbar: ToolbarTextView?
 
-    var childrenCount: UIView = UIView()
-    var childrenCountLabel: UILabel = UILabel()
+    var childrenCount: UIView!
+    var childrenCountLabel: UILabel!
     var comment: RComment?
     var depth: Int = 0
     

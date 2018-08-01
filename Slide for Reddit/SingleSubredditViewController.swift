@@ -281,6 +281,12 @@ class SingleSubredditViewController: MediaViewController {
         }
         lastYUsed = currentY
         lastY = currentY
+        
+        if scrollView.contentSize.height - (scrollView.contentOffset.y + scrollView.frame.size.height) < 300 {
+            if !loading && !nomore {
+                self.loadMore()
+            }
+        }
     }
 
     func hideUI(inHeader: Bool) {
@@ -1601,10 +1607,6 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
         cell.layer.rasterizationScale = UIScreen.main.scale
 
         cell.configure(submission: submission, parent: self, nav: self.navigationController, baseSub: self.sub)
-
-        if indexPath.row == self.links.count - 3 && !loading && !nomore {
-            self.loadMore()
-        }
 
         return cell
     }

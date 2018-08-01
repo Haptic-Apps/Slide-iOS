@@ -64,33 +64,33 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         del?.save(self)
     }
 
-    var bannerImage = UIImageView()
-    var thumbImageContainer = UIView()
-    var thumbImage = UIImageView()
-    var title = TTTAttributedLabel(frame: CGRect.zero)
-    var score = UILabel()
-    var box = UIStackView()
-    var sideButtons = UIStackView()
-    var buttons = UIStackView()
-    var comments = UILabel()
-    var info = UILabel()
-    var textView = TextDisplayStackView()
-    var save = UIImageView()
-    var upvote = UIImageView()
-    var hide = UIImageView()
-    var edit = UIImageView()
-    var reply = UIImageView()
-    var downvote = UIImageView()
-    var mod = UIImageView()
-    var commenticon = UIImageView()
-    var submissionicon = UIImageView()
+    var bannerImage: UIImageView!
+    var thumbImageContainer: UIView!
+    var thumbImage: UIImageView!
+    var title: TTTAttributedLabel!
+    var score: UILabel!
+    var box: UIStackView!
+    var sideButtons: UIStackView!
+    var buttons: UIStackView!
+    var comments: UILabel!
+    var info: UILabel!
+    var textView: TextDisplayStackView!
+    var save: UIImageView!
+    var upvote: UIImageView!
+    var hide: UIImageView!
+    var edit: UIImageView!
+    var reply: UIImageView!
+    var downvote: UIImageView!
+    var mod: UIImageView!
+    var commenticon: UIImageView!
+    var submissionicon: UIImageView!
     var del: LinkCellViewDelegate?
-    var taglabel = UILabel()
-    var tagbody = UIView()
-    var crosspost = UITableViewCell()
-    var sideUpvote = UIImageView()
-    var sideDownvote = UIImageView()
-    var sideScore = UILabel()
+    var taglabel: UILabel!
+    var tagbody: UIView!
+    var crosspost: UITableViewCell!
+    var sideUpvote: UIImageView!
+    var sideDownvote: UIImageView!
+    var sideScore: UILabel!
 
     var loadedImage: URL?
     var lq = false
@@ -411,6 +411,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             }
             buttons.addArrangedSubviews(edit, reply, save, hide, upvote, downvote, mod)
             self.contentView.addSubview(buttons)
+        } else {
+            buttons = UIStackView()
+            box = UIStackView()
         }
         
         if SettingValues.actionBarMode.isSide() && !full {
@@ -424,6 +427,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             sideButtons.addArrangedSubviews(sideUpvote, sideScore, sideDownvote)
             sideScore.textAlignment = .center
             self.contentView.addSubview(sideButtons)
+        } else {
+            sideButtons = UIStackView()
         }
         
         sideButtons.isHidden = !SettingValues.actionBarMode.isSide() || full
