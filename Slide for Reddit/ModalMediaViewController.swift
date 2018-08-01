@@ -43,10 +43,6 @@ class ModalMediaViewController: UIViewController {
         configureViews()
         configureLayout()
         connectGestures()
-        if #available(iOS 11, *) {}
-        else {
-            self.edgesForExtendedLayout = []
-        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -100,7 +96,11 @@ class ModalMediaViewController: UIViewController {
         embeddedVC.navigationBar.setItems([navItem], animated: false)
         self.view.addSubview(embeddedVC.navigationBar)
         
-        embeddedVC.navigationBar.topAnchor == self.view.safeTopAnchor
+        if #available(iOS 11, *) {
+            embeddedVC.navigationBar.topAnchor == self.view.safeTopAnchor
+        } else {
+            embeddedVC.navigationBar.topAnchor == self.view.topAnchor + 20
+        }
         embeddedVC.navigationBar.horizontalAnchors == self.view.horizontalAnchors
     }
     

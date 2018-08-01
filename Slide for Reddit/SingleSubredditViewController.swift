@@ -251,9 +251,11 @@ class SingleSubredditViewController: MediaViewController {
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
 
+        parentController?.drawerButton.transform = CGAffineTransform.identity
+        SingleSubredditViewController.fab?.transform = CGAffineTransform.identity
+        
         if self.viewIfLoaded?.window != nil {
             tableView.reloadData()
-            setupFab()
         }
     }
 
@@ -406,11 +408,13 @@ class SingleSubredditViewController: MediaViewController {
                     self.addNewFab()
                 })
             } else {
-                if SingleSubredditViewController.fab != nil {
+                if SingleSubredditViewController.fab != nil && !SingleSubredditViewController.fab!.isHidden {
                     SingleSubredditViewController.fab!.removeFromSuperview()
                     SingleSubredditViewController.fab = nil
                 }
-                addNewFab()
+                if  SingleSubredditViewController.fab == nil {
+                    addNewFab()
+                }
             }
         }
     }
