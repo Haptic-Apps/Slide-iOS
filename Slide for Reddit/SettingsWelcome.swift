@@ -116,6 +116,11 @@ class SettingsWelcome: UIPageViewController, UIPageViewControllerDataSource, UIP
         self.pageControl.bottomAnchor == self.view.safeBottomAnchor - 16
         self.pageControl.centerXAnchor == self.view.centerXAnchor
         self.pageControl.horizontalAnchors == self.view.horizontalAnchors
+        
+        if #available(iOS 11, *) {}
+        else {
+            self.edgesForExtendedLayout = []
+        }
     }
 
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {

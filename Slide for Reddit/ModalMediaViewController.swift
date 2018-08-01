@@ -43,6 +43,10 @@ class ModalMediaViewController: UIViewController {
         configureViews()
         configureLayout()
         connectGestures()
+        if #available(iOS 11, *) {}
+        else {
+            self.edgesForExtendedLayout = []
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
