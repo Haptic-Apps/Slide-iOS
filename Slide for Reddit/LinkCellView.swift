@@ -189,6 +189,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             $0.font = FontGenerator.fontOfSize(size: 18, submission: true)
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
+            $0.verticalAlignment = .top
         }
 
         self.hide = UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 24)).then {
