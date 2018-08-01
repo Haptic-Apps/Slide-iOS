@@ -152,13 +152,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 rootController = UINavigationController(rootViewController: MainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil))
             }
             
-            let split = UISplitViewController()
-            split.preferredDisplayMode = UISplitViewControllerDisplayMode.allVisible
-            split.maximumPrimaryColumnWidth = 10000
-            split.preferredPrimaryColumnWidthFraction = 1
-            split.viewControllers = [rootController]
-            window.rootViewController = split
-            
+            window.rootViewController = rootController
+
             window.makeKeyAndVisible()
         }
 
@@ -167,7 +162,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     public func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
         print("Recived: \(userInfo)")
-
     }
 
     var statusBar = UIView()

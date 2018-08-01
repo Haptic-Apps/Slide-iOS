@@ -237,7 +237,7 @@ class SingleSubredditViewController: MediaViewController {
         if single {
             UIApplication.shared.statusBarView?.backgroundColor = .clear
         }
-        if SingleSubredditViewController.fab != nil && !SingleSubredditViewController.nextSingle {
+        if SingleSubredditViewController.fab != nil && !SingleSubredditViewController.nextSingle && !SingleSubredditViewController.fab!.isHidden {
             UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
                 SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
             }, completion: { _ in
@@ -287,17 +287,20 @@ class SingleSubredditViewController: MediaViewController {
             (navigationController)?.setNavigationBarHidden(true, animated: true)
         }
         
-        UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
-            SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
-        }, completion: { _ in
-            SingleSubredditViewController.fab?.isHidden = true
-            self.isHiding = false
-        })
+        if SingleSubredditViewController.fab != nil && !SingleSubredditViewController.fab!.isHidden {
+            UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+                SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
+            }, completion: { _ in
+                SingleSubredditViewController.fab?.isHidden = true
+                self.isHiding = false
+            })
+        }
         
         if !SettingValues.bottomBarHidden || SettingValues.viewType {
             (self.navigationController)?.setToolbarHidden(true, animated: true)
             if !single && parentController != nil {
                 parentController!.drawerButton.isHidden = false
+                self.parentController!.drawerButton.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
                 UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
                     self.parentController!.drawerButton.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
                 }, completion: { _ in
@@ -327,6 +330,7 @@ class SingleSubredditViewController: MediaViewController {
                     AutoCache.progressView!.frame.origin.y = self.oldY
                 }, completion: { _ in
                     SingleSubredditViewController.fab?.isHidden = false
+                    SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
 
                     UIView.animate(withDuration: 0.25, delay: 0.25, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
                         SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
@@ -340,7 +344,8 @@ class SingleSubredditViewController: MediaViewController {
                 })
         } else {
             SingleSubredditViewController.fab?.isHidden = false
-
+            SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
+            
             UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
                 SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
             }, completion: { _ in
@@ -349,7 +354,7 @@ class SingleSubredditViewController: MediaViewController {
 
             if !SettingValues.bottomBarHidden || SettingValues.viewType {
                 (navigationController)?.setToolbarHidden(false, animated: true)
-                if !single && parentController != nil {
+                if !single && parentController != nil && !self.parentController!.drawerButton.isHidden {
                     UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
                         self.parentController!.drawerButton.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
                     }, completion: { _ in
@@ -365,6 +370,8 @@ class SingleSubredditViewController: MediaViewController {
         if SingleSubredditViewController.fab != nil && SingleSubredditViewController.fab!.isHidden {
             if animated {
                 SingleSubredditViewController.fab!.isHidden = false
+                SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
+
                 UIView.animate(withDuration: 0.3, animations: { () -> Void in
                     SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 1, y: 1)
                 })

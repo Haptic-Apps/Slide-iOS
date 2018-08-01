@@ -45,14 +45,14 @@ class SettingsWelcome: UIPageViewController, UIPageViewControllerDataSource, UIP
             start.addTarget(self, action: #selector(self.skip(_:)), for: UIControlEvents.touchUpInside)
             let startB = UIBarButtonItem.init(customView: start)
             let flexButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil)
-            
+            start.sizeToFit()
             toolbarItems = [flexButton, startB]
         } else {
             let skip = UIButton.init(type: .system)
             skip.setTitle("SKIP", for: .normal)
             skip.titleLabel?.textColor = ColorUtil.fontColor
             skip.setTitleColor(ColorUtil.fontColor, for: .normal)
-            
+            skip.sizeToFit()
             skip.addTarget(self, action: #selector(self.skip(_:)), for: UIControlEvents.touchUpInside)
             let skipB = UIBarButtonItem.init(customView: skip)
             
@@ -60,7 +60,7 @@ class SettingsWelcome: UIPageViewController, UIPageViewControllerDataSource, UIP
             next.setTitle("CONTINUE", for: .normal)
             next.titleLabel?.textColor = ColorUtil.fontColor
             next.setTitleColor(ColorUtil.fontColor, for: .normal)
-            
+            next.sizeToFit()
             next.addTarget(self, action: #selector(self.next(_:)), for: UIControlEvents.touchUpInside)
             let nextB = UIBarButtonItem.init(customView: next)
             
