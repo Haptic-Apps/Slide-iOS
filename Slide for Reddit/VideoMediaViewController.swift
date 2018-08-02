@@ -414,14 +414,18 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         spinnerIndicator.color = UIColor.white
         self.view.addSubview(spinnerIndicator)
         spinnerIndicator.startAnimating()
+        self.progressView.isHidden = true
     }
     
     func hideSpinner() {
+        self.progressView.isHidden = false
         self.spinnerIndicator.stopAnimating()
         self.spinnerIndicator.isHidden = true
     }
     
     func getVideo(_ toLoad: String) {
+        self.hideSpinner()
+
         if FileManager.default.fileExists(atPath: getKeyFromURL()) {
             playVideo()
         } else {
