@@ -189,7 +189,7 @@ class ModalMediaViewController: UIViewController {
     }
 
     func connectGestures() {
-        (parent as? SwipeDownModalVC)?.didStartPan = { [weak self] result in
+        didStartPan = { [weak self] result in
             if let strongSelf = self {
                 strongSelf.unFullscreen(strongSelf.embeddedVC.view)
             }
@@ -219,7 +219,7 @@ extension ModalMediaViewController {
             let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
             statusBar.isHidden = true
 
-            (self.parent as? SwipeDownModalVC)?.background?.alpha = 1
+            self.background?.alpha = 1
             self.embeddedVC.bottomButtons.alpha = 0
             self.embeddedVC.navigationBar.alpha = 0.2
         }, completion: {_ in
@@ -235,7 +235,7 @@ extension ModalMediaViewController {
             statusBar.isHidden = false
             self.embeddedVC.navigationBar.alpha = 1
 
-            (self.parent as? SwipeDownModalVC)?.background?.alpha = 0.6
+            self.background?.alpha = 0.6
             self.embeddedVC.bottomButtons.alpha = 1
             self.embeddedVC.progressView.alpha = 0.7
 
