@@ -86,7 +86,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
                 }
                 return WebsiteViewController(url: baseUrl, subreddit: link == nil ? "" : link.subreddit)
             }
-            return SingleContentViewController.init(url: contentUrl!, lq: lq, commentCallback)
+            return ModalMediaViewController.init(url: contentUrl!, lq: lq, commentCallback)
         } else if type == ContentType.CType.LINK || type == ContentType.CType.NONE {
             if SettingValues.safariVC {
                 let safariVC = SFHideSafariViewController(url: baseUrl)
@@ -163,7 +163,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
                 if controller is AlbumViewController {
                     controller.modalPresentationStyle = .overFullScreen
                     present(controller, animated: true, completion: nil)
-                } else if controller is SingleContentViewController {
+                } else if controller is ModalMediaViewController {
                     controller.modalPresentationStyle = .overFullScreen
                     present(controller, animated: true, completion: nil)
                 } else {

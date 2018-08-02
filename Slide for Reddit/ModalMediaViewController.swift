@@ -16,17 +16,73 @@ class ModalMediaViewController: UIViewController {
 
     var embeddedVC: EmbeddableMediaViewController!
     var fullscreen = false
+    var panGestureRecognizer: UIPanGestureRecognizer?
+    public var background: UIView?
+    
+    var originalPosition: CGPoint?
+    var currentPositionTouched: CGPoint?
+    var spinnerIndicator = UIActivityIndicatorView()
+
+    var didStartPan : (_ panStart: Bool) -> Void = { result in }
+    private let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
 
     private var savedColor: UIColor?
+    var commentCallback: (() -> Void)?
 
-    init(model: EmbeddableMediaDataModel) {
+    init(url: URL, lq: URL?, _ commentCallback: (() -> Void)?){
         super.init(nibName: nil, bundle: nil)
-        
+
+        self.commentCallback = commentCallback
+        if ContentType.isImgurLink(uri: url) {
+            spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+            spinnerIndicator.center = self.view.center
+            spinnerIndicator.color = UIColor.white
+            self.view.addSubview(spinnerIndicator)
+            spinnerIndicator.startAnimating()
+
+            self.loadTypeAsync(url)
+        } else {
+            self.setModel(model: EmbeddableMediaDataModel(baseURL: url, lqURL: lq, text: nil, inAlbum: false))
+        }
+    }
+    
+    func setModel(model: EmbeddableMediaDataModel) {
         let contentType = ContentType.getContentType(baseUrl: model.baseURL)
         embeddedVC = ModalMediaViewController.getVCForContent(ofType: contentType, withModel: model)
+        embeddedVC.commentCallback = self.commentCallback
         if embeddedVC == nil {
             fatalError("embeddedVC should be populated!")
         }
+    }
+    
+    func loadTypeAsync(_ baseUrl: URL) {
+        let changedUrl = URL.init(string: baseUrl.absoluteString + ".png")!
+        var request = URLRequest(url: changedUrl)
+        request.httpMethod = "HEAD"
+        let task = URLSession.shared.dataTask(with: request) { (_, response, _) -> Void in
+            if response != nil {
+                if response!.mimeType ?? "" == "image/gif" {
+                    let finalUrl = URL.init(string: baseUrl.absoluteString + ".mp4")!
+                    DispatchQueue.main.async {
+                        self.setModel(model: EmbeddableMediaDataModel(baseURL: finalUrl, lqURL: nil, text: nil, inAlbum: false))
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        self.setModel(model: EmbeddableMediaDataModel(baseURL: changedUrl, lqURL: nil, text: nil, inAlbum: false))
+                    }
+                }
+            } else {
+                DispatchQueue.main.async {
+                    self.setModel(model: EmbeddableMediaDataModel(baseURL: baseUrl, lqURL: nil, text: nil, inAlbum: false))
+                }
+            }
+        }
+        task.resume()
+    }
+
+    init(model: EmbeddableMediaDataModel) {
+        super.init(nibName: nil, bundle: nil)
+        setModel(model: model)
     }
     
     override func prefersHomeIndicatorAutoHidden() -> Bool {
@@ -39,6 +95,26 @@ class ModalMediaViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panGestureAction(_:)))
+        panGestureRecognizer!.delegate = self
+        panGestureRecognizer!.direction = .vertical
+        panGestureRecognizer!.cancelsTouchesInView = false
+        
+        view.addGestureRecognizer(panGestureRecognizer!)
+        
+        background = UIView()
+        background!.frame = self.view.frame
+        background!.autoresizingMask = [.flexibleHeight, .flexibleWidth]
+        background!.backgroundColor = .black
+        
+        background!.alpha = 0.6
+        
+        self.view.insertSubview(background!, at: 0)
+        let blurView = UIVisualEffectView(frame: UIScreen.main.bounds)
+        blurEffect.setValue(3, forKeyPath: "blurRadius")
+        blurView.effect = blurEffect
+        view.insertSubview(blurView, at: 0)
 
         configureViews()
         configureLayout()
@@ -137,7 +213,6 @@ class ModalMediaViewController: UIViewController {
 
 // MARK: - Actions
 extension ModalMediaViewController {
-
     func fullscreen(_ sender: AnyObject) {
         fullscreen = true
         UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
@@ -167,5 +242,60 @@ extension ModalMediaViewController {
         }, completion: {_ in
         })
     }
+}
+
+extension ModalMediaViewController: UIGestureRecognizerDelegate {
     
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        
+        // Reject the touch if it lands in a UIControl.
+        if let view = touch.view {
+            return !view.hasParentOfClass(UIControl.self)
+        } else {
+            return true
+        }
+    }
+
+    func panGestureAction(_ panGesture: UIPanGestureRecognizer) {
+        let translation = panGesture.translation(in: view)
+        
+        if panGesture.state == .began {
+            originalPosition = view.center
+            currentPositionTouched = panGesture.location(in: view)
+            didStartPan(true)
+        } else if panGesture.state == .changed {
+            view.frame.origin = CGPoint(
+                x: 0,
+                y: translation.y
+            )
+            let progress = translation.y / (self.view.frame.size.height / 2)
+            self.view.alpha = 1 - (abs(progress) * 1.3)
+            
+        } else if panGesture.state == .ended {
+            let velocity = panGesture.velocity(in: view)
+            
+            let down = panGesture.velocity(in: view).y > 0
+            if abs(velocity.y) >= 1000 || abs(self.view.frame.origin.y) > self.view.frame.size.height / 2 {
+                
+                UIView.animate(withDuration: 0.2, animations: {
+                    self.view.frame.origin = CGPoint(
+                        x: self.view.frame.origin.x,
+                        y: self.view.frame.size.height * (down ? 1 : -1) )
+                    
+                    self.view.alpha = 0.1
+                    
+                }, completion: { (isCompleted) in
+                    if isCompleted {
+                        self.dismiss(animated: false, completion: nil)
+                    }
+                })
+            } else {
+                UIView.animate(withDuration: 0.2, animations: {
+                    self.view.center = self.originalPosition!
+                    self.view.alpha = 1
+                    
+                })
+            }
+        }
+    }
 }

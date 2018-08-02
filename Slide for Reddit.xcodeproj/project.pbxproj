@@ -157,7 +157,6 @@
 		BE8FCA1D1E0C46090063B8EF /* Slide_for_RedditTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8FCA1C1E0C46090063B8EF /* Slide_for_RedditTests.swift */; };
 		BE8FCA281E0C46090063B8EF /* Slide_for_RedditUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8FCA271E0C46090063B8EF /* Slide_for_RedditUITests.swift */; };
 		BE9428EA20C46B5600E1A33A /* PostActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9428E920C46B5600E1A33A /* PostActions.swift */; };
-		BE9455FE1F32B5220097EEF0 /* SingleContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9455FD1F32B5220097EEF0 /* SingleContentViewController.swift */; };
 		BE9456001F32DD310097EEF0 /* AlbumViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9455FF1F32DD310097EEF0 /* AlbumViewController.swift */; };
 		BE9456021F3375460097EEF0 /* LeftTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9456011F3375460097EEF0 /* LeftTransition.swift */; };
 		BE97422C1F00116D00BF48E0 /* BannerLinkCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE97422B1F00116D00BF48E0 /* BannerLinkCellView.swift */; };
@@ -396,7 +395,6 @@
 		BE8FCA271E0C46090063B8EF /* Slide_for_RedditUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Slide_for_RedditUITests.swift; sourceTree = "<group>"; };
 		BE8FCA291E0C46090063B8EF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BE9428E920C46B5600E1A33A /* PostActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostActions.swift; sourceTree = "<group>"; };
-		BE9455FD1F32B5220097EEF0 /* SingleContentViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SingleContentViewController.swift; sourceTree = "<group>"; };
 		BE9455FF1F32DD310097EEF0 /* AlbumViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlbumViewController.swift; sourceTree = "<group>"; };
 		BE9456011F3375460097EEF0 /* LeftTransition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LeftTransition.swift; sourceTree = "<group>"; };
 		BE97422B1F00116D00BF48E0 /* BannerLinkCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BannerLinkCellView.swift; sourceTree = "<group>"; };
@@ -549,7 +547,6 @@
 				BEE5BF831E14836E00E3C9AE /* MediaVCDelegate.swift */,
 				BE5E53741E1DAEB7004FE226 /* RedditLink.swift */,
 				BE981D341E31855500BD3846 /* OpenInChrome.swift */,
-				BE9455FD1F32B5220097EEF0 /* SingleContentViewController.swift */,
 				BE9455FF1F32DD310097EEF0 /* AlbumViewController.swift */,
 				BE7AF5791F3655F50003B24B /* SwipeDownModalVC.swift */,
 				B776BDC00CB0E0C8961A71A3 /* TableDisplayView.swift */,
@@ -1409,7 +1406,6 @@
 				BE5E53751E1DAEB7004FE226 /* RedditLink.swift in Sources */,
 				BEC4942A1E307DDA006618F3 /* GalleryCellView.swift in Sources */,
 				BE97422E1F0011BE00BF48E0 /* ThumbnailLinkCellView.swift in Sources */,
-				BE9455FE1F32B5220097EEF0 /* SingleContentViewController.swift in Sources */,
 				B776BF494A7A822D5DB4B5BC /* ColorMuxPagingViewController.swift in Sources */,
 				BE1CD01320F43E51007746B6 /* TextDisplayStackView.swift in Sources */,
 				098B5A4720EFC68100FE201B /* UITabBarController+Extensions.swift in Sources */,

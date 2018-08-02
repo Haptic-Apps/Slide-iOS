@@ -1254,7 +1254,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         if viewControllerToCommit is AlbumViewController {
             viewControllerToCommit.modalPresentationStyle = .overFullScreen
             parent?.present(viewControllerToCommit, animated: true, completion: nil)
-        } else if viewControllerToCommit is SingleContentViewController {
+        } else if viewControllerToCommit is ModalMediaViewController {
             viewControllerToCommit.modalPresentationStyle = .overFullScreen
             parent?.present(viewControllerToCommit, animated: true, completion: nil)
         } else {

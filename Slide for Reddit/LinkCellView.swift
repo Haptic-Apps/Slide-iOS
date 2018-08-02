@@ -1429,7 +1429,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if viewControllerToCommit is AlbumViewController {
             viewControllerToCommit.modalPresentationStyle = .overFullScreen
             parentViewController?.present(viewControllerToCommit, animated: true, completion: nil)
-        } else if viewControllerToCommit is SingleContentViewController {
+        } else if viewControllerToCommit is ModalMediaViewController {
             viewControllerToCommit.modalPresentationStyle = .overFullScreen
             parentViewController?.present(viewControllerToCommit, animated: true, completion: nil)
         } else {

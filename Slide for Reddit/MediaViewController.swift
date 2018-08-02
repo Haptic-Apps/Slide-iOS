@@ -86,7 +86,7 @@ class MediaViewController: UIViewController, MediaVCDelegate {
                 }
                 return WebsiteViewController(url: baseUrl, subreddit: link == nil ? "" : link.subreddit)
             }
-            return SingleContentViewController.init(url: contentUrl!, lq: lq, commentCallback)
+            return ModalMediaViewController.init(url: contentUrl!, lq: lq, commentCallback)
         } else if type == ContentType.CType.LINK || type == ContentType.CType.NONE {
             if SettingValues.safariVC {
                 let safariVC = SFHideSafariViewController(url: baseUrl)
