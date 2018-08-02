@@ -49,9 +49,9 @@ class MediaViewController: UIViewController, MediaVCDelegate {
                     doShow(url: url)
                 }
             } else {
-                if lq && shownURL != nil {
+                if lq && shownURL != nil && !ContentType.isImgurLink(uri: url) {
                     doShow(url: url, lq: shownURL)
-                } else if shownURL != nil && ContentType.imageType(t: type) {
+                } else if shownURL != nil && ContentType.imageType(t: type) && !ContentType.isImgurLink(uri: url) {
                     doShow(url: shownURL!)
                 } else {
                     doShow(url: url)

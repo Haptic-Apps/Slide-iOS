@@ -385,11 +385,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
 
         // Load Youtube View
         if isYoutubeView {
-            spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
-            spinnerIndicator.center = self.view.center
-            spinnerIndicator.color = UIColor.white
-            self.view.addSubview(spinnerIndicator)
-            spinnerIndicator.startAnimating()
+            showSpinner()
             
             youtubeView.isHidden = false
             progressView.isHidden = true
@@ -402,10 +398,27 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         // Otherwise load AVPlayer
         let url = formatUrl(sS: data.baseURL!.absoluteString)
         videoType = VideoType.fromPath(url)
+        
+        if videoType != .DIRECT && videoType != .REDDIT && videoType != .IMGUR {
+            showSpinner()
+        }
 
         videoType.getSourceObject().load(url: url) { [weak self] (urlString) in
             self?.getVideo(urlString)
         }
+    }
+    
+    func showSpinner() {
+        spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+        spinnerIndicator.center = self.view.center
+        spinnerIndicator.color = UIColor.white
+        self.view.addSubview(spinnerIndicator)
+        spinnerIndicator.startAnimating()
+    }
+    
+    func hideSpinner() {
+        self.spinnerIndicator.stopAnimating()
+        self.spinnerIndicator.isHidden = true
     }
     
     func getVideo(_ toLoad: String) {
@@ -778,8 +791,8 @@ extension VideoMediaViewController: YTPlayerViewDelegate {
     func playerViewDidBecomeReady(_ playerView: YTPlayerView) {
         youtubeView.playVideo()
         scrubber.totalDuration = CMTime(seconds: playerView.duration(), preferredTimescale: 1000000)
-        spinnerIndicator.stopAnimating()
-        spinnerIndicator.isHidden = true
+        
+        hideSpinner()
     }
     
     func playerView(_ playerView: YTPlayerView, didPlayTime playTime: Float) {

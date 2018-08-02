@@ -14,6 +14,8 @@ class SingleContentViewController: SwipeDownModalVC, UIPageViewControllerDataSou
     var baseURL: URL?
     var lqURL: URL?
     var commentCallback: (() -> Void)?
+    var spinnerIndicator = UIActivityIndicatorView()
+
     public init(url: URL, lq: URL?, _ commentCallback: (() -> Void)?) {
         self.baseURL = url
         self.lqURL = lq
@@ -22,6 +24,12 @@ class SingleContentViewController: SwipeDownModalVC, UIPageViewControllerDataSou
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
 
         if ContentType.isImgurLink(uri: url) {
+            spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+            spinnerIndicator.center = self.view.center
+            spinnerIndicator.color = UIColor.white
+            self.view.addSubview(spinnerIndicator)
+            spinnerIndicator.startAnimating()
+            
             loadAsync(url)
         } else {
             let media = ModalMediaViewController(model: EmbeddableMediaDataModel(baseURL: baseURL, lqURL: lq, text: nil, inAlbum: false))
@@ -61,6 +69,9 @@ class SingleContentViewController: SwipeDownModalVC, UIPageViewControllerDataSou
     }
     
     func setUrlAndShow(_ url: URL) {
+        self.spinnerIndicator.stopAnimating()
+        self.spinnerIndicator.isHidden = true
+
         let media = ModalMediaViewController(model: EmbeddableMediaDataModel(baseURL: url, lqURL: nil, text: nil, inAlbum: false))
         media.embeddedVC.commentCallback = commentCallback
         

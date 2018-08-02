@@ -31,7 +31,6 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
     }
     
     func splitHashes(_ raw: String) {
-        print("Raw is \(raw)")
         self.spinnerIndicator.stopAnimating()
         self.spinnerIndicator.isHidden = true
         for hash in raw.split(",") {
