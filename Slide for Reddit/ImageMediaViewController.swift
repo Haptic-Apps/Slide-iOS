@@ -205,15 +205,13 @@ class ImageMediaViewController: EmbeddableMediaViewController {
                 }
                 self.updateProgress(CGFloat(average), "")
 
-            }, completed: { (image, _, _, _) in
-
-                SDWebImageManager.shared().saveImage(toCache: image, for: imageURL)
-                DispatchQueue.main.async {
-                    if let image = image {
-                        completion(image)
+                }, completed: { (image, data, _, _) in
+                    SDImageCache.shared().store(image, recalculateFromImage: false, imageData: data, forKey: imageURL.absoluteString, toDisk: true)
+                    DispatchQueue.main.async {
+                        if let image = image {
+                            completion(image)
+                        }
                     }
-                }
-
             })
 
         }

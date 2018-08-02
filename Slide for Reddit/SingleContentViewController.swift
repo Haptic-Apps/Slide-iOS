@@ -13,18 +13,63 @@ class SingleContentViewController: SwipeDownModalVC, UIPageViewControllerDataSou
     var vCs: [UIViewController] = [ClearVC()]
     var baseURL: URL?
     var lqURL: URL?
+    var commentCallback: (() -> Void)?
     public init(url: URL, lq: URL?, _ commentCallback: (() -> Void)?) {
         self.baseURL = url
         self.lqURL = lq
-        let media = ModalMediaViewController(model: EmbeddableMediaDataModel(baseURL: baseURL, lqURL: lq, text: nil, inAlbum: false))
-        media.embeddedVC.commentCallback = commentCallback
-
-        self.vCs.append(media)//todo change this
+        self.commentCallback = commentCallback
+        
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+
+        if ContentType.isImgurLink(uri: url) {
+            loadAsync(url)
+        } else {
+            let media = ModalMediaViewController(model: EmbeddableMediaDataModel(baseURL: baseURL, lqURL: lq, text: nil, inAlbum: false))
+            media.embeddedVC.commentCallback = commentCallback
+            
+            self.vCs.append(media)//todo change this
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func loadAsync(_ baseUrl: URL) {
+        let changedUrl = URL.init(string: baseUrl.absoluteString + ".png")!
+        var request = URLRequest(url: changedUrl)
+        request.httpMethod = "HEAD"
+        let task = URLSession.shared.dataTask(with: request) { (_, response, _) -> Void in
+            if response != nil {
+                if response!.mimeType ?? "" == "image/gif" {
+                    let finalUrl = URL.init(string: baseUrl.absoluteString + ".mp4")!
+                    DispatchQueue.main.async {
+                        self.setUrlAndShow(finalUrl)
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        self.setUrlAndShow(changedUrl)
+                    }
+                }
+            } else {
+                DispatchQueue.main.async {
+                    self.setUrlAndShow(changedUrl)
+                }
+            }
+        }
+        task.resume()
+    }
+    
+    func setUrlAndShow(_ url: URL) {
+        let media = ModalMediaViewController(model: EmbeddableMediaDataModel(baseURL: url, lqURL: nil, text: nil, inAlbum: false))
+        media.embeddedVC.commentCallback = commentCallback
+        
+        self.vCs.append(media)
+        let firstViewController = vCs[1]
+        setViewControllers([firstViewController],
+                           direction: .forward,
+                           animated: false,
+                           completion: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -39,13 +84,15 @@ class SingleContentViewController: SwipeDownModalVC, UIPageViewControllerDataSou
         self.delegate = self
         
         self.navigationController?.view.backgroundColor = UIColor.clear
-        let firstViewController = vCs[1]
         
-        setViewControllers([firstViewController],
-                           direction: .forward,
-                           animated: false,
-                           completion: nil)
-        
+        if vCs.count > 1 {
+            let firstViewController = vCs[1]
+            
+            setViewControllers([firstViewController],
+                               direction: .forward,
+                               animated: false,
+                               completion: nil)
+        }
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating: Bool, previousViewControllers: [UIViewController], transitionCompleted: Bool) {
