@@ -1335,7 +1335,7 @@ extension CommentDepthCell: TTTAttributedLabelDelegate {
             parent?.showSpoiler(textClicked)
         } else {
             let urlClicked = result.url!
-            parent?.doShow(url: urlClicked)
+            parent?.doShow(url: urlClicked, heroView: nil, heroVC: nil)
         }
     }
 }

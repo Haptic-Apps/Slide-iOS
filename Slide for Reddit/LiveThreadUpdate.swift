@@ -18,7 +18,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAt
     var image = UIImageView()
     
     func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
-        parentViewController?.doShow(url: url)
+        parentViewController?.doShow(url: url, heroView: nil, heroVC: nil)
     }
     
     override func layoutSubviews() {
@@ -239,6 +239,6 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAt
     public var navViewController: UIViewController?
     
     func openContent(sender: UITapGestureRecognizer? = nil) {
-        parentViewController?.doShow(url: URL.init(string: url)!)
+        parentViewController?.doShow(url: URL.init(string: url)!, heroView: nil, heroVC: nil)
     }
 }

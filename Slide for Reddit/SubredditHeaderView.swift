@@ -376,7 +376,7 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
     }
     
     func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
-        parentController?.doShow(url: url)
+        parentController?.doShow(url: url, heroView: nil, heroVC: nil)
     }
 }
 

@@ -20,7 +20,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
     var link: RSubmission!
     var commentCallback: (() -> Void)?
 
-    public func setLink(lnk: RSubmission, shownURL: URL?, lq: Bool, saveHistory: Bool) { //lq is should load lq and did load lq
+    public func setLink(lnk: RSubmission, shownURL: URL?, lq: Bool, saveHistory: Bool, heroView: UIView?, heroVC: UIViewController?) { //lq is should load lq and did load lq
         if saveHistory {
             History.addSeen(s: lnk)
         }
@@ -44,17 +44,17 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
         } else {
             if ContentType.isGif(uri: url) {
                 if !link!.videoPreview.isEmpty() {
-                    doShow(url: URL.init(string: link!.videoPreview)!)
+                    doShow(url: URL.init(string: link!.videoPreview)!, heroView: heroView, heroVC: heroVC)
                 } else {
-                    doShow(url: url)
+                    doShow(url: url, heroView: heroView, heroVC: heroVC)
                 }
             } else {
                 if lq && shownURL != nil {
-                    doShow(url: url, lq: shownURL)
+                    doShow(url: url, lq: shownURL, heroView: heroView, heroVC: heroVC)
                 } else if shownURL != nil && ContentType.imageType(t: type) {
-                    doShow(url: shownURL!)
+                    doShow(url: shownURL!, heroView: heroView, heroVC: heroVC)
                 } else {
-                    doShow(url: url)
+                    doShow(url: url, heroView: heroView, heroVC: heroVC)
                 }
             }
         }
@@ -134,7 +134,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
         controller.parentController!.dismiss(animated: true)
     }
 
-    func doShow(url: URL, lq: URL? = nil) {
+    func doShow(url: URL, lq: URL? = nil, heroView: UIView?, heroVC: UIViewController?) {
         if ContentType.isExternal(url) {
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
