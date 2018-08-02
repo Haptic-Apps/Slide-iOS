@@ -163,7 +163,7 @@ class MediaViewController: UIViewController, MediaVCDelegate {
                 if controller is AlbumViewController {
                     controller.modalPresentationStyle = .overFullScreen
                     present(controller, animated: true, completion: nil)
-                } else if controller is SingleContentViewController {
+                } else if controller is ModalMediaViewController {
                     controller.modalPresentationStyle = .overFullScreen
                     present(controller, animated: true, completion: nil)
                 } else {
