@@ -20,7 +20,7 @@ class MediaViewController: UIViewController, MediaVCDelegate {
     var link: RSubmission!
     var commentCallback: (() -> Void)?
 
-    public func setLink(lnk: RSubmission, shownURL: URL?, lq: Bool, saveHistory: Bool) { //lq is should load lq and did load lq
+    public func setLink(lnk: RSubmission, shownURL: URL?, lq: Bool, saveHistory: Bool, heroView: UIView?, heroVC: UIViewController?) { //lq is should load lq and did load lq
         if saveHistory {
             History.addSeen(s: lnk)
         }
@@ -44,17 +44,17 @@ class MediaViewController: UIViewController, MediaVCDelegate {
         } else {
             if ContentType.isGif(uri: url) {
                 if !link!.videoPreview.isEmpty() && !ContentType.isGfycat(uri: url) {
-                    doShow(url: URL.init(string: link!.videoPreview)!)
+                    doShow(url: URL.init(string: link!.videoPreview)!, heroView: heroView, heroVC: heroVC)
                 } else {
-                    doShow(url: url)
+                    doShow(url: url, heroView: heroView, heroVC: heroVC)
                 }
             } else {
                 if lq && shownURL != nil && !ContentType.isImgurLink(uri: url) {
-                    doShow(url: url, lq: shownURL)
+                    doShow(url: url, lq: shownURL, heroView: heroView, heroVC: heroVC)
                 } else if shownURL != nil && ContentType.imageType(t: type) && !ContentType.isImgurLink(uri: url) {
-                    doShow(url: shownURL!)
+                    doShow(url: shownURL!, heroView: heroView, heroVC: heroVC)
                 } else {
-                    doShow(url: url)
+                    doShow(url: url, heroView: heroView, heroVC: heroVC)
                 }
             }
         }
@@ -86,7 +86,7 @@ class MediaViewController: UIViewController, MediaVCDelegate {
                 }
                 return WebsiteViewController(url: baseUrl, subreddit: link == nil ? "" : link.subreddit)
             }
-            return SingleContentViewController.init(url: contentUrl!, lq: lq, commentCallback)
+            return ModalMediaViewController.init(url: contentUrl!, lq: lq, commentCallback)
         } else if type == ContentType.CType.LINK || type == ContentType.CType.NONE {
             if SettingValues.safariVC {
                 let safariVC = SFHideSafariViewController(url: baseUrl)
@@ -134,7 +134,7 @@ class MediaViewController: UIViewController, MediaVCDelegate {
         controller.parentController!.dismiss(animated: true)
     }
 
-    func doShow(url: URL, lq: URL? = nil) {
+    func doShow(url: URL, lq: URL? = nil, heroView: UIView?, heroVC: UIViewController?) {
         if ContentType.isExternal(url) {
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
@@ -163,7 +163,7 @@ class MediaViewController: UIViewController, MediaVCDelegate {
                 if controller is AlbumViewController {
                     controller.modalPresentationStyle = .overFullScreen
                     present(controller, animated: true, completion: nil)
-                } else if controller is SingleContentViewController {
+                } else if controller is ModalMediaViewController {
                     controller.modalPresentationStyle = .overFullScreen
                     present(controller, animated: true, completion: nil)
                 } else {

@@ -34,7 +34,7 @@ class TableDisplayView: UIScrollView {
         self.textDelegate = delegate
         super.init(frame: CGRect.zero)
 
-        parseHtml(newData.removingPercentEncoding!)
+        parseHtml(newData.removingPercentEncoding ?? newData)
         self.bounces = true
         self.isUserInteractionEnabled = true
         
