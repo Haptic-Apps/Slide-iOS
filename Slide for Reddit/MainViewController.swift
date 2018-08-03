@@ -13,18 +13,12 @@ import SideMenu
 import StoreKit
 import UIKit
 
-class MainViewController: ColorMuxPagingViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UISplitViewControllerDelegate {
+class MainViewController: ColorMuxPagingViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     var isReload = false
     public static var vCs: [UIViewController] = []
     public static var current: String = ""
     public static var needsRestart = false
     
-    override func didMove(toParentViewController parent: UIViewController?) {
-        if parent is UISplitViewController {
-            self.viewWillAppearActions()
-        }
-    }
-
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.viewWillAppearActions()
@@ -203,15 +197,10 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        self.splitViewController?.delegate = self
-        self.splitViewController?.preferredDisplayMode = UISplitViewControllerDisplayMode.allVisible
-        if SettingValues.multiColumn {
-            self.splitViewController?.maximumPrimaryColumnWidth = 10000
-            self.splitViewController?.preferredPrimaryColumnWidthFraction = 1
-        }
         if AccountController.isLoggedIn && !MainViewController.first {
             checkForMail()
         }
+        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = false
     }
 
     func addAccount() {

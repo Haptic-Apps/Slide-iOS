@@ -270,6 +270,7 @@ class SingleSubredditViewController: MediaViewController {
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let currentY = scrollView.contentOffset.y
+        
         if !SettingValues.pinToolbar {
             if currentY > lastYUsed && currentY > 60 {
                 if navigationController != nil && !isHiding && !isToolbarHidden && !(scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height)) {
@@ -1821,7 +1822,7 @@ extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
             if thumb {
                 estimatedUsableWidth -= thumbheight //is the same as the width
                 estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between thumb and label
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between thumb and label
             } else {
                 estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //12 padding on either side
             }

@@ -29,7 +29,7 @@ class ModalMediaViewController: UIViewController {
     private var savedColor: UIColor?
     var commentCallback: (() -> Void)?
 
-    init(url: URL, lq: URL?, _ commentCallback: (() -> Void)?){
+    init(url: URL, lq: URL?, _ commentCallback: (() -> Void)?) {
         super.init(nibName: nil, bundle: nil)
 
         self.commentCallback = commentCallback
@@ -52,6 +52,11 @@ class ModalMediaViewController: UIViewController {
         embeddedVC.commentCallback = self.commentCallback
         if embeddedVC == nil {
             fatalError("embeddedVC should be populated!")
+        }
+        if shouldLoad {
+            configureViews()
+            configureLayout()
+            connectGestures()
         }
     }
     
@@ -92,6 +97,8 @@ class ModalMediaViewController: UIViewController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    var shouldLoad = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -115,10 +122,14 @@ class ModalMediaViewController: UIViewController {
         blurEffect.setValue(3, forKeyPath: "blurRadius")
         blurView.effect = blurEffect
         view.insertSubview(blurView, at: 0)
-
-        configureViews()
-        configureLayout()
-        connectGestures()
+        
+        if embeddedVC != nil {
+            configureViews()
+            configureLayout()
+            connectGestures()
+        } else {
+            shouldLoad = true
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {

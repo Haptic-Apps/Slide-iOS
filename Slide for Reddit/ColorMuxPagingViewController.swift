@@ -13,8 +13,10 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         for view in self.view.subviews {
-            if let scrollView = view as? UIScrollView {
-                scrollView.delegate = self
+            if !(view is UICollectionView) {
+                if let scrollView = view as? UIScrollView {
+                    scrollView.delegate = self
+                }
             }
         }
     }
