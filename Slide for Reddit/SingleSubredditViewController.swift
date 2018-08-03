@@ -237,7 +237,7 @@ class SingleSubredditViewController: MediaViewController {
         if single {
             UIApplication.shared.statusBarView?.backgroundColor = .clear
         }
-        if SingleSubredditViewController.fab != nil && !SingleSubredditViewController.nextSingle && !SingleSubredditViewController.fab!.isHidden {
+        if SingleSubredditViewController.fab != nil && !SingleSubredditViewController.nextSingle {
             UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
                 SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
             }, completion: { _ in
@@ -295,14 +295,12 @@ class SingleSubredditViewController: MediaViewController {
             (navigationController)?.setNavigationBarHidden(true, animated: true)
         }
         
-        if SingleSubredditViewController.fab != nil && !SingleSubredditViewController.fab!.isHidden {
             UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
                 SingleSubredditViewController.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
             }, completion: { _ in
                 SingleSubredditViewController.fab?.isHidden = true
                 self.isHiding = false
             })
-        }
         
         if !SettingValues.bottomBarHidden || SettingValues.viewType {
             (self.navigationController)?.setToolbarHidden(true, animated: true)
@@ -362,7 +360,7 @@ class SingleSubredditViewController: MediaViewController {
 
             if !SettingValues.bottomBarHidden || SettingValues.viewType {
                 (navigationController)?.setToolbarHidden(false, animated: true)
-                if !single && parentController != nil && !self.parentController!.drawerButton.isHidden {
+                if !single && parentController != nil {
                     UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
                         self.parentController!.drawerButton.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
                     }, completion: { _ in
@@ -414,7 +412,7 @@ class SingleSubredditViewController: MediaViewController {
                     self.addNewFab()
                 })
             } else {
-                if SingleSubredditViewController.fab != nil && !SingleSubredditViewController.fab!.isHidden {
+                if SingleSubredditViewController.fab != nil {
                     SingleSubredditViewController.fab!.removeFromSuperview()
                     SingleSubredditViewController.fab = nil
                 }
