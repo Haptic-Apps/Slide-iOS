@@ -544,7 +544,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
         print("Clicked \(url.absoluteString)")
         if (parentViewController) != nil {
-            parentViewController?.doShow(url: url)
+            parentViewController?.doShow(url: url, heroView: nil, heroVC: nil)
         }
     }
 
@@ -1429,7 +1429,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if viewControllerToCommit is AlbumViewController {
             viewControllerToCommit.modalPresentationStyle = .overFullScreen
             parentViewController?.present(viewControllerToCommit, animated: true, completion: nil)
-        } else if viewControllerToCommit is SingleContentViewController {
+        } else if viewControllerToCommit is ModalMediaViewController {
             viewControllerToCommit.modalPresentationStyle = .overFullScreen
             parentViewController?.present(viewControllerToCommit, animated: true, completion: nil)
         } else {
@@ -1446,7 +1446,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
     func openLink(sender: UITapGestureRecognizer? = nil) {
         if let link = link {
-            (parentViewController)?.setLink(lnk: link, shownURL: loadedImage, lq: lq, saveHistory: true) //todo check this
+            (parentViewController)?.setLink(lnk: link, shownURL: loadedImage, lq: lq, saveHistory: true, heroView: big ? bannerImage : thumbImage, heroVC: parentViewController) //todo check this
         }
     }
 

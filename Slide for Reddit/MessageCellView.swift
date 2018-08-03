@@ -20,7 +20,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
     var single = false
 
     func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
-        parentViewController?.doShow(url: url)
+        parentViewController?.doShow(url: url, heroView: nil, heroVC: nil)
     }
     
     override func layoutSubviews() {

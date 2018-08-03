@@ -89,6 +89,7 @@ class SettingValues {
     public static let pref_bottomBarHidden = "BOTTOM_BAR_HIDDEN"
     public static let pref_widerIndicators = "WIDE_INDICATORS"
     public static let pref_lockCommentBottomBar = "LOCK_COMMENT_BOTTOM"
+    public static let pref_blackShadowbox = "BLACK_SHADOWBOX"
 
     public static var commentActionRight = CommentAction.UPVOTE
     public static var commentActionLeft = CommentAction.DOWNVOTE
@@ -120,6 +121,7 @@ class SettingValues {
     public static var pinToolbar = false
     public static var hapticFeedback = true
     public static var wideIndicators = false
+    public static var blackShadowbox = false
 
     public static var enlargeLinks = true
     public static var noImages = false
@@ -285,6 +287,7 @@ class SettingValues {
         }
 
         SettingValues.smallerTag = settings.bool(forKey: SettingValues.pref_smallTag)
+        SettingValues.blackShadowbox = settings.bool(forKey: SettingValues.pref_blackShadowbox)
         SettingValues.markReadOnScroll = settings.bool(forKey: SettingValues.pref_markReadOnScroll)
         SettingValues.nsfwPreviews = settings.bool(forKey: SettingValues.pref_nsfwPreviews)
         SettingValues.swapLongPress = settings.bool(forKey: SettingValues.pref_swapLongPress)

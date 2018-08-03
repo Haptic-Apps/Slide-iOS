@@ -59,7 +59,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
     }
 
     func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
-        doShow(url: url)
+        doShow(url: url, heroView: nil, heroVC: nil)
     }
 
     init(url: URL?, content: Object?, parent: ShadowboxViewController) {
@@ -268,14 +268,18 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
     }
     
     func doBackground() {
-        if content is RSubmission {
-            let thumbnail = (content as! RSubmission).thumbnailUrl
-            if let url = URL(string: thumbnail) {
-                SDWebImageDownloader.shared().downloadImage(with: url, options: .allowInvalidSSLCertificates, progress: { (_, _) in
-                    
-                }) { (image, _, _, _) in
-                    if image != nil {
-                        self.backgroundColor = image!.areaAverage()
+        if SettingValues.blackShadowbox {
+            self.backgroundColor = .black
+        } else {
+            if content is RSubmission {
+                let thumbnail = (content as! RSubmission).thumbnailUrl
+                if let url = URL(string: thumbnail) {
+                    SDWebImageDownloader.shared().downloadImage(with: url, options: .allowInvalidSSLCertificates, progress: { (_, _) in
+                        
+                    }) { (image, _, _, _) in
+                        if image != nil {
+                            self.backgroundColor = image!.areaAverage()
+                        }
                     }
                 }
             }
@@ -432,7 +436,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
     }
 
     func content(_ sender: AnyObject) {
-        doShow(url: baseURL!)
+        doShow(url: baseURL!, heroView: thumbImageContainer.isHidden ? embeddedVC.view : thumbImage, heroVC: parentVC)
     }
 
     override func viewWillAppear(_ animated: Bool) {
