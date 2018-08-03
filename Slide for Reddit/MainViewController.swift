@@ -124,8 +124,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         navigationController?.pushViewController(MainViewController.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil), animated: false)
     }
     
-    func navigationController(navigationController: UINavigationController, didShowViewController viewController: UIViewController, animated: Bool) {
-        self.interactivePopGestureRecognizer?.enabled = self.viewControllers.count > 1
+    func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
+        navigationController.interactivePopGestureRecognizer?.isEnabled = navigationController.viewControllers.count > 1
     }
 
     var checkedClipboardOnce = false
