@@ -259,12 +259,19 @@ extension ModalMediaViewController: UIGestureRecognizerDelegate {
     func panGestureAction(_ panGesture: UIPanGestureRecognizer) {
         let translation = panGesture.translation(in: view)
         
+        let viewToMove: UIView
+        if embeddedVC is ImageMediaViewController {
+            viewToMove = (embeddedVC as! ImageMediaViewController).imageView
+        } else {
+            viewToMove = (embeddedVC as! VideoMediaViewController).isYoutubeView ? (embeddedVC as! VideoMediaViewController).youtubeView : (embeddedVC as! VideoMediaViewController).videoView
+        }
+        
         if panGesture.state == .began {
-            originalPosition = view.center
+            originalPosition = viewToMove.center
             currentPositionTouched = panGesture.location(in: view)
             didStartPan(true)
         } else if panGesture.state == .changed {
-            view.frame.origin = CGPoint(
+            viewToMove.frame.origin = CGPoint(
                 x: 0,
                 y: translation.y
             )
@@ -278,9 +285,9 @@ extension ModalMediaViewController: UIGestureRecognizerDelegate {
             if abs(velocity.y) >= 1000 || abs(self.view.frame.origin.y) > self.view.frame.size.height / 2 {
                 
                 UIView.animate(withDuration: 0.2, animations: {
-                    self.view.frame.origin = CGPoint(
-                        x: self.view.frame.origin.x,
-                        y: self.view.frame.size.height * (down ? 1 : -1) )
+                    viewToMove.frame.origin = CGPoint(
+                        x: viewToMove.frame.origin.x,
+                        y: viewToMove.frame.size.height * (down ? 1 : -1) )
                     
                     self.view.alpha = 0.1
                     
@@ -291,7 +298,7 @@ extension ModalMediaViewController: UIGestureRecognizerDelegate {
                 })
             } else {
                 UIView.animate(withDuration: 0.2, animations: {
-                    self.view.center = self.originalPosition!
+                    viewToMove.center = self.originalPosition!
                     self.view.alpha = 1
                     
                 })
