@@ -15,6 +15,9 @@
 		0965260D20E2989600EA53BE /* UITableView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0965260C20E2989600EA53BE /* UITableView+Extensions.swift */; };
 		0965260F20E298BB00EA53BE /* Object+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0965260E20E298BB00EA53BE /* Object+Extensions.swift */; };
 		0965261120E2AA5400EA53BE /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0965261020E2AA5400EA53BE /* String+Extensions.swift */; };
+		0984BE4E2114C4040091C2E1 /* PostContentPresentationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0984BE4D2114C4040091C2E1 /* PostContentPresentationManager.swift */; };
+		0984BE502114C4D50091C2E1 /* SlideInPresentationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0984BE4F2114C4D50091C2E1 /* SlideInPresentationManager.swift */; };
+		0984BE532114CEA50091C2E1 /* SlideInPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0984BE522114CEA50091C2E1 /* SlideInPresentationController.swift */; };
 		098B5A4120EFC58300FE201B /* UIApplication+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098B5A4020EFC58300FE201B /* UIApplication+Extensions.swift */; };
 		098B5A4320EFC5B600FE201B /* UIButton+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098B5A4220EFC5B600FE201B /* UIButton+Extensions.swift */; };
 		098B5A4520EFC5E800FE201B /* RSubmission+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098B5A4420EFC5E800FE201B /* RSubmission+Extensions.swift */; };
@@ -25,6 +28,7 @@
 		098FC80F20E52D1A00F819F3 /* CGSize+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098FC80E20E52D1A00F819F3 /* CGSize+Extensions.swift */; };
 		09B2AF6220F6BC4100580F15 /* CachingPlayerItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B2AF6120F6BC4100580F15 /* CachingPlayerItem.swift */; };
 		09B2AF6420F7A2ED00580F15 /* VideoSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B2AF6320F7A2ED00580F15 /* VideoSource.swift */; };
+		09B51D032114D23F00BCB745 /* SlideInPresentationAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B51D022114D23F00BCB745 /* SlideInPresentationAnimator.swift */; };
 		09F411CD20F3EEA600D23A42 /* ModalMediaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F411CC20F3EEA600D23A42 /* ModalMediaViewController.swift */; };
 		09F411CF20F3EEB900D23A42 /* ImageMediaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F411CE20F3EEB900D23A42 /* ImageMediaViewController.swift */; };
 		09F411D120F3EEC600D23A42 /* VideoMediaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F411D020F3EEC600D23A42 /* VideoMediaViewController.swift */; };
@@ -244,6 +248,9 @@
 		0965260C20E2989600EA53BE /* UITableView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableView+Extensions.swift"; sourceTree = "<group>"; };
 		0965260E20E298BB00EA53BE /* Object+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Object+Extensions.swift"; sourceTree = "<group>"; };
 		0965261020E2AA5400EA53BE /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
+		0984BE4D2114C4040091C2E1 /* PostContentPresentationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostContentPresentationManager.swift; sourceTree = "<group>"; };
+		0984BE4F2114C4D50091C2E1 /* SlideInPresentationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideInPresentationManager.swift; sourceTree = "<group>"; };
+		0984BE522114CEA50091C2E1 /* SlideInPresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideInPresentationController.swift; sourceTree = "<group>"; };
 		098B5A4020EFC58300FE201B /* UIApplication+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+Extensions.swift"; sourceTree = "<group>"; };
 		098B5A4220EFC5B600FE201B /* UIButton+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+Extensions.swift"; sourceTree = "<group>"; };
 		098B5A4420EFC5E800FE201B /* RSubmission+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RSubmission+Extensions.swift"; sourceTree = "<group>"; };
@@ -254,6 +261,7 @@
 		098FC80E20E52D1A00F819F3 /* CGSize+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGSize+Extensions.swift"; sourceTree = "<group>"; };
 		09B2AF6120F6BC4100580F15 /* CachingPlayerItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachingPlayerItem.swift; sourceTree = "<group>"; };
 		09B2AF6320F7A2ED00580F15 /* VideoSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoSource.swift; sourceTree = "<group>"; };
+		09B51D022114D23F00BCB745 /* SlideInPresentationAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideInPresentationAnimator.swift; sourceTree = "<group>"; };
 		09F411CC20F3EEA600D23A42 /* ModalMediaViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalMediaViewController.swift; sourceTree = "<group>"; };
 		09F411CE20F3EEB900D23A42 /* ImageMediaViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageMediaViewController.swift; sourceTree = "<group>"; };
 		09F411D020F3EEC600D23A42 /* VideoMediaViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoMediaViewController.swift; sourceTree = "<group>"; };
@@ -504,6 +512,17 @@
 				BE3B74382107AA1200658DE9 /* UIAlertController+Extensions.swift */,
 			);
 			name = Extensions;
+			sourceTree = "<group>";
+		};
+		0984BE552114D1CD0091C2E1 /* Presentation */ = {
+			isa = PBXGroup;
+			children = (
+				0984BE4D2114C4040091C2E1 /* PostContentPresentationManager.swift */,
+				0984BE4F2114C4D50091C2E1 /* SlideInPresentationManager.swift */,
+				0984BE522114CEA50091C2E1 /* SlideInPresentationController.swift */,
+				09B51D022114D23F00BCB745 /* SlideInPresentationAnimator.swift */,
+			);
+			name = Presentation;
 			sourceTree = "<group>";
 		};
 		09F48EB920F652A300BAC8AC /* Image */ = {
@@ -805,6 +824,7 @@
 				BE2F3F501EF70EB2003C1B28 /* YTPlayerHelper */,
 				BEEA03CC20E1B53E007A8928 /* HapticUtility.swift */,
 				BEEA03CE20E2A411007A8928 /* BannerUtil.swift */,
+				0984BE552114D1CD0091C2E1 /* Presentation */,
 			);
 			path = "Slide for Reddit";
 			sourceTree = "<group>";
@@ -874,9 +894,9 @@
 				A1EE9457F3FCD70A23E04A54 /* [CP] Embed Pods Frameworks */,
 				BE2B8A061E25BD220053D493 /* Embed Frameworks */,
 				BE0EF7D71F43F9C40058D572 /* Embed App Extensions */,
-				BE77470620366576006C72E8 /* ShellScript */,
-				0991C18B2108CDC600B6BA16 /* ShellScript */,
-				46688CCFF9BCA197DBB28291 /* [CP] Copy Pods Resources */,
+				BE77470620366576006C72E8 /* Generate Credits.plist */,
+				0991C18B2108CDC600B6BA16 /* Run SwiftLint */,
+				0984BE512114C9490091C2E1 /* Integrate Reveal Server */,
 			);
 			buildRules = (
 			);
@@ -895,8 +915,6 @@
 				BE8FCA141E0C46090063B8EF /* Sources */,
 				BE8FCA151E0C46090063B8EF /* Frameworks */,
 				BE8FCA161E0C46090063B8EF /* Resources */,
-				3202D0FEC12D55BB1EDC2A27 /* [CP] Embed Pods Frameworks */,
-				29807F06CAFAC3EB34B83E4B /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -916,8 +934,6 @@
 				BE8FCA1F1E0C46090063B8EF /* Sources */,
 				BE8FCA201E0C46090063B8EF /* Frameworks */,
 				BE8FCA211E0C46090063B8EF /* Resources */,
-				D70E3CFC84CA829B8130BA19 /* [CP] Embed Pods Frameworks */,
-				9E75F0D2AA468181F54B7AFB /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1039,13 +1055,28 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		0991C18B2108CDC600B6BA16 /* ShellScript */ = {
+		0984BE512114C9490091C2E1 /* Integrate Reveal Server */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
+			name = "Integrate Reveal Server";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "REVEAL_APP_PATH=$(mdfind kMDItemCFBundleIdentifier=\"com.ittybittyapps.Reveal2\" | head -n 1)\nBUILD_SCRIPT_PATH=\"${REVEAL_APP_PATH}/Contents/SharedSupport/Scripts/reveal_server_build_phase.sh\"\nif [ \"${REVEAL_APP_PATH}\" -a -e \"${BUILD_SCRIPT_PATH}\" ]; then\n    \"${BUILD_SCRIPT_PATH}\"\nelse\n    echo \"Reveal Server not loaded: Cannot find a compatible Reveal app.\"\nfi";
+		};
+		0991C18B2108CDC600B6BA16 /* Run SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Run SwiftLint";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1070,51 +1101,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		29807F06CAFAC3EB34B83E4B /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Slide for RedditTests/Pods-Slide for RedditTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		3202D0FEC12D55BB1EDC2A27 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Slide for RedditTests/Pods-Slide for RedditTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		46688CCFF9BCA197DBB28291 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		77FAFF16641CB08EF86C3316 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1131,21 +1117,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		9E75F0D2AA468181F54B7AFB /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Slide for RedditUITests/Pods-Slide for RedditUITests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		A1EE9457F3FCD70A23E04A54 /* [CP] Embed Pods Frameworks */ = {
@@ -1222,13 +1193,14 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		BE77470620366576006C72E8 /* ShellScript */ = {
+		BE77470620366576006C72E8 /* Generate Credits.plist */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
+			name = "Generate Credits.plist";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1253,21 +1225,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		D70E3CFC84CA829B8130BA19 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Slide for RedditUITests/Pods-Slide for RedditUITests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -1276,6 +1233,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BE6EA6E41E1DA24700E9E709 /* ContentListingViewController.swift in Sources */,
+				09B51D032114D23F00BCB745 /* SlideInPresentationAnimator.swift in Sources */,
 				BE0E8BC01E26E91E004B56B1 /* BouncyViewControllerAnimator.swift in Sources */,
 				BEEA03CF20E2A411007A8928 /* BannerUtil.swift in Sources */,
 				BE8C29211EDE8001004D7514 /* MarginedTableViewCell.swift in Sources */,
@@ -1295,6 +1253,7 @@
 				0965261120E2AA5400EA53BE /* String+Extensions.swift in Sources */,
 				BE7BFB421F128F9B009CA2E1 /* Sidebar.swift in Sources */,
 				BE3E5C131E16BA2200749C0C /* AlbumData.swift in Sources */,
+				0984BE502114C4D50091C2E1 /* SlideInPresentationManager.swift in Sources */,
 				BE3B74372107A5F400658DE9 /* AsyncAlertImagePickerViewController.swift in Sources */,
 				BE6EA6C41E1C1DCE00E9E709 /* GfycatJSONBase.swift in Sources */,
 				0965260920E2982A00EA53BE /* UIImage+Extensions.swift in Sources */,
@@ -1333,6 +1292,7 @@
 				BE7439ED1E201C22008BB63B /* SubredditCellView.swift in Sources */,
 				BE3E5C211E18227500749C0C /* CommentDepthCell.swift in Sources */,
 				0965260720E28FEE00EA53BE /* UIStackView+Extensions.swift in Sources */,
+				0984BE4E2114C4040091C2E1 /* PostContentPresentationManager.swift in Sources */,
 				BE1DA3961E26AD5700EC0A04 /* SearchViewController.swift in Sources */,
 				09F411CF20F3EEB900D23A42 /* ImageMediaViewController.swift in Sources */,
 				BE6EA6E81E1DA86100E9E709 /* ProfileViewController.swift in Sources */,
@@ -1402,6 +1362,7 @@
 				BECF52442012AF7A00A310F9 /* VCPresenter.swift in Sources */,
 				09F411D320F3F20200D23A42 /* EmbeddableMediaViewController.swift in Sources */,
 				BEE10FC61F25078F00A72CE5 /* PagingCommentViewController.swift in Sources */,
+				0984BE532114CEA50091C2E1 /* SlideInPresentationController.swift in Sources */,
 				BE7AF57A1F3655F50003B24B /* SwipeDownModalVC.swift in Sources */,
 				BE5E53751E1DAEB7004FE226 /* RedditLink.swift in Sources */,
 				BEC4942A1E307DDA006618F3 /* GalleryCellView.swift in Sources */,
