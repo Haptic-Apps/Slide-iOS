@@ -13,7 +13,7 @@ import SideMenu
 import StoreKit
 import UIKit
 
-class MainViewController: ColorMuxPagingViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
+class MainViewController: ColorMuxPagingViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UINavigationControllerDelegate {
     var isReload = false
     public static var vCs: [UIViewController] = []
     public static var current: String = ""
@@ -55,6 +55,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         
         self.navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.isTranslucent = false
+        
+        self.navigationController?.delegate = self
         
         navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
         
@@ -122,6 +124,10 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         navigationController?.pushViewController(MainViewController.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil), animated: false)
     }
     
+    func navigationController(navigationController: UINavigationController, didShowViewController viewController: UIViewController, animated: Bool) {
+        self.interactivePopGestureRecognizer?.enabled = self.viewControllers.count > 1
+    }
+
     var checkedClipboardOnce = false
     func checkForMail() {
         DispatchQueue.main.async {
@@ -200,7 +206,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         if AccountController.isLoggedIn && !MainViewController.first {
             checkForMail()
         }
-        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = false
     }
 
     func addAccount() {
