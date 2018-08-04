@@ -164,9 +164,7 @@ class MediaViewController: UIViewController, MediaVCDelegate {
             } else {
                 let controller = getControllerForUrl(baseUrl: url, lq: lq)!
                 if let sourceView = heroView,
-                    let cellController = heroVC,
-                    let modalController = controller as? ModalMediaViewController,
-                    let modalContent = modalController.embeddedVC as? ImageMediaViewController {
+                    let modalController = controller as? ModalMediaViewController {
 
 //                    slideInTransitioningDelegate.direction = .bottom
 //                    slideInTransitioningDelegate.coverageRatio = 1.0

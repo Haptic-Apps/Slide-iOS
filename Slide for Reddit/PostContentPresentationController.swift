@@ -33,28 +33,47 @@ class PostContentPresentationController: UIPresentationController {
     }
 
     override func presentationTransitionWillBegin() {
-        if let vc = self.presentedViewController as? ModalMediaViewController,
-            let embeddedVC = vc.embeddedVC as? ImageMediaViewController {
+        guard let coordinator = presentedViewController.transitionCoordinator else {
+            return
+        }
 
-            presentingViewController.view.layoutIfNeeded()
-
-            guard let coordinator = presentedViewController.transitionCoordinator else {
-                return
-            }
+        if let vc = self.presentedViewController as? ModalMediaViewController {
 
             let image = (sourceImageView as! UIImageView).image!
-
             let fromRect = vc.view.convert(sourceImageView.bounds, from: sourceImageView)
-            let inner = AVMakeRect(aspectRatio: embeddedVC.imageView.bounds.size, insideRect: embeddedVC.view.bounds)
-            let toRect = vc.view.convert(inner, from: embeddedVC.scrollView)
 
-            let newTransform = transformFromRect(from: toRect, toRect: fromRect)
+            if let embeddedVC = vc.embeddedVC as? ImageMediaViewController {
 
-            embeddedVC.scrollView.transform = embeddedVC.scrollView.transform.concatenating(newTransform)
-            coordinator.animate(alongsideTransition: { _ in
-                embeddedVC.scrollView.transform = CGAffineTransform.identity
-            })
+                presentingViewController.view.layoutIfNeeded()
 
+                let inner = AVMakeRect(aspectRatio: embeddedVC.imageView.bounds.size, insideRect: embeddedVC.view.bounds)
+                let toRect = vc.view.convert(inner, from: embeddedVC.scrollView)
+
+                let newTransform = transformFromRect(from: toRect, toRect: fromRect)
+
+                embeddedVC.scrollView.transform = embeddedVC.scrollView.transform.concatenating(newTransform)
+                coordinator.animate(alongsideTransition: { _ in
+                    embeddedVC.scrollView.transform = CGAffineTransform.identity
+                })
+
+            } else if let embeddedVC = vc.embeddedVC as? VideoMediaViewController {
+
+                if embeddedVC.isYoutubeView {
+
+                } else {
+                    presentingViewController.view.layoutIfNeeded()
+
+                    let inner = AVMakeRect(aspectRatio: image.size, insideRect: embeddedVC.view.bounds)
+                    let toRect = vc.view.convert(inner, from: embeddedVC.view)
+
+                    let newTransform = transformFromRect(from: toRect, toRect: fromRect)
+
+                    embeddedVC.videoView.transform = embeddedVC.videoView.transform.concatenating(newTransform)
+                    coordinator.animate(alongsideTransition: { _ in
+                        embeddedVC.videoView.transform = CGAffineTransform.identity
+                    })
+                }
+            }
         }
     }
 
