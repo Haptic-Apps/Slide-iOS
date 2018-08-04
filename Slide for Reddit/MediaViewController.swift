@@ -16,6 +16,7 @@ import UIKit
 class MediaViewController: UIViewController, MediaVCDelegate {
 
     lazy var slideInTransitioningDelegate = SlideInPresentationManager()
+    lazy var postContentTransitioningDelegate = PostContentPresentationManager()
 
     var subChanged = false
 
@@ -167,9 +168,13 @@ class MediaViewController: UIViewController, MediaVCDelegate {
                     let modalController = controller as? ModalMediaViewController,
                     let modalContent = modalController.embeddedVC as? ImageMediaViewController {
 
-                    slideInTransitioningDelegate.direction = .bottom
-                    slideInTransitioningDelegate.coverageRatio = 1.0
-                    modalController.transitioningDelegate = slideInTransitioningDelegate
+//                    slideInTransitioningDelegate.direction = .bottom
+//                    slideInTransitioningDelegate.coverageRatio = 1.0
+//                    modalController.transitioningDelegate = slideInTransitioningDelegate
+//                    modalController.modalPresentationStyle = .custom
+
+                    postContentTransitioningDelegate.sourceImageView = sourceView
+                    modalController.transitioningDelegate = postContentTransitioningDelegate
                     modalController.modalPresentationStyle = .custom
 
                     present(modalController, animated: true, completion: nil)

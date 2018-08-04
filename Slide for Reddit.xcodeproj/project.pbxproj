@@ -29,6 +29,8 @@
 		09B2AF6220F6BC4100580F15 /* CachingPlayerItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B2AF6120F6BC4100580F15 /* CachingPlayerItem.swift */; };
 		09B2AF6420F7A2ED00580F15 /* VideoSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B2AF6320F7A2ED00580F15 /* VideoSource.swift */; };
 		09B51D032114D23F00BCB745 /* SlideInPresentationAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B51D022114D23F00BCB745 /* SlideInPresentationAnimator.swift */; };
+		09B51D052114E22C00BCB745 /* PostContentPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B51D042114E22C00BCB745 /* PostContentPresentationController.swift */; };
+		09B51D072114E80000BCB745 /* PostContentPresentationAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B51D062114E80000BCB745 /* PostContentPresentationAnimator.swift */; };
 		09F411CD20F3EEA600D23A42 /* ModalMediaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F411CC20F3EEA600D23A42 /* ModalMediaViewController.swift */; };
 		09F411CF20F3EEB900D23A42 /* ImageMediaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F411CE20F3EEB900D23A42 /* ImageMediaViewController.swift */; };
 		09F411D120F3EEC600D23A42 /* VideoMediaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F411D020F3EEC600D23A42 /* VideoMediaViewController.swift */; };
@@ -262,6 +264,8 @@
 		09B2AF6120F6BC4100580F15 /* CachingPlayerItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachingPlayerItem.swift; sourceTree = "<group>"; };
 		09B2AF6320F7A2ED00580F15 /* VideoSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoSource.swift; sourceTree = "<group>"; };
 		09B51D022114D23F00BCB745 /* SlideInPresentationAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideInPresentationAnimator.swift; sourceTree = "<group>"; };
+		09B51D042114E22C00BCB745 /* PostContentPresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostContentPresentationController.swift; sourceTree = "<group>"; };
+		09B51D062114E80000BCB745 /* PostContentPresentationAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostContentPresentationAnimator.swift; sourceTree = "<group>"; };
 		09F411CC20F3EEA600D23A42 /* ModalMediaViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalMediaViewController.swift; sourceTree = "<group>"; };
 		09F411CE20F3EEB900D23A42 /* ImageMediaViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageMediaViewController.swift; sourceTree = "<group>"; };
 		09F411D020F3EEC600D23A42 /* VideoMediaViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoMediaViewController.swift; sourceTree = "<group>"; };
@@ -518,6 +522,8 @@
 			isa = PBXGroup;
 			children = (
 				0984BE4D2114C4040091C2E1 /* PostContentPresentationManager.swift */,
+				09B51D042114E22C00BCB745 /* PostContentPresentationController.swift */,
+				09B51D062114E80000BCB745 /* PostContentPresentationAnimator.swift */,
 				0984BE4F2114C4D50091C2E1 /* SlideInPresentationManager.swift */,
 				0984BE522114CEA50091C2E1 /* SlideInPresentationController.swift */,
 				09B51D022114D23F00BCB745 /* SlideInPresentationAnimator.swift */,
@@ -1253,6 +1259,7 @@
 				0965261120E2AA5400EA53BE /* String+Extensions.swift in Sources */,
 				BE7BFB421F128F9B009CA2E1 /* Sidebar.swift in Sources */,
 				BE3E5C131E16BA2200749C0C /* AlbumData.swift in Sources */,
+				09B51D052114E22C00BCB745 /* PostContentPresentationController.swift in Sources */,
 				0984BE502114C4D50091C2E1 /* SlideInPresentationManager.swift in Sources */,
 				BE3B74372107A5F400658DE9 /* AsyncAlertImagePickerViewController.swift in Sources */,
 				BE6EA6C41E1C1DCE00E9E709 /* GfycatJSONBase.swift in Sources */,
@@ -1343,6 +1350,7 @@
 				BE6EA6E01E1C228100E9E709 /* GfycatTranscoded.swift in Sources */,
 				BEE5BF641E11A15500E3C9AE /* LinkCellView.swift in Sources */,
 				BE42B6F320CE01BD00607A54 /* IAPHandler.swift in Sources */,
+				09B51D072114E80000BCB745 /* PostContentPresentationAnimator.swift in Sources */,
 				BE6EA6CA1E1C1E9400E9E709 /* Files.swift in Sources */,
 				BE7439F91E21A59C008BB63B /* ActionStates.swift in Sources */,
 				BE86300F1E2E6A54004F0E1F /* PostFilter.swift in Sources */,
