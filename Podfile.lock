@@ -141,33 +141,6 @@ DEPENDENCIES:
   - TTTAttributedLabel
   - XLActionController (from `https://github.com/ccrama/XLActionController`)
 
-SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
-    - Alamofire
-    - Anchorage
-    - BadgeSwift
-    - BiometricAuthentication
-    - DTFoundation
-    - Embassy
-    - LicensesViewController
-    - MaterialComponents
-    - MDFInternationalization
-    - MDFTextAccessibility
-    - MKColorPicker
-    - MotionAnimator
-    - MotionInterchange
-    - MTColorDistance
-    - Realm
-    - RealmSwift
-    - SDWebImage
-    - SideMenu
-    - Starscream
-    - SwiftLint
-    - SwiftSpreadsheet
-    - SwiftyJSON
-    - Then
-    - TTTAttributedLabel
-
 EXTERNAL SOURCES:
   ActionSheetPicker-3.0:
     :git: https://github.com/ccrama/ActionSheetPicker-3.0
@@ -236,4 +209,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: f6d68c9e3ffe4512e6532cceb12247ea022bb531
 
-COCOAPODS: 1.5.3
+COCOAPODS: 1.4.0

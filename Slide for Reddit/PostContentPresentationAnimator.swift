@@ -70,10 +70,10 @@ extension PostContentPresentationAnimator: UIViewControllerAnimatedTransitioning
                 let storedZ = embeddedVC.scrollView.layer.zPosition
                 embeddedVC.scrollView.layer.zPosition = sourceImageView.layer.zPosition
 
-                UIView.animate(withDuration: animationDuration) {
+                UIView.animate(withDuration: animationDuration, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.8, options: .curveEaseInOut, animations: {
                     embeddedVC.scrollView.transform = CGAffineTransform.identity
                     embeddedVC.scrollView.layer.zPosition = storedZ
-                }
+                })
 
             } else if let embeddedVC = vc.embeddedVC as? VideoMediaViewController {
 
@@ -98,15 +98,21 @@ extension PostContentPresentationAnimator: UIViewControllerAnimatedTransitioning
         // Animate alpha
 
         let initialAlpha: CGFloat = isPresentation ? 0.0 : 1.0
-        let finalAlpha: CGFloat = isPresentation ? 1.0 : 0.0
+        let finalAlpha: CGFloat = isPresentation ? 0.6 : 0.0
 
         // Use a special animation chain for certain types of presenting VCs
         if let vc = controller as? ModalMediaViewController,
-            let _ = vc.embeddedVC as? ImageMediaViewController {
+            let embed = vc.embeddedVC as? EmbeddableMediaViewController {
 
-            controller.view.alpha = initialAlpha
+            vc.background?.alpha = initialAlpha
+            vc.blurView?.alpha = initialAlpha
+            embed.bottomButtons.alpha = initialAlpha
+            embed.navigationBar.alpha = initialAlpha
             UIView.animate(withDuration: animationDuration, animations: {
-                controller.view.alpha = finalAlpha
+                vc.background?.alpha = finalAlpha
+                vc.blurView?.alpha = finalAlpha
+                embed.bottomButtons.alpha = 1
+                embed.navigationBar.alpha = 1
             }, completion: { finished in
                 transitionContext.completeTransition(finished)
             })

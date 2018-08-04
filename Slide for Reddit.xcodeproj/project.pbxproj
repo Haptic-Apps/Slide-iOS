@@ -903,6 +903,7 @@
 				BE77470620366576006C72E8 /* Generate Credits.plist */,
 				0991C18B2108CDC600B6BA16 /* Run SwiftLint */,
 				0984BE512114C9490091C2E1 /* Integrate Reveal Server */,
+				B528E1C36BC851939B93B883 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -921,6 +922,8 @@
 				BE8FCA141E0C46090063B8EF /* Sources */,
 				BE8FCA151E0C46090063B8EF /* Frameworks */,
 				BE8FCA161E0C46090063B8EF /* Resources */,
+				FE4EF09D0FDE8EE78E905E9F /* [CP] Embed Pods Frameworks */,
+				A4DFDD2320B99460A82881EB /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -940,6 +943,8 @@
 				BE8FCA1F1E0C46090063B8EF /* Sources */,
 				BE8FCA201E0C46090063B8EF /* Frameworks */,
 				BE8FCA211E0C46090063B8EF /* Resources */,
+				20CFE062300C1E648421A13B /* [CP] Embed Pods Frameworks */,
+				30DD4CB07748898FFC821585 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1107,6 +1112,36 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		20CFE062300C1E648421A13B /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Slide for RedditUITests/Pods-Slide for RedditUITests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		30DD4CB07748898FFC821585 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Slide for RedditUITests/Pods-Slide for RedditUITests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		77FAFF16641CB08EF86C3316 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1199,6 +1234,36 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		A4DFDD2320B99460A82881EB /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Slide for RedditTests/Pods-Slide for RedditTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B528E1C36BC851939B93B883 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		BE77470620366576006C72E8 /* Generate Credits.plist */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1229,6 +1294,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		FE4EF09D0FDE8EE78E905E9F /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Slide for RedditTests/Pods-Slide for RedditTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
