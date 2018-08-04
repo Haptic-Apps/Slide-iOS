@@ -16,24 +16,30 @@ extension PostContentPresentationManager: UIViewControllerTransitioningDelegate 
     func presentationController(forPresented presented: UIViewController,
                                 presenting: UIViewController?,
                                 source: UIViewController) -> UIPresentationController? {
-        if let sourceImageView = sourceImageView {
-            let presentationController = PostContentPresentationController(presentedViewController: presented,
-                                                                       presenting: presenting,
-                                                                       sourceImageView: sourceImageView)
-            return presentationController
-        } else {
+        guard let sourceImageView = sourceImageView else {
             fatalError("SourceImageView must be specified!")
         }
+
+        let presentationController = PostContentPresentationController(presentedViewController: presented,
+                                                                   presenting: presenting,
+                                                                   sourceImageView: sourceImageView)
+        return presentationController
     }
 
     func animationController(forPresented presented: UIViewController,
                              presenting: UIViewController,
                              source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        return PostContentPresentationAnimator(isPresentation: true)
+        guard let sourceImageView = sourceImageView else {
+            fatalError("SourceImageView must be specified!")
+        }
+        return PostContentPresentationAnimator(isPresentation: true, sourceImageView: sourceImageView)
     }
 
     func animationController(forDismissed dismissed: UIViewController)
         -> UIViewControllerAnimatedTransitioning? {
-            return PostContentPresentationAnimator(isPresentation: false)
+            guard let sourceImageView = sourceImageView else {
+                fatalError("SourceImageView must be specified!")
+            }
+            return PostContentPresentationAnimator(isPresentation: false, sourceImageView: sourceImageView)
     }
 }

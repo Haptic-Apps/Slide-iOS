@@ -6,15 +6,19 @@
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
+import AVFoundation
 import UIKit
 
 final class PostContentPresentationAnimator: NSObject {
     // MARK: - Properties
     let isPresentation: Bool
 
+    let sourceImageView: UIView
+
     // MARK: - Initializers
-    init(isPresentation: Bool) {
+    init(isPresentation: Bool, sourceImageView: UIView) {
         self.isPresentation = isPresentation
+        self.sourceImageView = sourceImageView
         super.init()
     }
 }
@@ -25,9 +29,17 @@ extension PostContentPresentationAnimator: UIViewControllerAnimatedTransitioning
         return 0.3
     }
 
+    private func transformFromRect(from source: CGRect, toRect destination: CGRect) -> CGAffineTransform {
+        return CGAffineTransform.identity
+            .translatedBy(x: destination.midX - source.midX, y: destination.midY - source.midY)
+            .scaledBy(x: destination.width / source.width, y: destination.height / source.height)
+    }
+
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
         let key = isPresentation ? UITransitionContextViewControllerKey.to
             : UITransitionContextViewControllerKey.from
+
+        let animationDuration = transitionDuration(using: transitionContext)
 
         let controller = transitionContext.viewController(forKey: key)!
 
@@ -35,10 +47,58 @@ extension PostContentPresentationAnimator: UIViewControllerAnimatedTransitioning
             transitionContext.containerView.addSubview(controller.view)
         }
 
+        let presentingViewController = transitionContext.viewController(forKey: .from)!
+        let presentedViewController = transitionContext.viewController(forKey: .to)!
+
+        // Animate picture
+
+        if let vc = presentedViewController as? ModalMediaViewController {
+
+            let image = (sourceImageView as! UIImageView).image!
+            let fromRect = vc.view.convert(sourceImageView.bounds, from: sourceImageView)
+
+            if let embeddedVC = vc.embeddedVC as? ImageMediaViewController {
+
+                presentingViewController.view.layoutIfNeeded()
+
+                let inner = AVMakeRect(aspectRatio: embeddedVC.imageView.bounds.size, insideRect: embeddedVC.view.bounds)
+                let toRect = vc.view.convert(inner, from: embeddedVC.scrollView)
+
+                let newTransform = transformFromRect(from: toRect, toRect: fromRect)
+
+                embeddedVC.scrollView.transform = embeddedVC.scrollView.transform.concatenating(newTransform)
+                let storedZ = embeddedVC.scrollView.layer.zPosition
+                embeddedVC.scrollView.layer.zPosition = sourceImageView.layer.zPosition
+
+                UIView.animate(withDuration: animationDuration) {
+                    embeddedVC.scrollView.transform = CGAffineTransform.identity
+                    embeddedVC.scrollView.layer.zPosition = storedZ
+                }
+
+            } else if let embeddedVC = vc.embeddedVC as? VideoMediaViewController {
+
+                if embeddedVC.isYoutubeView {
+
+                } else {
+                    presentingViewController.view.layoutIfNeeded()
+
+                    let inner = AVMakeRect(aspectRatio: image.size, insideRect: embeddedVC.view.bounds)
+                    let toRect = vc.view.convert(inner, from: embeddedVC.view)
+
+                    let newTransform = transformFromRect(from: toRect, toRect: fromRect)
+
+                    embeddedVC.videoView.transform = embeddedVC.videoView.transform.concatenating(newTransform)
+                    UIView.animate(withDuration: animationDuration) {
+                        embeddedVC.videoView.transform = CGAffineTransform.identity
+                    }
+                }
+            }
+        }
+
+        // Animate alpha
+
         let initialAlpha: CGFloat = isPresentation ? 0.0 : 1.0
         let finalAlpha: CGFloat = isPresentation ? 1.0 : 0.0
-
-        let animationDuration = transitionDuration(using: transitionContext)
 
         // Use a special animation chain for certain types of presenting VCs
         if let vc = controller as? ModalMediaViewController,
