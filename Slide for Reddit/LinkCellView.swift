@@ -829,18 +829,20 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             thumb = true
             if submission.nsfw {
                 thumbImage.image = LinkCellImageCache.nsfw
+            } else if submission.spoiler {
+                thumbImage.image = LinkCellImageCache.spoiler
+            } else if type == .REDDIT {
+                thumbImage.image = LinkCellImageCache.reddit
             } else {
-                if type == .REDDIT {
-                    thumbImage.image = LinkCellImageCache.reddit
-                } else {
-                    thumbImage.image = LinkCellImageCache.web
-                }
+                thumbImage.image = LinkCellImageCache.web
             }
         } else if thumb && !big {
             if submission.nsfw {
                 thumbImage.image = LinkCellImageCache.nsfw
-            } else if submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty {
-                if type == .REDDIT {
+            } else if submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty || submission.spoiler {
+                if submission.spoiler {
+                    thumbImage.image = LinkCellImageCache.spoiler
+                } else if type == .REDDIT {
                     thumbImage.image = LinkCellImageCache.reddit
                 } else {
                     thumbImage.image = LinkCellImageCache.web

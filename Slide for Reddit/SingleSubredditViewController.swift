@@ -1258,9 +1258,14 @@ class SingleSubredditViewController: MediaViewController {
             thumb = true
         }
 
-        if submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && (sub == "all" || sub == "frontpage" || sub.contains("/m/") || sub.contains("+") || sub == "popular")) {
+        if (thumb || big) && submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && (sub == "all" || sub == "frontpage" || sub.contains("/m/") || sub.contains("+") || sub == "popular")) {
             big = false
             thumb = true
+        }
+        
+        if (thumb || big) && submission.spoiler {
+            thumb = true
+            big = false
         }
 
         if thumb && !big {
@@ -1724,7 +1729,7 @@ extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
                 thumb = false
             }
 
-            if submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && (sub == "all" || sub == "frontpage" || sub.contains("/m/") || sub.contains("+") || sub == "popular")) {
+            if (thumb || big) && submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && (sub == "all" || sub == "frontpage" || sub.contains("/m/") || sub.contains("+") || sub == "popular")) {
                 big = false
                 thumb = true
             }
@@ -1743,6 +1748,11 @@ extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
             }
 
             if type == .LINK && SettingValues.linkAlwaysThumbnail {
+                thumb = true
+                big = false
+            }
+            
+            if (thumb || big) && submission.spoiler {
                 thumb = true
                 big = false
             }

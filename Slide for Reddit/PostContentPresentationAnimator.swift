@@ -82,23 +82,29 @@ extension PostContentPresentationAnimator: UIViewControllerAnimatedTransitioning
                 } else {
                     presentingViewController.view.layoutIfNeeded()
 
-                    let inner = AVMakeRect(aspectRatio: image.size, insideRect: embeddedVC.view.bounds)
+                    let inner = AVMakeRect(aspectRatio: embeddedVC.progressView.isHidden ? image.size : embeddedVC.progressView.bounds.size, insideRect: embeddedVC.view.bounds)
                     let toRect = vc.view.convert(inner, from: embeddedVC.view)
 
                     let newTransform = transformFromRect(from: toRect, toRect: fromRect)
 
-                    embeddedVC.videoView.transform = embeddedVC.videoView.transform.concatenating(newTransform)
+                    let translatedView = embeddedVC.progressView.isHidden ? embeddedVC.videoView : embeddedVC.progressView
+                    translatedView.transform = embeddedVC.videoView.transform.concatenating(newTransform)
                     UIView.animate(withDuration: animationDuration) {
-                        embeddedVC.videoView.transform = CGAffineTransform.identity
+                        translatedView.transform = CGAffineTransform.identity
                     }
                 }
             }
         }
 
         // Animate alpha
+        
+        var isVideo = false
+        if let vc = controller as? ModalMediaViewController, vc.embeddedVC is VideoMediaViewController {
+            isVideo = true
+        }
 
         let initialAlpha: CGFloat = isPresentation ? 0.0 : 1.0
-        let finalAlpha: CGFloat = isPresentation ? 0.6 : 0.0
+        let finalAlpha: CGFloat = isPresentation ? (isVideo ? 1.0 : 0.6) : 0.0
 
         // Use a special animation chain for certain types of presenting VCs
         if let vc = controller as? ModalMediaViewController,

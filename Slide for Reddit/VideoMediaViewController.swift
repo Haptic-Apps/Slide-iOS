@@ -494,6 +494,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
                 }
         }
     }
+    
     func playVideo() {
         self.setProgressViewVisible(false)
         self.size.isHidden = true
