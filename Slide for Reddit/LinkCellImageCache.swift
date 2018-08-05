@@ -77,7 +77,7 @@ public class LinkCellImageCache {
         web = web.overlayWith(image: UIImage(named: "nav")!.getCopy(withSize: CGSize.square(size: 75)), posX: (75 / 2), posY: (75 / 2))
 
         spoiler = UIImage.convertGradientToImage(colors: [topColor, nextColor], frame: CGSize.square(size: 150))
-        spoiler = spoiler.overlayWith(image: UIImage(named: "reports")!.getCopy(withSize: CGSize.square(size: 75)), posX: (75 / 2), posY: (75 / 2))
+        spoiler = spoiler.overlayWith(image: UIImage(named: "reports")!.getCopy(withSize: CGSize.square(size: 75), withColor: UIColor.white), posX: (75 / 2), posY: (75 / 2))
 
         reddit = UIImage.convertGradientToImage(colors: [topColor, nextColor], frame: CGSize.square(size: 150))
         reddit = reddit.overlayWith(image: UIImage(named: "reddit")!.getCopy(withSize: CGSize.init(width: 90, height: 75)), posX: 30, posY: (75 / 2))

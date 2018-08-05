@@ -824,6 +824,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if thumb && type == .SELF {
             thumb = false
         }
+        
+        if (thumb || big) && submission.spoiler {
+            thumb = true
+            big = false
+        }
 
         if !big && !thumb && submission.type != .SELF && submission.type != .NONE { //If a submission has a link but no images, still show the web thumbnail
             thumb = true
