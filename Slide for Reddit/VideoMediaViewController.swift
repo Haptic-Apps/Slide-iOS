@@ -66,11 +66,6 @@ class VideoMediaViewController: EmbeddableMediaViewController {
 
         loadContent()
         handleHideUI()
-
-        displayLink = CADisplayLink(target: self, selector: #selector(displayLinkDidUpdate))
-        displayLink?.add(to: .current, forMode: .defaultRunLoopMode)
-        displayLink?.isPaused = true
-
     }
 
     func stopDisplayLink() {
@@ -80,15 +75,18 @@ class VideoMediaViewController: EmbeddableMediaViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        displayLink = CADisplayLink(target: self, selector: #selector(displayLinkDidUpdate))
+        displayLink?.add(to: .current, forMode: .defaultRunLoopMode)
         displayLink?.isPaused = false
         videoView.player?.play()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
         timer?.invalidate()
         request?.cancel()
+        stopDisplayLink()
         videoView.player?.pause()
+        super.viewWillDisappear(animated)
     }
 
     deinit {

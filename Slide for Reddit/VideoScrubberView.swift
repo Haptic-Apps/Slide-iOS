@@ -10,7 +10,7 @@ import Anchorage
 import CoreMedia
 import UIKit
 
-protocol VideoScrubberViewDelegate {
+protocol VideoScrubberViewDelegate: class {
     func sliderValueChanged(toSeconds: Float)
     func sliderDidBeginDragging()
     func sliderDidEndDragging()
@@ -43,7 +43,7 @@ extension UIImage {
 
 class VideoScrubberView: UIView {
 
-    var delegate: VideoScrubberViewDelegate?
+    weak var delegate: VideoScrubberViewDelegate?
     var totalDuration: CMTime = CMTime()
     private var elapsedDuration: CMTime = CMTime()
     private let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
