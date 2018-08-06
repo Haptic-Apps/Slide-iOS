@@ -82,15 +82,19 @@ extension PostContentPresentationAnimator: UIViewControllerAnimatedTransitioning
                 } else {
                     presentingViewController.view.layoutIfNeeded()
 
-                    let inner = AVMakeRect(aspectRatio: embeddedVC.progressView.isHidden ? image.size : embeddedVC.progressView.bounds.size, insideRect: embeddedVC.view.bounds)
+                    let translatedView = embeddedVC.progressView.isHidden ? embeddedVC.videoView : embeddedVC.progressView
+
+                    let inner = AVMakeRect(aspectRatio: translatedView.bounds.size, insideRect: embeddedVC.view.bounds)
                     let toRect = vc.view.convert(inner, from: embeddedVC.view)
 
                     let newTransform = transformFromRect(from: toRect, toRect: fromRect)
+                    let storedZ = translatedView.layer.zPosition
+                    translatedView.layer.zPosition = sourceImageView.layer.zPosition
 
-                    let translatedView = embeddedVC.progressView.isHidden ? embeddedVC.videoView : embeddedVC.progressView
-                    translatedView.transform = embeddedVC.videoView.transform.concatenating(newTransform)
+                    translatedView.transform = translatedView.transform.concatenating(newTransform)
                     UIView.animate(withDuration: animationDuration) {
                         translatedView.transform = CGAffineTransform.identity
+                        translatedView.layer.zPosition = storedZ
                     }
                 }
             }

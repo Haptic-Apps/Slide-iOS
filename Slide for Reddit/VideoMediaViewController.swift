@@ -441,9 +441,10 @@ class VideoMediaViewController: EmbeddableMediaViewController {
                     self.size.text = fileSize
                 }
                 }.responseData { response in
-                    if let error = response.error {
+                    switch response.result {
+                    case .failure(let error):
                         print(error)
-                    } else { //no errors
+                    case .success(_):
                         if self.videoType == .REDDIT {
                             self.downloadRedditAudio()
                         } else {
@@ -473,7 +474,9 @@ class VideoMediaViewController: EmbeddableMediaViewController {
             }
             }
             .responseData { response2 in
-                print(response2.response!.statusCode)
+                if (response2.error as NSError?)?.code == NSURLErrorCancelled {
+                    return
+                }
                 if response2.response!.statusCode != 200 {
                     do {
                         try FileManager.init().copyItem(at: localUrlV, to: finalUrl)

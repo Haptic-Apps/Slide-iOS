@@ -31,6 +31,10 @@ public class TextDisplayStackView: UIStackView {
     var tableCount = 0
     var tableData = [[[NSAttributedString]]]()
     
+    var ignoreHeight = false
+    
+    var activeSet = false
+    
     init() {
         self.fontSize = 0
         self.submission = false
@@ -90,16 +94,21 @@ public class TextDisplayStackView: UIStackView {
         removedSubviews.forEach({ $0.removeFromSuperview() })
         overflow.isHidden = true
         
-        let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.activeLinkAttributes)
-        activeLinkAttributes[NSForegroundColorAttributeName] = tColor
-        firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
-        firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+        if !activeSet {
+            activeSet = true
+            let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.activeLinkAttributes)
+            activeLinkAttributes[NSForegroundColorAttributeName] = tColor
+            firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+            firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+        }
         
         firstTextView.setText(string)
         
-        let framesetterB = CTFramesetterCreateWithAttributedString(string)
-        let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
-        estimatedHeight += textSizeB.height
+        if !ignoreHeight {
+            let framesetterB = CTFramesetterCreateWithAttributedString(string)
+            let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
+            estimatedHeight += textSizeB.height
+        }
     }
     
     public func setTextWithTitleHTML(_ title: NSAttributedString, _ body: NSAttributedString? = nil, htmlString: String) {
@@ -128,16 +137,21 @@ public class TextDisplayStackView: UIStackView {
                 startIndex = 1
             }
             
-            let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.activeLinkAttributes)
-            activeLinkAttributes[NSForegroundColorAttributeName] = tColor
-            firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
-            firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+            if !activeSet {
+                activeSet = true
+                let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.activeLinkAttributes)
+                activeLinkAttributes[NSForegroundColorAttributeName] = tColor
+                firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+                firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+            }
             
             firstTextView.setText(newTitle)
             
-            let framesetterB = CTFramesetterCreateWithAttributedString(newTitle)
-            let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
-            estimatedHeight += textSizeB.height
+            if !ignoreHeight {
+                let framesetterB = CTFramesetterCreateWithAttributedString(newTitle)
+                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
+                estimatedHeight += textSizeB.height
+            }
             
             if blocks.count > 1 {
                 if startIndex == 0 {
@@ -157,16 +171,21 @@ public class TextDisplayStackView: UIStackView {
                 newTitle.append(createAttributedChunk(baseHTML: htmlString))
             }
             
-            let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.activeLinkAttributes)
-            activeLinkAttributes[NSForegroundColorAttributeName] = tColor
-            firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
-            firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+            if !activeSet {
+                activeSet = true
+                let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.activeLinkAttributes)
+                activeLinkAttributes[NSForegroundColorAttributeName] = tColor
+                firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+                firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+            }
             
             firstTextView.setText(newTitle)
             
-            let framesetterB = CTFramesetterCreateWithAttributedString(newTitle)
-            let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
-            estimatedHeight += textSizeB.height
+            if !ignoreHeight {
+                let framesetterB = CTFramesetterCreateWithAttributedString(newTitle)
+                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
+                estimatedHeight += textSizeB.height
+            }
         }
         
     }
@@ -192,16 +211,21 @@ public class TextDisplayStackView: UIStackView {
         if !blocks[0].startsWith("<table>") && !blocks[0].startsWith("<cite>") && !blocks[0].startsWith("<code>") {
             let text = createAttributedChunk(baseHTML: blocks[0])
             
-            let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.activeLinkAttributes)
-            activeLinkAttributes[NSForegroundColorAttributeName] = tColor
-            firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
-            firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+            if !activeSet {
+                activeSet = true
+                let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.activeLinkAttributes)
+                activeLinkAttributes[NSForegroundColorAttributeName] = tColor
+                firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+                firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+            }
             
             firstTextView.setText(text)
             
-            let framesetterB = CTFramesetterCreateWithAttributedString(text)
-            let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
-            estimatedHeight += textSizeB.height
+            if !ignoreHeight {
+                let framesetterB = CTFramesetterCreateWithAttributedString(text)
+                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
+                estimatedHeight += textSizeB.height
+            }
             startIndex = 1
         }
         
@@ -261,15 +285,18 @@ public class TextDisplayStackView: UIStackView {
                 label.delegate = delegate
                 label.alpha = 0.7
                 label.numberOfLines = 0
-                label.setText(text)
+                
                 let activeLinkAttributes = NSMutableDictionary(dictionary: label.activeLinkAttributes)
                 activeLinkAttributes[NSForegroundColorAttributeName] = tColor
                 label.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
                 label.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
 
+                label.setText(text)
+                
                 let baseView = UIView()
                 baseView.accessibilityIdentifier = "Quote box view"
                 label.setBorder(border: .left, weight: 2, color: tColor)
+                
                 let framesetterB = CTFramesetterCreateWithAttributedString(text)
                 let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth - 12, height: CGFloat.greatestFiniteMagnitude), nil)
                 estimatedHeight += textSizeB.height
@@ -281,6 +308,7 @@ public class TextDisplayStackView: UIStackView {
                 label.rightAnchor == baseView.rightAnchor - CGFloat(4)
                 label.verticalAnchors == baseView.verticalAnchors
                 label.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+                baseView.heightAnchor == textSizeB.height
             } else {
                 let label = TTTAttributedLabel.init(frame: CGRect.zero)
                 label.accessibilityIdentifier = "New text"

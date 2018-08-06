@@ -261,8 +261,10 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     var searchBar = UISearchBar()
 
     func reloadHeights() {
-        tableView.beginUpdates()
-        tableView.endUpdates()
+        //UIView.performWithoutAnimation {
+            tableView.beginUpdates()
+            tableView.endUpdates()
+       // }
     }
     
     func prepareReply() {
