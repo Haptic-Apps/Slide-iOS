@@ -73,6 +73,11 @@ class VideoMediaViewController: EmbeddableMediaViewController {
 
     }
 
+    func stopDisplayLink() {
+        displayLink?.invalidate()
+        displayLink = nil
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         displayLink?.isPaused = false
@@ -87,6 +92,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     }
 
     deinit {
+        stopDisplayLink()
         NotificationCenter.default.removeObserver(self)
     }
     
@@ -508,7 +514,9 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         
         scrubber.totalDuration = videoView.player!.currentItem!.asset.duration
 
-        NotificationCenter.default.addObserver(self, selector: #selector(playerItemDidreachEnd), name: .AVPlayerItemDidPlayToEndTime, object: playerItem)
+        NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: playerItem, queue: OperationQueue.main) { [weak self] (notification) in
+            self?.playerItemDidreachEnd()
+        }
     }
     
     func playerItemDidreachEnd() {
