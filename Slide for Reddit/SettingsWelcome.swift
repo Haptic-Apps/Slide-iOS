@@ -6,8 +6,8 @@
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
-import UIKit
 import Anchorage
+import UIKit
 
 class SettingsWelcome: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     var pages = [UIViewController]()
@@ -117,8 +117,7 @@ class SettingsWelcome: UIPageViewController, UIPageViewControllerDataSource, UIP
         self.pageControl.centerXAnchor == self.view.centerXAnchor
         self.pageControl.horizontalAnchors == self.view.horizontalAnchors
         
-        if #available(iOS 11, *) {}
-        else {
+        if #available(iOS 11, *) {} else {
             self.edgesForExtendedLayout = []
         }
     }

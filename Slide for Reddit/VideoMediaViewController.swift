@@ -91,7 +91,9 @@ class VideoMediaViewController: EmbeddableMediaViewController {
 
     deinit {
         stopDisplayLink()
-        NotificationCenter.default.removeObserver(self)
+        if let observer = observer {
+            NotificationCenter.default.removeObserver(observer)
+        }
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -448,7 +450,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
                     switch response.result {
                     case .failure(let error):
                         print(error)
-                    case .success(_):
+                    case .success:
                         if self.videoType == .REDDIT {
                             self.downloadRedditAudio()
                         } else {
@@ -501,7 +503,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
                 }
         }
     }
-    
+    weak var observer: NSObjectProtocol?
     func playVideo() {
         self.setProgressViewVisible(false)
         self.size.isHidden = true
@@ -512,7 +514,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         
         scrubber.totalDuration = videoView.player!.currentItem!.asset.duration
 
-        NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: playerItem, queue: OperationQueue.main) { [weak self] (notification) in
+        observer = NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: playerItem, queue: OperationQueue.main) { [weak self] (_) in
             self?.playerItemDidreachEnd()
         }
     }

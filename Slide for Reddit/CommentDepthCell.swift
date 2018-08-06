@@ -21,7 +21,7 @@ protocol TTTAttributedCellDelegate: class {
     func getMenuShown() -> String?
 }
 
-protocol ReplyDelegate {
+protocol ReplyDelegate: class {
     func replySent(comment: Comment?, cell: CommentDepthCell?)
     func updateHeight(textView: UITextView)
     func discard()
@@ -75,7 +75,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var comment: RComment?
     var depth: Int = 0
     
-    var delegate: TTTAttributedCellDelegate?
+    weak var delegate: TTTAttributedCellDelegate?
     var content: Object?
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {

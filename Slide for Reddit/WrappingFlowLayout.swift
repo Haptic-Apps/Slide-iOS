@@ -8,12 +8,12 @@
 
 import Foundation
 
-protocol WrappingFlowLayoutDelegate {
+protocol WrappingFlowLayoutDelegate: class {
     func collectionView(_ collectionView: UICollectionView, width: CGFloat, indexPath: IndexPath) -> CGSize
 }
 
 class WrappingFlowLayout: UICollectionViewLayout {
-    var delegate: WrappingFlowLayoutDelegate!
+    weak var delegate: WrappingFlowLayoutDelegate!
     
     // 2
     var numberOfColumns = 0

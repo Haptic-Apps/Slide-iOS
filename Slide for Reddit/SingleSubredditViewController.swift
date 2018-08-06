@@ -30,15 +30,11 @@ class SingleSubredditViewController: MediaViewController {
     static var nextSingle = false
     
     var navbarEnabled: Bool {
-        get {
-            return single || !SettingValues.viewType
-        }
+        return single || !SettingValues.viewType
     }
 
     var toolbarEnabled: Bool {
-        get {
-            return !SettingValues.bottomBarHidden || SettingValues.viewType
-        }
+        return !SettingValues.bottomBarHidden || SettingValues.viewType
     }
 
     let maxHeaderHeight: CGFloat = 120
