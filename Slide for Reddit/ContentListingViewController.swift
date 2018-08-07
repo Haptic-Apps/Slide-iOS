@@ -75,6 +75,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         refreshControl.attributedTitle = NSAttributedString(string: "")
         refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControlEvents.valueChanged)
         tableView.addSubview(refreshControl) // not required when using UITableViewController
+        self.tableView.contentOffset = CGPoint(x: 0, y:-self.refreshControl.frame.size.height)
 
         self.tableView.register(BannerLinkCellView.classForCoder(), forCellWithReuseIdentifier: "banner")
         self.tableView.register(ThumbnailLinkCellView.classForCoder(), forCellWithReuseIdentifier: "thumb")
@@ -111,7 +112,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return baseData.content.count == 0 && loaded ? 1 : baseData.content.count
+        return baseData.content.count == 0 && loaded && !loading ? 1 : baseData.content.count
     }
 
     func collectionView(_ tableView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -642,8 +643,8 @@ public class NoContentCell: UICollectionViewCell {
         }
         title.attributedText = finalText
         title.numberOfLines = 0
-        self.contentView.layer.cornerRadius = 15
-        self.contentView.clipsToBounds = true
+        title.layer.cornerRadius = 15
+        title.clipsToBounds = true
         let titleView = title.withPadding(padding: UIEdgeInsets(top: 8, left: 12, bottom: 0, right: 12))
         self.contentView.addSubview(titleView)
         
