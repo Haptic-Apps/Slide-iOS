@@ -315,14 +315,13 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     func finalizeSetup(_ subs: [String]) {
         Subscriptions.set(name: (tempToken?.name)!, subs: subs, completion: {
             self.menuNav = nil
-            self.restartVC()
+            self.hardReset()
         })
     }
     
     var finalSubs = [String]()
 
     func restartVC() {
-        print("Restarting VC")
         let saved = currentPage
 
         if SettingValues.viewType {
@@ -703,7 +702,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             self.showDrawer(self.drawerButton)
         }
         drawerButton.isHidden = true
-        drawerButton.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
     }
     
     public static var isOffline = false

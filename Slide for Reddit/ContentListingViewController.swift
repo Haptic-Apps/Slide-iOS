@@ -62,17 +62,14 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     override func viewDidLoad() {
         super.viewDidLoad()
         flowLayout.delegate = self
-        let frame = self.view.bounds
-        self.tableView = UICollectionView(frame: frame, collectionViewLayout: flowLayout)
-        self.view = UIView.init(frame: CGRect.zero)
+        self.tableView = UICollectionView(frame: CGRect.zero, collectionViewLayout: flowLayout)
         
         self.view.addSubview(tableView)
-
+        
         self.tableView.delegate = self
         self.tableView.dataSource = self
 
         refreshControl = UIRefreshControl()
-        self.tableView.contentOffset = CGPoint.init(x: 0, y: -self.refreshControl.frame.size.height)
         refreshControl.tintColor = ColorUtil.fontColor
         refreshControl.attributedTitle = NSAttributedString(string: "")
         refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControlEvents.valueChanged)
@@ -101,7 +98,6 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             flowLayout.reset()
             tableView.reloadData()
         }
-        
     }
 
     var tC: UIViewController?
@@ -538,10 +534,11 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         loaded = true
         DispatchQueue.main.async {
             self.refreshControl.endRefreshing()
-            self.tableView.reloadData()
             self.flowLayout.reset()
+            self.tableView.reloadData()
             self.loading = false
             if self.baseData.content.count == 0 {
+                self.tableView.contentInset = UIEdgeInsets.init(top: 0, left: 0, bottom: 0, right: 0)
                 BannerUtil.makeBanner(text: "No content found!", seconds: 5, context: self)
             }
         }

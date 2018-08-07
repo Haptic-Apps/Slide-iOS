@@ -42,6 +42,9 @@ class InboxContributionLoader: ContributionLoader {
                     switch result {
                     case .failure(let error):
                         print(error)
+                        DispatchQueue.main.async {
+                            self.delegate?.doneLoading()
+                        }
                     case .success(let listing):
                         if reload {
                             self.content = []

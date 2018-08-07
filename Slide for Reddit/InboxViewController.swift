@@ -118,19 +118,19 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
         tabBar = MDCTabBar.init(frame: CGRect.init(x: 0, y: -8, width: self.view.frame.size.width, height: 45))
         tabBar.backgroundColor = ColorUtil.getColorForSub(sub: "")
         tabBar.itemAppearance = .titles
-        // 2
+        tabBar.selectedItemTintColor = UIColor.white
+        tabBar.unselectedItemTintColor = UIColor.white.withAlphaComponent(0.45)
+
         tabBar.items = content.enumerated().map { index, source in
             return UITabBarItem(title: source.description, image: nil, tag: index)
         }
         tabBar.autoresizingMask = [.flexibleWidth, .flexibleBottomMargin]
-
-        // 3
-        tabBar.selectedItem = tabBar.items[0]
-        // 4
+        tabBar.selectionIndicatorTemplate = IndicatorTemplate()
         tabBar.delegate = self
+        tabBar.selectedItem = tabBar.items[0]
         tabBar.tintColor = ColorUtil.accentColorForSub(sub: "NONE")
-        // 5
         tabBar.sizeToFit()
+        tabBar.frame.size.height = 48
 
         self.view.addSubview(tabBar)
 
@@ -178,7 +178,7 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
         let page = vCs.index(of: self.viewControllers!.first!)
 
         if !selected {
-            tabBar.setSelectedItem(tabBar.items[page! ], animated: true)
+            tabBar.setSelectedItem(tabBar.items[page!], animated: true)
         } else {
             selected = false
         }
@@ -259,7 +259,6 @@ extension InboxViewController: MDCTabBarDelegate {
                 direction: .forward,
                 animated: false,
                 completion: nil)
-
     }
 
 }

@@ -362,8 +362,7 @@ extension NavigationHeaderView {
                         }
                     } else {
                         Subscriptions.sync(name: s, completion: {
-                            (self.parentController as! NavigationSidebarViewController).parentController?.restartVC()
-                            (self.parentController as! NavigationSidebarViewController).parentController?.doCurrentPage(0)
+                            (self.parentController as! NavigationSidebarViewController).parentController?.hardReset()
                         })
                     }
                 }))
@@ -379,7 +378,7 @@ extension NavigationHeaderView {
             optionMenu.addAction(Action(ActionData(title: "Browse as guest", image: UIImage(named: "hide")!.menuIcon()), style: .default, handler: { _ in
                 AccountController.switchAccount(name: "GUEST")
                 Subscriptions.sync(name: "GUEST", completion: {
-                    (self.parentController as! NavigationSidebarViewController).parentController?.restartVC()
+                    (self.parentController as! NavigationSidebarViewController).parentController?.hardReset()
                 })
             }))
 
