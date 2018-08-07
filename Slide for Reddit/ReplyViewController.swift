@@ -524,6 +524,9 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 if username != nil {
                     text2.text = username!
                     text2.isEditable = false
+                    if username!.contains("/r/") {
+                        text2.placeholder = "Subreddit"
+                    }
                 }
                 
                 let text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({

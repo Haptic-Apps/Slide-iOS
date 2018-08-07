@@ -14,7 +14,6 @@ class RedditLink {
     
     public static func getViewControllerForURL(urlS: URL) -> UIViewController {
         let oldUrl = urlS
-        
         var url = formatRedditUrl(urlS: urlS)
         var np = false
         if url.isEmpty() {
@@ -42,8 +41,8 @@ class RedditLink {
             endParameters = parts[parts.count - 1]
             parts.remove(at: parts.count - 1)
         }
-        
-        print(type)
+                
+        let safeURL = url.startsWith("/") ? "https://www.reddit.com" + url : url
         
         switch type {
         case .SHORTENED:
@@ -52,12 +51,24 @@ class RedditLink {
             print(parts[1])
             return LiveThreadViewController.init(id: parts[2])
         case .WIKI:
-            
-            break
-            
+            return WebsiteViewController.init(url: URL(string: safeURL)!, subreddit: "")
         case .SEARCH:
-            break
+            let end = parts[parts.count - 1]
+            let sub: String
+            let restrictSub = end.contains("restrict_sr=on") || end.contains("restrict_sr=1")
+            if restrictSub {
+                sub = parts[2]
+            } else {
+                sub = "all"
+            }
+            let query: String
             
+            if let q = urlS.queryDictionary["q"] {
+                query = q.removingPercentEncoding?.removingPercentEncoding ?? q
+            } else {
+                query = ""
+            }
+            return SearchViewController(subreddit: sub, searchFor: query)
         case .COMMENT_PERMALINK:
             var comment = ""
             var contextNumber = 3
@@ -91,9 +102,8 @@ class RedditLink {
         case .SUBREDDIT:
             return SingleSubredditViewController.init(subName: parts[2], single: true)
         case .MESSAGE:
-            
-            break
-            
+            return ReplyViewController.init(name: "/r/\(parts[parts.count - 1])", completion: { (_) in
+            })
         case .USER:
             return ProfileViewController.init(name: parts[2])
         case .OTHER:
@@ -157,6 +167,11 @@ class RedditLink {
             url.stringByRemovingRegexMatches(pattern: "(?i)/(?>wiki|help)", replaceWith: "/r/reddit.com/wiki")
         }
         
+        url = url.removingPercentEncoding ?? url
+        url = url.removingPercentEncoding ?? url //For some reason, some links are doubly encoded
+        
+        url = url.replacingOccurrences(of: "&amp;", with: "&")
+
         return url
     }
     

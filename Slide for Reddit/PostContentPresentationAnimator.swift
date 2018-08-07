@@ -54,7 +54,6 @@ extension PostContentPresentationAnimator: UIViewControllerAnimatedTransitioning
 
         if let vc = presentedViewController as? ModalMediaViewController {
 
-            let image = (sourceImageView as! UIImageView).image!
             let fromRect = vc.view.convert(sourceImageView.bounds, from: sourceImageView)
 
             if let embeddedVC = vc.embeddedVC as? ImageMediaViewController {

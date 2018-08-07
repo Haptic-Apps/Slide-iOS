@@ -823,7 +823,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 name: NSNotification.Name.UIKeyboardWillHide,
                 object: nil)
 
-
         headerCell = FullLinkCellView()
         headerCell!.del = self
         headerCell!.parentViewController = self

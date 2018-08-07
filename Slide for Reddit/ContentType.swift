@@ -43,7 +43,7 @@ class ContentType {
     }
 
     public static func isSpoiler(uri: URL) -> Bool {
-        var urlString = uri.absoluteString
+        let urlString = uri.absoluteString
         if !urlString.hasPrefix("//") && ((urlString.hasPrefix("/") && urlString.length < 4)
             || urlString.hasPrefix("#spoil")
             || urlString.hasPrefix("/spoil")
@@ -177,6 +177,7 @@ class ContentType {
         if host == nil || scheme == nil || !(scheme == ("http") || scheme == ("https")) {
             return CType.EXTERNAL
         }
+        
         if isVideo(uri: url!) {
             return CType.VIDEO
         }

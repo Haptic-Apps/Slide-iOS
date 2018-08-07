@@ -946,7 +946,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             case .XKCD:
                 text = ("XKCD")
             case .GIF:
-                text = ("GIF")
+                if submission.domain == "v.redd.it" {
+                    text = "Reddit Video"
+                } else {
+                    text = ("GIF")
+                }
             case .IMGUR:
                 text = ("Imgur")
             case .VIDEO:
