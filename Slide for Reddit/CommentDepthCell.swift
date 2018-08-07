@@ -21,7 +21,7 @@ protocol TTTAttributedCellDelegate: class {
     func getMenuShown() -> String?
 }
 
-protocol ReplyDelegate {
+protocol ReplyDelegate: class {
     func replySent(comment: Comment?, cell: CommentDepthCell?)
     func updateHeight(textView: UITextView)
     func discard()
@@ -30,9 +30,16 @@ protocol ReplyDelegate {
 
 class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegate, UITextViewDelegate {
     
+    var previousRect = CGRect.zero
     func textViewDidChange(_ textView: UITextView) {
-        textView.sizeToFitHeight()
-        parent!.reloadHeights()
+        let pos = textView.endOfDocument
+        let currentRect = textView.caretRect(for: pos)
+        self.previousRect = self.previousRect.origin.y == 0.0 ? currentRect : previousRect
+        if currentRect.origin.y > previousRect.origin.y || textView.text.endsWith("\n") || textView.text.trimmed().isEmpty() {
+            textView.sizeToFitHeight()
+            parent!.reloadHeights()
+        }
+        previousRect = currentRect
     }
     
     var sideView: UIView!
@@ -42,7 +49,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     
     var sideViewSpace: UIView!
     var topViewSpace: UIView!
-    var title : TextDisplayStackView!
+    var title: TextDisplayStackView!
     
     //Buttons for comment menu
     var upvoteButton: UIButton!
@@ -57,7 +64,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var modShown = false
     
     //Buttons for reply
-    var body: UITextView!
+    var body: UITextView?
     var sendB: UIButton!
     var discardB: UIButton!
     var edit = false
@@ -68,7 +75,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var comment: RComment?
     var depth: Int = 0
     
-    var delegate: TTTAttributedCellDelegate?
+    weak var delegate: TTTAttributedCellDelegate?
     var content: Object?
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
@@ -78,6 +85,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         self.title = TextDisplayStackView(fontSize: 16, submission: false, color: .blue, delegate: self, width: contentView.frame.size.width).then({
             $0.isUserInteractionEnabled = true
             $0.accessibilityIdentifier = "Comment body"
+            $0.ignoreHeight = true
         })
 
         self.childrenCountLabel = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 15)).then({
@@ -149,27 +157,21 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             $0.isHidden = true
         }
         
-        self.body = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
-            $0.isEditable = true
-            $0.textColor = .white
-            $0.backgroundColor = UIColor.white.withAlphaComponent(0.3)
-            $0.layer.masksToBounds = false
-            $0.layer.cornerRadius = 10
-            $0.font = UIFont.systemFont(ofSize: 16)
-            $0.isScrollEnabled = false
-        })
         sendB = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 200, height: 60))
         discardB = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 200, height: 60))
         
         self.sendB.setTitle("Send", for: .normal)
         self.discardB.setTitle("Discard", for: .normal)
-
+        
         sendB.addTarget(self, action: #selector(self.send(_:)), for: UIControlEvents.touchUpInside)
         discardB.addTarget(self, action: #selector(self.discard(_:)), for: UIControlEvents.touchUpInside)
-
-        self.reply.addSubviews(body, sendB, discardB)
-        contentView.addSubview(reply)
         
+        sendB.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+        discardB.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+        
+        reply.addSubviews(sendB, discardB)
+        
+        contentView.addSubview(reply)
         configureLayout()
     }
 
@@ -316,11 +318,12 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         parent!.menuCell = self
         menu.isHidden = false
         reply.isHidden = true
-        if depth == 1 {
-            depth = 1
-        } else {
+        
+        if depth != 1 {
             depth = 2
+            updateDepth()
         }
+        
         NSLayoutConstraint.deactivate(menuHeight)
         menuHeight = batch {
             menu.heightAnchor == CGFloat(45)
@@ -328,10 +331,11 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             menu.bottomAnchor == contentView.bottomAnchor
             title.bottomAnchor == menu.topAnchor - CGFloat(8)
             menu.topAnchor == title.bottomAnchor + CGFloat(8)
-            body.heightAnchor == CGFloat(0)
+            if body != nil {
+                body!.heightAnchor == CGFloat(0)
+            }
             reply.heightAnchor == CGFloat(0)
         }
-        updateDepth()
         self.contentView.backgroundColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.getColorForSub(sub: ((comment)!.subreddit)).withAlphaComponent(0.25))
         menuBack.backgroundColor = ColorUtil.getColorForSub(sub: comment!.subreddit)
     }
@@ -344,7 +348,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         menuHeight = batch {
             title.bottomAnchor == contentView.bottomAnchor - CGFloat(8)
             menu.heightAnchor == CGFloat(0)
-            body.heightAnchor == CGFloat(0)
+            if body != nil {
+                body!.heightAnchor == CGFloat(0)
+            }
             reply.heightAnchor == CGFloat(0)
         }
         updateDepth()
@@ -425,7 +431,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         
         do {
             let name = comment!.getIdentifier()
-            try session?.editCommentOrLink(name, newBody: body.text!, completion: { (_) in
+            try session?.editCommentOrLink(name, newBody: body!.text!, completion: { (_) in
                 self.getCommentEdited(name)
             })
         } catch {
@@ -454,7 +460,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         
         do {
             let name = comment!.getIdentifier()
-            try session?.postComment(body.text!, parentName: name, completion: { (result) -> Void in
+            try session?.postComment(body!.text!, parentName: name, completion: { (result) -> Void in
                 switch result {
                 case .failure(let error):
                     print(error.description)
@@ -496,41 +502,58 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     
     var replyDelegate: ReplyDelegate?
     func reply(_ s: AnyObject) {
+        if body == nil {
+            self.body = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: 0, height: 0)).then({
+                $0.isEditable = true
+                $0.textColor = .white
+                $0.backgroundColor = UIColor.white.withAlphaComponent(0.3)
+                $0.layer.masksToBounds = false
+                $0.layer.cornerRadius = 10
+                $0.font = UIFont.systemFont(ofSize: 16)
+                $0.isScrollEnabled = false
+            })
+            
+            self.reply.addSubview(body!)
+        }
+        
         menu.isHidden = true
         reply.isHidden = false
+
         NSLayoutConstraint.deactivate(menuHeight)
         menuHeight = batch {
             title.bottomAnchor == reply.topAnchor - CGFloat(8)
             reply.topAnchor == title.bottomAnchor + CGFloat(8)
             reply.bottomAnchor == contentView.bottomAnchor
             reply.horizontalAnchors == contentView.horizontalAnchors
-            body.horizontalAnchors == reply.horizontalAnchors + CGFloat(8)
-            body.topAnchor == reply.topAnchor + CGFloat(8)
+            body!.horizontalAnchors == reply.horizontalAnchors + CGFloat(8)
+            body!.topAnchor == reply.topAnchor + CGFloat(8)
             discardB.leftAnchor == reply.leftAnchor + CGFloat(8)
             sendB.rightAnchor == reply.rightAnchor - CGFloat(8)
-            discardB.topAnchor == body.bottomAnchor + CGFloat(8)
-            sendB.topAnchor == body.bottomAnchor + CGFloat(8)
+            discardB.topAnchor == body!.bottomAnchor + CGFloat(8)
+            sendB.topAnchor == body!.bottomAnchor + CGFloat(8)
             discardB.bottomAnchor == reply.bottomAnchor - CGFloat(8)
             sendB.bottomAnchor == reply.bottomAnchor - CGFloat(8)
             sendB.heightAnchor == CGFloat(45)
             discardB.heightAnchor == CGFloat(45)
         }
+        
         updateDepth()
-
+        
+        body!.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
         reply.backgroundColor = menuBack.backgroundColor
         
-        body.text = ""
-        body.delegate = self
+        body!.text = ""
+        body!.delegate = self
         self.replyDelegate = parent!
 
         if edit {
-            body.text = comment!.body
+            body!.text = comment!.body
         }
 
-        body.sizeToFitHeight()
+        body!.sizeToFitHeight()
         parent!.prepareReply()
-        toolbar = ToolbarTextView.init(textView: body, parent: parent!)
-        body.becomeFirstResponder()
+        toolbar = ToolbarTextView.init(textView: body!, parent: parent!)
+        body!.becomeFirstResponder()
     }
 
     func menu(_ s: AnyObject) {
@@ -876,10 +899,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         menu.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
         title.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
         reply.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
-        body.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
-        sendB.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
-        discardB.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
-
     }
     
     func updateDepth() {
@@ -956,7 +975,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         menuHeight = batch {
             title.bottomAnchor == contentView.bottomAnchor - CGFloat(8)
             menu.heightAnchor == CGFloat(0)
-            body.heightAnchor == CGFloat(0)
+            if body != nil {
+                body!.heightAnchor == CGFloat(0)
+            }
             reply.heightAnchor == CGFloat(0)
         }
         updateDepth()
@@ -1056,10 +1077,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             hideCommentMenu()
         }
         
-        NSLayoutConstraint.deactivate(topMargin)
-        topMargin = batch {
-            topViewSpace.heightAnchor == CGFloat(marginTop)
-        }
+            NSLayoutConstraint.deactivate(topMargin)
+            topMargin = batch {
+                topViewSpace.heightAnchor == CGFloat(marginTop)
+            }
     }
     
     func doDTap(_ sender: AnyObject) {
@@ -1094,33 +1115,35 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         default:
             color = ColorUtil.fontColor
         }
+        
+        let boldFont = FontGenerator.boldFontOfSize(size: 12, submission: false)
 
         let scoreString = NSMutableAttributedString(string: ((comment.scoreHidden ? "[score hidden]" : "\(getScoreText(comment: comment))") + (comment.controversiality > 0 ? "†" : "")), attributes: [NSForegroundColorAttributeName: color])
 
         let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: comment.created, numericDates: true))" + (comment.isEdited ? ("(edit \(DateFormatter().timeSince(from: comment.edited, numericDates: true)))") : ""), attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor])
 
-        let authorString = NSMutableAttributedString(string: "\u{00A0}\u{00A0}\(AccountController.formatUsername(input: comment.author, small: true))\u{00A0}", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
+        let authorString = NSMutableAttributedString(string: "\u{00A0}\u{00A0}\(AccountController.formatUsername(input: comment.author, small: true))\u{00A0}", attributes: [NSFontAttributeName: boldFont, NSForegroundColorAttributeName: ColorUtil.fontColor])
         let authorStringNoFlair = NSMutableAttributedString(string: "\(AccountController.formatUsername(input: comment.author, small: true))\u{00A0}", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: parent?.authorColor ?? ColorUtil.fontColor])
 
-        let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(comment.flair)\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
-        let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
+        let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(comment.flair)\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: boldFont, NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
+        let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: boldFont, NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
         let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(comment.gilded) ", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false)])
 
         let spacer = NSMutableAttributedString.init(string: "  ")
         let userColor = ColorUtil.getColorForUser(name: comment.author)
         var authorSmall = false
         if comment.distinguished == "admin" {
-          authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#E57373"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 1, length: authorString.length - 1))
+          authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#E57373"), NSFontAttributeName: boldFont, NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 1, length: authorString.length - 1))
         } else if comment.distinguished == "special" {
-            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#F44336"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 1, length: authorString.length - 1))
+            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#F44336"), NSFontAttributeName: boldFont, NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 1, length: authorString.length - 1))
         } else if comment.distinguished == "moderator" {
-            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#81C784"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 1, length: authorString.length - 1))
+            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#81C784"), NSFontAttributeName: boldFont, NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 1, length: authorString.length - 1))
         } else if AccountController.currentName == comment.author {
-            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#FFB74D"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 1, length: authorString.length - 1))
+            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#FFB74D"), NSFontAttributeName: boldFont, NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 1, length: authorString.length - 1))
         } else if submissionAuthor != nil && comment.author == submissionAuthor {
-            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#64B5F6"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 1, length: authorString.length - 1))
+            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#64B5F6"), NSFontAttributeName: boldFont, NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 1, length: authorString.length - 1))
         } else if userColor != ColorUtil.baseColor {
-            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: userColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 3, length: authorString.length))
+            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: userColor, NSFontAttributeName: boldFont, NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 3, length: authorString.length))
         } else {
             authorSmall = true
         }
@@ -1140,7 +1163,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             infoString.append(tagString)
         }
 
-        infoString.append(NSAttributedString(string: "  •  ", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor]))
+        infoString.append(NSAttributedString(string: "  •  ", attributes: [NSFontAttributeName: boldFont, NSForegroundColorAttributeName: ColorUtil.fontColor]))
         infoString.append(scoreString)
         infoString.append(endString)
 

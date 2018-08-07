@@ -18,6 +18,7 @@ class ModalMediaViewController: UIViewController {
     var fullscreen = false
     var panGestureRecognizer: UIPanGestureRecognizer?
     public var background: UIView?
+    public var blurView: UIVisualEffectView?
     
     var originalPosition: CGPoint?
     var currentPositionTouched: CGPoint?
@@ -118,10 +119,10 @@ class ModalMediaViewController: UIViewController {
         background!.alpha = 0.6
         
         self.view.insertSubview(background!, at: 0)
-        let blurView = UIVisualEffectView(frame: UIScreen.main.bounds)
+        blurView = UIVisualEffectView(frame: UIScreen.main.bounds)
         blurEffect.setValue(3, forKeyPath: "blurRadius")
-        blurView.effect = blurEffect
-        view.insertSubview(blurView, at: 0)
+        blurView!.effect = blurEffect
+        view.insertSubview(blurView!, at: 0)
         
         if embeddedVC != nil {
             configureViews()

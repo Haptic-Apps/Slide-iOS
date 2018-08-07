@@ -66,28 +66,34 @@ class VideoMediaViewController: EmbeddableMediaViewController {
 
         loadContent()
         handleHideUI()
+    }
 
-        displayLink = CADisplayLink(target: self, selector: #selector(displayLinkDidUpdate))
-        displayLink?.add(to: .current, forMode: .defaultRunLoopMode)
-        displayLink?.isPaused = true
-
+    func stopDisplayLink() {
+        displayLink?.invalidate()
+        displayLink = nil
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        displayLink = CADisplayLink(target: self, selector: #selector(displayLinkDidUpdate))
+        displayLink?.add(to: .current, forMode: .defaultRunLoopMode)
         displayLink?.isPaused = false
         videoView.player?.play()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
         timer?.invalidate()
         request?.cancel()
+        stopDisplayLink()
         videoView.player?.pause()
+        super.viewWillDisappear(animated)
     }
 
     deinit {
-        NotificationCenter.default.removeObserver(self)
+        stopDisplayLink()
+        if let observer = observer {
+            NotificationCenter.default.removeObserver(observer)
+        }
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -441,9 +447,10 @@ class VideoMediaViewController: EmbeddableMediaViewController {
                     self.size.text = fileSize
                 }
                 }.responseData { response in
-                    if let error = response.error {
+                    switch response.result {
+                    case .failure(let error):
                         print(error)
-                    } else { //no errors
+                    case .success:
                         if self.videoType == .REDDIT {
                             self.downloadRedditAudio()
                         } else {
@@ -473,7 +480,9 @@ class VideoMediaViewController: EmbeddableMediaViewController {
             }
             }
             .responseData { response2 in
-                print(response2.response!.statusCode)
+                if (response2.error as NSError?)?.code == NSURLErrorCancelled {
+                    return
+                }
                 if response2.response!.statusCode != 200 {
                     do {
                         try FileManager.init().copyItem(at: localUrlV, to: finalUrl)
@@ -494,6 +503,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
                 }
         }
     }
+    weak var observer: NSObjectProtocol?
     func playVideo() {
         self.setProgressViewVisible(false)
         self.size.isHidden = true
@@ -504,7 +514,9 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         
         scrubber.totalDuration = videoView.player!.currentItem!.asset.duration
 
-        NotificationCenter.default.addObserver(self, selector: #selector(playerItemDidreachEnd), name: .AVPlayerItemDidPlayToEndTime, object: playerItem)
+        observer = NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: playerItem, queue: OperationQueue.main) { [weak self] (_) in
+            self?.playerItemDidreachEnd()
+        }
     }
     
     func playerItemDidreachEnd() {

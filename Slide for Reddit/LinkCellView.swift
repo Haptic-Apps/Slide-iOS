@@ -824,23 +824,30 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if thumb && type == .SELF {
             thumb = false
         }
+        
+        if (thumb || big) && submission.spoiler {
+            thumb = true
+            big = false
+        }
 
         if !big && !thumb && submission.type != .SELF && submission.type != .NONE { //If a submission has a link but no images, still show the web thumbnail
             thumb = true
             if submission.nsfw {
                 thumbImage.image = LinkCellImageCache.nsfw
+            } else if submission.spoiler {
+                thumbImage.image = LinkCellImageCache.spoiler
+            } else if type == .REDDIT {
+                thumbImage.image = LinkCellImageCache.reddit
             } else {
-                if type == .REDDIT {
-                    thumbImage.image = LinkCellImageCache.reddit
-                } else {
-                    thumbImage.image = LinkCellImageCache.web
-                }
+                thumbImage.image = LinkCellImageCache.web
             }
         } else if thumb && !big {
             if submission.nsfw {
                 thumbImage.image = LinkCellImageCache.nsfw
-            } else if submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty {
-                if type == .REDDIT {
+            } else if submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty || submission.spoiler {
+                if submission.spoiler {
+                    thumbImage.image = LinkCellImageCache.spoiler
+                } else if type == .REDDIT {
                     thumbImage.image = LinkCellImageCache.reddit
                 } else {
                     thumbImage.image = LinkCellImageCache.web
@@ -1283,8 +1290,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             score.attributedText = subScore
         } else {
             let scoreString = NSAttributedString(string: (link.score >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(link.score) / Double(1000))) : " \(link.score)", attributes: attrs)
-            score.attributedText = scoreString
-            sideScore.attributedText = scoreString
+            
+            if SettingValues.actionBarMode == .FULL {
+                score.attributedText = scoreString
+            } else if SettingValues.actionBarMode != .NONE {
+                sideScore.attributedText = scoreString
+            }
         }
 
         if ActionStates.isSaved(s: link) {

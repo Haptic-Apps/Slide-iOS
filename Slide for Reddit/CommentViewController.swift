@@ -261,8 +261,10 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     var searchBar = UISearchBar()
 
     func reloadHeights() {
-        tableView.beginUpdates()
-        tableView.endUpdates()
+        //UIView.performWithoutAnimation {
+            tableView.beginUpdates()
+            tableView.endUpdates()
+       // }
     }
     
     func prepareReply() {
@@ -347,7 +349,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     var comments: [String] = []
     var hiddenPersons = Set<String>()
     var hidden: Set<String> = Set<String>()
-    var headerCell: LinkCellView?
+    var headerCell: LinkCellView!
     var hasSubmission = true
     var paginator: Paginator? = Paginator()
     var context: String = ""
@@ -563,9 +565,11 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                                 self.headerCell?.showBody(width: self.view.frame.size.width - 24)
                                 self.tableView.tableHeaderView = UIView(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.width, height: 0.01))
                                 if let tableHeaderView = self.headerCell {
-                                    var frame = CGRect.zero
-                                    frame.size.width = self.tableView.bounds.size.width
-                                    frame.size.height = tableHeaderView.estimateHeight(true)
+                                    var frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: tableHeaderView.estimateHeight(true))
+                                    // Add safe area insets to left and right if available
+                                    if #available(iOS 11.0, *) {
+                                        frame = frame.insetBy(dx: max(self.view.safeAreaInsets.left, self.view.safeAreaInsets.right), dy: 0)
+                                    }
                                     if self.tableView.tableHeaderView == nil || !frame.equalTo(tableHeaderView.frame) {
                                         tableHeaderView.frame = frame
                                         tableHeaderView.layoutIfNeeded()
@@ -818,6 +822,14 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 name: NSNotification.Name.UIKeyboardWillHide,
                 object: nil)
 
+
+        headerCell = FullLinkCellView()
+        headerCell!.del = self
+        headerCell!.parentViewController = self
+        headerCell!.aspectWidth = self.tableView.bounds.size.width
+        headerCell!.configure(submission: submission!, parent: self, nav: self.navigationController, baseSub: submission!.subreddit)
+        headerCell!.showBody(width: self.view.frame.size.width - 24)
+
     }
 
     var keyboardHeight = CGFloat(0)
@@ -844,21 +856,18 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        if hasSubmission && self.view.frame.size.width != 0 && !hasDone {
-            hasDone = true
-
-            headerCell = FullLinkCellView()
+        if hasSubmission && self.view.frame.size.width != 0 {
 
             guard let headerCell = headerCell else {
                 return
             }
-            headerCell.del = self
-            headerCell.parentViewController = self
-            headerCell.aspectWidth = self.tableView.bounds.size.width
-            headerCell.configure(submission: submission!, parent: self, nav: self.navigationController, baseSub: submission!.subreddit)
-            headerCell.showBody(width: self.view.frame.size.width - 24)
 
-            let frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: headerCell.estimateHeight(true))
+            var frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: headerCell.estimateHeight(true))
+            // Add safe area insets to left and right if available
+            if #available(iOS 11.0, *) {
+                frame = frame.insetBy(dx: max(view.safeAreaInsets.left, view.safeAreaInsets.right), dy: 0)
+            }
+
             if self.tableView.tableHeaderView == nil || !frame.equalTo(headerCell.contentView.frame) {
                 headerCell.contentView.frame = frame
                 headerCell.contentView.layoutIfNeeded()

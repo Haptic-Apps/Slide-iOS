@@ -275,12 +275,11 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
                 let thumbnail = (content as! RSubmission).thumbnailUrl
                 if let url = URL(string: thumbnail) {
                     SDWebImageDownloader.shared().downloadImage(with: url, options: .allowInvalidSSLCertificates, progress: { (_, _) in
-                        
-                    }) { (image, _, _, _) in
+                    }, completed: { (image, _, _, _) in
                         if image != nil {
                             self.backgroundColor = image!.areaAverage()
                         }
-                    }
+                    })
                 }
             }
         }

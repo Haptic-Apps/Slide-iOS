@@ -463,14 +463,12 @@ public extension UIView {
     }
 
     private var queue: NSMutableArray {
-        get {
-            if let queue = objc_getAssociatedObject(self, &ToastKeys.Queue) as? NSMutableArray {
-                return queue
-            } else {
-                let queue = NSMutableArray()
-                objc_setAssociatedObject(self, &ToastKeys.Queue, queue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-                return queue
-            }
+        if let queue = objc_getAssociatedObject(self, &ToastKeys.Queue) as? NSMutableArray {
+            return queue
+        } else {
+            let queue = NSMutableArray()
+            objc_setAssociatedObject(self, &ToastKeys.Queue, queue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            return queue
         }
     }
 
@@ -765,11 +763,11 @@ public extension UIView {
 
         UIView.animate(withDuration: ToastManager.shared.style.fadeDuration, delay: 0.0, options: [.curveEaseOut, .allowUserInteraction], animations: { () -> Void in
             toast.alpha = 1.0
-        }) { (_) -> Void in
+        }, completion: { _ in
             let timer = Timer(timeInterval: duration, target: self, selector: #selector(UIView.toastTimerDidFinish(_:)), userInfo: toast, repeats: false)
             RunLoop.main.add(timer, forMode: RunLoopMode.commonModes)
             objc_setAssociatedObject(toast, &ToastKeys.Timer, timer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        }
+        })
     }
 
     private func hideToast(_ toast: UIView) {
@@ -780,8 +778,7 @@ public extension UIView {
 
         UIView.animate(withDuration: ToastManager.shared.style.fadeDuration, delay: 0.0, options: [.curveEaseIn, .beginFromCurrentState], animations: { () -> Void in
             toast.alpha = 0.0
-        }) {
-            (_: Bool) -> Void in
+        }, completion: { _ in
             toast.removeFromSuperview()
 
             objc_setAssociatedObject(self, &ToastKeys.ActiveToast, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
@@ -794,7 +791,7 @@ public extension UIView {
                 self.queue.removeObject(at: 0)
                 self.showToast(nextToast, duration: duration.doubleValue, position: position.cgPointValue)
             }
-        }
+        })
     }
 
     // MARK: - Events

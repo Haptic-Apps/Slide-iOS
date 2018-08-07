@@ -20,6 +20,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     var baseData: ContributionLoader
     var session: Session?
     var tableView: UICollectionView!
+    var loaded = false
 
     init(dataSource: ContributionLoader) {
         baseData = dataSource
@@ -47,6 +48,13 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.extendedLayoutIncludesOpaqueBars = true
         self.navigationController?.setToolbarHidden(true, animated: false)
         self.navigationController?.setNavigationBarHidden(false, animated: false)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if !loading && !loaded {
+            refresh()
+        }
     }
 
     var flowLayout: WrappingFlowLayout = WrappingFlowLayout.init()
@@ -81,8 +89,6 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             self.tableView.contentInset = UIEdgeInsets.init(top: 45, left: 0, bottom: 0, right: 0)
         }
         session = (UIApplication.shared.delegate as! AppDelegate).session
-
-        refresh()
     }
     
     var oldsize = CGFloat(0)
@@ -529,6 +535,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     var loading: Bool = false
 
     func doneLoading() {
+        loaded = true
         DispatchQueue.main.async {
             self.refreshControl.endRefreshing()
             self.tableView.reloadData()

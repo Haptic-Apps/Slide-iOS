@@ -392,9 +392,9 @@ NSString static *const kYTPlayerSyndicationRegexPattern = @"^https://tpc.googles
     return levels;
 }
 
-- (BOOL)webView:(UIWebView *)webView
+- (BOOL)webView:(UIWebView *)__unused webView
 shouldStartLoadWithRequest:(NSURLRequest *)request
- navigationType:(UIWebViewNavigationType)navigationType {
+ navigationType:(UIWebViewNavigationType)__unused navigationType {
     if ([request.URL.host isEqual: self.originURL.host]) {
         return YES;
     } else if ([request.URL.scheme isEqual:@"ytplayer"]) {
@@ -406,7 +406,7 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
     return YES;
 }
 
-- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
+- (void)webView:(UIWebView *)__unused webView didFailLoadWithError:(NSError *)__unused error {
     if (self.initialLoadingView) {
         [self.initialLoadingView removeFromSuperview];
     }

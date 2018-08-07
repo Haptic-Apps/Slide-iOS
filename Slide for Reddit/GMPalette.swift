@@ -27,7 +27,11 @@ class GMPalette {
                 lightBlue(), cyan(), teal(),
                 green(), lightGreen(), lime(),
                 yellow(), amber(), orange(),
-                deepOrange(), brown(), [GMColor.blueGrey300Color(), GMColor.blueGrey400Color(), GMColor.blueGrey500Color()]
+                deepOrange(), brown(),
+                [GMColor.blueGrey300Color(),
+                 GMColor.blueGrey400Color(),
+                 GMColor.blueGrey500Color(),
+                 ],
         ]
     }
 

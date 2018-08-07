@@ -181,9 +181,7 @@ public extension String {
     }
     
     var length: Int {
-        get {
-            return self.count
-        }
+        return self.count
     }
     
     func pad(_ n: Int, _ string: String = " ") -> String {
@@ -288,11 +286,9 @@ public extension String {
     }
     
     subscript(r: Range<Int>) -> String {
-        get {
-            let startIndex = self.index(self.startIndex, offsetBy: r.lowerBound)
-            let endIndex = self.index(self.startIndex, offsetBy: r.upperBound - r.lowerBound)
-            return self[startIndex..<endIndex]
-        }
+        let startIndex = self.index(self.startIndex, offsetBy: r.lowerBound)
+        let endIndex = self.index(self.startIndex, offsetBy: r.upperBound - r.lowerBound)
+        return self[startIndex..<endIndex]
     }
     
     func substring(_ startIndex: Int, length: Int) -> String {
@@ -310,10 +306,8 @@ public extension String {
     }
 
     subscript(i: Int) -> Character {
-        get {
-            let index = self.index(self.startIndex, offsetBy: i)
-            return self[index]
-        }
+        let index = self.index(self.startIndex, offsetBy: i)
+        return self[index]
     }
     
     //	/// get the left part of the string before the index

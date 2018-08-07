@@ -15,6 +15,9 @@ import UIKit
 
 class MediaViewController: UIViewController, MediaVCDelegate {
 
+    lazy var slideInTransitioningDelegate = SlideInPresentationManager()
+    lazy var postContentTransitioningDelegate = PostContentPresentationManager()
+
     var subChanged = false
 
     var link: RSubmission!
@@ -160,7 +163,20 @@ class MediaViewController: UIViewController, MediaVCDelegate {
                 present(controller, animated: true, completion: nil)
             } else {
                 let controller = getControllerForUrl(baseUrl: url, lq: lq)!
-                if controller is AlbumViewController {
+                if let sourceView = heroView,
+                    let modalController = controller as? ModalMediaViewController {
+
+//                    slideInTransitioningDelegate.direction = .bottom
+//                    slideInTransitioningDelegate.coverageRatio = 1.0
+//                    modalController.transitioningDelegate = slideInTransitioningDelegate
+//                    modalController.modalPresentationStyle = .custom
+
+                    postContentTransitioningDelegate.sourceImageView = sourceView
+                    modalController.transitioningDelegate = postContentTransitioningDelegate
+                    modalController.modalPresentationStyle = .custom
+
+                    present(modalController, animated: true, completion: nil)
+                } else if controller is AlbumViewController {
                     controller.modalPresentationStyle = .overFullScreen
                     present(controller, animated: true, completion: nil)
                 } else if controller is ModalMediaViewController {
