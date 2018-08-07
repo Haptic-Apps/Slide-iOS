@@ -112,14 +112,14 @@ extension PostContentPresentationAnimator: UIViewControllerAnimatedTransitioning
 
         // Use a special animation chain for certain types of presenting VCs
         if let vc = controller as? ModalMediaViewController,
-            let embed = vc.embeddedVC as? EmbeddableMediaViewController {
-
+            let embed = vc.embeddedVC {
             vc.background?.alpha = initialAlpha
             vc.blurView?.alpha = initialAlpha
             embed.bottomButtons.alpha = initialAlpha
             embed.navigationBar.alpha = initialAlpha
             UIView.animate(withDuration: animationDuration, animations: {
                 vc.background?.alpha = finalAlpha
+                vc.blurView?.alpha = finalAlpha
                 embed.bottomButtons.alpha = 1
                 embed.navigationBar.alpha = 1
             }, completion: { finished in
@@ -129,7 +129,7 @@ extension PostContentPresentationAnimator: UIViewControllerAnimatedTransitioning
         } else {
             controller.view.alpha = initialAlpha
             UIView.animate(withDuration: animationDuration, animations: {
-                controller.view.alpha = finalAlpha
+                controller.view.alpha = 1
             }, completion: { finished in
                 transitionContext.completeTransition(finished)
             })
