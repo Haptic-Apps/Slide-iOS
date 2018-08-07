@@ -88,6 +88,10 @@ class WrappingFlowLayout: UICollectionViewLayout {
             var yOffset = [CGFloat](repeating: 0, count: numberOfColumns)
             
             // 3
+            if yOffset.isEmpty {
+                return
+            }
+            
             for item in 0 ..< collectionView!.numberOfItems(inSection: 0) {
                 
                 let indexPath = IndexPath.init(row: item, section: 0)

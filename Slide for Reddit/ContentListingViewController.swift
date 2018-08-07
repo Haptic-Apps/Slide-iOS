@@ -6,6 +6,7 @@
 //  Copyright © 2016 Haptic Apps. All rights reserved.
 //
 
+import Anchorage
 import reddift
 import SDWebImage
 import UIKit
@@ -86,6 +87,8 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             self.tableView.contentInset = UIEdgeInsets.init(top: 45, left: 0, bottom: 0, right: 0)
         }
         session = (UIApplication.shared.delegate as! AppDelegate).session
+        
+        self.tableView.register(NoContentCell.classForCoder(), forCellWithReuseIdentifier: "nocontent")
     }
     
     var oldsize = CGFloat(0)
@@ -108,10 +111,13 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return baseData.content.count
+        return baseData.content.count == 0 && loaded ? 1 : baseData.content.count
     }
 
     func collectionView(_ tableView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if baseData.content.count == 0 {
+            return tableView.dequeueReusableCell(withReuseIdentifier: "nocontent", for: indexPath)
+        }
         let thing = baseData.content[indexPath.row]
         var cell: UICollectionViewCell?
         if thing is RSubmission {
@@ -438,7 +444,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                 return CGSize(width: itemWidth, height: estimatedHeights[message.id]!)
             }
         }
-        return CGSize(width: itemWidth, height: 0)
+        return CGSize(width: itemWidth, height: 90)
     }
 
     var estimatedHeights: [String: CGFloat] = [:]
@@ -537,10 +543,6 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             self.flowLayout.reset()
             self.tableView.reloadData()
             self.loading = false
-            if self.baseData.content.count == 0 {
-                self.tableView.contentInset = UIEdgeInsets.init(top: 0, left: 0, bottom: 0, right: 0)
-                BannerUtil.makeBanner(text: "No content found!", seconds: 5, context: self)
-            }
         }
     }
 }
@@ -608,5 +610,45 @@ extension ContentListingViewController: LinkCellViewDelegate {
 
     func mod(_ cell: LinkCellView) {
         PostActions.showModMenu(cell, parent: self)
+    }
+}
+
+public class NoContentCell: UICollectionViewCell {
+    override public init(frame: CGRect) {
+        super.init(frame: frame)
+        setupView()
+    }
+    
+    required public init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func setupView() {
+        let title = UILabel()
+        title.backgroundColor = ColorUtil.foregroundColor
+        title.textAlignment = .center
+        
+        let text = "Nothing to see here!\nNo content was found"
+        let textParts = text.components(separatedBy: "\n")
+        
+        let finalText: NSMutableAttributedString!
+        if textParts.count > 1 {
+            let firstPart = NSMutableAttributedString.init(string: textParts[0], attributes: [NSForegroundColorAttributeName: UIColor.white.withAlphaComponent(0.8), NSFontAttributeName: UIFont.boldSystemFont(ofSize: 14)])
+            let secondPart = NSMutableAttributedString.init(string: "\n" + textParts[1], attributes: [NSForegroundColorAttributeName: UIColor.white.withAlphaComponent(0.5), NSFontAttributeName: UIFont.systemFont(ofSize: 12)])
+            firstPart.append(secondPart)
+            finalText = firstPart
+        } else {
+            finalText = NSMutableAttributedString.init(string: text, attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 14)])
+        }
+        title.attributedText = finalText
+        title.numberOfLines = 0
+        self.contentView.layer.cornerRadius = 15
+        self.contentView.clipsToBounds = true
+        let titleView = title.withPadding(padding: UIEdgeInsets(top: 8, left: 12, bottom: 0, right: 12))
+        self.contentView.addSubview(titleView)
+        
+        titleView.heightAnchor == 90
+        titleView.horizontalAnchors == self.contentView.horizontalAnchors
+        titleView.topAnchor == self.contentView.topAnchor
     }
 }
