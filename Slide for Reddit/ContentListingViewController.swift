@@ -74,8 +74,8 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         refreshControl.tintColor = ColorUtil.fontColor
         refreshControl.attributedTitle = NSAttributedString(string: "")
         refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControlEvents.valueChanged)
-        tableView.addSubview(refreshControl) // not required when using UITableViewController
-        self.tableView.contentOffset = CGPoint(x: 0, y:-self.refreshControl.frame.size.height)
+        tableView.addSubview(refreshControl)
+        self.tableView.contentOffset = CGPoint(x: 0, y: -self.refreshControl.frame.size.height)
 
         self.tableView.register(BannerLinkCellView.classForCoder(), forCellWithReuseIdentifier: "banner")
         self.tableView.register(ThumbnailLinkCellView.classForCoder(), forCellWithReuseIdentifier: "thumb")
@@ -518,12 +518,12 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     var refreshControl: UIRefreshControl!
 
     func refresh() {
+        loading = true
         baseData.reset()
         tableView.reloadData()
         flowLayout.reset()
         flowLayout.invalidateLayout()
         refreshControl.beginRefreshing()
-        loading = true
         baseData.getData(reload: true)
     }
 
