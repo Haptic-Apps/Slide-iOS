@@ -52,6 +52,7 @@ class WrappingFlowLayout: UICollectionViewLayout {
         if pad && UIApplication.shared.keyWindow?.frame != UIScreen.main.bounds {
             numberOfColumns = 1
         }
+        
         if SettingValues.multiColumn {
             if UIApplication.shared.statusBarOrientation.isPortrait || !SettingValues.isPro {
                 if UIScreen.main.traitCollection.userInterfaceIdiom != .pad || !SettingValues.isPro {
@@ -64,6 +65,10 @@ class WrappingFlowLayout: UICollectionViewLayout {
             }
         } else {
             numberOfColumns = 1
+        }
+        
+        if pad && !UIApplication.shared.statusBarOrientation.isPortrait && !SettingValues.isPro {
+            numberOfColumns = 2
         }
         
         cellPadding = (numberOfColumns > 1 && (SettingValues.postViewMode != .LIST) && (SettingValues.postViewMode != .COMPACT) ) ? CGFloat(3) : ((SettingValues.postViewMode == .LIST) ? CGFloat(1) : CGFloat(0))
