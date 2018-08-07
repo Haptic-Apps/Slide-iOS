@@ -44,6 +44,7 @@ class FontGenerator {
         case ROBOTO_BOLD = "rbold"
         case ROBOTO_MEDIUM = "rmed"
         case SYSTEM = "system"
+        case PAPYRUS = "papyrus"
 
         public static var cases: [Font] {
             return [.HELVETICA, .ROBOTOCONDENSED_REGULAR, .ROBOTOCONDENSED_BOLD, .ROBOTO_LIGHT, .ROBOTO_BOLD, .ROBOTO_MEDIUM, .SYSTEM]
@@ -63,6 +64,8 @@ class FontGenerator {
                 return UIFont.init(name: "Roboto-Bold", size: 16)!
             case .ROBOTO_MEDIUM:
                 return UIFont.init(name: "Roboto-Bold", size: 16)!
+            case .PAPYRUS:
+                return UIFont.init(name: "Papyrus", size: 16)!
             case .SYSTEM:
                 return UIFont.boldSystemFont(ofSize: 16)
             }
@@ -82,6 +85,8 @@ class FontGenerator {
                 return UIFont.init(name: "Roboto-Bold", size: 16)!
             case .ROBOTO_MEDIUM:
                 return UIFont.init(name: "Roboto-Medium", size: 16)!
+            case .PAPYRUS:
+                return UIFont.init(name: "Papyrus", size: 16)!
             case .SYSTEM:
                 return UIFont.systemFont(ofSize: 16)
             }
