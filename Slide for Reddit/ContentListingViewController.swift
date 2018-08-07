@@ -65,8 +65,9 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         flowLayout.delegate = self
         self.tableView = UICollectionView(frame: CGRect.zero, collectionViewLayout: flowLayout)
         
+        self.view = UIView.init(frame: CGRect.zero)
         self.view.addSubview(tableView)
-        
+
         self.tableView.delegate = self
         self.tableView.dataSource = self
 
@@ -86,10 +87,14 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
 
         if baseData is ProfileContributionLoader || baseData is InboxContributionLoader || baseData is ModQueueContributionLoader || baseData is ModMailContributionLoader {
             self.tableView.contentInset = UIEdgeInsets.init(top: 45, left: 0, bottom: 0, right: 0)
+        } else {
+            self.tableView.contentInset = UIEdgeInsets.init(top: CGFloat(64), left: 0, bottom: 65, right: 0)
         }
+        
         session = (UIApplication.shared.delegate as! AppDelegate).session
         
         self.tableView.register(NoContentCell.classForCoder(), forCellWithReuseIdentifier: "nocontent")
+        self.tableView.layoutIfNeeded()
     }
     
     var oldsize = CGFloat(0)
