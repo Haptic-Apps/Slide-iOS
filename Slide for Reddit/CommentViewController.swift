@@ -232,14 +232,15 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         }
     }
 
-    func doHeadView() {
+    func doHeadView(_ size: CGSize) {
         inHeadView.removeFromSuperview()
         inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarView?.frame.size.height ?? 20)))
         if submission != nil {
             self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: submission!.subreddit)
         }
         
-        if !(navigationController?.isModalInPopover ?? false) {
+        let landscape = size.width > size.height
+        if !(navigationController?.isModalInPopover ?? false) && !landscape {
             self.navigationController?.view.addSubview(inHeadView)
         }
     }
@@ -933,7 +934,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             navigationItem.rightBarButtonItems = [sortB, searchB]
             navigationItem.rightBarButtonItem?.imageInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: -20)
         }
-        doHeadView()
+        doHeadView(self.view.frame.size)
     }
 
     var originalPosition: CGPoint?
@@ -1320,7 +1321,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     }
 
     func updateToolbar() {
-        doHeadView()
+        doHeadView(self.view.frame.size)
         navigationController?.setToolbarHidden(false, animated: false)
         self.isToolbarHidden = false
         let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
@@ -1705,6 +1706,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         self.headerCell!.contentView.frame = frame
         self.tableView.tableHeaderView!.frame = frame
         tableView.reloadData(with: .none)
+        doHeadView(size)
     }
     
     var lastYUsed = CGFloat(0)

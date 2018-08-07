@@ -170,7 +170,8 @@ class SettingsWelcomeTheme: UIViewController {
     var iOS = UIButton()
     var blue = UIButton()
     var dark = UIButton()
-    
+    var deep = UIButton()
+
     func doCells() {
         self.view.backgroundColor = ColorUtil.backgroundColor
         
@@ -253,6 +254,28 @@ class SettingsWelcomeTheme: UIViewController {
             self.blue.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
         }, completion: nil)
         
+        //Deep theme
+        deep = UIButton(frame: CGRect.init(x: 48, y: 480, width: self.view.frame.size.width - 96, height: 45))
+        deep.backgroundColor = ColorUtil.Theme.DEEP.foregroundColor
+        deep.layer.cornerRadius = 22.5
+        deep.clipsToBounds = true
+        deep.setTitle("  Dark Purple", for: .normal)
+        deep.leftImage(image: (UIImage.init(named: "colors")?.navIcon().getCopy(withColor: ColorUtil.Theme.DEEP.fontColor))!, renderMode: UIImageRenderingMode.alwaysOriginal)
+        deep.elevate(elevation: 2)
+        deep.titleLabel?.font = FontGenerator.Font.HELVETICA.font.withSize(18)
+        deep.setTitleColor(ColorUtil.Theme.DEEP.fontColor, for: .normal)
+        deep.titleEdgeInsets = UIEdgeInsets.init(top: 0, left: 20, bottom: 0, right: 20)
+        self.view.addSubview(deep)
+        
+        deep.addTapGestureRecognizer {
+            self.setDeep()
+        }
+        
+        deep.transform = CGAffineTransform.init(scaleX: 0.001, y: 0.001)
+        UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+            self.deep.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
+        }, completion: nil)
+        
         self.navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
         self.view.backgroundColor = ColorUtil.backgroundColor
     }
@@ -301,6 +324,21 @@ class SettingsWelcomeTheme: UIViewController {
         parentVC.doToolbar()
     }
     
+    func setDeep() {
+        UserDefaults.standard.set(ColorUtil.Theme.DEEP.rawValue, forKey: "theme")
+        UserDefaults.standard.set(FontGenerator.Font.HELVETICA.rawValue, forKey: "postfont")
+        UserDefaults.standard.set(FontGenerator.Font.HELVETICA.rawValue, forKey: "commentfont")
+        UserDefaults.standard.setColor(color: GMColor.deepPurple600Color(), forKey: "basecolor")
+        UserDefaults.standard.setColor(color: GMColor.pinkA400Color(), forKey: "accentcolor")
+        SettingValues.viewType = false
+        UserDefaults.standard.set(true, forKey: "firstOpen")
+        UserDefaults.standard.set(false, forKey: SettingValues.pref_viewType)
+        UserDefaults.standard.synchronize()
+        _ = ColorUtil.doInit()
+        doCells()
+        parentVC.doToolbar()
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         doCells()
