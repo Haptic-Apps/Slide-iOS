@@ -1453,7 +1453,7 @@ extension SingleSubredditViewController {
         alertController.view.addSubview(MKColorPicker)
 
         alertController.addAction(image: UIImage(named: "palette"), title: "Primary color", color: ColorUtil.accentColorForSub(sub: sub), style: .default) { _ in
-            ColorUtil.setAccentColorForSub(sub: self.sub, color: self.accentChosen!)
+            ColorUtil.setAccentColorForSub(sub: self.sub, color: self.accentChosen ?? ColorUtil.accentColorForSub(sub: self.sub))
             self.pickTheme(sender: sender, parent: parent)
             self.reloadDataReset()
         }
