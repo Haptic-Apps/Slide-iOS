@@ -26,6 +26,7 @@ class SettingsFont: UITableViewController {
     var commentRM: UITableViewCell = UITableViewCell()
     var commentSystem: UITableViewCell = UITableViewCell()
     var commentPapyrus: UITableViewCell = UITableViewCell()
+    var commentChalkboard: UITableViewCell = UITableViewCell()
 
     var submissionHelvetica: UITableViewCell = UITableViewCell()
     var submissionRCR: UITableViewCell = UITableViewCell()
@@ -35,6 +36,7 @@ class SettingsFont: UITableViewController {
     var submissionRM: UITableViewCell = UITableViewCell()
     var submissionSystem: UITableViewCell = UITableViewCell()
     var submissionPapyrus: UITableViewCell = UITableViewCell()
+    var submissionChalkboard: UITableViewCell = UITableViewCell()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -373,6 +375,16 @@ class SettingsFont: UITableViewController {
         self.submissionPapyrus.backgroundColor = ColorUtil.foregroundColor
         self.submissionPapyrus.textLabel?.textColor = ColorUtil.fontColor
 
+        self.commentChalkboard.textLabel?.text = "Chalkboard"
+        self.commentChalkboard.textLabel?.font = FontGenerator.Font.CHALKBOARD.font
+        self.commentChalkboard.backgroundColor = ColorUtil.foregroundColor
+        self.commentChalkboard.textLabel?.textColor = ColorUtil.fontColor
+
+        self.submissionChalkboard.textLabel?.text = "Chalkboard"
+        self.submissionChalkboard.textLabel?.font = FontGenerator.Font.CHALKBOARD.font
+        self.submissionChalkboard.backgroundColor = ColorUtil.foregroundColor
+        self.submissionChalkboard.textLabel?.textColor = ColorUtil.fontColor
+
         doChecks()
         self.tableView.tableFooterView = UIView()
 
@@ -388,6 +400,7 @@ class SettingsFont: UITableViewController {
         submissionRM.accessoryType = .none
         submissionSystem.accessoryType = .none
         submissionPapyrus.accessoryType = .none
+        submissionChalkboard.accessoryType = .none
         switch FontGenerator.postFont {
         case .HELVETICA:
             submissionHelvetica.accessoryType = .checkmark
@@ -403,6 +416,8 @@ class SettingsFont: UITableViewController {
             submissionRM.accessoryType = .checkmark
         case .PAPYRUS:
             submissionPapyrus.accessoryType = .checkmark
+        case .CHALKBOARD:
+            submissionChalkboard.accessoryType = .checkmark
         case .SYSTEM:
             submissionSystem.accessoryType = .checkmark
         }
@@ -415,6 +430,7 @@ class SettingsFont: UITableViewController {
         commentRM.accessoryType = .none
         commentSystem.accessoryType = .none
         commentPapyrus.accessoryType = .none
+        commentChalkboard.accessoryType = .none
         switch FontGenerator.commentFont {
         case .HELVETICA:
             commentHelvetica.accessoryType = .checkmark
@@ -430,6 +446,8 @@ class SettingsFont: UITableViewController {
             commentRM.accessoryType = .checkmark
         case .PAPYRUS:
             commentPapyrus.accessoryType = .checkmark
+        case .CHALKBOARD:
+            commentChalkboard.accessoryType = .checkmark
         case .SYSTEM:
             commentSystem.accessoryType = .checkmark
         }
@@ -470,6 +488,7 @@ class SettingsFont: UITableViewController {
             case 5: return self.submissionRM
             case 6: return self.submissionSystem
             case 7: return self.submissionPapyrus
+            case 8: return self.submissionChalkboard
             default: fatalError("Unknown row in section 1")
             }
         case 2:
@@ -482,6 +501,7 @@ class SettingsFont: UITableViewController {
             case 5: return self.commentRM
             case 6: return self.commentSystem
             case 7: return self.commentPapyrus
+            case 8: return self.commentChalkboard
             default: fatalError("Unknown row in section 1")
             }
         default: fatalError("Unknown section")
@@ -510,6 +530,8 @@ class SettingsFont: UITableViewController {
                 UserDefaults.standard.set(FontGenerator.Font.SYSTEM.rawValue, forKey: "postfont")
             case 7:
                 UserDefaults.standard.set(FontGenerator.Font.PAPYRUS.rawValue, forKey: "postfont")
+            case 8:
+                UserDefaults.standard.set(FontGenerator.Font.CHALKBOARD.rawValue, forKey: "postfont")
             default: fatalError("Unknown row in section 1")
             }
         } else if indexPath.section == 2 {
@@ -530,6 +552,8 @@ class SettingsFont: UITableViewController {
                 UserDefaults.standard.set(FontGenerator.Font.SYSTEM.rawValue, forKey: "commentfont")
             case 7:
                 UserDefaults.standard.set(FontGenerator.Font.PAPYRUS.rawValue, forKey: "commentfont")
+            case 8:
+                UserDefaults.standard.set(FontGenerator.Font.CHALKBOARD.rawValue, forKey: "commentfont")
             default: fatalError("Unknown row in section 1")
             }
         }
@@ -542,8 +566,8 @@ class SettingsFont: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0: return 4    // section 0 has 2 rows
-        case 1: return 8    // section 1 has 1 row
-        case 2: return 8    // section 1 has 1 row
+        case 1: return 9    // section 1 has 1 row
+        case 2: return 9    // section 1 has 1 row
         default: fatalError("Unknown number of sections")
         }
     }
