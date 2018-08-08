@@ -61,19 +61,18 @@ class AccountController {
                     AccountController.isLoggedIn = true
                     AccountController.currentName = name
                     let token = try OAuth2TokenRepository.token(of: name)
-                    (UIApplication.shared.delegate as! AppDelegate).session = Session(token: token)
-                    do {
-                        try (UIApplication.shared.delegate as! AppDelegate).session?.getUserProfile(name, completion: { (result) in
-                            switch result {
-                            case .failure(let error):
-                                print(error)
-                            case .success(let account):
-                                if AccountController.currentName == name {
-                                    AccountController.isGold = account.isGold
-                                }
+                    let session = Session(token: token)
+                    (UIApplication.shared.delegate as! AppDelegate).session = session
+                    try session.getUserProfile(name, completion: { (result) in
+                        switch result {
+                        case .failure(let error):
+                            print(error)
+                        case .success(let account):
+                            if AccountController.currentName == name {
+                                AccountController.isGold = account.isGold
                             }
-                        })
-                    } catch {}
+                        }
+                    })
                     UserDefaults.standard.set(name, forKey: "name")
                     UserDefaults.standard.synchronize()
                 } catch {
