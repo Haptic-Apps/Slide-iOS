@@ -137,13 +137,10 @@ public class TextDisplayStackView: UIStackView {
                 startIndex = 1
             }
             
-            if !activeSet {
-                activeSet = true
                 let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.activeLinkAttributes)
                 activeLinkAttributes[NSForegroundColorAttributeName] = tColor
                 firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
                 firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
-            }
             
             firstTextView.setText(newTitle)
             
@@ -171,13 +168,10 @@ public class TextDisplayStackView: UIStackView {
                 newTitle.append(createAttributedChunk(baseHTML: htmlString))
             }
             
-            if !activeSet {
-                activeSet = true
                 let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.activeLinkAttributes)
                 activeLinkAttributes[NSForegroundColorAttributeName] = tColor
                 firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
                 firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
-            }
             
             firstTextView.setText(newTitle)
             
