@@ -183,7 +183,7 @@ class SettingsGestures: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return indexPath.row == 0 && indexPath.section == 0 ? 120 : 70
+        return indexPath.row == 0 && indexPath.section == 0 ? 150 : 70
     }
     
     func tableView(tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
