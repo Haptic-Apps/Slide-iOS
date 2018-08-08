@@ -53,6 +53,9 @@ class NavigationHeaderView: UIView {
         title.isUserInteractionEnabled = true
 
         self.search = UISearchBar(frame: CGRect(x: 0, y: 0, width: 3, height: 50))
+        search.autocorrectionType = .no
+        search.autocapitalizationType = .none
+        search.spellCheckingType = .no
 
         self.addSubviews(title, search)
 
