@@ -830,7 +830,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         searchBar.searchBarStyle = UISearchBarStyle.minimal
         searchBar.textColor = .white
         searchBar.showsCancelButton = true
-        UIBarButtonItem.appearance(whenContainedInInstancesOf:[UISearchBar.self]).tintColor = UIColor.white
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = UIColor.white
 
         tableView.estimatedRowHeight = 200
         tableView.rowHeight = UITableViewAutomaticDimension

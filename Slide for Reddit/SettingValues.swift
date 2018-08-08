@@ -340,7 +340,7 @@ class SettingValues {
         SettingValues.postViewMode = PostViewType.init(rawValue: settings.string(forKey: SettingValues.pref_postViewMode) ?? "card") ?? .CARD
         SettingValues.actionBarMode = ActionBarMode.init(rawValue: settings.string(forKey: SettingValues.pref_actionbarMode) ?? "full") ?? .FULL
         SettingValues.flatMode = settings.bool(forKey: SettingValues.pref_flatMode)
-        SettingValues.postImageMode = PostImageMode.init(rawValue: settings.string(forKey: SettingValues.pref_postImageMode) ?? "cropped") ?? .CROPPED_IMAGE
+        SettingValues.postImageMode = PostImageMode.init(rawValue: settings.string(forKey: SettingValues.pref_postImageMode) ?? "full") ?? .CROPPED_IMAGE
         SettingValues.fabType = FabType.init(rawValue: settings.string(forKey: SettingValues.pref_fabType) ?? "hide") ?? .HIDE_READ
         
         SettingValues.commentActionLeft = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionLeft) ?? "downvote")!

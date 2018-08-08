@@ -142,6 +142,12 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
             let font = FontGenerator.fontOfSize(size: 16, submission: false)
             let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: accent)
             content = LinkParser.parse(attr2, ColorUtil.accentColorForSub(sub: ""))
+            
+            let activeLinkAttributes = NSMutableDictionary(dictionary: textView.activeLinkAttributes)
+            activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.baseAccent
+            textView.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+            textView.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+
             textView.setText(content)
             let framesetterB = CTFramesetterCreateWithAttributedString(content!)
             let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: width - 16 - (message.subject.hasPrefix("re:") ? 30 : 0), height: CGFloat.greatestFiniteMagnitude), nil)

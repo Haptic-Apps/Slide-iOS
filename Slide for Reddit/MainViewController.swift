@@ -176,16 +176,15 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                         }
                         DispatchQueue.main.async {
                             self.menuNav?.setmail(mailcount: unread)
-                            
                             if diff > 0 {
                                 BannerUtil.makeBanner(text: "\(diff) new message\(diff > 1 ? "s" : "")!", seconds: 5, context: self, top: true, callback: {
                                     () in
                                     let inbox = InboxViewController.init()
                                     VCPresenter.showVC(viewController: inbox, popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
                                 })
-                                UserDefaults.standard.set(unread, forKey: "mail")
-                                UserDefaults.standard.synchronize()
                             }
+                            UserDefaults.standard.set(unread, forKey: "mail")
+                            UserDefaults.standard.synchronize()
                         }
                     }
                 })
