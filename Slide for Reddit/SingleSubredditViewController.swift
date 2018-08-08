@@ -1557,7 +1557,7 @@ extension SingleSubredditViewController {
 extension SingleSubredditViewController: UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        if SettingValues.markReadOnScroll {
+        if SettingValues.markReadOnScroll && indexPath.row < links.count {
             History.addSeen(s: links[indexPath.row])
         }
     }

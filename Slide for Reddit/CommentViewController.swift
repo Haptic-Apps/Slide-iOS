@@ -414,7 +414,9 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         tableView.reloadData()
         if let link = self.submission {
             sub = link.subreddit
-            self.navigationItem.title = link.subreddit
+            
+            self.setupTitleView(link.subreddit)
+
             reset = false
             do {
                 var name = link.name
@@ -579,9 +581,11 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                                         self.tableView.tableHeaderView = view
                                     }
                                 }
-                                self.navigationItem.title = self.submission!.subreddit
+                                
+                                self.setupTitleView(self.submission!.subreddit)
+                                
                                 self.navigationItem.backBarButtonItem?.title = ""
-                                self.setBarColors(color: ColorUtil.getColorForSub(sub: self.navigationItem.title!))
+                                self.setBarColors(color: ColorUtil.getColorForSub(sub: self.submission!.subreddit))
                             } else {
                                 self.headerCell?.refreshLink(self.submission!)
                                 self.headerCell?.showBody(width: self.view.frame.size.width - 24)
@@ -637,6 +641,20 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         } else {
             return super.navigationItem
         }
+    }
+    
+    func setupTitleView(_ sub: String) {
+        let titleView = UILabel()
+        titleView.text = sub
+        titleView.textColor = .white
+        titleView.font = UIFont.boldSystemFont(ofSize: 17)
+        let width = titleView.sizeThatFits(CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)).width
+        titleView.frame = CGRect(origin: CGPoint.zero, size:CGSize(width: width, height: 500))
+        self.navigationItem.titleView = titleView
+        
+        titleView.addTapGestureRecognizer(action: {
+            VCPresenter.openRedditLink("/r/\(sub)", self.navigationController, self)
+        })
     }
 
     func doBanner(_ link: RSubmission) {
@@ -904,14 +922,15 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             self.updateToolbar()
         }
         
-        navigationItem.title = submission == nil ? subreddit : submission?.subreddit
+        self.setupTitleView(submission == nil ? subreddit : submission!.subreddit)
+
         self.navigationItem.backBarButtonItem?.title = ""
 
         if submission != nil {
-            self.setBarColors(color: ColorUtil.getColorForSub(sub: self.navigationItem.title!))
+            self.setBarColors(color: ColorUtil.getColorForSub(sub: submission == nil ? subreddit : submission!.subreddit))
         }
 
-        self.authorColor = ColorUtil.getCommentNameColor(self.navigationItem.title!)
+        self.authorColor = ColorUtil.getCommentNameColor(submission == nil ? subreddit : submission!.subreddit)
 
         if !loaded && (single || forceLoad) {
             refresh(self)
