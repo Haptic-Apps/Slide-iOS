@@ -36,6 +36,8 @@ class SettingsWelcome: UIPageViewController, UIPageViewControllerDataSource, UIP
         self.pageControl.pageIndicatorTintColor = ColorUtil.fontColor.withAlphaComponent(0.4)
         self.pageControl.currentPage = current
         
+        self.view.backgroundColor = ColorUtil.backgroundColor
+        
         if current == pages.count - 1 {
             let start = UIButton.init(type: .system)
             start.setTitle("LET'S GO!", for: .normal)
@@ -122,16 +124,7 @@ class SettingsWelcome: UIPageViewController, UIPageViewControllerDataSource, UIP
         }
     }
 
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        return nil
-    }
-    
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        return nil
-    }
-    
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
-
         // set the pageControl.currentPage to the index of the current viewController in pages
         if let viewControllers = pageViewController.viewControllers {
             if let viewControllerIndex = self.pages.index(of: viewControllers[0]) {
@@ -139,6 +132,47 @@ class SettingsWelcome: UIPageViewController, UIPageViewControllerDataSource, UIP
             }
         }
     }
+    
+    func pageViewController(_ pageViewController: UIPageViewController,
+                            viewControllerBefore viewController: UIViewController) -> UIViewController? {
+        guard let viewControllerIndex = self.pages.index(of: viewController) else {
+            return nil
+        }
+        
+        let previousIndex = viewControllerIndex - 1
+        
+        guard previousIndex >= 0 else {
+            return nil
+        }
+        
+        guard self.pages.count > previousIndex else {
+            return nil
+        }
+        
+        return self.pages[previousIndex]
+    }
+    
+    func pageViewController(_ pageViewController: UIPageViewController,
+                            viewControllerAfter viewController: UIViewController) -> UIViewController? {
+        guard let viewControllerIndex = self.pages.index(of: viewController) else {
+            return nil
+        }
+        
+        let nextIndex = viewControllerIndex + 1
+        let orderedViewControllersCount = self.pages.count
+        
+        guard orderedViewControllersCount != nextIndex else {
+            return nil
+        }
+        
+        guard orderedViewControllersCount > nextIndex else {
+            return nil
+        }
+        
+        return self.pages[nextIndex]
+    }
+    
+
 }
 
 class SettingsWelcomeTheme: UIViewController {
