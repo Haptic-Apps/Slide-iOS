@@ -201,7 +201,7 @@ class CachedTitle {
             infoString.append(endString)
         }
 
-        if SettingValues.showFirstParagraph && submission.isSelf && !full && !submission.htmlBody.trimmed().isEmpty {
+        if SettingValues.showFirstParagraph && submission.isSelf && !submission.spoiler && !submission.nsfw && !full && !submission.htmlBody.trimmed().isEmpty {
             infoString.append(NSAttributedString.init(string: "\n\n"))
             let length = submission.htmlBody.indexOf("\n") ?? submission.htmlBody.length
             let text = submission.htmlBody.substring(0, length: length).trimmed()
