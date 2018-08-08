@@ -649,7 +649,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         titleView.textColor = .white
         titleView.font = UIFont.boldSystemFont(ofSize: 17)
         let width = titleView.sizeThatFits(CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)).width
-        titleView.frame = CGRect(origin: CGPoint.zero, size:CGSize(width: width, height: 500))
+        titleView.frame = CGRect(origin: CGPoint.zero, size: CGSize(width: width, height: 500))
         self.navigationItem.titleView = titleView
         
         titleView.addTapGestureRecognizer(action: {
@@ -728,6 +728,8 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         self.tableView.contentInset = normalInsets
 
     }
+    
+    var savedBack = UIBarButtonItem()
 
     func showSearchBar() {
         searchBar.alpha = 0
@@ -735,10 +737,16 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         tableView.tableHeaderView = UIView()
         savedTitleView = navigationItem.titleView
         navigationItem.titleView = searchBar
+        savedBack = navigationItem.leftBarButtonItem!
         navigationItem.setRightBarButtonItems(nil, animated: true)
+        navigationItem.setLeftBarButtonItems(nil, animated: true)
+        self.navigationItem.setHidesBackButton(true, animated: false)
         UIView.animate(withDuration: 0.5, animations: {
             self.searchBar.alpha = 1
         }, completion: { _ in
+            if ColorUtil.theme != .LIGHT {
+                self.searchBar.keyboardAppearance = .dark
+            }
             self.searchBar.becomeFirstResponder()
         })
     }
@@ -762,7 +770,8 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         search.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let searchB = UIBarButtonItem.init(customView: search)
 
-        navigationItem.rightBarButtonItems = [moreB, sortB, searchB]
+        navigationItem.rightBarButtonItems = [sortB, searchB]
+        navigationItem.leftBarButtonItem = savedBack
 
         navigationItem.titleView = savedTitleView
 
@@ -821,6 +830,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         searchBar.searchBarStyle = UISearchBarStyle.minimal
         searchBar.textColor = .white
         searchBar.showsCancelButton = true
+        UIBarButtonItem.appearance(whenContainedInInstancesOf:[UISearchBar.self]).tintColor = UIColor.white
 
         tableView.estimatedRowHeight = 200
         tableView.rowHeight = UITableViewAutomaticDimension
@@ -1107,31 +1117,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 self.text[(thing as! RMore).getIdentifier()] = LinkParser.parse(attr2, color)
             }
 
-        }
-    }
-
-    func updateStringSearch(_ thing: Thing) -> NSAttributedString {
-        let color = ColorUtil.accentColorForSub(sub: (thing as! RComment).subreddit)
-        if let comment = thing as? Comment {
-            let html = comment.bodyHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
-            let attributed = NSMutableAttributedString.init(attributedString: TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: color))
-
-            do {
-                let regex = try NSRegularExpression.init(pattern: ("\\b\(searchBar.text!)\\b"), options: .caseInsensitive)
-                
-                let substring = NSMutableAttributedString(string: searchBar.text!)
-                substring.addAttribute(NSForegroundColorAttributeName, value: ColorUtil.getColorForSub(sub: comment.subreddit), range: NSRange(location: 0, length: substring.string.length))
-                
-                regex.replaceMatches(in: attributed.mutableString, options: NSRegularExpression.MatchingOptions.anchored, range: NSRange.init(location: 0, length: attributed.length), withTemplate: substring.string)
-            } catch {
-                print(error)
-            }
-            return attributed
-        } else {
-            let attr = NSMutableAttributedString(string: "more")
-            let font = FontGenerator.fontOfSize(size: 16, submission: false)
-            let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
-            return LinkParser.parse(attr2, color)
         }
     }
 
@@ -1902,7 +1887,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
         let base = NSMutableAttributedString.init(attributedString: cc)
         let r = base.mutableString.range(of: "\(searchBar.text!)", options: .caseInsensitive, range: NSRange(location: 0, length: base.string.length))
         if r.length > 0 {
-            base.addAttribute(NSForegroundColorAttributeName, value: ColorUtil.getColorForSub(sub: ""), range: r)
+            base.addAttribute(NSForegroundColorAttributeName, value: ColorUtil.accentColorForSub(sub: subreddit), range: r)
         }
         return base.attributedSubstring(from: NSRange.init(location: 0, length: base.length))
     }

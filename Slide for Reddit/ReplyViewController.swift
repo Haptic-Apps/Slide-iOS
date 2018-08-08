@@ -416,7 +416,6 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
 
     func layoutForType() {
         self.scrollView = UIScrollView.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height))
-        self.scrollView.backgroundColor = .clear
         self.view.addSubview(scrollView)
         self.scrollView.backgroundColor = ColorUtil.backgroundColor
         self.scrollView.isUserInteractionEnabled = true
@@ -1261,19 +1260,6 @@ extension UITextView: UITextViewDelegate {
         placeholderLabel.sizeToFit()
         placeholderLabel.frame.origin.x += 10
         placeholderLabel.frame.origin.y += 4
-
-        let border = CALayer()
-        let width = CGFloat(1.0)
-        border.borderColor = ColorUtil.fontColor.cgColor
-
-        border.frame = CGRect(x: 12, y: frame.size.height - width,
-                width: frame.size.width - 24, height: frame.size.height)
-
-        border.borderWidth = width
-
-        layer.masksToBounds = true
-
-        layer.addSublayer(border)
 
         // Hide the label if there is text in the text view
         placeholderLabel.isHidden = ((self.text.length) > 0)
