@@ -130,7 +130,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         self.goPro.imageView?.tintColor = ColorUtil.fontColor
 
         self.clearCell.textLabel?.text = "Clear cache"
-        self.clearCell.accessoryType = .disclosureIndicator
+        self.clearCell.accessoryType = .none
         self.clearCell.backgroundColor = ColorUtil.foregroundColor
         self.clearCell.textLabel?.textColor = ColorUtil.fontColor
         self.clearCell.imageView?.image = UIImage.init(named: "multis")?.toolbarIcon()
@@ -269,7 +269,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         self.lockCell.imageView?.tintColor = ColorUtil.fontColor
 
         if reset {
-            self.tableView.reloadData(with: .fade)
+            self.tableView.reloadData()
         }
     }
 
