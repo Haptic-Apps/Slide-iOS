@@ -587,8 +587,21 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                                 self.navigationItem.backBarButtonItem?.title = ""
                                 self.setBarColors(color: ColorUtil.getColorForSub(sub: self.submission!.subreddit))
                             } else {
+
                                 self.headerCell?.refreshLink(self.submission!)
                                 self.headerCell?.showBody(width: self.view.frame.size.width - 24)
+                                
+                                var frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: self.headerCell!.estimateHeight(true, true))
+                                // Add safe area insets to left and right if available
+                                if #available(iOS 11.0, *) {
+                                    frame = frame.insetBy(dx: max(self.view.safeAreaInsets.left, self.view.safeAreaInsets.right), dy: 0)
+                                }
+                                
+                                self.headerCell!.contentView.frame = frame
+                                self.headerCell!.contentView.layoutIfNeeded()
+                                let view = UIView(frame: self.headerCell!.contentView.frame)
+                                view.addSubview(self.headerCell!.contentView)
+                                self.tableView.tableHeaderView = view
                             }
                             self.refreshControl?.endRefreshing()
                             self.indicator.stopAnimating()

@@ -33,7 +33,8 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
         self.tableView.delegate = self
         self.tableView.dataSource = self
         self.tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "sub")
-        
+        self.tableView.separatorStyle = UITableViewCellSeparatorStyle.none
+
         tableView.backgroundColor = ColorUtil.backgroundColor
         tableView.separatorColor = ColorUtil.backgroundColor
         tableView.separatorInset = .zero

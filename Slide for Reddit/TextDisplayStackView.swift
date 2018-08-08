@@ -83,6 +83,7 @@ public class TextDisplayStackView: UIStackView {
     }
     
     public func setAttributedString(_ string: NSAttributedString) {
+        estimatedHeight = 0
         //Clear out old UIStackView from https://gist.github.com/Deub27/5eadbf1b77ce28abd9b630eadb95c1e2
         let removedSubviews = overflow.arrangedSubviews.reduce([]) { (allSubviews, subview) -> [UIView] in
             overflow.removeArrangedSubview(subview)
@@ -112,7 +113,7 @@ public class TextDisplayStackView: UIStackView {
     }
     
     public func setTextWithTitleHTML(_ title: NSAttributedString, _ body: NSAttributedString? = nil, htmlString: String) {
-        
+        estimatedHeight = 0
         //Clear out old UIStackView from https://gist.github.com/Deub27/5eadbf1b77ce28abd9b630eadb95c1e2
         let removedSubviews = overflow.arrangedSubviews.reduce([]) { (allSubviews, subview) -> [UIView] in
             overflow.removeArrangedSubview(subview)
@@ -185,7 +186,7 @@ public class TextDisplayStackView: UIStackView {
     }
     
     public func setData(htmlString: String) {
-        
+        estimatedHeight = 0
         //Clear out old UIStackView from https://gist.github.com/Deub27/5eadbf1b77ce28abd9b630eadb95c1e2
         let removedSubviews = overflow.arrangedSubviews.reduce([]) { (allSubviews, subview) -> [UIView] in
             overflow.removeArrangedSubview(subview)

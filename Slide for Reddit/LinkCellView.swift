@@ -601,13 +601,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         self.textView.setColor(color)
         hasText = true
         textView.estimatedWidth = width
+        textView.estimatedHeight = 0
         textView.setTextWithTitleHTML(NSMutableAttributedString(), htmlString: link.htmlBody)
     }
-
-//    func estimateHeight(_ full: Bool, _ reset: Bool = false) -> CGFloat {
-//        estimatedHeight = frame.size.height
-//        return estimatedHeight
-//    }
     
     func addTouch(view: UIView, action: Selector) {
         view.isUserInteractionEnabled = true
@@ -1375,6 +1371,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             let thumbheight = (full || SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50)) - (!full && SettingValues.postViewMode == .COMPACT ? 15 : 0)
             
             let textHeight = (!hasText || !full) ? CGFloat(0) : textView.estimatedHeight
+            
+            print("Est text height is \(textView.estimatedHeight)")
 
             if thumb {
                 imageHeight = thumbheight
