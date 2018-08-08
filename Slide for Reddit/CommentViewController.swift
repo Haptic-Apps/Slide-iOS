@@ -240,7 +240,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         }
         
         let landscape = size.width > size.height
-        if !(navigationController?.isModalInPopover ?? false) && !landscape {
+        if navigationController?.viewControllers.first != self && !landscape {
             self.navigationController?.view.addSubview(inHeadView)
         }
     }
@@ -707,11 +707,12 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             popup.clipsToBounds = true
             popup.transform = CGAffineTransform.init(scaleX: 0.001, y: 0.001)
             
-            self.view.superview?.addSubview(popup)
-            popup.bottomAnchor == self.view.superview!.safeBottomAnchor - 8
+            self.view.addSubview(popup)
+            popup.bottomAnchor == self.view.safeBottomAnchor - 8
             popup.widthAnchor == width
             popup.heightAnchor == 48
-            popup.centerXAnchor == self.view.superview!.centerXAnchor
+            popup.centerXAnchor == self.view.centerXAnchor
+            self.view.bringSubview(toFront: popup)
 
             UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
                 popup.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
@@ -755,7 +756,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     func hideSearchBar() {
         navigationController?.setNavigationBarHidden(false, animated: true)
-        isSearching = false
         tableView.tableHeaderView = savedHeaderView!
 
         let sort = UIButton.init(type: .custom)
@@ -774,7 +774,8 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         navigationItem.leftBarButtonItem = savedBack
 
         navigationItem.titleView = savedTitleView
-
+        
+        isSearching = false
         tableView.reloadData()
     }
 
@@ -963,6 +964,11 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             navigationItem.rightBarButtonItem?.imageInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: -20)
         }
         doHeadView(self.view.frame.size)
+        
+        if isSearching {
+            isSearching = false
+            tableView.reloadData()
+        }
     }
 
     var originalPosition: CGPoint?
