@@ -362,7 +362,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     func upvote(_ s: AnyObject) {
         parent!.vote(comment: comment!, dir: .up)
         self.refresh(comment: comment!, submissionAuthor: (parent!.submission?.author)!, text: self.cellContent!)
-        self.hideMenuAnimated()
+        if !menu.isHidden {
+            self.hideMenuAnimated()
+        }
     }
     
     func discard(_ sender: AnyObject) {
@@ -563,7 +565,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     func downvote(_ s: AnyObject) {
         parent!.vote(comment: comment!, dir: .down)
         self.refresh(comment: comment!, submissionAuthor: (parent!.submission?.author)!, text: self.cellContent!)
-        self.hideMenuAnimated()
+        if !menu.isHidden {
+            self.hideMenuAnimated()
+        }
     }
     
     func save() {
