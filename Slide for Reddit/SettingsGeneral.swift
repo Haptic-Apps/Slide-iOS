@@ -54,6 +54,9 @@ class SettingsGeneral: UITableViewController {
             MainViewController.needsRestart = true
             SettingValues.bottomBarHidden = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_bottomBarHidden)
+        } else if changed == hapticFeedbackSwitch {
+            SettingValues.hapticFeedback = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_hapticFeedback)
         } else if changed == hideFABSwitch {
             SettingValues.hiddenFAB = !changed.isOn
             UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_hiddenFAB)
