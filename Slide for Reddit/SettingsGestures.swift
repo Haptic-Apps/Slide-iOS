@@ -22,19 +22,9 @@ class SettingsGestures: UITableViewController {
 
     var doubleTapSubActionCell: UITableViewCell = UITableViewCell.init(style: UITableViewCellStyle.subtitle, reuseIdentifier: "dtaps")
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        updateCells()
-        // Do any additional setup after loading the view.
-    }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        updateCells()
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: "")
         navigationController?.navigationBar.tintColor = UIColor.white
     }
@@ -156,17 +146,17 @@ class SettingsGestures: UITableViewController {
         self.doubleTapActionCell.detailTextLabel?.numberOfLines = 0
         self.doubleTapActionCell.detailTextLabel?.text = SettingValues.commentActionDoubleTap.getTitle()
         self.doubleTapActionCell.imageView?.layer.cornerRadius = 5
-
+        
         if !SettingValues.commentTwoSwipe {
             self.rightActionCell.isUserInteractionEnabled = false
-            self.rightActionCell.alpha = 0.5
+            self.rightActionCell.contentView.alpha = 0.5
             self.leftActionCell.isUserInteractionEnabled = false
-            self.leftActionCell.alpha = 0.5
+            self.leftActionCell.contentView.alpha = 0.5
         } else {
             self.rightActionCell.isUserInteractionEnabled = true
-            self.rightActionCell.alpha = 1
+            self.rightActionCell.contentView.alpha = 1
             self.leftActionCell.isUserInteractionEnabled = true
-            self.leftActionCell.alpha = 1
+            self.leftActionCell.contentView.alpha = 1
         }
         
         createLeftView(cell: doubleTapSubActionCell, image: SettingValues.submissionActionDoubleTap.getPhoto(), color: SettingValues.submissionActionDoubleTap.getColor())
@@ -175,11 +165,10 @@ class SettingsGestures: UITableViewController {
         self.doubleTapSubActionCell.detailTextLabel?.numberOfLines = 0
         self.doubleTapSubActionCell.detailTextLabel?.text = SettingValues.submissionActionDoubleTap.getTitle()
         self.doubleTapSubActionCell.imageView?.layer.cornerRadius = 5
-
     }
     
     func createLeftView(cell: UITableViewCell, image: String, color: UIColor) {
-        cell.imageView?.image = UIImage.init(named: image)?.navIcon()
+        cell.imageView?.image = UIImage.init(named: image)?.navIcon().getCopy(withColor: ColorUtil.fontColor)
         cell.imageView?.backgroundColor = color
     }
     

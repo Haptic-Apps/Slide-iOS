@@ -28,6 +28,7 @@ class NavigationHeaderView: UIView {
     var title = UILabel()
     var account = UIButton()
     var inbox = UIButton()
+    var settings = UIButton()
     var more = UIButton()
     var search: UISearchBar = UISearchBar()
 
@@ -71,8 +72,14 @@ class NavigationHeaderView: UIView {
             $0.setImage(UIImage.init(named: "inbox")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControlState.normal)
             $0.isUserInteractionEnabled = true
         }
+        
+        self.settings = UIButton.init(type: .custom).then {
+            $0.imageView?.contentMode = UIViewContentMode.scaleAspectFit
+            $0.setImage(UIImage.init(named: "settings")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControlState.normal)
+            $0.isUserInteractionEnabled = true
+        }
 
-        title.addSubviews(account, inbox, more)
+        title.addSubviews(account, inbox, settings)
 
     }
 
@@ -87,6 +94,9 @@ class NavigationHeaderView: UIView {
 
         let iTap = UITapGestureRecognizer(target: self, action: #selector(self.inbox(_:)))
         inbox.addGestureRecognizer(iTap)
+
+        let sTap = UITapGestureRecognizer(target: self, action: #selector(self.settings(_:)))
+        settings.addGestureRecognizer(sTap)
 
         account.addTarget(self, action: #selector(self.switchAccounts(_:)), for: UIControlEvents.touchUpInside)
         more.addTarget(self, action: #selector(self.showMore(_:)), for: UIControlEvents.touchUpInside)
@@ -112,17 +122,17 @@ class NavigationHeaderView: UIView {
             account.leftAnchor == title.leftAnchor + 16
             account.centerYAnchor == title.centerYAnchor
 
-            more.rightAnchor == title.rightAnchor - 16
-            more.centerYAnchor == title.centerYAnchor
+            settings.rightAnchor == title.rightAnchor - 16
+            settings.centerYAnchor == title.centerYAnchor
 
-            inbox.rightAnchor == more.leftAnchor - 24
+            inbox.rightAnchor == settings.leftAnchor - 24
             inbox.centerYAnchor == title.centerYAnchor
 
             // TODO: Determine if we still need this
             if #available(iOS 11.0, *) {
                 account.heightAnchor == 90
                 inbox.heightAnchor == 90
-                more.heightAnchor == 90
+                settings.heightAnchor == 90
             }
         }
     }
@@ -249,14 +259,6 @@ extension NavigationHeaderView {
 
         let alertController: BottomSheetActionController = BottomSheetActionController()
         alertController.headerData = "Navigate"
-
-        alertController.addAction(Action(ActionData(title: "Settings", image: UIImage(named: "settings")!.menuIcon()), style: .default, handler: { _ in
-            self.settings(self.inbox)
-        }))
-
-        /*alertController.addAction(Action(ActionData(title: "Pro override (TESTING)", image: UIImage(named: "support")!.menuIcon()), style: .default, handler: { action in
-         SettingValues.isPro = !SettingValues.isPro
-         }))*/
 
         if mod {
             alertController.addAction(Action(ActionData(title: "Moderation", image: UIImage(named: "mod")!.menuIcon()), style: .default, handler: { _ in
