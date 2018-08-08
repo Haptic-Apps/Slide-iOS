@@ -10,10 +10,10 @@ import Foundation
 import reddift
 
 class Subscriptions {
-    private static var defaultSubs = ["frontpage", "slide_ios", "all", "announcements", "Art", "AskReddit", "askscience",
-                                      "aww", "blog", "books", "creepy", "dataisbeautiful", "DIY", "Documentaries",
-                                      "EarthPorn", "explainlikeimfive", "Fitness", "food", "funny", "Futurology",
-                                      "gadgets", "gaming", "GetMotivated", "gifs", "history", "IAmA",
+    private static var defaultSubs = ["frontpage", "slide_ios", "all", "myrandom", "random", "randnsfw", "announcements",
+                                      "Art", "AskReddit", "askscience", "aww", "blog", "books", "creepy", "dataisbeautiful",
+                                      "DIY", "Documentaries", "EarthPorn", "explainlikeimfive", "Fitness", "food", "funny",
+                                      "Futurology", "gadgets", "gaming", "GetMotivated", "gifs", "history", "IAmA",
                                       "InternetIsBeautiful", "Jokes", "LifeProTips", "listentothis",
                                       "mildlyinteresting", "movies", "Music", "news", "nosleep", "nottheonion",
                                       "OldSchoolCool", "personalfinance", "philosophy", "photoshopbattles", "pics",

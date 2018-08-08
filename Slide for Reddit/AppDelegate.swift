@@ -341,6 +341,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     toReturn = toReturn.sorted {
                         $0.localizedCaseInsensitiveCompare($1) == ComparisonResult.orderedAscending
                     }
+                    toReturn.insert("randnsfw", at: 0)
+                    toReturn.insert("random", at: 0)
+                    toReturn.insert("myrandom", at: 0)
                     toReturn.insert("all", at: 0)
                     toReturn.insert("frontpage", at: 0)
                     if subredditController != nil {
