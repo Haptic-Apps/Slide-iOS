@@ -938,6 +938,29 @@ class SingleSubredditViewController: MediaViewController {
     }
 
     func load(reset: Bool) {
+        if sub.lowercased() == "randnsfw" && !SettingValues.nsfwEnabled {
+            DispatchQueue.main.async {
+                let alert = UIAlertController.init(title: "r/\(self.sub) is NSFW", message: "If you are 18 and willing to see adult content, enable NSFW content in Settings > Content", preferredStyle: .alert)
+                alert.addAction(UIAlertAction.init(title: "Close", style: .default, handler: { (_) in
+                    self.navigationController?.popViewController(animated: true)
+                    self.dismiss(animated: true, completion: nil)
+                }))
+                self.present(alert, animated: true, completion: nil)
+            }
+            self.refreshControl.endRefreshing()
+            return
+        } else if sub.lowercased() == "myrandom" && !AccountController.isGold {
+            DispatchQueue.main.async {
+                let alert = UIAlertController.init(title: "r/\(self.sub) requires gold", message: "See reddit.com/gold/about for more details", preferredStyle: .alert)
+                alert.addAction(UIAlertAction.init(title: "Close", style: .default, handler: { (_) in
+                    self.navigationController?.popViewController(animated: true)
+                    self.dismiss(animated: true, completion: nil)
+                }))
+                self.present(alert, animated: true, completion: nil)
+            }
+            self.refreshControl.endRefreshing()
+            return
+        }
         if !loading {
             if !loaded {
                 if indicator == nil {

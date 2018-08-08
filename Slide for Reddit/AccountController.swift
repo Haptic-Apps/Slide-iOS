@@ -27,6 +27,7 @@ class AccountController {
     }
 
     static var isLoggedIn = false
+    static var isGold = false
     static var changed = false
     static var modSubs: [String] = []
 
@@ -52,6 +53,7 @@ class AccountController {
             print("Name is \(name)")
             if name == "GUEST" {
                 AccountController.isLoggedIn = false
+                AccountController.isGold = false
                 AccountController.currentName = name
                 (UIApplication.shared.delegate as! AppDelegate).session = Session()
             } else {
@@ -59,18 +61,31 @@ class AccountController {
                     AccountController.isLoggedIn = true
                     AccountController.currentName = name
                     let token = try OAuth2TokenRepository.token(of: name)
-                    (UIApplication.shared.delegate as! AppDelegate).session = Session(token: token)
+                    let session = Session(token: token)
+                    (UIApplication.shared.delegate as! AppDelegate).session = session
+                    try session.getUserProfile(name, completion: { (result) in
+                        switch result {
+                        case .failure(let error):
+                            print(error)
+                        case .success(let account):
+                            if AccountController.currentName == name {
+                                AccountController.isGold = account.isGold
+                            }
+                        }
+                    })
                     UserDefaults.standard.set(name, forKey: "name")
                     UserDefaults.standard.synchronize()
                 } catch {
                     print(error)
                     (UIApplication.shared.delegate as! AppDelegate).session = Session()
                     AccountController.isLoggedIn = false
+                    AccountController.isGold = false
                 }
             }
         } else {
             (UIApplication.shared.delegate as! AppDelegate).session = Session()
             AccountController.isLoggedIn = false
+            AccountController.isGold = false
         }
     }
 
