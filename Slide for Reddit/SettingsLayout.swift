@@ -202,22 +202,6 @@ class SettingsLayout: UITableViewController {
         case .SIDE_RIGHT:
             actionBarCell.imageView?.image = UIImage.init(named: "down")?.toolbarIcon()
         }
-        
-    }
-    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let label: UILabel = UILabel()
-        label.textColor = ColorUtil.baseAccent
-        label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
-        let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.backgroundColor
-        
-        switch section {
-        case 0: label.text  = "Preview"
-        case 1: label.text  = "Display"
-        case 2: label.text = "Actionbar"
-        default: label.text  = ""
-        }
-        return toReturn
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -440,6 +424,7 @@ class SettingsLayout: UITableViewController {
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 3
     }
+    
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if section == 0 {
             return 0
@@ -447,6 +432,22 @@ class SettingsLayout: UITableViewController {
         return 70
     }
     
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let label: UILabel = UILabel()
+        label.textColor = ColorUtil.baseAccent
+        label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
+        let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
+        toReturn.backgroundColor = ColorUtil.backgroundColor
+        
+        switch section {
+        case 0: label.text  = "Preview"
+        case 1: label.text  = "Display"
+        case 2: label.text = "Actionbar"
+        default: label.text  = ""
+        }
+        return toReturn
+    }
+
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == 0 {
             return link.estimateHeight(false)

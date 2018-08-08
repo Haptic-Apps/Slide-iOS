@@ -32,6 +32,12 @@ class SubredditReorderViewController: UITableViewController {
         sync.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let syncB = UIBarButtonItem.init(customView: sync)
 
+        let add = UIButton.init(type: .custom)
+        add.setImage(UIImage.init(named: "add")!.navIcon(), for: UIControlState.normal)
+        add.addTarget(self, action: #selector(self.add(_:)), for: UIControlEvents.touchUpInside)
+        add.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
+        let addB = UIBarButtonItem.init(customView: add)
+
         let az = UIButton.init(type: .custom)
         az.setImage(UIImage.init(named: "az")!.navIcon(), for: UIControlState.normal)
         az.addTarget(self, action: #selector(self.sortAz(_:)), for: UIControlEvents.touchUpInside)
@@ -57,7 +63,7 @@ class SubredditReorderViewController: UITableViewController {
         let pinB = UIBarButtonItem.init(customView: pin)
 
         editItems = [deleteB, topB, pinB]
-        normalItems = [syncB, azB]
+        normalItems = [addB, syncB, azB]
 
         self.navigationItem.rightBarButtonItems = normalItems
 
@@ -97,7 +103,22 @@ class SubredditReorderViewController: UITableViewController {
         let cell = tableView.cellForRow(at: indexPath)
         cell?.backgroundColor = ColorUtil.foregroundColor
     }
-
+    
+    func add(_ selector: AnyObject) {
+        let searchVC = SubredditFindReturnViewController(includeSubscriptions: false, includeCollections: true, includeTrending: true) { (sub) in
+            if !self.subs.contains(sub) {
+                self.subs.append(sub)
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                    let indexPath = IndexPath.init(row: self.subs.count - 1, section: 0)
+                    self.tableView.scrollToRow(at: indexPath,
+                                               at: UITableViewScrollPosition.top, animated: true)
+                }
+            }
+        }
+        VCPresenter.showVC(viewController: searchVC, popupIfPossible: false, parentNavigationController: navigationController, parentViewController: self)
+    }
+    
     func sync(_ selector: AnyObject) {
         let alertController = UIAlertController(title: nil, message: "Syncing subscriptions...\n\n", preferredStyle: .alert)
 
