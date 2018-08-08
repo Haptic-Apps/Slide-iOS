@@ -48,6 +48,7 @@ class ModalMediaViewController: UIViewController {
     }
     
     func setModel(model: EmbeddableMediaDataModel) {
+        spinnerIndicator.stopAnimating()
         let contentType = ContentType.getContentType(baseUrl: model.baseURL)
         embeddedVC = ModalMediaViewController.getVCForContent(ofType: contentType, withModel: model)
         embeddedVC.commentCallback = self.commentCallback
