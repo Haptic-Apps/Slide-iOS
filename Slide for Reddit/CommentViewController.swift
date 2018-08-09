@@ -86,6 +86,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     var removed: [String] = []
     var offline = false
     var np = false
+    var modLink = ""
     
     var authorColor: UIColor = ColorUtil.fontColor
 
@@ -610,6 +611,31 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
                             var index = 0
                             var loaded = false
+                            
+                            if SettingValues.hideAutomod && self.context.isEmpty() && self.submission!.author != AccountController.currentName {
+                                if let comment = self.content[self.dataArray[0]] as? RComment {
+                                    if comment.author == "AutoModerator" {
+                                        var toRemove = [String]()
+                                        let baseDepth = self.cDepth[comment.getIdentifier()]!
+                                        toRemove.append(comment.getIdentifier())
+                                        self.modLink = comment.permalink
+                                        self.hidden.insert(comment.getIdentifier())
+                                        
+                                        for next in self.dataArray {
+                                            if self.cDepth[next]! > baseDepth {
+                                                toRemove.append(next)
+                                                self.hidden.insert(next)
+                                            } else {
+                                                break
+                                            }
+                                        }
+                                        self.dataArray = self.dataArray.filter({ (comment) -> Bool in
+                                            return !toRemove.contains(comment)
+                                        })
+                                        self.modB.customView?.alpha = 1
+                                    }
+                                }
+                            }
                             if !self.context.isEmpty() {
                                 for comment in self.comments {
                                     if comment.contains(self.context) {
@@ -766,6 +792,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     }
 
     var moreB = UIBarButtonItem()
+    var modB = UIBarButtonItem()
 
     func hideSearchBar() {
         navigationController?.setNavigationBarHidden(false, animated: true)
@@ -1013,7 +1040,13 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             self.navigationController?.navigationController?.popToRootViewController(animated: true)
         }
     }
-
+    
+    func showMod(_ sender: AnyObject) {
+        if !modLink.isEmpty() {
+            VCPresenter.openRedditLink(self.modLink, self.navigationController, self)
+        }
+    }
+    
     func showMenu(_ sender: AnyObject) {
         if !offline {
             let link = submission!
@@ -1377,7 +1410,15 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
             more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             moreB = UIBarButtonItem.init(customView: more)
+            
+            let mod = UIButton.init(type: .custom)
+            mod.setImage(UIImage.init(named: "mod")?.toolbarIcon(), for: UIControlState.normal)
+            mod.addTarget(self, action: #selector(self.showMod(_:)), for: UIControlEvents.touchUpInside)
+            mod.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+            modB = UIBarButtonItem.init(customView: mod)
+            modB.customView?.alpha = 0
 
+            items.append(modB)
             items.append(space)
             items.append(upB)
             items.append(space)

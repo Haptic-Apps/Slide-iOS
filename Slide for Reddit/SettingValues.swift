@@ -90,6 +90,7 @@ class SettingValues {
     public static let pref_widerIndicators = "WIDE_INDICATORS"
     public static let pref_lockCommentBottomBar = "LOCK_COMMENT_BOTTOM"
     public static let pref_blackShadowbox = "BLACK_SHADOWBOX"
+    public static let pref_hideAutomod = "HIDE_AUTOMOD"
 
     public static var commentActionRight = CommentAction.UPVOTE
     public static var commentActionLeft = CommentAction.DOWNVOTE
@@ -122,6 +123,7 @@ class SettingValues {
     public static var hapticFeedback = true
     public static var wideIndicators = false
     public static var blackShadowbox = false
+    public static var hideAutomod = false
 
     public static var enlargeLinks = true
     public static var noImages = false
@@ -303,6 +305,7 @@ class SettingValues {
         SettingValues.autoCache = settings.bool(forKey: SettingValues.pref_autoCache)
         SettingValues.wideIndicators = settings.bool(forKey: SettingValues.pref_widerIndicators)
         SettingValues.leftThumbnail = settings.bool(forKey: SettingValues.pref_leftThumbnail)
+        SettingValues.hideAutomod = settings.bool(forKey: SettingValues.pref_hideAutomod)
         SettingValues.biometrics = settings.bool(forKey: SettingValues.pref_biometrics)
         SettingValues.enlargeLinks = settings.object(forKey: SettingValues.pref_enlargeLinks) == nil ? true : settings.bool(forKey: SettingValues.pref_enlargeLinks)
         SettingValues.commentFullScreen = settings.object(forKey: SettingValues.pref_commentFullScreen) == nil ? true : settings.bool(forKey: SettingValues.pref_commentFullScreen)
