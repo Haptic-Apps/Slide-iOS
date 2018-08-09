@@ -121,7 +121,7 @@ class SettingsGeneral: UITableViewController {
         createCell(viewType, viewTypeSwitch, isOn: SettingValues.viewType, text: "Swiping subreddit tabs mode")
         createCell(hapticFeedback, hapticFeedbackSwitch, isOn: SettingValues.hapticFeedback, text: "Haptic feedback throughout app")
         createCell(hideFAB, hideFABSwitch, isOn: !SettingValues.hiddenFAB, text: "Show subreddit floating action button")
-        createCell(scrubUsername, scrubUsernameSwitch, isOn: SettingValues.nameScrubbing, text: "Scrub your username (you will show as \"you\"")
+        createCell(scrubUsername, scrubUsernameSwitch, isOn: SettingValues.nameScrubbing, text: "Scrub your username (you will show as \"you\")")
         createCell(pinToolbar, pinToolbarSwitch, isOn: SettingValues.pinToolbar, text: "Pin header navigation bar and toolbar in subreddit views")
 
         self.postSorting.textLabel?.text = "Default post sorting"

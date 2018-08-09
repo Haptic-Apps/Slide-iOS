@@ -613,21 +613,16 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                             var loaded = false
                             
                             if SettingValues.hideAutomod && self.context.isEmpty() && self.submission!.author != AccountController.currentName {
-                                if let comment = self.content[self.dataArray[0]] as? RComment {
+                                if let comment = self.content[self.comments[0]] as? RComment {
                                     if comment.author == "AutoModerator" {
                                         var toRemove = [String]()
-                                        let baseDepth = self.cDepth[comment.getIdentifier()]!
                                         toRemove.append(comment.getIdentifier())
                                         self.modLink = comment.permalink
                                         self.hidden.insert(comment.getIdentifier())
                                         
-                                        for next in self.dataArray {
-                                            if self.cDepth[next]! > baseDepth {
-                                                toRemove.append(next)
-                                                self.hidden.insert(next)
-                                            } else {
-                                                break
-                                            }
+                                        for next in self.walkTreeFlat(n: comment.getIdentifier()) {
+                                            toRemove.append(next)
+                                            self.hidden.insert(next)
                                         }
                                         self.dataArray = self.dataArray.filter({ (comment) -> Bool in
                                             return !toRemove.contains(comment)
@@ -1416,7 +1411,9 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             mod.addTarget(self, action: #selector(self.showMod(_:)), for: UIControlEvents.touchUpInside)
             mod.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             modB = UIBarButtonItem.init(customView: mod)
-            modB.customView?.alpha = 0
+            if modLink.isEmpty() {
+                modB.customView?.alpha = 0
+            }
 
             items.append(modB)
             items.append(space)

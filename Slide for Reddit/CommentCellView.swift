@@ -107,7 +107,6 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
     public var navViewController: UIViewController?
     
     func openComment(sender: UITapGestureRecognizer? = nil) {
-        let comment = CommentViewController.init(submission: (self.comment?.linkid.substring(3, length: (self.comment?.linkid.length)! - 3))!, comment: self.comment!.id, context: 3, subreddit: (self.comment?.subreddit)!)
-        VCPresenter.showVC(viewController: comment, popupIfPossible: true, parentNavigationController: parentViewController?.navigationController, parentViewController: parentViewController)
+        VCPresenter.openRedditLink(self.comment!.permalink, parentViewController?.navigationController, parentViewController)
     }
 }
