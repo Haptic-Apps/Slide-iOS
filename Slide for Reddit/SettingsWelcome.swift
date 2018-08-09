@@ -129,6 +129,8 @@ class SettingsWelcome: UIPageViewController, UIPageViewControllerDataSource, UIP
         if let viewControllers = pageViewController.viewControllers {
             if let viewControllerIndex = self.pages.index(of: viewControllers[0]) {
                 self.pageControl.currentPage = viewControllerIndex
+                current = viewControllerIndex
+                self.doToolbar()
             }
         }
     }
