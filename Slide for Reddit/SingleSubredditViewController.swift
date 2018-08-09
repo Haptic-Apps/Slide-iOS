@@ -443,6 +443,8 @@ class SingleSubredditViewController: MediaViewController {
                     self.hideReadPosts()
                 case .GALLERY:
                     self.galleryMode()
+                case .SEARCH:
+                    self.search()
                 }
             }
             

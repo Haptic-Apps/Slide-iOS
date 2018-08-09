@@ -168,6 +168,10 @@ class SubredditFindReturnViewController: MediaTableViewController, UISearchBarDe
         searchBar.autocapitalizationType = .none
         searchBar.spellCheckingType = .no
         searchBar.frame.size.height = 50
+        if ColorUtil.theme != .LIGHT {
+            searchBar.keyboardAppearance = .dark
+        }
+
         tableView.tableHeaderView = searchBar
         
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 50, right: 0)
