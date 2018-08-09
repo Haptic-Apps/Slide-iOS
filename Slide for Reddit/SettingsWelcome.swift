@@ -79,8 +79,8 @@ class SettingsWelcome: UIPageViewController, UIPageViewControllerDataSource, UIP
         UserDefaults.standard.synchronize()
         navigationController?.navigationBar.isHidden = false
 
-        self.navigationController?.popViewController(animated: false)
-        self.navigationController?.pushViewController(MainViewController(), animated: false)
+        self.navigationController?.viewControllers = [MainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)]
+        self.dismiss(animated: true, completion: nil)
     }
     
     var current = 0

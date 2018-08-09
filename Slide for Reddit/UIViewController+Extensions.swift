@@ -8,7 +8,7 @@
 
 import UIKit
 
-extension UIViewController {
+extension UIViewController {    
     func topMostViewController() -> UIViewController {
         // Handling Modal views/Users/carloscrane/Desktop/Slide for Reddit/Slide for Reddit/SettingValues.swift
         if let presentedViewController = self.presentedViewController {
