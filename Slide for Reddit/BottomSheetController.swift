@@ -173,6 +173,7 @@ open class BottomSheetActionController: ActionController<BottomSheetCell, Action
         settings.cancelView.backgroundColor = ColorUtil.backgroundColor
         settings.behavior.hideOnScrollDown = false
         settings.behavior.bounces = true
+        settings.behavior.hideNavigationBarOnShow = false
         settings.behavior.hideOnTap = true
         settings.animation.scale = nil
         settings.behavior.useDynamics = false

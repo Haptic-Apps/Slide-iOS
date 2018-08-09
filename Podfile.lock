@@ -1,9 +1,9 @@
 PODS:
   - ActionSheetPicker-3.0 (2.2.0)
-  - Alamofire (4.7.2)
+  - Alamofire (4.7.3)
   - Anchorage (4.2.4)
   - BadgeSwift (5.0.1)
-  - BiometricAuthentication (2.0)
+  - BiometricAuthentication (2.0.2)
   - DTCoreText (1.6.21):
     - DTCoreText/Core (= 1.6.21)
     - DTFoundation/Core (~> 1.7.5)
@@ -21,18 +21,20 @@ PODS:
     - DTFoundation/Core
   - DTFoundation/UIKit (1.7.13):
     - DTFoundation/Core
-  - Embassy (4.0.5)
+  - Embassy (4.0.6)
   - LicensesViewController (0.6.5)
-  - MaterialComponents/ActivityIndicator (56.0.0):
+  - MaterialComponents/ActivityIndicator (59.2.1):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Application
     - MDFInternationalization
     - MotionAnimator (~> 2.0)
-  - MaterialComponents/AnimationTiming (56.0.0)
-  - MaterialComponents/BottomSheet (56.0.0):
+  - MaterialComponents/AnimationTiming (59.2.1)
+  - MaterialComponents/BottomSheet (59.2.1):
     - MaterialComponents/private/KeyboardWatcher
     - MaterialComponents/private/Math
-  - MaterialComponents/Buttons (56.0.0):
+    - MaterialComponents/private/ShapeLibrary
+    - MaterialComponents/private/Shapes
+  - MaterialComponents/Buttons (59.2.1):
     - MaterialComponents/Ink
     - MaterialComponents/private/Math
     - MaterialComponents/private/Shapes
@@ -41,25 +43,28 @@ PODS:
     - MaterialComponents/Typography
     - MDFInternationalization
     - MDFTextAccessibility
-  - MaterialComponents/Ink (56.0.0):
+  - MaterialComponents/Ink (59.2.1):
     - MaterialComponents/private/Math
-  - MaterialComponents/Palettes (56.0.0)
-  - MaterialComponents/private/Application (56.0.0)
-  - MaterialComponents/private/KeyboardWatcher (56.0.0):
+  - MaterialComponents/Palettes (59.2.1)
+  - MaterialComponents/private/Application (59.2.1)
+  - MaterialComponents/private/KeyboardWatcher (59.2.1):
     - MaterialComponents/private/Application
-  - MaterialComponents/private/Math (56.0.0)
-  - MaterialComponents/private/Shapes (56.0.0):
+  - MaterialComponents/private/Math (59.2.1)
+  - MaterialComponents/private/ShapeLibrary (59.2.1):
+    - MaterialComponents/private/Math
+    - MaterialComponents/private/Shapes
+  - MaterialComponents/private/Shapes (59.2.1):
     - MaterialComponents/private/Math
     - MaterialComponents/ShadowLayer
-  - MaterialComponents/ProgressView (56.0.0):
+  - MaterialComponents/ProgressView (59.2.1):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
     - MDFInternationalization
     - MotionAnimator (~> 2.1)
-  - MaterialComponents/ShadowElevations (56.0.0)
-  - MaterialComponents/ShadowLayer (56.0.0):
+  - MaterialComponents/ShadowElevations (59.2.1)
+  - MaterialComponents/ShadowLayer (59.2.1):
     - MaterialComponents/ShadowElevations
-  - MaterialComponents/Tabs (56.0.0):
+  - MaterialComponents/Tabs (59.2.1):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Ink
     - MaterialComponents/private/Math
@@ -67,26 +72,27 @@ PODS:
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/TextFields (56.0.0):
+  - MaterialComponents/TextFields (59.2.1):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
     - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/Typography (56.0.0):
+  - MaterialComponents/Typography (59.2.1):
     - MaterialComponents/private/Application
-  - MDFInternationalization (1.0.4)
+    - MaterialComponents/private/Math
+  - MDFInternationalization (1.1.0)
   - MDFTextAccessibility (1.2.0)
   - MKColorPicker (1.2)
   - MotionAnimator (2.8.1):
     - MotionInterchange (~> 1.6)
   - MotionInterchange (1.6.0)
   - MTColorDistance (0.0.3)
-  - Realm (3.7.4):
-    - Realm/Headers (= 3.7.4)
-  - Realm/Headers (3.7.4)
-  - RealmSwift (3.7.4):
-    - Realm (= 3.7.4)
+  - Realm (3.7.5):
+    - Realm/Headers (= 3.7.5)
+  - Realm/Headers (3.7.5)
+  - RealmSwift (3.7.5):
+    - Realm (= 3.7.5)
   - reddift (2.0.0):
     - reddift/MiniKeychain (= 2.0.0)
   - reddift/MiniKeychain (2.0.0)
@@ -97,7 +103,7 @@ PODS:
   - SideMenu (4.0.0)
   - SloppySwiper (0.6)
   - Starscream (3.0.5)
-  - SwiftLint (0.26.0)
+  - SwiftLint (0.27.0)
   - SwiftSpreadsheet (1.2.0)
   - SwiftyJSON (4.1.0)
   - Then (2.3.0)
@@ -163,7 +169,7 @@ CHECKOUT OPTIONS:
     :commit: 1e48b2ff36f1218fb69ed88678297b204ebcc144
     :git: https://github.com/Cocoanetics/DTCoreText
   reddift:
-    :commit: f05486d771b8719c9b8ec025f63f3a4c4b8ec924
+    :commit: 626f63cd7b1bb91e9c1997e2ad72cb2ac82558b9
     :git: https://github.com/ccrama/reddift
   RLBAlertsPickers:
     :commit: 583f111c780546a42320c406f1fcf21f9f2caf30
@@ -177,30 +183,30 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   ActionSheetPicker-3.0: d11a4c12c6aaf704b8a3f56d179198c99f3e41e6
-  Alamofire: e4fa87002c137ba2d8d634d2c51fabcda0d5c223
+  Alamofire: c7287b6e5d7da964a70935e5db17046b7fde6568
   Anchorage: f855157310859280c706cc0b9c9281c21702f515
   BadgeSwift: 3defa56f504bfb46f2300122c4a565ec9e405c1e
-  BiometricAuthentication: fce6c7537fba0192a395834657e75ccb4d89d9f0
+  BiometricAuthentication: ce2f923d4df7a4b340e154137e7b47e544abc1ae
   DTCoreText: e5d688cffc9f6a61eddd1a4f94e2046851230de3
   DTFoundation: f03be9fd786f11e505bb8fc44e2a3732bf0917df
-  Embassy: 1b2b74099b752b94edb1c93abe6036099b7c64ca
+  Embassy: 76ea224c371ec69169eac7425c48d332edf8457e
   LicensesViewController: 1f2982b1bab8402d3f88e23197957038e8abb907
-  MaterialComponents: e4edce947dba33f9c4dd14c34024602999afcbed
-  MDFInternationalization: e355b0cebecf53d60233bd267084e49366c82513
+  MaterialComponents: fe646d4ca537226a056b423f2e7b452f9eea6943
+  MDFInternationalization: b5b8626628abf026e630e5ebaeee563037712cbb
   MDFTextAccessibility: 94098925e0853551c5a311ce7c1ecefbe297cdb6
   MKColorPicker: 8998b2ab977e4f240fdf254db27a18b810da3cfc
   MotionAnimator: ee16aa30567c5bae0fb2750c132915829cfaaf8a
   MotionInterchange: ead0e3ae1f3a5fb539e289debbc7ae036160a10d
   MTColorDistance: 5ab8708eb88bc22d4d88e309d09eb912f3a6e27b
-  Realm: a469bb59e33f9926102ccaea4349822c53b9117e
-  RealmSwift: a45861b21c180f5cf0f122144b9759fa8dde3e9e
+  Realm: c286caf4dbf346ce24aad49ca76c7ce622d4a082
+  RealmSwift: 2a9281e37d6de55f66f76254d49d28aeb1b729e4
   reddift: 3066e687c2a934b0f9aca6ee6e2161abc4c93a56
   RLBAlertsPickers: 60b4bd5afcd92065774ed1b21d836bc89cc79d98
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
   SideMenu: 70ee5657df63ec3382660ec4ef470bf1cf5db07d
   SloppySwiper: 37e38f6da8df5c805914c6f32ec6ec8da63abe7c
   Starscream: faf918b2f2eff7d5dd21180646bf015a669673bd
-  SwiftLint: f6b83e8d95ee1e91e11932d843af4fdcbf3fc764
+  SwiftLint: 3207c1faa2240bf8973b191820a116113cd11073
   SwiftSpreadsheet: fa241abcd0c2e0bdfa641494413c3613d67efbca
   SwiftyJSON: c29297daf073d2aa016295d5809cdd68045c39b3
   Then: ee21c97b85ff6062b9b0080c9abb1eea46743345
