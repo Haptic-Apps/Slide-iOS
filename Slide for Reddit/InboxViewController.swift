@@ -254,11 +254,11 @@ extension InboxViewController: MDCTabBarDelegate {
     func tabBar(_ tabBar: MDCTabBar, didSelect item: UITabBarItem) {
         selected = true
         let firstViewController = vCs[tabBar.items.index(of: item)!]
-
+        currentIndex = tabBar.items.index(of: item)!
         setViewControllers([firstViewController],
-                direction: .forward,
-                animated: false,
-                completion: nil)
+                           direction: .forward,
+                           animated: false,
+                           completion: nil)
+        
     }
-
 }

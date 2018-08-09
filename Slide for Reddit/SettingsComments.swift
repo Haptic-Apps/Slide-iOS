@@ -38,6 +38,9 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
 
     var highlightOpCell: UITableViewCell = UITableViewCell()
     var highlightOp = UISwitch()
+    
+    var hideAutomodCell: UITableViewCell = UITableViewCell()
+    var hideAutomod = UISwitch()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -69,6 +72,9 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
         } else if changed == wideIndicator {
             SettingValues.wideIndicators = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_widerIndicators)
+        } else if changed == hideAutomod {
+            SettingValues.hideAutomod = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_hideAutomod)
         } else if changed == collapseDefault {
             SettingValues.collapseDefault = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_collapseDefault)
@@ -184,6 +190,7 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
         createCell(highlightOpCell, highlightOp, isOn: SettingValues.highlightOp, text: "Highlight op replies of parent comments")
         createCell(wideIndicatorCell, wideIndicator, isOn: SettingValues.wideIndicators, text: "Make comment depth indicator wider")
         createCell(lockBottomCell, lockBottom, isOn: SettingValues.lockCommentBars, text: "Don't autohide toolbars in comments")
+        createCell(hideAutomodCell, hideAutomod, isOn: SettingValues.hideAutomod, text: "Move top AutoModerator comment to a button (if it is not your submission)")
 
         updateThemeCell()
         
@@ -221,13 +228,17 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch indexPath.section {
         case 0:
-            return self.fullscreenImageCell
+            switch indexPath.row {
+            case 0: return self.fullscreenImageCell
+            case 1: return self.hideAutomodCell
+            default: fatalError("Unkown row in section 0")
+            }
         case 1:
             switch indexPath.row {
             case 0: return self.authorThemeCell
             case 1: return self.disableColorCell
             case 2: return self.wideIndicatorCell
-            default: fatalError("Unknown row in section 0")
+            default: fatalError("Unknown row in section 1")
             }
         case 2:
             switch indexPath.row {
@@ -236,7 +247,7 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
             case 2: return self.swapLongPressCell
             case 3: return self.highlightOpCell
             case 4: return self.lockBottomCell
-            default: fatalError("Unknown row in section 0")
+            default: fatalError("Unknown row in section 2")
             }
         default: fatalError("Unknown section")
         }
@@ -245,7 +256,7 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return 1
+        case 0: return 2
         case 1: return 3
         case 2: return 5
         default: fatalError("Unknown number of sections")

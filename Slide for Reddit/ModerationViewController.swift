@@ -135,7 +135,6 @@ class ModerationViewController: UIPageViewController, UIPageViewControllerDataSo
             selected = false
         }
         currentIndex = page!
-
     }
 
     var currentIndex = 0

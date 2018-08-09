@@ -178,7 +178,6 @@ class ImageMediaViewController: EmbeddableMediaViewController {
                 strongSelf.setProgressViewVisible(false)
                 strongSelf.downloadButton.isHidden = false
                 strongSelf.size.isHidden = true
-
             }
         }
     }

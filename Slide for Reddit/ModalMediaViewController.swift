@@ -34,14 +34,15 @@ class ModalMediaViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
 
         self.commentCallback = commentCallback
-        if ContentType.isImgurLink(uri: url) {
+        let type = ContentType.getContentType(baseUrl: url)
+        if ContentType.isImgurLink(uri: url) || type == .DEVIANTART || type == .XKCD {
             spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
             spinnerIndicator.center = self.view.center
             spinnerIndicator.color = UIColor.white
             self.view.addSubview(spinnerIndicator)
             spinnerIndicator.startAnimating()
 
-            self.loadTypeAsync(url)
+            self.loadTypeAsync(url, type)
         } else {
             self.setModel(model: EmbeddableMediaDataModel(baseURL: url, lqURL: lq, text: nil, inAlbum: false))
         }
@@ -62,29 +63,116 @@ class ModalMediaViewController: UIViewController {
         }
     }
     
-    func loadTypeAsync(_ baseUrl: URL) {
-        let changedUrl = URL.init(string: baseUrl.absoluteString + ".png")!
-        var request = URLRequest(url: changedUrl)
-        request.httpMethod = "HEAD"
-        let task = URLSession.shared.dataTask(with: request) { (_, response, _) -> Void in
-            if response != nil {
-                if response!.mimeType ?? "" == "image/gif" {
-                    let finalUrl = URL.init(string: baseUrl.absoluteString + ".mp4")!
-                    DispatchQueue.main.async {
-                        self.setModel(model: EmbeddableMediaDataModel(baseURL: finalUrl, lqURL: nil, text: nil, inAlbum: false))
+    func loadTypeAsync(_ baseUrl: URL, _ type: ContentType.CType) {
+        if type == .DEVIANTART {
+            let finalURL = URL(string: "http://backend.deviantart.com/oembed?url=" + baseUrl.absoluteString)!
+            URLSession.shared.dataTask(with: finalURL) { (data, _, error) in
+                var url: String?
+                if error != nil {
+                    print(error ?? "Error loading deviantart...")
+                } else {
+                    do {
+                        guard let json = try JSONSerialization.jsonObject(with: data!, options: []) as? NSDictionary else {
+                            return
+                        }
+                        
+                        if let fullsize = json["fullsize_url"] as? String {
+                            url = fullsize
+                        } else if let normal = json["url"] as? String {
+                            url = normal
+                        }
+                        
+                    } catch let error as NSError {
+                        print(error)
+                    }
+                }
+                
+                DispatchQueue.main.async {
+                    if url != nil {
+                        self.setModel(model: EmbeddableMediaDataModel(baseURL: URL(string: url!), lqURL: nil, text: nil, inAlbum: false))
+                    } else {
+                        BannerUtil.makeBanner(text: "Error connecting to Deviantart/nOpen in browser?", color: GMColor.red500Color(), seconds: 10, context: self, top: false, callback: {
+                            if #available(iOS 10.0, *) {
+                                UIApplication.shared.open(baseUrl, options: [:], completionHandler: nil)
+                            } else {
+                                UIApplication.shared.openURL(baseUrl)
+                            }
+                        })
+                    }
+                }
+                }.resume()
+        } else if type == .XKCD {
+            var urlString = baseUrl.absoluteString
+            
+            if !urlString.endsWith("/") {
+                urlString += "/"
+            }
+            
+            let apiUrl = urlString + "info.0.json"
+
+            let finalURL = URL(string: apiUrl)!
+            URLSession.shared.dataTask(with: finalURL) { (data, _, error) in
+                var url: String?
+                var text: String?
+                if error != nil {
+                    print(error ?? "Error loading xkcd...")
+                } else {
+                    do {
+                        guard let json = try JSONSerialization.jsonObject(with: data!, options: []) as? NSDictionary else {
+                            return
+                        }
+                        
+                        if let fullsize = json["img"] as? String {
+                            url = fullsize
+                        }
+                        if let title = json["safe_title"] as? String, let alt = json["alt"] as? String {
+                            text = title + "\n\n" + alt
+                        }
+                        
+                    } catch let error as NSError {
+                        print(error)
+                    }
+                }
+                
+                DispatchQueue.main.async {
+                    if url != nil {
+                        self.setModel(model: EmbeddableMediaDataModel(baseURL: URL(string: url!), lqURL: nil, text: text, inAlbum: false))
+                    } else {
+                        BannerUtil.makeBanner(text: "Error connecting to XKCD/nOpen in browser?", color: GMColor.red500Color(), seconds: 10, context: self, top: false, callback: {
+                            if #available(iOS 10.0, *) {
+                                UIApplication.shared.open(baseUrl, options: [:], completionHandler: nil)
+                            } else {
+                                UIApplication.shared.openURL(baseUrl)
+                            }
+                        })
+                    }
+                }
+                }.resume()
+
+        } else {
+            let changedUrl = URL.init(string: baseUrl.absoluteString + ".png")!
+            var request = URLRequest(url: changedUrl)
+            request.httpMethod = "HEAD"
+            let task = URLSession.shared.dataTask(with: request) { (_, response, _) -> Void in
+                if response != nil {
+                    if response!.mimeType ?? "" == "image/gif" {
+                        let finalUrl = URL.init(string: baseUrl.absoluteString + ".mp4")!
+                        DispatchQueue.main.async {
+                            self.setModel(model: EmbeddableMediaDataModel(baseURL: finalUrl, lqURL: nil, text: nil, inAlbum: false))
+                        }
+                    } else {
+                        DispatchQueue.main.async {
+                            self.setModel(model: EmbeddableMediaDataModel(baseURL: changedUrl, lqURL: nil, text: nil, inAlbum: false))
+                        }
                     }
                 } else {
                     DispatchQueue.main.async {
-                        self.setModel(model: EmbeddableMediaDataModel(baseURL: changedUrl, lqURL: nil, text: nil, inAlbum: false))
+                        self.setModel(model: EmbeddableMediaDataModel(baseURL: baseUrl, lqURL: nil, text: nil, inAlbum: false))
                     }
                 }
-            } else {
-                DispatchQueue.main.async {
-                    self.setModel(model: EmbeddableMediaDataModel(baseURL: baseUrl, lqURL: nil, text: nil, inAlbum: false))
-                }
             }
+            task.resume()
         }
-        task.resume()
     }
 
     init(model: EmbeddableMediaDataModel) {

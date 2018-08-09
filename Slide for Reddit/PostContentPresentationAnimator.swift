@@ -118,7 +118,7 @@ extension PostContentPresentationAnimator: UIViewControllerAnimatedTransitioning
             embed.navigationBar.alpha = initialAlpha
             UIView.animate(withDuration: animationDuration, animations: {
                 vc.background?.alpha = finalAlpha
-                vc.blurView?.alpha = finalAlpha
+                vc.blurView?.alpha = 1
                 embed.bottomButtons.alpha = 1
                 embed.navigationBar.alpha = 1
             }, completion: { finished in

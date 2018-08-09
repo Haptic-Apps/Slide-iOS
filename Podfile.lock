@@ -23,18 +23,18 @@ PODS:
     - DTFoundation/Core
   - Embassy (4.0.6)
   - LicensesViewController (0.6.5)
-  - MaterialComponents/ActivityIndicator (59.2.1):
+  - MaterialComponents/ActivityIndicator (59.2.2):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Application
     - MDFInternationalization
     - MotionAnimator (~> 2.0)
-  - MaterialComponents/AnimationTiming (59.2.1)
-  - MaterialComponents/BottomSheet (59.2.1):
+  - MaterialComponents/AnimationTiming (59.2.2)
+  - MaterialComponents/BottomSheet (59.2.2):
     - MaterialComponents/private/KeyboardWatcher
     - MaterialComponents/private/Math
     - MaterialComponents/private/ShapeLibrary
     - MaterialComponents/private/Shapes
-  - MaterialComponents/Buttons (59.2.1):
+  - MaterialComponents/Buttons (59.2.2):
     - MaterialComponents/Ink
     - MaterialComponents/private/Math
     - MaterialComponents/private/Shapes
@@ -43,28 +43,28 @@ PODS:
     - MaterialComponents/Typography
     - MDFInternationalization
     - MDFTextAccessibility
-  - MaterialComponents/Ink (59.2.1):
+  - MaterialComponents/Ink (59.2.2):
     - MaterialComponents/private/Math
-  - MaterialComponents/Palettes (59.2.1)
-  - MaterialComponents/private/Application (59.2.1)
-  - MaterialComponents/private/KeyboardWatcher (59.2.1):
+  - MaterialComponents/Palettes (59.2.2)
+  - MaterialComponents/private/Application (59.2.2)
+  - MaterialComponents/private/KeyboardWatcher (59.2.2):
     - MaterialComponents/private/Application
-  - MaterialComponents/private/Math (59.2.1)
-  - MaterialComponents/private/ShapeLibrary (59.2.1):
+  - MaterialComponents/private/Math (59.2.2)
+  - MaterialComponents/private/ShapeLibrary (59.2.2):
     - MaterialComponents/private/Math
     - MaterialComponents/private/Shapes
-  - MaterialComponents/private/Shapes (59.2.1):
+  - MaterialComponents/private/Shapes (59.2.2):
     - MaterialComponents/private/Math
     - MaterialComponents/ShadowLayer
-  - MaterialComponents/ProgressView (59.2.1):
+  - MaterialComponents/ProgressView (59.2.2):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
     - MDFInternationalization
     - MotionAnimator (~> 2.1)
-  - MaterialComponents/ShadowElevations (59.2.1)
-  - MaterialComponents/ShadowLayer (59.2.1):
+  - MaterialComponents/ShadowElevations (59.2.2)
+  - MaterialComponents/ShadowLayer (59.2.2):
     - MaterialComponents/ShadowElevations
-  - MaterialComponents/Tabs (59.2.1):
+  - MaterialComponents/Tabs (59.2.2):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Ink
     - MaterialComponents/private/Math
@@ -72,13 +72,13 @@ PODS:
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/TextFields (59.2.1):
+  - MaterialComponents/TextFields (59.2.2):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
     - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/Typography (59.2.1):
+  - MaterialComponents/Typography (59.2.2):
     - MaterialComponents/private/Application
     - MaterialComponents/private/Math
   - MDFInternationalization (1.1.0)
@@ -88,11 +88,11 @@ PODS:
     - MotionInterchange (~> 1.6)
   - MotionInterchange (1.6.0)
   - MTColorDistance (0.0.3)
-  - Realm (3.7.5):
-    - Realm/Headers (= 3.7.5)
-  - Realm/Headers (3.7.5)
-  - RealmSwift (3.7.5):
-    - Realm (= 3.7.5)
+  - Realm (3.7.6):
+    - Realm/Headers (= 3.7.6)
+  - Realm/Headers (3.7.6)
+  - RealmSwift (3.7.6):
+    - Realm (= 3.7.6)
   - reddift (2.0.0):
     - reddift/MiniKeychain (= 2.0.0)
   - reddift/MiniKeychain (2.0.0)
@@ -169,7 +169,7 @@ CHECKOUT OPTIONS:
     :commit: 1e48b2ff36f1218fb69ed88678297b204ebcc144
     :git: https://github.com/Cocoanetics/DTCoreText
   reddift:
-    :commit: 626f63cd7b1bb91e9c1997e2ad72cb2ac82558b9
+    :commit: d30d1b810f8c9851dbaa74936b4ec1919e38f0fe
     :git: https://github.com/ccrama/reddift
   RLBAlertsPickers:
     :commit: 583f111c780546a42320c406f1fcf21f9f2caf30
@@ -191,15 +191,15 @@ SPEC CHECKSUMS:
   DTFoundation: f03be9fd786f11e505bb8fc44e2a3732bf0917df
   Embassy: 76ea224c371ec69169eac7425c48d332edf8457e
   LicensesViewController: 1f2982b1bab8402d3f88e23197957038e8abb907
-  MaterialComponents: fe646d4ca537226a056b423f2e7b452f9eea6943
+  MaterialComponents: 70a1e7d84d140e7231452e3cc0fb3adae08dbfe5
   MDFInternationalization: b5b8626628abf026e630e5ebaeee563037712cbb
   MDFTextAccessibility: 94098925e0853551c5a311ce7c1ecefbe297cdb6
   MKColorPicker: 8998b2ab977e4f240fdf254db27a18b810da3cfc
   MotionAnimator: ee16aa30567c5bae0fb2750c132915829cfaaf8a
   MotionInterchange: ead0e3ae1f3a5fb539e289debbc7ae036160a10d
   MTColorDistance: 5ab8708eb88bc22d4d88e309d09eb912f3a6e27b
-  Realm: c286caf4dbf346ce24aad49ca76c7ce622d4a082
-  RealmSwift: 2a9281e37d6de55f66f76254d49d28aeb1b729e4
+  Realm: 9eaecad54712d6246d08ba34c10f354e4715d7d3
+  RealmSwift: 1fe08b4ebaeeaacf17f9ba0343f7b25c9fc31fa6
   reddift: 3066e687c2a934b0f9aca6ee6e2161abc4c93a56
   RLBAlertsPickers: 60b4bd5afcd92065774ed1b21d836bc89cc79d98
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c

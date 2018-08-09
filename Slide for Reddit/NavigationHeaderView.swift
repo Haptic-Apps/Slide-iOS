@@ -56,6 +56,9 @@ class NavigationHeaderView: UIView {
         search.autocorrectionType = .no
         search.autocapitalizationType = .none
         search.spellCheckingType = .no
+        if ColorUtil.theme != .LIGHT {
+            search.keyboardAppearance = .dark
+        }
 
         self.addSubviews(title, search)
 
@@ -190,22 +193,21 @@ class NavigationHeaderView: UIView {
     }
 
     func setMail(_ mailcount: Int) {
-        guard mailcount != 0 else {
             mailBadge?.removeFromSuperview()
             mailBadge = nil
-            return
+
+        if mailcount != 0 {
+            mailBadge = BadgeSwift()
+            inbox.addSubview(mailBadge!)
+            
+            mailBadge!.text = "\(mailcount)"
+            mailBadge!.insets = CGSize(width: 3, height: 3)
+            mailBadge!.font = UIFont.systemFont(ofSize: 11)
+            mailBadge!.textColor = UIColor.white
+            mailBadge!.badgeColor = UIColor.red
+            mailBadge!.shadowOpacityBadge = 0
+            positionBadge(mailBadge!)
         }
-
-        mailBadge = BadgeSwift()
-        inbox.addSubview(mailBadge!)
-
-        mailBadge!.text = "\(mailcount)"
-        mailBadge!.insets = CGSize(width: 3, height: 3)
-        mailBadge!.font = UIFont.systemFont(ofSize: 11)
-        mailBadge!.textColor = UIColor.white
-        mailBadge!.badgeColor = UIColor.red
-        mailBadge!.shadowOpacityBadge = 0
-        positionBadge(mailBadge!)
     }
 
     private func positionBadge(_ badge: UIView) {

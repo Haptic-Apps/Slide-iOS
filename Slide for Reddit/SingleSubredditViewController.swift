@@ -443,6 +443,8 @@ class SingleSubredditViewController: MediaViewController {
                     self.hideReadPosts()
                 case .GALLERY:
                     self.galleryMode()
+                case .SEARCH:
+                    self.search()
                 }
             }
             
@@ -552,7 +554,7 @@ class SingleSubredditViewController: MediaViewController {
                     case .failure:
                         print(result.error!.description)
                         DispatchQueue.main.async {
-                            if self.sub == ("all") || self.sub == ("frontpage") || self.sub.hasPrefix("/m/") || self.sub.contains("+") {
+                            if self.sub == ("all") || self.sub == ("frontpage") || self.sub.lowercased() == ("myrandom") || self.sub.lowercased() == ("random") || self.sub.lowercased() == ("randnsfw") || self.sub.hasPrefix("/m/") || self.sub.contains("+") {
                                 self.load(reset: true)
                             } else {
                                 DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
@@ -1584,7 +1586,6 @@ extension SingleSubredditViewController: UICollectionViewDelegate {
             History.addSeen(s: links[indexPath.row])
         }
     }
-
 }
 
 // MARK: - Collection View Data Source

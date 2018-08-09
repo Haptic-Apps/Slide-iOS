@@ -446,7 +446,6 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         }
         currentVc = self.viewControllers!.first!
         currentIndex = page!
-
     }
 
     var currentIndex = 0
@@ -478,7 +477,8 @@ extension ProfileViewController: MDCTabBarDelegate {
     func tabBar(_ tabBar: MDCTabBar, didSelect item: UITabBarItem) {
         selected = true
         let firstViewController = vCs[tabBar.items.index(of: item)!]
-        
+        currentIndex = tabBar.items.index(of: item)!
+        currentVc = firstViewController
         setViewControllers([firstViewController],
                            direction: .forward,
                            animated: false,
