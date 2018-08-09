@@ -56,6 +56,9 @@ class NavigationHeaderView: UIView {
         search.autocorrectionType = .no
         search.autocapitalizationType = .none
         search.spellCheckingType = .no
+        if ColorUtil.theme != .LIGHT {
+            search.keyboardAppearance = .dark
+        }
 
         self.addSubviews(title, search)
 
