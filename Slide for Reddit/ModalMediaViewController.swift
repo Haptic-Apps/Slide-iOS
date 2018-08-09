@@ -105,25 +105,27 @@ class ModalMediaViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panGestureAction(_:)))
-        panGestureRecognizer!.delegate = self
-        panGestureRecognizer!.direction = .vertical
-        panGestureRecognizer!.cancelsTouchesInView = false
-        
-        view.addGestureRecognizer(panGestureRecognizer!)
-        
-        background = UIView()
-        background!.frame = self.view.frame
-        background!.autoresizingMask = [.flexibleHeight, .flexibleWidth]
-        background!.backgroundColor = .black
-        
-        background!.alpha = 0.6
-        
-        self.view.insertSubview(background!, at: 0)
-        blurView = UIVisualEffectView(frame: UIScreen.main.bounds)
-        blurEffect.setValue(3, forKeyPath: "blurRadius")
-        blurView!.effect = blurEffect
-        view.insertSubview(blurView!, at: 0)
+        if !(parent is AlbumViewController) {
+            panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panGestureAction(_:)))
+            panGestureRecognizer!.delegate = self
+            panGestureRecognizer!.direction = .vertical
+            panGestureRecognizer!.cancelsTouchesInView = false
+            
+            view.addGestureRecognizer(panGestureRecognizer!)
+            
+            background = UIView()
+            background!.frame = self.view.frame
+            background!.autoresizingMask = [.flexibleHeight, .flexibleWidth]
+            background!.backgroundColor = .black
+            
+            background!.alpha = 0.6
+            
+            self.view.insertSubview(background!, at: 0)
+            blurView = UIVisualEffectView(frame: UIScreen.main.bounds)
+            blurEffect.setValue(3, forKeyPath: "blurRadius")
+            blurView!.effect = blurEffect
+            view.insertSubview(blurView!, at: 0)
+        }
         
         if embeddedVC != nil {
             configureViews()
