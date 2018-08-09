@@ -22,6 +22,8 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     var menuCell: CommentDepthCell?
     var menuId: String?
     public var inHeadView = UIView()
+    
+    var commentDepthColors = [UIColor]()
 
     func isMenuShown() -> Bool {
         return menuCell != nil
@@ -968,6 +970,8 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             self.updateToolbar()
         }
         
+        self.commentDepthColors = ColorUtil.getCommentDepthColors()
+        
         self.setupTitleView(submission == nil ? subreddit : submission!.subreddit)
 
         self.navigationItem.backBarButtonItem?.title = ""
@@ -1829,9 +1833,9 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
                     t = highlight(t)
                 }
 
-                cell.setComment(comment: content[thing] as! RComment, depth: cDepth[thing]!, parent: self, hiddenCount: count, date: lastSeen, author: submission?.author, text: t, isCollapsed: hiddenP, parentOP: parentOP ?? "")
+                cell.setComment(comment: content[thing] as! RComment, depth: cDepth[thing]!, parent: self, hiddenCount: count, date: lastSeen, author: submission?.author, text: t, isCollapsed: hiddenP, parentOP: parentOP ?? "", depthColors: commentDepthColors)
             } else {
-                cell.setMore(more: (content[thing] as! RMore), depth: cDepth[thing]!)
+                cell.setMore(more: (content[thing] as! RMore), depth: cDepth[thing]!, depthColors: commentDepthColors)
             }
             cell.content = content[thing]
         }

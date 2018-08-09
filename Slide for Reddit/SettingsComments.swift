@@ -6,8 +6,10 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
+import Anchorage
 import MKColorPicker
 import UIKit
+import XLActionController
 
 class SettingsComments: UITableViewController, ColorPickerViewDelegate {
     var disableNavigationBarCell: UITableViewCell = UITableViewCell()
@@ -15,8 +17,7 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
     
     var authorThemeCell: UITableViewCell = UITableViewCell()
 
-    var disableColorCell: UITableViewCell = UITableViewCell()
-    var disableColor = UISwitch()
+    var themeColorCell: UITableViewCell = UITableViewCell()
     
     var lockBottomCell: UITableViewCell = UITableViewCell()
     var lockBottom = UISwitch()
@@ -63,9 +64,6 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
         if changed == disableNavigationBar {
             SettingValues.disableNavigationBar = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_disableNavigationBar)
-        } else if changed == disableColor {
-            SettingValues.disableColor = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_disableColor)
         } else if changed == lockBottom {
             SettingValues.lockCommentBars = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_lockCommentBottomBar)
@@ -119,7 +117,86 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         if indexPath.section == 1 && indexPath.row == 0 {
             showAuthorChooser()
+        } else if indexPath.section == 1 && indexPath.row == 1 {
+            showDepthChooser()
         }
+    }
+    
+    func setDepthColors(_ colors: [UIColor]) {
+        ColorUtil.setCommentDepthColors(colors)
+        self.updateDepthsCell()
+    }
+    
+    func showDepthChooser() {
+        let alertController: BottomSheetActionController = BottomSheetActionController()
+        alertController.headerData = "Comment depths"
+
+        alertController.addAction(Action(ActionData(title: "Default", image: UIImage(named: "circle")!.menuIcon().getCopy(withColor: GMColor.red500Color())), style: .default, handler: { _ in
+            //choose color
+            var colorArray = [UIColor]()
+            colorArray.append(GMColor.red500Color())
+            colorArray.append(GMColor.orange500Color())
+            colorArray.append(GMColor.yellow500Color())
+            colorArray.append(GMColor.green500Color())
+            colorArray.append(GMColor.blue500Color())
+            self.setDepthColors(colorArray)
+        }))
+        
+        alertController.addAction(Action(ActionData(title: "Monochrome", image: UIImage(named: "circle")!.menuIcon().getCopy(withColor: GMColor.grey500Color())), style: .default, handler: { _ in
+            var colorArray = [UIColor]()
+            colorArray.append(GMColor.grey300Color())
+            colorArray.append(GMColor.grey400Color())
+            colorArray.append(GMColor.grey500Color())
+            colorArray.append(GMColor.grey600Color())
+            colorArray.append(GMColor.grey700Color())
+            self.setDepthColors(colorArray)
+        }))
+        
+        alertController.addAction(Action(ActionData(title: "Main color", image: UIImage(named: "circle")!.menuIcon().getCopy(withColor: ColorUtil.baseColor)), style: .default, handler: { _ in
+            let baseColor = ColorUtil.baseColor
+            var colorArray = [UIColor]()
+            colorArray.append(baseColor.add(overlay: UIColor.white.withAlphaComponent(0.3)))
+            colorArray.append(baseColor.add(overlay: UIColor.white.withAlphaComponent(0.15)))
+            colorArray.append(baseColor)
+            colorArray.append(baseColor.add(overlay: UIColor.black.withAlphaComponent(0.15)))
+            colorArray.append(baseColor.add(overlay: UIColor.black.withAlphaComponent(0.3)))
+            self.setDepthColors(colorArray)
+        }))
+        
+        alertController.addAction(Action(ActionData(title: "Accent color", image: UIImage(named: "circle")!.menuIcon().getCopy(withColor: ColorUtil.baseAccent)), style: .default, handler: { _ in
+            let baseColor = ColorUtil.baseAccent
+            var colorArray = [UIColor]()
+            colorArray.append(baseColor.add(overlay: UIColor.white.withAlphaComponent(0.3)))
+            colorArray.append(baseColor.add(overlay: UIColor.white.withAlphaComponent(0.15)))
+            colorArray.append(baseColor)
+            colorArray.append(baseColor.add(overlay: UIColor.black.withAlphaComponent(0.15)))
+            colorArray.append(baseColor.add(overlay: UIColor.black.withAlphaComponent(0.3)))
+            self.setDepthColors(colorArray)
+        }))
+        
+        alertController.addAction(Action(ActionData(title: "Space", image: UIImage(named: "circle")!.menuIcon().getCopy(withColor: UIColor(hex: "BF3436"))), style: .default, handler: { _ in
+            //choose color
+            var colorArray = [UIColor]()
+            colorArray.append(UIColor(hex: "EF6040"))
+            colorArray.append(UIColor(hex: "BF3436"))
+            colorArray.append(UIColor(hex: "6C2032"))
+            colorArray.append(UIColor(hex: "662132"))
+            colorArray.append(UIColor(hex: "20151D"))
+            self.setDepthColors(colorArray)
+        }))
+            
+        alertController.addAction(Action(ActionData(title: "Sea", image: UIImage(named: "circle")!.menuIcon().getCopy(withColor: GMColor.blue500Color())), style: .default, handler: { _ in
+            //choose color
+            var colorArray = [UIColor]()
+            colorArray.append(GMColor.blue300Color())
+            colorArray.append(GMColor.blue400Color())
+            colorArray.append(GMColor.blue500Color())
+            colorArray.append(GMColor.blue600Color())
+            colorArray.append(GMColor.blue700Color())
+            self.setDepthColors(colorArray)
+        }))
+
+        present(alertController, animated: true, completion: nil)
     }
     
     func showAuthorChooser() {
@@ -183,7 +260,6 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
 
         createCell(disableNavigationBarCell, disableNavigationBar, isOn: SettingValues.disableNavigationBar, text: "Disable comment navigation toolbar")
         createCell(fullscreenImageCell, fullscreenImage, isOn: SettingValues.commentFullScreen, text: "Show full height submission image in commment view")
-        createCell(disableColorCell, disableColor, isOn: SettingValues.disableColor, text: "Monochrome comment depth indicators")
         createCell(collapseDefaultCell, collapseDefault, isOn: SettingValues.collapseDefault, text: "Collapse all comments automatically")
         createCell(swapLongPressCell, swapLongPress, isOn: SettingValues.swapLongPress, text: "Swap tap and long press actions")
         createCell(collapseFullyCell, collapseFully, isOn: SettingValues.collapseFully, text: "Collapse comments fully")
@@ -193,6 +269,7 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
         createCell(hideAutomodCell, hideAutomod, isOn: SettingValues.hideAutomod, text: "Move top AutoModerator comment to a button (if it is not your submission)")
 
         updateThemeCell()
+        updateDepthsCell()
         
         self.tableView.tableFooterView = UIView()
     }
@@ -208,6 +285,30 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
         circleView.layer.cornerRadius = 15
         circleView.backgroundColor = ColorUtil.getCommentNameColor("NONE")
         authorThemeCell.accessoryView = circleView
+    }
+    
+    public func updateDepthsCell() {
+        themeColorCell.textLabel?.text = "Depths colors"
+        themeColorCell.textLabel?.textColor = ColorUtil.fontColor
+        themeColorCell.backgroundColor = ColorUtil.foregroundColor
+        themeColorCell.textLabel?.numberOfLines = 0
+        themeColorCell.textLabel?.lineBreakMode = .byWordWrapping
+        themeColorCell.selectionStyle = UITableViewCellSelectionStyle.none
+        let currentColors = ColorUtil.getCommentDepthColors().backwards()
+        let stack = UIStackView(frame: CGRect(x: 0, y: 0, width: 68, height: 30)).then {
+            $0.axis = .horizontal
+            $0.alignment = .center
+            $0.spacing = 2
+        }
+        for i in 0...4 {
+            let circleView = UIView(frame: CGRect(x: 0, y: 0, width: 12, height: 12))
+            circleView.layer.cornerRadius = 6
+            circleView.backgroundColor = currentColors[i]
+            circleView.heightAnchor == 12
+            circleView.widthAnchor == 12
+            stack.addArrangedSubview(circleView)
+        }
+        themeColorCell.accessoryView = stack
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -236,7 +337,7 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
         case 1:
             switch indexPath.row {
             case 0: return self.authorThemeCell
-            case 1: return self.disableColorCell
+            case 1: return self.themeColorCell
             case 2: return self.wideIndicatorCell
             default: fatalError("Unknown row in section 1")
             }

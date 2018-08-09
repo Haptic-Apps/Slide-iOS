@@ -142,6 +142,37 @@ class ColorUtil {
         }
     }
     
+    public static func getCommentDepthColors() -> [UIColor] {
+        var colors = [UIColor]()
+        for i in 0...4 {
+            let color = UserDefaults.standard.colorForKey(key: "commentcolor\(i)")
+            if color == nil {
+                switch i {
+                case 0:
+                    colors.append(GMColor.blue500Color())
+                case 1:
+                    colors.append(GMColor.green500Color())
+                case 2:
+                    colors.append(GMColor.yellow500Color())
+                case 3:
+                    colors.append(GMColor.orange500Color())
+                default:
+                    colors.append(GMColor.red500Color())
+                }
+            } else {
+                colors.append(color!)
+            }
+        }
+        return colors
+    }
+    
+    public static func setCommentDepthColors(_ colors: [UIColor]) {
+        for i in 0...4 {
+            UserDefaults.standard.setColor(color: colors.safeGet(i) ?? GMColor.red500Color(), forKey: "commentcolor\(i)")
+        }
+        UserDefaults.standard.synchronize()
+    }
+    
     public static func getCommentNameColor(_ subreddit: String) -> UIColor {
         if UserDefaults.standard.bool(forKey: "commentaccent") {
             return ColorUtil.accentColorForSub(sub: subreddit)

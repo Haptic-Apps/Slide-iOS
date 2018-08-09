@@ -51,6 +51,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var topViewSpace: UIView!
     var title: TextDisplayStackView!
     
+    var depthColors = [UIColor]()
+    
     //Buttons for comment menu
     var upvoteButton: UIButton!
     var downvoteButton: UIButton!
@@ -920,9 +922,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var menuHeight: [NSLayoutConstraint] = []
     var topMargin: [NSLayoutConstraint] = []
 
-    func setMore(more: RMore, depth: Int) {
+    func setMore(more: RMore, depth: Int, depthColors: [UIColor]) {
         self.depth = depth
         self.comment = nil
+        self.depthColors = depthColors
         loading = false
         childrenCount.alpha = 0
         self.contentView.backgroundColor = ColorUtil.foregroundColor
@@ -930,30 +933,16 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             sideWidth = (SettingValues.wideIndicators ? 8 : 4)
             marginTop = 1
             let i22 = depth - 2
-            if SettingValues.disableColor {
-                if i22 % 5 == 0 {
-                    sideView.backgroundColor = GMColor.grey100Color()
-                } else if i22 % 4 == 0 {
-                    sideView.backgroundColor = GMColor.grey200Color()
-                } else if i22 % 3 == 0 {
-                    sideView.backgroundColor = GMColor.grey300Color()
-                } else if i22 % 2 == 0 {
-                    sideView.backgroundColor = GMColor.grey400Color()
-                } else {
-                    sideView.backgroundColor = GMColor.grey500Color()
-                }
+            if i22 % 5 == 0 {
+                sideView.backgroundColor = depthColors.safeGet(0) ?? GMColor.blue500Color()
+            } else if i22 % 4 == 0 {
+                sideView.backgroundColor = depthColors.safeGet(1) ?? GMColor.green500Color()
+            } else if i22 % 3 == 0 {
+                sideView.backgroundColor = depthColors.safeGet(2) ?? GMColor.yellow500Color()
+            } else if i22 % 2 == 0 {
+                sideView.backgroundColor = depthColors.safeGet(3) ?? GMColor.orange500Color()
             } else {
-                if i22 % 5 == 0 {
-                    sideView.backgroundColor = GMColor.blue500Color()
-                } else if i22 % 4 == 0 {
-                    sideView.backgroundColor = GMColor.green500Color()
-                } else if i22 % 3 == 0 {
-                    sideView.backgroundColor = GMColor.yellow500Color()
-                } else if i22 % 2 == 0 {
-                    sideView.backgroundColor = GMColor.orange500Color()
-                } else {
-                    sideView.backgroundColor = GMColor.red500Color()
-                }
+                sideView.backgroundColor = depthColors.safeGet(4) ?? GMColor.red500Color()
             }
         } else {
             marginTop = 8
@@ -1004,7 +993,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     public var isCollapsed = false
     var dtap: UIShortTapGestureRecognizer?
 
-    func setComment(comment: RComment, depth: Int, parent: CommentViewController, hiddenCount: Int, date: Double, author: String?, text: NSAttributedString, isCollapsed: Bool, parentOP: String) {
+    func setComment(comment: RComment, depth: Int, parent: CommentViewController, hiddenCount: Int, date: Double, author: String?, text: NSAttributedString, isCollapsed: Bool, parentOP: String, depthColors: [UIColor]) {
         self.comment = comment
         self.cellContent = text
         self.contentView.backgroundColor = ColorUtil.foregroundColor
@@ -1014,6 +1003,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
 
         self.isCollapsed = isCollapsed
+        self.depthColors = depthColors
 
         if date != 0 && date < Double(comment.created.timeIntervalSince1970) {
             setIsNew(sub: comment.subreddit)
@@ -1032,30 +1022,16 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             sideWidth = SettingValues.wideIndicators ? 8 : 4 
             marginTop = 1
             let i22 = depth - 2
-            if SettingValues.disableColor {
-                if i22 % 5 == 0 {
-                    sideView.backgroundColor = GMColor.grey100Color()
-                } else if i22 % 4 == 0 {
-                    sideView.backgroundColor = GMColor.grey200Color()
-                } else if i22 % 3 == 0 {
-                    sideView.backgroundColor = GMColor.grey300Color()
-                } else if i22 % 2 == 0 {
-                    sideView.backgroundColor = GMColor.grey400Color()
-                } else {
-                    sideView.backgroundColor = GMColor.grey500Color()
-                }
+            if i22 % 5 == 0 {
+                sideView.backgroundColor = depthColors.safeGet(0) ?? GMColor.blue500Color()
+            } else if i22 % 4 == 0 {
+                sideView.backgroundColor = depthColors.safeGet(1) ?? GMColor.green500Color()
+            } else if i22 % 3 == 0 {
+                sideView.backgroundColor = depthColors.safeGet(2) ?? GMColor.yellow500Color()
+            } else if i22 % 2 == 0 {
+                sideView.backgroundColor = depthColors.safeGet(3) ?? GMColor.orange500Color()
             } else {
-                if i22 % 5 == 0 {
-                    sideView.backgroundColor = GMColor.blue500Color()
-                } else if i22 % 4 == 0 {
-                    sideView.backgroundColor = GMColor.green500Color()
-                } else if i22 % 3 == 0 {
-                    sideView.backgroundColor = GMColor.yellow500Color()
-                } else if i22 % 2 == 0 {
-                    sideView.backgroundColor = GMColor.orange500Color()
-                } else {
-                    sideView.backgroundColor = GMColor.red500Color()
-                }
+                sideView.backgroundColor = depthColors.safeGet(4) ?? GMColor.red500Color()
             }
             if SettingValues.highlightOp && parentOP == comment.author {
                 sideView.backgroundColor = GMColor.purple500Color()
@@ -1411,5 +1387,22 @@ extension UITextView {
         var frame: CGRect = self.frame
         frame.size.height = size.height
         self.frame = frame
+    }
+}
+
+extension Array {
+    public func safeGet(_ index: Int) -> Element? {
+        if index >= self.count {
+            return nil
+        }
+        return self[index]
+    }
+    
+    public func backwards() -> [Element] {
+        var newArray = [Element]()
+        for i in 0...self.count - 1 {
+            newArray.append(self[self.count - i - 1])
+        }
+        return newArray
     }
 }
