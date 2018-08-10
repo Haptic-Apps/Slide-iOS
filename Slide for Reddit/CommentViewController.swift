@@ -614,7 +614,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                             var index = 0
                             var loaded = false
                             
-                            if SettingValues.hideAutomod && self.context.isEmpty() && self.submission!.author != AccountController.currentName {
+                            if SettingValues.hideAutomod && self.context.isEmpty() && self.submission!.author != AccountController.currentName && !self.comments.isEmpty {
                                 if let comment = self.content[self.comments[0]] as? RComment {
                                     if comment.author == "AutoModerator" {
                                         var toRemove = [String]()

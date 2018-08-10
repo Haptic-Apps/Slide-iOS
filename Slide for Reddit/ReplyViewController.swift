@@ -73,6 +73,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     init(completion: @escaping(String?) -> Void) {
         type = .NEW_MESSAGE
         super.init(nibName: nil, bundle: nil)
+        setBarColors(color: ColorUtil.getColorForSub(sub: ""))
         self.messageCallback = { (message, error) in
             DispatchQueue.main.async {
                 if error != nil {
@@ -789,10 +790,14 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             text = [text1, text3]
             toolbar = ToolbarTextView.init(textView: text3, parent: self)
         }
+        var first = false
         for textField in text! {
-            if textField.isEditable {
+            if textField.isEditable && !first{
+                first = true
                 textField.becomeFirstResponder()
-                break
+            }
+            if ColorUtil.theme != .LIGHT {
+                textField.keyboardAppearance = .dark
             }
         }
     }
@@ -989,23 +994,37 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     }
 
     func submitMessage() {
-        let title = text![0]
-        let user = text![1]
-        let body = text![2]
-
-        if title.text.isEmpty() {
-            BannerUtil.makeBanner(text: "Title cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
-            return
-        }
-
-        if user.text.isEmpty() {
-            BannerUtil.makeBanner(text: "Recipient cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
-            return
-        }
-
-        if body.text.isEmpty() {
-            BannerUtil.makeBanner(text: "Body cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
-            return
+        let body: String
+        let user: String
+        let title: String
+        if self.type == .REPLY_MESSAGE {
+            body = text![text!.count - 1].text
+            title = ""
+            user = ""
+            
+            if body.isEmpty() {
+                BannerUtil.makeBanner(text: "Body cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
+                return
+            }
+        } else {
+            title = text![0].text
+            user = text![1].text
+            body = text![2].text
+            
+            if title.isEmpty() {
+                BannerUtil.makeBanner(text: "Title cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
+                return
+            }
+            
+            if user.isEmpty() {
+                BannerUtil.makeBanner(text: "Recipient cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
+                return
+            }
+            
+            if body.isEmpty() {
+                BannerUtil.makeBanner(text: "Body cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
+                return
+            }
         }
 
         alertController = UIAlertController(title: nil, message: "Sending message...\n\n", preferredStyle: .alert)
@@ -1021,7 +1040,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
 
         if type == .NEW_MESSAGE {
             do {
-                try self.session?.composeMessage(user.text, subject: title.text, text: body.text, completion: { (result) in
+                try self.session?.composeMessage(user, subject: title, text: body, completion: { (result) in
                     switch result {
                     case .failure(let error):
                         print(error.description)
@@ -1037,7 +1056,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         } else {
             do {
                 let name = toReplyTo!.getIdentifier()
-                try self.session?.replyMessage(body.text, parentName: name, completion: { (result) -> Void in
+                try self.session?.replyMessage(body, parentName: name, completion: { (result) -> Void in
                     switch result {
                     case .failure(let error):
                         print(error.description)
