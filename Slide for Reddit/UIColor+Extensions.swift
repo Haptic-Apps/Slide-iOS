@@ -61,7 +61,7 @@ public extension UIColor {
      Swaps all UIColor.cgColor getter calls for a function block that returns a random color. This has the
      effect of randomizing all UIColors every time their getter is called.
      */
-    public static func ruinForever() {
+    public static func 💀() {
         _ = self.rzl_swizzleImplementation
     }
 
