@@ -1749,7 +1749,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        print("Will transition! to \(size)")
         super.viewWillTransition(to: size, with: coordinator)
         if let header = self.tableView.tableHeaderView {
             var frame = header.frame
