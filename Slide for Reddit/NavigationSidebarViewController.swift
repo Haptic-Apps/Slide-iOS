@@ -81,6 +81,10 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
         }
         tableView.reloadData()
         getSuggestions()
+        
+        if textSearched == "uuddlrlrba" {
+            UIColor.💀()
+        }
     }
     
     var task: URLSessionDataTask?
