@@ -1749,28 +1749,31 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        print("Will transition! to \(size)")
         super.viewWillTransition(to: size, with: coordinator)
-        var frame = self.tableView.tableHeaderView!.frame
-        var leftInset: CGFloat = 0
-        var rightInset: CGFloat = 0
-        
-        if #available(iOS 11.0, *) {
-            leftInset = self.tableView.safeAreaInsets.left
-            rightInset = self.tableView.safeAreaInsets.right
-            frame.origin.x = leftInset
-        } else {
-            // Fallback on earlier versions
+        if let header = self.tableView.tableHeaderView {
+            var frame = header.frame
+            var leftInset: CGFloat = 0
+            var rightInset: CGFloat = 0
+            
+            if #available(iOS 11.0, *) {
+                leftInset = self.tableView.safeAreaInsets.left
+                rightInset = self.tableView.safeAreaInsets.right
+                frame.origin.x = leftInset
+            } else {
+                // Fallback on earlier versions
+            }
+            
+            self.headerCell!.aspectWidth = size.width - (leftInset + rightInset)
+            
+            frame.size.width = size.width - (leftInset + rightInset)
+            frame.size.height = self.headerCell!.estimateHeight(true, true)
+            
+            self.headerCell!.contentView.frame = frame
+            self.tableView.tableHeaderView!.frame = frame
+            tableView.reloadData(with: .none)
+            doHeadView(size)
         }
-        
-        self.headerCell!.aspectWidth = self.tableView.bounds.size.width - (leftInset + rightInset)
-        
-        frame.size.width = self.tableView.bounds.size.width - (leftInset + rightInset)
-        frame.size.height = self.headerCell!.estimateHeight(true, true)
-        
-        self.headerCell!.contentView.frame = frame
-        self.tableView.tableHeaderView!.frame = frame
-        tableView.reloadData(with: .none)
-        doHeadView(size)
     }
     
     var lastYUsed = CGFloat(0)
