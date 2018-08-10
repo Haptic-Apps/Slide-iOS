@@ -307,6 +307,7 @@ class SettingValues {
         SettingValues.leftThumbnail = settings.bool(forKey: SettingValues.pref_leftThumbnail)
         SettingValues.hideAutomod = settings.bool(forKey: SettingValues.pref_hideAutomod)
         SettingValues.biometrics = settings.bool(forKey: SettingValues.pref_biometrics)
+        SettingValues.safariVC = settings.object(forKey: SettingValues.pref_safariVC) == nil ? true : settings.bool(forKey: SettingValues.pref_safariVC)
         SettingValues.enlargeLinks = settings.object(forKey: SettingValues.pref_enlargeLinks) == nil ? true : settings.bool(forKey: SettingValues.pref_enlargeLinks)
         SettingValues.commentFullScreen = settings.object(forKey: SettingValues.pref_commentFullScreen) == nil ? true : settings.bool(forKey: SettingValues.pref_commentFullScreen)
         SettingValues.showLinkContentType = settings.object(forKey: SettingValues.pref_showLinkContentType) == nil ? true : settings.bool(forKey: SettingValues.pref_showLinkContentType)

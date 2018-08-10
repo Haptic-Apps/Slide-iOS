@@ -26,6 +26,7 @@
 		098B5A4B20EFC6C000FE201B /* UILabel+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098B5A4A20EFC6C000FE201B /* UILabel+Extensions.swift */; };
 		098B5A4D20EFC6E200FE201B /* UIViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098B5A4C20EFC6E200FE201B /* UIViewController+Extensions.swift */; };
 		098FC80F20E52D1A00F819F3 /* CGSize+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098FC80E20E52D1A00F819F3 /* CGSize+Extensions.swift */; };
+		0991D2A5211CDF8100E86B4C /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0991D2A4211CDF8100E86B4C /* UIColor+Extensions.swift */; };
 		09B2AF6220F6BC4100580F15 /* CachingPlayerItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B2AF6120F6BC4100580F15 /* CachingPlayerItem.swift */; };
 		09B2AF6420F7A2ED00580F15 /* VideoSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B2AF6320F7A2ED00580F15 /* VideoSource.swift */; };
 		09B51D032114D23F00BCB745 /* SlideInPresentationAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B51D022114D23F00BCB745 /* SlideInPresentationAnimator.swift */; };
@@ -262,6 +263,7 @@
 		098B5A4A20EFC6C000FE201B /* UILabel+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+Extensions.swift"; sourceTree = "<group>"; };
 		098B5A4C20EFC6E200FE201B /* UIViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extensions.swift"; sourceTree = "<group>"; };
 		098FC80E20E52D1A00F819F3 /* CGSize+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGSize+Extensions.swift"; sourceTree = "<group>"; };
+		0991D2A4211CDF8100E86B4C /* UIColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
 		09B2AF6120F6BC4100580F15 /* CachingPlayerItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachingPlayerItem.swift; sourceTree = "<group>"; };
 		09B2AF6320F7A2ED00580F15 /* VideoSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoSource.swift; sourceTree = "<group>"; };
 		09B51D022114D23F00BCB745 /* SlideInPresentationAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideInPresentationAnimator.swift; sourceTree = "<group>"; };
@@ -516,6 +518,7 @@
 				098B5A4C20EFC6E200FE201B /* UIViewController+Extensions.swift */,
 				BE3B74362107A5F400658DE9 /* AsyncAlertImagePickerViewController.swift */,
 				BE3B74382107AA1200658DE9 /* UIAlertController+Extensions.swift */,
+				0991D2A4211CDF8100E86B4C /* UIColor+Extensions.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -1364,6 +1367,7 @@
 				BE7360A11FB9089B00CA32AD /* TapBehindModalViewController.swift in Sources */,
 				BE3521801E3D3BDD00C30B8D /* LinkParser.swift in Sources */,
 				BE5466271FB93F46007ADD22 /* PlaceholderViewController.swift in Sources */,
+				0991D2A5211CDF8100E86B4C /* UIColor+Extensions.swift in Sources */,
 				BEE5BF621E119A9000E3C9AE /* MainViewController.swift in Sources */,
 				BE6EA6D61E1C1FC700E9E709 /* Formats.swift in Sources */,
 				BE780B691E3527DA00DAA1EB /* Drafts.swift in Sources */,
