@@ -85,10 +85,48 @@ class SubredditFindReturnViewController: MediaTableViewController, UISearchBarDe
         }
     }
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
         let cell = tableView.cellForRow(at: indexPath) as! SubredditCellView
         let sub = cell.subreddit
-        self.navigationController?.popViewController(animated: true)
-        callback(sub)
+
+        if Subscriptions.isCollection(sub) {
+            self.navigationController?.popViewController(animated: true)
+            self.callback(sub)
+            return
+        }
+        
+        let alrController = UIAlertController.init(title: "Subscribe to \(sub)", message: nil, preferredStyle: .actionSheet)
+
+        if AccountController.isLoggedIn {
+            let somethingAction = UIAlertAction(title: "Add to sub list and subscribe", style: UIAlertActionStyle.default, handler: {(_: UIAlertAction!) in
+                Subscriptions.subscribe(sub, true, session: (UIApplication.shared.delegate as! AppDelegate).session!)
+                BannerUtil.makeBanner(text: "Subscribed", seconds: 5, context: self.parent, top: true)
+                self.navigationController?.popViewController(animated: true)
+                self.callback(sub)
+            })
+            alrController.addAction(somethingAction)
+        } else {
+            self.navigationController?.popViewController(animated: true)
+            self.callback(sub)
+            return
+        }
+        
+        let somethingAction = UIAlertAction(title: "Add to sub list", style: UIAlertActionStyle.default, handler: {(_: UIAlertAction!) in
+            Subscriptions.subscribe(sub, false, session: (UIApplication.shared.delegate as! AppDelegate).session!)
+            self.navigationController?.popViewController(animated: true)
+            self.callback(sub)
+        })
+        alrController.addAction(somethingAction)
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: { (_: UIAlertAction!) in print("cancel") })
+        
+        alrController.addAction(cancelAction)
+        alrController.modalPresentationStyle = .popover
+        if let presenter = alrController.popoverPresentationController {
+            presenter.sourceView = cell.contentView
+            presenter.sourceRect = cell.contentView.bounds
+        }
+        self.present(alrController, animated: true, completion: {})
     }
     
     var searchBar: UISearchBar = UISearchBar()

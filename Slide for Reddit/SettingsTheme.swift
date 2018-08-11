@@ -21,12 +21,15 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
     var tintOutside: UITableViewCell = UITableViewCell()
     var tintOutsideSwitch: UISwitch = UISwitch()
     var isAccent = false
+    
+    var titleLabel = UILabel()
 
     var accentChosen: UIColor?
 
     public func colorPickerView(_ colorPickerView: ColorPickerView, didSelectItemAt indexPath: IndexPath) {
         if isAccent {
             accentChosen = colorPickerView.colors[indexPath.row]
+            titleLabel.textColor = self.accentChosen!
         } else {
             self.navigationController?.navigationBar.barTintColor = colorPickerView.colors[indexPath.row]
         }
@@ -121,11 +124,14 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
                 UserDefaults.standard.setColor(color: self.accentChosen!, forKey: "accentcolor")
                 UserDefaults.standard.synchronize()
                 _ = ColorUtil.doInit()
+                self.titleLabel.textColor = self.accentChosen!
+                self.tochange!.tableView.reloadData()
             }
         })
 
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { (_: UIAlertAction!) in
             self.accentChosen = nil
+            self.titleLabel.textColor = ColorUtil.baseAccent
         })
 
         alertController.addAction(somethingAction)
@@ -463,16 +469,16 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
     }
 
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let label: UILabel = UILabel()
-        label.textColor = ColorUtil.baseAccent
-        label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
-        let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
+        titleLabel = UILabel()
+        titleLabel.textColor = ColorUtil.baseAccent
+        titleLabel.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
+        let toReturn = titleLabel.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
         toReturn.backgroundColor = ColorUtil.backgroundColor
 
         switch section {
-        case 0: label.text = "App theme"
-        case 1: label.text = "Tinting"
-        default: label.text = ""
+        case 0: titleLabel.text = "App theme"
+        case 1: titleLabel.text = "Tinting"
+        default: titleLabel.text = ""
         }
         return toReturn
     }

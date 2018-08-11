@@ -22,6 +22,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
 
         self.tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "sub")
         self.tableView.isEditing = true
+        self.tableView.backgroundColor = ColorUtil.backgroundColor
         self.tableView.allowsSelectionDuringEditing = true
         self.tableView.allowsMultipleSelectionDuringEditing = true
         subs = Subscriptions.subreddits

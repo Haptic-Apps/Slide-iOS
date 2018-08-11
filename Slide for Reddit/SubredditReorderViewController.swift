@@ -20,6 +20,7 @@ class SubredditReorderViewController: UITableViewController {
         super.viewDidLoad()
         self.tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "sub")
         self.tableView.isEditing = true
+        self.tableView.backgroundColor = ColorUtil.backgroundColor
         self.tableView.allowsSelectionDuringEditing = true
         self.tableView.allowsMultipleSelectionDuringEditing = true
         subs.append(contentsOf: Subscriptions.subreddits)

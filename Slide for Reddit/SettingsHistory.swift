@@ -104,11 +104,13 @@ class SettingsHistory: UITableViewController {
         clearHistory.backgroundColor = ColorUtil.foregroundColor
         clearHistory.textLabel?.textColor = ColorUtil.fontColor
         clearHistory.selectionStyle = UITableViewCellSelectionStyle.none
+        clearHistory.accessoryType = .disclosureIndicator
 
         clearSubs.textLabel?.text = "Clear subreddit history"
         clearSubs.backgroundColor = ColorUtil.foregroundColor
         clearSubs.textLabel?.textColor = ColorUtil.fontColor
         clearSubs.selectionStyle = UITableViewCellSelectionStyle.none
+        clearSubs.accessoryType = .disclosureIndicator
 
         doDisables()
         self.tableView.tableFooterView = UIView()
@@ -141,7 +143,7 @@ class SettingsHistory: UITableViewController {
         return 2
     }
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 0
+        return 70
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

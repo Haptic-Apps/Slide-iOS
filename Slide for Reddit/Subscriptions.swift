@@ -193,4 +193,8 @@ class Subscriptions {
         getSubscriptionsUntilCompletion(session: session, p: paginator, tR: toReturn, mR: toReturnMultis, multis: false, completion: completion)
     }
     
+    public static func isCollection(_ baseSub: String) -> Bool {
+        return baseSub == "all" || baseSub == "frontpage" || baseSub.contains("/m/") || baseSub.contains("+") || baseSub == "popular" || baseSub == "random" || baseSub == "myrandom" || baseSub == "randnsfw"
+    }
+    
 }

@@ -62,7 +62,7 @@ extension RSubmission {
         }
 
         let sub = submission.subreddit
-        if submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && (sub == "all" || sub == "frontpage" || sub.contains("/m/") || sub.contains("+") || sub == "popular")) {
+        if submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && Subscriptions.isCollection(sub)) {
             big = false
             thumb = true
         }

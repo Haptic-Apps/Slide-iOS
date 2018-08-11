@@ -1269,7 +1269,7 @@ class SingleSubredditViewController: MediaViewController {
             thumb = true
         }
 
-        if (thumb || big) && submission.nsfw && (!SettingValues.nsfwPreviews || (SettingValues.hideNSFWCollection && (sub == "all" || sub == "frontpage" || sub.contains("/m/") || sub.contains("+") || sub == "popular"))) {
+        if (thumb || big) && submission.nsfw && (!SettingValues.nsfwPreviews || (SettingValues.hideNSFWCollection && Subscriptions.isCollection(sub))) {
             big = false
             thumb = true
         }
@@ -1739,7 +1739,7 @@ extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
                 thumb = false
             }
 
-            if (thumb || big) && submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && (sub == "all" || sub == "frontpage" || sub.contains("/m/") || sub.contains("+") || sub == "popular")) {
+            if (thumb || big) && submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && Subscriptions.isCollection(sub)) {
                 big = false
                 thumb = true
             }
