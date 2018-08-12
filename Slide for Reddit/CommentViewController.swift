@@ -1301,7 +1301,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         }
         var contents = content[dataArray[topCell]]
 
-        while contents is RComment ?  !matches(comment: contents as! RComment, sort: currentSort) : true && dataArray.count > topCell {
+        while (contents is RComment ?  !matches(comment: contents as! RComment, sort: currentSort) : true ) && dataArray.count > topCell && topCell - 1 >= 0 {
             topCell -= 1
             contents = content[dataArray[topCell]]
         }

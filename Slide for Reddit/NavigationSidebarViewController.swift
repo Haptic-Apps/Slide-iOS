@@ -13,7 +13,7 @@ import SDWebImage
 import SideMenu
 import UIKit
 
-class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, UIGestureRecognizerDelegate {
+class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, UIGestureRecognizerDelegate, UIScrollViewDelegate {
     weak var tableView: UITableView!
     var filteredContent: [String] = []
     var suggestions = [String]()
@@ -41,7 +41,10 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
 
         tableView.layer.cornerRadius = 15
         tableView.clipsToBounds = true
-
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        self.tableView.endEditing(true)
     }
 
     func setColors(_ sub: String) {

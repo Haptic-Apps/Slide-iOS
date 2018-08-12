@@ -75,13 +75,6 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
         })), parentVC: self)
     }
 
-    private func prepareOverlayVC(overlayVC: UIViewController) {
-        overlayVC.transitioningDelegate = overlayTransitioningDelegate
-        overlayVC.modalPresentationStyle = .custom
-    }
-
-    let overlayTransitioningDelegate = OverlayTransitioningDelegate()
-
     func read(_ sender: AnyObject) {
         do {
             try session?.markAllMessagesAsRead(completion: { (result) in

@@ -322,12 +322,4 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
             }
         }
     }
-
-    let overlayTransitioningDelegate = OverlayTransitioningDelegate()
-
-    private func prepareOverlayVC(overlayVC: UIViewController) {
-        overlayVC.transitioningDelegate = overlayTransitioningDelegate
-        overlayVC.modalPresentationStyle = .custom
-    }
-
 }
