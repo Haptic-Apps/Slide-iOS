@@ -163,7 +163,9 @@ class NavigationHeaderView: UIView {
 
     func setIsMod(_ hasMail: Bool) {
         isModerator = true
-        updateLayout()
+        DispatchQueue.main.async {
+            self.updateLayout()
+        }
     }
 
     func doColors(_ sub: String) {
