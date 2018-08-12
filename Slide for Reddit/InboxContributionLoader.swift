@@ -38,7 +38,7 @@ class InboxContributionLoader: ContributionLoader {
                 if reload {
                     paginator = Paginator()
                 }
-                try delegate?.session?.getMessage(messages, completion: { (result) in
+                try delegate?.session?.getMessage(paginator, messages, completion: { (result) in
                     switch result {
                     case .failure(let error):
                         print(error)

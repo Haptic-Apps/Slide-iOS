@@ -38,7 +38,7 @@ class ModMailContributionLoader: ContributionLoader {
                 if reload {
                     paginator = Paginator()
                 }
-                try delegate?.session?.getModMail(unread, completion: { (result) in
+                try delegate?.session?.getModMail(paginator, unread, completion: { (result) in
                     switch result {
                     case .failure(let error):
                         print(error)
@@ -60,7 +60,7 @@ class ModMailContributionLoader: ContributionLoader {
                         }
                         
                         self.paginator = listing.paginator
-                        self.canGetMore = !self.paginator.hasMore()
+                        self.canGetMore = self.paginator.hasMore()
                         DispatchQueue.main.async {
                             self.delegate?.doneLoading()
                         }
