@@ -169,7 +169,7 @@ CHECKOUT OPTIONS:
     :commit: 1e48b2ff36f1218fb69ed88678297b204ebcc144
     :git: https://github.com/Cocoanetics/DTCoreText
   reddift:
-    :commit: 24cc6c8b145c92144089e69c67d0ce5c60c47ec3
+    :commit: 2a2a44d85be28445ab2970f5a421cf7ed3d73f01
     :git: https://github.com/ccrama/reddift
   RLBAlertsPickers:
     :commit: 583f111c780546a42320c406f1fcf21f9f2caf30

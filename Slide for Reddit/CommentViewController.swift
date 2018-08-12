@@ -2054,7 +2054,6 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
                                     case .failure(let error):
                                         print(error)
                                     case .success(let list):
-
                                         DispatchQueue.main.async(execute: { () -> Void in
                                             let startDepth = self.cDepth[more.getIdentifier()] ?? 0
 

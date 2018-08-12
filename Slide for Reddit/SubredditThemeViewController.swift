@@ -15,6 +15,8 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
     var subs: [String] = []
     var accentChosen: UIColor?
     var colorChosen: UIColor?
+    var chosenButtons = [UIBarButtonItem]()
+    var regularButtons = [UIBarButtonItem]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,11 +54,27 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
         delete.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let deleteB = UIBarButtonItem.init(customView: delete)
 
-        self.navigationItem.rightBarButtonItems = [addB, deleteB, syncB]
+        let all = UIButton.init(type: .custom)
+        all.setImage(UIImage.init(named: "selectall")!.navIcon(), for: UIControlState.normal)
+        all.addTarget(self, action: #selector(self.all(_:)), for: UIControlEvents.touchUpInside)
+        all.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
+        let allB = UIBarButtonItem.init(customView: all)
 
+        regularButtons = [allB, syncB]
+        chosenButtons = [deleteB, addB]
+        
+        self.navigationItem.rightBarButtonItems = regularButtons
+        
         self.tableView.tableFooterView = UIView()
     }
 
+    public func all(_ selector: AnyObject) {
+        for row in 0..<subs.count {
+            tableView.selectRow(at: IndexPath(row: row, section: 0), animated: false, scrollPosition: .none)
+        }
+        self.navigationController?.navigationItem.setRightBarButtonItems(chosenButtons, animated: true)
+    }
+    
     public func add(_ selector: AnyObject) {
         var selected: [String] = []
         if tableView.indexPathsForSelectedRows != nil {
@@ -230,35 +248,20 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
     }
 
     var savedView = UIView()
-
-    func tableView(_ tableView: UITableView, didSelectRowAtDeprecated indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        let item = subs[indexPath.row]
-        let actionSheetController: UIAlertController = UIAlertController(title: item, message: "", preferredStyle: .actionSheet)
-
-        var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
-            print("Cancel")
+    var selected = false
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if !selected {
+            self.navigationController?.navigationItem.setRightBarButtonItems(chosenButtons, animated: true)
+            selected = true
         }
-        actionSheetController.addAction(cancelActionButton)
-
-        cancelActionButton = UIAlertAction(title: "Edit", style: .default) { _ -> Void in
-            // self.edit(item)
+    }
+    
+    override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        if tableView.indexPathsForSelectedRows == nil || tableView.indexPathsForSelectedRows!.isEmpty {
+            selected = false
+            self.navigationController?.navigationItem.setRightBarButtonItems(regularButtons, animated: true)
         }
-        actionSheetController.addAction(cancelActionButton)
-
-        cancelActionButton = UIAlertAction(title: "Delete", style: .default) { _ -> Void in
-            self.doDelete(item)
-        }
-        actionSheetController.addAction(cancelActionButton)
-        actionSheetController.modalPresentationStyle = .popover
-        let view = tableView.cellForRow(at: indexPath)!.contentView
-        savedView = view
-        if let presenter = actionSheetController.popoverPresentationController {
-            presenter.sourceView = view
-            presenter.sourceRect = view.bounds
-        }
-
-        self.present(actionSheetController, animated: true, completion: nil)
     }
 
     var editSubs: [String] = []

@@ -144,11 +144,11 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
         
         alertController.addAction(Action(ActionData(title: "Monochrome", image: UIImage(named: "circle")!.menuIcon().getCopy(withColor: GMColor.grey500Color())), style: .default, handler: { _ in
             var colorArray = [UIColor]()
-            colorArray.append(GMColor.grey300Color())
-            colorArray.append(GMColor.grey400Color())
-            colorArray.append(GMColor.grey500Color())
-            colorArray.append(GMColor.grey600Color())
             colorArray.append(GMColor.grey700Color())
+            colorArray.append(GMColor.grey600Color())
+            colorArray.append(GMColor.grey500Color())
+            colorArray.append(GMColor.grey400Color())
+            colorArray.append(GMColor.grey300Color())
             self.setDepthColors(colorArray)
         }))
         
@@ -185,14 +185,36 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
             self.setDepthColors(colorArray)
         }))
             
-        alertController.addAction(Action(ActionData(title: "Sea", image: UIImage(named: "circle")!.menuIcon().getCopy(withColor: GMColor.blue500Color())), style: .default, handler: { _ in
+        alertController.addAction(Action(ActionData(title: "Candy", image: UIImage(named: "circle")!.menuIcon().getCopy(withColor: GMColor.blue500Color())), style: .default, handler: { _ in
             //choose color
             var colorArray = [UIColor]()
-            colorArray.append(GMColor.blue300Color())
-            colorArray.append(GMColor.blue400Color())
-            colorArray.append(GMColor.blue500Color())
-            colorArray.append(GMColor.blue600Color())
-            colorArray.append(GMColor.blue700Color())
+            colorArray.append(UIColor(hex: "E83F6F"))
+            colorArray.append(UIColor(hex: "FF7B00"))
+            colorArray.append(UIColor(hex: "FFBF00"))
+            colorArray.append(UIColor(hex: "32936F"))
+            colorArray.append(UIColor(hex: "2274A5"))
+            self.setDepthColors(colorArray)
+        }))
+
+        alertController.addAction(Action(ActionData(title: "Spice", image: UIImage(named: "circle")!.menuIcon().getCopy(withColor: GMColor.blue500Color())), style: .default, handler: { _ in
+            //choose color
+            var colorArray = [UIColor]()
+            colorArray.append(UIColor(hex: "4F000B"))
+            colorArray.append(UIColor(hex: "720026"))
+            colorArray.append(UIColor(hex: "CE4257"))
+            colorArray.append(UIColor(hex: "CE4257"))
+            colorArray.append(UIColor(hex: "FF9B54"))
+            self.setDepthColors(colorArray)
+        }))
+
+        alertController.addAction(Action(ActionData(title: "Bright", image: UIImage(named: "circle")!.menuIcon().getCopy(withColor: GMColor.blue500Color())), style: .default, handler: { _ in
+            //choose color
+            var colorArray = [UIColor]()
+            colorArray.append(UIColor(hex: "FFBE0B"))
+            colorArray.append(UIColor(hex: "FB5607"))
+            colorArray.append(UIColor(hex: "FF006E"))
+            colorArray.append(UIColor(hex: "8338EC"))
+            colorArray.append(UIColor(hex: "3A86FF"))
             self.setDepthColors(colorArray)
         }))
 
@@ -223,7 +245,7 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
             ColorUtil.setCommentNameColor(color: nil, accent: true)
             self.updateThemeCell()
         }))
-
+        
         let cancelAction = UIAlertAction(title: "Save", style: .cancel, handler: { (_: UIAlertAction!) in
         })
         

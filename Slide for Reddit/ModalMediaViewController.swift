@@ -403,7 +403,9 @@ extension ModalMediaViewController: UIGestureRecognizerDelegate {
                 UIView.animate(withDuration: 0.2, animations: {
                     viewToMove.center = self.originalPosition!
                     self.view.alpha = 1
-                    
+                    if self.embeddedVC is VideoMediaViewController {
+                        self.background?.alpha = 1
+                    }
                 })
             }
         }

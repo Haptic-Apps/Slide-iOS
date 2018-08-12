@@ -193,7 +193,6 @@ class ColorUtil {
         }
         
         UserDefaults.standard.set(accent, forKey: "commentaccent")
-
         UserDefaults.standard.synchronize()
     }
 

@@ -12,7 +12,7 @@ import SDWebImage
 import UIKit
 import XLActionController
 
-class ContentListingViewController: MediaViewController, UICollectionViewDelegate, WrappingFlowLayoutDelegate, UICollectionViewDataSource, SubmissionMoreDelegate {
+class ContentListingViewController: MediaViewController, UICollectionViewDelegate, WrappingFlowLayoutDelegate, UICollectionViewDataSource, SubmissionMoreDelegate, UIScrollViewDelegate {
     
     func showFilterMenu(_ cell: LinkCellView) {
         //Not implemented
@@ -226,11 +226,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             c.layer.rasterizationScale = UIScreen.main.scale
             cell = c
         }
-
-        if indexPath.row == baseData.content.count - 2 && !loading && baseData.canGetMore {
-            self.loadMore()
-        }
-
+        
         return cell!
     }
 
@@ -539,6 +535,14 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         loading = true
         baseData.getData(reload: false)
     }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView.contentSize.height - (scrollView.contentOffset.y + scrollView.frame.size.height) < 300 {
+            if loaded && !loading && baseData.canGetMore {
+                self.loadMore()
+            }
+        }
+    }
 
     var loading: Bool = false
 
@@ -548,8 +552,8 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             self.refreshControl.endRefreshing()
             self.flowLayout.reset()
             self.tableView.reloadData()
-            self.loading = false
         }
+        self.loading = false
     }
 }
 
