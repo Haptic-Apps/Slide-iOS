@@ -20,7 +20,7 @@ class NavigationHeaderView: UIView {
     var profileString: String?
     var parentController: UIViewController?
     var subreddit = ""
-    var mod = false
+    var isModerator = false
     var mailBadge: BadgeSwift?
 
     private var layoutConstraints: [NSLayoutConstraint] = []
@@ -30,6 +30,7 @@ class NavigationHeaderView: UIView {
     var inbox = UIButton()
     var settings = UIButton()
     var more = UIButton()
+    var mod = UIButton()
     var search: UISearchBar = UISearchBar()
 
     required init?(coder aDecoder: NSCoder) {
@@ -79,13 +80,20 @@ class NavigationHeaderView: UIView {
             $0.isUserInteractionEnabled = true
         }
         
+        self.mod = UIButton.init(type: .custom).then {
+            $0.imageView?.contentMode = UIViewContentMode.scaleAspectFit
+            $0.setImage(UIImage.init(named: "mod")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControlState.normal)
+            $0.isUserInteractionEnabled = true
+            $0.isHidden = true
+        }
+
         self.settings = UIButton.init(type: .custom).then {
             $0.imageView?.contentMode = UIViewContentMode.scaleAspectFit
             $0.setImage(UIImage.init(named: "settings")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControlState.normal)
             $0.isUserInteractionEnabled = true
         }
 
-        title.addSubviews(account, inbox, settings)
+        title.addSubviews(account, inbox, mod, settings)
 
     }
 
@@ -101,9 +109,13 @@ class NavigationHeaderView: UIView {
         let iTap = UITapGestureRecognizer(target: self, action: #selector(self.inbox(_:)))
         inbox.addGestureRecognizer(iTap)
 
+        let mTap = UITapGestureRecognizer(target: self, action: #selector(self.mod(_:)))
+        mod.addGestureRecognizer(mTap)
+
         let sTap = UITapGestureRecognizer(target: self, action: #selector(self.settings(_:)))
         settings.addGestureRecognizer(sTap)
 
+        mod.addTarget(self, action: #selector(self.mod(_:)), for: UIControlEvents.touchUpInside)
         account.addTarget(self, action: #selector(self.switchAccounts(_:)), for: UIControlEvents.touchUpInside)
         more.addTarget(self, action: #selector(self.showMore(_:)), for: UIControlEvents.touchUpInside)
         inbox.addTarget(self, action: #selector(self.mod(_:)), for: UIControlEvents.touchUpInside)
@@ -134,6 +146,12 @@ class NavigationHeaderView: UIView {
             inbox.rightAnchor == settings.leftAnchor - 24
             inbox.centerYAnchor == title.centerYAnchor
 
+            if isModerator {
+                mod.isHidden = false
+                mod.rightAnchor == inbox.leftAnchor - 24
+                mod.centerYAnchor == title.centerYAnchor
+            }
+            
             // TODO: Determine if we still need this
             if #available(iOS 11.0, *) {
                 account.heightAnchor == 90
@@ -144,7 +162,8 @@ class NavigationHeaderView: UIView {
     }
 
     func setIsMod(_ hasMail: Bool) {
-        mod = true
+        isModerator = true
+        updateLayout()
     }
 
     func doColors(_ sub: String) {
@@ -265,7 +284,7 @@ extension NavigationHeaderView {
         let alertController: BottomSheetActionController = BottomSheetActionController()
         alertController.headerData = "Navigate"
 
-        if mod {
+        if isModerator {
             alertController.addAction(Action(ActionData(title: "Moderation", image: UIImage(named: "mod")!.menuIcon()), style: .default, handler: { _ in
                 self.mod(self.inbox)
             }))
