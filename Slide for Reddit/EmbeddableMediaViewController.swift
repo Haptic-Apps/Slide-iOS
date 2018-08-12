@@ -27,6 +27,7 @@ class EmbeddableMediaViewController: UIViewController {
     var navigationBar = UINavigationBar()
 
     var commentCallback: (() -> Void)?
+    var failureCallback: ((_ url: URL) -> Void)? 
 
     init(model: EmbeddableMediaDataModel, type: ContentType.CType) {
         super.init(nibName: nil, bundle: nil)

@@ -22,6 +22,7 @@ class MediaViewController: UIViewController, MediaVCDelegate {
 
     var link: RSubmission!
     var commentCallback: (() -> Void)?
+    var failureCallback: ((_ url: URL) -> Void)?
 
     public func setLink(lnk: RSubmission, shownURL: URL?, lq: Bool, saveHistory: Bool, heroView: UIView?, heroVC: UIViewController?) { //lq is should load lq and did load lq
         if saveHistory {
@@ -34,6 +35,25 @@ class MediaViewController: UIViewController, MediaVCDelegate {
         commentCallback = { () in
             let comment = CommentViewController.init(submission: self.link, single: true)
                 VCPresenter.showVC(viewController: comment, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+        }
+
+        failureCallback = { (url: URL) in
+            let vc: UIViewController
+            if SettingValues.safariVC {
+                let safariVC = SFHideSafariViewController(url: url)
+                if #available(iOS 10.0, *) {
+                    safariVC.preferredBarTintColor = ColorUtil.backgroundColor
+                    safariVC.preferredControlTintColor = ColorUtil.fontColor
+                    vc = safariVC
+                } else {
+                    let web = WebsiteViewController(url: url, subreddit: "")
+                    vc = web
+                }
+            } else {
+                let web = WebsiteViewController(url: url, subreddit: "")
+                vc = web
+            }
+            VCPresenter.showVC(viewController: vc, popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
         }
 
         let type = ContentType.getContentType(submission: lnk)
@@ -89,7 +109,7 @@ class MediaViewController: UIViewController, MediaVCDelegate {
                 }
                 return WebsiteViewController(url: baseUrl, subreddit: link == nil ? "" : link.subreddit)
             }
-            return ModalMediaViewController.init(url: contentUrl!, lq: lq, commentCallback)
+            return ModalMediaViewController.init(url: contentUrl!, lq: lq, commentCallback, failureCallback)
         } else if type == ContentType.CType.LINK || type == ContentType.CType.NONE {
             if SettingValues.safariVC {
                 let safariVC = SFHideSafariViewController(url: baseUrl)

@@ -409,9 +409,13 @@ class VideoMediaViewController: EmbeddableMediaViewController {
             showSpinner()
         }
 
-        videoType.getSourceObject().load(url: url) { [weak self] (urlString) in
+        videoType.getSourceObject().load(url: url, completion: { [weak self] (urlString) in
             self?.getVideo(urlString)
-        }
+            }, failure: {
+                self.parent?.dismiss(animated: true, completion: {
+                    self.failureCallback?(URL.init(string: url)!)
+                })
+        })
     }
     
     func showSpinner() {
@@ -450,6 +454,9 @@ class VideoMediaViewController: EmbeddableMediaViewController {
                     switch response.result {
                     case .failure(let error):
                         print(error)
+                        self.parent?.dismiss(animated: true, completion: {
+                            self.failureCallback?(URL.init(string: toLoad)!)
+                        })
                     case .success:
                         if self.videoType == .REDDIT {
                             self.downloadRedditAudio()

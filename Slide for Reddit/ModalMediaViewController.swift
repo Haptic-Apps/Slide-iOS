@@ -29,11 +29,13 @@ class ModalMediaViewController: UIViewController {
 
     private var savedColor: UIColor?
     var commentCallback: (() -> Void)?
+    var failureCallback: ((_ url: URL) -> Void)?
 
-    init(url: URL, lq: URL?, _ commentCallback: (() -> Void)?) {
+    init(url: URL, lq: URL?, _ commentCallback: (() -> Void)?, _ failureCallback: ((_ url: URL) -> Void)? = nil) {
         super.init(nibName: nil, bundle: nil)
 
         self.commentCallback = commentCallback
+        self.failureCallback = failureCallback
         let type = ContentType.getContentType(baseUrl: url)
         if ContentType.isImgurLink(uri: url) || type == .DEVIANTART || type == .XKCD {
             spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
@@ -53,6 +55,7 @@ class ModalMediaViewController: UIViewController {
         let contentType = ContentType.getContentType(baseUrl: model.baseURL)
         embeddedVC = ModalMediaViewController.getVCForContent(ofType: contentType, withModel: model)
         embeddedVC.commentCallback = self.commentCallback
+        embeddedVC.failureCallback = self.failureCallback
         if embeddedVC == nil {
             fatalError("embeddedVC should be populated!")
         }
