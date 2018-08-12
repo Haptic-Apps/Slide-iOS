@@ -13,9 +13,10 @@ import RealmSwift
 import reddift
 import SwiftyJSON
 import Then
+import TTTAttributedLabel
 import UIKit
 
-class ReplyViewController: MediaViewController, UITextViewDelegate {
+class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttributedLabelDelegate {
 
     public enum ReplyType {
         case NEW_MESSAGE
@@ -41,6 +42,10 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         func isMessage() -> Bool {
             return self == ReplyType.NEW_MESSAGE || self == ReplyType.REPLY_MESSAGE
         }
+    }
+    
+    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
+        self.doShow(url: url, heroView: nil, heroVC: nil)
     }
 
     var type = ReplyType.NEW_MESSAGE
@@ -433,29 +438,26 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         if type.isMessage() {
             if type == .REPLY_MESSAGE {
                 //two
-                let text1 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
-                    $0.isEditable = true
+                let text1 = TTTAttributedLabel.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.textColor = ColorUtil.fontColor
                     $0.backgroundColor = ColorUtil.foregroundColor
-                    $0.layer.masksToBounds = false
+                    $0.clipsToBounds = true
                     $0.layer.cornerRadius = 10
                     $0.delegate = self
+                    $0.numberOfLines = 0
                     $0.font = UIFont.systemFont(ofSize: 16)
-                    $0.isScrollEnabled = false
-                    $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 0, right: 8)
-                    $0.isEditable = false
+                    $0.textInsets = UIEdgeInsets.init(top: 24, left: 8, bottom: 24, right: 8)
                 })
                 
                 let html = (toReplyTo as! RMessage).htmlBody
-                do {
-                    let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
-                    let font = FontGenerator.fontOfSize(size: 16, submission: false)
-                    let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: ColorUtil.baseAccent)
-                    let content = LinkParser.parse(attr2, ColorUtil.accentColorForSub(sub: ""))
-                    text1.attributedText = content
-                } catch {
-                    
-                }
+                let content = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent)
+                
+                let activeLinkAttributes = NSMutableDictionary(dictionary: text1.activeLinkAttributes)
+                activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.baseAccent
+                text1.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+                text1.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+
+                text1.setText(content)
 
                 let text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.isEditable = true
@@ -475,13 +477,12 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 text3.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
                 
                 text3.heightAnchor >= CGFloat(70)
-                text1.sizeToFitHeight()
 
                 scrollView.addSubview(stack)
                 stack.widthAnchor == scrollView.widthAnchor
                 stack.verticalAnchors == scrollView.verticalAnchors
                 
-                text = [text1, text3]
+                text = [text3]
                 toolbar = ToolbarTextView.init(textView: text3, parent: self)
             } else {
                 //three
@@ -649,29 +650,27 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         } else if type.isComment() {
             if (toReplyTo as! RSubmission).type == .SELF {
                 //two
-                let text1 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
+                let text1 = TTTAttributedLabel.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.textColor = ColorUtil.fontColor
                     $0.backgroundColor = ColorUtil.foregroundColor
-                    $0.layer.masksToBounds = false
+                    $0.clipsToBounds = true
                     $0.layer.cornerRadius = 10
-                    $0.font = UIFont.systemFont(ofSize: 16)
-                    $0.isScrollEnabled = false
+                    $0.numberOfLines = 0
                     $0.delegate = self
-                    $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 0, right: 8)
-                    $0.isEditable = false
+                    $0.font = UIFont.systemFont(ofSize: 16)
+                    $0.textInsets = UIEdgeInsets.init(top: 24, left: 8, bottom: 24, right: 8)
                 })
                 
                 let html = (toReplyTo as! RSubmission).htmlBody
-                do {
-                    let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
-                    let font = FontGenerator.fontOfSize(size: 16, submission: false)
-                    let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: ColorUtil.baseAccent)
-                    let content = LinkParser.parse(attr2, ColorUtil.accentColorForSub(sub: ""))
-                    text1.attributedText = content
-                } catch {
-                    
-                }
+                let content = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent)
                 
+                let activeLinkAttributes = NSMutableDictionary(dictionary: text1.activeLinkAttributes)
+                activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.baseAccent
+                text1.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+                text1.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+
+                text1.setText(content)
+
                 let text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.isEditable = true
                     $0.placeholder = "Body"
@@ -704,7 +703,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 stack.widthAnchor == scrollView.widthAnchor
                 stack.verticalAnchors == scrollView.verticalAnchors
                 
-                text = [text1, text3]
+                text = [text3]
                 toolbar = ToolbarTextView.init(textView: text3, parent: self)
             } else {
                 //one
@@ -842,7 +841,11 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     func close(_ sender: AnyObject) {
         let alert = UIAlertController.init(title: "Discard this \(type.isMessage() ? "message" : (type.isComment()) ? "comment" : "submission")?", message: "", preferredStyle: .alert)
         alert.addAction(UIAlertAction.init(title: "Yes", style: .destructive, handler: { (_) in
-            self.navigationController?.dismiss(animated: true, completion: nil)
+            if self.navigationController?.viewControllers.count ?? 1 == 1 {
+                self.navigationController?.dismiss(animated: true, completion: nil)
+            } else {
+                self.navigationController?.popViewController(animated: true)
+            }
         }))
         alert.addAction(UIAlertAction.init(title: "No", style: .cancel))
         present(alert, animated: true)

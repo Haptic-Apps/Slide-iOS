@@ -242,7 +242,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: submission!.subreddit)
         }
         
-        let landscape = size.width > size.height
+        let landscape = size.width > size.height || (self.navigationController is TapBehindModalViewController && self.navigationController!.modalPresentationStyle == .pageSheet)
         if navigationController?.viewControllers.first != self && !landscape {
             self.navigationController?.view.addSubview(inHeadView)
         }

@@ -138,10 +138,10 @@ public class TextDisplayStackView: UIStackView {
                 startIndex = 1
             }
             
-                let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.activeLinkAttributes)
-                activeLinkAttributes[NSForegroundColorAttributeName] = tColor
-                firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
-                firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+            let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.activeLinkAttributes)
+            activeLinkAttributes[NSForegroundColorAttributeName] = tColor
+            firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+            firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
             
             firstTextView.setText(newTitle)
             
