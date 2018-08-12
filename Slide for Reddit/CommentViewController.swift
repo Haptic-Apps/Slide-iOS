@@ -2014,10 +2014,16 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
                             self.tableView.beginUpdates()
                             cell.expandSingle()
                             self.tableView.endUpdates()
+                            if hiddenPersons.contains((id)) {
+                                hiddenPersons.remove(at: hiddenPersons.index(of: id)!)
+                            }
                         } else {
                             self.tableView.beginUpdates()
                             cell.collapse(childNumber: 0)
                             self.tableView.endUpdates()
+                            if !hiddenPersons.contains(id) {
+                                hiddenPersons.insert(id)
+                            }
                         }
                     } else {
                         if hiddenPersons.contains((id)) && childNumber > 0 {
