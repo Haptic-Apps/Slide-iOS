@@ -19,6 +19,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
 
     var link: RSubmission!
     var commentCallback: (() -> Void)?
+    var failureCallback: ((_ url: URL) -> Void)?
 
     public func setLink(lnk: RSubmission, shownURL: URL?, lq: Bool, saveHistory: Bool, heroView: UIView?, heroVC: UIViewController?) { //lq is should load lq and did load lq
         if saveHistory {
@@ -27,14 +28,32 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
         self.link = lnk
         let url = link.url!
         
-        print("Setting comment callback")
         commentCallback = { () in
             let comment = CommentViewController.init(submission: self.link, single: true)
-                VCPresenter.showVC(viewController: comment, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+            VCPresenter.showVC(viewController: comment, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
         }
-
+        
+        failureCallback = { (url: URL) in
+            let vc: UIViewController
+            if SettingValues.safariVC {
+                let safariVC = SFHideSafariViewController(url: url)
+                if #available(iOS 10.0, *) {
+                    safariVC.preferredBarTintColor = ColorUtil.backgroundColor
+                    safariVC.preferredControlTintColor = ColorUtil.fontColor
+                    vc = safariVC
+                } else {
+                    let web = WebsiteViewController(url: url, subreddit: "")
+                    vc = web
+                }
+            } else {
+                let web = WebsiteViewController(url: url, subreddit: "")
+                vc = web
+            }
+            VCPresenter.showVC(viewController: vc, popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
+        }
+        
         let type = ContentType.getContentType(submission: lnk)
-
+        
         if type == .EXTERNAL {
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(lnk.url!, options: [:], completionHandler: nil)
@@ -43,15 +62,15 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
             }
         } else {
             if ContentType.isGif(uri: url) {
-                if !link!.videoPreview.isEmpty() {
+                if !link!.videoPreview.isEmpty() && !ContentType.isGfycat(uri: url) {
                     doShow(url: URL.init(string: link!.videoPreview)!, heroView: heroView, heroVC: heroVC)
                 } else {
                     doShow(url: url, heroView: heroView, heroVC: heroVC)
                 }
             } else {
-                if lq && shownURL != nil {
+                if lq && shownURL != nil && !ContentType.isImgurLink(uri: url) {
                     doShow(url: url, lq: shownURL, heroView: heroView, heroVC: heroVC)
-                } else if shownURL != nil && ContentType.imageType(t: type) {
+                } else if shownURL != nil && ContentType.imageType(t: type) && !ContentType.isImgurLink(uri: url) {
                     doShow(url: shownURL!, heroView: heroView, heroVC: heroVC)
                 } else {
                     doShow(url: url, heroView: heroView, heroVC: heroVC)
@@ -59,16 +78,16 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
             }
         }
     }
-
+    
     func getControllerForUrl(baseUrl: URL, lq: URL? = nil) -> UIViewController? {
         print(baseUrl)
         contentUrl = baseUrl
         if shouldTruncate(url: contentUrl!) {
             let content = contentUrl?.absoluteString
-            contentUrl = URL.init(string: (content?.substring(to: (content?.index(of: "."))!))!)
+            contentUrl = URL.init(string: (content?.substring(to: content!.index(of: ".")!))!)
         }
         let type = ContentType.getContentType(baseUrl: contentUrl)
-
+        
         if type == ContentType.CType.ALBUM && SettingValues.internalAlbumView {
             print("Showing album")
             return AlbumViewController.init(urlB: contentUrl!)
@@ -86,7 +105,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
                 }
                 return WebsiteViewController(url: baseUrl, subreddit: link == nil ? "" : link.subreddit)
             }
-            return ModalMediaViewController.init(url: contentUrl!, lq: lq, commentCallback)
+            return ModalMediaViewController.init(url: contentUrl!, lq: lq, commentCallback, failureCallback)
         } else if type == ContentType.CType.LINK || type == ContentType.CType.NONE {
             if SettingValues.safariVC {
                 let safariVC = SFHideSafariViewController(url: baseUrl)
@@ -135,6 +154,24 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
     }
 
     func doShow(url: URL, lq: URL? = nil, heroView: UIView?, heroVC: UIViewController?) {
+        failureCallback = { (url: URL) in
+            let vc: UIViewController
+            if SettingValues.safariVC {
+                let safariVC = SFHideSafariViewController(url: url)
+                if #available(iOS 10.0, *) {
+                    safariVC.preferredBarTintColor = ColorUtil.backgroundColor
+                    safariVC.preferredControlTintColor = ColorUtil.fontColor
+                    vc = safariVC
+                } else {
+                    let web = WebsiteViewController(url: url, subreddit: "")
+                    vc = web
+                }
+            } else {
+                let web = WebsiteViewController(url: url, subreddit: "")
+                vc = web
+            }
+            VCPresenter.showVC(viewController: vc, popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
+        }
         if ContentType.isExternal(url) {
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)

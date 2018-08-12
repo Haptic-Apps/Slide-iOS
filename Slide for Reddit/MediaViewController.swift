@@ -158,6 +158,24 @@ class MediaViewController: UIViewController, MediaVCDelegate {
     }
 
     func doShow(url: URL, lq: URL? = nil, heroView: UIView?, heroVC: UIViewController?) {
+        failureCallback = { (url: URL) in
+            let vc: UIViewController
+            if SettingValues.safariVC {
+                let safariVC = SFHideSafariViewController(url: url)
+                if #available(iOS 10.0, *) {
+                    safariVC.preferredBarTintColor = ColorUtil.backgroundColor
+                    safariVC.preferredControlTintColor = ColorUtil.fontColor
+                    vc = safariVC
+                } else {
+                    let web = WebsiteViewController(url: url, subreddit: "")
+                    vc = web
+                }
+            } else {
+                let web = WebsiteViewController(url: url, subreddit: "")
+                vc = web
+            }
+            VCPresenter.showVC(viewController: vc, popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
+        }
         if ContentType.isExternal(url) {
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
