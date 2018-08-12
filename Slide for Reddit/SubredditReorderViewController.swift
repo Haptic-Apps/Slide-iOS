@@ -233,7 +233,7 @@ class SubredditReorderViewController: UITableViewController {
             }
             if pinned2.isEmpty {
                 //Are all pinned, need to unpin
-                self.pinned = self.subs.filter({ (input) -> Bool in
+                self.pinned = self.pinned.filter({ (input) -> Bool in
                     return !pinned3.contains(input)
                 })
                 tableView.reloadData()
@@ -242,9 +242,9 @@ class SubredditReorderViewController: UITableViewController {
                 //Need to pin remaining and move to top
                 pinned.append(contentsOf: pinned2)
                 self.subs = self.subs.filter({ (input) -> Bool in
-                    return !pinned2.contains(input)
+                    return !pinned.contains(input)
                 })
-                self.subs.insert(contentsOf: pinned2, at: 0)
+                self.subs.insert(contentsOf: pinned, at: 0)
                 tableView.reloadData()
                 let indexPath = IndexPath.init(row: 0, section: 0)
                 self.tableView.scrollToRow(at: indexPath,

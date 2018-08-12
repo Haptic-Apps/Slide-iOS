@@ -168,6 +168,7 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        header.search.becomeFirstResponder()
     }
     
     override func didReceiveMemoryWarning() {
