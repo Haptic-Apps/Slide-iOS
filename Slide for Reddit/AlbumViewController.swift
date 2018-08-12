@@ -15,7 +15,8 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
     var vCs: [UIViewController] = []
     var baseURL: URL?
     var bottomScroll = UIScrollView()
-    
+    var failureCallback: ((_ url: URL) -> Void)?
+
     public init(urlB: URL) {
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
 
@@ -73,7 +74,9 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         URLSession.shared.dataTask(with: url) { (data, _, error) in
             if error != nil || data == nil {
                 print(error ?? "Error loading album...")
-                //todo error
+                self.dismiss(animated: true, completion: {
+                    self.failureCallback?(self.baseURL!)
+                })
             } else {
                 do {
                     try data!.write(to: URL.init(fileURLWithPath: self.getKeyFromURL(url)))

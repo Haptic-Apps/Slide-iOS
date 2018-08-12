@@ -73,6 +73,9 @@ class ModalMediaViewController: UIViewController {
                 var url: String?
                 if error != nil {
                     print(error ?? "Error loading deviantart...")
+                    self.dismiss(animated: true, completion: {
+                        self.failureCallback?(baseUrl)
+                    })
                 } else {
                     do {
                         guard let json = try JSONSerialization.jsonObject(with: data!, options: []) as? NSDictionary else {
@@ -87,22 +90,17 @@ class ModalMediaViewController: UIViewController {
                         
                     } catch let error as NSError {
                         print(error)
+                        self.dismiss(animated: true, completion: {
+                            self.failureCallback?(baseUrl)
+                        })
+                    }
+                    DispatchQueue.main.async {
+                        if url != nil {
+                            self.setModel(model: EmbeddableMediaDataModel(baseURL: URL(string: url!), lqURL: nil, text: nil, inAlbum: false))
+                        }
                     }
                 }
                 
-                DispatchQueue.main.async {
-                    if url != nil {
-                        self.setModel(model: EmbeddableMediaDataModel(baseURL: URL(string: url!), lqURL: nil, text: nil, inAlbum: false))
-                    } else {
-                        BannerUtil.makeBanner(text: "Error connecting to Deviantart/nOpen in browser?", color: GMColor.red500Color(), seconds: 10, context: self, top: false, callback: {
-                            if #available(iOS 10.0, *) {
-                                UIApplication.shared.open(baseUrl, options: [:], completionHandler: nil)
-                            } else {
-                                UIApplication.shared.openURL(baseUrl)
-                            }
-                        })
-                    }
-                }
                 }.resume()
         } else if type == .XKCD {
             var urlString = baseUrl.absoluteString
@@ -119,6 +117,9 @@ class ModalMediaViewController: UIViewController {
                 var text: String?
                 if error != nil {
                     print(error ?? "Error loading xkcd...")
+                    self.dismiss(animated: true, completion: {
+                        self.failureCallback?(baseUrl)
+                    })
                 } else {
                     do {
                         guard let json = try JSONSerialization.jsonObject(with: data!, options: []) as? NSDictionary else {
@@ -134,22 +135,17 @@ class ModalMediaViewController: UIViewController {
                         
                     } catch let error as NSError {
                         print(error)
+                        self.dismiss(animated: true, completion: {
+                            self.failureCallback?(baseUrl)
+                        })
+                    }
+                    DispatchQueue.main.async {
+                        if url != nil {
+                            self.setModel(model: EmbeddableMediaDataModel(baseURL: URL(string: url!), lqURL: nil, text: text, inAlbum: false))
+                        }
                     }
                 }
                 
-                DispatchQueue.main.async {
-                    if url != nil {
-                        self.setModel(model: EmbeddableMediaDataModel(baseURL: URL(string: url!), lqURL: nil, text: text, inAlbum: false))
-                    } else {
-                        BannerUtil.makeBanner(text: "Error connecting to XKCD/nOpen in browser?", color: GMColor.red500Color(), seconds: 10, context: self, top: false, callback: {
-                            if #available(iOS 10.0, *) {
-                                UIApplication.shared.open(baseUrl, options: [:], completionHandler: nil)
-                            } else {
-                                UIApplication.shared.openURL(baseUrl)
-                            }
-                        })
-                    }
-                }
                 }.resume()
 
         } else {

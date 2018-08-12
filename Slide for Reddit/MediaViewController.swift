@@ -198,6 +198,7 @@ class MediaViewController: UIViewController, MediaVCDelegate {
 
             } else if ContentType.isSpoiler(uri: url) {
                 let controller = UIAlertController.init(title: "Spoiler", message: url.absoluteString, preferredStyle: .alert)
+                controller.addAction(UIAlertAction(title: "Close", style: .cancel, handler: nil))
                 present(controller, animated: true, completion: nil)
             } else {
                 let controller = getControllerForUrl(baseUrl: url, lq: lq)!
@@ -216,6 +217,7 @@ class MediaViewController: UIViewController, MediaVCDelegate {
                     present(modalController, animated: true, completion: nil)
                 } else if controller is AlbumViewController {
                     controller.modalPresentationStyle = .overFullScreen
+                    (controller as! AlbumViewController).failureCallback = self.failureCallback
                     present(controller, animated: true, completion: nil)
                 } else if controller is ModalMediaViewController {
                     controller.modalPresentationStyle = .overFullScreen
