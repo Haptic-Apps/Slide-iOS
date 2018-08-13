@@ -1993,7 +1993,11 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
                     for c in self.dataArray {
                         let comment = content[c]
                         if comment is RComment && (comment as! RComment).getIdentifier().contains(self.context) {
-                            self.goToCell(i: index)
+                            self.menuId = comment!.getIdentifier()
+                            self.tableView.reloadData()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                self.goToCell(i: index)
+                            }
                             break
                         } else {
                             index += 1
@@ -2067,8 +2071,9 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
 
                                             var queue: [Object] = []
                                             for i in self.extendForMore(parentId: more.parentId, comments: list, current: startDepth) {
-                                                queue.append(i.0 is Comment ? RealmDataWrapper.commentToRComment(comment: i.0 as! Comment, depth: i.1) : RealmDataWrapper.moreToRMore(more: i.0 as! More))
-                                                self.cDepth[i.0.getId()] = i.1
+                                                let item = i.0 is Comment ? RealmDataWrapper.commentToRComment(comment: i.0 as! Comment, depth: i.1) : RealmDataWrapper.moreToRMore(more: i.0 as! More)
+                                                queue.append(item)
+                                                self.cDepth[item.getIdentifier()] = i.1
                                                 self.updateStrings([i])
                                             }
 
@@ -2086,6 +2091,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
                                             var ids: [String] = []
                                             for item in queue {
                                                 let id = item.getIdentifier()
+                                                print("ID is \(id)")
                                                 ids.append(id)
                                                 self.content[id] = item
                                             }
