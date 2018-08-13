@@ -124,7 +124,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
     func hardReset() {
         navigationController?.popViewController(animated: false)
-        navigationController?.pushViewController(MainViewController.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil), animated: false)
+        navigationController?.setViewControllers([MainViewController.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)], animated: false)
     }
     
     func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
