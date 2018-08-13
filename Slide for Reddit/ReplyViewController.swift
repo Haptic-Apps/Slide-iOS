@@ -50,6 +50,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
 
     var type = ReplyType.NEW_MESSAGE
     var text: [UITextView]?
+    var extras: [UIView]?
     var toolbar: ToolbarTextView?
     var toReplyTo: Object?
     var replyingView: UIView?
@@ -271,6 +272,10 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
     func textViewDidChange(_ textView: UITextView) {
         textView.sizeToFitHeight()
         var height = CGFloat(8)
+        for view in extras! {
+            height += CGFloat(8)
+            height += view.frame.size.height
+        }
         for textView in text! {
             height += CGFloat(8)
             height += textView.frame.size.height
@@ -423,6 +428,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
     func layoutForType() {
         self.scrollView = UIScrollView.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height))
         self.view.addSubview(scrollView)
+        extras = [UIView]()
         self.scrollView.backgroundColor = ColorUtil.backgroundColor
         self.scrollView.isUserInteractionEnabled = true
         self.scrollView.contentInset = UIEdgeInsets.init(top: 8, left: 0, bottom: 0, right: 0)
@@ -448,7 +454,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
                     $0.font = UIFont.systemFont(ofSize: 16)
                     $0.textInsets = UIEdgeInsets.init(top: 24, left: 8, bottom: 24, right: 8)
                 })
-                
+                extras?.append(text1)
                 let html = (toReplyTo as! RMessage).htmlBody
                 let content = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent)
                 
@@ -660,7 +666,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
                     $0.font = UIFont.systemFont(ofSize: 16)
                     $0.textInsets = UIEdgeInsets.init(top: 24, left: 8, bottom: 24, right: 8)
                 })
-                
+                extras?.append(text1)
                 let html = (toReplyTo as! RSubmission).htmlBody
                 let content = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent)
                 
@@ -791,7 +797,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
         }
         var first = false
         for textField in text! {
-            if textField.isEditable && !first{
+            if textField.isEditable && !first {
                 first = true
                 textField.becomeFirstResponder()
             }

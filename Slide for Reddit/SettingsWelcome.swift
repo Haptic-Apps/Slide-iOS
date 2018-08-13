@@ -173,8 +173,6 @@ class SettingsWelcome: UIPageViewController, UIPageViewControllerDataSource, UIP
         
         return self.pages[nextIndex]
     }
-    
-
 }
 
 class SettingsWelcomeTheme: UIViewController {

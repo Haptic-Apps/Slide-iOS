@@ -77,7 +77,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var comment: RComment?
     var depth: Int = 0
     
-    weak var delegate: TTTAttributedCellDelegate?
     var content: Object?
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
@@ -183,7 +182,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         if !self.cancelled {
             if SettingValues.swapLongPress {
                 //todo this is probably wrong
-                if comment != nil && self.delegate!.isMenuShown() && self.delegate!.getMenuShown() != comment!.getIdentifier() {
+                if comment != nil && self.parent != nil && self.parent!.isMenuShown() && self.parent!.getMenuShown() != comment!.getIdentifier() {
                     self.showMenu(nil)
                 } else {
                     self.pushedSingleTap(nil)
@@ -217,7 +216,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
 
     func handleShortPress(_ sender: UIGestureRecognizer) {
-        if SettingValues.swapLongPress || (self.delegate!.isMenuShown() && delegate!.getMenuShown() == (content as! RComment).getId()) {
+        if parent == nil || content == nil {
+            return
+        }
+        if SettingValues.swapLongPress || (self.parent!.isMenuShown() && self.parent!.getMenuShown() == (content as! RComment).getId()) {
             self.showMenu(sender)
         } else {
             self.pushedSingleTap(sender)
@@ -235,7 +237,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var long = UILongPressGestureRecognizer.init(target: self, action: nil)
 
     func showMenu(_ sender: AnyObject?) {
-        if let del = self.delegate {
+        if let del = self.parent {
             if del.isMenuShown() && del.getMenuShown() == (content as! RComment).getId() {
                 hideMenuAnimated()
             } else {
@@ -252,6 +254,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
     
     func showMenuAnimated() {
+        if parent == nil {
+            return
+        }
         if parent!.menuCell != nil {
             parent!.menuCell!.hideCommentMenu()
             parent!.reloadHeights()
@@ -305,6 +310,11 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         } else {
             menu.addArrangedSubviews(editButton, deleteButton, upvoteButton, downvoteButton, replyButton, moreButton, modButton)
         }
+        
+        if comment == nil {
+            return
+        }
+        
         if !AccountController.isLoggedIn || comment!.archived || parent!.np {
             upvoteButton.isHidden = true
             downvoteButton.isHidden = true
@@ -1266,12 +1276,12 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
 
     func longPressed(_ sender: AnyObject?) {
-        if self.delegate != nil {
+        if self.parent != nil {
         }
     }
 
     func pushedSingleTap(_ sender: AnyObject?) {
-        if let delegate = self.delegate {
+        if let delegate = self.parent {
             delegate.pushedSingleTap(self)
         }
     }

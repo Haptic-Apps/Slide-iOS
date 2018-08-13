@@ -1823,7 +1823,6 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
 
         cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as UITableViewCell
         if let cell = cell as? CommentDepthCell {
-            cell.delegate = self
             if content[thing] is RComment {
                 var count = 0
                 let hiddenP = hiddenPersons.contains(thing)

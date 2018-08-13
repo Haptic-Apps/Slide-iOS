@@ -6,6 +6,7 @@
 //  Copyright © 2016 Haptic Apps. All rights reserved.
 //
 
+import Anchorage
 import MaterialComponents.MaterialBottomSheet
 import RealmSwift
 import reddift
@@ -14,6 +15,7 @@ import StoreKit
 import UIKit
 
 class MainViewController: ColorMuxPagingViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UINavigationControllerDelegate {
+    
     var isReload = false
     public static var vCs: [UIViewController] = []
     public static var current: String = ""
@@ -427,6 +429,9 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         tabBar.frame.size.height = 48
         
         self.view.addSubview(tabBar)
+        tabBar.heightAnchor == 48
+        tabBar.horizontalAnchors == self.view.horizontalAnchors
+        tabBar.topAnchor == self.view.safeTopAnchor
     }
     
     func didChooseSub(_ gesture: UITapGestureRecognizer) {
@@ -543,17 +548,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        let isPhone = UIScreen.main.traitCollection.userInterfaceIdiom != .pad
-        let landscape = size.width > size.height
-        if SettingValues.viewType {
-            if landscape && isPhone {
-                tabBar.frame = CGRect.init(x: 0, y: 0, width: size.width, height: 84)
-                tabBar.sizeToFit()
-            } else if isPhone {
-                tabBar.frame = CGRect.init(x: 0, y: UIApplication.shared.statusBarView?.frame.size.height ?? 20, width: size.height, height: 84)
-                tabBar.sizeToFit()
-            }
-        }
         drawerButton.frame = CGRect(x: 8, y: size.height - 48, width: 40, height: 40)
     }
     
@@ -700,6 +694,11 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         drawerButton.addTapGestureRecognizer {
             self.showDrawer(self.drawerButton)
         }
+        
+        let swipe = UISwipeGestureRecognizer(target: self, action: #selector(showDrawer(_:)))
+        swipe.direction = .up
+        
+        drawerButton.addGestureRecognizer(swipe)
         drawerButton.isHidden = true
     }
     
@@ -743,7 +742,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                 menu.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControlEvents.touchUpInside)
                 menu.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
                 menuB = UIBarButtonItem.init(customView: menu)
-
+                
                 navigationItem.leftBarButtonItem = menuB
                 navigationItem.rightBarButtonItems = [moreB, sortB]
             } else {
