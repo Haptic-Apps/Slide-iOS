@@ -17,7 +17,6 @@ target 'Slide for Reddit' do
   pod 'MaterialComponents/BottomSheet'
   pod 'MaterialComponents/ProgressView'
   pod 'MKColorPicker'
-  pod 'PullUpController'
   pod 'BadgeSwift', '~> 5.0'
   pod 'LicensesViewController', '~> 0.6.5'
   pod 'BiometricAuthentication'

@@ -2043,7 +2043,10 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
                         }
                     }
                 } else {
-                    let datasetPosition = tableView.indexPath(for: cell)!.row
+                    let datasetPosition = tableView.indexPath(for: cell)?.row ?? -1
+                    if datasetPosition == -1 {
+                        return
+                    }
                     if let more = content[dataArray[datasetPosition]] as? RMore, let link = self.submission {
                         if more.children.isEmpty {
                             VCPresenter.openRedditLink("https://www.reddit.com" + submission!.permalink + more.parentId.substring(3, length: more.parentId.length - 3), self.navigationController, self)

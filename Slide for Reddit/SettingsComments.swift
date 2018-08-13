@@ -348,6 +348,10 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
     func tableView(tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        PagingCommentViewController.savedComment = nil
+    }
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch indexPath.section {
         case 0:

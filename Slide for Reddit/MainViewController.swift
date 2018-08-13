@@ -37,6 +37,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         }
         
         if SubredditReorderViewController.changed || ColorUtil.shouldBeNight() {
+            PagingCommentViewController.savedComment = nil
             var subChanged = false
             if finalSubs.count != Subscriptions.subreddits.count {
                 subChanged = true

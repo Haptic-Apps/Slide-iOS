@@ -182,11 +182,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         if !self.cancelled {
             if SettingValues.swapLongPress {
                 //todo this is probably wrong
-                if comment != nil && self.parent != nil && self.parent!.isMenuShown() && self.parent!.getMenuShown() != comment!.getIdentifier() {
-                    self.showMenu(nil)
-                } else {
-                    self.pushedSingleTap(nil)
-                }
+                self.pushedSingleTap(nil)
             } else {
                 if comment != nil {
                     self.showMenu(nil)
@@ -219,7 +215,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         if parent == nil || content == nil {
             return
         }
-        if SettingValues.swapLongPress || (self.parent!.isMenuShown() && self.parent!.getMenuShown() == (content as! RComment).getId()) {
+        if (SettingValues.swapLongPress && !isMore) || (self.parent!.isMenuShown() && self.parent!.getMenuShown() == (content as! RComment).getId()) {
             self.showMenu(sender)
         } else {
             self.pushedSingleTap(sender)
@@ -931,10 +927,12 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var marginTop: Int = 0
     var menuHeight: [NSLayoutConstraint] = []
     var topMargin: [NSLayoutConstraint] = []
+    var isMore = false
 
     func setMore(more: RMore, depth: Int, depthColors: [UIColor]) {
         self.depth = depth
         self.comment = nil
+        self.isMore = true
         self.depthColors = depthColors
         loading = false
         childrenCount.alpha = 0
@@ -1006,6 +1004,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     func setComment(comment: RComment, depth: Int, parent: CommentViewController, hiddenCount: Int, date: Double, author: String?, text: NSAttributedString, isCollapsed: Bool, parentOP: String, depthColors: [UIColor]) {
         self.comment = comment
         self.cellContent = text
+        self.isMore = false
         self.contentView.backgroundColor = ColorUtil.foregroundColor
         loading = false
         if self.parent == nil {
