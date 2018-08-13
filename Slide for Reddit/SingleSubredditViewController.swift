@@ -1010,7 +1010,7 @@ class SingleSubredditViewController: MediaViewController {
                                             updated = listing.updated
                                         }
                                         var paths = [IndexPath]()
-                                        for i in 0...(self.links.count - 1) {
+                                        for i in 0..<self.links.count {
                                             paths.append(IndexPath.init(item: i, section: 0))
                                         }
                                         self.flowLayout.reset()
@@ -1092,7 +1092,7 @@ class SingleSubredditViewController: MediaViewController {
                                 }
                             } else {
                                 var paths = [IndexPath]()
-                                for i in before...(self.links.count - 1) {
+                                for i in before..<self.links.count {
                                     paths.append(IndexPath.init(item: i, section: 0))
                                 }
 
