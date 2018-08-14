@@ -46,7 +46,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         MKColorPicker.selectionStyle = .check
         MKColorPicker.scrollDirection = .vertical
         let firstColor = ColorUtil.baseColor
-        for i in 0...MKColorPicker.colors.count - 1 {
+        for i in 0 ..< MKColorPicker.colors.count {
             if MKColorPicker.colors[i].cgColor.__equalTo(firstColor.cgColor) {
                 MKColorPicker.preselectedIndex = i
                 break
@@ -108,7 +108,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         self.isAccent = true
         MKColorPicker.scrollDirection = .vertical
         let firstColor = ColorUtil.baseColor
-        for i in 0...MKColorPicker.colors.count - 1 {
+        for i in 0 ..< MKColorPicker.colors.count {
             if MKColorPicker.colors[i].cgColor.__equalTo(firstColor.cgColor) {
                 MKColorPicker.preselectedIndex = i
                 break
