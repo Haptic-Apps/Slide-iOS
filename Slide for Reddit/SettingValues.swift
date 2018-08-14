@@ -73,7 +73,7 @@ class SettingValues {
     public static let pref_multiColumnCount = "MULTICOLUMN_COUNT"
     public static let pref_nameScrubbing = "NAME_SCRUBBING"
     public static let pref_autoCache = "AUTO_CACHE"
-    public static let pref_pro = "PRO_ENABLED"
+    public static let pref_pro = "RELEASE_PRO_ENABLED"
     public static let pref_pinToolbar = "PIN_TOOLBAR"
     public static let pref_commentTwoSwipe = "COMMENT_GESTURES"
     public static let pref_commentActionLeft = "COMMENT_LEFT"

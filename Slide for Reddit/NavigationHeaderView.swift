@@ -186,7 +186,7 @@ class NavigationHeaderView: UIView {
     }
 
     func doColors() {
-        var titleFont = UIFont.systemFont(ofSize: 25)
+        var titleFont = UIFont.boldSystemFont(ofSize: 25)
         title.font = titleFont
         title.numberOfLines = 0
         title.lineBreakMode = .byWordWrapping

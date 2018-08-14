@@ -33,6 +33,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
     var lockCell: UITableViewCell = UITableViewCell()
     var subCell: UITableViewCell = UITableViewCell()
     var licenseCell: UITableViewCell = UITableViewCell()
+    var contributorsCell: UITableViewCell = UITableViewCell()
     var aboutCell: UITableViewCell = UITableViewCell()
     var githubCell: UITableViewCell = UITableViewCell()
     var clearCell: UITableViewCell = UITableViewCell()
@@ -249,6 +250,13 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         self.licenseCell.imageView?.image = UIImage.init(named: "code")?.toolbarIcon()
         self.licenseCell.imageView?.tintColor = ColorUtil.fontColor
 
+        self.contributorsCell.textLabel?.text = "Contributors who make Slide possible"
+        self.contributorsCell.accessoryType = .disclosureIndicator
+        self.contributorsCell.backgroundColor = ColorUtil.foregroundColor
+        self.contributorsCell.textLabel?.textColor = ColorUtil.fontColor
+        self.contributorsCell.imageView?.image = UIImage.init(named: "happy")?.toolbarIcon()
+        self.contributorsCell.imageView?.tintColor = ColorUtil.fontColor
+
         multiColumnCell.textLabel?.text = "Multi Column mode"
         multiColumnCell.backgroundColor = ColorUtil.foregroundColor
         multiColumnCell.textLabel?.textColor = ColorUtil.fontColor
@@ -356,8 +364,9 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
             switch indexPath.row {
             case 0: return self.aboutCell
             case 1: return self.subCell
-            case 2: return self.githubCell
-            case 3: return self.licenseCell
+            case 2: return self.contributorsCell
+            case 3: return self.githubCell
+            case 4: return self.licenseCell
             default: fatalError("Unknown row in section 3")
             }
         default: fatalError("Unknown section")
@@ -462,13 +471,20 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         } else if indexPath.section == 2 && indexPath.row == 5 {
             ch = CacheSettings()
         } else if indexPath.section == 3 && indexPath.row == 2 {
-            let url = URL.init(string: "https://github.com/ccrama/Slide-ios")!
+            let url = URL.init(string: "https://github.com/ccrama/Slide-ios/graphs/contributors")!
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
             } else {
                 UIApplication.shared.openURL(url)
             }
         } else if indexPath.section == 3 && indexPath.row == 3 {
+            let url = URL.init(string: "https://github.com/ccrama/Slide-ios")!
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            } else {
+                UIApplication.shared.openURL(url)
+            }
+        } else if indexPath.section == 3 && indexPath.row == 4 {
             ch = LicensesViewController()
             let file = Bundle.main.path(forResource: "Credits", ofType: "plist")!
             (ch as! LicensesViewController).loadPlist(NSDictionary(contentsOfFile: file)!)
@@ -500,7 +516,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         case 0: return (SettingValues.isPro) ? 5 : 6
         case 1: return 5
         case 2: return 8
-        case 3: return 4
+        case 3: return 5
         default: fatalError("Unknown number of sections")
         }
     }
