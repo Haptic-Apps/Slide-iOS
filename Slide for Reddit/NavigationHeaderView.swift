@@ -142,17 +142,21 @@ class NavigationHeaderView: UIView {
             // Title constraints
             account.leftAnchor == back.leftAnchor + 16
             account.centerYAnchor == back.centerYAnchor
+            account.widthAnchor == 30
             title.leftAnchor == account.rightAnchor + 16
 
             settings.rightAnchor == back.rightAnchor - 16
             settings.centerYAnchor == back.centerYAnchor
+            settings.widthAnchor == 30
 
-            inbox.rightAnchor == settings.leftAnchor - 24
+            inbox.rightAnchor == settings.leftAnchor - 20
             inbox.centerYAnchor == back.centerYAnchor
+            inbox.widthAnchor == 30
 
             if isModerator {
                 mod.isHidden = false
-                mod.rightAnchor == inbox.leftAnchor - 24
+                mod.rightAnchor == inbox.leftAnchor - 16
+                mod.widthAnchor == 30
                 mod.centerYAnchor == title.centerYAnchor
                 title.rightAnchor == mod.leftAnchor - 16
             } else {
@@ -182,7 +186,8 @@ class NavigationHeaderView: UIView {
     }
 
     func doColors() {
-        var titleFont = UIFont.systemFont(ofSize: 15)
+        var titleFont = UIFont.systemFont(ofSize: 25)
+        title.font = titleFont
         title.numberOfLines = 0
         title.lineBreakMode = .byWordWrapping
         title.textColor = .white
