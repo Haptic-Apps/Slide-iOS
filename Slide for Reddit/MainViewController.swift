@@ -686,13 +686,14 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         }
         requestReviewIfAppropriate()
         
-        drawerButton = UIImageView.init(frame: CGRect(x: 8, y: UIScreen.main.bounds.height - 48, width: 40, height: 40))
+        drawerButton = UIImageView.init(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
         drawerButton.backgroundColor = ColorUtil.foregroundColor
         drawerButton.clipsToBounds = true
         drawerButton.contentMode = .center
         drawerButton.layer.cornerRadius = 20
         drawerButton.image = UIImage(named: "menu")?.getCopy(withSize: CGSize.square(size: 25), withColor: ColorUtil.fontColor)
         self.view.addSubview(drawerButton)
+        drawerButton.translatesAutoresizingMaskIntoConstraints = false
         drawerButton.addTapGestureRecognizer {
             self.showDrawer(self.drawerButton)
         }
@@ -702,6 +703,11 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         
         drawerButton.addGestureRecognizer(swipe)
         drawerButton.isHidden = true
+        
+        drawerButton.bottomAnchor == self.view.safeBottomAnchor - 8
+        drawerButton.leadingAnchor == self.view.safeLeadingAnchor + 8
+        drawerButton.heightAnchor == 40
+        drawerButton.widthAnchor == 40
     }
     
     public static var isOffline = false
