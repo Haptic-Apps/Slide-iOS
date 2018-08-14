@@ -107,8 +107,8 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         createCell(internalAlbumCell, internalAlbum, isOn: SettingValues.internalAlbumView, text: "Load albums in app")
         createCell(internalImageCell, internalImage, isOn: SettingValues.internalImageView, text: "Load images in app")
         createCell(internalYouTubeCell, internalYouTube, isOn: SettingValues.internalYouTube, text: "Load YouTube videos in app")
-        createCell(useSafariVCCell, useSafariVC, isOn: SettingValues.safariVC, text: "Use Safari web view instead of internal Website view")
-        useSafariVCCell.detailTextLabel?.text = "The Safari VC will still show ads if you have purchased pro"
+        createCell(useSafariVCCell, useSafariVC, isOn: SettingValues.safariVC, text: "Use Safari web view instead of internal website view")
+        useSafariVCCell.detailTextLabel?.text = "The Safari view will still show ads if you have purchased pro."
         useSafariVCCell.detailTextLabel?.textColor = ColorUtil.fontColor
         useSafariVCCell.detailTextLabel?.numberOfLines = 0
         useSafariVCCell.detailTextLabel?.lineBreakMode = .byWordWrapping

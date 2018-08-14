@@ -218,7 +218,7 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var cell: SubredditCellView?
+        var cell: SubredditCellView
         if indexPath.section == 0 {
             if indexPath.row == filteredContent.count && isSearching {
                 let thing = searchBar!.text!
@@ -247,8 +247,10 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
             c.setSubreddit(subreddit: thing, nav: parentController!, exists: false)
             cell = c
         }
+
+        cell.backgroundColor = ColorUtil.foregroundColor
     
-        return cell!
+        return cell
     }
     
 }

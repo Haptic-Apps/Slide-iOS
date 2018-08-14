@@ -615,6 +615,7 @@ class SettingsWelcomeMisc: UIViewController {
     }
     
     var tabs = UISwitch()
+    var fab = UISwitch()
     var history = UISwitch()
     var data = UISwitch()
     
@@ -649,6 +650,18 @@ class SettingsWelcomeMisc: UIViewController {
             $0.onTintColor = ColorUtil.baseAccent
             $0.addTarget(self, action: #selector(SettingsWelcomeMisc.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
         }
+
+        let fabLabel = UILabel().then {
+            $0.textColor = ColorUtil.fontColor
+            $0.font = UIFont.boldSystemFont(ofSize: 16)
+            $0.text = "Enable floating action button"
+            $0.numberOfLines = 0
+        }
+        fab = UISwitch().then {
+            $0.isOn = !SettingValues.hiddenFAB
+            $0.onTintColor = ColorUtil.baseAccent
+            $0.addTarget(self, action: #selector(SettingsWelcomeMisc.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+        }
         
         let dataLabel = UILabel().then {
             $0.textColor = ColorUtil.fontColor
@@ -674,7 +687,10 @@ class SettingsWelcomeMisc: UIViewController {
             $0.addTarget(self, action: #selector(SettingsWelcomeMisc.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
         }
         
-        self.view.addSubviews(tabsLabel, tabs, dataLabel, data, historyLabel, history)
+        self.view.addSubviews(tabsLabel, tabs,
+                              fabLabel, fab,
+                              dataLabel, data,
+                              historyLabel, history)
         
         tabsLabel.topAnchor == about.bottomAnchor + 24
         tabsLabel.leftAnchor == self.view.leftAnchor + 24
@@ -682,8 +698,15 @@ class SettingsWelcomeMisc: UIViewController {
         self.tabs.rightAnchor == self.view.rightAnchor - 24
         self.tabs.centerYAnchor == tabsLabel.centerYAnchor
         self.tabs.widthAnchor == 50
+
+        fabLabel.topAnchor == tabs.bottomAnchor + 24
+        fabLabel.leftAnchor == self.view.leftAnchor + 24
+        fabLabel.rightAnchor == self.fab.leftAnchor - 8
+        self.fab.rightAnchor == self.view.rightAnchor - 24
+        self.fab.centerYAnchor == fabLabel.centerYAnchor
+        self.fab.widthAnchor == 50
         
-        dataLabel.topAnchor == tabs.bottomAnchor + 24
+        dataLabel.topAnchor == fab.bottomAnchor + 24
         dataLabel.leftAnchor == self.view.leftAnchor + 24
         dataLabel.rightAnchor == self.data.leftAnchor - 8
         self.data.rightAnchor == self.view.rightAnchor - 24
@@ -710,6 +733,9 @@ class SettingsWelcomeMisc: UIViewController {
         if changed == tabs {
             SettingValues.viewType = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_viewType)
+        } else if changed == fab {
+            SettingValues.hiddenFAB = !changed.isOn
+            UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_hiddenFAB)
         } else if changed == history {
             SettingValues.saveHistory = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_saveHistory)
