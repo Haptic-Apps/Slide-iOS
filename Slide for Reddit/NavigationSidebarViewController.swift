@@ -113,18 +113,30 @@ class NavigationSidebarViewController: UIViewController, UITableViewDelegate, UI
     }
     
     func searchTableList() {
+        var searchItems = [String]()
         let searchString = searchBar?.text
         for s in Subscriptions.subreddits {
-            if s.localizedCaseInsensitiveContains(searchString!) {
-                filteredContent.append(s)
+            if s.localizedCaseInsensitiveContains(searchString ?? "") {
+                searchItems.append(s)
             }
         }
         
         if searchString != nil && !(searchString?.isEmpty())! {
             for s in Subscriptions.historySubs {
-                if s.localizedCaseInsensitiveContains(searchString!) {
-                    filteredContent.append(s)
+                if s.localizedCaseInsensitiveContains(searchString!) && !searchItems.contains(s) {
+                    searchItems.append(s)
                 }
+            }
+        }
+        
+        for item in searchItems {
+            if item.startsWith(searchString!) {
+                filteredContent.append(item)
+            }
+        }
+        for item in searchItems {
+            if !item.startsWith(searchString!) {
+                filteredContent.append(item)
             }
         }
     }
