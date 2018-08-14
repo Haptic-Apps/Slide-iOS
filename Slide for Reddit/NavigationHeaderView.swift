@@ -25,6 +25,7 @@ class NavigationHeaderView: UIView {
 
     private var layoutConstraints: [NSLayoutConstraint] = []
 
+    var back = UIView()
     var title = UILabel()
     var account = UIButton()
     var inbox = UIButton()
@@ -61,7 +62,7 @@ class NavigationHeaderView: UIView {
             search.keyboardAppearance = .dark
         }
 
-        self.addSubviews(title, search)
+        self.addSubviews(back, search)
 
         // Set up title children
         self.account = UIButton.init(type: .custom).then {
@@ -93,7 +94,7 @@ class NavigationHeaderView: UIView {
             $0.isUserInteractionEnabled = true
         }
 
-        title.addSubviews(account, inbox, mod, settings)
+        back.addSubviews(title, account, inbox, mod, settings)
 
     }
 
@@ -127,9 +128,11 @@ class NavigationHeaderView: UIView {
 
         layoutConstraints = batch {
 
-            title.topAnchor == self.topAnchor
-            title.heightAnchor == 90
-            title.horizontalAnchors == self.horizontalAnchors
+            back.topAnchor == self.topAnchor
+            back.heightAnchor == 90
+            back.horizontalAnchors == self.horizontalAnchors
+            
+            title.verticalAnchors == back.verticalAnchors
 
             search.topAnchor == title.bottomAnchor + 4
             search.horizontalAnchors == self.horizontalAnchors
@@ -137,24 +140,29 @@ class NavigationHeaderView: UIView {
             search.bottomAnchor == self.bottomAnchor
 
             // Title constraints
-            account.leftAnchor == title.leftAnchor + 16
-            account.centerYAnchor == title.centerYAnchor
+            account.leftAnchor == back.leftAnchor + 16
+            account.centerYAnchor == back.centerYAnchor
+            title.leftAnchor == account.rightAnchor + 16
 
-            settings.rightAnchor == title.rightAnchor - 16
-            settings.centerYAnchor == title.centerYAnchor
+            settings.rightAnchor == back.rightAnchor - 16
+            settings.centerYAnchor == back.centerYAnchor
 
             inbox.rightAnchor == settings.leftAnchor - 24
-            inbox.centerYAnchor == title.centerYAnchor
+            inbox.centerYAnchor == back.centerYAnchor
 
             if isModerator {
                 mod.isHidden = false
                 mod.rightAnchor == inbox.leftAnchor - 24
                 mod.centerYAnchor == title.centerYAnchor
+                title.rightAnchor == mod.leftAnchor - 16
+            } else {
+                title.rightAnchor == inbox.leftAnchor - 16
             }
             
             // TODO: Determine if we still need this
             if #available(iOS 11.0, *) {
                 account.heightAnchor == 90
+                title.heightAnchor == 90
                 inbox.heightAnchor == 90
                 settings.heightAnchor == 90
             }
@@ -170,7 +178,7 @@ class NavigationHeaderView: UIView {
 
     func doColors(_ sub: String) {
         doColors()
-        title.backgroundColor = ColorUtil.getColorForSub(sub: sub)
+        back.backgroundColor = ColorUtil.getColorForSub(sub: sub)
     }
 
     func doColors() {
@@ -178,28 +186,20 @@ class NavigationHeaderView: UIView {
         title.numberOfLines = 0
         title.lineBreakMode = .byWordWrapping
         title.textColor = .white
-
+        title.textAlignment = .left
+        
         if AccountController.isLoggedIn {
-            let titleT = NSMutableAttributedString.init(string: "\t\t", attributes: [NSFontAttributeName: titleFont])
-            if AccountController.formatUsername(input: AccountController.currentName, small: true).length > 15 {
-                titleFont = UIFont.systemFont(ofSize: 15)
-            } else {
-                titleFont = UIFont.systemFont(ofSize: 25)
-            }
-            titleT.append(NSMutableAttributedString.init(string: AccountController.formatUsername(input: AccountController.currentName, small: true), attributes: [NSFontAttributeName: titleFont.bold()]))
             title.adjustsFontSizeToFitWidth = true
-            title.attributedText = titleT
+            title.text = AccountController.formatUsername(input: AccountController.currentName, small: true)
             inbox.isHidden = false
         } else {
             inbox.isHidden = true
-            let titleT = NSMutableAttributedString.init(string: "\t\tGuest\n", attributes: [NSFontAttributeName: titleFont])
+            let titleT = NSMutableAttributedString.init(string: "Guest\n", attributes: [NSFontAttributeName: titleFont])
             titleFont = UIFont.systemFont(ofSize: 20)
-            titleT.append(NSMutableAttributedString.init(string: "\t\tTap to sign in", attributes: [NSFontAttributeName: titleFont.bold()]))
+            titleT.append(NSMutableAttributedString.init(string: "Tap to sign in", attributes: [NSFontAttributeName: titleFont.bold()]))
             title.attributedText = titleT
         }
 
-        title.textAlignment = .left
-        title.backgroundColor = ColorUtil.getColorForSub(sub: "")
         backgroundColor = ColorUtil.foregroundColor
     }
 
