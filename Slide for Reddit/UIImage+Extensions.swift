@@ -123,7 +123,7 @@ extension UIImage {
         var colorsRef = [CGColor]()
         var locations = [NSNumber]()
         
-        for i in 0 ... colors.count - 1 {
+        for i in 0 ..< colors.count {
             colorsRef.append(colors[i].cgColor as CGColor)
             locations.append(NSNumber(value: Float(i) / Float(colors.count - 1)))
         }

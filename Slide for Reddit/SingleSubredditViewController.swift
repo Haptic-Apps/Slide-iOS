@@ -1646,7 +1646,7 @@ extension SingleSubredditViewController: LinkCellViewDelegate {
             index += 1
         }
         var newLinks: [RSubmission] = []
-        for i in index...links.count - 1 {
+        for i in index ..< links.count {
             newLinks.append(links[i])
         }
 

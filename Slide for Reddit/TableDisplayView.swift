@@ -115,7 +115,7 @@ class TableDisplayView: UIScrollView {
             if(header.isEmpty){
                 header = row
             } else {
-                for index in 0...row.count - 1 {
+                for index in 0 ..< row.count {
                     flippedData.append([header[index], row[index]])
                 }
             }
