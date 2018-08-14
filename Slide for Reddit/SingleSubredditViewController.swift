@@ -244,7 +244,8 @@ class SingleSubredditViewController: MediaViewController {
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-
+        
+        self.fab?.removeFromSuperview()
         self.setupFab()
 
         if self.viewIfLoaded?.window != nil {

@@ -750,7 +750,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
         submissionHeight = submission.height
 
-        type = test ? ContentType.CType.LINK : ContentType.getContentType(baseUrl: submission.url)
+        type = test && SettingValues.linkAlwaysThumbnail ? ContentType.CType.LINK : ContentType.getContentType(baseUrl: submission.url)
         if submission.isSelf {
             type = .SELF
         }

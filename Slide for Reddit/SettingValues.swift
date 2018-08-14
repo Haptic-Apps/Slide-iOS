@@ -258,8 +258,8 @@ class SettingValues {
             }
         }
 
-        SettingValues.postFontOffset = settings.object(forKey: SettingValues.pref_postFontSize) == nil ? 0 : settings.integer(forKey: SettingValues.pref_postFontSize)
-        SettingValues.commentFontOffset = settings.object(forKey: SettingValues.pref_commentFontSize) == nil ? 0 : settings.integer(forKey: SettingValues.pref_commentFontSize)
+        SettingValues.postFontOffset = settings.object(forKey: SettingValues.pref_postFontSize) == nil ? -2 : settings.integer(forKey: SettingValues.pref_postFontSize)
+        SettingValues.commentFontOffset = settings.object(forKey: SettingValues.pref_commentFontSize) == nil ? -2 : settings.integer(forKey: SettingValues.pref_commentFontSize)
 
         if let time = UserDefaults.standard.string(forKey: pref_defaultTimePeriod) {
             for t in TimeFilterWithin.cases {
@@ -288,7 +288,7 @@ class SettingValues {
             }
         }
 
-        SettingValues.smallerTag = settings.bool(forKey: SettingValues.pref_smallTag)
+        SettingValues.smallerTag = settings.object(forKey: SettingValues.pref_smallTag) == nil ? true : settings.bool(forKey: SettingValues.pref_smallTag)
         SettingValues.blackShadowbox = settings.bool(forKey: SettingValues.pref_blackShadowbox)
         SettingValues.markReadOnScroll = settings.bool(forKey: SettingValues.pref_markReadOnScroll)
         SettingValues.nsfwPreviews = settings.bool(forKey: SettingValues.pref_nsfwPreviews)
