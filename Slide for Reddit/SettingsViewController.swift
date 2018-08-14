@@ -250,7 +250,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         self.licenseCell.imageView?.image = UIImage.init(named: "code")?.toolbarIcon()
         self.licenseCell.imageView?.tintColor = ColorUtil.fontColor
 
-        self.contributorsCell.textLabel?.text = "Contributors who make Slide possible"
+        self.contributorsCell.textLabel?.text = "Slide project contributors"
         self.contributorsCell.accessoryType = .disclosureIndicator
         self.contributorsCell.backgroundColor = ColorUtil.foregroundColor
         self.contributorsCell.textLabel?.textColor = ColorUtil.fontColor
