@@ -568,7 +568,7 @@ extension ContentListingViewController: LinkCellViewDelegate {
     }
 
     func more(_ cell: LinkCellView) {
-        PostActions.showMoreMenu(cell: cell, parent: parent!, nav: parent!.navigationController!, mutableList: false, delegate: self)
+        PostActions.showMoreMenu(cell: cell, parent: self, nav: self.navigationController!, mutableList: false, delegate: self)
     }
 
     func upvote(_ cell: LinkCellView) {

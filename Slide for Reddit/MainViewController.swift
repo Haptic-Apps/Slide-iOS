@@ -37,7 +37,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         }
         
         if SubredditReorderViewController.changed || ColorUtil.shouldBeNight() {
-            PagingCommentViewController.savedComment = nil
             var subChanged = false
             if finalSubs.count != Subscriptions.subreddits.count {
                 subChanged = true
@@ -51,6 +50,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             }
             if ColorUtil.doInit() || subChanged {
                 restartVC()
+                PagingCommentViewController.savedComment = nil
             } else if SubredditReorderViewController.changed {
                 doButtons()
             }
@@ -78,7 +78,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         if #available(iOS 10.3, *) {
             let lastReviewedVersion = UserDefaults.standard.string(forKey: "lastReviewed")
             let timesOpened = UserDefaults.standard.integer(forKey: "appOpens")
-            if lastReviewedVersion != nil && (getVersion() == lastReviewedVersion!) || timesOpened < 7 {
+            if lastReviewedVersion != nil && (getVersion() == lastReviewedVersion!) || timesOpened < 10 {
                 UserDefaults.standard.set(timesOpened + 1, forKey: "appOpens")
                 UserDefaults.standard.synchronize()
                 return

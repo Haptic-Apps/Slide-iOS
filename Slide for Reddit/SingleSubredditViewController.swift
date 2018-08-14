@@ -200,7 +200,9 @@ class SingleSubredditViewController: MediaViewController {
             navigationController?.setToolbarHidden(false, animated: false)
             self.isToolbarHidden = false
             if fab == nil {
-                setupFab()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    self.setupFab()
+                }
             } else {
                 show(true)
             }
@@ -432,34 +434,60 @@ class SingleSubredditViewController: MediaViewController {
             self.fab!.titleEdgeInsets = UIEdgeInsets.init(top: 0, left: 20, bottom: 0, right: 20)
             navigationController?.toolbar.addSubview(self.fab!)
             
-            self.fab!.addTapGestureRecognizer {
-                switch SettingValues.fabType {
-                case .SIDEBAR:
-                    self.doDisplaySidebar()
-                case .NEW_POST:
-                    self.newPost(self.fab!)
-                case .SHADOWBOX:
-                    self.shadowboxMode()
-                case .HIDE_READ:
-                    self.hideReadPosts()
-                case .GALLERY:
-                    self.galleryMode()
-                case .SEARCH:
-                    self.search()
-                }
-            }
-            
-            self.fab!.addLongTapGestureRecognizer {
-                self.changeFab()
-            }
-            
             self.fab!.transform = CGAffineTransform.init(scaleX: 0.001, y: 0.001)
             UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
                 self.fab!.transform = CGAffineTransform.identity
-            }, completion: nil)
+            }, completion: { (_)  in
+                let tap = UITapGestureRecognizer(target: self, action: #selector(self.doFabActions))
+                self.fab!.addGestureRecognizer(tap)
+                
+                self.fab!.addLongTapGestureRecognizer {
+                    self.changeFab()
+                }
+            })
         }
     }
 
+    func doFabActions() {
+        if UserDefaults.standard.bool(forKey: "FAB_SHOWN") == false {
+            let a = UIAlertController(title: "Subreddit Action Button", message: "This is the subreddit action button!\n\nThis button's actions can be customized by long pressing on it at any time, and this button can be removed completely in Settings > General.", preferredStyle: .alert)
+            a.addAction(UIAlertAction(title: "Change actions", style: .default, handler: { (_) in
+                UserDefaults.standard.set(true, forKey: "FAB_SHOWN")
+                UserDefaults.standard.synchronize()
+                self.changeFab()
+            }))
+            a.addAction(UIAlertAction(title: "Disable button (can be enabled again in Settings)", style: .default, handler: { (_) in
+                SettingValues.hiddenFAB = true
+                UserDefaults.standard.set(true, forKey: SettingValues.pref_hiddenFAB)
+                UserDefaults.standard.set(true, forKey: "FAB_SHOWN")
+                UserDefaults.standard.synchronize()
+                self.setupFab()
+            }))
+            a.addAction(UIAlertAction(title: "Close and continue", style: .default, handler: { (_) in
+                UserDefaults.standard.set(true, forKey: "FAB_SHOWN")
+                UserDefaults.standard.synchronize()
+                self.doFabActions()
+            }))
+            
+            self.present(a, animated: true, completion: nil)
+        } else {
+            switch SettingValues.fabType {
+            case .SIDEBAR:
+                self.doDisplaySidebar()
+            case .NEW_POST:
+                self.newPost(self.fab!)
+            case .SHADOWBOX:
+                self.shadowboxMode()
+            case .HIDE_READ:
+                self.hideReadPosts()
+            case .GALLERY:
+                self.galleryMode()
+            case .SEARCH:
+                self.search()
+            }
+        }
+    }
+    
     func changeFab() {
         let actionSheetController: UIAlertController = UIAlertController(title: "Change button type", message: "", preferredStyle: .alert)
 

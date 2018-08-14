@@ -114,25 +114,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
         self.contentView.addSubviews(sideView, sideViewSpace, topViewSpace, title, childrenCount)
         
-        if dtap == nil && SettingValues.commentActionDoubleTap != .NONE {
-            dtap = UIShortTapGestureRecognizer.init(target: self, action: #selector(self.doDTap(_:)))
-            dtap!.numberOfTapsRequired = 2
-            self.contentView.addGestureRecognizer(dtap!)
-        }
-
-        let tapGestureRecognizer = UITapGestureRecognizer.init(target: self, action: #selector(self.handleShortPress(_:)))
-        tapGestureRecognizer.cancelsTouchesInView = false
-        tapGestureRecognizer.delegate = self
-        if dtap != nil {
-            tapGestureRecognizer.require(toFail: dtap!)
-        }
-        self.title.addGestureRecognizer(tapGestureRecognizer)
-
-        long = UILongPressGestureRecognizer.init(target: self, action: #selector(self.handleLongPress(_:)))
-        long.minimumPressDuration = 0.25
-        long.delegate = self
-        self.addGestureRecognizer(long)
-
         self.contentView.backgroundColor = ColorUtil.foregroundColor
         sideViewSpace.backgroundColor = ColorUtil.backgroundColor
         topViewSpace.backgroundColor = ColorUtil.backgroundColor
@@ -175,6 +156,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         contentView.addSubview(reply)
         configureLayout()
     }
+    
+    var gesturesAdded = false
 
     func doLongClick() {
         timer!.invalidate()
@@ -212,9 +195,15 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
 
     func handleShortPress(_ sender: UIGestureRecognizer) {
+        if isMore {
+            self.pushedSingleTap(sender)
+            return
+        }
+
         if parent == nil || content == nil {
             return
         }
+        
         if !(parent?.isSearching ?? true ) && ((SettingValues.swapLongPress && !isMore) || (self.parent!.isMenuShown() && self.parent!.getMenuShown() == (content as! RComment).getId())) {
             self.showMenu(sender)
         } else {
@@ -928,12 +917,40 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var menuHeight: [NSLayoutConstraint] = []
     var topMargin: [NSLayoutConstraint] = []
     var isMore = false
+    
+    func connectGestures() {
+        if !gesturesAdded {
+            gesturesAdded = true
+            if dtap == nil && SettingValues.commentActionDoubleTap != .NONE {
+                dtap = UIShortTapGestureRecognizer.init(target: self, action: #selector(self.doDTap(_:)))
+                dtap!.numberOfTapsRequired = 2
+                self.contentView.addGestureRecognizer(dtap!)
+            }
+            
+            let tapGestureRecognizer = UITapGestureRecognizer.init(target: self, action: #selector(self.handleShortPress(_:)))
+            tapGestureRecognizer.cancelsTouchesInView = false
+            tapGestureRecognizer.delegate = self
+            if dtap != nil {
+                tapGestureRecognizer.require(toFail: dtap!)
+            }
+            self.title.addGestureRecognizer(tapGestureRecognizer)
+            
+            long = UILongPressGestureRecognizer.init(target: self, action: #selector(self.handleLongPress(_:)))
+            long.minimumPressDuration = 0.25
+            long.delegate = self
+            self.addGestureRecognizer(long)
+        }
+
+    }
 
     func setMore(more: RMore, depth: Int, depthColors: [UIColor]) {
         self.depth = depth
         self.comment = nil
         self.isMore = true
         self.depthColors = depthColors
+        
+        connectGestures()
+        
         loading = false
         childrenCount.alpha = 0
         self.contentView.backgroundColor = ColorUtil.foregroundColor
@@ -1011,6 +1028,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             self.parent = parent
         }
 
+        connectGestures()
+        
         self.isCollapsed = isCollapsed
         self.depthColors = depthColors
 
@@ -1073,6 +1092,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
     
     func doDTap(_ sender: AnyObject) {
+        if isMore {
+            return
+        }
         switch SettingValues.commentActionDoubleTap {
         case .UPVOTE:
             self.upvote(self)
@@ -1116,7 +1138,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
         let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(comment.flair)\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: boldFont, NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
         let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: boldFont, NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
-        let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(comment.gilded) ", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false)])
+        let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(comment.gilded) ", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
 
         let spacer = NSMutableAttributedString.init(string: "  ")
         let userColor = ColorUtil.getColorForUser(name: comment.author)
