@@ -14,8 +14,11 @@ import SideMenu
 import StoreKit
 import UIKit
 
-class MainViewController: ColorMuxPagingViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UINavigationControllerDelegate {
+class MainViewController: ColorMuxPagingViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UINavigationControllerDelegate, MDCBottomSheetPresentationControllerDelegate {
     
+    func bottomSheetWillChangeState(_ bottomSheet: MDCBottomSheetPresentationController, sheetState: MDCSheetState) {
+        print(sheetState)
+    }
     var isReload = false
     public static var vCs: [UIViewController] = []
     public static var current: String = ""
@@ -641,6 +644,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             menuNav?.setViewController(controller: self)
             self.menuNav?.setSubreddit(subreddit: MainViewController.current)
             bottomSheet = MDCBottomSheetController(contentViewController: menuNav!)
+            bottomSheet!.mdc_bottomSheetPresentationController?.delegate = self
+            print(bottomSheet!.mdc_bottomSheetPresentationController)
         }
 
         inHeadView.removeFromSuperview()
@@ -773,7 +778,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
     func checkForUpdate() {
         if !SettingValues.doneVersion() {
-            print("Getting posts for version \(Bundle.main.releaseVersionNumber!)")
+            print("Getting posts for version \(Bundle.main.buildVersionNumber!)")
             let session = (UIApplication.shared.delegate as! AppDelegate).session
             do {
                 try session?.getList(Paginator.init(), subreddit: Subreddit.init(subreddit: "slide_ios"), sort: LinkSortType.hot, timeFilterWithin: TimeFilterWithin.hour, completion: { (result) in
@@ -782,17 +787,18 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                         //Ignore this
                         break
                     case .success(let listing):
-                        print("Got")
+                        
                         let submissions = listing.children.flatMap({ $0 as? Link })
-                        let first = submissions[1]
-                        let second = submissions[2]
+                        let first = submissions[0]
+                        let second = submissions[1]
                         var storedTitle = ""
                         var storedLink = ""
 
-                        if first.stickied && first.title.contains(Bundle.main.releaseVersionNumber!) {
+                        print(first.title)
+                        if first.stickied && first.title.contains(Bundle.main.buildVersionNumber!) {
                             storedTitle = first.title
                             storedLink = first.permalink
-                        } else if second.stickied && second.title.contains(Bundle.main.releaseVersionNumber!) {
+                        } else if second.stickied && second.title.contains(Bundle.main.buildVersionNumber!) {
                             storedTitle = second.title
                             storedLink = second.permalink
                         }
@@ -837,6 +843,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             menuNav?.setViewController(controller: self)
             self.menuNav?.setSubreddit(subreddit: MainViewController.current)
             bottomSheet = MDCBottomSheetController(contentViewController: menuNav!)
+            bottomSheet!.mdc_bottomSheetPresentationController?.delegate = self
+            print(bottomSheet!.mdc_bottomSheetPresentationController)
         }
         menuNav!.setColors(MainViewController.current)
         present(bottomSheet!, animated: true, completion: nil)

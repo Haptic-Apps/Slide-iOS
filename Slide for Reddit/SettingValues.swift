@@ -361,12 +361,12 @@ class SettingValues {
 
     public static func doneVersion() -> Bool {
         let settings = UserDefaults.standard
-        return settings.object(forKey: Bundle.main.releaseVersionNumber!) != nil
+        return settings.object(forKey: Bundle.main.buildVersionNumber!) != nil
     }
 
     public static func showVersionDialog(_ title: String, _ permalink: String, parentVC: UIViewController) {
         let settings = UserDefaults.standard
-        settings.set(true, forKey: Bundle.main.releaseVersionNumber!)
+        settings.set(true, forKey: Bundle.main.buildVersionNumber!)
         settings.set(title, forKey: "vtitle")
         settings.set(permalink, forKey: "vlink")
         settings.synchronize()
