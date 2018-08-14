@@ -14,11 +14,8 @@ import SideMenu
 import StoreKit
 import UIKit
 
-class MainViewController: ColorMuxPagingViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UINavigationControllerDelegate, MDCBottomSheetPresentationControllerDelegate {
-    
-    func bottomSheetWillChangeState(_ bottomSheet: MDCBottomSheetPresentationController, sheetState: MDCSheetState) {
-        print(sheetState)
-    }
+class MainViewController: ColorMuxPagingViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UINavigationControllerDelegate {
+
     var isReload = false
     public static var vCs: [UIViewController] = []
     public static var current: String = ""
@@ -644,8 +641,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             menuNav?.setViewController(controller: self)
             self.menuNav?.setSubreddit(subreddit: MainViewController.current)
             bottomSheet = MDCBottomSheetController(contentViewController: menuNav!)
-            bottomSheet!.mdc_bottomSheetPresentationController?.delegate = self
-            print(bottomSheet!.mdc_bottomSheetPresentationController)
+            bottomSheet!.delegate = self
         }
 
         inHeadView.removeFromSuperview()
@@ -843,8 +839,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             menuNav?.setViewController(controller: self)
             self.menuNav?.setSubreddit(subreddit: MainViewController.current)
             bottomSheet = MDCBottomSheetController(contentViewController: menuNav!)
-            bottomSheet!.mdc_bottomSheetPresentationController?.delegate = self
-            print(bottomSheet!.mdc_bottomSheetPresentationController)
+            bottomSheet!.delegate = self
         }
         menuNav!.setColors(MainViewController.current)
         present(bottomSheet!, animated: true, completion: nil)
@@ -912,6 +907,18 @@ extension MainViewController: MDCTabBarDelegate {
         self.doCurrentPage(tabBar.items.index(of: item)!)
         tabBar.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
     }
+}
+
+extension MainViewController: MDCBottomSheetControllerDelegate {
+
+    func bottomSheetControllerWillChangeState(_ controller: MDCBottomSheetController, sheetState state: MDCSheetState) {
+        // Code goes here
+    }
+
+    func bottomSheetControllerDidDismissBottomSheet(_ controller: MDCBottomSheetController) {
+        // Code goes here
+    }
+
 }
 
 extension Bundle {
