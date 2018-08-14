@@ -790,7 +790,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                         var storedTitle = ""
                         var storedLink = ""
 
-                        print(first.title)
                         if first.stickied && first.title.contains(Bundle.main.buildVersionNumber!) {
                             storedTitle = first.title
                             storedLink = first.permalink
@@ -912,7 +911,10 @@ extension MainViewController: MDCTabBarDelegate {
 extension MainViewController: MDCBottomSheetControllerDelegate {
 
     func bottomSheetControllerWillChangeState(_ controller: MDCBottomSheetController, sheetState state: MDCSheetState) {
-        // Code goes here
+        if state == .closed {
+            controller.view.endEditing(true)
+            controller.dismiss(animated: true, completion: nil)
+        }
     }
 
     func bottomSheetControllerDidDismissBottomSheet(_ controller: MDCBottomSheetController) {
