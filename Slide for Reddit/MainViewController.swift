@@ -97,11 +97,10 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     
     //from https://github.com/CleverTap/ios-request-review/blob/master/Example/RatingExample/ViewController.swift
     private func requestReviewIfAppropriate() {
-        return //Disable this until out of TestFlight
         if #available(iOS 10.3, *) {
             let lastReviewedVersion = UserDefaults.standard.string(forKey: "lastReviewed")
             let timesOpened = UserDefaults.standard.integer(forKey: "appOpens")
-            if lastReviewedVersion != nil && (getVersion() == lastReviewedVersion!) || timesOpened < 6 {
+            if lastReviewedVersion != nil && (getVersion() == lastReviewedVersion!) || timesOpened < 7 {
                 UserDefaults.standard.set(timesOpened + 1, forKey: "appOpens")
                 UserDefaults.standard.synchronize()
                 return
@@ -780,7 +779,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
     func checkForUpdate() {
         if !SettingValues.doneVersion() {
-            print("Getting posts for version \(Bundle.main.buildVersionNumber!)")
+            print("Getting posts for version \(Bundle.main.releaseVersionNumber!)")
             let session = (UIApplication.shared.delegate as! AppDelegate).session
             do {
                 try session?.getList(Paginator.init(), subreddit: Subreddit.init(subreddit: "slide_ios"), sort: LinkSortType.hot, timeFilterWithin: TimeFilterWithin.hour, completion: { (result) in
@@ -796,10 +795,10 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                         var storedTitle = ""
                         var storedLink = ""
 
-                        if first.stickied && first.title.contains(Bundle.main.buildVersionNumber!) {
+                        if first.stickied && first.title.contains(Bundle.main.releaseVersionNumber!) {
                             storedTitle = first.title
                             storedLink = first.permalink
-                        } else if second.stickied && second.title.contains(Bundle.main.buildVersionNumber!) {
+                        } else if second.stickied && second.title.contains(Bundle.main.releaseVersionNumber!) {
                             storedTitle = second.title
                             storedLink = second.permalink
                         }
