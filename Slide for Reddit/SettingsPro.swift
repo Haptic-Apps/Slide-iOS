@@ -117,7 +117,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         about.sizeToFit()
         three = UILabel(frame: CGRect.init(x: (self.tableView.frame.size.width / 4) - 50, y: 160, width: 100, height: 45))
 
-        three.text = "$4.99"
+        three.text = "..."
         three.backgroundColor = GMColor.lightGreen300Color()
         three.layer.cornerRadius = 22.5
         three.clipsToBounds = true
@@ -128,7 +128,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         three.textAlignment = .center
         
         six = UILabel(frame: CGRect.init(x: (self.tableView.frame.size.width / 4) - 50, y: 160, width: 100, height: 45))
-        six.text = "$7.99"
+        six.text = "..."
         six.backgroundColor = GMColor.lightBlue300Color()
         six.layer.cornerRadius = 22.5
         six.clipsToBounds = true
@@ -227,7 +227,8 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
             
             let priceOldStr = numberFormatter.string(from: NSDecimalNumber(value: 4.99)) ?? "$4.99"
             let priceOldStr2 = numberFormatter.string(from: NSDecimalNumber(value: 7.99)) ?? "$7.99"
-            if priceOldStr != price1Str! {
+            print(items[0].priceLocale.identifier)
+            if priceOldStr != price1Str! && items[0].priceLocale.identifier.contains("en_US") {
                 //Is a sale
                 
                 let crossedString = NSMutableAttributedString.init(string: "\(priceOldStr)\n", attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSStrikethroughStyleAttributeName: NSNumber(value: NSUnderlineStyle.styleSingle.rawValue)])
