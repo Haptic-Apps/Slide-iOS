@@ -621,6 +621,8 @@ extension VideoMediaViewController {
         if url.contains("#t=") {
             url = url.replacingOccurrences(of: "#t=", with: url.contains("?") ? "&t=" : "?t=")
         }
+        
+        url = url.replacingOccurrences(of: "&amp;", with: "&")
 
         let i = URL(string: url)
         if let dictionary = i?.queryDictionary {

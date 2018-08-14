@@ -441,7 +441,7 @@ class SettingValues {
 
     public enum FabType: String {
 
-        public static let cases: [FabType] = [.HIDE_READ, .SHADOWBOX, .NEW_POST, .SIDEBAR, .GALLERY, .SEARCH]
+        public static let cases: [FabType] = [.HIDE_READ, .SHADOWBOX, .NEW_POST, .SIDEBAR, .SEARCH]
 
         case HIDE_READ = "hide"
         case SHADOWBOX = "shadowbox"

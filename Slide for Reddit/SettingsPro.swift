@@ -317,9 +317,9 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
             case 4: return self.night
             case 5: return self.biometric
             case 6: return self.themes
-            case 7: return self.gallery
-            case 8: return self.autocache
-            case 9: return self.username
+//            case 7: return self.gallery
+            case 7: return self.autocache
+            case 8: return self.username
 
             default: fatalError("Unknown row in section 0")
             }
@@ -356,7 +356,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return 10
+        case 0: return 9
         default: fatalError("Unknown number of sections")
         }
     }
