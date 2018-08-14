@@ -42,7 +42,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             if finalSubs.count != Subscriptions.subreddits.count {
                 subChanged = true
             } else {
-                for i in 0...finalSubs.count - 1 {
+                for i in 0 ..< finalSubs.count {
                     if finalSubs[i] != Subscriptions.subreddits[i] {
                         subChanged = true
                         break

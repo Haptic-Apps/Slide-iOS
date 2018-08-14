@@ -515,7 +515,7 @@ public class TextDisplayStackView: UIStackView {
         
         preSeperated.append(startSeperated[0])
         if startSeperated.count > 1 {
-            for i in 1...startSeperated.count - 1 {
+            for i in 1 ..< startSeperated.count {
                 text = startSeperated[i]
                 split = text.components(separatedBy: endTag)
                 code = split[0]
@@ -561,7 +561,7 @@ public class TextDisplayStackView: UIStackView {
             
             preSeperated.append(startSeperated[0])
             if startSeperated.count > 1 {
-                for i in 1...startSeperated.count - 1 {
+                for i in 1 ..< startSeperated.count {
                     text = startSeperated[i]
                     split = text.components(separatedBy: endTag)
                     code = split[0]
@@ -583,7 +583,7 @@ public class TextDisplayStackView: UIStackView {
             if block.contains(TABLE_START_TAG) {
                 var startSeperated = block.components(separatedBy: TABLE_START_TAG)
                 newBlocks.append(startSeperated[0].trimmed())
-                for i in 1...startSeperated.count - 1 {
+                for i in 1 ..< startSeperated.count {
                     var split = startSeperated[i].components(separatedBy: TABLE_END_TAG)
                     let table = "<table>" + split[0] + "</table>"
                     newBlocks.append(table)
