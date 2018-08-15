@@ -223,7 +223,26 @@ class SettingsWelcomeTheme: UIViewController {
         about.lineBreakMode = .byWordWrapping
         self.view.addSubview(about)
         
-        iOS = UIButton(frame: CGRect.init(x: 48, y: 270, width: self.view.frame.size.width - 96, height: 45))
+        let stack = UIStackView().then {
+            $0.axis = .vertical
+            $0.alignment = .center
+            $0.distribution = .equalCentering
+            $0.spacing = 12
+            $0.accessibilityIdentifier = "Select a theme!"
+        }
+        
+        let inner = UIView()
+        self.view.addSubview(inner)
+        inner.horizontalAnchors == self.view.horizontalAnchors + 16
+        inner.topAnchor == about.topAnchor
+        inner.bottomAnchor == self.view.bottomAnchor + 48
+        inner.addSubview(stack)
+
+        stack.horizontalAnchors == inner.horizontalAnchors
+        stack.heightAnchor == 216
+        stack.centerYAnchor == inner.centerYAnchor
+
+        iOS = UIButton(frame: CGRect.init(x: 48, y: 220, width: self.view.frame.size.width - 96, height: 45))
         iOS.backgroundColor = .white
         iOS.layer.cornerRadius = 22.5
         iOS.clipsToBounds = true
@@ -233,19 +252,13 @@ class SettingsWelcomeTheme: UIViewController {
         iOS.titleLabel?.font = UIFont.systemFont(ofSize: 18)
         iOS.setTitleColor(GMColor.blue500Color(), for: .normal)
         iOS.titleEdgeInsets = UIEdgeInsets.init(top: 0, left: 20, bottom: 0, right: 20)
-        self.view.addSubview(iOS)
         
         iOS.addTapGestureRecognizer {
             self.setiOS()
         }
         
-        iOS.transform = CGAffineTransform.init(scaleX: 0.001, y: 0.001)
-        UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
-            self.iOS.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
-        }, completion: nil)
-        
         //Dark theme
-        dark = UIButton(frame: CGRect.init(x: 48, y: 340, width: self.view.frame.size.width - 96, height: 45))
+        dark = UIButton(frame: CGRect.init(x: 48, y: 290, width: self.view.frame.size.width - 96, height: 45))
         dark.backgroundColor = ColorUtil.Theme.DARK.foregroundColor
         dark.layer.cornerRadius = 22.5
         dark.clipsToBounds = true
@@ -255,19 +268,13 @@ class SettingsWelcomeTheme: UIViewController {
         dark.titleLabel?.font = FontGenerator.Font.ROBOTO_BOLD.font.withSize(18)
         dark.setTitleColor(ColorUtil.Theme.DARK.fontColor, for: .normal)
         dark.titleEdgeInsets = UIEdgeInsets.init(top: 0, left: 20, bottom: 0, right: 20)
-        self.view.addSubview(dark)
         
         dark.addTapGestureRecognizer {
             self.setDark()
         }
         
-        dark.transform = CGAffineTransform.init(scaleX: 0.001, y: 0.001)
-        UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
-            self.dark.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
-        }, completion: nil)
-        
         //Blue theme
-        blue = UIButton(frame: CGRect.init(x: 48, y: 410, width: self.view.frame.size.width - 96, height: 45))
+        blue = UIButton(frame: CGRect.init(x: 48, y: 360, width: self.view.frame.size.width - 96, height: 45))
         blue.backgroundColor = ColorUtil.Theme.BLUE.foregroundColor
         blue.layer.cornerRadius = 22.5
         blue.clipsToBounds = true
@@ -277,19 +284,13 @@ class SettingsWelcomeTheme: UIViewController {
         blue.titleLabel?.font = FontGenerator.Font.HELVETICA.font.withSize(18)
         blue.setTitleColor(ColorUtil.Theme.BLUE.fontColor, for: .normal)
         blue.titleEdgeInsets = UIEdgeInsets.init(top: 0, left: 20, bottom: 0, right: 20)
-        self.view.addSubview(blue)
         
         blue.addTapGestureRecognizer {
             self.setBlue()
         }
         
-        blue.transform = CGAffineTransform.init(scaleX: 0.001, y: 0.001)
-        UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
-            self.blue.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
-        }, completion: nil)
-        
         //Deep theme
-        deep = UIButton(frame: CGRect.init(x: 48, y: 480, width: self.view.frame.size.width - 96, height: 45))
+        deep = UIButton(frame: CGRect.init(x: 48, y: 430, width: self.view.frame.size.width - 96, height: 45))
         deep.backgroundColor = ColorUtil.Theme.DEEP.foregroundColor
         deep.layer.cornerRadius = 22.5
         deep.clipsToBounds = true
@@ -299,17 +300,42 @@ class SettingsWelcomeTheme: UIViewController {
         deep.titleLabel?.font = FontGenerator.Font.HELVETICA.font.withSize(18)
         deep.setTitleColor(ColorUtil.Theme.DEEP.fontColor, for: .normal)
         deep.titleEdgeInsets = UIEdgeInsets.init(top: 0, left: 20, bottom: 0, right: 20)
-        self.view.addSubview(deep)
         
         deep.addTapGestureRecognizer {
             self.setDeep()
         }
         
+        stack.addArrangedSubviews(iOS, dark, blue, deep)
+        
+        dark.transform = CGAffineTransform.init(scaleX: 0.001, y: 0.001)
+        UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+            self.dark.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
+        }, completion: nil)
+        
+        dark.heightAnchor == 45
+        blue.heightAnchor == 45
+        deep.heightAnchor == 45
+        iOS.heightAnchor == 45
+        dark.horizontalAnchors == stack.horizontalAnchors
+        blue.horizontalAnchors == stack.horizontalAnchors
+        deep.horizontalAnchors == stack.horizontalAnchors
+        iOS.horizontalAnchors == stack.horizontalAnchors
+
+        blue.transform = CGAffineTransform.init(scaleX: 0.001, y: 0.001)
+        UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+            self.blue.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
+        }, completion: nil)
+
         deep.transform = CGAffineTransform.init(scaleX: 0.001, y: 0.001)
         UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
             self.deep.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
         }, completion: nil)
         
+        iOS.transform = CGAffineTransform.init(scaleX: 0.001, y: 0.001)
+        UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+            self.iOS.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
+        }, completion: nil)
+
         self.navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
         self.view.backgroundColor = ColorUtil.backgroundColor
     }

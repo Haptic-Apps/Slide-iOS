@@ -72,7 +72,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
         for row in 0..<subs.count {
             tableView.selectRow(at: IndexPath(row: row, section: 0), animated: false, scrollPosition: .none)
         }
-        self.navigationController?.navigationItem.setRightBarButtonItems(chosenButtons, animated: true)
+        self.navigationItem.setRightBarButtonItems(chosenButtons, animated: true)
     }
     
     public func add(_ selector: AnyObject) {
@@ -252,7 +252,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if !selected {
-            self.navigationController?.navigationItem.setRightBarButtonItems(chosenButtons, animated: true)
+            self.navigationItem.setRightBarButtonItems(chosenButtons, animated: true)
             selected = true
         }
     }
@@ -260,7 +260,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
     override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         if tableView.indexPathsForSelectedRows == nil || tableView.indexPathsForSelectedRows!.isEmpty {
             selected = false
-            self.navigationController?.navigationItem.setRightBarButtonItems(regularButtons, animated: true)
+            self.navigationItem.setRightBarButtonItems(regularButtons, animated: true)
         }
     }
 

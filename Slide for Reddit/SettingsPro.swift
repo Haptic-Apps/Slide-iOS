@@ -227,7 +227,6 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
             
             let priceOldStr = numberFormatter.string(from: NSDecimalNumber(value: 4.99)) ?? "$4.99"
             let priceOldStr2 = numberFormatter.string(from: NSDecimalNumber(value: 7.99)) ?? "$7.99"
-            print(items[0].priceLocale.identifier)
             if priceOldStr != price1Str! && items[0].priceLocale.identifier.contains("en_US") {
                 //Is a sale
                 
@@ -252,8 +251,8 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
                 self.three.frame = CGRect.init(x: (self.tableView.frame.size.width / 4) - 50, y: 150, width: 100, height: 80)
                 self.six.frame = CGRect.init(x: (self.tableView.frame.size.width / 4) - 50, y: 150, width: 100, height: 80)
             } else {
-                self.three.text = priceOldStr
-                self.six.text = priceOldStr2
+                self.three.text = price2Str
+                self.six.text = price1Str
             }
         }
         IAPHandler.shared.purchaseStatusBlock = {[weak self] (type) in
