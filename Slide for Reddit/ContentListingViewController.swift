@@ -521,9 +521,9 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     func refresh() {
         loading = true
         baseData.reset()
-        tableView.reloadData()
         flowLayout.reset()
         flowLayout.invalidateLayout()
+        tableView.reloadData()
         refreshControl.beginRefreshing()
         baseData.getData(reload: true)
     }

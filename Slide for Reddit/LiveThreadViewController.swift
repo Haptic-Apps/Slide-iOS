@@ -197,8 +197,8 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
                     if let payload = (text as! JSONDictionary)["payload"] as? JSONDictionary, let data = payload["data"] as? JSONDictionary {
                         DispatchQueue.main.async {
                             self.content.insert(data, at: 0)
-                            self.tableView.reloadData()
                             self.flowLayout.reset()
+                            self.tableView.reloadData()
                         }
                     }
                 }
@@ -216,8 +216,8 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
 
     func doneLoading() {
         DispatchQueue.main.async {
-            self.tableView.reloadData()
             self.flowLayout.reset()
+            self.tableView.reloadData()
         }
     }
 }

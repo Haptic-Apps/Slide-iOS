@@ -748,9 +748,9 @@ class SingleSubredditViewController: MediaViewController {
         //todo save realm
         DispatchQueue.main.async {
             if !indexPaths.isEmpty {
+                self.flowLayout.reset()
                 self.tableView.performBatchUpdates({
                     self.tableView.deleteItems(at: indexPaths)
-                    self.flowLayout.reset()
                 }, completion: nil)
             }
         }
@@ -946,9 +946,9 @@ class SingleSubredditViewController: MediaViewController {
 
     func refresh() {
         links = []
-        tableView.reloadData()
         flowLayout.reset()
         flowLayout.invalidateLayout()
+        tableView.reloadData()
         load(reset: true)
     }
 
@@ -1394,8 +1394,8 @@ extension SingleSubredditViewController {
                 links.remove(at: index)
             }
         }
-        tableView.reloadData()
         self.flowLayout.reset()
+        tableView.reloadData()
     }
 
     func pickTheme(sender: AnyObject?, parent: MainViewController?) {
@@ -1967,6 +1967,8 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
                 location += 1
             }
 
+            self.flowLayout.reset()
+
             tableView.performBatchUpdates({
                 self.tableView.deleteItems(at: [IndexPath.init(item: location, section: 0)])
                 BannerUtil.makeBanner(text: "Submission hidden forever!\nTap to undo", color: GMColor.red500Color(), seconds: 4, context: self, callback: {
@@ -1978,8 +1980,6 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
 
                     }
                 })
-
-                self.flowLayout.reset()
             }, completion: nil)
 
         } catch {
