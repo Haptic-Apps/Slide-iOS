@@ -233,7 +233,8 @@ class SettingsWelcomeTheme: UIViewController {
         
         let inner = UIView()
         self.view.addSubview(inner)
-        inner.horizontalAnchors == self.view.horizontalAnchors + 16
+        inner.centerXAnchor == self.view.centerXAnchor
+        inner.widthAnchor == 250
         inner.topAnchor == about.topAnchor
         inner.bottomAnchor == self.view.bottomAnchor + 48
         inner.addSubview(stack)
@@ -488,6 +489,24 @@ class SettingsWelcomeLayout: UIViewController {
         let isList = SettingValues.postViewMode == .LIST
         let isCompact = SettingValues.postViewMode == .COMPACT
         
+        let stack = UIStackView().then {
+            $0.axis = .vertical
+            $0.alignment = .center
+            $0.spacing = 5
+            $0.accessibilityIdentifier = "Select a layout type!"
+        }
+        
+        let inner = UIView()
+        self.view.addSubview(inner)
+        
+        inner.horizontalAnchors == self.view.horizontalAnchors + 16
+        inner.topAnchor == about.topAnchor
+        inner.bottomAnchor == self.view.bottomAnchor + 48
+        inner.addSubview(stack)
+        
+        stack.horizontalAnchors == inner.horizontalAnchors
+        stack.centerYAnchor == inner.centerYAnchor
+
         card = UIImageView().then {
             $0.image = UIImage(named: "card-1")?.getCopy(withColor: isCard ? ColorUtil.baseAccent : ColorUtil.fontColor)
             $0.contentMode = .scaleAspectFit
@@ -500,6 +519,8 @@ class SettingsWelcomeLayout: UIViewController {
             $0.sizeToFit()
         }
         
+        cardLabel.heightAnchor == 15
+        
         list = UIImageView().then {
             $0.image = UIImage(named: "list-1")?.getCopy(withColor: isList ? ColorUtil.baseAccent : ColorUtil.fontColor)
             $0.contentMode = .scaleAspectFit
@@ -510,6 +531,8 @@ class SettingsWelcomeLayout: UIViewController {
             $0.textColor = ColorUtil.fontColor
             $0.sizeToFit()
         }
+        
+        listLabel.heightAnchor == 15
 
         compact = UIImageView().then {
             $0.image = UIImage(named: "compact-1")?.getCopy(withColor: isCompact ? ColorUtil.baseAccent : ColorUtil.fontColor)
@@ -522,40 +545,68 @@ class SettingsWelcomeLayout: UIViewController {
             $0.sizeToFit()
         }
         
-        self.view.addSubviews(card, cardLabel, list, listLabel, compact, compactLabel)
+        compactLabel.heightAnchor == 15
         
-        card.centerXAnchor == self.view.centerXAnchor
-        card.topAnchor == about.bottomAnchor - 8
-        card.widthAnchor == 175
-        card.heightAnchor == 175
-        card.addTapGestureRecognizer {
-            self.setCard()
-        }
+        stack.addArrangedSubviews(card, cardLabel, list, listLabel, compact, compactLabel)
         
-        cardLabel.centerXAnchor == self.view.centerXAnchor
-        cardLabel.topAnchor == card.bottomAnchor - 8
-
-        list.centerXAnchor == self.view.centerXAnchor
-        list.topAnchor == cardLabel.bottomAnchor + 16
-        list.widthAnchor == 175
-        list.heightAnchor == 100
-        list.addTapGestureRecognizer {
-            self.setList()
+        print(UIScreen.main.bounds.size.height)
+        if UIScreen.main.bounds.size.height > 600 {
+            stack.heightAnchor == 435
+            card.centerXAnchor == stack.centerXAnchor
+            card.widthAnchor == 175
+            card.heightAnchor == 175
+            card.addTapGestureRecognizer {
+                self.setCard()
+            }
+            
+            cardLabel.centerXAnchor == stack.centerXAnchor
+            
+            list.centerXAnchor == stack.centerXAnchor
+            list.widthAnchor == 175
+            list.heightAnchor == 100
+            list.addTapGestureRecognizer {
+                self.setList()
+            }
+            
+            listLabel.centerXAnchor == stack.centerXAnchor
+            
+            compact.centerXAnchor == self.view.centerXAnchor
+            compact.widthAnchor == 175
+            compact.heightAnchor == 90
+            compact.addTapGestureRecognizer {
+                self.setCompact()
+            }
+            
+            compactLabel.centerXAnchor == stack.centerXAnchor
+        } else {
+            stack.heightAnchor == 278
+            card.centerXAnchor == stack.centerXAnchor
+            card.widthAnchor == 100
+            card.heightAnchor == 100
+            card.addTapGestureRecognizer {
+                self.setCard()
+            }
+            
+            cardLabel.centerXAnchor == stack.centerXAnchor
+            
+            list.centerXAnchor == stack.centerXAnchor
+            list.widthAnchor == 100
+            list.heightAnchor == 57
+            list.addTapGestureRecognizer {
+                self.setList()
+            }
+            
+            listLabel.centerXAnchor == stack.centerXAnchor
+            
+            compact.centerXAnchor == self.view.centerXAnchor
+            compact.widthAnchor == 100
+            compact.heightAnchor == 51
+            compact.addTapGestureRecognizer {
+                self.setCompact()
+            }
+            
+            compactLabel.centerXAnchor == stack.centerXAnchor
         }
-        
-        listLabel.centerXAnchor == self.view.centerXAnchor
-        listLabel.topAnchor == list.bottomAnchor - 8
-
-        compact.centerXAnchor == self.view.centerXAnchor
-        compact.topAnchor == listLabel.bottomAnchor + 16
-        compact.widthAnchor == 175
-        compact.heightAnchor == 90
-        compact.addTapGestureRecognizer {
-            self.setCompact()
-        }
-
-        compactLabel.centerXAnchor == self.view.centerXAnchor
-        compactLabel.topAnchor == compact.bottomAnchor - 8
 
         self.navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
         self.view.backgroundColor = ColorUtil.backgroundColor
