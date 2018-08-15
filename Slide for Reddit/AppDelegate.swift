@@ -54,8 +54,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        let settings = UIUserNotificationSettings(types: UIUserNotificationType.alert, categories: nil)
-        UIApplication.shared.registerUserNotificationSettings(settings)
+        //let settings = UIUserNotificationSettings(types: UIUserNotificationType.alert, categories: nil)
+        //UIApplication.shared.registerUserNotificationSettings(settings)
 
         let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true) as NSArray
         let documentDirectory = paths[0] as! String
@@ -113,6 +113,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Drafts.initialize()
         RemovalReasons.initialize()
         Subscriptions.sync(name: AccountController.currentName, completion: nil)
+        /* enable this when we implement it
         if #available(iOS 10.0, *) {
             UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (_, error) in
                 if (error) != nil {
@@ -127,7 +128,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             UIApplication.shared.registerForRemoteNotifications()
         } else {
             // Fallback on earlier versions
-        }
+        }*/
         if !UserDefaults.standard.bool(forKey: "sc" + name) {
             syncColors(subredditController: nil)
         }
