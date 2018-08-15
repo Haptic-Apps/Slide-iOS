@@ -39,7 +39,6 @@ class WrappingFlowLayout: UICollectionViewLayout {
     }
     func reset() {
         cache = []
-        prepare()
         var portraitCount = SettingValues.multiColumnCount / 2
         if portraitCount == 0 {
             portraitCount = 1
@@ -73,7 +72,7 @@ class WrappingFlowLayout: UICollectionViewLayout {
         }
         
         cellPadding = (numberOfColumns > 1 && (SettingValues.postViewMode != .LIST) && (SettingValues.postViewMode != .COMPACT) ) ? CGFloat(3) : ((SettingValues.postViewMode == .LIST) ? CGFloat(1) : CGFloat(0))
-
+        prepare()
     }
     
     override func prepare() {

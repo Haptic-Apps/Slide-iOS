@@ -1138,8 +1138,8 @@ class SingleSubredditViewController: MediaViewController {
                                 
                                     self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + (-1 * ((SettingValues.viewType && !self.single) ?    (52 ) : (self.navigationController?.navigationBar.frame.size.height ?? 64))) - top)
                                 } else {
-                                    self.tableView.insertItems(at: paths)
                                     self.flowLayout.reset()
+                                    self.tableView.insertItems(at: paths)
                                 }
 
                                 self.refreshControl.endRefreshing()
