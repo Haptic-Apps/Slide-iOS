@@ -274,7 +274,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         IAPHandler.shared.restoreBlock = {[weak self] (isRestore) in
             guard let strongSelf = self else { return }
             if isRestore {
-                let alertView = UIAlertController(title: "", message: "Slide has been successfully restored on your device! Thank you for supporting my work :)", preferredStyle: .alert)
+                let alertView = UIAlertController(title: "", message: "Slide has been successfully restored on your device! Thank you for supporting Slide :)", preferredStyle: .alert)
                 let action = UIAlertAction(title: "Close", style: .cancel, handler: { (_) in
                 })
                 alertView.addAction(action)

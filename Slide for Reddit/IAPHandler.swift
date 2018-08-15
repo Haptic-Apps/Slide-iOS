@@ -97,22 +97,36 @@ extension IAPHandler: SKProductsRequestDelegate, SKPaymentTransactionObserver {
     
     // MARK: - IAP PAYMENT QUEUE
     func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
+        var oneSuccess = false
+        var restored = false
         for transaction: AnyObject in transactions {
             if let trans = transaction as? SKPaymentTransaction {
                 switch trans.transactionState {
                 case .purchased:
                     print("purchased")
                     SKPaymentQueue.default().finishTransaction(transaction as! SKPaymentTransaction)
-                    purchaseStatusBlock?(.purchased)
+                    oneSuccess = true
                 case .failed:
                     print("failed")
                     SKPaymentQueue.default().finishTransaction(transaction as! SKPaymentTransaction)
-                    restoreBlock?(false)
                 case .restored:
                     print("restored")
+                    restored = true
                     SKPaymentQueue.default().finishTransaction(transaction as! SKPaymentTransaction)
-                    restoreBlock?(true)
+                    oneSuccess = true
                 default: break
-                }}}
+                }
+            }
+        }
+        
+        if oneSuccess {
+            if restored {
+                restoreBlock?(true)
+            } else {
+                purchaseStatusBlock?(.purchased)
+            }
+        } else {
+            restoreBlock?(false)
+        }
     }
 }
