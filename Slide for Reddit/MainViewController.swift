@@ -409,7 +409,11 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         self.view.addSubview(tabBar)
         tabBar.heightAnchor == 48
         tabBar.horizontalAnchors == self.view.horizontalAnchors
-        tabBar.topAnchor == self.view.safeTopAnchor
+        if #available(iOS 11, *) {
+            tabBar.topAnchor == self.view.safeTopAnchor
+        } else {
+            tabBar.topAnchor == self.view.topAnchor + 20
+        }
     }
     
     func didChooseSub(_ gesture: UITapGestureRecognizer) {
@@ -527,6 +531,21 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
         drawerButton.frame = CGRect(x: 8, y: size.height - 48, width: 40, height: 40)
+        inHeadView.removeFromSuperview()
+
+        if size.width > size.height && UIDevice.current.userInterfaceIdiom != .pad {
+            if #available(iOS 11, *) {
+                tabBar.topAnchor == self.view.safeTopAnchor
+            } else {
+                tabBar.topAnchor == self.view.topAnchor
+            }
+        } else {
+            if #available(iOS 11, *) {
+                tabBar.topAnchor == self.view.safeTopAnchor
+            } else {
+                tabBar.topAnchor == self.view.topAnchor + 20
+            }
+        }
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
