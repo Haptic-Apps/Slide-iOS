@@ -50,7 +50,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             }
             if ColorUtil.doInit() || subChanged {
                 restartVC()
-                PagingCommentViewController.savedComment = nil
             } else if SubredditReorderViewController.changed {
                 doButtons()
             }
@@ -100,6 +99,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     }
 
     func hardReset() {
+        PagingCommentViewController.savedComment = nil
         navigationController?.popViewController(animated: false)
         navigationController?.setViewControllers([MainViewController.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)], animated: false)
     }
