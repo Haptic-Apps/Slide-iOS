@@ -258,7 +258,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         }
         IAPHandler.shared.purchaseStatusBlock = {[weak self] (type) in
             guard let strongSelf = self else { return }
-            if type == .purchased || type == .restored {
+            if type == .purchased {
                 let alertView = UIAlertController(title: "", message: type.message(), preferredStyle: .alert)
                 let action = UIAlertAction(title: "Close", style: .cancel, handler: { (_) in
                     strongSelf.navigationController?.dismiss(animated: true)
@@ -269,7 +269,12 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
                 UserDefaults.standard.set(true, forKey: SettingValues.pref_pro)
                 UserDefaults.standard.synchronize()
                 SettingsPro.changed = true
-            } else {
+            }
+        }
+        
+        IAPHandler.shared.restoreBlock = {[weak self] (isRestore) in
+            guard let strongSelf = self else { return }
+            if isRestore {
                 let alertView = UIAlertController(title: "", message: "Slide Pro purchase not found. Make sure you are signed in with the same Apple ID as you purchased Slide Pro with originally.\nIf this issue persists, feel free to send me an email!", preferredStyle: .alert)
                 let action = UIAlertAction(title: "Close", style: .cancel, handler: { (_) in
                 })
@@ -280,6 +285,23 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
                         mail.mailComposeDelegate = strongSelf
                         mail.setToRecipients(["hapticappsdev@gmail.com"])
                         mail.setSubject("Slide Pro Purchase Restore")
+                        mail.setMessageBody("<p>Apple ID: \nName:\n\n</p>", isHTML: true)
+                        
+                        strongSelf.present(mail, animated: true)
+                    }
+                }))
+                strongSelf.present(alertView, animated: true, completion: nil)
+            } else {
+                let alertView = UIAlertController(title: "Something went wrong!", message: "Slide Pro could not be purchased. Please try again later or send me an email for more support!", preferredStyle: .alert)
+                let action = UIAlertAction(title: "Close", style: .cancel, handler: { (_) in
+                })
+                alertView.addAction(action)
+                alertView.addAction(UIAlertAction.init(title: "Email me", style: .default, handler: { (_) in
+                    if MFMailComposeViewController.canSendMail() {
+                        let mail = MFMailComposeViewController()
+                        mail.mailComposeDelegate = strongSelf
+                        mail.setToRecipients(["hapticappsdev@gmail.com"])
+                        mail.setSubject("Slide Pro Purchase")
                         mail.setMessageBody("<p>Apple ID: \nName:\n\n</p>", isHTML: true)
                         
                         strongSelf.present(mail, animated: true)

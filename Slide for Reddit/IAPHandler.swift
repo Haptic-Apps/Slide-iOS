@@ -32,6 +32,8 @@ class IAPHandler: NSObject {
     public var iapProducts = [SKProduct]()
     
     var purchaseStatusBlock: ((IAPHandlerAlertType) -> Void)?
+    var restoreBlock: ((Bool) -> Void)?
+
     var getItemsBlock: (([SKProduct]) -> Void)?
 
     // MARK: - MAKE PURCHASE OF A PRODUCT
@@ -105,9 +107,11 @@ extension IAPHandler: SKProductsRequestDelegate, SKPaymentTransactionObserver {
                 case .failed:
                     print("failed")
                     SKPaymentQueue.default().finishTransaction(transaction as! SKPaymentTransaction)
+                    restoreBlock?(false)
                 case .restored:
                     print("restored")
                     SKPaymentQueue.default().finishTransaction(transaction as! SKPaymentTransaction)
+                    restoreBlock?(true)
                 default: break
                 }}}
     }
