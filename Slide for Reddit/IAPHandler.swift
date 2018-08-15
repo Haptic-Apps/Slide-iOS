@@ -101,6 +101,7 @@ extension IAPHandler: SKProductsRequestDelegate, SKPaymentTransactionObserver {
         var restored = false
         for transaction: AnyObject in transactions {
             if let trans = transaction as? SKPaymentTransaction {
+                print(trans)
                 switch trans.transactionState {
                 case .purchased:
                     print("purchased")

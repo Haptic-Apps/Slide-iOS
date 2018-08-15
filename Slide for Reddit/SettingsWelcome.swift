@@ -550,7 +550,7 @@ class SettingsWelcomeLayout: UIViewController {
         stack.addArrangedSubviews(card, cardLabel, list, listLabel, compact, compactLabel)
         
         print(UIScreen.main.bounds.size.height)
-        if UIScreen.main.bounds.size.height > 600 {
+        if UIScreen.main.bounds.size.height > 670 {
             stack.heightAnchor == 435
             card.centerXAnchor == stack.centerXAnchor
             card.widthAnchor == 175
