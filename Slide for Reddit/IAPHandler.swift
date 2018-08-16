@@ -33,6 +33,7 @@ class IAPHandler: NSObject {
     
     var purchaseStatusBlock: ((IAPHandlerAlertType) -> Void)?
     var restoreBlock: ((Bool) -> Void)?
+    var errorBlock: ((String?) -> Void)?
 
     var getItemsBlock: (([SKProduct]) -> Void)?
 
@@ -99,9 +100,9 @@ extension IAPHandler: SKProductsRequestDelegate, SKPaymentTransactionObserver {
     func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
         var oneSuccess = false
         var restored = false
-        var failed = false
+        var failed : String?
+        var didFail = false
         for transaction: AnyObject in transactions {
-            print(transaction.transactionState)
             if let trans = transaction as? SKPaymentTransaction {
                 switch trans.transactionState {
                 case .purchasing, .deferred: break // do nothing
@@ -111,8 +112,9 @@ extension IAPHandler: SKProductsRequestDelegate, SKPaymentTransactionObserver {
                     oneSuccess = true
                 case .failed:
                     print("failed")
+                    didFail = true
                     SKPaymentQueue.default().finishTransaction(transaction as! SKPaymentTransaction)
-                    failed = true
+                    failed = trans.error?.localizedDescription ?? nil
                 case .restored:
                     print("restored")
                     restored = true
@@ -128,8 +130,8 @@ extension IAPHandler: SKProductsRequestDelegate, SKPaymentTransactionObserver {
             } else {
                 purchaseStatusBlock?(.purchased)
             }
-        } else if failed {
-            restoreBlock?(false)
+        } else if didFail {
+            errorBlock?(failed)
         }
     }
 }

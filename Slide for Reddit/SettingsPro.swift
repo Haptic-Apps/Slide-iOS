@@ -59,6 +59,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
 
         self.night.textLabel?.text = "Auto night mode"
         self.night.detailTextLabel?.text = "Select a custom night theme and night hours, Slide does the rest"
+        self.night.detailTextLabel?.numberOfLines = 0
         self.night.backgroundColor = ColorUtil.foregroundColor
         self.night.textLabel?.textColor = ColorUtil.fontColor
         self.night.imageView?.image = UIImage.init(named: "night")?.toolbarIcon()
@@ -67,6 +68,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         
         self.username.textLabel?.text = "Username scrubbing"
         self.username.detailTextLabel?.text = "Keep your account names a secret"
+        self.username.detailTextLabel?.numberOfLines = 0
         self.username.backgroundColor = ColorUtil.foregroundColor
         self.username.textLabel?.textColor = ColorUtil.fontColor
         self.username.imageView?.image = UIImage.init(named: "hide")?.toolbarIcon()
@@ -75,6 +77,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         
         self.backup.textLabel?.text = "Backup and Restore"
         self.backup.detailTextLabel?.text = "Sync your Slide settings between devices"
+        self.backup.detailTextLabel?.numberOfLines = 0
         self.backup.backgroundColor = ColorUtil.foregroundColor
         self.backup.textLabel?.textColor = ColorUtil.fontColor
         self.backup.imageView?.image = UIImage.init(named: "download")?.toolbarIcon()
@@ -83,6 +86,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
 
         self.custom.textLabel?.text = "Custom theme colors"
         self.custom.detailTextLabel?.text = "Choose a custom color for your themes"
+        self.custom.detailTextLabel?.numberOfLines = 0
         self.custom.backgroundColor = ColorUtil.foregroundColor
         self.custom.detailTextLabel?.textColor = ColorUtil.fontColor
         self.custom.textLabel?.textColor = ColorUtil.fontColor
@@ -92,6 +96,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.themes.textLabel?.text = "More base themes"
         self.themes.detailTextLabel?.text = "Unlocks Sepia and Deep themes"
         self.themes.backgroundColor = ColorUtil.Theme.DEEP.backgroundColor
+        self.themes.detailTextLabel?.numberOfLines = 0
         self.themes.detailTextLabel?.textColor = .white
         self.themes.textLabel?.textColor = .white
         self.themes.imageView?.image = UIImage.init(named: "colors")?.toolbarIcon().getCopy(withColor: .white)
@@ -140,6 +145,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         
         self.shadowbox.textLabel?.text = "Shadowbox mode"
         self.shadowbox.detailTextLabel?.text = "View your favorite subreddits distraction free"
+        self.shadowbox.detailTextLabel?.numberOfLines = 0
         self.shadowbox.backgroundColor = ColorUtil.foregroundColor
         self.shadowbox.textLabel?.textColor = ColorUtil.fontColor
         self.shadowbox.imageView?.image = UIImage.init(named: "shadowbox")?.toolbarIcon()
@@ -148,6 +154,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         
         self.gallery.textLabel?.text = "Gallery mode"
         self.gallery.detailTextLabel?.text = "r/pics never looked better"
+        self.gallery.detailTextLabel?.numberOfLines = 0
         self.gallery.backgroundColor = ColorUtil.foregroundColor
         self.gallery.textLabel?.textColor = ColorUtil.fontColor
         self.gallery.imageView?.image = UIImage.init(named: "image")?.toolbarIcon()
@@ -156,6 +163,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         
         self.biometric.textLabel?.text = "Biometric lock"
         self.biometric.detailTextLabel?.text = "Keep your Reddit content safe"
+        self.biometric.detailTextLabel?.numberOfLines = 0
         self.biometric.backgroundColor = ColorUtil.foregroundColor
         self.biometric.textLabel?.textColor = ColorUtil.fontColor
         self.biometric.imageView?.image = UIImage.init(named: "lockapp")?.toolbarIcon()
@@ -163,7 +171,8 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.biometric.detailTextLabel?.textColor = ColorUtil.fontColor
         
         self.multicolumn.textLabel?.text = "Multicolumn mode"
-        self.multicolumn.detailTextLabel?.text = "A must-have for iPads!"
+        self.multicolumn.detailTextLabel?.text = "A must-have for iPads! Set as many columns of content as you would like"
+        self.multicolumn.detailTextLabel?.numberOfLines = 0
         self.multicolumn.backgroundColor = ColorUtil.foregroundColor
         self.multicolumn.textLabel?.textColor = ColorUtil.fontColor
         self.multicolumn.imageView?.image = UIImage.init(named: "multicolumn")?.toolbarIcon()
@@ -172,6 +181,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         
         self.autocache.textLabel?.text = "Autocache subreddits"
         self.autocache.detailTextLabel?.text = "Cache your favorite subs for your morning commute"
+        self.autocache.detailTextLabel?.numberOfLines = 0
         self.autocache.backgroundColor = ColorUtil.foregroundColor
         self.autocache.textLabel?.textColor = ColorUtil.fontColor
         self.autocache.imageView?.image = UIImage.init(named: "download")?.toolbarIcon()
@@ -302,10 +312,54 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
             }
         }
         
-        IAPHandler.shared.restoreBlock = {[weak self] (isRestore) in
+        IAPHandler.shared.errorBlock = {[weak self] (error) in
             guard let strongSelf = self else { return }
             strongSelf.alertController?.dismiss(animated: true, completion: nil)
-            if isRestore {
+            if error != nil {
+                SettingValues.isPro = true
+                UserDefaults.standard.set(true, forKey: SettingValues.pref_pro)
+                UserDefaults.standard.synchronize()
+                SettingsPro.changed = true
+                let alertView = UIAlertController(title: "Something went wrong!", message: "Slide Pro was not purchased and your account has not been charged.\nError: \(error!)\n\nPlease send me an email if this issue persists!", preferredStyle: .alert)
+                let action = UIAlertAction(title: "Close", style: .cancel, handler: { (_) in
+                })
+                alertView.addAction(action)
+                alertView.addAction(UIAlertAction.init(title: "Email me", style: .default, handler: { (_) in
+                    if MFMailComposeViewController.canSendMail() {
+                        let mail = MFMailComposeViewController()
+                        mail.mailComposeDelegate = strongSelf
+                        mail.setToRecipients(["hapticappsdev@gmail.com"])
+                        mail.setSubject("Slide Pro Purchase")
+                        mail.setMessageBody("<p>Apple ID: \nName:\n\n</p>", isHTML: true)
+                        
+                        strongSelf.present(mail, animated: true)
+                    }
+                }))
+                strongSelf.present(alertView, animated: true, completion: nil)
+            } else {
+                let alertView = UIAlertController(title: "Something went wrong!", message: "Slide Pro was not purchased and your account has not been charged! \n\nPlease send me an email if this issue persists!", preferredStyle: .alert)
+                let action = UIAlertAction(title: "Close", style: .cancel, handler: { (_) in
+                })
+                alertView.addAction(action)
+                alertView.addAction(UIAlertAction.init(title: "Email me", style: .default, handler: { (_) in
+                    if MFMailComposeViewController.canSendMail() {
+                        let mail = MFMailComposeViewController()
+                        mail.mailComposeDelegate = strongSelf
+                        mail.setToRecipients(["hapticappsdev@gmail.com"])
+                        mail.setSubject("Slide Pro Purchase")
+                        mail.setMessageBody("<p>Apple ID: \nName:\n\n</p>", isHTML: true)
+                        
+                        strongSelf.present(mail, animated: true)
+                    }
+                }))
+                strongSelf.present(alertView, animated: true, completion: nil)
+            }
+        }
+        
+        IAPHandler.shared.restoreBlock = {[weak self] (restored) in
+            guard let strongSelf = self else { return }
+            strongSelf.alertController?.dismiss(animated: true, completion: nil)
+            if restored {
                 SettingValues.isPro = true
                 UserDefaults.standard.set(true, forKey: SettingValues.pref_pro)
                 UserDefaults.standard.synchronize()
@@ -316,7 +370,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
                 alertView.addAction(action)
                 strongSelf.present(alertView, animated: true, completion: nil)
             } else {
-                let alertView = UIAlertController(title: "Something went wrong!", message: "Slide Pro could not be purchased. Please try again later or send me an email for more support!", preferredStyle: .alert)
+                let alertView = UIAlertController(title: "Something went wrong!", message: "Slide Pro could not be restored! Make sure you purchased Slide on the same Apple ID as you purchased Slide Pro on. Please send me an email if this issue persists!", preferredStyle: .alert)
                 let action = UIAlertAction(title: "Close", style: .cancel, handler: { (_) in
                 })
                 alertView.addAction(action)
@@ -325,7 +379,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
                         let mail = MFMailComposeViewController()
                         mail.mailComposeDelegate = strongSelf
                         mail.setToRecipients(["hapticappsdev@gmail.com"])
-                        mail.setSubject("Slide Pro Purchase")
+                        mail.setSubject("Slide Pro Restsore")
                         mail.setMessageBody("<p>Apple ID: \nName:\n\n</p>", isHTML: true)
                         
                         strongSelf.present(mail, animated: true)
