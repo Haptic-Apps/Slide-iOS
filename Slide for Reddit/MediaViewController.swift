@@ -206,7 +206,7 @@ class MediaViewController: UIViewController, MediaVCDelegate {
                     let modalController = controller as? ModalMediaViewController {
 
 //                    slideInTransitioningDelegate.direction = .bottom
-//                    slideInTransitioningDelegate.coverageRatio = 1.0
+//                    slideInTransitioningDelegate.coverageRatio = 0.6
 //                    modalController.transitioningDelegate = slideInTransitioningDelegate
 //                    modalController.modalPresentationStyle = .custom
 
