@@ -218,41 +218,51 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         super.viewDidLoad()
         IAPHandler.shared.fetchAvailableProducts()
         IAPHandler.shared.getItemsBlock = {(items) in
-            let numberFormatter = NumberFormatter()
-            numberFormatter.formatterBehavior = .behavior10_4
-            numberFormatter.numberStyle = .currency
-            numberFormatter.locale = items[0].priceLocale
-            let price1Str = numberFormatter.string(from: items[0].price)
-            let price2Str = numberFormatter.string(from: items[1].price)
             
-            let priceOldStr = numberFormatter.string(from: NSDecimalNumber(value: 4.99)) ?? "$4.99"
-            let priceOldStr2 = numberFormatter.string(from: NSDecimalNumber(value: 7.99)) ?? "$7.99"
-            if priceOldStr != price1Str! && items[0].priceLocale.identifier.contains("en_US") {
-                //Is a sale
-                
-                let crossedString = NSMutableAttributedString.init(string: "\(priceOldStr)\n", attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSStrikethroughStyleAttributeName: NSNumber(value: NSUnderlineStyle.styleSingle.rawValue)])
-                let crossedString2 = NSMutableAttributedString.init(string: "\(priceOldStr2)\n", attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSStrikethroughStyleAttributeName: NSNumber(value: NSUnderlineStyle.styleSingle.rawValue)])
+            if items.isEmpty {
+                let alertView = UIAlertController(title: "Slide could not connect to Apple's servers", message: "Something went wrong connecting to Apple, please try again soon! Sorry for any inconvenience this may have caused", preferredStyle: .alert)
+                let action = UIAlertAction(title: "Close", style: .cancel, handler: { (_) in
+                })
+                alertView.addAction(action)
+                self.present(alertView, animated: true, completion: nil)
 
-                let newString = NSMutableAttributedString.init(string: price1Str!, attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 18)])
-                let newString2 = NSMutableAttributedString.init(string: price2Str!, attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 18)])
-                
-                let finalString = NSMutableAttributedString()
-                let finalString2 = NSMutableAttributedString()
-                
-                finalString.append(crossedString)
-                finalString.append(newString)
-                
-                finalString2.append(crossedString2)
-                finalString2.append(newString2)
-                
-                self.three.attributedText = finalString
-                self.six.attributedText = finalString2
-                
-                self.three.frame = CGRect.init(x: (self.tableView.frame.size.width / 4) - 50, y: 150, width: 100, height: 80)
-                self.six.frame = CGRect.init(x: (self.tableView.frame.size.width / 4) - 50, y: 150, width: 100, height: 80)
             } else {
-                self.three.text = price2Str
-                self.six.text = price1Str
+                let numberFormatter = NumberFormatter()
+                numberFormatter.formatterBehavior = .behavior10_4
+                numberFormatter.numberStyle = .currency
+                numberFormatter.locale = items[0].priceLocale
+                let price1Str = numberFormatter.string(from: items[0].price)
+                let price2Str = numberFormatter.string(from: items[1].price)
+                
+                let priceOldStr = numberFormatter.string(from: NSDecimalNumber(value: 4.99)) ?? "$4.99"
+                let priceOldStr2 = numberFormatter.string(from: NSDecimalNumber(value: 7.99)) ?? "$7.99"
+                if priceOldStr != price1Str! && items[0].priceLocale.identifier.contains("en_US") {
+                    //Is a sale
+                    
+                    let crossedString = NSMutableAttributedString.init(string: "\(priceOldStr)\n", attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSStrikethroughStyleAttributeName: NSNumber(value: NSUnderlineStyle.styleSingle.rawValue)])
+                    let crossedString2 = NSMutableAttributedString.init(string: "\(priceOldStr2)\n", attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12), NSStrikethroughStyleAttributeName: NSNumber(value: NSUnderlineStyle.styleSingle.rawValue)])
+                    
+                    let newString = NSMutableAttributedString.init(string: price1Str!, attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 18)])
+                    let newString2 = NSMutableAttributedString.init(string: price2Str!, attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 18)])
+                    
+                    let finalString = NSMutableAttributedString()
+                    let finalString2 = NSMutableAttributedString()
+                    
+                    finalString.append(crossedString)
+                    finalString.append(newString)
+                    
+                    finalString2.append(crossedString2)
+                    finalString2.append(newString2)
+                    
+                    self.three.attributedText = finalString
+                    self.six.attributedText = finalString2
+                    
+                    self.three.frame = CGRect.init(x: (self.tableView.frame.size.width / 4) - 50, y: 150, width: 100, height: 80)
+                    self.six.frame = CGRect.init(x: (self.tableView.frame.size.width / 4) - 50, y: 150, width: 100, height: 80)
+                } else {
+                    self.three.text = price2Str
+                    self.six.text = price1Str
+                }
             }
         }
         IAPHandler.shared.purchaseStatusBlock = {[weak self] (type) in
