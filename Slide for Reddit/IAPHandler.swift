@@ -99,10 +99,12 @@ extension IAPHandler: SKProductsRequestDelegate, SKPaymentTransactionObserver {
     func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
         var oneSuccess = false
         var restored = false
+        var failed = false
         for transaction: AnyObject in transactions {
+            print(transaction.transactionState)
             if let trans = transaction as? SKPaymentTransaction {
-                print(trans)
                 switch trans.transactionState {
+                case .purchasing, .deferred: break // do nothing
                 case .purchased:
                     print("purchased")
                     SKPaymentQueue.default().finishTransaction(transaction as! SKPaymentTransaction)
@@ -110,12 +112,12 @@ extension IAPHandler: SKProductsRequestDelegate, SKPaymentTransactionObserver {
                 case .failed:
                     print("failed")
                     SKPaymentQueue.default().finishTransaction(transaction as! SKPaymentTransaction)
+                    failed = true
                 case .restored:
                     print("restored")
                     restored = true
                     SKPaymentQueue.default().finishTransaction(transaction as! SKPaymentTransaction)
                     oneSuccess = true
-                default: break
                 }
             }
         }
@@ -126,7 +128,7 @@ extension IAPHandler: SKProductsRequestDelegate, SKPaymentTransactionObserver {
             } else {
                 purchaseStatusBlock?(.purchased)
             }
-        } else {
+        } else if failed {
             restoreBlock?(false)
         }
     }

@@ -200,10 +200,28 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         
         purchasePro.addTapGestureRecognizer {
             IAPHandler.shared.purchaseMyProduct(index: 0)
+            self.alertController = UIAlertController(title: nil, message: "Purchasing pro...\n\n", preferredStyle: .alert)
+            
+            let spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+            spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
+            spinnerIndicator.color = UIColor.black
+            spinnerIndicator.startAnimating()
+            
+            self.alertController?.view.addSubview(spinnerIndicator)
+            self.present(self.alertController!, animated: true, completion: nil)
         }
         
         purchaseBundle.addTapGestureRecognizer {
             IAPHandler.shared.purchaseMyProduct(index: 1)
+            self.alertController = UIAlertController(title: nil, message: "Purchasing pro with donation...\n\n", preferredStyle: .alert)
+            
+            let spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+            spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
+            spinnerIndicator.color = UIColor.black
+            spinnerIndicator.startAnimating()
+            
+            self.alertController?.view.addSubview(spinnerIndicator)
+            self.present(self.alertController!, animated: true, completion: nil)
         }
 
         about.frame.size.height += 200
@@ -213,6 +231,8 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         tableView.tableHeaderView?.isUserInteractionEnabled = true
 
     }
+    
+    var alertController: UIAlertController?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -268,6 +288,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         IAPHandler.shared.purchaseStatusBlock = {[weak self] (type) in
             guard let strongSelf = self else { return }
             if type == .purchased {
+                strongSelf.alertController?.dismiss(animated: true, completion: nil)
                 let alertView = UIAlertController(title: "", message: type.message(), preferredStyle: .alert)
                 let action = UIAlertAction(title: "Close", style: .cancel, handler: { (_) in
                     strongSelf.navigationController?.dismiss(animated: true)
@@ -283,6 +304,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         
         IAPHandler.shared.restoreBlock = {[weak self] (isRestore) in
             guard let strongSelf = self else { return }
+            strongSelf.alertController?.dismiss(animated: true, completion: nil)
             if isRestore {
                 SettingValues.isPro = true
                 UserDefaults.standard.set(true, forKey: SettingValues.pref_pro)
