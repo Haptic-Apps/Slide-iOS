@@ -9,6 +9,7 @@
 import Anchorage
 import Then
 import UIKit
+import STPopup
 
 class ModalMediaViewController: UIViewController {
 
@@ -33,6 +34,7 @@ class ModalMediaViewController: UIViewController {
 
     init(url: URL, lq: URL?, _ commentCallback: (() -> Void)?, _ failureCallback: ((_ url: URL) -> Void)? = nil) {
         super.init(nibName: nil, bundle: nil)
+        self.contentSizeInPopup = CGSize(width: UIScreen.main.bounds.size.width * 0.75, height: UIScreen.main.bounds.size.height * 0.75)
 
         self.commentCallback = commentCallback
         self.failureCallback = failureCallback
@@ -176,6 +178,7 @@ class ModalMediaViewController: UIViewController {
 
     init(model: EmbeddableMediaDataModel) {
         super.init(nibName: nil, bundle: nil)
+        self.contentSizeInPopup = CGSize(width: UIScreen.main.bounds.size.width * 0.75, height: UIScreen.main.bounds.size.height * 0.75)
         setModel(model: model)
     }
     

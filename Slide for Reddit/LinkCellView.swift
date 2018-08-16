@@ -12,6 +12,8 @@ import MaterialComponents
 import reddift
 import RLBAlertsPickers
 import SafariServices
+import STPopupPreview
+import STPopup
 import Then
 import TTTAttributedLabel
 import UIKit
@@ -33,7 +35,18 @@ enum CurrentType {
     case thumb, banner, text, none
 }
 
-class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TTTAttributedLabelDelegate, UIGestureRecognizerDelegate {
+class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TTTAttributedLabelDelegate, UIGestureRecognizerDelegate, STPopupPreviewRecognizerDelegate {
+    func previewViewController(for popupPreviewRecognizer: STPopupPreviewRecognizer) -> UIViewController? {
+        return parentViewController?.getControllerForUrl(baseUrl: link!.url!)
+    }
+    
+    func presentingViewController(for popupPreviewRecognizer: STPopupPreviewRecognizer) -> UIViewController {
+        return parentViewController!
+    }
+    
+    func previewActions(for popupPreviewRecognizer: STPopupPreviewRecognizer) -> [STPopupPreviewAction] {
+        return [STPopupPreviewAction]()
+    }
 
     func upvote(sender: UITapGestureRecognizer? = nil) {
         //todo maybe? contentView.blink(color: GMColor.orange500Color())
@@ -367,6 +380,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 self.addGestureRecognizer(dtap!)
             }
             
+            self.contentView.popupPreviewRecognizer = STPopupPreviewRecognizer(delegate: self)
+            
             if !full {
                 let comment = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openComment(sender:)))
                 comment.delegate = self
@@ -375,7 +390,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 }
                 self.addGestureRecognizer(comment)
             }
-            if longPress == nil {
+            if false && longPress == nil {
                 longPress = UILongPressGestureRecognizer(target: self, action: #selector(LinkCellView.handleLongPress(_:)))
                 longPress?.minimumPressDuration = 0.25 // 1 second press
                 longPress?.delegate = self
@@ -435,7 +450,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         buttons.isHidden = SettingValues.actionBarMode != .FULL && !full
         buttons.isUserInteractionEnabled = SettingValues.actionBarMode != .FULL || full
     }
-
+    
     func doConstraints() {
 //        var target: CurrentType = .none
 //
