@@ -533,17 +533,19 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         drawerButton.frame = CGRect(x: 8, y: size.height - 48, width: 40, height: 40)
         inHeadView.removeFromSuperview()
 
-        if size.width > size.height && UIDevice.current.userInterfaceIdiom != .pad {
-            if #available(iOS 11, *) {
-                tabBar.topAnchor == self.view.safeTopAnchor
+        if SettingValues.viewType {
+            if size.width > size.height && UIDevice.current.userInterfaceIdiom != .pad {
+                if #available(iOS 11, *) {
+                    tabBar.topAnchor == self.view.safeTopAnchor
+                } else {
+                    tabBar.topAnchor == self.view.topAnchor
+                }
             } else {
-                tabBar.topAnchor == self.view.topAnchor
-            }
-        } else {
-            if #available(iOS 11, *) {
-                tabBar.topAnchor == self.view.safeTopAnchor
-            } else {
-                tabBar.topAnchor == self.view.topAnchor + 20
+                if #available(iOS 11, *) {
+                    tabBar.topAnchor == self.view.safeTopAnchor
+                } else {
+                    tabBar.topAnchor == self.view.topAnchor + 20
+                }
             }
         }
     }
@@ -647,7 +649,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         if SettingValues.viewType {
             self.view.addSubview(inHeadView)
         }
-        
+    
         checkForUpdate()
 
         if UIScreen.main.traitCollection.userInterfaceIdiom == .pad {

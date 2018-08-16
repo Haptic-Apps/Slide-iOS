@@ -45,13 +45,13 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
     var multiColumn = UISwitch()
     var lock = UISwitch()
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        if SettingsPro.changed {
+            self.tableView.reloadData()
+            let menuB = UIBarButtonItem(image: UIImage.init(named: "support")?.toolbarIcon().getCopy(withColor: GMColor.red500Color()), style: .plain, target: self, action: #selector(SettingsViewController.didPro(_:)))
+            navigationItem.rightBarButtonItem = menuB
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -59,18 +59,19 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: "")
         navigationController?.navigationBar.tintColor = UIColor.white
         navigationController?.setToolbarHidden(true, animated: false)
-        if SettingsPro.changed {
-            loadView()
-        }
     }
 
     override func loadView() {
         super.loadView()
-        doCells()
         if SettingValues.isPro {
             let menuB = UIBarButtonItem(image: UIImage.init(named: "support")?.toolbarIcon().getCopy(withColor: GMColor.red500Color()), style: .plain, target: self, action: #selector(SettingsViewController.didPro(_:)))
             navigationItem.rightBarButtonItem = menuB
         }
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        doCells()
     }
     
     func didPro(_ sender: AnyObject) {
@@ -86,8 +87,10 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         }))
         
         alert.addAction(UIAlertAction.init(title: "Private Message", style: .default, handler: { (_) in
-            VCPresenter.showVC(viewController: ReplyViewController.init(name: "ccrama", completion: { (_) in
-            }), popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
+            let base = TapBehindModalViewController(rootViewController: ReplyViewController.init(name: "ccrama", completion: { (_) in
+                BannerUtil.makeBanner(text: "Message sent!", color: GMColor.green500Color(), seconds: 3, context: self, top: true, callback: nil)
+            }))
+            VCPresenter.presentAlert(base, parentVC: self)
         }))
             
         alert.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: nil))

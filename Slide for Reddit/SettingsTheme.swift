@@ -441,7 +441,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         actionSheetController.addAction(cancelActionButton)
 
         for theme in ColorUtil.Theme.cases {
-            if !SettingValues.isPro && (theme == ColorUtil.Theme.BLACK || theme == ColorUtil.Theme.SEPIA || theme == ColorUtil.Theme.DEEP) {
+            if !SettingValues.isPro && (theme == ColorUtil.Theme.SEPIA || theme == ColorUtil.Theme.DEEP) {
                 actionSheetController.addAction(image: UIImage.init(named: "support")?.menuIcon().getCopy(withColor: GMColor.red500Color()), title: theme.rawValue + " (pro)", color: GMColor.red500Color(), style: .default, isEnabled: true) { (_) in
                     _ = VCPresenter.proDialogShown(feature: false, self)
                 }

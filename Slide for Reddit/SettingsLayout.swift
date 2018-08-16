@@ -392,7 +392,7 @@ class SettingsLayout: UITableViewController {
 
         createCell(smalltagCell, smalltag, isOn: SettingValues.smallerTag, text: "Smaller content tag")
         createCell(largerThumbnailCell, largerThumbnail, isOn: SettingValues.largerThumbnail, text: "Larger thumbnail")
-        createCell(scoreTitleCell, scoreTitle, isOn: SettingValues.scoreInTitle, text: "Score and comment count in title")
+        createCell(scoreTitleCell, scoreTitle, isOn: SettingValues.scoreInTitle, text: "Show comment count in title (useful if you turn the action bar off)")
         createCell(abbreviateScoreCell, abbreviateScore, isOn: SettingValues.abbreviateScores, text: "Abbreviate post scores (ex: 10k)")
         createCell(domainInfoCell, domainInfo, isOn: SettingValues.domainInInfo, text: "Show domain in info line")
         createCell(leftThumbCell, leftThumb, isOn: SettingValues.leftThumbnail, text: "Thumbnail on left side")

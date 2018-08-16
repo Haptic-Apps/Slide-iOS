@@ -299,7 +299,6 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
                 }
             }
             self.pickAccent(sub, sender: sender)
-            self.tableView.reloadData()
         }
 
         alertController.addAction(image: nil, title: "Save", color: ColorUtil.baseAccent, style: .default) { _ in

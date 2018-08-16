@@ -141,13 +141,7 @@ class CachedTitle {
         infoString.append(attributedTitle)
         if SettingValues.scoreInTitle {
             infoString.append(NSAttributedString.init(string: "\n"))
-            var scoreString: NSAttributedString = NSAttributedString()
-            if SettingValues.abbreviateScores {
-                let text = (submission.score >= 10000 && SettingValues.abbreviateScores) ? String(format: "%0.1fk ", (Double(submission.score) / Double(1000))) : " \(submission.score)"
-                scoreString = NSMutableAttributedString(string: "\(text)pts \(submission.commentCount)cmts", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: colorF])
-            } else {
-                scoreString = NSMutableAttributedString(string: "\(submission.score)pts \(submission.commentCount)cmts", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: colorF])
-            }
+            let scoreString = NSMutableAttributedString(string: "\(submission.commentCount)comments", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: colorF])
             infoString.append(scoreString)
         }
         

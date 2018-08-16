@@ -104,7 +104,6 @@ class SettingsWelcome: UIPageViewController, UIPageViewControllerDataSource, UIP
         self.pages.append(SettingsWelcomeStart())
         self.pages.append(SettingsWelcomeTheme(parent: self))
         self.pages.append(SettingsWelcomeLayout(parent: self))
-        self.pages.append(SettingsWelcomeMisc(parent: self))
 
         setViewControllers([pages[0]], direction: .forward, animated: true, completion: nil)
         // pageControl
@@ -247,7 +246,7 @@ class SettingsWelcomeTheme: UIViewController {
         iOS.backgroundColor = .white
         iOS.layer.cornerRadius = 22.5
         iOS.clipsToBounds = true
-        iOS.setTitle("  iOS", for: .normal)
+        iOS.setTitle("  Light", for: .normal)
         iOS.leftImage(image: (UIImage.init(named: "colors")?.navIcon().getCopy(withColor: GMColor.blue500Color()))!, renderMode: UIImageRenderingMode.alwaysOriginal)
         iOS.elevate(elevation: 2)
         iOS.titleLabel?.font = UIFont.systemFont(ofSize: 18)
@@ -263,7 +262,7 @@ class SettingsWelcomeTheme: UIViewController {
         dark.backgroundColor = ColorUtil.Theme.DARK.foregroundColor
         dark.layer.cornerRadius = 22.5
         dark.clipsToBounds = true
-        dark.setTitle("  Dark material", for: .normal)
+        dark.setTitle("  Dark gray", for: .normal)
         dark.leftImage(image: (UIImage.init(named: "colors")?.navIcon().getCopy(withColor: ColorUtil.Theme.DARK.fontColor))!, renderMode: UIImageRenderingMode.alwaysOriginal)
         dark.elevate(elevation: 2)
         dark.titleLabel?.font = FontGenerator.Font.ROBOTO_BOLD.font.withSize(18)
@@ -360,7 +359,7 @@ class SettingsWelcomeTheme: UIViewController {
         UserDefaults.standard.set(ColorUtil.Theme.DARK.rawValue, forKey: "theme")
         UserDefaults.standard.set(FontGenerator.Font.ROBOTO_BOLD.rawValue, forKey: "postfont")
         UserDefaults.standard.set(FontGenerator.Font.ROBOTO_MEDIUM.rawValue, forKey: "commentfont")
-        UserDefaults.standard.setColor(color: GMColor.yellowA400Color(), forKey: "accentcolor")
+        UserDefaults.standard.setColor(color: GMColor.blueA400Color(), forKey: "accentcolor")
         UserDefaults.standard.set(true, forKey: "firstOpen")
         SettingValues.viewType = true
         UserDefaults.standard.set(true, forKey: SettingValues.pref_viewType)

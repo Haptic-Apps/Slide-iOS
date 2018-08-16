@@ -111,7 +111,7 @@ class ColorUtil {
     }
 
     static var baseColor = GMColor.blue500Color()
-    static var baseAccent = GMColor.cyanA200Color()
+    static var baseAccent = GMColor.blueA400Color()
     public static var upvoteColor = UIColor.init(hexString: "#FF9800")
     public static var downvoteColor = UIColor.init(hexString: "#2196F3")
 

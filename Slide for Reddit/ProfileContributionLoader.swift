@@ -56,6 +56,7 @@ class ProfileContributionLoader: ContributionLoader {
                                 self.content.append(RealmDataWrapper.linkToRSubmission(submission: item as! Link))
                             }
                         }
+                        self.canGetMore = listing.paginator.hasMore()
                         self.paginator = listing.paginator
                         DispatchQueue.main.async {
                             self.delegate?.doneLoading()

@@ -90,8 +90,8 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.custom.imageView?.tintColor = ColorUtil.fontColor
         
         self.themes.textLabel?.text = "More base themes"
-        self.themes.detailTextLabel?.text = "Unlocks AMOLED, Sepia, and Deep themes"
-        self.themes.backgroundColor = .black
+        self.themes.detailTextLabel?.text = "Unlocks Sepia and Deep themes"
+        self.themes.backgroundColor = ColorUtil.Theme.DEEP.backgroundColor
         self.themes.detailTextLabel?.textColor = .white
         self.themes.textLabel?.textColor = .white
         self.themes.imageView?.image = UIImage.init(named: "colors")?.toolbarIcon().getCopy(withColor: .white)
@@ -219,7 +219,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         IAPHandler.shared.fetchAvailableProducts()
         IAPHandler.shared.getItemsBlock = {(items) in
             
-            if items.isEmpty {
+            if items.isEmpty || items.count != 2 {
                 let alertView = UIAlertController(title: "Slide could not connect to Apple's servers", message: "Something went wrong connecting to Apple, please try again soon! Sorry for any inconvenience this may have caused", preferredStyle: .alert)
                 let action = UIAlertAction(title: "Close", style: .cancel, handler: { (_) in
                 })
@@ -234,8 +234,8 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
                 let price1Str = numberFormatter.string(from: items[0].price)
                 let price2Str = numberFormatter.string(from: items[1].price)
                 
-                let priceOldStr = numberFormatter.string(from: NSDecimalNumber(value: 4.99)) ?? "$4.99"
-                let priceOldStr2 = numberFormatter.string(from: NSDecimalNumber(value: 7.99)) ?? "$7.99"
+                let priceOldStr = "$4.99"
+                let priceOldStr2 = "$7.99"
                 if priceOldStr != price1Str! && items[0].priceLocale.identifier.contains("en_US") {
                     //Is a sale
                     
@@ -260,8 +260,8 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
                     self.three.frame = CGRect.init(x: (self.tableView.frame.size.width / 4) - 50, y: 150, width: 100, height: 80)
                     self.six.frame = CGRect.init(x: (self.tableView.frame.size.width / 4) - 50, y: 150, width: 100, height: 80)
                 } else {
-                    self.three.text = price2Str
-                    self.six.text = price1Str
+                    self.three.text = price1Str
+                    self.six.text = price2Str
                 }
             }
         }

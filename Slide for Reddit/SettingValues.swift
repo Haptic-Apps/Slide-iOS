@@ -364,6 +364,11 @@ class SettingValues {
         return settings.object(forKey: Bundle.main.releaseVersionNumber!) != nil
     }
 
+    public static func firstEnter() -> Bool {
+        let settings = UserDefaults.standard
+        return settings.object(forKey: "USEDONCE") != nil
+    }
+
     public static func showVersionDialog(_ title: String, _ permalink: String, parentVC: UIViewController) {
         let settings = UserDefaults.standard
         settings.set(true, forKey: Bundle.main.releaseVersionNumber!)
