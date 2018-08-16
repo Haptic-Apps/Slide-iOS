@@ -7,7 +7,9 @@ width="150"
 Slide is an open-source, ad-free Reddit browser for iOS. It is based around
 the [Reddift](https://github.com/sonsongithub/reddift) Reddit API wrapper.
 
-Slide is not yet avaliable for download on the App Store, but is currently going through Alpha testing through TestFlight. For more information regarding availability, feel free to join us on [the subreddit](https://www.reddit.com/r/slide_ios)  
+Slide is avaliable for download on the [App Store](https://itunes.apple.com/us/app/slide-for-reddit/id1260626828)
+
+For more information regarding availability, feel free to join us on [the subreddit](https://www.reddit.com/r/slide_ios)  
 
 
 
