@@ -117,7 +117,7 @@ class ColorUtil {
 
     public static func getColorForSub(sub: String) -> UIColor {
         let color = UserDefaults.standard.colorForKey(key: "color+" + sub)
-        if color == nil || color!.hexString == UIColor.black.hexString {
+        if color == nil {
             return baseColor
         } else {
             return color!

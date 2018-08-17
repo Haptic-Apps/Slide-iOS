@@ -10,12 +10,12 @@ import UIKit
 
 class BottomSheetPresentationManager: UIPercentDrivenInteractiveTransition, UIGestureRecognizerDelegate {
     var direction = PresentationDirection.left
-    var coverageRatio: CGFloat = 0.66
+    var coverageRatio: CGFloat = 1
     var presenting: Bool = false
 
     /// True when the pan gesture is active.
     fileprivate var interactive: Bool = false
-
+    
     weak var draggingView: UIView? {
         didSet {
             self.draggingView?.addGestureRecognizer(panGestureRecognizer)
@@ -139,6 +139,7 @@ extension BottomSheetPresentationManager: UIViewControllerAnimatedTransitioning 
 
         if presenting {
             transitionContext.containerView.addSubview(controller.view)
+            transitionContext.containerView.bringSubview(toFront: controller.view)
         }
 
         let presentedFrame = transitionContext.finalFrame(for: controller)
@@ -181,7 +182,6 @@ extension BottomSheetPresentationManager: UIViewControllerAnimatedTransitioning 
         // Set up for the animation
         let animationDuration = transitionDuration(using: transitionContext)
         controller.view.frame = initialFrame
-
         // Perform a different animation based on whether we're interactive (performing a gesture) or not
         if interactive {
             // Do a linear animation so we match our dragging with our transition

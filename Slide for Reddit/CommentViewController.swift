@@ -1415,8 +1415,8 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             mod.addTarget(self, action: #selector(self.showMod(_:)), for: UIControlEvents.touchUpInside)
             mod.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             modB = UIBarButtonItem.init(customView: mod)
-            if modLink.isEmpty() {
-                modB.customView?.alpha = 0
+            if modLink.isEmpty() && modB.customView != nil {
+                modB.customView? = UIView(frame: modB.customView!.frame)
             }
 
             items.append(modB)
@@ -1940,7 +1940,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
             //collapse self
             id = baseCell.comment!.getIdentifier()
         } else {
-            while (contents is RMore || (contents as! RComment).depth > 1) && dataArray.count > topCell {
+            while (contents is RMore || (contents as! RComment).depth > 1) && 0 <= topCell {
                 topCell -= 1
                 contents = content[dataArray[topCell]]
             }
