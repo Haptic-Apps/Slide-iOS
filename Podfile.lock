@@ -21,7 +21,7 @@ PODS:
     - DTFoundation/Core
   - DTFoundation/UIKit (1.7.13):
     - DTFoundation/Core
-  - Embassy (4.0.6)
+  - Embassy (4.0.7)
   - LicensesViewController (0.6.5)
   - MaterialComponents (60.0.0):
     - MaterialComponents/ActivityIndicator (= 60.0.0)
@@ -548,7 +548,7 @@ CHECKOUT OPTIONS:
     :commit: d0ce399ad9143acb237ce8cfd5f948a8cdd99db3
     :git: https://github.com/colejd/material-components-ios.git
   reddift:
-    :commit: 11ff208f4bd95f95bbc3507c2e2ae3dc619f18f5
+    :commit: 520241789357456586ccba59524182d5a776fc39
     :git: https://github.com/ccrama/reddift
   RLBAlertsPickers:
     :commit: 583f111c780546a42320c406f1fcf21f9f2caf30
@@ -568,7 +568,7 @@ SPEC CHECKSUMS:
   BiometricAuthentication: ce2f923d4df7a4b340e154137e7b47e544abc1ae
   DTCoreText: e5d688cffc9f6a61eddd1a4f94e2046851230de3
   DTFoundation: f03be9fd786f11e505bb8fc44e2a3732bf0917df
-  Embassy: 76ea224c371ec69169eac7425c48d332edf8457e
+  Embassy: 53ca7c2dd4c7f64956ddd4f5ef0443cec6383dd1
   LicensesViewController: 1f2982b1bab8402d3f88e23197957038e8abb907
   MaterialComponents: 291c4ce5711bf1458f8950b9993695745ac9d31b
   MDFInternationalization: b5b8626628abf026e630e5ebaeee563037712cbb

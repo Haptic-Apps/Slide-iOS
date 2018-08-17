@@ -76,7 +76,10 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         refreshControl.attributedTitle = NSAttributedString(string: "")
         refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControlEvents.valueChanged)
         tableView.addSubview(refreshControl)
+        
         self.tableView.contentOffset = CGPoint(x: 0, y: -self.refreshControl.frame.size.height)
+
+        self.automaticallyAdjustsScrollViewInsets = false
 
         self.tableView.register(BannerLinkCellView.classForCoder(), forCellWithReuseIdentifier: "banner")
         self.tableView.register(ThumbnailLinkCellView.classForCoder(), forCellWithReuseIdentifier: "thumb")
@@ -85,11 +88,16 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.tableView.register(MessageCellView.classForCoder(), forCellWithReuseIdentifier: "message")
         tableView.backgroundColor = ColorUtil.backgroundColor
 
-        if baseData is ProfileContributionLoader || baseData is InboxContributionLoader || baseData is ModQueueContributionLoader || baseData is ModMailContributionLoader {
-            self.tableView.contentInset = UIEdgeInsets.init(top: 45, left: 0, bottom: 0, right: 0)
+        var top = 20
+        if #available(iOS 11.0, *) {
+            top = 0
         } else {
-            self.tableView.contentInset = UIEdgeInsets.init(top: CGFloat(64), left: 0, bottom: 65, right: 0)
+            top = 64
         }
+        
+        top += ((baseData is ProfileContributionLoader || baseData is InboxContributionLoader || baseData is ModQueueContributionLoader || baseData is ModMailContributionLoader) ? 45 : 0)
+        
+        self.tableView.contentInset = UIEdgeInsets.init(top: CGFloat(top), left: 0, bottom: 65, right: 0)
         
         session = (UIApplication.shared.delegate as! AppDelegate).session
         
@@ -127,88 +135,21 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         let thing = baseData.content[indexPath.row]
         var cell: UICollectionViewCell?
         if thing is RSubmission {
-            var target = CurrentType.none
-            let submission = thing as! RSubmission
-
-            var thumb = submission.thumbnail
-            var big = submission.banner
-            let height = submission.height
-
-            var type = ContentType.getContentType(baseUrl: submission.url)
-            if submission.isSelf {
-                type = .SELF
-            }
-
-            if SettingValues.postImageMode == .THUMBNAIL {
-                big = false
-                thumb = true
-            }
-
-            let fullImage = ContentType.fullImage(t: type)
-
-            if !fullImage && height < 50 {
-                big = false
-                thumb = true
-            }
-
-            if type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big {
-                big = false
-                thumb = false
-            }
-
-            if height < 50 {
-                thumb = true
-                big = false
-            }
-
-            if type == ContentType.CType.SELF && SettingValues.hideImageSelftext
-                    || SettingValues.noImages && submission.isSelf {
-                big = false
-                thumb = false
-            }
-
-            if big || !submission.thumbnail {
-                thumb = false
-            }
-
-            if !big && !thumb && submission.type != .SELF && submission.type != .NONE { //If a submission has a link but no images, still show the web thumbnail
-                thumb = true
-            }
-
-            if submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection) {
-                big = false
-                thumb = true
-            }
-
-            if SettingValues.noImages {
-                big = false
-                thumb = false
-            }
-            if thumb && type == .SELF {
-                thumb = false
-            }
-
-            if thumb && !big {
-                target = .thumb
-            } else if big {
-                target = .banner
-            } else {
-                target = .text
-            }
-
+            
             var c: LinkCellView?
-            if target == .thumb {
+            switch SingleSubredditViewController.cellType(forSubmission: thing as! RSubmission, false) {
+            case .thumb:
                 c = tableView.dequeueReusableCell(withReuseIdentifier: "thumb", for: indexPath) as! ThumbnailLinkCellView
-            } else if target == .banner {
+            case .banner:
                 c = tableView.dequeueReusableCell(withReuseIdentifier: "banner", for: indexPath) as! BannerLinkCellView
-            } else {
+            default:
                 c = tableView.dequeueReusableCell(withReuseIdentifier: "text", for: indexPath) as! TextLinkCellView
             }
 
             c?.preservesSuperviewLayoutMargins = false
             c?.del = self
 
-            (c)!.configure(submission: submission, parent: self, nav: self.navigationController, baseSub: "")
+            (c)!.configure(submission: thing as! RSubmission, parent: self, nav: self.navigationController, baseSub: "")
 
             c?.layer.shouldRasterize = true
             c?.layer.rasterizationScale = UIScreen.main.scale
@@ -238,133 +179,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
 
             if thing is RSubmission {
                 let submission = thing as! RSubmission
-                if estimatedHeights[submission.id] == nil {
-                    var thumb = submission.thumbnail
-                    var big = submission.banner
-
-                    var type = ContentType.getContentType(baseUrl: submission.url)
-                    if submission.isSelf {
-                        type = .SELF
-                    }
-
-                    if SettingValues.postImageMode == .THUMBNAIL {
-                        big = false
-                        thumb = true
-                    }
-
-                    let fullImage = ContentType.fullImage(t: type)
-                    var submissionHeight = submission.height
-
-                    if !fullImage && submissionHeight < 50 {
-                        big = false
-                        thumb = true
-                    } else if big && (SettingValues.postImageMode == .CROPPED_IMAGE) {
-                        submissionHeight = 200
-                    } else if big {
-                        let ratio = Double(submissionHeight) / Double(submission.width)
-                        let width = Double(itemWidth)
-
-                        let h = width * ratio
-                        if h == 0 {
-                            submissionHeight = 200
-                        } else {
-                            submissionHeight = Int(h)
-                        }
-                    }
-
-                    if type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big {
-                        big = false
-                        thumb = false
-                    }
-
-                    if submissionHeight < 50 {
-                        thumb = true
-                        big = false
-                    }
-
-                    if big || !submission.thumbnail {
-                        thumb = false
-                    }
-
-                    if !big && !thumb && submission.type != .SELF && submission.type != .NONE { //If a submission has a link but no images, still show the web thumbnail
-                        thumb = true
-                    }
-
-                    if submission.nsfw && !SettingValues.nsfwPreviews {
-                        big = false
-                        thumb = true
-                    }
-
-                    if submission.nsfw && SettingValues.hideNSFWCollection {
-                        big = false
-                        thumb = true
-                    }
-
-                    if SettingValues.noImages {
-                        big = false
-                        thumb = false
-                    }
-                    if thumb && type == .SELF {
-                        thumb = false
-                    }
-
-                    var paddingTop = CGFloat(0)
-                    var paddingBottom = CGFloat(2)
-                    var paddingLeft = CGFloat(0)
-                    var paddingRight = CGFloat(0)
-                    var innerPadding = CGFloat(0)
-                    if SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER {
-                        paddingTop = 5
-                        paddingBottom = 5
-                        paddingLeft = 5
-                        paddingRight = 5
-                    }
-                    
-                    let actionbar = CGFloat(SettingValues.actionBarMode != .FULL ? 0 : 24)
-                    
-                    var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
-                    let thumbheight = (SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50)) - (SettingValues.postViewMode == .COMPACT ? 15 : 0)
-                    let textHeight = CGFloat(submission.isSelf ? 5 : 0)
-                    
-                    if thumb {
-                        imageHeight = thumbheight
-                        innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between top and thumbnail
-                        innerPadding += 18 - (SettingValues.postViewMode == .COMPACT ? 4 : 0) //between label and bottom box
-                        innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
-                    } else if big {
-                        if SettingValues.postViewMode == .CENTER {
-                            innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 16) //between label
-                            innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between banner and box
-                        } else {
-                            innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between banner and label
-                            innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between label and box
-                        }
-                        
-                        innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
-                    } else {
-                        innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8)
-                        innerPadding += 5 //between label and body
-                        innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between body and box
-                        innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
-                    }
-                    
-                    var estimatedUsableWidth = itemWidth - paddingLeft - paddingRight
-                    if thumb {
-                        estimatedUsableWidth -= thumbheight //is the same as the width
-                        estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb
-                        estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between thumb and label
-                    } else {
-                        estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //12 padding on either side
-                    }
-                    
-                    let framesetter = CTFramesetterCreateWithAttributedString(CachedTitle.getTitle(submission: submission, full: false, false))
-                    let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude), nil)
-                    
-                    let totalHeight = paddingTop + paddingBottom + (thumb ? max(ceil(textSize.height), imageHeight) : ceil(textSize.height) + imageHeight) + innerPadding + actionbar + textHeight
-
-                    estimatedHeights[submission.id] = totalHeight
-                }
-                return CGSize(width: itemWidth, height: estimatedHeights[submission.id]!)
+                return SingleSubredditViewController.sizeWith(submission, width, false)
             } else if thing is RComment {
                 let comment = thing as! RComment
                 if estimatedHeights[comment.id] == nil {
@@ -552,6 +367,16 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             self.refreshControl.endRefreshing()
             self.flowLayout.reset()
             self.tableView.reloadData()
+            
+            var top = CGFloat(0)
+            if #available(iOS 11, *) {
+                top += 22
+                if !SettingValues.viewType {
+                    top += 4
+                }
+            }
+            
+            self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + (-1 * (((self.baseData is ProfileContributionLoader || self.baseData is InboxContributionLoader || self.baseData is ModQueueContributionLoader || self.baseData is ModMailContributionLoader) ? 45 : 0) + (self.navigationController?.navigationBar.frame.size.height ?? 64))) - top)
         }
         self.loading = false
     }

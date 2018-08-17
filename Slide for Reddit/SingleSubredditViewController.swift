@@ -259,7 +259,7 @@ class SingleSubredditViewController: MediaViewController {
         return true
     }
 
-    func getHeightFromAspectRatio(imageHeight: CGFloat, imageWidth: CGFloat, viewWidth: CGFloat) -> CGFloat {
+    static func getHeightFromAspectRatio(imageHeight: CGFloat, imageWidth: CGFloat, viewWidth: CGFloat) -> CGFloat {
         let ratio = imageHeight / imageWidth
         return viewWidth * ratio
     }
@@ -1136,7 +1136,7 @@ class SingleSubredditViewController: MediaViewController {
                                         }
                                     }
                                 
-                                    self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + (-1 * ((SettingValues.viewType && !self.single) ?    (52 ) : (self.navigationController?.navigationBar.frame.size.height ?? 64))) - top)
+                                    self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + (-1 * ((SettingValues.viewType && !self.single) ? 52 : (self.navigationController?.navigationBar.frame.size.height ?? 64))) - top)
                                 } else {
                                     self.flowLayout.reset()
                                     self.tableView.insertItems(at: paths)
@@ -1239,9 +1239,196 @@ class SingleSubredditViewController: MediaViewController {
         SDWebImagePrefetcher.init().prefetchURLs(urls)
         }
     }
+    
+    static func sizeWith(_ submission: RSubmission, _ width: CGFloat, _ isCollection: Bool) -> CGSize {
+        let itemWidth = width
+        var thumb = submission.thumbnail
+        var big = submission.banner
+        
+        var submissionHeight = CGFloat(submission.height)
+        
+        var type = ContentType.getContentType(baseUrl: submission.url)
+        if submission.isSelf {
+            type = .SELF
+        }
+        
+        if SettingValues.postImageMode == .THUMBNAIL {
+            big = false
+            thumb = true
+        }
+        
+        let fullImage = ContentType.fullImage(t: type)
+        
+        if !fullImage && submissionHeight < 50 {
+            big = false
+            thumb = true
+        } else if big && (( SettingValues.postImageMode == .CROPPED_IMAGE)) {
+            submissionHeight = 200
+        } else if big {
+            let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: CGFloat(submission.width), viewWidth: itemWidth - ((SettingValues.postViewMode != .CARD) ? CGFloat(5) : CGFloat(0)))
+            if h == 0 {
+                submissionHeight = 200
+            } else {
+                submissionHeight = h
+            }
+        }
+        
+        if type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big {
+            big = false
+            thumb = false
+        }
+        
+        if submissionHeight < 50 {
+            thumb = true
+            big = false
+        }
+        
+        if type == ContentType.CType.SELF && SettingValues.hideImageSelftext
+            || SettingValues.noImages && submission.isSelf {
+            big = false
+            thumb = false
+        }
+        
+        if big || !submission.thumbnail {
+            thumb = false
+        }
+        
+        if (thumb || big) && submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && isCollection) {
+            big = false
+            thumb = true
+        }
+        
+        if SettingValues.noImages {
+            big = false
+            thumb = false
+        }
+        
+        if thumb && type == .SELF {
+            thumb = false
+        }
+        
+        if !big && !thumb && submission.type != .SELF && submission.type != .NONE { //If a submission has a link but no images, still show the web thumbnail
+            thumb = true
+        }
+        
+        if type == .LINK && SettingValues.linkAlwaysThumbnail {
+            thumb = true
+            big = false
+        }
+        
+        if (thumb || big) && submission.spoiler {
+            thumb = true
+            big = false
+        }
+        
+        if big {
+            let imageSize = CGSize.init(width: submission.width, height: ((SettingValues.postImageMode == .CROPPED_IMAGE)) ? 200 : submission.height)
+            
+            var aspect = imageSize.width / imageSize.height
+            if aspect == 0 || aspect > 10000 || aspect.isNaN {
+                aspect = 1
+            }
+            if SettingValues.postImageMode == .CROPPED_IMAGE {
+                aspect = width / 200
+                if aspect == 0 || aspect > 10000 || aspect.isNaN {
+                    aspect = 1
+                }
+                
+                submissionHeight = 200
+            }
+        }
+        var paddingTop = CGFloat(0)
+        var paddingBottom = CGFloat(2)
+        var paddingLeft = CGFloat(0)
+        var paddingRight = CGFloat(0)
+        var innerPadding = CGFloat(0)
+        if SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER {
+            paddingTop = 5
+            paddingBottom = 5
+            paddingLeft = 5
+            paddingRight = 5
+        }
+        
+        let actionbar = CGFloat(SettingValues.actionBarMode != .FULL ? 0 : 24)
+        
+        let thumbheight = (SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50)) - (SettingValues.postViewMode == .COMPACT ? 15 : 0)
+        let textHeight = CGFloat(submission.isSelf ? 5 : 0)
+        
+        if thumb {
+            innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between top and thumbnail
+            if SettingValues.actionBarMode == .FULL {
+                innerPadding += 18 - (SettingValues.postViewMode == .COMPACT ? 4 : 0) //between label and bottom box
+                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
+            } else {
+                innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between thumbnail and bottom
+            }
+        } else if big {
+            if SettingValues.postViewMode == .CENTER {
+                innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 16) //between label
+                if SettingValues.actionBarMode == .FULL {
+                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between banner and box
+                } else {
+                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between buttons and bottom
+                }
+            } else {
+                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between banner and label
+                if SettingValues.actionBarMode == .FULL {
+                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between label and box
+                } else {
+                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between buttons and bottom
+                }
+            }
+            if SettingValues.actionBarMode == .FULL {
+                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
+            }
+        } else {
+            if !submission.body.trimmed().isEmpty() && SettingValues.showFirstParagraph {
+                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8)
+            }
+            innerPadding += (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between top and title
+            if SettingValues.actionBarMode == .FULL {
+                innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between body and box
+                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
+            }
+        }
+        
+        var estimatedUsableWidth = itemWidth - paddingLeft - paddingRight
+        if thumb {
+            estimatedUsableWidth -= thumbheight //is the same as the width
+            estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb
+            estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between thumb and label
+        } else {
+            estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //12 padding on either side
+        }
+        
+        if SettingValues.postImageMode == .CROPPED_IMAGE {
+            submissionHeight = 200
+        } else {
+            submissionHeight = getHeightFromAspectRatio(imageHeight: submissionHeight == 200 ? CGFloat(200) : CGFloat(submission.height), imageWidth: CGFloat(submission.width), viewWidth: estimatedUsableWidth)
+        }
+        var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
+        
+        if thumb {
+            imageHeight = thumbheight
+        }
+        
+        if SettingValues.actionBarMode.isSide() {
+            estimatedUsableWidth -= 36
+            estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 8 : 16) //buttons horizontal margins
+            if thumb {
+                estimatedUsableWidth += (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb no longer exists
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //buttons buttons and thumb
+            }
+        }
+        
+        let framesetter = CTFramesetterCreateWithAttributedString(CachedTitle.getTitle(submission: submission, full: false, false))
+        let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude), nil)
+        let totalHeight = paddingTop + paddingBottom + (thumb ? max(SettingValues.actionBarMode.isSide() ? 60 : 0, ceil(textSize.height), imageHeight) : max(SettingValues.actionBarMode.isSide() ? 60 : 0, ceil(textSize.height)) + imageHeight) + innerPadding + actionbar + textHeight
+        return CGSize(width: itemWidth, height: totalHeight)
+    }
 
     // TODO: This is mostly replicated by `RSubmission.getLinkView()`. Can we consolidate?
-    func cellType(forSubmission submission: RSubmission) -> CurrentType {
+    static func cellType(forSubmission submission: RSubmission, _ isCollection: Bool) -> CurrentType {
         var target: CurrentType = .none
 
         var thumb = submission.thumbnail
@@ -1298,7 +1485,7 @@ class SingleSubredditViewController: MediaViewController {
             thumb = true
         }
 
-        if (thumb || big) && submission.nsfw && (!SettingValues.nsfwPreviews || (SettingValues.hideNSFWCollection && Subscriptions.isCollection(sub))) {
+        if (thumb || big) && submission.nsfw && (!SettingValues.nsfwPreviews || (SettingValues.hideNSFWCollection && isCollection)) {
             big = false
             thumb = true
         }
@@ -1635,7 +1822,7 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
             self.tableView.register(TextLinkCellView.classForCoder(), forCellWithReuseIdentifier: "text\(SingleSubredditViewController.cellVersion)")
         }
 
-        switch cellType(forSubmission: submission) {
+        switch SingleSubredditViewController.cellType(forSubmission: submission, Subscriptions.isCollection(sub)) {
         case .thumb:
             cell = tableView.dequeueReusableCell(withReuseIdentifier: "thumb\(SingleSubredditViewController.cellVersion)", for: indexPath) as! ThumbnailLinkCellView
         case .banner:
@@ -1713,196 +1900,11 @@ extension SingleSubredditViewController: ColorPickerViewDelegate {
 // MARK: - Wrapping Flow Layout Delegate
 extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
     func collectionView(_ collectionView: UICollectionView, width: CGFloat, indexPath: IndexPath) -> CGSize {
-        let itemWidth = width
         if indexPath.row < links.count {
             let submission = links[indexPath.row]
-
-            var thumb = submission.thumbnail
-            var big = submission.banner
-
-            var submissionHeight = CGFloat(submission.height)
-
-            var type = ContentType.getContentType(baseUrl: submission.url)
-            if submission.isSelf {
-                type = .SELF
-            }
-
-            if SettingValues.postImageMode == .THUMBNAIL {
-                big = false
-                thumb = true
-            }
-
-            let fullImage = ContentType.fullImage(t: type)
-
-            if !fullImage && submissionHeight < 50 {
-                big = false
-                thumb = true
-            } else if big && (( SettingValues.postImageMode == .CROPPED_IMAGE)) {
-                submissionHeight = 200
-            } else if big {
-                let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: CGFloat(submission.width), viewWidth: itemWidth - ((SettingValues.postViewMode != .CARD) ? CGFloat(5) : CGFloat(0)))
-                if h == 0 {
-                    submissionHeight = 200
-                } else {
-                    submissionHeight = h
-                }
-            }
-
-            if type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big {
-                big = false
-                thumb = false
-            }
-
-            if submissionHeight < 50 {
-                thumb = true
-                big = false
-            }
-
-            if type == ContentType.CType.SELF && SettingValues.hideImageSelftext
-                || SettingValues.noImages && submission.isSelf {
-                big = false
-                thumb = false
-            }
-
-            if big || !submission.thumbnail {
-                thumb = false
-            }
-
-            if (thumb || big) && submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && Subscriptions.isCollection(sub)) {
-                big = false
-                thumb = true
-            }
-
-            if SettingValues.noImages {
-                big = false
-                thumb = false
-            }
-
-            if thumb && type == .SELF {
-                thumb = false
-            }
-
-            if !big && !thumb && submission.type != .SELF && submission.type != .NONE { //If a submission has a link but no images, still show the web thumbnail
-                thumb = true
-            }
-
-            if type == .LINK && SettingValues.linkAlwaysThumbnail {
-                thumb = true
-                big = false
-            }
-            
-            if (thumb || big) && submission.spoiler {
-                thumb = true
-                big = false
-            }
-
-            if big {
-                let imageSize = CGSize.init(width: submission.width, height: ((SettingValues.postImageMode == .CROPPED_IMAGE)) ? 200 : submission.height)
-
-                var aspect = imageSize.width / imageSize.height
-                if aspect == 0 || aspect > 10000 || aspect.isNaN {
-                    aspect = 1
-                }
-                if SettingValues.postImageMode == .CROPPED_IMAGE {
-                    aspect = width / 200
-                    if aspect == 0 || aspect > 10000 || aspect.isNaN {
-                        aspect = 1
-                    }
-
-                    submissionHeight = 200
-                }
-            }
-            var paddingTop = CGFloat(0)
-            var paddingBottom = CGFloat(2)
-            var paddingLeft = CGFloat(0)
-            var paddingRight = CGFloat(0)
-            var innerPadding = CGFloat(0)
-            if SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER {
-                paddingTop = 5
-                paddingBottom = 5
-                paddingLeft = 5
-                paddingRight = 5
-            }
-
-            let actionbar = CGFloat(SettingValues.actionBarMode != .FULL ? 0 : 24)
-
-            let thumbheight = (SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50)) - (SettingValues.postViewMode == .COMPACT ? 15 : 0)
-            let textHeight = CGFloat(submission.isSelf ? 5 : 0)
-
-            if thumb {
-                innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between top and thumbnail
-                if SettingValues.actionBarMode == .FULL {
-                    innerPadding += 18 - (SettingValues.postViewMode == .COMPACT ? 4 : 0) //between label and bottom box
-                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
-                } else {
-                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between thumbnail and bottom
-                }
-            } else if big {
-                if SettingValues.postViewMode == .CENTER {
-                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 16) //between label
-                    if SettingValues.actionBarMode == .FULL {
-                        innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between banner and box
-                    } else {
-                        innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between buttons and bottom
-                    }
-                } else {
-                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between banner and label
-                    if SettingValues.actionBarMode == .FULL {
-                        innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between label and box
-                    } else {
-                        innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between buttons and bottom
-                    }
-                }
-                if SettingValues.actionBarMode == .FULL {
-                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
-                }
-            } else {
-                if !submission.body.trimmed().isEmpty() && SettingValues.showFirstParagraph {
-                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8)
-                }
-                innerPadding += (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between top and title
-                if SettingValues.actionBarMode == .FULL {
-                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between body and box
-                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
-                }
-            }
-
-            var estimatedUsableWidth = itemWidth - paddingLeft - paddingRight
-            if thumb {
-                estimatedUsableWidth -= thumbheight //is the same as the width
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between thumb and label
-            } else {
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //12 padding on either side
-            }
-
-            if SettingValues.postImageMode == .CROPPED_IMAGE {
-                submissionHeight = 200
-            } else {
-                submissionHeight = getHeightFromAspectRatio(imageHeight: submissionHeight == 200 ? CGFloat(200) : CGFloat(submission.height), imageWidth: CGFloat(submission.width), viewWidth: estimatedUsableWidth)
-            }
-            var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
-
-            if thumb {
-                imageHeight = thumbheight
-            }
-
-            if SettingValues.actionBarMode.isSide() {
-                estimatedUsableWidth -= 36
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 8 : 16) //buttons horizontal margins
-                if thumb {
-                    estimatedUsableWidth += (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb no longer exists
-                    estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //buttons buttons and thumb
-                }
-            }
-
-            let framesetter = CTFramesetterCreateWithAttributedString(CachedTitle.getTitle(submission: submission, full: false, false))
-            let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude), nil)
-            let totalHeight = paddingTop + paddingBottom + (thumb ? max(SettingValues.actionBarMode.isSide() ? 60 : 0, ceil(textSize.height), imageHeight) : max(SettingValues.actionBarMode.isSide() ? 60 : 0, ceil(textSize.height)) + imageHeight) + innerPadding + actionbar + textHeight
-            return CGSize(width: itemWidth, height: totalHeight)
-            
+            return SingleSubredditViewController.sizeWith(submission, width, Subscriptions.isCollection(sub))
         }
-        return CGSize(width: itemWidth, height: 0)
+        return CGSize(width: width, height: 0)
     }
 }
 

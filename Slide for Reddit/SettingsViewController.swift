@@ -468,7 +468,8 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
             
             BannerUtil.makeBanner(text: "All caches cleared!", color: GMColor.green500Color(), seconds: 3, context: self)
         } else if indexPath.section == 3 && indexPath.row == 0 {
-            //todo Show changlog?
+            let url = UserDefaults.standard.string(forKey: "vlink")!
+            VCPresenter.openRedditLink(url, self.navigationController, self)
         } else if indexPath.section == 3 && indexPath.row == 1 {
             ch = SingleSubredditViewController.init(subName: "slide_ios", single: true)
         } else if indexPath.section == 2 && indexPath.row == 5 {
