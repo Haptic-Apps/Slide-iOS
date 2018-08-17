@@ -62,9 +62,9 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         flowLayout.delegate = self
         self.tableView = UICollectionView(frame: CGRect.zero, collectionViewLayout: flowLayout)
-        
         self.view = UIView.init(frame: CGRect.zero)
         self.view.addSubview(tableView)
 
@@ -72,13 +72,12 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.tableView.dataSource = self
 
         refreshControl = UIRefreshControl()
+        
         refreshControl.tintColor = ColorUtil.fontColor
         refreshControl.attributedTitle = NSAttributedString(string: "")
         refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControlEvents.valueChanged)
         tableView.addSubview(refreshControl)
         
-        self.tableView.contentOffset = CGPoint(x: 0, y: -self.refreshControl.frame.size.height)
-
         self.automaticallyAdjustsScrollViewInsets = false
 
         self.tableView.register(BannerLinkCellView.classForCoder(), forCellWithReuseIdentifier: "banner")
@@ -86,6 +85,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.tableView.register(TextLinkCellView.classForCoder(), forCellWithReuseIdentifier: "text")
         self.tableView.register(CommentCellView.classForCoder(), forCellWithReuseIdentifier: "comment")
         self.tableView.register(MessageCellView.classForCoder(), forCellWithReuseIdentifier: "message")
+        self.tableView.register(NoContentCell.classForCoder(), forCellWithReuseIdentifier: "nocontent")
         tableView.backgroundColor = ColorUtil.backgroundColor
 
         var top = 20
@@ -100,9 +100,6 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.tableView.contentInset = UIEdgeInsets.init(top: CGFloat(top), left: 0, bottom: 65, right: 0)
         
         session = (UIApplication.shared.delegate as! AppDelegate).session
-        
-        self.tableView.register(NoContentCell.classForCoder(), forCellWithReuseIdentifier: "nocontent")
-        self.tableView.layoutIfNeeded()
     }
     
     var oldsize = CGFloat(0)
@@ -361,22 +358,29 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
 
     var loading: Bool = false
 
-    func doneLoading() {
+    func doneLoading(before: Int) {
         loaded = true
         DispatchQueue.main.async {
-            self.refreshControl.endRefreshing()
-            self.flowLayout.reset()
-            self.tableView.reloadData()
-            
-            var top = CGFloat(0)
-            if #available(iOS 11, *) {
-                top += 22
-                if !SettingValues.viewType {
-                    top += 4
-                }
+            var paths = [IndexPath]()
+            for i in before..<self.baseData.content.count {
+                paths.append(IndexPath.init(item: i, section: 0))
             }
             
-            self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + (-1 * (((self.baseData is ProfileContributionLoader || self.baseData is InboxContributionLoader || self.baseData is ModQueueContributionLoader || self.baseData is ModMailContributionLoader) ? 45 : 0) + (self.navigationController?.navigationBar.frame.size.height ?? 64))) - top)
+            if before == 0 {
+                self.flowLayout.reset()
+                self.tableView.reloadData()
+                
+                var top = CGFloat(0)
+                if #available(iOS 11, *) {
+                    top += 22
+                }
+                
+                self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + (-1 * (((self.baseData is ProfileContributionLoader || self.baseData is InboxContributionLoader || self.baseData is ModQueueContributionLoader || self.baseData is ModMailContributionLoader) ? 45 : 0) + (self.navigationController?.navigationBar.frame.size.height ?? 64))) - top)
+            } else {
+                self.flowLayout.reset()
+                self.tableView.insertItems(at: paths)
+            }
+            self.refreshControl.endRefreshing()
         }
         self.loading = false
     }

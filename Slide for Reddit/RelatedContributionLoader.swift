@@ -49,6 +49,7 @@ class RelatedContributionLoader: ContributionLoader {
                         if reload {
                             self.content = []
                         }
+                        let before = self.content.count
                         let baseContent = listing.1.children.flatMap({ $0 })
                         for item in baseContent {
                             if item is Comment {
@@ -60,7 +61,7 @@ class RelatedContributionLoader: ContributionLoader {
 
                         self.paginator = listing.1.paginator
                         DispatchQueue.main.async {
-                            self.delegate?.doneLoading()
+                            self.delegate?.doneLoading(before: before)
                         }
                     }
                 })

@@ -46,6 +46,7 @@ class ModQueueContributionLoader: ContributionLoader {
                         if reload {
                             self.content = []
                         }
+                        let before = self.content.count
                         let baseContent = listing.children.flatMap({ $0 })
                         for item in baseContent {
                             if item is Comment {
@@ -56,7 +57,7 @@ class ModQueueContributionLoader: ContributionLoader {
                         }
                         self.paginator = listing.paginator
                         DispatchQueue.main.async {
-                            self.delegate?.doneLoading()
+                            self.delegate?.doneLoading(before: before)
                         }
                     }
                 })

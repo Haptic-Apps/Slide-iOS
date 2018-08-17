@@ -48,6 +48,7 @@ class ProfileContributionLoader: ContributionLoader {
                         if reload {
                             self.content = []
                         }
+                        let before = self.content.count
                         let baseContent = listing.children.flatMap({ $0 })
                         for item in baseContent {
                             if item is Comment {
@@ -59,7 +60,7 @@ class ProfileContributionLoader: ContributionLoader {
                         self.canGetMore = listing.paginator.hasMore()
                         self.paginator = listing.paginator
                         DispatchQueue.main.async {
-                            self.delegate?.doneLoading()
+                            self.delegate?.doneLoading(before: before)
                         }
                     }
                 })

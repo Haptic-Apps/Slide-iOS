@@ -61,7 +61,7 @@ class SingleSubredditViewController: MediaViewController {
     var paginator = Paginator()
     var sub: String
     var session: Session?
-    var tableView: UICollectionView = UICollectionView.init(frame: CGRect.zero, collectionViewLayout: UICollectionViewLayout.init())
+    var tableView: UICollectionView!
     var single: Bool = false
 
     var loaded = false
@@ -137,7 +137,6 @@ class SingleSubredditViewController: MediaViewController {
         flowLayout.delegate = self
         self.tableView = UICollectionView(frame: CGRect.zero, collectionViewLayout: flowLayout)
         self.view = UIView.init(frame: CGRect.zero)
-
         self.view.addSubview(tableView)
 
         self.tableView.delegate = self
@@ -534,7 +533,7 @@ class SingleSubredditViewController: MediaViewController {
         }
 
         top += ((SettingValues.viewType && !single) ? 52 : 0)
-
+ 
         self.tableView.contentInset = UIEdgeInsets.init(top: CGFloat(top), left: 0, bottom: 65, right: 0)
 
         session = (UIApplication.shared.delegate as! AppDelegate).session
@@ -1142,7 +1141,6 @@ class SingleSubredditViewController: MediaViewController {
                                     self.tableView.insertItems(at: paths)
                                 }
 
-                                self.refreshControl.endRefreshing()
                                 self.indicator?.stopAnimating()
                                 self.loading = false
                                 if MainViewController.first {

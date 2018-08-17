@@ -50,6 +50,7 @@ class SearchContributionLoader: ContributionLoader {
                         if reload {
                             self.content = []
                         }
+                        let before = self.content.count
                         for item in listing.children.flatMap({ $0 }) {
                             if item is Comment {
                                 self.content.append(RealmDataWrapper.commentToRComment(comment: item as! Comment, depth: 0))
@@ -60,7 +61,7 @@ class SearchContributionLoader: ContributionLoader {
                         self.paginator = listing.paginator
                         self.canGetMore = listing.paginator.hasMore()
                         DispatchQueue.main.async {
-                            self.delegate?.doneLoading()
+                            self.delegate?.doneLoading(before: before)
                         }
                     }
                 })
