@@ -1977,7 +1977,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
                     self.links.insert(item, at: location)
                     self.tableView.insertItems(at: [IndexPath.init(item: location, section: 0)])
                     do {
-                        try self.session?.setHide(false, name: cell.link!.getId(), completion: { (_) in })
+                        try self.session?.setHide(true, name: cell.link!.getId(), completion: { (_) in })
                     } catch {
 
                     }

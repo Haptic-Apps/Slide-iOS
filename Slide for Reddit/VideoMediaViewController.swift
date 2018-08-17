@@ -918,6 +918,10 @@ extension VideoMediaViewController {
             UIAlertAction(title: "Share URL", style: .default) { (_) in
                 let shareItems: Array = [baseURL]
                 let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+                if let presenter = activityViewController.popoverPresentationController {
+                    presenter.sourceView = sender
+                    presenter.sourceRect = sender.bounds
+                }
                 let window = UIApplication.shared.keyWindow!
                 if let modalVC = window.rootViewController?.presentedViewController {
                     modalVC.present(activityViewController, animated: true, completion: nil)
@@ -926,11 +930,11 @@ extension VideoMediaViewController {
                 }
             }
         )
-        alert.addAction(
+        /* alert.addAction(
             UIAlertAction(title: "Share Video", style: .default) { (_) in
                 //TODO THIS
             }
-        )
+        )*/
         alert.addAction(
             UIAlertAction(title: "Cancel", style: .cancel) { (_) in
             }

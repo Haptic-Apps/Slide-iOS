@@ -95,11 +95,19 @@ class PostActions: NSObject {
         
         alertController.addAction(Action(ActionData(title: "Share content", image: UIImage(named: "share")!.menuIcon()), style: .default, handler: { _ in
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [link.url!], applicationActivities: nil)
+            if let presenter = activityViewController.popoverPresentationController {
+                presenter.sourceView = cell.contentView
+                presenter.sourceRect = cell.contentView.bounds
+            }
             let currentViewController: UIViewController = UIApplication.shared.keyWindow!.rootViewController!
             currentViewController.present(activityViewController, animated: true, completion: nil)
         }))
         alertController.addAction(Action(ActionData(title: "Share Reddit link", image: UIImage(named: "comments")!.menuIcon()), style: .default, handler: { _ in
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [URL.init(string: "https://reddit.com" + link.permalink)!], applicationActivities: nil)
+            if let presenter = activityViewController.popoverPresentationController {
+                presenter.sourceView = cell.contentView
+                presenter.sourceRect = cell.contentView.bounds
+            }
             let currentViewController: UIViewController = UIApplication.shared.keyWindow!.rootViewController!
             currentViewController.present(activityViewController, animated: true, completion: nil)
         }))

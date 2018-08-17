@@ -751,6 +751,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }))
         alertController.addAction(Action(ActionData(title: "Share comment permalink", image: UIImage(named: "link")!.menuIcon()), style: .default, handler: { _ in
             let activityViewController = UIActivityViewController(activityItems: [self.comment!.permalink], applicationActivities: nil)
+            if let presenter = activityViewController.popoverPresentationController {
+                presenter.sourceView = self.moreButton
+                presenter.sourceRect = self.moreButton.bounds
+            }
             par.present(activityViewController, animated: true, completion: {})
         }))
         if AccountController.isLoggedIn {

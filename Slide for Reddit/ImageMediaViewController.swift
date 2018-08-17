@@ -284,6 +284,10 @@ extension ImageMediaViewController {
             UIAlertAction(title: "Share URL", style: .default) { (_) in
                 let shareItems: Array = [baseURL]
                 let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+                if let presenter = activityViewController.popoverPresentationController {
+                    presenter.sourceView = sender
+                    presenter.sourceRect = sender.bounds
+                }
                 let window = UIApplication.shared.keyWindow!
                 if let modalVC = window.rootViewController?.presentedViewController {
                     modalVC.present(activityViewController, animated: true, completion: nil)
@@ -296,6 +300,10 @@ extension ImageMediaViewController {
             UIAlertAction(title: "Share Image", style: .default) { (_) in
                 let shareItems: Array = [self.imageView.image!]
                 let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+                if let presenter = activityViewController.popoverPresentationController {
+                    presenter.sourceView = sender
+                    presenter.sourceRect = sender.bounds
+                }
                 let window = UIApplication.shared.keyWindow!
                 if let modalVC = window.rootViewController?.presentedViewController {
                     modalVC.present(activityViewController, animated: true, completion: nil)
