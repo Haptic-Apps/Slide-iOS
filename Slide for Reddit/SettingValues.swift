@@ -76,8 +76,10 @@ class SettingValues {
     public static let pref_pro = "RELEASE_PRO_ENABLED"
     public static let pref_pinToolbar = "PIN_TOOLBAR"
     public static let pref_commentTwoSwipe = "COMMENT_GESTURES"
-    public static let pref_commentActionLeft = "COMMENT_LEFT"
-    public static let pref_commentActionRight = "COMMENT_RIGHT"
+    public static let pref_commentActionRightLeft = "COMMENT_LEFT"
+    public static let pref_commentActionRightRight = "COMMENT_RIGHT"
+    public static let pref_commentActionLeftLeft = "COMMENT_LEFT_LEFT"
+    public static let pref_commentActionLeftRight = "COMMENT_RIGHT_LEFT"
     public static let pref_commentActionDoubleTap = "COMMENT_DOUBLE_TAP"
     public static let pref_submissionActionDoubleTap = "SUBMISSION_DOUBLE_TAP"
     public static let pref_commentFullScreen = "COMMENT_FULLSCREEN"
@@ -91,9 +93,12 @@ class SettingValues {
     public static let pref_lockCommentBottomBar = "LOCK_COMMENT_BOTTOM"
     public static let pref_blackShadowbox = "BLACK_SHADOWBOX"
     public static let pref_hideAutomod = "HIDE_AUTOMOD"
+    public static let pref_swipeAnywhereComments = "SWIPE_ANYWHERE_COMMENTS"
 
-    public static var commentActionRight = CommentAction.UPVOTE
-    public static var commentActionLeft = CommentAction.DOWNVOTE
+    public static var commentActionRightRight = CommentAction.UPVOTE
+    public static var commentActionRightLeft = CommentAction.DOWNVOTE
+    public static var commentActionLeftRight = CommentAction.MENU
+    public static var commentActionLeftLeft = CommentAction.COLLAPSE
     public static var commentActionDoubleTap = CommentAction.NONE
     public static var submissionActionDoubleTap = CommentAction.NONE
 
@@ -124,6 +129,7 @@ class SettingValues {
     public static var wideIndicators = false
     public static var blackShadowbox = false
     public static var hideAutomod = false
+    public static var swipeAnywhereComments = false
 
     public static var enlargeLinks = true
     public static var noImages = false
@@ -249,6 +255,7 @@ class SettingValues {
         }
 
         SettingValues.hapticFeedback = settings.object(forKey: SettingValues.pref_hapticFeedback) == nil ? true : settings.bool(forKey: SettingValues.pref_hapticFeedback)
+        SettingValues.swipeAnywhereComments = settings.object(forKey: SettingValues.pref_swipeAnywhereComments) == nil ? true : settings.bool(forKey: SettingValues.pref_swipeAnywhereComments)
 
         basePath = settings.string(forKey: SettingValues.pref_defaultTimePeriod)
         for time in TimeFilterWithin.cases {
@@ -347,8 +354,11 @@ class SettingValues {
         SettingValues.postImageMode = PostImageMode.init(rawValue: settings.string(forKey: SettingValues.pref_postImageMode) ?? "full") ?? .CROPPED_IMAGE
         SettingValues.fabType = FabType.init(rawValue: settings.string(forKey: SettingValues.pref_fabType) ?? "hide") ?? .HIDE_READ
         
-        SettingValues.commentActionLeft = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionLeft) ?? "downvote")!
-        SettingValues.commentActionRight = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionRight) ?? "upvote")!
+        SettingValues.commentActionRightLeft = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionRightLeft) ?? "downvote")!
+        SettingValues.commentActionRightRight = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionRightRight) ?? "upvote")!
+        SettingValues.commentActionLeftLeft = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionLeftLeft) ?? "collapse")!
+        SettingValues.commentActionLeftRight = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionLeftRight) ?? "menu")!
+
         SettingValues.commentActionDoubleTap = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionDoubleTap) ?? "none")!
         SettingValues.submissionActionDoubleTap = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_submissionActionDoubleTap) ?? "none")!
 

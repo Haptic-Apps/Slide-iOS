@@ -857,7 +857,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        if self.navigationController != nil && !(self.navigationController!.delegate is SloppySwiper) && (parent == nil || (parent != nil && !(parent! is PagingCommentViewController))) {
+        if (self.navigationController != nil && !(self.navigationController!.delegate is SloppySwiper) && (parent == nil || (parent != nil && !(parent! is PagingCommentViewController)))) && SettingValues.swipeAnywhereComments {
             let swiper = SloppySwiper.init(navigationController: self.navigationController!)
             self.navigationController!.delegate = swiper!
         }
@@ -1847,26 +1847,26 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         HapticUtility.hapticActionWeak()
         let cell = tableView.cellForRow(at: indexPath)
-        if cell is CommentDepthCell && (cell as! CommentDepthCell).comment != nil && SettingValues.commentTwoSwipe && (SettingValues.commentActionLeft != .NONE || SettingValues.commentActionRight != .NONE) {
+        if cell is CommentDepthCell && (cell as! CommentDepthCell).comment != nil && SettingValues.commentTwoSwipe && (SettingValues.commentActionRightLeft != .NONE || SettingValues.commentActionRightRight != .NONE) {
 
             var actions = [UIContextualAction]()
-            if SettingValues.commentActionRight != .NONE {
+            if SettingValues.commentActionRightRight != .NONE {
                 let action = UIContextualAction.init(style: .normal, title: "", handler: { (action, _, b) in
                     b(true)
-                    self.doAction(cell: cell as! CommentDepthCell, action: SettingValues.commentActionRight, indexPath: indexPath)
+                    self.doAction(cell: cell as! CommentDepthCell, action: SettingValues.commentActionRightRight, indexPath: indexPath)
                 })
-                action.backgroundColor = SettingValues.commentActionRight.getColor()
-                action.image = UIImage.init(named: SettingValues.commentActionRight.getPhoto())?.navIcon()
+                action.backgroundColor = SettingValues.commentActionRightRight.getColor()
+                action.image = UIImage.init(named: SettingValues.commentActionRightRight.getPhoto())?.navIcon()
 
                 actions.append(action)
             }
-            if SettingValues.commentActionLeft != .NONE {
+            if SettingValues.commentActionRightLeft != .NONE {
                 let action = UIContextualAction.init(style: .normal, title: "", handler: { (action, _, b) in
                     b(true)
-                    self.doAction(cell: cell as! CommentDepthCell, action: SettingValues.commentActionLeft, indexPath: indexPath)
+                    self.doAction(cell: cell as! CommentDepthCell, action: SettingValues.commentActionRightLeft, indexPath: indexPath)
                 })
-                action.backgroundColor = SettingValues.commentActionLeft.getColor()
-                action.image = UIImage.init(named: SettingValues.commentActionLeft.getPhoto())?.navIcon()
+                action.backgroundColor = SettingValues.commentActionRightLeft.getColor()
+                action.image = UIImage.init(named: SettingValues.commentActionRightLeft.getPhoto())?.navIcon()
 
                 actions.append(action)
             }
@@ -1874,6 +1874,42 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
 
             return config
 
+        } else {
+            return UISwipeActionsConfiguration.init()
+        }
+    }
+    
+    @available(iOS 11.0, *)
+    override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        HapticUtility.hapticActionWeak()
+        let cell = tableView.cellForRow(at: indexPath)
+        if cell is CommentDepthCell && (cell as! CommentDepthCell).comment != nil && !SettingValues.swipeAnywhereComments && (SettingValues.commentActionLeftLeft != .NONE || SettingValues.commentActionLeftRight != .NONE) {
+            
+            var actions = [UIContextualAction]()
+            if SettingValues.commentActionLeftLeft != .NONE {
+                let action = UIContextualAction.init(style: .normal, title: "", handler: { (action, _, b) in
+                    b(true)
+                    self.doAction(cell: cell as! CommentDepthCell, action: SettingValues.commentActionLeftLeft, indexPath: indexPath)
+                })
+                action.backgroundColor = SettingValues.commentActionLeftLeft.getColor()
+                action.image = UIImage.init(named: SettingValues.commentActionLeftLeft.getPhoto())?.navIcon()
+                
+                actions.append(action)
+            }
+            if SettingValues.commentActionLeftRight != .NONE {
+                let action = UIContextualAction.init(style: .normal, title: "", handler: { (action, _, b) in
+                    b(true)
+                    self.doAction(cell: cell as! CommentDepthCell, action: SettingValues.commentActionLeftRight, indexPath: indexPath)
+                })
+                action.backgroundColor = SettingValues.commentActionLeftRight.getColor()
+                action.image = UIImage.init(named: SettingValues.commentActionLeftRight.getPhoto())?.navIcon()
+                
+                actions.append(action)
+            }
+            let config = UISwipeActionsConfiguration.init(actions: actions)
+            
+            return config
+            
         } else {
             return UISwipeActionsConfiguration.init()
         }

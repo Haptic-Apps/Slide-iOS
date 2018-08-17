@@ -60,18 +60,32 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         self.navigationController?.view.backgroundColor = UIColor.clear
          let firstViewController = vCs[0]
 
-        swiper = SloppySwiper.init(navigationController: self.navigationController!)
-        self.navigationController!.delegate = swiper!
-        for view in view.subviews {
-            if view is UIScrollView {
-                let scrollView = view as! UIScrollView
-                //swiper!.panRecognizer.require(toFail:scrollView.panGestureRecognizer)
-                scrollView.delegate = self
-                if scrollView.isPagingEnabled && SettingValues.commentTwoSwipe {
-                    scrollView.panGestureRecognizer.minimumNumberOfTouches = 2
+        if SettingValues.swipeAnywhereComments {
+            swiper = SloppySwiper.init(navigationController: self.navigationController!)
+            self.navigationController!.delegate = swiper!
+            for view in view.subviews {
+                if view is UIScrollView {
+                    let scrollView = view as! UIScrollView
+                    //swiper!.panRecognizer.require(toFail:scrollView.panGestureRecognizer)
+                    scrollView.delegate = self
+                    if scrollView.isPagingEnabled && SettingValues.commentTwoSwipe {
+                        scrollView.panGestureRecognizer.minimumNumberOfTouches = 2
+                    }
+                    scrollView.panGestureRecognizer.require(toFail: swiper!.panRecognizer)
+                    break
                 }
-                scrollView.panGestureRecognizer.require(toFail: swiper!.panRecognizer)
-                break
+            }
+        } else {
+            for view in view.subviews {
+                if view is UIScrollView {
+                    let scrollView = view as! UIScrollView
+                    //swiper!.panRecognizer.require(toFail:scrollView.panGestureRecognizer)
+                    scrollView.delegate = self
+                    if scrollView.isPagingEnabled && SettingValues.commentTwoSwipe {
+                        scrollView.panGestureRecognizer.minimumNumberOfTouches = 2
+                    }
+                    break
+                }
             }
         }
         
