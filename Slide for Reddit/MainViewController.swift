@@ -308,8 +308,9 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         self.menuNav?.setSubreddit(subreddit: MainViewController.current)
 
         bottomSheetTransitioningDelegate.direction = .bottom
-        bottomSheetTransitioningDelegate.coverageRatio = 0.9
-        bottomSheetTransitioningDelegate.draggingView = menuNav?.header
+        bottomSheetTransitioningDelegate.coverageRatio = 0.85
+        bottomSheetTransitioningDelegate.draggingView = menuNav?.view
+        bottomSheetTransitioningDelegate.scrollView = menuNav?.tableView
         bottomSheetTransitioningDelegate.menuViewController = menuNav
         menuNav?.transitioningDelegate = bottomSheetTransitioningDelegate
         menuNav?.modalPresentationStyle = .custom

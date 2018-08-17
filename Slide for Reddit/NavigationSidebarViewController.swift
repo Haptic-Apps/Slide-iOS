@@ -59,11 +59,12 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         header.frame.size.height = header.getEstHeight()
         view.addSubview(header)
 
+        tableView.bounces = false
         tableView.delegate = self
         tableView.dataSource = self
         tableView.separatorStyle = UITableViewCellSeparatorStyle.none
         tableView.clipsToBounds = true
-        tableView.estimatedRowHeight = 400.0
+        tableView.estimatedRowHeight = 50
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.separatorInset = .zero
 
@@ -93,7 +94,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
 
     func configureGestures() {
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.

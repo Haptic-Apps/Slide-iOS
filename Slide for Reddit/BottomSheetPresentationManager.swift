@@ -8,7 +8,7 @@
 
 import UIKit
 
-class BottomSheetPresentationManager: UIPercentDrivenInteractiveTransition {
+class BottomSheetPresentationManager: UIPercentDrivenInteractiveTransition, UIGestureRecognizerDelegate {
     var direction = PresentationDirection.left
     var coverageRatio: CGFloat = 0.66
     var presenting: Bool = false
@@ -16,6 +16,20 @@ class BottomSheetPresentationManager: UIPercentDrivenInteractiveTransition {
     weak var draggingView: UIView? {
         didSet {
             self.draggingView?.addGestureRecognizer(panGestureRecognizer)
+        }
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+       return scrollView?.contentOffset.y ?? 0 == 0
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return otherGestureRecognizer is UIPanGestureRecognizer
+    }
+    
+    weak var scrollView: UITableView? {
+        didSet {
+            self.panGestureRecognizer.delegate = self
         }
     }
 
@@ -61,10 +75,10 @@ extension BottomSheetPresentationManager {
 
     @objc func handlePan(_ sender: UIPanGestureRecognizerWithInitialTouch) {
         // Ignore the gesture if it didn't originate in the draggable area of the view
-        guard let draggingView = draggingView,
-            draggingView.frame.contains(sender.initialTouchLocation) else {
-                return
-        }
+        //guard let draggingView = draggingView,
+       //     draggingView.frame.contains(sender.initialTouchLocation) else {
+       //         return
+       // }
 
         // Hide the keyboard
         if let menuVC = menuViewController as? NavigationSidebarViewController, menuVC.header.search.isFirstResponder {
@@ -85,7 +99,7 @@ extension BottomSheetPresentationManager {
         case .changed:
             self.update(d)
         default: // .Ended, .Cancelled, .Failed ...
-            if d > 0.2 {
+            if d > 0.15 {
                 // threshold crossed: finish
                 self.finish()
             } else {
@@ -99,7 +113,7 @@ extension BottomSheetPresentationManager {
 extension BottomSheetPresentationManager: UIViewControllerAnimatedTransitioning {
     func transitionDuration(
         using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
-        return 0.3
+        return 0.25
     }
 
     func interactionControllerForPresentation(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
@@ -138,10 +152,10 @@ extension BottomSheetPresentationManager: UIViewControllerAnimatedTransitioning 
 
         let animationDuration = transitionDuration(using: transitionContext)
         controller.view.frame = initialFrame
-        UIView.animate(withDuration: animationDuration, delay: 0, options: presenting ? .curveEaseInOut : .curveLinear, animations: {
+        UIView.animate(withDuration: animationDuration, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.45, options: .curveEaseInOut, animations: {
             controller.view.frame = finalFrame
-        }, completion: { finished in
-
+        }) {
+            (finished) in
             // tell our transitionContext object that we've finished animating
             if transitionContext.transitionWasCancelled {
                 transitionContext.completeTransition(false)
@@ -149,7 +163,7 @@ extension BottomSheetPresentationManager: UIViewControllerAnimatedTransitioning 
                 transitionContext.completeTransition(finished)
             }
 
-        })
+        }
     }
 }
 
