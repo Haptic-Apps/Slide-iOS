@@ -45,7 +45,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.automaticallyAdjustsScrollViewInsets = false
-        self.edgesForExtendedLayout = UIRectEdge.all
+        self.edgesForExtendedLayout = []
         self.extendedLayoutIncludesOpaqueBars = true
         self.navigationController?.setToolbarHidden(true, animated: false)
         self.navigationController?.setNavigationBarHidden(false, animated: false)
@@ -72,11 +72,16 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.tableView.dataSource = self
 
         refreshControl = UIRefreshControl()
-        
+        refreshControl.endRefreshing()
         refreshControl.tintColor = ColorUtil.fontColor
         refreshControl.attributedTitle = NSAttributedString(string: "")
         refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControlEvents.valueChanged)
         tableView.addSubview(refreshControl)
+        tableView.alwaysBounceVertical = true
+
+        defer {
+            refreshControl.beginRefreshing()
+        }
         
         self.automaticallyAdjustsScrollViewInsets = false
 
@@ -336,7 +341,6 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         flowLayout.reset()
         flowLayout.invalidateLayout()
         tableView.reloadData()
-        refreshControl.beginRefreshing()
         baseData.getData(reload: true)
     }
 

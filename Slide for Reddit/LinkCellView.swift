@@ -1344,6 +1344,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 }
             }
         } else {
+            History.addSeen(s: link!)
+            if History.getSeen(s: link!) {
+                self.title.alpha = 0.7
+            } else {
+                self.title.alpha = 1
+            }
             if let controller = parentViewController?.getControllerForUrl(baseUrl: (link?.url)!) {
                 return controller
             }

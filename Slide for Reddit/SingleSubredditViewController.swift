@@ -516,7 +516,8 @@ class SingleSubredditViewController: MediaViewController {
         refreshControl.attributedTitle = NSAttributedString(string: "")
         refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControlEvents.valueChanged)
         tableView.addSubview(refreshControl) // not required when using UITableViewController
-
+        tableView.alwaysBounceVertical = true
+        
         self.automaticallyAdjustsScrollViewInsets = false
 
         // TODO: Can just use .self instead of .classForCoder()
@@ -1043,13 +1044,14 @@ class SingleSubredditViewController: MediaViewController {
                                         }
                                         self.flowLayout.reset()
                                         self.tableView.reloadData()
-                                        self.tableView.contentOffset = CGPoint.init(x: 0, y: -64 + ((SettingValues.viewType && !self.single) ? -20 : 0))
                                         
                                         self.refreshControl.endRefreshing()
                                         self.indicator?.stopAnimating()
                                         self.loading = false
                                         self.loading = false
                                         self.nomore = true
+                                        
+                                        self.tableView.contentOffset = CGPoint.init(x: 0, y: -64 + ((SettingValues.viewType && !self.single) ? -20 : 0))
                                         
                                         if self.links.isEmpty {
                                             BannerUtil.makeBanner(text: "No offline content found! You can set up subreddit caching in Settings > Auto Cache", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 5, context: self)
@@ -1142,6 +1144,7 @@ class SingleSubredditViewController: MediaViewController {
                                 }
 
                                 self.indicator?.stopAnimating()
+                                self.refreshControl.endRefreshing()
                                 self.loading = false
                                 if MainViewController.first {
                                     MainViewController.first = false
