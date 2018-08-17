@@ -83,7 +83,6 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             refreshControl.beginRefreshing()
         }
         self.tableView.setContentOffset(CGPoint(x: 0, y: -refreshControl.frame.size.height), animated: true)
-
         
         self.automaticallyAdjustsScrollViewInsets = false
 

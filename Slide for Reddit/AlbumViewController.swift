@@ -12,14 +12,15 @@ import UIKit
 
 class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     
-    var vCs: [UIViewController] = []
+    var urlStringKeys = [String]()
+    var embeddableMediaDataCache = [String: EmbeddableMediaDataModel]()
     var baseURL: URL?
     var bottomScroll = UIScrollView()
     var failureCallback: ((_ url: URL) -> Void)?
-
+    
     public init(urlB: URL) {
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
-
+        
         self.baseURL = urlB
     }
     
@@ -36,24 +37,25 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         self.spinnerIndicator.isHidden = true
         for hash in raw.split(",") {
             self.thumbs.append(URL(string: "https://imgur.com/\(hash)s.jpg")!)
-            let media = ModalMediaViewController(model: EmbeddableMediaDataModel(
-                baseURL: URL.init(string: "https://imgur.com/\(hash).png")!,
+            let urlStringkey = "https://imgur.com/\(hash).png"
+            self.urlStringKeys.append(urlStringkey)
+            self.embeddableMediaDataCache[urlStringkey] = EmbeddableMediaDataModel(
+                baseURL: URL.init(string: urlStringkey)!,
                 lqURL: URL.init(string: "https://imgur.com/\(hash)m.png"),
                 text: nil,
                 inAlbum: true
-            ))
-            self.vCs.append(media)
+            )
         }
         let prefetcher = SDWebImagePrefetcher.shared()
         prefetcher?.prefetchURLs(thumbs)
-
-        let firstViewController = self.vCs[0]
+        
+        let firstViewController = ModalMediaViewController(model: self.embeddableMediaDataCache[self.urlStringKeys[0]]!)
         
         self.setViewControllers([firstViewController],
                                 direction: .forward,
                                 animated: true,
                                 completion: nil)
-        self.navItem?.title = "1/\(self.vCs.count)"
+        self.navItem?.title = "1/\(self.urlStringKeys.count)"
         let gridB = UIBarButtonItem(image: UIImage(named: "grid")?.navIcon().withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(overview(_:)))
         navItem?.rightBarButtonItem = gridB
     }
@@ -99,14 +101,15 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         if(NSString(data: data, encoding: String.Encoding.utf8.rawValue)?.contains("[]"))! {
             //single album image
             DispatchQueue.main.async {
-                let media = ModalMediaViewController(model: EmbeddableMediaDataModel(
-                    baseURL: URL(string: "https://imgur.com/\(self.hash).png")!,
-                    lqURL: URL(string: "https://imgur.com/\(self.hash)m.png"),
+                let urlStringkey = "https://imgur.com/\(self.hash).png"
+                self.urlStringKeys.append(urlStringkey)
+                self.embeddableMediaDataCache[urlStringkey] = EmbeddableMediaDataModel(
+                    baseURL: URL.init(string: urlStringkey)!,
+                    lqURL: URL.init(string: "https://imgur.com/\(self.hash)m.png"),
                     text: nil,
                     inAlbum: false
-                ))
-                self.vCs.append(media)
-                let firstViewController = self.vCs[0]
+                )
+                let firstViewController = ModalMediaViewController(model: self.embeddableMediaDataCache[self.urlStringKeys[0]]!)
                 
                 self.setViewControllers([firstViewController],
                                         direction: .forward,
@@ -124,21 +127,22 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                 DispatchQueue.main.async {
                     for image in (album?.data?.images)! {
                         self.thumbs.append(URL(string: "https://imgur.com/\(image.hash!)s.jpg")!)
-                        let media = ModalMediaViewController(model: EmbeddableMediaDataModel(
-                            baseURL: URL.init(string: "https://imgur.com/\(image.hash!)\(image.ext!)")!,
+                        let urlStringkey = "https://imgur.com/\(image.hash!)\(image.ext!)"
+                        self.urlStringKeys.append(urlStringkey)
+                        self.embeddableMediaDataCache[urlStringkey] = EmbeddableMediaDataModel(
+                            baseURL: URL.init(string: urlStringkey)!,
                             lqURL: URL.init(string: "https://imgur.com/\(image.hash!)\(image.ext! != ".gif" ? "m":"")\(image.ext!)"),
                             text: image.description,
                             inAlbum: true
-                        ))
-                        self.vCs.append(media)
+                        )
                     }
-                    let firstViewController = self.vCs[0]
+                    let firstViewController = ModalMediaViewController(model: self.embeddableMediaDataCache[self.urlStringKeys[0]]!)
                     
                     self.setViewControllers([firstViewController],
                                             direction: .forward,
                                             animated: true,
                                             completion: nil)
-                    self.navItem?.title = "\(self.vCs.index(of: self.viewControllers!.first!)! + 1)/\(self.vCs.count)"
+                    self.navItem?.title = "\(self.urlStringKeys.index(of: ((self.viewControllers!.first! as! ModalMediaViewController).embeddedVC.data.baseURL?.absoluteString)!)! + 1)/\(self.urlStringKeys.count)"
                     let gridB = UIBarButtonItem(image: UIImage(named: "grid")?.navIcon().withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(self.overview(_:)))
                     
                     self.navItem?.rightBarButtonItem = gridB
@@ -197,7 +201,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         self.delegate = self
         view.backgroundColor = UIColor.black.withAlphaComponent(0.7)
         self.navigationController?.view.backgroundColor = UIColor.clear
-
+        
         let navigationBar = UINavigationBar.init(frame: CGRect.init(x: 0, y: 5 + (UIApplication.shared.statusBarView?.frame.size.height ?? 20), width: self.view.frame.size.width, height: 56))
         navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationBar.shadowImage = UIImage()
@@ -252,7 +256,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
             paging: false,
             images: self.thumbs,
             selection: .single(action: { [unowned self] image in
-                let firstViewController = self.vCs[image!]
+                let firstViewController = ModalMediaViewController(model: self.embeddableMediaDataCache[self.urlStringKeys[image!]]!)
                 
                 self.setViewControllers([firstViewController],
                                         direction: .forward,
@@ -265,12 +269,12 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating: Bool, previousViewControllers: [UIViewController], transitionCompleted: Bool) {
-        navItem?.title = "\(vCs.index(of: viewControllers!.first!)! + 1)/\(vCs.count)"
+        navItem?.title = "\(urlStringKeys.index(of: ((viewControllers!.first! as! ModalMediaViewController).embeddedVC.data.baseURL?.absoluteString)!)! + 1)/\(urlStringKeys.count)"
     }
     
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        guard let viewControllerIndex = vCs.index(of: viewController) else {
+        guard let viewControllerIndex = urlStringKeys.index(of: ((viewController as! ModalMediaViewController).embeddedVC.data.baseURL?.absoluteString)!) else {
             return nil
         }
         
@@ -280,21 +284,21 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
             return nil
         }
         
-        guard vCs.count > previousIndex else {
+        guard urlStringKeys.count > previousIndex else {
             return nil
         }
-
-        return vCs[previousIndex]
+        
+        return ModalMediaViewController(model: self.embeddableMediaDataCache[self.urlStringKeys[previousIndex]]!)
     }
     
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        guard let viewControllerIndex = vCs.index(of: viewController) else {
+        guard let viewControllerIndex = urlStringKeys.index(of: ((viewController as! ModalMediaViewController).embeddedVC.data.baseURL?.absoluteString)!) else {
             return nil
         }
         
         let nextIndex = viewControllerIndex + 1
-        let orderedViewControllersCount = vCs.count
+        let orderedViewControllersCount = urlStringKeys.count
         
         guard orderedViewControllersCount != nextIndex else {
             return nil
@@ -303,8 +307,8 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         guard orderedViewControllersCount > nextIndex else {
             return nil
         }
-
-        return vCs[nextIndex]
+        
+        return ModalMediaViewController(model: self.embeddableMediaDataCache[self.urlStringKeys[nextIndex]]!)
     }
     
     func getKeyFromURL(_ url: URL) -> String {
