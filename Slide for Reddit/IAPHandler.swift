@@ -98,39 +98,31 @@ extension IAPHandler: SKProductsRequestDelegate, SKPaymentTransactionObserver {
     
     // MARK: - IAP PAYMENT QUEUE
     func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
-        var oneSuccess = false
-        var restored = false
-        var failed : String?
+        var failed: String?
         var didFail = false
         for transaction: AnyObject in transactions {
             if let trans = transaction as? SKPaymentTransaction {
                 switch trans.transactionState {
-                case .purchasing, .deferred: break // do nothing
                 case .purchased:
-                    print("purchased")
+                    print("Product Purchased")
+                    purchaseStatusBlock?(.purchased)
                     SKPaymentQueue.default().finishTransaction(transaction as! SKPaymentTransaction)
-                    oneSuccess = true
                 case .failed:
-                    print("failed")
+                    print("Purchased Failed")
                     didFail = true
+                    failed = trans.error?.localizedDescription
                     SKPaymentQueue.default().finishTransaction(transaction as! SKPaymentTransaction)
-                    failed = trans.error?.localizedDescription ?? nil
                 case .restored:
-                    print("restored")
-                    restored = true
+                    print("Already Purchased")
+                    purchaseStatusBlock?(.purchased)
                     SKPaymentQueue.default().finishTransaction(transaction as! SKPaymentTransaction)
-                    oneSuccess = true
+                default:
+                    break
                 }
             }
         }
         
-        if oneSuccess {
-            if restored {
-                restoreBlock?(true)
-            } else {
-                purchaseStatusBlock?(.purchased)
-            }
-        } else if didFail {
+        if didFail {
             errorBlock?(failed)
         }
     }
