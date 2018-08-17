@@ -90,8 +90,10 @@ extension BottomSheetPresentationManager {
         let translation = sender.translation(in: menuViewController!.view!)
 
         // do some math to translate this to a percentage based value
-        let d = translation.y / menuViewController!.view!.bounds.height
+        let d = translation.y / menuViewController!.view!.bounds.height / 2
 
+        let yVelocity = sender.velocity(in: menuViewController!.view!).y
+        
         // now lets deal with different states that the gesture recognizer sends
         switch sender.state {
         case .began:
@@ -99,7 +101,7 @@ extension BottomSheetPresentationManager {
         case .changed:
             self.update(d)
         default: // .Ended, .Cancelled, .Failed ...
-            if d > 0.15 {
+            if d > 0.25 || yVelocity > 1000.0 {
                 // threshold crossed: finish
                 self.finish()
             } else {
@@ -154,16 +156,14 @@ extension BottomSheetPresentationManager: UIViewControllerAnimatedTransitioning 
         controller.view.frame = initialFrame
         UIView.animate(withDuration: animationDuration, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.45, options: .curveEaseInOut, animations: {
             controller.view.frame = finalFrame
-        }) {
-            (finished) in
+        }, completion: { (finished) in
             // tell our transitionContext object that we've finished animating
             if transitionContext.transitionWasCancelled {
                 transitionContext.completeTransition(false)
             } else {
                 transitionContext.completeTransition(finished)
             }
-
-        }
+        })
     }
 }
 

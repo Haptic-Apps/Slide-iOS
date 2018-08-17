@@ -50,7 +50,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         super.viewWillLayoutSubviews()
 
         if !SettingValues.flatMode {
-            view.roundCorners([.topLeft, .topRight], radius: 30)
+            header.roundCorners([.topLeft, .topRight], radius: 30)
         }
     }
 
@@ -83,12 +83,20 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     }
 
     func configureLayout() {
+        
+        var width = UIScreen.main.bounds.size.width * (UIDevice.current.userInterfaceIdiom == .pad ? 0.75 : 0.95)
+        if width < 250 {
+            width = UIScreen.main.bounds.size.width
+        }
+        
         header.heightAnchor == header.getEstHeight()
-        header.horizontalAnchors == view.horizontalAnchors
+        header.widthAnchor == width
+        header.centerXAnchor == self.view.centerXAnchor
         header.topAnchor == view.topAnchor
 
-        tableView.topAnchor == view.topAnchor + header.getEstHeight()
-        tableView.horizontalAnchors == view.horizontalAnchors
+        tableView.topAnchor == header.bottomAnchor
+        tableView.widthAnchor == width
+        tableView.centerXAnchor == self.view.centerXAnchor
         tableView.bottomAnchor == view.bottomAnchor
     }
 
