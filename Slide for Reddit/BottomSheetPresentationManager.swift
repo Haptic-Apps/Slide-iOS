@@ -69,7 +69,6 @@ extension BottomSheetPresentationManager: UIViewControllerTransitioningDelegate 
     func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         self.presenting = false
         return self
-        //        return DismissAnimator()
     }
 }
 

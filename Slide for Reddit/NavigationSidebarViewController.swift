@@ -42,7 +42,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         header.search.becomeFirstResponder()
 
         // Update any things that can change due to user settings here
-        tableView.backgroundColor = ColorUtil.backgroundColor
+        tableView.backgroundColor = ColorUtil.foregroundColor
         tableView.separatorColor = ColorUtil.backgroundColor
     }
 
