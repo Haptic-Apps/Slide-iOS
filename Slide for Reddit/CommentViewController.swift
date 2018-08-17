@@ -1944,9 +1944,20 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
                 topCell -= 1
                 contents = content[dataArray[topCell]]
             }
+            var skipTop = false
             let indexPath = IndexPath.init(row: topCell, section: 0)
-            self.tableView.scrollToRow(at: indexPath,
-                    at: UITableViewScrollPosition.top, animated: true)
+            for index in tableView.indexPathsForVisibleRows ?? [] {
+                if index.row == topCell {
+                    skipTop = true
+                    break
+                }
+            }
+            
+            if !skipTop {
+                self.tableView.scrollToRow(at: indexPath,
+                                           at: UITableViewScrollPosition.none, animated: true)
+            }
+            
             id = (contents as! RComment).getIdentifier()
         }
         let childNumber = getChildNumber(n: id)
