@@ -13,6 +13,9 @@ class BottomSheetPresentationManager: UIPercentDrivenInteractiveTransition, UIGe
     var coverageRatio: CGFloat = 0.66
     var presenting: Bool = false
 
+    /// True when the pan gesture is active.
+    fileprivate var interactive: Bool = false
+
     weak var draggingView: UIView? {
         didSet {
             self.draggingView?.addGestureRecognizer(panGestureRecognizer)
@@ -80,36 +83,39 @@ extension BottomSheetPresentationManager {
        //         return
        // }
 
-        // Hide the keyboard
-        if let menuVC = menuViewController as? NavigationSidebarViewController, menuVC.header.search.isFirstResponder {
+        guard let menuVC = menuViewController as? NavigationSidebarViewController,
+            let menuView = menuVC.view else {
+            return
+        }
+
+        // Hide the keyboard if it's out
+        if menuVC.header.search.isFirstResponder {
             menuVC.header.search.resignFirstResponder()
         }
 
-        //        menuViewController!.view.center =
-        // how much distance have we panned in reference to the parent view?
-        let translation = sender.translation(in: menuViewController!.view!)
-
-        // do some math to translate this to a percentage based value
-        let d = translation.y / menuViewController!.view!.bounds.height / 2
-
-        let yVelocity = sender.velocity(in: menuViewController!.view!).y
-        
-        // now lets deal with different states that the gesture recognizer sends
         switch sender.state {
         case .began:
-            menuViewController?.dismiss(animated: true, completion: nil)
+            self.interactive = true
+            menuVC.dismiss(animated: true, completion: nil)
+
         case .changed:
-            self.update(d)
-        default: // .Ended, .Cancelled, .Failed ...
-            if d > 0.25 || yVelocity > 1000.0 {
-                // threshold crossed: finish
+            let translation = sender.translation(in: menuView)
+            let progress = translation.y / menuView.bounds.height
+            self.update(progress)
+
+        default:
+            self.interactive = false
+
+            let velocity = sender.velocity(in: menuView).y
+            if percentComplete > 0.3 || velocity > 350 {
                 self.finish()
             } else {
-                // threshold not met: cancel
                 self.cancel()
             }
         }
+
     }
+
 }
 
 extension BottomSheetPresentationManager: UIViewControllerAnimatedTransitioning {
@@ -152,18 +158,51 @@ extension BottomSheetPresentationManager: UIViewControllerAnimatedTransitioning 
         let initialFrame = presenting ? dismissedFrame : presentedFrame
         let finalFrame = presenting ? presentedFrame : dismissedFrame
 
-        let animationDuration = transitionDuration(using: transitionContext)
-        controller.view.frame = initialFrame
-        UIView.animate(withDuration: animationDuration, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.45, options: .curveEaseInOut, animations: {
-            controller.view.frame = finalFrame
-        }, completion: { (finished) in
+        // Runs when the animation finishes
+        let completionBlock: (Bool) -> Void = { (finished) in
             // tell our transitionContext object that we've finished animating
             if transitionContext.transitionWasCancelled {
+                if self.interactive {
+                    transitionContext.cancelInteractiveTransition()
+                }
                 transitionContext.completeTransition(false)
             } else {
+                if self.interactive {
+                    finished ? transitionContext.finishInteractiveTransition() : transitionContext.cancelInteractiveTransition()
+                }
                 transitionContext.completeTransition(finished)
             }
-        })
+        }
+
+        // Put what you want to animate here.
+        let animationBlock: () -> Void = {
+            controller.view.frame = finalFrame
+        }
+
+        // Set up for the animation
+        let animationDuration = transitionDuration(using: transitionContext)
+        controller.view.frame = initialFrame
+
+        // Perform a different animation based on whether we're interactive (performing a gesture) or not
+        if interactive {
+            // Do a linear animation so we match our dragging with our transition
+            UIView.animate(withDuration: animationDuration,
+                           delay: 0,
+                           options: .curveLinear,
+                           animations: animationBlock,
+                           completion: completionBlock)
+
+        } else {
+            // Do a spring animation with easing
+            UIView.animate(withDuration: animationDuration,
+                           delay: 0,
+                           usingSpringWithDamping: 0.8,
+                           initialSpringVelocity: 0.45,
+                           options: .curveEaseInOut,
+                           animations: animationBlock,
+                           completion: completionBlock)
+        }
+
     }
 }
 
