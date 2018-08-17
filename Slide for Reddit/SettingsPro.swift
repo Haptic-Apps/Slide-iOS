@@ -316,10 +316,6 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
             guard let strongSelf = self else { return }
             strongSelf.alertController?.dismiss(animated: true, completion: nil)
             if error != nil {
-                SettingValues.isPro = true
-                UserDefaults.standard.set(true, forKey: SettingValues.pref_pro)
-                UserDefaults.standard.synchronize()
-                SettingsPro.changed = true
                 let alertView = UIAlertController(title: "Something went wrong!", message: "Slide Pro was not purchased and your account has not been charged.\nError: \(error!)\n\nPlease send me an email if this issue persists!", preferredStyle: .alert)
                 let action = UIAlertAction(title: "Close", style: .cancel, handler: { (_) in
                 })
