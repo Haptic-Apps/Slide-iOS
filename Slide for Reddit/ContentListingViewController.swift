@@ -72,8 +72,8 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.tableView.dataSource = self
 
         refreshControl = UIRefreshControl()
-        refreshControl.endRefreshing()
         refreshControl.tintColor = ColorUtil.fontColor
+
         refreshControl.attributedTitle = NSAttributedString(string: "")
         refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControlEvents.valueChanged)
         tableView.addSubview(refreshControl)
@@ -82,6 +82,8 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         defer {
             refreshControl.beginRefreshing()
         }
+        self.tableView.setContentOffset(CGPoint(x: 0, y: -refreshControl.frame.size.height), animated: true)
+
         
         self.automaticallyAdjustsScrollViewInsets = false
 
