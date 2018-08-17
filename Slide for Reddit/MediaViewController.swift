@@ -84,8 +84,7 @@ class MediaViewController: UIViewController, MediaVCDelegate {
     }
 
     func getControllerForUrl(baseUrl: URL, lq: URL? = nil) -> UIViewController? {
-        print(baseUrl)
-        contentUrl = baseUrl
+        contentUrl = baseUrl.absoluteString.startsWith("//") ? URL(string: "https:\(baseUrl.absoluteString)") ?? baseUrl : baseUrl
         if shouldTruncate(url: contentUrl!) {
             let content = contentUrl?.absoluteString
             contentUrl = URL.init(string: (content?.substring(to: content!.index(of: ".")!))!)
@@ -96,9 +95,9 @@ class MediaViewController: UIViewController, MediaVCDelegate {
             print("Showing album")
             return AlbumViewController.init(urlB: contentUrl!)
         } else if contentUrl != nil && ContentType.displayImage(t: type) && SettingValues.internalImageView || (type == .GIF && SettingValues.internalGifView) || type == .STREAMABLE || type == .VID_ME || (type == ContentType.CType.VIDEO && SettingValues.internalYouTube) {
-            if !ContentType.isGifLoadInstantly(uri: baseUrl) && type == .GIF {
+            if !ContentType.isGifLoadInstantly(uri: contentUrl!) && type == .GIF {
                 if SettingValues.safariVC {
-                    let safariVC = SFHideSafariViewController(url: baseUrl)
+                    let safariVC = SFHideSafariViewController(url: contentUrl!)
                     if #available(iOS 10.0, *) {
                         safariVC.preferredBarTintColor = ColorUtil.backgroundColor
                         safariVC.preferredControlTintColor = ColorUtil.fontColor
@@ -107,12 +106,12 @@ class MediaViewController: UIViewController, MediaVCDelegate {
                     }
                     return safariVC
                 }
-                return WebsiteViewController(url: baseUrl, subreddit: link == nil ? "" : link.subreddit)
+                return WebsiteViewController(url: contentUrl!, subreddit: link == nil ? "" : link.subreddit)
             }
             return ModalMediaViewController.init(url: contentUrl!, lq: lq, commentCallback, failureCallback)
         } else if type == ContentType.CType.LINK || type == ContentType.CType.NONE {
             if SettingValues.safariVC {
-                let safariVC = SFHideSafariViewController(url: baseUrl)
+                let safariVC = SFHideSafariViewController(url: contentUrl!)
                 if #available(iOS 10.0, *) {
                     safariVC.preferredBarTintColor = ColorUtil.backgroundColor
                     safariVC.preferredControlTintColor = ColorUtil.fontColor
@@ -121,13 +120,13 @@ class MediaViewController: UIViewController, MediaVCDelegate {
                 }
                 return safariVC
             }
-            let web = WebsiteViewController(url: baseUrl, subreddit: link == nil ? "" : link.subreddit)
+            let web = WebsiteViewController(url: contentUrl!, subreddit: link == nil ? "" : link.subreddit)
             return web
         } else if type == ContentType.CType.REDDIT {
             return RedditLink.getViewControllerForURL(urlS: contentUrl!)
         }
         if SettingValues.safariVC {
-            let safariVC = SFHideSafariViewController(url: baseUrl)
+            let safariVC = SFHideSafariViewController(url: contentUrl!)
             if #available(iOS 10.0, *) {
                 safariVC.preferredBarTintColor = ColorUtil.backgroundColor
                 safariVC.preferredControlTintColor = ColorUtil.fontColor
@@ -136,7 +135,7 @@ class MediaViewController: UIViewController, MediaVCDelegate {
             }
             return safariVC
         }
-        return WebsiteViewController(url: baseUrl, subreddit: link == nil ? "" : link.subreddit)
+        return WebsiteViewController(url: contentUrl!, subreddit: link == nil ? "" : link.subreddit)
     }
 
     var contentUrl: URL?
@@ -183,7 +182,11 @@ class MediaViewController: UIViewController, MediaVCDelegate {
                 UIApplication.shared.openURL(url)
             }
         } else {
-            contentUrl = URL.init(string: String.init(htmlEncodedString: url.absoluteString))!
+            var urlString = url.absoluteString
+            if urlString.startsWith("//") {
+                urlString = "https:" + urlString
+            }
+            contentUrl = URL.init(string: String.init(htmlEncodedString: urlString))!
             if ContentType.isTable(uri: url) {
 //                let controller = TableDisplayViewController.init(baseHtml: url.absoluteString, color: navigationController?.navigationBar.barTintColor ?? ColorUtil.getColorForSub(sub: ""))
 //
@@ -201,7 +204,7 @@ class MediaViewController: UIViewController, MediaVCDelegate {
                 controller.addAction(UIAlertAction(title: "Close", style: .cancel, handler: nil))
                 present(controller, animated: true, completion: nil)
             } else {
-                let controller = getControllerForUrl(baseUrl: url, lq: lq)!
+                let controller = getControllerForUrl(baseUrl: contentUrl!, lq: lq)!
                 if let sourceView = heroView,
                     let modalController = controller as? ModalMediaViewController {
 
