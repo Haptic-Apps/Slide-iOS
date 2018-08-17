@@ -61,6 +61,14 @@ extension UIView {
         })
     }
 
+    // https://stackoverflow.com/a/27293815/7138792
+    func roundCorners(_ corners: UIRectCorner, radius: CGFloat) {
+        let path = UIBezierPath(roundedRect: self.bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
+        let mask = CAShapeLayer()
+        mask.path = path.cgPath
+        self.layer.mask = mask
+    }
+
 }
 
 // Convenient safe anchor accessors
