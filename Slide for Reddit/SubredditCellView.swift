@@ -123,7 +123,7 @@ class SubredditCellView: UITableViewCell {
         self.sideView.isHidden = false
         self.icon.isHidden = true
         if !exists {
-            title.text = "Go to r/\(subreddit)"
+            title.text = "Go to /r/\(subreddit)"
         } else {
             title.text = subreddit
         }
@@ -142,7 +142,7 @@ class SubredditCellView: UITableViewCell {
         self.icon.isHidden = false
         self.sideView.isHidden = true
         self.navController = nav
-        title.text = "Go to u/\(profile)'s profile"
+        title.text = "Go to /u/\(profile)'s profile"
         sideView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
         let selectedView = UIView()
         selectedView.backgroundColor = ColorUtil.backgroundColor
