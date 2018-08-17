@@ -20,6 +20,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     public static var vCs: [UIViewController] = []
     public static var current: String = ""
     public static var needsRestart = false
+
+    lazy var bottomSheetTransitioningDelegate = BottomSheetPresentationManager()
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -300,6 +302,19 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     
     var finalSubs = [String]()
 
+    func makeMenuNav() {
+        menuNav = NavigationSidebarViewController()
+        menuNav?.setViewController(controller: self)
+        self.menuNav?.setSubreddit(subreddit: MainViewController.current)
+
+        bottomSheetTransitioningDelegate.direction = .bottom
+        bottomSheetTransitioningDelegate.coverageRatio = 0.9
+        bottomSheetTransitioningDelegate.draggingView = menuNav?.header
+        bottomSheetTransitioningDelegate.menuViewController = menuNav
+        menuNav?.transitioningDelegate = bottomSheetTransitioningDelegate
+        menuNav?.modalPresentationStyle = .custom
+    }
+
     func restartVC() {
         let saved = currentPage
 
@@ -370,9 +385,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         self.doCurrentPage(saved)
 
         if let nav = self.menuNav {
-            if nav.tableView != nil {
-                nav.tableView.reloadData()
-            }
+            nav.tableView.reloadData()
         }
         menuNav?.dismiss(animated: true)
 
@@ -466,7 +479,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
     var tintColor: UIColor = UIColor.white
     var menuNav: NavigationSidebarViewController?
-    var bottomSheet: MDCBottomSheetController?
     var currentTitle = "Slide"
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -635,11 +647,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         self.automaticallyAdjustsScrollViewInsets = false
 
         if menuNav == nil {
-            menuNav = NavigationSidebarViewController()
-            menuNav?.setViewController(controller: self)
-            self.menuNav?.setSubreddit(subreddit: MainViewController.current)
-            bottomSheet = MDCBottomSheetController(contentViewController: menuNav!)
-            bottomSheet!.delegate = self
+            makeMenuNav()
         }
 
         inHeadView.removeFromSuperview()
@@ -838,14 +846,10 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
     func showDrawer(_ sender: AnyObject) {
         if menuNav == nil {
-            menuNav = NavigationSidebarViewController()
-            menuNav?.setViewController(controller: self)
-            self.menuNav?.setSubreddit(subreddit: MainViewController.current)
-            bottomSheet = MDCBottomSheetController(contentViewController: menuNav!)
-            bottomSheet!.delegate = self
+            makeMenuNav()
         }
         menuNav!.setColors(MainViewController.current)
-        present(bottomSheet!, animated: true, completion: nil)
+        present(menuNav!, animated: true, completion: nil)
     }
 
     func shadowbox() {
@@ -910,21 +914,6 @@ extension MainViewController: MDCTabBarDelegate {
         self.doCurrentPage(tabBar.items.index(of: item)!)
         tabBar.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
     }
-}
-
-extension MainViewController: MDCBottomSheetControllerDelegate {
-
-    func bottomSheetControllerWillChangeState(_ controller: MDCBottomSheetController, sheetState state: MDCSheetState) {
-        if state == .closed {
-            controller.view.endEditing(true)
-            controller.dismiss(animated: true, completion: nil)
-        }
-    }
-
-    func bottomSheetControllerDidDismissBottomSheet(_ controller: MDCBottomSheetController) {
-        // Code goes here
-    }
-
 }
 
 extension Bundle {
