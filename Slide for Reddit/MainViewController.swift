@@ -313,7 +313,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         bottomSheetTransitioningDelegate.scrollView = menuNav?.tableView
         bottomSheetTransitioningDelegate.menuViewController = menuNav
         menuNav?.transitioningDelegate = bottomSheetTransitioningDelegate
-        menuNav?.modalPresentationStyle = .custom
     }
 
     func restartVC() {

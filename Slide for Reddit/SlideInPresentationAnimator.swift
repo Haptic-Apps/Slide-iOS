@@ -32,10 +32,14 @@ extension SlideInPresentationAnimator: UIViewControllerAnimatedTransitioning {
         let key = isPresentation ? UITransitionContextViewControllerKey.to
             : UITransitionContextViewControllerKey.from
 
+        let keyV = isPresentation ? UITransitionContextViewKey.to
+            : UITransitionContextViewKey.from
+        
         let controller = transitionContext.viewController(forKey: key)!
+        let view = transitionContext.view(forKey: keyV)!
 
         if isPresentation {
-            transitionContext.containerView.addSubview(controller.view)
+            transitionContext.containerView.addSubview(view)
         }
 
         let presentedFrame = transitionContext.finalFrame(for: controller)
@@ -55,9 +59,9 @@ extension SlideInPresentationAnimator: UIViewControllerAnimatedTransitioning {
         let finalFrame = isPresentation ? presentedFrame : dismissedFrame
 
         let animationDuration = transitionDuration(using: transitionContext)
-        controller.view.frame = initialFrame
+        view.frame = initialFrame
         UIView.animate(withDuration: animationDuration, animations: {
-            controller.view.frame = finalFrame
+            view.frame = finalFrame
         }, completion: { finished in
             transitionContext.completeTransition(finished)
         })

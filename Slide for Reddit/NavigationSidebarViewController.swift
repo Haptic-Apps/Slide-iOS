@@ -28,7 +28,16 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     var isSearching = false
 
     var task: URLSessionDataTask?
-
+    
+    init() {
+        super.init(nibName: nil, bundle: nil)
+        self.modalPresentationStyle = .custom
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
