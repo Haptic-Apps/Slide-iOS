@@ -1127,7 +1127,7 @@ class SingleSubredditViewController: MediaViewController {
                                 }
 
                                 if before == 0 {
-                                    self.flowLayout.reset()
+                                    self.flowLayout.invalidateLayout()
                                     self.tableView.reloadData()
                                     var top = CGFloat(0)
                                     if #available(iOS 11, *) {
@@ -1139,7 +1139,7 @@ class SingleSubredditViewController: MediaViewController {
                                 
                                     self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + (-1 * ((SettingValues.viewType && !self.single) ? 52 : (self.navigationController?.navigationBar.frame.size.height ?? 64))) - top)
                                 } else {
-                                    self.flowLayout.reset()
+                                    self.flowLayout.invalidateLayout()
                                     self.tableView.insertItems(at: paths)
                                 }
 

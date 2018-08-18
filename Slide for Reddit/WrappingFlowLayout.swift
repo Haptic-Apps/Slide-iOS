@@ -39,6 +39,7 @@ class WrappingFlowLayout: UICollectionViewLayout {
     }
     func reset() {
         cache = []
+        contentHeight = 0
         var portraitCount = SettingValues.multiColumnCount / 2
         if portraitCount == 0 {
             portraitCount = 1

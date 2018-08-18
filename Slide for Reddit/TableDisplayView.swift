@@ -143,6 +143,7 @@ class TableDisplayView: UIScrollView {
     
     func addSubviews() {
         let activeLinkAttributes = [NSForegroundColorAttributeName: tColor]
+        var odd = false
         for row in baseData {
             let rowStack = UIStackView().then({
                 $0.axis = .horizontal
@@ -159,7 +160,9 @@ class TableDisplayView: UIScrollView {
                     $0.activeLinkAttributes = activeLinkAttributes
                 })
                 text.setText(string)
-                
+                if odd {
+                    text.backgroundColor = ColorUtil.foregroundColor
+                }
                 let width = getWidestCell(column: column)
                 globalWidth += width
                 globalWidth += 4
@@ -169,7 +172,9 @@ class TableDisplayView: UIScrollView {
             }
             globalWidth -= 4
             baseStackView.addArrangedSubview(rowStack)
+            odd = !odd
         }
+        
         addSubview(baseStackView)
         contentInset = UIEdgeInsets.init(top: 0, left: 8, bottom: 0, right: 8)
         baseStackView.widthAnchor == globalWidth
