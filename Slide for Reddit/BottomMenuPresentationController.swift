@@ -149,7 +149,7 @@ class SlideInTransition: NSObject, UIViewControllerAnimatedTransitioning {
             viewToAnimate.frame = offsetFrame
         }
 
-        let options: UIViewAnimationOptions = interactive ? [.curveLinear] : []
+        let options: UIViewAnimationOptions = interactive ? [.curveLinear] : [.curveEaseInOut]
         let animateBlock = { [weak self] in
             if self!.reverse {
                 viewToAnimate.frame = offsetFrame
@@ -158,7 +158,7 @@ class SlideInTransition: NSObject, UIViewControllerAnimatedTransitioning {
             }
         }
         
-        let completionBlock: (Bool) -> () = { finished in
+        let completionBlock: (Bool) -> Void = { finished in
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
         }
 
@@ -208,6 +208,9 @@ private class PanGestureInteractionController: UIPercentDrivenInteractiveTransit
 
     // MARK: User interaction
     @objc func viewPanned(sender: UIPanGestureRecognizer) {
+        
+        sender.view?.endEditing(true)
+        
         switch sender.state {
         case .began:
             callbacks.didBeginPanning?()
