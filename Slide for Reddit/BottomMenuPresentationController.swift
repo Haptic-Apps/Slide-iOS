@@ -19,11 +19,13 @@ class BottomMenuPresentationController: UIPresentationController, UIViewControll
         view.backgroundColor = UIColor(white: 0.0, alpha: 0.5)
         view.frame = self.containerView?.bounds ?? CGRect()
 
-        let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
-        let blurView = UIVisualEffectView(frame: view.frame)
-        blurEffect.setValue(3, forKeyPath: "blurRadius")
-        blurView.effect = blurEffect
-        view.insertSubview(blurView, at: 0)
+        if #available(iOS 11, *) {
+            let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
+            let blurView = UIVisualEffectView(frame: view.frame)
+            blurEffect.setValue(3, forKeyPath: "blurRadius")
+            blurView.effect = blurEffect
+            view.insertSubview(blurView, at: 0)
+        }
 
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(backgroundViewTapped))
         view.addGestureRecognizer(tapGesture)
