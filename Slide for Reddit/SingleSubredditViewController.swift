@@ -1514,7 +1514,7 @@ class SingleSubredditViewController: MediaViewController {
     var server: DefaultHTTPServer?
     
     func addToHomescreen() {
-        DispatchQueue.main.async { () -> Void in
+        DispatchQueue.global(qos: .background).async { () -> Void in
             self.loop = try! SelectorEventLoop(selector: try! KqueueSelector())
             self.server = DefaultHTTPServer(eventLoop: self.loop!, port: 8080) { (_, startResponse: ((String, [(String, String)]) -> Void), sendBody: ((Data) -> Void)
                 ) in

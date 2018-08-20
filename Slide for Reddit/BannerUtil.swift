@@ -71,7 +71,7 @@ public class BannerUtil {
             popup.bottomAnchor == toView.safeBottomAnchor - 48
         }
         popup.horizontalAnchors == toView.horizontalAnchors + 12 + xmargin
-        popup.heightAnchor == (48 + ((text.contains("\n")) ? 24 : 0))
+        popup.heightAnchor == (CGFloat(48) + CGFloat((text.contains("\n")) ? 24 : 0))
 
         UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
             self.popup.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
