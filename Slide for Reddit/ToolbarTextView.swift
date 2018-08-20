@@ -376,11 +376,11 @@ public class ToolbarTextView: NSObject {
     }
 
     func bold(_ sender: UIButton!) {
-        wrapIn("*")
+        wrapIn("**")
     }
 
     func italics(_ sender: UIButton!) {
-        wrapIn("**")
+        wrapIn("*")
     }
 
     func list(_ sender: UIButton!) {

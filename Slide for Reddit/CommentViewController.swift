@@ -1238,6 +1238,9 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     }
 
     func showNavTypes(_ sender: UIView) {
+        if !loaded {
+            return
+        }
         let actionSheetController: UIAlertController = UIAlertController(title: "Navigation type", message: "", preferredStyle: .actionSheet)
 
         let link = getCount(sort: .LINK)
@@ -1301,6 +1304,9 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     }
 
     func goUp(_ sender: AnyObject) {
+        if !loaded {
+            return
+        }
         var topCell = 0
         if let top = tableView.indexPathsForVisibleRows {
             if top.count > 0 {
@@ -1320,13 +1326,16 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     var lastMoved = -1
 
     func goDown(_ sender: AnyObject) {
+        if !loaded {
+            return
+        }
         var topCell = 0
         if let top = tableView.indexPathsForVisibleRows {
             if top.count > 0 {
                 topCell = top[0].row
             }
         }
-        if topCell <= 0 && lastMoved != 0 {
+        if topCell <= 0 && lastMoved < 0 {
             goToCellTop(i: 0)
             lastMoved = 0
         } else {
