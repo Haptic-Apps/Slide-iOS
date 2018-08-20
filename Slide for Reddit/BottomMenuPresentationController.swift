@@ -6,6 +6,7 @@
 //  Based on https://gist.github.com/chrisco314/3b58040015ed857498c761a3ea524161
 //
 
+import Anchorage
 import UIKit
 
 class BottomMenuPresentationController: UIPresentationController, UIViewControllerTransitioningDelegate {
@@ -14,24 +15,7 @@ class BottomMenuPresentationController: UIPresentationController, UIViewControll
     fileprivate var dismissInteractionController: PanGestureInteractionController?
     weak var scrollView: UITableView?
 
-    lazy fileprivate var backgroundView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor(white: 0.0, alpha: 0.5)
-        view.frame = self.containerView?.bounds ?? CGRect()
-
-        if #available(iOS 11, *) {
-            let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
-            let blurView = UIVisualEffectView(frame: view.frame)
-            blurEffect.setValue(3, forKeyPath: "blurRadius")
-            blurView.effect = blurEffect
-            view.insertSubview(blurView, at: 0)
-        }
-
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(backgroundViewTapped))
-        view.addGestureRecognizer(tapGesture)
-
-        return view
-    }()
+    lazy fileprivate var backgroundView = UIView()
 
     init(presentedViewController: UIViewController, presenting: UIViewController) {
         super.init(presentedViewController: presentedViewController, presenting: presenting)
@@ -50,7 +34,27 @@ extension BottomMenuPresentationController {
 // MARK: - UIPresentationController
 extension BottomMenuPresentationController {
     override func presentationTransitionWillBegin() {
+        
+        backgroundView = UIView()
+        backgroundView.backgroundColor = UIColor(white: 0.0, alpha: 0.5)
+        
+        if #available(iOS 11, *) {
+            let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
+            let blurView = UIVisualEffectView(frame: backgroundView.frame)
+            blurEffect.setValue(3, forKeyPath: "blurRadius")
+            blurView.effect = blurEffect
+            backgroundView.insertSubview(blurView, at: 0)
+            blurView.horizontalAnchors == backgroundView.horizontalAnchors
+            blurView.verticalAnchors == backgroundView.verticalAnchors
+        }
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(backgroundViewTapped))
+        backgroundView.addGestureRecognizer(tapGesture)
+
         containerView?.addSubview(backgroundView)
+        backgroundView.horizontalAnchors == containerView!.horizontalAnchors
+        backgroundView.verticalAnchors == containerView!.verticalAnchors
+        
         backgroundView.alpha = 0
         presentingViewController.transitionCoordinator?.animate(alongsideTransition: { [weak self] _ in
             self?.backgroundView.alpha = 1
@@ -59,7 +63,7 @@ extension BottomMenuPresentationController {
 
     override func dismissalTransitionWillBegin() {
         presentingViewController.transitionCoordinator?.animate(alongsideTransition: { [weak self] _ in
-            self?.backgroundView.alpha = 0.5
+            self?.backgroundView.alpha = 0
             }, completion: nil)
     }
     
@@ -141,7 +145,7 @@ class SlideInTransition: NSObject, UIViewControllerAnimatedTransitioning {
         guard let viewToAnimate = viewControllerToAnimate.view else { return }
 
         var offsetFrame = viewToAnimate.bounds
-        offsetFrame.origin.x = 0
+        offsetFrame.origin.x = (UIScreen.main.bounds.width - viewControllerToAnimate.view.frame.width) / 2
         offsetFrame.origin.y = transitionContext.containerView.bounds.height
 
         if !reverse {
