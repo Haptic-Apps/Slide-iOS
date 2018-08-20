@@ -89,7 +89,8 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     var offline = false
     var np = false
     var modLink = ""
-    
+    var swiper: SloppySwiper?
+
     var authorColor: UIColor = ColorUtil.fontColor
 
     func replySent(comment: Comment?, cell: CommentDepthCell?) {
@@ -857,9 +858,16 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        if (self.navigationController != nil && !(self.navigationController!.delegate is SloppySwiper) && (parent == nil || (parent != nil && !(parent! is PagingCommentViewController)))) && SettingValues.swipeAnywhereComments {
-            let swiper = SloppySwiper.init(navigationController: self.navigationController!)
+        if (self.navigationController != nil && (parent == nil || (parent != nil && !(parent! is PagingCommentViewController)))) && SettingValues.swipeAnywhereComments {
+            swiper = SloppySwiper.init(navigationController: self.navigationController!)
             self.navigationController!.delegate = swiper!
+            for view in view.subviews {
+                if view is UIScrollView {
+                    let scrollView = view as! UIScrollView
+                    scrollView.panGestureRecognizer.require(toFail: swiper!.panRecognizer)
+                    break
+                }
+            }
         }
 
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: UIBarButtonItemStyle.plain, target: nil, action: nil)
@@ -1845,10 +1853,9 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
 
     @available(iOS 11.0, *)
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        HapticUtility.hapticActionWeak()
         let cell = tableView.cellForRow(at: indexPath)
         if cell is CommentDepthCell && (cell as! CommentDepthCell).comment != nil && SettingValues.commentTwoSwipe && (SettingValues.commentActionRightLeft != .NONE || SettingValues.commentActionRightRight != .NONE) {
-
+            HapticUtility.hapticActionWeak()
             var actions = [UIContextualAction]()
             if SettingValues.commentActionRightRight != .NONE {
                 let action = UIContextualAction.init(style: .normal, title: "", handler: { (action, _, b) in
@@ -1881,10 +1888,9 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
     
     @available(iOS 11.0, *)
     override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        HapticUtility.hapticActionWeak()
         let cell = tableView.cellForRow(at: indexPath)
         if cell is CommentDepthCell && (cell as! CommentDepthCell).comment != nil && !SettingValues.swipeAnywhereComments && (SettingValues.commentActionLeftLeft != .NONE || SettingValues.commentActionLeftRight != .NONE) {
-            
+            HapticUtility.hapticActionWeak()
             var actions = [UIContextualAction]()
             if SettingValues.commentActionLeftLeft != .NONE {
                 let action = UIContextualAction.init(style: .normal, title: "", handler: { (action, _, b) in

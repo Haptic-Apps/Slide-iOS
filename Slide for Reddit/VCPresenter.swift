@@ -18,7 +18,12 @@ public class VCPresenter {
             return
         }
         if ((parentNavigationController != nil && parentNavigationController!.modalPresentationStyle != .pageSheet) && !(parentViewController is SubSidebarViewController) && popupIfPossible && UIApplication.shared.statusBarOrientation.isLandscape) || parentNavigationController == nil {
+            if viewController is SingleSubredditViewController {
+                (viewController as! SingleSubredditViewController).isModal = true
+            }
+            
             let newParent = TapBehindModalViewController.init(rootViewController: viewController)
+
             newParent.navigationBar.shadowImage = UIImage()
             newParent.navigationBar.isTranslucent = false
 

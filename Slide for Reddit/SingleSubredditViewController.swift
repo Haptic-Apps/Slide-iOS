@@ -48,6 +48,8 @@ class SingleSubredditViewController: MediaViewController {
 
     var parentController: MainViewController?
     var accentChosen: UIColor?
+    
+    var isModal = false
 
     var isAccent = false
 
@@ -73,6 +75,7 @@ class SingleSubredditViewController: MediaViewController {
 
     static var firstPresented = true
     static var cellVersion = 0
+    var swiper: SloppySwiper?
 
     var headerView = UIView()
     var more = UIButton()
@@ -140,10 +143,21 @@ class SingleSubredditViewController: MediaViewController {
 
         self.tableView.delegate = self
         self.tableView.dataSource = self
-//        self.tableView.prefetchDataSource = self
         refreshControl = UIRefreshControl()
 
         reloadNeedingColor()
+        
+        if single && !isModal {
+            swiper = SloppySwiper.init(navigationController: self.navigationController!)
+            self.navigationController!.delegate = swiper!
+            for view in view.subviews {
+                if view is UIScrollView {
+                    let scrollView = view as! UIScrollView
+                    scrollView.panGestureRecognizer.require(toFail: swiper!.panRecognizer)
+                    break
+                }
+            }
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -181,11 +195,6 @@ class SingleSubredditViewController: MediaViewController {
             tableView.reloadItems(at: [savedIndex!])
         } else {
             tableView.reloadData()
-        }
-
-        if single && navigationController != nil && navigationController!.modalPresentationStyle != .pageSheet {
-            // let swiper = SloppySwiper.init(navigationController: self.navigationController!)
-            // self.navigationController!.delegate = swiper!
         }
 
         self.view.backgroundColor = ColorUtil.backgroundColor
