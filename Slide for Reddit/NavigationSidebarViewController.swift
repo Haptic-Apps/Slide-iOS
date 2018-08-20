@@ -39,11 +39,15 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        header.search.becomeFirstResponder()
 
         // Update any things that can change due to user settings here
         tableView.backgroundColor = ColorUtil.foregroundColor
         tableView.separatorColor = ColorUtil.backgroundColor
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        header.search.becomeFirstResponder()
     }
 
     override func viewWillLayoutSubviews() {
@@ -52,6 +56,10 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         if !SettingValues.flatMode {
             header.roundCorners([.topLeft, .topRight], radius: 30)
         }
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
     }
 
     func configureViews() {
@@ -83,20 +91,13 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     }
 
     func configureLayout() {
-        
-        var width = UIScreen.main.bounds.size.width * (UIDevice.current.userInterfaceIdiom == .pad ? 0.75 : 0.95)
-        if width < 250 {
-            width = UIScreen.main.bounds.size.width
-        }
-        
-        header.heightAnchor == header.getEstHeight()
-        header.widthAnchor == width
-        header.centerXAnchor == self.view.centerXAnchor
+
         header.topAnchor == view.topAnchor
+        header.heightAnchor == header.getEstHeight()
+        header.horizontalAnchors == view.horizontalAnchors
 
         tableView.topAnchor == header.bottomAnchor
-        tableView.widthAnchor == width
-        tableView.centerXAnchor == self.view.centerXAnchor
+        tableView.horizontalAnchors == view.horizontalAnchors
         tableView.bottomAnchor == view.bottomAnchor
     }
 
@@ -137,22 +138,6 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     }
     
 }
-
-//// MARK: - Actions
-//
-//extension NavigationSidebarViewController {
-//    @objc func handlePan(_ sender: UIPanGestureRecognizerWithInitialTouch) {
-//        // Ignore the gesture if it didn't originate in the draggable area of the view
-//        guard header.frame.contains(sender.initialTouchLocation) else {
-//            return
-//        }
-//
-//        // Hide the keyboard
-//        if header.search.isFirstResponder {
-//            header.search.resignFirstResponder()
-//        }
-//    }
-//}
 
 extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataSource {
 
