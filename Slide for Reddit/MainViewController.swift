@@ -21,7 +21,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     public static var current: String = ""
     public static var needsRestart = false
 
-    var menuPresentationController : BottomMenuPresentationController?
+    var menuPresentationController: BottomMenuPresentationController?
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -320,6 +320,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 //        menuNav?.transitioningDelegate = coverPartiallyDelegate
 
         menuPresentationController = BottomMenuPresentationController(presentedViewController: menuNav!, presenting: self)
+        menuPresentationController?.scrollView = menuNav?.tableView
         menuNav?.transitioningDelegate = menuPresentationController
 
         menuNav?.modalPresentationStyle = .custom

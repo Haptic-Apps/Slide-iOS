@@ -12,6 +12,7 @@ class BottomMenuPresentationController: UIPresentationController, UIViewControll
 
     fileprivate var interactive = false
     fileprivate var dismissInteractionController: PanGestureInteractionController?
+    weak var scrollView: UITableView?
 
     lazy fileprivate var backgroundView: UIView = {
         let view = UIView()
@@ -59,12 +60,13 @@ extension BottomMenuPresentationController {
             self?.backgroundView.alpha = 0.5
             }, completion: nil)
     }
-
+    
     override func presentationTransitionDidEnd(_ completed: Bool) {
         if !completed {
             backgroundView.removeFromSuperview()
         }
         dismissInteractionController = PanGestureInteractionController(view: containerView!)
+        dismissInteractionController?.scrollView = scrollView
         dismissInteractionController?.callbacks.didBeginPanning = { [weak self] in
             self?.interactive = true
             self?.presentingViewController.dismiss(animated: true, completion: nil)
@@ -146,17 +148,30 @@ class SlideInTransition: NSObject, UIViewControllerAnimatedTransitioning {
         }
 
         let options: UIViewAnimationOptions = interactive ? [.curveLinear] : []
+        let animateBlock = { [weak self] in
+            if self!.reverse {
+                viewToAnimate.frame = offsetFrame
+            } else {
+                viewToAnimate.frame = transitionContext.finalFrame(for: viewControllerToAnimate)
+            }
+        }
+        
+        let completionBlock: (Bool) -> () = { finished in
+            transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
+        }
 
-        UIView.animate(withDuration: duration, delay: 0, options: options,
-                       animations: { [weak self] in
-                        if self!.reverse {
-                            viewToAnimate.frame = offsetFrame
-                        } else {
-                            viewToAnimate.frame = transitionContext.finalFrame(for: viewControllerToAnimate)
-                        }
-            }, completion: { _ in
-                transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
-        })
+        if interactive {
+            UIView.animate(withDuration: duration, delay: 0, options: options,
+                           animations: animateBlock, completion: completionBlock)
+        } else {
+            UIView.animate(withDuration: duration,
+                           delay: 0,
+                           usingSpringWithDamping: 0.8,
+                           initialSpringVelocity: 0.45,
+                           options: .curveEaseInOut,
+                           animations: animateBlock,
+                           completion: completionBlock)
+        }
     }
 
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
@@ -171,7 +186,13 @@ private class PanGestureInteractionController: UIPercentDrivenInteractiveTransit
     var callbacks = Callbacks()
 
     let gestureRecognizer: UIPanGestureRecognizer
-
+    
+    weak var scrollView: UITableView? {
+        didSet {
+            self.gestureRecognizer.delegate = self
+        }
+    }
+    
     // MARK: Initialization
 
     init(view: UIView) {
@@ -191,7 +212,8 @@ private class PanGestureInteractionController: UIPercentDrivenInteractiveTransit
         case .changed:
             update(percentCompleteForTranslation(translation: sender.translation(in: sender.view)))
         case .ended:
-            if sender.shouldRecognizeForDirection() && percentComplete > 0.25 {
+            let velocity = sender.velocity(in: sender.view).y
+            if sender.shouldRecognizeForDirection() && (percentComplete > 0.25 || velocity > 350) {
                 finish()
             } else {
                 cancel()
@@ -210,11 +232,12 @@ private class PanGestureInteractionController: UIPercentDrivenInteractiveTransit
 }
 
 extension PanGestureInteractionController: UIGestureRecognizerDelegate {
-    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        guard let panGestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer else {
-            return false
-        }
-        return panGestureRecognizer.shouldRecognizeForDirection()
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        return scrollView?.contentOffset.y ?? 0 == 0
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return otherGestureRecognizer is UIPanGestureRecognizer
     }
 }
 
