@@ -32,7 +32,7 @@
 		09B51D032114D23F00BCB745 /* SlideInPresentationAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B51D022114D23F00BCB745 /* SlideInPresentationAnimator.swift */; };
 		09B51D052114E22C00BCB745 /* PostContentPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B51D042114E22C00BCB745 /* PostContentPresentationController.swift */; };
 		09B51D072114E80000BCB745 /* PostContentPresentationAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B51D062114E80000BCB745 /* PostContentPresentationAnimator.swift */; };
-		09D3E67121264692003C6094 /* BottomSheetPresentationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D3E67021264692003C6094 /* BottomSheetPresentationManager.swift */; };
+		09C5A40D212B09A8000339FD /* BottomMenuPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C5A40C212B09A8000339FD /* BottomMenuPresentationController.swift */; };
 		09F411CD20F3EEA600D23A42 /* ModalMediaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F411CC20F3EEA600D23A42 /* ModalMediaViewController.swift */; };
 		09F411CF20F3EEB900D23A42 /* ImageMediaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F411CE20F3EEB900D23A42 /* ImageMediaViewController.swift */; };
 		09F411D120F3EEC600D23A42 /* VideoMediaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F411D020F3EEC600D23A42 /* VideoMediaViewController.swift */; };
@@ -267,7 +267,7 @@
 		09B51D022114D23F00BCB745 /* SlideInPresentationAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideInPresentationAnimator.swift; sourceTree = "<group>"; };
 		09B51D042114E22C00BCB745 /* PostContentPresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostContentPresentationController.swift; sourceTree = "<group>"; };
 		09B51D062114E80000BCB745 /* PostContentPresentationAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostContentPresentationAnimator.swift; sourceTree = "<group>"; };
-		09D3E67021264692003C6094 /* BottomSheetPresentationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheetPresentationManager.swift; sourceTree = "<group>"; };
+		09C5A40C212B09A8000339FD /* BottomMenuPresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomMenuPresentationController.swift; sourceTree = "<group>"; };
 		09F411CC20F3EEA600D23A42 /* ModalMediaViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalMediaViewController.swift; sourceTree = "<group>"; };
 		09F411CE20F3EEB900D23A42 /* ImageMediaViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageMediaViewController.swift; sourceTree = "<group>"; };
 		09F411D020F3EEC600D23A42 /* VideoMediaViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoMediaViewController.swift; sourceTree = "<group>"; };
@@ -528,7 +528,7 @@
 				0984BE4F2114C4D50091C2E1 /* SlideInPresentationManager.swift */,
 				0984BE522114CEA50091C2E1 /* SlideInPresentationController.swift */,
 				09B51D022114D23F00BCB745 /* SlideInPresentationAnimator.swift */,
-				09D3E67021264692003C6094 /* BottomSheetPresentationManager.swift */,
+				09C5A40C212B09A8000339FD /* BottomMenuPresentationController.swift */,
 			);
 			name = Presentation;
 			sourceTree = "<group>";
@@ -1381,6 +1381,7 @@
 				098FC80F20E52D1A00F819F3 /* CGSize+Extensions.swift in Sources */,
 				BE6EA6D51E1C1FC700E9E709 /* Channel.swift in Sources */,
 				0965260F20E298BB00EA53BE /* Object+Extensions.swift in Sources */,
+				09C5A40D212B09A8000339FD /* BottomMenuPresentationController.swift in Sources */,
 				BED7B6BA1F2258E700E31A82 /* CachedTitle.swift in Sources */,
 				BE2DEAB41E2693C100FBF0B5 /* SubredditHeaderView.swift in Sources */,
 				BE3B74392107AA1200658DE9 /* UIAlertController+Extensions.swift in Sources */,
@@ -1412,7 +1413,6 @@
 				BE44B5841FFAC5FE00D3F6D5 /* BottomSheetController.swift in Sources */,
 				BE9742301F0011E500BF48E0 /* TextLinkCellView.swift in Sources */,
 				BE8FCA0A1E0C46090063B8EF /* SingleSubredditViewController.swift in Sources */,
-				09D3E67121264692003C6094 /* BottomSheetPresentationManager.swift in Sources */,
 				BEB2B2391E35D64F00BF761C /* MessageCellView.swift in Sources */,
 				BEB2B2371E35D48000BF761C /* InboxViewController.swift in Sources */,
 				BEE206F81F1CFC96008BB5F1 /* SettingsHistory.swift in Sources */,

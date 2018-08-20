@@ -34,18 +34,6 @@ class ModalMediaViewController: UIViewController {
     init(url: URL, lq: URL?, _ commentCallback: (() -> Void)?, _ failureCallback: ((_ url: URL) -> Void)? = nil) {
         super.init(nibName: nil, bundle: nil)
 
-        embeddedVC.commentCallback = { [weak self] in
-            guard let strongSelf = self else {
-                return
-            }
-            strongSelf.commentCallback!()
-        }
-        embeddedVC.failureCallback = { [weak self] (url) in
-            guard let strongSelf = self else {
-                return
-            }
-            strongSelf.failureCallback!(url)
-        }
         let type = ContentType.getContentType(baseUrl: url)
         if ContentType.isImgurLink(uri: url) || type == .DEVIANTART || type == .XKCD {
             spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
@@ -64,8 +52,18 @@ class ModalMediaViewController: UIViewController {
         spinnerIndicator.stopAnimating()
         let contentType = ContentType.getContentType(baseUrl: model.baseURL)
         embeddedVC = ModalMediaViewController.getVCForContent(ofType: contentType, withModel: model)
-        embeddedVC.commentCallback = self.commentCallback
-        embeddedVC.failureCallback = self.failureCallback
+        embeddedVC.commentCallback = { [weak self] in
+            guard let strongSelf = self else {
+                return
+            }
+            strongSelf.commentCallback!()
+        }
+        embeddedVC.failureCallback = { [weak self] (url) in
+            guard let strongSelf = self else {
+                return
+            }
+            strongSelf.failureCallback!(url)
+        }
         if embeddedVC == nil {
             fatalError("embeddedVC should be populated!")
         }
