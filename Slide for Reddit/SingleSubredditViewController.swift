@@ -83,7 +83,6 @@ class SingleSubredditViewController: MediaViewController {
     var lastYUsed = CGFloat(0)
 
     var listingId: String = "" //a random id for use in Realm
-    static var ignoreFab = false
 
     var fab: UIButton?
 
@@ -200,7 +199,7 @@ class SingleSubredditViewController: MediaViewController {
             self.isToolbarHidden = false
             if fab == nil {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                    self.setupFab()
+                    self.setupFab(UIScreen.main.bounds.size)
                 }
             } else {
                 show(true)
@@ -247,13 +246,15 @@ class SingleSubredditViewController: MediaViewController {
         super.viewWillTransition(to: size, with: coordinator)
         
         self.fab?.removeFromSuperview()
-        self.setupFab()
+        self.fab = nil
+        
+        self.setupFab(size)
 
         if self.viewIfLoaded?.window != nil {
             tableView.reloadData()
         }
     }
-
+    
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
@@ -390,32 +391,19 @@ class SingleSubredditViewController: MediaViewController {
         }
     }
 
-    func setupFab() {
+    func setupFab(_ size: CGSize) {
         if !SettingValues.bottomBarHidden || SettingValues.viewType {
-            if self.fab != nil && !self.fab!.isHidden && self.fab!.superview != nil {
-                UIView.animate(withDuration: 0.15, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
-                    self.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
-                }, completion: { _ in
-                    self.fab?.removeFromSuperview()
-                    self.fab = nil
-                    self.addNewFab()
-                })
-            } else {
-                if self.fab != nil {
-                    self.fab!.removeFromSuperview()
-                    self.fab = nil
-                }
-                if  self.fab == nil {
-                    addNewFab()
-                }
-            }
+            addNewFab(size)
         }
     }
     
-    func addNewFab() {
-        SingleSubredditViewController.ignoreFab = false
+    func addNewFab(_ size: CGSize) {
+        if self.fab != nil {
+            self.fab!.removeFromSuperview()
+            self.fab = nil
+        }
         if !MainViewController.isOffline && !SettingValues.hiddenFAB {
-            self.fab = UIButton(frame: CGRect.init(x: (UIScreen.main.bounds.width / 2) - 70, y: -20, width: 140, height: 45))
+            self.fab = UIButton(frame: CGRect.init(x: (size.width / 2) - 70, y: -20, width: 140, height: 45))
             self.fab!.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
             self.fab!.accessibilityHint = sub
             self.fab!.layer.cornerRadius = 22.5
@@ -428,7 +416,7 @@ class SingleSubredditViewController: MediaViewController {
             self.fab!.titleLabel?.font = UIFont.systemFont(ofSize: 14)
             
             let width = title.size(with: self.fab!.titleLabel!.font).width + CGFloat(65)
-            self.fab!.frame = CGRect.init(x: (UIScreen.main.bounds.width / 2) - (width / 2), y: -20, width: width, height: CGFloat(45))
+            self.fab!.frame = CGRect.init(x: (size.width / 2) - (width / 2), y: -20, width: width, height: CGFloat(45))
             
             self.fab!.titleEdgeInsets = UIEdgeInsets.init(top: 0, left: 20, bottom: 0, right: 20)
             navigationController?.toolbar.addSubview(self.fab!)
@@ -460,7 +448,7 @@ class SingleSubredditViewController: MediaViewController {
                 UserDefaults.standard.set(true, forKey: SettingValues.pref_hiddenFAB)
                 UserDefaults.standard.set(true, forKey: "FAB_SHOWN")
                 UserDefaults.standard.synchronize()
-                self.setupFab()
+                self.setupFab(UIScreen.main.bounds.size)
             }))
             a.addAction(UIAlertAction(title: "Close and continue", style: .default, handler: { (_) in
                 UserDefaults.standard.set(true, forKey: "FAB_SHOWN")
@@ -499,7 +487,7 @@ class SingleSubredditViewController: MediaViewController {
             let saveActionButton: UIAlertAction = UIAlertAction(title: t.getTitle(), style: .default) { _ -> Void in
                 UserDefaults.standard.set(t.rawValue, forKey: SettingValues.pref_fabType)
                 SettingValues.fabType = t
-                self.setupFab()
+                self.setupFab(UIScreen.main.bounds.size)
             }
             actionSheetController.addAction(saveActionButton)
         }
@@ -768,7 +756,7 @@ class SingleSubredditViewController: MediaViewController {
     
     func resetColors() {
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub)
-        setupFab()
+        setupFab(UIScreen.main.bounds.size)
         if parentController != nil {
             parentController?.colorChanged(ColorUtil.getColorForSub(sub: sub))
         }
@@ -778,7 +766,7 @@ class SingleSubredditViewController: MediaViewController {
         self.flowLayout.reset()
         tableView.reloadData()
         tableView.layoutIfNeeded()
-        setupFab()
+        setupFab(UIScreen.main.bounds.size)
     }
 
     func search() {

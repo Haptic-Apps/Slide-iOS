@@ -200,7 +200,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     }
 
     func goToSubreddit(subreddit: String) {
-        SingleSubredditViewController.ignoreFab = true
         menuNav?.dismiss(animated: true) {
             if Subscriptions.subreddits.contains(subreddit) {
                 let index = Subscriptions.subreddits.index(of: subreddit)
@@ -223,14 +222,12 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     }
     
     func goToUser(profile: String) {
-        SingleSubredditViewController.ignoreFab = true
         menuNav?.dismiss(animated: true) {
             VCPresenter.openRedditLink("/u/" + profile.replacingOccurrences(of: " ", with: ""), self.navigationController, self)
         }
     }
 
     func goToSubreddit(index: Int) {
-        SingleSubredditViewController.ignoreFab = true
         let firstViewController = MainViewController.vCs[index]
 
         setViewControllers([firstViewController],
