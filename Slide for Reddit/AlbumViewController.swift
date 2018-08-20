@@ -254,6 +254,11 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         SDImageCache.shared().clearMemory()
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        SDImageCache.shared().clearMemory()
+    }
+    
     func overview(_ sender: AnyObject) {
         let alert = UIAlertController(style: .actionSheet)
         alert.addAsyncImagePicker(
