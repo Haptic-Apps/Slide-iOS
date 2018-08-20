@@ -56,7 +56,7 @@ extension BottomMenuPresentationController {
 
     override func dismissalTransitionWillBegin() {
         presentingViewController.transitionCoordinator?.animate(alongsideTransition: { [weak self] _ in
-            self?.backgroundView.alpha = 0
+            self?.backgroundView.alpha = 0.5
             }, completion: nil)
     }
 
@@ -215,38 +215,6 @@ extension PanGestureInteractionController: UIGestureRecognizerDelegate {
             return false
         }
         return panGestureRecognizer.shouldRecognizeForDirection()
-    }
-}
-
-private extension CoverDirection {
-    func panDistanceForView(view: UIView) -> CGPoint {
-        switch self {
-        case .left: return CGPoint(x: -view.bounds.size.width, y: 0)
-        case .right: return CGPoint(x: view.bounds.size.width, y: 0)
-        case .up: return CGPoint(x: 0, y: -view.bounds.size.height)
-        case .down: return CGPoint(x: 0, y: view.bounds.size.height)
-        }
-    }
-}
-
-private extension CoverDirection {
-    func offsetFrameForView(view: UIView, containerView: UIView) -> CGRect {
-        var frame = view.bounds
-        switch self {
-        case .left:
-            frame.origin.x = -frame.width
-            frame.origin.y = 0
-        case .right:
-            frame.origin.x = containerView.bounds.width
-            frame.origin.y = 0
-        case .up:
-            frame.origin.x = 0
-            frame.origin.y = -frame.height
-        case .down:
-            frame.origin.x = 0
-            frame.origin.y = containerView.bounds.height
-        }
-        return frame
     }
 }
 
