@@ -501,6 +501,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     
     var replyDelegate: ReplyDelegate?
     func reply(_ s: AnyObject) {
+        if menu.isHidden {
+            showMenu(s)
+        }
         if body == nil {
             self.body = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: 0, height: 0)).then({
                 $0.isEditable = true

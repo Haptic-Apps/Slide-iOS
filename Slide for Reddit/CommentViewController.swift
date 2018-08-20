@@ -1933,6 +1933,8 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
             cell.menu(cell)
         case .COLLAPSE:
             collapseParent(indexPath, baseCell: cell)
+        case .REPLY:
+            cell.reply(cell)
         case .NONE:
             break
         }

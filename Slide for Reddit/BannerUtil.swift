@@ -6,6 +6,7 @@
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
+import Anchorage
 import UIKit
 
 public class BannerUtil {
@@ -28,23 +29,11 @@ public class BannerUtil {
     }
 
     func makeBanner(text: String, color: UIColor = ColorUtil.accentColorForSub(sub: ""), seconds: TimeInterval, context: UIViewController, top: Bool, callback: (() -> Void)? = nil) -> BannerUtil {
-        var bottommargin = CGFloat(56)
-        var topmargin = CGFloat(72)
-        if context.navigationController != nil && !context.navigationController!.isToolbarHidden {
-            bottommargin += 48
-        }
-        if #available(iOS 11.0, *) {
-            if let window = UIApplication.shared.keyWindow {
-                bottommargin += window.safeAreaInsets.bottom
-                topmargin += window.safeAreaInsets.top
-            }
-        }
-
         var xmargin = CGFloat(12)
         if UIScreen.main.bounds.width > 350 {
             xmargin += (UIScreen.main.bounds.width - 350) / 2
         }
-        let frame = CGRect.init(x: xmargin, y: top ? topmargin : UIScreen.main.bounds.height - bottommargin, width: UIScreen.main.bounds.width - (xmargin * 2), height: 48 + ((text.contains("\n")) ? 24 : 0))
+        let frame = CGRect.init(x: 0, y: 0, width: UIScreen.main.bounds.width - (xmargin * 2), height: 48 + ((text.contains("\n")) ? 24 : 0))
         popup = UILabel.init(frame: frame)
         popup.backgroundColor = color
         popup.textAlignment = .center
@@ -68,7 +57,22 @@ public class BannerUtil {
         popup.clipsToBounds = true
         popup.transform = CGAffineTransform.init(scaleX: 0.001, y: 0.001)
         popup.isUserInteractionEnabled = true
-        context.view.superview?.addSubview(popup)
+        let toView: UIView
+      //  if context.navigationController != nil {
+      //      toView = context.navigationController!.view
+      //  } else {
+            toView = context.view
+      //  }
+        toView.addSubview(popup)
+        toView.bringSubview(toFront: popup)
+        if top {
+            popup.topAnchor == toView.safeTopAnchor + 72
+        } else {
+            popup.bottomAnchor == toView.safeBottomAnchor - 48
+        }
+        popup.horizontalAnchors == toView.horizontalAnchors + 12 + xmargin
+        popup.heightAnchor == (48 + ((text.contains("\n")) ? 24 : 0))
+
         UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
             self.popup.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
         }, completion: { _ in

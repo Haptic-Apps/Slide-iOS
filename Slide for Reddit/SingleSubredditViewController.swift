@@ -1115,7 +1115,9 @@ class SingleSubredditViewController: MediaViewController {
                                 if listing.children.isEmpty {
                                     BannerUtil.makeBanner(text: "No posts found!\nMake sure this sub exists and you have permission to view it", color: GMColor.red500Color(), seconds: 5, context: self)
                                 } else {
-                                    BannerUtil.makeBanner(text: "No posts found!\nCheck your filter settings", color: GMColor.red500Color(), seconds: 5, context: self)
+                                    BannerUtil.makeBanner(text: "No posts found!\nCheck your filter settings, or tap here to reload.", color: GMColor.red500Color(), seconds: 5, context: self) {
+                                        self.refresh()
+                                    }
                                 }
                             } else {
                                 var paths = [IndexPath]()

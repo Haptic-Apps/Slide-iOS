@@ -393,7 +393,7 @@ class SettingValues {
     }
     
     public enum CommentAction: String {
-        public static let cases: [CommentAction] = [.UPVOTE, .DOWNVOTE, .MENU, .COLLAPSE, .SAVE, .NONE]
+        public static let cases: [CommentAction] = [.UPVOTE, .DOWNVOTE, .MENU, .COLLAPSE, .SAVE, .REPLY, .NONE]
         
         case UPVOTE = "upvote"
         case DOWNVOTE = "downvote"
@@ -401,6 +401,7 @@ class SettingValues {
         case COLLAPSE = "collapse"
         case SAVE = "save"
         case NONE = "none"
+        case REPLY = "reply"
         
         func getTitle() -> String {
             switch self {
@@ -416,6 +417,8 @@ class SettingValues {
                 return "Comment menu"
             case .NONE:
                 return "Disabled"
+            case .REPLY:
+                return "Reply"
             }
         }
         
@@ -433,6 +436,8 @@ class SettingValues {
                 return "moreh"
             case .NONE:
                 return "close"
+            case .REPLY:
+                return "reply"
             }
         }
         
@@ -450,6 +455,8 @@ class SettingValues {
                 return ColorUtil.baseAccent
             case .NONE:
                 return GMColor.red500Color()
+            case .REPLY:
+                return GMColor.green500Color()
             }
         }
     }
