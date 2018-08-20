@@ -21,7 +21,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     public static var current: String = ""
     public static var needsRestart = false
 
-    lazy var bottomSheetTransitioningDelegate = BottomSheetPresentationManager()
+    var menuPresentationController : BottomMenuPresentationController?
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -303,13 +303,26 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         menuNav = NavigationSidebarViewController()
         menuNav?.setViewController(controller: self)
         self.menuNav?.setSubreddit(subreddit: MainViewController.current)
+//        menuNav?.modalPresentationStyle = .overCurrentContext
 
-        bottomSheetTransitioningDelegate.direction = .bottom
-        bottomSheetTransitioningDelegate.coverageRatio = 0.85
-        bottomSheetTransitioningDelegate.draggingView = menuNav?.view
-        bottomSheetTransitioningDelegate.scrollView = menuNav?.tableView
-        bottomSheetTransitioningDelegate.menuViewController = menuNav
-        menuNav?.transitioningDelegate = bottomSheetTransitioningDelegate
+//        bottomSheetTransitioningDelegate.direction = .bottom
+//        bottomSheetTransitioningDelegate.coverageRatio = 0.85
+//        bottomSheetTransitioningDelegate.draggingView = menuNav?.view
+//        bottomSheetTransitioningDelegate.scrollView = menuNav?.tableView
+//        bottomSheetTransitioningDelegate.menuViewController = menuNav
+//        menuNav?.transitioningDelegate = bottomSheetTransitioningDelegate
+
+//        slideInTransitioningDelegate.coverageRatio = 0.85
+//        slideInTransitioningDelegate.direction = .bottom
+//        menuNav?.transitioningDelegate = slideInTransitioningDelegate
+
+//        self.coverPartiallyDelegate = CoverPartiallyPresentationController(presentedViewController: menuNav!, presenting: self, coverDirection: .down)
+//        menuNav?.transitioningDelegate = coverPartiallyDelegate
+
+        menuPresentationController = BottomMenuPresentationController(presentedViewController: menuNav!, presenting: self)
+        menuNav?.transitioningDelegate = menuPresentationController
+
+        menuNav?.modalPresentationStyle = .custom
     }
 
     func restartVC() {
