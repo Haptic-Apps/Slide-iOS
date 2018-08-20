@@ -52,10 +52,8 @@ public class BannerUtil {
         }
         popup.attributedText = finalText
         popup.numberOfLines = 0
-        popup.elevate(elevation: 2)
         popup.layer.cornerRadius = 5
         popup.clipsToBounds = true
-        popup.transform = CGAffineTransform.init(scaleX: 0.001, y: 0.001)
         popup.isUserInteractionEnabled = true
         let toView: UIView
       //  if context.navigationController != nil {
@@ -72,7 +70,8 @@ public class BannerUtil {
         }
         popup.horizontalAnchors == toView.horizontalAnchors + 12 + xmargin
         popup.heightAnchor == (CGFloat(48) + CGFloat((text.contains("\n")) ? 24 : 0))
-
+        popup.elevate(elevation: 2)
+        popup.transform = CGAffineTransform.init(scaleX: 0.001, y: 0.001)
         UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
             self.popup.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
         }, completion: { _ in
