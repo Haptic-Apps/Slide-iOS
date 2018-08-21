@@ -150,7 +150,7 @@ class SlideInTransition: NSObject, UIViewControllerAnimatedTransitioning {
             width = UIScreen.main.bounds.width * 0.95
         }
 
-        offsetFrame.origin.x = UIScreen.main.bounds.width - (width / 2)
+        offsetFrame.origin.x = (UIScreen.main.bounds.width - width) / 2
         offsetFrame.origin.y = transitionContext.containerView.bounds.height
 
         if !reverse {
