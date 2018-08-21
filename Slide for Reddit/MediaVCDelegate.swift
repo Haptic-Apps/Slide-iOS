@@ -7,7 +7,6 @@
 //
 
 import MaterialComponents.MaterialProgressView
-import MaterialComponents.MDCBottomSheetController
 import reddift
 import SafariServices
 import SDWebImage

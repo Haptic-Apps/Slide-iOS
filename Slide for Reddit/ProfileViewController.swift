@@ -343,6 +343,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         tabBar.heightAnchor == 45
         tabBar.horizontalAnchors == self.view.horizontalAnchors
         tabBar.topAnchor == self.view.safeTopAnchor
+        tabBar.sizeToFit()
 
         self.edgesForExtendedLayout = []
         

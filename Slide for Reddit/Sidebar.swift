@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import MaterialComponents.MaterialBottomSheet
 import reddift
 import TTTAttributedLabel
 
@@ -68,7 +67,7 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate {
         }
     }
 
-    var inner: (UIViewController & MediaVCDelegate)?
+    var inner: SubSidebarViewController?
     var subInfo: Subreddit?
 
     func displaySidebar() {
@@ -91,11 +90,18 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate {
     }
 
     var alrController = UIAlertController()
+    var menuPresentationController: BottomMenuPresentationController?
 
     func doDisplaySidebar(_ sub: Subreddit) {
-        inner = SubSidebarViewController(sub: sub, parent: parent!)
-        let bottomSheet: MDCBottomSheetController = MDCBottomSheetController(contentViewController: inner!)
-        parent?.present(bottomSheet, animated: true, completion: nil)
+        guard let parent = parent else { return }
+        inner = SubSidebarViewController(sub: sub, parent: parent)
+
+        menuPresentationController = BottomMenuPresentationController(presentedViewController: inner!, presenting: parent)
+        menuPresentationController?.scrollView = inner!.scrollView
+        inner!.transitioningDelegate = menuPresentationController!
+        inner!.modalPresentationStyle = .custom
+
+        parent.present(inner!, animated: true, completion: nil)
     }
 
     func subscribe(_ sub: Subreddit) {

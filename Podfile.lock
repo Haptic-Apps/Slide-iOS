@@ -23,11 +23,22 @@ PODS:
     - DTFoundation/Core
   - Embassy (4.0.7)
   - LicensesViewController (0.6.5)
+  - MaterialComponents/ActivityIndicator (60.1.0):
+    - MaterialComponents/Palettes
+    - MaterialComponents/private/Application
+    - MDFInternationalization
+    - MotionAnimator (~> 2.0)
   - MaterialComponents/AnimationTiming (60.1.0)
   - MaterialComponents/Ink (60.1.0):
     - MaterialComponents/private/Math
+  - MaterialComponents/Palettes (60.1.0)
   - MaterialComponents/private/Application (60.1.0)
   - MaterialComponents/private/Math (60.1.0)
+  - MaterialComponents/ProgressView (60.1.0):
+    - MaterialComponents/Palettes
+    - MaterialComponents/private/Math
+    - MDFInternationalization
+    - MotionAnimator (~> 2.1)
   - MaterialComponents/ShadowElevations (60.1.0)
   - MaterialComponents/ShadowLayer (60.1.0):
     - MaterialComponents/ShadowElevations
@@ -44,6 +55,9 @@ PODS:
     - MaterialComponents/private/Math
   - MDFInternationalization (1.1.0)
   - MKColorPicker (1.2)
+  - MotionAnimator (2.8.1):
+    - MotionInterchange (~> 1.6)
+  - MotionInterchange (1.6.0)
   - MTColorDistance (0.0.3)
   - Realm (3.7.6):
     - Realm/Headers (= 3.7.6)
@@ -78,6 +92,8 @@ DEPENDENCIES:
   - DTCoreText (from `https://github.com/Cocoanetics/DTCoreText`)
   - Embassy (~> 4.0)
   - LicensesViewController (~> 0.6.5)
+  - MaterialComponents/ActivityIndicator
+  - MaterialComponents/ProgressView
   - MaterialComponents/Tabs
   - MKColorPicker
   - MTColorDistance
@@ -142,6 +158,8 @@ SPEC CHECKSUMS:
   MaterialComponents: bd1ebf279041919605fe6133a4173db4148ec1cd
   MDFInternationalization: b5b8626628abf026e630e5ebaeee563037712cbb
   MKColorPicker: 8998b2ab977e4f240fdf254db27a18b810da3cfc
+  MotionAnimator: ee16aa30567c5bae0fb2750c132915829cfaaf8a
+  MotionInterchange: ead0e3ae1f3a5fb539e289debbc7ae036160a10d
   MTColorDistance: 5ab8708eb88bc22d4d88e309d09eb912f3a6e27b
   Realm: 9eaecad54712d6246d08ba34c10f354e4715d7d3
   RealmSwift: 1fe08b4ebaeeaacf17f9ba0343f7b25c9fc31fa6
@@ -158,6 +176,6 @@ SPEC CHECKSUMS:
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   XLActionController: 007868251c0eed70d649d06c1625259b73b3a600
 
-PODFILE CHECKSUM: 8035a59b80011b53a8c7662df827eb410a7713d5
+PODFILE CHECKSUM: 6332ed5f4f8660ef5a4dcf0847098756e746572f
 
 COCOAPODS: 1.4.0

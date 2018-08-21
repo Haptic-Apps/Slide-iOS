@@ -6,13 +6,14 @@
 //  Copyright © 2016 Haptic Apps. All rights reserved.
 //
 
+import Anchorage
 import reddift
 import SDWebImage
 import SideMenu
 import UIKit
 
 class SubSidebarViewController: MediaViewController, UIGestureRecognizerDelegate {
-    weak var scrollView: UIScrollView!
+    var scrollView = UIScrollView()
     var subreddit: Subreddit?
     var filteredContent: [String] = []
     var parentController: (UIViewController & MediaVCDelegate)?
@@ -26,34 +27,25 @@ class SubSidebarViewController: MediaViewController, UIGestureRecognizerDelegate
 
     func doSubreddit(sub: Subreddit, _ width: CGFloat) {
         header.setSubreddit(subreddit: sub, parent: self, width)
+        var widthF = UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .pad ? 0.75 : 0.95)
+        if widthF < 250 {
+            widthF = UIScreen.main.bounds.width * 0.95
+        }
 
         header.frame.size.height = header.getEstHeight()
-        header.frame.size.width = width
+        header.frame.size.width = widthF
         scrollView.contentSize = header.frame.size
         scrollView.addSubview(header)
         scrollView.layer.cornerRadius = 15
         scrollView.clipsToBounds = true
+        scrollView.bounces = false
+        scrollView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 16, right: 0)
 
         header.isUserInteractionEnabled = true
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    override func loadView() {
-        title = subreddit!.displayName
-        color = ColorUtil.getColorForSub(sub: subreddit!.displayName)
-
-        setNavColors()
-
-        self.view = UIScrollView(frame: CGRect.zero)
-        self.scrollView = self.view as! UIScrollView
-
-        scrollView.backgroundColor = ColorUtil.backgroundColor
-
-        self.doSubreddit(sub: subreddit!, UIScreen.main.bounds.width)
-
     }
 
     func close(_ sender: AnyObject) {
@@ -64,7 +56,18 @@ class SubSidebarViewController: MediaViewController, UIGestureRecognizerDelegate
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        scrollView.frame = CGRect.zero
+        
+        self.view.addSubview(scrollView)
+        scrollView.edgeAnchors == self.view.edgeAnchors
+        title = subreddit!.displayName
+        color = ColorUtil.getColorForSub(sub: subreddit!.displayName)
+        
+        setNavColors()
+        
+        scrollView.backgroundColor = ColorUtil.backgroundColor
+        
+        self.doSubreddit(sub: subreddit!, UIScreen.main.bounds.width)
     }
 
     var loaded = false

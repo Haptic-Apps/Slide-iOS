@@ -7,7 +7,6 @@
 //
 
 import Embassy
-import MaterialComponents.MaterialBottomSheet
 import MaterialComponents.MDCActivityIndicator
 import MKColorPicker
 import RealmSwift
@@ -81,8 +80,6 @@ class SingleSubredditViewController: MediaViewController {
     var more = UIButton()
 
     var lastY: CGFloat = CGFloat(0)
-    var add: MDCFloatingButton = MDCFloatingButton()
-    var hide: MDCFloatingButton = MDCFloatingButton()
     var lastYUsed = CGFloat(0)
 
     var listingId: String = "" //a random id for use in Realm
@@ -1887,7 +1884,6 @@ extension SingleSubredditViewController: ColorPickerViewDelegate {
             let c = colorPickerView.colors[indexPath.row]
             self.navigationController?.navigationBar.barTintColor = c
             sideView.backgroundColor = c
-            add.backgroundColor = c
             sideView.backgroundColor = c
             inHeadView.backgroundColor = c
             if parentController != nil {

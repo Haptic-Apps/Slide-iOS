@@ -7,7 +7,6 @@
 //
 
 import MaterialComponents.MaterialProgressView
-import MaterialComponents.MDCBottomSheetController
 import reddift
 import SafariServices
 import SDWebImage
@@ -183,19 +182,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
                 urlString = "https:" + urlString
             }
             contentUrl = URL.init(string: String.init(htmlEncodedString: urlString))!
-            if ContentType.isTable(uri: url) {
-//                let controller = TableDisplayViewController.init(baseHtml: url.absoluteString, color: navigationController?.navigationBar.barTintColor ?? ColorUtil.getColorForSub(sub: ""))
-//
-//                let newParent = TapBehindModalViewController.init(rootViewController: controller)
-//                newParent.navigationBar.shadowImage = UIImage()
-//                newParent.navigationBar.isTranslucent = false
-//
-//                newParent.view.layer.cornerRadius = 15
-//                newParent.view.clipsToBounds = true
-//
-//                present(MDCBottomSheetController.init(contentViewController: newParent), animated: true, completion: nil)
-
-            } else if ContentType.isSpoiler(uri: url) {
+            if ContentType.isSpoiler(uri: url) {
                 let controller = UIAlertController.init(title: "Spoiler", message: url.absoluteString, preferredStyle: .alert)
                 present(controller, animated: true, completion: nil)
             } else {

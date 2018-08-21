@@ -7,7 +7,7 @@
 //
 
 import Anchorage
-import MaterialComponents.MaterialBottomSheet
+import MaterialComponents.MaterialTabs
 import RealmSwift
 import reddift
 import SideMenu
@@ -320,9 +320,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 //        menuNav?.transitioningDelegate = coverPartiallyDelegate
 
         menuPresentationController = BottomMenuPresentationController(presentedViewController: menuNav!, presenting: self)
-        menuPresentationController?.scrollView = menuNav?.tableView
+        menuPresentationController?.tableView = menuNav?.tableView
         menuNav?.transitioningDelegate = menuPresentationController
-
         menuNav?.modalPresentationStyle = .custom
     }
 

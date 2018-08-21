@@ -13,7 +13,8 @@ class BottomMenuPresentationController: UIPresentationController, UIViewControll
 
     fileprivate var interactive = false
     fileprivate var dismissInteractionController: PanGestureInteractionController?
-    weak var scrollView: UITableView?
+    weak var tableView: UITableView?
+    weak var scrollView: UIScrollView?
 
     lazy fileprivate var backgroundView = UIView()
 
@@ -72,6 +73,7 @@ extension BottomMenuPresentationController {
             backgroundView.removeFromSuperview()
         }
         dismissInteractionController = PanGestureInteractionController(view: containerView!)
+        dismissInteractionController?.tableView = tableView
         dismissInteractionController?.scrollView = scrollView
         dismissInteractionController?.callbacks.didBeginPanning = { [weak self] in
             self?.interactive = true
@@ -198,14 +200,19 @@ private class PanGestureInteractionController: UIPercentDrivenInteractiveTransit
 
     let gestureRecognizer: UIPanGestureRecognizer
     
-    weak var scrollView: UITableView? {
+    weak var tableView: UITableView? {
+        didSet {
+            self.gestureRecognizer.delegate = self
+        }
+    }
+    
+    weak var scrollView: UIScrollView? {
         didSet {
             self.gestureRecognizer.delegate = self
         }
     }
     
     // MARK: Initialization
-
     init(view: UIView) {
         gestureRecognizer = UIPanGestureRecognizer()
         view.addGestureRecognizer(gestureRecognizer)
@@ -247,11 +254,11 @@ private class PanGestureInteractionController: UIPercentDrivenInteractiveTransit
 
 extension PanGestureInteractionController: UIGestureRecognizerDelegate {
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        return scrollView?.contentOffset.y ?? 0 == 0
+        return scrollView == nil ? tableView?.contentOffset.y ?? 0 == 0 : scrollView?.contentOffset.y ?? 0 == 0
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return otherGestureRecognizer is UIPanGestureRecognizer
+        return otherGestureRecognizer is UIPanGestureRecognizer && (scrollView == nil ? tableView?.contentOffset.y ?? 0 == 0 : scrollView?.contentOffset.y ?? 0 == 0)
     }
 }
 

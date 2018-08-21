@@ -296,6 +296,8 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
     var parentController: (UIViewController & MediaVCDelegate)?
 
     func setSubreddit(subreddit: Subreddit, parent: MediaViewController, _ width: CGFloat) {
+        
+        
         self.subreddit = subreddit
         self.setWidth = width
         self.parentController = parent
@@ -332,6 +334,11 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
         attributedString.append(subt)
         here.attributedText = attributedString
 
+        var width = UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .pad ? 0.75 : 0.95)
+        if width < 250 {
+            width = UIScreen.main.bounds.width * 0.95
+        }
+
         info.estimatedWidth = width - 24
         if !subreddit.descriptionHtml.isEmpty() {
             info.tColor = ColorUtil.accentColorForSub(sub: subreddit.displayName)
@@ -344,6 +351,11 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
     var setWidth: CGFloat = 0
 
     func setupAnchors() {
+        var width = UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .pad ? 0.75 : 0.95)
+        if width < 250 {
+            width = UIScreen.main.bounds.width * 0.95
+        }
+        self.widthAnchor == width
 
         back.horizontalAnchors == horizontalAnchors
         submit.horizontalAnchors == horizontalAnchors + CGFloat(12)

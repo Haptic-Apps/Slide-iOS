@@ -127,6 +127,7 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
         tabBar.heightAnchor == 45
         tabBar.horizontalAnchors == self.view.horizontalAnchors
         tabBar.topAnchor == self.view.safeTopAnchor
+        tabBar.sizeToFit()
 
         time = History.getInboxSeen()
         History.inboxSeen()
@@ -148,7 +149,6 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
         }
 
         if self.navigationController?.interactivePopGestureRecognizer != nil {
-            print("Not nil")
             for view in view.subviews {
                 if let scrollView = view as? UIScrollView {
                     scrollView.panGestureRecognizer.require(toFail: self.navigationController!.interactivePopGestureRecognizer!)

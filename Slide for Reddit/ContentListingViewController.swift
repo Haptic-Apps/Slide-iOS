@@ -49,6 +49,12 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.extendedLayoutIncludesOpaqueBars = true
         self.navigationController?.setToolbarHidden(true, animated: false)
         self.navigationController?.setNavigationBarHidden(false, animated: false)
+        
+        if !loaded && !loading {
+            defer {
+                refreshControl.beginRefreshing()
+            }
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -79,9 +85,6 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         tableView.addSubview(refreshControl)
         tableView.alwaysBounceVertical = true
 
-        defer {
-            refreshControl.beginRefreshing()
-        }
         self.tableView.setContentOffset(CGPoint(x: 0, y: -refreshControl.frame.size.height), animated: true)
         
         self.automaticallyAdjustsScrollViewInsets = false
