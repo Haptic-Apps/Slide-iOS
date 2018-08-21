@@ -145,14 +145,19 @@ class SlideInTransition: NSObject, UIViewControllerAnimatedTransitioning {
         guard let viewToAnimate = viewControllerToAnimate.view else { return }
 
         var offsetFrame = viewToAnimate.bounds
-        offsetFrame.origin.x = (UIScreen.main.bounds.width - viewControllerToAnimate.view.frame.width) / 2
+        var width = UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .pad ? 0.75 : 0.95)
+        if width < 250 {
+            width = UIScreen.main.bounds.width * 0.95
+        }
+
+        offsetFrame.origin.x = UIScreen.main.bounds.width - (width / 2)
         offsetFrame.origin.y = transitionContext.containerView.bounds.height
 
         if !reverse {
             transitionContext.containerView.addSubview(viewToAnimate)
             viewToAnimate.frame = offsetFrame
         }
-
+        
         let options: UIViewAnimationOptions = interactive ? [.curveLinear] : [.curveEaseInOut]
         let animateBlock = { [weak self] in
             if self!.reverse {

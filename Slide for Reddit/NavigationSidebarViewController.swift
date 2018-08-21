@@ -59,16 +59,12 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         header.search.becomeFirstResponder()
     }
 
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
         if !SettingValues.flatMode {
             header.roundCorners([.topLeft, .topRight], radius: 30)
         }
-    }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
     }
 
     func configureViews() {
