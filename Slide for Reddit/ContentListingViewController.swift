@@ -349,6 +349,9 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     }
 
     func loadMore() {
+        if loading || !loaded {
+            return
+        }
         if !showing {
             showLoader()
         }
@@ -357,7 +360,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if scrollView.contentSize.height - (scrollView.contentOffset.y + scrollView.frame.size.height) < 300 {
+        if scrollView.contentSize.height > 0 && (scrollView.contentSize.height - (scrollView.contentOffset.y + scrollView.frame.size.height) < 300) {
             if loaded && !loading && baseData.canGetMore {
                 self.loadMore()
             }
@@ -369,7 +372,6 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     func doneLoading(before: Int) {
         loaded = true
         DispatchQueue.main.async {
-            
             if before == 0 || before > self.baseData.content.count {
                 self.flowLayout.reset()
                 self.tableView.reloadData()

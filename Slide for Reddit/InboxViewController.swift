@@ -166,6 +166,7 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
     var selected = false
 
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
+        
         guard completed else {
             return
         }
@@ -173,9 +174,9 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
 
         if !selected {
             tabBar.setSelectedItem(tabBar.items[page!], animated: true)
-        } else {
-            selected = false
         }
+        selected = false
+        
         currentIndex = page!
 
     }
@@ -246,7 +247,6 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
 extension InboxViewController: MDCTabBarDelegate {
 
     func tabBar(_ tabBar: MDCTabBar, didSelect item: UITabBarItem) {
-        selected = true
         let firstViewController = vCs[tabBar.items.index(of: item)!]
         currentIndex = tabBar.items.index(of: item)!
         setViewControllers([firstViewController],
