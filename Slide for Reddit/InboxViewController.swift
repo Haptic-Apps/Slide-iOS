@@ -49,7 +49,7 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
         super.viewWillAppear(animated)
         self.title = "Inbox"
         UIApplication.shared.applicationIconBadgeNumber = 0
-        navigationController?.setNavigationBarHidden(false, animated: true)
+        navigationController?.setNavigationBarHidden(false, animated: false)
         navigationController?.navigationBar.tintColor = .white
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: "")
         let edit = UIButton.init(type: .custom)
@@ -124,7 +124,7 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
         tabBar.tintColor = ColorUtil.accentColorForSub(sub: "NONE")
 
         self.view.addSubview(tabBar)
-        tabBar.heightAnchor == 45
+        tabBar.heightAnchor == 48
         tabBar.horizontalAnchors == self.view.horizontalAnchors
         tabBar.topAnchor == self.view.safeTopAnchor
         tabBar.sizeToFit()

@@ -97,12 +97,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.tableView.register(NoContentCell.classForCoder(), forCellWithReuseIdentifier: "nocontent")
         tableView.backgroundColor = ColorUtil.backgroundColor
 
-        var top = 20
-        if #available(iOS 11.0, *) {
-            top = 0
-        } else {
-            top = 64
-        }
+        var top = 0
         
         top += ((baseData is ProfileContributionLoader || baseData is InboxContributionLoader || baseData is ModQueueContributionLoader || baseData is ModMailContributionLoader) ? 45 : 0)
         

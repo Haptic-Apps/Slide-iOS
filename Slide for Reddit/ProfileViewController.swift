@@ -340,7 +340,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         tabBar.tintColor = ColorUtil.accentColorForSub(sub: "NONE")
         
         self.view.addSubview(tabBar)
-        tabBar.heightAnchor == 45
+        tabBar.heightAnchor == 48
         tabBar.horizontalAnchors == self.view.horizontalAnchors
         tabBar.topAnchor == self.view.safeTopAnchor
         tabBar.sizeToFit()
@@ -439,11 +439,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         guard completed else { return }
         let page = vCs.index(of: self.viewControllers!.first!)
 
-        if !selected {
-            tabBar.setSelectedItem(tabBar.items[page! ], animated: true)
-        } else {
-            selected = false
-        }
+        tabBar.setSelectedItem(tabBar.items[page! ], animated: true)
         currentVc = self.viewControllers!.first!
         currentIndex = page!
     }
