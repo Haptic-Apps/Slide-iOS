@@ -9,7 +9,6 @@ target 'Slide for Reddit' do
   pod 'reddift', :git =>  'https://github.com/ccrama/reddift'
   pod 'SDWebImage', '~>3.8'
   pod 'SideMenu'
-  pod 'MaterialComponents', :git => 'https://github.com/colejd/material-components-ios.git', :branch => 'expose-bottomsheet-state'
   pod 'MKColorPicker'
   pod 'BadgeSwift', '~> 5.0'
   pod 'LicensesViewController', '~> 0.6.5'

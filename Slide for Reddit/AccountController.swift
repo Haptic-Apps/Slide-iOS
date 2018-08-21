@@ -17,6 +17,7 @@ class AccountController {
     static func reload() {
         AccountController.names.removeAll(keepingCapacity: false)
         AccountController.names += OAuth2TokenRepository.savedNames
+        print(AccountController.names)
     }
 
     static func switchAccount(name: String) {
@@ -87,6 +88,7 @@ class AccountController {
             AccountController.isLoggedIn = false
             AccountController.isGold = false
         }
+        NotificationCenter.default.post(name: OAuth2TokenRepositoryDidSaveTokenName, object: nil, userInfo: nil)
     }
 
     public static var names: [String] = []

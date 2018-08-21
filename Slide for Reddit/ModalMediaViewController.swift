@@ -34,6 +34,9 @@ class ModalMediaViewController: UIViewController {
     init(url: URL, lq: URL?, _ commentCallback: (() -> Void)?, _ failureCallback: ((_ url: URL) -> Void)? = nil) {
         super.init(nibName: nil, bundle: nil)
 
+        self.failureCallback = failureCallback
+        self.commentCallback = commentCallback
+        
         let type = ContentType.getContentType(baseUrl: url)
         if ContentType.isImgurLink(uri: url) || type == .DEVIANTART || type == .XKCD {
             spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)

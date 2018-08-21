@@ -33,8 +33,7 @@ public class BannerUtil {
         if UIScreen.main.bounds.width > 350 {
             xmargin += (UIScreen.main.bounds.width - 350) / 2
         }
-        let frame = CGRect.init(x: 0, y: 0, width: UIScreen.main.bounds.width - (xmargin * 2), height: 48 + ((text.contains("\n")) ? 24 : 0))
-        popup = UILabel.init(frame: frame)
+        popup = UILabel.init(frame: CGRect.zero)
         popup.backgroundColor = color
         popup.textAlignment = .center
         popup.isUserInteractionEnabled = true
@@ -52,8 +51,9 @@ public class BannerUtil {
         }
         popup.attributedText = finalText
         popup.numberOfLines = 0
-        popup.layer.cornerRadius = 5
+        popup.elevate(elevation: 2)
         popup.clipsToBounds = true
+        popup.layer.cornerRadius = 10
         popup.isUserInteractionEnabled = true
         let toView: UIView
       //  if context.navigationController != nil {
@@ -64,13 +64,21 @@ public class BannerUtil {
         toView.addSubview(popup)
         toView.bringSubview(toFront: popup)
         if top {
-            popup.topAnchor == toView.safeTopAnchor + 72
+            if #available(iOS 11, *) {
+                popup.topAnchor == toView.safeTopAnchor + 12
+            } else {
+                popup.topAnchor == toView.safeTopAnchor + 72
+            }
         } else {
-            popup.bottomAnchor == toView.safeBottomAnchor - 48
+            if #available(iOS 11, *) {
+                popup.bottomAnchor == toView.safeBottomAnchor - 12
+            } else {
+                popup.bottomAnchor == toView.safeBottomAnchor - 56
+            }
         }
         popup.horizontalAnchors == toView.horizontalAnchors + 12 + xmargin
+        popup.widthAnchor == (UIScreen.main.bounds.width - (2 * (12 + xmargin)))
         popup.heightAnchor == (CGFloat(48) + CGFloat((text.contains("\n")) ? 24 : 0))
-        popup.elevate(elevation: 2)
         popup.transform = CGAffineTransform.init(scaleX: 0.001, y: 0.001)
         UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
             self.popup.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
