@@ -486,10 +486,11 @@ class SettingsLayout: UITableViewController {
             switch indexPath.row {
             case 0: return self.actionBarCell
             case 1: return self.scoreTitleCell
-            case 2: return self.abbreviateScoreCell
-            case 3: return self.domainInfoCell
-            case 4: return self.hideCell
-            case 5: return self.saveCell
+            case 2: return self.commentTitleCell
+            case 3: return self.abbreviateScoreCell
+            case 4: return self.domainInfoCell
+            case 5: return self.hideCell
+            case 6: return self.saveCell
                 
             default: fatalError("Unknown row in section 2")
             }
@@ -501,7 +502,7 @@ class SettingsLayout: UITableViewController {
         switch section {
         case 0: return 1
         case 1: return 8
-        case 2: return 6
+        case 2: return 7
         default: fatalError("Unknown number of sections")
         }
     }
