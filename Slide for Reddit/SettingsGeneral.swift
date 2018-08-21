@@ -174,11 +174,11 @@ class SettingsGeneral: UITableViewController {
             switch indexPath.row {
             case 0: return self.viewType
             case 1: return self.hideFAB
-            case 3: return self.autoKeyboard
-            case 4: return self.bottomBarHidden
-            case 5: return self.pinToolbar
-            case 6: return self.scrubUsername
-            case 7: return self.hapticFeedback
+            case 2: return self.autoKeyboard
+            case 3: return self.bottomBarHidden
+            case 4: return self.pinToolbar
+            case 5: return self.scrubUsername
+            case 6: return self.hapticFeedback
             default: fatalError("Unknown row in section 0")
             }
         case 1:
