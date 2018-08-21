@@ -30,6 +30,9 @@ class SettingsLayout: UITableViewController {
     var scoreTitleCell: UITableViewCell = UITableViewCell()
     var scoreTitle = UISwitch()
     
+    var commentTitleCell: UITableViewCell = UITableViewCell()
+    var commentTitle = UISwitch()
+
     var abbreviateScoreCell: UITableViewCell = UITableViewCell()
     var abbreviateScore = UISwitch()
     
@@ -88,6 +91,9 @@ class SettingsLayout: UITableViewController {
         } else if changed == scoreTitle {
             SettingValues.scoreInTitle = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_scoreInTitle)
+        } else if changed == commentTitle {
+            SettingValues.commentsInTitle = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_commentsInTitle)
         } else if changed == thumbLink {
             SettingValues.linkAlwaysThumbnail = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_linkAlwaysThumbnail)
@@ -392,7 +398,8 @@ class SettingsLayout: UITableViewController {
 
         createCell(smalltagCell, smalltag, isOn: SettingValues.smallerTag, text: "Smaller content tag")
         createCell(largerThumbnailCell, largerThumbnail, isOn: SettingValues.largerThumbnail, text: "Larger thumbnail")
-        createCell(scoreTitleCell, scoreTitle, isOn: SettingValues.scoreInTitle, text: "Show comment count in title (useful if you turn the action bar off)")
+        createCell(commentTitleCell, commentTitle, isOn: SettingValues.commentsInTitle, text: "Show comment count under title")
+        createCell(scoreTitleCell, scoreTitle, isOn: SettingValues.scoreInTitle, text: "Show post score under title")
         createCell(abbreviateScoreCell, abbreviateScore, isOn: SettingValues.abbreviateScores, text: "Abbreviate post scores (ex: 10k)")
         createCell(domainInfoCell, domainInfo, isOn: SettingValues.domainInInfo, text: "Show domain in info line")
         createCell(leftThumbCell, leftThumb, isOn: SettingValues.leftThumbnail, text: "Thumbnail on left side")

@@ -950,13 +950,15 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
     }
 
-    func setMore(more: RMore, depth: Int, depthColors: [UIColor]) {
+    func setMore(more: RMore, depth: Int, depthColors: [UIColor], parent: CommentViewController) {
         self.depth = depth
         self.comment = nil
         self.isMore = true
         self.depthColors = depthColors
         
-        connectGestures()
+        if self.parent == nil {
+            self.parent = parent
+        }
         
         loading = false
         childrenCount.alpha = 0
@@ -1010,6 +1012,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         topMargin = batch {
             topViewSpace.heightAnchor == CGFloat(marginTop)
         }
+        
+        connectGestures()
     }
 
     var numberOfDots = 3

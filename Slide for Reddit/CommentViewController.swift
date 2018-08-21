@@ -1,7 +1,7 @@
 //
 //  CommentViewController.swift
 //  Slide for Reddit
-//=
+//
 //  Created by Carlos Crane on 12/30/16.
 //  Copyright © 2016 Haptic Apps. All rights reserved.
 //
@@ -1853,7 +1853,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
 
                 cell.setComment(comment: content[thing] as! RComment, depth: cDepth[thing]!, parent: self, hiddenCount: count, date: lastSeen, author: submission?.author, text: t, isCollapsed: hiddenP, parentOP: parentOP ?? "", depthColors: commentDepthColors)
             } else {
-                cell.setMore(more: (content[thing] as! RMore), depth: cDepth[thing]!, depthColors: commentDepthColors)
+                cell.setMore(more: (content[thing] as! RMore), depth: cDepth[thing]!, depthColors: commentDepthColors, parent: self)
             }
             cell.content = content[thing]
         }

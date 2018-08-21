@@ -38,6 +38,7 @@ class SettingValues {
     public static let pref_upvotePercentage = "UPVOTE_PERCENTAGE"
     public static let pref_largerThumbnail = "LARGER_THUMBNAIL"
     public static let pref_scoreInTitle = "SCORE_IN_TITLE"
+    public static let pref_commentsInTitle = "COMMENTS_IN_TITLE"
     public static let pref_dataSavingEnabled = "DATA_SAVING_ENABLED"
     public static let pref_dataSavingDisableWifi = "DATA_SAVING_D_WIFI"
     public static let pref_loadContentHQ = "LOAD_CONTENT_HQ"
@@ -137,6 +138,7 @@ class SettingValues {
     public static var showLinkContentType = true
     public static var internalGifView = true
     public static var scoreInTitle = false
+    public static var commentsInTitle = false
     public static var internalAlbumView = true
     public static var internalImageView = true
     public static var forceExternalBrowserLinks: [String] = []
@@ -351,6 +353,7 @@ class SettingValues {
         SettingValues.viewType = settings.bool(forKey: SettingValues.pref_viewType)
         SettingValues.abbreviateScores = settings.object(forKey: SettingValues.pref_abbreviateScores) == nil ? true : settings.bool(forKey: SettingValues.pref_abbreviateScores)
         SettingValues.scoreInTitle = settings.bool(forKey: SettingValues.pref_scoreInTitle)
+        SettingValues.commentsInTitle = settings.bool(forKey: SettingValues.pref_commentsInTitle)
         SettingValues.postViewMode = PostViewType.init(rawValue: settings.string(forKey: SettingValues.pref_postViewMode) ?? "card") ?? .CARD
         SettingValues.actionBarMode = ActionBarMode.init(rawValue: settings.string(forKey: SettingValues.pref_actionbarMode) ?? "full") ?? .FULL
         SettingValues.flatMode = settings.bool(forKey: SettingValues.pref_flatMode)

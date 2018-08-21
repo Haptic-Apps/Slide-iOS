@@ -139,12 +139,33 @@ class CachedTitle {
         infoString.append(endString)
         infoString.append(NSAttributedString.init(string: "\n"))
         infoString.append(attributedTitle)
-        if SettingValues.scoreInTitle {
+        
+        if SettingValues.scoreInTitle || SettingValues.commentsInTitle {
             infoString.append(NSAttributedString.init(string: "\n"))
-            let scoreString = NSMutableAttributedString(string: "\(submission.commentCount)comments", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: colorF])
+        }
+        if SettingValues.scoreInTitle {
+            var sColor = ColorUtil.fontColor
+            switch ActionStates.getVoteDirection(s: submission) {
+            case .down:
+                sColor = ColorUtil.downvoteColor
+            case .up:
+                sColor = ColorUtil.upvoteColor
+            case .none:
+                break
+            }
+
+            let scoreString = NSMutableAttributedString(string: "\(submission.score) points", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: sColor])
             infoString.append(scoreString)
         }
         
+        if SettingValues.commentsInTitle {
+            if SettingValues.scoreInTitle {
+                infoString.append(spacer)
+            }
+            let scoreString = NSMutableAttributedString(string: "\(submission.commentCount) comments", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: colorF])
+            infoString.append(scoreString)
+        }
+
         if removed.contains(submission.id) || (!submission.removedBy.isEmpty() && !approved.contains(submission.id)) {
             let attrs = [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: GMColor.red500Color()] as [String: Any]
             infoString.append(spacer)
