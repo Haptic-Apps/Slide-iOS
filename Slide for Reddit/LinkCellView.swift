@@ -643,6 +643,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         comments.text = " \(submission.commentCount)\(more > 0 ? " (+\(more))" : "")"
     }
     
+    func refreshTitle() {
+        title.setText(CachedTitle.getTitle(submission: self.link!, full: full, true, false))
+    }
+    
     func doDTap(_ sender: AnyObject) {
         switch SettingValues.submissionActionDoubleTap {
         case .UPVOTE:

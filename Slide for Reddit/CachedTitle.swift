@@ -140,32 +140,35 @@ class CachedTitle {
         infoString.append(NSAttributedString.init(string: "\n"))
         infoString.append(attributedTitle)
         
-        if SettingValues.scoreInTitle || SettingValues.commentsInTitle {
-            infoString.append(NSAttributedString.init(string: "\n"))
-        }
-        if SettingValues.scoreInTitle {
-            var sColor = ColorUtil.fontColor
-            switch ActionStates.getVoteDirection(s: submission) {
-            case .down:
-                sColor = ColorUtil.downvoteColor
-            case .up:
-                sColor = ColorUtil.upvoteColor
-            case .none:
-                break
+        if !full {
+            if SettingValues.scoreInTitle || SettingValues.commentsInTitle {
+                infoString.append(NSAttributedString.init(string: "\n"))
             }
-
-            let scoreString = NSMutableAttributedString(string: "\(submission.score) points", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: sColor])
-            infoString.append(scoreString)
+            if SettingValues.scoreInTitle {
+                var sColor = ColorUtil.fontColor
+                switch ActionStates.getVoteDirection(s: submission) {
+                case .down:
+                    sColor = ColorUtil.downvoteColor
+                case .up:
+                    sColor = ColorUtil.upvoteColor
+                case .none:
+                    break
+                }
+                
+                let subScore = NSMutableAttributedString(string: (submission.score >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk points", (Double(submission.score) / Double(1000))) : " \(submission.score) points", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: sColor])
+                
+                infoString.append(subScore)
+            }
+            
+            if SettingValues.commentsInTitle {
+                if SettingValues.scoreInTitle {
+                    infoString.append(spacer)
+                }
+                let scoreString = NSMutableAttributedString(string: "\(submission.commentCount) comments", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: colorF])
+                infoString.append(scoreString)
+            }
         }
         
-        if SettingValues.commentsInTitle {
-            if SettingValues.scoreInTitle {
-                infoString.append(spacer)
-            }
-            let scoreString = NSMutableAttributedString(string: "\(submission.commentCount) comments", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: colorF])
-            infoString.append(scoreString)
-        }
-
         if removed.contains(submission.id) || (!submission.removedBy.isEmpty() && !approved.contains(submission.id)) {
             let attrs = [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: GMColor.red500Color()] as [String: Any]
             infoString.append(spacer)
