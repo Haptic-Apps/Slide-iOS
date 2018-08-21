@@ -56,7 +56,9 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        header.search.becomeFirstResponder()
+        if SettingValues.autoKeyboard {
+            header.search.becomeFirstResponder()
+        }
     }
 
     override func viewDidLayoutSubviews() {

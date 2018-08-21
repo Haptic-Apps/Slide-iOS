@@ -17,6 +17,7 @@ class SettingsGeneral: UITableViewController {
     var pinToolbar: UITableViewCell = UITableViewCell()
     var hapticFeedback: UITableViewCell = UITableViewCell()
     var bottomBarHidden: UITableViewCell = UITableViewCell()
+    var autoKeyboard: UITableViewCell = UITableViewCell()
 
     var postSorting: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "post")
     var commentSorting: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "comment")
@@ -27,6 +28,7 @@ class SettingsGeneral: UITableViewController {
     var pinToolbarSwitch = UISwitch()
     var hapticFeedbackSwitch = UISwitch()
     var bottomBarSwitch = UISwitch()
+    var autoKeyboardSwitch = UISwitch()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -54,6 +56,9 @@ class SettingsGeneral: UITableViewController {
             MainViewController.needsRestart = true
             SettingValues.bottomBarHidden = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_bottomBarHidden)
+        } else if changed == autoKeyboardSwitch {
+            SettingValues.autoKeyboard = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_autoKeyboard)
         } else if changed == hapticFeedbackSwitch {
             SettingValues.hapticFeedback = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_hapticFeedback)
@@ -123,6 +128,7 @@ class SettingsGeneral: UITableViewController {
         createCell(hideFAB, hideFABSwitch, isOn: !SettingValues.hiddenFAB, text: "Show subreddit floating action button")
         createCell(scrubUsername, scrubUsernameSwitch, isOn: SettingValues.nameScrubbing, text: "Scrub your username (you will show as \"you\")")
         createCell(pinToolbar, pinToolbarSwitch, isOn: SettingValues.pinToolbar, text: "Pin header navigation bar and toolbar in subreddit views")
+        createCell(autoKeyboard, autoKeyboardSwitch, isOn: SettingValues.autoKeyboard, text: "Open keyboard automatically in bottom drawer")
 
         self.postSorting.textLabel?.text = "Default post sorting"
         self.postSorting.detailTextLabel?.text = SettingValues.defaultSorting.description
@@ -168,10 +174,11 @@ class SettingsGeneral: UITableViewController {
             switch indexPath.row {
             case 0: return self.viewType
             case 1: return self.hideFAB
-            case 2: return self.bottomBarHidden
-            case 3: return self.pinToolbar
-            case 4: return self.scrubUsername
-            case 5: return self.hapticFeedback
+            case 3: return self.autoKeyboard
+            case 4: return self.bottomBarHidden
+            case 5: return self.pinToolbar
+            case 6: return self.scrubUsername
+            case 7: return self.hapticFeedback
             default: fatalError("Unknown row in section 0")
             }
         case 1:
@@ -309,7 +316,7 @@ class SettingsGeneral: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return 6
+        case 0: return 7
         case 1: return 1
         case 2: return 2
         default: fatalError("Unknown number of sections")

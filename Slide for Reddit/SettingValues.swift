@@ -94,6 +94,7 @@ class SettingValues {
     public static let pref_blackShadowbox = "BLACK_SHADOWBOX"
     public static let pref_hideAutomod = "HIDE_AUTOMOD"
     public static let pref_swipeAnywhereComments = "SWIPE_ANYWHERE_COMMENTS"
+    public static let pref_autoKeyboard = "SWIPE_ANYWHERE_COMMENTS"
 
     public static var commentActionRightRight = CommentAction.UPVOTE
     public static var commentActionRightLeft = CommentAction.DOWNVOTE
@@ -180,6 +181,7 @@ class SettingValues {
     public static var linkAlwaysThumbnail = false
     public static var bottomBarHidden = true
     public static var lockCommentBars = true
+    public static var autoKeyboard = true
 
     enum PostViewType: String {
         case LIST = "list"
@@ -322,6 +324,7 @@ class SettingValues {
         SettingValues.hiddenFAB = settings.bool(forKey: SettingValues.pref_hiddenFAB)
         SettingValues.isPro = settings.bool(forKey: SettingValues.pref_pro)
         SettingValues.pinToolbar = settings.bool(forKey: SettingValues.pref_pinToolbar)
+        SettingValues.autoKeyboard = settings.object(forKey: SettingValues.pref_autoKeyboard) == nil ? true : settings.bool(forKey: SettingValues.pref_autoKeyboard)
         SettingValues.linkAlwaysThumbnail = settings.object(forKey: SettingValues.pref_linkAlwaysThumbnail) == nil ? true : settings.bool(forKey: SettingValues.pref_linkAlwaysThumbnail)
         SettingValues.bottomBarHidden = settings.bool(forKey: SettingValues.pref_bottomBarHidden)
 
