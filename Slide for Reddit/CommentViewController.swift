@@ -858,7 +858,8 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        if (self.navigationController != nil && (parent == nil || (parent != nil && !(parent! is PagingCommentViewController)))) && SettingValues.swipeAnywhereComments {
+        //Disabled for now, need to figure out why this breaks inbox and profile views
+        if false && (self.navigationController != nil && (parent == nil || (parent != nil && !(parent! is PagingCommentViewController)))) && SettingValues.swipeAnywhereComments {
             swiper = SloppySwiper.init(navigationController: self.navigationController!)
             self.navigationController!.delegate = swiper!
             for view in view.subviews {

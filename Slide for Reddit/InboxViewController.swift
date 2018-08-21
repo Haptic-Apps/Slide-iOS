@@ -36,20 +36,11 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
         return [MessageWhere.inbox, MessageWhere.messages, MessageWhere.unread]
     }
 
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-    }
-
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.title = "Inbox"
         UIApplication.shared.applicationIconBadgeNumber = 0
-        navigationController?.setNavigationBarHidden(false, animated: false)
+        navigationController?.setNavigationBarHidden(false, animated: true)
         navigationController?.navigationBar.tintColor = .white
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: "")
         let edit = UIButton.init(type: .custom)
@@ -126,7 +117,6 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
         self.view.addSubview(tabBar)
         tabBar.heightAnchor == 48
         tabBar.horizontalAnchors == self.view.horizontalAnchors
-        tabBar.topAnchor == self.view.safeTopAnchor
         tabBar.sizeToFit()
 
         time = History.getInboxSeen()

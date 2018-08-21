@@ -36,6 +36,8 @@ class SubSidebarViewController: MediaViewController, UIGestureRecognizerDelegate
         header.frame.size.width = widthF
         scrollView.contentSize = header.frame.size
         scrollView.addSubview(header)
+        header.leftAnchor == scrollView.leftAnchor
+        header.topAnchor == scrollView.topAnchor
         scrollView.layer.cornerRadius = 15
         scrollView.clipsToBounds = true
         scrollView.bounces = false
