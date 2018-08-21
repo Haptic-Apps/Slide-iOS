@@ -366,12 +366,8 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     func doneLoading(before: Int) {
         loaded = true
         DispatchQueue.main.async {
-            var paths = [IndexPath]()
-            for i in before..<self.baseData.content.count {
-                paths.append(IndexPath.init(item: i, section: 0))
-            }
             
-            if before == 0 {
+            if before == 0 || before > self.baseData.content.count {
                 self.flowLayout.reset()
                 self.tableView.reloadData()
                 
@@ -382,6 +378,11 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                 
                 self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + (-1 * (((self.baseData is ProfileContributionLoader || self.baseData is InboxContributionLoader || self.baseData is ModQueueContributionLoader || self.baseData is ModMailContributionLoader) ? 45 : 0) + (self.navigationController?.navigationBar.frame.size.height ?? 64))) - top)
             } else {
+                var paths = [IndexPath]()
+                for i in before..<self.baseData.content.count {
+                    paths.append(IndexPath.init(item: i, section: 0))
+                }
+
                 self.flowLayout.reset()
                 self.tableView.insertItems(at: paths)
             }

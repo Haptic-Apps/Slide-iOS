@@ -13,6 +13,7 @@ target 'Slide for Reddit' do
   pod 'BadgeSwift', '~> 5.0'
   pod 'LicensesViewController', '~> 0.6.5'
   pod 'BiometricAuthentication'
+  pod 'MaterialComponents/Tabs'
   pod 'Embassy', '~> 4.0'
   pod 'MTColorDistance'
   pod 'DTCoreText', :git => 'https://github.com/Cocoanetics/DTCoreText'

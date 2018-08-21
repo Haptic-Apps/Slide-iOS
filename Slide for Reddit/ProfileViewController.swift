@@ -6,6 +6,7 @@
 //  Copyright © 2016 Haptic Apps. All rights reserved.
 //
 
+import Anchorage
 import MaterialComponents.MDCTabBar
 import MKColorPicker
 import reddift
@@ -327,24 +328,22 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
             items.append(i.title)
         }
 
-        tabBar = MDCTabBar.init(frame: CGRect.init(x: 0, y: -8, width: self.view.frame.size.width, height: 45))
+        tabBar = MDCTabBar.init(frame: CGRect.zero)
         tabBar.backgroundColor = ColorUtil.getColorForUser(name: name)
         tabBar.itemAppearance = .titles
-        // 2
         tabBar.items = content.enumerated().map { index, source in
             return UITabBarItem(title: source.title, image: nil, tag: index)
         }
-        tabBar.autoresizingMask = [.flexibleWidth, .flexibleBottomMargin]
         
-        // 3
         tabBar.selectedItem = tabBar.items[openTo]
-        // 4
         tabBar.delegate = self
         tabBar.tintColor = ColorUtil.accentColorForSub(sub: "NONE")
-        // 5
-        tabBar.sizeToFit()
         
         self.view.addSubview(tabBar)
+        tabBar.heightAnchor == 45
+        tabBar.horizontalAnchors == self.view.horizontalAnchors
+        tabBar.topAnchor == self.view.safeTopAnchor
+
         self.edgesForExtendedLayout = []
         
         self.dataSource = self

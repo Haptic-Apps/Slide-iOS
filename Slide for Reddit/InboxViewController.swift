@@ -6,6 +6,7 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
+import Anchorage
 import MaterialComponents.MaterialTabs
 import reddift
 import UIKit
@@ -108,7 +109,7 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
             items.append(i.description)
         }
 
-        tabBar = MDCTabBar.init(frame: CGRect.init(x: 0, y: -8, width: self.view.frame.size.width, height: 45))
+        tabBar = MDCTabBar.init(frame: CGRect.zero)
         tabBar.backgroundColor = ColorUtil.getColorForSub(sub: "")
         tabBar.itemAppearance = .titles
         tabBar.selectedItemTintColor = UIColor.white
@@ -117,15 +118,15 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
         tabBar.items = content.enumerated().map { index, source in
             return UITabBarItem(title: source.description, image: nil, tag: index)
         }
-        tabBar.autoresizingMask = [.flexibleWidth, .flexibleBottomMargin]
         tabBar.selectionIndicatorTemplate = IndicatorTemplate()
         tabBar.delegate = self
         tabBar.selectedItem = tabBar.items[0]
         tabBar.tintColor = ColorUtil.accentColorForSub(sub: "NONE")
-        tabBar.sizeToFit()
-        tabBar.frame.size.height = 48
 
         self.view.addSubview(tabBar)
+        tabBar.heightAnchor == 45
+        tabBar.horizontalAnchors == self.view.horizontalAnchors
+        tabBar.topAnchor == self.view.safeTopAnchor
 
         time = History.getInboxSeen()
         History.inboxSeen()
