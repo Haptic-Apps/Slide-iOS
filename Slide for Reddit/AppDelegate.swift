@@ -185,18 +185,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             })
         }
     }
-
-    func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        getData(completionHandler)
-    }
     
     func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
         let url = shortcutItem.userInfo!["sub"]!
         VCPresenter.openRedditLink("/r/\(url)", nil, window?.rootViewController)
     }
-
+    
+    /* Disable this for now
+    func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        getData(completionHandler)
+    }
+    
     func getData(_ completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-
         if let session = session {
             do {
                 let request = try session.getMessageRequest(.unread)
@@ -281,7 +281,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } else {
             // Fallback on earlier versions
         }
-    }
+    }*/
 
     func syncColors(subredditController: MainViewController?) {
         let defaults = UserDefaults.standard
@@ -426,7 +426,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         totalBackground = true
         History.seenTimes.write(toFile: seenFile!, atomically: true)
         History.commentCounts.write(toFile: commentsFile!, atomically: true)
-        application.setMinimumBackgroundFetchInterval(900)
+        //disable this for now application.setMinimumBackgroundFetchInterval(900)
 
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
