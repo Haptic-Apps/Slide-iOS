@@ -20,6 +20,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     public static var vCs: [UIViewController] = []
     public static var current: String = ""
     public static var needsRestart = false
+    public var toolbar: UIView?
 
     var menuPresentationController: BottomMenuPresentationController?
     
@@ -300,8 +301,15 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     var finalSubs = [String]()
 
     func makeMenuNav() {
-        menuNav = NavigationSidebarViewController()
-        menuNav?.setViewController(controller: self)
+        menuNav = NavigationSidebarViewController(controller: self)
+        toolbar = UIView()
+        menuNav?.topView = toolbar
+        menuNav?.view.addSubview(toolbar!)
+        toolbar!.backgroundColor = ColorUtil.foregroundColor
+        toolbar!.horizontalAnchors == menuNav!.view.horizontalAnchors
+        toolbar!.topAnchor == menuNav!.view.topAnchor
+        toolbar!.heightAnchor == 48
+        //toolbar!.roundCorners([UIRectCorner.topLeft, UIRectCorner.topRight], radius: 15)
         self.menuNav?.setSubreddit(subreddit: MainViewController.current)
 //        menuNav?.modalPresentationStyle = .overCurrentContext
 
@@ -319,10 +327,14 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 //        self.coverPartiallyDelegate = CoverPartiallyPresentationController(presentedViewController: menuNav!, presenting: self, coverDirection: .down)
 //        menuNav?.transitioningDelegate = coverPartiallyDelegate
 
-        menuPresentationController = BottomMenuPresentationController(presentedViewController: menuNav!, presenting: self)
-        menuPresentationController?.tableView = menuNav?.tableView
-        menuNav?.transitioningDelegate = menuPresentationController
-        menuNav?.modalPresentationStyle = .custom
+        self.addChildViewController(menuNav!)
+        self.view.addSubview(menuNav!.view)
+        menuNav!.didMove(toParentViewController: self)
+        
+        // 3- Adjust bottomSheet frame and initial position.
+        let height = view.frame.height
+        let width  = view.frame.width
+        menuNav!.view.frame = CGRect(x: 0, y: self.view.frame.maxY - 48, width: width, height: height * 0.8)
     }
 
     func restartVC() {
@@ -478,6 +490,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         self.tintColor = ColorUtil.getColorForSub(sub: MainViewController.current)
         self.menuNav?.setSubreddit(subreddit: MainViewController.current)
         self.currentTitle = MainViewController.current
+        menuNav!.setColors(MainViewController.current)
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: vc.sub, true)
         self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: vc.sub, true)
 
@@ -613,6 +626,10 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         self.navToMux = self.navigationController!.navigationBar
         self.color1 = ColorUtil.backgroundColor
         self.color2 = ColorUtil.backgroundColor
+        
+        if menuNav == nil {
+            makeMenuNav()
+        }
 
         self.splitViewController?.preferredDisplayMode = UISplitViewControllerDisplayMode.allVisible
         if SettingValues.multiColumn {
@@ -631,10 +648,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         super.viewDidLoad()
         self.edgesForExtendedLayout = []
         self.automaticallyAdjustsScrollViewInsets = false
-
-        if menuNav == nil {
-            makeMenuNav()
-        }
 
         inHeadView.removeFromSuperview()
         inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarView?.frame.size.height ?? 20)))
@@ -684,11 +697,15 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         drawerButton.contentMode = .center
         drawerButton.layer.cornerRadius = 20
         drawerButton.image = UIImage(named: "menu")?.getCopy(withSize: CGSize.square(size: 25), withColor: ColorUtil.fontColor)
-        self.view.addSubview(drawerButton)
+        //self.view.addSubview(drawerButton)
         drawerButton.translatesAutoresizingMaskIntoConstraints = false
         drawerButton.addTapGestureRecognizer {
             self.showDrawer(self.drawerButton)
         }
+        
+        toolbar?.addTapGestureRecognizer(action: {
+            self.showDrawer(self.drawerButton)
+        })
         
         let swipe = UISwipeGestureRecognizer(target: self, action: #selector(showDrawer(_:)))
         swipe.direction = .up
@@ -696,10 +713,10 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         drawerButton.addGestureRecognizer(swipe)
         drawerButton.isHidden = true
         
-        drawerButton.bottomAnchor == self.view.safeBottomAnchor - 8
-        drawerButton.leadingAnchor == self.view.safeLeadingAnchor + 8
-        drawerButton.heightAnchor == 40
-        drawerButton.widthAnchor == 40
+        //drawerButton.bottomAnchor == self.view.safeBottomAnchor - 8
+        //drawerButton.leadingAnchor == self.view.safeLeadingAnchor + 8
+        //drawerButton.heightAnchor == 40
+        //drawerButton.widthAnchor == 40
     }
     
     public static var isOffline = false
@@ -750,15 +767,22 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                 more.setImage(UIImage.init(named: "moreh")?.toolbarIcon(), for: UIControlState.normal)
                 more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
                 more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-                let moreB = UIBarButtonItem.init(customView: more)
                 
                 let menu = UIButton.init(type: .custom)
                 menu.setImage(UIImage.init(named: "menu")?.toolbarIcon(), for: UIControlState.normal)
                 menu.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControlEvents.touchUpInside)
                 menu.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
-                menuB = UIBarButtonItem.init(customView: menu)
-
-                toolbarItems = [menuB, flexButton, moreB]
+                toolbar?.addSubview(menu)
+                toolbar?.addSubview(more)
+                
+                menu.heightAnchor == 48
+                menu.widthAnchor == 48
+                menu.leftAnchor == toolbar!.leftAnchor
+                
+                more.heightAnchor == 48
+                more.widthAnchor == 48
+                more.rightAnchor == toolbar!.rightAnchor
+                
                 navigationItem.rightBarButtonItem = sortB
             }
         } else {
@@ -853,7 +877,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             makeMenuNav()
         }
         menuNav!.setColors(MainViewController.current)
-        present(menuNav!, animated: true, completion: nil)
+        menuNav!.expand()
     }
 
     func shadowbox() {

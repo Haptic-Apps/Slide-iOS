@@ -21,6 +21,8 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     var filteredContent: [String] = []
     var suggestions = [String]()
     var parentController: MainViewController?
+    var backgroundView = UIView()
+    var topView: UIView?
 
     var header: NavigationHeaderView = NavigationHeaderView()
 
@@ -29,9 +31,9 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
 
     var task: URLSessionDataTask?
     
-    init() {
+    init(controller: MainViewController) {
+        self.parentController = controller
         super.init(nibName: nil, bundle: nil)
-        self.modalPresentationStyle = .custom
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -44,6 +46,141 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         configureViews()
         configureLayout()
         configureGestures()
+        
+        configureBackground()
+    }
+    
+    struct Callbacks {
+        var didBeginPanning: (() -> Void)?
+        var didCollapse: (() -> Void)?
+    }
+    var callbacks = Callbacks()
+    
+    var gestureRecognizer: UIPanGestureRecognizer!
+    
+    // MARK: User interaction
+    @objc func viewPanned(sender: UIPanGestureRecognizer) {
+        parentController!.view.bringSubview(toFront: backgroundView)
+        parentController!.view.bringSubview(toFront: self.view)
+        sender.view?.endEditing(true)
+        let velocity = sender.velocity(in: sender.view).y
+
+        switch sender.state {
+        case .began:
+            callbacks.didBeginPanning?()
+        case .changed:
+            update(sender)
+            topView?.alpha = 0
+            backgroundView.alpha = velocity < 0 ? abs(percentCompleteForTranslation(sender)) : 1 - abs(percentCompleteForTranslation(sender))
+        case .ended:
+            let percentComplete = percentCompleteForTranslation(sender)
+    
+            self.backgroundView.alpha = percentComplete
+            if percentComplete > 0.25 || abs(velocity) > 350 {
+                if velocity < 0 {
+                    expand()
+                } else {
+                    collapse()
+                }
+            } else {
+                if velocity < 0 {
+                    expand()
+                } else {
+                    collapse()
+                }
+            }
+        case .cancelled:
+            collapse()
+        default:
+            return
+        }
+
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        return tableView.contentOffset.y == 0
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return otherGestureRecognizer is UIPanGestureRecognizer && (tableView.contentOffset.y == 0)
+    }
+    
+    func update(_ recognizer: UIPanGestureRecognizer) {
+        let translation = recognizer.translation(in: self.view)
+        let y = self.view.frame.minY
+        self.view.frame = CGRect(x: 0, y: max(y + translation.y, UIScreen.main.bounds.height - self.view.frame.height), width: view.frame.width, height: view.frame.height)
+        recognizer.setTranslation(CGPoint.zero, in: self.view)
+    }
+    
+    private func percentCompleteForTranslation(_ recognizer: UIPanGestureRecognizer) -> CGFloat {
+        return (self.view.frame.minY - 48) / self.view.frame.size.height
+    }
+    
+    func collapse() {
+        let y = UIScreen.main.bounds.height - 48
+        let animateBlock = { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.backgroundView.alpha = 0
+            strongSelf.topView?.alpha = 1
+            strongSelf.view.frame = CGRect(x: 0, y: y, width: strongSelf.view.frame.width, height: strongSelf.view.frame.height)
+        }
+        
+        let completionBlock: (Bool) -> Void = { finished in
+        }
+        self.callbacks.didCollapse?()
+
+        UIView.animate(withDuration: 0.25,
+                       delay: 0,
+                       usingSpringWithDamping: 0.8,
+                       initialSpringVelocity: 0.45,
+                       options: .curveEaseInOut,
+                       animations: animateBlock,
+                       completion: completionBlock)
+    }
+    
+    func expand() {
+        let y = UIScreen.main.bounds.height - self.view.frame.size.height
+        let animateBlock = { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.backgroundView.alpha = 1
+            strongSelf.topView?.alpha = 0
+            strongSelf.view.frame = CGRect(x: 0, y: y, width: strongSelf.view.frame.width, height: strongSelf.view.frame.height)
+        }
+        
+        let completionBlock: (Bool) -> Void = { finished in
+        }
+
+        UIView.animate(withDuration: 0.25,
+                       delay: 0,
+                       usingSpringWithDamping: 0.8,
+                       initialSpringVelocity: 0.45,
+                       options: .curveEaseInOut,
+                       animations: animateBlock,
+                       completion: completionBlock)
+    }
+    
+    func configureBackground() {
+        backgroundView = UIView()
+        backgroundView.backgroundColor = UIColor(white: 0.0, alpha: 0.5)
+        
+        if #available(iOS 11, *) {
+            let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
+            let blurView = UIVisualEffectView(frame: backgroundView.frame)
+            blurEffect.setValue(3, forKeyPath: "blurRadius")
+            blurView.effect = blurEffect
+            backgroundView.insertSubview(blurView, at: 0)
+            blurView.horizontalAnchors == backgroundView.horizontalAnchors
+            blurView.verticalAnchors == backgroundView.verticalAnchors
+        }
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(collapse))
+        backgroundView.addGestureRecognizer(tapGesture)
+        
+        parentController!.view.addSubview(backgroundView)
+        backgroundView.horizontalAnchors == parentController!.view.horizontalAnchors
+        backgroundView.verticalAnchors == parentController!.view.verticalAnchors
+        
+        backgroundView.alpha = 0
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -109,6 +246,11 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     }
 
     func configureGestures() {
+        gestureRecognizer = UIPanGestureRecognizer()
+        view.addGestureRecognizer(gestureRecognizer)
+        
+        gestureRecognizer.delegate = self
+        gestureRecognizer.addTarget(self, action: #selector(viewPanned(sender:)))
     }
     
     override func didReceiveMemoryWarning() {
