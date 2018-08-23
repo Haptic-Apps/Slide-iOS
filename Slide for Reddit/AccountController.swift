@@ -8,6 +8,7 @@
 
 import Foundation
 import reddift
+import SafariServices
 
 class AccountController {
     @objc static func didSaveToken(_ notification: Notification) {
@@ -93,8 +94,45 @@ class AccountController {
 
     public static var names: [String] = []
 
-    static func addAccount() {
-        try! OAuth2Authorizer.sharedInstance.challengeWithAllScopes()
+    static func addAccount(context: UIViewController) {
+        try! AccountController.challengeWithAllScopes(context)
+    }
+    
+    /**
+     Open OAuth2 page to try to authorize with all scopes in Safari.app.
+     */
+    public static func challengeWithAllScopes(_ context: UIViewController) throws {
+        do {
+            try self.challengeWithScopes(["identity", "edit", "flair", "history", "modconfig", "modflair", "modlog", "modposts", "modwiki", "mysubreddits", "privatemessages", "read", "report", "save", "submit", "subscribe", "vote", "wikiedit", "wikiread"], context)
+        } catch {
+            throw error
+        }
+    }
+    
+    /**
+     Open OAuth2 page to try to authorize with user specified scopes in Safari.app.
+     
+     - parameter scopes: Scope you want to get authorizing. You can check all scopes at https://www.reddit.com/dev/api/oauth.
+     */
+    public static func challengeWithScopes(_ scopes: [String], _ context: UIViewController) throws {
+        let commaSeparatedScopeString = scopes.joined(separator: ",")
+        
+        let length = 64
+        let mutableData = NSMutableData(length: Int(length))
+        if let data = mutableData {
+            let a = OpaquePointer(data.mutableBytes)
+            let ptr = UnsafeMutablePointer<UInt8>(a)
+            _ = SecRandomCopyBytes(kSecRandomDefault, length, ptr)
+            OAuth2Authorizer.sharedInstance.state = data.base64EncodedString(options: .endLineWithLineFeed)
+            guard let authorizationURL = URL(string: "https://www.reddit.com/api/v1/authorize.compact?client_id=r1JeYb6X0P2QOg&response_type=code&state=" + OAuth2Authorizer.sharedInstance.state + "&redirect_uri=slide://ccrama&duration=permanent&scope=" + commaSeparatedScopeString)
+                else { throw ReddiftError.canNotCreateURLRequestForOAuth2Page as NSError }
+            let vc: UIViewController
+            let web = WebsiteViewController(url: authorizationURL, subreddit: "")
+            vc = web
+            VCPresenter.showVC(viewController: vc, popupIfPossible: false, parentNavigationController: nil, parentViewController: context)
+        } else {
+            throw ReddiftError.canNotAllocateDataToCreateURLForOAuth2 as NSError
+        }
     }
 
     static func doModOf() {

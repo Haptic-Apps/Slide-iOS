@@ -460,7 +460,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     func doLogin(token: OAuth2Token?) {
         (UIApplication.shared.delegate as! AppDelegate).login = self
         if token == nil {
-            AccountController.addAccount()
+            AccountController.addAccount(context: self)
         } else {
             setToken(token: token!)
         }

@@ -9,6 +9,7 @@
 import SafariServices
 import UIKit
 import WebKit
+import reddift
 
 class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     var url: URL?
@@ -33,7 +34,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
             sort.addTarget(self, action: #selector(self.readerMode(_:)), for: UIControlEvents.touchUpInside)
             sort.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
             let sortB = UIBarButtonItem.init(customView: sort)
-            navigationItem.rightBarButtonItems = [ sortB]
+            navigationItem.rightBarButtonItems = [sortB]
         }
 
     }
@@ -76,7 +77,6 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         self.webView.scrollView.frame = self.view.frame
         self.webView.scrollView.setZoomScale(1, animated: false)
         loadUrl()
-
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -93,7 +93,6 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     }
     
     func loadUrl() {
-        print(url!.absoluteString)
         let myURLRequest: URLRequest = URLRequest(url: url!)
         webView.load(myURLRequest)
         self.title = url!.host
@@ -107,6 +106,36 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         var request = navigationAction.request
         let url = request.url
         
+        if url != nil {
+            if (URLComponents(url: url!, resolvingAgainstBaseURL: false))?.scheme == "slide" {
+                webView.endEditing(true)
+                self.navigationController?.dismiss(animated: true) {
+                    _ = OAuth2Authorizer.sharedInstance.receiveRedirect(url!, completion: { (result) -> Void in
+                        print(result)
+                        switch result {
+                            
+                        case .failure(let error):
+                            print(error)
+                        case .success(let token):
+                            DispatchQueue.main.async(execute: { () -> Void in
+                                do {
+                                    try OAuth2TokenRepository.save(token: token, of: token.name)
+                                    (UIApplication.shared.delegate as! AppDelegate).login?.setToken(token: token)
+                                    NotificationCenter.default.post(name: OAuth2TokenRepositoryDidSaveTokenName, object: nil, userInfo: nil)
+                                } catch {
+                                    NotificationCenter.default.post(name: OAuth2TokenRepositoryDidFailToSaveTokenName, object: nil, userInfo: nil)
+                                    print(error)
+                                }
+                            })
+                        }
+                    })
+                }
+            } else if (url?.absoluteString ?? "").contains("reddit.com") {
+                self.title = "Log in"
+                self.navigationItem.rightBarButtonItems = []
+            }
+        }
+
         if url == nil || !(isAd(url: url!)) {
             
             decisionHandler(WKNavigationActionPolicy.allow)
@@ -124,7 +153,6 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
 
     func isAd(url: URL) -> Bool {
       let host = url.host
-        print(host ?? "nil")
        return host != nil && !host!.isEmpty && hostMatches(host: host!)
     }
     
