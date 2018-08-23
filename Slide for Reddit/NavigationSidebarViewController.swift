@@ -194,6 +194,11 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         tableView.backgroundColor = ColorUtil.foregroundColor
         tableView.separatorColor = ColorUtil.backgroundColor
     }
+    
+    override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
+        collapse()
+        completion?()
+    }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -213,6 +218,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     func configureViews() {
 
         header.frame.size.height = header.getEstHeight()
+        header.parentController = self.parentController
         view.addSubview(header)
 
         tableView.bounces = false
