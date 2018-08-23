@@ -204,6 +204,8 @@ class SingleSubredditViewController: MediaViewController {
         if toolbarEnabled {
             if single {
                 navigationController?.setToolbarHidden(false, animated: false)
+            } else {
+                parentController?.menuNav?.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - 64, width: parentController?.menuNav?.view.frame.width ?? 0, height: parentController?.menuNav?.view.frame.height ?? 0)
             }
             self.isToolbarHidden = false
             if fab == nil {
@@ -313,6 +315,10 @@ class SingleSubredditViewController: MediaViewController {
         if !SettingValues.bottomBarHidden || SettingValues.viewType {
             if single {
                 navigationController?.setToolbarHidden(true, animated: true)
+            } else {
+                UIView.animate(withDuration: 0.25) {
+                    self.parentController?.menuNav?.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height, width: self.parentController?.menuNav?.view.frame.width ?? 0, height: self.parentController?.menuNav?.view.frame.height ?? 0)
+                }
             }
             if !single && parentController != nil {
                 parentController!.drawerButton.isHidden = false
@@ -350,6 +356,10 @@ class SingleSubredditViewController: MediaViewController {
                     if !SettingValues.bottomBarHidden || SettingValues.viewType {
                         if self.single {
                             self.navigationController?.setToolbarHidden(false, animated: true)
+                        } else {
+                            UIView.animate(withDuration: 0.25) {
+                                self.parentController?.menuNav?.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - 64, width: self.parentController?.menuNav?.view.frame.width ?? 0, height: self.parentController?.menuNav?.view.frame.height ?? 0)
+                            }
                         }
                     }
                     self.isToolbarHidden = false
@@ -367,6 +377,10 @@ class SingleSubredditViewController: MediaViewController {
             if !SettingValues.bottomBarHidden || SettingValues.viewType {
                 if single {
                     navigationController?.setToolbarHidden(false, animated: true)
+                } else {
+                    UIView.animate(withDuration: 0.25) {
+                        self.parentController?.menuNav?.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - 64, width: self.parentController?.menuNav?.view.frame.width ?? 0, height: self.parentController?.menuNav?.view.frame.height ?? 0)
+                    }
                 }
                 if !single && parentController != nil {
                     self.parentController!.drawerButton.isHidden = true

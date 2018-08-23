@@ -335,7 +335,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         // 3- Adjust bottomSheet frame and initial position.
         let height = view.frame.height
         let width = view.frame.width
-        menuNav!.view.frame = CGRect(x: 0, y: self.view.frame.maxY - 48, width: width, height: height * 0.8)
+        menuNav!.view.frame = CGRect(x: 0, y: self.view.frame.maxY - 64, width: width, height: height * 0.8)
     }
 
     func restartVC() {
@@ -698,7 +698,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         drawerButton.contentMode = .center
         drawerButton.layer.cornerRadius = 20
         drawerButton.image = UIImage(named: "menu")?.getCopy(withSize: CGSize.square(size: 25), withColor: ColorUtil.fontColor)
-        //self.view.addSubview(drawerButton)
+        self.view.addSubview(drawerButton)
         drawerButton.translatesAutoresizingMaskIntoConstraints = false
         drawerButton.addTapGestureRecognizer {
             self.showDrawer(self.drawerButton)
@@ -714,10 +714,10 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         drawerButton.addGestureRecognizer(swipe)
         drawerButton.isHidden = true
         
-        //drawerButton.bottomAnchor == self.view.safeBottomAnchor - 8
-        //drawerButton.leadingAnchor == self.view.safeLeadingAnchor + 8
-        //drawerButton.heightAnchor == 40
-        //drawerButton.widthAnchor == 40
+        drawerButton.bottomAnchor == self.view.safeBottomAnchor - 8
+        drawerButton.leadingAnchor == self.view.safeLeadingAnchor + 8
+        drawerButton.heightAnchor == 40
+        drawerButton.widthAnchor == 40
     }
     
     public static var isOffline = false
