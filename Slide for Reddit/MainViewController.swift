@@ -792,6 +792,10 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                 toolbarItems = [settingsB, flexButton, offlineB]
             }
         }
+        
+        let swipe = UISwipeGestureRecognizer(target: self, action: #selector(showDrawer(_:)))
+        swipe.direction = .up
+        self.navigationController?.toolbar.addGestureRecognizer(swipe)
     }
 
     func checkForUpdate() {
@@ -807,10 +811,18 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                     case .success(let listing):
                         
                         let submissions = listing.children.flatMap({ $0 as? Link })
+                        if submissions.count < 2 {
+                            return
+                        }
+                        
                         let first = submissions[0]
                         let second = submissions[1]
                         var storedTitle = ""
                         var storedLink = ""
+                        
+                        let g1 = first.title.capturedGroups(withRegex: "(\\d+(\\.\\d+)+)")
+                        let g2 = second.title.capturedGroups(withRegex: "(\\d+(\\.\\d+)+)")
+                        let lastUpdate = g1.isEmpty ? (g2.isEmpty ? "" : g2[0][0]) : g1[0][0]
 
                         if first.stickied && first.title.contains(Bundle.main.releaseVersionNumber!) {
                             storedTitle = first.title
@@ -818,6 +830,12 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                         } else if second.stickied && second.title.contains(Bundle.main.releaseVersionNumber!) {
                             storedTitle = second.title
                             storedLink = second.permalink
+                        } else if Bundle.main.releaseVersionNumber!.contains(lastUpdate) || Bundle.main.releaseVersionNumber!.contains(lastUpdate) {
+                            storedTitle = g1.isEmpty ? second.title : first.title
+                            storedLink = g1.isEmpty ? second.permalink : first.permalink
+
+                            UserDefaults.standard.set(true, forKey: Bundle.main.releaseVersionNumber!)
+                            UserDefaults.standard.synchronize()
                         }
 
                         if !storedTitle.isEmpty && !storedLink.isEmpty {

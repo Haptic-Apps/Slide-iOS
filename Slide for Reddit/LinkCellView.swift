@@ -364,7 +364,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             if dtap == nil && SettingValues.submissionActionDoubleTap != .NONE {
                 dtap = UIShortTapGestureRecognizer.init(target: self, action: #selector(self.doDTap(_:)))
                 dtap!.numberOfTapsRequired = 2
-                self.addGestureRecognizer(dtap!)
+                self.contentView.addGestureRecognizer(dtap!)
             }
             
             if !full {

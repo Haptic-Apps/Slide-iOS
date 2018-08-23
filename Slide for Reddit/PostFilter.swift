@@ -28,10 +28,12 @@ class PostFilter {
         PostFilter.flairs = UserDefaults.standard.array(forKey: "flairfilters") as! [NSString]? ?? []
         PostFilter.openExternally = UserDefaults.standard.array(forKey: "openexternally") as! [NSString]? ?? []
         filters = UserDefaults.init(suiteName: "filters")
+        print(PostFilter.domains)
+
     }
 
     public static func saveAndUpdate() {
-        UserDefaults.standard.set(PostFilter.domains, forKey: "domainFilters")
+        UserDefaults.standard.set(PostFilter.domains, forKey: "domainfilters")
         UserDefaults.standard.set(PostFilter.selftext, forKey: "selftextfilters")
         UserDefaults.standard.set(PostFilter.titles, forKey: "titlefilters")
         UserDefaults.standard.set(PostFilter.profiles, forKey: "profilefilters")

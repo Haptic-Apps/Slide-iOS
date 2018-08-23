@@ -1347,7 +1347,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             }
             for i in (topCell + 1)...(dataArray.count - 1) {
                 contents = content[dataArray[i]]
-                if contents is RComment && matches(comment: contents as! RComment, sort: currentSort) && i != lastMoved {
+                if contents is RComment && matches(comment: contents as! RComment, sort: currentSort) && i > lastMoved {
                     goToCellTop(i: i)
                     lastMoved = i
                     break
@@ -1852,7 +1852,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
                     t = highlight(t)
                 }
 
-                cell.setComment(comment: content[thing] as! RComment, depth: cDepth[thing]!, parent: self, hiddenCount: count, date: lastSeen, author: submission?.author, text: t, isCollapsed: hiddenP, parentOP: parentOP ?? "", depthColors: commentDepthColors)
+                cell.setComment(comment: content[thing] as! RComment, depth: cDepth[thing]!, parent: self, hiddenCount: count, date: lastSeen, author: submission?.author, text: t, isCollapsed: hiddenP, parentOP: parentOP ?? "", depthColors: commentDepthColors, indexPath: indexPath)
             } else {
                 cell.setMore(more: (content[thing] as! RMore), depth: cDepth[thing]!, depthColors: commentDepthColors, parent: self)
             }

@@ -51,6 +51,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var topViewSpace: UIView!
     var title: TextDisplayStackView!
     
+    var currentPath = IndexPath(row: 0, section: 0)
+    
     var depthColors = [UIColor]()
     
     //Buttons for comment menu
@@ -1029,10 +1031,12 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     public var isCollapsed = false
     var dtap: UIShortTapGestureRecognizer?
 
-    func setComment(comment: RComment, depth: Int, parent: CommentViewController, hiddenCount: Int, date: Double, author: String?, text: NSAttributedString, isCollapsed: Bool, parentOP: String, depthColors: [UIColor]) {
+    func setComment(comment: RComment, depth: Int, parent: CommentViewController, hiddenCount: Int, date: Double, author: String?, text: NSAttributedString, isCollapsed: Bool, parentOP: String, depthColors: [UIColor], indexPath: IndexPath) {
         self.comment = comment
         self.cellContent = text
         self.isMore = false
+        
+        self.currentPath = indexPath
         self.contentView.backgroundColor = ColorUtil.foregroundColor
         loading = false
         if self.parent == nil {
@@ -1106,18 +1110,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         if isMore {
             return
         }
-        switch SettingValues.commentActionDoubleTap {
-        case .UPVOTE:
-            self.upvote(self)
-        case .DOWNVOTE:
-            self.downvote(self)
-        case .SAVE:
-            self.save()
-        case .MENU:
-            self.menu(self)
-        default:
-            break
-        }
+        parent?.doAction(cell: self, action: SettingValues.commentActionDoubleTap, indexPath: currentPath)
     }
 
     var cellContent: NSAttributedString?

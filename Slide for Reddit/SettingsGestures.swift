@@ -71,9 +71,9 @@ class SettingsGestures: UITableViewController {
         } else if indexPath.row == 3 {
             showAction(cell: rightLeftActionCell)
         } else if indexPath.row == 4 {
-            showAction(cell: leftRightActionCell)
-        } else if indexPath.row == 5 {
             showAction(cell: leftLeftActionCell)
+        } else if indexPath.row == 5 {
+            showAction(cell: leftRightActionCell)
         } else if indexPath.row == 6 {
             showAction(cell: doubleTapActionCell)
         } else if indexPath.row == 0 && indexPath.section == 1 {
@@ -92,6 +92,10 @@ class SettingsGestures: UITableViewController {
                     SettingValues.commentActionRightLeft = action
                 } else if cell == self.doubleTapActionCell {
                     SettingValues.commentActionDoubleTap = action
+                } else if cell == self.leftLeftActionCell {
+                        SettingValues.commentActionLeftLeft = action
+                } else if cell == self.leftRightActionCell {
+                        SettingValues.commentActionLeftRight = action
                 } else {
                     SettingValues.submissionActionDoubleTap = action
                     SubredditReorderViewController.changed = true
