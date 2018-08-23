@@ -172,14 +172,15 @@ class SingleSubredditViewController: MediaViewController {
 
         doHeadView()
 
-        navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
+        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: "", true)
+        navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white
 
         self.navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.isTranslucent = false
 
         showUI()
 
-        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub)
+        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub, true)
 
         self.automaticallyAdjustsScrollViewInsets = false
         self.edgesForExtendedLayout = UIRectEdge.all
@@ -753,7 +754,7 @@ class SingleSubredditViewController: MediaViewController {
     func doHeadView() {
         inHeadView.removeFromSuperview()
         inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarView?.frame.size.height ?? 20)))
-        self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: sub)
+        self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: sub, true)
         
         if !(navigationController is TapBehindModalViewController) {
             self.view.addSubview(inHeadView)
@@ -761,7 +762,7 @@ class SingleSubredditViewController: MediaViewController {
     }
     
     func resetColors() {
-        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub)
+        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub, true)
         setupFab(UIScreen.main.bounds.size)
         if parentController != nil {
             parentController?.colorChanged(ColorUtil.getColorForSub(sub: sub))
@@ -1882,10 +1883,10 @@ extension SingleSubredditViewController: ColorPickerViewDelegate {
             self.fab?.backgroundColor = accentChosen
         } else {
             let c = colorPickerView.colors[indexPath.row]
-            self.navigationController?.navigationBar.barTintColor = c
+            self.navigationController?.navigationBar.barTintColor = SettingValues.reduceColor ? ColorUtil.backgroundColor : c
             sideView.backgroundColor = c
             sideView.backgroundColor = c
-            inHeadView.backgroundColor = c
+            inHeadView.backgroundColor = SettingValues.reduceColor ? ColorUtil.backgroundColor : c
             if parentController != nil {
                 parentController?.colorChanged(c)
             }

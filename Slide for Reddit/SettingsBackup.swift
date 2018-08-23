@@ -26,8 +26,7 @@ class SettingsBackup: UITableViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: "")
-        navigationController?.navigationBar.tintColor = UIColor.white
+        setupBaseBarColors()
         navigationController?.setToolbarHidden(true, animated: false)
         doCells()
     }

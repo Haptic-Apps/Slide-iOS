@@ -37,7 +37,7 @@ extension UIImage {
 
     // TODO: These should make only one copy and do in-place operations on those
     func navIcon() -> UIImage {
-        return self.getCopy(withSize: CGSize(width: 25, height: 25), withColor: .white)
+        return self.getCopy(withSize: CGSize(width: 25, height: 25), withColor: SettingValues.reduceColor ? ColorUtil.fontColor : .white)
     }
 
     func smallIcon() -> UIImage {

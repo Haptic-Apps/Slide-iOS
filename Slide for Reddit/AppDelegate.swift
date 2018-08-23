@@ -135,8 +135,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         _ = ColorUtil.doInit()
 
-        let textAttributes = [NSForegroundColorAttributeName: UIColor.white]
-        UINavigationBar.appearance().titleTextAttributes = textAttributes
         doBios()
 
         SDWebImageManager.shared().imageCache.maxCacheAge = 1209600 //2 weeks

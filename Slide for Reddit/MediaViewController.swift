@@ -223,6 +223,9 @@ class MediaViewController: UIViewController, MediaVCDelegate {
 
     func setBarColors(color: UIColor) {
         self.color = color
+        if SettingValues.reduceColor {
+            self.color = ColorUtil.backgroundColor
+        }
         setNavColors()
     }
 

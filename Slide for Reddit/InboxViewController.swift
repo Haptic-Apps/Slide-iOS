@@ -41,8 +41,7 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
         self.title = "Inbox"
         UIApplication.shared.applicationIconBadgeNumber = 0
         navigationController?.setNavigationBarHidden(false, animated: true)
-        navigationController?.navigationBar.tintColor = .white
-        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: "")
+        setupBaseBarColors()
         let edit = UIButton.init(type: .custom)
         edit.setImage(UIImage.init(named: "edit")?.navIcon(), for: UIControlState.normal)
         edit.addTarget(self, action: #selector(self.new(_:)), for: UIControlEvents.touchUpInside)

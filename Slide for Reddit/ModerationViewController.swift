@@ -47,8 +47,7 @@ class ModerationViewController: UIPageViewController, UIPageViewControllerDataSo
         super.viewWillAppear(animated)
         self.title = "Moderation"
         navigationController?.setNavigationBarHidden(false, animated: true)
-        navigationController?.navigationBar.tintColor = .white
-        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: "")
+        setupBaseBarColors()
     }
 
     var time: Double = 0

@@ -240,7 +240,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         inHeadView.removeFromSuperview()
         inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarView?.frame.size.height ?? 20)))
         if submission != nil {
-            self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: submission!.subreddit)
+            self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: submission!.subreddit, true)
         }
         
         let landscape = size.width > size.height || (self.navigationController is TapBehindModalViewController && self.navigationController!.modalPresentationStyle == .pageSheet)
@@ -683,7 +683,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     func setupTitleView(_ sub: String) {
         let titleView = UILabel()
         titleView.text = sub
-        titleView.textColor = .white
+        titleView.textColor = SettingValues.reduceColor ? ColorUtil.fontColor : .white
         titleView.font = UIFont.boldSystemFont(ofSize: 17)
         let width = titleView.sizeThatFits(CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)).width
         titleView.frame = CGRect(origin: CGPoint.zero, size: CGSize(width: width, height: 500))
@@ -692,6 +692,17 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         titleView.addTapGestureRecognizer(action: {
             VCPresenter.openRedditLink("/r/\(sub)", self.navigationController, self)
         })
+        
+        if SettingValues.reduceColor {
+            var sideView = UIView()
+            sideView = UIView(frame: CGRect(x: -20, y: 15, width: 15, height: 15))
+            sideView.backgroundColor = ColorUtil.getColorForSub(sub: sub)
+            sideView.translatesAutoresizingMaskIntoConstraints = false
+            titleView.addSubview(sideView)
+            sideView.layer.cornerRadius = 7.5
+            sideView.clipsToBounds = true
+        }
+
     }
 
     func doBanner(_ link: RSubmission) {

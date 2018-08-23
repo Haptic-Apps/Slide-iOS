@@ -344,8 +344,7 @@ class SubredditReorderViewController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.tableView.separatorStyle = .none
-        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: "")
-        navigationController?.navigationBar.tintColor = UIColor.white
+        setupBaseBarColors()
         self.title = "Manage subscriptions"
     }
 

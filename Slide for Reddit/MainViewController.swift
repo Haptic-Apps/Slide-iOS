@@ -211,9 +211,9 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                                    completion: nil)
 
                 self.doCurrentPage(index!)
-                self.navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: subreddit)
-                self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
-                self.tabBar.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
+                self.navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: subreddit, true)
+                self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit, true)
+                self.tabBar.backgroundColor = ColorUtil.getColorForSub(sub: subreddit, true)
             } else {
                 //todo better sanitation
                 VCPresenter.openRedditLink("/r/" + subreddit.replacingOccurrences(of: " ", with: ""), self.navigationController, self)
@@ -413,11 +413,11 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
     func setupTabBar(_ subs: [String]) {
         tabBar = MDCTabBar.init(frame: CGRect.init(x: 0, y: -4 + (UIApplication.shared.statusBarView?.frame.size.height ?? 20), width: self.view.frame.size.width, height: 76))
-        tabBar.backgroundColor = ColorUtil.getColorForSub(sub: MainViewController.current)
+        tabBar.backgroundColor = ColorUtil.getColorForSub(sub: MainViewController.current, true)
         tabBar.itemAppearance = .titles
 
-        tabBar.selectedItemTintColor = UIColor.white
-        tabBar.unselectedItemTintColor = UIColor.white.withAlphaComponent(0.45)
+        tabBar.selectedItemTintColor = SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white
+        tabBar.unselectedItemTintColor = SettingValues.reduceColor ? ColorUtil.fontColor.withAlphaComponent(0.45) : UIColor.white.withAlphaComponent(0.45)
         tabBar.items = subs.enumerated().map { index, source in
             return UITabBarItem(title: source, image: nil, tag: index)
         }
@@ -425,7 +425,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         tabBar.selectionIndicatorTemplate = IndicatorTemplate()
         tabBar.delegate = self
         tabBar.selectedItem = tabBar.items[0]
-        tabBar.tintColor = ColorUtil.accentColorForSub(sub: "NONE")
+        tabBar.tintColor = ColorUtil.accentColorForSub(sub: subs.isEmpty ? "NONE" : subs[0])
         tabBar.sizeToFit()
         tabBar.frame.size.height = 48
         
@@ -442,40 +442,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     func didChooseSub(_ gesture: UITapGestureRecognizer) {
         let sub = gesture.view!.tag
         goToSubreddit(index: sub)
-    }
-
-    func generateSubs() -> (Int, [UIView]) {
-        var subs: [UIView] = []
-        var i = 0
-        var count = 0
-        for sub in Subscriptions.subreddits {
-            let label = UILabel()
-            label.text = "          \(sub)"
-            label.textColor = ColorUtil.fontColor
-            label.adjustsFontSizeToFitWidth = true
-            label.font = UIFont.boldSystemFont(ofSize: 14)
-
-            var sideView = UIView()
-            sideView = UIView(frame: CGRect(x: 10, y: 15, width: 15, height: 15))
-            sideView.backgroundColor = ColorUtil.getColorForSub(sub: sub)
-            sideView.translatesAutoresizingMaskIntoConstraints = false
-            label.addSubview(sideView)
-            sideView.layer.cornerRadius = 7.5
-            sideView.clipsToBounds = true
-            label.sizeToFit()
-            label.frame = CGRect.init(x: i, y: -5, width: Int(label.frame.size.width), height: 50)
-            i += Int(label.frame.size.width)
-            label.tag = count
-            count += 1
-            label.isUserInteractionEnabled = true
-            let tap = UITapGestureRecognizer.init(target: self, action: #selector(didChooseSub(_:)))
-            label.addGestureRecognizer(tap)
-
-            subs.append(label)
-
-        }
-
-        return (i, subs)
     }
 
     func doLogin(token: OAuth2Token?) {
@@ -512,18 +478,28 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         self.tintColor = ColorUtil.getColorForSub(sub: MainViewController.current)
         self.menuNav?.setSubreddit(subreddit: MainViewController.current)
         self.currentTitle = MainViewController.current
-        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: vc.sub)
-        self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: vc.sub)
+        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: vc.sub, true)
+        self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: vc.sub, true)
 
         if !(vc).loaded {
             (vc).load(reset: true)
         }
 
         let label = UILabel()
-        label.text = "   \(self.currentTitle)"
-        label.textColor = .white
+        label.text = "   \(SettingValues.reduceColor ? "    " : "")\(self.currentTitle)"
+        label.textColor = SettingValues.reduceColor ? ColorUtil.fontColor : .white
         label.adjustsFontSizeToFitWidth = true
         label.font = UIFont.boldSystemFont(ofSize: 20)
+        
+        if SettingValues.reduceColor {
+            var sideView = UIView()
+            sideView = UIView(frame: CGRect(x: 5, y: 5, width: 15, height: 15))
+            sideView.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
+            sideView.translatesAutoresizingMaskIntoConstraints = false
+            label.addSubview(sideView)
+            sideView.layer.cornerRadius = 7.5
+            sideView.clipsToBounds = true
+        }
 
         label.sizeToFit()
         let leftItem = UIBarButtonItem(customView: label)
@@ -537,7 +513,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         self.navigationController?.navigationBar.shadowImage = UIImage()
         self.navigationController?.navigationBar.layoutIfNeeded()
 
-        tabBar.backgroundColor = ColorUtil.getColorForSub(sub: MainViewController.current)
+        tabBar.backgroundColor = ColorUtil.getColorForSub(sub: MainViewController.current, true)
 
         tabBar.tintColor = ColorUtil.accentColorForSub(sub: MainViewController.current)
         if !selected {
@@ -662,7 +638,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
         inHeadView.removeFromSuperview()
         inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarView?.frame.size.height ?? 20)))
-        self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
+        self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle, true)
         
         if SettingValues.viewType {
             self.view.addSubview(inHeadView)
@@ -677,9 +653,9 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             self.navigationController?.navigationBar.shadowImage = UIImage()
             navigationController?.navigationBar.isTranslucent = false
 
-            navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: self.currentTitle)
-            tabBar.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
-            self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
+            navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: self.currentTitle, true)
+            tabBar.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle, true)
+            self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle, true)
 
             menuNav?.header.doColors()
             if menuNav?.tableView != nil {
@@ -853,8 +829,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
     func colorChanged(_ color: UIColor) {
         tabBar.tintColor = ColorUtil.accentColorForSub(sub: MainViewController.current)
-        tabBar.backgroundColor = color
-        inHeadView.backgroundColor = color
+        tabBar.backgroundColor = SettingValues.reduceColor ? ColorUtil.backgroundColor : color
+        inHeadView.backgroundColor = SettingValues.reduceColor ? ColorUtil.backgroundColor : color
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -940,7 +916,7 @@ extension MainViewController: MDCTabBarDelegate {
                 completion: nil)
 
         self.doCurrentPage(tabBar.items.index(of: item)!)
-        tabBar.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
+        tabBar.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle, true)
     }
 }
 

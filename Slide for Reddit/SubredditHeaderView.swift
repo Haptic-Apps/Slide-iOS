@@ -296,8 +296,6 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
     var parentController: (UIViewController & MediaVCDelegate)?
 
     func setSubreddit(subreddit: Subreddit, parent: MediaViewController, _ width: CGFloat) {
-        
-        
         self.subreddit = subreddit
         self.setWidth = width
         self.parentController = parent

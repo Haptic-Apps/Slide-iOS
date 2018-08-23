@@ -204,6 +204,9 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
 
     func setBarColors(color: UIColor) {
         self.color = color
+        if SettingValues.reduceColor {
+            self.color = self is CommentViewController ? ColorUtil.foregroundColor : ColorUtil.backgroundColor
+        }
         setNavColors()
     }
 

@@ -22,7 +22,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
     var openTo = 0
 
     public func colorPickerView(_ colorPickerView: ColorPickerView, didSelectItemAt indexPath: IndexPath) {
-        self.navigationController?.navigationBar.barTintColor = colorPickerView.colors[indexPath.row]
+        self.navigationController?.navigationBar.barTintColor = SettingValues.reduceColor ? ColorUtil.backgroundColor : colorPickerView.colors[indexPath.row]
     }
 
     func pickColor(sender: AnyObject) {
@@ -44,7 +44,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         })
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: {(_: UIAlertAction!) in
-            self.navigationController?.navigationBar.barTintColor = ColorUtil.getColorForUser(name: self.name)
+            self.navigationController?.navigationBar.barTintColor = SettingValues.reduceColor ? ColorUtil.backgroundColor : ColorUtil.getColorForUser(name: self.name)
         })
         
         alertController.addAction(somethingAction)
@@ -160,12 +160,12 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.title = AccountController.formatUsername(input: name, small: true)
-        navigationController?.navigationBar.tintColor = .white
         navigationController?.navigationBar.isTranslucent = false
         self.navigationController?.setNavigationBarHidden(false, animated: true)
         
         if navigationController != nil {
-            navigationController?.navigationBar.barTintColor = ColorUtil.getColorForUser(name: name)
+            navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: "", true)
+            navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white
         }
         let sort = UIButton.init(type: .custom)
         sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControlState.normal)

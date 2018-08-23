@@ -28,4 +28,16 @@ extension UIViewController {
             return self
         }
     }
+    
+    func setupBaseBarColors() {
+        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: "", true)
+        navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white
+        let textAttributes = [NSForegroundColorAttributeName: SettingValues.reduceColor ? ColorUtil.fontColor : .white]
+        navigationController?.navigationBar.titleTextAttributes = textAttributes
+        if SettingValues.reduceColor && ColorUtil.theme == .LIGHT {
+            UIApplication.shared.statusBarStyle = .default
+        } else {
+            UIApplication.shared.statusBarStyle = .lightContent
+        }
+    }
 }

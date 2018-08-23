@@ -20,6 +20,10 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
     var tintingMode: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "tintingMode")
     var tintOutside: UITableViewCell = UITableViewCell()
     var tintOutsideSwitch: UISwitch = UISwitch()
+    
+    var reduceColor: UITableViewCell = UITableViewCell()
+    var reduceColorSwitch: UISwitch = UISwitch()
+
     var isAccent = false
     
     var titleLabel = UILabel()
@@ -31,7 +35,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
             accentChosen = colorPickerView.colors[indexPath.row]
             titleLabel.textColor = self.accentChosen!
         } else {
-            self.navigationController?.navigationBar.barTintColor = colorPickerView.colors[indexPath.row]
+            setupBaseBarColors()
         }
     }
 
@@ -79,7 +83,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         })
 
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { (_: UIAlertAction!) in
-            self.navigationController?.navigationBar.barTintColor = ColorUtil.baseColor
+            self.setupBaseBarColors()
         })
 
         //alertController.addAction(custom)
@@ -145,6 +149,20 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         present(alertController, animated: true, completion: nil)
     }
 
+    public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
+        cell.textLabel?.text = text
+        cell.textLabel?.textColor = ColorUtil.fontColor
+        cell.backgroundColor = ColorUtil.foregroundColor
+        cell.textLabel?.numberOfLines = 0
+        cell.textLabel?.lineBreakMode = .byWordWrapping
+        if let s = switchV {
+            s.isOn = isOn
+            s.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+            cell.accessoryView = s
+        }
+        cell.selectionStyle = UITableViewCellSelectionStyle.none
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -158,12 +176,12 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: "")
-        navigationController?.navigationBar.tintColor = UIColor.white
+        setupBaseBarColors()
     }
 
     override func loadView() {
         super.loadView()
+        setupBaseBarColors()
 
         self.view.backgroundColor = ColorUtil.backgroundColor
         // set the title
@@ -212,12 +230,18 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         self.tintingMode.backgroundColor = ColorUtil.foregroundColor
         self.tintingMode.textLabel?.textColor = ColorUtil.fontColor
         self.tintingMode.detailTextLabel?.textColor = ColorUtil.fontColor
+        
+        createCell(reduceColor, reduceColorSwitch, isOn: SettingValues.reduceColor, text: "Reduce color throughout app (affects all navigation bars)")
 
         self.tableView.tableFooterView = UIView()
     }
 
     func switchIsChanged(_ changed: UISwitch) {
-        if changed == tintOutsideSwitch {
+        if changed == reduceColorSwitch {
+            MainViewController.needsRestart = true
+            SettingValues.reduceColor = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_reduceColor)
+        } else if changed == tintOutsideSwitch {
             SettingValues.onlyTintOutside = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_onlyTintOutside)
         } else {
@@ -229,6 +253,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
             self.tochange!.doCells()
             self.tochange!.tableView.reloadData()
         }
+        loadView()
         UserDefaults.standard.synchronize()
     }
 
@@ -259,6 +284,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
             case 1: return self.accent
             case 2: return self.base
             case 3: return self.night
+            case 4: return self.reduceColor
             default: fatalError("Unknown row in section 0")
             }
         case 1:
@@ -455,6 +481,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
                     self.tableView.reloadData(with: .automatic)
                     self.tochange!.doCells()
                     self.tochange!.tableView.reloadData()
+                    MainViewController.needsRestart = true
                 }
                 actionSheetController.addAction(saveActionButton)
             }
@@ -485,8 +512,8 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return 4    // section 0 has 2 rows
-        case 1: return 2    // section 1 has 1 row
+        case 0: return 5
+        case 1: return 2
         default: fatalError("Unknown number of sections")
         }
     }

@@ -96,6 +96,7 @@ class SettingValues {
     public static let pref_hideAutomod = "HIDE_AUTOMOD"
     public static let pref_swipeAnywhereComments = "SWIPE_ANYWHERE_COMMENTS"
     public static let pref_autoKeyboard = "SWIPE_ANYWHERE_COMMENTS"
+    public static let pref_reduceColor = "REDUCE_COLORS"
 
     public static var commentActionRightRight = CommentAction.UPVOTE
     public static var commentActionRightLeft = CommentAction.DOWNVOTE
@@ -154,6 +155,7 @@ class SettingValues {
     public static var isPro = true
     public static var lqLow = true
     public static var nsfwEnabled = false
+    public static var reduceColor = true
     public static var nsfwPreviews = false
     public static var hideNSFWCollection = false
     public static var domainInInfo = false
@@ -240,6 +242,7 @@ class SettingValues {
     public static func initialize() {
         let settings = UserDefaults.standard
         SettingValues.saveNSFWHistory = settings.bool(forKey: SettingValues.pref_saveNSFWHistory)
+        SettingValues.reduceColor = settings.bool(forKey: SettingValues.pref_reduceColor)
         SettingValues.saveHistory = settings.object(forKey: SettingValues.pref_saveHistory) == nil ? true : settings.bool(forKey: SettingValues.pref_saveHistory)
         SettingValues.multiColumn = settings.object(forKey: SettingValues.pref_multiColumn) == nil ? false : settings.bool(forKey: SettingValues.pref_multiColumn)
         

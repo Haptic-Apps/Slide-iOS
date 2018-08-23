@@ -44,8 +44,7 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: "")
-        navigationController?.navigationBar.tintColor = UIColor.white
+        setupBaseBarColors()
     }
 
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
