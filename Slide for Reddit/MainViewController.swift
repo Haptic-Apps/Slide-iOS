@@ -308,7 +308,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         toolbar!.backgroundColor = ColorUtil.foregroundColor
         toolbar!.horizontalAnchors == menuNav!.view.horizontalAnchors
         toolbar!.topAnchor == menuNav!.view.topAnchor
-        toolbar!.heightAnchor == 48
+        toolbar!.heightAnchor == 64
         //toolbar!.roundCorners([UIRectCorner.topLeft, UIRectCorner.topRight], radius: 15)
         self.menuNav?.setSubreddit(subreddit: MainViewController.current)
 //        menuNav?.modalPresentationStyle = .overCurrentContext
@@ -333,7 +333,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         
         // 3- Adjust bottomSheet frame and initial position.
         let height = view.frame.height
-        let width  = view.frame.width
+        let width = view.frame.width
         menuNav!.view.frame = CGRect(x: 0, y: self.view.frame.maxY - 48, width: width, height: height * 0.8)
     }
 
@@ -775,12 +775,12 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                 toolbar?.addSubview(menu)
                 toolbar?.addSubview(more)
                 
-                menu.heightAnchor == 48
-                menu.widthAnchor == 48
+                menu.heightAnchor == 56
+                menu.widthAnchor == 56
                 menu.leftAnchor == toolbar!.leftAnchor
                 
-                more.heightAnchor == 48
-                more.widthAnchor == 48
+                more.heightAnchor == 56
+                more.widthAnchor == 56
                 more.rightAnchor == toolbar!.rightAnchor
                 
                 navigationItem.rightBarButtonItem = sortB

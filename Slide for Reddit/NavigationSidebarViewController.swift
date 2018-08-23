@@ -113,11 +113,11 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     }
     
     private func percentCompleteForTranslation(_ recognizer: UIPanGestureRecognizer) -> CGFloat {
-        return (self.view.frame.minY - 48) / self.view.frame.size.height
+        return (self.view.frame.minY - 64) / self.view.frame.size.height
     }
     
     func collapse() {
-        let y = UIScreen.main.bounds.height - 48
+        let y = UIScreen.main.bounds.height - 64
         let animateBlock = { [weak self] in
             guard let strongSelf = self else { return }
             strongSelf.backgroundView.alpha = 0
