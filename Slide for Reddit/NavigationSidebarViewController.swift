@@ -23,6 +23,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     var parentController: MainViewController?
     var backgroundView = UIView()
     var topView: UIView?
+    var bottomOffset: CGFloat = 64
 
     var header: NavigationHeaderView = NavigationHeaderView()
 
@@ -34,6 +35,12 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     init(controller: MainViewController) {
         self.parentController = controller
         super.init(nibName: nil, bundle: nil)
+        
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            if UIScreen.main.bounds.height == 812 {
+                bottomOffset = 72
+            }
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -117,11 +124,11 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     }
     
     private func percentCompleteForTranslation(_ recognizer: UIPanGestureRecognizer) -> CGFloat {
-        return (self.view.frame.minY - 64) / self.view.frame.size.height
+        return (self.view.frame.minY - bottomOffset) / self.view.frame.size.height
     }
     
     func collapse() {
-        let y = UIScreen.main.bounds.height - 64
+        let y = UIScreen.main.bounds.height - bottomOffset
         let animateBlock = { [weak self] in
             guard let strongSelf = self else { return }
             strongSelf.backgroundView.alpha = 0

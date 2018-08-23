@@ -358,7 +358,7 @@ class SingleSubredditViewController: MediaViewController {
                             self.navigationController?.setToolbarHidden(false, animated: true)
                         } else {
                             UIView.animate(withDuration: 0.25) {
-                                self.parentController?.menuNav?.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - 64, width: self.parentController?.menuNav?.view.frame.width ?? 0, height: self.parentController?.menuNav?.view.frame.height ?? 0)
+                                self.parentController?.menuNav?.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - (self.parentController?.menuNav?.bottomOffset ?? 0), width: self.parentController?.menuNav?.view.frame.width ?? 0, height: self.parentController?.menuNav?.view.frame.height ?? 0)
                             }
                         }
                     }
@@ -379,7 +379,7 @@ class SingleSubredditViewController: MediaViewController {
                     navigationController?.setToolbarHidden(false, animated: true)
                 } else {
                     UIView.animate(withDuration: 0.25) {
-                        self.parentController?.menuNav?.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - 64, width: self.parentController?.menuNav?.view.frame.width ?? 0, height: self.parentController?.menuNav?.view.frame.height ?? 0)
+                        self.parentController?.menuNav?.view.frame = CGRect(x: 0, y: (UIScreen.main.bounds.height - (self.parentController?.menuNav?.bottomOffset ?? 0)), width: self.parentController?.menuNav?.view.frame.width ?? 0, height: self.parentController?.menuNav?.view.frame.height ?? 0)
                     }
                 }
                 if !single && parentController != nil {
