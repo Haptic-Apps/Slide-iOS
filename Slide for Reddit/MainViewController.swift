@@ -27,6 +27,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.viewWillAppearActions()
+        self.navigationController?.setToolbarHidden(true, animated: false)
     }
     
     public func viewWillAppearActions() {
@@ -305,7 +306,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         toolbar = UIView()
         menuNav?.topView = toolbar
         menuNav?.view.addSubview(toolbar!)
-        toolbar!.backgroundColor = ColorUtil.foregroundColor
+        toolbar!.backgroundColor = ColorUtil.foregroundColor.add(overlay: UIColor.white.withAlphaComponent(0.05))
         toolbar!.horizontalAnchors == menuNav!.view.horizontalAnchors
         toolbar!.topAnchor == menuNav!.view.topAnchor
         toolbar!.heightAnchor == 64

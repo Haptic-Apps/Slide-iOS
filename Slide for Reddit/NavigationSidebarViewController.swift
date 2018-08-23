@@ -70,7 +70,11 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
             callbacks.didBeginPanning?()
         case .changed:
             update(sender)
-            topView?.alpha = 0
+            if topView?.alpha ?? 0 != 0 {
+                UIView.animate(withDuration: 0.1) {
+                    self.topView?.alpha = 0
+                }
+            }
             backgroundView.alpha = velocity < 0 ? abs(percentCompleteForTranslation(sender)) : 1 - abs(percentCompleteForTranslation(sender))
         case .ended:
             let percentComplete = percentCompleteForTranslation(sender)
