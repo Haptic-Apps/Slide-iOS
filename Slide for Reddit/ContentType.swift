@@ -133,6 +133,20 @@ class ContentType {
         return hostContains(host: host, bases: ["imgur.com", "bildgur.de"]) && !isAlbum(uri: uri) && !isGif(uri: uri) && !isImage(uri: uri)
     }
     
+    public static func shouldOpenExternally(_ url : URL) -> Bool {
+        let type = getContentType(baseUrl: url)
+        if !SettingValues.internalGifView && (type == CType.GIF || type == CType.VID_ME || type == CType.STREAMABLE) {
+            return true
+        } else if !SettingValues.internalYouTube && type == CType.VIDEO {
+            return true
+        } else if !SettingValues.internalImageView && (type == CType.IMAGE || type == CType.IMGUR || type == CType.DEVIANTART || type == CType.XKCD || type == CType.TUMBLR) {
+            return true
+        } else if !SettingValues.internalAlbumView && type == CType.ALBUM {
+            return true
+        }
+        return false
+    }
+    
     /**
      * Attempt to determine the content type of a link from the URL
      *

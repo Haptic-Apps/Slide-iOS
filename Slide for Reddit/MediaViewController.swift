@@ -174,7 +174,7 @@ class MediaViewController: UIViewController, MediaVCDelegate {
             }
             VCPresenter.showVC(viewController: vc, popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
         }
-        if ContentType.isExternal(url) || (SettingValues.browser == SettingValues.BROWSER_OPERA || SettingValues.browser == SettingValues.BROWSER_FIREFOX || SettingValues.browser == SettingValues.BROWSER_SAFARI || SettingValues.browser == SettingValues.BROWSER_FOCUS || SettingValues.browser == SettingValues.BROWSER_CHROME) {
+        if ContentType.isExternal(url) || ContentType.shouldOpenExternally(url) {
             let oldUrl = url
             var newUrl = oldUrl
             

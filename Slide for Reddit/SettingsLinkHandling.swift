@@ -138,20 +138,19 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         }
     }
     
-
     func switchIsChanged(_ changed: UISwitch) {
         if changed == internalImage {
-            SettingValues.internalImageView = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_internalImageView)
+            SettingValues.internalImageView = !changed.isOn
+            UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_internalImageView)
         } else if changed == internalGif {
-            SettingValues.internalGifView = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_internalGifView)
+            SettingValues.internalGifView = !changed.isOn
+            UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_internalGifView)
         } else if changed == internalAlbum {
-            SettingValues.internalAlbumView = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_internalAlbumView)
+            SettingValues.internalAlbumView = !changed.isOn
+            UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_internalAlbumView)
         } else if changed == internalYouTube {
-            SettingValues.internalYouTube = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_internalYouTube)
+            SettingValues.internalYouTube = !changed.isOn
+            UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_internalYouTube)
         }
         UserDefaults.standard.synchronize()
         tableView.reloadData()
@@ -179,10 +178,10 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         self.title = "Link Handling"
         self.tableView.separatorStyle = .none
 
-        createCell(internalGifCell, internalGif, isOn: SettingValues.internalGifView, text: "Load gifs in app")
-        createCell(internalAlbumCell, internalAlbum, isOn: SettingValues.internalAlbumView, text: "Load albums in app")
-        createCell(internalImageCell, internalImage, isOn: SettingValues.internalImageView, text: "Load images in app")
-        createCell(internalYouTubeCell, internalYouTube, isOn: SettingValues.internalYouTube, text: "Load YouTube videos in app")
+        createCell(internalGifCell, internalGif, isOn: !SettingValues.internalGifView, text: "Open videos (gifs, v.redd.it, streamable.com) externally")
+        createCell(internalAlbumCell, internalAlbum, isOn: !SettingValues.internalAlbumView, text: "Open Imgur albums externally")
+        createCell(internalImageCell, internalImage, isOn: !SettingValues.internalImageView, text: "Open images (Imgur, direct image links) externally")
+        createCell(internalYouTubeCell, internalYouTube, isOn: !SettingValues.internalYouTube, text: "Open YouTube videos externally")
 
         self.tableView.tableFooterView = UIView()
 
@@ -302,11 +301,13 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         label.textColor = ColorUtil.baseAccent
         label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
+        var contentAttribute = NSMutableAttributedString(string: "Content Settings", attributes: [NSFontAttributeName: label.font, NSForegroundColorAttributeName: label.textColor])
+        contentAttribute.append(NSMutableAttributedString(string: "Additionally, you can open specific domains in the External Domains section below", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: label.textColor]))
         toReturn.backgroundColor = ColorUtil.backgroundColor
         switch section {
         case 0: label.text = "Web browser"
-        case 1: label.text = "Content Settings"
-        case 2: label.text =  "Open External Link Matching"
+        case 1: label.attributedText = contentAttribute
+        case 2: label.text =  "External Domains"
         default: label.text  = ""
         }
         return toReturn

@@ -163,7 +163,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
             strongSelf.topView?.layer.cornerRadius = 0
         }
 
-        UIView.animate(withDuration: 0.25,
+        UIView.animate(withDuration: 0.4,
                        delay: 0,
                        usingSpringWithDamping: 0.7,
                        initialSpringVelocity: 0.45,
@@ -182,7 +182,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
             strongSelf.topView?.backgroundColor = strongSelf.header.back.backgroundColor
         }
 
-        UIView.animate(withDuration: 0.25,
+        UIView.animate(withDuration: 0.4,
                        delay: 0,
                        usingSpringWithDamping: 0.7,
                        initialSpringVelocity: 0.45,
