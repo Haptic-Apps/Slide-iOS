@@ -95,7 +95,7 @@ class MediaViewController: UIViewController, MediaVCDelegate {
             return AlbumViewController.init(urlB: contentUrl!)
         } else if contentUrl != nil && ContentType.displayImage(t: type) && SettingValues.internalImageView || (type == .GIF && SettingValues.internalGifView) || type == .STREAMABLE || type == .VID_ME || (type == ContentType.CType.VIDEO && SettingValues.internalYouTube) {
             if !ContentType.isGifLoadInstantly(uri: contentUrl!) && type == .GIF {
-                if SettingValues.safariVC {
+                if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL {
                     let safariVC = SFHideSafariViewController(url: contentUrl!)
                     if #available(iOS 10.0, *) {
                         safariVC.preferredBarTintColor = ColorUtil.backgroundColor
@@ -109,7 +109,7 @@ class MediaViewController: UIViewController, MediaVCDelegate {
             }
             return ModalMediaViewController.init(url: contentUrl!, lq: lq, commentCallback, failureCallback)
         } else if type == ContentType.CType.LINK || type == ContentType.CType.NONE {
-            if SettingValues.safariVC {
+            if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL {
                 let safariVC = SFHideSafariViewController(url: contentUrl!)
                 if #available(iOS 10.0, *) {
                     safariVC.preferredBarTintColor = ColorUtil.backgroundColor
@@ -124,7 +124,7 @@ class MediaViewController: UIViewController, MediaVCDelegate {
         } else if type == ContentType.CType.REDDIT {
             return RedditLink.getViewControllerForURL(urlS: contentUrl!)
         }
-        if SettingValues.safariVC {
+        if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL {
             let safariVC = SFHideSafariViewController(url: contentUrl!)
             if #available(iOS 10.0, *) {
                 safariVC.preferredBarTintColor = ColorUtil.backgroundColor
@@ -158,7 +158,7 @@ class MediaViewController: UIViewController, MediaVCDelegate {
     func doShow(url: URL, lq: URL? = nil, heroView: UIView?, heroVC: UIViewController?) {
         failureCallback = { (url: URL) in
             let vc: UIViewController
-            if SettingValues.safariVC {
+            if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL {
                 let safariVC = SFHideSafariViewController(url: url)
                 if #available(iOS 10.0, *) {
                     safariVC.preferredBarTintColor = ColorUtil.backgroundColor
@@ -174,11 +174,26 @@ class MediaViewController: UIViewController, MediaVCDelegate {
             }
             VCPresenter.showVC(viewController: vc, popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
         }
-        if ContentType.isExternal(url) {
+        if ContentType.isExternal(url) || (SettingValues.browser == SettingValues.BROWSER_OPERA || SettingValues.browser == SettingValues.BROWSER_FIREFOX || SettingValues.browser == SettingValues.BROWSER_SAFARI || SettingValues.browser == SettingValues.BROWSER_CHROME) {
+            let oldUrl = url
+            var newUrl = oldUrl
+            
+            let browser = SettingValues.browser
+            let sanitized = oldUrl.absoluteString.replacingOccurrences(of: "https://", with: "").replacingOccurrences(of: "http://", with: "")
+            if browser == "safari" {
+            } else if browser == "chrome" {
+                newUrl = URL(string: "googlechrome://" + sanitized) ?? oldUrl
+            } else if browser == "opera" {
+                newUrl = URL(string: "opera-http://" + sanitized) ?? oldUrl
+            } else if browser == "firefox" {
+                newUrl = URL(string: "firefox://open-url?url=" + oldUrl.absoluteString) ?? oldUrl
+            }
+
+            print(newUrl.absoluteString)
             if #available(iOS 10.0, *) {
-                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                UIApplication.shared.open(newUrl, options: [:], completionHandler: nil)
             } else {
-                UIApplication.shared.openURL(url)
+                UIApplication.shared.openURL(newUrl)
             }
         } else {
             var urlString = url.absoluteString

@@ -13,9 +13,6 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
 
     var domainEnter = UISearchBar()
 
-    var useSafariVCCell: UITableViewCell = UITableViewCell()
-    var useSafariVC = UISwitch()
-
     var internalGifCell: UITableViewCell = UITableViewCell()
     var internalGif = UISwitch()
 
@@ -27,6 +24,12 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
 
     var internalYouTubeCell: UITableViewCell = UITableViewCell()
     var internalYouTube = UISwitch()
+    
+    var chromeIcon: UIImage?
+    var safariIcon: UIImage?
+    var safariInternalIcon: UIImage?
+    var internalIcon: UIImage?
+    var firefoxIcon: UIImage?
 
     //for future var dontLoadImagePreviewsCell: UITableViewCell = UITableViewCell()
     // var dontLoadImagePreviews = UISwitch()
@@ -34,6 +37,8 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        testBrowsers()
+        doImages()
         // Do any additional setup after loading the view.
     }
 
@@ -41,10 +46,70 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    func doImages() {
+        var first = GMColor.blue500Color()
+        var second = first.add(overlay: UIColor.white.withAlphaComponent(0.4))
+        var coloredIcon = UIImage.convertGradientToImage(colors: [first, second], frame: CGSize.square(size: 150))
+        safariIcon = coloredIcon.overlayWith(image: UIImage(named: "nav")!.getCopy(withSize: CGSize.square(size: 150)), posX: 0, posY: 0)
+        
+        first = GMColor.lightBlue500Color()
+        second = first.add(overlay: UIColor.white.withAlphaComponent(0.4))
+        coloredIcon = UIImage.convertGradientToImage(colors: [first, second], frame: CGSize.square(size: 150))
+        safariInternalIcon = coloredIcon.overlayWith(image: UIImage(named: "nav")!.getCopy(withSize: CGSize.square(size: 150)), posX: 0, posY: 0)
+        
+        internalIcon = UIImage(named: "roundicon")
+        
+        first = GMColor.orange500Color()
+        second = first.add(overlay: UIColor.white.withAlphaComponent(0.4))
+        coloredIcon = UIImage.convertGradientToImage(colors: [first, second], frame: CGSize.square(size: 150))
+        firefoxIcon = coloredIcon.overlayWith(image: UIImage(named: "nav")!.getCopy(withSize: CGSize.square(size: 150)), posX: 0, posY: 0)
+        
+        first = GMColor.yellow500Color()
+        second = first.add(overlay: UIColor.white.withAlphaComponent(0.4))
+        coloredIcon = UIImage.convertGradientToImage(colors: [first, second], frame: CGSize.square(size: 150))
+        chromeIcon = coloredIcon.overlayWith(image: UIImage(named: "nav")!.getCopy(withSize: CGSize.square(size: 150)), posX: 0, posY: 0)
+
+
+    }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupBaseBarColors()
+    }
+    
+    var browsers = [String]()
+    
+    func testBrowsers() {
+        browsers.removeAll()
+        let safariURL = URL(string: "http://google.com")!
+        let chromeURL = URL(string: "googlechrome://google.com")!
+        let operaURL = URL(string: "opera-http://google.com")!
+        let firefoxURL = URL(string: "firefox://google.com")!
+
+        let sharedApplication = UIApplication.shared
+        
+        if sharedApplication.canOpenURL(safariURL) {
+            browsers.append(SettingValues.BROWSER_SAFARI)
+        }
+        
+        if sharedApplication.canOpenURL(chromeURL) {
+            browsers.append(SettingValues.BROWSER_CHROME)
+        }
+        
+        if sharedApplication.canOpenURL(operaURL) {
+            browsers.append(SettingValues.BROWSER_OPERA)
+        }
+        
+        if sharedApplication.canOpenURL(firefoxURL) {
+            browsers.append(SettingValues.BROWSER_FIREFOX)
+        }
+        
+        browsers.append(SettingValues.BROWSER_INTERNAL)
+        
+        if #available(iOS 10, *) {
+            browsers.append(SettingValues.BROWSER_SAFARI_INTERNAL)
+        }
     }
 
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
@@ -72,9 +137,6 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         } else if changed == internalYouTube {
             SettingValues.internalYouTube = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_internalYouTube)
-        } else if changed == useSafariVC {
-            SettingValues.safariVC = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_safariVC)
         }
         UserDefaults.standard.synchronize()
         tableView.reloadData()
@@ -106,11 +168,6 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         createCell(internalAlbumCell, internalAlbum, isOn: SettingValues.internalAlbumView, text: "Load albums in app")
         createCell(internalImageCell, internalImage, isOn: SettingValues.internalImageView, text: "Load images in app")
         createCell(internalYouTubeCell, internalYouTube, isOn: SettingValues.internalYouTube, text: "Load YouTube videos in app")
-        createCell(useSafariVCCell, useSafariVC, isOn: SettingValues.safariVC, text: "Use Safari web view instead of internal website view")
-        useSafariVCCell.detailTextLabel?.text = "The Safari view will still show ads if you have purchased pro."
-        useSafariVCCell.detailTextLabel?.textColor = ColorUtil.fontColor
-        useSafariVCCell.detailTextLabel?.numberOfLines = 0
-        useSafariVCCell.detailTextLabel?.lineBreakMode = .byWordWrapping
 
         self.tableView.tableFooterView = UIView()
 
@@ -146,15 +203,49 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch indexPath.section {
         case 0:
+            let cell = UITableViewCell()
+            cell.backgroundColor = ColorUtil.foregroundColor
+            cell.backgroundColor = ColorUtil.foregroundColor
+            cell.textLabel?.textColor = ColorUtil.fontColor
+            
+            let text = browsers[indexPath.row]
+            if text == SettingValues.BROWSER_SAFARI {
+                cell.textLabel?.text = "External Safari"
+                cell.imageView?.image = safariIcon
+            } else if text == SettingValues.BROWSER_SAFARI_INTERNAL {
+                cell.textLabel?.text = "Internal Safari"
+                cell.imageView?.image = safariInternalIcon
+            } else if text == SettingValues.BROWSER_CHROME {
+                cell.textLabel?.text = "Chrome"
+                cell.imageView?.image = chromeIcon
+            } else if text == SettingValues.BROWSER_OPERA {
+                cell.textLabel?.text = "Opera"
+                cell.imageView?.image = UIImage.init(named: "world")?.toolbarIcon()
+            } else if text == SettingValues.BROWSER_FIREFOX {
+                cell.textLabel?.text = "FireFox"
+                cell.imageView?.image = firefoxIcon
+            } else if text == SettingValues.BROWSER_INTERNAL {
+                cell.textLabel?.text = "Internal browser (suppots ad-blocking with Pro)"
+                cell.imageView?.image = internalIcon
+            }
+            
+            cell.imageView?.layer.cornerRadius = 5
+            cell.imageView?.clipsToBounds = true
+            
+            if SettingValues.browser == browsers[indexPath.row] {
+                cell.accessoryType = .checkmark
+            }
+            
+            return cell
+        case 1:
             switch indexPath.row {
-            case 0: return self.useSafariVCCell
-            case 1: return self.internalImageCell
-            case 2: return self.internalGifCell
-            case 3: return self.internalAlbumCell
-            case 4: return self.internalYouTubeCell
+            case 0: return self.internalImageCell
+            case 1: return self.internalGifCell
+            case 2: return self.internalAlbumCell
+            case 3: return self.internalYouTubeCell
             default: fatalError("Unknown row in section 0")
             }
-        case 1:
+        case 2:
             let cell = UITableViewCell()
             cell.backgroundColor = ColorUtil.foregroundColor
             cell.accessoryType = .disclosureIndicator
@@ -173,6 +264,13 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         default: return UIView()
         }
     }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.section == 0 {
+            SettingValues.browser = browsers[indexPath.row]
+            tableView.reloadData()
+        }
+    }
 
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 70
@@ -185,8 +283,9 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
         toReturn.backgroundColor = ColorUtil.backgroundColor
         switch section {
-        case 0: label.text = "Content Settings"
-        case 1: label.text =  "Open External Link Matching"
+        case 0: label.text = "Web browser"
+        case 1: label.text = "Content Settings"
+        case 2: label.text =  "Open External Link Matching"
         default: label.text  = ""
         }
         return toReturn
@@ -194,8 +293,9 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return 5   // section 0 has 2 rows
-        case 1: return PostFilter.openExternally.count
+        case 0: return browsers.count
+        case 1: return 4   // section 0 has 2 rows
+        case 2: return PostFilter.openExternally.count
         default: fatalError("Unknown number of sections")
         }
     }

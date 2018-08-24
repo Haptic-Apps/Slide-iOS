@@ -360,6 +360,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey: Any] = [:]) -> Bool {
+        
+        let bUrl = url.absoluteString
+        if bUrl.startsWith("googlechrome://") || bUrl.startsWith("firefox://") || bUrl.startsWith("opera-http://") {
+            return false
+        }
+        
         if url.absoluteString.contains("/r/") {
             VCPresenter.openRedditLink(url.absoluteString.replacingOccurrences(of: "slide://", with: ""), nil, window?.rootViewController)
             return true

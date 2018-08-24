@@ -34,7 +34,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
         
         failureCallback = { (url: URL) in
             let vc: UIViewController
-            if SettingValues.safariVC {
+            if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL {
                 let safariVC = SFHideSafariViewController(url: url)
                 if #available(iOS 10.0, *) {
                     safariVC.preferredBarTintColor = ColorUtil.backgroundColor
@@ -91,7 +91,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
             return AlbumViewController.init(urlB: contentUrl!)
         } else if contentUrl != nil && ContentType.displayImage(t: type) && SettingValues.internalImageView || (type == .GIF && SettingValues.internalGifView) || type == .STREAMABLE || type == .VID_ME || (type == ContentType.CType.VIDEO && SettingValues.internalYouTube) {
             if !ContentType.isGifLoadInstantly(uri: contentUrl!) && type == .GIF {
-                if SettingValues.safariVC {
+                if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL {
                     let safariVC = SFHideSafariViewController(url: contentUrl!)
                     if #available(iOS 10.0, *) {
                         safariVC.preferredBarTintColor = ColorUtil.backgroundColor
@@ -101,11 +101,11 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
                     }
                     return safariVC
                 }
-                return WebsiteViewController(url: baseUrl, subreddit: link == nil ? "" : link.subreddit)
+                return WebsiteViewController(url: contentUrl!, subreddit: link == nil ? "" : link.subreddit)
             }
             return ModalMediaViewController.init(url: contentUrl!, lq: lq, commentCallback, failureCallback)
         } else if type == ContentType.CType.LINK || type == ContentType.CType.NONE {
-            if SettingValues.safariVC {
+            if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL {
                 let safariVC = SFHideSafariViewController(url: contentUrl!)
                 if #available(iOS 10.0, *) {
                     safariVC.preferredBarTintColor = ColorUtil.backgroundColor
@@ -120,7 +120,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
         } else if type == ContentType.CType.REDDIT {
             return RedditLink.getViewControllerForURL(urlS: contentUrl!)
         }
-        if SettingValues.safariVC {
+        if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL {
             let safariVC = SFHideSafariViewController(url: contentUrl!)
             if #available(iOS 10.0, *) {
                 safariVC.preferredBarTintColor = ColorUtil.backgroundColor
@@ -154,7 +154,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
     func doShow(url: URL, lq: URL? = nil, heroView: UIView?, heroVC: UIViewController?) {
         failureCallback = { (url: URL) in
             let vc: UIViewController
-            if SettingValues.safariVC {
+            if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL {
                 let safariVC = SFHideSafariViewController(url: url)
                 if #available(iOS 10.0, *) {
                     safariVC.preferredBarTintColor = ColorUtil.backgroundColor

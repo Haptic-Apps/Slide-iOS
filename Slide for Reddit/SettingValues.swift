@@ -97,6 +97,14 @@ class SettingValues {
     public static let pref_swipeAnywhereComments = "SWIPE_ANYWHERE_COMMENTS"
     public static let pref_autoKeyboard = "SWIPE_ANYWHERE_COMMENTS"
     public static let pref_reduceColor = "REDUCE_COLORS"
+    public static let pref_browser = "WEB_BROWSER"
+    
+    public static let BROWSER_INTERNAL = "internal"
+    public static let BROWSER_FIREFOX = "firefox"
+    public static let BROWSER_SAFARI = "safari"
+    public static let BROWSER_SAFARI_INTERNAL = "safariinternal"
+    public static let BROWSER_CHROME = "chrome"
+    public static let BROWSER_OPERA = "opera"
 
     public static var commentActionRightRight = CommentAction.UPVOTE
     public static var commentActionRightLeft = CommentAction.DOWNVOTE
@@ -105,6 +113,7 @@ class SettingValues {
     public static var commentActionDoubleTap = CommentAction.NONE
     public static var submissionActionDoubleTap = CommentAction.NONE
 
+    public static var browser = "firefox"
     public static var viewType = true
     public static var commentTwoSwipe = true
     public static var hiddenFAB = true
@@ -174,7 +183,6 @@ class SettingValues {
     public static var highlightOp = true
     public static var smallerTag = true
     public static var biometrics = true
-    public static var safariVC = true
     public static var nightStart = 1
     public static var nightStartMin = 0
     public static var nightEnd = 5
@@ -321,7 +329,6 @@ class SettingValues {
         SettingValues.leftThumbnail = settings.bool(forKey: SettingValues.pref_leftThumbnail)
         SettingValues.hideAutomod = settings.bool(forKey: SettingValues.pref_hideAutomod)
         SettingValues.biometrics = settings.bool(forKey: SettingValues.pref_biometrics)
-        SettingValues.safariVC = settings.object(forKey: SettingValues.pref_safariVC) == nil ? true : settings.bool(forKey: SettingValues.pref_safariVC)
         SettingValues.enlargeLinks = settings.object(forKey: SettingValues.pref_enlargeLinks) == nil ? true : settings.bool(forKey: SettingValues.pref_enlargeLinks)
         SettingValues.commentFullScreen = settings.object(forKey: SettingValues.pref_commentFullScreen) == nil ? true : settings.bool(forKey: SettingValues.pref_commentFullScreen)
         SettingValues.showLinkContentType = settings.object(forKey: SettingValues.pref_showLinkContentType) == nil ? true : settings.bool(forKey: SettingValues.pref_showLinkContentType)
@@ -359,6 +366,7 @@ class SettingValues {
         SettingValues.commentsInTitle = settings.bool(forKey: SettingValues.pref_commentsInTitle)
         SettingValues.postViewMode = PostViewType.init(rawValue: settings.string(forKey: SettingValues.pref_postViewMode) ?? "card") ?? .CARD
         SettingValues.actionBarMode = ActionBarMode.init(rawValue: settings.string(forKey: SettingValues.pref_actionbarMode) ?? "full") ?? .FULL
+        SettingValues.browser = settings.string(forKey: SettingValues.pref_browser) ?? SettingValues.BROWSER_INTERNAL
         SettingValues.flatMode = settings.bool(forKey: SettingValues.pref_flatMode)
         SettingValues.postImageMode = PostImageMode.init(rawValue: settings.string(forKey: SettingValues.pref_postImageMode) ?? "full") ?? .CROPPED_IMAGE
         SettingValues.fabType = FabType.init(rawValue: settings.string(forKey: SettingValues.pref_fabType) ?? "hide") ?? .HIDE_READ
