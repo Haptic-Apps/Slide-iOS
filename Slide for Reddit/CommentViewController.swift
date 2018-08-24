@@ -1597,7 +1597,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                     self.tableView.beginUpdates()
 
                     var indexPaths: [IndexPath] = []
-                    for row in (i + 1)..<counter {
+                    for row in (i + 1)...counter {
                         indexPaths.append(IndexPath(row: row, section: 0))
                     }
                     self.tableView.insertRows(at: indexPaths, with: .fade)

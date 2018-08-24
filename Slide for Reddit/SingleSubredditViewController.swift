@@ -619,7 +619,7 @@ class SingleSubredditViewController: MediaViewController {
             let subbB = UIBarButtonItem.init(customView: subb)
 
             let info = UIButton.init(type: .custom)
-            info.setImage(UIImage.init(named: "info")?.navIcon(), for: UIControlState.normal)
+            info.setImage(UIImage.init(named: "info")?.toolbarIcon(), for: UIControlState.normal)
             info.addTarget(self, action: #selector(self.doDisplaySidebar), for: UIControlEvents.touchUpInside)
             info.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let infoB = UIBarButtonItem.init(customView: info)

@@ -67,30 +67,30 @@ class NavigationHeaderView: UIView {
         // Set up title children
         self.account = UIButton.init(type: .custom).then {
             $0.imageView?.contentMode = UIViewContentMode.scaleAspectFit
-            $0.setImage(UIImage.init(named: "profile")!.getCopy(withSize: .square(size: 30)), for: UIControlState.normal)
+            $0.setImage(UIImage.init(named: "profile")!.getCopy(withSize: .square(size: 30), withColor: SettingValues.reduceColor ? ColorUtil.fontColor : .white), for: UIControlState.normal)
         }
 
         self.more = UIButton.init(type: .custom).then {
             $0.imageView?.contentMode = UIViewContentMode.scaleAspectFit
-            $0.setImage(UIImage.init(named: "moreh")!.getCopy(withSize: .square(size: 30)), for: UIControlState.normal)
+            $0.setImage(UIImage.init(named: "moreh")!.getCopy(withSize: .square(size: 30), withColor: SettingValues.reduceColor ? ColorUtil.fontColor : .white), for: UIControlState.normal)
         }
 
         self.inbox = UIButton.init(type: .custom).then {
             $0.imageView?.contentMode = UIViewContentMode.scaleAspectFit
-            $0.setImage(UIImage.init(named: "inbox")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControlState.normal)
+            $0.setImage(UIImage.init(named: "inbox")!.getCopy(withSize: .square(size: 30), withColor: SettingValues.reduceColor ? ColorUtil.fontColor : .white), for: UIControlState.normal)
             $0.isUserInteractionEnabled = true
         }
         
         self.mod = UIButton.init(type: .custom).then {
             $0.imageView?.contentMode = UIViewContentMode.scaleAspectFit
-            $0.setImage(UIImage.init(named: "mod")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControlState.normal)
+            $0.setImage(UIImage.init(named: "mod")!.getCopy(withSize: .square(size: 30), withColor: SettingValues.reduceColor ? ColorUtil.fontColor : .white), for: UIControlState.normal)
             $0.isUserInteractionEnabled = true
             $0.isHidden = true
         }
 
         self.settings = UIButton.init(type: .custom).then {
             $0.imageView?.contentMode = UIViewContentMode.scaleAspectFit
-            $0.setImage(UIImage.init(named: "settings")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControlState.normal)
+            $0.setImage(UIImage.init(named: "settings")!.getCopy(withSize: .square(size: 30), withColor: SettingValues.reduceColor ? ColorUtil.fontColor : .white), for: UIControlState.normal)
             $0.isUserInteractionEnabled = true
         }
 
@@ -183,6 +183,10 @@ class NavigationHeaderView: UIView {
     func doColors(_ sub: String) {
         doColors()
         back.backgroundColor = ColorUtil.getColorForSub(sub: sub)
+        if SettingValues.reduceColor {
+            title.textColor = ColorUtil.fontColor
+            back.backgroundColor = ColorUtil.foregroundColor
+        }
     }
 
     func doColors() {
