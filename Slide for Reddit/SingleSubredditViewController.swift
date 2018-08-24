@@ -195,6 +195,9 @@ class SingleSubredditViewController: MediaViewController {
             tableView.reloadData()
         }
 
+        if single {
+            setupBaseBarColors()
+        }
         self.view.backgroundColor = ColorUtil.backgroundColor
     }
 
@@ -496,19 +499,19 @@ class SingleSubredditViewController: MediaViewController {
     func doFabActions() {
         if UserDefaults.standard.bool(forKey: "FAB_SHOWN") == false {
             let a = UIAlertController(title: "Subreddit Action Button", message: "This is the subreddit action button!\n\nThis button's actions can be customized by long pressing on it at any time, and this button can be removed completely in Settings > General.", preferredStyle: .alert)
-            a.addAction(UIAlertAction(title: "Change actions", style: .default, handler: { (_) in
+            a.addAction(UIAlertAction(title: "Change action", style: .default, handler: { (_) in
                 UserDefaults.standard.set(true, forKey: "FAB_SHOWN")
                 UserDefaults.standard.synchronize()
                 self.changeFab()
             }))
-            a.addAction(UIAlertAction(title: "Disable button (can be enabled again in Settings)", style: .default, handler: { (_) in
+            a.addAction(UIAlertAction(title: "Hide button", style: .default, handler: { (_) in
                 SettingValues.hiddenFAB = true
                 UserDefaults.standard.set(true, forKey: SettingValues.pref_hiddenFAB)
                 UserDefaults.standard.set(true, forKey: "FAB_SHOWN")
                 UserDefaults.standard.synchronize()
                 self.setupFab(UIScreen.main.bounds.size)
             }))
-            a.addAction(UIAlertAction(title: "Close and continue", style: .default, handler: { (_) in
+            a.addAction(UIAlertAction(title: "Continue", style: .default, handler: { (_) in
                 UserDefaults.standard.set(true, forKey: "FAB_SHOWN")
                 UserDefaults.standard.synchronize()
                 self.doFabActions()
@@ -534,6 +537,11 @@ class SingleSubredditViewController: MediaViewController {
     }
     
     func changeFab() {
+        if !UserDefaults.standard.bool(forKey: "FAB_SHOWN") {
+            UserDefaults.standard.set(true, forKey: "FAB_SHOWN")
+            UserDefaults.standard.synchronize()
+        }
+
         let actionSheetController: UIAlertController = UIAlertController(title: "Change button type", message: "", preferredStyle: .alert)
 
         let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
@@ -601,6 +609,12 @@ class SingleSubredditViewController: MediaViewController {
             sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let sortB = UIBarButtonItem.init(customView: sort)
 
+            subb = UIButton.init(type: .custom)
+            subb.setImage(UIImage.init(named: Subscriptions.subreddits.contains(sub) ? "subbed" : "addcircle")?.navIcon(), for: UIControlState.normal)
+            subb.addTarget(self, action: #selector(self.subscribeSingle(_:)), for: UIControlEvents.touchUpInside)
+            subb.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+            let subbB = UIBarButtonItem.init(customView: subb)
+
             if SettingValues.bottomBarHidden || SettingValues.viewType {
                 more = UIButton.init(type: .custom)
                 more.setImage(UIImage.init(named: "moreh")?.navIcon(), for: UIControlState.normal)
@@ -608,7 +622,7 @@ class SingleSubredditViewController: MediaViewController {
                 more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
                 let moreB = UIBarButtonItem.init(customView: more)
                 
-                navigationItem.rightBarButtonItems = [moreB, sortB]
+                navigationItem.rightBarButtonItems = [moreB, sortB, subbB]
             } else {
                 more = UIButton.init(type: .custom)
                 more.setImage(UIImage.init(named: "moreh")?.menuIcon(), for: UIControlState.normal)
@@ -616,7 +630,7 @@ class SingleSubredditViewController: MediaViewController {
                 more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
                 let moreB = UIBarButtonItem.init(customView: more)
                 
-                navigationItem.rightBarButtonItems = [sortB]
+                navigationItem.rightBarButtonItems = [sortB, subbB]
                 let flexButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil)
                 
                 toolbarItems = [flexButton, moreB]
@@ -719,24 +733,24 @@ class SingleSubredditViewController: MediaViewController {
             Subscriptions.unsubscribe(sub, session: session!)
             subChanged = false
             BannerUtil.makeBanner(text: "Unsubscribed", color: ColorUtil.accentColorForSub(sub: sub), seconds: 3, context: self, top: true)
-            subb.setImage(UIImage.init(named: "addcircle")?.getCopy(withColor: ColorUtil.fontColor), for: UIControlState.normal)
+            subb.setImage(UIImage.init(named: "addcircle")?.navIcon(), for: UIControlState.normal)
         } else {
-            let alrController = UIAlertController.init(title: "Subscribe to \(sub)", message: nil, preferredStyle: .actionSheet)
+            let alrController = UIAlertController.init(title: "Follow r/\(sub)", message: nil, preferredStyle: .actionSheet)
             if AccountController.isLoggedIn {
-                let somethingAction = UIAlertAction(title: "Add to sub list and subscribe", style: UIAlertActionStyle.default, handler: { (_: UIAlertAction!) in
+                let somethingAction = UIAlertAction(title: "Subscribe", style: UIAlertActionStyle.default, handler: { (_: UIAlertAction!) in
                     Subscriptions.subscribe(self.sub, true, session: self.session!)
                     self.subChanged = true
-                    BannerUtil.makeBanner(text: "Subscribed", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 3, context: self, top: true)
-                    self.subb.setImage(UIImage.init(named: "subbed")?.getCopy(withColor: ColorUtil.fontColor), for: UIControlState.normal)
+                    BannerUtil.makeBanner(text: "Subscribed to r/\(self.sub)", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 3, context: self, top: true)
+                    self.subb.setImage(UIImage.init(named: "subbed")?.navIcon(), for: UIControlState.normal)
                 })
                 alrController.addAction(somethingAction)
             }
 
-            let somethingAction = UIAlertAction(title: "Just add to sub list", style: UIAlertActionStyle.default, handler: { (_: UIAlertAction!) in
+            let somethingAction = UIAlertAction(title: "Casually subscribe", style: UIAlertActionStyle.default, handler: { (_: UIAlertAction!) in
                 Subscriptions.subscribe(self.sub, false, session: self.session!)
                 self.subChanged = true
-                BannerUtil.makeBanner(text: "Added to subreddit list", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 3, context: self, top: true)
-                self.subb.setImage(UIImage.init(named: "subbed")?.getCopy(withColor: ColorUtil.fontColor), for: UIControlState.normal)
+                BannerUtil.makeBanner(text: "r/\(self.sub) added to your subreddit list", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 3, context: self, top: true)
+                self.subb.setImage(UIImage.init(named: "subbed")?.navIcon(), for: UIControlState.normal)
             })
             alrController.addAction(somethingAction)
 

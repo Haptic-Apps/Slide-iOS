@@ -24,6 +24,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     var backgroundView = UIView()
     var topView: UIView?
     var bottomOffset: CGFloat = 64
+    var muxColor = ColorUtil.foregroundColor
 
     var header: NavigationHeaderView = NavigationHeaderView()
 
@@ -64,6 +65,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     var callbacks = Callbacks()
     
     var gestureRecognizer: UIPanGestureRecognizer!
+    var lastPercentY = CGFloat(0)
     
     // MARK: User interaction
     @objc func viewPanned(sender: UIPanGestureRecognizer) {
@@ -74,25 +76,13 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         
         switch sender.state {
         case .began:
+            lastPercentY = CGFloat(0)
             callbacks.didBeginPanning?()
-            if topView?.alpha == 0 {
-                UIView.animate(withDuration: 0.25) {
-                    self.topView?.backgroundColor = ColorUtil.foregroundColor.add(overlay: UIColor.white.withAlphaComponent(0.05))
-                }
-            } else {
-                UIView.animate(withDuration: 0.25) {
-                    self.topView?.backgroundColor = self.header.back.backgroundColor
-                }
-            }
         case .changed:
             update(sender)
-            backgroundView.alpha = velocity < 0 ? abs(percentCompleteForTranslation(sender)) : 1 - abs(percentCompleteForTranslation(sender))
-            topView?.alpha = velocity > 0 ? 0.8 - abs(percentCompleteForTranslation(sender)) : abs(percentCompleteForTranslation(sender) )
         case .ended:
             let percentComplete = percentCompleteForTranslation(sender)
-    
-            self.backgroundView.alpha = percentComplete
-            if percentComplete > 0.25 || abs(velocity) > 350 {
+            if (velocity < 0 ? percentComplete : 1 - percentComplete) > 0.25 || abs(velocity) > 350 {
                 if velocity < 0 {
                     expand()
                 } else {
@@ -130,10 +120,29 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         let y = self.view.frame.minY
         self.view.frame = CGRect(x: 0, y: max(y + translation.y, UIScreen.main.bounds.height - self.view.frame.height), width: view.frame.width, height: view.frame.height)
         recognizer.setTranslation(CGPoint.zero, in: self.view)
+        
+        let percentMoved = percentCompleteForTranslation(recognizer)
+        let normalizedPercentBar = min(1, percentMoved * 5)
+        let normalizedAlphaBar = percentMoved < 0.5 ? 0 : ((percentMoved - 0.5) * 5)
+        
+        if percentMoved < 0.01 {
+            UIView.animate(withDuration: 0.1) {
+                self.topView?.backgroundColor = self.muxColor
+            }
+        } else {
+            UIView.animate(withDuration: 0.1) {
+                self.topView?.backgroundColor = self.header.back.backgroundColor
+            }
+        }
+
+        backgroundView.alpha = percentMoved
+        topView?.alpha = 1 - normalizedAlphaBar
+        topView?.layer.cornerRadius = (30 * normalizedPercentBar)
     }
     
     private func percentCompleteForTranslation(_ recognizer: UIPanGestureRecognizer) -> CGFloat {
-        return (self.view.frame.minY - bottomOffset) / self.view.frame.size.height
+        let percent = (UIScreen.main.bounds.height - self.view.frame.maxY - bottomOffset) / (self.view.frame.size.height - bottomOffset) * -1
+        return 1 - percent
     }
     
     func collapse() {
@@ -143,16 +152,20 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
             strongSelf.backgroundView.alpha = 0
             strongSelf.topView?.alpha = 1
             strongSelf.view.frame = CGRect(x: 0, y: y, width: strongSelf.view.frame.width, height: strongSelf.view.frame.height)
-            strongSelf.topView?.backgroundColor =  ColorUtil.foregroundColor.add(overlay: UIColor.white.withAlphaComponent(0.05))
+            strongSelf.topView?.backgroundColor = ColorUtil.foregroundColor.add(overlay: UIColor.white.withAlphaComponent(0.05))
+            strongSelf.topView?.layer.cornerRadius = 0
         }
         
-        let completionBlock: (Bool) -> Void = { finished in
-        }
         self.callbacks.didCollapse?()
+        
+        let completionBlock: (Bool) -> Void = { [weak self] finished in
+            guard let strongSelf = self else { return }
+            strongSelf.topView?.layer.cornerRadius = 0
+        }
 
         UIView.animate(withDuration: 0.25,
                        delay: 0,
-                       usingSpringWithDamping: 0.8,
+                       usingSpringWithDamping: 0.7,
                        initialSpringVelocity: 0.45,
                        options: .curveEaseInOut,
                        animations: animateBlock,
@@ -168,17 +181,14 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
             strongSelf.view.frame = CGRect(x: 0, y: y, width: strongSelf.view.frame.width, height: strongSelf.view.frame.height)
             strongSelf.topView?.backgroundColor = strongSelf.header.back.backgroundColor
         }
-        
-        let completionBlock: (Bool) -> Void = { finished in
-        }
 
         UIView.animate(withDuration: 0.25,
                        delay: 0,
-                       usingSpringWithDamping: 0.8,
+                       usingSpringWithDamping: 0.7,
                        initialSpringVelocity: 0.45,
                        options: .curveEaseInOut,
                        animations: animateBlock,
-                       completion: completionBlock)
+                       completion: nil)
     }
     
     func configureBackground() {

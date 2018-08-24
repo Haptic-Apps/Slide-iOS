@@ -169,18 +169,18 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
             BannerUtil.makeBanner(text: "Unsubscribed from r/\(subreddit!.displayName)", color: ColorUtil.accentColorForSub(sub: subreddit!.displayName), seconds: 3, context: parentController, top: true)
 
         } else {
-            let alrController = UIAlertController.init(title: "Subscribe to \(subreddit!.displayName)", message: nil, preferredStyle: .actionSheet)
+            let alrController = UIAlertController.init(title: "Follow \(subreddit!.displayName)", message: nil, preferredStyle: .actionSheet)
             if AccountController.isLoggedIn {
-                let somethingAction = UIAlertAction(title: "Add to sub list and subscribe", style: UIAlertActionStyle.default, handler: { (_: UIAlertAction!) in
+                let somethingAction = UIAlertAction(title: "Subscribe", style: UIAlertActionStyle.default, handler: { (_: UIAlertAction!) in
                     Subscriptions.subscribe(self.subreddit!.displayName, true, session: (UIApplication.shared.delegate as! AppDelegate).session!)
-                    BannerUtil.makeBanner(text: "Subscribed", color: ColorUtil.accentColorForSub(sub: self.subreddit!.displayName), seconds: 3, context: self.parentController, top: true)
+                    BannerUtil.makeBanner(text: "Subscribed to r/\(self.subreddit!.displayName)", color: ColorUtil.accentColorForSub(sub: self.subreddit!.displayName), seconds: 3, context: self.parentController, top: true)
                 })
                 alrController.addAction(somethingAction)
             }
             
-            let somethingAction = UIAlertAction(title: "Just add to sub list", style: UIAlertActionStyle.default, handler: { (_: UIAlertAction!) in
+            let somethingAction = UIAlertAction(title: "Casually subscribe", style: UIAlertActionStyle.default, handler: { (_: UIAlertAction!) in
                 Subscriptions.subscribe(self.subreddit!.displayName, false, session: (UIApplication.shared.delegate as! AppDelegate).session!)
-                BannerUtil.makeBanner(text: "Added to subreddit list", color: ColorUtil.accentColorForSub(sub: self.subreddit!.displayName), seconds: 3, context: self.parentController, top: true)
+                BannerUtil.makeBanner(text: "r/\(self.subreddit!.displayName) added to your subreddit list", color: ColorUtil.accentColorForSub(sub: self.subreddit!.displayName), seconds: 3, context: self.parentController, top: true)
             })
             alrController.addAction(somethingAction)
             
@@ -195,7 +195,6 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
             }
             
             parentController?.present(alrController, animated: true, completion: {})
-            
         }
     }
 

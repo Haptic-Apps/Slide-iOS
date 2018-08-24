@@ -28,21 +28,21 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
         percentComplete = fabs(point.x - self.view.frame.size.width) / self.view.frame.size.width
 
         if viewToMux != nil && color1 != nil && color2 != nil {
-            let color = fadeFromColor(fromColor: color1!, toColor: color2!, withPercentage: percentComplete)
+            let color = ColorMuxPagingViewController.fadeFromColor(fromColor: color1!, toColor: color2!, withPercentage: percentComplete)
             if percentComplete > 0.1 && percentComplete != 1 {
                 viewToMux!.backgroundColor = color
             }
         }
 
         if navToMux != nil {
-            let color = fadeFromColor(fromColor: color1!, toColor: color2!, withPercentage: percentComplete)
+            let color = ColorMuxPagingViewController.fadeFromColor(fromColor: color1!, toColor: color2!, withPercentage: percentComplete)
             if !color.cgColor.__equalTo(color1!.cgColor) {
                 navToMux!.barTintColor = color
             }
         }
     }
 
-    func fadeFromColor(fromColor: UIColor, toColor: UIColor, withPercentage: CGFloat) -> UIColor {
+    static func fadeFromColor(fromColor: UIColor, toColor: UIColor, withPercentage: CGFloat) -> UIColor {
         var fromRed: CGFloat = 0.0
         var fromGreen: CGFloat = 0.0
         var fromBlue: CGFloat = 0.0

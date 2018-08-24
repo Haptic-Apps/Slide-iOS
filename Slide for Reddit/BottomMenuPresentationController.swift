@@ -260,6 +260,11 @@ extension PanGestureInteractionController: UIGestureRecognizerDelegate {
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return otherGestureRecognizer is UIPanGestureRecognizer && (scrollView == nil ? tableView?.contentOffset.y ?? 0 == 0 : scrollView?.contentOffset.y ?? 0 == 0)
     }
+    
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        return (gestureRecognizer is UIPanGestureRecognizer && (gestureRecognizer as! UIPanGestureRecognizer).velocity(in: scrollView ?? tableView!).y < 0) ? false : true
+    }
+
 }
 
 extension CGPoint {

@@ -53,6 +53,9 @@ public class VCPresenter {
             if viewController is SFHideSafariViewController {
                 newParent.setNavigationBarHidden(true, animated: false)
             }
+            if !(viewController is SingleSubredditViewController) {
+                viewController.setupBaseBarColors()
+            }
         } else {
             let button = UIButtonWithContext.init(type: .custom)
             button.parentController = parentNavigationController!

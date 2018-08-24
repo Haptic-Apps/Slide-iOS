@@ -306,10 +306,11 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         toolbar = UIView()
         menuNav?.topView = toolbar
         menuNav?.view.addSubview(toolbar!)
+        menuNav?.muxColor = ColorUtil.foregroundColor.add(overlay: UIColor.white.withAlphaComponent(0.05))
         toolbar!.backgroundColor = ColorUtil.foregroundColor.add(overlay: UIColor.white.withAlphaComponent(0.05))
         toolbar!.horizontalAnchors == menuNav!.view.horizontalAnchors
         toolbar!.topAnchor == menuNav!.view.topAnchor
-        toolbar!.heightAnchor == CGFloat(menuNav!.bottomOffset)
+        toolbar!.heightAnchor == 90
         //toolbar!.roundCorners([UIRectCorner.topLeft, UIRectCorner.topRight], radius: 15)
         self.menuNav?.setSubreddit(subreddit: MainViewController.current)
 //        menuNav?.modalPresentationStyle = .overCurrentContext
