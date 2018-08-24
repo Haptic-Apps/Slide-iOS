@@ -38,7 +38,7 @@ class MediaViewController: UIViewController, MediaVCDelegate {
 
         failureCallback = { (url: URL) in
             let vc: UIViewController
-            if SettingValues.safariVC {
+            if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL {
                 let safariVC = SFHideSafariViewController(url: url)
                 if #available(iOS 10.0, *) {
                     safariVC.preferredBarTintColor = ColorUtil.backgroundColor

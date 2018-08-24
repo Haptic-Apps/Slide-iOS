@@ -50,27 +50,25 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
     func doImages() {
         var first = GMColor.blue500Color()
         var second = first.add(overlay: UIColor.white.withAlphaComponent(0.4))
-        var coloredIcon = UIImage.convertGradientToImage(colors: [first, second], frame: CGSize.square(size: 150))
-        safariIcon = coloredIcon.overlayWith(image: UIImage(named: "nav")!.getCopy(withSize: CGSize.square(size: 150)), posX: 0, posY: 0)
+        var coloredIcon = UIImage.convertGradientToImage(colors: [first, second], frame: CGSize.square(size: 40))
+        safariIcon = coloredIcon.overlayWith(image: UIImage(named: "nav")!.getCopy(withSize: CGSize.square(size: 20), withColor: .white), posX: 10, posY: 10)
         
         first = GMColor.lightBlue500Color()
         second = first.add(overlay: UIColor.white.withAlphaComponent(0.4))
-        coloredIcon = UIImage.convertGradientToImage(colors: [first, second], frame: CGSize.square(size: 150))
-        safariInternalIcon = coloredIcon.overlayWith(image: UIImage(named: "nav")!.getCopy(withSize: CGSize.square(size: 150)), posX: 0, posY: 0)
-        
-        internalIcon = UIImage(named: "roundicon")
+        coloredIcon = UIImage.convertGradientToImage(colors: [first, second], frame: CGSize.square(size: 40))
+        safariInternalIcon = coloredIcon.overlayWith(image: UIImage(named: "nav")!.getCopy(withSize: CGSize.square(size: 20), withColor: .white), posX: 10, posY: 10)
+
+        internalIcon = UIImage(named: "roundicon")?.getCopy(withSize: CGSize.square(size: 50))
         
         first = GMColor.orange500Color()
         second = first.add(overlay: UIColor.white.withAlphaComponent(0.4))
-        coloredIcon = UIImage.convertGradientToImage(colors: [first, second], frame: CGSize.square(size: 150))
-        firefoxIcon = coloredIcon.overlayWith(image: UIImage(named: "nav")!.getCopy(withSize: CGSize.square(size: 150)), posX: 0, posY: 0)
-        
+        coloredIcon = UIImage.convertGradientToImage(colors: [first, second], frame: CGSize.square(size: 50))
+        firefoxIcon = coloredIcon.overlayWith(image: UIImage(named: "nav")!.getCopy(withSize: CGSize.square(size: 20), withColor: .black), posX: 10, posY: 10)
+
         first = GMColor.yellow500Color()
         second = first.add(overlay: UIColor.white.withAlphaComponent(0.4))
-        coloredIcon = UIImage.convertGradientToImage(colors: [first, second], frame: CGSize.square(size: 150))
-        chromeIcon = coloredIcon.overlayWith(image: UIImage(named: "nav")!.getCopy(withSize: CGSize.square(size: 150)), posX: 0, posY: 0)
-
-
+        coloredIcon = UIImage.convertGradientToImage(colors: [first, second], frame: CGSize.square(size: 40))
+        chromeIcon = coloredIcon.overlayWith(image: UIImage(named: "nav")!.getCopy(withSize: CGSize.square(size: 20), withColor: GMColor.orange700Color()), posX: 10, posY: 10)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -89,8 +87,14 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
 
         let sharedApplication = UIApplication.shared
         
+        browsers.append(SettingValues.BROWSER_INTERNAL)
+
         if sharedApplication.canOpenURL(safariURL) {
             browsers.append(SettingValues.BROWSER_SAFARI)
+        }
+        
+        if #available(iOS 10, *) {
+            browsers.append(SettingValues.BROWSER_SAFARI_INTERNAL)
         }
         
         if sharedApplication.canOpenURL(chromeURL) {
@@ -103,12 +107,6 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         
         if sharedApplication.canOpenURL(firefoxURL) {
             browsers.append(SettingValues.BROWSER_FIREFOX)
-        }
-        
-        browsers.append(SettingValues.BROWSER_INTERNAL)
-        
-        if #available(iOS 10, *) {
-            browsers.append(SettingValues.BROWSER_SAFARI_INTERNAL)
         }
     }
 
@@ -229,7 +227,7 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
                 cell.imageView?.image = internalIcon
             }
             
-            cell.imageView?.layer.cornerRadius = 5
+            cell.imageView?.layer.cornerRadius = 15
             cell.imageView?.clipsToBounds = true
             
             if SettingValues.browser == browsers[indexPath.row] {
@@ -268,6 +266,8 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 0 {
             SettingValues.browser = browsers[indexPath.row]
+            UserDefaults.standard.set(browsers[indexPath.row], forKey: SettingValues.pref_browser)
+            UserDefaults.standard.synchronize()
             tableView.reloadData()
         }
     }
