@@ -68,9 +68,9 @@ PODS:
     - reddift/MiniKeychain (= 2.0.0)
   - reddift/MiniKeychain (2.0.0)
   - RLBAlertsPickers (1.0)
-  - SDWebImage (3.8.2):
-    - SDWebImage/Core (= 3.8.2)
-  - SDWebImage/Core (3.8.2)
+  - SDWebImage (4.1.2):
+    - SDWebImage/Core (= 4.1.2)
+  - SDWebImage/Core (4.1.2)
   - SideMenu (4.0.0)
   - SloppySwiper (0.6)
   - Starscream (3.0.5)
@@ -100,7 +100,7 @@ DEPENDENCIES:
   - RealmSwift
   - reddift (from `https://github.com/ccrama/reddift`)
   - RLBAlertsPickers (from `https://github.com/ccrama/Alerts-Pickers`)
-  - SDWebImage (~> 3.8)
+  - SDWebImage (~> 4.1.2)
   - SideMenu
   - SloppySwiper (from `https://github.com/fastred/sloppySwiper`)
   - Starscream (~> 3.0.2)
@@ -165,7 +165,7 @@ SPEC CHECKSUMS:
   RealmSwift: 1fe08b4ebaeeaacf17f9ba0343f7b25c9fc31fa6
   reddift: 3066e687c2a934b0f9aca6ee6e2161abc4c93a56
   RLBAlertsPickers: 60b4bd5afcd92065774ed1b21d836bc89cc79d98
-  SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
+  SDWebImage: cb6f9f266a9977741efcbc21e618e8be3734c774
   SideMenu: 70ee5657df63ec3382660ec4ef470bf1cf5db07d
   SloppySwiper: 37e38f6da8df5c805914c6f32ec6ec8da63abe7c
   Starscream: faf918b2f2eff7d5dd21180646bf015a669673bd
@@ -176,6 +176,6 @@ SPEC CHECKSUMS:
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   XLActionController: 007868251c0eed70d649d06c1625259b73b3a600
 
-PODFILE CHECKSUM: 6332ed5f4f8660ef5a4dcf0847098756e746572f
+PODFILE CHECKSUM: 9d1b7075123d06026a9e2aaccdf12d507f2646c4
 
 COCOAPODS: 1.4.0

@@ -7,7 +7,7 @@ target 'Slide for Reddit' do
   # Pods for Slide for Reddit
 
   pod 'reddift', :git =>  'https://github.com/ccrama/reddift'
-  pod 'SDWebImage', '~>3.8'
+  pod 'SDWebImage', '~>4.1.2'
   pod 'SideMenu'
   pod 'MKColorPicker'
   pod 'BadgeSwift', '~> 5.0'

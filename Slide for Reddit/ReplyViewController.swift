@@ -1083,11 +1083,6 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
     func submitComment() {
         let body = text!.last!
 
-        if body.text.isEmpty() {
-            BannerUtil.makeBanner(text: "Body cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
-            return
-        }
-
         alertController = UIAlertController(title: nil, message: "Posting comment...\n\n", preferredStyle: .alert)
         let spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
         spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)

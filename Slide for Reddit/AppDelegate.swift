@@ -33,7 +33,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var commentsFile: String?
     var totalBackground = false
     var isPro = false
-
+    
     var orientationLock = UIInterfaceOrientationMask.allButUpsideDown
 
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
@@ -137,9 +137,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         doBios()
 
-        SDWebImageManager.shared().imageCache.maxCacheAge = 1209600 //2 weeks
-        SDWebImageManager.shared().imageCache.maxCacheSize = 250 * 1024 * 1024
-
+        SDWebImageManager.shared().imageCache?.config.maxCacheAge = 1209600 //2 weeks
+        SDWebImageManager.shared().imageCache?.config.maxCacheSize = 250 * 1024 * 1024
+        
         UIApplication.shared.applicationIconBadgeNumber = 0
         
         self.window = UIWindow(frame: UIScreen.main.bounds)

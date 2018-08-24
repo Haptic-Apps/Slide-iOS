@@ -200,14 +200,12 @@ class ImageMediaViewController: EmbeddableMediaViewController {
 
     func loadImage(imageURL: URL, completion: @escaping ((UIImage) -> Void) ) {
 
-        if SDWebImageManager.shared().cachedImageExists(for: imageURL) {
+        if let image = SDWebImageManager.shared().imageCache?.imageFromDiskCache(forKey: imageURL.absoluteString) {
             DispatchQueue.main.async {
-                if let image = SDWebImageManager.shared().imageCache.imageFromDiskCache(forKey: imageURL.absoluteString) {
-                    completion(image)
-                }
+                completion(image)
             }
         } else {
-            SDWebImageDownloader.shared().downloadImage(with: imageURL, options: .allowInvalidSSLCertificates, progress: { (current: NSInteger, total: NSInteger) in
+            SDWebImageDownloader.shared().downloadImage(with: imageURL, options: [.allowInvalidSSLCertificates, .scaleDownLargeImages], progress: { (current: NSInteger, total: NSInteger, _) in
 
                 var average: Float = 0
                 average = (Float(current) / Float(total))
@@ -226,7 +224,7 @@ class ImageMediaViewController: EmbeddableMediaViewController {
                 self.updateProgress(CGFloat(average), "")
 
                 }, completed: { (image, data, _, _) in
-                    SDImageCache.shared().store(image, recalculateFromImage: false, imageData: data, forKey: imageURL.absoluteString, toDisk: true)
+                    SDImageCache.shared().store(image, imageData: data, forKey: imageURL.absoluteString, toDisk: true, completion: nil)
                     DispatchQueue.main.async {
                         if let image = image {
                             completion(image)

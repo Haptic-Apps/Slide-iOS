@@ -733,7 +733,7 @@ extension VideoMediaViewController {
             key = key.substring(0, length: 200)
         }
         
-        return SDImageCache.shared().makeDiskCachePath(key) + ".mp4"
+        return (SDImageCache.shared().makeDiskCachePath(key) ?? "") + ".mp4"
     }
 }
 

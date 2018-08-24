@@ -47,7 +47,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
             )
         }
         let prefetcher = SDWebImagePrefetcher.shared()
-        prefetcher?.prefetchURLs(thumbs)
+        prefetcher.prefetchURLs(thumbs)
         
         let firstViewController = ModalMediaViewController(model: self.embeddableMediaDataCache[self.urlStringKeys[0]]!)
         
@@ -148,7 +148,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                     self.navItem?.rightBarButtonItem = gridB
                 }
                 let prefetcher = SDWebImagePrefetcher.shared()
-                prefetcher?.prefetchURLs(thumbs)
+                prefetcher.prefetchURLs(thumbs)
             } catch {
                 print(error)
                 //todo fallback
@@ -331,7 +331,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
             key = key.substring(0, length: 200)
         }
         
-        return SDImageCache.shared().makeDiskCachePath(key) + ".mp4"
+        return (SDImageCache.shared().makeDiskCachePath(key) ?? "") + ".mp4"
     }
     
 }

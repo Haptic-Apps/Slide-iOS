@@ -121,11 +121,15 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
             browsers.append(SettingValues.BROWSER_FOCUS)
         }
     }
+    
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return indexPath.section == 2
+    }
 
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             switch indexPath.section {
-            case 1:
+            case 2:
                 PostFilter.openExternally.remove(at: indexPath.row)
             default: fatalError("Unknown section")
             }
@@ -133,6 +137,7 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
             PostFilter.saveAndUpdate()
         }
     }
+    
 
     func switchIsChanged(_ changed: UISwitch) {
         if changed == internalImage {

@@ -462,8 +462,8 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
 
             SDImageCache.shared().clearMemory()
             SDImageCache.shared().clearDisk()
-            SDWebImageManager.shared().imageCache.clearMemory()
-            SDWebImageManager.shared().imageCache.clearDisk()
+            SDWebImageManager.shared().imageCache?.clearMemory()
+            SDWebImageManager.shared().imageCache?.clearDisk()
             
             BannerUtil.makeBanner(text: "All caches cleared!", color: GMColor.green500Color(), seconds: 3, context: self)
         } else if indexPath.section == 3 && indexPath.row == 0 {

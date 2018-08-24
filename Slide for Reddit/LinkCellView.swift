@@ -855,7 +855,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             } else {
                 let thumbURL = submission.thumbnailUrl
                 DispatchQueue.global(qos: .userInteractive).async {
-                    self.thumbImage.sd_setImage(with: URL.init(string: thumbURL), placeholderImage: LinkCellImageCache.web)
+                    self.thumbImage.sd_setImage(with: URL.init(string: thumbURL), placeholderImage: LinkCellImageCache.web, options: [.allowInvalidSSLCertificates, .scaleDownLargeImages])
                 }
             }
         } else {
@@ -886,7 +886,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 
                 let lqURL = submission.lqUrl
                 DispatchQueue.global(qos: .userInteractive).async {
-                    self.bannerImage.sd_setImage(with: URL.init(string: lqURL), completed: { (_, _, cache, _) in
+                    self.bannerImage.sd_setImage(with: URL.init(string: lqURL), placeholderImage: nil, options: [.allowInvalidSSLCertificates, .scaleDownLargeImages], completed: { (_, _, cache, _) in
                         if cache == .none {
                             UIView.animate(withDuration: 0.3, animations: {
                                 self.bannerImage.alpha = 1
@@ -900,7 +900,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 loadedImage = URL.init(string: submission.bannerUrl)
                 let bannerURL = submission.bannerUrl
                 DispatchQueue.global(qos: .userInteractive).async {
-                    self.bannerImage.sd_setImage(with: URL.init(string: bannerURL), completed: { (_, _, cache, _) in
+                    self.bannerImage.sd_setImage(with: URL.init(string: bannerURL), placeholderImage: nil, options: [.allowInvalidSSLCertificates, .scaleDownLargeImages], completed: { (_, _, cache, _) in
                         if cache == .none {
                             UIView.animate(withDuration: 0.3, animations: {
                                 self.bannerImage.alpha = 1
