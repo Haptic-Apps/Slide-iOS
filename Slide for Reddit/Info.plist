@@ -43,6 +43,7 @@
 		<string>youtube</string>
 		<string>firefox</string>
 		<string>opera-http</string>
+		<string>firefox-focus</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<false/>

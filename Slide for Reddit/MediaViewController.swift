@@ -174,19 +174,21 @@ class MediaViewController: UIViewController, MediaVCDelegate {
             }
             VCPresenter.showVC(viewController: vc, popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
         }
-        if ContentType.isExternal(url) || (SettingValues.browser == SettingValues.BROWSER_OPERA || SettingValues.browser == SettingValues.BROWSER_FIREFOX || SettingValues.browser == SettingValues.BROWSER_SAFARI || SettingValues.browser == SettingValues.BROWSER_CHROME) {
+        if ContentType.isExternal(url) || (SettingValues.browser == SettingValues.BROWSER_OPERA || SettingValues.browser == SettingValues.BROWSER_FIREFOX || SettingValues.browser == SettingValues.BROWSER_SAFARI || SettingValues.browser == SettingValues.BROWSER_FOCUS || SettingValues.browser == SettingValues.BROWSER_CHROME) {
             let oldUrl = url
             var newUrl = oldUrl
             
             let browser = SettingValues.browser
             let sanitized = oldUrl.absoluteString.replacingOccurrences(of: "https://", with: "").replacingOccurrences(of: "http://", with: "")
-            if browser == "safari" {
-            } else if browser == "chrome" {
+            if browser == SettingValues.BROWSER_SAFARI {
+            } else if browser == SettingValues.BROWSER_CHROME {
                 newUrl = URL(string: "googlechrome://" + sanitized) ?? oldUrl
-            } else if browser == "opera" {
+            } else if browser == SettingValues.BROWSER_OPERA {
                 newUrl = URL(string: "opera-http://" + sanitized) ?? oldUrl
-            } else if browser == "firefox" {
+            } else if browser == SettingValues.BROWSER_FIREFOX {
                 newUrl = URL(string: "firefox://open-url?url=" + oldUrl.absoluteString) ?? oldUrl
+            } else if browser == SettingValues.BROWSER_FOCUS {
+                newUrl = URL(string: "firefox-focus://open-url?url=" + oldUrl.absoluteString) ?? oldUrl
             }
 
             print(newUrl.absoluteString)

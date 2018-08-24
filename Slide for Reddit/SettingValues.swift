@@ -105,6 +105,7 @@ class SettingValues {
     public static let BROWSER_SAFARI_INTERNAL = "safariinternal"
     public static let BROWSER_CHROME = "chrome"
     public static let BROWSER_OPERA = "opera"
+    public static let BROWSER_FOCUS = "focus"
 
     public static var commentActionRightRight = CommentAction.UPVOTE
     public static var commentActionRightLeft = CommentAction.DOWNVOTE
