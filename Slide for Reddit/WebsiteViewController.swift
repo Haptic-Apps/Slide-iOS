@@ -56,7 +56,9 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        webView.removeObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress))
+        if setObserver {
+            webView.removeObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress))
+        }
     }
     
     override func viewDidLoad() {
@@ -79,11 +81,11 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         loadUrl()
     }
     
+    var setObserver = false
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
         webView.addObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), options: .new, context: nil)
-
+        setObserver = true
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {

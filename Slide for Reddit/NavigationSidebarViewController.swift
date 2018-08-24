@@ -71,18 +71,23 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         parentController!.view.bringSubview(toFront: self.view)
         sender.view?.endEditing(true)
         let velocity = sender.velocity(in: sender.view).y
-
+        
         switch sender.state {
         case .began:
             callbacks.didBeginPanning?()
-        case .changed:
-            update(sender)
-            if topView?.alpha ?? 0 != 0 {
-                UIView.animate(withDuration: 0.1) {
-                    self.topView?.alpha = 0
+            if topView?.alpha == 0 {
+                UIView.animate(withDuration: 0.25) {
+                    self.topView?.backgroundColor = ColorUtil.foregroundColor.add(overlay: UIColor.white.withAlphaComponent(0.05))
+                }
+            } else {
+                UIView.animate(withDuration: 0.25) {
+                    self.topView?.backgroundColor = self.header.back.backgroundColor
                 }
             }
+        case .changed:
+            update(sender)
             backgroundView.alpha = velocity < 0 ? abs(percentCompleteForTranslation(sender)) : 1 - abs(percentCompleteForTranslation(sender))
+            topView?.alpha = velocity > 0 ? 0.8 - abs(percentCompleteForTranslation(sender)) : abs(percentCompleteForTranslation(sender) )
         case .ended:
             let percentComplete = percentCompleteForTranslation(sender)
     
@@ -94,7 +99,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
                     collapse()
                 }
             } else {
-                if velocity < 0 {
+                if velocity > 0 {
                     expand()
                 } else {
                     collapse()
@@ -116,6 +121,10 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         return otherGestureRecognizer is UIPanGestureRecognizer && (tableView.contentOffset.y == 0)
     }
     
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        return (gestureRecognizer is UIPanGestureRecognizer && (gestureRecognizer as! UIPanGestureRecognizer).velocity(in: self.view).y < 0 && topView?.alpha ?? 1 == 0) ? false : true
+    }
+    
     func update(_ recognizer: UIPanGestureRecognizer) {
         let translation = recognizer.translation(in: self.view)
         let y = self.view.frame.minY
@@ -134,6 +143,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
             strongSelf.backgroundView.alpha = 0
             strongSelf.topView?.alpha = 1
             strongSelf.view.frame = CGRect(x: 0, y: y, width: strongSelf.view.frame.width, height: strongSelf.view.frame.height)
+            strongSelf.topView?.backgroundColor =  ColorUtil.foregroundColor.add(overlay: UIColor.white.withAlphaComponent(0.05))
         }
         
         let completionBlock: (Bool) -> Void = { finished in
@@ -156,6 +166,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
             strongSelf.backgroundView.alpha = 1
             strongSelf.topView?.alpha = 0
             strongSelf.view.frame = CGRect(x: 0, y: y, width: strongSelf.view.frame.width, height: strongSelf.view.frame.height)
+            strongSelf.topView?.backgroundColor = strongSelf.header.back.backgroundColor
         }
         
         let completionBlock: (Bool) -> Void = { finished in
