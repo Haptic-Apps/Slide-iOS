@@ -98,7 +98,9 @@ class SettingValues {
     public static let pref_autoKeyboard = "SWIPE_ANYWHERE_COMMENTS"
     public static let pref_reduceColor = "REDUCE_COLORS"
     public static let pref_browser = "WEB_BROWSER"
-    
+    public static let pref_infoBelowTitle = "INFO_BELOW_TITLE"
+    public static let pref_matchSilence = "MATCH_SILENCE"
+
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_FIREFOX = "firefox"
     public static let BROWSER_SAFARI = "safari"
@@ -143,6 +145,8 @@ class SettingValues {
     public static var blackShadowbox = false
     public static var hideAutomod = false
     public static var swipeAnywhereComments = false
+    public static var infoBelowTitle = false
+    public static var matchSilence = true
 
     public static var enlargeLinks = true
     public static var noImages = false
@@ -362,6 +366,8 @@ class SettingValues {
 
         SettingValues.largerThumbnail = settings.object(forKey: SettingValues.pref_largerThumbnail) == nil ? true : settings.bool(forKey: SettingValues.pref_largerThumbnail)
         SettingValues.viewType = settings.bool(forKey: SettingValues.pref_viewType)
+        SettingValues.matchSilence = settings.object(forKey: SettingValues.pref_matchSilence) == nil ? true : settings.bool(forKey: SettingValues.pref_matchSilence)
+        SettingValues.infoBelowTitle = settings.bool(forKey: SettingValues.pref_infoBelowTitle)
         SettingValues.abbreviateScores = settings.object(forKey: SettingValues.pref_abbreviateScores) == nil ? true : settings.bool(forKey: SettingValues.pref_abbreviateScores)
         SettingValues.scoreInTitle = settings.bool(forKey: SettingValues.pref_scoreInTitle)
         SettingValues.commentsInTitle = settings.bool(forKey: SettingValues.pref_commentsInTitle)

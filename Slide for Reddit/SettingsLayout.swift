@@ -33,6 +33,9 @@ class SettingsLayout: UITableViewController {
     var commentTitleCell: UITableViewCell = UITableViewCell()
     var commentTitle = UISwitch()
 
+    var infoBelowTitleCell: UITableViewCell = UITableViewCell()
+    var infoBelowTitle = UISwitch()
+
     var abbreviateScoreCell: UITableViewCell = UITableViewCell()
     var abbreviateScore = UISwitch()
     
@@ -84,6 +87,10 @@ class SettingsLayout: UITableViewController {
         } else if changed == largerThumbnail {
             SettingValues.largerThumbnail = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_largerThumbnail)
+        } else if changed == infoBelowTitle {
+            SettingValues.infoBelowTitle = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_infoBelowTitle)
+            CachedTitle.titles.removeAll()
         } else if changed == abbreviateScore {
             SettingValues.abbreviateScores = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_abbreviateScores)
@@ -400,6 +407,7 @@ class SettingsLayout: UITableViewController {
         createCell(commentTitleCell, commentTitle, isOn: SettingValues.commentsInTitle, text: "Show comment count under title")
         createCell(scoreTitleCell, scoreTitle, isOn: SettingValues.scoreInTitle, text: "Show post score under title")
         createCell(abbreviateScoreCell, abbreviateScore, isOn: SettingValues.abbreviateScores, text: "Abbreviate post scores (ex: 10k)")
+        createCell(infoBelowTitleCell, infoBelowTitle, isOn: SettingValues.infoBelowTitle, text: "Show information bar below the title")
         createCell(domainInfoCell, domainInfo, isOn: SettingValues.domainInInfo, text: "Show domain in info line")
         createCell(leftThumbCell, leftThumb, isOn: SettingValues.leftThumbnail, text: "Thumbnail on left side")
         createCell(hideCell, hide, isOn: SettingValues.hideButton, text: "Show hide post button")
@@ -484,12 +492,13 @@ class SettingsLayout: UITableViewController {
         case 2:
             switch indexPath.row {
             case 0: return self.actionBarCell
-            case 1: return self.scoreTitleCell
+            case 1: return self.infoBelowTitleCell
             case 2: return self.commentTitleCell
-            case 3: return self.abbreviateScoreCell
-            case 4: return self.domainInfoCell
-            case 5: return self.hideCell
-            case 6: return self.saveCell
+            case 3: return self.scoreTitleCell
+            case 4: return self.abbreviateScoreCell
+            case 5: return self.domainInfoCell
+            case 6: return self.hideCell
+            case 7: return self.saveCell
                 
             default: fatalError("Unknown row in section 2")
             }
@@ -501,7 +510,7 @@ class SettingsLayout: UITableViewController {
         switch section {
         case 0: return 1
         case 1: return 8
-        case 2: return 7
+        case 2: return 8
         default: fatalError("Unknown number of sections")
         }
     }

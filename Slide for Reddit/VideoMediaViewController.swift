@@ -378,7 +378,11 @@ class VideoMediaViewController: EmbeddableMediaViewController {
 
         // Prevent video from stopping system background audio
         do {
-            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
+            if SettingValues.matchSilence {
+                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
+            } else {
+                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+            }
         } catch let error as NSError {
             print(error)
         }

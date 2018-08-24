@@ -18,6 +18,7 @@ class SettingsGeneral: UITableViewController {
     var hapticFeedback: UITableViewCell = UITableViewCell()
     var bottomBarHidden: UITableViewCell = UITableViewCell()
     var autoKeyboard: UITableViewCell = UITableViewCell()
+    var matchSilence: UITableViewCell = UITableViewCell()
 
     var postSorting: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "post")
     var commentSorting: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "comment")
@@ -29,6 +30,7 @@ class SettingsGeneral: UITableViewController {
     var hapticFeedbackSwitch = UISwitch()
     var bottomBarSwitch = UISwitch()
     var autoKeyboardSwitch = UISwitch()
+    var matchSilenceSwitch = UISwitch()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -72,6 +74,9 @@ class SettingsGeneral: UITableViewController {
             SettingValues.pinToolbar = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_pinToolbar)
             SubredditReorderViewController.changed = true
+        } else if changed == matchSilenceSwitch {
+            SettingValues.matchSilence = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_matchSilence)
         } else if changed == scrubUsernameSwitch {
             if !VCPresenter.proDialogShown(feature: false, self) {
                 SettingValues.nameScrubbing = changed.isOn
@@ -92,8 +97,9 @@ class SettingsGeneral: UITableViewController {
 
         switch section {
         case 0: label.text = "Display"
-        case 1: label.text = "Notifications"
-        case 2: label.text = "Sorting"
+        case 1: label.text = "Interaction"
+        case 2: label.text = "Notifications"
+        case 3: label.text = "Sorting"
         default: label.text = ""
         }
         return toReturn
@@ -126,7 +132,9 @@ class SettingsGeneral: UITableViewController {
         createCell(hapticFeedback, hapticFeedbackSwitch, isOn: SettingValues.hapticFeedback, text: "Haptic feedback throughout app")
         createCell(hideFAB, hideFABSwitch, isOn: !SettingValues.hiddenFAB, text: "Show subreddit floating action button")
         createCell(scrubUsername, scrubUsernameSwitch, isOn: SettingValues.nameScrubbing, text: "Scrub your username (you will show as \"you\")")
-        createCell(pinToolbar, pinToolbarSwitch, isOn: SettingValues.pinToolbar, text: "Pin header navigation bar and toolbar in subreddit views")
+        createCell(pinToolbar, pinToolbarSwitch, isOn: SettingValues.pinToolbar, text: "Don't autohide navigation bars")
+        createCell(matchSilence, matchSilenceSwitch, isOn: SettingValues.matchSilence, text: "Mute videos if silent mode is on")
+        createCell(autoKeyboard, autoKeyboardSwitch, isOn: SettingValues.autoKeyboard, text: "Open keyboard automatically in bottom drawer")
         createCell(autoKeyboard, autoKeyboardSwitch, isOn: SettingValues.autoKeyboard, text: "Open keyboard automatically in bottom drawer")
 
         self.postSorting.textLabel?.text = "Default post sorting"
@@ -153,7 +161,7 @@ class SettingsGeneral: UITableViewController {
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 3
+        return 4
     }
 
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -177,15 +185,20 @@ class SettingsGeneral: UITableViewController {
             case 3: return self.bottomBarHidden
             case 4: return self.pinToolbar
             case 5: return self.scrubUsername
-            case 6: return self.hapticFeedback
             default: fatalError("Unknown row in section 0")
             }
         case 1:
             switch indexPath.row {
+            case 0: return self.hapticFeedback
+            case 1: return self.matchSilence
+            default: fatalError("Unknown row in section 0")
+            }
+        case 2:
+            switch indexPath.row {
             case 0: return self.notifications
             default: fatalError("Unknown row in section 1")
             }
-        case 2:
+        case 3:
             switch indexPath.row {
             case 0: return self.postSorting
             case 1: return self.commentSorting
@@ -315,9 +328,10 @@ class SettingsGeneral: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return 7
-        case 1: return 1
-        case 2: return 2
+        case 0: return 6
+        case 1: return 2
+        case 2: return 1
+        case 3: return 2
         default: fatalError("Unknown number of sections")
         }
     }

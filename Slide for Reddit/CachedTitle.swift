@@ -135,10 +135,17 @@ class CachedTitle {
         }
 
         let infoString = NSMutableAttributedString()
-        infoString.append(boldString)
-        infoString.append(endString)
-        infoString.append(NSAttributedString.init(string: "\n"))
-        infoString.append(attributedTitle)
+        if SettingValues.infoBelowTitle {
+            infoString.append(attributedTitle)
+            infoString.append(NSAttributedString.init(string: "\n"))
+            infoString.append(boldString)
+            infoString.append(endString)
+        } else {
+            infoString.append(boldString)
+            infoString.append(endString)
+            infoString.append(NSAttributedString.init(string: "\n"))
+            infoString.append(attributedTitle)
+        }
         
         if !full {
             if SettingValues.scoreInTitle || SettingValues.commentsInTitle {
