@@ -276,7 +276,7 @@ public class TextDisplayStackView: UIStackView {
             } else if block.startsWith("<cite>") {
                 let label = TTTAttributedLabel.init(frame: CGRect.zero)
                 label.accessibilityIdentifier = "Quote"
-                let text = createAttributedChunk(baseHTML: block)
+                let text = createAttributedChunk(baseHTML: block.replacingOccurrences(of: "<cite>", with: "").replacingOccurrences(of: "<p>", with: "").replacingOccurrences(of: "</cite>", with: "").replacingOccurrences(of: "</p>", with: "").trimmed())
                 label.delegate = delegate
                 label.alpha = 0.7
                 label.numberOfLines = 0
@@ -296,18 +296,20 @@ public class TextDisplayStackView: UIStackView {
                 let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth - 12, height: CGFloat.greatestFiniteMagnitude), nil)
                 estimatedHeight += textSizeB.height
                 baseView.addSubview(label)
-                overflow.addArrangedSubview(baseView)
-
-                baseView.horizontalAnchors == overflow.horizontalAnchors
                 label.leftAnchor == baseView.leftAnchor + CGFloat(8)
                 label.rightAnchor == baseView.rightAnchor - CGFloat(4)
-                label.verticalAnchors == baseView.verticalAnchors
+                label.heightAnchor == textSizeB.height
+                label.topAnchor == baseView.topAnchor
+                label.bottomAnchor == baseView.bottomAnchor
                 label.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+                overflow.addArrangedSubview(baseView)
+                            
+                baseView.horizontalAnchors == overflow.horizontalAnchors
                 baseView.heightAnchor == textSizeB.height
             } else {
                 let label = TTTAttributedLabel.init(frame: CGRect.zero)
                 label.accessibilityIdentifier = "New text"
-                let text = createAttributedChunk(baseHTML: block)
+                let text = createAttributedChunk(baseHTML: block.trimmed())
                 label.delegate = delegate
                 let activeLinkAttributes = NSMutableDictionary(dictionary: label.activeLinkAttributes)
                 activeLinkAttributes[NSForegroundColorAttributeName] = tColor

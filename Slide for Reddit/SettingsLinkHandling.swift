@@ -302,7 +302,7 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
         label.numberOfLines = 0
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
-        var contentAttribute = NSMutableAttributedString(string: "Content Settings", attributes: [NSFontAttributeName: label.font, NSForegroundColorAttributeName: label.textColor])
+        let contentAttribute = NSMutableAttributedString(string: "Content Settings", attributes: [NSFontAttributeName: label.font, NSForegroundColorAttributeName: label.textColor])
         contentAttribute.append(NSMutableAttributedString(string: "\nAdditionally, you can set specific domains to open externally in the External Domains section below", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 16, submission: true), NSForegroundColorAttributeName: label.textColor]))
         toReturn.backgroundColor = ColorUtil.backgroundColor
         switch section {

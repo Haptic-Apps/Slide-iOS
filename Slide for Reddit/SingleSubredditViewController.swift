@@ -368,14 +368,17 @@ class SingleSubredditViewController: MediaViewController {
                     self.isToolbarHidden = false
                 })
         } else {
-            self.fab?.isHidden = false
-            self.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
             
-            UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
-                self.fab?.transform = CGAffineTransform.identity
-            }, completion: { _ in
-
-            })
+            if self.fab?.superview != nil {
+                self.fab?.isHidden = false
+                self.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
+                
+                UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+                    self.fab?.transform = CGAffineTransform.identity
+                }, completion: { _ in
+                    
+                })
+            }
 
             if !SettingValues.bottomBarHidden || SettingValues.viewType {
                 if single {
@@ -615,6 +618,12 @@ class SingleSubredditViewController: MediaViewController {
             subb.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let subbB = UIBarButtonItem.init(customView: subb)
 
+            let info = UIButton.init(type: .custom)
+            info.setImage(UIImage.init(named: "info")?.navIcon(), for: UIControlState.normal)
+            info.addTarget(self, action: #selector(self.doDisplaySidebar), for: UIControlEvents.touchUpInside)
+            info.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+            let infoB = UIBarButtonItem.init(customView: info)
+
             if SettingValues.bottomBarHidden || SettingValues.viewType {
                 more = UIButton.init(type: .custom)
                 more.setImage(UIImage.init(named: "moreh")?.navIcon(), for: UIControlState.normal)
@@ -633,7 +642,7 @@ class SingleSubredditViewController: MediaViewController {
                 navigationItem.rightBarButtonItems = [sortB, subbB]
                 let flexButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil)
                 
-                toolbarItems = [flexButton, moreB]
+                toolbarItems = [infoB, flexButton, moreB]
             }
             title = sub
 

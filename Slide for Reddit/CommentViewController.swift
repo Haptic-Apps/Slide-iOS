@@ -240,7 +240,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         inHeadView.removeFromSuperview()
         inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarView?.frame.size.height ?? 20)))
         if submission != nil {
-            self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: submission!.subreddit, true)
+            self.inHeadView.backgroundColor = !SettingValues.reduceColor ? ColorUtil.getColorForSub(sub: submission!.subreddit) : ColorUtil.foregroundColor
         }
         
         let landscape = size.width > size.height || (self.navigationController is TapBehindModalViewController && self.navigationController!.modalPresentationStyle == .pageSheet)
@@ -1028,6 +1028,12 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             isSearching = false
             tableView.reloadData()
         }
+        
+        if SettingValues.reduceColor && ColorUtil.theme == .LIGHT {
+            UIApplication.shared.statusBarStyle = .default
+        } else {
+            UIApplication.shared.statusBarStyle = .lightContent
+        }
     }
 
     var originalPosition: CGPoint?
@@ -1591,7 +1597,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                     self.tableView.beginUpdates()
 
                     var indexPaths: [IndexPath] = []
-                    for row in (i + 1)...counter {
+                    for row in (i + 1)..<counter {
                         indexPaths.append(IndexPath(row: row, section: 0))
                     }
                     self.tableView.insertRows(at: indexPaths, with: .fade)

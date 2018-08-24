@@ -74,6 +74,12 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         if menuNav?.tableView != nil {
             menuNav?.tableView.reloadData()
         }
+        
+        if SettingValues.reduceColor && ColorUtil.theme == .LIGHT {
+            UIApplication.shared.statusBarStyle = .default
+        } else {
+            UIApplication.shared.statusBarStyle = .lightContent
+        }
     }
     
     //from https://github.com/CleverTap/ios-request-review/blob/master/Example/RatingExample/ViewController.swift

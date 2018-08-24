@@ -51,6 +51,12 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         self.extendedLayoutIncludesOpaqueBars = true
         self.view.backgroundColor = UIColor.clear
         self.navigationController?.view.backgroundColor = .clear
+        
+        if SettingValues.reduceColor && ColorUtil.theme == .LIGHT {
+            UIApplication.shared.statusBarStyle = .default
+        } else {
+            UIApplication.shared.statusBarStyle = .lightContent
+        }
     }
     
     override func viewDidLoad() {

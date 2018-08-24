@@ -6,10 +6,11 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
+import Anchorage
+import reddift
 import SafariServices
 import UIKit
 import WebKit
-import reddift
 
 class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     var url: URL?
@@ -72,6 +73,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         webView.allowsBackForwardNavigationGestures = true
 
         self.view.addSubview(webView)
+        webView.edgeAnchors == self.view.edgeAnchors
         myProgressView = UIProgressView(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: 10))
         myProgressView.progressTintColor = ColorUtil.accentColorForSub(sub: sub)
         self.view.addSubview(myProgressView)

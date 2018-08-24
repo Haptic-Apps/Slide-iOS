@@ -157,6 +157,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         }
         
         self.callbacks.didCollapse?()
+        self.view.endEditing(true)
         
         let completionBlock: (Bool) -> Void = { [weak self] finished in
             guard let strongSelf = self else { return }
@@ -181,6 +182,13 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
             strongSelf.view.frame = CGRect(x: 0, y: y, width: strongSelf.view.frame.width, height: strongSelf.view.frame.height)
             strongSelf.topView?.backgroundColor = strongSelf.header.back.backgroundColor
         }
+        
+        let completionBlock: (Bool) -> Void = { [weak self] finished in
+            guard let strongSelf = self else { return }
+            if SettingValues.autoKeyboard {
+                strongSelf.header.search.becomeFirstResponder()
+            }
+        }
 
         UIView.animate(withDuration: 0.4,
                        delay: 0,
@@ -188,7 +196,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
                        initialSpringVelocity: 0.45,
                        options: .curveEaseInOut,
                        animations: animateBlock,
-                       completion: nil)
+                       completion: completionBlock)
     }
     
     func configureBackground() {
