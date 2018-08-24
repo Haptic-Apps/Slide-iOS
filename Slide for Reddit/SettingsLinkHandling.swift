@@ -74,7 +74,7 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         first = GMColor.purple500Color()
         second = GMColor.pink500Color()
         coloredIcon = UIImage.convertGradientToImage(colors: [first, second], frame: CGSize.square(size: 40))
-        focusIcon = coloredIcon.overlayWith(image: UIImage(named: "nav")!.getCopy(withSize: CGSize.square(size: 20), withColor: GMColor.orange700Color()), posX: 10, posY: 10)
+        focusIcon = coloredIcon.overlayWith(image: UIImage(named: "nav")!.getCopy(withSize: CGSize.square(size: 20), withColor: .white), posX: 10, posY: 10)
 
     }
 
@@ -207,7 +207,7 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        return 3
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -239,6 +239,7 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
                 cell.imageView?.image = focusIcon
             } else if text == SettingValues.BROWSER_INTERNAL {
                 cell.textLabel?.text = "Internal browser (suppots ad-blocking with Pro)"
+                cell.textLabel?.numberOfLines = 0
                 cell.imageView?.image = internalIcon
             }
             
@@ -273,7 +274,7 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
 
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         switch section {
-        case 1: return domainEnter
+        case 2: return domainEnter
         default: return UIView()
         }
     }
