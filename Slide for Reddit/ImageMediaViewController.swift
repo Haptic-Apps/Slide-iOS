@@ -214,11 +214,13 @@ class ImageMediaViewController: EmbeddableMediaViewController {
                 countBytes.countStyle = .file
                 let fileSize = countBytes.string(fromByteCount: Int64(total))
                 if average > 0 {
-                    self.size.text = fileSize
-                    if total == 0 {
-                        self.parent?.dismiss(animated: true, completion: {
-                            self.failureCallback?(imageURL)
-                        })
+                    DispatchQueue.main.async {
+                        self.size.text = fileSize
+                        if total == 0 {
+                            self.parent?.dismiss(animated: true, completion: {
+                                self.failureCallback?(imageURL)
+                            })
+                        }
                     }
                 }
                 self.updateProgress(CGFloat(average), "")

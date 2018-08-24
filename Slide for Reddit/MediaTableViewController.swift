@@ -152,7 +152,8 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
     }
 
     func doShow(url: URL, lq: URL? = nil, heroView: UIView?, heroVC: UIViewController?) {
-        failureCallback = { (url: URL) in
+        failureCallback = {[weak self] (url: URL) in
+            guard let strongSelf = self else { return }
             let vc: UIViewController
             if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL {
                 let safariVC = SFHideSafariViewController(url: url)
@@ -168,13 +169,30 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
                 let web = WebsiteViewController(url: url, subreddit: "")
                 vc = web
             }
-            VCPresenter.showVC(viewController: vc, popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
+            VCPresenter.showVC(viewController: vc, popupIfPossible: false, parentNavigationController: strongSelf.navigationController, parentViewController: strongSelf)
         }
-        if ContentType.isExternal(url) {
+        if ContentType.isExternal(url) || ContentType.shouldOpenExternally(url) {
+            let oldUrl = url
+            var newUrl = oldUrl
+            
+            let browser = SettingValues.browser
+            let sanitized = oldUrl.absoluteString.replacingOccurrences(of: "https://", with: "").replacingOccurrences(of: "http://", with: "")
+            if browser == SettingValues.BROWSER_SAFARI {
+            } else if browser == SettingValues.BROWSER_CHROME {
+                newUrl = URL(string: "googlechrome://" + sanitized) ?? oldUrl
+            } else if browser == SettingValues.BROWSER_OPERA {
+                newUrl = URL(string: "opera-http://" + sanitized) ?? oldUrl
+            } else if browser == SettingValues.BROWSER_FIREFOX {
+                newUrl = URL(string: "firefox://open-url?url=" + oldUrl.absoluteString) ?? oldUrl
+            } else if browser == SettingValues.BROWSER_FOCUS {
+                newUrl = URL(string: "firefox-focus://open-url?url=" + oldUrl.absoluteString) ?? oldUrl
+            }
+            
+            print(newUrl.absoluteString)
             if #available(iOS 10.0, *) {
-                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                UIApplication.shared.open(newUrl, options: [:], completionHandler: nil)
             } else {
-                UIApplication.shared.openURL(url)
+                UIApplication.shared.openURL(newUrl)
             }
         } else {
             var urlString = url.absoluteString

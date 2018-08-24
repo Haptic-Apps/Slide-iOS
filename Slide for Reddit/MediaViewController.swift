@@ -156,7 +156,8 @@ class MediaViewController: UIViewController, MediaVCDelegate {
     }
 
     func doShow(url: URL, lq: URL? = nil, heroView: UIView?, heroVC: UIViewController?) {
-        failureCallback = { (url: URL) in
+        failureCallback = {[weak self] (url: URL) in
+            guard let strongSelf = self else { return }
             let vc: UIViewController
             if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL {
                 let safariVC = SFHideSafariViewController(url: url)
@@ -172,7 +173,7 @@ class MediaViewController: UIViewController, MediaVCDelegate {
                 let web = WebsiteViewController(url: url, subreddit: "")
                 vc = web
             }
-            VCPresenter.showVC(viewController: vc, popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
+            VCPresenter.showVC(viewController: vc, popupIfPossible: false, parentNavigationController: strongSelf.navigationController, parentViewController: strongSelf)
         }
         if ContentType.isExternal(url) || ContentType.shouldOpenExternally(url) {
             let oldUrl = url
