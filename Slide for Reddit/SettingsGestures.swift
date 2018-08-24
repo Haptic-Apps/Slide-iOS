@@ -6,6 +6,7 @@
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
+import Anchorage
 import UIKit
 import XLActionController
 
@@ -29,6 +30,7 @@ class SettingsGestures: UITableViewController {
 
     var doubleTapSubActionCell: UITableViewCell = UITableViewCell.init(style: UITableViewCellStyle.subtitle, reuseIdentifier: "dtaps")
 
+    var commentCell = UITableViewCell()
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         updateCells()
@@ -56,8 +58,9 @@ class SettingsGestures: UITableViewController {
         toReturn.backgroundColor = ColorUtil.backgroundColor
         
         switch section {
-        case 0: label.text  = "Comments"
-        case 1: label.text  = "Submissions"
+        case 0: label.text  = "General"
+        case 1: label.text  = "Comments"
+        case 2: label.text  = "Submissions"
         default: label.text  = ""
         }
         return toReturn
@@ -65,18 +68,25 @@ class SettingsGestures: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        if indexPath.row == 2 {
-            showAction(cell: rightRightActionCell)
-        } else if indexPath.row == 3 {
-            showAction(cell: rightLeftActionCell)
-        } else if indexPath.row == 4 {
-            showAction(cell: leftLeftActionCell)
-        } else if indexPath.row == 5 {
-            showAction(cell: leftRightActionCell)
-        } else if indexPath.row == 6 {
-            showAction(cell: doubleTapActionCell)
-        } else if indexPath.row == 0 && indexPath.section == 1 {
+        
+        if indexPath.row == 0 && indexPath.section == 2 {
             showAction(cell: doubleTapSubActionCell)
+            return
+        }
+        
+        if indexPath.section != 1 {
+            return
+        }
+        if indexPath.row == 1 {
+            showAction(cell: rightRightActionCell)
+        } else if indexPath.row == 2 {
+            showAction(cell: rightLeftActionCell)
+        } else if indexPath.row == 3 {
+            showAction(cell: leftLeftActionCell)
+        } else if indexPath.row == 4 {
+            showAction(cell: leftRightActionCell)
+        } else if indexPath.row == 5 {
+            showAction(cell: doubleTapActionCell)
         }
     }
     
@@ -141,8 +151,125 @@ class SettingsGestures: UITableViewController {
 
         updateCells()
         self.tableView.tableFooterView = UIView()
+        
+        commentCell.contentView.backgroundColor = ColorUtil.foregroundColor
+        let label = UILabel()
+        for view in commentCell.contentView.subviews {
+            view.removeFromSuperview()
+        }
+        commentCell.contentView.addSubview(label)
+        label.edgeAnchors == commentCell.edgeAnchors + 8
+        label.attributedText = getText()
+        label.numberOfLines = 0
+        label.sizeToFit()
+        label.setBorder(border: .left, weight: 4, color: GMColor.red500Color())
     }
     
+    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+        return .none
+    }
+    
+    func getText() -> NSAttributedString {
+        let color = ColorUtil.fontColor
+        
+        let boldFont = FontGenerator.boldFontOfSize(size: 12, submission: false)
+        
+        let scoreString = NSMutableAttributedString(string: "[score hidden]", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: color])
+        
+        let endString = NSMutableAttributedString(string: "  •  3d", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
+        
+        let authorStringNoFlair = NSMutableAttributedString(string: "u/ccrama\u{00A0}", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor])
+        
+        let infoString = NSMutableAttributedString(string: "")
+            infoString.append(authorStringNoFlair)
+        
+        infoString.append(NSAttributedString(string: "  •  ", attributes: [NSFontAttributeName: boldFont, NSForegroundColorAttributeName: ColorUtil.fontColor]))
+        infoString.append(scoreString)
+        infoString.append(endString)
+        
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = 1.5
+        infoString.addAttribute(NSParagraphStyleAttributeName, value: paragraphStyle, range: NSRange(location: 0, length: infoString.length))
+        
+        let newTitle = NSMutableAttributedString(attributedString: infoString)
+            newTitle.append(NSAttributedString.init(string: "\n\n", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 5)]))
+        newTitle.append(TextDisplayStackView.createAttributedChunk(baseHTML: "<p>Swipe here to test the gestures out!</p>", fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent))
+
+        return newTitle
+    }
+    
+    @available(iOS 11.0, *)
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        if indexPath.row != 0 || indexPath.section != 1 {
+            return nil
+        }
+        
+        if SettingValues.commentTwoSwipe && (SettingValues.commentActionRightLeft != .NONE || SettingValues.commentActionRightRight != .NONE) {
+            HapticUtility.hapticActionWeak()
+            var actions = [UIContextualAction]()
+            if SettingValues.commentActionRightRight != .NONE {
+                let action = UIContextualAction.init(style: .normal, title: "", handler: { (action, _, b) in
+                    b(true)
+                })
+                action.backgroundColor = SettingValues.commentActionRightRight.getColor()
+                action.image = UIImage.init(named: SettingValues.commentActionRightRight.getPhoto())?.navIcon()
+                
+                actions.append(action)
+            }
+            if SettingValues.commentActionRightLeft != .NONE {
+                let action = UIContextualAction.init(style: .normal, title: "", handler: { (action, _, b) in
+                    b(true)
+                })
+                action.backgroundColor = SettingValues.commentActionRightLeft.getColor()
+                action.image = UIImage.init(named: SettingValues.commentActionRightLeft.getPhoto())?.navIcon()
+                
+                actions.append(action)
+            }
+            let config = UISwipeActionsConfiguration.init(actions: actions)
+            
+            return config
+            
+        } else {
+            return UISwipeActionsConfiguration.init()
+        }
+    }
+    
+    @available(iOS 11.0, *)
+    override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        if indexPath.row != 0 || indexPath.section != 1 {
+            return nil
+        }
+
+        if !SettingValues.swipeAnywhereComments && (SettingValues.commentActionLeftLeft != .NONE || SettingValues.commentActionLeftRight != .NONE) {
+            HapticUtility.hapticActionWeak()
+            var actions = [UIContextualAction]()
+            if SettingValues.commentActionLeftLeft != .NONE {
+                let action = UIContextualAction.init(style: .normal, title: "", handler: { (_, _, b) in
+                    b(true)
+                })
+                action.backgroundColor = SettingValues.commentActionLeftLeft.getColor()
+                action.image = UIImage.init(named: SettingValues.commentActionLeftLeft.getPhoto())?.navIcon()
+                
+                actions.append(action)
+            }
+            if SettingValues.commentActionLeftRight != .NONE {
+                let action = UIContextualAction.init(style: .normal, title: "", handler: { (_, _, b) in
+                    b(true)
+                })
+                action.backgroundColor = SettingValues.commentActionLeftRight.getColor()
+                action.image = UIImage.init(named: SettingValues.commentActionLeftRight.getPhoto())?.navIcon()
+                
+                actions.append(action)
+            }
+            let config = UISwipeActionsConfiguration.init(actions: actions)
+            
+            return config
+            
+        } else {
+            return UISwipeActionsConfiguration.init()
+        }
+    }
+
     func updateCells() {
         createCell(rightRightActionCell, nil, isOn: false, text: "First right slide button (also triggered by a long slide)")
         createCell(rightLeftActionCell, nil, isOn: false, text: "Second right slide button")
@@ -227,7 +354,7 @@ class SettingsGestures: UITableViewController {
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        return 3
     }
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if section == 0 {
@@ -249,14 +376,19 @@ class SettingsGestures: UITableViewController {
             switch indexPath.row {
             case 0: return self.doubleSwipeCell
             case 1: return self.swipeAnywhereCell
-            case 2: return self.rightRightActionCell
-            case 3: return self.rightLeftActionCell
-            case 4: return self.leftLeftActionCell
-            case 5: return self.leftRightActionCell
-            case 6: return self.doubleTapActionCell
             default: fatalError("Unknown row in section 0")
             }
         case 1:
+            switch indexPath.row {
+            case 0: return self.commentCell
+            case 1: return self.rightRightActionCell
+            case 2: return self.rightLeftActionCell
+            case 3: return self.leftLeftActionCell
+            case 4: return self.leftRightActionCell
+            case 5: return self.doubleTapActionCell
+            default: fatalError("Unknown row in section 0")
+            }
+        case 2:
             switch indexPath.row {
             case 0: return self.doubleTapSubActionCell
             default: fatalError("Unknown row in section 0")
@@ -268,8 +400,9 @@ class SettingsGestures: UITableViewController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return 7
-        case 1: return 1
+        case 0: return 2
+        case 1: return 6
+        case 2: return 1
         default: fatalError("Unknown number of sections")
         }
     }

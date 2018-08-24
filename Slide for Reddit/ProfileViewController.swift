@@ -329,7 +329,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         }
 
         tabBar = MDCTabBar.init(frame: CGRect.zero)
-        tabBar.backgroundColor = ColorUtil.getColorForUser(name: name)
+        tabBar.backgroundColor = ColorUtil.getColorForSub(sub: "", true)
         tabBar.itemAppearance = .titles
         tabBar.items = content.enumerated().map { index, source in
             return UITabBarItem(title: source.title, image: nil, tag: index)
