@@ -69,9 +69,6 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     
     // MARK: User interaction
     @objc func viewPanned(sender: UIPanGestureRecognizer) {
-        parentController!.view.bringSubview(toFront: backgroundView)
-        parentController!.view.bringSubview(toFront: self.view)
-        
         sender.view?.endEditing(true)
         let velocity = sender.velocity(in: sender.view).y
         
@@ -79,6 +76,9 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         case .began:
             lastPercentY = CGFloat(0)
             callbacks.didBeginPanning?()
+            parentController!.navigationController?.view.addSubviews(backgroundView, self.view)
+            parentController!.navigationController?.view.bringSubview(toFront: backgroundView)
+            parentController!.navigationController?.view.bringSubview(toFront: self.view)
         case .changed:
             update(sender)
         case .ended:

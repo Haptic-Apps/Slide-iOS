@@ -25,6 +25,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     var menuPresentationController: BottomMenuPresentationController?
     
     override func viewWillAppear(_ animated: Bool) {
+        menuNav?.view.isHidden = false
         super.viewWillAppear(animated)
         self.viewWillAppearActions()
         self.navigationController?.setToolbarHidden(true, animated: false)
@@ -355,7 +356,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         // 3- Adjust bottomSheet frame and initial position.
         let height = view.frame.height
         let width = view.frame.width
-        menuNav!.view.frame = CGRect(x: 0, y: self.view.frame.maxY - CGFloat(menuNav!.bottomOffset), width: width, height: height * 0.8)
+        menuNav!.view.frame = CGRect(x: 0, y: self.view.frame.maxY - CGFloat(menuNav!.bottomOffset), width: width, height: height * 0.9)
     }
 
     func restartVC() {
@@ -886,6 +887,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         UIApplication.shared.statusBarView?.backgroundColor = .clear
+        
+        menuNav?.view.isHidden = true
 
         if navigationController?.isNavigationBarHidden ?? false {
             navigationController?.setNavigationBarHidden(false, animated: false)
