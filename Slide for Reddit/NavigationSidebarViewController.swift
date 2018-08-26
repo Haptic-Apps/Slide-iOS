@@ -71,6 +71,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     @objc func viewPanned(sender: UIPanGestureRecognizer) {
         parentController!.view.bringSubview(toFront: backgroundView)
         parentController!.view.bringSubview(toFront: self.view)
+        
         sender.view?.endEditing(true)
         let velocity = sender.velocity(in: sender.view).y
         
@@ -152,7 +153,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
             strongSelf.backgroundView.alpha = 0
             strongSelf.topView?.alpha = 1
             strongSelf.view.frame = CGRect(x: 0, y: y, width: strongSelf.view.frame.width, height: strongSelf.view.frame.height)
-            strongSelf.topView?.backgroundColor = ColorUtil.foregroundColor.add(overlay: UIColor.white.withAlphaComponent(0.05))
+            strongSelf.topView?.backgroundColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.theme == .LIGHT ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
             strongSelf.topView?.layer.cornerRadius = 0
         }
         
@@ -217,9 +218,8 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         backgroundView.addGestureRecognizer(tapGesture)
         
         parentController!.view.addSubview(backgroundView)
-        backgroundView.horizontalAnchors == parentController!.view.horizontalAnchors
-        backgroundView.verticalAnchors == parentController!.view.verticalAnchors
-        
+        backgroundView.edgeAnchors == parentController!.view.edgeAnchors
+
         backgroundView.alpha = 0
     }
 
@@ -509,8 +509,10 @@ extension NavigationSidebarViewController: UISearchBarDelegate {
 extension NavigationSidebarViewController: UIScrollViewDelegate {
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        self.tableView.endEditing(true)
-        header.search.resignFirstResponder()
+        if self.searchBar?.text?.isEmpty() ?? false {
+            self.tableView.endEditing(true)
+            header.search.resignFirstResponder()
+        }
     }
 
 }

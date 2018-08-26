@@ -84,6 +84,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
             let content = contentUrl?.absoluteString
             contentUrl = URL.init(string: (content?.substring(to: content!.index(of: ".")!))!)
         }
+
         let type = ContentType.getContentType(baseUrl: contentUrl)
         
         if type == ContentType.CType.ALBUM && SettingValues.internalAlbumView {
@@ -136,6 +137,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
     var contentUrl: URL?
 
     public func shouldTruncate(url: URL) -> Bool {
+        return false //Todo: figure out what this does
         let path = url.path
         return !ContentType.isGif(uri: url) && !ContentType.isImage(uri: url) && path.contains(".")
     }
@@ -200,6 +202,8 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
                 urlString = "https:" + urlString
             }
             contentUrl = URL.init(string: String.init(htmlEncodedString: urlString))!
+            
+
             if ContentType.isSpoiler(uri: url) {
                 let controller = UIAlertController.init(title: "Spoiler", message: url.absoluteString, preferredStyle: .alert)
                 present(controller, animated: true, completion: nil)

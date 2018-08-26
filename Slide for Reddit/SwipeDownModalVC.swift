@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SDWebImage
 
 class SwipeDownModalVC: ColorMuxPagingViewController {
     var panGestureRecognizer: UIPanGestureRecognizer?
@@ -18,9 +19,15 @@ class SwipeDownModalVC: ColorMuxPagingViewController {
     
     var didStartPan : (_ panStart: Bool) -> Void = { result in }
     private let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        SDImageCache.shared().config.shouldCacheImagesInMemory = true
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        SDImageCache.shared().config.shouldCacheImagesInMemory = false
         panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panGestureAction(_:)))
         panGestureRecognizer2 = UIPanGestureRecognizer(target: self, action: #selector(panGestureAction(_:)))
         panGestureRecognizer!.delegate = self

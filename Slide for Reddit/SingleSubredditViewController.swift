@@ -144,7 +144,7 @@ class SingleSubredditViewController: MediaViewController {
 
         reloadNeedingColor()
         
-        if single && !isModal {
+        if false && single && !isModal { //todo reimplement soon?
             swiper = SloppySwiper.init(navigationController: self.navigationController!)
             self.navigationController!.delegate = swiper!
             for view in view.subviews {

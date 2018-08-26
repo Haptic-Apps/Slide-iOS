@@ -140,6 +140,7 @@ class MediaViewController: UIViewController, MediaVCDelegate {
     var contentUrl: URL?
 
     public func shouldTruncate(url: URL) -> Bool {
+        return false //Todo: figure out what this does
         let path = url.path
         return !ContentType.isGif(uri: url) && !ContentType.isImage(uri: url) && path.contains(".")
     }

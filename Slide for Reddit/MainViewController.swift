@@ -312,8 +312,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         toolbar = UIView()
         menuNav?.topView = toolbar
         menuNav?.view.addSubview(toolbar!)
-        menuNav?.muxColor = ColorUtil.foregroundColor.add(overlay: UIColor.white.withAlphaComponent(0.05))
-        toolbar!.backgroundColor = ColorUtil.foregroundColor.add(overlay: UIColor.white.withAlphaComponent(0.05))
+        menuNav?.muxColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.theme == .LIGHT ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
+        toolbar!.backgroundColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.theme == .LIGHT ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
         toolbar!.horizontalAnchors == menuNav!.view.horizontalAnchors
         toolbar!.topAnchor == menuNav!.view.topAnchor
         toolbar!.heightAnchor == 90
@@ -567,6 +567,10 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                 }
             }
         }
+        
+        let height = size.height
+        let width = size.width
+        menuNav!.view.frame = CGRect(x: 0, y: self.view.frame.maxY - CGFloat(menuNav!.bottomOffset), width: width, height: height * (UIDevice.current.userInterfaceIdiom == .phone && width > height ? 1 : 0.8))
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
