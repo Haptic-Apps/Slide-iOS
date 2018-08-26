@@ -19,6 +19,7 @@ public class TextDisplayStackView: UIStackView {
     
     var estimatedWidth = CGFloat(0)
     var estimatedHeight = CGFloat(0)
+    weak var parentLongPress: UILongPressGestureRecognizer?
     
     let firstTextView: TTTAttributedLabel
     let delegate: TTTAttributedLabelDelegate?
@@ -104,6 +105,9 @@ public class TextDisplayStackView: UIStackView {
         }
         
         firstTextView.setText(string)
+        if let long = parentLongPress {
+            long.require(toFail: firstTextView.longPressGestureRecognizer)
+        }
         
         if !ignoreHeight {
             let framesetterB = CTFramesetterCreateWithAttributedString(string)
@@ -144,7 +148,10 @@ public class TextDisplayStackView: UIStackView {
             firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
             
             firstTextView.setText(newTitle)
-            
+            if let long = parentLongPress {
+                long.require(toFail: firstTextView.longPressGestureRecognizer)
+            }
+
             if !ignoreHeight {
                 let framesetterB = CTFramesetterCreateWithAttributedString(newTitle)
                 let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
@@ -175,7 +182,10 @@ public class TextDisplayStackView: UIStackView {
                 firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
             
             firstTextView.setText(newTitle)
-            
+            if let long = parentLongPress {
+                long.require(toFail: firstTextView.longPressGestureRecognizer)
+            }
+
             if !ignoreHeight {
                 let framesetterB = CTFramesetterCreateWithAttributedString(newTitle)
                 let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
@@ -215,7 +225,10 @@ public class TextDisplayStackView: UIStackView {
             }
             
             firstTextView.setText(text)
-            
+            if let long = parentLongPress {
+                long.require(toFail: firstTextView.longPressGestureRecognizer)
+            }
+
             if !ignoreHeight {
                 let framesetterB = CTFramesetterCreateWithAttributedString(text)
                 let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
@@ -278,6 +291,9 @@ public class TextDisplayStackView: UIStackView {
                 label.accessibilityIdentifier = "Quote"
                 let text = createAttributedChunk(baseHTML: block.replacingOccurrences(of: "<cite>", with: "").replacingOccurrences(of: "<p>", with: "").replacingOccurrences(of: "</cite>", with: "").replacingOccurrences(of: "</p>", with: "").trimmed())
                 label.delegate = delegate
+                if let long = parentLongPress {
+                    long.require(toFail: label.longPressGestureRecognizer)
+                }
                 label.alpha = 0.7
                 label.numberOfLines = 0
                 
@@ -311,6 +327,9 @@ public class TextDisplayStackView: UIStackView {
                 label.accessibilityIdentifier = "New text"
                 let text = createAttributedChunk(baseHTML: block.trimmed())
                 label.delegate = delegate
+                if let long = parentLongPress {
+                    long.require(toFail: label.longPressGestureRecognizer)
+                }
                 let activeLinkAttributes = NSMutableDictionary(dictionary: label.activeLinkAttributes)
                 activeLinkAttributes[NSForegroundColorAttributeName] = tColor
                 label.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]

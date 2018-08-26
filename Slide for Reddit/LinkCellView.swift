@@ -123,27 +123,27 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     }
 
     func attributedLabel(_ label: TTTAttributedLabel!, didLongPressLinkWith url: URL!, at point: CGPoint) {
-        if (url) != nil {
-            if parentViewController != nil {
-
-                let alertController = UIAlertController.init(title: nil, message: nil, preferredStyle: .actionSheet)
-
-                let open = OpenInChromeController.init()
-                if open.isChromeInstalled() {
-                    alertController.addAction(image: UIImage.init(named: "web"), title: "Open in Chrome", color: ColorUtil.fontColor, style: .default, isEnabled: true) { (_) in
-                        open.openInChrome(url, callbackURL: nil, createNewTab: true)
-                    }
+        if parentViewController != nil {
+            let alertController: BottomSheetActionController = BottomSheetActionController()
+            alertController.headerData = url.host
+            
+            alertController.addAction(Action(ActionData(title: "Copy URL", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { _ in
+                UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
+            }))
+            alertController.addAction(Action(ActionData(title: "Open externally", image: UIImage(named: "nav")!.menuIcon()), style: .default, handler: { _ in
+                if #available(iOS 10.0, *) {
+                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                } else {
+                    UIApplication.shared.openURL(url)
                 }
-                alertController.addAction(image: UIImage.init(named: "Open in Safari"), title: "nav", color: ColorUtil.fontColor, style: .default, isEnabled: true) { (_) in
-                    if #available(iOS 10.0, *) {
-                        UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                    } else {
-                        UIApplication.shared.openURL(url)
-                    }
-                }
-
-                VCPresenter.presentAlert(alertController, parentVC: parentViewController!)
+            }))
+            let open = OpenInChromeController.init()
+            if open.isChromeInstalled() {
+                alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "world")!.menuIcon()), style: .default, handler: { _ in
+                    _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
+                }))
             }
+            parentViewController?.present(alertController, animated: true, completion: nil)
         }
     }
 
@@ -166,6 +166,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             if !SettingValues.flatMode {
                 $0.layer.cornerRadius = 10
             }
+            if #available(iOS 11.0, *) {
+                $0.accessibilityIgnoresInvertColors = true
+            }
             $0.contentMode = .scaleAspectFill
             $0.clipsToBounds = true
         }
@@ -177,6 +180,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             $0.contentMode = .scaleAspectFill
             if !SettingValues.flatMode {
                 $0.layer.cornerRadius = 15
+            }
+            if #available(iOS 11.0, *) {
+                $0.accessibilityIgnoresInvertColors = true
             }
             $0.clipsToBounds = true
             $0.backgroundColor = UIColor.white
@@ -377,8 +383,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             }
             if longPress == nil {
                 longPress = UILongPressGestureRecognizer(target: self, action: #selector(LinkCellView.handleLongPress(_:)))
-                longPress?.minimumPressDuration = 0.25 // 1 second press
+                longPress?.minimumPressDuration = 0.25
                 longPress?.delegate = self
+                textView.parentLongPress = longPress!
                 self.contentView.addGestureRecognizer(longPress!)
             }
 

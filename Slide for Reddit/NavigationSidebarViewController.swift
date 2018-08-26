@@ -281,7 +281,6 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     }
 
     func configureLayout() {
-
         header.topAnchor == view.topAnchor
         header.heightAnchor == header.getEstHeight()
         header.horizontalAnchors == view.horizontalAnchors
@@ -322,6 +321,8 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     func setSubreddit(subreddit: String) {
         header.setSubreddit(subreddit: subreddit, parent: self)
         header.frame.size.height = header.getEstHeight()
+        tableView.backgroundColor = ColorUtil.backgroundColor
+        self.view.backgroundColor = ColorUtil.backgroundColor
     }
     
     func setmail(mailcount: Int) {

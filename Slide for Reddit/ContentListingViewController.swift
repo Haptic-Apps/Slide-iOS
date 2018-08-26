@@ -478,8 +478,8 @@ public class NoContentCell: UICollectionViewCell {
         
         let finalText: NSMutableAttributedString!
         if textParts.count > 1 {
-            let firstPart = NSMutableAttributedString.init(string: textParts[0], attributes: [NSForegroundColorAttributeName: UIColor.white.withAlphaComponent(0.8), NSFontAttributeName: UIFont.boldSystemFont(ofSize: 14)])
-            let secondPart = NSMutableAttributedString.init(string: "\n" + textParts[1], attributes: [NSForegroundColorAttributeName: UIColor.white.withAlphaComponent(0.5), NSFontAttributeName: UIFont.systemFont(ofSize: 12)])
+            let firstPart = NSMutableAttributedString.init(string: textParts[0], attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor.withAlphaComponent(0.8), NSFontAttributeName: UIFont.boldSystemFont(ofSize: 14)])
+            let secondPart = NSMutableAttributedString.init(string: "\n" + textParts[1], attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor.withAlphaComponent(0.5), NSFontAttributeName: UIFont.systemFont(ofSize: 12)])
             firstPart.append(secondPart)
             finalText = firstPart
         } else {

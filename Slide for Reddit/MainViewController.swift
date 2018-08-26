@@ -571,6 +571,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         let height = size.height
         let width = size.width
         menuNav!.view.frame = CGRect(x: 0, y: self.view.frame.maxY - CGFloat(menuNav!.bottomOffset), width: width, height: height * (UIDevice.current.userInterfaceIdiom == .phone && width > height ? 1 : 0.8))
+        menuNav!.configureLayout()
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {

@@ -947,6 +947,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             long = UILongPressGestureRecognizer.init(target: self, action: #selector(self.handleLongPress(_:)))
             long.minimumPressDuration = 0.25
             long.delegate = self
+            title.parentLongPress = long
             self.addGestureRecognizer(long)
         }
 
@@ -1320,51 +1321,26 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 extension CommentDepthCell: TTTAttributedLabelDelegate {
     func attributedLabel(_ label: TTTAttributedLabel!, didLongPressLinkWith url: URL!, at point: CGPoint) {
         if parent != nil {
-            let sheet = UIAlertController(title: url.absoluteString, message: nil, preferredStyle: .actionSheet)
-            sheet.addAction(
-                UIAlertAction(title: "Close", style: .cancel) { (_) in
-                    sheet.dismiss(animated: true, completion: nil)
+            let alertController: BottomSheetActionController = BottomSheetActionController()
+            alertController.headerData = url.host
+            
+            alertController.addAction(Action(ActionData(title: "Copy URL", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { _ in
+                UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
+            }))
+            alertController.addAction(Action(ActionData(title: "Open externally", image: UIImage(named: "nav")!.menuIcon()), style: .default, handler: { _ in
+                if #available(iOS 10.0, *) {
+                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                } else {
+                    UIApplication.shared.openURL(url)
                 }
-            )
+            }))
             let open = OpenInChromeController.init()
             if open.isChromeInstalled() {
-                sheet.addAction(
-                    UIAlertAction(title: "Open in Chrome", style: .default) { (_) in
-                        _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
-                    }
-                )
+                alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "world")!.menuIcon()), style: .default, handler: { _ in
+                    _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
+                }))
             }
-            sheet.addAction(
-                UIAlertAction(title: "Open in Safari", style: .default) { (_) in
-                    if #available(iOS 10.0, *) {
-                        UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                    } else {
-                        UIApplication.shared.openURL(url)
-                    }
-                    sheet.dismiss(animated: true, completion: nil)
-                }
-            )
-            sheet.addAction(
-                UIAlertAction(title: "Open", style: .default) { (_) in
-                    /* let controller = WebViewController(nibName: nil, bundle: nil)
-                     controller.url = url
-                     let nav = UINavigationController(rootViewController: controller)
-                     self.present(nav, animated: true, completion: nil)*/
-                }
-            )
-            sheet.addAction(
-                UIAlertAction(title: "Copy URL", style: .default) { (_) in
-                    UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
-                    sheet.dismiss(animated: true, completion: nil)
-                }
-            )
-            sheet.modalPresentationStyle = .popover
-            if let presenter = sheet.popoverPresentationController {
-                presenter.sourceView = label
-                presenter.sourceRect = label.bounds
-            }
-            
-            parent?.present(sheet, animated: true, completion: nil)
+            parent?.present(alertController, animated: true, completion: nil)
         }
     }
     

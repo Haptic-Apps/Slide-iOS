@@ -845,7 +845,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
     }
 
     func close(_ sender: AnyObject) {
-        let alert = UIAlertController.init(title: "Discard this \(type.isMessage() ? "message" : (type.isComment()) ? "comment" : "submission")?", message: "", preferredStyle: .alert)
+        let alert = UIAlertController.init(title: "Discard this \(type.isMessage() ? "message" : (type.isComment()) ? "comment" : type.isEdit() ? "edit" : "submission")?", message: "", preferredStyle: .alert)
         alert.addAction(UIAlertAction.init(title: "Yes", style: .destructive, handler: { (_) in
             if self.navigationController?.viewControllers.count ?? 1 == 1 {
                 self.navigationController?.dismiss(animated: true, completion: nil)
