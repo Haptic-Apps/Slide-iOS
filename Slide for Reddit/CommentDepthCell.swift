@@ -225,8 +225,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
     func showMenu(_ sender: AnyObject?) {
         checkReply { (completed) in
-            if(completed) {
-                doShowMenu()
+            if completed {
+                self.doShowMenu()
             }
         }
     }
@@ -254,7 +254,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
         if parent!.menuCell != nil {
             parent!.menuCell?.checkReply { (finished) in
-                if(finished) {
+                if finished {
                     self.parent!.menuCell!.hideCommentMenu()
                     self.parent!.reloadHeights()
                     self.showCommentMenu()
@@ -528,7 +528,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                     self.toolbar?.saveDraft(nil)
                     completion(true)
                 }))
-                alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (_)
+                alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (_) in
                     completion(false)
                 }))
                 del.present(alert, animated: true)
@@ -1347,7 +1347,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
     func pushedSingleTap(_ sender: AnyObject?) {
         checkReply { (completed) in
-            if(completed) {
+            if completed {
                 self.parent?.pushedSingleTap(self)
             }
         }
