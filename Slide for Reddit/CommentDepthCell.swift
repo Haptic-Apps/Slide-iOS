@@ -224,6 +224,14 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var long = UILongPressGestureRecognizer.init(target: self, action: nil)
 
     func showMenu(_ sender: AnyObject?) {
+        checkReply { (completed) in
+            if(completed) {
+                doShowMenu()
+            }
+        }
+    }
+    
+    func doShowMenu() {
         if let del = self.parent {
             if del.isMenuShown() && del.getMenuShown() == (content as! RComment).getId() {
                 hideMenuAnimated()
@@ -245,12 +253,20 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             return
         }
         if parent!.menuCell != nil {
-            parent!.menuCell!.hideCommentMenu()
+            parent!.menuCell?.checkReply { (finished) in
+                if(finished) {
+                    self.parent!.menuCell!.hideCommentMenu()
+                    self.parent!.reloadHeights()
+                    self.showCommentMenu()
+                    self.parent!.menuId = self.comment!.getIdentifier()
+                    self.parent!.reloadHeights()
+                }
+            }
+        } else {
+            self.showCommentMenu()
+            parent!.menuId = comment!.getIdentifier()
             parent!.reloadHeights()
         }
-        self.showCommentMenu()
-        parent!.menuId = comment!.getIdentifier()
-        parent!.reloadHeights()
     }
     
     func showCommentMenu() {
@@ -501,6 +517,27 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         self.reply(sender)
     }
     
+    func checkReply(completion: @escaping (Bool) -> Void) {
+        if let del = self.parent {
+            if del.isReply && !(body?.text.isEmpty() ?? true) {
+                let alert = UIAlertController(title: "Discard your comment?", message: nil, preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (_) in
+                    completion(true)
+                }))
+                alert.addAction(UIAlertAction(title: "Yes and save draft", style: .default, handler: { (_) in
+                    self.toolbar?.saveDraft(nil)
+                    completion(true)
+                }))
+                alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (_)
+                    completion(false)
+                }))
+                del.present(alert, animated: true)
+            } else {
+                completion(true)
+            }
+        }
+    }
+    
     var replyDelegate: ReplyDelegate?
     func reply(_ s: AnyObject) {
         if menu.isHidden {
@@ -522,6 +559,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         
         menu.isHidden = true
         reply.isHidden = false
+        parent?.isReply = true
 
         NSLayoutConstraint.deactivate(menuHeight)
         menuHeight = batch {
@@ -1308,8 +1346,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
 
     func pushedSingleTap(_ sender: AnyObject?) {
-        if let delegate = self.parent {
-            delegate.pushedSingleTap(self)
+        checkReply { (completed) in
+            if(completed) {
+                self.parent?.pushedSingleTap(self)
+            }
         }
     }
 

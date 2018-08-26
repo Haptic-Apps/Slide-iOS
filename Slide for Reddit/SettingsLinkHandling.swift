@@ -242,7 +242,7 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
                 cell.textLabel?.text = "FireFox Focus"
                 cell.imageView?.image = focusIcon
             } else if text == SettingValues.BROWSER_INTERNAL {
-                cell.textLabel?.text = "Internal browser (suppots ad-blocking with Pro)"
+                cell.textLabel?.text = "Internal browser (supports ad-blocking with Pro)"
                 cell.textLabel?.numberOfLines = 0
                 cell.imageView?.image = internalIcon
             }

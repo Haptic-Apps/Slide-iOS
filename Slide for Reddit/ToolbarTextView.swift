@@ -73,7 +73,7 @@ public class ToolbarTextView: NSObject {
         text!.replace(text!.selectedTextRange!, withText: with + text!.text(in: text!.selectedTextRange!)!.replacingOccurrences(of: value, with: with))
     }
 
-    func saveDraft(_ sender: AnyObject) {
+    func saveDraft(_ sender: AnyObject?) {
         if let toSave = text!.text {
             if !toSave.isEmpty() {
                 Drafts.addDraft(s: text!.text)
