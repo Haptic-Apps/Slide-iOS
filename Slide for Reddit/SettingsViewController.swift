@@ -52,6 +52,19 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
             let menuB = UIBarButtonItem(image: UIImage.init(named: "support")?.toolbarIcon().getCopy(withColor: GMColor.red500Color()), style: .plain, target: self, action: #selector(SettingsViewController.didPro(_:)))
             navigationItem.rightBarButtonItem = menuB
         }
+        let button = UIButtonWithContext.init(type: .custom)
+        button.imageView?.contentMode = UIViewContentMode.scaleAspectFit
+        button.setImage(UIImage.init(named: "back")!.navIcon(), for: UIControlState.normal)
+        button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        button.addTarget(self, action: #selector(handleBackButton), for: .touchUpInside)
+        
+        let barButton = UIBarButtonItem.init(customView: button)
+        
+        navigationItem.leftBarButtonItem = barButton
+    }
+    
+    @objc public func handleBackButton() {
+        self.navigationController?.popViewController(animated: true)
     }
 
     override func viewWillAppear(_ animated: Bool) {

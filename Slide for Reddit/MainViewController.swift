@@ -252,22 +252,31 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         print("Setting token")
         alertController?.dismiss(animated: false, completion: nil)
         // Do any additional setup after loading the view.
-        alertController = UIAlertController(title: nil, message: "Syncing subscriptions...\n\n", preferredStyle: .alert)
-
-        let spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
-        UserDefaults.standard.setValue(true, forKey: "done" + token.name)
-        spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
-        spinnerIndicator.color = UIColor.black
-        spinnerIndicator.startAnimating()
-
-        alertController?.view.addSubview(spinnerIndicator)
-        self.present(alertController!, animated: true, completion: nil)
-        UserDefaults.standard.set(token.name, forKey: "name")
-        UserDefaults.standard.synchronize()
-        tempToken = token
-
-        AccountController.switchAccount(name: token.name)
-        (UIApplication.shared.delegate as! AppDelegate).syncColors(subredditController: self)
+        
+        if UserDefaults.standard.array(forKey: "subs" + token.name) != nil {
+            UserDefaults.standard.set(token.name, forKey: "name")
+            UserDefaults.standard.synchronize()
+            tempToken = token
+            AccountController.switchAccount(name: token.name)
+            (UIApplication.shared.delegate as! AppDelegate).syncColors(subredditController: self)
+        } else {
+            alertController = UIAlertController(title: nil, message: "Syncing subscriptions...\n\n", preferredStyle: .alert)
+            
+            let spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+            UserDefaults.standard.setValue(true, forKey: "done" + token.name)
+            spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
+            spinnerIndicator.color = UIColor.black
+            spinnerIndicator.startAnimating()
+            
+            alertController?.view.addSubview(spinnerIndicator)
+            self.present(alertController!, animated: true, completion: nil)
+            UserDefaults.standard.set(token.name, forKey: "name")
+            UserDefaults.standard.synchronize()
+            tempToken = token
+            
+            AccountController.switchAccount(name: token.name)
+            (UIApplication.shared.delegate as! AppDelegate).syncColors(subredditController: self)
+        }
     }
 
     func complete(subs: [String]) {
@@ -292,9 +301,13 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                 self.present(alert, animated: true, completion: nil)
             })
         } else {
-            self.alertController?.dismiss(animated: true, completion: {
+            if self.alertController != nil {
+                self.alertController?.dismiss(animated: true, completion: {
+                    self.finalizeSetup(subs)
+                })
+            } else {
                 self.finalizeSetup(subs)
-            })
+            }
         }
     }
     

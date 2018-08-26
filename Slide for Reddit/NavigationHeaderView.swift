@@ -195,6 +195,10 @@ class NavigationHeaderView: UIView {
         title.numberOfLines = 0
         title.lineBreakMode = .byWordWrapping
         title.textColor = .white
+        if SettingValues.reduceColor {
+            title.textColor = ColorUtil.fontColor
+            back.backgroundColor = ColorUtil.foregroundColor
+        }
         title.textAlignment = .left
         
         if AccountController.isLoggedIn {
@@ -421,6 +425,10 @@ extension NavigationHeaderView {
 
             optionMenu.addAction(Action(ActionData(title: "Log out", image: UIImage(named: "delete")!.menuIcon().getCopy(withColor: GMColor.red500Color())), style: .default, handler: { _ in
                 AccountController.delete(name: AccountController.currentName)
+                AccountController.switchAccount(name: "GUEST")
+                Subscriptions.sync(name: "GUEST", completion: {
+                    (self.parentController as! NavigationSidebarViewController).parentController?.hardReset()
+                })
             }))
 
         }

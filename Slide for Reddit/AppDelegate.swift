@@ -314,39 +314,47 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 })
 
             } else {
-                Subscriptions.getSubscriptionsFully(session: session!, completion: { (subs, multis) in
-                    for sub in subs {
-                        toReturn.append(sub.displayName)
-                        if !sub.keyColor.isEmpty {
-                            let color = ColorUtil.getClosestColor(hex: sub.keyColor)
-                            if defaults.object(forKey: "color" + sub.displayName) == nil {
-                                defaults.setColor(color: color, forKey: "color+" + sub.displayName)
-                            }
-                        }
-                    }
-                    for m in multis {
-                        toReturn.append("/m/" + m.displayName)
-                        if !m.keyColor.isEmpty {
-
-                            let color = (UIColor.init(hexString: m.keyColor))
-                            if defaults.object(forKey: "color" + m.displayName) == nil {
-                                defaults.setColor(color: color, forKey: "color+" + m.displayName)
-                            }
-                        }
-                    }
-
-                    toReturn = toReturn.sorted {
-                        $0.localizedCaseInsensitiveCompare($1) == ComparisonResult.orderedAscending
-                    }
-                    toReturn.insert("all", at: 0)
-                    toReturn.insert("frontpage", at: 0)
+                if UserDefaults.standard.array(forKey: "subs" + (subredditController?.tempToken?.name ?? "")) != nil {
+                    Subscriptions.sync(name: (subredditController?.tempToken?.name ?? ""), completion: nil)
                     if subredditController != nil {
                         DispatchQueue.main.async(execute: { () -> Void in
-                            subredditController?.complete(subs: toReturn)
+                            subredditController?.complete(subs: Subscriptions.subreddits)
                         })
                     }
-
-                })
+                } else {
+                    Subscriptions.getSubscriptionsFully(session: session!, completion: { (subs, multis) in
+                        for sub in subs {
+                            toReturn.append(sub.displayName)
+                            if !sub.keyColor.isEmpty {
+                                let color = ColorUtil.getClosestColor(hex: sub.keyColor)
+                                if defaults.object(forKey: "color" + sub.displayName) == nil {
+                                    defaults.setColor(color: color, forKey: "color+" + sub.displayName)
+                                }
+                            }
+                        }
+                        for m in multis {
+                            toReturn.append("/m/" + m.displayName)
+                            if !m.keyColor.isEmpty {
+                                
+                                let color = (UIColor.init(hexString: m.keyColor))
+                                if defaults.object(forKey: "color" + m.displayName) == nil {
+                                    defaults.setColor(color: color, forKey: "color+" + m.displayName)
+                                }
+                            }
+                        }
+                        
+                        toReturn = toReturn.sorted {
+                            $0.localizedCaseInsensitiveCompare($1) == ComparisonResult.orderedAscending
+                        }
+                        toReturn.insert("all", at: 0)
+                        toReturn.insert("frontpage", at: 0)
+                        if subredditController != nil {
+                            DispatchQueue.main.async(execute: { () -> Void in
+                                subredditController?.complete(subs: toReturn)
+                            })
+                        }
+                    })
+                }
             }
         } catch {
             print(error)

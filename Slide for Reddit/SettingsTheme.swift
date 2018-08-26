@@ -234,6 +234,20 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         createCell(reduceColor, reduceColorSwitch, isOn: SettingValues.reduceColor, text: "Reduce color throughout app (affects all navigation bars)")
 
         self.tableView.tableFooterView = UIView()
+        
+        let button = UIButtonWithContext.init(type: .custom)
+        button.imageView?.contentMode = UIViewContentMode.scaleAspectFit
+        button.setImage(UIImage.init(named: "back")!.navIcon(), for: UIControlState.normal)
+        button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        button.addTarget(self, action: #selector(handleBackButton), for: .touchUpInside)
+        
+        let barButton = UIBarButtonItem.init(customView: button)
+        
+        navigationItem.leftBarButtonItem = barButton
+    }
+    
+    @objc public func handleBackButton() {
+        self.navigationController?.popViewController(animated: true)
     }
 
     func switchIsChanged(_ changed: UISwitch) {
@@ -254,6 +268,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
             self.tochange!.tableView.reloadData()
         }
         loadView()
+        tableView.reloadData()
         UserDefaults.standard.synchronize()
     }
 

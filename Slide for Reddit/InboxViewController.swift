@@ -102,8 +102,8 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
         tabBar = MDCTabBar.init(frame: CGRect.zero)
         tabBar.backgroundColor = ColorUtil.getColorForSub(sub: "", true)
         tabBar.itemAppearance = .titles
-        tabBar.selectedItemTintColor = UIColor.white
-        tabBar.unselectedItemTintColor = UIColor.white.withAlphaComponent(0.45)
+        tabBar.selectedItemTintColor = (SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white)
+        tabBar.unselectedItemTintColor = (SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white).withAlphaComponent(0.45)
 
         tabBar.items = content.enumerated().map { index, source in
             return UITabBarItem(title: source.description, image: nil, tag: index)

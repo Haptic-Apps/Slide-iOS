@@ -329,12 +329,15 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         }
 
         tabBar = MDCTabBar.init(frame: CGRect.zero)
-        tabBar.backgroundColor = ColorUtil.getColorForSub(sub: "", true)
         tabBar.itemAppearance = .titles
         tabBar.items = content.enumerated().map { index, source in
             return UITabBarItem(title: source.title, image: nil, tag: index)
         }
         
+        tabBar.backgroundColor = ColorUtil.getColorForSub(sub: "", true)
+        tabBar.selectedItemTintColor = (SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white)
+        tabBar.unselectedItemTintColor = (SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white).withAlphaComponent(0.45)
+
         tabBar.selectedItem = tabBar.items[openTo]
         tabBar.delegate = self
         tabBar.tintColor = ColorUtil.accentColorForSub(sub: "NONE")

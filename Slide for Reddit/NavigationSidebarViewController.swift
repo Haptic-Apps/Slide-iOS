@@ -322,7 +322,6 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         header.setSubreddit(subreddit: subreddit, parent: self)
         header.frame.size.height = header.getEstHeight()
         tableView.backgroundColor = ColorUtil.backgroundColor
-        self.view.backgroundColor = ColorUtil.backgroundColor
     }
     
     func setmail(mailcount: Int) {

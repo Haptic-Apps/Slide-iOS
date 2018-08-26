@@ -67,15 +67,17 @@ class ModerationViewController: UIPageViewController, UIPageViewControllerDataSo
         }
 
         tabBar = MDCTabBar.init(frame: CGRect.init(x: 0, y: -8, width: self.view.frame.size.width, height: 45))
-        tabBar.backgroundColor = ColorUtil.getColorForSub(sub: "")
+        
+        tabBar.backgroundColor = ColorUtil.getColorForSub(sub: "", true)
+        tabBar.selectedItemTintColor = (SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white)
+        tabBar.unselectedItemTintColor = (SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white).withAlphaComponent(0.45)
+
         tabBar.itemAppearance = .titles
-        // 2
         tabBar.items = content.enumerated().map { index, source in
             return UITabBarItem(title: source.description, image: nil, tag: index)
         }
         tabBar.autoresizingMask = [.flexibleWidth, .flexibleBottomMargin]
 
-        // 3
         tabBar.selectedItem = tabBar.items[0]
         // 4
         tabBar.delegate = self
