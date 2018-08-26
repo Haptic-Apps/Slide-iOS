@@ -383,10 +383,14 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
     
     func discard(_ sender: AnyObject) {
-        self.endEditing(true)
-        replyDelegate!.discard()
-        showCommentMenu()
-        parent!.reloadHeights()
+        checkReply { (completed) in
+            if completed {
+                self.endEditing(true)
+                self.replyDelegate!.discard()
+                self.showCommentMenu()
+                self.parent!.reloadHeights()
+            }
+        }
     }
     
     var alertController: UIAlertController?
