@@ -322,6 +322,12 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     var finalSubs = [String]()
 
     func makeMenuNav() {
+        if menuNav != nil {
+            menuNav?.view.removeFromSuperview()
+            menuNav?.backgroundView.removeFromSuperview()
+            menuNav?.removeFromParentViewController()
+            menuNav = nil
+        }
         menuNav = NavigationSidebarViewController(controller: self)
         toolbar = UIView()
         menuNav?.topView = toolbar
@@ -562,7 +568,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        super.viewWillTransition(to: size, with: coordinator)
         drawerButton.frame = CGRect(x: 8, y: size.height - 48, width: 40, height: 40)
         inHeadView.removeFromSuperview()
 
@@ -582,10 +587,15 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             }
         }
         
-        let height = size.height
-        let width = size.width
-        menuNav!.view.frame = CGRect(x: 0, y: self.view.frame.maxY - CGFloat(menuNav!.bottomOffset), width: width, height: height * (UIDevice.current.userInterfaceIdiom == .phone && width > height ? 1 : 0.8))
-        menuNav!.configureLayout()
+        makeMenuNav()
+        doButtons()
+        menuNav!.collapse()
+        menuNav!.view.isHidden = true
+        super.viewWillTransition(to: size, with: coordinator)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+            self.menuNav!.view.isHidden = false
+            (self.viewControllers?[self.currentPage] as! SingleSubredditViewController).showUI()
+        }
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
