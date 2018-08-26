@@ -15,6 +15,7 @@ class SubredditCellView: UITableViewCell {
 
     var subreddit = ""
     var profile = ""
+    var search = ""
     var timer: Timer?
     var cancelled = false
 
@@ -58,7 +59,6 @@ class SubredditCellView: UITableViewCell {
         
         self.icon = UIImageView().then {
             $0.frame = CGRect(x: 0, y: 0, width: 16, height: 16)
-            $0.image = UIImage.init(named: "profile")!.menuIcon() // TODO: Should cache this image
             $0.isHidden = true
         }
 
@@ -139,10 +139,29 @@ class SubredditCellView: UITableViewCell {
         self.contentView.backgroundColor = ColorUtil.foregroundColor
         self.profile = profile
         self.subreddit = ""
+        self.search = ""
         self.icon.isHidden = false
         self.sideView.isHidden = true
         self.navController = nav
         title.text = "Go to u/\(profile)'s profile"
+        self.icon.image = UIImage.init(named: "profile")!.menuIcon()
+        sideView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
+        let selectedView = UIView()
+        selectedView.backgroundColor = ColorUtil.backgroundColor
+        selectedBackgroundView = selectedView
+    }
+
+    func setSearch(string: String, nav: UIViewController?) {
+        title.textColor = ColorUtil.fontColor
+        self.contentView.backgroundColor = ColorUtil.foregroundColor
+        self.search = string
+        self.subreddit = ""
+        self.profile = ""
+        self.icon.isHidden = false
+        self.sideView.isHidden = true
+        self.navController = nav
+        title.text = "Search for \(string)"
+        self.icon.image = UIImage.init(named: "search")!.menuIcon()
         sideView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
         let selectedView = UIView()
         selectedView.backgroundColor = ColorUtil.backgroundColor

@@ -267,6 +267,8 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         tableView.separatorInset = .zero
 
         tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "sub")
+        tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "search")
+        tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "profile")
 
         view.addSubview(tableView)
 
@@ -341,6 +343,8 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
         if !cell.profile.isEmpty() {
             let user = cell.profile
             parentController?.goToUser(profile: user)
+        } else if !cell.search.isEmpty() {
+            VCPresenter.showVC(viewController: SearchViewController(subreddit: "all", searchFor: cell.search), popupIfPossible: false, parentNavigationController: parentController?.navigationController, parentViewController: parentController)
         } else {
             let sub = cell.subreddit
             parentController?.goToSubreddit(subreddit: sub)
@@ -367,7 +371,7 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
             if isSearching {
-                return filteredContent.count + (filteredContent.contains(searchBar!.text!) ? 0 : 1) + 1
+                return filteredContent.count + (filteredContent.contains(searchBar!.text!) ? 0 : 1) + 2
             } else {
                 return Subscriptions.subreddits.count
             }
@@ -408,8 +412,13 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
                 cell = c
             } else if isSearching && indexPath.row == filteredContent.count + 1 {
                 let thing = searchBar!.text!
-                let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
+                let c = tableView.dequeueReusableCell(withIdentifier: "profile", for: indexPath) as! SubredditCellView
                 c.setProfile(profile: thing, nav: parentController!)
+                cell = c
+            } else if isSearching && indexPath.row == filteredContent.count + 2 {
+                let thing = searchBar!.text!
+                let c = tableView.dequeueReusableCell(withIdentifier: "search", for: indexPath) as! SubredditCellView
+                c.setSearch(string: thing, nav: parentController!)
                 cell = c
             } else {
                 var thing = ""
