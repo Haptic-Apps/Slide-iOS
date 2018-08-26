@@ -20,6 +20,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         return contentType == ContentType.CType.VIDEO
     }
 
+    var globalAspect = CGFloat(0)
     var videoView = VideoView()
     var youtubeView = YTPlayerView()
     var downloadedOnce = false
@@ -109,7 +110,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-//        youtubeView.heightAnchor == size.height //Fullscreen landscape
+        self.youtubeHeightConstraint = self.youtubeView.heightAnchor == self.youtubeView.widthAnchor * globalAspect
     }
 
 //    override func didReceiveMemoryWarning() {
@@ -210,9 +211,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     func configureLayout() {
         videoView.edgeAnchors == view.edgeAnchors
 
-        youtubeView.centerYAnchor == view.centerYAnchor
-        youtubeView.leadingAnchor == view.safeLeadingAnchor
-        youtubeView.trailingAnchor == view.safeTrailingAnchor
+        youtubeView.edgeAnchors == view.edgeAnchors
 
         bottomButtons.horizontalAnchors == view.safeHorizontalAnchors + CGFloat(8)
         bottomButtons.bottomAnchor == view.safeBottomAnchor - CGFloat(8)
@@ -663,7 +662,7 @@ extension VideoMediaViewController {
                 return
             }
             
-            print("Aspect is \(aspect)")
+            strongSelf.globalAspect = aspect
             strongSelf.youtubeHeightConstraint = strongSelf.youtubeView.heightAnchor == strongSelf.youtubeView.widthAnchor * aspect
             let vars = [
                 "controls": 0, // Disable controls
