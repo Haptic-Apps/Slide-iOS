@@ -283,7 +283,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         self.score = UILabel().then {
             $0.accessibilityIdentifier = "Score Label"
             $0.numberOfLines = 1
-            $0.font = FontGenerator.fontOfSize(size: 12, submission: true)
             $0.textColor = ColorUtil.fontColor
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
@@ -293,7 +292,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             $0.accessibilityIdentifier = "Score Label vertical"
             $0.numberOfLines = 1
             $0.textAlignment = .center
-            $0.font = FontGenerator.fontOfSize(size: 12, submission: true)
             $0.textColor = ColorUtil.fontColor
             $0.isOpaque = false
         }

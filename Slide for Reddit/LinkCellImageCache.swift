@@ -37,6 +37,10 @@ public class LinkCellImageCache {
     static var nsfw = UIImage()
     static var reddit = UIImage()
     static var spoiler = UIImage()
+    
+    static var font14: UIFont!
+    static var font16: UIFont!
+    static var font12: UIFont!
 
     private struct sizes {
         static let small = CGSize(width: 12, height: 12)
@@ -45,6 +49,11 @@ public class LinkCellImageCache {
 
     // TODO: Call this whenever the theme changes.
     public static func initialize() {
+        
+        font12 =  FontGenerator.boldFontOfSize(size: 12, submission: true)
+        font14 =  FontGenerator.boldFontOfSize(size: 14, submission: true)
+        font16 =  FontGenerator.boldFontOfSize(size: 16, submission: true)
+        
         upvote = UIImage(named: "upvote")!.menuIcon()
         upvoteTinted = upvote.getCopy(withColor: ColorUtil.upvoteColor)
 

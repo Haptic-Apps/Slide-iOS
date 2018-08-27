@@ -11,17 +11,29 @@ import UIKit
 class FontGenerator {
     //Fonts are: HelveticaNeue, RobotoCondensed-Regular, RobotoCondensed-Bold, Roboto-Light, Roboto-Bold, Roboto-Medium, or System Font (San Fransisco)
     public static func fontOfSize(size: CGFloat, submission: Bool) -> UIFont {
-        return (submission ? postFont.font : commentFont.font).withSize( size + CGFloat(submission ? SettingValues.postFontOffset : SettingValues.commentFontOffset))
+        if let font = fontDict["\(size)\(submission)"] {
+            return font
+        }
+        let newFont =  (submission ? postFont.font : commentFont.font).withSize( size + CGFloat(submission ? SettingValues.postFontOffset : SettingValues.commentFontOffset))
+        fontDict["\(size)\(submission)"] = newFont
+        return newFont
     }
     
     public static func boldFontOfSize(size: CGFloat, submission: Bool) -> UIFont {
-        return (submission ? postFont.bold() : commentFont.bold()).withSize( size + CGFloat(submission ? SettingValues.postFontOffset : SettingValues.commentFontOffset))
+        if let font = fontDict["\(size)\(submission)B"] {
+            return font
+        }
+        let newFont =  (submission ? postFont.bold() : commentFont.bold()).withSize( size + CGFloat(submission ? SettingValues.postFontOffset : SettingValues.commentFontOffset))
+        fontDict["\(size)\(submission)B"] = newFont
+        return newFont
     }
     
     public static var postFont = Font.SYSTEM
     public static var commentFont = Font.SYSTEM
+    public static var fontDict = [String: UIFont]()
 
     public static func initialize() {
+        fontDict.removeAll()
         if let name = UserDefaults.standard.string(forKey: "postfont") {
             if let t = Font(rawValue: name) {
                 postFont = t
