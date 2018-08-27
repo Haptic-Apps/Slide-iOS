@@ -385,6 +385,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     func discard(_ sender: AnyObject) {
         checkReply { (completed) in
             if completed {
+                self.parent?.isReply = false
                 self.endEditing(true)
                 self.replyDelegate!.discard()
                 self.showCommentMenu()

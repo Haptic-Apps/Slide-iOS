@@ -594,7 +594,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         super.viewWillTransition(to: size, with: coordinator)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
             self.menuNav!.view.isHidden = false
-            (self.viewControllers?[self.currentPage] as! SingleSubredditViewController).showUI()
+            (MainViewController.vCs[self.currentPage] as! SingleSubredditViewController).showUI()
         }
     }
     
