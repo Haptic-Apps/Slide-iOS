@@ -175,6 +175,10 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     }
     
     func expand() {
+        parentController!.navigationController?.view.addSubviews(backgroundView, self.view)
+        parentController!.navigationController?.view.bringSubview(toFront: backgroundView)
+        parentController!.navigationController?.view.bringSubview(toFront: self.view)
+        
         let y = UIScreen.main.bounds.height - self.view.frame.size.height
         let animateBlock = { [weak self] in
             guard let strongSelf = self else { return }

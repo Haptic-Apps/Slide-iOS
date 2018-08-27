@@ -111,7 +111,8 @@ class SingleSubredditViewController: MediaViewController {
         self.parentController = parent
 
         super.init(nibName: nil, bundle: nil)
-        //  setBarColors(color: ColorUtil.getColorForSub(sub: subName))
+        self.sort = SettingValues.getLinkSorting(forSubreddit: self.sub)
+        self.time = SettingValues.getTimePeriod(forSubreddit: self.sub)
     }
 
     init(subName: String, single: Bool) {
@@ -119,7 +120,8 @@ class SingleSubredditViewController: MediaViewController {
         self.single = true
         SingleSubredditViewController.nextSingle = true
         super.init(nibName: nil, bundle: nil)
-        // setBarColors(color: ColorUtil.getColorForSub(sub: subName))
+        self.sort = SettingValues.getLinkSorting(forSubreddit: self.sub)
+        self.time = SettingValues.getTimePeriod(forSubreddit: self.sub)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -529,6 +531,8 @@ class SingleSubredditViewController: MediaViewController {
                 self.newPost(self.fab!)
             case .SHADOWBOX:
                 self.shadowboxMode()
+            case .RELOAD:
+                self.refresh()
             case .HIDE_READ:
                 self.hideReadPosts()
             case .GALLERY:
@@ -544,7 +548,7 @@ class SingleSubredditViewController: MediaViewController {
             UserDefaults.standard.set(true, forKey: "FAB_SHOWN")
             UserDefaults.standard.synchronize()
         }
-
+        
         let actionSheetController: UIAlertController = UIAlertController(title: "Change button type", message: "", preferredStyle: .alert)
 
         let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
@@ -605,7 +609,6 @@ class SingleSubredditViewController: MediaViewController {
         self.time = SettingValues.getTimePeriod(forSubreddit: self.sub)
 
         if single {
-
             let sort = UIButton.init(type: .custom)
             sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControlState.normal)
             sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControlEvents.touchUpInside)
@@ -992,7 +995,6 @@ class SingleSubredditViewController: MediaViewController {
 
             for t in TimeFilterWithin.cases {
                 let saveActionButton: UIAlertAction = UIAlertAction(title: t.param, style: .default) { _ -> Void in
-                    print("Sort is \(s) and time is \(t)")
                     self.sort = s
                     self.time = t
                     self.refresh()
@@ -1013,7 +1015,11 @@ class SingleSubredditViewController: MediaViewController {
         }
     }
 
-    func refresh() {
+    func refresh(_ indicator: Bool = true) {
+        if indicator {
+            refreshControl.beginRefreshing()
+        }
+        
         links = []
         flowLayout.reset()
         flowLayout.invalidateLayout()

@@ -192,7 +192,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             $0.accessibilityIdentifier = "Title"
             $0.numberOfLines = 0
             $0.lineBreakMode = .byWordWrapping
-            $0.font = FontGenerator.fontOfSize(size: 18, submission: true)
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
             $0.verticalAlignment = .top
@@ -279,12 +278,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             $0.contentMode = .scaleAspectFit
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
-        }
-
-        self.textView = TextDisplayStackView.init(fontSize: 16, submission: true, color: ColorUtil.baseAccent, delegate: self, width: 100).then {
-            $0.accessibilityIdentifier = "Self Text View"
-            $0.backgroundColor = ColorUtil.foregroundColor
-            $0.isHidden = true
         }
 
         self.score = UILabel().then {
@@ -385,7 +378,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 longPress = UILongPressGestureRecognizer(target: self, action: #selector(LinkCellView.handleLongPress(_:)))
                 longPress?.minimumPressDuration = 0.25
                 longPress?.delegate = self
-                textView.parentLongPress = longPress!
+                if full {
+                    textView.parentLongPress = longPress!
+                }
                 self.contentView.addGestureRecognizer(longPress!)
             }
 
@@ -1388,9 +1383,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             let thumbheight = (full || SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50)) - (!full && SettingValues.postViewMode == .COMPACT ? 15 : 0)
             
             let textHeight = (!hasText || !full) ? CGFloat(0) : textView.estimatedHeight
-            
-            print("Est text height is \(textView.estimatedHeight)")
-
+        
             if thumb {
                 imageHeight = thumbheight
                 innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between top and thumbnail

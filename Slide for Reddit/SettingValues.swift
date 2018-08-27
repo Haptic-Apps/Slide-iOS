@@ -487,7 +487,7 @@ class SettingValues {
 
     public enum FabType: String {
 
-        public static let cases: [FabType] = [.HIDE_READ, .SHADOWBOX, .NEW_POST, .SIDEBAR, .SEARCH]
+        public static let cases: [FabType] = [.HIDE_READ, .SHADOWBOX, .NEW_POST, .SIDEBAR, .RELOAD, .SEARCH]
 
         case HIDE_READ = "hide"
         case SHADOWBOX = "shadowbox"
@@ -495,6 +495,7 @@ class SettingValues {
         case SIDEBAR = "sidebar"
         case GALLERY = "gallery"
         case SEARCH = "search"
+        case RELOAD = "reload"
 
         func getPhoto() -> String {
             switch self {
@@ -506,6 +507,8 @@ class SettingValues {
                 return "shadowbox"
             case .SIDEBAR:
                 return "info"
+            case .RELOAD:
+                return "sync"
             case .GALLERY:
                 return "image"
             case .SEARCH:
@@ -523,6 +526,8 @@ class SettingValues {
                 return "Shadowbox"
             case .SIDEBAR:
                 return "Sidebar"
+            case .RELOAD:
+                return "Reload"
             case .GALLERY:
                  return "Gallery"
             case .SEARCH:

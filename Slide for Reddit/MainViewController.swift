@@ -522,8 +522,14 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: vc.sub, true)
         self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: vc.sub, true)
 
-        if !(vc).loaded {
-            (vc).load(reset: true)
+        if !(vc).loaded || !SettingValues.viewType {
+            if vc.loaded {
+                vc.indicator?.isHidden = false
+                vc.indicator?.startAnimating()
+                vc.refresh(false)
+            } else {
+                (vc).load(reset: true)
+            }
         }
 
         let label = UILabel()
