@@ -94,21 +94,27 @@ class SettingsGestures: UITableViewController {
         let alertController: BottomSheetActionController = BottomSheetActionController()
         for action in SettingValues.CommentAction.cases {
             alertController.addAction(Action(ActionData(title: action.getTitle(), image: UIImage(named: action.getPhoto())!.menuIcon()), style: .default, handler: { _ in
-                UserDefaults.standard.set(action.rawValue, forKey: cell == self.rightRightActionCell ? SettingValues.pref_commentActionRightRight : (cell == self.rightLeftActionCell ? SettingValues.pref_commentActionRightLeft : (cell == self.doubleTapSubActionCell ? SettingValues.pref_submissionActionDoubleTap :  SettingValues.pref_commentActionDoubleTap)))
-                if cell == self.rightRightActionCell {
+                if cell == self.leftRightActionCell {
+                    SettingValues.commentActionLeftRight = action
+                    UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_commentActionLeftRight)
+                } else if cell == self.rightRightActionCell {
                     SettingValues.commentActionRightRight = action
+                    UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_commentActionRightRight)
+                } else if cell == self.leftLeftActionCell {
+                    SettingValues.commentActionLeftLeft = action
+                    UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_commentActionLeftLeft)
                 } else if cell == self.rightLeftActionCell {
                     SettingValues.commentActionRightLeft = action
-                } else if cell == self.doubleTapActionCell {
-                    SettingValues.commentActionDoubleTap = action
-                } else if cell == self.leftLeftActionCell {
-                        SettingValues.commentActionLeftLeft = action
-                } else if cell == self.leftRightActionCell {
-                        SettingValues.commentActionLeftRight = action
-                } else {
+                    UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_commentActionRightLeft)
+                } else if cell == self.doubleTapSubActionCell {
                     SettingValues.submissionActionDoubleTap = action
                     SubredditReorderViewController.changed = true
+                    UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_submissionActionDoubleTap)
+                } else {
+                    SettingValues.commentActionDoubleTap = action
+                    UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_commentActionDoubleTap)
                 }
+                
                 UserDefaults.standard.synchronize()
                 self.updateCells()
             }))

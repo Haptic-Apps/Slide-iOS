@@ -624,7 +624,7 @@ class SingleSubredditViewController: MediaViewController {
             info.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let infoB = UIBarButtonItem.init(customView: info)
 
-            if SettingValues.bottomBarHidden || SettingValues.viewType {
+            if false && (SettingValues.bottomBarHidden || SettingValues.viewType) {
                 more = UIButton.init(type: .custom)
                 more.setImage(UIImage.init(named: "moreh")?.navIcon(), for: UIControlState.normal)
                 more.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControlEvents.touchUpInside)
@@ -1619,7 +1619,8 @@ class SingleSubredditViewController: MediaViewController {
             // Start HTTP server to listen on the port
             do {
                 try self.server?.start()
-            } catch {
+            } catch let error {
+                print(error)
                 self.server?.stop()
                 do {
                     try self.server?.start()
