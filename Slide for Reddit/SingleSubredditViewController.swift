@@ -242,9 +242,6 @@ class SingleSubredditViewController: MediaViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
-        server?.stop()
-        loop?.stop()
 
         UIApplication.shared.statusBarStyle = .lightContent
 
@@ -1620,7 +1617,16 @@ class SingleSubredditViewController: MediaViewController {
             }
             
             // Start HTTP server to listen on the port
-            try! self.server?.start()
+            do {
+                try self.server?.start()
+            } catch {
+                self.server?.stop()
+                do {
+                    try self.server?.start()
+                } catch {
+                    
+                }
+            }
             
             // Run event loop
             self.loop?.runForever()
