@@ -23,26 +23,26 @@ PODS:
     - DTFoundation/Core
   - Embassy (4.0.7)
   - LicensesViewController (0.6.5)
-  - MaterialComponents/ActivityIndicator (60.1.0):
+  - MaterialComponents/ActivityIndicator (60.3.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Application
     - MDFInternationalization
     - MotionAnimator (~> 2.0)
-  - MaterialComponents/AnimationTiming (60.1.0)
-  - MaterialComponents/Ink (60.1.0):
+  - MaterialComponents/AnimationTiming (60.3.0)
+  - MaterialComponents/Ink (60.3.0):
     - MaterialComponents/private/Math
-  - MaterialComponents/Palettes (60.1.0)
-  - MaterialComponents/private/Application (60.1.0)
-  - MaterialComponents/private/Math (60.1.0)
-  - MaterialComponents/ProgressView (60.1.0):
+  - MaterialComponents/Palettes (60.3.0)
+  - MaterialComponents/private/Application (60.3.0)
+  - MaterialComponents/private/Math (60.3.0)
+  - MaterialComponents/ProgressView (60.3.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
     - MDFInternationalization
     - MotionAnimator (~> 2.1)
-  - MaterialComponents/ShadowElevations (60.1.0)
-  - MaterialComponents/ShadowLayer (60.1.0):
+  - MaterialComponents/ShadowElevations (60.3.0)
+  - MaterialComponents/ShadowLayer (60.3.0):
     - MaterialComponents/ShadowElevations
-  - MaterialComponents/Tabs (60.1.0):
+  - MaterialComponents/Tabs (60.3.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Ink
     - MaterialComponents/private/Math
@@ -50,7 +50,7 @@ PODS:
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/Typography (60.1.0):
+  - MaterialComponents/Typography (60.3.0):
     - MaterialComponents/private/Application
     - MaterialComponents/private/Math
   - MDFInternationalization (1.1.0)
@@ -133,7 +133,7 @@ CHECKOUT OPTIONS:
     :commit: 1e48b2ff36f1218fb69ed88678297b204ebcc144
     :git: https://github.com/Cocoanetics/DTCoreText
   reddift:
-    :commit: 32aa9c569c84af41dbe8a6cdfb454f3de1b25782
+    :commit: 0a65c71fc6896cda99c9487b23a4b969911e617d
     :git: https://github.com/ccrama/reddift
   RLBAlertsPickers:
     :commit: 583f111c780546a42320c406f1fcf21f9f2caf30
@@ -155,7 +155,7 @@ SPEC CHECKSUMS:
   DTFoundation: f03be9fd786f11e505bb8fc44e2a3732bf0917df
   Embassy: 53ca7c2dd4c7f64956ddd4f5ef0443cec6383dd1
   LicensesViewController: 1f2982b1bab8402d3f88e23197957038e8abb907
-  MaterialComponents: bd1ebf279041919605fe6133a4173db4148ec1cd
+  MaterialComponents: f78226418ca7bf8fdf2250bd26fe626c769f1e9d
   MDFInternationalization: b5b8626628abf026e630e5ebaeee563037712cbb
   MKColorPicker: 8998b2ab977e4f240fdf254db27a18b810da3cfc
   MotionAnimator: ee16aa30567c5bae0fb2750c132915829cfaaf8a

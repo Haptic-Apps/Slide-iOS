@@ -38,6 +38,12 @@ class SettingsWelcome: UIPageViewController, UIPageViewControllerDataSource, UIP
         
         self.view.backgroundColor = ColorUtil.backgroundColor
         
+        if ColorUtil.theme == .LIGHT {
+            UIApplication.shared.statusBarStyle = .default
+        } else {
+            UIApplication.shared.statusBarStyle = .lightContent
+        }
+
         if current == pages.count - 1 {
             let start = UIButton.init(type: .system)
             start.setTitle("LET'S GO!", for: .normal)
