@@ -575,6 +575,8 @@ class SettingsFont: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
         UserDefaults.standard.synchronize()
         FontGenerator.initialize()
+        CachedTitle.titleFont = FontGenerator.fontOfSize(size: 18, submission: true)
+        CachedTitle.titles.removeAll()
         doChecks()
     }
     

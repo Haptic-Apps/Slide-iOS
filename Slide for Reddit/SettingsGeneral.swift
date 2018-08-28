@@ -182,9 +182,9 @@ class SettingsGeneral: UITableViewController {
             case 0: return self.viewType
             case 1: return self.hideFAB
             case 2: return self.autoKeyboard
-            case 3: return self.bottomBarHidden
-            case 4: return self.pinToolbar
-            case 5: return self.scrubUsername
+          //  case 3: return self.bottomBarHidden
+            case 3: return self.pinToolbar
+            case 4: return self.scrubUsername
             default: fatalError("Unknown row in section 0")
             }
         case 1:
@@ -328,7 +328,7 @@ class SettingsGeneral: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return 6
+        case 0: return 5
         case 1: return 2
         case 2: return 1
         case 3: return 2

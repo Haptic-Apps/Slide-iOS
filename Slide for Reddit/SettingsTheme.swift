@@ -527,7 +527,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return 5
+        case 0: return 4
         case 1: return 2
         default: fatalError("Unknown number of sections")
         }

@@ -512,7 +512,7 @@ class SettingsWelcomeLayout: UIViewController {
         }
         
         let cardLabel = UILabel().then {
-            $0.text = "Card view"
+            $0.text = "Card view with banner images"
             $0.font = UIFont.boldSystemFont(ofSize: 13)
             $0.textColor = ColorUtil.fontColor
             $0.sizeToFit()
@@ -525,7 +525,7 @@ class SettingsWelcomeLayout: UIViewController {
             $0.contentMode = .scaleAspectFit
         }
         let listLabel = UILabel().then {
-            $0.text = "List view"
+            $0.text = "List view with thumbnails"
             $0.font = UIFont.boldSystemFont(ofSize: 13)
             $0.textColor = ColorUtil.fontColor
             $0.sizeToFit()

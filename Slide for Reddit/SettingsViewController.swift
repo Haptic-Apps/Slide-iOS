@@ -44,6 +44,9 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
     var multiColumnCell: UITableViewCell = UITableViewCell()
     var multiColumn = UISwitch()
     var lock = UISwitch()
+    
+    var reduceColorCell: UITableViewCell = UITableViewCell()
+    var reduceColor = UISwitch()
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -135,7 +138,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         self.mainTheme.accessoryType = .disclosureIndicator
         self.mainTheme.backgroundColor = ColorUtil.foregroundColor
         self.mainTheme.textLabel?.textColor = ColorUtil.fontColor
-        self.mainTheme.imageView?.image = UIImage.init(named: "colors")?.toolbarIcon()
+        self.mainTheme.imageView?.image = UIImage.init(named: "palette")?.toolbarIcon()
         self.mainTheme.imageView?.tintColor = ColorUtil.fontColor
 
         self.goPro.textLabel?.text = "Support Slide, Go Pro!"
@@ -291,13 +294,30 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         self.lockCell.imageView?.image = UIImage.init(named: "lockapp")?.toolbarIcon()
         self.lockCell.imageView?.tintColor = ColorUtil.fontColor
 
+        reduceColor = UISwitch()
+        reduceColor.isOn = SettingValues.reduceColor
+        reduceColor.addTarget(self, action: #selector(SettingsViewController.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+        reduceColorCell.textLabel?.text = "Reduce app colors (experimental)"
+        reduceColorCell.textLabel?.numberOfLines = 0
+        reduceColorCell.accessoryView = reduceColor
+        reduceColorCell.backgroundColor = ColorUtil.foregroundColor
+        reduceColorCell.textLabel?.textColor = ColorUtil.fontColor
+        reduceColorCell.selectionStyle = UITableViewCellSelectionStyle.none
+        self.reduceColorCell.imageView?.image = UIImage.init(named: "colors")?.toolbarIcon()
+        self.reduceColorCell.imageView?.tintColor = ColorUtil.fontColor
+
         if reset {
             self.tableView.reloadData()
         }
     }
 
     func switchIsChanged(_ changed: UISwitch) {
-        if changed == multiColumn {
+        if changed == reduceColor {
+            MainViewController.needsRestart = true
+            SettingValues.reduceColor = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_reduceColor)
+            setupBaseBarColors()
+        } else if changed == multiColumn {
             SettingValues.multiColumn = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_multiColumn)
         } else if changed == lock {
@@ -308,6 +328,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
                 changed.isOn = false
             }
         }
+        UserDefaults.standard.synchronize()
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -357,10 +378,11 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         case 1:
             switch indexPath.row {
             case 0: return self.mainTheme
-            case 1: return self.postLayout
-            case 2: return self.subThemes
-            case 3: return self.font
-            case 4: return self.comments
+            case 1: return self.reduceColorCell
+            case 2: return self.postLayout
+            case 3: return self.subThemes
+            case 4: return self.font
+            case 5: return self.comments
             default: fatalError("Unknown row in section 1")
             }
         case 2:
@@ -440,20 +462,20 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
             }
         } else if indexPath.section == 2 && indexPath.row == 4 {
             ch = FiltersViewController()
-        } else if indexPath.section == 1 && indexPath.row == 2 {
+        } else if indexPath.section == 1 && indexPath.row == 3 {
             ch = SubredditThemeViewController()
         } else if indexPath.section == 1 && indexPath.row == 0 {
             ch = SettingsTheme()
             (ch as! SettingsTheme).tochange = self
-        } else if indexPath.section == 1 && indexPath.row == 3 {
+        } else if indexPath.section == 1 && indexPath.row == 4 {
             ch = SettingsFont()
-        } else if indexPath.section == 1 && indexPath.row == 1 {
+        } else if indexPath.section == 1 && indexPath.row == 2 {
             ch = SettingsLayout()
         } else if indexPath.section == 2 && indexPath.row == 2 {
             ch = SettingsData()
         } else if indexPath.section == 2 && indexPath.row == 3 {
             ch = SettingsContent()
-        } else if indexPath.section == 1 && indexPath.row == 4 {
+        } else if indexPath.section == 1 && indexPath.row == 5 {
             ch = SettingsComments()
         } else if indexPath.section == 2 && indexPath.row == 0 {
             ch = SettingsLinkHandling()
@@ -530,7 +552,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0: return (SettingValues.isPro) ? 5 : 6
-        case 1: return 5
+        case 1: return 6
         case 2: return 8
         case 3: return 5
         default: fatalError("Unknown number of sections")

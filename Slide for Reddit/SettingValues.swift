@@ -343,7 +343,7 @@ class SettingValues {
         SettingValues.pinToolbar = settings.bool(forKey: SettingValues.pref_pinToolbar)
         SettingValues.autoKeyboard = settings.object(forKey: SettingValues.pref_autoKeyboard) == nil ? true : settings.bool(forKey: SettingValues.pref_autoKeyboard)
         SettingValues.linkAlwaysThumbnail = settings.object(forKey: SettingValues.pref_linkAlwaysThumbnail) == nil ? true : settings.bool(forKey: SettingValues.pref_linkAlwaysThumbnail)
-        SettingValues.bottomBarHidden = settings.bool(forKey: SettingValues.pref_bottomBarHidden)
+        SettingValues.bottomBarHidden = false // disable for now settings.bool(forKey: SettingValues.pref_bottomBarHidden)
 
         SettingValues.dataSavingEnabled = settings.bool(forKey: SettingValues.pref_dataSavingEnabled)
         SettingValues.dataSavingDisableWiFi = settings.bool(forKey: SettingValues.pref_dataSavingDisableWifi)

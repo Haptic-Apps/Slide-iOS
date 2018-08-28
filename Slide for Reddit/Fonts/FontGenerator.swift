@@ -14,7 +14,7 @@ class FontGenerator {
         if let font = fontDict["\(size)\(submission)"] {
             return font
         }
-        let newFont =  (submission ? postFont.font : commentFont.font).withSize( size + CGFloat(submission ? SettingValues.postFontOffset : SettingValues.commentFontOffset))
+        let newFont = (submission ? postFont.font : commentFont.font).withSize( size + CGFloat(submission ? SettingValues.postFontOffset : SettingValues.commentFontOffset))
         fontDict["\(size)\(submission)"] = newFont
         return newFont
     }
@@ -23,7 +23,7 @@ class FontGenerator {
         if let font = fontDict["\(size)\(submission)B"] {
             return font
         }
-        let newFont =  (submission ? postFont.bold() : commentFont.bold()).withSize( size + CGFloat(submission ? SettingValues.postFontOffset : SettingValues.commentFontOffset))
+        let newFont = (submission ? postFont.bold() : commentFont.bold()).withSize( size + CGFloat(submission ? SettingValues.postFontOffset : SettingValues.commentFontOffset))
         fontDict["\(size)\(submission)B"] = newFont
         return newFont
     }

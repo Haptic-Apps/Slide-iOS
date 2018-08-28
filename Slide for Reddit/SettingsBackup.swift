@@ -121,6 +121,9 @@ class SettingsBackup: UITableViewController {
     
     func backupSync() {
         let icloud = NSUbiquitousKeyValueStore.default()
+        for item in icloud.dictionaryRepresentation {
+            icloud.removeObject(forKey: item.key)
+        }
         for item in UserDefaults.standard.dictionaryRepresentation() {
             icloud.set(item.value, forKey: item.key)
         }
