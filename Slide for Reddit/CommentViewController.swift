@@ -2165,11 +2165,13 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
 
                                             self.comments.remove(at: realPosition)
                                             self.dataArray.remove(at: datasetPosition)
+                                            
+                                            let currentParent = self.parents[more.getIdentifier()]
 
                                             var ids: [String] = []
                                             for item in queue {
                                                 let id = item.getIdentifier()
-                                                print("ID is \(id)")
+                                                self.parents[id] = currentParent
                                                 ids.append(id)
                                                 self.content[id] = item
                                             }
