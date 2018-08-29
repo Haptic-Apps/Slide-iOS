@@ -1172,9 +1172,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 self.text[comment.getId()] = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: color)
             } else {
                 let attr = NSMutableAttributedString(string: "more")
-                let font = FontGenerator.fontOfSize(size: 16, submission: false)
-                let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
-                self.text[(thing.0 as! More).getId()] = LinkParser.parse(attr2, color)
+                self.text[(thing.0 as! More).getId()] = LinkParser.parse(attr, color)
             }
         }
     }
@@ -1189,9 +1187,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 self.text[comment.getIdentifier()] = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: color)
             } else {
                 let attr = NSMutableAttributedString(string: "more")
-                let font = FontGenerator.fontOfSize(size: 16, submission: false)
-                let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: color)
-                self.text[(thing as! RMore).getIdentifier()] = LinkParser.parse(attr2, color)
+                self.text[(thing as! RMore).getIdentifier()] = LinkParser.parse(attr, color)
             }
 
         }

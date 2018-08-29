@@ -71,8 +71,8 @@ class SettingsGeneral: UITableViewController {
             SettingValues.hapticFeedback = !changed.isOn
             UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_hapticFeedback)
         } else if changed == pinToolbarSwitch {
-            SettingValues.pinToolbar = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_pinToolbar)
+            SettingValues.pinToolbar = !changed.isOn
+            UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_pinToolbar)
             SubredditReorderViewController.changed = true
         } else if changed == matchSilenceSwitch {
             SettingValues.matchSilence = changed.isOn
@@ -132,7 +132,7 @@ class SettingsGeneral: UITableViewController {
         createCell(hapticFeedback, hapticFeedbackSwitch, isOn: SettingValues.hapticFeedback, text: "Haptic feedback throughout app")
         createCell(hideFAB, hideFABSwitch, isOn: !SettingValues.hiddenFAB, text: "Show subreddit floating action button")
         createCell(scrubUsername, scrubUsernameSwitch, isOn: SettingValues.nameScrubbing, text: "Scrub your username (you will show as \"you\")")
-        createCell(pinToolbar, pinToolbarSwitch, isOn: SettingValues.pinToolbar, text: "Don't autohide navigation bars")
+        createCell(pinToolbar, pinToolbarSwitch, isOn: !SettingValues.pinToolbar, text: "Autohide navigation bars")
         createCell(matchSilence, matchSilenceSwitch, isOn: SettingValues.matchSilence, text: "Mute videos if silent mode is on")
         createCell(autoKeyboard, autoKeyboardSwitch, isOn: SettingValues.autoKeyboard, text: "Open keyboard automatically in bottom drawer")
         createCell(autoKeyboard, autoKeyboardSwitch, isOn: SettingValues.autoKeyboard, text: "Open keyboard automatically in bottom drawer")

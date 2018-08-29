@@ -105,15 +105,15 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        return tableView.contentOffset.y == 0
+        return tableView.contentOffset.y == 0 && !self.view.isHidden
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return otherGestureRecognizer is UIPanGestureRecognizer && (tableView.contentOffset.y == 0)
+        return otherGestureRecognizer is UIPanGestureRecognizer && (tableView.contentOffset.y == 0) && !self.view.isHidden
     }
     
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        return (gestureRecognizer is UIPanGestureRecognizer && (gestureRecognizer as! UIPanGestureRecognizer).velocity(in: self.view).y < 0 && topView?.alpha ?? 1 == 0) ? false : true
+        return !self.view.isHidden && (gestureRecognizer is UIPanGestureRecognizer && (gestureRecognizer as! UIPanGestureRecognizer).velocity(in: self.view).y < 0 && topView?.alpha ?? 1 == 0) ? false : true
     }
     
     func update(_ recognizer: UIPanGestureRecognizer) {
@@ -175,6 +175,9 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     }
     
     func expand() {
+        if self.view.isHidden {
+            return
+        }
         parentController!.navigationController?.view.addSubviews(backgroundView, self.view)
         parentController!.navigationController?.view.bringSubview(toFront: backgroundView)
         parentController!.navigationController?.view.bringSubview(toFront: self.view)

@@ -36,6 +36,8 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
 
     func failed(error: Error) {
         print(error)
+        loaded = true
+        loading = false
     }
 
     func drefresh(_ sender: AnyObject) {
@@ -365,6 +367,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     var loading: Bool = false
 
     func doneLoading(before: Int) {
+        loading = false
         loaded = true
         DispatchQueue.main.async {
             if before == 0 || before > self.baseData.content.count {

@@ -1041,6 +1041,7 @@ class SingleSubredditViewController: MediaViewController {
     }
 
     func load(reset: Bool) {
+        PagingCommentViewController.savedComment = nil
         if sub.lowercased() == "randnsfw" && !SettingValues.nsfwEnabled {
             DispatchQueue.main.async {
                 let alert = UIAlertController.init(title: "r/\(self.sub) is NSFW", message: "If you are 18 and willing to see adult content, enable NSFW content in Settings > Content", preferredStyle: .alert)

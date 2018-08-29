@@ -1032,18 +1032,15 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         if depth == 1 {
             marginTop = 8
         }
-
-        let font = FontGenerator.fontOfSize(size: 14, submission: false)
         
-        var attr = NSMutableAttributedString()
+        var attr = NSAttributedString()
         if more.children.isEmpty {
-            attr = NSMutableAttributedString(string: "Continue this thread", attributes: [NSFontAttributeName: font])
+            attr = TextDisplayStackView.createAttributedChunk(baseHTML: "<p>Continue thread</p>", fontSize: 16, submission: false, accentColor: .white)
         } else {
-            attr = NSMutableAttributedString(string: "Load \(more.count) more", attributes: [NSFontAttributeName: font])
+            attr = TextDisplayStackView.createAttributedChunk(baseHTML: "<p>Load \(more.count) more</p>", fontSize: 16, submission: false, accentColor: .white)
         }
-        let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: .white)
         
-        title.setTextWithTitleHTML(attr2, htmlString: "")
+        title.setTextWithTitleHTML(attr, htmlString: "")
         NSLayoutConstraint.deactivate(menuHeight)
         menuHeight = batch {
             title.bottomAnchor == contentView.bottomAnchor - CGFloat(8)
@@ -1177,9 +1174,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         
         let boldFont = FontGenerator.boldFontOfSize(size: 12, submission: false)
 
-        let scoreString = NSMutableAttributedString(string: ((comment.scoreHidden ? "[score hidden]" : "\(getScoreText(comment: comment))") + (comment.controversiality > 0 ? "†" : "")), attributes: [NSForegroundColorAttributeName: color])
+        let scoreString = NSMutableAttributedString(string: ((comment.scoreHidden ? "[score hidden]" : "\(getScoreText(comment: comment))") + (comment.controversiality > 0 ? "†" : "")), attributes: [NSForegroundColorAttributeName: color, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false)])
 
-        let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: comment.created, numericDates: true))" + (comment.isEdited ? ("(edit \(DateFormatter().timeSince(from: comment.edited, numericDates: true)))") : ""), attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor])
+        let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: comment.created, numericDates: true))" + (comment.isEdited ? ("(edit \(DateFormatter().timeSince(from: comment.edited, numericDates: true)))") : ""), attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false)])
 
         let authorString = NSMutableAttributedString(string: "\u{00A0}\u{00A0}\(AccountController.formatUsername(input: comment.author, small: true))\u{00A0}", attributes: [NSFontAttributeName: boldFont, NSForegroundColorAttributeName: ColorUtil.fontColor])
         let authorStringNoFlair = NSMutableAttributedString(string: "\(AccountController.formatUsername(input: comment.author, small: true))\u{00A0}", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: parent?.authorColor ?? ColorUtil.fontColor])
