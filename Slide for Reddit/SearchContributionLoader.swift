@@ -36,7 +36,7 @@ class SearchContributionLoader: ContributionLoader {
     var paging = false
     
     func getData(reload: Bool) {
-        if delegate != nil && canGetMore {
+        if delegate != nil && (canGetMore || reload) {
             do {
                 if reload {
                     paginator = Paginator()

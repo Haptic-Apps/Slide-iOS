@@ -70,6 +70,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupBaseBarColors()
         
         flowLayout.delegate = self
         self.tableView = UICollectionView(frame: CGRect.zero, collectionViewLayout: flowLayout)
@@ -339,6 +340,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     func refresh() {
         loading = true
         baseData.reset()
+        refreshControl.beginRefreshing()
         flowLayout.reset()
         flowLayout.invalidateLayout()
         tableView.reloadData()
