@@ -41,6 +41,19 @@ class ContentType {
     public static func isExternal(_ uri: URL) -> Bool {
         return PostFilter.openExternally(uri)
     }
+    
+    public static func shouldOpenBrowser(_ url : URL) -> Bool {
+        let browser = SettingValues.browser
+        if browser == SettingValues.BROWSER_INTERNAL || browser == SettingValues.BROWSER_SAFARI_INTERNAL {
+            return false
+        } else {
+            let type = getContentType(baseUrl: url)
+            if type == .LINK || type == .UNKNOWN {
+                return true
+            }
+        }
+        return false
+    }
 
     public static func isSpoiler(uri: URL) -> Bool {
         let urlString = uri.absoluteString
@@ -133,7 +146,7 @@ class ContentType {
         return hostContains(host: host, bases: ["imgur.com", "bildgur.de"]) && !isAlbum(uri: uri) && !isGif(uri: uri) && !isImage(uri: uri)
     }
     
-    public static func shouldOpenExternally(_ url : URL) -> Bool {
+    public static func shouldOpenExternally(_ url: URL) -> Bool {
         let type = getContentType(baseUrl: url)
         if !SettingValues.internalGifView && (type == CType.GIF || type == CType.VID_ME || type == CType.STREAMABLE) {
             return true

@@ -176,7 +176,7 @@ class MediaViewController: UIViewController, MediaVCDelegate {
             }
             VCPresenter.showVC(viewController: vc, popupIfPossible: false, parentNavigationController: strongSelf.navigationController, parentViewController: strongSelf)
         }
-        if ContentType.isExternal(url) || ContentType.shouldOpenExternally(url) {
+        if ContentType.isExternal(url) || ContentType.shouldOpenExternally(url) || ContentType.shouldOpenBrowser(url) {
             let oldUrl = url
             var newUrl = oldUrl
             
@@ -193,8 +193,8 @@ class MediaViewController: UIViewController, MediaVCDelegate {
                 newUrl = URL(string: "firefox-focus://open-url?url=" + oldUrl.absoluteString) ?? oldUrl
             }
 
-            print(newUrl.absoluteString)
             if #available(iOS 10.0, *) {
+                print("Opening externally")
                 UIApplication.shared.open(newUrl, options: [:], completionHandler: nil)
             } else {
                 UIApplication.shared.openURL(newUrl)

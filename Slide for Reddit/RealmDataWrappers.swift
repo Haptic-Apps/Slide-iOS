@@ -16,7 +16,7 @@ class RealmDataWrapper {
     static func linkToRSubmission(submission: Link) -> RSubmission {
         let flair = submission.linkFlairText.isEmpty ? submission.linkFlairCssClass : submission.linkFlairText
         let bodyHtml = submission.selftextHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
-
+        
         var json: JSONDictionary?
         json = submission.baseJson
 
@@ -63,7 +63,7 @@ class RealmDataWrapper {
             thumb = false
         case .URL:
             thumb = true
-            turl = submission.thumbnail
+            turl = submission.thumbnail.removingPercentEncoding ?? submission.thumbnail
         }
 
         if big { //check for low quality image
