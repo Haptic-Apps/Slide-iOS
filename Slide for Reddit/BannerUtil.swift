@@ -13,6 +13,8 @@ public class BannerUtil {
     public var popup = UILabel()
     public var cancelled = false
     public static var banner: BannerUtil?
+    var originalPosition = CGPoint.zero
+    var currentPositionTouched = CGPoint.zero
 
     public func cancel() {
         self.cancelled = true
@@ -55,6 +57,11 @@ public class BannerUtil {
         popup.clipsToBounds = true
         popup.layer.cornerRadius = 10
         popup.isUserInteractionEnabled = true
+        let pan = UIPanGestureRecognizer(target: self, action: #selector(viewPanned(_:)))
+        pan.direction = .vertical
+        pan.cancelsTouchesInView = false
+
+        popup.addGestureRecognizer(pan)
         let toView: UIView
       //  if context.navigationController != nil {
       //      toView = context.navigationController!.view
@@ -67,13 +74,23 @@ public class BannerUtil {
             if #available(iOS 11, *) {
                 popup.topAnchor == toView.safeTopAnchor + 12
             } else {
-                popup.topAnchor == toView.safeTopAnchor + 72
+                popup.topAnchor == toView.safeTopAnchor + 64
             }
         } else {
             if #available(iOS 11, *) {
                 popup.bottomAnchor == toView.safeBottomAnchor - 12
+                if context is MainViewController {
+                    popup.bottomAnchor == toView.bottomAnchor - ((context as! MainViewController).menuNav?.bottomOffset ?? 0) - 12 - (!SettingValues.hiddenFAB ? 12 : 0)
+                } else if context is SingleSubredditViewController && !(context as! SingleSubredditViewController).single {
+                    popup.bottomAnchor == toView.bottomAnchor - 64 - 12 - (SettingValues.hiddenFAB ? 12 : 0)
+                }
             } else {
                 popup.bottomAnchor == toView.safeBottomAnchor - 56
+                if context is MainViewController {
+                    popup.bottomAnchor == toView.bottomAnchor - ((context as! MainViewController).menuNav?.bottomOffset ?? 0) - 56 - (!SettingValues.hiddenFAB ? 12 : 0)
+                } else if context is SingleSubredditViewController && !(context as! SingleSubredditViewController).single {
+                    popup.bottomAnchor == toView.bottomAnchor - 64 - 56 - (SettingValues.hiddenFAB ? 12 : 0)
+                }
             }
         }
         popup.horizontalAnchors == toView.horizontalAnchors + 12 + xmargin
@@ -104,5 +121,46 @@ public class BannerUtil {
             })
         }
         return self
+    }
+}
+
+extension BannerUtil {
+    @objc func viewPanned(_ panGesture: UIPanGestureRecognizer) {
+        let viewToMove = popup
+
+        let translation = panGesture.translation(in: viewToMove)
+        
+        if panGesture.state == .began {
+            originalPosition = viewToMove.frame.origin
+            currentPositionTouched = panGesture.location(in: viewToMove)
+        } else if panGesture.state == .changed {
+            viewToMove.frame.origin = CGPoint(
+                x: originalPosition.x,
+                y: translation.y + originalPosition.y
+            )
+            let progress = abs(translation.y) / viewToMove.frame.size.height
+            viewToMove.alpha = 1.5 - progress
+        } else if panGesture.state == .ended {
+            let velocity = panGesture.velocity(in: viewToMove)
+            
+            let down = panGesture.velocity(in: viewToMove.superview ?? viewToMove).y > 0
+            if abs(velocity.y) >= 1000 || abs(viewToMove.frame.origin.y - originalPosition.y) > viewToMove.frame.size.height / 2 {
+                UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseInOut], animations: {
+                    viewToMove.alpha = 0
+                    viewToMove.frame.origin = CGPoint(
+                        x: viewToMove.frame.origin.x,
+                        y: (viewToMove.frame.size.height * (down ? 1 : -1)) + self.originalPosition.y)
+                    
+                }, completion: { (isCompleted) in
+                    if isCompleted {
+                        self.cancel()
+                    }
+                })
+            } else {
+                UIView.animate(withDuration: 0.2, animations: {
+                    viewToMove.frame.origin = self.originalPosition
+                })
+            }
+        }
     }
 }

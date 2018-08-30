@@ -25,6 +25,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     var topView: UIView?
     var bottomOffset: CGFloat = 64
     var muxColor = ColorUtil.foregroundColor
+    var lastY: CGFloat = 0.0
 
     var header: NavigationHeaderView = NavigationHeaderView()
 
@@ -523,12 +524,20 @@ extension NavigationSidebarViewController: UISearchBarDelegate {
 }
 
 extension NavigationSidebarViewController: UIScrollViewDelegate {
-
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let currentY = scrollView.contentOffset.y
         if self.searchBar?.text?.isEmpty() ?? false {
             self.tableView.endEditing(true)
             header.search.resignFirstResponder()
         }
+        let currentBottomY = scrollView.frame.size.height + currentY
+        if currentY > lastY {
+            tableView.bounces = true
+        } else {
+            if currentBottomY < scrollView.contentSize.height + scrollView.contentInset.bottom {
+                tableView.bounces = false
+            }
+        }
+        lastY = scrollView.contentOffset.y
     }
-
 }

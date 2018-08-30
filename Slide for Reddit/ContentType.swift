@@ -42,7 +42,7 @@ class ContentType {
         return PostFilter.openExternally(uri)
     }
     
-    public static func shouldOpenBrowser(_ url : URL) -> Bool {
+    public static func shouldOpenBrowser(_ url: URL) -> Bool {
         let browser = SettingValues.browser
         if browser == SettingValues.BROWSER_INTERNAL || browser == SettingValues.BROWSER_SAFARI_INTERNAL {
             return false

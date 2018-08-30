@@ -843,7 +843,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
     func checkForUpdate() {
         if !SettingValues.doneVersion() {
-            print("Getting posts for version \(Bundle.main.releaseVersionNumber!)")
             let session = (UIApplication.shared.delegate as! AppDelegate).session
             do {
                 try session?.getList(Paginator.init(), subreddit: Subreddit.init(subreddit: "slide_ios"), sort: LinkSortType.hot, timeFilterWithin: TimeFilterWithin.hour, completion: { (result) in
