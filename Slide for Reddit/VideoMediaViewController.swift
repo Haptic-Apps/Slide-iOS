@@ -87,7 +87,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         request?.cancel()
         stopDisplayLink()
         videoView.player?.pause()
-        downloadSession.invalidateAndCancel()
+        downloadSession?.invalidateAndCancel()
         playerStatusToken = nil
         super.viewWillDisappear(animated)
     }
@@ -236,66 +236,35 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     
     func handleDoubleTap(_ sender: UITapGestureRecognizer) {
         if sender.state == UIGestureRecognizerState.ended {
+
+            let maxTime = scrubber.slider.maximumValue
             let x = sender.location(in: self.view).x
+            let baseIncrement = isYoutubeView ? 10 : min(maxTime / 5, 10)
+
             if x > UIScreen.main.bounds.size.width / 2 {
-                //skip forward
-                if isYoutubeView {
-                    let playerCurrentTime = scrubber.slider.value
-                    let maxTime = scrubber.slider.maximumValue
-                    
-                    let newTime = playerCurrentTime + 10
-                    
-                    if newTime < maxTime {
-                        youtubeView.seek(toSeconds: newTime, allowSeekAhead: true)
-                    } else {
-                        youtubeView.seek(toSeconds: 0, allowSeekAhead: true)
-                    }
-                    youtubeView.playVideo()
-                } else {
-                    if let player = self.videoView.player {
-                        let playerCurrentTime = CMTimeGetSeconds(player.currentTime())
-                        let maxTime = CMTimeGetSeconds(player.currentItem!.duration)
-                        
-                        let newTime = playerCurrentTime + (maxTime / 5)
-                        
-                        if newTime < maxTime {
-                            let time2: CMTime = CMTimeMake(Int64(newTime * 1000 as Float64), 1000)
-                            player.seek(to: time2)
-                        } else {
-                            player.seek(to: kCMTimeZero)
-                        }
-                        player.play()
-                    }
-                }
+                seekAhead(bySeconds: baseIncrement)
             } else {
-                //skip back
-                if isYoutubeView {
-                    let playerCurrentTime = scrubber.slider.value
-                    
-                    let newTime = playerCurrentTime - 5
-                    
-                    if newTime > 0 {
-                        youtubeView.seek(toSeconds: newTime, allowSeekAhead: true)
-                    } else {
-                        youtubeView.seek(toSeconds: 0, allowSeekAhead: true)
-                    }
-                    youtubeView.playVideo()
-                } else {
-                    if let player = self.videoView.player {
-                        let playerCurrentTime = CMTimeGetSeconds(player.currentTime())
-                        let maxTime = CMTimeGetSeconds(player.currentItem!.duration)
-                        
-                        let newTime = playerCurrentTime - (maxTime / 7)
-                        
-                        if newTime > 0 {
-                            let time2: CMTime = CMTimeMake(Int64(newTime * 1000 as Float64), 1000)
-                            player.seek(to: time2)
-                        } else {
-                            player.seek(to: kCMTimeZero)
-                        }
-                        player.play()
-                    }
-                }
+                seekAhead(bySeconds: -baseIncrement)
+            }
+        }
+    }
+
+    func seekAhead(bySeconds seconds: Float) {
+        let playerCurrentTime = scrubber.slider.value
+        let maxTime = scrubber.slider.maximumValue
+
+        var newTime = (playerCurrentTime + seconds)
+        newTime = min(newTime, maxTime) // Prevent seeking beyond end
+        newTime = max(newTime, 0) // Prevent seeking before beginning
+
+        if isYoutubeView {
+            youtubeView.seek(toSeconds: newTime, allowSeekAhead: true)
+            youtubeView.playVideo()
+        } else {
+            let tolerance: CMTime = CMTimeMakeWithSeconds(0.001, 1000) // 1 ms with a resolution of 1 ms
+            let newCMTime = CMTimeMakeWithSeconds(Float64(newTime), 1000)
+            self.videoView.player?.seek(to: newCMTime, toleranceBefore: tolerance, toleranceAfter: tolerance) { _ in
+                self.videoView.player?.play()
             }
         }
     }
@@ -451,7 +420,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     }
 
     var configuration: URLSessionConfiguration!
-    var downloadSession: AVAssetDownloadURLSession!
+    var downloadSession: AVAssetDownloadURLSession?
 
     func setupAssetDownload() {
         // Create new background session configuration.
@@ -478,6 +447,10 @@ class VideoMediaViewController: EmbeddableMediaViewController {
 
         // Passing a nil options value indicates the highest available bitrate should be downloaded
 
+        guard let downloadSession = downloadSession else {
+            fatalError("No download session")
+        }
+
         let downloadTask = downloadSession.makeAssetDownloadTask(asset: asset,
                                                                  assetTitle: assetTitle,
                                                                  assetArtworkData: nil,
@@ -491,10 +464,8 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         let playerItem = AVPlayerItem(asset: downloadTask.urlAsset)
 //        playerItem.delegate = self
 
-        playerStatusToken = playerItem.observe(\.status) { [unowned self] (object, change) in
+        playerStatusToken = playerItem.observe(\.status) { [unowned self] (object, _) in
             if object.status == .readyToPlay {
-//                self.hideSpinner()
-//                self.videoView.player!.play()
                 self.onReadyToPlay()
             }
         }
@@ -548,12 +519,14 @@ class VideoMediaViewController: EmbeddableMediaViewController {
 //
 //    }
 
-    var playerStatusToken: NSKeyValueObservation? = nil
+    var playerStatusToken: NSKeyValueObservation?
     weak var observer: NSObjectProtocol?
     
     func playerItemDidreachEnd() {
-        self.videoView.player!.seek(to: kCMTimeZero)
-        self.videoView.player!.play()
+        let tolerance: CMTime = CMTimeMakeWithSeconds(0, 1000)
+        self.videoView.player!.seek(to: kCMTimeZero, toleranceBefore: tolerance, toleranceAfter: tolerance) { _ in
+            self.videoView.player!.play()
+        }
     }
     
     func formatUrl(sS: String) -> String {
@@ -796,45 +769,47 @@ extension VideoMediaViewController: CachingPlayerItemDelegate {
         self.downloadButton.isHidden = false
     }
 
-    func playerItemReadyToPlay(_ playerItem: CachingPlayerItem) {
-        onReadyToPlay()
-    }
-
-    func didReachEnd(_ playerItem: CachingPlayerItem) {
-        self.videoView.player!.seek(to: kCMTimeZero)
-        self.videoView.player!.play()
-    }
-
-    func playerItem(_ playerItem: CachingPlayerItem, didFinishDownloadingData data: Data) {
-        print("File is downloaded and ready for storing")
-        DispatchQueue.main.async {
-            self.progressView.alpha = 0
-            self.size.alpha = 0
-        }
-
-        //@colejd we might use an already-created key value in the new delegate
-        FileManager.default.createFile(atPath: getKeyFromURL(), contents: data, attributes: nil)
-    }
-
-    func playerItem(_ playerItem: CachingPlayerItem, didDownloadBytesSoFar bytesDownloaded: Int, outOf bytesExpected: Int) {
-        DispatchQueue.main.async {
-            let progress = Float(bytesDownloaded) / Float(bytesExpected)
-            let countBytes = ByteCountFormatter()
-            countBytes.allowedUnits = [.useMB]
-            countBytes.countStyle = .file
-            let fileSizeString = countBytes.string(fromByteCount: Int64(bytesExpected))
-            self.updateProgress(CGFloat(progress), fileSizeString)
-            self.size.text = fileSizeString
-        }
-    }
-
-    func playerItemPlaybackStalled(_ playerItem: CachingPlayerItem) {
-        print("Not enough data for playback, likely because of a poor network connection. Wait a bit and try to play later.")
-    }
-
-    func playerItem(_ playerItem: CachingPlayerItem, downloadingFailedWith error: Error) {
-        print(error)
-    }
+//    func playerItemReadyToPlay(_ playerItem: CachingPlayerItem) {
+//        onReadyToPlay()
+//    }
+//
+//    func didReachEnd(_ playerItem: CachingPlayerItem) {
+//        let tolerance: CMTime = CMTimeMakeWithSeconds(0, 1000)
+//        self.videoView.player!.seek(to: kCMTimeZero, toleranceBefore: tolerance, toleranceAfter: tolerance) { _ in
+//            self.videoView.player!.play()
+//        }
+//    }
+//
+//    func playerItem(_ playerItem: CachingPlayerItem, didFinishDownloadingData data: Data) {
+//        print("File is downloaded and ready for storing")
+//        DispatchQueue.main.async {
+//            self.progressView.alpha = 0
+//            self.size.alpha = 0
+//        }
+//
+//        //@colejd we might use an already-created key value in the new delegate
+//        FileManager.default.createFile(atPath: getKeyFromURL(), contents: data, attributes: nil)
+//    }
+//
+//    func playerItem(_ playerItem: CachingPlayerItem, didDownloadBytesSoFar bytesDownloaded: Int, outOf bytesExpected: Int) {
+//        DispatchQueue.main.async {
+//            let progress = Float(bytesDownloaded) / Float(bytesExpected)
+//            let countBytes = ByteCountFormatter()
+//            countBytes.allowedUnits = [.useMB]
+//            countBytes.countStyle = .file
+//            let fileSizeString = countBytes.string(fromByteCount: Int64(bytesExpected))
+//            self.updateProgress(CGFloat(progress), fileSizeString)
+//            self.size.text = fileSizeString
+//        }
+//    }
+//
+//    func playerItemPlaybackStalled(_ playerItem: CachingPlayerItem) {
+//        print("Not enough data for playback, likely because of a poor network connection. Wait a bit and try to play later.")
+//    }
+//
+//    func playerItem(_ playerItem: CachingPlayerItem, downloadingFailedWith error: Error) {
+//        print(error)
+//    }
 
 }
 
@@ -843,9 +818,7 @@ extension VideoMediaViewController {
     func displayLinkDidUpdate(displaylink: CADisplayLink) {
         if !sliderBeingUsed {
             if isYoutubeView {
-                if !sliderBeingUsed {
-                    self.scrubber.updateWithTime(elapsedTime: CMTime(seconds: Double(youtubeView.currentTime()), preferredTimescale: 1000000))
-                }
+                self.scrubber.updateWithTime(elapsedTime: CMTime(seconds: Double(youtubeView.currentTime()), preferredTimescale: 1000))
             } else {
                 if let player = videoView.player {
                     scrubber.updateWithTime(elapsedTime: player.currentTime())
@@ -1021,7 +994,8 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
         if isYoutubeView {
             self.youtubeView.seek(toSeconds: toSeconds, allowSeekAhead: true) // Disable seekahead until the user lets go
         } else {
-            self.videoView.player?.seek(to: targetTime)
+            let tolerance: CMTime = CMTimeMakeWithSeconds(0.001, 1000) // 1 ms
+            self.videoView.player?.seek(to: targetTime, toleranceBefore: tolerance, toleranceAfter: tolerance)
         }
     }
 
