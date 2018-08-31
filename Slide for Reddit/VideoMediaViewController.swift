@@ -65,6 +65,8 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         configureLayout()
         connectActions()
 
+        setupAssetDownload()
+
         loadContent()
         handleHideUI()
     }
@@ -383,8 +385,6 @@ class VideoMediaViewController: EmbeddableMediaViewController {
             showSpinner()
         }
 
-        setupAssetDownload()
-
         // Play the video
 
         let completionBlock: (String) -> Void = { [weak self] (urlString) in
@@ -610,11 +610,51 @@ class VideoMediaViewController: EmbeddableMediaViewController {
 
 extension VideoMediaViewController: AVAssetDownloadDelegate {
 
+    func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
+        if let error = error {
+            print(error.localizedDescription)
+        }
+    }
+
+    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+        if let error = error {
+            print(error.localizedDescription)
+        }
+    }
+
+    func urlSession(_ session: URLSession, assetDownloadTask: AVAssetDownloadTask, didLoad timeRange: CMTimeRange, totalTimeRangesLoaded loadedTimeRanges: [NSValue], timeRangeExpectedToLoad: CMTimeRange) {
+
+        var percentComplete = 0.0
+
+        // Iterate through the loaded time ranges
+        for value in loadedTimeRanges {
+
+            // Unwrap the CMTimeRange from the NSValue
+            let loadedTimeRange = value.timeRangeValue
+
+            // Calculate the percentage of the total expected asset duration
+            percentComplete += loadedTimeRange.duration.seconds / timeRangeExpectedToLoad.duration.seconds
+
+        }
+        percentComplete *= 100
+
+        // Update UI state: post notification, update KVO state, invoke callback, etc.
+        print("Percent loaded: \(percentComplete)%")
+
+    }
+
+    func urlSession(_ session: URLSession, assetDownloadTask: AVAssetDownloadTask, didFinishDownloadingTo location: URL) {
+        // Do not move the asset from the download location
+//        UserDefaults.standard.set(location.relativePath, forKey: "assetPath")
+        let filePath = location.relativePath
+
+    }
 }
 
 extension VideoMediaViewController {
 
     func loadYoutube(url urlS: String) {
+        print("Loading YouTube video at \(urlS)")
         var seconds = 0
         var video = ""
         var playlist = ""
