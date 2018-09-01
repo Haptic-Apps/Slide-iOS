@@ -171,6 +171,9 @@ class SettingsFont: UITableViewController {
         cancelActionButton = UIAlertAction(title: "Smallest", style: .default) { _ -> Void in
             self.setSizeComment(size: -6)
         }
+        if currentCommentSize == -6 {
+            cancelActionButton.setValue(selected, forKey: "image")
+        }
         actionSheetController.addAction(cancelActionButton)
 
         actionSheetController.modalPresentationStyle = .popover

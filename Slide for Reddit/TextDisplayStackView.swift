@@ -75,6 +75,7 @@ public class TextDisplayStackView: UIStackView {
         self.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         firstTextView.horizontalAnchors == self.horizontalAnchors
         firstTextView.topAnchor == self.topAnchor
+        firstTextView.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
         overflow.bottomAnchor == self.bottomAnchor
         overflow.horizontalAnchors == self.horizontalAnchors
     }

@@ -210,7 +210,7 @@ class SingleSubredditViewController: MediaViewController {
             if single {
                 navigationController?.setToolbarHidden(false, animated: false)
             } else {
-                parentController?.menuNav?.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - 64, width: parentController?.menuNav?.view.frame.width ?? 0, height: parentController?.menuNav?.view.frame.height ?? 0)
+                parentController?.menuNav?.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - (parentController?.menuNav?.bottomOffset ?? 64), width: parentController?.menuNav?.view.frame.width ?? 0, height: parentController?.menuNav?.view.frame.height ?? 0)
             }
             self.isToolbarHidden = false
             if fab == nil {

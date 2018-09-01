@@ -40,7 +40,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         
         if UIDevice.current.userInterfaceIdiom == .phone {
             if UIScreen.main.bounds.height == 812 {
-                bottomOffset = 72
+                bottomOffset = 84
             }
         }
     }
@@ -164,6 +164,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         let completionBlock: (Bool) -> Void = { [weak self] finished in
             guard let strongSelf = self else { return }
             strongSelf.topView?.layer.cornerRadius = 0
+            strongSelf.backgroundView.removeFromSuperview()
         }
 
         UIView.animate(withDuration: 0.4,
