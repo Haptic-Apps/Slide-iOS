@@ -20,8 +20,10 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
     var session: Session?
     var vCs: [UIViewController] = []
     var openTo = 0
+    var newColor = UIColor.white
 
     public func colorPickerView(_ colorPickerView: ColorPickerView, didSelectItemAt indexPath: IndexPath) {
+        newColor = colorPickerView.colors[indexPath.row]
         self.navigationController?.navigationBar.barTintColor = SettingValues.reduceColor ? ColorUtil.backgroundColor : colorPickerView.colors[indexPath.row]
     }
 
@@ -40,7 +42,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         alertController.view.addSubview(MKColorPicker)
         
         let somethingAction = UIAlertAction(title: "Save", style: .default, handler: {(_: UIAlertAction!) in
-            ColorUtil.setColorForUser(name: self.name, color: (self.navigationController?.navigationBar.barTintColor)!)
+            ColorUtil.setColorForUser(name: self.name, color: self.newColor)
         })
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: {(_: UIAlertAction!) in
