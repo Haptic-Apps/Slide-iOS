@@ -164,7 +164,6 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         let completionBlock: (Bool) -> Void = { [weak self] finished in
             guard let strongSelf = self else { return }
             strongSelf.topView?.layer.cornerRadius = 0
-            strongSelf.backgroundView.removeFromSuperview()
         }
 
         UIView.animate(withDuration: 0.4,
