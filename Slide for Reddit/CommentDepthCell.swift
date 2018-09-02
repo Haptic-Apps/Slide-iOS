@@ -35,7 +35,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         let pos = textView.endOfDocument
         let currentRect = textView.caretRect(for: pos)
         self.previousRect = self.previousRect.origin.y == 0.0 ? currentRect : previousRect
-        if currentRect.origin.y > previousRect.origin.y || textView.text.endsWith("\n") || textView.text.trimmed().isEmpty() {
+        if currentRect.origin.y < 0 || currentRect.origin.y > previousRect.origin.y || textView.text.endsWith("\n") || textView.text.trimmed().isEmpty() {
             textView.sizeToFitHeight()
             parent!.reloadHeights()
         }
