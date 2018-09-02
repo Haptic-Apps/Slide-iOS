@@ -18,6 +18,7 @@ class AccountController {
     static func reload() {
         AccountController.names.removeAll(keepingCapacity: false)
         AccountController.names += OAuth2TokenRepository.savedNames
+        AccountController.names += LocalKeystore.savedNames
         print(AccountController.names)
     }
 
@@ -35,7 +36,11 @@ class AccountController {
 
     static func delete(name: String) {
         do {
-            try OAuth2TokenRepository.removeToken(of: name)
+            if isMigrated(name) {
+                try LocalKeystore.removeToken(of: name)
+            } else {
+                try OAuth2TokenRepository.removeToken(of: name)
+            }
             names.remove(at: names.index(of: name)!)
             UserDefaults.standard.set(name, forKey: "GUEST")
             UserDefaults.standard.synchronize()
@@ -50,6 +55,7 @@ class AccountController {
     static func initialize() {
         names.removeAll(keepingCapacity: false)
         names += OAuth2TokenRepository.savedNames
+        names += LocalKeystore.savedNames
         NotificationCenter.default.addObserver(self, selector: #selector(AccountController.didSaveToken(_:)), name: OAuth2TokenRepositoryDidSaveTokenName, object: nil)
         if let name = UserDefaults.standard.string(forKey: "name") {
             print("Name is \(name)")
@@ -62,7 +68,14 @@ class AccountController {
                 do {
                     AccountController.isLoggedIn = true
                     AccountController.currentName = name
-                    let token = try OAuth2TokenRepository.token(of: name)
+                    let token: OAuth2Token
+                    if !isMigrated(name) {
+                        token = try OAuth2TokenRepository.token(of: name)
+                        try LocalKeystore.save(token: token, of: name)
+                    } else {
+                        token = try LocalKeystore.token(of: name)
+                    }
+                    
                     let session = Session(token: token)
                     (UIApplication.shared.delegate as! AppDelegate).session = session
                     try session.getUserProfile(name, completion: { (result) in
@@ -155,6 +168,10 @@ class AccountController {
             }
             return "u/\(input)"
         }
+    }
+    
+    public static func isMigrated(_ name: String) -> Bool {
+        return UserDefaults.standard.data(forKey: "AUTH+\(name)") != nil
     }
     
     public static func formatUsernamePosessive(input: String, small: Bool) -> String {

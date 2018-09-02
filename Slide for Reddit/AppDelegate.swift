@@ -397,7 +397,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 case .success(let token):
                     DispatchQueue.main.async(execute: { () -> Void in
                         do {
-                            try OAuth2TokenRepository.save(token: token, of: token.name)
+                            try LocalKeystore.save(token: token, of: token.name)
                             self.login?.setToken(token: token)
                             NotificationCenter.default.post(name: OAuth2TokenRepositoryDidSaveTokenName, object: nil, userInfo: nil)
                         } catch {
@@ -470,7 +470,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func refreshSession() {
         // refresh current session token
         do {
-            try self.session?.refreshToken({ (result) -> Void in
+            try self.session?.refreshTokenLocal({ (result) -> Void in
                 switch result {
                 case .failure(let error):
                     print(error)
@@ -491,7 +491,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // create an authenticated or anonymous session object
         if let currentName = UserDefaults.standard.object(forKey: "name") as? String {
             do {
-                let token = try OAuth2TokenRepository.token(of: currentName)
+                let token: OAuth2Token
+                if AccountController.isMigrated(currentName) {
+                    token = try LocalKeystore.token(of: currentName)
+                } else {
+                    token = try OAuth2TokenRepository.token(of: currentName)
+                }
                 self.session = Session(token: token)
                 self.refreshSession()
             } catch {
@@ -536,5 +541,72 @@ extension URL {
 
         }
         return results
+    }
+}
+extension Session {
+    /**
+     Refresh own token.
+     
+     - parameter completion: The completion handler to call when the load request is complete.
+     */
+    public func refreshTokenLocal(_ completion: @escaping (Result<Token>) -> Void) throws -> Void {
+        guard let currentToken = token as? OAuth2Token
+            else { throw ReddiftError.tokenIsNotAvailable as NSError }
+        do {
+            try currentToken.refresh({ (result) -> Void in
+                switch result {
+                case .failure(let error):
+                    completion(Result(error: error as NSError))
+                case .success(let newToken):
+                    DispatchQueue.main.async(execute: { () -> Void in
+                        self.token = newToken
+                        do {
+                            try LocalKeystore.save(token: newToken)
+                            completion(Result(value: newToken))
+                        } catch { completion(Result(error: error as NSError)) }
+                    })
+                }
+            })
+        } catch { throw error }
+    }
+    
+    /**
+     Revoke own token. After calling this function, this object must be released becuase it has lost any conection.
+     
+     - parameter completion: The completion handler to call when the load request is complete.
+     */
+    public func revokeTokenLocal(_ completion: @escaping (Result<Token>) -> Void) throws -> Void {
+        guard let currentToken = token as? OAuth2Token
+            else { throw ReddiftError.tokenIsNotAvailable as NSError }
+        do {
+            try currentToken.revoke({ (result) -> Void in
+                switch result {
+                case .failure(let error):
+                    completion(Result(error: error as NSError))
+                case .success:
+                    DispatchQueue.main.async(execute: { () -> Void in
+                        do {
+                            try LocalKeystore.removeToken(of: currentToken.name)
+                            completion(Result(value: currentToken))
+                        } catch { completion(Result(error: error as NSError)) }
+                    })
+                }
+            })
+        } catch { throw error }
+    }
+    
+    /**
+     Set an expired token to self.
+     This method is implemented in order to test codes to automatiaclly refresh an expired token.
+     */
+    public func setDummyExpiredToken() {
+        if let path = Bundle.main.path(forResource: "expired_token.json", ofType: nil), let data = try? Data(contentsOf: URL(fileURLWithPath: path)) {
+            do {
+                if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: AnyObject] {
+                    let token = OAuth2Token(json)
+                    self.token = token
+                }
+            } catch { print(error) }
+        }
     }
 }
