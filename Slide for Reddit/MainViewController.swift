@@ -314,6 +314,9 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     
     func finalizeSetup(_ subs: [String]) {
         Subscriptions.set(name: (tempToken?.name)!, subs: subs, completion: {
+            self.menuNav?.view.removeFromSuperview()
+            self.menuNav?.backgroundView.removeFromSuperview()
+            self.menuNav?.removeFromParentViewController()
             self.menuNav = nil
             self.hardReset()
         })
