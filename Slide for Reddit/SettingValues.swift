@@ -95,7 +95,7 @@ class SettingValues {
     public static let pref_blackShadowbox = "BLACK_SHADOWBOX"
     public static let pref_hideAutomod = "HIDE_AUTOMOD"
     public static let pref_swipeAnywhereComments = "SWIPE_ANYWHERE_COMMENTS"
-    public static let pref_autoKeyboard = "SWIPE_ANYWHERE_COMMENTS"
+    public static let pref_autoKeyboard = "AUTO_KEYBOARD"
     public static let pref_reduceColor = "REDUCE_COLORS"
     public static let pref_browser = "WEB_BROWSER"
     public static let pref_infoBelowTitle = "INFO_BELOW_TITLE"

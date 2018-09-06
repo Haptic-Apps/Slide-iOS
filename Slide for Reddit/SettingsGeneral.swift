@@ -135,7 +135,6 @@ class SettingsGeneral: UITableViewController {
         createCell(pinToolbar, pinToolbarSwitch, isOn: !SettingValues.pinToolbar, text: "Autohide navigation bars")
         createCell(matchSilence, matchSilenceSwitch, isOn: SettingValues.matchSilence, text: "Mute videos if silent mode is on")
         createCell(autoKeyboard, autoKeyboardSwitch, isOn: SettingValues.autoKeyboard, text: "Open keyboard automatically in bottom drawer")
-        createCell(autoKeyboard, autoKeyboardSwitch, isOn: SettingValues.autoKeyboard, text: "Open keyboard automatically in bottom drawer")
 
         self.postSorting.textLabel?.text = "Default post sorting"
         self.postSorting.detailTextLabel?.text = SettingValues.defaultSorting.description
