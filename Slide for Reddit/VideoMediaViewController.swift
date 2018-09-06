@@ -487,7 +487,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         self.videoView.player!.play()
     }
     
-    static func format(sS: String) -> String {
+    static func format(sS: String, _ hls: Bool = false) -> String {
         var s = sS
         if s.hasSuffix("v") && !s.contains("streamable.com") {
             s = s.substring(0, length: s.length - 1)
@@ -510,6 +510,20 @@ class VideoMediaViewController: EmbeddableMediaViewController {
                 s = s.substring(0, length: s.length - 2)
             }
             s += "/DASH_9_6_M"
+        }
+        if hls {
+            if s.contains("v.redd.it") && s.contains("DASH") {
+                if s.endsWith("/") {
+                    s = s.substring(0, length: s.length - 2)
+                }
+                s = s.substring(0, length: s.lastIndexOf("/")!)
+                s += "/HLSPlaylist.m3u8"
+            } else if s.contains("v.redd.it") {
+                if s.endsWith("/") {
+                    s = s.substring(0, length: s.length - 2)
+                }
+                s += "/HLSPlaylist.m3u8"
+            }
         }
         return s
     }

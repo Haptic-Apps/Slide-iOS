@@ -964,7 +964,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if big {
             bannerImage.isHidden = false
             updater?.invalidate()
-            if SettingValues.autoplayVideos && ContentType.displayVideo(t: type) {
+            if SettingValues.autoplayVideos && ContentType.displayVideo(t: type) && type != .VIDEO {
                 videoView?.player?.pause()
                 videoView?.isHidden = false
                 bannerImage.isHidden = true
@@ -978,8 +978,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 } else {
                     baseUrl = submission.url!
                 }
-                let url = VideoMediaViewController.format(sS: baseUrl.absoluteString)
+                let url = VideoMediaViewController.format(sS: baseUrl.absoluteString, true)
                 let videoType = VideoMediaViewController.VideoType.fromPath(url)
+                print(url)
                 videoType.getSourceObject().load(url: url, completion: { [weak self] (urlString) in
                     guard let strongSelf = self else { return }
                     DispatchQueue.main.async {
