@@ -1120,6 +1120,7 @@ class SingleSubredditViewController: MediaViewController {
                                         
                                         self.refreshControl.endRefreshing()
                                         self.indicator?.stopAnimating()
+                                        self.indicator?.isHidden = true
                                         self.loading = false
                                         self.loading = false
                                         self.nomore = true
@@ -1183,6 +1184,7 @@ class SingleSubredditViewController: MediaViewController {
                                 
                                 self.refreshControl.endRefreshing()
                                 self.indicator?.stopAnimating()
+                                self.indicator?.isHidden = true
                                 self.loading = false
                                 if MainViewController.first {
                                     MainViewController.first = false
@@ -1219,6 +1221,7 @@ class SingleSubredditViewController: MediaViewController {
                                 }
 
                                 self.indicator?.stopAnimating()
+                                self.indicator?.isHidden = true
                                 self.refreshControl.endRefreshing()
                                 self.loading = false
                                 if MainViewController.first {
@@ -1480,7 +1483,8 @@ class SingleSubredditViewController: MediaViewController {
         if SettingValues.postImageMode == .CROPPED_IMAGE {
             submissionHeight = 200
         } else {
-            submissionHeight = getHeightFromAspectRatio(imageHeight: submissionHeight == 200 ? CGFloat(200) : CGFloat(submission.height), imageWidth: CGFloat(submission.width), viewWidth: estimatedUsableWidth)
+            let bannerPadding = (SettingValues.postViewMode != .CARD) ? CGFloat(5) : CGFloat(0)
+            submissionHeight = getHeightFromAspectRatio(imageHeight: submissionHeight == 200 ? CGFloat(200) : CGFloat(submission.height), imageWidth: CGFloat(submission.width), viewWidth: width - paddingLeft - paddingRight - (bannerPadding * 2))
         }
         var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
         

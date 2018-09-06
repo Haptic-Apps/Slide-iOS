@@ -405,9 +405,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if SettingValues.autoplayVideos {
             self.videoView = VideoView().then {
                 $0.accessibilityIdentifier = "Video view"
+                $0.layer.cornerRadius = 15
+                $0.layer.masksToBounds = true
             }
-            bannerImage.addSubview(videoView)
-            bannerImage.bringSubview(toFront: videoView)
+            
+            contentView.addSubview(videoView)
+            contentView.bringSubview(toFront: videoView)
         }
         
         contentView.layer.masksToBounds = true
@@ -498,6 +501,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
             if !SettingValues.flatMode {
                 self.contentView.layer.cornerRadius = CGFloat(radius)
+                self.contentView.clipsToBounds = false
             }
             
             if SettingValues.actionBarMode == .FULL || full {
@@ -887,6 +891,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             if SettingValues.autoplayVideos && ContentType.isGif(uri: submission.url!) {
                 videoView?.player?.pause()
                 videoView?.isHidden = false
+                bannerImage.isHidden = true
                 if observer == nil {
                     observer = NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: videoView.player, queue: OperationQueue.main) { [weak self] (_) in
                         self?.playerItemDidreachEnd()
@@ -907,6 +912,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                         strongSelf.avPlayerItem = AVPlayerItem(url: URL(string: urlString)!)
                         strongSelf.videoView?.player = AVPlayer(playerItem: strongSelf.avPlayerItem!)
                         strongSelf.videoView?.player?.play()
+                        strongSelf.videoView?.player?.isMuted = true
                     }
                     }, failure: {
                     

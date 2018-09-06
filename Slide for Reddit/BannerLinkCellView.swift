@@ -40,6 +40,7 @@ final class BannerLinkCellView: LinkCellView {
                 if SettingValues.autoplayVideos {
                     videoView.horizontalAnchors == bannerImage.horizontalAnchors
                     videoView.verticalAnchors == bannerImage.verticalAnchors
+                    videoView.topAnchor == contentView.topAnchor
                 }
                 
                 if SettingValues.actionBarMode == .FULL {
@@ -76,6 +77,7 @@ final class BannerLinkCellView: LinkCellView {
                 if SettingValues.autoplayVideos {
                     videoView.horizontalAnchors == bannerImage.horizontalAnchors
                     videoView.verticalAnchors == bannerImage.verticalAnchors
+                    videoView.topAnchor == contentView.topAnchor
                 }
             }
 

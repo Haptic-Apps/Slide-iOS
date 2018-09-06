@@ -49,6 +49,12 @@ final class FullLinkCellView: LinkCellView {
                 infoContainer.leftAnchor == bannerImage.leftAnchor
                 infoContainer.bottomAnchor == bannerImage.bottomAnchor
                 infoContainer.rightAnchor == bannerImage.rightAnchor
+                
+                if SettingValues.autoplayVideos {
+                    videoView.horizontalAnchors == bannerImage.horizontalAnchors
+                    videoView.verticalAnchors == bannerImage.verticalAnchors
+                    videoView.topAnchor == contentView.topAnchor
+                }
             } else if thumb {
                 thumbImageContainer.isHidden = false
                 infoContainer.backgroundColor = .clear
