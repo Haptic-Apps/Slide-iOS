@@ -147,6 +147,7 @@ class SettingValues {
     public static var swipeAnywhereComments = false
     public static var infoBelowTitle = false
     public static var matchSilence = true
+    public static var noCacheVideos = true
 
     public static var enlargeLinks = true
     public static var noImages = false
