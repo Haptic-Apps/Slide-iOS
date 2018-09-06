@@ -35,36 +35,36 @@ enum CurrentType {
 }
 
 class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TTTAttributedLabelDelegate, UIGestureRecognizerDelegate {
-
+    
     func upvote(sender: UITapGestureRecognizer? = nil) {
         //todo maybe? contentView.blink(color: GMColor.orange500Color())
         del?.upvote(self)
     }
-
+    
     func hide(sender: UITapGestureRecognizer? = nil) {
         del?.hide(self)
     }
-
+    
     func reply(sender: UITapGestureRecognizer? = nil) {
         del?.reply(self)
     }
-
+    
     func downvote(sender: UITapGestureRecognizer? = nil) {
         del?.downvote(self)
     }
-
+    
     func more(sender: UITapGestureRecognizer? = nil) {
         del?.more(self)
     }
-
+    
     func mod(sender: UITapGestureRecognizer? = nil) {
         del?.mod(self)
     }
-
+    
     func save(sender: UITapGestureRecognizer? = nil) {
         del?.save(self)
     }
-
+    
     var bannerImage: UIImageView!
     var thumbImageContainer: UIView!
     var thumbImage: UIImageView!
@@ -98,39 +98,39 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var progressDot: UIView!
     var sound: UIButton!
     var updater: CADisplayLink?
-
+    
     var avPlayerItem: AVPlayerItem?
-
+    
     var loadedImage: URL?
     var lq = false
-
+    
     var hasText = false
-
+    
     var full = false
     var infoContainer = UIView()
     var estimatedHeight = CGFloat(0)
-
+    
     var big = false
     var dtap: UIShortTapGestureRecognizer?
-
+    
     var thumb = true
     var submissionHeight: Int = 0
     var addTouch = false
-
+    
     var link: RSubmission?
     var aspectWidth = CGFloat(0.1)
-
+    
     var tempConstraints: [NSLayoutConstraint] = []
     var constraintsForType: [NSLayoutConstraint] = []
     var constraintsForContent: [NSLayoutConstraint] = []
-
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
-
+        
         configureView()
         configureLayout()
     }
-
+    
     func attributedLabel(_ label: TTTAttributedLabel!, didLongPressLinkWith url: URL!, at point: CGPoint) {
         if parentViewController != nil {
             let alertController: BottomSheetActionController = BottomSheetActionController()
@@ -155,9 +155,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             parentViewController?.present(alertController, animated: true, completion: nil)
         }
     }
-
+    
     func configureView() {
-
+        
         self.accessibilityIdentifier = "Link Cell View"
         self.contentView.accessibilityIdentifier = "Link Cell Content View"
         
@@ -168,7 +168,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 $0.elevate(elevation: 2.0)
             }
         }
-
+        
         self.thumbImage = UIImageView().then {
             $0.accessibilityIdentifier = "Thumbnail Image"
             $0.backgroundColor = UIColor.white
@@ -183,7 +183,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
         self.thumbImageContainer.addSubview(self.thumbImage)
         self.thumbImage.edgeAnchors == self.thumbImageContainer.edgeAnchors
-
+        
         self.bannerImage = UIImageView().then {
             $0.accessibilityIdentifier = "Banner Image"
             $0.contentMode = .scaleAspectFill
@@ -196,7 +196,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             $0.clipsToBounds = true
             $0.backgroundColor = UIColor.white
         }
-
+        
         self.title = TTTAttributedLabel(frame: CGRect(x: 75, y: 8, width: 0, height: 0)).then {
             $0.accessibilityIdentifier = "Title"
             $0.numberOfLines = 0
@@ -205,7 +205,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             $0.backgroundColor = ColorUtil.foregroundColor
             $0.verticalAlignment = .top
         }
-
+        
         self.hide = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Hide Button"
             $0.setImage(LinkCellImageCache.hide, for: .normal)
@@ -213,7 +213,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
         }
-
+        
         self.reply = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Reply Button"
             $0.setImage(LinkCellImageCache.reply, for: .normal)
@@ -221,7 +221,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
         }
-
+        
         self.edit = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Edit Button"
             $0.setImage(LinkCellImageCache.edit, for: .normal)
@@ -229,21 +229,21 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
         }
-
+        
         self.save = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Save Button"
             $0.contentMode = .center
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
         }
-
+        
         self.upvote = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Upvote Button"
             $0.contentMode = .center
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
         }
-
+        
         self.downvote = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Downvote Button"
             $0.contentMode = .center
@@ -264,7 +264,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
         }
-
+        
         self.mod = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Mod Button"
             $0.setImage(LinkCellImageCache.mod, for: .normal)
@@ -272,7 +272,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
         }
-
+        
         self.commenticon = UIImageView(frame: CGRect(x: 0, y: 0, width: 10, height: 10)).then {
             $0.accessibilityIdentifier = "Comment Count Icon"
             $0.image = LinkCellImageCache.commentsIcon
@@ -280,7 +280,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
         }
-
+        
         self.submissionicon = UIImageView(frame: CGRect(x: 0, y: 0, width: 10, height: 10)).then {
             $0.accessibilityIdentifier = "Score Icon"
             $0.image = LinkCellImageCache.votesIcon
@@ -288,7 +288,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
         }
-
+        
         self.score = UILabel().then {
             $0.accessibilityIdentifier = "Score Label"
             $0.numberOfLines = 1
@@ -296,7 +296,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
         }
-
+        
         self.sideScore = UILabel().then {
             $0.accessibilityIdentifier = "Score Label vertical"
             $0.numberOfLines = 1
@@ -304,7 +304,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             $0.textColor = ColorUtil.fontColor
             $0.isOpaque = false
         }
-
+        
         self.comments = UILabel().then {
             $0.accessibilityIdentifier = "Comment Count Label"
             $0.numberOfLines = 1
@@ -313,14 +313,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
         }
-
+        
         self.taglabel = UILabel().then {
             $0.accessibilityIdentifier = "Tag Label"
             $0.numberOfLines = 1
             $0.font = FontGenerator.boldFontOfSize(size: 12, submission: true)
             $0.textColor = UIColor.black
         }
-
+        
         self.tagbody = taglabel.withPadding(padding: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1)).then {
             $0.accessibilityIdentifier = "Tag Body"
             $0.backgroundColor = UIColor.white
@@ -336,16 +336,16 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             $0.font = FontGenerator.fontOfSize(size: 12, submission: true)
             $0.textColor = .white
         }
-
+        
         self.infoContainer = info.withPadding(padding: UIEdgeInsets.init(top: 4, left: 10, bottom: 4, right: 10)).then {
             $0.accessibilityIdentifier = "Banner Info Container"
             $0.backgroundColor = UIColor.black.withAlphaComponent(0.6)
             $0.clipsToBounds = true
             if !SettingValues.flatMode {
-            $0.layer.cornerRadius = 15
+                $0.layer.cornerRadius = 15
             }
         }
-
+        
         if self is FullLinkCellView {
             contentView.addSubviews(bannerImage, thumbImageContainer, title, textView, infoContainer, tagbody)
         } else {
@@ -358,6 +358,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 if !SettingValues.flatMode {
                     $0.layer.cornerRadius = 15
                 }
+                $0.backgroundColor = .black
                 $0.layer.masksToBounds = true
             }
             
@@ -366,7 +367,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             progressDot.alpha = 0.7
             sound = UIButton(type: .custom)
             sound.setImage(UIImage(named: "mute"), for: .normal)
-
+            
             topVideoView.addSubviews(progressDot, sound)
             progressDot.widthAnchor == 20
             progressDot.heightAnchor == 20
@@ -376,7 +377,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             sound.heightAnchor == 20
             sound.rightAnchor == topVideoView.rightAnchor - 8
             sound.bottomAnchor == topVideoView.bottomAnchor - 8
-
+            
             contentView.addSubviews(videoView, topVideoView)
             contentView.bringSubview(toFront: videoView)
             contentView.bringSubview(toFront: topVideoView)
@@ -531,42 +532,42 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             fadeAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
             fadeAnimation.autoreverses = false
             fadeAnimation.repeatCount = Float.greatestFiniteMagnitude
-
+            
             progressDot.layer.add(pulseAnimation, forKey: "scale")
             progressDot.layer.add(fadeAnimation, forKey: "fade")
         }
     }
     
     func doConstraints() {
-//        var target: CurrentType = .none
-//
-//        if (thumb && !big) {
-//            target = .thumb
-//        } else if (big) {
-//            target = .banner
-//        } else {
-//            target = .text
-//        }
-//
-//        configureForType(target)
+        //        var target: CurrentType = .none
+        //
+        //        if (thumb && !big) {
+        //            target = .thumb
+        //        } else if (big) {
+        //            target = .banner
+        //        } else {
+        //            target = .text
+        //        }
+        //
+        //        configureForType(target)
     }
-
+    
     // Reconfigures the layout of the cell.
     func configureLayout() {
         let ceight = SettingValues.postViewMode == .COMPACT ? CGFloat(4) : CGFloat(8)
         let ctwelve = SettingValues.postViewMode == .COMPACT ? CGFloat(8) : CGFloat(12)
-
+        
         // Remove all constraints previously applied by this method
         NSLayoutConstraint.deactivate(tempConstraints)
         tempConstraints = []
-
+        
         tempConstraints = batch {
             var topmargin = 0
             var bottommargin = 2
             var leftmargin = 0
             var rightmargin = 0
             var radius = 0
-
+            
             if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full {
                 topmargin = 5
                 bottommargin = 5
@@ -574,9 +575,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 rightmargin = 5
                 radius = 15
             }
-
+            
             self.contentView.layoutMargins = UIEdgeInsets.init(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin))
-
+            
             if !SettingValues.flatMode {
                 self.contentView.layer.cornerRadius = CGFloat(radius)
                 self.contentView.clipsToBounds = false
@@ -586,7 +587,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 box.leftAnchor == contentView.leftAnchor + ctwelve
                 box.bottomAnchor == contentView.bottomAnchor - ceight
                 box.centerYAnchor == buttons.centerYAnchor // Align vertically with buttons
-            box.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+                box.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
                 box.heightAnchor == CGFloat(24)
                 buttons.heightAnchor == CGFloat(24)
                 buttons.rightAnchor == contentView.rightAnchor - ctwelve
@@ -601,31 +602,31 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 sideScore.widthAnchor == CGFloat(36)
                 sideButtons.widthAnchor == CGFloat(36)
             }
-        
+            
             title.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
         }
-
+        
         if !full {
             layoutForType()
             layoutForContent()
         }
     }
-
+    
     internal func layoutForType() {
-
+        
         thumbImageContainer.isHidden = true
         bannerImage.isHidden = true
-
+        
         // Remove all constraints previously applied by this method
         NSLayoutConstraint.deactivate(constraintsForType)
         constraintsForType = []
-
+        
         // Deriving classes will populate constraintsForType in the override for this method.
-
+        
     }
-
+    
     internal func layoutForContent() {
-
+        
         // Remove all constraints previously applied by this method
         NSLayoutConstraint.deactivate(constraintsForContent)
         constraintsForContent = []
@@ -636,7 +637,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
         return layoutAttributes
     }
-
+    
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         let pointForTargetViewmod: CGPoint = mod.convert(point, from: self)
         if mod.bounds.contains(pointForTargetViewmod) {
@@ -684,13 +685,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         self.setLink(submission: submission, parent: parent, nav: nav, baseSub: baseSub, test: test)
         layoutForContent()
     }
-
+    
     func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
         if (parentViewController) != nil {
             parentViewController?.doShow(url: url, heroView: nil, heroVC: nil)
         }
     }
-
+    
     func showBody(width: CGFloat) {
         full = true
         textView.isHidden = false
@@ -709,18 +710,18 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         tap.delegate = self
         view.addGestureRecognizer(tap)
     }
-
+    
     func getHeightFromAspectRatio(imageHeight: Int, imageWidth: Int) -> Int {
         let ratio = Double(imageHeight) / Double(imageWidth)
         let width = Double(contentView.frame.size.width == 0 ? aspectWidth : contentView.frame.size.width)
         return Int(width * ratio)
     }
-
+    
     func refreshLink(_ submission: RSubmission) {
         self.link = submission
-
+        
         title.setText(CachedTitle.getTitle(submission: submission, full: full, true, false))
-
+        
         if dtap == nil && SettingValues.submissionActionDoubleTap != .NONE {
             dtap = UIShortTapGestureRecognizer.init(target: self, action: #selector(self.doDTap(_:)))
             dtap!.numberOfTapsRequired = 2
@@ -735,7 +736,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             }
             self.addGestureRecognizer(comment)
         }
-
+        
         refresh()
         let more = History.commentsSince(s: submission)
         comments.text = " \(submission.commentCount)\(more > 0 ? " (+\(more))" : "")"
@@ -763,7 +764,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var aspect = CGFloat(1)
     var type: ContentType.CType = .NONE
     var activeSet = false
-
+    
     private func setLink(submission: RSubmission, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, baseSub: String, test: Bool = false) {
         loadedImage = nil
         full = parent is CommentViewController
@@ -777,13 +778,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             comments.textColor = .white
             title.textColor = .white
         }
-
+        
         parentViewController = parent
         self.link = submission
         if navViewController == nil && nav != nil {
             navViewController = nav
         }
-
+        
         if !activeSet {
             let activeLinkAttributes = NSMutableDictionary(dictionary: title.activeLinkAttributes)
             activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.accentColorForSub(sub: submission.subreddit)
@@ -791,11 +792,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             title.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
             activeSet = true
         }
-
+        
         title.setText(CachedTitle.getTitle(submission: submission, full: full, false, false))
-
+        
         reply.isHidden = true
-
+        
         if !SettingValues.hideButton {
             hide.isHidden = true
         } else {
@@ -824,7 +825,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             downvote.isHidden = false
             sideUpvote.isHidden = false
             sideDownvote.isHidden = false
-
+            
             if submission.canMod {
                 mod.isHidden = false
                 if !submission.reports.isEmpty {
@@ -833,37 +834,37 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     mod.setImage(LinkCellImageCache.mod, for: .normal)
                 }
             }
-
+            
             if full {
                 reply.isHidden = false
                 hide.isHidden = true
             }
             edit.isHidden = true
         }
-
+        
         full = parent is CommentViewController
-
+        
         if !submission.archived && AccountController.isLoggedIn && AccountController.currentName == submission.author && full {
             edit.isHidden = false
         }
-
+        
         thumb = submission.thumbnail
         big = submission.banner
-
+        
         submissionHeight = submission.height
-
+        
         type = test && SettingValues.linkAlwaysThumbnail ? ContentType.CType.LINK : ContentType.getContentType(baseUrl: submission.url)
         if submission.isSelf {
             type = .SELF
         }
-
+        
         if SettingValues.postImageMode == .THUMBNAIL && !full {
             big = false
             thumb = true
         }
-
+        
         let fullImage = ContentType.fullImage(t: type)
-
+        
         if !fullImage && submissionHeight < 50 {
             big = false
             thumb = true
@@ -877,33 +878,33 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 submissionHeight = h
             }
         }
-
+        
         if SettingValues.actionBarMode != .FULL && !full {
             buttons.isHidden = true
             box.isHidden = true
         }
-
+        
         if type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big || type == .SELF && full {
             big = false
             thumb = false
         }
-
+        
         if submissionHeight < 50 {
             thumb = true
             big = false
         }
-
+        
         let shouldShowLq = SettingValues.dataSavingEnabled && submission.lQ && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi())
         if type == ContentType.CType.SELF && SettingValues.hideImageSelftext
-                || SettingValues.noImages && submission.isSelf {
+            || SettingValues.noImages && submission.isSelf {
             big = false
             thumb = false
         }
-
+        
         if big || !submission.thumbnail {
             thumb = false
         }
-
+        
         if submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && Subscriptions.isCollection(baseSub)) {
             big = false
             thumb = true
@@ -913,12 +914,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             thumb = true
             big = false
         }
-
+        
         if SettingValues.noImages {
             big = false
             thumb = false
         }
-
+        
         if thumb && type == .SELF {
             thumb = false
         }
@@ -927,7 +928,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             thumb = true
             big = false
         }
-
+        
         if !big && !thumb && submission.type != .SELF && submission.type != .NONE { //If a submission has a link but no images, still show the web thumbnail
             thumb = true
             if submission.nsfw {
@@ -960,7 +961,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             thumbImage.sd_setImage(with: URL.init(string: ""))
             self.thumbImage.frame.size.width = 0
         }
-
+        
         if big {
             bannerImage.isHidden = false
             updater?.invalidate()
@@ -997,7 +998,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                         strongSelf.updater?.isPaused = false
                     }
                     }, failure: {
-                    
+                        
                 })
             } else if videoView != nil {
                 topVideoView?.isHidden = true
@@ -1006,7 +1007,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             
             bannerImage.alpha = 0
             let imageSize = CGSize.init(width: submission.width, height: ((full && !SettingValues.commentFullScreen) || (!full && SettingValues.postImageMode == .CROPPED_IMAGE)) ? 200 : submission.height)
-
+            
             aspect = imageSize.width / imageSize.height
             if aspect == 0 || aspect > 10000 || aspect.isNaN {
                 aspect = 1
@@ -1016,7 +1017,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 if aspect == 0 || aspect > 10000 || aspect.isNaN {
                     aspect = 1
                 }
-
+                
                 submissionHeight = test ? 150 : 200
             }
             bannerImage.isUserInteractionEnabled = true
@@ -1054,21 +1055,21 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         } else {
             bannerImage.sd_setImage(with: URL.init(string: ""))
         }
-
+        
         if !full && !test {
             aspectWidth = self.contentView.frame.size.width
         }
-
+        
         let mo = History.commentsSince(s: submission)
         comments.text = " \(submission.commentCount)" + (mo > 0 ? "(+\(mo))" : "")
-
+        
         if !registered && !full {
             parent.registerForPreviewing(with: self, sourceView: self.contentView)
             registered = true
         }
-
+        
         refresh()
-
+        
         if (type != .IMAGE && type != .SELF && !thumb) || full {
             infoContainer.isHidden = false
             var text = ""
@@ -1104,7 +1105,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             default:
                 text = "Link"
             }
-
+            
             if SettingValues.smallerTag && !full {
                 infoContainer.isHidden = true
                 tagbody.isHidden = false
@@ -1113,48 +1114,48 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 tagbody.isHidden = true
                 if submission.isCrosspost && full {
                     let colorF = UIColor.white
-
+                    
                     let finalText = NSMutableAttributedString.init(string: "Crosspost - " + submission.domain, attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 14, submission: true)])
-
+                    
                     let endString = NSMutableAttributedString(string: "\nOriginal submission by ", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: colorF])
                     let by = NSMutableAttributedString(string: " in ", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: colorF])
-
+                    
                     let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.author, small: false))\u{00A0}", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: colorF])
-
+                    
                     let userColor = ColorUtil.getColorForUser(name: submission.crosspostAuthor)
                     if AccountController.currentName == submission.author {
                         authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#FFB74D"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
                     } else if userColor != ColorUtil.baseColor {
                         authorString.addAttributes([kTTTBackgroundFillColorAttributeName: userColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
                     }
-
+                    
                     endString.append(authorString)
                     endString.append(by)
-
+                    
                     let attrs = [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: colorF] as [String: Any]
-
+                    
                     let boldString = NSMutableAttributedString(string: "r/\(submission.crosspostSubreddit)", attributes: attrs)
-
+                    
                     let color = ColorUtil.getColorForSub(sub: submission.crosspostSubreddit)
                     if color != ColorUtil.baseColor {
                         boldString.addAttribute(NSForegroundColorAttributeName, value: color, range: NSRange.init(location: 0, length: boldString.length))
                     }
-
+                    
                     endString.append(boldString)
                     finalText.append(endString)
-
+                    
                     infoContainer.addTapGestureRecognizer {
                         VCPresenter.openRedditLink(submission.crosspostPermalink, self.parentViewController?.navigationController, self.parentViewController)
                     }
                     info.attributedText = finalText
-
+                    
                 } else {
                     let finalText = NSMutableAttributedString.init(string: text, attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 14, submission: true)])
                     finalText.append(NSAttributedString.init(string: "\n\(submission.domain)"))
                     info.attributedText = finalText
                 }
             }
-
+            
         } else {
             infoContainer.isHidden = true
             tagbody.isHidden = true
@@ -1166,11 +1167,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             self.layoutForType()
         }
     }
-
+    
     var currentType: CurrentType = .none
-
+    
     public static func checkWiFi() -> Bool {
-
+        
         let networkStatus = Reachability().connectionStatus()
         switch networkStatus {
         case .Unknown, .Offline:
@@ -1181,7 +1182,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             return true
         }
     }
-
+    
     public static var cachedInternet: Bool?
     public static func checkInternet() -> Bool {
         if LinkCellView.cachedInternet != nil {
@@ -1198,7 +1199,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
         return LinkCellView.cachedInternet!
     }
-
+    
     func showMore() {
         timer!.invalidate()
         AudioServicesPlaySystemSound(1519)
@@ -1215,7 +1216,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var longPress: UILongPressGestureRecognizer?
     var timer: Timer?
     var cancelled = false
-
+    
     func displayLinkDidUpdate(displaylink: CADisplayLink) {
         if let player = videoView.player {
             let elapsedTime = player.currentTime()
@@ -1233,47 +1234,47 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             }
         }
     }
-
+    
     func handleLongPress(_ sender: UILongPressGestureRecognizer) {
         if sender.state == UIGestureRecognizerState.began {
             cancelled = false
             timer = Timer.scheduledTimer(timeInterval: 0.25,
-                    target: self,
-                    selector: #selector(self.showMore),
-                    userInfo: nil,
-                    repeats: false)
-
+                                         target: self,
+                                         selector: #selector(self.showMore),
+                                         userInfo: nil,
+                                         repeats: false)
+            
         }
         if sender.state == UIGestureRecognizerState.ended {
             timer!.invalidate()
             cancelled = true
         }
     }
-
+    
     func edit(sender: AnyObject) {
         let link = self.link!
-
+        
         let alertController: BottomSheetActionController = BottomSheetActionController()
         alertController.headerData = "Edit your submission"
-
+        
         if link.isSelf {
             alertController.addAction(Action(ActionData(title: "Edit selftext", image: UIImage(named: "edit")!.menuIcon()), style: .default, handler: { _ in
                 self.editSelftext()
             }))
         }
-
+        
         alertController.addAction(Action(ActionData(title: "Flair submission", image: UIImage(named: "size")!.menuIcon()), style: .default, handler: { _ in
             self.flairSelf()
-
+            
         }))
-
+        
         alertController.addAction(Action(ActionData(title: "Delete submission", image: UIImage(named: "delete")!.menuIcon()), style: .default, handler: { _ in
             self.deleteSelf(self)
         }))
-
+        
         VCPresenter.presentAlert(alertController, parentVC: parentViewController!)
     }
-
+    
     func editSelftext() {
         let reply = ReplyViewController.init(submission: link!, sub: (self.link?.subreddit)!) { (cr) in
             DispatchQueue.main.async(execute: { () -> Void in
@@ -1281,16 +1282,16 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 self.showBody(width: self.contentView.frame.size.width - 24)
             })
         }
-
+        
         let navEditorViewController: UINavigationController = UINavigationController(rootViewController: reply)
         parentViewController?.present(navEditorViewController, animated: true, completion: nil)
         //todo new implementation
     }
-
+    
     func deleteSelf(_ cell: LinkCellView) {
         let alertController: BottomSheetActionController = BottomSheetActionController()
         alertController.headerData = "Really delete your submission?"
-
+        
         alertController.addAction(Action(ActionData(title: "Yes", image: UIImage(named: "delete")!.menuIcon()), style: .default, handler: { _ in
             if let delegate = self.del {
                 delegate.deleteSelf(self)
@@ -1299,7 +1300,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         VCPresenter.presentAlert(alertController, parentVC: parentViewController!)
     }
-
+    
     func flairSelf() {
         //todo this
         var list: [FlairTemplate] = []
@@ -1316,20 +1317,20 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     DispatchQueue.main.async {
                         let sheet = UIAlertController(title: "r/\(self.link!.subreddit) flairs", message: nil, preferredStyle: .actionSheet)
                         sheet.addAction(
-                                UIAlertAction(title: "Close", style: .cancel) { (_) in
-                                    sheet.dismiss(animated: true, completion: nil)
-                                }
+                            UIAlertAction(title: "Close", style: .cancel) { (_) in
+                                sheet.dismiss(animated: true, completion: nil)
+                            }
                         )
-
+                        
                         for flair in flairs {
                             let somethingAction = UIAlertAction(title: (flair.text.isEmpty) ?flair.name : flair.text, style: .default) { (_) in
                                 sheet.dismiss(animated: true, completion: nil)
                                 self.setFlair(flair)
                             }
-
+                            
                             sheet.addAction(somethingAction)
                         }
-
+                        
                         self.parentViewController?.present(sheet, animated: true)
                     }
                 }
@@ -1337,13 +1338,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         } catch {
         }
     }
-
+    
     var flairText: String?
-
+    
     func setFlair(_ flair: FlairTemplate) {
         if flair.editable {
             let alert = UIAlertController(title: "Edit flair text", message: "", preferredStyle: .alert)
-
+            
             let config: TextField.Config = { textField in
                 textField.becomeFirstResponder()
                 textField.textColor = .black
@@ -1362,23 +1363,23 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     self.flairText = textField.text
                 }
             }
-
+            
             alert.addOneTextField(configuration: config)
-
+            
             alert.addAction(UIAlertAction(title: "Set flair", style: .default, handler: { (_) in
                 self.submitFlairChange(flair, text: self.flairText ?? "")
             }))
-
+            
             alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
-
+            
             //todo make this work on ipad
             parentViewController?.present(alert, animated: true, completion: nil)
-
+            
         } else {
             submitFlairChange(flair)
         }
     }
-
+    
     func unmute() {
         self.videoView?.player?.isMuted = false
         UIView.animate(withDuration: 0.5, animations: {
@@ -1406,11 +1407,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                         self.setLink(submission: self.link!, parent: self.parentViewController!, nav: self.navViewController!, baseSub: (self.link?.subreddit)!)
                         self.showBody(width: self.contentView.frame.size.width - 24)
                     }
-            }}
+                }}
         } catch {
         }
     }
-
+    
     func refresh() {
         let link = self.link!
         upvote.setImage(LinkCellImageCache.upvote, for: .normal)
@@ -1418,7 +1419,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         downvote.setImage(LinkCellImageCache.downvote, for: .normal)
         sideUpvote.setImage(LinkCellImageCache.upvoteSmall, for: .normal)
         sideDownvote.setImage(LinkCellImageCache.downvoteSmall, for: .normal)
-
+        
         var attrs: [String: Any] = [:]
         switch ActionStates.getVoteDirection(s: link) {
         case .down:
@@ -1432,13 +1433,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         default:
             attrs = ([NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true)])
         }
-
+        
         if full {
             let subScore = NSMutableAttributedString(string: (link.score >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(link.score) / Double(1000))) : " \(link.score)", attributes: attrs)
             let scoreRatio =
-                    NSMutableAttributedString(string: (SettingValues.upvotePercentage && full && link.upvoteRatio > 0) ?
-                            " (\(Int(link.upvoteRatio * 100))%)" : "", attributes: [NSFontAttributeName: comments.font, NSForegroundColorAttributeName: comments.textColor])
-
+                NSMutableAttributedString(string: (SettingValues.upvotePercentage && full && link.upvoteRatio > 0) ?
+                    " (\(Int(link.upvoteRatio * 100))%)" : "", attributes: [NSFontAttributeName: comments.font, NSForegroundColorAttributeName: comments.textColor])
+            
             var attrsNew: [String: Any] = [:]
             if scoreRatio.length > 0 {
                 let numb = (link.upvoteRatio)
@@ -1460,9 +1461,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     }
                 }
             }
-
+            
             scoreRatio.addAttributes(attrsNew, range: NSRange.init(location: 0, length: scoreRatio.length))
-
+            
             subScore.append(scoreRatio)
             score.attributedText = subScore
         } else {
@@ -1474,7 +1475,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 sideScore.attributedText = scoreString
             }
         }
-
+        
         if ActionStates.isSaved(s: link) {
             save.setImage(LinkCellImageCache.saveTinted, for: .normal)
         }
@@ -1484,14 +1485,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             self.title.alpha = 1
         }
     }
-
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         var topmargin = 0
         var bottommargin = 2
         var leftmargin = 0
         var rightmargin = 0
-
+        
         if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full {
             topmargin = 5
             bottommargin = 5
@@ -1501,19 +1502,19 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 self.contentView.elevate(elevation: 2)
             }
         }
-
+        
         let f = self.contentView.frame
         let fr = UIEdgeInsetsInsetRect(f, UIEdgeInsets(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin)))
         self.contentView.frame = fr
     }
-
+    
     var registered: Bool = false
-
+    
     func previewingContext(_ previewingContext: UIViewControllerPreviewing,
                            viewControllerForLocation location: CGPoint) -> UIViewController? {
         if full {
             let locationInTextView = textView.convert(location, to: textView)
-
+            
             if let (url, rect) = getInfo(locationInTextView: locationInTextView) {
                 previewingContext.sourceRect = textView.convert(rect, from: textView)
                 if let controller = parentViewController?.getControllerForUrl(baseUrl: url) {
@@ -1533,7 +1534,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
         return nil
     }
-
+    
     func estimateHeight(_ full: Bool, _ reset: Bool = false) -> CGFloat {
         if estimatedHeight == 0 || reset {
             var paddingTop = CGFloat(0)
@@ -1547,14 +1548,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 paddingLeft = 5
                 paddingRight = 5
             }
-
+            
             let actionbar = CGFloat(!full && SettingValues.actionBarMode != .FULL ? 0 : 24)
-
+            
             var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
             let thumbheight = (full || SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50)) - (!full && SettingValues.postViewMode == .COMPACT ? 15 : 0)
             
             let textHeight = (!hasText || !full) ? CGFloat(0) : textView.estimatedHeight
-        
+            
             if thumb {
                 imageHeight = thumbheight
                 innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between top and thumbnail
@@ -1568,7 +1569,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between banner and label
                     innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 12) //between label and box
                 }
-
+                
                 innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between box and end
             } else {
                 innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8)
@@ -1576,7 +1577,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 12) //between body and box
                 innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between box and end
             }
-
+            
             var estimatedUsableWidth = aspectWidth - paddingLeft - paddingRight
             var fullHeightExtras = CGFloat(0)
             
@@ -1597,7 +1598,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     fullHeightExtras += imageHeight
                 }
             }
-
+            
             if SettingValues.actionBarMode.isSide() && !full {
                 estimatedUsableWidth -= 36
                 estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 24) //buttons horizontal margins
@@ -1611,14 +1612,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
         return estimatedHeight
     }
-
+    
     func getInfo(locationInTextView: CGPoint) -> (URL, CGRect)? {
         if let attr = textView.firstTextView.link(at: locationInTextView) {
             return (attr.result.url!, attr.accessibilityFrame)
         }
         return nil
     }
-
+    
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
         if viewControllerToCommit is AlbumViewController {
             viewControllerToCommit.modalPresentationStyle = .overFullScreen
@@ -1630,20 +1631,20 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             VCPresenter.showVC(viewController: viewControllerToCommit, popupIfPossible: true, parentNavigationController: parentViewController?.navigationController, parentViewController: parentViewController)
         }
     }
-
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     public var parentViewController: (UIViewController & MediaVCDelegate)?
     public var navViewController: UIViewController?
-
+    
     func openLink(sender: UITapGestureRecognizer? = nil) {
         if let link = link {
             (parentViewController)?.setLink(lnk: link, shownURL: loadedImage, lq: lq, saveHistory: true, heroView: big ? bannerImage : thumbImage, heroVC: parentViewController) //todo check this
         }
     }
-
+    
     func openComment(sender: UITapGestureRecognizer? = nil) {
         if !full {
             if let delegate = self.del {
@@ -1651,31 +1652,31 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             }
         }
     }
-
+    
     public static var imageDictionary: NSMutableDictionary = NSMutableDictionary.init()
-
+    
 }
 
 extension UILabel {
     func addImage(imageName: String, afterLabel bolAfterLabel: Bool = false) {
         let attachment: NSTextAttachment = textAttachment(fontSize: self.font.pointSize, imageName: imageName)
         let attachmentString: NSAttributedString = NSAttributedString(attachment: attachment)
-
+        
         if bolAfterLabel {
             let strLabelText: NSMutableAttributedString = NSMutableAttributedString.init(attributedString: self.attributedText!)
             strLabelText.append(attachmentString)
-
+            
             self.attributedText = strLabelText
         } else {
             let strLabelText: NSMutableAttributedString = NSMutableAttributedString.init(attributedString: self.attributedText!)
             let mutableAttachmentString: NSMutableAttributedString = NSMutableAttributedString(attributedString: attachmentString)
             mutableAttachmentString.append(strLabelText)
-
+            
             self.attributedText = mutableAttachmentString
         }
         self.baselineAdjustment = .alignCenters
     }
-
+    
     func textAttachment(fontSize: CGFloat, imageName: String) -> NSTextAttachment {
         let font = FontGenerator.fontOfSize(size: fontSize, submission: true) //set accordingly to your font, you might pass it in the function
         let textAttachment = NSTextAttachment()
@@ -1683,7 +1684,7 @@ extension UILabel {
         if image != nil {
             textAttachment.image = image as? UIImage
         } else {
-
+            
             let img = UIImage(named: imageName)?.getCopy(withSize: .square(size: self.font.pointSize), withColor: ColorUtil.fontColor)
             textAttachment.image = img
             LinkCellView.imageDictionary.setObject(img!, forKey: imageName as NSCopying)
@@ -1692,7 +1693,7 @@ extension UILabel {
         textAttachment.bounds = CGRect(x: 0, y: font.descender - fontSize / 2 + mid + 2, width: fontSize, height: fontSize).integral
         return textAttachment
     }
-
+    
     func removeImage() {
         let text = self.text
         self.attributedText = nil

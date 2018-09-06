@@ -358,7 +358,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         }
 
         // Otherwise load AVPlayer
-        let url = formatUrl(sS: data.baseURL!.absoluteString)
+        let url = formatUrl(sS: data.baseURL!.absoluteString, SettingValues.noCacheVideos)
         videoType = VideoType.fromPath(url)
         
         if videoType != .DIRECT && videoType != .REDDIT && videoType != .IMGUR {
@@ -528,8 +528,8 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         return s
     }
     
-    func formatUrl(sS: String) -> String {
-        return VideoMediaViewController.format(sS: sS)
+    func formatUrl(sS: String, _ vreddit: Bool = false) -> String {
+        return VideoMediaViewController.format(sS: sS, SettingValues.noCacheVideos)
     }
 
     public enum VideoType {
