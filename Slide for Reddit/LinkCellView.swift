@@ -517,13 +517,23 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         if oldPercent == -1 {
             let pulseAnimation = CABasicAnimation(keyPath: "transform.scale")
-            pulseAnimation.duration = 1.0
+            pulseAnimation.duration = 0.5
             pulseAnimation.toValue = 1.2
-            pulseAnimation.fromValue = 1
+            pulseAnimation.fromValue = 0.2
             pulseAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
-            pulseAnimation.autoreverses = true
+            pulseAnimation.autoreverses = false
             pulseAnimation.repeatCount = Float.greatestFiniteMagnitude
+            
+            let fadeAnimation = CABasicAnimation(keyPath: "opacity")
+            fadeAnimation.duration = 0.5
+            fadeAnimation.toValue = 0
+            fadeAnimation.fromValue = 2.5
+            fadeAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+            fadeAnimation.autoreverses = false
+            fadeAnimation.repeatCount = Float.greatestFiniteMagnitude
+
             progressDot.layer.add(pulseAnimation, forKey: "scale")
+            progressDot.layer.add(fadeAnimation, forKey: "fade")
         }
     }
     
