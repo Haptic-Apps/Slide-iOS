@@ -892,7 +892,8 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
         if isYoutubeView {
             self.youtubeView.seek(toSeconds: toSeconds, allowSeekAhead: true) // Disable seekahead until the user lets go
         } else {
-            self.videoView.player?.seek(to: targetTime)
+            let tolerance: CMTime = CMTimeMakeWithSeconds(0.001, 1000) // 1 ms with a resolution of 1 ms
+            self.videoView.player?.seek(to: targetTime, toleranceBefore: tolerance, toleranceAfter: tolerance)
         }
     }
 
