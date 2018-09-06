@@ -54,6 +54,7 @@ final class FullLinkCellView: LinkCellView {
                     videoView.horizontalAnchors == bannerImage.horizontalAnchors
                     videoView.verticalAnchors == bannerImage.verticalAnchors
                     videoView.topAnchor == contentView.topAnchor
+                    topVideoView.edgeAnchors == videoView.edgeAnchors
                 }
             } else if thumb {
                 thumbImageContainer.isHidden = false

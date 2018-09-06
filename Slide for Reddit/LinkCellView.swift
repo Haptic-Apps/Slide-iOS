@@ -93,6 +93,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var sideDownvote: UIButton!
     var sideScore: UILabel!
     var videoView: VideoView!
+    var topVideoView: UIView!
 
     var avPlayerItem: AVPlayerItem?
     weak var observer: NSObjectProtocol?
@@ -348,56 +349,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             }
         }
 
-        if !addTouch {
-            save.addTarget(self, action: #selector(LinkCellView.save(sender:)), for: .touchUpInside)
-            upvote.addTarget(self, action: #selector(LinkCellView.upvote(sender:)), for: .touchUpInside)
-            if SettingValues.actionBarMode.isSide() {
-                sideUpvote.addTarget(self, action: #selector(LinkCellView.upvote(sender:)), for: .touchUpInside)
-                sideDownvote.addTarget(self, action: #selector(LinkCellView.downvote(sender:)), for: .touchUpInside)
-            }
-            reply.addTarget(self, action: #selector(LinkCellView.reply(sender:)), for: .touchUpInside)
-            downvote.addTarget(self, action: #selector(LinkCellView.downvote(sender:)), for: .touchUpInside)
-            mod.addTarget(self, action: #selector(LinkCellView.mod(sender:)), for: .touchUpInside)
-            edit.addTarget(self, action: #selector(LinkCellView.edit(sender:)), for: .touchUpInside)
-            hide.addTarget(self, action: #selector(LinkCellView.hide(sender:)), for: .touchUpInside)
-            sideUpvote.addTarget(self, action: #selector(LinkCellView.upvote(sender:)), for: .touchUpInside)
-
-            addTouch(view: thumbImage, action: #selector(LinkCellView.openLink(sender:)))
-            let tap = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openLink(sender:)))
-            tap.delegate = self
-            bannerImage.addGestureRecognizer(tap)
-            
-            let tap2 = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openLink(sender:)))
-            tap2.delegate = self
-            infoContainer.addGestureRecognizer(tap2)
-
-            if dtap == nil && SettingValues.submissionActionDoubleTap != .NONE {
-                dtap = UIShortTapGestureRecognizer.init(target: self, action: #selector(self.doDTap(_:)))
-                dtap!.numberOfTapsRequired = 2
-                self.contentView.addGestureRecognizer(dtap!)
-            }
-            
-            if !full {
-                let comment = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openComment(sender:)))
-                comment.delegate = self
-                if dtap != nil {
-                    comment.require(toFail: dtap!)
-                }
-                self.addGestureRecognizer(comment)
-            }
-            if longPress == nil {
-                longPress = UILongPressGestureRecognizer(target: self, action: #selector(LinkCellView.handleLongPress(_:)))
-                longPress?.minimumPressDuration = 0.25
-                longPress?.delegate = self
-                if full {
-                    textView.parentLongPress = longPress!
-                }
-                self.contentView.addGestureRecognizer(longPress!)
-            }
-
-            addTouch = true
-        }
-
         if self is FullLinkCellView {
             contentView.addSubviews(bannerImage, thumbImageContainer, title, textView, infoContainer, tagbody)
         } else {
@@ -411,8 +362,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 $0.layer.masksToBounds = true
             }
             
-            contentView.addSubview(videoView)
+            self.topVideoView = UIView()
+            
+            contentView.addSubviews(videoView, topVideoView)
             contentView.bringSubview(toFront: videoView)
+            contentView.bringSubview(toFront: topVideoView)
         }
         
         contentView.layer.masksToBounds = true
@@ -454,6 +408,65 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             self.contentView.addSubview(sideButtons)
         } else {
             sideButtons = UIStackView()
+        }
+        
+        
+        if !addTouch {
+            save.addTarget(self, action: #selector(LinkCellView.save(sender:)), for: .touchUpInside)
+            upvote.addTarget(self, action: #selector(LinkCellView.upvote(sender:)), for: .touchUpInside)
+            if SettingValues.actionBarMode.isSide() {
+                sideUpvote.addTarget(self, action: #selector(LinkCellView.upvote(sender:)), for: .touchUpInside)
+                sideDownvote.addTarget(self, action: #selector(LinkCellView.downvote(sender:)), for: .touchUpInside)
+            }
+            reply.addTarget(self, action: #selector(LinkCellView.reply(sender:)), for: .touchUpInside)
+            downvote.addTarget(self, action: #selector(LinkCellView.downvote(sender:)), for: .touchUpInside)
+            mod.addTarget(self, action: #selector(LinkCellView.mod(sender:)), for: .touchUpInside)
+            edit.addTarget(self, action: #selector(LinkCellView.edit(sender:)), for: .touchUpInside)
+            hide.addTarget(self, action: #selector(LinkCellView.hide(sender:)), for: .touchUpInside)
+            sideUpvote.addTarget(self, action: #selector(LinkCellView.upvote(sender:)), for: .touchUpInside)
+            
+            addTouch(view: thumbImage, action: #selector(LinkCellView.openLink(sender:)))
+            let tap = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openLink(sender:)))
+            tap.delegate = self
+            bannerImage.addGestureRecognizer(tap)
+            
+            let tap2 = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openLink(sender:)))
+            tap2.delegate = self
+            infoContainer.addGestureRecognizer(tap2)
+            
+            if videoView != nil {
+                topVideoView.isUserInteractionEnabled = true
+                videoView.isUserInteractionEnabled = false
+                let tap3 = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openLink(sender:)))
+                tap3.delegate = self
+                topVideoView.addGestureRecognizer(tap3)
+            }
+            
+            if dtap == nil && SettingValues.submissionActionDoubleTap != .NONE {
+                dtap = UIShortTapGestureRecognizer.init(target: self, action: #selector(self.doDTap(_:)))
+                dtap!.numberOfTapsRequired = 2
+                self.contentView.addGestureRecognizer(dtap!)
+            }
+            
+            if !full {
+                let comment = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openComment(sender:)))
+                comment.delegate = self
+                if dtap != nil {
+                    comment.require(toFail: dtap!)
+                }
+                self.addGestureRecognizer(comment)
+            }
+            if longPress == nil {
+                longPress = UILongPressGestureRecognizer(target: self, action: #selector(LinkCellView.handleLongPress(_:)))
+                longPress?.minimumPressDuration = 0.25
+                longPress?.delegate = self
+                if full {
+                    textView.parentLongPress = longPress!
+                }
+                self.contentView.addGestureRecognizer(longPress!)
+            }
+            
+            addTouch = true
         }
         
         sideButtons.isHidden = !SettingValues.actionBarMode.isSide() || full
@@ -891,6 +904,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 videoView?.player?.pause()
                 videoView?.isHidden = false
                 bannerImage.isHidden = true
+                topVideoView?.isHidden = false
+                self.contentView.bringSubview(toFront: topVideoView!)
                 if observer == nil {
                     observer = NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: videoView.player, queue: OperationQueue.main) { [weak self] (_) in
                         self?.playerItemDidreachEnd()
@@ -917,6 +932,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     
                 })
             } else if videoView != nil {
+                topVideoView?.isHidden = true
                 videoView?.isHidden = true
             }
             
