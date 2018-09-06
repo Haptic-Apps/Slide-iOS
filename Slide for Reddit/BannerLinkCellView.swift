@@ -38,9 +38,7 @@ final class BannerLinkCellView: LinkCellView {
 
                 bannerImage.horizontalAnchors == contentView.horizontalAnchors + bannerPadding
                 if SettingValues.autoplayVideos {
-                    videoView.horizontalAnchors == bannerImage.horizontalAnchors
-                    videoView.verticalAnchors == bannerImage.verticalAnchors
-                    videoView.topAnchor == contentView.topAnchor
+                    videoView.edgeAnchors == bannerImage.edgeAnchors
                     topVideoView.edgeAnchors == videoView.edgeAnchors
                 }
                 
@@ -76,9 +74,7 @@ final class BannerLinkCellView: LinkCellView {
                     sideButtons.bottomAnchor == contentView.bottomAnchor - ceight
                 }
                 if SettingValues.autoplayVideos {
-                    videoView.horizontalAnchors == bannerImage.horizontalAnchors
-                    videoView.verticalAnchors == bannerImage.verticalAnchors
-                    videoView.topAnchor == contentView.topAnchor
+                    videoView.edgeAnchors == bannerImage.edgeAnchors
                     topVideoView.edgeAnchors == videoView.edgeAnchors
                 }
             }

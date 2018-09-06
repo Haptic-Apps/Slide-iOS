@@ -92,11 +92,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var sideUpvote: UIButton!
     var sideDownvote: UIButton!
     var sideScore: UILabel!
+    
     var videoView: VideoView!
     var topVideoView: UIView!
+    var progressDot: UIView!
+    var sound: UIButton!
+    var updater: CADisplayLink?
 
     var avPlayerItem: AVPlayerItem?
-    weak var observer: NSObjectProtocol?
 
     var loadedImage: URL?
     var lq = false
@@ -150,12 +153,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 }))
             }
             parentViewController?.present(alertController, animated: true, completion: nil)
-        }
-    }
-
-    deinit {
-        if let observer = observer {
-            NotificationCenter.default.removeObserver(observer)
         }
     }
 
@@ -358,12 +355,28 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if SettingValues.autoplayVideos {
             self.videoView = VideoView().then {
                 $0.accessibilityIdentifier = "Video view"
-                $0.layer.cornerRadius = 15
+                if !SettingValues.flatMode {
+                    $0.layer.cornerRadius = 15
+                }
                 $0.layer.masksToBounds = true
             }
             
             self.topVideoView = UIView()
-            
+            self.progressDot = UIView()
+            progressDot.alpha = 0.7
+            sound = UIButton(type: .custom)
+            sound.setImage(UIImage(named: "mute"), for: .normal)
+
+            topVideoView.addSubviews(progressDot, sound)
+            progressDot.widthAnchor == 20
+            progressDot.heightAnchor == 20
+            progressDot.leftAnchor == topVideoView.leftAnchor + 8
+            progressDot.bottomAnchor == topVideoView.bottomAnchor - 8
+            sound.widthAnchor == 20
+            sound.heightAnchor == 20
+            sound.rightAnchor == topVideoView.rightAnchor - 8
+            sound.bottomAnchor == topVideoView.bottomAnchor - 8
+
             contentView.addSubviews(videoView, topVideoView)
             contentView.bringSubview(toFront: videoView)
             contentView.bringSubview(toFront: topVideoView)
@@ -409,7 +422,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         } else {
             sideButtons = UIStackView()
         }
-        
         
         if !addTouch {
             save.addTarget(self, action: #selector(LinkCellView.save(sender:)), for: .touchUpInside)
@@ -473,7 +485,48 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         buttons.isHidden = SettingValues.actionBarMode != .FULL && !full
         buttons.isUserInteractionEnabled = SettingValues.actionBarMode != .FULL || full
     }
-
+    
+    func updateProgress(_ oldPercent: CGFloat, _ total: String) {
+        var percent = oldPercent
+        if percent == -1 {
+            percent = 1
+        }
+        let startAngle = -CGFloat.pi / 2
+        
+        let center = CGPoint (x: 20 / 2, y: 20 / 2)
+        let radius = CGFloat(20 / 2)
+        let arc = CGFloat.pi * CGFloat(2) * percent
+        
+        let cPath = UIBezierPath()
+        cPath.move(to: center)
+        cPath.addLine(to: CGPoint(x: center.x + radius * cos(startAngle), y: center.y + radius * sin(startAngle)))
+        cPath.addArc(withCenter: center, radius: radius, startAngle: startAngle, endAngle: arc + startAngle, clockwise: true)
+        cPath.addLine(to: CGPoint(x: center.x, y: center.y))
+        
+        let circleShape = CAShapeLayer()
+        circleShape.path = cPath.cgPath
+        circleShape.strokeColor = UIColor.white.cgColor
+        circleShape.fillColor = UIColor.white.cgColor
+        circleShape.lineWidth = 1.5
+        // add sublayer
+        for layer in progressDot.layer.sublayers ?? [CALayer]() {
+            layer.removeFromSuperlayer()
+        }
+        progressDot.layer.removeAllAnimations()
+        progressDot.layer.addSublayer(circleShape)
+        
+        if oldPercent == -1 {
+            let pulseAnimation = CABasicAnimation(keyPath: "transform.scale")
+            pulseAnimation.duration = 1.0
+            pulseAnimation.toValue = 1.2
+            pulseAnimation.fromValue = 1
+            pulseAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+            pulseAnimation.autoreverses = true
+            pulseAnimation.repeatCount = Float.greatestFiniteMagnitude
+            progressDot.layer.add(pulseAnimation, forKey: "scale")
+        }
+    }
+    
     func doConstraints() {
 //        var target: CurrentType = .none
 //
@@ -900,17 +953,15 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
         if big {
             bannerImage.isHidden = false
-            if SettingValues.autoplayVideos && ContentType.isGif(uri: submission.url!) {
+            updater?.invalidate()
+            if SettingValues.autoplayVideos && ContentType.displayVideo(t: type) {
                 videoView?.player?.pause()
                 videoView?.isHidden = false
                 bannerImage.isHidden = true
                 topVideoView?.isHidden = false
+                sound.isHidden = true
+                self.updateProgress(-1, "")
                 self.contentView.bringSubview(toFront: topVideoView!)
-                if observer == nil {
-                    observer = NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: videoView.player, queue: OperationQueue.main) { [weak self] (_) in
-                        self?.playerItemDidreachEnd()
-                    }
-                }
                 let baseUrl: URL
                 if !submission.videoPreview.isEmpty() && !ContentType.isGfycat(uri: submission.url!) {
                     baseUrl = URL.init(string: link!.videoPreview)!
@@ -919,7 +970,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 }
                 let url = VideoMediaViewController.format(sS: baseUrl.absoluteString)
                 let videoType = VideoMediaViewController.VideoType.fromPath(url)
-                
                 videoType.getSourceObject().load(url: url, completion: { [weak self] (urlString) in
                     guard let strongSelf = self else { return }
                     DispatchQueue.main.async {
@@ -927,6 +977,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                         strongSelf.videoView?.player = AVPlayer(playerItem: strongSelf.avPlayerItem!)
                         strongSelf.videoView?.player?.play()
                         strongSelf.videoView?.player?.isMuted = true
+                        if (strongSelf.videoView.player?.currentItem?.tracks.count ?? 1) > 1 {
+                            strongSelf.sound.isHidden = false
+                            strongSelf.sound.addTarget(strongSelf, action: #selector(strongSelf.unmute), for: .touchUpInside)
+                        }
+                        strongSelf.updater = CADisplayLink(target: strongSelf, selector: #selector(strongSelf.displayLinkDidUpdate))
+                        strongSelf.updater?.add(to: .current, forMode: .defaultRunLoopMode)
+                        strongSelf.updater?.isPaused = false
                     }
                     }, failure: {
                     
@@ -1148,6 +1205,24 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var timer: Timer?
     var cancelled = false
 
+    func displayLinkDidUpdate(displaylink: CADisplayLink) {
+        if let player = videoView.player {
+            let elapsedTime = player.currentTime()
+            if CMTIME_IS_INVALID(elapsedTime) {
+                return
+            }
+            let duration = Float(CMTimeGetSeconds(player.currentItem!.duration))
+            let time = Float(CMTimeGetSeconds(elapsedTime))
+            
+            if duration.isFinite && duration > 0 {
+                updateProgress(CGFloat(time / duration), "")
+            }
+            if (time / duration) >= 0.99 {
+                self.playerItemDidreachEnd()
+            }
+        }
+    }
+
     func handleLongPress(_ sender: UILongPressGestureRecognizer) {
         if sender.state == UIGestureRecognizerState.began {
             cancelled = false
@@ -1293,6 +1368,15 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
     }
 
+    func unmute() {
+        self.videoView?.player?.isMuted = false
+        UIView.animate(withDuration: 0.5, animations: {
+            self.sound.alpha = 0
+        }) { (_) in
+            self.sound.isHidden = true
+        }
+    }
+    
     func submitFlairChange(_ flair: FlairTemplate, text: String? = "") {
         do {
             try (UIApplication.shared.delegate as! AppDelegate).session?.flairSubmission(link!.subreddit, flairId: flair.id, submissionFullname: link!.id, text: text ?? "") { result in
