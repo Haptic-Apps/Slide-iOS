@@ -76,21 +76,21 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var comments: UILabel!
     var info: UILabel!
     var textView: TextDisplayStackView!
-    var save: UIImageView!
-    var upvote: UIImageView!
-    var hide: UIImageView!
-    var edit: UIImageView!
-    var reply: UIImageView!
-    var downvote: UIImageView!
-    var mod: UIImageView!
+    var save: UIButton!
+    var upvote: UIButton!
+    var hide: UIButton!
+    var edit: UIButton!
+    var reply: UIButton!
+    var downvote: UIButton!
+    var mod: UIButton!
     var commenticon: UIImageView!
     var submissionicon: UIImageView!
     var del: LinkCellViewDelegate?
     var taglabel: UILabel!
     var tagbody: UIView!
     var crosspost: UITableViewCell!
-    var sideUpvote: UIImageView!
-    var sideDownvote: UIImageView!
+    var sideUpvote: UIButton!
+    var sideDownvote: UIButton!
     var sideScore: UILabel!
     var videoView: VideoView!
 
@@ -208,68 +208,68 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             $0.verticalAlignment = .top
         }
 
-        self.hide = UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 24)).then {
+        self.hide = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Hide Button"
-            $0.image = LinkCellImageCache.hide
+            $0.setImage(LinkCellImageCache.hide, for: .normal)
             $0.contentMode = .center
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
         }
 
-        self.reply = UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 24)).then {
+        self.reply = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Reply Button"
-            $0.image = LinkCellImageCache.reply
+            $0.setImage(LinkCellImageCache.reply, for: .normal)
             $0.contentMode = .center
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
         }
 
-        self.edit = UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 24)).then {
+        self.edit = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Edit Button"
-            $0.image = LinkCellImageCache.edit
+            $0.setImage(LinkCellImageCache.edit, for: .normal)
             $0.contentMode = .center
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
         }
 
-        self.save = UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 24)).then {
+        self.save = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Save Button"
             $0.contentMode = .center
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
         }
 
-        self.upvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 24)).then {
+        self.upvote = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Upvote Button"
             $0.contentMode = .center
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
         }
 
-        self.downvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 20)).then {
+        self.downvote = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Downvote Button"
             $0.contentMode = .center
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
         }
         
-        self.sideUpvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 24)).then {
+        self.sideUpvote = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Upvote Button"
             $0.contentMode = .center
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
         }
         
-        self.sideDownvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 20)).then {
+        self.sideDownvote = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Downvote Button"
             $0.contentMode = .center
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
         }
 
-        self.mod = UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 24)).then {
+        self.mod = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Mod Button"
-            $0.image = LinkCellImageCache.mod
+            $0.setImage(LinkCellImageCache.mod, for: .normal)
             $0.contentMode = .center
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
@@ -349,17 +349,19 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
 
         if !addTouch {
-            addTouch(view: save, action: #selector(LinkCellView.save(sender:)))
-            addTouch(view: upvote, action: #selector(LinkCellView.upvote(sender:)))
+            save.addTarget(self, action: #selector(LinkCellView.save(sender:)), for: .touchUpInside)
+            upvote.addTarget(self, action: #selector(LinkCellView.upvote(sender:)), for: .touchUpInside)
             if SettingValues.actionBarMode.isSide() {
-                addTouch(view: sideUpvote, action: #selector(LinkCellView.upvote(sender:)))
-                addTouch(view: sideDownvote, action: #selector(LinkCellView.downvote(sender:)))
+                sideUpvote.addTarget(self, action: #selector(LinkCellView.upvote(sender:)), for: .touchUpInside)
+                sideDownvote.addTarget(self, action: #selector(LinkCellView.downvote(sender:)), for: .touchUpInside)
             }
-            addTouch(view: reply, action: #selector(LinkCellView.reply(sender:)))
-            addTouch(view: downvote, action: #selector(LinkCellView.downvote(sender:)))
-            addTouch(view: mod, action: #selector(LinkCellView.mod(sender:)))
-            addTouch(view: edit, action: #selector(LinkCellView.edit(sender:)))
-            addTouch(view: hide, action: #selector(LinkCellView.hide(sender:)))
+            reply.addTarget(self, action: #selector(LinkCellView.reply(sender:)), for: .touchUpInside)
+            downvote.addTarget(self, action: #selector(LinkCellView.downvote(sender:)), for: .touchUpInside)
+            mod.addTarget(self, action: #selector(LinkCellView.mod(sender:)), for: .touchUpInside)
+            edit.addTarget(self, action: #selector(LinkCellView.edit(sender:)), for: .touchUpInside)
+            hide.addTarget(self, action: #selector(LinkCellView.hide(sender:)), for: .touchUpInside)
+            sideUpvote.addTarget(self, action: #selector(LinkCellView.upvote(sender:)), for: .touchUpInside)
+
             addTouch(view: thumbImage, action: #selector(LinkCellView.openLink(sender:)))
             let tap = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openLink(sender:)))
             tap.delegate = self
@@ -572,51 +574,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
     }
 
-    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-
-       let pointForTargetViewmod: CGPoint = mod.convert(point, from: self)
-        if mod.bounds.contains(pointForTargetViewmod) {
-            return mod
-        }
-        let pointForTargetViewdownvote: CGPoint = downvote.convert(point, from: self)
-        if downvote.bounds.contains(pointForTargetViewdownvote) {
-            return downvote
-        }
-        if SettingValues.actionBarMode.isSide() {
-            let pointForTargetViewupvoteSide: CGPoint = sideUpvote.convert(point, from: self)
-            if sideUpvote.bounds.contains(pointForTargetViewupvoteSide) {
-                return sideUpvote
-            }
-            let pointForTargetViewdownvoteSide: CGPoint = sideDownvote.convert(point, from: self)
-            if sideDownvote.bounds.contains(pointForTargetViewdownvoteSide) {
-                return sideDownvote
-            }
-        }
-        let pointForTargetViewupvote: CGPoint = upvote.convert(point, from: self)
-        if upvote.bounds.contains(pointForTargetViewupvote) {
-            return upvote
-        }
-        let pointForTargetViewsave: CGPoint = save.convert(point, from: self)
-        if save.bounds.contains(pointForTargetViewsave) {
-            return save
-        }
-        let pointForTargetViewh: CGPoint = hide.convert(point, from: self)
-        if hide.bounds.contains(pointForTargetViewh) {
-            return hide
-        }
-
-        let pointForTargetViewreply: CGPoint = reply.convert(point, from: self)
-        if reply.bounds.contains(pointForTargetViewreply) {
-            return reply
-        }
-        let pointForTargetViewedit: CGPoint = edit.convert(point, from: self)
-        if edit.bounds.contains(pointForTargetViewedit) {
-            return edit
-        }
-
-        return super.hitTest(point, with: event)
-    }
-
     func showBody(width: CGFloat) {
         full = true
         textView.isHidden = false
@@ -754,9 +711,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             if submission.canMod {
                 mod.isHidden = false
                 if !submission.reports.isEmpty {
-                    mod.image = LinkCellImageCache.modTinted
+                    mod.setImage(LinkCellImageCache.modTinted, for: .normal)
                 } else {
-                    mod.image = LinkCellImageCache.mod
+                    mod.setImage(LinkCellImageCache.mod, for: .normal)
                 }
             }
 
@@ -888,6 +845,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
 
         if big {
+            bannerImage.isHidden = false
             if SettingValues.autoplayVideos && ContentType.isGif(uri: submission.url!) {
                 videoView?.player?.pause()
                 videoView?.isHidden = false
@@ -1303,20 +1261,21 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
     func refresh() {
         let link = self.link!
-        upvote.image = LinkCellImageCache.upvote
-        save.image = LinkCellImageCache.save
-        downvote.image = LinkCellImageCache.downvote
-        sideUpvote.image = LinkCellImageCache.upvoteSmall
-        sideDownvote.image = LinkCellImageCache.downvoteSmall
+        upvote.setImage(LinkCellImageCache.upvote, for: .normal)
+        save.setImage(LinkCellImageCache.save, for: .normal)
+        downvote.setImage(LinkCellImageCache.downvote, for: .normal)
+        sideUpvote.setImage(LinkCellImageCache.upvoteSmall, for: .normal)
+        sideDownvote.setImage(LinkCellImageCache.downvoteSmall, for: .normal)
+
         var attrs: [String: Any] = [:]
         switch ActionStates.getVoteDirection(s: link) {
         case .down:
-            downvote.image = LinkCellImageCache.downvoteTinted
-            sideDownvote.image = LinkCellImageCache.downvoteTintedSmall
+            downvote.setImage(LinkCellImageCache.downvoteTinted, for: .normal)
+            sideDownvote.setImage(LinkCellImageCache.downvoteTintedSmall, for: .normal)
             attrs = ([NSForegroundColorAttributeName: ColorUtil.downvoteColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
         case .up:
-            upvote.image = LinkCellImageCache.upvoteTinted
-            sideUpvote.image = LinkCellImageCache.upvoteTintedSmall
+            upvote.setImage(LinkCellImageCache.upvoteTinted, for: .normal)
+            sideUpvote.setImage(LinkCellImageCache.upvoteTintedSmall, for: .normal)
             attrs = ([NSForegroundColorAttributeName: ColorUtil.upvoteColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
         default:
             attrs = ([NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true)])
@@ -1365,7 +1324,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
 
         if ActionStates.isSaved(s: link) {
-            save.image = LinkCellImageCache.saveTinted
+            save.setImage(LinkCellImageCache.saveTinted, for: .normal)
         }
         if History.getSeen(s: link) && !full {
             self.title.alpha = 0.7
