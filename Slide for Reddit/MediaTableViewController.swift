@@ -202,7 +202,6 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
             }
             contentUrl = URL.init(string: String.init(htmlEncodedString: urlString))!
             
-
             if ContentType.isSpoiler(uri: url) {
                 let controller = UIAlertController.init(title: "Spoiler", message: url.absoluteString, preferredStyle: .alert)
                 controller.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: nil))

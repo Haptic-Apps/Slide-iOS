@@ -87,6 +87,10 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         request?.cancel()
         stopDisplayLink()
         videoView.player?.pause()
+        if SettingValues.noCacheVideos {
+            videoView.player?.currentItem?.cancelPendingSeeks()
+            videoView.player?.currentItem?.asset.cancelLoading()
+        }
         super.viewWillDisappear(animated)
     }
 
@@ -483,7 +487,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         self.videoView.player!.play()
     }
     
-    func formatUrl(sS: String) -> String {
+    static func format(sS: String) -> String {
         var s = sS
         if s.hasSuffix("v") && !s.contains("streamable.com") {
             s = s.substring(0, length: s.length - 1)
@@ -509,8 +513,12 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         }
         return s
     }
+    
+    func formatUrl(sS: String) -> String {
+        return VideoMediaViewController.format(sS: sS)
+    }
 
-    enum VideoType {
+    public enum VideoType {
         case DIRECT
         case IMGUR
         case VID_ME

@@ -1884,6 +1884,11 @@ extension SingleSubredditViewController {
 extension SingleSubredditViewController: UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if cell is LinkCellView && (cell as! LinkCellView).videoView != nil {
+            (cell as! LinkCellView).videoView!.player?.pause()
+            (cell as! LinkCellView).videoView!.player?.currentItem?.asset.cancelLoading()
+            (cell as! LinkCellView).videoView!.player?.currentItem?.cancelPendingSeeks()
+        }
         if SettingValues.markReadOnScroll && indexPath.row < links.count {
             History.addSeen(s: links[indexPath.row])
         }

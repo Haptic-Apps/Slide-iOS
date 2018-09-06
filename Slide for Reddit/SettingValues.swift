@@ -118,6 +118,7 @@ class SettingValues {
 
     public static var browser = "firefox"
     public static var viewType = true
+    public static var autoplayVideos = true
     public static var commentTwoSwipe = true
     public static var hiddenFAB = true
     public static var upvotePercentage = true

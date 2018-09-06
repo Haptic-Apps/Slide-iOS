@@ -8,6 +8,7 @@
 
 import Anchorage
 import AudioToolbox
+import AVKit
 import MaterialComponents
 import reddift
 import RLBAlertsPickers
@@ -91,6 +92,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var sideUpvote: UIImageView!
     var sideDownvote: UIImageView!
     var sideScore: UILabel!
+    var videoView: VideoView!
+
+    var avPlayerItem: AVPlayerItem?
+    weak var observer: NSObjectProtocol?
 
     var loadedImage: URL?
     var lq = false
@@ -144,6 +149,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 }))
             }
             parentViewController?.present(alertController, animated: true, completion: nil)
+        }
+    }
+
+    deinit {
+        if let observer = observer {
+            NotificationCenter.default.removeObserver(observer)
         }
     }
 
@@ -320,7 +331,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 $0.layer.cornerRadius = 4
             }
         }
-
+        
         self.info = UILabel().then {
             $0.accessibilityIdentifier = "Banner Info"
             $0.numberOfLines = 2
@@ -390,6 +401,15 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         } else {
             contentView.addSubviews(bannerImage, thumbImageContainer, title, infoContainer, tagbody)
         }
+        
+        if SettingValues.autoplayVideos {
+            self.videoView = VideoView().then {
+                $0.accessibilityIdentifier = "Video view"
+            }
+            bannerImage.addSubview(videoView)
+            bannerImage.bringSubview(toFront: videoView)
+        }
+        
         contentView.layer.masksToBounds = true
         
         if SettingValues.actionBarMode == .FULL || full {
@@ -864,6 +884,37 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
 
         if big {
+            if SettingValues.autoplayVideos && ContentType.isGif(uri: submission.url!) {
+                videoView?.player?.pause()
+                videoView?.isHidden = false
+                if observer == nil {
+                    observer = NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: videoView.player, queue: OperationQueue.main) { [weak self] (_) in
+                        self?.playerItemDidreachEnd()
+                    }
+                }
+                let baseUrl: URL
+                if !submission.videoPreview.isEmpty() && !ContentType.isGfycat(uri: submission.url!) {
+                    baseUrl = URL.init(string: link!.videoPreview)!
+                } else {
+                    baseUrl = submission.url!
+                }
+                let url = VideoMediaViewController.format(sS: baseUrl.absoluteString)
+                let videoType = VideoMediaViewController.VideoType.fromPath(url)
+                
+                videoType.getSourceObject().load(url: url, completion: { [weak self] (urlString) in
+                    guard let strongSelf = self else { return }
+                    DispatchQueue.main.async {
+                        strongSelf.avPlayerItem = AVPlayerItem(url: URL(string: urlString)!)
+                        strongSelf.videoView?.player = AVPlayer(playerItem: strongSelf.avPlayerItem!)
+                        strongSelf.videoView?.player?.play()
+                    }
+                    }, failure: {
+                    
+                })
+            } else if videoView != nil {
+                videoView?.isHidden = true
+            }
+            
             bannerImage.alpha = 0
             let imageSize = CGSize.init(width: submission.width, height: ((full && !SettingValues.commentFullScreen) || (!full && SettingValues.postImageMode == .CROPPED_IMAGE)) ? 200 : submission.height)
 
@@ -1065,6 +1116,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if !self.cancelled && LinkCellView.checkInternet() {
             self.more()
         }
+    }
+    
+    func playerItemDidreachEnd() {
+        self.videoView?.player?.seek(to: kCMTimeZero)
+        self.videoView?.player?.play()
     }
     
     var longPress: UILongPressGestureRecognizer?
