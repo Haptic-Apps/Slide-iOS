@@ -65,6 +65,8 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         configureLayout()
         connectActions()
 
+        setupAssetDownload()
+
         loadContent()
         handleHideUI()
     }
@@ -87,6 +89,8 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         request?.cancel()
         stopDisplayLink()
         videoView.player?.pause()
+        downloadSession?.invalidateAndCancel()
+        playerStatusToken = nil
         super.viewWillDisappear(animated)
     }
 
@@ -234,66 +238,35 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     
     func handleDoubleTap(_ sender: UITapGestureRecognizer) {
         if sender.state == UIGestureRecognizerState.ended {
+
+            let maxTime = scrubber.slider.maximumValue
             let x = sender.location(in: self.view).x
+            let baseIncrement = isYoutubeView ? 10 : min(maxTime / 5, 10)
+
             if x > UIScreen.main.bounds.size.width / 2 {
-                //skip forward
-                if isYoutubeView {
-                    let playerCurrentTime = scrubber.slider.value
-                    let maxTime = scrubber.slider.maximumValue
-                    
-                    let newTime = playerCurrentTime + 10
-                    
-                    if newTime < maxTime {
-                        youtubeView.seek(toSeconds: newTime, allowSeekAhead: true)
-                    } else {
-                        youtubeView.seek(toSeconds: 0, allowSeekAhead: true)
-                    }
-                    youtubeView.playVideo()
-                } else {
-                    if let player = self.videoView.player {
-                        let playerCurrentTime = CMTimeGetSeconds(player.currentTime())
-                        let maxTime = CMTimeGetSeconds(player.currentItem!.duration)
-                        
-                        let newTime = playerCurrentTime + (maxTime / 5)
-                        
-                        if newTime < maxTime {
-                            let time2: CMTime = CMTimeMake(Int64(newTime * 1000 as Float64), 1000)
-                            player.seek(to: time2)
-                        } else {
-                            player.seek(to: kCMTimeZero)
-                        }
-                        player.play()
-                    }
-                }
+                seekAhead(bySeconds: baseIncrement)
             } else {
-                //skip back
-                if isYoutubeView {
-                    let playerCurrentTime = scrubber.slider.value
-                    
-                    let newTime = playerCurrentTime - 5
-                    
-                    if newTime > 0 {
-                        youtubeView.seek(toSeconds: newTime, allowSeekAhead: true)
-                    } else {
-                        youtubeView.seek(toSeconds: 0, allowSeekAhead: true)
-                    }
-                    youtubeView.playVideo()
-                } else {
-                    if let player = self.videoView.player {
-                        let playerCurrentTime = CMTimeGetSeconds(player.currentTime())
-                        let maxTime = CMTimeGetSeconds(player.currentItem!.duration)
-                        
-                        let newTime = playerCurrentTime - (maxTime / 7)
-                        
-                        if newTime > 0 {
-                            let time2: CMTime = CMTimeMake(Int64(newTime * 1000 as Float64), 1000)
-                            player.seek(to: time2)
-                        } else {
-                            player.seek(to: kCMTimeZero)
-                        }
-                        player.play()
-                    }
-                }
+                seekAhead(bySeconds: -baseIncrement)
+            }
+        }
+    }
+
+    func seekAhead(bySeconds seconds: Float) {
+        let playerCurrentTime = scrubber.slider.value
+        let maxTime = scrubber.slider.maximumValue
+
+        var newTime = (playerCurrentTime + seconds)
+        newTime = min(newTime, maxTime) // Prevent seeking beyond end
+        newTime = max(newTime, 0) // Prevent seeking before beginning
+
+        if isYoutubeView {
+            youtubeView.seek(toSeconds: newTime, allowSeekAhead: true)
+            youtubeView.playVideo()
+        } else {
+            let tolerance: CMTime = CMTimeMakeWithSeconds(0.001, 1000) // 1 ms with a resolution of 1 ms
+            let newCMTime = CMTimeMakeWithSeconds(Float64(newTime), 1000)
+            self.videoView.player?.seek(to: newCMTime, toleranceBefore: tolerance, toleranceAfter: tolerance) { _ in
+                self.videoView.player?.play()
             }
         }
     }
@@ -412,13 +385,23 @@ class VideoMediaViewController: EmbeddableMediaViewController {
             showSpinner()
         }
 
-        videoType.getSourceObject().load(url: url, completion: { [weak self] (urlString) in
-            self?.getVideo(urlString)
-            }, failure: {
-                self.parent?.dismiss(animated: true, completion: {
-                    self.failureCallback?(URL.init(string: url)!)
-                })
-        })
+        // Play the video
+
+        let completionBlock: (String) -> Void = { [weak self] (urlString) in
+            if #available(iOS 10.0, *) {
+                self?.playVideo(urlString)
+            } else {
+                // TODO: Fallback on earlier versions
+            }
+        }
+
+        let failureBlock: () -> Void = { [weak self] in
+            self?.parent?.dismiss(animated: true, completion: {
+                self?.failureCallback?(URL.init(string: url)!)
+            })
+        }
+
+        videoType.getSourceObject().load(url: url, completion: completionBlock, failure: failureBlock)
     }
     
     func showSpinner() {
@@ -435,103 +418,115 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         self.spinnerIndicator.stopAnimating()
         self.spinnerIndicator.isHidden = true
     }
-    
-    func getVideo(_ toLoad: String) {
-        self.hideSpinner()
 
-        if FileManager.default.fileExists(atPath: getKeyFromURL()) {
-            playVideo()
-        } else {
-            request = Alamofire.download(toLoad, method: .get, to: { (_, _) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
-                return (URL(fileURLWithPath: self.videoType == .REDDIT ? self.getKeyFromURL().replacingOccurrences(of: ".mp4", with: "video.mp4") : self.getKeyFromURL()), [.createIntermediateDirectories])
-            }).downloadProgress() { progress in
-                DispatchQueue.main.async {
-                    let countBytes = ByteCountFormatter()
-                    countBytes.allowedUnits = [.useMB]
-                    countBytes.countStyle = .file
-                    let fileSize = countBytes.string(fromByteCount: Int64(progress.totalUnitCount))
-                    self.updateProgress(CGFloat(progress.fractionCompleted), fileSize)
-                    self.size.text = fileSize
-                }
-                }.responseData { response in
-                    switch response.result {
-                    case .failure(let error):
-                        print(error)
-                        self.parent?.dismiss(animated: true, completion: {
-                            self.failureCallback?(URL.init(string: toLoad)!)
-                        })
-                    case .success:
-                        if self.videoType == .REDDIT {
-                            self.downloadRedditAudio()
-                        } else {
-                            DispatchQueue.main.async {
-                                self.playVideo()
-                            }
-                        }
-                    }
+    var configuration: URLSessionConfiguration!
+    var downloadSession: AVAssetDownloadURLSession?
+
+    func setupAssetDownload() {
+        // Create new background session configuration.
+        configuration = URLSessionConfiguration.background(withIdentifier: getKeyFromURL())
+
+        // Create a new AVAssetDownloadURLSession with background configuration, delegate, and queue
+        downloadSession = AVAssetDownloadURLSession(configuration: configuration,
+                                                    assetDownloadDelegate: self,
+                                                    delegateQueue: OperationQueue.main)
+    }
+
+    @available(iOS 10.0, *)
+    func playVideo(_ toLoad: String) {
+        guard let url = URL(string: toLoad) else {
+            fatalError("Oof ouch owie")
+        }
+
+        print("Handling video at \(url)")
+
+        let asset = AVURLAsset(url: url)
+        let assetTitle = getKeyFromURL()
+
+        // Create new AVAssetDownloadTask for the desired asset
+
+        // Passing a nil options value indicates the highest available bitrate should be downloaded
+
+        guard let downloadSession = downloadSession else {
+            fatalError("No download session")
+        }
+
+        let downloadTask = downloadSession.makeAssetDownloadTask(asset: asset,
+                                                                 assetTitle: assetTitle,
+                                                                 assetArtworkData: nil,
+                                                                 options: nil)!
+
+        // Start task
+        downloadTask.resume()
+
+        // Create standard playback items and begin playback
+
+        let playerItem = AVPlayerItem(asset: downloadTask.urlAsset)
+//        playerItem.delegate = self
+
+        playerStatusToken = playerItem.observe(\.status) { [unowned self] (object, _) in
+            if object.status == .readyToPlay {
+                self.onReadyToPlay()
             }
         }
-    }
-    
-    func downloadRedditAudio() {
-        let key = getKeyFromURL()
-        var toLoadAudio = self.data.baseURL!.absoluteString
-        toLoadAudio = toLoadAudio.substring(0, length: toLoadAudio.lastIndexOf("/DASH_") ?? toLoadAudio.length)
-        toLoadAudio += "/audio"
-        let finalUrl = URL.init(fileURLWithPath: key)
-        let localUrlV = URL.init(fileURLWithPath: key.replacingOccurrences(of: ".mp4", with: "video.mp4"))
-        let localUrlAudio = URL.init(fileURLWithPath: key.replacingOccurrences(of: ".mp4", with: "audio.mp4"))
-
-        self.request = Alamofire.download(toLoadAudio, method: .get, to: { (_, _) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
-            return (localUrlAudio, [.removePreviousFile, .createIntermediateDirectories])
-        }).downloadProgress() { progress in
-            DispatchQueue.main.async {
-                self.updateProgress(CGFloat(progress.fractionCompleted), "")
-            }
-            }
-            .responseData { response2 in
-                if (response2.error as NSError?)?.code == NSURLErrorCancelled {
-                    return
-                }
-                if response2.response!.statusCode != 200 {
-                    do {
-                        try FileManager.init().copyItem(at: localUrlV, to: finalUrl)
-                        DispatchQueue.main.async {
-                            self.playVideo()
-                        }
-                    } catch {
-                        DispatchQueue.main.async {
-                            self.playVideo()
-                        }
-                    }
-                } else { //no errors
-                    self.mergeFilesWithUrl(videoUrl: localUrlV, audioUrl: localUrlAudio, savePathUrl: finalUrl) {
-                        DispatchQueue.main.async {
-                            self.playVideo()
-                        }
-                    }
-                }
-        }
-    }
-    weak var observer: NSObjectProtocol?
-    func playVideo() {
-        self.setProgressViewVisible(false)
-        self.size.isHidden = true
-        self.downloadButton.isHidden = false
-        let playerItem = AVPlayerItem(url: URL(fileURLWithPath: getKeyFromURL()))
-        videoView.player = AVPlayer(playerItem: playerItem)
-        videoView.player?.play()
-        
-        scrubber.totalDuration = videoView.player!.currentItem!.asset.duration
 
         observer = NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: playerItem, queue: OperationQueue.main) { [weak self] (_) in
             self?.playerItemDidreachEnd()
         }
+
+        videoView.player = AVPlayer(playerItem: playerItem)
+        videoView.player!.automaticallyWaitsToMinimizeStalling = false
+
     }
+
+//    func playVideo2(_ toLoad: String) {
+//        self.hideSpinner()
+//
+//        let playerItem: CachingPlayerItem
+//
+//        print("Handling video at \(toLoad)")
+//
+//        let asset = AVURLAsset(url: URL(string: toLoad)!)
+//
+//        if FileManager.default.fileExists(atPath: getKeyFromURL()) {
+//            // Load from cache
+//            let localURL = URL(fileURLWithPath: getKeyFromURL())
+//            playerItem = CachingPlayerItem(localUrl: localURL)
+//            print("Playing cached video at \(localURL)")
+//        } else {
+//            // Stream from URL
+//            guard let streamingURL = URL(string: toLoad) else {
+//                fatalError("Could not construct URL from path: \(toLoad)")
+//            }
+//            playerItem = CachingPlayerItem(url: streamingURL)
+//            print("Streaming video at \(streamingURL)")
+//        }
+//
+//        playerItem.delegate = self
+//        videoView.player = AVPlayer(playerItem: playerItem)
+//
+//        if #available(iOS 10.0, *) {
+//            videoView.player?.automaticallyWaitsToMinimizeStalling = false
+//        }
+//
+//        observer = NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: playerItem, queue: OperationQueue.main) { [weak self] (_) in
+//            self?.playerItemDidreachEnd()
+//        }
+//
+////        videoView.player?.play()
+//
+////        scrubber.totalDuration = videoView.player!.currentItem!.asset.duration // TODO: change to playerItem.asset.duration
+//
+//    }
+
+    var playerStatusToken: NSKeyValueObservation?
+    weak var observer: NSObjectProtocol?
     
     func playerItemDidreachEnd() {
-        self.videoView.player!.seek(to: kCMTimeZero)
-        self.videoView.player!.play()
+        let tolerance: CMTime = CMTimeMakeWithSeconds(0, 1000)
+        self.videoView.player!.seek(to: kCMTimeZero, toleranceBefore: tolerance, toleranceAfter: tolerance) { _ in
+            self.videoView.player!.play()
+        }
     }
     
     func formatUrl(sS: String) -> String {
@@ -613,9 +608,53 @@ class VideoMediaViewController: EmbeddableMediaViewController {
 
 }
 
+extension VideoMediaViewController: AVAssetDownloadDelegate {
+
+    func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
+        if let error = error {
+            print(error.localizedDescription)
+        }
+    }
+
+    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+        if let error = error {
+            print(error.localizedDescription)
+        }
+    }
+
+    func urlSession(_ session: URLSession, assetDownloadTask: AVAssetDownloadTask, didLoad timeRange: CMTimeRange, totalTimeRangesLoaded loadedTimeRanges: [NSValue], timeRangeExpectedToLoad: CMTimeRange) {
+
+        var percentComplete = 0.0
+
+        // Iterate through the loaded time ranges
+        for value in loadedTimeRanges {
+
+            // Unwrap the CMTimeRange from the NSValue
+            let loadedTimeRange = value.timeRangeValue
+
+            // Calculate the percentage of the total expected asset duration
+            percentComplete += loadedTimeRange.duration.seconds / timeRangeExpectedToLoad.duration.seconds
+
+        }
+        percentComplete *= 100
+
+        // Update UI state: post notification, update KVO state, invoke callback, etc.
+        print("Percent loaded: \(percentComplete)%")
+
+    }
+
+    func urlSession(_ session: URLSession, assetDownloadTask: AVAssetDownloadTask, didFinishDownloadingTo location: URL) {
+        // Do not move the asset from the download location
+//        UserDefaults.standard.set(location.relativePath, forKey: "assetPath")
+        let filePath = location.relativePath
+
+    }
+}
+
 extension VideoMediaViewController {
 
     func loadYoutube(url urlS: String) {
+        print("Loading YouTube video at \(urlS)")
         var seconds = 0
         var video = ""
         var playlist = ""
@@ -723,7 +762,7 @@ extension VideoMediaViewController {
 
         }).resume()
     }
-    
+
     func getKeyFromURL() -> String {
         let disallowedChars = CharacterSet.urlPathAllowed.inverted
         var key = self.data.baseURL!.absoluteString.components(separatedBy: disallowedChars).joined(separator: "_")
@@ -735,75 +774,91 @@ extension VideoMediaViewController {
         if key.length > 200 {
             key = key.substring(0, length: 200)
         }
-        
-        return (SDImageCache.shared().makeDiskCachePath(key) ?? "") + ".mp4"
+
+        return key
     }
+    
+//    func getKeyFromURL() -> String {
+//        let disallowedChars = CharacterSet.urlPathAllowed.inverted
+//        var key = self.data.baseURL!.absoluteString.components(separatedBy: disallowedChars).joined(separator: "_")
+//        key = key.replacingOccurrences(of: ":", with: "")
+//        key = key.replacingOccurrences(of: "/", with: "")
+//        key = key.replacingOccurrences(of: ".gifv", with: ".mp4")
+//        key = key.replacingOccurrences(of: ".gif", with: ".mp4")
+//        key = key.replacingOccurrences(of: ".", with: "")
+//        if key.length > 200 {
+//            key = key.substring(0, length: 200)
+//        }
+//
+//        return (SDImageCache.shared().makeDiskCachePath(key) ?? "") + ".mp4"
+//    }
 }
 
-/*extension VideoMediaViewController: CachingPlayerItemDelegate {
+extension VideoMediaViewController: CachingPlayerItemDelegate {
 
-    func playerItemReadyToPlay(_ playerItem: CachingPlayerItem) {
+    func onReadyToPlay() {
         print("Player ready to play")
         videoView.player?.play()
-        
+        self.hideSpinner()
+
         // Hook up the scrubber to the player
         scrubber.totalDuration = videoView.player!.currentItem!.asset.duration
+
+        self.setProgressViewVisible(false)
+        self.size.isHidden = true
+        self.downloadButton.isHidden = false
     }
 
-    func displayLinkDidUpdate(displaylink: CADisplayLink) {
-        if let player = videoView.player {
-            if !sliderBeingUsed {
-                scrubber.updateWithTime(elapsedTime: player.currentTime())
-            }
-        }
-    }
-    
-    
-    func didReachEnd(_ playerItem: CachingPlayerItem) {
-        self.videoView.player!.seek(to: kCMTimeZero)
-        self.videoView.player!.play()
-    }
-    
-    func playerItem(_ playerItem: CachingPlayerItem, didFinishDownloadingData data: Data) {
-        print("File is downloaded and ready for storing")
-        DispatchQueue.main.async {
-            self.progressView.alpha = 0
-            self.size.alpha = 0
-        }
-        
-        //@colejd we might use an already-created key value in the new delegate
-        FileManager.default.createFile(atPath: getKeyFromURL(), contents: data, attributes: nil)
-    }
+//    func playerItemReadyToPlay(_ playerItem: CachingPlayerItem) {
+//        onReadyToPlay()
+//    }
+//
+//    func didReachEnd(_ playerItem: CachingPlayerItem) {
+//        let tolerance: CMTime = CMTimeMakeWithSeconds(0, 1000)
+//        self.videoView.player!.seek(to: kCMTimeZero, toleranceBefore: tolerance, toleranceAfter: tolerance) { _ in
+//            self.videoView.player!.play()
+//        }
+//    }
+//
+//    func playerItem(_ playerItem: CachingPlayerItem, didFinishDownloadingData data: Data) {
+//        print("File is downloaded and ready for storing")
+//        DispatchQueue.main.async {
+//            self.progressView.alpha = 0
+//            self.size.alpha = 0
+//        }
+//
+//        //@colejd we might use an already-created key value in the new delegate
+//        FileManager.default.createFile(atPath: getKeyFromURL(), contents: data, attributes: nil)
+//    }
+//
+//    func playerItem(_ playerItem: CachingPlayerItem, didDownloadBytesSoFar bytesDownloaded: Int, outOf bytesExpected: Int) {
+//        DispatchQueue.main.async {
+//            let progress = Float(bytesDownloaded) / Float(bytesExpected)
+//            let countBytes = ByteCountFormatter()
+//            countBytes.allowedUnits = [.useMB]
+//            countBytes.countStyle = .file
+//            let fileSizeString = countBytes.string(fromByteCount: Int64(bytesExpected))
+//            self.updateProgress(CGFloat(progress), fileSizeString)
+//            self.size.text = fileSizeString
+//        }
+//    }
+//
+//    func playerItemPlaybackStalled(_ playerItem: CachingPlayerItem) {
+//        print("Not enough data for playback, likely because of a poor network connection. Wait a bit and try to play later.")
+//    }
+//
+//    func playerItem(_ playerItem: CachingPlayerItem, downloadingFailedWith error: Error) {
+//        print(error)
+//    }
 
-    func playerItem(_ playerItem: CachingPlayerItem, didDownloadBytesSoFar bytesDownloaded: Int, outOf bytesExpected: Int) {
-        DispatchQueue.main.async {
-            self.progressView.progress = Float(bytesDownloaded) / Float(bytesExpected)
-            let countBytes = ByteCountFormatter()
-            countBytes.allowedUnits = [.useMB]
-            countBytes.countStyle = .file
-            let fileSizeString = countBytes.string(fromByteCount: Int64(bytesExpected))
-            self.size.text = fileSizeString
-        }
-    }
-
-    func playerItemPlaybackStalled(_ playerItem: CachingPlayerItem) {
-        print("Not enough data for playback. Probably because of the poor network. Wait a bit and try to play later.")
-    }
-
-    func playerItem(_ playerItem: CachingPlayerItem, downloadingFailedWith error: Error) {
-        print(error)
-    }
-    
-}*/
+}
 
 extension VideoMediaViewController {
     
     func displayLinkDidUpdate(displaylink: CADisplayLink) {
         if !sliderBeingUsed {
             if isYoutubeView {
-                if !sliderBeingUsed {
-                    self.scrubber.updateWithTime(elapsedTime: CMTime(seconds: Double(youtubeView.currentTime()), preferredTimescale: 1000000))
-                }
+                self.scrubber.updateWithTime(elapsedTime: CMTime(seconds: Double(youtubeView.currentTime()), preferredTimescale: 1000))
             } else {
                 if let player = videoView.player {
                     scrubber.updateWithTime(elapsedTime: player.currentTime())
@@ -979,7 +1034,8 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
         if isYoutubeView {
             self.youtubeView.seek(toSeconds: toSeconds, allowSeekAhead: true) // Disable seekahead until the user lets go
         } else {
-            self.videoView.player?.seek(to: targetTime)
+            let tolerance: CMTime = CMTimeMakeWithSeconds(0.001, 1000) // 1 ms
+            self.videoView.player?.seek(to: targetTime, toleranceBefore: tolerance, toleranceAfter: tolerance)
         }
     }
 

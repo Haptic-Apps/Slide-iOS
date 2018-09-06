@@ -56,7 +56,7 @@ class GfycatVideoSource: VideoSource {
 
 class RedditVideoSource: VideoSource {
     func load(url: String, completion: @escaping (String) -> Void, failure: @escaping () -> Void) {
-        let muxedURL = url
+        let muxedURL = url.substring(0, length: url.lastIndexOf("DASH_")!) + "HLSPlaylist.m3u8"
         completion(muxedURL)
     }
 }
