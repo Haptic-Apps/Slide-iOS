@@ -639,44 +639,50 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     }
     
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-        let pointForTargetViewmod: CGPoint = mod.convert(point, from: self)
-        if mod.bounds.contains(pointForTargetViewmod) {
+
+        func didHit(_ view: UIView, insets: CGSize = CGSize(width: -10, height: -15)) -> Bool {
+            let convertedPoint = view.convert(point, from: self)
+            return view.bounds.insetBy(dx: insets.width, dy: insets.height).contains(convertedPoint)
+        }
+
+        if didHit(mod) {
             return mod
         }
-        let pointForTargetViewdownvote: CGPoint = downvote.convert(point, from: self)
-        if downvote.bounds.contains(pointForTargetViewdownvote) {
+
+        if didHit(downvote) {
             return downvote
         }
+
         if SettingValues.actionBarMode.isSide() {
-            let pointForTargetViewupvoteSide: CGPoint = sideUpvote.convert(point, from: self)
-            if sideUpvote.bounds.contains(pointForTargetViewupvoteSide) {
+            if didHit(sideUpvote) {
                 return sideUpvote
             }
-            let pointForTargetViewdownvoteSide: CGPoint = sideDownvote.convert(point, from: self)
-            if sideDownvote.bounds.contains(pointForTargetViewdownvoteSide) {
+
+            if didHit(sideDownvote) {
                 return sideDownvote
             }
         }
-        let pointForTargetViewupvote: CGPoint = upvote.convert(point, from: self)
-        if upvote.bounds.contains(pointForTargetViewupvote) {
+
+        if didHit(upvote) {
             return upvote
         }
-        let pointForTargetViewsave: CGPoint = save.convert(point, from: self)
-        if save.bounds.contains(pointForTargetViewsave) {
+
+        if didHit(save) {
             return save
         }
-        let pointForTargetViewh: CGPoint = hide.convert(point, from: self)
-        if hide.bounds.contains(pointForTargetViewh) {
+
+        if didHit(hide) {
             return hide
         }
-        let pointForTargetViewreply: CGPoint = reply.convert(point, from: self)
-        if reply.bounds.contains(pointForTargetViewreply) {
+
+        if didHit(reply) {
             return reply
         }
-        let pointForTargetViewedit: CGPoint = edit.convert(point, from: self)
-        if edit.bounds.contains(pointForTargetViewedit) {
+
+        if didHit(edit) {
             return edit
         }
+
         return super.hitTest(point, with: event)
     }
     
