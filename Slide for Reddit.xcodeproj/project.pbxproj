@@ -172,6 +172,8 @@
 		BEB2B2351E35D25100BF761C /* InboxContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB2B2341E35D25100BF761C /* InboxContributionLoader.swift */; };
 		BEB2B2371E35D48000BF761C /* InboxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB2B2361E35D48000BF761C /* InboxViewController.swift */; };
 		BEB2B2391E35D64F00BF761C /* MessageCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB2B2381E35D64F00BF761C /* MessageCellView.swift */; };
+		BEB81A5E214315D1007E326B /* AutoplayBannerLinkCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB81A5D214315D1007E326B /* AutoplayBannerLinkCellView.swift */; };
+		BEB81A6021432C6C007E326B /* AnyModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB81A5F21432C6C007E326B /* AnyModalViewController.swift */; };
 		BEBF45C81E230CC900764BB8 /* History.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEBF45C71E230CC900764BB8 /* History.swift */; };
 		BEBF45DB1E23383D00764BB8 /* seen.plist in Resources */ = {isa = PBXBuildFile; fileRef = BEBF45DA1E23383D00764BB8 /* seen.plist */; };
 		BEBF45DD1E23384500764BB8 /* comments.plist in Resources */ = {isa = PBXBuildFile; fileRef = BEBF45DC1E23384500764BB8 /* comments.plist */; };
@@ -415,6 +417,8 @@
 		BEB2B2341E35D25100BF761C /* InboxContributionLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxContributionLoader.swift; sourceTree = "<group>"; };
 		BEB2B2361E35D48000BF761C /* InboxViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxViewController.swift; sourceTree = "<group>"; };
 		BEB2B2381E35D64F00BF761C /* MessageCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCellView.swift; sourceTree = "<group>"; };
+		BEB81A5D214315D1007E326B /* AutoplayBannerLinkCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoplayBannerLinkCellView.swift; sourceTree = "<group>"; };
+		BEB81A5F21432C6C007E326B /* AnyModalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyModalViewController.swift; sourceTree = "<group>"; };
 		BEBF45C71E230CC900764BB8 /* History.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = History.swift; sourceTree = "<group>"; };
 		BEBF45DA1E23383D00764BB8 /* seen.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = seen.plist; sourceTree = "<group>"; };
 		BEBF45DC1E23384500764BB8 /* comments.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = comments.plist; sourceTree = "<group>"; };
@@ -488,6 +492,7 @@
 				09F48EB920F652A300BAC8AC /* Image */,
 				09F48EBA20F652AE00BAC8AC /* Video */,
 				09F411D220F3F20200D23A42 /* EmbeddableMediaViewController.swift */,
+				BEB81A5F21432C6C007E326B /* AnyModalViewController.swift */,
 			);
 			name = Media;
 			sourceTree = "<group>";
@@ -845,6 +850,7 @@
 		BE97422A1F00112F00BF48E0 /* LinkCellViews */ = {
 			isa = PBXGroup;
 			children = (
+				BEB81A5D214315D1007E326B /* AutoplayBannerLinkCellView.swift */,
 				BEEA03D020E2C8DC007A8928 /* LinkCellImageCache.swift */,
 				BEE5BF631E11A15500E3C9AE /* LinkCellView.swift */,
 				BE97422B1F00116D00BF48E0 /* BannerLinkCellView.swift */,
@@ -1315,6 +1321,7 @@
 				BECF52472012B8E700A310F9 /* YTPlayerView.m in Sources */,
 				BE2F3F5D1EF96877003C1B28 /* SettingsContent.swift in Sources */,
 				BE9456001F32DD310097EEF0 /* AlbumViewController.swift in Sources */,
+				BEB81A5E214315D1007E326B /* AutoplayBannerLinkCellView.swift in Sources */,
 				BE6EA6CC1E1C1E9400E9E709 /* StremableMp4Mobile.swift in Sources */,
 				BE6EA6C31E1C1DCE00E9E709 /* GfyItem.swift in Sources */,
 				BE0DC525210BB7A700E8E441 /* SettingsWelcome.swift in Sources */,
@@ -1434,6 +1441,7 @@
 				BEB2B2351E35D25100BF761C /* InboxContributionLoader.swift in Sources */,
 				BECF52442012AF7A00A310F9 /* VCPresenter.swift in Sources */,
 				09F411D320F3F20200D23A42 /* EmbeddableMediaViewController.swift in Sources */,
+				BEB81A6021432C6C007E326B /* AnyModalViewController.swift in Sources */,
 				BEE10FC61F25078F00A72CE5 /* PagingCommentViewController.swift in Sources */,
 				0984BE532114CEA50091C2E1 /* SlideInPresentationController.swift in Sources */,
 				BE7AF57A1F3655F50003B24B /* SwipeDownModalVC.swift in Sources */,

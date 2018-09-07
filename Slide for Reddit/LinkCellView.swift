@@ -31,7 +31,7 @@ protocol LinkCellViewDelegate: class {
 }
 
 enum CurrentType {
-    case thumb, banner, text, none
+    case thumb, banner, text, autoplay, none
 }
 
 class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TTTAttributedLabelDelegate, UIGestureRecognizerDelegate {
@@ -353,7 +353,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             contentView.addSubviews(bannerImage, thumbImageContainer, title, infoContainer, tagbody)
         }
         
-        if SettingValues.autoplayVideos {
+        if self is AutoplayBannerLinkCellView || self is FullLinkCellView {
             self.videoView = VideoView().then {
                 $0.accessibilityIdentifier = "Video view"
                 if !SettingValues.flatMode {
@@ -378,19 +378,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             }
             
             topVideoView.addSubviews(progressDot, sound, timeView)
-            progressDot.widthAnchor == 20
-            progressDot.heightAnchor == 20
-            progressDot.leftAnchor == topVideoView.leftAnchor + 8
-            progressDot.bottomAnchor == topVideoView.bottomAnchor - 8
-            
-            timeView.leftAnchor == progressDot.rightAnchor + 8
-            timeView.bottomAnchor == topVideoView.bottomAnchor - 8
-            timeView.heightAnchor == 20
-            
-            sound.widthAnchor == 30
-            sound.heightAnchor == 30
-            sound.rightAnchor == topVideoView.rightAnchor
-            sound.bottomAnchor == topVideoView.bottomAnchor
             
             contentView.addSubviews(videoView, topVideoView)
             contentView.bringSubview(toFront: videoView)
@@ -464,7 +451,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             if videoView != nil {
                 topVideoView.isUserInteractionEnabled = true
                 videoView.isUserInteractionEnabled = false
-                let tap3 = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openLink(sender:)))
+                let tap3 = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openLinkVideo(sender:)))
                 tap3.delegate = self
                 topVideoView.addGestureRecognizer(tap3)
             }
@@ -572,6 +559,22 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     func configureLayout() {
         let ceight = SettingValues.postViewMode == .COMPACT ? CGFloat(4) : CGFloat(8)
         let ctwelve = SettingValues.postViewMode == .COMPACT ? CGFloat(8) : CGFloat(12)
+        
+        if videoView != nil {
+            progressDot.widthAnchor == 20
+            progressDot.heightAnchor == 20
+            progressDot.leftAnchor == topVideoView.leftAnchor + 8
+            progressDot.bottomAnchor == topVideoView.bottomAnchor - 8
+            
+            timeView.leftAnchor == progressDot.rightAnchor + 8
+            timeView.bottomAnchor == topVideoView.bottomAnchor - 8
+            timeView.heightAnchor == 20
+            
+            sound.widthAnchor == 30
+            sound.heightAnchor == 30
+            sound.rightAnchor == topVideoView.rightAnchor
+            sound.bottomAnchor == topVideoView.bottomAnchor
+        }
         
         // Remove all constraints previously applied by this method
         NSLayoutConstraint.deactivate(tempConstraints)
@@ -681,6 +684,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
 
         return testedViews.first(where: didHit) ?? super.hitTest(point, with: event)
+    }
+    
+    deinit {
+        if videoView != nil {
+            videoView?.player?.currentItem?.asset.cancelLoading()
+            videoView?.player?.currentItem?.cancelPendingSeeks()
+            updater?.invalidate()
+        }
     }
     
     func configure(submission: RSubmission, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, baseSub: String, test: Bool = false, parentWidth: CGFloat = 0) {
@@ -976,7 +987,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if big {
             bannerImage.isHidden = false
             updater?.invalidate()
-            if SettingValues.autoplayVideos && ContentType.displayVideo(t: type) && type != .VIDEO {
+            if self is AutoplayBannerLinkCellView || (self is FullLinkCellView && SettingValues.autoplayVideos && ContentType.displayVideo(t: type) && type != .VIDEO) {
                 videoView?.player?.pause()
                 videoView?.isHidden = false
                 bannerImage.isHidden = true
@@ -1008,9 +1019,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     }, failure: {
                         
                 })
-            } else if videoView != nil {
-                topVideoView?.isHidden = true
-                videoView?.isHidden = true
+            } else if self is FullLinkCellView {
+                self.videoView.isHidden = true
+                self.topVideoView.isHidden = true
             }
             
             bannerImage.alpha = 0
@@ -1662,6 +1673,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if let link = link {
             (parentViewController)?.setLink(lnk: link, shownURL: loadedImage, lq: lq, saveHistory: true, heroView: big ? bannerImage : thumbImage, heroVC: parentViewController) //todo check this
         }
+    }
+    
+    func openLinkVideo(sender: UITapGestureRecognizer? = nil) {
+        let controller = AnyModalViewController(cellView: self)
+        controller.modalPresentationStyle = .overFullScreen
+        parentViewController?.present(controller, animated: true, completion: nil)
     }
     
     func openComment(sender: UITapGestureRecognizer? = nil) {

@@ -1550,12 +1550,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         headerCell.videoView?.player?.pause()
     }
 
-    deinit {
-        headerCell.videoView?.player?.currentItem?.asset.cancelLoading()
-        headerCell.videoView?.player?.currentItem?.cancelPendingSeeks()
-        headerCell.updater?.invalidate()
-    }
-    
     func collapseAll() {
         if dataArray.count > 0 {
             for i in 0...dataArray.count - 1 {

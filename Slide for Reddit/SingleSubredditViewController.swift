@@ -580,6 +580,7 @@ class SingleSubredditViewController: MediaViewController {
 
         // TODO: Can just use .self instead of .classForCoder()
         self.tableView.register(BannerLinkCellView.classForCoder(), forCellWithReuseIdentifier: "banner\(SingleSubredditViewController.cellVersion)")
+        self.tableView.register(AutoplayBannerLinkCellView.classForCoder(), forCellWithReuseIdentifier: "autoplay\(SingleSubredditViewController.cellVersion)")
         self.tableView.register(ThumbnailLinkCellView.classForCoder(), forCellWithReuseIdentifier: "thumb\(SingleSubredditViewController.cellVersion)")
         self.tableView.register(TextLinkCellView.classForCoder(), forCellWithReuseIdentifier: "text\(SingleSubredditViewController.cellVersion)")
         lastVersion = SingleSubredditViewController.cellVersion
@@ -1578,7 +1579,11 @@ class SingleSubredditViewController: MediaViewController {
         if thumb && !big {
             target = .thumb
         } else if big {
-            target = .banner
+            if SettingValues.autoplayVideos && (ContentType.displayVideo(t: type) && type != .VIDEO) {
+                target = .autoplay
+            } else {
+                target = .banner
+            }
         } else {
             target = .text
         }
@@ -1914,6 +1919,7 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
         
         if lastVersion != SingleSubredditViewController.cellVersion {
             self.tableView.register(BannerLinkCellView.classForCoder(), forCellWithReuseIdentifier: "banner\(SingleSubredditViewController.cellVersion)")
+            self.tableView.register(AutoplayBannerLinkCellView.classForCoder(), forCellWithReuseIdentifier: "autoplay\(SingleSubredditViewController.cellVersion)")
             self.tableView.register(ThumbnailLinkCellView.classForCoder(), forCellWithReuseIdentifier: "thumb\(SingleSubredditViewController.cellVersion)")
             self.tableView.register(TextLinkCellView.classForCoder(), forCellWithReuseIdentifier: "text\(SingleSubredditViewController.cellVersion)")
         }
@@ -1921,6 +1927,8 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
         switch SingleSubredditViewController.cellType(forSubmission: submission, Subscriptions.isCollection(sub)) {
         case .thumb:
             cell = tableView.dequeueReusableCell(withReuseIdentifier: "thumb\(SingleSubredditViewController.cellVersion)", for: indexPath) as! ThumbnailLinkCellView
+        case .autoplay:
+            cell = tableView.dequeueReusableCell(withReuseIdentifier: "autoplay\(SingleSubredditViewController.cellVersion)", for: indexPath) as! AutoplayBannerLinkCellView
         case .banner:
             cell = tableView.dequeueReusableCell(withReuseIdentifier: "banner\(SingleSubredditViewController.cellVersion)", for: indexPath) as! BannerLinkCellView
         default:
