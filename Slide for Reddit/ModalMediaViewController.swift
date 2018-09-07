@@ -380,13 +380,13 @@ extension ModalMediaViewController: UIGestureRecognizerDelegate {
         }
         
         if panGesture.state == .began {
-            originalPosition = viewToMove.center
+            originalPosition = viewToMove.frame.origin
             currentPositionTouched = panGesture.location(in: view)
             didStartPan(true)
         } else if panGesture.state == .changed {
             viewToMove.frame.origin = CGPoint(
                 x: 0,
-                y: translation.y
+                y: originalPosition!.y + translation.y
             )
             let progress = translation.y / (self.view.frame.size.height / 2)
             self.view.alpha = 1 - (abs(progress) * 1.3)
@@ -411,7 +411,7 @@ extension ModalMediaViewController: UIGestureRecognizerDelegate {
                 })
             } else {
                 UIView.animate(withDuration: 0.2, animations: {
-                    viewToMove.center = self.originalPosition!
+                    viewToMove.frame.origin = self.originalPosition!
                     self.view.alpha = 1
                     if self.embeddedVC is VideoMediaViewController {
                         self.background?.alpha = 1

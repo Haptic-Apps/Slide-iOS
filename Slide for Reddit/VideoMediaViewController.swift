@@ -8,6 +8,7 @@
 
 import Alamofire
 import Anchorage
+import AVFoundation
 import SDWebImage
 import Then
 import UIKit
@@ -52,8 +53,6 @@ class VideoMediaViewController: EmbeddableMediaViewController {
 
     var forcedFullscreen = false
     var oldOrientation: UIInterfaceOrientation?
-
-    var youtubeHeightConstraint: NSLayoutConstraint?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -113,8 +112,12 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         }
     }
 
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        self.youtubeHeightConstraint = self.youtubeView.heightAnchor == self.youtubeView.widthAnchor * globalAspect
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+
+        // Recalculate youtube frame size
+        // TODO: Use aspect ratio of actual video
+        self.youtubeView.frame = AVMakeRect(aspectRatio: CGSize(width: 16.0, height: 9.0), insideRect: self.view.bounds)
     }
 
 //    override func didReceiveMemoryWarning() {
@@ -214,8 +217,6 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     
     func configureLayout() {
         videoView.edgeAnchors == view.edgeAnchors
-
-        youtubeView.edgeAnchors == view.edgeAnchors
 
         bottomButtons.horizontalAnchors == view.safeHorizontalAnchors + CGFloat(8)
         bottomButtons.bottomAnchor == view.safeBottomAnchor - CGFloat(8)
@@ -634,7 +635,7 @@ extension VideoMediaViewController {
             }
             
             strongSelf.globalAspect = aspect
-            strongSelf.youtubeHeightConstraint = strongSelf.youtubeView.heightAnchor == strongSelf.youtubeView.widthAnchor * aspect
+//            strongSelf.youtubeHeightConstraint = strongSelf.youtubeView.heightAnchor == strongSelf.youtubeView.widthAnchor * aspect
             let vars = [
                 "controls": 0, // Disable controls
                 "playsinline": 1,
