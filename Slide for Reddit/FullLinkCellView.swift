@@ -50,7 +50,7 @@ final class FullLinkCellView: LinkCellView {
                 infoContainer.bottomAnchor == bannerImage.bottomAnchor
                 infoContainer.rightAnchor == bannerImage.rightAnchor
                 
-                if SettingValues.autoplayVideos {
+                if videoView != nil {
                     videoView.edgeAnchors == bannerImage.edgeAnchors
                     topVideoView.edgeAnchors == videoView.edgeAnchors
                 }
