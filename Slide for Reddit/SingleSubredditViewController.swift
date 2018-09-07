@@ -1892,6 +1892,7 @@ extension SingleSubredditViewController: UICollectionViewDelegate {
             (cell as! LinkCellView).videoView!.player?.pause()
             (cell as! LinkCellView).videoView!.player?.currentItem?.asset.cancelLoading()
             (cell as! LinkCellView).videoView!.player?.currentItem?.cancelPendingSeeks()
+            (cell as! LinkCellView).updater?.invalidate()
         }
         if SettingValues.markReadOnScroll && indexPath.row < links.count {
             History.addSeen(s: links[indexPath.row])

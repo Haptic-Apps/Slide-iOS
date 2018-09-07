@@ -115,7 +115,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var dtap: UIShortTapGestureRecognizer?
     
     var thumb = true
-    var submissionHeight: Int = 0
+    var submissionHeight: CGFloat = 0
     var addTouch = false
     
     var link: RSubmission?
@@ -683,9 +683,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         return testedViews.first(where: didHit) ?? super.hitTest(point, with: event)
     }
     
-    func configure(submission: RSubmission, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, baseSub: String, test: Bool = false) {
+    func configure(submission: RSubmission, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, baseSub: String, test: Bool = false, parentWidth: CGFloat = 0) {
         self.link = submission
-        self.setLink(submission: submission, parent: parent, nav: nav, baseSub: baseSub, test: test)
+        self.setLink(submission: submission, parent: parent, nav: nav, baseSub: baseSub, test: test, parentWidth: parentWidth)
         layoutForContent()
     }
     
@@ -714,12 +714,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         view.addGestureRecognizer(tap)
     }
     
-    func getHeightFromAspectRatio(imageHeight: Int, imageWidth: Int) -> Int {
-        let ratio = Double(imageHeight) / Double(imageWidth)
-        let width = Double(contentView.frame.size.width == 0 ? aspectWidth : contentView.frame.size.width)
-        return Int(width * ratio)
+    func getHeightFromAspectRatio(imageHeight: CGFloat, imageWidth: CGFloat, viewWidth: CGFloat) -> CGFloat {
+        let ratio = imageHeight / imageWidth
+        return viewWidth * ratio
     }
-    
+
     func refreshLink(_ submission: RSubmission) {
         self.link = submission
         
@@ -772,7 +771,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         return !(touch.view is UIButton)
     }
     
-    private func setLink(submission: RSubmission, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, baseSub: String, test: Bool = false) {
+    private func setLink(submission: RSubmission, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, baseSub: String, test: Bool = false, parentWidth: CGFloat = 0) {
         loadedImage = nil
         full = parent is CommentViewController
         lq = false
@@ -858,7 +857,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         thumb = submission.thumbnail
         big = submission.banner
         
-        submissionHeight = submission.height
+        submissionHeight = CGFloat(submission.height)
         
         type = test && SettingValues.linkAlwaysThumbnail ? ContentType.CType.LINK : ContentType.getContentType(baseUrl: submission.url)
         if submission.isSelf {
@@ -878,12 +877,17 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         } else if big && ((!full && SettingValues.postImageMode == .CROPPED_IMAGE) || (full && !SettingValues.commentFullScreen)) {
             submissionHeight = test ? 150 : 200
         } else if big {
-            let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: submission.width)
+            let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: CGFloat(submission.width), viewWidth: parentWidth == 0 ? (contentView.frame.size.width == 0 ? CGFloat(submission.width) : contentView.frame.size.width) : parentWidth)
             if h == 0 {
                 submissionHeight = test ? 150 : 200
             } else {
                 submissionHeight = h
             }
+        }
+        
+        if full {
+            let bannerPadding = CGFloat(5)
+            submissionHeight = getHeightFromAspectRatio(imageHeight: submissionHeight == 200 ? CGFloat(200) : CGFloat(submission.height), imageWidth: CGFloat(submission.width), viewWidth: (parentWidth == 0 ? (contentView.frame.size.width == 0 ? CGFloat(submission.width) : contentView.frame.size.width) : parentWidth) - (bannerPadding * 2))
         }
         
         if SettingValues.actionBarMode != .FULL && !full {

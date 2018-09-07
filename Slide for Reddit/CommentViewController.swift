@@ -568,7 +568,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                                 self.headerCell?.parentViewController = self
                                 self.hasDone = true
                                 self.headerCell?.aspectWidth = self.tableView.bounds.size.width
-                                self.headerCell?.configure(submission: self.submission!, parent: self, nav: self.navigationController, baseSub: self.submission!.subreddit)
+                                self.headerCell?.configure(submission: self.submission!, parent: self, nav: self.navigationController, baseSub: self.submission!.subreddit, parentWidth: self.view.frame.size.width)
                                 self.headerCell?.showBody(width: self.view.frame.size.width - 24)
                                 self.tableView.tableHeaderView = UIView(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.width, height: 0.01))
                                 if let tableHeaderView = self.headerCell {
@@ -913,7 +913,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         headerCell!.del = self
         headerCell!.parentViewController = self
         headerCell!.aspectWidth = self.tableView.bounds.size.width
-        headerCell!.configure(submission: submission!, parent: self, nav: self.navigationController, baseSub: submission!.subreddit)
+        headerCell!.configure(submission: submission!, parent: self, nav: self.navigationController, baseSub: submission!.subreddit, parentWidth: self.view.frame.size.width)
         headerCell!.showBody(width: self.view.frame.size.width - 24)
 
     }
@@ -1004,6 +1004,10 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
         if !loaded && (single || forceLoad) {
             refresh(self)
+        }
+
+        if headerCell.videoView != nil {
+            headerCell.videoView?.player?.play()
         }
 
         if navigationController != nil {
@@ -1543,8 +1547,15 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         inHeadView.removeFromSuperview()
+        headerCell.videoView?.player?.pause()
     }
 
+    deinit {
+        headerCell.videoView?.player?.currentItem?.asset.cancelLoading()
+        headerCell.videoView?.player?.currentItem?.cancelPendingSeeks()
+        headerCell.updater?.invalidate()
+    }
+    
     func collapseAll() {
         if dataArray.count > 0 {
             for i in 0...dataArray.count - 1 {
