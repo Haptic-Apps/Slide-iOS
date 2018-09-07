@@ -640,50 +640,31 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
 
-        func didHit(_ view: UIView, insets: CGSize = CGSize(width: -10, height: -15)) -> Bool {
+        let insets = CGSize(width: -10, height: -15)
+
+        func didHit(_ view: UIView) -> Bool {
             let convertedPoint = view.convert(point, from: self)
             return view.bounds.insetBy(dx: insets.width, dy: insets.height).contains(convertedPoint)
         }
 
-        if didHit(mod) {
-            return mod
-        }
-
-        if didHit(downvote) {
-            return downvote
-        }
+        var testedViews: [UIView] = [
+            upvote,
+            downvote,
+            mod,
+            save,
+            hide,
+            reply,
+            edit,
+        ]
 
         if SettingValues.actionBarMode.isSide() {
-            if didHit(sideUpvote) {
-                return sideUpvote
-            }
-
-            if didHit(sideDownvote) {
-                return sideDownvote
-            }
+            testedViews += [
+                sideUpvote,
+                sideDownvote,
+            ]
         }
 
-        if didHit(upvote) {
-            return upvote
-        }
-
-        if didHit(save) {
-            return save
-        }
-
-        if didHit(hide) {
-            return hide
-        }
-
-        if didHit(reply) {
-            return reply
-        }
-
-        if didHit(edit) {
-            return edit
-        }
-
-        return super.hitTest(point, with: event)
+        return testedViews.first(where: didHit) ?? super.hitTest(point, with: event)
     }
     
     func configure(submission: RSubmission, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, baseSub: String, test: Bool = false) {
