@@ -252,6 +252,9 @@ class MediaViewController: UIViewController, MediaVCDelegate {
         if navigationController != nil {
             self.navigationController?.navigationBar.shadowImage = UIImage()
             navigationController?.navigationBar.barTintColor = color
+            navigationController?.navigationBar.titleTextAttributes = [
+                NSForegroundColorAttributeName: ColorUtil.fontColor as Any,
+            ]
         }
     }
 
