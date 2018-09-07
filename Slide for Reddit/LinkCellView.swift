@@ -98,6 +98,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var progressDot: UIView!
     var sound: UIButton!
     var updater: CADisplayLink?
+    var timeView: UILabel!
     
     var avPlayerItem: AVPlayerItem?
     
@@ -368,11 +369,23 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             sound = UIButton(type: .custom)
             sound.setImage(UIImage(named: "mute"), for: .normal)
             
-            topVideoView.addSubviews(progressDot, sound)
+            timeView = UILabel().then {
+                $0.textColor = .white
+                $0.font = UIFont.systemFont(ofSize: 10)
+                $0.textAlignment = .center
+                $0.alpha = 0.6
+            }
+            
+            topVideoView.addSubviews(progressDot, sound, timeView)
             progressDot.widthAnchor == 20
             progressDot.heightAnchor == 20
             progressDot.leftAnchor == topVideoView.leftAnchor + 8
             progressDot.bottomAnchor == topVideoView.bottomAnchor - 8
+            
+            timeView.leftAnchor == progressDot.rightAnchor + 8
+            timeView.bottomAnchor == topVideoView.bottomAnchor - 8
+            timeView.heightAnchor == 20
+            
             sound.widthAnchor == 20
             sound.heightAnchor == 20
             sound.rightAnchor == topVideoView.rightAnchor - 8
@@ -515,6 +528,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
         progressDot.layer.removeAllAnimations()
         progressDot.layer.addSublayer(circleShape)
+        
+        timeView.text = total
         
         if oldPercent == -1 {
             let pulseAnimation = CABasicAnimation(keyPath: "transform.scale")
@@ -1204,6 +1219,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var timer: Timer?
     var cancelled = false
     
+    private func getTimeString(_ time: Int) -> String {
+        let h = time / 3600
+        let m = (time % 3600) / 60
+        let s = (time % 3600) % 60
+        return h > 0 ? String(format: "%1d:%02d:%02d", h, m, s) : String(format: "%1d:%02d", m, s)
+    }
+    
     func displayLinkDidUpdate(displaylink: CADisplayLink) {
         if let player = videoView.player {
             let elapsedTime = player.currentTime()
@@ -1214,7 +1236,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             let time = Float(CMTimeGetSeconds(elapsedTime))
             
             if duration.isFinite && duration > 0 {
-                updateProgress(CGFloat(time / duration), "")
+                updateProgress(CGFloat(time / duration), "\(getTimeString(Int(floor(1 + duration - time))))")
             }
             if (time / duration) >= 0.99 {
                 self.playerItemDidreachEnd()

@@ -28,4 +28,11 @@ final class VideoView: UIView {
         return AVPlayerLayer.self
     }
 
+    override func layoutSublayers(of layer: CALayer) {
+        super.layoutSublayers(of: layer)
+        guard layer == self.layer else {
+            return
+        }
+        layer.frame = self.frame
+    }
 }
