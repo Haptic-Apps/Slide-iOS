@@ -367,7 +367,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             self.progressDot = UIView()
             progressDot.alpha = 0.7
             sound = UIButton(type: .custom)
-            sound.setImage(UIImage(named: "mute"), for: .normal)
+            sound.isUserInteractionEnabled = true
+            sound.setImage(UIImage(named: "mute")?.getCopy(withSize: CGSize.square(size: 20), withColor: GMColor.red400Color()), for: .normal)
             
             timeView = UILabel().then {
                 $0.textColor = .white
@@ -386,10 +387,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             timeView.bottomAnchor == topVideoView.bottomAnchor - 8
             timeView.heightAnchor == 20
             
-            sound.widthAnchor == 20
-            sound.heightAnchor == 20
-            sound.rightAnchor == topVideoView.rightAnchor - 8
-            sound.bottomAnchor == topVideoView.bottomAnchor - 8
+            sound.widthAnchor == 30
+            sound.heightAnchor == 30
+            sound.rightAnchor == topVideoView.rightAnchor
+            sound.bottomAnchor == topVideoView.bottomAnchor
             
             contentView.addSubviews(videoView, topVideoView)
             contentView.bringSubview(toFront: videoView)
@@ -767,6 +768,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var type: ContentType.CType = .NONE
     var activeSet = false
     
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        return !(touch.view is UIButton)
+    }
+    
     private func setLink(submission: RSubmission, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, baseSub: String, test: Bool = false) {
         loadedImage = nil
         full = parent is CommentViewController
@@ -991,10 +996,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                         strongSelf.videoView?.player = AVPlayer(playerItem: strongSelf.avPlayerItem!)
                         strongSelf.videoView?.player?.play()
                         strongSelf.videoView?.player?.isMuted = true
-                        if (strongSelf.videoView.player?.currentItem?.tracks.count ?? 1) > 1 {
-                            strongSelf.sound.isHidden = false
-                            strongSelf.sound.addTarget(strongSelf, action: #selector(strongSelf.unmute), for: .touchUpInside)
-                        }
+                        strongSelf.sound.addTarget(strongSelf, action: #selector(strongSelf.unmute), for: .touchUpInside)
                         strongSelf.updater = CADisplayLink(target: strongSelf, selector: #selector(strongSelf.displayLinkDidUpdate))
                         strongSelf.updater?.add(to: .current, forMode: .defaultRunLoopMode)
                         strongSelf.updater?.isPaused = false
@@ -1227,6 +1229,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     }
     
     func displayLinkDidUpdate(displaylink: CADisplayLink) {
+        if sound.isHidden && (self.videoView.player?.isMuted ?? false) && (self.videoView.player?.currentItem?.tracks.count ?? 1) > 1 {
+            sound.isHidden = false
+        }
         if let player = videoView.player {
             let elapsedTime = player.currentTime()
             if CMTIME_IS_INVALID(elapsedTime) {
@@ -1391,6 +1396,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     
     func unmute() {
         self.videoView?.player?.isMuted = false
+        print("Un muting")
         UIView.animate(withDuration: 0.5, animations: {
             self.sound.alpha = 0
         }) { (_) in
