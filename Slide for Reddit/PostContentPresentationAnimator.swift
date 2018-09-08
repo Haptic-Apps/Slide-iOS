@@ -91,10 +91,10 @@ extension PostContentPresentationAnimator: UIViewControllerAnimatedTransitioning
                     translatedView.layer.zPosition = sourceImageView.layer.zPosition
                     
                     translatedView.transform = translatedView.transform.concatenating(newTransform)
-                    UIView.animate(withDuration: animationDuration) {
+                    UIView.animate(withDuration: animationDuration, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.8, options: .curveEaseInOut, animations: {
                         translatedView.transform = CGAffineTransform.identity
                         translatedView.layer.zPosition = storedZ
-                    }
+                    }, completion: nil)
                 }
             }
         } else if let vc = presentedViewController as? AnyModalViewController {
@@ -111,10 +111,10 @@ extension PostContentPresentationAnimator: UIViewControllerAnimatedTransitioning
             translatedView.layer.zPosition = sourceImageView.layer.zPosition
             
             translatedView.transform = translatedView.transform.concatenating(newTransform)
-            UIView.animate(withDuration: animationDuration) {
+            UIView.animate(withDuration: animationDuration, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.8, options: .curveEaseInOut, animations: {
                 translatedView.transform = CGAffineTransform.identity
                 translatedView.layer.zPosition = storedZ
-            }
+            }, completion: nil)
         }
         
         // Animate alpha
