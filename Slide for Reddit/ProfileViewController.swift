@@ -21,6 +21,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
     var vCs: [UIViewController] = []
     var openTo = 0
     var newColor = UIColor.white
+    var friends = false
 
     public func colorPickerView(_ colorPickerView: ColorPickerView, didSelectItemAt indexPath: IndexPath) {
         newColor = colorPickerView.colors[indexPath.row]
@@ -129,6 +130,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
             return token.name
             }) as String? {
             if name == n {
+                friends = true
                 self.content = UserContent.cases
             } else {
                 self.content = ProfileViewController.doDefault()
@@ -137,6 +139,9 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
             self.content = ProfileViewController.doDefault()
         }
         
+        if friends {
+            self.vCs.append(ContentListingViewController.init(dataSource: FriendsContributionLoader.init()))
+        }
         for place in content {
             self.vCs.append(ContentListingViewController.init(dataSource: ProfileContributionLoader.init(name: name, whereContent: place)))
         }
@@ -326,20 +331,28 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
 
         view.backgroundColor = ColorUtil.backgroundColor
         var items: [String] = []
+        if friends {
+            items.append("FRIENDS")
+        }
         for i in content {
             items.append(i.title)
         }
 
         tabBar = MDCTabBar.init(frame: CGRect.zero)
         tabBar.itemAppearance = .titles
-        tabBar.items = content.enumerated().map { index, source in
-            return UITabBarItem(title: source.title, image: nil, tag: index)
+        tabBar.items = items.enumerated().map { index, source in
+            return UITabBarItem(title: source, image: nil, tag: index)
         }
         
         tabBar.backgroundColor = ColorUtil.getColorForSub(sub: "", true)
         tabBar.selectedItemTintColor = (SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white)
         tabBar.unselectedItemTintColor = (SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white).withAlphaComponent(0.45)
 
+        if friends {
+            openTo += 1
+        }
+        currentIndex = openTo
+        
         tabBar.selectedItem = tabBar.items[openTo]
         tabBar.delegate = self
         tabBar.tintColor = ColorUtil.accentColorForSub(sub: "NONE")

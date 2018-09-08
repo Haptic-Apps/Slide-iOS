@@ -287,6 +287,13 @@ class RealmDataWrapper {
 
     }
 
+    static func friendToRealm(user: User) -> Object {
+        let rFriend = RFriend()
+        rFriend.name = user.name
+        rFriend.friendSince = NSDate(timeIntervalSince1970: TimeInterval(user.date))
+        return rFriend
+    }
+
     static func commentToRealm(comment: Thing, depth: Int) -> Object {
         if comment is Comment {
             return commentToRComment(comment: comment as! Comment, depth: depth)
@@ -588,6 +595,11 @@ class RSubmissionListing: Object {
     dynamic var accessed = NSDate(timeIntervalSince1970: 1)
     dynamic var comments = false
     let submissions = List<RSubmission>()
+}
+
+class RFriend: Object {
+    dynamic var name = ""
+    dynamic var friendSince = NSDate(timeIntervalSince1970: 1)
 }
 
 extension String {

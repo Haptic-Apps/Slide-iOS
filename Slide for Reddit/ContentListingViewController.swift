@@ -99,11 +99,12 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.tableView.register(CommentCellView.classForCoder(), forCellWithReuseIdentifier: "comment")
         self.tableView.register(MessageCellView.classForCoder(), forCellWithReuseIdentifier: "message")
         self.tableView.register(NoContentCell.classForCoder(), forCellWithReuseIdentifier: "nocontent")
+        self.tableView.register(FriendCellView.classForCoder(), forCellWithReuseIdentifier: "friend")
         tableView.backgroundColor = ColorUtil.backgroundColor
 
         var top = 0
         
-        top += ((baseData is ProfileContributionLoader || baseData is InboxContributionLoader || baseData is ModQueueContributionLoader || baseData is ModMailContributionLoader) ? 45 : 0)
+        top += ((self.baseData is FriendsContributionLoader || baseData is ProfileContributionLoader || baseData is InboxContributionLoader || baseData is ModQueueContributionLoader || baseData is ModMailContributionLoader) ? 45 : 0)
         
         self.tableView.contentInset = UIEdgeInsets.init(top: CGFloat(top), left: 0, bottom: 65, right: 0)
         
@@ -167,6 +168,12 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             c.layer.shouldRasterize = true
             c.layer.rasterizationScale = UIScreen.main.scale
             cell = c
+        } else if thing is RFriend {
+            let c = tableView.dequeueReusableCell(withReuseIdentifier: "friend", for: indexPath) as! FriendCellView
+            c.setFriend(friend: (thing as! RFriend), parent: self)
+            c.layer.shouldRasterize = true
+            c.layer.rasterizationScale = UIScreen.main.scale
+            cell = c
         } else {
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "message", for: indexPath) as! MessageCellView
             c.setMessage(message: (thing as! RMessage), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
@@ -215,6 +222,8 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     estimatedHeights[comment.id] = height.estimatedHeight + 20
                 }
                 return CGSize(width: itemWidth, height: estimatedHeights[comment.id]!)
+            } else if thing is RFriend {
+                return CGSize(width: itemWidth, height: 70)
             } else {
                 let message = thing as! RMessage
                 if estimatedHeights[message.id] == nil {
@@ -384,7 +393,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     top += 22
                 }
                 
-                self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + (-1 * (((self.baseData is ProfileContributionLoader || self.baseData is InboxContributionLoader || self.baseData is ModQueueContributionLoader || self.baseData is ModMailContributionLoader) ? 45 : 0) + (self.navigationController?.navigationBar.frame.size.height ?? 64))) - top)
+                self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + (-1 * (((self.baseData is FriendsContributionLoader || self.baseData is ProfileContributionLoader || self.baseData is InboxContributionLoader || self.baseData is ModQueueContributionLoader || self.baseData is ModMailContributionLoader) ? 45 : 0) + (self.navigationController?.navigationBar.frame.size.height ?? 64))) - top)
             } else {
                 var paths = [IndexPath]()
                 for i in before..<self.baseData.content.count {

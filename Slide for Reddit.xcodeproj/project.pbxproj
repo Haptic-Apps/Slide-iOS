@@ -174,6 +174,8 @@
 		BEB2B2391E35D64F00BF761C /* MessageCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB2B2381E35D64F00BF761C /* MessageCellView.swift */; };
 		BEB81A5E214315D1007E326B /* AutoplayBannerLinkCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB81A5D214315D1007E326B /* AutoplayBannerLinkCellView.swift */; };
 		BEB81A6021432C6C007E326B /* AnyModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB81A5F21432C6C007E326B /* AnyModalViewController.swift */; };
+		BEB81A66214457ED007E326B /* FriendsContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB81A65214457ED007E326B /* FriendsContributionLoader.swift */; };
+		BEB81A6821445FE4007E326B /* FriendCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB81A6721445FE4007E326B /* FriendCellView.swift */; };
 		BEBF45C81E230CC900764BB8 /* History.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEBF45C71E230CC900764BB8 /* History.swift */; };
 		BEBF45DB1E23383D00764BB8 /* seen.plist in Resources */ = {isa = PBXBuildFile; fileRef = BEBF45DA1E23383D00764BB8 /* seen.plist */; };
 		BEBF45DD1E23384500764BB8 /* comments.plist in Resources */ = {isa = PBXBuildFile; fileRef = BEBF45DC1E23384500764BB8 /* comments.plist */; };
@@ -419,6 +421,8 @@
 		BEB2B2381E35D64F00BF761C /* MessageCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCellView.swift; sourceTree = "<group>"; };
 		BEB81A5D214315D1007E326B /* AutoplayBannerLinkCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoplayBannerLinkCellView.swift; sourceTree = "<group>"; };
 		BEB81A5F21432C6C007E326B /* AnyModalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyModalViewController.swift; sourceTree = "<group>"; };
+		BEB81A65214457ED007E326B /* FriendsContributionLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendsContributionLoader.swift; sourceTree = "<group>"; };
+		BEB81A6721445FE4007E326B /* FriendCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendCellView.swift; sourceTree = "<group>"; };
 		BEBF45C71E230CC900764BB8 /* History.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = History.swift; sourceTree = "<group>"; };
 		BEBF45DA1E23383D00764BB8 /* seen.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = seen.plist; sourceTree = "<group>"; };
 		BEBF45DC1E23384500764BB8 /* comments.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = comments.plist; sourceTree = "<group>"; };
@@ -825,6 +829,8 @@
 				0984BE552114D1CD0091C2E1 /* Presentation */,
 				BE776389211B732B002F2969 /* SubredditFindReturnViewController.swift */,
 				BE292568213C5730006B5130 /* LocalKeystore.swift */,
+				BEB81A65214457ED007E326B /* FriendsContributionLoader.swift */,
+				BEB81A6721445FE4007E326B /* FriendCellView.swift */,
 			);
 			path = "Slide for Reddit";
 			sourceTree = "<group>";
@@ -1315,6 +1321,7 @@
 				09B51D032114D23F00BCB745 /* SlideInPresentationAnimator.swift in Sources */,
 				BEEA03CF20E2A411007A8928 /* BannerUtil.swift in Sources */,
 				BE8C29211EDE8001004D7514 /* MarginedTableViewCell.swift in Sources */,
+				BEB81A66214457ED007E326B /* FriendsContributionLoader.swift in Sources */,
 				BE9428EA20C46B5600E1A33A /* PostActions.swift in Sources */,
 				BE3E5C0C1E160D7000749C0C /* ColorUtil.swift in Sources */,
 				BEEA03CD20E1B53E007A8928 /* HapticUtility.swift in Sources */,
@@ -1369,6 +1376,7 @@
 				BE7439EB1E201BB0008BB63B /* NavigationSidebarViewController.swift in Sources */,
 				BE2F3F4C1EF62021003C1B28 /* SettingsLayout.swift in Sources */,
 				0965260B20E2987800EA53BE /* UISearchBar+Extensions.swift in Sources */,
+				BEB81A6821445FE4007E326B /* FriendCellView.swift in Sources */,
 				BE7439ED1E201C22008BB63B /* SubredditCellView.swift in Sources */,
 				BE3E5C211E18227500749C0C /* CommentDepthCell.swift in Sources */,
 				0965260720E28FEE00EA53BE /* UIStackView+Extensions.swift in Sources */,
