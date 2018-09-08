@@ -1003,7 +1003,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 }
                 let url = VideoMediaViewController.format(sS: baseUrl.absoluteString, true)
                 let videoType = VideoMediaViewController.VideoType.fromPath(url)
-                print(url)
                 videoType.getSourceObject().load(url: url, completion: { [weak self] (urlString) in
                     guard let strongSelf = self else { return }
                     DispatchQueue.main.async {
@@ -1677,7 +1676,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     
     func openLinkVideo(sender: UITapGestureRecognizer? = nil) {
         let controller = AnyModalViewController(cellView: self)
-        controller.modalPresentationStyle = .overFullScreen
+        let postContentTransitioningDelegate = PostContentPresentationManager()
+        postContentTransitioningDelegate.sourceImageView = self.videoView
+        controller.transitioningDelegate = postContentTransitioningDelegate
+        controller.modalPresentationStyle = .custom
+
         parentViewController?.present(controller, animated: true, completion: nil)
     }
     

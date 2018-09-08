@@ -33,7 +33,9 @@ class RedditLink {
             url = url.substring(2, length: url.length - 2)
         }
         
-        let type = getRedditLinkType(urlBase: URL.init(string: url)!)
+        let percentUrl = url.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? url
+        
+        let type = getRedditLinkType(urlBase: URL.init(string: percentUrl)!)
         
         var parts = url.split("/")
         var endParameters = ""
