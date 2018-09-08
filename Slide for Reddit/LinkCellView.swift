@@ -480,12 +480,54 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 self.contentView.addGestureRecognizer(longPress!)
             }
             
+            if panGestureRecognizer == nil {
+                panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(LinkCellView.handlePan(_:)))
+                panGestureRecognizer!.direction = .horizontal
+                self.title.addGestureRecognizer(panGestureRecognizer!)
+            }
+            
             addTouch = true
         }
         
         sideButtons.isHidden = !SettingValues.actionBarMode.isSide() || full
         buttons.isHidden = SettingValues.actionBarMode != .FULL && !full
         buttons.isUserInteractionEnabled = SettingValues.actionBarMode != .FULL || full
+    }
+    
+    var progressBar = ProgressBarView()
+    var panGestureRecognizer: UIPanGestureRecognizer!
+    var previousTranslation: CGFloat!
+    
+    func handlePan(_ sender: UIPanGestureRecognizer) {
+        if sender.state == .began {
+            progressBar = ProgressBarView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height * 2 / 3))
+            UIApplication.shared.keyWindow?.addSubview(progressBar)
+            previousTranslation = 0
+        }
+        if sender.state != .ended {
+            guard progressBar.progress != 1 else { return }
+            let currentTranslation = sender.translation(in: title).x
+            if previousTranslation <= 0 && currentTranslation > 0 {
+                progressBar.setMode(upvote: true)
+            } else if previousTranslation >= 0 && currentTranslation < 0 {
+                progressBar.setMode(upvote: false)
+            }
+            progressBar.progress = Float(min(abs(currentTranslation) / (contentView.bounds.width / 4), 1))
+            if progressBar.progress == 1 {
+                if currentTranslation > 0 {
+                    del?.upvote(self)
+                } else {
+                    del?.downvote(self)
+                }
+                UIView.animate(withDuration: 0.4, animations: {
+                    self.progressBar.alpha = 0
+                })
+            }
+            previousTranslation = currentTranslation
+        } else {
+            progressBar.isHidden = true
+            progressBar.removeFromSuperview()
+        }
     }
     
     func updateProgress(_ oldPercent: CGFloat, _ total: String) {
