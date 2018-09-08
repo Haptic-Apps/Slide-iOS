@@ -95,9 +95,6 @@ class VideoMediaViewController: EmbeddableMediaViewController {
 
     deinit {
         stopDisplayLink()
-        if let observer = observer {
-            NotificationCenter.default.removeObserver(observer)
-        }
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -467,7 +464,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
                 }
         }
     }
-    weak var observer: NSObjectProtocol?
+
     func playVideo(_ url: String = "") {
         self.setProgressViewVisible(false)
         self.size.isHidden = true
@@ -477,10 +474,6 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         videoView.player?.play()
         
         scrubber.totalDuration = videoView.player!.currentItem!.asset.duration
-
-        observer = NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: playerItem, queue: OperationQueue.main) { [weak self] (_) in
-            self?.playerItemDidreachEnd()
-        }
     }
     
     func playerItemDidreachEnd() {
@@ -743,6 +736,11 @@ extension VideoMediaViewController {
             } else {
                 if let player = videoView.player {
                     scrubber.updateWithTime(elapsedTime: player.currentTime())
+                    let duration = Float(CMTimeGetSeconds(player.currentItem!.duration))
+                    let time = Float(CMTimeGetSeconds(player.currentTime()))
+                    if (time / duration) >= 0.99 {
+                        self.playerItemDidreachEnd()
+                    }
                 }
             }
         }

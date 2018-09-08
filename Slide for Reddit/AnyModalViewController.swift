@@ -37,7 +37,8 @@ class AnyModalViewController: UIViewController {
     var spinnerIndicator = UIActivityIndicatorView()
     var tap: UITapGestureRecognizer?
     var dTap: UITapGestureRecognizer?
-    
+    var navigationBar = UINavigationBar()
+
     var timer: Timer?
     var cancelled = false
     
@@ -296,6 +297,22 @@ class AnyModalViewController: UIViewController {
             $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         }
         
+        navigationBar = UINavigationBar.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: 56))
+        navigationBar.setBackgroundImage(UIImage(), for: .default)
+        navigationBar.shadowImage = UIImage()
+        navigationBar.isTranslucent = true
+        
+        let navItem = UINavigationItem(title: "")
+        let close = UIButton.init(type: .custom)
+        close.setImage(UIImage.init(named: "close")?.navIcon(), for: UIControlState.normal)
+        close.addTarget(self, action: #selector(self.exit), for: UIControlEvents.touchUpInside)
+        close.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        let closeB = UIBarButtonItem.init(customView: close)
+        navItem.leftBarButtonItem = closeB
+        
+        navigationBar.setItems([navItem], animated: false)
+        self.view.addSubview(navigationBar)
+
         bottomButtons.addArrangedSubviews(UIView.flexSpace(), downloadButton, menuButton)
     }
     
@@ -314,6 +331,13 @@ class AnyModalViewController: UIViewController {
         
         scrubber.horizontalAnchors == view.safeHorizontalAnchors + 8
         scrubber.bottomAnchor == bottomButtons.topAnchor - 16
+        
+        if #available(iOS 11, *) {
+            self.navigationBar.topAnchor == self.view.safeTopAnchor
+        } else {
+            self.navigationBar.topAnchor == self.view.topAnchor + 20
+        }
+        self.navigationBar.horizontalAnchors == self.view.horizontalAnchors
     }
     
     func handleTap(_ sender: UITapGestureRecognizer) {
@@ -430,24 +454,23 @@ extension AnyModalViewController {
             statusBar.isHidden = true
             
             self.background?.alpha = 1
-            //            self.embeddedVC.bottomButtons.alpha = 0
-            //            self.embeddedVC.navigationBar.alpha = 0.2
+                        self.bottomButtons.alpha = 0
+                        self.navigationBar.alpha = 0.2
         }, completion: {_ in
-            //            self.embeddedVC.bottomButtons.isHidden = true
+                        self.bottomButtons.isHidden = true
         })
     }
     
     func unFullscreen(_ sender: AnyObject) {
         fullscreen = false
-        //        self.embeddedVC.bottomButtons.isHidden = false
+        self.bottomButtons.isHidden = false
         UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
             let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
             statusBar.isHidden = false
-            //            self.embeddedVC.navigationBar.alpha = 1
+            self.navigationBar.alpha = 1
             
             self.background?.alpha = 0.6
-            //            self.embeddedVC.bottomButtons.alpha = 1
-            //            self.embeddedVC.progressView.alpha = 0.7
+            self.bottomButtons.alpha = 1
             
         }, completion: {_ in
         })
