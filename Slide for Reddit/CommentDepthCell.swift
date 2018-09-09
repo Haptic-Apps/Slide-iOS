@@ -1091,10 +1091,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         self.isCollapsed = isCollapsed
         self.depthColors = depthColors
 
-        if date != 0 && date < Double(comment.created.timeIntervalSince1970) {
-            setIsNew(sub: comment.subreddit)
-        }
-        
         if hiddenCount > 0 {
             childrenCount.alpha = 1
             childrenCountLabel.text = "+\(hiddenCount)"
@@ -1131,7 +1127,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             marginTop = 8
         }
 
-        refresh(comment: comment, submissionAuthor: author, text: text)
+        refresh(comment: comment, submissionAuthor: author, text: text, date)
 
         if !registered {
             parent.registerForPreviewing(with: self, sourceView: title)
@@ -1143,10 +1139,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             hideCommentMenu()
         }
         
-            NSLayoutConstraint.deactivate(topMargin)
-            topMargin = batch {
-                topViewSpace.heightAnchor == CGFloat(marginTop)
-            }
+        NSLayoutConstraint.deactivate(topMargin)
+        topMargin = batch {
+            topViewSpace.heightAnchor == CGFloat(marginTop)
+        }
     }
     
     func doDTap(_ sender: AnyObject) {
@@ -1160,9 +1156,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
     var savedAuthor: String = ""
 
-    func refresh(comment: RComment, submissionAuthor: String?, text: NSAttributedString) {
+    func refresh(comment: RComment, submissionAuthor: String?, text: NSAttributedString, _ date: Double = 0) {
         var color: UIColor
-
+        
         savedAuthor = submissionAuthor!
 
         switch ActionStates.getVoteDirection(s: comment) {
@@ -1177,11 +1173,15 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         let boldFont = FontGenerator.boldFontOfSize(size: 14, submission: false)
         title.firstTextView.textInsets = UIEdgeInsets(top: 3, left: 0, bottom: 1, right: 0)
 
-        let scoreString = NSMutableAttributedString(string: ((comment.scoreHidden ? "[score hidden]" : "\(getScoreText(comment: comment))") + (comment.controversiality > 0 ? "†" : "")), attributes: [NSForegroundColorAttributeName: color, NSFontAttributeName: boldFont])
+        let scoreString = NSMutableAttributedString(string: ((comment.scoreHidden ? "[score hidden]" : "\(getScoreText(comment: comment))") + (comment.controversiality > 0 ? "†  •  " : "  •  ")), attributes: [NSForegroundColorAttributeName: color, NSFontAttributeName: boldFont])
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = 2
 
-        let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: comment.created, numericDates: true))" + (comment.isEdited ? ("(edit \(DateFormatter().timeSince(from: comment.edited, numericDates: true)))") : ""), attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: boldFont])
+        let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: comment.created, numericDates: true))" + (comment.isEdited ? ("(edit \(DateFormatter().timeSince(from: comment.edited, numericDates: true)))") : ""), attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: boldFont])
+        
+        if date != 0 && date < Double(comment.created.timeIntervalSince1970) {
+            endString.addAttributes([kTTTBackgroundFillColorAttributeName: ColorUtil.getColorForSub(sub: comment.subreddit), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange(location: 0, length: endString.length))
+        }
 
         let authorString = NSMutableAttributedString(string: "\u{00A0}\u{00A0}\(AccountController.formatUsername(input: comment.author, small: true))\u{00A0}", attributes: [NSFontAttributeName: boldFont, NSForegroundColorAttributeName: ColorUtil.fontColor, NSParagraphStyleAttributeName: paragraphStyle])
         let authorStringNoFlair = NSMutableAttributedString(string: "\(AccountController.formatUsername(input: comment.author, small: true))\u{00A0}", attributes: [NSFontAttributeName: boldFont, NSForegroundColorAttributeName: parent?.authorColor ?? ColorUtil.fontColor, NSParagraphStyleAttributeName: paragraphStyle])

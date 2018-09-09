@@ -462,7 +462,6 @@ class SettingsFont: UITableViewController {
         self.submissionSize.detailTextLabel?.text = submissionText
         self.commentSize.detailTextLabel?.text = commentText
 
-        
         self.tableView.reloadData()
     }
     

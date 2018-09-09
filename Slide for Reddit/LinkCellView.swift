@@ -618,8 +618,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 } else {
                     sideButtons.leftAnchor == contentView.leftAnchor + ceight
                 }
-                sideScore.widthAnchor == CGFloat(36)
-                sideButtons.widthAnchor == CGFloat(36)
+                sideScore.widthAnchor == CGFloat(48)
+                sideButtons.widthAnchor == CGFloat(48)
             }
             
             title.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
