@@ -6,6 +6,7 @@
 //  Copyright © 2016 Haptic Apps. All rights reserved.
 //
 
+import Anchorage
 import Embassy
 import MaterialComponents.MDCActivityIndicator
 import MKColorPicker
@@ -583,6 +584,7 @@ class SingleSubredditViewController: MediaViewController {
         self.tableView.register(AutoplayBannerLinkCellView.classForCoder(), forCellWithReuseIdentifier: "autoplay\(SingleSubredditViewController.cellVersion)")
         self.tableView.register(ThumbnailLinkCellView.classForCoder(), forCellWithReuseIdentifier: "thumb\(SingleSubredditViewController.cellVersion)")
         self.tableView.register(TextLinkCellView.classForCoder(), forCellWithReuseIdentifier: "text\(SingleSubredditViewController.cellVersion)")
+        self.tableView.register(LoadingCell.classForCoder(), forCellWithReuseIdentifier: "loading")
         lastVersion = SingleSubredditViewController.cellVersion
 
         var top = 20
@@ -1909,10 +1911,16 @@ extension SingleSubredditViewController: UICollectionViewDelegate {
 extension SingleSubredditViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return links.count
+        return links.count + ((links.count != 0 && loaded) ? 1 : 0)
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if indexPath.row >= self.links.count {
+            let cell = tableView.dequeueReusableCell(withReuseIdentifier: "loading", for: indexPath) as! LoadingCell
+            cell.loader.color = ColorUtil.fontColor
+            cell.loader.startAnimating()
+            return cell
+        }
         let submission = self.links[(indexPath as NSIndexPath).row]
 
         var cell: LinkCellView!
@@ -2007,7 +2015,7 @@ extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
             let submission = links[indexPath.row]
             return SingleSubredditViewController.sizeWith(submission, width, Subscriptions.isCollection(sub))
         }
-        return CGSize(width: width, height: 0)
+        return CGSize(width: width, height: 80)
     }
 }
 
@@ -2138,5 +2146,28 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
         //todo make this work on ipad
         self.present(actionSheetController, animated: true, completion: nil)
 
+    }
+}
+public class LoadingCell: UICollectionViewCell {
+    var loader = UIActivityIndicatorView()
+    override public init(frame: CGRect) {
+        super.init(frame: frame)
+        setupView()
+    }
+    
+    required public init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func setupView() {
+        loader.startAnimating()
+        
+        self.contentView.addSubview(loader)
+        
+        loader.heightAnchor == 60
+        loader.widthAnchor == 60
+        loader.topAnchor == self.contentView.topAnchor + 10
+        loader.bottomAnchor == self.contentView.bottomAnchor - 10
+        loader.centerXAnchor == self.contentView.centerXAnchor
     }
 }
