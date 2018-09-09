@@ -333,8 +333,8 @@ public class TextDisplayStackView: UIStackView {
                 }
                 let activeLinkAttributes = NSMutableDictionary(dictionary: label.activeLinkAttributes)
                 activeLinkAttributes[NSForegroundColorAttributeName] = tColor
-                label.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
-                label.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+                label.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
+                label.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
                 label.numberOfLines = 0
                 label.setText(text)
                 let framesetterB = CTFramesetterCreateWithAttributedString(text)

@@ -910,8 +910,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             thumb = true
             big = false
         }
-        
-        let shouldShowLq = SettingValues.dataSavingEnabled && submission.lQ && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi())
+        let checkWifi = LinkCellView.checkWiFi()
+        let shouldShowLq = SettingValues.dataSavingEnabled && submission.lQ && !(SettingValues.dataSavingDisableWiFi && checkWifi)
         if type == ContentType.CType.SELF && SettingValues.hideImageSelftext
             || SettingValues.noImages && submission.isSelf {
             big = false
@@ -987,7 +987,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if big {
             bannerImage.isHidden = false
             updater?.invalidate()
-            if self is AutoplayBannerLinkCellView || (self is FullLinkCellView && SettingValues.autoplayVideos && ContentType.displayVideo(t: type) && type != .VIDEO) {
+            if self is AutoplayBannerLinkCellView || (self is FullLinkCellView && SettingValues.shouldAutoPlay() && ContentType.displayVideo(t: type) && type != .VIDEO) {
                 videoView?.player?.pause()
                 videoView?.isHidden = false
                 bannerImage.isHidden = true

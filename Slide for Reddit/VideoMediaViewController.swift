@@ -86,14 +86,12 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         request?.cancel()
         stopDisplayLink()
         videoView.player?.pause()
-        if SettingValues.noCacheVideos {
-            videoView.player?.currentItem?.cancelPendingSeeks()
-            videoView.player?.currentItem?.asset.cancelLoading()
-        }
         super.viewWillDisappear(animated)
     }
 
     deinit {
+        videoView.player?.currentItem?.cancelPendingSeeks()
+        videoView.player?.currentItem?.asset.cancelLoading()
         stopDisplayLink()
     }
     
@@ -356,7 +354,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         }
 
         // Otherwise load AVPlayer
-        let url = formatUrl(sS: data.baseURL!.absoluteString, SettingValues.noCacheVideos)
+        let url = formatUrl(sS: data.baseURL!.absoluteString, SettingValues.shouldAutoPlay())
         videoType = VideoType.fromPath(url)
         
         if videoType != .DIRECT && videoType != .REDDIT && videoType != .IMGUR {
@@ -390,7 +388,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     func getVideo(_ toLoad: String) {
         self.hideSpinner()
 
-        if FileManager.default.fileExists(atPath: getKeyFromURL()) || SettingValues.noCacheVideos {
+        if FileManager.default.fileExists(atPath: getKeyFromURL()) || SettingValues.shouldAutoPlay() {
             playVideo(toLoad)
         } else {
             request = Alamofire.download(toLoad, method: .get, to: { (_, _) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
@@ -469,7 +467,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         self.setProgressViewVisible(false)
         self.size.isHidden = true
         self.downloadButton.isHidden = false
-        let playerItem = AVPlayerItem(url: SettingValues.noCacheVideos ? URL(string: url)! : URL(fileURLWithPath: getKeyFromURL()))
+        let playerItem = AVPlayerItem(url: SettingValues.shouldAutoPlay() ? URL(string: url)! : URL(fileURLWithPath: getKeyFromURL()))
         videoView.player = AVPlayer(playerItem: playerItem)
         videoView.player?.play()
         
@@ -523,7 +521,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
     }
     
     func formatUrl(sS: String, _ vreddit: Bool = false) -> String {
-        return VideoMediaViewController.format(sS: sS, SettingValues.noCacheVideos)
+        return VideoMediaViewController.format(sS: sS, SettingValues.shouldAutoPlay())
     }
 
     public enum VideoType {

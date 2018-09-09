@@ -16,7 +16,9 @@ class SettingsLayout: UITableViewController {
     
     var cardModeCell: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "mode")
     
-    var actionBarCell: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "mode") // TODO: Should this have a different reuseIdentifier?
+    var actionBarCell: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "actionbar") // TODO: Should this have a different reuseIdentifier?
+
+    var autoPlayCell: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "video") // TODO: Should this have a different reuseIdentifier?
 
     var flatModeCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "flat")
     var flatMode = UISwitch()
@@ -357,6 +359,19 @@ class SettingsLayout: UITableViewController {
             }))
             
             VCPresenter.presentAlert(alertController, parentVC: self)
+        } else if indexPath.section == 1 && indexPath.row == 3 {
+            let alertController: BottomSheetActionController = BottomSheetActionController()
+            for item in SettingValues.AutoPlay.cases {
+                alertController.addAction(Action(ActionData(title: item.description()), style: .default, handler: { _ in
+                    UserDefaults.standard.set(item.rawValue, forKey: SettingValues.pref_autoPlayMode)
+                    SettingValues.autoPlayMode = item
+                    UserDefaults.standard.synchronize()
+                    self.autoPlayCell.detailTextLabel?.text = SettingValues.autoPlayMode.description()
+                    SingleSubredditViewController.cellVersion += 1
+                    SubredditReorderViewController.changed = true
+                }))
+            }
+            VCPresenter.presentAlert(alertController, parentVC: self)
         }
     }
     
@@ -401,6 +416,13 @@ class SettingsLayout: UITableViewController {
         actionBarCell.detailTextLabel?.text = SettingValues.actionBarMode.rawValue.capitalize()
         actionBarCell.detailTextLabel?.numberOfLines = 0
         actionBarCell.detailTextLabel?.lineBreakMode = .byWordWrapping
+        
+        createCell(autoPlayCell, isOn: false, text: "Autoplay videos and gifs")
+        autoPlayCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        autoPlayCell.detailTextLabel?.text = SettingValues.autoPlayMode.description()
+        autoPlayCell.detailTextLabel?.numberOfLines = 0
+        autoPlayCell.detailTextLabel?.lineBreakMode = .byWordWrapping
+        autoPlayCell.imageView?.image = UIImage.init(named: "play")?.toolbarIcon()
 
         createCell(smalltagCell, smalltag, isOn: SettingValues.smallerTag, text: "Smaller content tag")
         createCell(largerThumbnailCell, largerThumbnail, isOn: SettingValues.largerThumbnail, text: "Larger thumbnail")
@@ -485,7 +507,8 @@ class SettingsLayout: UITableViewController {
             case 0: return self.cardModeCell
             case 1: return self.imageCell
             case 2: return self.actionBarCell
-            case 3: return self.flatModeCell
+            case 3: return self.autoPlayCell
+            case 4: return self.flatModeCell
                 
             default: fatalError("Unknown row in section 1")
             }
@@ -523,7 +546,7 @@ class SettingsLayout: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0: return 1
-        case 1: return 4
+        case 1: return 5
         case 2: return 5
         case 3: return 3
         case 4: return 4

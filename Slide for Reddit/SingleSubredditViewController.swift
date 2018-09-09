@@ -1344,7 +1344,7 @@ class SingleSubredditViewController: MediaViewController {
         if !fullImage && submissionHeight < 50 {
             big = false
             thumb = true
-        } else if big && (( SettingValues.postImageMode == .CROPPED_IMAGE)) {
+        } else if big && (( SettingValues.postImageMode == .CROPPED_IMAGE)) && !(SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO)) {
             submissionHeight = 200
         } else if big {
             let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: CGFloat(submission.width), viewWidth: itemWidth - ((SettingValues.postViewMode != .CARD) ? CGFloat(5) : CGFloat(0)))
@@ -1410,7 +1410,7 @@ class SingleSubredditViewController: MediaViewController {
             if aspect == 0 || aspect > 10000 || aspect.isNaN {
                 aspect = 1
             }
-            if SettingValues.postImageMode == .CROPPED_IMAGE {
+            if SettingValues.postImageMode == .CROPPED_IMAGE && !(SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO)) {
                 aspect = width / 200
                 if aspect == 0 || aspect > 10000 || aspect.isNaN {
                     aspect = 1
@@ -1483,7 +1483,7 @@ class SingleSubredditViewController: MediaViewController {
             estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //12 padding on either side
         }
         
-        if SettingValues.postImageMode == .CROPPED_IMAGE {
+        if SettingValues.postImageMode == .CROPPED_IMAGE && !(SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO)) {
             submissionHeight = 200
         } else {
             let bannerPadding = (SettingValues.postViewMode != .CARD) ? CGFloat(5) : CGFloat(0)
@@ -1581,7 +1581,7 @@ class SingleSubredditViewController: MediaViewController {
         if thumb && !big {
             target = .thumb
         } else if big {
-            if SettingValues.autoplayVideos && (ContentType.displayVideo(t: type) && type != .VIDEO) {
+            if SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO) {
                 target = .autoplay
             } else {
                 target = .banner

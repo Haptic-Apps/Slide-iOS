@@ -7,6 +7,7 @@
 //
 
 import Anchorage
+import DTCoreText
 import reddift
 import SDWebImage
 import SwiftSpreadsheet
@@ -43,16 +44,10 @@ class CodeDisplayView: UIScrollView {
             if string.trimmed().isEmpty() {
                 continue
             }
-            do {
-                let attr = try NSMutableAttributedString(data: string.data(using: .unicode)!, options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
-                let font = UIFont(name: "Courier", size: 16 + CGFloat(SettingValues.commentFontOffset)) ?? UIFont.systemFont(ofSize: 16)
-                attr.addAttribute(NSFontAttributeName, value: font, range: NSRange.init(location: 0, length: attr.length))
-                attr.addAttribute(NSForegroundColorAttributeName, value: baseColor, range: NSRange.init(location: 0, length: attr.length))
-                let cell = LinkParser.parse(attr, baseColor)
-                baseData.append(cell)
-            } catch {
-                print(error.localizedDescription)
-            }
+            let baseHtml = DTHTMLAttributedStringBuilder.init(html: string.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor: baseColor, DTDefaultFontFamily: "Courier", DTDefaultFontSize: FontGenerator.fontOfSize(size: 16, submission: false).pointSize, DTDefaultFontName: "Courier"], documentAttributes: nil).generatedAttributedString()!
+            let attr = NSMutableAttributedString(attributedString: baseHtml)
+            let cell = LinkParser.parse(attr, baseColor)
+            baseData.append(cell)
         }
     }
     

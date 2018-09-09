@@ -100,6 +100,7 @@ class SettingValues {
     public static let pref_browser = "WEB_BROWSER"
     public static let pref_infoBelowTitle = "INFO_BELOW_TITLE"
     public static let pref_matchSilence = "MATCH_SILENCE"
+    public static let pref_autoPlayMode = "AUTOPLAY_MODE"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_FIREFOX = "firefox"
@@ -118,7 +119,6 @@ class SettingValues {
 
     public static var browser = "firefox"
     public static var viewType = true
-    public static var autoplayVideos = true
     public static var commentTwoSwipe = true
     public static var hiddenFAB = true
     public static var upvotePercentage = true
@@ -130,6 +130,7 @@ class SettingValues {
     public static var postViewMode = PostViewType.LIST
     public static var postImageMode = PostImageMode.CROPPED_IMAGE
     public static var actionBarMode = ActionBarMode.FULL
+    public static var autoPlayMode = AutoPlay.ALWAYS
     public static var flatMode = false
     public static var fabType = FabType.HIDE_READ
     public static var pictureMode = "PICTURE_MODE"
@@ -148,7 +149,6 @@ class SettingValues {
     public static var swipeAnywhereComments = false
     public static var infoBelowTitle = false
     public static var matchSilence = true
-    public static var noCacheVideos = true
 
     public static var enlargeLinks = true
     public static var noImages = false
@@ -223,6 +223,36 @@ class SettingValues {
         
         func isSide() -> Bool {
             return self == .SIDE || self == .SIDE_RIGHT
+        }
+    }
+
+    enum AutoPlay: String {
+        static let cases: [AutoPlay] = [.ALWAYS, .WIFI, .NEVER]
+
+        case NEVER = "never"
+        case WIFI = "wifi_only"
+        case ALWAYS = "always"
+        
+        func description() -> String {
+            switch self {
+            case .NEVER:
+                return "Never autoplay videos (lowers data use, disables video streaming)"
+            case .ALWAYS:
+                return "Always autoplay videos"
+            case .WIFI:
+                return "Autoplay only on WiFi"
+            }
+        }
+    }
+    
+    public static func shouldAutoPlay() -> Bool {
+        switch SettingValues.autoPlayMode {
+        case .ALWAYS:
+            return true
+        case .WIFI:
+            return LinkCellView.checkWiFi()
+        case .NEVER:
+            return false
         }
     }
 
@@ -375,6 +405,7 @@ class SettingValues {
         SettingValues.commentsInTitle = settings.bool(forKey: SettingValues.pref_commentsInTitle)
         SettingValues.postViewMode = PostViewType.init(rawValue: settings.string(forKey: SettingValues.pref_postViewMode) ?? "card") ?? .CARD
         SettingValues.actionBarMode = ActionBarMode.init(rawValue: settings.string(forKey: SettingValues.pref_actionbarMode) ?? "full") ?? .FULL
+        SettingValues.autoPlayMode = AutoPlay.init(rawValue: settings.string(forKey: SettingValues.pref_autoPlayMode) ?? "always") ?? .ALWAYS
         SettingValues.browser = settings.string(forKey: SettingValues.pref_browser) ?? SettingValues.BROWSER_INTERNAL
         SettingValues.flatMode = settings.bool(forKey: SettingValues.pref_flatMode)
         SettingValues.postImageMode = PostImageMode.init(rawValue: settings.string(forKey: SettingValues.pref_postImageMode) ?? "full") ?? .CROPPED_IMAGE

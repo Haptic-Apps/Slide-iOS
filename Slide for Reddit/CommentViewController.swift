@@ -2117,13 +2117,14 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
                                 hiddenPersons.remove(at: hiddenPersons.index(of: id)!)
                             }
                         } else {
-                            self.tableView.beginUpdates()
                             oldHeights[cell.comment!.getIdentifier()] = cell.contentView.frame.size.height
-                            cell.collapse(childNumber: 0)
-                            self.tableView.endUpdates()
                             if !hiddenPersons.contains(id) {
                                 hiddenPersons.insert(id)
                             }
+                            
+                            self.tableView.beginUpdates()
+                            cell.collapse(childNumber: 0)
+                            self.tableView.endUpdates()
                         }
                     } else {
                         if hiddenPersons.contains((id)) && childNumber > 0 {
