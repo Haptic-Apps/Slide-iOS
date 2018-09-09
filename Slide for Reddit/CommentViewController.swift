@@ -1487,6 +1487,15 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     }
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if SettingValues.collapseFully {
+            let datasetPosition = (indexPath as NSIndexPath).row
+            let thing = isSearching ? filteredData[datasetPosition] : dataArray[datasetPosition]
+            if !hiddenPersons.contains(thing) {
+                if let height = oldHeights[thing] {
+                    return height
+                }
+            }
+        }
         return UITableViewAutomaticDimension
     }
 
@@ -1852,7 +1861,7 @@ override func scrollViewDidScroll(_ scrollView: UIScrollView) {
 override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell: UITableViewCell! = nil
 
-    let datasetPosition = (indexPath as NSIndexPath).row
+        let datasetPosition = (indexPath as NSIndexPath).row
 
         let thing = isSearching ? filteredData[datasetPosition] : dataArray[datasetPosition]
         let parentOP = parents[thing]
@@ -2005,10 +2014,12 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
                 } else if cell.isCollapsed {
                 } else {
                     self.tableView.beginUpdates()
+                    oldHeights[cell.comment!.getIdentifier()] = cell.contentView.frame.size.height
                     cell.collapse(childNumber: 0)
                     self.tableView.endUpdates()
                 }
             } else {
+                oldHeights[cell.comment!.getIdentifier()] = cell.contentView.frame.size.height
                 cell.collapse(childNumber: childNumber)
                 if hiddenPersons.contains((id)) && childNumber > 0 {
                 } else {
@@ -2022,6 +2033,8 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
             }
         }
     }
+    
+    var oldHeights = [String: CGFloat]()
 
     func getChildNumber(n: String) -> Int {
         let children = walkTreeFully(n: n)
@@ -2105,6 +2118,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
                             }
                         } else {
                             self.tableView.beginUpdates()
+                            oldHeights[cell.comment!.getIdentifier()] = cell.contentView.frame.size.height
                             cell.collapse(childNumber: 0)
                             self.tableView.endUpdates()
                             if !hiddenPersons.contains(id) {
@@ -2124,6 +2138,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
                                     hiddenPersons.insert(id)
                                 }
                                 if childNumber > 0 {
+                                    oldHeights[cell.comment!.getIdentifier()] = cell.contentView.frame.size.height
                                     cell.collapse(childNumber: childNumber)
                                 }
                             }

@@ -1123,6 +1123,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             sideWidth = 0
         }
         
+        title.estimatedWidth = (parent.view.frame.size.width ) - CGFloat((SettingValues.wideIndicators ? 8 : 4) * (depth)) - CGFloat(16)
+
         if depth == 1 {
             marginTop = 8
         }
@@ -1265,7 +1267,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         infoString.addAttribute(NSParagraphStyleAttributeName, value: paragraphStyle, range: NSRange(location: 0, length: infoString.length))
 
         title.tColor = ColorUtil.accentColorForSub(sub: comment.subreddit)
-        title.estimatedWidth = parent?.view.frame.size.width ?? UIScreen.main.bounds.width
         if !isCollapsed || !SettingValues.collapseFully {
             title.setTextWithTitleHTML(infoString, text, htmlString: comment.htmlText)
         } else {
