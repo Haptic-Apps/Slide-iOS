@@ -18,7 +18,7 @@ class SettingsLayout: UITableViewController {
     
     var actionBarCell: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "mode") // TODO: Should this have a different reuseIdentifier?
 
-    var flatModeCell: UITableViewCell = UITableViewCell()
+    var flatModeCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "flat")
     var flatMode = UISwitch()
 
     var largerThumbnailCell: UITableViewCell = UITableViewCell()
@@ -306,7 +306,7 @@ class SettingsLayout: UITableViewController {
             }))
             
             VCPresenter.presentAlert(alertController, parentVC: self)
-        } else if indexPath.section == 2 && indexPath.row == 0 {
+        } else if indexPath.section == 1 && indexPath.row == 2 {
             let alertController: BottomSheetActionController = BottomSheetActionController()
             alertController.addAction(Action(ActionData(title: "Full action bar", image: UIImage(named: "code")!.menuIcon()), style: .default, handler: { _ in
                 UserDefaults.standard.set("full", forKey: SettingValues.pref_actionbarMode)
@@ -384,19 +384,19 @@ class SettingsLayout: UITableViewController {
         
         createCell(selftextCell, selftext, isOn: SettingValues.showFirstParagraph, text: "Show selftext preview")
         
-        createCell(cardModeCell, isOn: false, text: "Layout mode")
+        createCell(cardModeCell, isOn: false, text: "Submission view mode")
         cardModeCell.detailTextLabel?.textColor = ColorUtil.fontColor
         cardModeCell.detailTextLabel?.text = SettingValues.postViewMode.rawValue.capitalize()
         cardModeCell.detailTextLabel?.numberOfLines = 0
         cardModeCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         
-        createCell(imageCell, isOn: false, text: "Image mode")
+        createCell(imageCell, isOn: false, text: "Banner images")
         imageCell.detailTextLabel?.textColor = ColorUtil.fontColor
         imageCell.detailTextLabel?.text = SettingValues.postImageMode.rawValue.capitalize()
         imageCell.detailTextLabel?.numberOfLines = 0
         imageCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         
-        createCell(actionBarCell, isOn: false, text: "Action Bar mode")
+        createCell(actionBarCell, isOn: false, text: "Action Bar style")
         actionBarCell.detailTextLabel?.textColor = ColorUtil.fontColor
         actionBarCell.detailTextLabel?.text = SettingValues.actionBarMode.rawValue.capitalize()
         actionBarCell.detailTextLabel?.numberOfLines = 0
@@ -414,6 +414,8 @@ class SettingsLayout: UITableViewController {
         createCell(saveCell, save, isOn: SettingValues.saveButton, text: "Show save button")
         createCell(thumbLinkCell, thumbLink, isOn: SettingValues.linkAlwaysThumbnail, text: "Always show thumbnail on link posts")
         createCell(flatModeCell, flatMode, isOn: SettingValues.flatMode, text: "Flat Mode")
+        flatModeCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        flatModeCell.detailTextLabel?.text = "Disables rounded corners and shadows"
 
         doDisables()
         self.tableView.tableFooterView = UIView()
@@ -436,7 +438,7 @@ class SettingsLayout: UITableViewController {
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 3
+        return 5
     }
     
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -454,9 +456,11 @@ class SettingsLayout: UITableViewController {
         toReturn.backgroundColor = ColorUtil.backgroundColor
         
         switch section {
-        case 0: label.text  = "Preview"
-        case 1: label.text  = "Display"
-        case 2: label.text = "Actionbar"
+        case 0: label.text = "Preview"
+        case 1: label.text = "Display"
+        case 2: label.text = "Information line"
+        case 3: label.text = "Thumbnails"
+        case 4: label.text = "Advanced"
         default: label.text  = ""
         }
         return toReturn
@@ -480,27 +484,37 @@ class SettingsLayout: UITableViewController {
             switch indexPath.row {
             case 0: return self.cardModeCell
             case 1: return self.imageCell
-            case 2: return self.largerThumbnailCell
-            case 3: return self.leftThumbCell
-            case 4: return self.thumbLinkCell
-            case 5: return self.selftextCell
-            case 6: return self.smalltagCell
-            case 7: return self.flatModeCell
+            case 2: return self.actionBarCell
+            case 3: return self.flatModeCell
                 
             default: fatalError("Unknown row in section 1")
             }
         case 2:
             switch indexPath.row {
-            case 0: return self.actionBarCell
-            case 1: return self.infoBelowTitleCell
-            case 2: return self.commentTitleCell
-            case 3: return self.scoreTitleCell
-            case 4: return self.abbreviateScoreCell
-            case 5: return self.domainInfoCell
-            case 6: return self.hideCell
-            case 7: return self.saveCell
+            case 0: return self.infoBelowTitleCell
+            case 1: return self.commentTitleCell
+            case 2: return self.scoreTitleCell
+            case 3: return self.abbreviateScoreCell
+            case 4: return self.domainInfoCell
                 
             default: fatalError("Unknown row in section 2")
+            }
+        case 3:
+            switch indexPath.row {
+            case 0: return self.largerThumbnailCell
+            case 1: return self.leftThumbCell
+            case 2: return self.thumbLinkCell
+                
+            default: fatalError("Unknown row in section 3")
+            }
+        case 4:
+            switch indexPath.row {
+            case 0: return self.selftextCell
+            case 1: return self.smalltagCell
+            case 2: return self.hideCell
+            case 3: return self.saveCell
+                
+            default: fatalError("Unknown row in section 4")
             }
         default: fatalError("Unknown section")
         }
@@ -509,8 +523,10 @@ class SettingsLayout: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0: return 1
-        case 1: return 8
-        case 2: return 8
+        case 1: return 4
+        case 2: return 5
+        case 3: return 3
+        case 4: return 4
         default: fatalError("Unknown number of sections")
         }
     }

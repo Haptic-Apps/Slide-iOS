@@ -176,7 +176,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         self.cacheCell.imageView?.image = UIImage.init(named: "save-1")?.toolbarIcon()
         self.cacheCell.imageView?.tintColor = ColorUtil.fontColor
 
-        self.postLayout.textLabel?.text = "Post layout"
+        self.postLayout.textLabel?.text = "Submission layout"
         self.postLayout.accessoryType = .disclosureIndicator
         self.postLayout.backgroundColor = ColorUtil.foregroundColor
         self.postLayout.textLabel?.textColor = ColorUtil.fontColor
@@ -275,7 +275,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         self.contributorsCell.imageView?.image = UIImage.init(named: "happy")?.toolbarIcon()
         self.contributorsCell.imageView?.tintColor = ColorUtil.fontColor
 
-        multiColumnCell.textLabel?.text = "Multi Column mode"
+        multiColumnCell.textLabel?.text = "Multi-Column mode settings"
         multiColumnCell.backgroundColor = ColorUtil.foregroundColor
         multiColumnCell.textLabel?.textColor = ColorUtil.fontColor
         multiColumnCell.selectionStyle = UITableViewCellSelectionStyle.none
@@ -286,7 +286,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         lock.isOn = SettingValues.biometrics
         lock.isEnabled = BioMetricAuthenticator.canAuthenticate()
         lock.addTarget(self, action: #selector(SettingsViewController.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        lockCell.textLabel?.text = "Require unlock on open"
+        lockCell.textLabel?.text = "Biometric app lock"
         lockCell.accessoryView = lock
         lockCell.backgroundColor = ColorUtil.foregroundColor
         lockCell.textLabel?.textColor = ColorUtil.fontColor

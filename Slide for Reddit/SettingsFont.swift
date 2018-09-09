@@ -15,8 +15,8 @@ class SettingsFont: UITableViewController {
     var typeCell: UITableViewCell = UITableViewCell()
     var enlarge = UISwitch()
     var type = UISwitch()
-    var commentSize: UITableViewCell = UITableViewCell()
-    var submissionSize: UITableViewCell = UITableViewCell()
+    var commentSize: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "commentSize")
+    var submissionSize: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "submissionSize")
 
     var commentHelvetica: UITableViewCell = UITableViewCell()
     var commentRCR: UITableViewCell = UITableViewCell()
@@ -73,9 +73,9 @@ class SettingsFont: UITableViewController {
         toReturn.backgroundColor = ColorUtil.backgroundColor
         
         switch section {
-        case 0: label.text  = "Links"
-        case 1: label.text  = "Submissions"
-        case 2: label.text = "Comments"
+        case 0: label.text  = "Font size"
+        case 1: label.text  = "Submission font"
+        case 2: label.text = "Comment font"
         default: label.text  = ""
         }
         return toReturn
@@ -86,6 +86,7 @@ class SettingsFont: UITableViewController {
         UserDefaults.standard.set(size, forKey: SettingValues.pref_commentFontSize)
         UserDefaults.standard.synchronize()
         FontGenerator.initialize()
+        doFontSizes()
     }
     
     func setSizeSubmission(size: Int) {
@@ -95,6 +96,7 @@ class SettingsFont: UITableViewController {
         SubredditReorderViewController.changed = true
         CachedTitle.titleFont = FontGenerator.fontOfSize(size: 18, submission: true)
         FontGenerator.initialize()
+        doFontSizes()
     }
     
     func doCommentSize() {
@@ -296,8 +298,6 @@ class SettingsFont: UITableViewController {
         self.typeCell.textLabel?.textColor = ColorUtil.fontColor
         typeCell.selectionStyle = UITableViewCellSelectionStyle.none
         
-        self.commentSize.textLabel?.text = "Comment font size"
-        self.commentSize.detailTextLabel?.text = "Small"
         self.commentSize.backgroundColor = ColorUtil.foregroundColor
         self.commentSize.textLabel?.textColor = ColorUtil.fontColor
         self.commentSize.detailTextLabel?.textColor = ColorUtil.fontColor
@@ -305,13 +305,13 @@ class SettingsFont: UITableViewController {
         let tap = UITapGestureRecognizer.init(target: self, action: #selector(self.doCommentSize))
         self.commentSize.contentView.addGestureRecognizer(tap)
 
-        self.submissionSize.textLabel?.text = "Submission font size"
-        self.submissionSize.detailTextLabel?.text = "Large"
         self.submissionSize.backgroundColor = ColorUtil.foregroundColor
         self.submissionSize.textLabel?.textColor = ColorUtil.fontColor
         self.submissionSize.detailTextLabel?.textColor = ColorUtil.fontColor
         let tap2 = UITapGestureRecognizer.init(target: self, action: #selector(self.doSubmissionSize))
         self.submissionSize.contentView.addGestureRecognizer(tap2)
+
+        doFontSizes()
 
         self.commentHelvetica.textLabel?.text = "Helvetica"
         self.commentHelvetica.textLabel?.font = FontGenerator.Font.HELVETICA.font
@@ -408,6 +408,64 @@ class SettingsFont: UITableViewController {
 
     }
     
+    func doFontSizes() {
+        self.submissionSize.textLabel?.font = FontGenerator.fontOfSize(size: 16, submission: true)
+        self.commentSize.textLabel?.font = FontGenerator.fontOfSize(size: 16, submission: false)
+        
+        var commentText = ""
+        switch SettingValues.commentFontOffset {
+        case 10:
+            commentText = "Largest"
+        case 8:
+            commentText = "Extra Large"
+        case 4:
+            commentText = "Very Large"
+        case 2:
+            commentText = "Large"
+        case 0:
+            commentText = "Normal"
+        case -2:
+            commentText = "Small"
+        case -4:
+            commentText = "Very Small"
+        case -6:
+            commentText = "Smallest"
+        default:
+            commentText = "Default"
+        }
+        
+        var submissionText = ""
+        switch SettingValues.postFontOffset {
+        case 10:
+            submissionText = "Largest"
+        case 8:
+            submissionText = "Extra Large"
+        case 4:
+            submissionText = "Very Large"
+        case 2:
+            submissionText = "Large"
+        case 0:
+            submissionText = "Normal"
+        case -2:
+            submissionText = "Small"
+        case -4:
+            submissionText = "Very Small"
+        case -6:
+            submissionText = "Smallest"
+        default:
+            submissionText = "Default"
+        }
+        
+        self.commentSize.textLabel?.text = "Comment font size"
+        self.submissionSize.textLabel?.text = "Submission title size"
+        
+        self.submissionSize.detailTextLabel?.text = submissionText
+        self.commentSize.detailTextLabel?.text = commentText
+
+        
+        self.tableView.reloadData()
+    }
+    
     func doChecks() {
         
         submissionHelvetica.accessoryType = .none
@@ -490,10 +548,10 @@ class SettingsFont: UITableViewController {
         switch indexPath.section {
         case 0:
             switch indexPath.row {
-            case 0: return self.enlargeCell
-            case 1: return self.typeCell
-            case 2: return self.submissionSize
-            case 3: return self.commentSize
+            case 0: return self.submissionSize
+            case 1: return self.commentSize
+            case 2: return self.enlargeCell
+            case 3: return self.typeCell
             default: fatalError("Unknown row in section 0")
             }
         case 1:
@@ -581,6 +639,7 @@ class SettingsFont: UITableViewController {
         CachedTitle.titleFont = FontGenerator.fontOfSize(size: 18, submission: true)
         CachedTitle.titles.removeAll()
         doChecks()
+        doFontSizes()
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
