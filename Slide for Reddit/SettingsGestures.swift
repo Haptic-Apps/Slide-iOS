@@ -30,6 +30,10 @@ class SettingsGestures: UITableViewController {
 
     var doubleTapSubActionCell: UITableViewCell = UITableViewCell.init(style: UITableViewCellStyle.subtitle, reuseIdentifier: "dtaps")
 
+    var leftSubActionCell: UITableViewCell = UITableViewCell.init(style: UITableViewCellStyle.subtitle, reuseIdentifier: "leftsub")
+
+    var rightSubActionCell: UITableViewCell = UITableViewCell.init(style: UITableViewCellStyle.subtitle, reuseIdentifier: "rightsub")
+
     var commentCell = UITableViewCell()
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -70,9 +74,16 @@ class SettingsGestures: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
         
         if indexPath.row == 0 && indexPath.section == 2 {
-            showAction(cell: doubleTapSubActionCell)
+            showActionSub(cell: doubleTapSubActionCell)
+            return
+        } else if indexPath.row == 2 && indexPath.section == 2 {
+            showActionSub(cell: leftSubActionCell)
+            return
+        } else if indexPath.row == 3 && indexPath.section == 2 {
+            showActionSub(cell: rightSubActionCell)
             return
         }
+
         
         if indexPath.section != 1 {
             return
@@ -106,10 +117,6 @@ class SettingsGestures: UITableViewController {
                 } else if cell == self.rightLeftActionCell {
                     SettingValues.commentActionRightLeft = action
                     UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_commentActionRightLeft)
-                } else if cell == self.doubleTapSubActionCell {
-                    SettingValues.submissionActionDoubleTap = action
-                    SubredditReorderViewController.changed = true
-                    UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_submissionActionDoubleTap)
                 } else {
                     SettingValues.commentActionDoubleTap = action
                     UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_commentActionDoubleTap)
@@ -122,6 +129,29 @@ class SettingsGestures: UITableViewController {
         VCPresenter.presentAlert(alertController, parentVC: self)
     }
     
+    func showActionSub(cell: UITableViewCell) {
+        let alertController: BottomSheetActionController = BottomSheetActionController()
+        for action in SettingValues.SubmissionAction.cases {
+            alertController.addAction(Action(ActionData(title: action.getTitle(), image: UIImage(named: action.getPhoto())!.menuIcon()), style: .default, handler: { _ in
+                if cell == self.doubleTapSubActionCell {
+                    SettingValues.submissionActionDoubleTap = action
+                    UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_submissionActionDoubleTap)
+                } else if cell == self.rightSubActionCell {
+                    SettingValues.submissionActionRight = action
+                    UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_submissionActionRight)
+                } else if cell == self.leftSubActionCell {
+                    SettingValues.submissionActionLeft = action
+                    UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_submissionActionLeft)
+                }
+                
+                SubredditReorderViewController.changed = true
+                UserDefaults.standard.synchronize()
+                self.updateCells()
+            }))
+        }
+        VCPresenter.presentAlert(alertController, parentVC: self)
+    }
+
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
         cell.textLabel?.textColor = ColorUtil.fontColor
@@ -143,17 +173,17 @@ class SettingsGestures: UITableViewController {
         self.title = "Gestures"
         self.tableView.separatorStyle = .none
         
-        createCell(doubleSwipeCell, doubleSwipe, isOn: SettingValues.commentTwoSwipe, text: "Double finger swipe to go to next submission in comments view")
+        createCell(doubleSwipeCell, doubleSwipe, isOn: SettingValues.commentTwoSwipe, text: "Swipe between comments using two fingers")
         self.doubleSwipeCell.detailTextLabel?.textColor = ColorUtil.fontColor
         self.doubleSwipeCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.doubleSwipeCell.detailTextLabel?.numberOfLines = 0
-        self.doubleSwipeCell.detailTextLabel?.text = "Turning this off enables single finger swipe mode, which will disable comment slide gestures"
+        self.doubleSwipeCell.detailTextLabel?.text = "Disabling this setting will disable all comment swipe gestures"
         
         createCell(swipeAnywhereCell, swipeAnywhere, isOn: SettingValues.swipeAnywhereComments, text: "Swipe anywhere to exit comments")
         self.swipeAnywhereCell.detailTextLabel?.textColor = ColorUtil.fontColor
         self.swipeAnywhereCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.swipeAnywhereCell.detailTextLabel?.numberOfLines = 0
-        self.swipeAnywhereCell.detailTextLabel?.text = "Turning this off enables the left-side comment gestures"
+        self.swipeAnywhereCell.detailTextLabel?.text = "Disabling this setting enables the left-side comment gestures"
 
         updateCells()
         self.tableView.tableFooterView = UIView()
@@ -322,6 +352,20 @@ class SettingsGestures: UITableViewController {
         self.doubleTapActionCell.detailTextLabel?.text = SettingValues.commentActionDoubleTap.getTitle()
         self.doubleTapActionCell.imageView?.layer.cornerRadius = 5
         
+        createLeftView(cell: leftSubActionCell, image: SettingValues.submissionActionLeft.getPhoto(), color: SettingValues.submissionActionLeft.getColor())
+        self.leftSubActionCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.leftSubActionCell.detailTextLabel?.lineBreakMode = .byWordWrapping
+        self.leftSubActionCell.detailTextLabel?.numberOfLines = 0
+        self.leftSubActionCell.detailTextLabel?.text = SettingValues.submissionActionLeft.getTitle()
+        self.leftSubActionCell.imageView?.layer.cornerRadius = 5
+
+        createLeftView(cell: rightSubActionCell, image: SettingValues.submissionActionRight.getPhoto(), color: SettingValues.submissionActionRight.getColor())
+        self.rightSubActionCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.rightSubActionCell.detailTextLabel?.lineBreakMode = .byWordWrapping
+        self.rightSubActionCell.detailTextLabel?.numberOfLines = 0
+        self.rightSubActionCell.detailTextLabel?.text = SettingValues.submissionActionRight.getTitle()
+        self.rightSubActionCell.imageView?.layer.cornerRadius = 5
+
         if !SettingValues.commentTwoSwipe {
             self.rightRightActionCell.isUserInteractionEnabled = false
             self.rightRightActionCell.contentView.alpha = 0.5
