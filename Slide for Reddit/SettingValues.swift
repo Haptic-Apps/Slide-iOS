@@ -560,7 +560,7 @@ class SettingValues {
         func getPhoto() -> String {
             switch self {
             case .HIDE :
-                return "hidden"
+                return "hide"
             case .UPVOTE:
                 return "upvote"
             case .DOWNVOTE:
@@ -572,7 +572,7 @@ class SettingValues {
             case .NONE:
                 return "close"
             case .SUBREDDIT:
-                return "sub"
+                return "subs"
             }
         }
         

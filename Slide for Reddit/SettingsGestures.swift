@@ -76,10 +76,10 @@ class SettingsGestures: UITableViewController {
         if indexPath.row == 0 && indexPath.section == 2 {
             showActionSub(cell: doubleTapSubActionCell)
             return
-        } else if indexPath.row == 2 && indexPath.section == 2 {
+        } else if indexPath.row == 1 && indexPath.section == 2 {
             showActionSub(cell: leftSubActionCell)
             return
-        } else if indexPath.row == 3 && indexPath.section == 2 {
+        } else if indexPath.row == 2 && indexPath.section == 2 {
             showActionSub(cell: rightSubActionCell)
             return
         }
@@ -313,6 +313,8 @@ class SettingsGestures: UITableViewController {
         createCell(leftRightActionCell, nil, isOn: false, text: "Second left slide button")
         createCell(doubleTapActionCell, nil, isOn: false, text: "Double tap comment action")
         createCell(doubleTapSubActionCell, nil, isOn: false, text: "Double tap submission action")
+        createCell(leftSubActionCell, nil, isOn: false, text: "Left submission swipe")
+        createCell(rightSubActionCell, nil, isOn: false, text: "Right submission swipe")
 
         createLeftView(cell: doubleSwipeCell, image: "twofinger", color: ColorUtil.foregroundColor)
         createLeftView(cell: swipeAnywhereCell, image: "back", color: ColorUtil.foregroundColor)
@@ -441,6 +443,8 @@ class SettingsGestures: UITableViewController {
         case 2:
             switch indexPath.row {
             case 0: return self.doubleTapSubActionCell
+            case 1: return self.leftSubActionCell
+            case 2: return self.rightSubActionCell
             default: fatalError("Unknown row in section 0")
             }
         default: fatalError("Unknown section")
@@ -452,7 +456,7 @@ class SettingsGestures: UITableViewController {
         switch section {
         case 0: return 2
         case 1: return 6
-        case 2: return 1
+        case 2: return 3
         default: fatalError("Unknown number of sections")
         }
     }
