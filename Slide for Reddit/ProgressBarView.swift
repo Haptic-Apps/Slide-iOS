@@ -10,10 +10,21 @@
 
 import UIKit
 
+enum ProgressType {
+    case UNKNOWN
+    case NONERIGHT
+    case NONELEFT
+    case UPVOTE
+    case DOWNVOTE
+    case SAVE
+    case HIDE
+}
+
 class ProgressBarView: UIView {
     var cPath: UIBezierPath!
     var baseLayer: CAShapeLayer!
     var progressLayer: CAShapeLayer!
+    var progressType: ProgressType!
     
     var progress: Float = 0 {
         willSet(newValue) {
@@ -23,59 +34,84 @@ class ProgressBarView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        progressType = .UNKNOWN
         cPath = UIBezierPath()
         self.addShapeLayers()
     }
     
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+        progressType = .UNKNOWN
         cPath = UIBezierPath()
         self.addShapeLayers()
     }
     
     func addShapeLayers() {
-        createCirclePath(startAngle: -1 * CGFloat.pi / 2, endAngle: 3 * CGFloat.pi / 2, clockwise: true)
+        createLinePath(xStart: 0, xEnd: self.frame.width)
         
         baseLayer = CAShapeLayer()
         baseLayer.path = cPath.cgPath
-        baseLayer.lineWidth = self.frame.width / 6
+        baseLayer.lineWidth = self.frame.height
         baseLayer.fillColor = nil
-        baseLayer.strokeColor = UIColor(hexString: "#FF8b60").withAlphaComponent(0.4).cgColor
+        baseLayer.strokeColor = UIColor(hexString: "#A5A4A4").withAlphaComponent(0.3).cgColor
         
         progressLayer = CAShapeLayer()
         progressLayer.path = cPath.cgPath
-        progressLayer.lineCap = kCALineCapRound
-        progressLayer.lineWidth = self.frame.width / 6
+        progressLayer.lineCap = kCALineCapButt
+        progressLayer.lineWidth = self.frame.height
         progressLayer.fillColor = nil
-        progressLayer.strokeColor = UIColor(hexString: "#FF8b60").cgColor
+        progressLayer.strokeColor = UIColor(hexString: "#A5A4A4").withAlphaComponent(0.6).cgColor
         progressLayer.strokeEnd = 0.0
         
         self.layer.addSublayer(baseLayer)
         self.layer.addSublayer(progressLayer)
     }
     
-    private func createCirclePath(startAngle: CGFloat, endAngle: CGFloat, clockwise: Bool) {
-        let x = self.frame.width / 2
-        let y = self.frame.height / 2
-        let center = CGPoint(x: x, y: y)
+    private func createLinePath(xStart: CGFloat, xEnd: CGFloat) {
         cPath.removeAllPoints()
-        cPath.addArc(withCenter: center, radius: x * 2 / 3, startAngle: startAngle, endAngle: endAngle, clockwise: clockwise)
-        cPath.close()
+        cPath.move(to: CGPoint(x: xStart, y: self.frame.height / 2))
+        cPath.addLine(to: CGPoint(x: xEnd, y: self.frame.height / 2))
     }
     
-    func setMode(upvote: Bool) {
-        if upvote {
-            createCirclePath(startAngle: -1 * CGFloat.pi / 2, endAngle: 3 * CGFloat.pi / 2, clockwise: true)
-            baseLayer.path = cPath.cgPath
-            baseLayer.strokeColor = UIColor(hexString: "#FF8b60").withAlphaComponent(0.4).cgColor
-            progressLayer.path = cPath.cgPath
-            progressLayer.strokeColor = UIColor(hexString: "#FF8b60").cgColor
-        } else {
-            createCirclePath(startAngle: 3 * CGFloat.pi / 2, endAngle: -1 * CGFloat.pi / 2, clockwise: false)
-            baseLayer.path = cPath.cgPath
-            baseLayer.strokeColor = UIColor(hexString: "#9494FF").withAlphaComponent(0.4).cgColor
-            progressLayer.path = cPath.cgPath
-            progressLayer.strokeColor = UIColor(hexString: "#9494FF").cgColor
+    func setMode(type: ProgressType, flip: Bool = false) {
+        progressType = type
+        var xStart: CGFloat!
+        var xEnd: CGFloat!
+        var hexString: String!
+        switch type {
+        case .NONERIGHT:
+            xStart = 0
+            xEnd = self.frame.width
+            hexString = "#A5A4A4"
+        case .NONELEFT:
+            xStart = self.frame.width
+            xEnd = 0
+            hexString = "#A5A4A4"
+        case .UPVOTE:
+            xStart = 0
+            xEnd = self.frame.width
+            hexString = "#FF8B60"
+        case .DOWNVOTE:
+            xStart = self.frame.width
+            xEnd = 0
+            hexString = "#9494FF"
+        case .SAVE:
+            xStart = 0
+            xEnd = self.frame.width
+            hexString = "#3BCB56"
+        case .HIDE:
+            xStart = self.frame.width
+            xEnd = 0
+            hexString = "#ED001C"
+        default:
+            break
         }
+        if flip {
+            createLinePath(xStart: xStart, xEnd: xEnd)
+            baseLayer.path = cPath.cgPath
+            progressLayer.path = cPath.cgPath
+        }
+        baseLayer.strokeColor = UIColor(hexString: hexString).withAlphaComponent(0.3).cgColor
+        progressLayer.strokeColor = UIColor(hexString: hexString).withAlphaComponent(0.6).cgColor
     }
 }

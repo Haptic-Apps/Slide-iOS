@@ -494,26 +494,43 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         buttons.isUserInteractionEnabled = SettingValues.actionBarMode != .FULL || full
     }
     
-    var progressBar = ProgressBarView()
+    var progressBar: ProgressBarView!
     var panGestureRecognizer: UIPanGestureRecognizer!
     var previousTranslation: CGFloat!
+    var previousProgress: Float!
     
     func handlePan(_ sender: UIPanGestureRecognizer) {
         if sender.state == .began {
-            progressBar = ProgressBarView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height * 2 / 3))
-            UIApplication.shared.keyWindow?.addSubview(progressBar)
+            progressBar = ProgressBarView(frame: contentView.bounds).then {
+                $0.accessibilityIdentifier = "Progress Bar"
+                if !SettingValues.flatMode {
+                    $0.layer.cornerRadius = 15 // TODO: this is not rounding the corners
+                }
+            }
+            contentView.addSubview(progressBar)
+//            progressBar.horizontalAnchors == contentView.horizontalAnchors
+//            progressBar.verticalAnchors == contentView.verticalAnchors
             previousTranslation = 0
+            previousProgress = 0
         }
         if sender.state != .ended {
-            guard progressBar.progress != 1 else { return }
+            guard previousProgress != 1 else { return }
             let currentTranslation = sender.translation(in: title).x
             if previousTranslation <= 0 && currentTranslation > 0 {
-                progressBar.setMode(upvote: true)
+                progressBar.setMode(type: .NONERIGHT, flip: true)
             } else if previousTranslation >= 0 && currentTranslation < 0 {
-                progressBar.setMode(upvote: false)
+                progressBar.setMode(type: .NONELEFT, flip: true)
             }
-            progressBar.progress = Float(min(abs(currentTranslation) / (contentView.bounds.width / 4), 1))
-            if progressBar.progress == 1 {
+            progressBar.progress = Float(min(abs(currentTranslation) / (contentView.bounds.width / 3), 1))
+            let currentProgress = progressBar.progress
+            if previousProgress >= 0.4 && currentProgress < 0.4 {
+                progressBar.setMode(type: currentTranslation > 0 ? .NONERIGHT : .NONELEFT)
+            } else if (previousProgress <= 0.4 && currentProgress > 0.4) || (previousProgress >= 0.8 && currentProgress < 0.8) {
+                progressBar.setMode(type: currentTranslation > 0 ? .SAVE : .HIDE)
+            } else if previousProgress <= 0.8 && currentProgress > 0.8 {
+                progressBar.setMode(type: currentTranslation > 0 ? .UPVOTE : .DOWNVOTE)
+            }
+            if currentProgress == 1 {
                 if currentTranslation > 0 {
                     del?.upvote(self)
                 } else {
@@ -522,10 +539,26 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 UIView.animate(withDuration: 0.4, animations: {
                     self.progressBar.alpha = 0
                 })
+                progressBar.progressType = .UNKNOWN
             }
             previousTranslation = currentTranslation
+            previousProgress = currentProgress
         } else {
-            progressBar.isHidden = true
+            switch progressBar.progressType! {
+            case .UPVOTE:
+                del?.upvote(self)
+            case .DOWNVOTE:
+                del?.downvote(self)
+            case .SAVE:
+                del?.save(self)
+            case .HIDE:
+                del?.hide(self)
+            default:
+                break
+            }
+            UIView.animate(withDuration: 0.4, animations: {
+                self.progressBar.alpha = 0
+            })
             progressBar.removeFromSuperview()
         }
     }
