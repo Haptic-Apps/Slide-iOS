@@ -480,12 +480,151 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 self.contentView.addGestureRecognizer(longPress!)
             }
             
+            if panGestureRecognizer == nil && (SettingValues.submissionActionRight != .NONE || SettingValues.submissionActionLeft != .NONE) {
+                panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(LinkCellView.handlePan(_:)))
+                panGestureRecognizer!.direction = .horizontal
+                self.title.addGestureRecognizer(panGestureRecognizer!)
+            }
+            if panGestureRecognizer2 == nil && (SettingValues.submissionActionRight != .NONE || SettingValues.submissionActionLeft != .NONE) && (self is BannerLinkCellView || self is AutoplayBannerLinkCellView || self is FullLinkCellView) {
+                panGestureRecognizer2 = UIPanGestureRecognizer(target: self, action: #selector(LinkCellView.handlePan(_:)))
+                panGestureRecognizer2!.direction = .horizontal
+                if self is BannerLinkCellView {
+                    self.bannerImage.addGestureRecognizer(panGestureRecognizer2!)
+                } else if self is AutoplayBannerLinkCellView {
+                    self.topVideoView.addGestureRecognizer(panGestureRecognizer2!)
+                } else {
+                    self.bannerImage.addGestureRecognizer(panGestureRecognizer2!)
+                }
+            }
+
             addTouch = true
         }
         
         sideButtons.isHidden = !SettingValues.actionBarMode.isSide() || full
         buttons.isHidden = SettingValues.actionBarMode != .FULL && !full
         buttons.isUserInteractionEnabled = SettingValues.actionBarMode != .FULL || full
+    }
+    
+    var progressBar: ProgressBarView!
+    var typeImage: UIImageView!
+    var panGestureRecognizer: UIPanGestureRecognizer!
+    var panGestureRecognizer2: UIPanGestureRecognizer!
+    var previousTranslation: CGFloat!
+    var previousProgress: Float!
+    var dragCancelled = false
+    var direction = 0
+    
+    func handlePan(_ sender: UIPanGestureRecognizer) {
+        if sender.state == .began {
+            dragCancelled = false
+            direction = 0
+            progressBar = ProgressBarView(frame: contentView.bounds).then {
+                $0.accessibilityIdentifier = "Progress Bar"
+                if !SettingValues.flatMode {
+                    $0.layer.cornerRadius = 15
+                    $0.clipsToBounds = true
+                }
+            }
+            typeImage = UIImageView().then {
+                $0.accessibilityIdentifier = "Action type"
+                $0.layer.cornerRadius = 22.5
+                $0.clipsToBounds = true
+            }
+            contentView.addSubviews(typeImage, progressBar)
+            contentView.bringSubview(toFront: typeImage)
+            typeImage.centerAnchors == self.contentView.centerAnchors
+            typeImage.heightAnchor == 45
+            typeImage.widthAnchor == 45
+            previousTranslation = 0
+            previousProgress = 0
+        }
+        if dragCancelled {
+            return
+        }
+        if sender.state != .ended {
+            guard previousProgress != 1 else { return }
+            let posx = sender.location(in: contentView).x
+            let currentTranslation = ((direction == 0 && sender.translation(in: sender.view!).x < 0) || direction == -1) ? 0 - (contentView.bounds.size.width - posx) : posx
+            if previousTranslation <= 0 && currentTranslation > 0 {
+                if direction != -1 {
+                    direction = 1
+                    progressBar.setMode(type: .NONE, flip: false)
+                }
+            } else if previousTranslation >= 0 && currentTranslation < 0 {
+                if direction != 1 {
+                    direction = -1
+                    progressBar.setMode(type: .NONE, flip: true)
+                }
+            }
+            
+            if (direction == -1 && SettingValues.submissionActionLeft == .NONE) || (direction == 1 && SettingValues.submissionActionRight == .NONE) {
+                dragCancelled = true
+                return
+            }
+            progressBar.progress = Float(min(abs(currentTranslation) / (contentView.bounds.width), 1))
+            let currentProgress = progressBar.progress
+            if previousProgress >= 0.1 && currentProgress < 0.1 {
+                progressBar.setMode(type: .NONE)
+            } else if previousProgress <= 0.1 && currentProgress > 0.1 {
+                if currentTranslation > 0 && direction == 1 {
+                    let action = SettingValues.submissionActionRight
+                    progressBar.setMode(type: action, flip: currentTranslation < 0)
+                    typeImage.image = UIImage(named: action.getPhoto())?.getCopy(withSize: CGSize.square(size: 25), withColor: .white)
+                    typeImage.backgroundColor = action.getColor()
+                } else if currentTranslation <= 0 && direction == -1 {
+                    let action = SettingValues.submissionActionLeft
+                    progressBar.setMode(type: action, flip: currentTranslation < 0)
+                    typeImage.image = UIImage(named: action.getPhoto())?.getCopy(withSize: CGSize.square(size: 25), withColor: .white)
+                    typeImage.backgroundColor = action.getColor()
+                }
+            }
+            if currentProgress >= 0.4 && previousProgress < 0.4 || sender.state == .ended {
+                if #available(iOS 10.0, *) {
+                    HapticUtility.hapticActionWeak()
+                }
+            }
+            typeImage.alpha = CGFloat(currentProgress)
+            if currentProgress == 1 {
+                doAction(item: progressBar.progressType!)
+                UIView.animate(withDuration: 0.4, animations: {
+                    self.progressBar.alpha = 0
+                })
+                progressBar.progressType = .NONE
+            }
+            previousTranslation = currentTranslation
+            previousProgress = currentProgress
+        } else if sender.state == .ended && progressBar.progress >= 0.4 {
+            doAction(item: progressBar.progressType!)
+            UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
+                self.progressBar.progress = 1
+                self.progressBar.alpha = 0
+                self.typeImage.alpha = 0
+                self.typeImage.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
+            }) { (_) in
+                self.progressBar.removeFromSuperview()
+                self.typeImage.removeFromSuperview()
+            }
+        } else {
+            UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
+                self.progressBar.progress = 0
+                self.progressBar.alpha = 0
+                self.typeImage.alpha = 0
+            }) { (_) in
+                self.progressBar.removeFromSuperview()
+                self.typeImage.removeFromSuperview()
+            }
+        }
+        
+        if dragCancelled {
+            UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseInOut, animations: {
+                self.progressBar.progress = 0
+                self.typeImage.alpha = 0
+                self.progressBar.alpha = 0
+            }) { (_) in
+                self.progressBar.removeFromSuperview()
+                self.typeImage.removeFromSuperview()
+            }
+        }
     }
     
     func updateProgress(_ oldPercent: CGFloat, _ total: String) {
@@ -769,6 +908,43 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             self.save()
         case .MENU:
             self.more()
+        case .HIDE:
+            if !full {
+                self.hide()
+            }
+        case .SUBREDDIT:
+            let sub = SingleSubredditViewController.init(subName: self.link!.subreddit, single: true)
+            VCPresenter.showVC(viewController: sub, popupIfPossible: true, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController)
+        default:
+            break
+        }
+    }
+    
+    func doAction(left: Bool) {
+        switch left ? SettingValues.submissionActionLeft : SettingValues.submissionActionRight {
+        case .UPVOTE:
+            self.upvote()
+        case .DOWNVOTE:
+            self.downvote()
+        case .SAVE:
+            self.save()
+        case .MENU:
+            self.more()
+        default:
+            break
+        }
+    }
+    
+    func doAction(item: SettingValues.SubmissionAction) {
+        switch item {
+        case .UPVOTE:
+            self.upvote()
+        case .DOWNVOTE:
+            self.downvote()
+        case .SAVE:
+            self.save()
+        case .MENU:
+            self.more()
         default:
             break
         }
@@ -1008,6 +1184,15 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     DispatchQueue.main.async {
                         strongSelf.avPlayerItem = AVPlayerItem(url: URL(string: urlString)!)
                         strongSelf.videoView?.player = AVPlayer(playerItem: strongSelf.avPlayerItem!)
+                        do {
+                            if SettingValues.matchSilence {
+                                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
+                            } else {
+                                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+                            }
+                        } catch {
+                            
+                        }
                         strongSelf.videoView?.player?.play()
                         strongSelf.videoView?.player?.isMuted = true
                         strongSelf.sound.addTarget(strongSelf, action: #selector(strongSelf.unmute), for: .touchUpInside)

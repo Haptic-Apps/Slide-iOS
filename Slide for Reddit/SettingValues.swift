@@ -102,6 +102,8 @@ class SettingValues {
     public static let pref_matchSilence = "MATCH_SILENCE"
     public static let pref_autoPlayMode = "AUTOPLAY_MODE"
     public static let pref_showPages = "SHOW_PAGES"
+    public static let pref_submissionActionLeft = "SUBMISSION_LEFT"
+    public static let pref_submissionActionRight = "SUBMISSION_RIGHT"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_FIREFOX = "firefox"
@@ -116,7 +118,9 @@ class SettingValues {
     public static var commentActionLeftRight = CommentAction.MENU
     public static var commentActionLeftLeft = CommentAction.COLLAPSE
     public static var commentActionDoubleTap = CommentAction.NONE
-    public static var submissionActionDoubleTap = CommentAction.NONE
+    public static var submissionActionDoubleTap = SubmissionAction.NONE
+    public static var submissionActionLeft = SubmissionAction.UPVOTE
+    public static var submissionActionRight = SubmissionAction.SAVE
 
     public static var browser = "firefox"
     public static var viewType = true
@@ -420,7 +424,9 @@ class SettingValues {
         SettingValues.commentActionLeftRight = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionLeftRight) ?? "menu")!
 
         SettingValues.commentActionDoubleTap = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionDoubleTap) ?? "none")!
-        SettingValues.submissionActionDoubleTap = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_submissionActionDoubleTap) ?? "none")!
+        SettingValues.submissionActionDoubleTap = SubmissionAction.init(rawValue: settings.string(forKey: SettingValues.pref_submissionActionDoubleTap) ?? "none")!
+        SettingValues.submissionActionRight = SubmissionAction.init(rawValue: settings.string(forKey: SettingValues.pref_submissionActionRight) ?? "upvote")!
+        SettingValues.submissionActionLeft = SubmissionAction.init(rawValue: settings.string(forKey: SettingValues.pref_submissionActionLeft) ?? "downvote")!
 
         SettingValues.internalImageView = settings.object(forKey: SettingValues.pref_internalImageView) == nil ? true : settings.bool(forKey: SettingValues.pref_internalImageView)
         SettingValues.internalGifView = settings.object(forKey: SettingValues.pref_internalGifView) == nil ? true : settings.bool(forKey: SettingValues.pref_internalGifView)
@@ -516,6 +522,75 @@ class SettingValues {
             case .NONE:
                 return GMColor.red500Color()
             case .REPLY:
+                return GMColor.green500Color()
+            }
+        }
+    }
+
+    public enum SubmissionAction: String {
+        public static let cases: [SubmissionAction] = [.UPVOTE, .DOWNVOTE, .MENU, .HIDE, .SAVE, .SUBREDDIT, .NONE]
+        
+        case UPVOTE = "upvote"
+        case DOWNVOTE = "downvote"
+        case MENU = "menu"
+        case HIDE = "hide"
+        case SAVE = "save"
+        case NONE = "none"
+        case SUBREDDIT = "sub"
+        
+        func getTitle() -> String {
+            switch self {
+            case .HIDE :
+                return "Hide post"
+            case .UPVOTE:
+                return "Upvote"
+            case .DOWNVOTE:
+                return "Downvote"
+            case .SAVE:
+                return "Save"
+            case .MENU:
+                return "Comment menu"
+            case .NONE:
+                return "Disabled"
+            case .SUBREDDIT:
+                return "Visit subreddit"
+            }
+        }
+        
+        func getPhoto() -> String {
+            switch self {
+            case .HIDE :
+                return "hide"
+            case .UPVOTE:
+                return "upvote"
+            case .DOWNVOTE:
+                return "downvote"
+            case .SAVE:
+                return "save"
+            case .MENU:
+                return "moreh"
+            case .NONE:
+                return "close"
+            case .SUBREDDIT:
+                return "subs"
+            }
+        }
+        
+        func getColor() -> UIColor {
+            switch self {
+            case .HIDE :
+                return .black
+            case .UPVOTE:
+                return ColorUtil.upvoteColor
+            case .DOWNVOTE:
+                return ColorUtil.downvoteColor
+            case .SAVE:
+                return GMColor.yellow500Color()
+            case .MENU:
+                return ColorUtil.baseAccent
+            case .NONE:
+                return GMColor.red500Color()
+            case .SUBREDDIT:
                 return GMColor.green500Color()
             }
         }
