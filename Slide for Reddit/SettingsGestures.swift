@@ -84,7 +84,6 @@ class SettingsGestures: UITableViewController {
             return
         }
 
-        
         if indexPath.section != 1 {
             return
         }

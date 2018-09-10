@@ -527,14 +527,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             }
             typeImage = UIImageView().then {
                 $0.accessibilityIdentifier = "Action type"
-                $0.layer.cornerRadius = 20
+                $0.layer.cornerRadius = 22.5
                 $0.clipsToBounds = true
             }
             contentView.addSubviews(typeImage, progressBar)
             contentView.bringSubview(toFront: typeImage)
             typeImage.centerAnchors == self.contentView.centerAnchors
-            typeImage.heightAnchor == 40
-            typeImage.widthAnchor == 40
+            typeImage.heightAnchor == 45
+            typeImage.widthAnchor == 45
             previousTranslation = 0
             previousProgress = 0
         }
@@ -569,12 +569,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 if currentTranslation > 0 && direction == 1 {
                     let action = SettingValues.submissionActionRight
                     progressBar.setMode(type: action, flip: currentTranslation < 0)
-                    typeImage.image = UIImage(named: action.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
+                    typeImage.image = UIImage(named: action.getPhoto())?.getCopy(withSize: CGSize.square(size: 25), withColor: .white)
                     typeImage.backgroundColor = action.getColor()
                 } else if currentTranslation <= 0 && direction == -1 {
                     let action = SettingValues.submissionActionLeft
                     progressBar.setMode(type: action, flip: currentTranslation < 0)
-                    typeImage.image = UIImage(named: action.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
+                    typeImage.image = UIImage(named: action.getPhoto())?.getCopy(withSize: CGSize.square(size: 25), withColor: .white)
                     typeImage.backgroundColor = action.getColor()
                 }
             }
@@ -949,7 +949,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             break
         }
     }
-
     
     var aspect = CGFloat(1)
     var type: ContentType.CType = .NONE
