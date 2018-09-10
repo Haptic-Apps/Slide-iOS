@@ -45,6 +45,7 @@ class SingleSubredditViewController: MediaViewController {
     let cellsPerRow = 3
     
     var times = 0
+    var startTime = Date()
 
     var parentController: MainViewController?
     var accentChosen: UIColor?
@@ -585,6 +586,7 @@ class SingleSubredditViewController: MediaViewController {
         self.tableView.register(ThumbnailLinkCellView.classForCoder(), forCellWithReuseIdentifier: "thumb\(SingleSubredditViewController.cellVersion)")
         self.tableView.register(TextLinkCellView.classForCoder(), forCellWithReuseIdentifier: "text\(SingleSubredditViewController.cellVersion)")
         self.tableView.register(LoadingCell.classForCoder(), forCellWithReuseIdentifier: "loading")
+        self.tableView.register(PageCell.classForCoder(), forCellWithReuseIdentifier: "page")
         lastVersion = SingleSubredditViewController.cellVersion
 
         var top = 20
@@ -1042,6 +1044,8 @@ class SingleSubredditViewController: MediaViewController {
 
         }
     }
+    
+    var page = 0
 
     func load(reset: Bool) {
         PagingCommentViewController.savedComment = nil
@@ -1088,6 +1092,10 @@ class SingleSubredditViewController: MediaViewController {
                 loading = true
                 if reset {
                     paginator = Paginator()
+                    self.page = 0
+                }
+                if reset || !loaded {
+                    self.startTime = Date()
                 }
                 var subreddit: SubredditURLPath = Subreddit.init(subreddit: sub)
 
@@ -1144,6 +1152,7 @@ class SingleSubredditViewController: MediaViewController {
 
                         if reset {
                             self.links = []
+                            self.page = 0
                         }
                         let before = self.links.count
                         if self.realmListing == nil {
@@ -1162,7 +1171,16 @@ class SingleSubredditViewController: MediaViewController {
                             converted.append(newRS)
                             CachedTitle.addTitle(s: newRS)
                         }
-                        let values = PostFilter.filter(converted, previous: self.links, baseSubreddit: self.sub)
+                        var values = PostFilter.filter(converted, previous: self.links, baseSubreddit: self.sub)
+                        if self.page > 0 && !values.isEmpty && SettingValues.showPages {
+                            let pageItem = RSubmission()
+                            pageItem.subreddit = DateFormatter().timeSince(from: self.startTime as NSDate, numericDates: true)
+                            pageItem.author = "PAGE_SEPARATOR"
+                            pageItem.title = "Page \(self.page + 1)\n\(self.links.count + values.count) posts"
+                            values.insert(pageItem, at: 0)
+                        }
+                        self.page += 1
+                        
                         self.links += values
                         self.paginator = listing.paginator
                         self.nomore = !listing.paginator.hasMore() || values.isEmpty
@@ -1171,14 +1189,17 @@ class SingleSubredditViewController: MediaViewController {
                             //todo insert
                             realm.beginWrite()
                             for submission in self.links {
-                                realm.create(type(of: submission), value: submission, update: true)
-                                self.realmListing!.links.append(submission)
+                                if submission.author != "PAGE_SEPARATOR" {
+                                    realm.create(type(of: submission), value: submission, update: true)
+                                    self.realmListing!.links.append(submission)
+                                }
                             }
                             realm.create(type(of: self.realmListing!), value: self.realmListing!, update: true)
                             try realm.commitWrite()
                         } catch {
 
                         }
+                        
                         self.preloadImages(values)
                         DispatchQueue.main.async {
                             if self.links.isEmpty {
@@ -1921,7 +1942,32 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
             cell.loader.startAnimating()
             return cell
         }
+
         let submission = self.links[(indexPath as NSIndexPath).row]
+
+        if submission.author == "PAGE_SEPARATOR" {
+            let cell = tableView.dequeueReusableCell(withReuseIdentifier: "page", for: indexPath) as! PageCell
+            
+            let textParts = submission.title.components(separatedBy: "\n")
+            
+            let finalText: NSMutableAttributedString!
+            if textParts.count > 1 {
+                let firstPart = NSMutableAttributedString.init(string: textParts[0], attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 16)])
+                let secondPart = NSMutableAttributedString.init(string: "\n" + textParts[1], attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: UIFont.systemFont(ofSize: 13)])
+                firstPart.append(secondPart)
+                finalText = firstPart
+            } else {
+                finalText = NSMutableAttributedString.init(string: submission.title, attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 14)])
+            }
+
+            cell.time.font = UIFont.systemFont(ofSize: 12)
+            cell.time.textColor = ColorUtil.fontColor
+            cell.time.alpha = 0.7
+            cell.time.text = submission.subreddit
+            
+            cell.title.attributedText = finalText
+            return cell
+        }
 
         var cell: LinkCellView!
         
@@ -2013,6 +2059,9 @@ extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
     func collectionView(_ collectionView: UICollectionView, width: CGFloat, indexPath: IndexPath) -> CGSize {
         if indexPath.row < links.count {
             let submission = links[indexPath.row]
+            if submission.author == "PAGE_SEPARATOR" {
+                return CGSize(width: width, height: 80)
+            }
             return SingleSubredditViewController.sizeWith(submission, width, Subscriptions.isCollection(sub))
         }
         return CGSize(width: width, height: 80)
@@ -2148,6 +2197,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
 
     }
 }
+
 public class LoadingCell: UICollectionViewCell {
     var loader = UIActivityIndicatorView()
     override public init(frame: CGRect) {
@@ -2169,5 +2219,40 @@ public class LoadingCell: UICollectionViewCell {
         loader.topAnchor == self.contentView.topAnchor + 10
         loader.bottomAnchor == self.contentView.bottomAnchor - 10
         loader.centerXAnchor == self.contentView.centerXAnchor
+    }
+}
+
+public class PageCell: UICollectionViewCell {
+    var title = UILabel()
+    var time = UILabel()
+    
+    override public init(frame: CGRect) {
+        super.init(frame: frame)
+        setupView()
+    }
+    
+    required public init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func setupView() {
+        self.contentView.addSubviews(title, time)
+        
+        title.heightAnchor == 60
+        title.horizontalAnchors == self.contentView.horizontalAnchors
+        title.topAnchor == self.contentView.topAnchor + 10
+        title.bottomAnchor == self.contentView.bottomAnchor - 10
+        title.numberOfLines = 0
+        title.lineBreakMode = .byWordWrapping
+        title.textAlignment = .center
+        
+        time.heightAnchor == 60
+        time.leftAnchor == self.contentView.leftAnchor
+        time.topAnchor == self.contentView.topAnchor + 10
+        time.bottomAnchor == self.contentView.bottomAnchor - 10
+        time.numberOfLines = 0
+        time.widthAnchor == 70
+        time.lineBreakMode = .byWordWrapping
+        time.textAlignment = .center
     }
 }

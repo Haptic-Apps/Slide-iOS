@@ -101,6 +101,7 @@ class SettingValues {
     public static let pref_infoBelowTitle = "INFO_BELOW_TITLE"
     public static let pref_matchSilence = "MATCH_SILENCE"
     public static let pref_autoPlayMode = "AUTOPLAY_MODE"
+    public static let pref_showPages = "SHOW_PAGES"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_FIREFOX = "firefox"
@@ -149,6 +150,7 @@ class SettingValues {
     public static var swipeAnywhereComments = false
     public static var infoBelowTitle = false
     public static var matchSilence = true
+    public static var showPages = true
 
     public static var enlargeLinks = true
     public static var noImages = false
@@ -376,6 +378,7 @@ class SettingValues {
         SettingValues.autoKeyboard = settings.object(forKey: SettingValues.pref_autoKeyboard) == nil ? true : settings.bool(forKey: SettingValues.pref_autoKeyboard)
         SettingValues.linkAlwaysThumbnail = settings.object(forKey: SettingValues.pref_linkAlwaysThumbnail) == nil ? true : settings.bool(forKey: SettingValues.pref_linkAlwaysThumbnail)
         SettingValues.bottomBarHidden = false // disable for now settings.bool(forKey: SettingValues.pref_bottomBarHidden)
+        SettingValues.showPages = settings.bool(forKey: SettingValues.pref_showPages)
 
         SettingValues.dataSavingEnabled = settings.bool(forKey: SettingValues.pref_dataSavingEnabled)
         SettingValues.dataSavingDisableWiFi = settings.bool(forKey: SettingValues.pref_dataSavingDisableWifi)

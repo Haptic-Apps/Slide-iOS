@@ -19,6 +19,7 @@ class SettingsGeneral: UITableViewController {
     var bottomBarHidden: UITableViewCell = UITableViewCell()
     var autoKeyboard: UITableViewCell = UITableViewCell()
     var matchSilence: UITableViewCell = UITableViewCell()
+    var showPages: UITableViewCell = UITableViewCell()
 
     var postSorting: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "post")
     var commentSorting: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "comment")
@@ -31,6 +32,7 @@ class SettingsGeneral: UITableViewController {
     var bottomBarSwitch = UISwitch()
     var autoKeyboardSwitch = UISwitch()
     var matchSilenceSwitch = UISwitch()
+    var showPagesSwitch = UISwitch()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -57,6 +59,10 @@ class SettingsGeneral: UITableViewController {
             MainViewController.needsRestart = true
             SettingValues.bottomBarHidden = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_bottomBarHidden)
+        } else if changed == showPagesSwitch {
+            MainViewController.needsRestart = true
+            SettingValues.showPages = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_showPages)
         } else if changed == autoKeyboardSwitch {
             SettingValues.autoKeyboard = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_autoKeyboard)
@@ -135,6 +141,7 @@ class SettingsGeneral: UITableViewController {
         createCell(pinToolbar, pinToolbarSwitch, isOn: !SettingValues.pinToolbar, text: "Autohide navigation bars")
         createCell(matchSilence, matchSilenceSwitch, isOn: SettingValues.matchSilence, text: "Mute videos if silent mode is on")
         createCell(autoKeyboard, autoKeyboardSwitch, isOn: SettingValues.autoKeyboard, text: "Open keyboard automatically in bottom drawer")
+        createCell(showPages, showPagesSwitch, isOn: SettingValues.autoKeyboard, text: "Show page separators when loading more content")
 
         self.postSorting.textLabel?.text = "Default post sorting"
         self.postSorting.detailTextLabel?.text = SettingValues.defaultSorting.description
@@ -180,10 +187,11 @@ class SettingsGeneral: UITableViewController {
             switch indexPath.row {
             case 0: return self.viewType
             case 1: return self.hideFAB
-            case 2: return self.autoKeyboard
+            case 2: return self.showPages
+            case 3: return self.autoKeyboard
           //  case 3: return self.bottomBarHidden
-            case 3: return self.pinToolbar
-            case 4: return self.scrubUsername
+            case 4: return self.pinToolbar
+            case 5: return self.scrubUsername
             default: fatalError("Unknown row in section 0")
             }
         case 1:
@@ -327,7 +335,7 @@ class SettingsGeneral: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return 5
+        case 0: return 6
         case 1: return 2
         case 2: return 1
         case 3: return 2
