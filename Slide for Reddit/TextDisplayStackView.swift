@@ -138,7 +138,7 @@ public class TextDisplayStackView: UIStackView {
             let newTitle = NSMutableAttributedString(attributedString: title)
             
             if !blocks[0].startsWith("<table>") && !blocks[0].startsWith("<cite>") && !blocks[0].startsWith("<code>") {
-                newTitle.append(NSAttributedString.init(string: "\n\n", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 5)]))
+                newTitle.append(NSAttributedString.init(string: "", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 5)]))
                 newTitle.append(createAttributedChunk(baseHTML: blocks[0]))
                 startIndex = 1
             }

@@ -594,8 +594,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             previousProgress = currentProgress
         } else if sender.state == .ended && progressBar.progress >= 0.4 {
             doAction(item: progressBar.progressType!)
+            self.progressBar.progress = 1
             UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
-                self.progressBar.progress = 1
                 self.progressBar.alpha = 0
                 self.typeImage.alpha = 0
                 self.typeImage.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
@@ -604,8 +604,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 self.typeImage.removeFromSuperview()
             })
         } else {
+            self.progressBar.progress = 0
             UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
-                self.progressBar.progress = 0
                 self.progressBar.alpha = 0
                 self.typeImage.alpha = 0
             }, completion: { (_) in
@@ -613,10 +613,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 self.typeImage.removeFromSuperview()
             })
         }
-        
+    
         if dragCancelled {
+            self.progressBar.progress = 0
             UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseInOut, animations: {
-                self.progressBar.progress = 0
                 self.typeImage.alpha = 0
                 self.progressBar.alpha = 0
             }, completion: { (_) in
