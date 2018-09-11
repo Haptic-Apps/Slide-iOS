@@ -321,12 +321,12 @@ class SingleSubredditViewController: MediaViewController {
                 navigationController?.setToolbarHidden(true, animated: true)
             } else {
                 UIView.animate(withDuration: 0.25) {
-                    self.parentController?.menuNav?.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height, width: self.parentController?.menuNav?.view.frame.width ?? 0, height: self.parentController?.menuNav?.view.frame.height ?? 0)
+                    self.parentController?.menuNav?.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - ((self.parentController?.menuNav?.bottomOffset ?? 1) / 2), width: self.parentController?.menuNav?.view.frame.width ?? 0, height: self.parentController?.menuNav?.view.frame.height ?? 0)
                 }
             }
-            if !single && parentController != nil {
-                parentController!.drawerButton.isHidden = false
-            }
+//            if !single && parentController != nil {
+//                parentController!.drawerButton.isHidden = false
+//            }
         }
         self.isToolbarHidden = true
 
@@ -363,6 +363,7 @@ class SingleSubredditViewController: MediaViewController {
                         } else {
                             UIView.animate(withDuration: 0.25) {
                                 self.parentController?.menuNav?.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - (self.parentController?.menuNav?.bottomOffset ?? 0), width: self.parentController?.menuNav?.view.frame.width ?? 0, height: self.parentController?.menuNav?.view.frame.height ?? 0)
+                                self.parentController?.menuNav?.topView?.layer.cornerRadius = 0
                             }
                         }
                     }
@@ -389,9 +390,9 @@ class SingleSubredditViewController: MediaViewController {
                         self.parentController?.menuNav?.view.frame = CGRect(x: 0, y: (UIScreen.main.bounds.height - (self.parentController?.menuNav?.bottomOffset ?? 0)), width: self.parentController?.menuNav?.view.frame.width ?? 0, height: self.parentController?.menuNav?.view.frame.height ?? 0)
                     }
                 }
-                if !single && parentController != nil {
-                    self.parentController!.drawerButton.isHidden = true
-                }
+//                if !single && parentController != nil {
+//                    self.parentController!.drawerButton.isHidden = true
+//                }
             }
             self.isToolbarHidden = false
         }

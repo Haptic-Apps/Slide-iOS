@@ -333,6 +333,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         }
         menuNav = NavigationSidebarViewController(controller: self)
         toolbar = UIView()
+        toolbar!.layer.cornerRadius = 15
         menuNav?.topView = toolbar
         menuNav?.view.addSubview(toolbar!)
         menuNav?.muxColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.theme == .LIGHT ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
@@ -737,17 +738,17 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         }
         requestReviewIfAppropriate()
         
-        drawerButton = UIImageView.init(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
-        drawerButton.backgroundColor = ColorUtil.foregroundColor
-        drawerButton.clipsToBounds = true
-        drawerButton.contentMode = .center
-        drawerButton.layer.cornerRadius = 20
-        drawerButton.image = UIImage(named: "menu")?.getCopy(withSize: CGSize.square(size: 25), withColor: ColorUtil.fontColor)
-        self.view.addSubview(drawerButton)
-        drawerButton.translatesAutoresizingMaskIntoConstraints = false
-        drawerButton.addTapGestureRecognizer {
-            self.showDrawer(self.drawerButton)
-        }
+//        drawerButton = UIImageView.init(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+//        drawerButton.backgroundColor = ColorUtil.foregroundColor
+//        drawerButton.clipsToBounds = true
+//        drawerButton.contentMode = .center
+//        drawerButton.layer.cornerRadius = 20
+//        drawerButton.image = UIImage(named: "menu")?.getCopy(withSize: CGSize.square(size: 25), withColor: ColorUtil.fontColor)
+//        self.view.addSubview(drawerButton)
+//        drawerButton.translatesAutoresizingMaskIntoConstraints = false
+//        drawerButton.addTapGestureRecognizer {
+//            self.showDrawer(self.drawerButton)
+//        }
         
         toolbar?.addTapGestureRecognizer(action: {
             self.showDrawer(self.drawerButton)
@@ -756,13 +757,13 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         let swipe = UISwipeGestureRecognizer(target: self, action: #selector(showDrawer(_:)))
         swipe.direction = .up
         
-        drawerButton.addGestureRecognizer(swipe)
-        drawerButton.isHidden = true
-        
-        drawerButton.bottomAnchor == self.view.safeBottomAnchor - 8
-        drawerButton.leadingAnchor == self.view.safeLeadingAnchor + 8
-        drawerButton.heightAnchor == 40
-        drawerButton.widthAnchor == 40
+//        drawerButton.addGestureRecognizer(swipe)
+//        drawerButton.isHidden = true
+//
+//        drawerButton.bottomAnchor == self.view.safeBottomAnchor - 8
+//        drawerButton.leadingAnchor == self.view.safeLeadingAnchor + 8
+//        drawerButton.heightAnchor == 40
+//        drawerButton.widthAnchor == 40
     }
     
     public static var isOffline = false
@@ -824,11 +825,13 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                 menu.heightAnchor == 56
                 menu.widthAnchor == 56
                 menu.leftAnchor == toolbar!.leftAnchor
+                menu.topAnchor == toolbar!.topAnchor
                 
                 more.heightAnchor == 56
                 more.widthAnchor == 56
                 more.rightAnchor == toolbar!.rightAnchor
-                
+                more.topAnchor == toolbar!.topAnchor
+
                 navigationItem.rightBarButtonItem = sortB
             }
         } else {

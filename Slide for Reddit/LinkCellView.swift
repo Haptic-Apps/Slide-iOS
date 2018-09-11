@@ -572,6 +572,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             
             if (direction == -1 && SettingValues.submissionActionLeft == .NONE) || (direction == 1 && SettingValues.submissionActionRight == .NONE) {
                 dragCancelled = true
+                sender.cancel()
                 return
             } else if progressBar.superview == nil && (abs(currentTranslation) / (contentView.bounds.width)) > 0.2 {
                 contentView.addSubviews(typeImage, progressBar)
@@ -610,7 +611,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             typeImage.alpha = CGFloat(currentProgress)
             previousTranslation = currentTranslation
             previousProgress = currentProgress
-        } else if sender.state == .ended && progressBar.progress >= 0.4 {
+        } else if sender.state == .ended && progressBar.progress >= 0.6 {
             self.progressBar.progressLayer.strokeEnd = 1
             doAction(item: progressBar.progressType!)
             UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
@@ -1933,5 +1934,11 @@ extension UIView: MaterialView {
         self.layer.shadowOffset = CGSize(width: 0, height: elevation)
         self.layer.shadowRadius = CGFloat(elevation)
         self.layer.shadowOpacity = 0.24
+    }
+}
+extension UIGestureRecognizer {
+    func cancel() {
+        isEnabled = false
+        isEnabled = true
     }
 }
